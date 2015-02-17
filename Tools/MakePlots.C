@@ -1,5 +1,5 @@
-#include "Plotter.h"
-#include "samples.h"
+#include "SusyAnaTools/Tools/Plotter.h"
+#include "SusyAnaTools/Tools/samples.h"
 
 #include <getopt.h>
 #include <iostream>
