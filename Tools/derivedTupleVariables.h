@@ -2,6 +2,7 @@
 #include "SusyAnaTools/Tools/customize.h"
 
 #include "TH1.h"
+#include "TH2.h"
 #include "TFile.h"
 #include "TLorentzVector.h"
 #include "Math/VectorUtil.h"
@@ -12,8 +13,8 @@
 namespace plotterFunctions
 {
     //Ugly global variables here
-    static TH1* muEffPt;
-    static TH1* muAccPt;
+    static TH2* muEff;
+    static TH2* muAcc;
 
     void generateWeight(NTupleReader& tr)
     {
@@ -33,6 +34,7 @@ namespace plotterFunctions
         const std::vector<double>& muonsCharge          = tr.getVec<double>("muonsCharge");
         const std::vector<double>& muonsMtw             = tr.getVec<double>("muonsMtw");
 
+        const double& ht                             = tr.getVar<double>("ht");
         const double& met                            = tr.getVar<double>("met");
         const double& metphi                         = tr.getVar<double>("metphi");
 
@@ -54,8 +56,12 @@ namespace plotterFunctions
             }
         }
 
+        double genHt = 0.0;
+
         for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
         {
+            if((abs(genDecayPdgIdVec[i]) != 0 &&  abs(genDecayPdgIdVec[i]) < 6) || (abs(genDecayPdgIdVec[i]) > 100 && abs(genDecayPdgIdVec[i]) < 10000)) genHt += genDecayLVec[i].Pt();
+                
             if(abs(genDecayPdgIdVec[i]) == 13)
             {
                 genMu->push_back(&genDecayLVec[i]);
@@ -124,21 +130,28 @@ namespace plotterFunctions
                 {
                     bestRecoZ = (*cutMuVec)[i] + (*cutMuVec)[j];
                     zMassCurrent = zm;
-                    if(muEffPt)
+                    if(muEff && muAcc)
                     {
+                        double mu1pt = (*cutMuVec)[i].Pt();
+                        double mu2pt = (*cutMuVec)[j].Pt();
+                        double Ht = ht;
+
+                        //set to not overflow histograms
+                        if(mu1pt >= 2000.0) mu1pt = 1999.9;
+                        if(mu2pt >= 2000.0) mu2pt = 1999.9;
+                        if(Ht >= 3000.0) Ht = 2999.9;
+                        
                         //Get mu efficiencies
                         double muEff1 = 0.0, muEff2 = 0.0;
-                        // Eff without applying acceptance
-                        //const double p0 = 0.952453;
-                        //const double p1 = -9.32974e-05;
-                        // Eff with acceptance applied
-                        const double p0 = 0.976727;
-                        const double p1 = -0.000129567;
-                        if((*cutMuVec)[i].Pt() > 400) muEff1 = p0 + (*cutMuVec)[i].Pt() * p1;
-                        else                          muEff1 = muEffPt->GetBinContent(muEffPt->FindBin((*cutMuVec)[i].Pt()));
-
-                        if((*cutMuVec)[j].Pt() > 400) muEff2 = p0 + (*cutMuVec)[j].Pt() * p1;
-                        else                          muEff2 = muEffPt->GetBinContent(muEffPt->FindBin((*cutMuVec)[j].Pt()));
+                        
+                        
+                        muEff1 = muEff->GetBinContent(muEff->GetXaxis()->FindBin(mu1pt), muEff->GetYaxis()->FindBin(Ht));
+                        muEff2 = muEff->GetBinContent(muEff->GetXaxis()->FindBin(mu2pt), muEff->GetYaxis()->FindBin(Ht));
+//                        muAcc
+                        
+                        
+                        if(muEff1 < 1.0e-5 || muEff2 < 1.0e-5) zEff = 1.0e-10;
+                        else                                   zEff = muEff1 * muEff2;
 
                         if(zEff < 0.1) 
                         {
@@ -146,28 +159,21 @@ namespace plotterFunctions
                             zEff = 1.0e101;
                         }
 
-                        if(muEff1 < 1.0e-5 || muEff2 < 1.0e-5) zEff = 1.0e-10;
-                        else                                   zEff = muEff1 * muEff2;
 
                         //Get mu acceptance
                         double muAcc1 = 0.0, muAcc2 = 0.0;
 
-                        if((*cutMuVec)[i].Pt() > 600) muAcc1 = 1.0;
-                        else                          muAcc1 = muAccPt->GetBinContent(muAccPt->FindBin((*cutMuVec)[i].Pt()));
-
-                        if((*cutMuVec)[j].Pt() > 600) muAcc2 = 1.0;
-                        else                          muAcc2 = muAccPt->GetBinContent(muAccPt->FindBin((*cutMuVec)[j].Pt()));
-                
-
-                        if(zAcc < 0.1) 
-                        {
-                            std::cout << "WARNING: Z efficiency < 0.1, forcing weight to zero! Eff_Z: " << zAcc << "\t Pt_mu1:" << (*cutMuVec)[i].Pt() <<  "\t Eff_mu1: " << muAcc1 << "\t Pt_mu2: " << (*cutMuVec)[j].Pt() << "\t Eff_mu2: " << muAcc2 << std::endl;
-                            zAcc = 1.0e101;
-                        }
+                        muAcc1 = muAcc->GetBinContent(muAcc->GetXaxis()->FindBin(mu1pt), muAcc->GetYaxis()->FindBin(Ht));
+                        muAcc2 = muAcc->GetBinContent(muAcc->GetXaxis()->FindBin(mu2pt), muAcc->GetYaxis()->FindBin(Ht));
 
                         if(muAcc1 < 1.0e-5 || muAcc2 < 1.0e-5) zAcc = 1.0e-10;
                         else                                   zAcc = muAcc1 * muAcc2;
 
+                        if(zAcc < 0.1) 
+                        {
+                            std::cout << "WARNING: Z acceptance < 0.1, forcing weight to zero! Acc_Z: " << zAcc << "\t Pt_mu1:" << (*cutMuVec)[i].Pt() <<  "\t Acc_mu1: " << muAcc1 << "\t Pt_mu2: " << (*cutMuVec)[j].Pt() << "\t Acc_mu2: " << muAcc2 << std::endl;
+                            zAcc = 1.0e101;
+                        }
                     }
                 }
             }
@@ -188,11 +194,15 @@ namespace plotterFunctions
         tr.registerDerivedVar("zEffWgt", 1.0/zEff);
         tr.registerDerivedVar("zAcc", zAcc);
         tr.registerDerivedVar("zAccWgt", 1.0/zAcc);
+        tr.registerDerivedVar("genHt", genHt);
 
         tr.registerDerivedVec("cutMuVec", cutMuVec);
         tr.registerDerivedVec("genMu", genMu);
+        tr.registerDerivedVar("ngenMu", static_cast<double>(genMu->size()));
         tr.registerDerivedVec("genMuInAcc", genMuInAcc);
+        tr.registerDerivedVar("ngenMuInAcc", static_cast<double>(genMuInAcc->size()));
         tr.registerDerivedVec("genMatchMuInAcc", genMatchMuInAcc);
+        tr.registerDerivedVar("ngenMatchMuInAcc", static_cast<double>(genMatchMuInAcc->size()));
         tr.registerDerivedVar("genZPt", genZPt);
         tr.registerDerivedVar("genZEta", genZEta);
         tr.registerDerivedVar("genZmass", genZmass);
@@ -225,7 +235,7 @@ namespace plotterFunctions
         const double HT_jetEtaMax = 2.4;
         const double MTH_jetPtMin = 30.0;
 
-        double HT = 0.0;
+        double HT = 0.0, HTNoIso = 0.0;
         TLorentzVector MHT;
 
         int iJet = 0;
@@ -240,8 +250,16 @@ namespace plotterFunctions
                 dRmin = std::min(dRmin, dR);
             }
 
+            double dRminNoIso = dRmin;
+
             for(int i = 0; i < muonsLVec.size() && i < muonsRelIso.size(); ++i)
             {
+                if(AnaFunctions::passMuon(muonsLVec[i], 0.0, 0.0, AnaConsts::muonsArr))
+                {
+                    double dRNoIso = ROOT::Math::VectorUtil::DeltaR(jet, muonsLVec[i]);
+                    dRminNoIso = std::min(dRminNoIso, dRNoIso);
+                }
+
                 if(!AnaFunctions::passMuon(muonsLVec[i], muonsRelIso[i], 0.0, AnaConsts::muonsArr)) continue;
                 double dR = ROOT::Math::VectorUtil::DeltaR(jet, muonsLVec[i]);
                 dRmin = std::min(dRmin, dR);
@@ -258,9 +276,14 @@ namespace plotterFunctions
                 if(jet.Pt() > HT_jetPtMin && fabs(jet.Eta()) < HT_jetEtaMax) HT += jet.Pt();
                 if(jet.Pt() > MTH_jetPtMin) MHT += jet;
             }
+            if(dRminNoIso > jldRMax)
+            {
+                if(jet.Pt() > HT_jetPtMin && fabs(jet.Eta()) < HT_jetEtaMax) HTNoIso += jet.Pt();
+            }
             ++iJet;
         }
         tr.registerDerivedVar("cleanHt", HT);
+        tr.registerDerivedVar("cleanHtNoIso", HTNoIso);
         tr.registerDerivedVar("cleanMHt", MHT.Pt());
         tr.registerDerivedVar("cleanMHtPhi", MHT.Phi());
         tr.registerDerivedVec("cleanJetVec", cleanJetVec);
@@ -325,7 +348,7 @@ namespace plotterFunctions
         double MT2 = -1;
         double mTcomb = -1;
 
-        bool passPreTTag = passZinvLeptVeto && passZinvnJets && passZinvdPhis && passZinvBJets && passZinvMET && cntNJetsPt30 >= AnaConsts::nJetsSel;
+        bool passPreTTag = passZinvLeptVeto && passZinvnJets && passZinvdPhis/* && passZinvBJets */&& passZinvMET && cntNJetsPt30 >= AnaConsts::nJetsSel;
         if(passPreTTag)
         {
             type3Ptr->processEvent(zinvJetVec, zinvBTagVec, metLVec);
@@ -398,8 +421,8 @@ namespace plotterFunctions
         TFile *f = new TFile("muEffHists.root");
         if(f)
         {
-            muEffPt = static_cast<TH1*>(f->Get("muEffPt"));
-            muAccPt = static_cast<TH1*>(f->Get("muAccPt"));
+            muEff = static_cast<TH2*>(f->Get("hMuEff"));
+            muAcc = static_cast<TH2*>(f->Get("hMuAcc"));
             f->Close();
             delete f;
         }

@@ -23,7 +23,7 @@ LIBS       = $(shell root-config --glibs)
 MT2LIB     = -L$(CMSSW_BASE)/lib/${SCRAM_ARCH}/ -lrecipeAUXOxbridgeMT2
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
-PROGRAMS = harvestHists makePlots
+PROGRAMS = calcEff harvestHists makePlots
 
 all: $(PROGRAMS)
 
@@ -40,6 +40,8 @@ $(ODIR)/%.o : $(RSDIR)/%.C
 $(ODIR)/%.o : $(RSDIR)/%.cc
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
 
+calcEff: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/calcEff.o
+	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
 harvestHists: $(ODIR)/harvestHists.o
 	$(LD) $^ $(LIBS) -o $@
