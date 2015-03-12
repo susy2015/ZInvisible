@@ -106,6 +106,7 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_ll_inc(    "DY#rightarrow#mu#mu Inc",               fileMap["IncDY"], "pdgIdZDec=13;passMuZinvSel", "");
 
     Plotter::DatasetSummary dsDY_ll(        "DY#rightarrow#mu#mu",                   fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel", "");
+    Plotter::DatasetSummary dsDY_ll_base(   "DY#rightarrow#mu#mu baseline",          fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel;passZinvBaseline", "");
     Plotter::DatasetSummary dsDY_ll_zWeight("DY#rightarrow#mu#mu no #mu, Z eff",     fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel", "zEffWgt");
     Plotter::DatasetSummary dsDY_ll_zAcc(   "DY#rightarrow#mu#mu no #mu, Z eff+acc", fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel", "zEffWgt;zAccWgt");
     Plotter::DatasetSummary dsDY_ll_gen(    "DY#rightarrow#mu#mu Gen",               fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel", "");
@@ -116,8 +117,8 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_ll_zAcc_scaled(   "DY#rightarrow#mu#mu no #mu, Z eff+acc", fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel", "zEffWgt;zAccWgt", znunu_mumu_ratio / zAcc);
     Plotter::DatasetSummary dsDY_llclean_scaled(   "DY#rightarrow#mu#mu no #mu",            fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel", "",                znunu_mumu_ratio / zAcc);
 
-    Plotter::DatasetSummary dsDY_ll_forAcc(     "DY#rightarrow#mu#mu no Sel",                      fileMap["DYJetsToLL"],  "pdgIdZDec=13", "ngenMu");
-    Plotter::DatasetSummary dsDY_ll_forEff(     "DY#rightarrow#mu#mu no Sel",                      fileMap["DYJetsToLL"],  "pdgIdZDec=13", "");
+    Plotter::DatasetSummary dsDY_ll_forAcc(     "DY#rightarrow#mu#mu no Sel forAcc",                      fileMap["DYJetsToLL"],  "pdgIdZDec=13", "ngenMu");
+    Plotter::DatasetSummary dsDY_ll_forEff(     "DY#rightarrow#mu#mu no Sel forEff",                      fileMap["DYJetsToLL"],  "pdgIdZDec=13", "");
     Plotter::DatasetSummary dsDY_ll_forEff_num( "DY#rightarrow#mu#mu no Sel N(#mu) match wgt",     fileMap["DYJetsToLL"],  "pdgIdZDec=13", "ngenMatchMuInAcc");
     Plotter::DatasetSummary dsDY_ll_forEff_den( "DY#rightarrow#mu#mu no Sel N(#mu) wgt",           fileMap["DYJetsToLL"],  "pdgIdZDec=13", "ngenMuInAcc");
 
@@ -173,6 +174,19 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("bestRecoZPt"  , {PDC("single",  {{"bestRecoZPt", dsDY_ll}, {"genZPt", dsDY_ll_gen}})},    {1, 2}, "", 100, 0, 1500,  true,  true,  "Z p_{T} [GeV]",           "Norm Events"));    
     vh.push_back(PHS("bestRecoZMass", {PDC("single",  {{"bestRecoZM", dsDY_ll},  {"genZmass", dsDY_ll_gen}})},  {1, 2}, "", 100, 0, 1000,  true,  true,  "M(Z) [GeV]",              "Norm Events"));    
 
+    vh.push_back(PHS("zPtRes",             {PDC("single", "ZPtRes",       {dsDY_ll, dsDY_ll_base})}, {1, 1}, "",           100,  -1,  1,  false,  true,  "Z p_{T} (reco - gen)/gen",   "Norm Events"));
+    vh.push_back(PHS("zPtRes_Zpt_lt_200",  {PDC("single", "ZPtRes",       {dsDY_ll, dsDY_ll_base})}, {1, 1}, "genZPt<200", 100,  -1,  1,  false,  true,  "Z p_{T} (reco - gen)/gen",   "Norm Events"));
+    vh.push_back(PHS("zPtRes_Zpt_gt_200",  {PDC("single", "ZPtRes",       {dsDY_ll, dsDY_ll_base})}, {1, 1}, "genZPt>200", 100,  -1,  1,  false,  true,  "Z p_{T} (reco - gen)/gen",   "Norm Events"));
+    vh.push_back(PHS("zEtaRes",            {PDC("single", "ZEtaRes",      {dsDY_ll, dsDY_ll_base})}, {1, 1}, "",           100,  -5,  5,  false,  true,  "Z #eta (reco - gen)",        "Norm Events"));
+    vh.push_back(PHS("zPhiRes",            {PDC("single", "ZPhiRes",      {dsDY_ll, dsDY_ll_base})}, {1, 1}, "",           100,  -5,  5,  false,  true,  "Z #phi (reco - gen)",        "Norm Events"));
+    vh.push_back(PHS("zMRes",              {PDC("single", "ZMRes",        {dsDY_ll, dsDY_ll_base})}, {1, 1}, "",           100,  -1,  1,  false,  true,  "M(Z) (reco - gen)/gen",      "Norm Events"));
+
+    vh.push_back(PHS("mu1dRMin",              {PDC("single", "mu1dRMin",        {dsDY_ll,        dsDY_ll_base})}, {1, 1}, "",           100,   0,  5,  false,  true,  "min dR (#mu1,jet)",        "Norm Events"));
+    vh.push_back(PHS("mu2dRMin",              {PDC("single", "mu2dRMin",        {dsDY_ll,        dsDY_ll_base})}, {1, 1}, "",           100,   0,  5,  false,  true,  "min dR (#mu2,jet)",        "Norm Events"));
+    vh.push_back(PHS("mudR",                  {PDC("single", "mudR",            {dsDY_ll,        dsDY_ll_base})}, {1, 1}, "",           100,   0,  5,  false,  true,  "min dR (#mu1,#mu2)",       "Norm Events"));
+    vh.push_back(PHS("genMudR",               {PDC("single", "genMudR",         {dsDY_ll_forEff, dsDY_ll_base})}, {1, 1}, "",           100,   0,  5,  false,  true,  "gen min dR (#mu1,#mu2)",   "Norm Events"));
+    vh.push_back(PHS("genMudPhi",             {PDC("single", "genMudPhi",       {dsDY_ll_forEff, dsDY_ll_base})}, {1, 1}, "",           100,  -4,  4,  false,  true,  "gen min dPhi (#mu1,#mu2)", "Norm Events"));
+    vh.push_back(PHS("genMudEta",             {PDC("single", "genMudEta",       {dsDY_ll_forEff, dsDY_ll_base})}, {1, 1}, "",           100,  -5,  5,  false,  true,  "gen min dEta (#mu1,#mu2)", "Norm Events"));
 
     // Here are the interesting plots for the closure test 
 
@@ -381,37 +395,37 @@ int main(int argc, char* argv[])
     Plotter::DataCollection cleanmht_DY_nunu_nt("single", "cleanMHt",   {dsDY_nunu_0t, dsDY_nunu_1t, dsDY_nunu_2t, dsDY_nunu_3t});
     Plotter::DataCollection cleanMet_DY_nunu_nt("single", "cleanMetPt", {dsDY_nunu_0t, dsDY_nunu_1t, dsDY_nunu_2t, dsDY_nunu_3t});
 
-    vh.push_back(PHS("DY_mumu_nb_cleanht",   {cleanht_DY_ll_nb}, {1, 1}, "", 100, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nb_cleanmet", {cleanMet_DY_ll_nb}, {1, 1}, "", 100, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nb_cleanmht", {cleanmht_DY_ll_nb}, {1, 1}, "", 100, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
+    vh.push_back(PHS("DY_mumu_nb_cleanht",   {cleanht_DY_ll_nb}, {1, 1}, "", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
+    vh.push_back(PHS("DY_mumu_nb_cleanmet", {cleanMet_DY_ll_nb}, {1, 1}, "", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
+    vh.push_back(PHS("DY_mumu_nb_cleanmht", {cleanmht_DY_ll_nb}, {1, 1}, "", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
 
-    vh.push_back(PHS("DY_mumu_nt_cleanht",   {cleanht_DY_ll_nt}, {1, 1}, "", 100, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nt_cleanmet", {cleanMet_DY_ll_nt}, {1, 1}, "", 100, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nt_cleanmht", {cleanmht_DY_ll_nt}, {1, 1}, "", 100, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
+    vh.push_back(PHS("DY_mumu_nt_cleanht",   {cleanht_DY_ll_nt}, {1, 1}, "", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
+    vh.push_back(PHS("DY_mumu_nt_cleanmet", {cleanMet_DY_ll_nt}, {1, 1}, "", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
+    vh.push_back(PHS("DY_mumu_nt_cleanmht", {cleanmht_DY_ll_nt}, {1, 1}, "", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
 
-    vh.push_back(PHS("DY_nunu_nb_cleanht",   {cleanht_DY_nunu_nb}, {1, 1}, "", 100, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nb_cleanmet", {cleanMet_DY_nunu_nb}, {1, 1}, "", 100, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nb_cleanmht", {cleanmht_DY_nunu_nb}, {1, 1}, "", 100, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
+    vh.push_back(PHS("DY_nunu_nb_cleanht",   {cleanht_DY_nunu_nb}, {1, 1}, "", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
+    vh.push_back(PHS("DY_nunu_nb_cleanmet", {cleanMet_DY_nunu_nb}, {1, 1}, "", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
+    vh.push_back(PHS("DY_nunu_nb_cleanmht", {cleanmht_DY_nunu_nb}, {1, 1}, "", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
 
-    vh.push_back(PHS("DY_nunu_nt_cleanht",   {cleanht_DY_nunu_nt}, {1, 1}, "", 100, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nt_cleanmet", {cleanMet_DY_nunu_nt}, {1, 1}, "", 100, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nt_cleanmht", {cleanmht_DY_nunu_nt}, {1, 1}, "", 100, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
+    vh.push_back(PHS("DY_nunu_nt_cleanht",   {cleanht_DY_nunu_nt}, {1, 1}, "", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
+    vh.push_back(PHS("DY_nunu_nt_cleanmet", {cleanMet_DY_nunu_nt}, {1, 1}, "", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
+    vh.push_back(PHS("DY_nunu_nt_cleanmht", {cleanmht_DY_nunu_nt}, {1, 1}, "", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
 
-    vh.push_back(PHS("DY_mumu_nb_baseline_cleanht",   {cleanht_DY_ll_nb}, {1, 1}, "passZinvBaselineNoTag", 100, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nb_baseline_cleanmet", {cleanMet_DY_ll_nb}, {1, 1}, "passZinvBaselineNoTag", 100, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nb_baseline_cleanmht", {cleanmht_DY_ll_nb}, {1, 1}, "passZinvBaselineNoTag", 100, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
+    vh.push_back(PHS("DY_mumu_nb_baseline_cleanht",   {cleanht_DY_ll_nb}, {1, 1}, "passZinvBaselineNoTag", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
+    vh.push_back(PHS("DY_mumu_nb_baseline_cleanmet", {cleanMet_DY_ll_nb}, {1, 1}, "passZinvBaselineNoTag", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
+    vh.push_back(PHS("DY_mumu_nb_baseline_cleanmht", {cleanmht_DY_ll_nb}, {1, 1}, "passZinvBaselineNoTag", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
 
-    vh.push_back(PHS("DY_mumu_nt_baseline_cleanht",   {cleanht_DY_ll_nt}, {1, 1}, "passZinvBaselineNoTag", 100, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nt_baseline_cleanmet", {cleanMet_DY_ll_nt}, {1, 1}, "passZinvBaselineNoTag", 100, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nt_baseline_cleanmht", {cleanmht_DY_ll_nt}, {1, 1}, "passZinvBaselineNoTag", 100, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
+    vh.push_back(PHS("DY_mumu_nt_baseline_cleanht",   {cleanht_DY_ll_nt}, {1, 1}, "passZinvBaselineNoTag", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
+    vh.push_back(PHS("DY_mumu_nt_baseline_cleanmet", {cleanMet_DY_ll_nt}, {1, 1}, "passZinvBaselineNoTag", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
+    vh.push_back(PHS("DY_mumu_nt_baseline_cleanmht", {cleanmht_DY_ll_nt}, {1, 1}, "passZinvBaselineNoTag", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
 
-    vh.push_back(PHS("DY_nunu_nb_baseline_cleanht",   {cleanht_DY_nunu_nb}, {1, 1}, "passZinvBaselineNoTag", 100, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nb_baseline_cleanmet", {cleanMet_DY_nunu_nb}, {1, 1}, "passZinvBaselineNoTag", 100, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nb_baseline_cleanmht", {cleanmht_DY_nunu_nb}, {1, 1}, "passZinvBaselineNoTag", 100, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
+    vh.push_back(PHS("DY_nunu_nb_baseline_cleanht",   {cleanht_DY_nunu_nb}, {1, 1}, "passZinvBaselineNoTag", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
+    vh.push_back(PHS("DY_nunu_nb_baseline_cleanmet", {cleanMet_DY_nunu_nb}, {1, 1}, "passZinvBaselineNoTag", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
+    vh.push_back(PHS("DY_nunu_nb_baseline_cleanmht", {cleanmht_DY_nunu_nb}, {1, 1}, "passZinvBaselineNoTag", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
 
-    vh.push_back(PHS("DY_nunu_nt_baseline_cleanht",   {cleanht_DY_nunu_nt}, {1, 1}, "passZinvBaselineNoTag", 100, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nt_baseline_cleanmet", {cleanMet_DY_nunu_nt}, {1, 1}, "passZinvBaselineNoTag", 100, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nt_baseline_cleanmht", {cleanmht_DY_nunu_nt}, {1, 1}, "passZinvBaselineNoTag", 100, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
+    vh.push_back(PHS("DY_nunu_nt_baseline_cleanht",   {cleanht_DY_nunu_nt}, {1, 1}, "passZinvBaselineNoTag", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
+    vh.push_back(PHS("DY_nunu_nt_baseline_cleanmet", {cleanMet_DY_nunu_nt}, {1, 1}, "passZinvBaselineNoTag", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
+    vh.push_back(PHS("DY_nunu_nt_baseline_cleanmht", {cleanmht_DY_nunu_nt}, {1, 1}, "passZinvBaselineNoTag", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
 
 
     // Plots the information needed to calculate acceptance corrections, plot itself is meaningless

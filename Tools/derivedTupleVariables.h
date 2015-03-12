@@ -15,13 +15,148 @@ namespace plotterFunctions
     //Ugly global variables here
     static TH2* muEff;
     static TH2* muAcc;
+    static TH1* hZEff;
+    static TH1* hZAcc;
 
     void generateWeight(NTupleReader& tr)
     {
+        const std::vector<TLorentzVector*>& cleanJetVec     = tr.getVec<TLorentzVector*>("cleanJetVec");        
+        const std::vector<TLorentzVector>& cutMuVec         = tr.getVec<TLorentzVector>("cutMuVec");
+        const std::vector<TLorentzVector*>& genMu           = tr.getVec<TLorentzVector*>("genMu");
+        const std::vector<TLorentzVector*>& genMuInAcc      = tr.getVec<TLorentzVector*>("genMuInAcc");
+        const std::vector<TLorentzVector*>& genMatchMuInAcc = tr.getVec<TLorentzVector*>("genMatchMuInAcc");
+
+        const int& pdgIdZDec      = tr.getVar<int>("pdgIdZDec");
+        const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
+        const double& ht          = tr.getVar<double>("ht");
+        const double& bestRecoZPt = tr.getVar<double>("bestRecoZPt");
+
         // Calculate PU weight
 
         // Calculate Z-eff weight
+
+        const double zMassMin = 71.0;
+        const double zMass    = 91.0;
+        const double zMassMax = 111.0;
+
+        double zMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
+        for(int i = 0; i < cutMuVec.size(); ++i)
+        {
+            if(cutMuVec[i].Pt() < 10) continue;
+            for(int j = 0; j < i && j < cutMuVec.size(); ++j)
+            {
+                if(cutMuVec[j].Pt() < 10) continue;
+                double zm = (cutMuVec[i] + cutMuVec[j]).M();
+                //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
+                if(fabs(zm - zMass) < fabs(zMassCurrent - zMass))
+                {
+                    zMassCurrent = zm;
+                    if(muEff && muAcc)
+                    {
+                        double mu1pt = cutMuVec[i].Pt();
+                        double mu2pt = cutMuVec[j].Pt();
+                        double Ht = ht;
+
+                        //set to not overflow histograms
+                        if(mu1pt >= 2000.0) mu1pt = 1999.9;
+                        if(mu2pt >= 2000.0) mu2pt = 1999.9;
+                        if(Ht >= 3000.0) Ht = 2999.9;
+                        
+                        //Get mu efficiencies
+                        double muEff1 = 0.0, muEff2 = 0.0;
+
+                        muEff1 = muEff->GetBinContent(muEff->GetXaxis()->FindBin(mu1pt), muEff->GetYaxis()->FindBin(Ht));
+                        muEff2 = muEff->GetBinContent(muEff->GetXaxis()->FindBin(mu2pt), muEff->GetYaxis()->FindBin(Ht));
+                        
+                        if(muEff1 < 1.0e-5 || muEff2 < 1.0e-5) zEff = 1.0e-10;
+                        else                                   zEff = muEff1 * muEff2;
+
+                        //Get mu acceptance
+                        /*double muAcc1 = 0.0, muAcc2 = 0.0;
+
+                        muAcc1 = muAcc->GetBinContent(muAcc->GetXaxis()->FindBin(mu1pt), muAcc->GetYaxis()->FindBin(Ht));
+                        muAcc2 = muAcc->GetBinContent(muAcc->GetXaxis()->FindBin(mu2pt), muAcc->GetYaxis()->FindBin(Ht));
+
+                        if(muAcc1 < 1.0e-5 || muAcc2 < 1.0e-5) zAcc = 1.0e-10;
+                        else                                   zAcc = muAcc1 * muAcc2;*/
+
+                    }
+                }
+            }
+        }
+
+        double genCleanHt = ht;
+        for(auto& tlvp : genMuInAcc) if(tlvp->Pt() > 50) genCleanHt -= tlvp->Pt();
+
+        double mu1dRMin = 99.9, mu2dRMin = 99.9;
+        for(auto& jet : cleanJetVec)
+        {
+            double mu1dR = 999.9, mu2dR = 999.9;
+            if(cutMuVec.size() >= 1) mu1dR = ROOT::Math::VectorUtil::DeltaR(*jet, cutMuVec[0]);
+            if(cutMuVec.size() >= 2) mu2dR = ROOT::Math::VectorUtil::DeltaR(*jet, cutMuVec[1]);
+            mu1dRMin = std::min(mu1dRMin, mu1dR);
+            mu2dRMin = std::min(mu2dRMin, mu2dR);
+        }
         
+        double mudR = 99.9, genMudR = 99.9, genMudPhi = 99.9, genMudEta = 99.9;
+
+        if(cutMuVec.size() >= 2) mudR    = ROOT::Math::VectorUtil::DeltaR(cutMuVec[0], cutMuVec[1]);
+        if(genMu.size() > 2) std::cout << "MORE THAN 2 GEN MUONS: " << genMu.size() << std::endl;
+        if(genMu.size() >= 2)    
+        {
+            genMudR = ROOT::Math::VectorUtil::DeltaR(*(genMu[0]), *(genMu[1]));
+            genMudPhi = ROOT::Math::VectorUtil::DeltaPhi(*(genMu[0]), *(genMu[1]));
+            genMudEta = genMu[0]->Eta() - genMu[1]->Eta();
+        }
+
+        std::vector<double>* jActR1 = new std::vector<double>();
+        std::vector<double>* jActR2 = new std::vector<double>();
+
+        for(int i = 0; i < genMu.size(); ++i)
+        {
+            double tjActR1 = 0.0, tjActR2 = 0.0;//, jActR1wgm = 0.0, jActR2wgm = 0.0;
+            for(auto& jet : cleanJetVec)
+            {
+                double dR = ROOT::Math::VectorUtil::DeltaR(*jet, *(genMu[i]));
+                if(dR > 0.1 && dR < 1.0)
+                {
+                    tjActR1 += jet->Pt() / dR;
+                    tjActR2 += jet->Pt() / (dR * dR);
+                }
+            }
+            jActR1->push_back(tjActR1);
+            jActR2->push_back(tjActR2);
+        }
+        
+        //ZPt eff/Acc here
+        //if(hZEff) zEff = hZEff->GetBinContent(hZEff->GetXaxis()->FindBin(bestRecoZ.Pt()));//, hZEff->GetYaxis()->FindBin(genCleanHt));//ht));
+        if(hZAcc) zAcc = hZAcc->GetBinContent(hZAcc->GetXaxis()->FindBin(bestRecoZPt));//, hZAcc->GetYaxis()->FindBin(genCleanHt));//ht));
+
+        if(pdgIdZDec == 13 && passMuZinvSel && zAcc < 0.05) 
+        {
+            std::cout << "WARNING: Z acceptance < 0.05, forcing weight to zero! Acc_Z: " << zAcc << std::endl;
+            zAcc = 1.0e101;
+        }
+
+        if(pdgIdZDec == 13 && passMuZinvSel && zEff < 0.05) 
+        {
+            std::cout << "WARNING: Z efficiency < 0.05, forcing weight to zero! Eff_Z: " << zEff << "\tZ(Pt): " << bestRecoZPt <<  std::endl;
+            zEff = 1.0e101;
+        }
+
+        tr.registerDerivedVec("jActR1", jActR1);
+        tr.registerDerivedVec("jActR2", jActR2);
+
+        tr.registerDerivedVar("mu1dRMin", mu1dRMin);
+        tr.registerDerivedVar("mu2dRMin", mu2dRMin);
+        tr.registerDerivedVar("mudR", mudR);
+        tr.registerDerivedVar("genMudR", genMudR);
+        tr.registerDerivedVar("genMudPhi", genMudPhi);
+        tr.registerDerivedVar("genMudEta", genMudEta);
+        tr.registerDerivedVar("zEff", zEff);
+        tr.registerDerivedVar("zEffWgt", 1.0/zEff);
+        tr.registerDerivedVar("zAcc", zAcc);
+        tr.registerDerivedVar("zAccWgt", 1.0/zAcc);
     }
 
     void muInfo(NTupleReader& tr)
@@ -85,7 +220,7 @@ namespace plotterFunctions
             }
         }
 
-        double genZPt = -999.9, genZEta = -999.9, genZmass = -999.9;
+        double genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
         int nZ = 0;
         for(int j = 0; j <  genDecayPdgIdVec.size(); ++j)
         {
@@ -94,6 +229,7 @@ namespace plotterFunctions
                 nZ++;
                 genZPt = genDecayLVec[j].Pt();
                 genZEta = genDecayLVec[j].Eta();
+                genZPhi = genDecayLVec[j].Phi();
                 genZmass = genDecayLVec[j].M();
                 
             }
@@ -108,10 +244,7 @@ namespace plotterFunctions
             else if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 13) pdgIdZDec = 13;
         }
 
-        bool passMuZinvSel = true;
-        if(cutMuVec->size() != 2) passMuZinvSel = false;
-        if(sumCharge != 0)       passMuZinvSel = false;
-
+        bool passMuZinvSel = (cutMuVec->size() == 2 && sumCharge == 0);
         
         const double zMassMin = 71.0;
         const double zMass    = 91.0;
@@ -126,55 +259,11 @@ namespace plotterFunctions
             {
                 if((*cutMuVec)[j].Pt() < 10) continue;
                 double zm = ((*cutMuVec)[i] + (*cutMuVec)[j]).M();
-                if(/*zm > zMassMin && zm < zMassMax && */fabs(zm - zMass) < fabs(zMassCurrent - zMass))
+                //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
+                if(fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                 {
                     bestRecoZ = (*cutMuVec)[i] + (*cutMuVec)[j];
                     zMassCurrent = zm;
-                    if(muEff && muAcc)
-                    {
-                        double mu1pt = (*cutMuVec)[i].Pt();
-                        double mu2pt = (*cutMuVec)[j].Pt();
-                        double Ht = ht;
-
-                        //set to not overflow histograms
-                        if(mu1pt >= 2000.0) mu1pt = 1999.9;
-                        if(mu2pt >= 2000.0) mu2pt = 1999.9;
-                        if(Ht >= 3000.0) Ht = 2999.9;
-                        
-                        //Get mu efficiencies
-                        double muEff1 = 0.0, muEff2 = 0.0;
-                        
-                        
-                        muEff1 = muEff->GetBinContent(muEff->GetXaxis()->FindBin(mu1pt), muEff->GetYaxis()->FindBin(Ht));
-                        muEff2 = muEff->GetBinContent(muEff->GetXaxis()->FindBin(mu2pt), muEff->GetYaxis()->FindBin(Ht));
-//                        muAcc
-                        
-                        
-                        if(muEff1 < 1.0e-5 || muEff2 < 1.0e-5) zEff = 1.0e-10;
-                        else                                   zEff = muEff1 * muEff2;
-
-                        if(zEff < 0.1) 
-                        {
-                            std::cout << "WARNING: Z efficiency < 0.1, forcing weight to zero! Eff_Z: " << zEff << "\t Pt_mu1:" << (*cutMuVec)[i].Pt() <<  "\t Eff_mu1: " << muEff1 << "\t Pt_mu2: " << (*cutMuVec)[j].Pt() << "\t Eff_mu2: " << muEff2 << std::endl;
-                            zEff = 1.0e101;
-                        }
-
-
-                        //Get mu acceptance
-                        double muAcc1 = 0.0, muAcc2 = 0.0;
-
-                        muAcc1 = muAcc->GetBinContent(muAcc->GetXaxis()->FindBin(mu1pt), muAcc->GetYaxis()->FindBin(Ht));
-                        muAcc2 = muAcc->GetBinContent(muAcc->GetXaxis()->FindBin(mu2pt), muAcc->GetYaxis()->FindBin(Ht));
-
-                        if(muAcc1 < 1.0e-5 || muAcc2 < 1.0e-5) zAcc = 1.0e-10;
-                        else                                   zAcc = muAcc1 * muAcc2;
-
-                        if(zAcc < 0.1) 
-                        {
-                            std::cout << "WARNING: Z acceptance < 0.1, forcing weight to zero! Acc_Z: " << zAcc << "\t Pt_mu1:" << (*cutMuVec)[i].Pt() <<  "\t Acc_mu1: " << muAcc1 << "\t Pt_mu2: " << (*cutMuVec)[j].Pt() << "\t Acc_mu2: " << muAcc2 << std::endl;
-                            zAcc = 1.0e101;
-                        }
-                    }
                 }
             }
         }
@@ -190,11 +279,12 @@ namespace plotterFunctions
         tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
         tr.registerDerivedVar("cleanMetPt", cleanMetPt);
         tr.registerDerivedVar("cleanMetPhi", cleanMet.Phi());
-        tr.registerDerivedVar("zEff", zEff);
-        tr.registerDerivedVar("zEffWgt", 1.0/zEff);
-        tr.registerDerivedVar("zAcc", zAcc);
-        tr.registerDerivedVar("zAccWgt", 1.0/zAcc);
         tr.registerDerivedVar("genHt", genHt);
+
+        tr.registerDerivedVar("ZPtRes", (bestRecoZPt - genZPt)/genZPt);
+        tr.registerDerivedVar("ZEtaRes", bestRecoZ.Eta() - genZEta);
+        tr.registerDerivedVar("ZPhiRes", bestRecoZ.Phi() - genZPhi);
+        tr.registerDerivedVar("ZMRes", (bestRecoZ.M() - genZmass)/genZmass);
 
         tr.registerDerivedVec("cutMuVec", cutMuVec);
         tr.registerDerivedVec("genMu", genMu);
@@ -423,16 +513,18 @@ namespace plotterFunctions
         {
             muEff = static_cast<TH2*>(f->Get("hMuEff"));
             muAcc = static_cast<TH2*>(f->Get("hMuAcc"));
+            hZEff = static_cast<TH1*>(f->Get("hZEffPt"));
+            hZAcc = static_cast<TH1*>(f->Get("hZAccPt"));
             f->Close();
             delete f;
         }
 
         //register functions with NTupleReader
         tr.registerFunction(&cleanJets);
-        tr.registerFunction(&generateWeight);
         tr.registerFunction(&muInfo);
+        tr.registerFunction(&generateWeight);
         tr.registerFunction(&zinvBaseline);
-        tr.registerFunction(&printInterestingEvents);
+        //tr.registerFunction(&printInterestingEvents);
     }
 
     void activateBranches(std::set<std::string>& activeBranches)
