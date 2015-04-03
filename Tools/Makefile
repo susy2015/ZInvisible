@@ -7,7 +7,7 @@ CXX        = g++
 
 CXXFLAGS  += -I. -I$(CMSSW_BASE)/src -std=c++0x
 ## Optimization flag
-CXXFLAGS += -O3
+CXXFLAGS += -g #-O3
 ## Enable the maximun warning
 #CXXFLAGS += -Wall -Wextra -Weffc++ -g
 

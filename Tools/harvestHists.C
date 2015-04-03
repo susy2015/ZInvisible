@@ -31,15 +31,15 @@ TH2* rebin2d(TH2* old, double xbins[], int nx, double ybins[], int ny)
 
 static double dzbt[] = {0.0};
 
-void makeRatio1D(std::string label, TFile *fin, TFile *fout, double bins[] = dzbt)
+void makeRatio1D(std::string label, TFile *fin, TFile *fout, double bins[] = dzbt, int nbins = 0)
 {
     TH1 *num = (TH1*)fin->Get((label+"_num").c_str());
     TH1 *den = (TH1*)fin->Get((label+"_den").c_str());
 
-    if(sizeof(bins)/sizeof(double) > 1)
+    if(nbins > 1)
     {
-        num = num->Rebin(sizeof(bins)/sizeof(double) - 1, "", bins);
-        den = den->Rebin(sizeof(bins)/sizeof(double) - 1, "", bins);
+        num = num->Rebin(nbins - 1, "", bins);
+        den = den->Rebin(nbins - 1, "", bins);
     }
 
     TH1 *ratio = (TH1*)num->Clone(label.c_str());
@@ -77,10 +77,13 @@ int main ()
     double zptbins[] = {0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 180.0, 220.0, 300.0, 400.0, 500.0, 600.0, 800.0, 2000.0};
     int nzptbins = sizeof(zptbins)/sizeof(double);
 
+    double muptbins[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 120.0, 140.0, 180.0, 200.0, 300.0, 400.0, 500.0, 600.0, 800.0, 2000.0};
+    int nmuptbins = sizeof(muptbins)/sizeof(double);
+
     TFile  *fin = new TFile("effhists.root");
     TFile *fout = new TFile("muEffHists2.root", "RECREATE");
 
-    makeRatio1D("hMuEffPt", fin, fout);
+    makeRatio1D("hMuEffPt", fin, fout, muptbins, nmuptbins);
     makeRatio1D("hMuAccPt", fin, fout);
 
     makeRatio1D("hMuEffHt", fin, fout);
@@ -89,8 +92,8 @@ int main ()
     makeRatio2D("hMuEff", fin, fout);
     makeRatio2D("hMuAcc", fin, fout);
 
-    makeRatio1D("hZEffPt", fin, fout);
-    makeRatio1D("hZAccPt", fin, fout);
+    makeRatio1D("hZEffPt", fin, fout, zptbins, nzptbins);
+    makeRatio1D("hZAccPt", fin, fout, zptbins, nzptbins);
 
     makeRatio2D("hZEff", fin, fout);
     makeRatio2D("hZAcc", fin, fout);

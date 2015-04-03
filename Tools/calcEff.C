@@ -10,7 +10,7 @@
 
 int main()
 {
-    AnaSamples::SampleSet        ss("/eos/uscms/store/user/lpcsusyhad/PHYS14_720_Dec23_2014/");
+    AnaSamples::SampleSet        ss;
     AnaSamples::SampleCollection sc(ss);
 
     TFile *f = new TFile("effhists.root","RECREATE");
@@ -60,6 +60,7 @@ int main()
     activeBranches.insert("genDecayLVec");
     activeBranches.insert("muonsLVec");
     activeBranches.insert("muonsRelIso");
+    activeBranches.insert("muonsMiniIso");
     activeBranches.insert("W_emuVec");
     activeBranches.insert("muonsCharge");
     activeBranches.insert("muonsMtw");
@@ -119,52 +120,54 @@ int main()
             const std::vector<double>& jActR1 = tr.getVec<double>("jActR1");
             const std::vector<double>& jActR2 = tr.getVec<double>("jActR2");
 
+            for(auto& tlv : genMuInAcc)
+            {
+                hMuAccPt_num->Fill(tlv->Pt(), file.getWeight());
+                hMuAccHt_num->Fill(cleanHt,   file.getWeight());
+
+                hMuAcc_num->Fill(tlv->Pt(), cleanHt, file.getWeight());
+
+                hMuEffPt_den->Fill(tlv->Pt(), file.getWeight());
+                hMuEffHt_den->Fill(cleanHt,   file.getWeight());
+
+                hMuEff_den->Fill(tlv->Pt(), cleanHt, file.getWeight());
+
+                hZEff_jActR1_den->Fill(tlv->Pt(), jActR1[count], file.getWeight());
+                hZEff_jActR2_den->Fill(tlv->Pt(), jActR2[count], file.getWeight());
+
+                for(auto& tlv2 : genMatchMuInAcc)
+                {
+                    if(     count == 0 && tlv == tlv2) oneMatch = true;
+                    else if(count == 1 && tlv == tlv2) twoMatch = true;
+
+                    if(count == random && tlv == tlv2) hMuEff_num_rand->Fill(tlv->Pt(), cleanHt, file.getWeight());
+
+                    if(tlv == tlv2)
+                    {
+                        hZEff_jActR1_num->Fill(tlv->Pt(), jActR1[count], file.getWeight());
+                        hZEff_jActR2_num->Fill(tlv->Pt(), jActR2[count], file.getWeight());
+                    }
+                }
+                count++;
+            }
+
+            for(auto& tlv : genMatchMuInAcc)
+            {
+                hMuEffPt_num->Fill(tlv->Pt(), file.getWeight());
+                hMuEffHt_num->Fill(cleanHt,   file.getWeight());
+
+                hMuEff_num->Fill(tlv->Pt(), cleanHt, file.getWeight());
+
+                if(      oneMatch && twoMatch) hMuEff_num_pp->Fill(tlv->Pt(), cleanHt, file.getWeight());
+                else if(!oneMatch && twoMatch) hMuEff_num_fp->Fill(tlv->Pt(), cleanHt, file.getWeight());
+                else if(oneMatch && !twoMatch) hMuEff_num_pf->Fill(tlv->Pt(), cleanHt, file.getWeight());
+            }
+
+
             hZAccPt_den->Fill(genZPt, file.getWeight());
             hZAcc_den->Fill(genZPt, modHt, file.getWeight());
             if(genMuInAcc.size() >= 2)
             {
-                for(auto& tlv : genMuInAcc)
-                {
-                    hMuAccPt_num->Fill(tlv->Pt(), file.getWeight());
-                    hMuAccHt_num->Fill(cleanHt,   file.getWeight());
-
-                    hMuAcc_num->Fill(tlv->Pt(), cleanHt, file.getWeight());
-
-                    hMuEffPt_den->Fill(tlv->Pt(), file.getWeight());
-                    hMuEffHt_den->Fill(cleanHt,   file.getWeight());
-
-                    hMuEff_den->Fill(tlv->Pt(), cleanHt, file.getWeight());
-
-                    hZEff_jActR1_den->Fill(tlv->Pt(), jActR1[count], file.getWeight());
-                    hZEff_jActR2_den->Fill(tlv->Pt(), jActR2[count], file.getWeight());
-
-                    for(auto& tlv2 : genMatchMuInAcc)
-                    {
-                        if(     count == 0 && tlv == tlv2) oneMatch = true;
-                        else if(count == 1 && tlv == tlv2) twoMatch = true;
-
-                        if(count == random && tlv == tlv2) hMuEff_num_rand->Fill(tlv->Pt(), cleanHt, file.getWeight());
-
-                        if(tlv == tlv2)
-                        {
-                            hZEff_jActR1_num->Fill(tlv->Pt(), jActR1[count], file.getWeight());
-                            hZEff_jActR2_num->Fill(tlv->Pt(), jActR2[count], file.getWeight());
-                        }
-                    }
-                    count++;
-                }
-
-                for(auto& tlv : genMatchMuInAcc)
-                {
-                    hMuEffPt_num->Fill(tlv->Pt(), file.getWeight());
-                    hMuEffHt_num->Fill(cleanHt,   file.getWeight());
-
-                    hMuEff_num->Fill(tlv->Pt(), cleanHt, file.getWeight());
-
-                    if(      oneMatch && twoMatch) hMuEff_num_pp->Fill(tlv->Pt(), cleanHt, file.getWeight());
-                    else if(!oneMatch && twoMatch) hMuEff_num_fp->Fill(tlv->Pt(), cleanHt, file.getWeight());
-                    else if(oneMatch && !twoMatch) hMuEff_num_pf->Fill(tlv->Pt(), cleanHt, file.getWeight());
-                }
 
                 hZAccPt_num->Fill(genZPt, file.getWeight());
                 hZAcc_num->Fill(genZPt, modHt, file.getWeight());

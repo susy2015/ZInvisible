@@ -13,13 +13,17 @@
 namespace plotterFunctions
 {
     //Ugly global variables here
-    static TH2* muEff;
+    static TH1* muEff;
+    static TH2* muEff_jActR1;
     static TH2* muAcc;
     static TH1* hZEff;
     static TH1* hZAcc;
 
+    topTagger::type3TopTagger * type3Ptr2;
+
     void generateWeight(NTupleReader& tr)
     {
+        const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVec");
         const std::vector<TLorentzVector*>& cleanJetVec     = tr.getVec<TLorentzVector*>("cleanJetVec");        
         const std::vector<TLorentzVector>& cutMuVec         = tr.getVec<TLorentzVector>("cutMuVec");
         const std::vector<TLorentzVector*>& genMu           = tr.getVec<TLorentzVector*>("genMu");
@@ -65,10 +69,40 @@ namespace plotterFunctions
                         //Get mu efficiencies
                         double muEff1 = 0.0, muEff2 = 0.0;
 
-                        muEff1 = muEff->GetBinContent(muEff->GetXaxis()->FindBin(mu1pt), muEff->GetYaxis()->FindBin(Ht));
-                        muEff2 = muEff->GetBinContent(muEff->GetXaxis()->FindBin(mu2pt), muEff->GetYaxis()->FindBin(Ht));
+                        if(muEff)
+                        {
+                            muEff1 = muEff->GetBinContent(muEff->GetXaxis()->FindBin(mu1pt));//, muEff->GetYaxis()->FindBin(Ht));
+                            muEff2 = muEff->GetBinContent(muEff->GetXaxis()->FindBin(mu2pt));//, muEff->GetYaxis()->FindBin(Ht));
+                        }
+
+                        //double tjActR1L1 = 0.0, tjActR1L2 = 0.0;//, jActR1wgm = 0.0, jActR2wgm = 0.0;
+                        //for(auto& jet : cleanJetVec)
+                        //{
+                        //    double dR1 = ROOT::Math::VectorUtil::DeltaR(*jet, cutMuVec[i]);
+                        //    double dR2 = ROOT::Math::VectorUtil::DeltaR(*jet, cutMuVec[j]);
+                        //    if(dR1 > 0.04 && dR1 < 1.0)
+                        //    {
+                        //        tjActR1L1 += jet->Pt() / dR1;
+                        //    }
+                        //    if(dR2 > 0.04 && dR2 < 1.0)
+                        //    {
+                        //        tjActR1L2 += jet->Pt() / dR2;
+                        //    }
+                        //}
+                        //
+                        //if(muEff_jActR1)
+                        //{
+                        //    muEff1 = muEff_jActR1->GetBinContent(muEff_jActR1->GetXaxis()->FindBin(mu1pt), muEff_jActR1->GetYaxis()->FindBin(tjActR1L1));
+                        //    muEff2 = muEff_jActR1->GetBinContent(muEff_jActR1->GetXaxis()->FindBin(mu2pt), muEff_jActR1->GetYaxis()->FindBin(tjActR1L2));
+                        //}
+
                         
-                        if(muEff1 < 1.0e-5 || muEff2 < 1.0e-5) zEff = 1.0e-10;
+                        
+                        if((mu1pt > 20 && muEff1 < 1.0e-5) || (mu2pt > 20 && muEff2 < 1.0e-5)) 
+                        {
+                            std::cout << "SMALL muEff!!! muEff1: " << muEff1 << "\tmuEff2: " << muEff2 << "\t" << mu1pt << "\t" << mu2pt << std::endl;
+                            zEff = 1.0e-10;
+                        }
                         else                                   zEff = muEff1 * muEff2;
 
                         //Get mu acceptance
@@ -115,13 +149,22 @@ namespace plotterFunctions
         for(int i = 0; i < genMu.size(); ++i)
         {
             double tjActR1 = 0.0, tjActR2 = 0.0;//, jActR1wgm = 0.0, jActR2wgm = 0.0;
-            for(auto& jet : cleanJetVec)
+            //for(auto& jet : cleanJetVec)
+            //{
+            //    double dR = ROOT::Math::VectorUtil::DeltaR(*jet, *(genMu[i]));
+            //    if(dR > 0.1 && dR < 1.0)
+            //    {
+            //        tjActR1 += jet->Pt() / dR;
+            //        tjActR2 += jet->Pt() / (dR * dR);
+            //    }
+            //}
+            for(auto& jet : jetsLVec)
             {
-                double dR = ROOT::Math::VectorUtil::DeltaR(*jet, *(genMu[i]));
-                if(dR > 0.1 && dR < 1.0)
+                double dR = ROOT::Math::VectorUtil::DeltaR(jet, *(genMu[i]));
+                if(dR > 0.04 && dR < 1.0)
                 {
-                    tjActR1 += jet->Pt() / dR;
-                    tjActR2 += jet->Pt() / (dR * dR);
+                    tjActR1 += jet.Pt() / dR;
+                    tjActR2 += jet.Pt() / (dR * dR);
                 }
             }
             jActR1->push_back(tjActR1);
@@ -138,7 +181,7 @@ namespace plotterFunctions
             zAcc = 1.0e101;
         }
 
-        if(pdgIdZDec == 13 && passMuZinvSel && zEff < 0.05) 
+        if(pdgIdZDec == 13 && passMuZinvSel && zEff < 0.04) 
         {
             std::cout << "WARNING: Z efficiency < 0.05, forcing weight to zero! Eff_Z: " << zEff << "\tZ(Pt): " << bestRecoZPt <<  std::endl;
             zEff = 1.0e101;
@@ -165,9 +208,9 @@ namespace plotterFunctions
         const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
         const std::vector<TLorentzVector>& muonsLVec    = tr.getVec<TLorentzVector>("muonsLVec");
         const std::vector<double>& muonsRelIso          = tr.getVec<double>("muonsRelIso");
+        const std::vector<double>& muonsMiniIso         = tr.getVec<double>("muonsMiniIso");
         const std::vector<int>& W_emuVec                = tr.getVec<int>("W_emuVec");
         const std::vector<double>& muonsCharge          = tr.getVec<double>("muonsCharge");
-        const std::vector<double>& muonsMtw             = tr.getVec<double>("muonsMtw");
 
         const double& ht                             = tr.getVar<double>("ht");
         const double& met                            = tr.getVar<double>("met");
@@ -180,10 +223,16 @@ namespace plotterFunctions
         std::vector<double>* cutMuCharge = new std::vector<double>();
 
         int sumCharge = 0;
+        int nTriggerMuons = 0;
         for(int i = 0; i < muonsLVec.size(); ++i)
         {
-            if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], muonsMtw[i], AnaConsts::muonsArr))
+            if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, AnaConsts::muonsArr))
             {
+                if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, AnaConsts::muonsTrigArr)) 
+                {
+                    if(nTriggerMuons == 0 && muonsLVec[i].Pt() > 17)  nTriggerMuons++;
+                    else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
+                }
                 cutMuVec->push_back(muonsLVec[i]);
                 cutMuCharge->push_back(muonsCharge[i]);
                 if(muonsCharge[i] > 0) sumCharge++;
@@ -193,6 +242,8 @@ namespace plotterFunctions
 
         double genHt = 0.0;
 
+        const double minMuPt = 20.0;
+
         for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
         {
             if((abs(genDecayPdgIdVec[i]) != 0 &&  abs(genDecayPdgIdVec[i]) < 6) || (abs(genDecayPdgIdVec[i]) > 100 && abs(genDecayPdgIdVec[i]) < 10000)) genHt += genDecayLVec[i].Pt();
@@ -200,7 +251,7 @@ namespace plotterFunctions
             if(abs(genDecayPdgIdVec[i]) == 13)
             {
                 genMu->push_back(&genDecayLVec[i]);
-                if(AnaFunctions::passMuonAccOnly(genDecayLVec[i], AnaConsts::muonsArr))
+                if(AnaFunctions::passMuonAccOnly(genDecayLVec[i], AnaConsts::muonsMiniIsoArr) && genDecayLVec[i].Pt() > minMuPt)
                 {
                     genMuInAcc->push_back(&genDecayLVec[i]);
                     double dRMin = 999.9;
@@ -231,7 +282,6 @@ namespace plotterFunctions
                 genZEta = genDecayLVec[j].Eta();
                 genZPhi = genDecayLVec[j].Phi();
                 genZmass = genDecayLVec[j].M();
-                
             }
         }
         if(nZ > 1) std::cout << "!!!WARNING MORE THAN 1 Z FOUND!!!" << std::endl;
@@ -244,7 +294,8 @@ namespace plotterFunctions
             else if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 13) pdgIdZDec = 13;
         }
 
-        bool passMuZinvSel = (cutMuVec->size() == 2 && sumCharge == 0);
+        bool passMuZinvSel = (cutMuVec->size() == 2 && sumCharge == 0 && (*cutMuVec)[1].Pt() > minMuPt);
+        bool passDiMuTrig  = nTriggerMuons >= 2;
         
         const double zMassMin = 71.0;
         const double zMass    = 91.0;
@@ -254,10 +305,10 @@ namespace plotterFunctions
         TLorentzVector bestRecoZ;
         for(int i = 0; i < cutMuVec->size(); ++i)
         {
-            if((*cutMuVec)[i].Pt() < 10) continue;
+            if((*cutMuVec)[i].Pt() < minMuPt) continue;
             for(int j = 0; j < i && j < cutMuVec->size(); ++j)
             {
-                if((*cutMuVec)[j].Pt() < 10) continue;
+                if((*cutMuVec)[j].Pt() < minMuPt) continue;
                 double zm = ((*cutMuVec)[i] + (*cutMuVec)[j]).M();
                 //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                 if(fabs(zm - zMass) < fabs(zMassCurrent - zMass))
@@ -273,6 +324,11 @@ namespace plotterFunctions
         metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
         TLorentzVector cleanMet = metV + metZ;
 
+        double cutMuPt1 = -999.9;
+        double cutMuPt2 = -999.9;
+        if(cutMuVec->size() >= 1) cutMuPt1 = cutMuVec->at(0).Pt();
+        if(cutMuVec->size() >= 2) cutMuPt2 = cutMuVec->at(1).Pt();
+
         double bestRecoZPt = bestRecoZ.Pt();
         double cleanMetPt = cleanMet.Pt();
         tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
@@ -280,6 +336,8 @@ namespace plotterFunctions
         tr.registerDerivedVar("cleanMetPt", cleanMetPt);
         tr.registerDerivedVar("cleanMetPhi", cleanMet.Phi());
         tr.registerDerivedVar("genHt", genHt);
+        tr.registerDerivedVar("cutMuPt1", cutMuPt1);
+        tr.registerDerivedVar("cutMuPt2", cutMuPt2);
 
         tr.registerDerivedVar("ZPtRes", (bestRecoZPt - genZPt)/genZPt);
         tr.registerDerivedVar("ZEtaRes", bestRecoZ.Eta() - genZEta);
@@ -298,6 +356,7 @@ namespace plotterFunctions
         tr.registerDerivedVar("genZmass", genZmass);
         tr.registerDerivedVar("pdgIdZDec", pdgIdZDec);
         tr.registerDerivedVar("passMuZinvSel", passMuZinvSel);
+        tr.registerDerivedVar("passDiMuIsoTrig", passDiMuTrig);
     }
 
     void cleanJets(NTupleReader& tr)
@@ -307,7 +366,10 @@ namespace plotterFunctions
         const std::vector<TLorentzVector>& muonsLVec = tr.getVec<TLorentzVector>("muonsLVec");
         const std::vector<double>& elesRelIso        = tr.getVec<double>("elesRelIso");
         const std::vector<double>& muonsRelIso       = tr.getVec<double>("muonsRelIso");
+        const std::vector<double>& muonsMiniIso      = tr.getVec<double>("muonsMiniIso");
         const std::vector<double>& recoJetsBtag_0    = tr.getVec<double>("recoJetsBtag_0");
+        const std::vector<int>& muMatchedJetIdx       = tr.getVec<int>("muMatchedJetIdx");
+        const std::vector<int>& eleMatchedJetIdx      = tr.getVec<int>("eleMatchedJetIdx");
 
         if(elesLVec.size() != elesRelIso.size() || muonsLVec.size() != muonsRelIso.size())
         {
@@ -318,8 +380,9 @@ namespace plotterFunctions
         std::vector<const TLorentzVector*>* cleanJetVec = new std::vector<const TLorentzVector*>();
         std::vector<TLorentzVector>* zinvJetVec = new std::vector<TLorentzVector>();
         std::vector<double>* zinvBTag = new std::vector<double>;
+        std::vector<double>* mindR = new std::vector<double>;
 
-        const double jldRMax = 0.3;
+        const double jldRMax = 0.15;
 
         const double HT_jetPtMin = 50;
         const double HT_jetEtaMax = 2.4;
@@ -328,57 +391,95 @@ namespace plotterFunctions
         double HT = 0.0, HTNoIso = 0.0;
         TLorentzVector MHT;
 
-        int iJet = 0;
-        for(auto& jet : jetsLVec)
+        std::vector<bool> keepJet(jetsLVec.size(), true);
+        std::vector<bool> keepJetPFCandMatch(jetsLVec.size(), true);
+
+        if(muonsLVec.size() != muonsMiniIso.size() || muonsLVec.size() != muMatchedJetIdx.size()) std::cout << "Electron vector size missmatch" << std::endl;
+
+        for(int iM = 0; iM < muonsLVec.size() && iM < muonsMiniIso.size() && iM < muMatchedJetIdx.size(); ++iM)
         {
             double dRmin = 999.0;
+            int minJMatch = -1;
 
-            for(int i = 0; i < elesLVec.size() && i < elesRelIso.size(); ++i)
+            if(!AnaFunctions::passMuon(muonsLVec[iM], muonsMiniIso[iM], 0.0, AnaConsts::muonsMiniIsoArr)) continue;
+
+            for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
             {
-                if(!AnaFunctions::passElectron(elesLVec[i], elesRelIso[i], 0.0, AnaConsts::elesArr)) continue;
-                double dR = ROOT::Math::VectorUtil::DeltaR(jet, elesLVec[i]);
-                dRmin = std::min(dRmin, dR);
-            }
+                if(!keepJet[iJet]) continue;
 
-            double dRminNoIso = dRmin;
-
-            for(int i = 0; i < muonsLVec.size() && i < muonsRelIso.size(); ++i)
-            {
-                if(AnaFunctions::passMuon(muonsLVec[i], 0.0, 0.0, AnaConsts::muonsArr))
+                double dR = ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], muonsLVec[iM]);
+                if(dR < dRmin)
                 {
-                    double dRNoIso = ROOT::Math::VectorUtil::DeltaR(jet, muonsLVec[i]);
-                    dRminNoIso = std::min(dRminNoIso, dRNoIso);
+                    dRmin = dR;
+                    minJMatch = iJet;
                 }
-
-                if(!AnaFunctions::passMuon(muonsLVec[i], muonsRelIso[i], 0.0, AnaConsts::muonsArr)) continue;
-                double dR = ROOT::Math::VectorUtil::DeltaR(jet, muonsLVec[i]);
-                dRmin = std::min(dRmin, dR);
             }
 
-            if(dRmin > jldRMax) 
+            mindR->push_back(dRmin);
+            if(minJMatch >= 0 && dRmin < jldRMax) keepJet[minJMatch] = false;
+
+            //if(muMatchedJetIdx[iM] != minJMatch) std::cout << "Different muon match between dR and PFCand matching found!!!" << std::endl;
+
+            if(muMatchedJetIdx[iM] >= 0) keepJetPFCandMatch[muMatchedJetIdx[iM]] = false;
+            else                         keepJetPFCandMatch[minJMatch] = false;
+
+        }
+
+        if(elesLVec.size() != elesRelIso.size() || elesLVec.size() != eleMatchedJetIdx.size()) std::cout << "Electron vector size mismatch\t" << elesLVec.size() << "\t" << elesRelIso.size() << "\t" << eleMatchedJetIdx.size() << std::endl;
+
+        for(int iE = 0; iE < elesLVec.size() && iE < elesRelIso.size() && iE < eleMatchedJetIdx.size(); ++iE)
+        {
+            double dRmin = 999.0;
+            int minJMatch = -1;
+
+            if(!AnaFunctions::passElectron(elesLVec[iE], elesRelIso[iE], 0.0, AnaConsts::elesArr)) continue;
+
+            for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
             {
-                cleanJetVec->push_back(&jet);
-                if(AnaFunctions::jetPassCuts(jet, AnaConsts::pt30Arr))
+                if(!keepJet[iJet]) continue;
+
+                double dR = ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], elesLVec[iE]);
+                if(dR < dRmin)
                 {
-                    zinvJetVec->push_back(jet);
+                    dRmin = dR;
+                    minJMatch = iJet;
+                }
+            }
+            
+            mindR->push_back(dRmin);
+            if(minJMatch >= 0 && dRmin < jldRMax) keepJet[minJMatch] = false;
+
+            //if(eleMatchedJetIdx[iE] != minJMatch) std::cout << "Different electron match between dR and PFCand matching found!!!" << std::endl;
+
+            if(eleMatchedJetIdx[iE] >= 0) keepJetPFCandMatch[eleMatchedJetIdx[iE]] = false;
+            else                          keepJetPFCandMatch[minJMatch] = false;
+        }
+
+        int jetsKept = 0;
+        for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
+        {
+            if(keepJetPFCandMatch[iJet])
+            {
+                ++jetsKept;
+                cleanJetVec->push_back(&jetsLVec[iJet]);
+                if(AnaFunctions::jetPassCuts(jetsLVec[iJet], AnaConsts::pt30Arr))
+                {
+                    zinvJetVec->push_back(jetsLVec[iJet]);
                     zinvBTag->push_back(recoJetsBtag_0[iJet]);
                 }
-                if(jet.Pt() > HT_jetPtMin && fabs(jet.Eta()) < HT_jetEtaMax) HT += jet.Pt();
-                if(jet.Pt() > MTH_jetPtMin) MHT += jet;
+                if(jetsLVec[iJet].Pt() > HT_jetPtMin && fabs(jetsLVec[iJet].Eta()) < HT_jetEtaMax) HT += jetsLVec[iJet].Pt();
+                if(jetsLVec[iJet].Pt() > MTH_jetPtMin) MHT += jetsLVec[iJet];
             }
-            if(dRminNoIso > jldRMax)
-            {
-                if(jet.Pt() > HT_jetPtMin && fabs(jet.Eta()) < HT_jetEtaMax) HTNoIso += jet.Pt();
-            }
-            ++iJet;
         }
+
+        tr.registerDerivedVar("nJetsRemoved", static_cast<int>(jetsLVec.size() - jetsKept));
         tr.registerDerivedVar("cleanHt", HT);
-        tr.registerDerivedVar("cleanHtNoIso", HTNoIso);
         tr.registerDerivedVar("cleanMHt", MHT.Pt());
         tr.registerDerivedVar("cleanMHtPhi", MHT.Phi());
         tr.registerDerivedVec("cleanJetVec", cleanJetVec);
         tr.registerDerivedVec("zinvJetVec", zinvJetVec);
         tr.registerDerivedVec("zinvBTagVec", zinvBTag);
+        tr.registerDerivedVec("minljdR", mindR);
     }
 
     void zinvBaseline(NTupleReader& tr)
@@ -404,7 +505,7 @@ namespace plotterFunctions
         std::vector<double> dPhiVec = AnaFunctions::calcDPhi(zinvJetVec, cleanMetPhi, 3, AnaConsts::dphiArr);
 
         // Calculate number of leptons
-        //int nMuons = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsRelIso"), tr.getVec<double>("muonsMtw"), AnaConsts::muonsArr);
+        int nMuons = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsRelIso"), tr.getVec<double>("muonsMtw"), AnaConsts::muonsArr);
         int nElectrons = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesRelIso"), tr.getVec<double>("elesMtw"), AnaConsts::elesArr);
         int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), AnaConsts::isoTrksArr);
 
@@ -424,6 +525,9 @@ namespace plotterFunctions
         bool passZinvLeptVeto = true;
         if( nElectrons != AnaConsts::nElectronsSel ) passZinvLeptVeto = false;
         if( nIsoTrks != AnaConsts::nIsoTrksSel )     passZinvLeptVeto = false;
+        
+        bool passStandLeptVeto = passZinvLeptVeto;
+        if( nMuons != AnaConsts::nMuonsSel ) passStandLeptVeto = false;
 
         bool passZinvMET = true;
         if( tr.getVar<double>("cleanMetPt") < AnaConsts::defaultMETcut ) passZinvMET = false;
@@ -441,15 +545,18 @@ namespace plotterFunctions
         bool passPreTTag = passZinvLeptVeto && passZinvnJets && passZinvdPhis/* && passZinvBJets */&& passZinvMET && cntNJetsPt30 >= AnaConsts::nJetsSel;
         if(passPreTTag)
         {
-            type3Ptr->processEvent(zinvJetVec, zinvBTagVec, metLVec);
-            bestTopJetIdx = type3Ptr->bestTopJetIdx;
-            remainPassCSVS = type3Ptr->remainPassCSVS;
-            pickedRemainingCombfatJetIdx = type3Ptr->pickedRemainingCombfatJetIdx;
-            if( bestTopJetIdx != -1 ) bestTopJetMass = type3Ptr->bestTopJetLVec.M();
+            topTagger::type3TopTagger * t3Ptr = nullptr;
+            if(passZinvBJets) t3Ptr = type3Ptr;
+            else              t3Ptr = type3Ptr2;
+            t3Ptr->processEvent(zinvJetVec, zinvBTagVec, metLVec);
+            bestTopJetIdx = t3Ptr->bestTopJetIdx;
+            remainPassCSVS = t3Ptr->remainPassCSVS;
+            pickedRemainingCombfatJetIdx = t3Ptr->pickedRemainingCombfatJetIdx;
+            if( bestTopJetIdx != -1 ) bestTopJetMass = t3Ptr->bestTopJetLVec.M();
 
-            nTopCandSortedCnt = type3Ptr->nTopCandSortedCnt;
-            MT2 = type3Ptr->MT2;
-            mTcomb = type3Ptr->mTbJet + 0.5*type3Ptr->mTbestTopJet;
+            nTopCandSortedCnt = t3Ptr->nTopCandSortedCnt;
+            MT2 = t3Ptr->MT2;
+            mTcomb = t3Ptr->mTbJet + 0.5*t3Ptr->mTbestTopJet;
         }
 
         bool passZinvTagger = true;
@@ -458,8 +565,8 @@ namespace plotterFunctions
         if( pickedRemainingCombfatJetIdx == -1 && zinvJetVec.size()>=6 )                             passZinvTagger = false;
         if( ! (bestTopJetMass > AnaConsts::lowTopCut_ && bestTopJetMass < AnaConsts::highTopCut_ ) ) passZinvTagger = false;
 
-        bool passZinvBaseline =  passZinvLeptVeto && passZinvnJets && passZinvdPhis && passZinvBJets && passZinvMET && passZinvTagger;
-        bool passZinvBaselineNoTag = passZinvLeptVeto && passZinvnJets && passZinvdPhis && passZinvMET;
+        bool passZinvBaseline      = passZinvLeptVeto && passZinvnJets && passZinvdPhis && passZinvBJets && passZinvMET && passZinvTagger;
+        bool passZinvBaselineNoTag = passZinvLeptVeto && passZinvnJets && passZinvdPhis                  && passZinvMET;
 
         tr.registerDerivedVar("bestTopJetIdxZinv", bestTopJetIdx);
         tr.registerDerivedVar("remainPassCSVSZinv", remainPassCSVS);
@@ -468,6 +575,7 @@ namespace plotterFunctions
 
         tr.registerDerivedVar("passZinvMET", passZinvMET);
         tr.registerDerivedVar("passZinvLeptVeto", passZinvLeptVeto);
+        tr.registerDerivedVar("passStandLeptVeto", passStandLeptVeto);
         tr.registerDerivedVar("passZinvnJets", passZinvnJets);
         tr.registerDerivedVar("passZinvdPhis", passZinvdPhis);
         tr.registerDerivedVar("passZinvBJets", passZinvBJets);
@@ -511,13 +619,18 @@ namespace plotterFunctions
         TFile *f = new TFile("muEffHists.root");
         if(f)
         {
-            muEff = static_cast<TH2*>(f->Get("hMuEff"));
+            muEff = static_cast<TH1*>(f->Get("hMuEffPt"));
+            muEff_jActR1 = static_cast<TH2*>(f->Get("hZEff_jActR1"));
             muAcc = static_cast<TH2*>(f->Get("hMuAcc"));
             hZEff = static_cast<TH1*>(f->Get("hZEffPt"));
             hZAcc = static_cast<TH1*>(f->Get("hZAccPt"));
             f->Close();
             delete f;
         }
+
+        type3Ptr2 = new topTagger::type3TopTagger();
+        type3Ptr2->setnJetsSel(AnaConsts::nJetsSel);
+        type3Ptr2->setdobVetoCS(true);
 
         //register functions with NTupleReader
         tr.registerFunction(&cleanJets);
@@ -538,6 +651,7 @@ namespace plotterFunctions
         activeBranches.insert("genDecayLVec");
         activeBranches.insert("muonsLVec");
         activeBranches.insert("muonsRelIso");
+        activeBranches.insert("muonsMiniIso");
         activeBranches.insert("W_emuVec");
         activeBranches.insert("muonsCharge");
         activeBranches.insert("muonsMtw");
@@ -551,5 +665,7 @@ namespace plotterFunctions
         activeBranches.insert("elesMtw");
         activeBranches.insert("loose_isoTrks_iso");
         activeBranches.insert("loose_isoTrksLVec");
+        activeBranches.insert("muMatchedJetIdx");
+        activeBranches.insert("eleMatchedJetIdx");
     }
 }
