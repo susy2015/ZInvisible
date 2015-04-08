@@ -74,11 +74,17 @@ int main ()
     double ybins[] = {0.0, 10.0, 40.0, 120.0, 200.0, 300.0, 400.0, 650.0, 800.0, 1000.0, 5000.0};
     int nybins = sizeof(ybins)/sizeof(double);
 
-    double zptbins[] = {0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 180.0, 220.0, 300.0, 400.0, 500.0, 600.0, 800.0, 2000.0};
+    double zptbins[] = {0.0, 60.0, 100.0, 140.0, 180.0, 220.0, 300.0, 400.0, 500.0, 600.0, 800.0, 2000.0};
     int nzptbins = sizeof(zptbins)/sizeof(double);
 
     double muptbins[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 120.0, 140.0, 180.0, 200.0, 300.0, 400.0, 500.0, 600.0, 800.0, 2000.0};
     int nmuptbins = sizeof(muptbins)/sizeof(double);
+
+    double muptbins2[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 70.0, 100.0, 2000.0};
+    int nmuptbins2 = sizeof(muptbins2)/sizeof(double);
+
+    double atbins[] = {0.0, 5.0, 10.0, 20.0, 40.0, 60.0, 80.0, 100.0, 3000.0};
+    int nactbins = sizeof(atbins)/sizeof(double);
 
     TFile  *fin = new TFile("effhists.root");
     TFile *fout = new TFile("muEffHists2.root", "RECREATE");
@@ -100,6 +106,8 @@ int main ()
 
     makeRatio2D("hZEff_jActR1", fin, fout, zptbins, nzptbins, ybins, nybins);
     makeRatio2D("hZEff_jActR2", fin, fout);
+
+    makeRatio2D("hMuEffPtAct", fin, fout, muptbins2, nmuptbins2, atbins, nactbins);
 
     fin->Close();
 }

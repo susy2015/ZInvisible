@@ -4,9 +4,9 @@ Requirements = Memory >= 199 &&OpSys == "LINUX"&& (Arch != "DUMMY" )&& Disk > 10
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/makePlots, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,  $ENV(CMSSW_BASE)/src/ZInvisible/Tools/muEffHists.root,  $ENV(CMSSW_BASE)/src/ZInvisible/Tools/AutoDict_vector_TLorentzVector__cxx.so,  $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so
-Output = makePlots_$(Cluster)_$(Process).stdout
-Error = makePlots_$(Cluster)_$(Process).stderr
-Log = makePlots_$(Cluster)_$(Process).log
+Output = makePlots_$(Process).stdout
+Error = makePlots_$(Process).stderr
+Log = makePlots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 

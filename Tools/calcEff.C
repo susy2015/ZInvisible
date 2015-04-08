@@ -1,4 +1,5 @@
 #include "SusyAnaTools/Tools/samples.h"
+#include "SusyAnaTools/Tools/baselineDef.h"
 #include "derivedTupleVariables.h"
 
 #include <iostream>
@@ -30,6 +31,16 @@ int main()
     TH2 *hMuEff_num_pp = new TH2D("hMuEff_num_pp", "hMuEff_num_pp", 200, 0, 2000, 300, 0, 3000);
     TH2 *hMuEff_num_pf = new TH2D("hMuEff_num_pf", "hMuEff_num_pf", 200, 0, 2000, 300, 0, 3000);
     TH2 *hMuEff_num_fp = new TH2D("hMuEff_num_fp", "hMuEff_num_fp", 200, 0, 2000, 300, 0, 3000);
+
+    TH2 *hMuEffPtActReco_num = new TH2D("hMuEffPtActReco_num", "hMuEffPtActReco_num", 200, 0, 2000, 300, 0, 3000);
+    TH2 *hMuEffPtActReco_den = new TH2D("hMuEffPtActReco_den", "hMuEffPtActReco_den", 200, 0, 2000, 300, 0, 3000);
+    TH2 *hMuEffPtActIso_num = new TH2D("hMuEffPtActIso_num", "hMuEffPtActIso_num", 200, 0, 2000, 300, 0, 3000);
+    TH2 *hMuEffPtActIso_den = new TH2D("hMuEffPtActIso_den", "hMuEffPtActIso_den", 200, 0, 2000, 300, 0, 3000);
+
+    TH1 *hMuEffPtReco_num = new TH1D("hMuEffPtReco_num", "hMuEffPtActReco_num", 200, 0, 2000);
+    TH1 *hMuEffPtReco_den = new TH1D("hMuEffPtReco_den", "hMuEffPtActReco_den", 200, 0, 2000);
+    TH1 *hMuEffPtIso_num = new TH1D("hMuEffPtIso_num", "hMuEffPtActIso_num", 200, 0, 2000);
+    TH1 *hMuEffPtIso_den = new TH1D("hMuEffPtIso_den", "hMuEffPtActIso_den", 200, 0, 2000);
 
     TH2 *hMuEff_num_rand = new TH2D("hMuEff_num_rand", "hMuEff_num_rand", 200, 0, 2000, 300, 0, 3000);
 
@@ -64,33 +75,52 @@ int main()
     activeBranches.insert("W_emuVec");
     activeBranches.insert("muonsCharge");
     activeBranches.insert("muonsMtw");
+    activeBranches.insert("elesMtw");
+    activeBranches.insert("loose_isoTrksLVec");
+    activeBranches.insert("loose_isoTrks_iso");
+    activeBranches.insert("loose_isoTrks_mtw");
     activeBranches.insert("met");
     activeBranches.insert("metphi");
     activeBranches.insert("jetsLVec");
     activeBranches.insert("elesLVec");
     activeBranches.insert("elesRelIso");
     activeBranches.insert("recoJetsBtag_0");
+    activeBranches.insert("muMatchedJetIdx");
+    activeBranches.insert("eleMatchedJetIdx");
+    activeBranches.insert("recoJetschargedEmEnergyFraction"); 
+    activeBranches.insert("recoJetschargedHadronEnergyFraction");
 
     TRandom3 *trg = new TRandom3(12321);
+    plotterFunctions::tr3 = new TRandom3(32123);
 
     for(auto& file : sc["DYJetsToLL"]) 
     {
         TChain *t = new TChain(sc["DYJetsToLL"].front().treePath.c_str());
 
         file.addFilesToChain(t);
+        //t->Add("root://cmsxrootd-site.fnal.gov//store/user/lpcsusyhad/PHYS14_720_Mar14_2014_v2/pastika/DYJetsToLL_M-50_HT-600toInf_Tune4C_13TeV-madgraph-tauola/PHYS14_PU20bx25_PHYS14_25_V1-FLAT/150328_003328/0000/stopFlatNtuples_15.root");
 
         std::cout << "Processing file(s): " << file.filePath << std::endl;
 
         NTupleReader tr(t, activeBranches);
-        tr.registerFunction(&plotterFunctions::cleanJets);
+        tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&plotterFunctions::muInfo);
         tr.registerFunction(&plotterFunctions::generateWeight);
+        tr.registerFunction(&plotterFunctions::zinvBaseline);
 
         while(tr.getNextEvent())
         {
-            const std::vector<const TLorentzVector*>& genMatchMuInAcc = tr.getVec<const TLorentzVector*>("genMatchMuInAcc");
-            const std::vector<const TLorentzVector*>& genMuInAcc      = tr.getVec<const TLorentzVector*>("genMuInAcc");
-            const std::vector<const TLorentzVector*>& genMu           = tr.getVec<const TLorentzVector*>("genMu");
+            const std::vector<const TLorentzVector*>& genMatchIsoMuInAcc = tr.getVec<const TLorentzVector*>("genMatchIsoMuInAcc");
+            const std::vector<const TLorentzVector*>& genMatchMuInAcc    = tr.getVec<const TLorentzVector*>("genMatchMuInAcc");
+            const std::vector<const TLorentzVector*>& genMuInAcc         = tr.getVec<const TLorentzVector*>("genMuInAcc");
+            const std::vector<const TLorentzVector*>& genMu              = tr.getVec<const TLorentzVector*>("genMu");
+            const std::vector<double>& genMuAct                = tr.getVec<double>("genMuAct");
+            const std::vector<double>& genMuInAccAct           = tr.getVec<double>("genMuInAccAct");
+            const std::vector<double>& genMatchMuInAccAct      = tr.getVec<double>("genMatchMuInAccAct");
+            const std::vector<double>& genMatchIsoMuInAccAct   = tr.getVec<double>("genMatchIsoMuInAccAct");
+
+            const bool& passZinvBaselineNoTag = tr.getVar<bool>("passZinvBaselineNoTag");
+            const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
 
             const double& recoZPt = tr.getVar<double>("bestRecoZPt");
             const double& genZPt  = tr.getVar<double>("genZPt");
@@ -163,25 +193,53 @@ int main()
                 else if(oneMatch && !twoMatch) hMuEff_num_pf->Fill(tlv->Pt(), cleanHt, file.getWeight());
             }
 
-
-            hZAccPt_den->Fill(genZPt, file.getWeight());
-            hZAcc_den->Fill(genZPt, modHt, file.getWeight());
-            if(genMuInAcc.size() >= 2)
+            if(true)//passMuZinvSel)
             {
-
-                hZAccPt_num->Fill(genZPt, file.getWeight());
-                hZAcc_num->Fill(genZPt, modHt, file.getWeight());
-                
-                hZEffPt_den->Fill(genZPt, file.getWeight());
-                hZEff_den->Fill(genZPt, modHt, file.getWeight());
-                const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
-                if(passMuZinvSel)//genMatchMuInAcc.size() >= 2)
+                for(int i = 0; i < genMuInAcc.size(); ++i)
                 {
-                    hZEffPt_num->Fill(genZPt, file.getWeight());
-                    hZEff_num->Fill(genZPt, modHt, file.getWeight());
+                    hMuEffPtActReco_den->Fill(genMuInAcc[i]->Pt(), genMuInAccAct[i]);
+
+                    hMuEffPtReco_den->Fill(genMuInAcc[i]->Pt());
+                }
+                for(int i = 0; i < genMatchMuInAcc.size(); ++i)
+                {
+                    hMuEffPtActReco_num->Fill(genMatchMuInAcc[i]->Pt(), genMatchMuInAccAct[i]);
+
+                    hMuEffPtActIso_den->Fill(genMatchMuInAcc[i]->Pt(), genMatchMuInAccAct[i]);
+
+
+                    hMuEffPtReco_num->Fill(genMatchMuInAcc[i]->Pt());
+                    
+                    hMuEffPtIso_den->Fill(genMatchMuInAcc[i]->Pt());
+                }
+                for(int i = 0; i < genMatchIsoMuInAcc.size(); ++i)
+                {
+                    hMuEffPtActIso_num->Fill(genMatchIsoMuInAcc[i]->Pt(), genMatchIsoMuInAccAct[i]);
+
+                    hMuEffPtIso_num->Fill(genMatchIsoMuInAcc[i]->Pt());
+                }
+            }
+
+            if(passMuZinvSel && passZinvBaselineNoTag)
+            {
+                hZAccPt_den->Fill(genZPt, file.getWeight());
+                hZAcc_den->Fill(genZPt, modHt, file.getWeight());
+                if(genMuInAcc.size() >= 2 && genMuInAcc[0]->Pt() > 45)
+                {
+                    hZAccPt_num->Fill(genZPt, file.getWeight());
+                    hZAcc_num->Fill(genZPt, modHt, file.getWeight());
+                
+                    hZEffPt_den->Fill(genZPt, file.getWeight());
+                    hZEff_den->Fill(genZPt, modHt, file.getWeight());
+                    if(passMuZinvSel)//genMatchMuInAcc.size() >= 2)
+                    {
+                        hZEffPt_num->Fill(genZPt, file.getWeight());
+                        hZEff_num->Fill(genZPt, modHt, file.getWeight());
+                    }
                 }
             }
         }
+        //break;
     }
 
     hMuEffPt_num->Write();
@@ -200,6 +258,15 @@ int main()
     hMuEff_num_pp->Write();
     hMuEff_num_pf->Write();
     hMuEff_num_fp->Write();
+
+    hMuEffPtActReco_num->Write();
+    hMuEffPtActReco_den->Write();
+    hMuEffPtActIso_num->Write();
+    hMuEffPtActIso_den->Write();
+    hMuEffPtReco_num->Write();
+    hMuEffPtReco_den->Write();
+    hMuEffPtIso_num->Write();
+    hMuEffPtIso_den->Write();
 
     hMuEff_num_rand->Write();
 
