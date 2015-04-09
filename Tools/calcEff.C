@@ -32,10 +32,10 @@ int main()
     TH2 *hMuEff_num_pf = new TH2D("hMuEff_num_pf", "hMuEff_num_pf", 200, 0, 2000, 300, 0, 3000);
     TH2 *hMuEff_num_fp = new TH2D("hMuEff_num_fp", "hMuEff_num_fp", 200, 0, 2000, 300, 0, 3000);
 
-    TH2 *hMuEffPtActReco_num = new TH2D("hMuEffPtActReco_num", "hMuEffPtActReco_num", 200, 0, 2000, 300, 0, 3000);
-    TH2 *hMuEffPtActReco_den = new TH2D("hMuEffPtActReco_den", "hMuEffPtActReco_den", 200, 0, 2000, 300, 0, 3000);
-    TH2 *hMuEffPtActIso_num = new TH2D("hMuEffPtActIso_num", "hMuEffPtActIso_num", 200, 0, 2000, 300, 0, 3000);
-    TH2 *hMuEffPtActIso_den = new TH2D("hMuEffPtActIso_den", "hMuEffPtActIso_den", 200, 0, 2000, 300, 0, 3000);
+    TH2 *hMuEffPtActReco_num = new TH2D("hMuEffPtActReco_num", "hMuEffPtActReco_num", 200, 0, 2000, 300, 0, 1500);
+    TH2 *hMuEffPtActReco_den = new TH2D("hMuEffPtActReco_den", "hMuEffPtActReco_den", 200, 0, 2000, 300, 0, 1500);
+    TH2 *hMuEffPtActIso_num = new TH2D("hMuEffPtActIso_num", "hMuEffPtActIso_num", 200, 0, 2000, 300, 0, 1500);
+    TH2 *hMuEffPtActIso_den = new TH2D("hMuEffPtActIso_den", "hMuEffPtActIso_den", 200, 0, 2000, 300, 0, 1500);
 
     TH1 *hMuEffPtReco_num = new TH1D("hMuEffPtReco_num", "hMuEffPtActReco_num", 200, 0, 2000);
     TH1 *hMuEffPtReco_den = new TH1D("hMuEffPtReco_den", "hMuEffPtActReco_den", 200, 0, 2000);
@@ -103,6 +103,7 @@ int main()
         std::cout << "Processing file(s): " << file.filePath << std::endl;
 
         NTupleReader tr(t, activeBranches);
+        stopFunctions::cjh.setMuonIso("mini");
         tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&plotterFunctions::muInfo);
         tr.registerFunction(&plotterFunctions::generateWeight);

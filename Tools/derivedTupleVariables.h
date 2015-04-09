@@ -16,6 +16,8 @@ namespace plotterFunctions
     //Ugly global variables here
     static TH1* muEff;
     static TH2* muEff_jActR1;
+    static TH1* muEffReco;
+    static TH2* muEffIso;
     static TH2* muAcc;
     static TH1* hZEff;
     static TH1* hZAcc;
@@ -28,6 +30,7 @@ namespace plotterFunctions
         const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVec");
         const std::vector<TLorentzVector>& cleanJetVec      = tr.getVec<TLorentzVector>("cleanJetVec");        
         const std::vector<TLorentzVector>& cutMuVec         = tr.getVec<TLorentzVector>("cutMuVec");
+        const std::vector<double>& cutMuActivity            = tr.getVec<double>("cutMuActivity");
         const std::vector<TLorentzVector*>& genMu           = tr.getVec<TLorentzVector*>("genMu");
         const std::vector<TLorentzVector*>& genMuInAcc      = tr.getVec<TLorentzVector*>("genMuInAcc");
         const std::vector<TLorentzVector*>& genMatchMuInAcc = tr.getVec<TLorentzVector*>("genMatchMuInAcc");
@@ -71,10 +74,23 @@ namespace plotterFunctions
                         //Get mu efficiencies
                         double muEff1 = 0.0, muEff2 = 0.0;
 
-                        if(muEff)
+                        if(muEff && muEffReco && muEffIso)
                         {
-                            muEff1 = muEff->GetBinContent(muEff->GetXaxis()->FindBin(mu1pt));//, muEff->GetYaxis()->FindBin(Ht));
-                            muEff2 = muEff->GetBinContent(muEff->GetXaxis()->FindBin(mu2pt));//, muEff->GetYaxis()->FindBin(Ht));
+                            int recoPtBin = muEffReco->GetXaxis()->FindBin(mu1pt);
+                            if(recoPtBin >= muEffReco->GetNbinsX()) recoPtBin = muEffReco->GetNbinsX();
+                            int isoPtBin = muEffIso->GetXaxis()->FindBin(mu1pt);
+                            if(isoPtBin >= muEffIso->GetNbinsX()) isoPtBin = muEffIso->GetNbinsX();
+                            int isoActBin = muEffIso->GetYaxis()->FindBin(cutMuActivity[i]);
+                            if(isoActBin >= muEffIso->GetNbinsY()) isoActBin = muEffIso->GetNbinsY();
+                            muEff1 = muEffReco->GetBinContent(recoPtBin) * muEffIso->GetBinContent(isoPtBin, isoActBin);
+
+                            recoPtBin = muEffReco->GetXaxis()->FindBin(mu2pt);
+                            if(recoPtBin >= muEffReco->GetNbinsX()) recoPtBin = muEffReco->GetNbinsX();
+                            isoPtBin = muEffIso->GetXaxis()->FindBin(mu2pt);
+                            if(isoPtBin >= muEffIso->GetNbinsX()) isoPtBin = muEffIso->GetNbinsX();
+                            isoActBin = muEffIso->GetYaxis()->FindBin(cutMuActivity[j]);
+                            if(isoActBin >= muEffIso->GetNbinsY()) isoActBin = muEffIso->GetNbinsY();
+                            muEff2 = muEffReco->GetBinContent(recoPtBin) * muEffIso->GetBinContent(isoPtBin, isoActBin);
                         }
 
                         //double tjActR1L1 = 0.0, tjActR1L2 = 0.0;//, jActR1wgm = 0.0, jActR2wgm = 0.0;
@@ -99,13 +115,12 @@ namespace plotterFunctions
                         //}
 
                         
-                        
                         if((mu1pt > 20 && muEff1 < 1.0e-5) || (mu2pt > 20 && muEff2 < 1.0e-5)) 
                         {
                             std::cout << "SMALL muEff!!! muEff1: " << muEff1 << "\tmuEff2: " << muEff2 << "\t" << mu1pt << "\t" << mu2pt << std::endl;
                             zEff = 1.0e-10;
                         }
-                        else                                   zEff = muEff1 * muEff2;
+                        else zEff = muEff1 * muEff2;
 
                         //Get mu acceptance
                         /*double muAcc1 = 0.0, muAcc2 = 0.0;
@@ -570,7 +585,7 @@ namespace plotterFunctions
 
         // Calculate number of leptons
         int nMuons = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsRelIso"), tr.getVec<double>("muonsMtw"), AnaConsts::muonsArr);
-        int nElectrons = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesRelIso"), tr.getVec<double>("elesMtw"), AnaConsts::elesArr);
+        int nElectrons = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesRelIso"), tr.getVec<double>("elesMtw"), tr.getVec<unsigned int>("elesisEB"), AnaConsts::elesArr);
         int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), AnaConsts::isoTrksArr);
 
 
@@ -685,6 +700,8 @@ namespace plotterFunctions
         if(f)
         {
             muEff = static_cast<TH1*>(f->Get("hMuEffPt"));
+            muEffReco = static_cast<TH1*>(f->Get("hMuEffPtReco"));
+            muEffIso  = static_cast<TH2*>(f->Get("hMuEffPtActIso"));
             muEff_jActR1 = static_cast<TH2*>(f->Get("hZEff_jActR1"));
             muAcc = static_cast<TH2*>(f->Get("hMuAcc"));
             hZEff = static_cast<TH1*>(f->Get("hZEffPt"));
@@ -735,5 +752,6 @@ namespace plotterFunctions
         activeBranches.insert("eleMatchedJetIdx");
         activeBranches.insert("recoJetschargedEmEnergyFraction"); 
         activeBranches.insert("recoJetschargedHadronEnergyFraction");
+        activeBranches.insert("elesisEB");
     }
 }

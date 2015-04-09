@@ -8,7 +8,7 @@ eval `scramv1 runtime -sh`
 
 cd ${_CONDOR_SCRATCH_DIR}
 
-xrdcp root://cmsxrootd-site.fnal.gov//store/user/lpcsusyhad/PHYS14_720_Mar14_2014_v2/rootlist_$1.txt .
+#xrdcp root://cmsxrootd-site.fnal.gov//store/user/lpcsusyhad/PHYS14_720_Mar14_2014_v2/rootlist_$1.txt .
 
 ./makePlots --condor -D $1
 

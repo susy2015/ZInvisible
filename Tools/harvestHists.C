@@ -104,10 +104,14 @@ int main ()
     makeRatio2D("hZEff", fin, fout);
     makeRatio2D("hZAcc", fin, fout);
 
-    makeRatio2D("hZEff_jActR1", fin, fout, zptbins, nzptbins, ybins, nybins);
+    makeRatio2D("hZEff_jActR1", fin, fout);//, zptbins, nzptbins, ybins, nybins);
     makeRatio2D("hZEff_jActR2", fin, fout);
 
-    makeRatio2D("hMuEffPtAct", fin, fout, muptbins2, nmuptbins2, atbins, nactbins);
+    makeRatio2D("hMuEffPtActReco", fin, fout, muptbins2, nmuptbins2, atbins, nactbins);
+    makeRatio2D("hMuEffPtActIso", fin, fout, muptbins2, nmuptbins2, atbins, nactbins);
+
+    makeRatio1D("hMuEffPtReco", fin, fout, muptbins2, nmuptbins2);
+    makeRatio1D("hMuEffPtIso", fin, fout, muptbins2, nmuptbins2);
 
     fin->Close();
 }

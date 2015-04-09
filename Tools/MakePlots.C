@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
         doSave = true;
         doPlots = false;
         fromTuple = true;
-        sampleloc = "";
+        //sampleloc = "";
     }
 
     AnaSamples::SampleSet        ss(sampleloc);
