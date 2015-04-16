@@ -76,21 +76,31 @@ namespace plotterFunctions
 
                         if(muEff && muEffReco && muEffIso)
                         {
+                            //Fit to reco eff (eff = p0 + p1*pt + p2*pt^2
+                            const double fitStart = 200.0; // extended to 1400 GeV
+                            const double p0 =     0.955847; // +/- 0.461944    
+                            const double p1 = -2.24431e-05; // +/- 0.00128305  
+                            const double p2 = -5.68907e-08; // +/- 7.85913e-07
+                            double muRecoEff = 0.0;
+
                             int recoPtBin = muEffReco->GetXaxis()->FindBin(mu1pt);
-                            if(recoPtBin >= muEffReco->GetNbinsX()) recoPtBin = muEffReco->GetNbinsX();
+                            if(recoPtBin >= muEffReco->FindBin(fitStart)) muRecoEff = p0 + p1*mu1pt + p2*mu1pt*mu1pt;
+                            else                                          muRecoEff = muEffReco->GetBinContent(recoPtBin);
                             int isoPtBin = muEffIso->GetXaxis()->FindBin(mu1pt);
                             if(isoPtBin >= muEffIso->GetNbinsX()) isoPtBin = muEffIso->GetNbinsX();
                             int isoActBin = muEffIso->GetYaxis()->FindBin(cutMuActivity[i]);
                             if(isoActBin >= muEffIso->GetNbinsY()) isoActBin = muEffIso->GetNbinsY();
-                            muEff1 = muEffReco->GetBinContent(recoPtBin) * muEffIso->GetBinContent(isoPtBin, isoActBin);
+                            muEff1 = muRecoEff * muEffIso->GetBinContent(isoPtBin, isoActBin);
 
+                            muRecoEff = 0.0;
                             recoPtBin = muEffReco->GetXaxis()->FindBin(mu2pt);
-                            if(recoPtBin >= muEffReco->GetNbinsX()) recoPtBin = muEffReco->GetNbinsX();
+                            if(recoPtBin >= muEffReco->FindBin(fitStart)) muRecoEff = p0 + p1*mu2pt + p2*mu2pt*mu2pt;
+                            else                                          muRecoEff = muEffReco->GetBinContent(recoPtBin);
                             isoPtBin = muEffIso->GetXaxis()->FindBin(mu2pt);
                             if(isoPtBin >= muEffIso->GetNbinsX()) isoPtBin = muEffIso->GetNbinsX();
                             isoActBin = muEffIso->GetYaxis()->FindBin(cutMuActivity[j]);
                             if(isoActBin >= muEffIso->GetNbinsY()) isoActBin = muEffIso->GetNbinsY();
-                            muEff2 = muEffReco->GetBinContent(recoPtBin) * muEffIso->GetBinContent(isoPtBin, isoActBin);
+                            muEff2 = muRecoEff * muEffIso->GetBinContent(isoPtBin, isoActBin);
                         }
 
                         //double tjActR1L1 = 0.0, tjActR1L2 = 0.0;//, jActR1wgm = 0.0, jActR2wgm = 0.0;

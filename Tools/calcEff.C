@@ -89,6 +89,7 @@ int main()
     activeBranches.insert("eleMatchedJetIdx");
     activeBranches.insert("recoJetschargedEmEnergyFraction"); 
     activeBranches.insert("recoJetschargedHadronEnergyFraction");
+    activeBranches.insert("elesisEB");
 
     TRandom3 *trg = new TRandom3(12321);
     plotterFunctions::tr3 = new TRandom3(32123);
@@ -125,6 +126,7 @@ int main()
 
             const double& recoZPt = tr.getVar<double>("bestRecoZPt");
             const double& genZPt  = tr.getVar<double>("genZPt");
+            const double& genZM   =  tr.getVar<double>("genZmass");
             const double& cleanHt = tr.getVar<double>("ht");
             const int&    pdgIdZDec = tr.getVar<int>("pdgIdZDec");
 
@@ -221,18 +223,18 @@ int main()
                 }
             }
 
-            if(passMuZinvSel && passZinvBaselineNoTag)
+            if(true)//passMuZinvSel && passZinvBaselineNoTag)
             {
                 hZAccPt_den->Fill(genZPt, file.getWeight());
                 hZAcc_den->Fill(genZPt, modHt, file.getWeight());
-                if(genMuInAcc.size() >= 2 && genMuInAcc[0]->Pt() > 45)
+                if(genMuInAcc.size() >= 2)// && genMuInAcc[0]->Pt() > 45 && genMuInAcc[1]->Pt() > 20 && genZM > 71 && genZM < 111)
                 {
                     hZAccPt_num->Fill(genZPt, file.getWeight());
                     hZAcc_num->Fill(genZPt, modHt, file.getWeight());
                 
                     hZEffPt_den->Fill(genZPt, file.getWeight());
                     hZEff_den->Fill(genZPt, modHt, file.getWeight());
-                    if(passMuZinvSel)//genMatchMuInAcc.size() >= 2)
+                    if(genMuInAcc[0]->Pt() > 45 && genMuInAcc[1]->Pt() > 20 && genZM > 71 && genZM < 111)//passMuZinvSel && passZinvBaselineNoTag)//genMatchMuInAcc.size() >= 2)
                     {
                         hZEffPt_num->Fill(genZPt, file.getWeight());
                         hZEff_num->Fill(genZPt, modHt, file.getWeight());
