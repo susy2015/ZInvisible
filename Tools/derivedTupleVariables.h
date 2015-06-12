@@ -1,5 +1,6 @@
 #include "SusyAnaTools/Tools/NTupleReader.h"
 #include "SusyAnaTools/Tools/customize.h"
+#include "SusyAnaTools/Tools/baselineDef.h"
 
 #include "TH1.h"
 #include "TH2.h"
@@ -22,8 +23,9 @@ namespace plotterFunctions
     static TH1* hZEff;
     static TH1* hZAcc;
     static TRandom3 *tr3;
+    static BaselineVessel *blvZinv;
 
-    topTagger::type3TopTagger * type3Ptr2;
+//    topTagger::type3TopTagger * type3Ptr2;
 
     void generateWeight(NTupleReader& tr)
     {
@@ -306,10 +308,14 @@ namespace plotterFunctions
         double genHt = 0.0;
 
         const double minMuPt = 20.0, highMuPt = 45.0;
+        double nuPt1 = -999.9, nuPt2 = -999.9;
 
         for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
         {
             if((abs(genDecayPdgIdVec[i]) != 0 &&  abs(genDecayPdgIdVec[i]) < 6) || (abs(genDecayPdgIdVec[i]) > 100 && abs(genDecayPdgIdVec[i]) < 10000)) genHt += genDecayLVec[i].Pt();
+
+            if(genDecayPdgIdVec[i] ==  13) nuPt1 = genDecayLVec[i].Pt();
+            if(genDecayPdgIdVec[i] == -13) nuPt2 = genDecayLVec[i].Pt();
                 
             if(abs(genDecayPdgIdVec[i]) == 13)
             {
@@ -354,11 +360,13 @@ namespace plotterFunctions
 
         double genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
         int nZ = 0;
+        TLorentzVector genZ;
         for(int j = 0; j <  genDecayPdgIdVec.size(); ++j)
         {
             if(abs(genDecayPdgIdVec[j]) == 23)
             {
                 nZ++;
+                genZ = genDecayLVec[j];
                 genZPt = genDecayLVec[j].Pt();
                 genZEta = genDecayLVec[j].Eta();
                 genZPhi = genDecayLVec[j].Phi();
@@ -366,6 +374,7 @@ namespace plotterFunctions
             }
         }
         if(nZ > 1) std::cout << "!!!WARNING MORE THAN 1 Z FOUND!!!" << std::endl;
+
 
         int pdgIdZDec = 0;
         if(W_emuVec.size() == 0) pdgIdZDec = 15;
@@ -399,6 +408,14 @@ namespace plotterFunctions
             }
         }
 
+        //if(genMuInAcc->size() >= 2)
+        //{
+        //    double mmm = (*genMuInAcc->at(0) + *genMuInAcc->at(1)).M();
+        //    if(fabs(genZmass - mmm)/genZmass > 0.2 && mmm > 71 && mmm < 111) std::cout << "genZmass: " << genZmass << "\tgen dimuon mass: " << mmm << "\treco dimuon mass: " << zMassCurrent << "\tgenZPt: " << genZPt << "\tmu1pt: " << (*genMuInAcc->at(0)).Pt() << "\tmu2pt: " << (*genMuInAcc->at(1)).Pt() << std::endl;
+        //}
+
+
+
         TLorentzVector metV, metZ;
         metV.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
         metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
@@ -410,6 +427,22 @@ namespace plotterFunctions
         double cutMuPt2 = -999.9;
         if(cutMuVec->size() >= 1) cutMuPt1 = cutMuVec->at(0).Pt();
         if(cutMuVec->size() >= 2) cutMuPt2 = cutMuVec->at(1).Pt();
+
+        const unsigned int& run   = tr.getVar<unsigned int>("run");
+        const unsigned int& lumi  = tr.getVar<unsigned int>("lumi");
+        const unsigned int& event = tr.getVar<unsigned int>("event");
+        //if(passMuZinvSel && genZPt > 400 && fabs(nuPt1 - nuPt2) > 300) std::cout << "BONJOUR!!! \t" << genZPt << "\t" << fabs(nuPt1 - nuPt2) << "\t" << run << "\t" << lumi << "\t" << event << std::endl;
+
+        double mindPhiMetJ = 999.9;
+        int jc = 0;
+        for(const TLorentzVector& jet : jetsLVec)
+        {
+            if(jc >= 3) break;
+            jc++;
+            mindPhiMetJ = std::min(mindPhiMetJ, fabs(ROOT::Math::VectorUtil::DeltaPhi(genZ, jet)));
+        }
+        //if(genZPt > 600) std::cout << "HELLO THERE!!!!" << std::endl;
+        //if(genZPt > 600 && mindPhiMetJ < 0.5) std::cout << "BONJOUR!!! \t" << genZPt << "\t" << mindPhiMetJ << "\t" << run << "\t" << lumi << "\t" << event << std::endl;
 
         double bestRecoZPt = bestRecoZ.Pt();
         double cleanMetPt = cleanMet.Pt();
@@ -571,115 +604,118 @@ namespace plotterFunctions
 //        tr.registerDerivedVec("minljdR", mindR);
 //    }
 
-    void zinvBaseline(NTupleReader& tr)
-    {
-        const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
-
-        const double& cleanMetPt  = tr.getVar<double>("cleanMetPt");
-        const double& cleanMetPhi = tr.getVar<double>("cleanMetPhi");
-
-        const std::vector<TLorentzVector>& zinvJetVec  = tr.getVec<TLorentzVector>("cleanJetpt30ArrVec");
-        const std::vector<double>&         zinvBTagVec = tr.getVec<double>("cleanJetpt30ArrBTag");
-
-        TLorentzVector metLVec;
-        metLVec.SetPtEtaPhiM(tr.getVar<double>("cleanMetPt"), 0.0, cleanMetPhi, 0.0);
-
-        // Calculate number of jets and b-tagged jets
-        int cntCSVS = AnaFunctions::countCSVS(zinvJetVec, zinvBTagVec, AnaConsts::cutCSVS, AnaConsts::bTagArr);
-        int cntNJetsPt50Eta24 = AnaFunctions::countJets(zinvJetVec, AnaConsts::pt50Eta24Arr);
-        int cntNJetsPt30Eta24 = AnaFunctions::countJets(zinvJetVec, AnaConsts::pt30Eta24Arr);
-        int cntNJetsPt30      = AnaFunctions::countJets(zinvJetVec, AnaConsts::pt30Arr);
-
-        // Recalculate deltaPhi
-        std::vector<double> dPhiVec = AnaFunctions::calcDPhi(zinvJetVec, cleanMetPhi, 3, AnaConsts::dphiArr);
-
-        // Calculate number of leptons
-        int nMuons = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsRelIso"), tr.getVec<double>("muonsMtw"), AnaConsts::muonsArr);
-        int nElectrons = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesRelIso"), tr.getVec<double>("elesMtw"), tr.getVec<unsigned int>("elesisEB"), AnaConsts::elesArr);
-        int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), AnaConsts::isoTrksArr);
-
-
-        // Pass cuts
-
-        bool passZinvdPhis = true;
-        if( dPhiVec.at(0) < AnaConsts::dPhi0_CUT || dPhiVec.at(1) < AnaConsts::dPhi1_CUT || dPhiVec.at(2) < AnaConsts::dPhi2_CUT ) passZinvdPhis = false;
-
-        bool passZinvnJets = true;
-        if( cntNJetsPt50Eta24 < AnaConsts::nJetsSelPt50Eta24 ) passZinvnJets = false;
-        if( cntNJetsPt30Eta24 < AnaConsts::nJetsSelPt30Eta24 ) passZinvnJets = false;
-
-        bool passZinvBJets = true;
-        if( !( (AnaConsts::low_nJetsSelBtagged == -1 || cntCSVS >= AnaConsts::low_nJetsSelBtagged) && (AnaConsts::high_nJetsSelBtagged == -1 || cntCSVS < AnaConsts::high_nJetsSelBtagged ) ) ) passZinvBJets = false;
-
-        bool passZinvLeptVeto = true;
-        if( nElectrons != AnaConsts::nElectronsSel ) passZinvLeptVeto = false;
-        if( nIsoTrks != AnaConsts::nIsoTrksSel )     passZinvLeptVeto = false;
-        
-        bool passStandLeptVeto = passZinvLeptVeto;
-        if( nMuons != AnaConsts::nMuonsSel ) passStandLeptVeto = false;
-
-        bool passZinvMET = true;
-        if( tr.getVar<double>("cleanMetPt") < AnaConsts::defaultMETcut ) passZinvMET = false;
-
-        // Calculate top tagger related variables. 
-        // Note that to save speed, only do the calculation after previous base line requirements.
-        int bestTopJetIdx = -1;
-        bool remainPassCSVS = false;
-        int pickedRemainingCombfatJetIdx = -1;
-        double bestTopJetMass = -1;
-        int nTopCandSortedCnt = 0;
-        double MT2 = -1;
-        double mTcomb = -1;
-
-        bool passPreTTag = passZinvLeptVeto && passZinvnJets && passZinvdPhis/* && passZinvBJets */&& passZinvMET && cntNJetsPt30 >= AnaConsts::nJetsSel;
-        bool passZinvTagger = false;
-        if(type3Ptr && type3Ptr2 && passPreTTag)
-        {
-            passZinvTagger = true; //will be set fals below if it fails 
-            topTagger::type3TopTagger * t3Ptr = nullptr;
-            if(passZinvBJets) t3Ptr = type3Ptr;
-            else              t3Ptr = type3Ptr2;
-            t3Ptr->processEvent(zinvJetVec, zinvBTagVec, metLVec);
-            bestTopJetIdx = t3Ptr->bestTopJetIdx;
-            remainPassCSVS = t3Ptr->remainPassCSVS;
-            pickedRemainingCombfatJetIdx = t3Ptr->pickedRemainingCombfatJetIdx;
-            if( bestTopJetIdx != -1 ) bestTopJetMass = t3Ptr->bestTopJetLVec.M();
-
-            nTopCandSortedCnt = t3Ptr->nTopCandSortedCnt;
-            MT2 = t3Ptr->MT2;
-            mTcomb = t3Ptr->mTbJet + 0.5*t3Ptr->mTbestTopJet;
-        }
-
-        if( bestTopJetIdx == -1 )                                                                    passZinvTagger = false;
-        if( ! remainPassCSVS )                                                                       passZinvTagger = false;
-        if( pickedRemainingCombfatJetIdx == -1 && zinvJetVec.size()>=6 )                             passZinvTagger = false;
-        if( ! (bestTopJetMass > AnaConsts::lowTopCut_ && bestTopJetMass < AnaConsts::highTopCut_ ) ) passZinvTagger = false;
-
-        bool passZinvBaseline      = passZinvLeptVeto && passZinvnJets && passZinvdPhis && passZinvBJets && passZinvMET && passZinvTagger;
-        bool passZinvBaselineNoTag = passZinvLeptVeto && passZinvnJets && passZinvdPhis                  && passZinvMET;
-
-        tr.registerDerivedVar("bestTopJetIdxZinv", bestTopJetIdx);
-        tr.registerDerivedVar("remainPassCSVSZinv", remainPassCSVS);
-        tr.registerDerivedVar("pickedRemainingCombfatJetIdxZinv", pickedRemainingCombfatJetIdx);
-        tr.registerDerivedVar("bestTopJetMassZinv", bestTopJetMass);
-
-        tr.registerDerivedVar("passZinvMET", passZinvMET);
-        tr.registerDerivedVar("passZinvLeptVeto", passZinvLeptVeto);
-        tr.registerDerivedVar("passStandLeptVeto", passStandLeptVeto);
-        tr.registerDerivedVar("passZinvnJets", passZinvnJets);
-        tr.registerDerivedVar("passZinvdPhis", passZinvdPhis);
-        tr.registerDerivedVar("passZinvBJets", passZinvBJets);
-        tr.registerDerivedVar("passZinvTagger", passZinvTagger);
-        tr.registerDerivedVar("passZinvBaseline", passZinvBaseline);
-        tr.registerDerivedVar("passZinvBaselineNoTag", passZinvBaselineNoTag);
-
-        tr.registerDerivedVar("cntNJetsPt30Eta24Zinv", cntNJetsPt30Eta24);
-        tr.registerDerivedVar("cntCSVSZinv", cntCSVS);
-
-        tr.registerDerivedVar("nTopCandSortedCntZinv", nTopCandSortedCnt);
-        tr.registerDerivedVar("MT2Zinv", MT2);
-        tr.registerDerivedVar("mTcombZinv", mTcomb);
-    }
+//    void zinvBaseline(NTupleReader& tr)
+//    {
+//        const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
+//
+//        const double& cleanMetPt  = tr.getVar<double>("cleanMetPt");
+//        const double& cleanMetPhi = tr.getVar<double>("cleanMetPhi");
+//
+//        const std::vector<TLorentzVector>& zinvJetVec  = tr.getVec<TLorentzVector>("cleanJetpt30ArrVec");
+//        const std::vector<double>&         zinvBTagVec = tr.getVec<double>("cleanJetpt30ArrBTag");
+//
+//        TLorentzVector metLVec;
+//        metLVec.SetPtEtaPhiM(tr.getVar<double>("cleanMetPt"), 0.0, cleanMetPhi, 0.0);
+//
+//        // Calculate number of jets and b-tagged jets
+//        int cntCSVS = AnaFunctions::countCSVS(zinvJetVec, zinvBTagVec, AnaConsts::cutCSVS, AnaConsts::bTagArr);
+//        int cntNJetsPt50Eta24 = AnaFunctions::countJets(zinvJetVec, AnaConsts::pt50Eta24Arr);
+//        int cntNJetsPt30Eta24 = AnaFunctions::countJets(zinvJetVec, AnaConsts::pt30Eta24Arr);
+//        int cntNJetsPt30      = AnaFunctions::countJets(zinvJetVec, AnaConsts::pt30Arr);
+//
+//        // Recalculate deltaPhi
+//        std::vector<double> *dPhiVec = new std::vector<double>();
+//        *dPhiVec = AnaFunctions::calcDPhi(zinvJetVec, cleanMetPhi, 3, AnaConsts::dphiArr);
+//
+//        // Calculate number of leptons
+//        int nMuons = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsRelIso"), tr.getVec<double>("muonsMtw"), AnaConsts::muonsArr);
+//        int nElectrons = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesRelIso"), tr.getVec<double>("elesMtw"), tr.getVec<unsigned int>("elesisEB"), AnaConsts::elesArr);
+//        int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), AnaConsts::isoTrksArr);
+//
+//
+//        // Pass cuts
+//
+//        bool passZinvdPhis = true;
+//        if( dPhiVec->at(0) < AnaConsts::dPhi0_CUT || dPhiVec->at(1) < AnaConsts::dPhi1_CUT || dPhiVec->at(2) < AnaConsts::dPhi2_CUT ) passZinvdPhis = false;
+//
+//        bool passZinvnJets = true;
+//        if( cntNJetsPt50Eta24 < AnaConsts::nJetsSelPt50Eta24 ) passZinvnJets = false;
+//        if( cntNJetsPt30Eta24 < AnaConsts::nJetsSelPt30Eta24 ) passZinvnJets = false;
+//
+//        bool passZinvBJets = true;
+//        if( !( (AnaConsts::low_nJetsSelBtagged == -1 || cntCSVS >= AnaConsts::low_nJetsSelBtagged) && (AnaConsts::high_nJetsSelBtagged == -1 || cntCSVS < AnaConsts::high_nJetsSelBtagged ) ) ) passZinvBJets = false;
+//
+//        bool passZinvLeptVeto = true;
+//        if( nElectrons != AnaConsts::nElectronsSel ) passZinvLeptVeto = false;
+//        if( nIsoTrks != AnaConsts::nIsoTrksSel )     passZinvLeptVeto = false;
+//        
+//        bool passStandLeptVeto = passZinvLeptVeto;
+//        if( nMuons != AnaConsts::nMuonsSel ) passStandLeptVeto = false;
+//
+//        bool passZinvMET = true;
+//        if( tr.getVar<double>("cleanMetPt") < AnaConsts::defaultMETcut ) passZinvMET = false;
+//
+//        // Calculate top tagger related variables. 
+//        // Note that to save speed, only do the calculation after previous base line requirements.
+//        int bestTopJetIdx = -1;
+//        bool remainPassCSVS = false;
+//        int pickedRemainingCombfatJetIdx = -1;
+//        double bestTopJetMass = -1;
+//        int nTopCandSortedCnt = 0;
+//        double MT2 = -1;
+//        double mTcomb = -1;
+//
+//        bool passPreTTag = passZinvLeptVeto && passZinvnJets && passZinvdPhis/* && passZinvBJets */&& passZinvMET && cntNJetsPt30 >= AnaConsts::nJetsSel;
+//        bool passZinvTagger = false;
+//        if(type3Ptr && type3Ptr2 && passPreTTag)
+//        {
+//            passZinvTagger = true; //will be set fals below if it fails 
+//            topTagger::type3TopTagger * t3Ptr = nullptr;
+//            if(passZinvBJets) t3Ptr = type3Ptr;
+//            else              t3Ptr = type3Ptr2;
+//            t3Ptr->processEvent(zinvJetVec, zinvBTagVec, metLVec);
+//            bestTopJetIdx = t3Ptr->bestTopJetIdx;
+//            remainPassCSVS = t3Ptr->remainPassCSVS;
+//            pickedRemainingCombfatJetIdx = t3Ptr->pickedRemainingCombfatJetIdx;
+//            if( bestTopJetIdx != -1 ) bestTopJetMass = t3Ptr->bestTopJetLVec.M();
+//
+//            nTopCandSortedCnt = t3Ptr->nTopCandSortedCnt;
+//            MT2 = t3Ptr->MT2;
+//            mTcomb = t3Ptr->mTbJet + 0.5*t3Ptr->mTbestTopJet;
+//        }
+//
+//        if( bestTopJetIdx == -1 )                                                                    passZinvTagger = false;
+//        if( ! remainPassCSVS )                                                                       passZinvTagger = false;
+//        if( pickedRemainingCombfatJetIdx == -1 && zinvJetVec.size()>=6 )                             passZinvTagger = false;
+//        if( ! (bestTopJetMass > AnaConsts::lowTopCut_ && bestTopJetMass < AnaConsts::highTopCut_ ) ) passZinvTagger = false;
+//
+//        bool passZinvBaseline      = passZinvLeptVeto && passZinvnJets && passZinvdPhis && passZinvBJets && passZinvMET && passZinvTagger;
+//        bool passZinvBaselineNoTag = passZinvLeptVeto && passZinvnJets && passZinvdPhis                  && passZinvMET;
+//
+//        tr.registerDerivedVec("dPhiZinvVec", dPhiVec);
+//
+//        tr.registerDerivedVar("bestTopJetIdxZinv", bestTopJetIdx);
+//        tr.registerDerivedVar("remainPassCSVSZinv", remainPassCSVS);
+//        tr.registerDerivedVar("pickedRemainingCombfatJetIdxZinv", pickedRemainingCombfatJetIdx);
+//        tr.registerDerivedVar("bestTopJetMassZinv", bestTopJetMass);
+//
+//        tr.registerDerivedVar("passZinvMET", passZinvMET);
+//        tr.registerDerivedVar("passZinvLeptVeto", passZinvLeptVeto);
+//        tr.registerDerivedVar("passStandLeptVeto", passStandLeptVeto);
+//        tr.registerDerivedVar("passZinvnJets", passZinvnJets);
+//        tr.registerDerivedVar("passZinvdPhis", passZinvdPhis);
+//        tr.registerDerivedVar("passZinvBJets", passZinvBJets);
+//        tr.registerDerivedVar("passZinvTagger", passZinvTagger);
+//        tr.registerDerivedVar("passZinvBaseline", passZinvBaseline);
+//        tr.registerDerivedVar("passZinvBaselineNoTag", passZinvBaselineNoTag);
+//
+//        tr.registerDerivedVar("cntNJetsPt30Eta24Zinv", cntNJetsPt30Eta24);
+//        tr.registerDerivedVar("cntCSVSZinv", cntCSVS);
+//
+//        tr.registerDerivedVar("nTopCandSortedCntZinv", nTopCandSortedCnt);
+//        tr.registerDerivedVar("MT2Zinv", MT2);
+//        tr.registerDerivedVar("mTcombZinv", mTcomb);
+//    }
 
     void printInterestingEvents(NTupleReader& tr)
     {
@@ -699,9 +735,14 @@ namespace plotterFunctions
         const double& mhtphi = tr.getVar<double>("mhtphi");
         const double& ht     = tr.getVar<double>("ht");
 
-        if(met > 1000) std::cout << "run: " << run << "\tevent: " << event << "\tmet: " << met << "\tmetphi: " << metphi << "\tnMuons_CUT: " << nMuons_CUT << "\t nElectrons_CUT: " << nElectrons_CUT << "\tcntNJetsPt30: " << cntNJetsPt30 << "\tcntNJetsPt30Eta24: " << cntNJetsPt30Eta24 << "\tcntNJetsPt50Eta24: " << cntNJetsPt50Eta24 << "\tmht: " << mht << "\tmhtphi: " << mhtphi << "\tht: " << ht << std::endl;
+        //if(met > 1000) std::cout << "run: " << run << "\tevent: " << event << "\tmet: " << met << "\tmetphi: " << metphi << "\tnMuons_CUT: " << nMuons_CUT << "\t nElectrons_CUT: " << nElectrons_CUT << "\tcntNJetsPt30: " << cntNJetsPt30 << "\tcntNJetsPt30Eta24: " << cntNJetsPt30Eta24 << "\tcntNJetsPt50Eta24: " << cntNJetsPt50Eta24 << "\tmht: " << mht << "\tmhtphi: " << mhtphi << "\tht: " << ht << std::endl;
     }
     
+    void zinvBaseline(NTupleReader& tr)
+    {
+        (*blvZinv)(tr);
+    }
+
     void registerFunctions(NTupleReader& tr)
     {
         //Make some global "constants" here
@@ -720,14 +761,19 @@ namespace plotterFunctions
             delete f;
         }
 
-        type3Ptr2 = new topTagger::type3TopTagger();
-        type3Ptr2->setnJetsSel(AnaConsts::nJetsSel);
-        type3Ptr2->setdobVetoCS(true);
-
+//        type3Ptr2 = new topTagger::type3TopTagger();
+//        type3Ptr2->setnJetsSel(AnaConsts::nJetsSel);
+//        type3Ptr2->setdobVetoCS(true);
+//
         tr3 = new TRandom3();
+
+        blvZinv = new BaselineVessel("Zinv");
 
         //register functions with NTupleReader
         tr.registerFunction(&muInfo);
+        stopFunctions::cjh.setMuonIso("mini");
+        stopFunctions::cjh.setRemove(false);
+        tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&generateWeight);
         tr.registerFunction(&zinvBaseline);
         //tr.registerFunction(&printInterestingEvents);
@@ -735,8 +781,10 @@ namespace plotterFunctions
 
     void activateBranches(std::set<std::string>& activeBranches)
     {
+        for(auto& bn : AnaConsts::activatedBranchNames) activeBranches.insert(bn);
         activeBranches.insert("ht");
         activeBranches.insert("run");
+        activeBranches.insert("lumi");
         activeBranches.insert("event");
         activeBranches.insert("mht");
         activeBranches.insert("mhtphi");

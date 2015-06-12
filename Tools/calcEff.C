@@ -63,8 +63,15 @@ int main()
     TH2 *hZEff_jActR2_num = new TH2D("hZEff_jActR2_num", "hZEff_jActR2_num", 200, 0, 2000, 500, 0, 5000);
     TH2 *hZEff_jActR2_den = new TH2D("hZEff_jActR2_den", "hZEff_jActR2_den", 200, 0, 2000, 500, 0, 5000);
 
+    TH2 *hdPhi1 = new TH2D("hdPhi1", "hdPhi1", 200, 0, 2000, 500, 0, 5000);
+    TH2 *hdPhi2 = new TH2D("hdPhi2", "hdPhi2", 200, 0, 2000, 500, 0, 5000);
+    TH2 *hdPhi3 = new TH2D("hdPhi3", "hdPhi3", 200, 0, 2000, 500, 0, 5000);
+
     std::set<std::string> activeBranches;
 
+    activeBranches.insert("run");
+    activeBranches.insert("lumi");
+    activeBranches.insert("event");
     activeBranches.insert("ht");
     activeBranches.insert("genDecayPdgIdVec");
     activeBranches.insert("genDecayLVecOB");
@@ -90,6 +97,7 @@ int main()
     activeBranches.insert("recoJetschargedEmEnergyFraction"); 
     activeBranches.insert("recoJetschargedHadronEnergyFraction");
     activeBranches.insert("elesisEB");
+    activeBranches.insert("cleanMetPt");
 
     TRandom3 *trg = new TRandom3(12321);
     plotterFunctions::tr3 = new TRandom3(32123);
@@ -124,11 +132,12 @@ int main()
             const bool& passZinvBaselineNoTag = tr.getVar<bool>("passZinvBaselineNoTag");
             const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
 
-            const double& recoZPt = tr.getVar<double>("bestRecoZPt");
-            const double& genZPt  = tr.getVar<double>("genZPt");
-            const double& genZM   =  tr.getVar<double>("genZmass");
-            const double& cleanHt = tr.getVar<double>("ht");
-            const int&    pdgIdZDec = tr.getVar<int>("pdgIdZDec");
+            const double& recoZPt    = tr.getVar<double>("bestRecoZPt");
+            const double& genZPt     = tr.getVar<double>("genZPt");
+            const double& genZM      = tr.getVar<double>("genZmass");
+            const double& cleanHt    = tr.getVar<double>("ht");
+            const double& cleanMetPt = tr.getVar<double>("cleanMetPt");
+            const int&    pdgIdZDec  = tr.getVar<int>("pdgIdZDec");
 
             if(pdgIdZDec != 13) continue;
 
@@ -229,15 +238,25 @@ int main()
                 hZAcc_den->Fill(genZPt, modHt, file.getWeight());
                 if(genMuInAcc.size() >= 2)// && genMuInAcc[0]->Pt() > 45 && genMuInAcc[1]->Pt() > 20 && genZM > 71 && genZM < 111)
                 {
-                    hZAccPt_num->Fill(genZPt, file.getWeight());
-                    hZAcc_num->Fill(genZPt, modHt, file.getWeight());
-                
-                    hZEffPt_den->Fill(genZPt, file.getWeight());
-                    hZEff_den->Fill(genZPt, modHt, file.getWeight());
-                    if(genMuInAcc[0]->Pt() > 45 && genMuInAcc[1]->Pt() > 20 && genZM > 71 && genZM < 111)//passMuZinvSel && passZinvBaselineNoTag)//genMatchMuInAcc.size() >= 2)
+                    // muon iso cut 
+                    double muDeltaR = ROOT::Math::VectorUtil::DeltaR(*genMuInAcc[0], *genMuInAcc[1]);
+                    double minMuPt = std::min(genMuInAcc[0]->Pt(), genMuInAcc[1]->Pt());
+                    double mudRMin = 10.0/minMuPt;;
+                    if(minMuPt < 50)       mudRMin = 0.2;
+                    else if(minMuPt > 200) mudRMin = 0.05;
+                    //if(cleanMetPt > 1000) std::cout << muDeltaR << " > " << mudRMin << "\t" << genMuInAcc.size() << std::endl;
+                    if(muDeltaR > mudRMin)
                     {
-                        hZEffPt_num->Fill(genZPt, file.getWeight());
-                        hZEff_num->Fill(genZPt, modHt, file.getWeight());
+                        hZAccPt_num->Fill(genZPt, file.getWeight());
+                        hZAcc_num->Fill(genZPt, modHt, file.getWeight());
+                
+                        hZEffPt_den->Fill(genZPt, file.getWeight());
+                        hZEff_den->Fill(genZPt, modHt, file.getWeight());
+                        if(genMuInAcc[0]->Pt() > 45 && genMuInAcc[1]->Pt() > 20 && genZM > 71 && genZM < 111)//passMuZinvSel && passZinvBaselineNoTag)//genMatchMuInAcc.size() >= 2)
+                        {
+                            hZEffPt_num->Fill(genZPt, file.getWeight());
+                            hZEff_num->Fill(genZPt, modHt, file.getWeight());
+                        }
                     }
                 }
             }
