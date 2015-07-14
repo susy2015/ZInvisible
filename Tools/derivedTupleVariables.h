@@ -1,6 +1,7 @@
 #include "SusyAnaTools/Tools/NTupleReader.h"
 #include "SusyAnaTools/Tools/customize.h"
 #include "SusyAnaTools/Tools/baselineDef.h"
+#include "SusyAnaTools/Tools/searchBins.h"
 
 #include "TH1.h"
 #include "TH2.h"
@@ -41,6 +42,7 @@ namespace plotterFunctions
         const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
         const double& ht          = tr.getVar<double>("ht");
         const double& bestRecoZPt = tr.getVar<double>("bestRecoZPt");
+        const double& genZPt      = tr.getVar<double>("genZPt");
 
         // Calculate PU weight
 
@@ -202,7 +204,17 @@ namespace plotterFunctions
         
         //ZPt eff/Acc here
         //if(hZEff) zEff = hZEff->GetBinContent(hZEff->GetXaxis()->FindBin(bestRecoZ.Pt()));//, hZEff->GetYaxis()->FindBin(genCleanHt));//ht));
-        if(hZAcc) zAcc = hZAcc->GetBinContent(hZAcc->GetXaxis()->FindBin(bestRecoZPt));//, hZAcc->GetYaxis()->FindBin(genCleanHt));//ht));
+        //if(hZAcc) zAcc = hZAcc->GetBinContent(hZAcc->GetXaxis()->FindBin(bestRecoZPt));//, hZAcc->GetYaxis()->FindBin(genCleanHt));//ht));
+
+        //functional form [2] - exp([0] + [1]*x)
+        double acc_p0 = -2.91374e-01;
+        double acc_p1 = -4.42884e-03;
+        double acc_p2 =  9.51190e-01;
+        if(hZAcc) 
+        {
+            if(genZPt < 100) zAcc = hZAcc->GetBinContent(hZAcc->GetXaxis()->FindBin(genZPt));
+            else             zAcc = acc_p2 - exp(acc_p0 + acc_p1 * genZPt);
+        }
 
         if(pdgIdZDec == 13 && passMuZinvSel && zAcc < 0.05) 
         {
@@ -250,6 +262,7 @@ namespace plotterFunctions
 
         std::vector<const TLorentzVector*>* genMatchIsoMuInAcc = new std::vector<const TLorentzVector*>();
         std::vector<const TLorentzVector*>* genMatchMuInAcc = new std::vector<const TLorentzVector*>();
+        std::vector<double>* genMatchMuInAccRes = new std::vector<double>();
         std::vector<const TLorentzVector*>* genMuInAcc = new std::vector<const TLorentzVector*>();
         std::vector<const TLorentzVector*>* genMu = new std::vector<const TLorentzVector*>();
         std::vector<double>* genMatchIsoMuInAccAct = new std::vector<double>();
@@ -326,18 +339,21 @@ namespace plotterFunctions
                     genMuInAcc->push_back(&genDecayLVec[i]);
                     genMuInAccAct->push_back(genMuAct->back());
                     double dRMin = 999.9;
+                    double matchPt = -999.9;
                     for(int j = 0; j < cutMuVecRecoOnly.size(); ++j)
                     {
                         double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVecRecoOnly[j]);
                         if(dR < dRMin)
                         {
                             dRMin = dR;
+                            matchPt = cutMuVecRecoOnly[j].Pt();
                         }
                     }
                     if(dRMin < 0.02)
                     {
                         genMatchMuInAcc->push_back(&genDecayLVec[i]);
                         genMatchMuInAccAct->push_back(genMuAct->back());
+                        genMatchMuInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
                     }
                     
                     dRMin = 999.9;
@@ -446,13 +462,16 @@ namespace plotterFunctions
 
         double bestRecoZPt = bestRecoZ.Pt();
         double cleanMetPt = cleanMet.Pt();
+        //double cleanMet2Pt = cleanMet2.Pt();
         tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
         tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
         tr.registerDerivedVar("cleanMetPt", cleanMetPt);
         tr.registerDerivedVar("cleanMetPhi", cleanMet.Phi());
+        //tr.registerDerivedVar("cleanMet2Pt", cleanMet2Pt);
         tr.registerDerivedVar("genHt", genHt);
         tr.registerDerivedVar("cutMuPt1", cutMuPt1);
         tr.registerDerivedVar("cutMuPt2", cutMuPt2);
+        tr.registerDerivedVar("mindPhiMetJ", mindPhiMetJ);
 
         tr.registerDerivedVar("ZPtRes", (bestRecoZPt - genZPt)/genZPt);
         tr.registerDerivedVar("ZEtaRes", bestRecoZ.Eta() - genZEta);
@@ -468,6 +487,7 @@ namespace plotterFunctions
         tr.registerDerivedVar("ngenMuInAcc", static_cast<double>(genMuInAcc->size()));
         tr.registerDerivedVec("genMuInAccAct", genMuInAccAct);
         tr.registerDerivedVec("genMatchMuInAcc", genMatchMuInAcc);
+        tr.registerDerivedVec("genMatchMuInAccRes", genMatchMuInAccRes);
         tr.registerDerivedVec("genMatchIsoMuInAcc", genMatchIsoMuInAcc);
         tr.registerDerivedVar("ngenMatchMuInAcc", static_cast<double>(genMatchMuInAcc->size()));
         tr.registerDerivedVec("genMatchMuInAccAct", genMatchMuInAccAct);
@@ -717,6 +737,43 @@ namespace plotterFunctions
 //        tr.registerDerivedVar("mTcombZinv", mTcomb);
 //    }
 
+    void getSearchBin(NTupleReader& tr)
+    {
+        const int& cntCSVS = tr.getVar<int>("cntCSVSZinv");
+        const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+        const double& cleanMet = tr.getVar<double>("cleanMetPt");
+        const double& cleanMetPhi = tr.getVar<double>("cleanMetPhi");
+        const double& MT2 = tr.getVar<double>("best_had_brJet_MT2Zinv");
+        const std::vector<TLorentzVector>& removedJetsLVec = tr.getVec<TLorentzVector>("removedJetVec");
+
+        int nSearchBin = find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
+
+        //hack, this does not belong here
+        TLorentzVector cleanMet2;
+        cleanMet2.SetPtEtaPhiM(cleanMet, 0.0, cleanMetPhi, 0.0);
+        
+        for(auto& jet : removedJetsLVec)
+        {
+            cleanMet2 += jet;
+        }
+
+        std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
+        const double wnb01 = 2.2322e-01;
+        const double wnb02 = 4.3482e-02;
+        const double wnb03 = 4.5729e-03;
+        if(cntCSVS == 0)
+        {
+            //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt, MT2, cleanMet), wnb01));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt, MT2, cleanMet), wnb02));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt, MT2, cleanMet), wnb03));
+        }
+
+        tr.registerDerivedVar("nSearchBin", nSearchBin);
+        tr.registerDerivedVar("cleanMet2Pt", double(cleanMet2.Pt()));
+        tr.registerDerivedVec("nb0Bins", nb0Bins);
+    }
+
     void printInterestingEvents(NTupleReader& tr)
     {
         const unsigned int& run   = tr.getVar<unsigned int>("run");
@@ -756,7 +813,7 @@ namespace plotterFunctions
             muEff_jActR1 = static_cast<TH2*>(f->Get("hZEff_jActR1"));
             muAcc = static_cast<TH2*>(f->Get("hMuAcc"));
             hZEff = static_cast<TH1*>(f->Get("hZEffPt"));
-            hZAcc = static_cast<TH1*>(f->Get("hZAccPt"));
+            hZAcc = static_cast<TH1*>(f->Get("hZAccPtSmear"));
             f->Close();
             delete f;
         }
@@ -773,9 +830,11 @@ namespace plotterFunctions
         tr.registerFunction(&muInfo);
         stopFunctions::cjh.setMuonIso("mini");
         stopFunctions::cjh.setRemove(false);
+        stopFunctions::cjh.setDisable(false);
         tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&generateWeight);
         tr.registerFunction(&zinvBaseline);
+        tr.registerFunction(&getSearchBin);
         //tr.registerFunction(&printInterestingEvents);
     }
 

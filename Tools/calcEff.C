@@ -52,6 +52,8 @@ int main()
     TH1 *hZEffPt_den = new TH1D("hZEffPt_den", "hZEffPt_den", 200, 0, 2000);
     TH1 *hZAccPt_num = new TH1D("hZAccPt_num", "hZAccPt_num", 200, 0, 2000);
     TH1 *hZAccPt_den = new TH1D("hZAccPt_den", "hZAccPt_den", 200, 0, 2000);
+    TH1 *hZAccPtSmear_num = new TH1D("hZAccPtSmear_num", "hZAccPtSmear_num", 200, 0, 2000);
+    TH1 *hZAccPtSmear_den = new TH1D("hZAccPtSmear_den", "hZAccPtSmear_den", 200, 0, 2000);
 
     TH2 *hZEff_num = new TH2D("hZEff_num", "hZEff_num", 200, 0, 2000, 300, 0, 3000);
     TH2 *hZEff_den = new TH2D("hZEff_den", "hZEff_den", 200, 0, 2000, 300, 0, 3000);
@@ -101,6 +103,9 @@ int main()
 
     TRandom3 *trg = new TRandom3(12321);
     plotterFunctions::tr3 = new TRandom3(32123);
+    TFile * fZRes = new TFile("zRes.root");
+    TH1* hZRes = (TH1*)fZRes->Get("zRes");
+    double hZRes_int = hZRes->Integral(hZRes->FindBin(-0.3), hZRes->FindBin(0.3));
 
     for(auto& file : sc["DYJetsToLL"]) 
     {
@@ -113,10 +118,11 @@ int main()
 
         NTupleReader tr(t, activeBranches);
         stopFunctions::cjh.setMuonIso("mini");
+        stopFunctions::cjh.setRemove(false);
         tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&plotterFunctions::muInfo);
         tr.registerFunction(&plotterFunctions::generateWeight);
-        tr.registerFunction(&plotterFunctions::zinvBaseline);
+        //tr.registerFunction(&plotterFunctions::zinvBaseline);
 
         while(tr.getNextEvent())
         {
@@ -129,8 +135,8 @@ int main()
             const std::vector<double>& genMatchMuInAccAct      = tr.getVec<double>("genMatchMuInAccAct");
             const std::vector<double>& genMatchIsoMuInAccAct   = tr.getVec<double>("genMatchIsoMuInAccAct");
 
-            const bool& passZinvBaselineNoTag = tr.getVar<bool>("passZinvBaselineNoTag");
-            const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
+            //const bool& passZinvBaselineNoTag = tr.getVar<bool>("passZinvBaselineNoTag");
+            //const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
 
             const double& recoZPt    = tr.getVar<double>("bestRecoZPt");
             const double& genZPt     = tr.getVar<double>("genZPt");
@@ -232,8 +238,13 @@ int main()
                 }
             }
 
+
             if(true)//passMuZinvSel && passZinvBaselineNoTag)
             {
+                for(int i = hZRes->FindBin(-0.3); i <= hZRes->FindBin(0.3); ++i)
+                {
+                    hZAccPtSmear_den->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
+                }
                 hZAccPt_den->Fill(genZPt, file.getWeight());
                 hZAcc_den->Fill(genZPt, modHt, file.getWeight());
                 if(genMuInAcc.size() >= 2)// && genMuInAcc[0]->Pt() > 45 && genMuInAcc[1]->Pt() > 20 && genZM > 71 && genZM < 111)
@@ -241,12 +252,16 @@ int main()
                     // muon iso cut 
                     double muDeltaR = ROOT::Math::VectorUtil::DeltaR(*genMuInAcc[0], *genMuInAcc[1]);
                     double minMuPt = std::min(genMuInAcc[0]->Pt(), genMuInAcc[1]->Pt());
-                    double mudRMin = 10.0/minMuPt;;
+                    double mudRMin = 10.0/minMuPt;
                     if(minMuPt < 50)       mudRMin = 0.2;
                     else if(minMuPt > 200) mudRMin = 0.05;
                     //if(cleanMetPt > 1000) std::cout << muDeltaR << " > " << mudRMin << "\t" << genMuInAcc.size() << std::endl;
-                    if(muDeltaR > mudRMin)
+                    if(true)//muDeltaR > mudRMin)
                     {
+                        for(int i = hZRes->FindBin(-0.3); i <= hZRes->FindBin(0.3); ++i)
+                        {
+                            hZAccPtSmear_num->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
+                        }
                         hZAccPt_num->Fill(genZPt, file.getWeight());
                         hZAcc_num->Fill(genZPt, modHt, file.getWeight());
                 
@@ -264,6 +279,7 @@ int main()
         //break;
     }
 
+    f->cd();
     hMuEffPt_num->Write();
     hMuEffPt_den->Write();
     hMuAccPt_num->Write();
@@ -296,6 +312,9 @@ int main()
     hZEffPt_den->Write();
     hZAccPt_num->Write();
     hZAccPt_den->Write();
+    hZAccPtSmear_den->Write();
+    hZAccPtSmear_num->Write();
+
     hZEff_num->Write();
     hZEff_den->Write();
     hZAcc_num->Write();

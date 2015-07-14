@@ -102,7 +102,9 @@ int main ()
     makeRatio2D("hMuAcc", fin, fout);
 
     makeRatio1D("hZEffPt", fin, fout, zptbins, nzptbins);
-    makeRatio1D("hZAccPt", fin, fout);//, zptbins, nzptbins);
+    makeRatio1D("hZAccPt", fin, fout, zptbins, nzptbins);
+
+    makeRatio1D("hZAccPtSmear", fin, fout);//, zptbins, nzptbins);
 
     makeRatio2D("hZEff", fin, fout);
     makeRatio2D("hZAcc", fin, fout);
