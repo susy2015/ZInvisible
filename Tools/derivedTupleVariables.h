@@ -829,6 +829,9 @@ namespace plotterFunctions
         //register functions with NTupleReader
         tr.registerFunction(&muInfo);
         stopFunctions::cjh.setMuonIso("mini");
+        stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
+        stopFunctions::cjh.setBTagCollection("recoJetsBtag");
+        stopFunctions::cjh.setForceDr(true);
         stopFunctions::cjh.setRemove(false);
         stopFunctions::cjh.setDisable(false);
         tr.registerFunction(&stopFunctions::cleanJets);
