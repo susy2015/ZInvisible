@@ -18,14 +18,15 @@ int main(int argc, char* argv[])
         {"histFile",  required_argument, 0, 'H'},
         {"dataSets",  required_argument, 0, 'D'},
         {"numFiles",  required_argument, 0, 'N'},
-        {"startFile", required_argument, 0, 'M'}
+        {"startFile", required_argument, 0, 'M'},
+        {"plotDir",   required_argument, 0, 'P'}
     };
 
     bool doPlots = true, doSave = true, fromTuple = true, runOnCondor = false;
-    string histFile = "", dataSets = "", sampleloc = AnaSamples::fileDir;
+    string histFile = "", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0;
 
-    while((opt = getopt_long(argc, argv, "psfcH:D:N:M:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "psfcH:D:N:M:P:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
@@ -61,6 +62,10 @@ int main(int argc, char* argv[])
 
         case 'M':
             startFile = int(atoi(optarg));
+            break;
+
+        case 'P':
+            plotDir = optarg;
             break;
         }
     }
@@ -929,6 +934,7 @@ int main(int argc, char* argv[])
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
     Plotter plotter(vh, vvf, fromTuple, histFile, nFiles, startFile);
+    plotter.setPlotDir(plotDir);
     if(doSave)  plotter.saveHists();
     if(doPlots) plotter.plot();
 }
