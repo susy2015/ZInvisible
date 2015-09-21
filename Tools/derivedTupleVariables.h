@@ -871,8 +871,12 @@ namespace plotterFunctions
         activeBranches.insert("loose_isoTrksLVec");
         activeBranches.insert("muMatchedJetIdx");
         activeBranches.insert("eleMatchedJetIdx");
-        activeBranches.insert("recoJetschargedEmEnergyFraction"); 
+        activeBranches.insert("recoJetschargedEmEnergyFraction");
+        activeBranches.insert("recoJetsneutralEmEnergyFraction");
         activeBranches.insert("recoJetschargedHadronEnergyFraction");
+        activeBranches.insert("prodJetsNoMu_recoJetschargedEmEnergyFraction");
+        activeBranches.insert("prodJetsNoMu_recoJetsneutralEmEnergyFraction");
+        activeBranches.insert("prodJetsNoMu_recoJetschargedHadronEnergyFraction");
         activeBranches.insert("elesisEB");
     }
 }
