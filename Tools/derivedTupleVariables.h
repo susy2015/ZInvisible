@@ -598,6 +598,7 @@ namespace plotterFunctions
         stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
         stopFunctions::cjh.setForceDr(true);
         stopFunctions::cjh.setRemove(false);
+        stopFunctions::cjh.setSoftClean(true);
         stopFunctions::cjh.setDisable(false);
         tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&generateWeight);
