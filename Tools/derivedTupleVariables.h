@@ -25,6 +25,8 @@ namespace plotterFunctions
     static TH1* hZAcc;
     static TRandom3 *tr3;
     static BaselineVessel *blvZinv;
+    static BaselineVessel *blvZinv2b;
+    static BaselineVessel *blvZinv3b;
 
 //    topTagger::type3TopTagger * type3Ptr2;
 
@@ -505,9 +507,13 @@ namespace plotterFunctions
     {
         const int& cntCSVS = tr.getVar<int>("cntCSVSZinv");
         const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+        const int& nTopCandSortedCnt2b = tr.getVar<int>("nTopCandSortedCntZinv2b");
+        const int& nTopCandSortedCnt3b = tr.getVar<int>("nTopCandSortedCntZinv3b");
         const double& cleanMet = tr.getVar<double>("cleanMetPt");
         const double& cleanMetPhi = tr.getVar<double>("cleanMetPhi");
         const double& MT2 = tr.getVar<double>("best_had_brJet_MT2Zinv");
+        const double& MT2_2b = tr.getVar<double>("best_had_brJet_MT2Zinv2b");
+        const double& MT2_3b = tr.getVar<double>("best_had_brJet_MT2Zinv3b");
         const std::vector<TLorentzVector>& removedJetsLVec = tr.getVec<TLorentzVector>("removedJetVec");
 
         int nSearchBin = find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
@@ -528,9 +534,9 @@ namespace plotterFunctions
         if(cntCSVS == 0)
         {
             //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt, MT2, cleanMet), wnb01));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt, MT2, cleanMet), wnb02));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt, MT2, cleanMet), wnb03));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt,   MT2,    cleanMet), wnb01));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03));
         }
 
         tr.registerDerivedVar("nSearchBin", nSearchBin);
@@ -564,6 +570,16 @@ namespace plotterFunctions
         (*blvZinv)(tr);
     }
 
+    void zinvBaseline2b(NTupleReader& tr)
+    {
+        (*blvZinv2b)(tr);
+    }
+
+    void zinvBaseline3b(NTupleReader& tr)
+    {
+        (*blvZinv3b)(tr);
+    }
+
     void registerFunctions(NTupleReader& tr)
     {
         //Make some global "constants" here
@@ -589,6 +605,8 @@ namespace plotterFunctions
         tr3 = new TRandom3();
 
         blvZinv = new BaselineVessel("Zinv");
+        blvZinv2b = new BaselineVessel("Zinv2b");
+        blvZinv3b = new BaselineVessel("Zinv3b");
 
         //register functions with NTupleReader
         tr.registerFunction(&muInfo);
@@ -598,11 +616,13 @@ namespace plotterFunctions
         stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
         stopFunctions::cjh.setForceDr(true);
         stopFunctions::cjh.setRemove(false);
-        stopFunctions::cjh.setSoftClean(true);
+        stopFunctions::cjh.setPhotoCleanThresh(0.7);
         stopFunctions::cjh.setDisable(false);
         tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&generateWeight);
         tr.registerFunction(&zinvBaseline);
+        tr.registerFunction(&zinvBaseline2b);
+        tr.registerFunction(&zinvBaseline3b);
         tr.registerFunction(&getSearchBin);
         //tr.registerFunction(&printInterestingEvents);
     }
