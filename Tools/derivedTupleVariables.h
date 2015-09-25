@@ -621,7 +621,7 @@ namespace plotterFunctions
         stopFunctions::cjh.setBTagCollection("recoJetsBtag");
         stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
         stopFunctions::cjh.setForceDr(true);
-        stopFunctions::cjh.setRemove(false);
+        stopFunctions::cjh.setRemove(true);
         //stopFunctions::cjh.setPhotoCleanThresh(0.7);
         stopFunctions::cjh.setDisable(false);
         tr.registerFunction(&stopFunctions::cleanJets);
