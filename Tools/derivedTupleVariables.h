@@ -325,52 +325,55 @@ namespace plotterFunctions
         const double minMuPt = 20.0, highMuPt = 45.0;
         double nuPt1 = -999.9, nuPt2 = -999.9;
 
-        for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
+        if(&genDecayPdgIdVec != nullptr && &genDecayLVec != nullptr)
         {
-            if((abs(genDecayPdgIdVec[i]) != 0 &&  abs(genDecayPdgIdVec[i]) < 6) || (abs(genDecayPdgIdVec[i]) > 100 && abs(genDecayPdgIdVec[i]) < 10000)) genHt += genDecayLVec[i].Pt();
-
-            if(genDecayPdgIdVec[i] ==  13) nuPt1 = genDecayLVec[i].Pt();
-            if(genDecayPdgIdVec[i] == -13) nuPt2 = genDecayLVec[i].Pt();
-                
-            if(abs(genDecayPdgIdVec[i]) == 13)
+            for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
             {
-                genMu->push_back(&genDecayLVec[i]);
-                genMuAct->push_back(AnaFunctions::getMuonActivity(genDecayLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, recoJetschargedEmEnergyFraction, AnaConsts::muonsAct));
-                if(AnaFunctions::passMuonAccOnly(genDecayLVec[i], AnaConsts::muonsMiniIsoArr) && genDecayLVec[i].Pt() > minMuPt)
+                if((abs(genDecayPdgIdVec[i]) != 0 &&  abs(genDecayPdgIdVec[i]) < 6) || (abs(genDecayPdgIdVec[i]) > 100 && abs(genDecayPdgIdVec[i]) < 10000)) genHt += genDecayLVec[i].Pt();
+
+                if(genDecayPdgIdVec[i] ==  13) nuPt1 = genDecayLVec[i].Pt();
+                if(genDecayPdgIdVec[i] == -13) nuPt2 = genDecayLVec[i].Pt();
+                
+                if(abs(genDecayPdgIdVec[i]) == 13)
                 {
-                    genMuInAcc->push_back(&genDecayLVec[i]);
-                    genMuInAccAct->push_back(genMuAct->back());
-                    double dRMin = 999.9;
-                    double matchPt = -999.9;
-                    for(int j = 0; j < cutMuVecRecoOnly.size(); ++j)
+                    genMu->push_back(&genDecayLVec[i]);
+                    genMuAct->push_back(AnaFunctions::getMuonActivity(genDecayLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, recoJetschargedEmEnergyFraction, AnaConsts::muonsAct));
+                    if(AnaFunctions::passMuonAccOnly(genDecayLVec[i], AnaConsts::muonsMiniIsoArr) && genDecayLVec[i].Pt() > minMuPt)
                     {
-                        double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVecRecoOnly[j]);
-                        if(dR < dRMin)
+                        genMuInAcc->push_back(&genDecayLVec[i]);
+                        genMuInAccAct->push_back(genMuAct->back());
+                        double dRMin = 999.9;
+                        double matchPt = -999.9;
+                        for(int j = 0; j < cutMuVecRecoOnly.size(); ++j)
                         {
-                            dRMin = dR;
-                            matchPt = cutMuVecRecoOnly[j].Pt();
+                            double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVecRecoOnly[j]);
+                            if(dR < dRMin)
+                            {
+                                dRMin = dR;
+                                matchPt = cutMuVecRecoOnly[j].Pt();
+                            }
                         }
-                    }
-                    if(dRMin < 0.02)
-                    {
-                        genMatchMuInAcc->push_back(&genDecayLVec[i]);
-                        genMatchMuInAccAct->push_back(genMuAct->back());
-                        genMatchMuInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
-                    }
+                        if(dRMin < 0.02)
+                        {
+                            genMatchMuInAcc->push_back(&genDecayLVec[i]);
+                            genMatchMuInAccAct->push_back(genMuAct->back());
+                            genMatchMuInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
+                        }
                     
-                    dRMin = 999.9;
-                    for(int j = 0; j < cutMuVec->size(); ++j)
-                    {
-                        double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutMuVec)[j]);
-                        if(dR < dRMin)
+                        dRMin = 999.9;
+                        for(int j = 0; j < cutMuVec->size(); ++j)
                         {
-                            dRMin = dR;
+                            double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutMuVec)[j]);
+                            if(dR < dRMin)
+                            {
+                                dRMin = dR;
+                            }
                         }
-                    }
-                    if(dRMin < 0.02)
-                    {
-                        genMatchIsoMuInAcc->push_back(&genDecayLVec[i]);
-                        genMatchIsoMuInAccAct->push_back(genMuAct->back());
+                        if(dRMin < 0.02)
+                        {
+                            genMatchIsoMuInAcc->push_back(&genDecayLVec[i]);
+                            genMatchIsoMuInAccAct->push_back(genMuAct->back());
+                        }
                     }
                 }
             }
@@ -379,19 +382,22 @@ namespace plotterFunctions
         double genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
         int nZ = 0;
         TLorentzVector genZ;
-        for(int j = 0; j <  genDecayPdgIdVec.size(); ++j)
+        if(&genDecayPdgIdVec != nullptr)
         {
-            if(abs(genDecayPdgIdVec[j]) == 23)
+            for(int j = 0; j <  genDecayPdgIdVec.size(); ++j)
             {
-                nZ++;
-                genZ = genDecayLVec[j];
-                genZPt = genDecayLVec[j].Pt();
-                genZEta = genDecayLVec[j].Eta();
-                genZPhi = genDecayLVec[j].Phi();
-                genZmass = genDecayLVec[j].M();
+                if(abs(genDecayPdgIdVec[j]) == 23)
+                {
+                    nZ++;
+                    genZ = genDecayLVec[j];
+                    genZPt = genDecayLVec[j].Pt();
+                    genZEta = genDecayLVec[j].Eta();
+                    genZPhi = genDecayLVec[j].Phi();
+                    genZmass = genDecayLVec[j].M();
+                }
             }
+            if(nZ > 1) std::cout << "!!!WARNING MORE THAN 1 Z FOUND!!!" << std::endl;
         }
-        if(nZ > 1) std::cout << "!!!WARNING MORE THAN 1 Z FOUND!!!" << std::endl;
 
 
         int pdgIdZDec = 0;
@@ -616,7 +622,7 @@ namespace plotterFunctions
         stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
         stopFunctions::cjh.setForceDr(true);
         stopFunctions::cjh.setRemove(false);
-        stopFunctions::cjh.setPhotoCleanThresh(0.7);
+        //stopFunctions::cjh.setPhotoCleanThresh(0.7);
         stopFunctions::cjh.setDisable(false);
         tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&generateWeight);
