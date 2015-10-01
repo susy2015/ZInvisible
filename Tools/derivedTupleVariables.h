@@ -6,6 +6,7 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TFile.h"
+#include "TMath.h"
 #include "TLorentzVector.h"
 #include "Math/VectorUtil.h"
 #include "TRandom3.h"
@@ -25,6 +26,7 @@ namespace plotterFunctions
     static TH1* hZAcc;
     static TRandom3 *tr3;
     static BaselineVessel *blvZinv;
+    static BaselineVessel *blvZinv1b;
     static BaselineVessel *blvZinv2b;
     static BaselineVessel *blvZinv3b;
 
@@ -509,6 +511,78 @@ namespace plotterFunctions
         tr.registerDerivedVar("passSingleMu45", muTrigMu45);
     }
 
+    void fakebtagvectors(NTupleReader& tr)
+    {
+        const std::vector<double>& cleanJetpt30ArrBTag = tr.getVec<double>("cleanJetpt30ArrBTag");
+
+        double maxCSV = 0.0;
+        double secCSV = 0.0;
+        double tenCSV = 0.0;
+        int iMaxCSV = -1;
+        int iSecCSV = -1;
+        int iTenCSV = -1;
+
+        //find index of 3 highest CSV values
+        for(int i = 0; i < cleanJetpt30ArrBTag.size(); ++i)
+        {
+            if(cleanJetpt30ArrBTag[i] > maxCSV)
+            {
+                tenCSV = secCSV;
+                secCSV = maxCSV;
+                maxCSV = cleanJetpt30ArrBTag[i];
+                iTenCSV = iSecCSV;
+                iSecCSV = iMaxCSV;
+                iMaxCSV = i;
+            }
+            else if(cleanJetpt30ArrBTag[i] > secCSV)
+            {
+                tenCSV = secCSV;
+                secCSV = cleanJetpt30ArrBTag[i];
+                iTenCSV = iSecCSV;
+                iSecCSV = i;
+            }
+            else if(cleanJetpt30ArrBTag[i] > tenCSV)
+            {
+                tenCSV = cleanJetpt30ArrBTag[i];
+                iTenCSV = i;
+            }
+        }
+
+        std::vector<double>* cleanJetpt30ArrBTag1fake = new std::vector<double>(cleanJetpt30ArrBTag);
+        std::vector<double>* cleanJetpt30ArrBTag2fake = new std::vector<double>(cleanJetpt30ArrBTag);
+        std::vector<double>* cleanJetpt30ArrBTag3fake = new std::vector<double>(cleanJetpt30ArrBTag);
+        std::vector<double>* fakedCSVValues = new std::vector<double>();
+
+        if(iMaxCSV >= 0) (*cleanJetpt30ArrBTag1fake)[iMaxCSV] = 0.99;
+
+        if(iMaxCSV >= 0) (*cleanJetpt30ArrBTag2fake)[iMaxCSV] = 0.99;
+        if(iSecCSV >= 0) (*cleanJetpt30ArrBTag2fake)[iSecCSV] = 0.99;
+
+        if(iMaxCSV >= 0) (*cleanJetpt30ArrBTag3fake)[iMaxCSV] = 0.99;
+        if(iSecCSV >= 0) (*cleanJetpt30ArrBTag3fake)[iSecCSV] = 0.99;
+        if(iTenCSV >= 0) (*cleanJetpt30ArrBTag3fake)[iTenCSV] = 0.99;
+
+        if(iMaxCSV >= 0) fakedCSVValues->push_back(maxCSV);
+        if(iSecCSV >= 0) fakedCSVValues->push_back(secCSV);
+        if(iTenCSV >= 0) fakedCSVValues->push_back(tenCSV);
+
+        //Calculate the combinatoric weights for b-jet faking
+        double weight1fakeb = TMath::Binomial(cleanJetpt30ArrBTag.size(), 1);
+        double weight2fakeb = TMath::Binomial(cleanJetpt30ArrBTag.size(), 2);
+        double weight3fakeb = TMath::Binomial(cleanJetpt30ArrBTag.size(), 3);
+        
+        tr.registerDerivedVar("weight1fakeb", weight1fakeb);
+        tr.registerDerivedVar("weight2fakeb", weight2fakeb);
+        tr.registerDerivedVar("weight3fakeb", weight3fakeb);
+
+        tr.registerDerivedVec("cleanJetpt30ArrBTag1fake", cleanJetpt30ArrBTag1fake);
+        tr.registerDerivedVec("cleanJetpt30ArrBTag2fake", cleanJetpt30ArrBTag2fake);
+        tr.registerDerivedVec("cleanJetpt30ArrBTag3fake", cleanJetpt30ArrBTag3fake);
+        tr.registerDerivedVec("fakedCSVValues", fakedCSVValues);
+        tr.registerDerivedVar("maxCSV", maxCSV);
+        
+    }
+
     void getSearchBin(NTupleReader& tr)
     {
         const int& cntCSVS = tr.getVar<int>("cntCSVSZinv");
@@ -576,6 +650,11 @@ namespace plotterFunctions
         (*blvZinv)(tr);
     }
 
+    void zinvBaseline1b(NTupleReader& tr)
+    {
+        (*blvZinv1b)(tr);
+    }
+
     void zinvBaseline2b(NTupleReader& tr)
     {
         (*blvZinv2b)(tr);
@@ -611,6 +690,7 @@ namespace plotterFunctions
         tr3 = new TRandom3();
 
         blvZinv = new BaselineVessel("Zinv");
+        blvZinv1b = new BaselineVessel("Zinv1b");
         blvZinv2b = new BaselineVessel("Zinv2b");
         blvZinv3b = new BaselineVessel("Zinv3b");
 
@@ -625,8 +705,10 @@ namespace plotterFunctions
         //stopFunctions::cjh.setPhotoCleanThresh(0.7);
         stopFunctions::cjh.setDisable(false);
         tr.registerFunction(&stopFunctions::cleanJets);
+        tr.registerFunction(&fakebtagvectors);
         tr.registerFunction(&generateWeight);
         tr.registerFunction(&zinvBaseline);
+        tr.registerFunction(&zinvBaseline1b);
         tr.registerFunction(&zinvBaseline2b);
         tr.registerFunction(&zinvBaseline3b);
         tr.registerFunction(&getSearchBin);
