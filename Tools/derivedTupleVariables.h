@@ -6,6 +6,7 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TFile.h"
+#include "TMath.h"
 #include "TLorentzVector.h"
 #include "Math/VectorUtil.h"
 #include "TRandom3.h"
@@ -25,6 +26,7 @@ namespace plotterFunctions
     static TH1* hZAcc;
     static TRandom3 *tr3;
     static BaselineVessel *blvZinv;
+    static BaselineVessel *blvZinv1b;
     static BaselineVessel *blvZinv2b;
     static BaselineVessel *blvZinv3b;
 
@@ -509,6 +511,82 @@ namespace plotterFunctions
         tr.registerDerivedVar("passSingleMu45", muTrigMu45);
     }
 
+    void fakebtagvectors(NTupleReader& tr)
+    {
+        const std::vector<double>& cleanJetpt30ArrBTag = tr.getVec<double>("cleanJetpt30ArrBTag");
+
+        double maxCSV = 0.0;
+        double secCSV = 0.0;
+        double tenCSV = 0.0;
+        int iMaxCSV = -1;
+        int iSecCSV = -1;
+        int iTenCSV = -1;
+
+        //find index of 3 highest CSV values
+        for(int i = 0; i < cleanJetpt30ArrBTag.size(); ++i)
+        {
+            if(cleanJetpt30ArrBTag[i] > maxCSV)
+            {
+                tenCSV = secCSV;
+                secCSV = maxCSV;
+                maxCSV = cleanJetpt30ArrBTag[i];
+                iTenCSV = iSecCSV;
+                iSecCSV = iMaxCSV;
+                iMaxCSV = i;
+            }
+            else if(cleanJetpt30ArrBTag[i] > secCSV)
+            {
+                tenCSV = secCSV;
+                secCSV = cleanJetpt30ArrBTag[i];
+                iTenCSV = iSecCSV;
+                iSecCSV = i;
+            }
+            else if(cleanJetpt30ArrBTag[i] > tenCSV)
+            {
+                tenCSV = cleanJetpt30ArrBTag[i];
+                iTenCSV = i;
+            }
+        }
+
+        std::vector<double>* cleanJetpt30ArrBTag1fake = new std::vector<double>(cleanJetpt30ArrBTag);
+        std::vector<double>* cleanJetpt30ArrBTag2fake = new std::vector<double>(cleanJetpt30ArrBTag);
+        std::vector<double>* cleanJetpt30ArrBTag3fake = new std::vector<double>(cleanJetpt30ArrBTag);
+        std::vector<double>* fakedCSVValues = new std::vector<double>();
+
+        if(iMaxCSV >= 0) (*cleanJetpt30ArrBTag1fake)[iMaxCSV] = 0.99;
+
+        if(iMaxCSV >= 0) (*cleanJetpt30ArrBTag2fake)[iMaxCSV] = 0.99;
+        if(iSecCSV >= 0) (*cleanJetpt30ArrBTag2fake)[iSecCSV] = 0.99;
+
+        if(iMaxCSV >= 0) (*cleanJetpt30ArrBTag3fake)[iMaxCSV] = 0.99;
+        if(iSecCSV >= 0) (*cleanJetpt30ArrBTag3fake)[iSecCSV] = 0.99;
+        if(iTenCSV >= 0) (*cleanJetpt30ArrBTag3fake)[iTenCSV] = 0.99;
+
+        if(iMaxCSV >= 0) fakedCSVValues->push_back(maxCSV);
+        if(iSecCSV >= 0) fakedCSVValues->push_back(secCSV);
+        if(iTenCSV >= 0) fakedCSVValues->push_back(tenCSV);
+
+        //Calculate the combinatoric weights for b-jet faking
+        double weight1fakeb = TMath::Binomial(cleanJetpt30ArrBTag.size(), 1);
+        double weight2fakeb = TMath::Binomial(cleanJetpt30ArrBTag.size(), 2);
+        double weight3fakeb = TMath::Binomial(cleanJetpt30ArrBTag.size(), 3);
+        //check for nans
+        if(weight1fakeb != weight1fakeb) weight1fakeb = 0.0;
+        if(weight2fakeb != weight2fakeb) weight2fakeb = 0.0;
+        if(weight3fakeb != weight3fakeb) weight3fakeb = 0.0;
+        
+        tr.registerDerivedVar("weight1fakeb", weight1fakeb);
+        tr.registerDerivedVar("weight2fakeb", weight2fakeb);
+        tr.registerDerivedVar("weight3fakeb", weight3fakeb);
+
+        tr.registerDerivedVec("cleanJetpt30ArrBTag1fake", cleanJetpt30ArrBTag1fake);
+        tr.registerDerivedVec("cleanJetpt30ArrBTag2fake", cleanJetpt30ArrBTag2fake);
+        tr.registerDerivedVec("cleanJetpt30ArrBTag3fake", cleanJetpt30ArrBTag3fake);
+        tr.registerDerivedVec("fakedCSVValues", fakedCSVValues);
+        tr.registerDerivedVar("maxCSV", maxCSV);
+        
+    }
+
     void getSearchBin(NTupleReader& tr)
     {
         const int& cntCSVS = tr.getVar<int>("cntCSVSZinv");
@@ -520,6 +598,9 @@ namespace plotterFunctions
         const double& MT2 = tr.getVar<double>("best_had_brJet_MT2Zinv");
         const double& MT2_2b = tr.getVar<double>("best_had_brJet_MT2Zinv2b");
         const double& MT2_3b = tr.getVar<double>("best_had_brJet_MT2Zinv3b");
+        const double& weight1fakeb = tr.getVar<double>("weight1fakeb");
+        const double& weight2fakeb = tr.getVar<double>("weight2fakeb");
+        const double& weight3fakeb = tr.getVar<double>("weight3fakeb");
         const std::vector<TLorentzVector>& removedJetsLVec = tr.getVec<TLorentzVector>("removedJetVec");
 
         int nSearchBin = find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
@@ -537,12 +618,17 @@ namespace plotterFunctions
         const double wnb01 = 2.2322e-01;
         const double wnb02 = 4.3482e-02;
         const double wnb03 = 4.5729e-03;
+
+        const double wjnb1 = 0.1934061013;
+        const double wjnb2 = 0.0871400061;
+        const double wjnb3 = 0.0685596365;
+
         if(cntCSVS == 0)
         {
             //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt,   MT2,    cleanMet), wnb01));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt,   MT2,    cleanMet), wnb01 * wjnb1 * weight1fakeb));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * wjnb2 * weight2fakeb));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * wjnb3 * weight3fakeb));
         }
 
         tr.registerDerivedVar("nSearchBin", nSearchBin);
@@ -574,6 +660,11 @@ namespace plotterFunctions
     void zinvBaseline(NTupleReader& tr)
     {
         (*blvZinv)(tr);
+    }
+
+    void zinvBaseline1b(NTupleReader& tr)
+    {
+        (*blvZinv1b)(tr);
     }
 
     void zinvBaseline2b(NTupleReader& tr)
@@ -611,6 +702,7 @@ namespace plotterFunctions
         tr3 = new TRandom3();
 
         blvZinv = new BaselineVessel("Zinv");
+        blvZinv1b = new BaselineVessel("Zinv1b");
         blvZinv2b = new BaselineVessel("Zinv2b");
         blvZinv3b = new BaselineVessel("Zinv3b");
 
@@ -621,12 +713,14 @@ namespace plotterFunctions
         stopFunctions::cjh.setBTagCollection("recoJetsBtag");
         stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
         stopFunctions::cjh.setForceDr(true);
-        stopFunctions::cjh.setRemove(false);
+        stopFunctions::cjh.setRemove(true);
         //stopFunctions::cjh.setPhotoCleanThresh(0.7);
         stopFunctions::cjh.setDisable(false);
         tr.registerFunction(&stopFunctions::cleanJets);
+        tr.registerFunction(&fakebtagvectors);
         tr.registerFunction(&generateWeight);
         tr.registerFunction(&zinvBaseline);
+        tr.registerFunction(&zinvBaseline1b);
         tr.registerFunction(&zinvBaseline2b);
         tr.registerFunction(&zinvBaseline3b);
         tr.registerFunction(&getSearchBin);

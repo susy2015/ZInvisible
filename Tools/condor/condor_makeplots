@@ -11,40 +11,79 @@ notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
 
-Arguments = ZJetsToNuNu_HT_600toInf $ENV(CMSSW_BASE) -1 0
+Arguments = ZJetsToNuNu_HT_600toInf $ENV(CMSSW_BASE) 11 0
 Queue
 
-Arguments = ZJetsToNuNu_HT_400to600 $ENV(CMSSW_BASE) -1 0
+Arguments = ZJetsToNuNu_HT_400to600 $ENV(CMSSW_BASE) 11 0
 Queue
 
-Arguments = ZJetsToNuNu_HT_200to400 $ENV(CMSSW_BASE) -1 0
+Arguments = ZJetsToNuNu_HT_200to400 $ENV(CMSSW_BASE) 11 0
 Queue
 
-Arguments = ZJetsToNuNu_HT_100to200 $ENV(CMSSW_BASE) -1 0
+Arguments = ZJetsToNuNu_HT_100to200 $ENV(CMSSW_BASE) 11 0
 Queue
 
-Arguments = DYJetsToLL_HT_600toInf $ENV(CMSSW_BASE) 11 0
+Arguments = ZJetsToNuNu_HT_600toInf $ENV(CMSSW_BASE) -1 11
 Queue
 
-Arguments = DYJetsToLL_HT_400to600 $ENV(CMSSW_BASE) 11 0
+Arguments = ZJetsToNuNu_HT_400to600 $ENV(CMSSW_BASE) -1 11
 Queue
 
-Arguments = DYJetsToLL_HT_200to400 $ENV(CMSSW_BASE) 11 0
+Arguments = ZJetsToNuNu_HT_200to400 $ENV(CMSSW_BASE) -1 11
 Queue
 
-Arguments = DYJetsToLL_HT_100to200 $ENV(CMSSW_BASE) 11 0
+Arguments = ZJetsToNuNu_HT_100to200 $ENV(CMSSW_BASE) -1 11
 Queue
 
 
-Arguments = DYJetsToLL_HT_600toInf $ENV(CMSSW_BASE) -1 11
+Arguments = DYJetsToLL_HT_600toInf $ENV(CMSSW_BASE) 6 0
 Queue
 
-Arguments = DYJetsToLL_HT_400to600 $ENV(CMSSW_BASE) -1 11
+Arguments = DYJetsToLL_HT_400to600 $ENV(CMSSW_BASE) 6 0
 Queue
 
-Arguments = DYJetsToLL_HT_200to400 $ENV(CMSSW_BASE) -1 11
+Arguments = DYJetsToLL_HT_200to400 $ENV(CMSSW_BASE) 6 0
 Queue
 
-Arguments = DYJetsToLL_HT_100to200 $ENV(CMSSW_BASE) -1 11
+Arguments = DYJetsToLL_HT_100to200 $ENV(CMSSW_BASE) 6 0
+Queue
+
+
+Arguments = DYJetsToLL_HT_600toInf $ENV(CMSSW_BASE) 6 6
+Queue
+
+Arguments = DYJetsToLL_HT_400to600 $ENV(CMSSW_BASE) 6 6
+Queue
+
+Arguments = DYJetsToLL_HT_200to400 $ENV(CMSSW_BASE) 6 6
+Queue
+
+Arguments = DYJetsToLL_HT_100to200 $ENV(CMSSW_BASE) 6 6
+Queue
+
+
+Arguments = DYJetsToLL_HT_600toInf $ENV(CMSSW_BASE) 6 12
+Queue
+
+Arguments = DYJetsToLL_HT_400to600 $ENV(CMSSW_BASE) 6 12
+Queue
+
+Arguments = DYJetsToLL_HT_200to400 $ENV(CMSSW_BASE) 6 12
+Queue
+
+Arguments = DYJetsToLL_HT_100to200 $ENV(CMSSW_BASE) 6 12
+Queue
+
+
+Arguments = DYJetsToLL_HT_600toInf $ENV(CMSSW_BASE) -1 18
+Queue
+
+Arguments = DYJetsToLL_HT_400to600 $ENV(CMSSW_BASE) -1 18
+Queue
+
+Arguments = DYJetsToLL_HT_200to400 $ENV(CMSSW_BASE) -1 18
+Queue
+
+Arguments = DYJetsToLL_HT_100to200 $ENV(CMSSW_BASE) -1 18
 Queue
 
