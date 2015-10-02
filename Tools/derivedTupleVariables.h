@@ -570,6 +570,10 @@ namespace plotterFunctions
         double weight1fakeb = TMath::Binomial(cleanJetpt30ArrBTag.size(), 1);
         double weight2fakeb = TMath::Binomial(cleanJetpt30ArrBTag.size(), 2);
         double weight3fakeb = TMath::Binomial(cleanJetpt30ArrBTag.size(), 3);
+        //check for nans
+        if(weight1fakeb != weight1fakeb) weight1fakeb = 0.0;
+        if(weight2fakeb != weight2fakeb) weight2fakeb = 0.0;
+        if(weight3fakeb != weight3fakeb) weight3fakeb = 0.0;
         
         tr.registerDerivedVar("weight1fakeb", weight1fakeb);
         tr.registerDerivedVar("weight2fakeb", weight2fakeb);
@@ -594,6 +598,9 @@ namespace plotterFunctions
         const double& MT2 = tr.getVar<double>("best_had_brJet_MT2Zinv");
         const double& MT2_2b = tr.getVar<double>("best_had_brJet_MT2Zinv2b");
         const double& MT2_3b = tr.getVar<double>("best_had_brJet_MT2Zinv3b");
+        const double& weight1fakeb = tr.getVar<double>("weight1fakeb");
+        const double& weight2fakeb = tr.getVar<double>("weight2fakeb");
+        const double& weight3fakeb = tr.getVar<double>("weight3fakeb");
         const std::vector<TLorentzVector>& removedJetsLVec = tr.getVec<TLorentzVector>("removedJetVec");
 
         int nSearchBin = find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
@@ -611,12 +618,17 @@ namespace plotterFunctions
         const double wnb01 = 2.2322e-01;
         const double wnb02 = 4.3482e-02;
         const double wnb03 = 4.5729e-03;
+
+        const double wjnb1 = 0.1934061013;
+        const double wjnb2 = 0.0871400061;
+        const double wjnb3 = 0.0685596365;
+
         if(cntCSVS == 0)
         {
             //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt,   MT2,    cleanMet), wnb01));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt,   MT2,    cleanMet), wnb01 * wjnb1 * weight1fakeb));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * wjnb2 * weight2fakeb));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * wjnb3 * weight3fakeb));
         }
 
         tr.registerDerivedVar("nSearchBin", nSearchBin);
