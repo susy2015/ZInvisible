@@ -710,7 +710,7 @@ namespace plotterFunctions
         tr.registerFunction(&muInfo);
         stopFunctions::cjh.setMuonIso("mini");
         stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
-        stopFunctions::cjh.setBTagCollection("recoJetsBtag");
+        stopFunctions::cjh.setBTagCollection("recoJetsBtag_0_MuCleaned");
         stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
         stopFunctions::cjh.setForceDr(true);
         stopFunctions::cjh.setRemove(true);
