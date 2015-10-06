@@ -94,29 +94,29 @@ int main ()
 
     makeRatio1D("hMuEffPt", fin, fout, muptbins, nmuptbins);
     makeRatio1D("hMuAccPt", fin, fout);
-
+    
     makeRatio1D("hMuEffHt", fin, fout);
     makeRatio1D("hMuAccHt", fin, fout);
-
+    
     makeRatio2D("hMuEff", fin, fout);
     makeRatio2D("hMuAcc", fin, fout);
-
+    
     makeRatio1D("hZEffPt", fin, fout, zptbins, nzptbins);
     makeRatio1D("hZAccPt", fin, fout, zptbins, nzptbins);
-
+    
     makeRatio1D("hZAccPtSmear", fin, fout);//, zptbins, nzptbins);
-
+    
     makeRatio2D("hZEff", fin, fout);
     makeRatio2D("hZAcc", fin, fout);
-
+    
     makeRatio2D("hZEff_jActR1", fin, fout, zptbins, nzptbins, ybins, nybins);
     makeRatio2D("hZEff_jActR2", fin, fout);
-
+    
     makeRatio2D("hMuEffPtActReco", fin, fout, muptbins2, nmuptbins2, atbins, nactbins);
     makeRatio2D("hMuEffPtActIso", fin, fout, muptbins2, nmuptbins2, atbins, nactbins);
-
+    
     makeRatio1D("hMuEffPtReco", fin, fout, muptbins3, nmuptbins3);
     makeRatio1D("hMuEffPtIso", fin, fout, muptbins3, nmuptbins3);
 
-    fin->Close();
+    //fin->Close();
 }

@@ -100,6 +100,11 @@ int main()
     activeBranches.insert("recoJetschargedHadronEnergyFraction");
     activeBranches.insert("elesisEB");
     activeBranches.insert("cleanMetPt");
+    activeBranches.insert("prodJetsNoMu_jetsLVec");
+    activeBranches.insert("recoJetsBtag_0_MuCleaned");
+    activeBranches.insert("prodJetsNoMu_recoJetschargedEmEnergyFraction");
+    activeBranches.insert("prodJetsNoMu_recoJetsneutralEmEnergyFraction");
+    activeBranches.insert("prodJetsNoMu_recoJetschargedHadronEnergyFraction");
 
     TRandom3 *trg = new TRandom3(12321);
     plotterFunctions::tr3 = new TRandom3(32123);
@@ -118,7 +123,14 @@ int main()
 
         NTupleReader tr(t, activeBranches);
         stopFunctions::cjh.setMuonIso("mini");
-        stopFunctions::cjh.setRemove(false);
+        stopFunctions::cjh.setElecIso("rel");
+        stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
+        stopFunctions::cjh.setBTagCollection("recoJetsBtag_0_MuCleaned");
+        stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
+        stopFunctions::cjh.setForceDr(true);
+        stopFunctions::cjh.setRemove(true);
+        //stopFunctions::cjh.setPhotoCleanThresh(0.7);
+        stopFunctions::cjh.setDisable(true);
         tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&plotterFunctions::muInfo);
         tr.registerFunction(&plotterFunctions::generateWeight);

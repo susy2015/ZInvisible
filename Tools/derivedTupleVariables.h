@@ -85,10 +85,17 @@ namespace plotterFunctions
                         if(muEff && muEffReco && muEffIso)
                         {
                             //Fit to reco eff (eff = p0 + p1*pt + p2*pt^2
+                            //PHYS14
+                            //const double fitStart = 200.0; // extended to 1400 GeV
+                            //const double p0 =     0.955847; // +/- 0.461944    
+                            //const double p1 = -2.24431e-05; // +/- 0.00128305  
+                            //const double p2 = -5.68907e-08; // +/- 7.85913e-07
+                            //Sprint15
                             const double fitStart = 200.0; // extended to 1400 GeV
-                            const double p0 =     0.955847; // +/- 0.461944    
-                            const double p1 = -2.24431e-05; // +/- 0.00128305  
-                            const double p2 = -5.68907e-08; // +/- 7.85913e-07
+                            const double p0 =  9.83467e-01; // +/- 1.54469e+00
+                            const double p1 = -7.81897e-06; // +/- 4.16487e-03
+                            const double p2 = -1.22092e-08; // +/- 2.18556e-06
+                            
                             double muRecoEff = 0.0;
 
                             int recoPtBin = muEffReco->GetXaxis()->FindBin(mu1pt);
@@ -211,9 +218,15 @@ namespace plotterFunctions
         //if(hZAcc) zAcc = hZAcc->GetBinContent(hZAcc->GetXaxis()->FindBin(bestRecoZPt));//, hZAcc->GetYaxis()->FindBin(genCleanHt));//ht));
 
         //functional form [2] - exp([0] + [1]*x)
-        double acc_p0 = -2.91374e-01;
-        double acc_p1 = -4.42884e-03;
-        double acc_p2 =  9.51190e-01;
+        //PHYS14
+        //double acc_p0 = -2.91374e-01;
+        //double acc_p1 = -4.42884e-03;
+        //double acc_p2 =  9.51190e-01;
+        //Sprint15
+        double acc_p0 = -2.64921e-01;
+        double acc_p1 = -4.65305e-03;
+        double acc_p2 =  9.50493e-01;
+        
         if(hZAcc) 
         {
             if(genZPt < 100) zAcc = hZAcc->GetBinContent(hZAcc->GetXaxis()->FindBin(genZPt));
@@ -709,13 +722,14 @@ namespace plotterFunctions
         //register functions with NTupleReader
         tr.registerFunction(&muInfo);
         stopFunctions::cjh.setMuonIso("mini");
+        stopFunctions::cjh.setElecIso("rel");
         stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
         stopFunctions::cjh.setBTagCollection("recoJetsBtag_0_MuCleaned");
         stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
         stopFunctions::cjh.setForceDr(true);
         stopFunctions::cjh.setRemove(true);
         //stopFunctions::cjh.setPhotoCleanThresh(0.7);
-        stopFunctions::cjh.setDisable(false);
+        stopFunctions::cjh.setDisable(true);
         tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&fakebtagvectors);
         tr.registerFunction(&generateWeight);
