@@ -259,6 +259,7 @@ namespace plotterFunctions
         const std::vector<TLorentzVector>& jetsLVec     = tr.getVec<TLorentzVector>("jetsLVec");
         const std::vector<double>& recoJetschargedEmEnergyFraction     = tr.getVec<double>("recoJetschargedEmEnergyFraction"); 
         const std::vector<double>& recoJetschargedHadronEnergyFraction = tr.getVec<double>("recoJetschargedHadronEnergyFraction");
+        const std::vector<int> & muonsFlagIDVec = tr.getVec<int>("muonsFlagMedium");
 
         const double& ht                             = tr.getVar<double>("ht");
         const double& met                            = tr.getVar<double>("met");
@@ -283,13 +284,13 @@ namespace plotterFunctions
         int nTriggerMuons = 0;
         for(int i = 0; i < muonsLVec.size(); ++i)
         {
-            if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, AnaConsts::muonsArr)) // emulates muons with pt but no iso requirements.  
+            if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsArr)) // emulates muons with pt but no iso requirements.  
             {
                 cutMuVecRecoOnly.push_back(muonsLVec[i]);
             }
-            if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, AnaConsts::muonsArr))
+            if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsArr))
             {
-                if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, AnaConsts::muonsTrigArr)) 
+                if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsTrigArr)) 
                 {
                     if(nTriggerMuons == 0 && muonsLVec[i].Pt() > 17)  nTriggerMuons++;
                     else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
