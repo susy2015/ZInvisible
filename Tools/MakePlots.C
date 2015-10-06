@@ -21,13 +21,15 @@ int main(int argc, char* argv[])
         {"startFile", required_argument, 0, 'M'},
         {"numEvts",   required_argument, 0, 'E'},
         {"plotDir",   required_argument, 0, 'P'}
+	{"luminosity",      required_argument, 0, 'L'}
     };
 
     bool doPlots = true, doSave = true, fromTuple = true, runOnCondor = false;
     string histFile = "", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
+    double lumi = AnaSamples::luminosity;
 
-    while((opt = getopt_long(argc, argv, "psfcH:D:N:M:E:P:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "psfcH:D:N:M:E:P:L:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
@@ -72,6 +74,10 @@ int main(int argc, char* argv[])
         case 'P':
             plotDir = optarg;
             break;
+
+	case 'L':
+            lumi = atof(optarg); 
+            break;
         }
     }
 
@@ -87,7 +93,7 @@ int main(int argc, char* argv[])
         //sampleloc = "";
     }
 
-    AnaSamples::SampleSet        ss(sampleloc);
+    AnaSamples::SampleSet        ss(sampleloc, lumi);
     AnaSamples::SampleCollection sc(ss);
 
     const double zAcc = 1.0;
@@ -938,13 +944,138 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcDY_test(   "single", {{"mht", dsDY_ll}, {"jetsLVec(pt)", dsDY_nunu}, {"genZmass", dsDY_test}, {"genZPt", dsDY_test}});
     Plotter::DataCollection dcDY_ratio(  "ratio",  {{"cleanJetVec(pt)", dsDY_ll}, {"jetsLVec(pt)", dsDY_ll}});
     Plotter::DataCollection dcDY_stack(  "stack",  "mht", {dsDY_ll, dsDY_nunu});
-    Plotter::DataCollection dcDY_dataTets(  "data",  "met", {dsDY_nunu});
+    Plotter::DataCollection dcDY_dataTest(  "data",  "met", {dsDY_nunu});
 
-    vh.push_back(PHS("test",  {dcDY_stack, dcDY_test, dcDY_dataTets},  {3, 2}, "genZmass>80", 100, 0, 1000,   true, true,  "???",         "Norm Events"));
+    vh.push_back(PHS("test",  {dcDY_stack, dcDY_test, dcDY_dataTest},  {3, 2}, "genZmass>80", 100, 0, 1000,   true, true,  "???",         "Norm Events"));
     vh.push_back(PHS("test2", {dcDY_ratio},  {1, 1}, "", 100, 0, 500, true, false, "jpt???", "Ratio"));
 
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
+
+
+    // ------------------------
+    // - Data/MC plots
+    // ------------------------
+
+    Plotter::DatasetSummary dsData_2015B_nosel("Data Run 2015B", fileMap["Data_2015B"], "", "");
+    Plotter::DatasetSummary dsData_2015C_nosel("Data Run 2015C", fileMap["Data_2015C"], "", "");
+    Plotter::DatasetSummary dsData_2015D_nosel("Data Run 2015D", fileMap["Data_2015D"], "", "");
+    Plotter::DatasetSummary dsDY_nosel("DY", fileMap["DYJetsToLL"], "", "");
+
+    Plotter::DatasetSummary dsData_2015B_blnotag("Data Run 2015B", fileMap["Data_2015B"], "passBaselineNoTagZinv", "");
+    Plotter::DatasetSummary dsData_2015C_blnotag("Data Run 2015C", fileMap["Data_2015C"], "passBaselineNoTagZinv", "");
+    Plotter::DatasetSummary dsData_2015D_blnotag("Data Run 2015D", fileMap["Data_2015D"], "passBaselineNoTagZinv", "");
+    Plotter::DatasetSummary dsDY_blnotag("DY", fileMap["DYJetsToLL"], "passBaselineNoTagZinv", "");
+
+    Plotter::DatasetSummary dsData_2015B_bl("Data Run 2015B", fileMap["Data_2015B"], "passBaselineZinv", "");
+    Plotter::DatasetSummary dsData_2015C_bl("Data Run 2015C", fileMap["Data_2015C"], "passBaselineZinv", "");
+    Plotter::DatasetSummary dsData_2015D_bl("Data Run 2015D", fileMap["Data_2015D"], "passBaselineZinv", "");
+    Plotter::DatasetSummary dsDY_bl("DY", fileMap["DYJetsToLL"], "passBaselineZinv", "");
+
+
+    Plotter::DataCollection dcData_2015B_met_nosel("data",  "cleanMetPt", {dsData_2015B_nosel});
+    Plotter::DataCollection dcData_2015CD_met_nosel("data",  "cleanMetPt", {dsData_2015C_nosel, dsData_2015D_nosel});
+    Plotter::DataCollection dcDY_met_nosel("stack",  "cleanMetPt", {dsDY_nosel});
+
+    Plotter::DataCollection dcData_2015B_met_blnotag("data",  "cleanMetPt", {dsData_2015B_blnotag});
+    Plotter::DataCollection dcData_2015CD_met_blnotag("data",  "cleanMetPt", {dsData_2015C_blnotag, dsData_2015D_blnotag});
+    Plotter::DataCollection dcDY_met_blnotag("stack",  "cleanMetPt", {dsDY_blnotag});
+
+    Plotter::DataCollection dcData_2015B_met_bl("data",  "cleanMetPt", {dsData_2015B_bl});
+    Plotter::DataCollection dcData_2015CD_met_bl("data",  "cleanMetPt", {dsData_2015C_bl, dsData_2015D_bl});
+    Plotter::DataCollection dcDY_met_bl("stack",  "cleanMetPt", {dsDY_bl});
+
+
+    Plotter::DataCollection dcData_2015B_nt_nosel("data",  "nTopCandSortedCntZinv", {dsData_2015B_nosel});
+    Plotter::DataCollection dcData_2015CD_nt_nosel("data",  "nTopCandSortedCntZinv", {dsData_2015C_nosel, dsData_2015D_nosel});
+    Plotter::DataCollection dcDY_nt_nosel("stack",  "nTopCandSortedCntZinv", {dsDY_nosel});
+
+    Plotter::DataCollection dcData_2015B_nt_blnotag("data",  "nTopCandSortedCntZinv", {dsData_2015B_blnotag});
+    Plotter::DataCollection dcData_2015CD_nt_blnotag("data",  "nTopCandSortedCntZinv", {dsData_2015C_blnotag, dsData_2015D_blnotag});
+    Plotter::DataCollection dcDY_nt_blnotag("stack",  "nTopCandSortedCntZinv", {dsDY_blnotag});
+
+    Plotter::DataCollection dcData_2015B_nt_bl("data",  "nTopCandSortedCntZinv", {dsData_2015B_bl});
+    Plotter::DataCollection dcData_2015CD_nt_bl("data",  "nTopCandSortedCntZinv", {dsData_2015C_bl, dsData_2015D_bl});
+    Plotter::DataCollection dcDY_nt_bl("stack",  "nTopCandSortedCntZinv", {dsDY_bl});
+
+
+    Plotter::DataCollection dcData_2015B_nb_nosel("data",  "cntCSVSZinv", {dsData_2015B_nosel});
+    Plotter::DataCollection dcData_2015CD_nb_nosel("data",  "cntCSVSZinv", {dsData_2015C_nosel, dsData_2015D_nosel});
+    Plotter::DataCollection dcDY_nb_nosel("stack",  "cntCSVSZinv", {dsDY_nosel});
+
+    Plotter::DataCollection dcData_2015B_nb_blnotag("data",  "cntCSVSZinv", {dsData_2015B_blnotag});
+    Plotter::DataCollection dcData_2015CD_nb_blnotag("data",  "cntCSVSZinv", {dsData_2015C_blnotag, dsData_2015D_blnotag});
+    Plotter::DataCollection dcDY_nb_blnotag("stack",  "cntCSVSZinv", {dsDY_blnotag});
+
+    Plotter::DataCollection dcData_2015B_nb_bl("data",  "cntCSVSZinv", {dsData_2015B_bl});
+    Plotter::DataCollection dcData_2015CD_nb_bl("data",  "cntCSVSZinv", {dsData_2015C_bl, dsData_2015D_bl});
+    Plotter::DataCollection dcDY_nb_bl("stack",  "cntCSVSZinv", {dsDY_bl});
+
+
+    Plotter::DataCollection dcData_2015B_nj_nosel("data",  "cntNJetsPt30Eta24Zinv", {dsData_2015B_nosel});
+    Plotter::DataCollection dcData_2015CD_nj_nosel("data",  "cntNJetsPt30Eta24Zinv", {dsData_2015C_nosel, dsData_2015D_nosel});
+    Plotter::DataCollection dcDY_nj_nosel("stack",  "cntNJetsPt30Eta24Zinv", {dsDY_nosel});
+
+    Plotter::DataCollection dcData_2015B_nj_blnotag("data",  "cntNJetsPt30Eta24Zinv", {dsData_2015B_blnotag});
+    Plotter::DataCollection dcData_2015CD_nj_blnotag("data",  "cntNJetsPt30Eta24Zinv", {dsData_2015C_blnotag, dsData_2015D_blnotag});
+    Plotter::DataCollection dcDY_nj_blnotag("stack",  "cntNJetsPt30Eta24Zinv", {dsDY_blnotag});
+
+    Plotter::DataCollection dcData_2015B_nj_bl("data",  "cntNJetsPt30Eta24Zinv", {dsData_2015B_bl});
+    Plotter::DataCollection dcData_2015CD_nj_bl("data",  "cntNJetsPt30Eta24Zinv", {dsData_2015C_bl, dsData_2015D_bl});
+    Plotter::DataCollection dcDY_nj_bl("stack",  "cntNJetsPt30Eta24Zinv", {dsDY_bl});
+
+
+    Plotter::DataCollection dcData_2015B_ht_nosel("data",  "cleanHt", {dsData_2015B_nosel});
+    Plotter::DataCollection dcData_2015CD_ht_nosel("data",  "cleanHt", {dsData_2015C_nosel});
+    Plotter::DataCollection dcDY_ht_nosel("stack",  "cleanHt", {dsDY_nosel});
+
+    Plotter::DataCollection dcData_2015B_ht_blnotag("data",  "cleanHt", {dsData_2015B_blnotag});
+    Plotter::DataCollection dcData_2015CD_ht_blnotag("data",  "cleanHt", {dsData_2015C_blnotag, dsData_2015D_blnotag});
+    Plotter::DataCollection dcDY_ht_blnotag("stack",  "cleanHt", {dsDY_blnotag});
+
+    Plotter::DataCollection dcData_2015B_ht_bl("data",  "cleanHt", {dsData_2015B_bl});
+    Plotter::DataCollection dcData_2015CD_ht_bl("data",  "cleanHt", {dsData_2015C_bl, dsData_2015D_bl});
+    Plotter::DataCollection dcDY_ht_bl("stack",  "cleanHt", {dsDY_bl});
+
+
+    vh.push_back(PHS("DataMC_2015B_met_nosel", {dcData_2015B_met_nosel, dcDY_met_nosel},  {1, 2}, "", 150, 0, 1500,   true, false,  "met",    ""));
+    vh.push_back(PHS("DataMC_2015B_ht_nosel",  {dcData_2015B_ht_nosel, dcDY_ht_nosel},    {1, 2}, "", 150, 0, 1500,   true, false,  "ht",     ""));
+    vh.push_back(PHS("DataMC_2015B_nt_nosel",  {dcData_2015B_nt_nosel, dcDY_nt_nosel},    {1, 2}, "", 5, 0, 5,        true, false,  "ntop",   ""));
+    vh.push_back(PHS("DataMC_2015B_nb_nosel",  {dcData_2015B_nb_nosel, dcDY_nb_nosel},    {1, 2}, "", 10, 0, 10,      true, false,  "nb",     ""));
+    vh.push_back(PHS("DataMC_2015B_nj_nosel",  {dcData_2015B_nj_nosel, dcDY_nj_nosel},    {1, 2}, "", 20, 0, 20,      true, false,  "nj",     ""));
+
+    vh.push_back(PHS("DataMC_2015B_met_baselineNoTag",  {dcData_2015B_met_blnotag, dcDY_met_blnotag}, {1, 2}, "", 150, 0, 1500,   true, false,  "met",         ""));
+    vh.push_back(PHS("DataMC_2015B_ht_baselineNoTag",  {dcData_2015B_ht_blnotag,   dcDY_ht_blnotag},  {1, 2}, "", 150, 0, 1500,   true, false,  "ht",         ""));
+    vh.push_back(PHS("DataMC_2015B_nt_baselineNoTag",  {dcData_2015B_nt_blnotag,   dcDY_nt_blnotag},  {1, 2}, "", 5, 0, 5,        true, false,  "ntop",         ""));
+    vh.push_back(PHS("DataMC_2015B_nb_baselineNoTag",  {dcData_2015B_nb_blnotag,   dcDY_nb_blnotag},  {1, 2}, "", 10, 0, 10,      true, false,  "nb",         ""));
+    vh.push_back(PHS("DataMC_2015B_nj_baselineNoTag",  {dcData_2015B_nj_blnotag,   dcDY_nj_blnotag},  {1, 2}, "", 20, 0, 20,      true, false,  "nj",         ""));
+
+    vh.push_back(PHS("DataMC_2015B_met_baseline",  {dcData_2015B_met_bl, dcDY_met_bl}, {1, 2}, "", 150, 0, 1500,   true, false,  "met",         ""));
+    vh.push_back(PHS("DataMC_2015B_ht_baseline",  {dcData_2015B_ht_bl,   dcDY_ht_bl},  {1, 2}, "", 150, 0, 1500,   true, false,  "ht",         ""));
+    vh.push_back(PHS("DataMC_2015B_nt_baseline",  {dcData_2015B_nt_bl,   dcDY_nt_bl},  {1, 2}, "", 5, 0, 5,        true, false,  "ntop",         ""));
+    vh.push_back(PHS("DataMC_2015B_nb_baseline",  {dcData_2015B_nb_bl,   dcDY_nb_bl},  {1, 2}, "", 10, 0, 10,      true, false,  "nb",         ""));
+    vh.push_back(PHS("DataMC_2015B_nj_baseline",  {dcData_2015B_nj_bl,   dcDY_nj_bl},  {1, 2}, "", 20, 0, 20,      true, false,  "nj",         ""));
+
+
+    vh.push_back(PHS("DataMC_2015CD_met_nosel", {dcData_2015C_met_nosel, dcDY_met_nosel},  {1, 2}, "", 150, 0, 1500,   true, false,  "met",         ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_nosel",  {dcData_2015C_ht_nosel, dcDY_ht_nosel},  {1, 2}, "", 150, 0, 1500,   true, false,  "ht",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_nosel",  {dcData_2015C_nt_nosel, dcDY_nt_nosel},  {1, 2}, "", 5, 0, 5,   true, false,  "ntop",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_nosel",  {dcData_2015C_nb_nosel, dcDY_nb_nosel},  {1, 2}, "", 10, 0, 10,   true, false,  "nb",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_nosel",  {dcData_2015C_nj_nosel, dcDY_nj_nosel},  {1, 2}, "", 20, 0, 20,   true, false,  "nj",         ""));
+
+    vh.push_back(PHS("DataMC_2015CD_met_baselineNoTag", {dcData_2015C_met_blnotag, dcDY_met_blnotag},  {1, 2}, "", 150, 0, 1500,   true, false,  "met",         ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_baselineNoTag",  {dcData_2015C_ht_blnotag, dcDY_ht_blnotag},  {1, 2}, "", 150, 0, 1500,   true, false,  "ht",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_baselineNoTag",  {dcData_2015C_nt_blnotag, dcDY_nt_blnotag},  {1, 2}, "", 5, 0, 5,   true, false,  "ntop",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_baselineNoTag",  {dcData_2015C_nb_blnotag, dcDY_nb_blnotag},  {1, 2}, "", 10, 0, 10,   true, false,  "nb",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_baselineNoTag",  {dcData_2015C_nj_blnotag, dcDY_nj_blnotag},  {1, 2}, "", 20, 0, 20,   true, false,  "nj",         ""));
+
+    vh.push_back(PHS("DataMC_2015CD_met_baseline", {dcData_2015C_met_bl, dcDY_met_bl},  {1, 2}, "", 150, 0, 1500,   true, false,  "met",         ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_baseline",  {dcData_2015C_ht_bl, dcDY_ht_bl},  {1, 2}, "", 150, 0, 1500,   true, false,  "ht",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_baseline",  {dcData_2015C_nt_bl, dcDY_nt_bl},  {1, 2}, "", 5, 0, 5,   true, false,  "ntop",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_baseline",  {dcData_2015C_nb_bl, dcDY_nb_bl},  {1, 2}, "", 10, 0, 10,   true, false,  "nb",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_baseline",  {dcData_2015C_nj_bl, dcDY_nj_bl},  {1, 2}, "", 20, 0, 20,   true, false,  "nj",         ""));
+
+
 
     Plotter plotter(vh, vvf, fromTuple, histFile, nFiles, startFile, nEvts);
     plotter.setPlotDir(plotDir);
