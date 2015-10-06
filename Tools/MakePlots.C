@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
         {"numFiles",  required_argument, 0, 'N'},
         {"startFile", required_argument, 0, 'M'},
         {"numEvts",   required_argument, 0, 'E'},
-        {"plotDir",   required_argument, 0, 'P'}
+        {"plotDir",   required_argument, 0, 'P'},
 	{"luminosity",      required_argument, 0, 'L'}
     };
 
@@ -1057,23 +1057,23 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("DataMC_2015B_nj_baseline",  {dcData_2015B_nj_bl,   dcDY_nj_bl},  {1, 2}, "", 20, 0, 20,      true, false,  "nj",         ""));
 
 
-    vh.push_back(PHS("DataMC_2015CD_met_nosel", {dcData_2015C_met_nosel, dcDY_met_nosel},  {1, 2}, "", 150, 0, 1500,   true, false,  "met",         ""));
-    vh.push_back(PHS("DataMC_2015CD_ht_nosel",  {dcData_2015C_ht_nosel, dcDY_ht_nosel},  {1, 2}, "", 150, 0, 1500,   true, false,  "ht",         ""));
-    vh.push_back(PHS("DataMC_2015CD_nt_nosel",  {dcData_2015C_nt_nosel, dcDY_nt_nosel},  {1, 2}, "", 5, 0, 5,   true, false,  "ntop",         ""));
-    vh.push_back(PHS("DataMC_2015CD_nb_nosel",  {dcData_2015C_nb_nosel, dcDY_nb_nosel},  {1, 2}, "", 10, 0, 10,   true, false,  "nb",         ""));
-    vh.push_back(PHS("DataMC_2015CD_nj_nosel",  {dcData_2015C_nj_nosel, dcDY_nj_nosel},  {1, 2}, "", 20, 0, 20,   true, false,  "nj",         ""));
+    vh.push_back(PHS("DataMC_2015CD_met_nosel", {dcData_2015CD_met_nosel, dcDY_met_nosel},  {1, 2}, "", 150, 0, 1500,   true, false,  "met",         ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_nosel",  {dcData_2015CD_ht_nosel, dcDY_ht_nosel},  {1, 2}, "", 150, 0, 1500,   true, false,  "ht",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_nosel",  {dcData_2015CD_nt_nosel, dcDY_nt_nosel},  {1, 2}, "", 5, 0, 5,   true, false,  "ntop",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_nosel",  {dcData_2015CD_nb_nosel, dcDY_nb_nosel},  {1, 2}, "", 10, 0, 10,   true, false,  "nb",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_nosel",  {dcData_2015CD_nj_nosel, dcDY_nj_nosel},  {1, 2}, "", 20, 0, 20,   true, false,  "nj",         ""));
 
-    vh.push_back(PHS("DataMC_2015CD_met_baselineNoTag", {dcData_2015C_met_blnotag, dcDY_met_blnotag},  {1, 2}, "", 150, 0, 1500,   true, false,  "met",         ""));
-    vh.push_back(PHS("DataMC_2015CD_ht_baselineNoTag",  {dcData_2015C_ht_blnotag, dcDY_ht_blnotag},  {1, 2}, "", 150, 0, 1500,   true, false,  "ht",         ""));
-    vh.push_back(PHS("DataMC_2015CD_nt_baselineNoTag",  {dcData_2015C_nt_blnotag, dcDY_nt_blnotag},  {1, 2}, "", 5, 0, 5,   true, false,  "ntop",         ""));
-    vh.push_back(PHS("DataMC_2015CD_nb_baselineNoTag",  {dcData_2015C_nb_blnotag, dcDY_nb_blnotag},  {1, 2}, "", 10, 0, 10,   true, false,  "nb",         ""));
-    vh.push_back(PHS("DataMC_2015CD_nj_baselineNoTag",  {dcData_2015C_nj_blnotag, dcDY_nj_blnotag},  {1, 2}, "", 20, 0, 20,   true, false,  "nj",         ""));
+    vh.push_back(PHS("DataMC_2015CD_met_baselineNoTag", {dcData_2015CD_met_blnotag, dcDY_met_blnotag},  {1, 2}, "", 150, 0, 1500,   true, false,  "met",         ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_baselineNoTag",  {dcData_2015CD_ht_blnotag, dcDY_ht_blnotag},  {1, 2}, "", 150, 0, 1500,   true, false,  "ht",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_baselineNoTag",  {dcData_2015CD_nt_blnotag, dcDY_nt_blnotag},  {1, 2}, "", 5, 0, 5,   true, false,  "ntop",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_baselineNoTag",  {dcData_2015CD_nb_blnotag, dcDY_nb_blnotag},  {1, 2}, "", 10, 0, 10,   true, false,  "nb",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_baselineNoTag",  {dcData_2015CD_nj_blnotag, dcDY_nj_blnotag},  {1, 2}, "", 20, 0, 20,   true, false,  "nj",         ""));
 
-    vh.push_back(PHS("DataMC_2015CD_met_baseline", {dcData_2015C_met_bl, dcDY_met_bl},  {1, 2}, "", 150, 0, 1500,   true, false,  "met",         ""));
-    vh.push_back(PHS("DataMC_2015CD_ht_baseline",  {dcData_2015C_ht_bl, dcDY_ht_bl},  {1, 2}, "", 150, 0, 1500,   true, false,  "ht",         ""));
-    vh.push_back(PHS("DataMC_2015CD_nt_baseline",  {dcData_2015C_nt_bl, dcDY_nt_bl},  {1, 2}, "", 5, 0, 5,   true, false,  "ntop",         ""));
-    vh.push_back(PHS("DataMC_2015CD_nb_baseline",  {dcData_2015C_nb_bl, dcDY_nb_bl},  {1, 2}, "", 10, 0, 10,   true, false,  "nb",         ""));
-    vh.push_back(PHS("DataMC_2015CD_nj_baseline",  {dcData_2015C_nj_bl, dcDY_nj_bl},  {1, 2}, "", 20, 0, 20,   true, false,  "nj",         ""));
+    vh.push_back(PHS("DataMC_2015CD_met_baseline", {dcData_2015CD_met_bl, dcDY_met_bl},  {1, 2}, "", 150, 0, 1500,   true, false,  "met",         ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_baseline",  {dcData_2015CD_ht_bl, dcDY_ht_bl},  {1, 2}, "", 150, 0, 1500,   true, false,  "ht",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_baseline",  {dcData_2015CD_nt_bl, dcDY_nt_bl},  {1, 2}, "", 5, 0, 5,   true, false,  "ntop",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_baseline",  {dcData_2015CD_nb_bl, dcDY_nb_bl},  {1, 2}, "", 10, 0, 10,   true, false,  "nb",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_baseline",  {dcData_2015CD_nj_bl, dcDY_nj_bl},  {1, 2}, "", 20, 0, 20,   true, false,  "nj",         ""));
 
 
 
