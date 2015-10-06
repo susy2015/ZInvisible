@@ -403,13 +403,15 @@ namespace plotterFunctions
 
 
         int pdgIdZDec = 0;
-        if(W_emuVec.size() == 0) pdgIdZDec = 15;
-        else if(W_emuVec.size() == 2)
-        {
-            if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 11) pdgIdZDec = 11;
-            else if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 13) pdgIdZDec = 13;
-        }
-
+	if(&W_emuVec != nullptr)
+	{
+	    if(W_emuVec.size() == 0) pdgIdZDec = 15;
+	    else if(W_emuVec.size() == 2)
+	    {
+	        if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 11) pdgIdZDec = 11;
+		else if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 13) pdgIdZDec = 13;
+	    }
+	}
         bool passDiMuTrig  = nTriggerMuons >= 2;
         
         const double zMassMin = 71.0;
