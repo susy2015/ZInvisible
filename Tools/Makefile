@@ -23,10 +23,13 @@ LIBS       = $(shell root-config --glibs)
 MT2LIB     = -L$(CMSSW_BASE)/lib/${SCRAM_ARCH}/ -lrecipeAUXOxbridgeMT2
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
-PROGRAMS = calcEff harvestHists makePlots nEvts
+PROGRAMS = calcEff harvestHists makePlots
 
-all: $(PROGRAMS)
+all: mkobj $(PROGRAMS)
 
+
+mkobj:
+	@mkdir -p obj
 
 $(ODIR)/%.o : $(SDIR)/%.C
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
@@ -48,9 +51,6 @@ harvestHists: $(ODIR)/harvestHists.o
 
 makePlots: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePlots.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
-
-nEvts: $(ODIR)/samples.o $(ODIR)/nEvts.o
-	$(LD) $^ $(LIBS) -o $@
 
 clean:
 	rm -f $(ODIR)/*.o $(ODIR)/*.d $(PROGRAMS) core 
