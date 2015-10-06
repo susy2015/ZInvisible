@@ -87,3 +87,60 @@ Queue
 Arguments = DYJetsToLL_HT_100to200 $ENV(CMSSW_BASE) -1 18
 Queue
 
+
+#Arguments = TTJets_DiLept $ENV(CMSSW_BASE) 15 0
+#Queue
+#
+#Arguments = TTJets_DiLept $ENV(CMSSW_BASE) 15 15
+#Queue
+#
+#Arguments = TTJets_DiLept $ENV(CMSSW_BASE) 15 30
+#Queue
+#
+#Arguments = TTJets_DiLept $ENV(CMSSW_BASE) 15 45
+#Queue
+#
+#Arguments = TTJets_DiLept $ENV(CMSSW_BASE) 15 60
+#Queue
+#
+#Arguments = TTJets_DiLept $ENV(CMSSW_BASE) 15 75
+#Queue
+#
+#Arguments = TTJets_DiLept $ENV(CMSSW_BASE) 15 90
+#Queue
+#
+#Arguments = TTJets_DiLept $ENV(CMSSW_BASE) 15 105
+#Queue
+#
+#Arguments = TTJets_DiLept $ENV(CMSSW_BASE) 15 120
+#Queue
+#
+#Arguments = TTJets_DiLept $ENV(CMSSW_BASE) 15 135
+#Queue
+#
+#Arguments = TTJets_DiLept $ENV(CMSSW_BASE) -1 150
+#Queue
+
+
+
+#Arguments = Data_2015CD $ENV(CMSSW_BASE) 15 0 
+#Queue
+#
+#Arguments = Data_2015CD $ENV(CMSSW_BASE) 15 15
+#Queue
+#
+#Arguments = Data_2015CD $ENV(CMSSW_BASE) 15 30
+#Queue
+#
+#Arguments = Data_2015CD $ENV(CMSSW_BASE) 15 45 
+#Queue
+#
+#Arguments = Data_2015CD $ENV(CMSSW_BASE) 15 60
+#Queue
+#
+#Arguments = Data_2015CD $ENV(CMSSW_BASE) 15 75
+#Queue
+#
+#Arguments = Data_2015CD $ENV(CMSSW_BASE) -1 90
+#Queue
+
