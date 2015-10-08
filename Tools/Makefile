@@ -25,11 +25,16 @@ MT2LIB     = -L$(CMSSW_BASE)/lib/${SCRAM_ARCH}/ -lrecipeAUXOxbridgeMT2
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
 PROGRAMS = calcEff harvestHists makePlots
 
-all: mkobj $(PROGRAMS)
+all: mkobj sampPyWrap $(PROGRAMS)
 
 
 mkobj:
 	@mkdir -p obj
+
+sampPyWrap:
+	$(CXX) --std=c++11 -c -fPIC -o $(ODIR)/samplesPyWrap.o $(RSDIR)/samples.cc
+	$(CXX) --std=c++11 -c -fPIC -o $(ODIR)/samplesModulePyWrap.o $(SDIR)/samplesModule.cc
+	$(CXX) -shared -o $(ODIR)/samplesModule.so $(ODIR)/samplesPyWrap.o $(ODIR)/samplesModulePyWrap.o
 
 $(ODIR)/%.o : $(SDIR)/%.C
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
