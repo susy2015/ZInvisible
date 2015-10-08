@@ -116,7 +116,7 @@ int main()
     {
         TChain *t = new TChain(sc["DYJetsToLL"].front().treePath.c_str());
 
-        file.addFilesToChain(t);
+        for(const auto& fn : file.getFilelist()) t->Add(fn.c_str());
         //t->Add("root://cmsxrootd-site.fnal.gov//store/user/lpcsusyhad/PHYS14_720_Mar14_2014_v2/pastika/DYJetsToLL_M-50_HT-600toInf_Tune4C_13TeV-madgraph-tauola/PHYS14_PU20bx25_PHYS14_25_V1-FLAT/150328_003328/0000/stopFlatNtuples_15.root");
 
         std::cout << "Processing file(s): " << file.filePath << std::endl;
