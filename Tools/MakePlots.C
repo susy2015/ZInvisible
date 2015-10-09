@@ -152,6 +152,7 @@ int main(int argc, char* argv[])
     }
     else if(ss[dataSets] != ss.null())
     {
+        // First check whether you passed in a sample collection, or a collection exists with a similar name as the dataset
         for(const auto& fsnp : sc)
         {
             if(dataSets.find(fsnp.first) !=std::string::npos)
@@ -161,6 +162,11 @@ int main(int argc, char* argv[])
                 break;
             }
         }
+	// If we didn't find such a collection, we pass in the dataset itself
+        if (fileMap.size() == 0)
+	{
+	    fileMap[dataSets] = {ss[dataSets]};
+	}
     }
 
     Plotter::DatasetSummary dsDY_ll_inc(    "DY#rightarrow#mu#mu Inc",               fileMap["IncDY"], "pdgIdZDec=13;passMuZinvSel", "");
@@ -963,17 +969,17 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_nosel("DY", fileMap["DYJetsToLL"], "", "");
     Plotter::DatasetSummary dstt2l_nosel("t#bar{t} dilepton", fileMap["TTbarDiLep"], "", "");
 
-    Plotter::DatasetSummary dsData_2015B_blnotag("Data Run 2015B", fileMap["SingleMuon_2015B"], "passBaselineNoTagZinv", "");
-    Plotter::DatasetSummary dsData_2015C_blnotag("Data Run 2015C", fileMap["SingleMuon_2015C"], "passBaselineNoTagZinv", "");
-    Plotter::DatasetSummary dsData_2015D_blnotag("Data Run 2015D", fileMap["SingleMuon_2015D"], "passBaselineNoTagZinv", "");
-    Plotter::DatasetSummary dsDY_blnotag("DY", fileMap["DYJetsToLL"], "passBaselineNoTagZinv", "");
-    Plotter::DatasetSummary dstt2l_blnotag("t#bar{t} dilepton", fileMap["TTbarDiLep"], "passBaselineNoTagZinv", "");
+    Plotter::DatasetSummary dsData_2015B_blnotag("Data Run 2015B", fileMap["SingleMuon_2015B"], "passBaselineNoTagZinv;passMuZinvSel", "");
+    Plotter::DatasetSummary dsData_2015C_blnotag("Data Run 2015C", fileMap["SingleMuon_2015C"], "passBaselineNoTagZinv;passMuZinvSel", "");
+    Plotter::DatasetSummary dsData_2015D_blnotag("Data Run 2015D", fileMap["SingleMuon_2015D"], "passBaselineNoTagZinv;passMuZinvSel", "");
+    Plotter::DatasetSummary dsDY_blnotag("DY", fileMap["DYJetsToLL"], "passBaselineNoTagZinv;passMuZinvSel", "");
+    Plotter::DatasetSummary dstt2l_blnotag("t#bar{t} dilepton", fileMap["TTbarDiLep"], "passBaselineNoTagZinv;passMuZinvSel", "");
 
-    Plotter::DatasetSummary dsData_2015B_bl("Data Run 2015B", fileMap["SingleMuon_2015B"], "passBaselineZinv", "");
-    Plotter::DatasetSummary dsData_2015C_bl("Data Run 2015C", fileMap["SingleMuon_2015C"], "passBaselineZinv", "");
-    Plotter::DatasetSummary dsData_2015D_bl("Data Run 2015D", fileMap["SingleMuon_2015D"], "passBaselineZinv", "");
-    Plotter::DatasetSummary dsDY_bl("DY", fileMap["DYJetsToLL"], "passBaselineZinv", "");
-    Plotter::DatasetSummary dstt2l_bl("t#bar{t} dilepton", fileMap["TTbarDiLep"], "passBaselineZinv", "");
+    Plotter::DatasetSummary dsData_2015B_bl("Data Run 2015B", fileMap["SingleMuon_2015B"], "passBaselineZinv;passMuZinvSel", "");
+    Plotter::DatasetSummary dsData_2015C_bl("Data Run 2015C", fileMap["SingleMuon_2015C"], "passBaselineZinv;passMuZinvSel", "");
+    Plotter::DatasetSummary dsData_2015D_bl("Data Run 2015D", fileMap["SingleMuon_2015D"], "passBaselineZinv;passMuZinvSel", "");
+    Plotter::DatasetSummary dsDY_bl("DY", fileMap["DYJetsToLL"], "passBaselineZinv;passMuZinvSel", "");
+    Plotter::DatasetSummary dstt2l_bl("t#bar{t} dilepton", fileMap["TTbarDiLep"], "passBaselineZinv;passMuZinvSel", "");
 
 
     Plotter::DataCollection dcData_2015B_met_nosel("data",  "cleanMetPt", {dsData_2015B_nosel});
