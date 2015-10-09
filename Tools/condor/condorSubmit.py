@@ -37,7 +37,7 @@ datasets = []
 if options.datasets:
     datasets = options.datasets.split(',')
 else:
-    print "No dataset pecified"
+    print "No dataset specified"
     exit(0)
 
 for ds in datasets:
