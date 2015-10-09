@@ -61,3 +61,4 @@ fout.close
 
 system('mkdir -p logs')
 system("echo 'condor_submit condor_submit.txt'")
+system('condor_submit condor_submit.txt')
