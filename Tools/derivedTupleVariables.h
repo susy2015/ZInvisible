@@ -747,6 +747,7 @@ namespace plotterFunctions
     void activateBranches(std::set<std::string>& activeBranches)
     {
         for(auto& bn : AnaConsts::activatedBranchNames) activeBranches.insert(bn);
+        for(auto& bn : AnaConsts::activatedBranchNames_DataOnly) activeBranches.insert(bn);
         activeBranches.insert("ht");
         activeBranches.insert("run");
         activeBranches.insert("lumi");
