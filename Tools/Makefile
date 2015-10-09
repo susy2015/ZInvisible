@@ -31,10 +31,17 @@ all: mkobj sampPyWrap $(PROGRAMS)
 mkobj:
 	@mkdir -p obj
 
-sampPyWrap:
-	$(CXX) --std=c++11 -c -fPIC -o $(ODIR)/samplesPyWrap.o $(RSDIR)/samples.cc
-	$(CXX) --std=c++11 -c -fPIC -o $(ODIR)/samplesModulePyWrap.o $(SDIR)/samplesModule.cc
-	$(CXX) -shared -o $(ODIR)/samplesModule.so $(ODIR)/samplesPyWrap.o $(ODIR)/samplesModulePyWrap.o
+sampPyWrap: $(ODIR)/samplesModule.so
+
+$(ODIR)/samplesModule.so: $(ODIR)/samplesPyWrap.o $(ODIR)/samplesModulePyWrap.o
+	$(CXX) -shared -o $@ $^
+
+$(ODIR)/samplesPyWrap.o: $(RSDIR)/samples.cc $(RSDIR)/samples.h 
+	$(CXX) --std=c++11 -c -fPIC -o $@ $<
+
+$(ODIR)/samplesModulePyWrap.o: $(SDIR)/samplesModule.cc
+	$(CXX) --std=c++11 -c -fPIC -o $@ $<
+
 
 $(ODIR)/%.o : $(SDIR)/%.C
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
@@ -58,6 +65,6 @@ makePlots: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/Ma
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
 clean:
-	rm -f $(ODIR)/*.o $(ODIR)/*.d $(PROGRAMS) core 
+	rm -f $(ODIR)/*.o $(ODIR)/*.so $(ODIR)/*.d $(PROGRAMS) core 
 
 -include $(ODIR)/*.d
