@@ -57,7 +57,7 @@ for ds in datasets:
 
 fout = open("condor_submit.txt", "w")
 fout.write(''.join(fileParts))
-fout.close
+fout.close()
 
 system('mkdir -p logs')
 system("echo 'condor_submit condor_submit.txt'")
