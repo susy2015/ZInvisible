@@ -383,14 +383,6 @@ namespace plotterFunctions
             }
         }
 
-        //if(genMuInAcc->size() >= 2)
-        //{
-        //    double mmm = (*genMuInAcc->at(0) + *genMuInAcc->at(1)).M();
-        //    if(fabs(genZmass - mmm)/genZmass > 0.2 && mmm > 71 && mmm < 111) std::cout << "genZmass: " << genZmass << "\tgen dimuon mass: " << mmm << "\treco dimuon mass: " << zMassCurrent << "\tgenZPt: " << genZPt << "\tmu1pt: " << (*genMuInAcc->at(0)).Pt() << "\tmu2pt: " << (*genMuInAcc->at(1)).Pt() << std::endl;
-        //}
-
-
-
         TLorentzVector metV, metZ;
         metV.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
         metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
@@ -550,18 +542,8 @@ namespace plotterFunctions
         const double& weight1fakeb = tr.getVar<double>("weight1fakeb");
         const double& weight2fakeb = tr.getVar<double>("weight2fakeb");
         const double& weight3fakeb = tr.getVar<double>("weight3fakeb");
-        const std::vector<TLorentzVector>& removedJetsLVec = tr.getVec<TLorentzVector>("removedJetVec");
 
         int nSearchBin = find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
-
-        //hack, this does not belong here
-        TLorentzVector cleanMet2;
-        cleanMet2.SetPtEtaPhiM(cleanMet, 0.0, cleanMetPhi, 0.0);
-        
-        for(auto& jet : removedJetsLVec)
-        {
-            cleanMet2 += jet;
-        }
 
         std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
         //weights based on total N(b) yields vs. N(b) = 0 control region
@@ -581,7 +563,6 @@ namespace plotterFunctions
         }
 
         tr.registerDerivedVar("nSearchBin", nSearchBin);
-        tr.registerDerivedVar("cleanMet2Pt", double(cleanMet2.Pt()));
         tr.registerDerivedVec("nb0Bins", nb0Bins);
     }
 
