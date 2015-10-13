@@ -631,13 +631,15 @@ namespace plotterFunctions
         }
 
         std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
-        const double wnb01 = 2.2322e-01;
-        const double wnb02 = 4.3482e-02;
-        const double wnb03 = 4.5729e-03;
+        //weights based on total N(b) yields vs. N(b) = 0 control region
+        const double wnb01 = 6.26687e-2;//1.210079e-01;//2.2322e-01;
+        const double wnb02 = 5.78052e-3;//6.443451e-02;//4.3482e-02;
+        const double wnb03 = 7.08235e-4;//8.484504e-03;//4.5729e-03;
 
-        const double wjnb1 = 0.1934061013;
-        const double wjnb2 = 0.0871400061;
-        const double wjnb3 = 0.0685596365;
+        //weight factors to account for combinaitoric weights 
+        const double wjnb1 = 1.0;//0.1644543373;//0.1934061013;
+        const double wjnb2 = 1.0;//0.0621741958;//0.0871400061;
+        const double wjnb3 = 1.0;//0.0407881155;//0.0685596365;
 
         if(cntCSVS == 0)
         {
