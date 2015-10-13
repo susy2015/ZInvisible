@@ -44,16 +44,16 @@ $(ODIR)/samplesModulePyWrap.o: $(SDIR)/samplesModule.cc
 
 
 $(ODIR)/%.o : $(SDIR)/%.C
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -o $@ -c $<
 
 $(ODIR)/%.o : $(SDIR)/%.cc
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -o $@ -c $<
 
 $(ODIR)/%.o : $(RSDIR)/%.C
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -o $@ -c $<
 
 $(ODIR)/%.o : $(RSDIR)/%.cc
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -o $@ -c $<
 
 calcEff: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/calcEff.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@

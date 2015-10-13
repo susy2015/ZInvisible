@@ -64,7 +64,6 @@ namespace plotterFunctions
             {
                 if(cutMuVec[j].Pt() < 10) continue;
                 double zm = (cutMuVec[i] + cutMuVec[j]).M();
-                //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                 if(fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                 {
                     zMassCurrent = zm;
@@ -118,27 +117,6 @@ namespace plotterFunctions
                             muEff2 = muRecoEff * muEffIso->GetBinContent(isoPtBin, isoActBin);
                         }
 
-                        //double tjActR1L1 = 0.0, tjActR1L2 = 0.0;//, jActR1wgm = 0.0, jActR2wgm = 0.0;
-                        //for(auto& jet : cleanJetVec)
-                        //{
-                        //    double dR1 = ROOT::Math::VectorUtil::DeltaR(*jet, cutMuVec[i]);
-                        //    double dR2 = ROOT::Math::VectorUtil::DeltaR(*jet, cutMuVec[j]);
-                        //    if(dR1 > 0.04 && dR1 < 1.0)
-                        //    {
-                        //        tjActR1L1 += jet->Pt() / dR1;
-                        //    }
-                        //    if(dR2 > 0.04 && dR2 < 1.0)
-                        //    {
-                        //        tjActR1L2 += jet->Pt() / dR2;
-                        //    }
-                        //}
-                        //
-                        //if(muEff_jActR1)
-                        //{
-                        //    muEff1 = muEff_jActR1->GetBinContent(muEff_jActR1->GetXaxis()->FindBin(mu1pt), muEff_jActR1->GetYaxis()->FindBin(tjActR1L1));
-                        //    muEff2 = muEff_jActR1->GetBinContent(muEff_jActR1->GetXaxis()->FindBin(mu2pt), muEff_jActR1->GetYaxis()->FindBin(tjActR1L2));
-                        //}
-
                         
                         if((mu1pt > 20 && muEff1 < 1.0e-5) || (mu2pt > 20 && muEff2 < 1.0e-5)) 
                         {
@@ -146,16 +124,6 @@ namespace plotterFunctions
                             zEff = 1.0e-10;
                         }
                         else zEff = muEff1 * muEff2;
-
-                        //Get mu acceptance
-                        /*double muAcc1 = 0.0, muAcc2 = 0.0;
-
-                        muAcc1 = muAcc->GetBinContent(muAcc->GetXaxis()->FindBin(mu1pt), muAcc->GetYaxis()->FindBin(Ht));
-                        muAcc2 = muAcc->GetBinContent(muAcc->GetXaxis()->FindBin(mu2pt), muAcc->GetYaxis()->FindBin(Ht));
-
-                        if(muAcc1 < 1.0e-5 || muAcc2 < 1.0e-5) zAcc = 1.0e-10;
-                        else                                   zAcc = muAcc1 * muAcc2;*/
-
                     }
                 }
             }
@@ -185,38 +153,6 @@ namespace plotterFunctions
             genMudEta = genMu[0]->Eta() - genMu[1]->Eta();
         }
 
-        std::vector<double>* jActR1 = new std::vector<double>();
-        std::vector<double>* jActR2 = new std::vector<double>();
-
-        for(int i = 0; i < genMu.size(); ++i)
-        {
-            double tjActR1 = 0.0, tjActR2 = 0.0;//, jActR1wgm = 0.0, jActR2wgm = 0.0;
-            //for(auto& jet : cleanJetVec)
-            //{
-            //    double dR = ROOT::Math::VectorUtil::DeltaR(*jet, *(genMu[i]));
-            //    if(dR > 0.1 && dR < 1.0)
-            //    {
-            //        tjActR1 += jet->Pt() / dR;
-            //        tjActR2 += jet->Pt() / (dR * dR);
-            //    }
-            //}
-            for(auto& jet : jetsLVec)
-            {
-                double dR = ROOT::Math::VectorUtil::DeltaR(jet, *(genMu[i]));
-                if(dR > 0.04 && dR < 1.0)
-                {
-                    tjActR1 += jet.Pt() / dR;
-                    tjActR2 += jet.Pt() / (dR * dR);
-                }
-            }
-            jActR1->push_back(tjActR1);
-            jActR2->push_back(tjActR2);
-        }
-        
-        //ZPt eff/Acc here
-        //if(hZEff) zEff = hZEff->GetBinContent(hZEff->GetXaxis()->FindBin(bestRecoZ.Pt()));//, hZEff->GetYaxis()->FindBin(genCleanHt));//ht));
-        //if(hZAcc) zAcc = hZAcc->GetBinContent(hZAcc->GetXaxis()->FindBin(bestRecoZPt));//, hZAcc->GetYaxis()->FindBin(genCleanHt));//ht));
-
         //functional form [2] - exp([0] + [1]*x)
         //PHYS14
         //double acc_p0 = -2.91374e-01;
@@ -244,9 +180,6 @@ namespace plotterFunctions
             std::cout << "WARNING: Z efficiency < 0.05, forcing weight to zero! Eff_Z: " << zEff << "\tZ(Pt): " << bestRecoZPt <<  std::endl;
             zEff = 1.0e101;
         }
-
-        tr.registerDerivedVec("jActR1", jActR1);
-        tr.registerDerivedVec("jActR2", jActR2);
 
         tr.registerDerivedVar("mu1dRMin", mu1dRMin);
         tr.registerDerivedVar("mu2dRMin", mu2dRMin);
@@ -450,14 +383,6 @@ namespace plotterFunctions
             }
         }
 
-        //if(genMuInAcc->size() >= 2)
-        //{
-        //    double mmm = (*genMuInAcc->at(0) + *genMuInAcc->at(1)).M();
-        //    if(fabs(genZmass - mmm)/genZmass > 0.2 && mmm > 71 && mmm < 111) std::cout << "genZmass: " << genZmass << "\tgen dimuon mass: " << mmm << "\treco dimuon mass: " << zMassCurrent << "\tgenZPt: " << genZPt << "\tmu1pt: " << (*genMuInAcc->at(0)).Pt() << "\tmu2pt: " << (*genMuInAcc->at(1)).Pt() << std::endl;
-        //}
-
-
-
         TLorentzVector metV, metZ;
         metV.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
         metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
@@ -617,38 +542,27 @@ namespace plotterFunctions
         const double& weight1fakeb = tr.getVar<double>("weight1fakeb");
         const double& weight2fakeb = tr.getVar<double>("weight2fakeb");
         const double& weight3fakeb = tr.getVar<double>("weight3fakeb");
-        const std::vector<TLorentzVector>& removedJetsLVec = tr.getVec<TLorentzVector>("removedJetVec");
 
         int nSearchBin = find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
 
-        //hack, this does not belong here
-        TLorentzVector cleanMet2;
-        cleanMet2.SetPtEtaPhiM(cleanMet, 0.0, cleanMetPhi, 0.0);
-        
-        for(auto& jet : removedJetsLVec)
-        {
-            cleanMet2 += jet;
-        }
-
         std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
-        const double wnb01 = 2.2322e-01;
-        const double wnb02 = 4.3482e-02;
-        const double wnb03 = 4.5729e-03;
-
-        const double wjnb1 = 0.1934061013;
-        const double wjnb2 = 0.0871400061;
-        const double wjnb3 = 0.0685596365;
+        //weights based on total N(b) yields vs. N(b) = 0 control region
+        //These weights are derived from the rato of events in the N(t) = 1, 2, 3 bins after all baseline cuts except b tag between the 
+        //N(b) = 0 control region and each N(b) signal region using Z->nunu MC.  They account for both the combinatoric reweighting factor
+        //as well as the different event yields between hte control region and each signal region.  
+        const double wnb01 = 6.26687e-2;
+        const double wnb02 = 5.78052e-3;
+        const double wnb03 = 7.08235e-4;
 
         if(cntCSVS == 0)
         {
             //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt,   MT2,    cleanMet), wnb01 * wjnb1 * weight1fakeb));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * wjnb2 * weight2fakeb));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * wjnb3 * weight3fakeb));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt,   MT2,    cleanMet), wnb01 * weight1fakeb));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * weight2fakeb));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * weight3fakeb));
         }
 
         tr.registerDerivedVar("nSearchBin", nSearchBin);
-        tr.registerDerivedVar("cleanMet2Pt", double(cleanMet2.Pt()));
         tr.registerDerivedVec("nb0Bins", nb0Bins);
     }
 
