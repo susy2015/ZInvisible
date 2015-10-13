@@ -639,7 +639,7 @@ namespace plotterFunctions
         //register functions with NTupleReader
         tr.registerFunction(&muInfo);
         stopFunctions::cjh.setMuonIso("mini");
-        stopFunctions::cjh.setElecIso("rel");
+        stopFunctions::cjh.setElecIso("mini");
         stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
         stopFunctions::cjh.setBTagCollection("recoJetsBtag_0_MuCleaned");
         stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");

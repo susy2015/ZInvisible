@@ -513,12 +513,12 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("nb_0_cleanmht_DY_nunu_stack",     {scaled_stacked_DYtonunu_cleanmht},  {1, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0",  100, 0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
     vh.push_back(PHS("nb_0_cleanmet_DY_nunu_stack",     {scaled_stacked_DYtonunu_cleanMet},  {1, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0",  100, 0,     1500, true,  false,  "MET [GeV]",      "Events"));
 
-    vh.push_back(PHS("nSearchBin",               {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             45,  0,     45,   false, false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("nSearchBin_log",           {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("nSearchBinnb0",            {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("nSearchBinnb0_log",        {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("nSearchBinnb0ZZ",          {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("nSearchBinnb0ZZ_log",      {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("nSearchBin",               {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_log",           {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBinnb0",            {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBinnb0_log",        {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBinnb0ZZ",          {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBinnb0ZZ_log",      {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
 
     vh.push_back(PHS("mT2Zinv",                {scaled_cleanmt2},      {2, 1}, "",                                                             100, 0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
     vh.push_back(PHS("baseline_mT2Zinv",       {scaled_cleanmt2},      {2, 1}, "passBaselineZinv",                                             50,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
@@ -743,167 +743,10 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("byCSVvh1b_Ntops_baselineNoTag",    {PDC("single", "nTopCandSortedCntZinv",  {dsDY_nunu_veryhighCSV1b, dsDY_nunu_verylowCSV})}, {2, 1}, "passBaselineNoTagZinv",  10, 0,   10, true, true, "N tops",        "Norm Events"));
 
 
-
     vh.push_back(PHS("muPt_met_lt_150", {PDC("single", "cutMuVec(pt)", {dsDY_ll, dsDY_nunu})}, {1, 2}, "cleanMetPt<150", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]",         "Norm Events"));
     vh.push_back(PHS("cleanht_met_lt_150",   {scaled_cleanht}, {1, 1}, "cleanMetPt<150", 50, 0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
     vh.push_back(PHS("cleanmet_met_lt_150", {scaled_cleanMet}, {1, 1}, "cleanMetPt<150", 50, 0,     1500, true,  false,  "MET [GeV]",      "Events"));
     vh.push_back(PHS("cleanmht_met_lt_150", {scaled_cleanmht}, {1, 1}, "cleanMetPt<150", 50, 0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
-
-    Plotter::DataCollection  cleanht_DY_ll_nb("single", "cleanHt",    {dsDY_ll_0b, dsDY_ll_1b, dsDY_ll_2b, dsDY_ll_3b});
-    Plotter::DataCollection cleanmht_DY_ll_nb("single", "cleanMHt",   {dsDY_ll_0b, dsDY_ll_1b, dsDY_ll_2b, dsDY_ll_3b});
-    Plotter::DataCollection cleanMet_DY_ll_nb("single", "cleanMetPt", {dsDY_ll_0b, dsDY_ll_1b, dsDY_ll_2b, dsDY_ll_3b});
-
-    Plotter::DataCollection  cleanht_DY_ll_nt("single", "cleanHt",    {dsDY_ll_0t, dsDY_ll_1t, dsDY_ll_2t, dsDY_ll_3t});
-    Plotter::DataCollection cleanmht_DY_ll_nt("single", "cleanMHt",   {dsDY_ll_0t, dsDY_ll_1t, dsDY_ll_2t, dsDY_ll_3t});
-    Plotter::DataCollection cleanMet_DY_ll_nt("single", "cleanMetPt", {dsDY_ll_0t, dsDY_ll_1t, dsDY_ll_2t, dsDY_ll_3t});
-
-    Plotter::DataCollection  cleanht_DY_nunu_nb("single", "cleanHt",    {dsDY_nunu_0b, dsDY_nunu_1b, dsDY_nunu_2b, dsDY_nunu_3b});
-    Plotter::DataCollection cleanmht_DY_nunu_nb("single", "cleanMHt",   {dsDY_nunu_0b, dsDY_nunu_1b, dsDY_nunu_2b, dsDY_nunu_3b});
-    Plotter::DataCollection cleanMet_DY_nunu_nb("single", "cleanMetPt", {dsDY_nunu_0b, dsDY_nunu_1b, dsDY_nunu_2b, dsDY_nunu_3b});
-
-    Plotter::DataCollection  cleanht_DY_nunu_nt("single", "cleanHt",    {dsDY_nunu_0t, dsDY_nunu_1t, dsDY_nunu_2t, dsDY_nunu_3t});
-    Plotter::DataCollection cleanmht_DY_nunu_nt("single", "cleanMHt",   {dsDY_nunu_0t, dsDY_nunu_1t, dsDY_nunu_2t, dsDY_nunu_3t});
-    Plotter::DataCollection cleanMet_DY_nunu_nt("single", "cleanMetPt", {dsDY_nunu_0t, dsDY_nunu_1t, dsDY_nunu_2t, dsDY_nunu_3t});
-
-    PDC cleanMet_DY_nunu_nb_1_0("ratio", "cleanMetPt", {dsDY_nunu_1b, dsDY_nunu_0b});
-    PDC cleanMet_DY_nunu_nb_2_0("ratio", "cleanMetPt", {dsDY_nunu_2b, dsDY_nunu_0b});
-    PDC cleanMet_DY_nunu_nb_3_0("ratio", "cleanMetPt", {dsDY_nunu_3b, dsDY_nunu_0b});
-
-    PDC cleanMet_DY_nunu_nt_1_0("ratio", "cleanMetPt", {dsDY_nunu_1t, dsDY_nunu_0t});
-    PDC cleanMet_DY_nunu_nt_2_0("ratio", "cleanMetPt", {dsDY_nunu_2t, dsDY_nunu_0t});
-    PDC cleanMet_DY_nunu_nt_3_0("ratio", "cleanMetPt", {dsDY_nunu_3t, dsDY_nunu_0t});
-
-    vh.push_back(PHS("DY_nunu_nb_Ratio_cleanmet",               {cleanMet_DY_nunu_nb_1_0, cleanMet_DY_nunu_nb_2_0, cleanMet_DY_nunu_nb_3_0}, {1, 1}, "",                      25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nb_baseline_Ratio_cleanmet",      {cleanMet_DY_nunu_nb_1_0, cleanMet_DY_nunu_nb_2_0, cleanMet_DY_nunu_nb_3_0}, {1, 1}, "passBaselineZinv",      25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nb_baselineNoTag_Ratio_cleanmet", {cleanMet_DY_nunu_nb_1_0, cleanMet_DY_nunu_nb_2_0, cleanMet_DY_nunu_nb_3_0}, {1, 1}, "passBaselineNoTagZinv", 25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nb_baselineNob_Ratio_cleanmet",   {cleanMet_DY_nunu_nb_1_0, cleanMet_DY_nunu_nb_2_0, cleanMet_DY_nunu_nb_3_0}, {1, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv>0", 25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-
-    vh.push_back(PHS("DY_nunu_nt_Ratio_cleanmet",               {cleanMet_DY_nunu_nt_1_0, cleanMet_DY_nunu_nt_2_0, cleanMet_DY_nunu_nt_3_0}, {1, 1}, "",                      25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nt_baseline_Ratio_cleanmet",      {cleanMet_DY_nunu_nt_1_0, cleanMet_DY_nunu_nt_2_0, cleanMet_DY_nunu_nt_3_0}, {1, 1}, "passBaselineZinv",      25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nt_baselineNoTag_Ratio_cleanmet", {cleanMet_DY_nunu_nt_1_0, cleanMet_DY_nunu_nt_2_0, cleanMet_DY_nunu_nt_3_0}, {1, 1}, "passBaselineNoTagZinv", 25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nt_baselineNoT_Ratio_cleanmet",   {cleanMet_DY_nunu_nt_1_0, cleanMet_DY_nunu_nt_2_0, cleanMet_DY_nunu_nt_3_0}, {1, 1}, "passBaselineNoTagZinv;cntCSVSZinv>0", 25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-
-    PDC cleanMet_DY_ll_nb_1_0("ratio", "cleanMetPt", {dsDY_ll_1b, dsDY_ll_0b});
-    PDC cleanMet_DY_ll_nb_2_0("ratio", "cleanMetPt", {dsDY_ll_2b, dsDY_ll_0b});
-    PDC cleanMet_DY_ll_nb_3_0("ratio", "cleanMetPt", {dsDY_ll_3b, dsDY_ll_0b});
-
-    PDC cleanMet_DY_ll_nt_1_0("ratio", "cleanMetPt", {dsDY_ll_1t, dsDY_ll_0t});
-    PDC cleanMet_DY_ll_nt_2_0("ratio", "cleanMetPt", {dsDY_ll_2t, dsDY_ll_0t});
-    PDC cleanMet_DY_ll_nt_3_0("ratio", "cleanMetPt", {dsDY_ll_3t, dsDY_ll_0t});
-
-    vh.push_back(PHS("DY_ll_nb_Ratio_cleanmet",               {cleanMet_DY_ll_nb_1_0, cleanMet_DY_ll_nb_2_0, cleanMet_DY_ll_nb_3_0}, {1, 1}, "",                      25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nb_baseline_Ratio_cleanmet",      {cleanMet_DY_ll_nb_1_0, cleanMet_DY_ll_nb_2_0, cleanMet_DY_ll_nb_3_0}, {1, 1}, "passBaselineZinv",      25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nb_baselineNoTag_Ratio_cleanmet", {cleanMet_DY_ll_nb_1_0, cleanMet_DY_ll_nb_2_0, cleanMet_DY_ll_nb_3_0}, {1, 1}, "passBaselineNoTagZinv", 25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nb_baselineNob_Ratio_cleanmet",   {cleanMet_DY_ll_nb_1_0, cleanMet_DY_ll_nb_2_0, cleanMet_DY_ll_nb_3_0}, {1, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv>0", 25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-
-    vh.push_back(PHS("DY_ll_nt_Ratio_cleanmet",               {cleanMet_DY_ll_nt_1_0, cleanMet_DY_ll_nt_2_0, cleanMet_DY_ll_nt_3_0}, {1, 1}, "",                      25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nt_baseline_Ratio_cleanmet",      {cleanMet_DY_ll_nt_1_0, cleanMet_DY_ll_nt_2_0, cleanMet_DY_ll_nt_3_0}, {1, 1}, "passBaselineZinv",      25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nt_baselineNoTag_Ratio_cleanmet", {cleanMet_DY_ll_nt_1_0, cleanMet_DY_ll_nt_2_0, cleanMet_DY_ll_nt_3_0}, {1, 1}, "passBaselineNoTagZinv", 25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nt_baselineNoT_Ratio_cleanmet",   {cleanMet_DY_ll_nt_1_0, cleanMet_DY_ll_nt_2_0, cleanMet_DY_ll_nt_3_0}, {1, 1}, "passBaselineNoTagZinv;cntCSVSZinv>0", 25, 0,     1500, false,  true,  "MET [GeV]", "Norm Ratio"));
-
-    PDC cleanMT2_DY_ll_nb_1_0("ratio", "best_had_brJet_MT2Zinv", {dsDY_ll_1b, dsDY_ll_0b});
-    PDC cleanMT2_DY_ll_nb_2_0("ratio", "best_had_brJet_MT2Zinv", {dsDY_ll_2b, dsDY_ll_0b});
-    PDC cleanMT2_DY_ll_nb_3_0("ratio", "best_had_brJet_MT2Zinv", {dsDY_ll_3b, dsDY_ll_0b});
-
-    PDC cleanMT2_DY_ll_nt_1_0("ratio", "best_had_brJet_MT2Zinv", {dsDY_ll_1t, dsDY_ll_0t});
-    PDC cleanMT2_DY_ll_nt_2_0("ratio", "best_had_brJet_MT2Zinv", {dsDY_ll_2t, dsDY_ll_0t});
-    PDC cleanMT2_DY_ll_nt_3_0("ratio", "best_had_brJet_MT2Zinv", {dsDY_ll_3t, dsDY_ll_0t});
-
-    vh.push_back(PHS("DY_ll_nb_Ratio_cleanMT2",               {cleanMT2_DY_ll_nb_1_0, cleanMT2_DY_ll_nb_2_0, cleanMT2_DY_ll_nb_3_0}, {1, 1}, "",                      25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nb_baseline_Ratio_cleanMT2",      {cleanMT2_DY_ll_nb_1_0, cleanMT2_DY_ll_nb_2_0, cleanMT2_DY_ll_nb_3_0}, {1, 1}, "passBaselineZinv",      25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nb_baselineNoTag_Ratio_cleanMT2", {cleanMT2_DY_ll_nb_1_0, cleanMT2_DY_ll_nb_2_0, cleanMT2_DY_ll_nb_3_0}, {1, 1}, "passBaselineNoTagZinv", 25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nb_baselineNob_Ratio_cleanMT2",   {cleanMT2_DY_ll_nb_1_0, cleanMT2_DY_ll_nb_2_0, cleanMT2_DY_ll_nb_3_0}, {1, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv>0", 25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-
-    vh.push_back(PHS("DY_ll_nt_Ratio_cleanMT2",               {cleanMT2_DY_ll_nt_1_0, cleanMT2_DY_ll_nt_2_0, cleanMT2_DY_ll_nt_3_0}, {1, 1}, "",                      25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nt_baseline_Ratio_cleanMT2",      {cleanMT2_DY_ll_nt_1_0, cleanMT2_DY_ll_nt_2_0, cleanMT2_DY_ll_nt_3_0}, {1, 1}, "passBaselineZinv",      25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nt_baselineNoTag_Ratio_cleanMT2", {cleanMT2_DY_ll_nt_1_0, cleanMT2_DY_ll_nt_2_0, cleanMT2_DY_ll_nt_3_0}, {1, 1}, "passBaselineNoTagZinv", 25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nt_baselineNoT_Ratio_cleanMT2",   {cleanMT2_DY_ll_nt_1_0, cleanMT2_DY_ll_nt_2_0, cleanMT2_DY_ll_nt_3_0}, {1, 1}, "passBaselineNoTagZinv;cntCSVSZinv>0", 25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-
-    PDC cleanMT2_DY_nunu_nb_1_0("ratio", "best_had_brJet_MT2Zinv", {dsDY_nunu_1b, dsDY_nunu_0b});
-    PDC cleanMT2_DY_nunu_nb_2_0("ratio", "best_had_brJet_MT2Zinv", {dsDY_nunu_2b, dsDY_nunu_0b});
-    PDC cleanMT2_DY_nunu_nb_3_0("ratio", "best_had_brJet_MT2Zinv", {dsDY_nunu_3b, dsDY_nunu_0b});
-
-    PDC cleanMT2_DY_nunu_nt_1_0("ratio", "best_had_brJet_MT2Zinv", {dsDY_nunu_1t, dsDY_nunu_0t});
-    PDC cleanMT2_DY_nunu_nt_2_0("ratio", "best_had_brJet_MT2Zinv", {dsDY_nunu_2t, dsDY_nunu_0t});
-    PDC cleanMT2_DY_nunu_nt_3_0("ratio", "best_had_brJet_MT2Zinv", {dsDY_nunu_3t, dsDY_nunu_0t});
-
-    vh.push_back(PHS("DY_nunu_nb_Ratio_cleanMT2",               {cleanMT2_DY_nunu_nb_1_0, cleanMT2_DY_nunu_nb_2_0, cleanMT2_DY_nunu_nb_3_0}, {1, 1}, "",                      25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nb_baseline_Ratio_cleanMT2",      {cleanMT2_DY_nunu_nb_1_0, cleanMT2_DY_nunu_nb_2_0, cleanMT2_DY_nunu_nb_3_0}, {1, 1}, "passBaselineZinv",      25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nb_baselineNoTag_Ratio_cleanMT2", {cleanMT2_DY_nunu_nb_1_0, cleanMT2_DY_nunu_nb_2_0, cleanMT2_DY_nunu_nb_3_0}, {1, 1}, "passBaselineNoTagZinv", 25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nb_baselineNob_Ratio_cleanMT2",   {cleanMT2_DY_nunu_nb_1_0, cleanMT2_DY_nunu_nb_2_0, cleanMT2_DY_nunu_nb_3_0}, {1, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv>0", 25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-
-    vh.push_back(PHS("DY_nunu_nt_Ratio_cleanMT2",               {cleanMT2_DY_nunu_nt_1_0, cleanMT2_DY_nunu_nt_2_0, cleanMT2_DY_nunu_nt_3_0}, {1, 1}, "",                      25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nt_baseline_Ratio_cleanMT2",      {cleanMT2_DY_nunu_nt_1_0, cleanMT2_DY_nunu_nt_2_0, cleanMT2_DY_nunu_nt_3_0}, {1, 1}, "passBaselineZinv",      25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nt_baselineNoTag_Ratio_cleanMT2", {cleanMT2_DY_nunu_nt_1_0, cleanMT2_DY_nunu_nt_2_0, cleanMT2_DY_nunu_nt_3_0}, {1, 1}, "passBaselineNoTagZinv", 25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nt_baselineNoT_Ratio_cleanMT2",   {cleanMT2_DY_nunu_nt_1_0, cleanMT2_DY_nunu_nt_2_0, cleanMT2_DY_nunu_nt_3_0}, {1, 1}, "passBaselineNoTagZinv;cntCSVSZinv>0", 25, 0,     1500, false,  true,  "MT2 [GeV]", "Norm Ratio"));
-
-    PDC cleanNT_DY_ll_nb_1_0("ratio", "nTopCandSortedCntZinv", {dsDY_ll_1b, dsDY_ll_0b});
-    PDC cleanNT_DY_ll_nb_2_0("ratio", "nTopCandSortedCntZinv", {dsDY_ll_2b, dsDY_ll_0b});
-    PDC cleanNT_DY_ll_nb_3_0("ratio", "nTopCandSortedCntZinv", {dsDY_ll_3b, dsDY_ll_0b});
-
-    PDC cleanNT_DY_ll_nt_1_0("ratio", "nTopCandSortedCntZinv", {dsDY_ll_1t, dsDY_ll_0t});
-    PDC cleanNT_DY_ll_nt_2_0("ratio", "nTopCandSortedCntZinv", {dsDY_ll_2t, dsDY_ll_0t});
-    PDC cleanNT_DY_ll_nt_3_0("ratio", "nTopCandSortedCntZinv", {dsDY_ll_3t, dsDY_ll_0t});
-
-    vh.push_back(PHS("DY_ll_nb_Ratio_cleannT",               {cleanNT_DY_ll_nb_1_0, cleanNT_DY_ll_nb_2_0, cleanNT_DY_ll_nb_3_0}, {1, 1}, "",                      10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nb_baseline_Ratio_cleannT",      {cleanNT_DY_ll_nb_1_0, cleanNT_DY_ll_nb_2_0, cleanNT_DY_ll_nb_3_0}, {1, 1}, "passBaselineZinv",      10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nb_baselineNoTag_Ratio_cleannT", {cleanNT_DY_ll_nb_1_0, cleanNT_DY_ll_nb_2_0, cleanNT_DY_ll_nb_3_0}, {1, 1}, "passBaselineNoTagZinv", 10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nb_baselineNob_Ratio_cleannT",   {cleanNT_DY_ll_nb_1_0, cleanNT_DY_ll_nb_2_0, cleanNT_DY_ll_nb_3_0}, {1, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv>0", 10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-
-    vh.push_back(PHS("DY_ll_nt_Ratio_cleannT",               {cleanNT_DY_ll_nt_1_0, cleanNT_DY_ll_nt_2_0, cleanNT_DY_ll_nt_3_0}, {1, 1}, "",                      10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nt_baseline_Ratio_cleannT",      {cleanNT_DY_ll_nt_1_0, cleanNT_DY_ll_nt_2_0, cleanNT_DY_ll_nt_3_0}, {1, 1}, "passBaselineZinv",      10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nt_baselineNoTag_Ratio_cleannT", {cleanNT_DY_ll_nt_1_0, cleanNT_DY_ll_nt_2_0, cleanNT_DY_ll_nt_3_0}, {1, 1}, "passBaselineNoTagZinv", 10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-    vh.push_back(PHS("DY_ll_nt_baselineNoT_Ratio_cleannT",   {cleanNT_DY_ll_nt_1_0, cleanNT_DY_ll_nt_2_0, cleanNT_DY_ll_nt_3_0}, {1, 1}, "passBaselineNoTagZinv;cntCSVSZinv>0", 10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-
-    PDC cleanNT_DY_nunu_nb_1_0("ratio", "nTopCandSortedCntZinv", {dsDY_nunu_1b, dsDY_nunu_0b});
-    PDC cleanNT_DY_nunu_nb_2_0("ratio", "nTopCandSortedCntZinv", {dsDY_nunu_2b, dsDY_nunu_0b});
-    PDC cleanNT_DY_nunu_nb_3_0("ratio", "nTopCandSortedCntZinv", {dsDY_nunu_3b, dsDY_nunu_0b});
-
-    PDC cleanNT_DY_nunu_nt_1_0("ratio", "nTopCandSortedCntZinv", {dsDY_nunu_1t, dsDY_nunu_0t});
-    PDC cleanNT_DY_nunu_nt_2_0("ratio", "nTopCandSortedCntZinv", {dsDY_nunu_2t, dsDY_nunu_0t});
-    PDC cleanNT_DY_nunu_nt_3_0("ratio", "nTopCandSortedCntZinv", {dsDY_nunu_3t, dsDY_nunu_0t});
-
-    vh.push_back(PHS("DY_nunu_nb_Ratio_cleanNT",               {cleanNT_DY_nunu_nb_1_0, cleanNT_DY_nunu_nb_2_0, cleanNT_DY_nunu_nb_3_0}, {1, 1}, "",                      10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nb_baseline_Ratio_cleanNT",      {cleanNT_DY_nunu_nb_1_0, cleanNT_DY_nunu_nb_2_0, cleanNT_DY_nunu_nb_3_0}, {1, 1}, "passBaselineZinv",      10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nb_baselineNoTag_Ratio_cleanNT", {cleanNT_DY_nunu_nb_1_0, cleanNT_DY_nunu_nb_2_0, cleanNT_DY_nunu_nb_3_0}, {1, 1}, "passBaselineNoTagZinv", 10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nb_baselineNob_Ratio_cleanNT",   {cleanNT_DY_nunu_nb_1_0, cleanNT_DY_nunu_nb_2_0, cleanNT_DY_nunu_nb_3_0}, {1, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv>0", 10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-
-    vh.push_back(PHS("DY_nunu_nt_Ratio_cleanNT",               {cleanNT_DY_nunu_nt_1_0, cleanNT_DY_nunu_nt_2_0, cleanNT_DY_nunu_nt_3_0}, {1, 1}, "",                      10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nt_baseline_Ratio_cleanNT",      {cleanNT_DY_nunu_nt_1_0, cleanNT_DY_nunu_nt_2_0, cleanNT_DY_nunu_nt_3_0}, {1, 1}, "passBaselineZinv",      10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nt_baselineNoTag_Ratio_cleanNT", {cleanNT_DY_nunu_nt_1_0, cleanNT_DY_nunu_nt_2_0, cleanNT_DY_nunu_nt_3_0}, {1, 1}, "passBaselineNoTagZinv", 10, 0,     10, false,  true,  "N(t)", "Norm Ratio"));
-    vh.push_back(PHS("DY_nunu_nt_baselineNoT_Ratio_cleanNT",   {cleanNT_DY_nunu_nt_1_0, cleanNT_DY_nunu_nt_2_0, cleanNT_DY_nunu_nt_3_0}, {1, 1}, "passBaselineNoTagZinv;cntCSVSZinv>0", 10, 0,    10, false,  true,  "n(t)", "Norm Ratio"));
-
-    vh.push_back(PHS("DY_mumu_nb_cleanht",   {cleanht_DY_ll_nb}, {1, 1}, "", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nb_cleanmet", {cleanMet_DY_ll_nb}, {1, 1}, "", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nb_cleanmht", {cleanmht_DY_ll_nb}, {1, 1}, "", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
-
-    vh.push_back(PHS("DY_mumu_nt_cleanht",   {cleanht_DY_ll_nt}, {1, 1}, "", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nt_cleanmet", {cleanMet_DY_ll_nt}, {1, 1}, "", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nt_cleanmht", {cleanmht_DY_ll_nt}, {1, 1}, "", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
-
-    vh.push_back(PHS("DY_nunu_nb_cleanht",   {cleanht_DY_nunu_nb}, {1, 1}, "", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nb_cleanmet", {cleanMet_DY_nunu_nb}, {1, 1}, "", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nb_cleanmht", {cleanmht_DY_nunu_nb}, {1, 1}, "", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
-
-    vh.push_back(PHS("DY_nunu_nt_cleanht",   {cleanht_DY_nunu_nt}, {1, 1}, "", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nt_cleanmet", {cleanMet_DY_nunu_nt}, {1, 1}, "", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nt_cleanmht", {cleanmht_DY_nunu_nt}, {1, 1}, "", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
-
-    vh.push_back(PHS("DY_mumu_nb_baseline_cleanht",   {cleanht_DY_ll_nb}, {1, 1}, "passBaselineNoTagZinv", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nb_baseline_cleanmet", {cleanMet_DY_ll_nb}, {1, 1}, "passBaselineNoTagZinv", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nb_baseline_cleanmht", {cleanmht_DY_ll_nb}, {1, 1}, "passBaselineNoTagZinv", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
-
-    vh.push_back(PHS("DY_mumu_nt_baseline_cleanht",   {cleanht_DY_ll_nt}, {1, 1}, "passBaselineNoTagZinv", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nt_baseline_cleanmet", {cleanMet_DY_ll_nt}, {1, 1}, "passBaselineNoTagZinv", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_mumu_nt_baseline_cleanmht", {cleanmht_DY_ll_nt}, {1, 1}, "passBaselineNoTagZinv", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
-
-    vh.push_back(PHS("DY_nunu_nb_baseline_cleanht",   {cleanht_DY_nunu_nb}, {1, 1}, "passBaselineNoTagZinv", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nb_baseline_cleanmet", {cleanMet_DY_nunu_nb}, {1, 1}, "passBaselineNoTagZinv", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nb_baseline_cleanmht", {cleanmht_DY_nunu_nb}, {1, 1}, "passBaselineNoTagZinv", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
-
-    vh.push_back(PHS("DY_nunu_nt_baseline_cleanht",   {cleanht_DY_nunu_nt}, {1, 1}, "passBaselineNoTagZinv", 50, 0,     2000, true,  true,  "H_{T} [GeV]",    "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nt_baseline_cleanmet", {cleanMet_DY_nunu_nt}, {1, 1}, "passBaselineNoTagZinv", 50, 0,     1500, true,  true,  "MET [GeV]",      "Norm Events"));
-    vh.push_back(PHS("DY_nunu_nt_baseline_cleanmht", {cleanmht_DY_nunu_nt}, {1, 1}, "passBaselineNoTagZinv", 50, 0,     1500, true,  true,  "MH_{T} [GeV]",   "Norm Events"));
 
 
     // Plots the information needed to calculate acceptance corrections, plot itself is meaningless
