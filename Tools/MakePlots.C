@@ -1,4 +1,4 @@
-#include "SusyAnaTools/Tools/Plotter.h"
+#include "Plotter.h"
 #include "SusyAnaTools/Tools/samples.h"
 
 #include <getopt.h>
