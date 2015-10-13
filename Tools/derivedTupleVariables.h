@@ -632,21 +632,19 @@ namespace plotterFunctions
 
         std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
         //weights based on total N(b) yields vs. N(b) = 0 control region
-        const double wnb01 = 6.26687e-2;//1.210079e-01;//2.2322e-01;
-        const double wnb02 = 5.78052e-3;//6.443451e-02;//4.3482e-02;
-        const double wnb03 = 7.08235e-4;//8.484504e-03;//4.5729e-03;
-
-        //weight factors to account for combinaitoric weights 
-        const double wjnb1 = 1.0;//0.1644543373;//0.1934061013;
-        const double wjnb2 = 1.0;//0.0621741958;//0.0871400061;
-        const double wjnb3 = 1.0;//0.0407881155;//0.0685596365;
+        //These weights are derived from the rato of events in the N(t) = 1, 2, 3 bins after all baseline cuts except b tag between the 
+        //N(b) = 0 control region and each N(b) signal region using Z->nunu MC.  They account for both the combinatoric reweighting factor
+        //as well as the different event yields between hte control region and each signal region.  
+        const double wnb01 = 6.26687e-2;
+        const double wnb02 = 5.78052e-3;
+        const double wnb03 = 7.08235e-4;
 
         if(cntCSVS == 0)
         {
             //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt,   MT2,    cleanMet), wnb01 * wjnb1 * weight1fakeb));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * wjnb2 * weight2fakeb));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * wjnb3 * weight3fakeb));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt,   MT2,    cleanMet), wnb01 * weight1fakeb));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * weight2fakeb));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * weight3fakeb));
         }
 
         tr.registerDerivedVar("nSearchBin", nSearchBin);
