@@ -4,6 +4,7 @@
 from samples import SampleCollection
 from os import system
 import optparse 
+import subprocess
 
 submitFile = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
@@ -57,8 +58,9 @@ for ds in datasets:
 
 fout = open("condor_submit.txt", "w")
 fout.write(''.join(fileParts))
-fout.close
+fout.close()
 
 system('mkdir -p logs')
 system("echo 'condor_submit condor_submit.txt'")
 system('condor_submit condor_submit.txt')
+
