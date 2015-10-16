@@ -532,11 +532,13 @@ namespace plotterFunctions
     {
         const int& cntCSVS = tr.getVar<int>("cntCSVSZinv");
         const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+        const int& nTopCandSortedCnt1b = tr.getVar<int>("nTopCandSortedCntZinv1b");
         const int& nTopCandSortedCnt2b = tr.getVar<int>("nTopCandSortedCntZinv2b");
         const int& nTopCandSortedCnt3b = tr.getVar<int>("nTopCandSortedCntZinv3b");
         const double& cleanMet = tr.getVar<double>("cleanMetPt");
         const double& cleanMetPhi = tr.getVar<double>("cleanMetPhi");
         const double& MT2 = tr.getVar<double>("best_had_brJet_MT2Zinv");
+        const double& MT2_1b = tr.getVar<double>("best_had_brJet_MT2Zinv1b");
         const double& MT2_2b = tr.getVar<double>("best_had_brJet_MT2Zinv2b");
         const double& MT2_3b = tr.getVar<double>("best_had_brJet_MT2Zinv3b");
         const double& weight1fakeb = tr.getVar<double>("weight1fakeb");
@@ -549,15 +551,15 @@ namespace plotterFunctions
         //weights based on total N(b) yields vs. N(b) = 0 control region
         //These weights are derived from the rato of events in the N(t) = 1, 2, 3 bins after all baseline cuts except b tag between the 
         //N(b) = 0 control region and each N(b) signal region using Z->nunu MC.  They account for both the combinatoric reweighting factor
-        //as well as the different event yields between hte control region and each signal region.  
-        const double wnb01 = 6.26687e-2;
-        const double wnb02 = 5.78052e-3;
-        const double wnb03 = 7.08235e-4;
+        //as well as the different event yields between the control region and each signal region.  
+        const double wnb01 = 3.478840e-02;//6.26687e-2;
+        const double wnb02 = 2.586369e-03;//5.78052e-3;
+        const double wnb03 = 1.640077e-04;//7.08235e-4;
 
         if(cntCSVS == 0)
         {
             //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
-            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt,   MT2,    cleanMet), wnb01 * weight1fakeb));
+            nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), wnb01 * weight1fakeb));
             nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * weight2fakeb));
             nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * weight3fakeb));
         }
@@ -639,7 +641,7 @@ namespace plotterFunctions
         //register functions with NTupleReader
         tr.registerFunction(&muInfo);
         stopFunctions::cjh.setMuonIso("mini");
-        stopFunctions::cjh.setElecIso("rel");
+        stopFunctions::cjh.setElecIso("mini");
         stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
         stopFunctions::cjh.setBTagCollection("recoJetsBtag_0_MuCleaned");
         stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
