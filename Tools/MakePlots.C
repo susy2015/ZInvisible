@@ -899,11 +899,11 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcDY_ht_nosel("stack",  "HTZinv", {dsDY_nosel, dstt2l_nosel});
 
     Plotter::DataCollection dcData_2015B_ht_blnotag("data",  "HTZinv", {dsData_2015B_blnotag});
-    Plotter::DataCollection dcData_2015CD_ht_blnotag("data",  "HTZinv", {dsData_2015C_blnotag, dsData_2015D_blnotag});
+    Plotter::DataCollection dcData_2015CD_ht_blnotag("data",  "HTZinv", {dsData_2015C_blnotag});
     Plotter::DataCollection dcDY_ht_blnotag("stack",  "HTZinv", {dsDY_blnotag, dstt2l_blnotag});
 
     Plotter::DataCollection dcData_2015B_ht_bl("data",  "HTZinv", {dsData_2015B_bl});
-    Plotter::DataCollection dcData_2015CD_ht_bl("data",  "HTZinv", {dsData_2015C_bl, dsData_2015D_bl});
+    Plotter::DataCollection dcData_2015CD_ht_bl("data",  "HTZinv", {dsData_2015C_bl});
     Plotter::DataCollection dcDY_ht_bl("stack",  "HTZinv", {dsDY_bl, dstt2l_bl});
 
 
