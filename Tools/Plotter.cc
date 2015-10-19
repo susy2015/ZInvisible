@@ -570,21 +570,24 @@ void Plotter::plot()
                 double sow = 0, te = 0;
                 bool firstHIS = true;
                 TH1* thstacksucks;
-                for(auto& h : hvec.hcsVec)
+                for(auto ih = hvec.hcsVec.rbegin(); ih != hvec.hcsVec.rend(); ++ih)
                 {
                     if(firstHIS)
                     {
                         firstHIS = false;
-                        thstacksucks = static_cast<TH1*>(h->h->Clone());
+                        thstacksucks = static_cast<TH1*>((*ih)->h->Clone());
                     }
                     else
                     {
-                        thstacksucks->Add(h->h);
+                        thstacksucks->Add((*ih)->h);
                     }
-                    h->h->SetLineColor(stackColors[iStack%NSTACKCOLORS]);
-                    h->h->SetFillColor(stackColors[iStack%NSTACKCOLORS]);
+                    (*ih)->h->SetLineColor(stackColors[iStack%NSTACKCOLORS]);
+                    (*ih)->h->SetFillColor(stackColors[iStack%NSTACKCOLORS]);
                     iStack++;
-                    stack->Add(h->h);
+                    stack->Add((*ih)->h);
+                }
+                for(auto& h : hvec.hcsVec)
+                {
                     double integral = h->h->Integral(0, h->h->GetNbinsX() + 1);
                     if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", h->label.c_str(), integral);
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", h->label.c_str(), integral);
