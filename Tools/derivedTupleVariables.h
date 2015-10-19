@@ -616,15 +616,19 @@ namespace plotterFunctions
         TFile *f = new TFile("muEffHists.root");
         if(f)
         {
-            muEff = static_cast<TH1*>(f->Get("hMuEffPt"));
-            muEffReco = static_cast<TH1*>(f->Get("hMuEffPtReco"));
-            muEffIso  = static_cast<TH2*>(f->Get("hMuEffPtActIso"));
-            muEff_jActR1 = static_cast<TH2*>(f->Get("hZEff_jActR1"));
-            muAcc = static_cast<TH2*>(f->Get("hMuAcc"));
-            hZEff = static_cast<TH1*>(f->Get("hZEffPt"));
-            hZAcc = static_cast<TH1*>(f->Get("hZAccPtSmear"));
+            muEff = static_cast<TH1*>(f->Get("hMuEffPt_ratio"));
+            muEffReco = static_cast<TH1*>(f->Get("hMuEffPtReco_ratio"));
+            muEffIso  = static_cast<TH2*>(f->Get("hMuEffPtActIso_ratio"));
+            muEff_jActR1 = static_cast<TH2*>(f->Get("hZEff_jActR1_ratio"));
+            muAcc = static_cast<TH2*>(f->Get("hMuAcc_ratio"));
+            hZEff = static_cast<TH1*>(f->Get("hZEffPt_ratio"));
+            hZAcc = static_cast<TH1*>(f->Get("hZAccPtSmear_ratio"));
             f->Close();
             delete f;
+        }
+        else
+        {
+            std::cout << "Failed to open: muEffHists.root" << std::endl;
         }
 
 //        type3Ptr2 = new topTagger::type3TopTagger();
