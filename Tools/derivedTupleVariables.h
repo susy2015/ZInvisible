@@ -37,7 +37,9 @@ namespace plotterFunctions
         const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVec");
         const std::vector<TLorentzVector>& cleanJetVec      = tr.getVec<TLorentzVector>("cleanJetVec");        
         const std::vector<TLorentzVector>& cutMuVec         = tr.getVec<TLorentzVector>("cutMuVec");
+        const std::vector<TLorentzVector>& cutElecVec       = tr.getVec<TLorentzVector>("cutElecVec");
         const std::vector<double>& cutMuActivity            = tr.getVec<double>("cutMuActivity");
+        const std::vector<double>& cutElecActivity          = tr.getVec<double>("cutElecActivity");
         const std::vector<TLorentzVector*>& genMu           = tr.getVec<TLorentzVector*>("genMu");
         const std::vector<TLorentzVector*>& genMuInAcc      = tr.getVec<TLorentzVector*>("genMuInAcc");
         const std::vector<TLorentzVector*>& genMatchMuInAcc = tr.getVec<TLorentzVector*>("genMatchMuInAcc");
@@ -165,8 +167,8 @@ namespace plotterFunctions
         
         if(hZAcc) 
         {
-            if(genZPt < 100) zAcc = hZAcc->GetBinContent(hZAcc->GetXaxis()->FindBin(genZPt));
-            else             zAcc = acc_p2 - exp(acc_p0 + acc_p1 * genZPt);
+            if(bestRecoZPt < 100) zAcc = hZAcc->GetBinContent(hZAcc->GetXaxis()->FindBin(bestRecoZPt));
+            else             zAcc = acc_p2 - exp(acc_p0 + acc_p1 * bestRecoZPt);
         }
 
         if(pdgIdZDec == 13 && passMuZinvSel && zAcc < 0.05) 
@@ -179,6 +181,14 @@ namespace plotterFunctions
         {
             std::cout << "WARNING: Z efficiency < 0.05, forcing weight to zero! Eff_Z: " << zEff << "\tZ(Pt): " << bestRecoZPt <<  std::endl;
             zEff = 1.0e101;
+        }
+
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //!!!!!!!!!!!!!HACK HACK HACK!!!!!!!!!!!!!
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if(cutElecVec.size() == 2)
+        {
+            zEff = 1.0;
         }
 
         tr.registerDerivedVar("mu1dRMin", mu1dRMin);
@@ -211,6 +221,18 @@ namespace plotterFunctions
         const double& met                            = tr.getVar<double>("met");
         const double& metphi                         = tr.getVar<double>("metphi");
 
+        const std::vector<TLorentzVector, std::allocator<TLorentzVector> > elesLVec = tr.getVec<TLorentzVector>("elesLVec");
+        const std::vector<double>& elesMiniIso          = tr.getVec<double>("elesMiniIso");
+        const std::vector<double>& elesCharge           = tr.getVec<double>("elesCharge");
+        const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
+
+        const bool& passMuonVeto  = tr.getVar<bool>("passMuonVeto");
+        const bool& passEleVeto   = tr.getVar<bool>("passEleVeto");
+            
+        std::vector<TLorentzVector>* cutElecVec = new std::vector<TLorentzVector>();
+        std::vector<double>* cutElecCharge = new std::vector<double>();
+        std::vector<double>* cutElecActivity = new std::vector<double>();
+
         std::vector<const TLorentzVector*>* genMatchIsoMuInAcc = new std::vector<const TLorentzVector*>();
         std::vector<const TLorentzVector*>* genMatchMuInAcc = new std::vector<const TLorentzVector*>();
         std::vector<double>* genMatchMuInAccRes = new std::vector<double>();
@@ -226,17 +248,18 @@ namespace plotterFunctions
 
         std::vector<TLorentzVector> cutMuVecRecoOnly;
 
-        int sumCharge = 0;
+        //muon selections 
+        int sumMuCharge = 0;
         int nTriggerMuons = 0;
         for(int i = 0; i < muonsLVec.size(); ++i)
         {
-            if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsArr)) // emulates muons with pt but no iso requirements.  
+            if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements.  
             {
                 cutMuVecRecoOnly.push_back(muonsLVec[i]);
             }
-            if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsArr))
+            if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
             {
-                if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsTrigArr)) 
+                if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) 
                 {
                     if(nTriggerMuons == 0 && muonsLVec[i].Pt() > 17)  nTriggerMuons++;
                     else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
@@ -244,10 +267,25 @@ namespace plotterFunctions
                 cutMuVec->push_back(muonsLVec[i]);
                 cutMuCharge->push_back(muonsCharge[i]);
                 cutMuActivity->push_back(AnaFunctions::getMuonActivity(muonsLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, recoJetschargedEmEnergyFraction, AnaConsts::muonsAct));
-                if(muonsCharge[i] > 0) sumCharge++;
-                else                   sumCharge--;
+                if(muonsCharge[i] > 0) sumMuCharge++;
+                else                   sumMuCharge--;
             }
         }
+
+        //electron selection
+        int sumElecCharge = 0;
+        for(int i = 0; i < elesLVec.size(); ++i)
+        {
+            if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], -1, AnaConsts::elesMiniIsoArr))
+            {
+                cutElecVec->push_back(elesLVec[i]);
+                cutElecCharge->push_back(elesCharge[i]);
+                cutElecActivity->push_back(AnaFunctions::getElectronActivity(elesLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, AnaConsts::elesAct));
+                if(elesCharge[i] > 0) sumElecCharge++;
+                else                  sumElecCharge--;
+            }
+        }        
+
 
         //mu45 non-iso trigger emulation 
         const double effsnom2012ABC[] = {0.928,0.8302,0.8018};
@@ -365,8 +403,8 @@ namespace plotterFunctions
         const double zMass    = 91.0;
         const double zMassMax = 111.0;
 
-        double zMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
-        TLorentzVector bestRecoZ;
+        double zMuMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
+        TLorentzVector bestRecoMuZ;
         for(int i = 0; i < cutMuVec->size(); ++i)
         {
             if((*cutMuVec)[i].Pt() < minMuPt) continue;
@@ -375,30 +413,68 @@ namespace plotterFunctions
                 if((*cutMuVec)[j].Pt() < minMuPt) continue;
                 double zm = ((*cutMuVec)[i] + (*cutMuVec)[j]).M();
                 //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
-                if(fabs(zm - zMass) < fabs(zMassCurrent - zMass))
+                if(fabs(zm - zMass) < fabs(zMuMassCurrent - zMass))
                 {
-                    bestRecoZ = (*cutMuVec)[i] + (*cutMuVec)[j];
-                    zMassCurrent = zm;
+                    bestRecoMuZ = (*cutMuVec)[i] + (*cutMuVec)[j];
+                    zMuMassCurrent = zm;
+                }
+            }
+        }
+
+        double zElecMassCurrent = 1.0e300;
+        TLorentzVector bestRecoElecZ;
+        for(int i = 0; i < cutElecVec->size(); ++i)
+        {
+            if((*cutElecVec)[i].Pt() < minMuPt) continue;
+            for(int j = 0; j < i && j < cutElecVec->size(); ++j)
+            {
+                if((*cutElecVec)[j].Pt() < minMuPt) continue;
+                double zm = ((*cutElecVec)[i] + (*cutElecVec)[j]).M();
+                //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
+                if(fabs(zm - zMass) < fabs(zElecMassCurrent - zMass))
+                {
+                    bestRecoElecZ = (*cutElecVec)[i] + (*cutElecVec)[j];
+                    zElecMassCurrent = zm;
+                }
+            }
+        }
+
+        double zElMuMassCurrent = 1.0e300;
+        TLorentzVector bestRecoElMuZ;
+        for(int i = 0; i < cutMuVec->size(); ++i)
+        {
+            if((*cutMuVec)[i].Pt() < minMuPt) continue;
+            for(int j = 0; j < cutElecVec->size(); ++j)
+            {
+                if((*cutElecVec)[j].Pt() < minMuPt) continue;
+                double zm = ((*cutMuVec)[i] + (*cutElecVec)[j]).M();
+                //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
+                if(fabs(zm - zMass) < fabs(zElMuMassCurrent - zMass))
+                {
+                    bestRecoElMuZ = (*cutMuVec)[i] + (*cutElecVec)[j];
+                    zElMuMassCurrent = zm;
                 }
             }
         }
 
         TLorentzVector metV, metZ;
         metV.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
+
+        TLorentzVector bestRecoZ = (fabs(bestRecoElecZ.M() - zMass) > fabs(bestRecoMuZ.M() - zMass))?(bestRecoMuZ):(bestRecoElecZ);
+        if(fabs(bestRecoZ.M() - zMass) > fabs(bestRecoElMuZ.M() - zMass)) bestRecoZ = bestRecoElMuZ;
+        
         metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
         TLorentzVector cleanMet = metV + metZ;
 
-        bool passMuZinvSel = (cutMuVec->size() == 2 && sumCharge == 0 && (*cutMuVec)[0].Pt() > highMuPt && (*cutMuVec)[1].Pt() > minMuPt) && (bestRecoZ.M() > zMassMin) && (bestRecoZ.M() < zMassMax);        
+        bool passMuZinvSel = passEleVeto && (cutMuVec->size() == 2 && sumMuCharge == 0 && (*cutMuVec)[0].Pt() > highMuPt && (*cutMuVec)[1].Pt() > minMuPt) && (bestRecoMuZ.M() > zMassMin) && (bestRecoMuZ.M() < zMassMax);
+        bool passElecZinvSel = passMuonVeto && (cutElecVec->size() == 2 && sumElecCharge == 0 && (*cutElecVec)[0].Pt() > highMuPt && (*cutElecVec)[1].Pt() > minMuPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
+        bool passElMuZinvSel = (cutMuVec->size() == 1 && cutElecVec->size() == 1 && sumElecCharge == -sumMuCharge && (*cutMuVec)[0].Pt() > highMuPt && (*cutElecVec)[0].Pt() > minMuPt) && (bestRecoElMuZ.M() > zMassMin) && (bestRecoElMuZ.M() < zMassMax);
 
         double cutMuPt1 = -999.9;
         double cutMuPt2 = -999.9;
         if(cutMuVec->size() >= 1) cutMuPt1 = cutMuVec->at(0).Pt();
         if(cutMuVec->size() >= 2) cutMuPt2 = cutMuVec->at(1).Pt();
 
-        const unsigned int& run   = tr.getVar<unsigned int>("run");
-        const unsigned int& lumi  = tr.getVar<unsigned int>("lumi");
-        const unsigned int& event = tr.getVar<unsigned int>("event");
-        //if(passMuZinvSel && genZPt > 400 && fabs(nuPt1 - nuPt2) > 300) std::cout << "BONJOUR!!! \t" << genZPt << "\t" << fabs(nuPt1 - nuPt2) << "\t" << run << "\t" << lumi << "\t" << event << std::endl;
 
         double mindPhiMetJ = 999.9;
         int jc = 0;
@@ -430,7 +506,9 @@ namespace plotterFunctions
         tr.registerDerivedVar("ZMRes", (bestRecoZ.M() - genZmass)/genZmass);
 
         tr.registerDerivedVec("cutMuVec", cutMuVec);
+        tr.registerDerivedVec("cutElecVec", cutElecVec);
         tr.registerDerivedVec("cutMuActivity", cutMuActivity);
+        tr.registerDerivedVec("cutElecActivity", cutElecActivity);
         tr.registerDerivedVec("genMu", genMu);
         tr.registerDerivedVar("ngenMu", static_cast<double>(genMu->size()));
         tr.registerDerivedVec("genMuInAcc", genMuInAcc);
@@ -447,9 +525,12 @@ namespace plotterFunctions
         tr.registerDerivedVar("genZEta", genZEta);
         tr.registerDerivedVar("genZmass", genZmass);
         tr.registerDerivedVar("pdgIdZDec", pdgIdZDec);
-        tr.registerDerivedVar("passMuZinvSel", passMuZinvSel);
         tr.registerDerivedVar("passDiMuIsoTrig", passDiMuTrig);
         tr.registerDerivedVar("passSingleMu45", muTrigMu45);
+        
+        tr.registerDerivedVar("passMuZinvSel", passMuZinvSel);
+        tr.registerDerivedVar("passElecZinvSel", passElecZinvSel);
+        tr.registerDerivedVar("passElMuZinvSel", passElMuZinvSel);
     }
 
     void fakebtagvectors(NTupleReader& tr)
@@ -548,6 +629,8 @@ namespace plotterFunctions
         int nSearchBin = find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
 
         std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
+        std::vector<double> * nb0BinsNW = new std::vector<double>();
+
         //weights based on total N(b) yields vs. N(b) = 0 control region
         //These weights are derived from the rato of events in the N(t) = 1, 2, 3 bins after all baseline cuts except b tag between the 
         //N(b) = 0 control region and each N(b) signal region using Z->nunu MC.  They account for both the combinatoric reweighting factor
@@ -562,9 +645,14 @@ namespace plotterFunctions
             nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), wnb01 * weight1fakeb));
             nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * weight2fakeb));
             nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * weight3fakeb));
+
+            nb0BinsNW->emplace_back(find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet));
+            nb0BinsNW->emplace_back(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet));
+            nb0BinsNW->emplace_back(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet));
         }
 
         tr.registerDerivedVar("nSearchBin", nSearchBin);
+        tr.registerDerivedVec("nb0BinsNW", nb0BinsNW);
         tr.registerDerivedVec("nb0Bins", nb0Bins);
     }
 
@@ -653,6 +741,7 @@ namespace plotterFunctions
         stopFunctions::cjh.setRemove(true);
         //stopFunctions::cjh.setPhotoCleanThresh(0.7);
         stopFunctions::cjh.setDisable(true);
+        stopFunctions::cjh.setDisableElec(false);
         tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&fakebtagvectors);
         tr.registerFunction(&generateWeight);
@@ -701,5 +790,7 @@ namespace plotterFunctions
         activeBranches.insert("prodJetsNoMu_recoJetsneutralEmEnergyFraction");
         activeBranches.insert("prodJetsNoMu_recoJetschargedHadronEnergyFraction");
         activeBranches.insert("elesisEB");
+        activeBranches.insert("elesMiniIso");
+        activeBranches.insert("elesCharge");
     }
 }
