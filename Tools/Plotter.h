@@ -23,7 +23,7 @@ class Plotter
 {
 private:
     class HistCutSummary;
-    
+
     class VarName
     {
     public:
@@ -50,7 +50,7 @@ private:
         double translateVar(const NTupleReader& tr) const;
         bool boolReturn(const NTupleReader& tr) const;
     };
-    
+
     class Cuttable
     {
     public:
@@ -60,7 +60,7 @@ private:
         void setCuts(const std::string& c);
         void extractCuts(std::set<std::string>& ab) const;
         const std::string& getCuts() const {return cuts_;}
-        
+
     private:
         std::string cuts_;
         std::vector<Cut> cutVec_;
@@ -121,7 +121,7 @@ public:
         bool isLog, isNorm, isRatio;
         std::string xAxisLabel, yAxisLabel;
         std::pair<int, int> ratio;
-        
+
         HistSummary() {}
         HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, bool log, bool norm, std::string xal, std::string yal, bool isRatio = true);
         ~HistSummary();
@@ -163,7 +163,7 @@ private:
         HistCutSummary(const std::string& lab, const std::string& name, const VarName v, const HistSummary* hsum, const DatasetSummary& ds) : label(lab), name(name), h(nullptr), variable(v), hs(hsum), dss(ds) {}
         ~HistCutSummary();
     };
-    
+
     void createHistsFromTuple();
     void createHistsFromFile();
     void fillHist(TH1 * const h, const VarName& name, const NTupleReader& tr, const double weight);
@@ -171,32 +171,32 @@ private:
 
     template<typename T> static const double& tlvGetValue(const std::string& name, const T& v)
     {
-        if     (name.find("pt")  != std::string::npos) 
+        if     (name.find("pt")  != std::string::npos)
         {
             const auto& retval = v.Pt();
             return retval;
         }
-        else if(name.find("eta") != std::string::npos) 
+        else if(name.find("eta") != std::string::npos)
         {
             const auto& retval = v.Eta();
             return retval;
         }
-        else if(name.find("phi") != std::string::npos) 
+        else if(name.find("phi") != std::string::npos)
         {
             const auto& retval = v.Phi();
             return retval;
         }
-        else if(name.find("E")   != std::string::npos) 
+        else if(name.find("E")   != std::string::npos)
         {
             const auto& retval = v.E();
             return retval;
         }
-        else if(name.find("M")   != std::string::npos) 
+        else if(name.find("M")   != std::string::npos)
         {
             const auto& retval = v.M();
             return retval;
         }
-        else if(name.find("Mt")  != std::string::npos) 
+        else if(name.find("Mt")  != std::string::npos)
         {
             const auto& retval = v.Mt();
             return retval;
@@ -218,10 +218,10 @@ private:
     {
         return *obj;
     }
-    
+
     template<typename T> void fillHistFromVec(TH1* const h, const VarName& name, const NTupleReader& tr, const double weight)
     {
-        if(name.var.compare("size") == 0) 
+        if(name.var.compare("size") == 0)
         {
             const auto& vec = tr.getVec<T>(name.name);
             if(&vec != nullptr) h->Fill(vec.size(), weight);
@@ -244,7 +244,7 @@ private:
     template<typename T, typename R = T> static const R& getVarFromVec(const VarName& name, const NTupleReader& tr)
     {
         const auto& vec = tr.getVec<T>(name.name);
-        
+
         if(&vec != nullptr)
         {
             const int& i = name.index;
