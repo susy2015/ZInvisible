@@ -242,10 +242,15 @@ void Plotter::createHistsFromTuple()
         std::cout << "Processing file(s): " << file.filePath << std::endl;
 
         int fileCount = 0, startCount = 0;
+        int NEvtsTotal = 0;
         for(const std::string& fname : file.filelist_)
         {
             if(startCount++ < startFile_) continue;
             if(nFile_ > 0 && fileCount++ >= nFile_) break;
+
+            if(nFile_ > 0) NEvtsTotal = 0;
+            else if(NEvtsTotal > maxEvts_) break;
+
             TFile *f = TFile::Open(fname.c_str());
 
             if(!f)
@@ -272,7 +277,7 @@ void Plotter::createHistsFromTuple()
 
             while(tr.getNextEvent())
             {
-                if(maxEvts_ > 0 && tr.getEvtNum() > maxEvts_) break;
+                if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;
                 if(tr.getEvtNum() %1000 == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
                 for(auto& hist : histsToFill)
                 {
@@ -287,6 +292,7 @@ void Plotter::createHistsFromTuple()
 
                     fillHist(hist->h, hist->variable, tr, weight);
                 }
+                ++NEvtsTotal;
             }
             f->Close();
         }
