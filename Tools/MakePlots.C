@@ -391,6 +391,8 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("ttbar_elecPt",      {PDC("single", "cutElecVec(pt)",         {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]",         "Norm Events"));
     vh.push_back(PHS("ttbar_elec1Pt",     {PDC("single", "cutElecVec[0](pt)",      {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]",         "Norm Events"));
     vh.push_back(PHS("ttbar_elec2Pt",     {PDC("single", "cutElecVec[1](pt)",      {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]",         "Norm Events"));
+    vh.push_back(PHS("ttbar_nb",          {PDC("single", "cntCSVSZinv",            {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 10,  0, 10,    true,  false, "N(b)",                    "Events"));
+    vh.push_back(PHS("ttbar_nt",          {PDC("single", "nTopCandSortedCnt",      {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 10,  0, 10,    true,  false, "N(t)",                    "Events"));
 
     vh.push_back(PHS("ttbar_baseline_mht",         {PDC("single", "mht",                    {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "M(H_{t}) [GeV]",  "Norm Events"));
     vh.push_back(PHS("ttbar_baseline_mt2",         {PDC("single", "best_had_brJet_MT2Zinv", {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "MT2 [GeV]",       "Norm Events"));
@@ -408,6 +410,8 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("ttbar_baseline_elecPt",      {PDC("single", "cutElecVec(pt)",         {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]", "Norm Events"));
     vh.push_back(PHS("ttbar_baseline_elec1Pt",     {PDC("single", "cutElecVec[0](pt)",      {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]", "Norm Events"));
     vh.push_back(PHS("ttbar_baseline_elec2Pt",     {PDC("single", "cutElecVec[1](pt)",      {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_nb",          {PDC("single", "cntCSVSZinv",            {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 10,  0, 10,    true,  false, "N(b)",            "Events"));
+    vh.push_back(PHS("ttbar_baseline_nt",          {PDC("single", "nTopCandSortedCnt",      {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 10,  0, 10,    true,  false, "N(t)",            "Events"));
 
     // Simple Reco vs. Gen plots
     vh.push_back(PHS("bestRecoZPt"  ,         {PDC("single",  {{"bestRecoZPt", dsDY_ll},       {"genZPt", dsDY_ll_gen}})},          {1, 2}, "",              100, 0, 1500,  true,  true,  "Z p_{T} [GeV]",           "Norm Events"));
