@@ -119,38 +119,6 @@ int main(int argc, char* argv[])
         fileMap["DYJetsToLL_HT_400to600"] = {ss["DYJetsToLL_HT_400to600"]};
         fileMap["ZJetsToNuNu_HT_400to600"] = {ss["ZJetsToNuNu_HT_400to600"]};
     }
-    //else if(dataSets.size() == 0)
-    //{
-    //    fileMap["IncDY"] = sc["IncDY"];
-    //    fileMap["DYJetsToLL"]  = sc["DYJetsToLL"];
-    //    fileMap["ZJetsToNuNu"] = sc["ZJetsToNuNu"];
-    //    fileMap["DYJetsToLL_HT_600toInf"] = {ss["DYJetsToLL_HT_600toInf"]};
-    //    fileMap["DYJetsToLL_HT_400to600"] = {ss["DYJetsToLL_HT_400to600"]};
-    //    fileMap["DYJetsToLL_HT_200to400"] = {ss["DYJetsToLL_HT_200to400"]};
-    //    fileMap["DYJetsToLL_HT_100to200"] = {ss["DYJetsToLL_HT_100to200"]};
-    //    fileMap["ZJetsToNuNu_HT_600toInf"] = {ss["ZJetsToNuNu_HT_600toInf"]};
-    //    fileMap["ZJetsToNuNu_HT_400to600"] = {ss["ZJetsToNuNu_HT_400to600"]};
-    //    fileMap["ZJetsToNuNu_HT_200to400"] = {ss["ZJetsToNuNu_HT_200to400"]};
-    //    fileMap["ZJetsToNuNu_HT_100to200"] = {ss["ZJetsToNuNu_HT_100to200"]};
-    //}
-    //else if(sc[dataSets] != sc.null())
-    //{
-    //    fileMap[dataSets] = sc[dataSets];
-    //    if(dataSets.compare("DYJetsToLL") == 0)
-    //    {
-    //        fileMap["DYJetsToLL_HT_600toInf"] = {ss["DYJetsToLL_HT_600toInf"]};
-    //        fileMap["DYJetsToLL_HT_400to600"] = {ss["DYJetsToLL_HT_400to600"]};
-    //        fileMap["DYJetsToLL_HT_200to400"] = {ss["DYJetsToLL_HT_200to400"]};
-    //        fileMap["DYJetsToLL_HT_100to200"] = {ss["DYJetsToLL_HT_100to200"]};
-    //    }
-    //    else if(dataSets.compare("ZJetsToNuNu") == 0)
-    //    {
-    //        fileMap["ZJetsToNuNu_HT_600toInf"] = {ss["ZJetsToNuNu_HT_600toInf"]};
-    //        fileMap["ZJetsToNuNu_HT_400to600"] = {ss["ZJetsToNuNu_HT_400to600"]};
-    //        fileMap["ZJetsToNuNu_HT_200to400"] = {ss["ZJetsToNuNu_HT_200to400"]};
-    //        fileMap["ZJetsToNuNu_HT_100to200"] = {ss["ZJetsToNuNu_HT_100to200"]};
-    //    }
-    //}
     else
     {
         if(sc[dataSets] != sc.null())
