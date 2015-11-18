@@ -216,6 +216,7 @@ namespace plotterFunctions
         const std::vector<double>& recoJetschargedEmEnergyFraction     = tr.getVec<double>("recoJetschargedEmEnergyFraction"); 
         const std::vector<double>& recoJetschargedHadronEnergyFraction = tr.getVec<double>("recoJetschargedHadronEnergyFraction");
         const std::vector<int> & muonsFlagIDVec = tr.getVec<int>("muonsFlagMedium");
+        const std::vector<int>&  elesFlagIDVec  = tr.getVec<int>("elesFlagVeto");
 
         const double& ht                             = tr.getVar<double>("ht");
         const double& met                            = tr.getVar<double>("met");
@@ -229,9 +230,21 @@ namespace plotterFunctions
         const bool& passMuonVeto  = tr.getVar<bool>("passMuonVeto");
         const bool& passEleVeto   = tr.getVar<bool>("passEleVeto");
             
+        std::vector<const TLorentzVector*>* genMatchIsoElecInAcc = new std::vector<const TLorentzVector*>();
+        std::vector<const TLorentzVector*>* genMatchElecInAcc = new std::vector<const TLorentzVector*>();
+        std::vector<double>* genMatchElecInAccRes = new std::vector<double>();
+        std::vector<const TLorentzVector*>* genElecInAcc = new std::vector<const TLorentzVector*>();
+        std::vector<const TLorentzVector*>* genElec = new std::vector<const TLorentzVector*>();
+        std::vector<double>* genMatchIsoElecInAccAct = new std::vector<double>();
+        std::vector<double>* genMatchElecInAccAct = new std::vector<double>();
+        std::vector<double>* genElecInAccAct = new std::vector<double>();
+        std::vector<double>* genElecAct = new std::vector<double>();
+
         std::vector<TLorentzVector>* cutElecVec = new std::vector<TLorentzVector>();
         std::vector<double>* cutElecCharge = new std::vector<double>();
         std::vector<double>* cutElecActivity = new std::vector<double>();
+
+        std::vector<TLorentzVector> cutElecVecRecoOnly;
 
         std::vector<const TLorentzVector*>* genMatchIsoMuInAcc = new std::vector<const TLorentzVector*>();
         std::vector<const TLorentzVector*>* genMatchMuInAcc = new std::vector<const TLorentzVector*>();
@@ -276,7 +289,12 @@ namespace plotterFunctions
         int sumElecCharge = 0;
         for(int i = 0; i < elesLVec.size(); ++i)
         {
-            if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], -1, AnaConsts::elesMiniIsoArr))
+            if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr)) // emulates muons with pt but no iso requirements.  
+            {
+                cutElecVecRecoOnly.push_back(muonsLVec[i]);
+            }
+
+            if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
             {
                 cutElecVec->push_back(elesLVec[i]);
                 cutElecCharge->push_back(elesCharge[i]);
@@ -310,8 +328,10 @@ namespace plotterFunctions
         double genHt = 0.0;
 
         const double minMuPt = 20.0, highMuPt = 45.0;
+        const double minElecPt = 33.0, highElecPt = 33.0;
         double nuPt1 = -999.9, nuPt2 = -999.9;
 
+        //Gen info parsing 
         if(&genDecayPdgIdVec != nullptr && &genDecayLVec != nullptr)
         {
             for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
@@ -321,6 +341,51 @@ namespace plotterFunctions
                 if(genDecayPdgIdVec[i] ==  13) nuPt1 = genDecayLVec[i].Pt();
                 if(genDecayPdgIdVec[i] == -13) nuPt2 = genDecayLVec[i].Pt();
                 
+                //Elec efficiency and acceptance
+                if(abs(genDecayPdgIdVec[i]) == 11)
+                {
+                    genElec->push_back(&genDecayLVec[i]);
+                    genElecAct->push_back(AnaFunctions::getElectronActivity(genDecayLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, AnaConsts::elesAct));
+                    if(AnaFunctions::passElectronAccOnly(genDecayLVec[i], AnaConsts::elesMiniIsoArr) && genDecayLVec[i].Pt() > minElecPt)
+                    {
+                        genElecInAcc->push_back(&genDecayLVec[i]);
+                        genElecInAccAct->push_back(genElecAct->back());
+                        double dRMin = 999.9;
+                        double matchPt = -999.9;
+                        for(int j = 0; j < cutElecVecRecoOnly.size(); ++j)
+                        {
+                            double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVecRecoOnly[j]);
+                            if(dR < dRMin)
+                            {
+                                dRMin = dR;
+                                matchPt = cutElecVecRecoOnly[j].Pt();
+                            }
+                        }
+                        if(dRMin < 0.02)
+                        {
+                            genMatchElecInAcc->push_back(&genDecayLVec[i]);
+                            genMatchElecInAccAct->push_back(genElecAct->back());
+                            genMatchElecInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
+                        }
+                    
+                        dRMin = 999.9;
+                        for(int j = 0; j < cutElecVec->size(); ++j)
+                        {
+                            double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutElecVec)[j]);
+                            if(dR < dRMin)
+                            {
+                                dRMin = dR;
+                            }
+                        }
+                        if(dRMin < 0.02)
+                        {
+                            genMatchIsoElecInAcc->push_back(&genDecayLVec[i]);
+                            genMatchIsoElecInAccAct->push_back(genElecAct->back());
+                        }
+                    }
+                }
+                
+                //muon efficiency and acceptance 
                 if(abs(genDecayPdgIdVec[i]) == 13)
                 {
                     genMu->push_back(&genDecayLVec[i]);
