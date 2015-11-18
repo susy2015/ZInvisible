@@ -35,7 +35,6 @@ namespace plotterFunctions
     void generateWeight(NTupleReader& tr)
     {
         const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVec");
-        const std::vector<TLorentzVector>& cleanJetVec      = tr.getVec<TLorentzVector>("cleanJetVec");        
         const std::vector<TLorentzVector>& cutMuVec         = tr.getVec<TLorentzVector>("cutMuVec");
         const std::vector<TLorentzVector>& cutElecVec       = tr.getVec<TLorentzVector>("cutElecVec");
         const std::vector<double>& cutMuActivity            = tr.getVec<double>("cutMuActivity");
@@ -135,7 +134,7 @@ namespace plotterFunctions
         for(auto& tlvp : genMuInAcc) if(tlvp->Pt() > 50) genCleanHt -= tlvp->Pt();
 
         double mu1dRMin = 99.9, mu2dRMin = 99.9;
-        for(auto& jet : cleanJetVec)
+        for(auto& jet : jetsLVec)
         {
             double mu1dR = 999.9, mu2dR = 999.9;
             if(cutMuVec.size() >= 1) mu1dR = ROOT::Math::VectorUtil::DeltaR(jet, cutMuVec[0]);
@@ -227,8 +226,20 @@ namespace plotterFunctions
         const std::vector<double>& elesCharge           = tr.getVec<double>("elesCharge");
         const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
 
-        const bool& passMuonVeto  = tr.getVar<bool>("passMuonVeto");
-        const bool& passEleVeto   = tr.getVar<bool>("passEleVeto");
+        bool passMuonVeto = false;
+        bool passEleVeto = false;
+
+        try
+        {
+            const bool& passMuonVetoTmp  = tr.getVar<bool>("passMuonVeto");
+            const bool& passEleVetoTmp   = tr.getVar<bool>("passEleVeto");
+            if(&passMuonVetoTmp != nullptr) passMuonVeto = passMuonVetoTmp;
+            if(&passEleVetoTmp != nullptr) passEleVeto = passEleVetoTmp;
+        }
+        catch(const std::string e)
+        {
+            //std::cout << "void muInfo(NTupleReader& tr): Caught exception, variable \"" << e << "\" not found" << std::endl;
+        }
             
         std::vector<const TLorentzVector*>* genMatchIsoElecInAcc = new std::vector<const TLorentzVector*>();
         std::vector<const TLorentzVector*>* genMatchElecInAcc = new std::vector<const TLorentzVector*>();
@@ -291,7 +302,7 @@ namespace plotterFunctions
         {
             if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr)) // emulates muons with pt but no iso requirements.  
             {
-                cutElecVecRecoOnly.push_back(muonsLVec[i]);
+                cutElecVecRecoOnly.push_back(elesLVec[i]);
             }
 
             if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
@@ -600,7 +611,7 @@ namespace plotterFunctions
 
     void fakebtagvectors(NTupleReader& tr)
     {
-        const std::vector<double>& cleanJetpt30ArrBTag = tr.getVec<double>("cleanJetpt30ArrBTag");
+        const std::vector<double>& cleanJetpt30ArrBTag = tr.getVec<double>("recoJetsBtag_forTaggerZinv");
 
         double maxCSV = 0.0;
         double secCSV = 0.0;
@@ -797,20 +808,20 @@ namespace plotterFunctions
 
         //register functions with NTupleReader
         tr.registerFunction(&muInfo);
-        stopFunctions::cjh.setMuonIso("mini");
-        stopFunctions::cjh.setElecIso("mini");
-        stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
-        stopFunctions::cjh.setBTagCollection("recoJetsBtag_0_MuCleaned");
-        stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
-        stopFunctions::cjh.setForceDr(true);
-        stopFunctions::cjh.setRemove(true);
-        //stopFunctions::cjh.setPhotoCleanThresh(0.7);
-        stopFunctions::cjh.setDisable(true);
-        stopFunctions::cjh.setDisableElec(false);
-        tr.registerFunction(&stopFunctions::cleanJets);
-        tr.registerFunction(&fakebtagvectors);
+        //stopFunctions::cjh.setMuonIso("mini");
+        //stopFunctions::cjh.setElecIso("mini");
+        //stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
+        //stopFunctions::cjh.setBTagCollection("recoJetsBtag_0_MuCleaned");
+        //stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
+        //stopFunctions::cjh.setForceDr(true);
+        //stopFunctions::cjh.setRemove(true);
+        ////stopFunctions::cjh.setPhotoCleanThresh(0.7);
+        //stopFunctions::cjh.setDisable(true);
+        //stopFunctions::cjh.setDisableElec(false);
+        //tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&generateWeight);
         tr.registerFunction(&zinvBaseline);
+        tr.registerFunction(&fakebtagvectors);
         tr.registerFunction(&zinvBaseline1b);
         tr.registerFunction(&zinvBaseline2b);
         tr.registerFunction(&zinvBaseline3b);
