@@ -217,6 +217,10 @@ namespace plotterFunctions
         const std::vector<int> & muonsFlagIDVec = tr.getVec<int>("muonsFlagMedium");
         const std::vector<int>&  elesFlagIDVec  = tr.getVec<int>("elesFlagVeto");
 
+        const std::vector<double>& muonspfActivity      = tr.getVec<double>("muonspfActivity");
+        const std::vector<double>& elespfActivity       = tr.getVec<double>("elespfActivity");
+        const std::vector<double>& W_emu_pfActivityVec  = tr.getVec<double>("W_emu_pfActivityVec");
+
         const double& ht                             = tr.getVar<double>("ht");
         const double& met                            = tr.getVar<double>("met");
         const double& metphi                         = tr.getVar<double>("metphi");
@@ -290,7 +294,7 @@ namespace plotterFunctions
                 }
                 cutMuVec->push_back(muonsLVec[i]);
                 cutMuCharge->push_back(muonsCharge[i]);
-                cutMuActivity->push_back(AnaFunctions::getMuonActivity(muonsLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, recoJetschargedEmEnergyFraction, AnaConsts::muonsAct));
+                cutMuActivity->push_back(muonspfActivity[i]);
                 if(muonsCharge[i] > 0) sumMuCharge++;
                 else                   sumMuCharge--;
             }
@@ -351,56 +355,17 @@ namespace plotterFunctions
 
                 if(genDecayPdgIdVec[i] ==  13) nuPt1 = genDecayLVec[i].Pt();
                 if(genDecayPdgIdVec[i] == -13) nuPt2 = genDecayLVec[i].Pt();
-                
-                //Elec efficiency and acceptance
-                if(abs(genDecayPdgIdVec[i]) == 11)
-                {
-                    genElec->push_back(&genDecayLVec[i]);
-                    genElecAct->push_back(AnaFunctions::getElectronActivity(genDecayLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, AnaConsts::elesAct));
-                    if(AnaFunctions::passElectronAccOnly(genDecayLVec[i], AnaConsts::elesMiniIsoArr) && genDecayLVec[i].Pt() > minElecPt)
-                    {
-                        genElecInAcc->push_back(&genDecayLVec[i]);
-                        genElecInAccAct->push_back(genElecAct->back());
-                        double dRMin = 999.9;
-                        double matchPt = -999.9;
-                        for(int j = 0; j < cutElecVecRecoOnly.size(); ++j)
-                        {
-                            double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVecRecoOnly[j]);
-                            if(dR < dRMin)
-                            {
-                                dRMin = dR;
-                                matchPt = cutElecVecRecoOnly[j].Pt();
-                            }
-                        }
-                        if(dRMin < 0.02)
-                        {
-                            genMatchElecInAcc->push_back(&genDecayLVec[i]);
-                            genMatchElecInAccAct->push_back(genElecAct->back());
-                            genMatchElecInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
-                        }
-                    
-                        dRMin = 999.9;
-                        for(int j = 0; j < cutElecVec->size(); ++j)
-                        {
-                            double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutElecVec)[j]);
-                            if(dR < dRMin)
-                            {
-                                dRMin = dR;
-                            }
-                        }
-                        if(dRMin < 0.02)
-                        {
-                            genMatchIsoElecInAcc->push_back(&genDecayLVec[i]);
-                            genMatchIsoElecInAccAct->push_back(genElecAct->back());
-                        }
-                    }
-                }
+            }
+
+            for(int index = 0; index < W_emuVec.size(); ++index)
+            {
+                int i = W_emuVec[index];
                 
                 //muon efficiency and acceptance 
                 if(abs(genDecayPdgIdVec[i]) == 13)
                 {
                     genMu->push_back(&genDecayLVec[i]);
-                    genMuAct->push_back(AnaFunctions::getMuonActivity(genDecayLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, recoJetschargedEmEnergyFraction, AnaConsts::muonsAct));
+                    genMuAct->push_back(W_emu_pfActivityVec[index]);
                     if(AnaFunctions::passMuonAccOnly(genDecayLVec[i], AnaConsts::muonsMiniIsoArr) && genDecayLVec[i].Pt() > minMuPt)
                     {
                         genMuInAcc->push_back(&genDecayLVec[i]);
@@ -439,8 +404,54 @@ namespace plotterFunctions
                         }
                     }
                 }
+
+                //Elec efficiency and acceptance
+                if(abs(genDecayPdgIdVec[i]) == 11)
+                {
+                    genElec->push_back(&genDecayLVec[i]);
+                    genElecAct->push_back(W_emu_pfActivityVec[index]);
+                    if(AnaFunctions::passElectronAccOnly(genDecayLVec[i], AnaConsts::elesMiniIsoArr) && genDecayLVec[i].Pt() > minElecPt)
+                    {
+                        genElecInAcc->push_back(&genDecayLVec[i]);
+                        genElecInAccAct->push_back(genElecAct->back());
+                        double dRMin = 999.9;
+                        double matchPt = -999.9;
+                        for(int j = 0; j < cutElecVecRecoOnly.size(); ++j)
+                        {
+                            double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVecRecoOnly[j]);
+                            if(dR < dRMin)
+                            {
+                                dRMin = dR;
+                                matchPt = cutElecVecRecoOnly[j].Pt();
+                            }
+                        }
+                        if(dRMin < 0.02)
+                        {
+                            genMatchElecInAcc->push_back(&genDecayLVec[i]);
+                            genMatchElecInAccAct->push_back(genElecAct->back());
+                            genMatchElecInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
+                        }
+                    
+                        dRMin = 999.9;
+                        for(int j = 0; j < cutElecVec->size(); ++j)
+                        {
+                            double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutElecVec)[j]);
+                            if(dR < dRMin)
+                            {
+                                dRMin = dR;
+                            }
+                        }
+                        if(dRMin < 0.02)
+                        {
+                            genMatchIsoElecInAcc->push_back(&genDecayLVec[i]);
+                            genMatchIsoElecInAccAct->push_back(genElecAct->back());
+                        }
+                    }
+                }
             }
         }
+
+
 
         double genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
         int nZ = 0;
