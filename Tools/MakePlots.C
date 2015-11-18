@@ -110,6 +110,7 @@ int main(int argc, char* argv[])
         fileMap["ZJetsToNuNu"] = {ss["ZJetsToNuNu_HT_600toInf"]};
         fileMap["DYJetsToLL_HT_600toInf"] = {ss["DYJetsToLL_HT_600toInf"]};
         fileMap["ZJetsToNuNu_HT_600toInf"] = {ss["ZJetsToNuNu_HT_600toInf"]};
+        fileMap["TTbarDiLep"] = {ss["TTbarDiLep"]};
     }
     else if(dataSets.compare("TEST2") == 0)
     {
@@ -118,20 +119,40 @@ int main(int argc, char* argv[])
         fileMap["DYJetsToLL_HT_400to600"] = {ss["DYJetsToLL_HT_400to600"]};
         fileMap["ZJetsToNuNu_HT_400to600"] = {ss["ZJetsToNuNu_HT_400to600"]};
     }
-    else if(dataSets.size() == 0)
+    else
     {
-        fileMap["IncDY"] = sc["IncDY"];
-        fileMap["DYJetsToLL"]  = sc["DYJetsToLL"];
-        fileMap["ZJetsToNuNu"] = sc["ZJetsToNuNu"];
-        fileMap["DYJetsToLL_HT_600toInf"] = {ss["DYJetsToLL_HT_600toInf"]};
-        fileMap["DYJetsToLL_HT_400to600"] = {ss["DYJetsToLL_HT_400to600"]};
-        fileMap["DYJetsToLL_HT_200to400"] = {ss["DYJetsToLL_HT_200to400"]};
-        fileMap["DYJetsToLL_HT_100to200"] = {ss["DYJetsToLL_HT_100to200"]};
-        fileMap["ZJetsToNuNu_HT_600toInf"] = {ss["ZJetsToNuNu_HT_600toInf"]};
-        fileMap["ZJetsToNuNu_HT_400to600"] = {ss["ZJetsToNuNu_HT_400to600"]};
-        fileMap["ZJetsToNuNu_HT_200to400"] = {ss["ZJetsToNuNu_HT_200to400"]};
-        fileMap["ZJetsToNuNu_HT_100to200"] = {ss["ZJetsToNuNu_HT_100to200"]};
+        if(sc[dataSets] != sc.null())
+        {
+            fileMap[dataSets] = {sc[dataSets]};
+            int i = 0;
+            for(const auto& fs : sc[dataSets])
+            {
+                fileMap[sc.getSampleLabels(dataSets)[i++]].push_back(fs);
+            }
+        }
+        else if(ss[dataSets] != ss.null())
+        {
+            for(const auto& fsnp : sc)
+            {
+                if(dataSets.find(fsnp.first) !=std::string::npos)
+                {
+                    fileMap[fsnp.first] = {ss[dataSets]};
+                    fileMap[dataSets] = {ss[dataSets]};
+                    break;
+                }
+            }
+        }
+	// If we didn't find such a collection, we pass in the dataset itself
+        //if (fileMap.size() == 0)
+	//{
+	//    fileMap[dataSets] = {ss[dataSets]};
+	//	}
+
     }
+
+
+
+	/*
     else if(dataSets.compare("Data_SingleMuon_2015C") == 0)
     {
         //add this to the 25ns filemap
@@ -144,49 +165,27 @@ int main(int argc, char* argv[])
         fileMap[dataSets] = {ss[dataSets]};
 	fileMap["Data_SingleMuon25ns"] = {ss[dataSets]};
     }
-    else if(sc[dataSets] != sc.null())
-    {
-        fileMap[dataSets] = sc[dataSets];
-        if(dataSets.compare("DYJetsToLL") == 0)
-        {
-            fileMap["DYJetsToLL_HT_600toInf"] = {ss["DYJetsToLL_HT_600toInf"]};
-            fileMap["DYJetsToLL_HT_400to600"] = {ss["DYJetsToLL_HT_400to600"]};
-            fileMap["DYJetsToLL_HT_200to400"] = {ss["DYJetsToLL_HT_200to400"]};
-            fileMap["DYJetsToLL_HT_100to200"] = {ss["DYJetsToLL_HT_100to200"]};
-        }
-        else if(dataSets.compare("ZJetsToNuNu") == 0)
-        {
-            fileMap["ZJetsToNuNu_HT_600toInf"] = {ss["ZJetsToNuNu_HT_600toInf"]};
-            fileMap["ZJetsToNuNu_HT_400to600"] = {ss["ZJetsToNuNu_HT_400to600"]};
-            fileMap["ZJetsToNuNu_HT_200to400"] = {ss["ZJetsToNuNu_HT_200to400"]};
-            fileMap["ZJetsToNuNu_HT_100to200"] = {ss["ZJetsToNuNu_HT_100to200"]};
-        }
-    }
-    else if(ss[dataSets] != ss.null())
-    {
-        // First check whether you passed in a sample collection, or a collection exists with a similar name as the dataset
-        for(const auto& fsnp : sc)
-        {
-            if(dataSets.find(fsnp.first) !=std::string::npos)
-            {
-	      std::cout << fsnp.first << " " << dataSets << std::endl;
-                fileMap[fsnp.first] = {ss[dataSets]};
-                fileMap[dataSets] = {ss[dataSets]};
-                break;
-            }
-        }
-	// If we didn't find such a collection, we pass in the dataset itself
-        if (fileMap.size() == 0)
-	{
-	    fileMap[dataSets] = {ss[dataSets]};
-	}
+	*/
 
-    }
+
 
     Plotter::DatasetSummary dsDY_ll_inc(    "DY#rightarrow#mu#mu Inc",               fileMap["IncDY"], "pdgIdZDec=13;passMuZinvSel", "");
 
     Plotter::DatasetSummary dsDY_ll_noSel(      "DY#rightarrow#mu#mu no sel",            fileMap["DYJetsToLL"],   "pdgIdZDec=13", "");
     Plotter::DatasetSummary dsDY_ll_gen_noSel(  "DY#rightarrow#mu#mu Gen no Sel",        fileMap["DYJetsToLL"],   "pdgIdZDec=13", "");
+
+    Plotter::DatasetSummary dsTT_mm("t#bar{t}#rightarrow#mu#mu", fileMap["TTbarDiLep"], "", "");
+    Plotter::DatasetSummary dsTT_ee("t#bar{t}#rightarrowee",     fileMap["TTbarDiLep"], "", "");
+    Plotter::DatasetSummary dsTT_em("t#bar{t}#rightarrowe#mu",   fileMap["TTbarDiLep"], "", "");
+
+    Plotter::DatasetSummary dsTT_mm_lepSel("t#bar{t}#rightarrow#mu#mu", fileMap["TTbarDiLep"], "passMuZinvSel", "");
+    Plotter::DatasetSummary dsTT_ee_lepSel("t#bar{t}#rightarrowee",     fileMap["TTbarDiLep"], "passElecZinvSel", "");
+    Plotter::DatasetSummary dsTT_em_lepSel("t#bar{t}#rightarrowe#mu",   fileMap["TTbarDiLep"], "passElMuZinvSel", "");
+
+    Plotter::DatasetSummary dsDY_ee(               "DY#rightarrowee",                 fileMap["DYJetsToLL"],   "pdgIdZDec=11;passElecZinvSel", "");
+    Plotter::DatasetSummary dsDY_ee_scaled(        "DY#rightarrowee",                 fileMap["DYJetsToLL"],   "pdgIdZDec=11;passElecZinvSel", "",                znunu_mumu_ratio / zAcc);
+    Plotter::DatasetSummary dsDY_ee_zAcc_scaled(   "DY#rightarrowee no e, Z eff+acc", fileMap["DYJetsToLL"],   "pdgIdZDec=11;passElecZinvSel", "zEffWgt;zAccWgt", znunu_mumu_ratio / zAcc);
+    Plotter::DatasetSummary dsDY_ee_zWeight_scaled("DY#rightarrowee no e, Z eff",     fileMap["DYJetsToLL"],   "pdgIdZDec=11;passElecZinvSel", "zEffWgt",         znunu_mumu_ratio / zAcc);
 
     Plotter::DatasetSummary dsDY_ll(        "DY#rightarrow#mu#mu",                   fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel", "");
     Plotter::DatasetSummary dsDY_ll_base(   "DY#rightarrow#mu#mu baseline",          fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel;passBaselineZinv", "");
@@ -337,18 +336,18 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("mindPhigenZJ",               {PDC("single", "mindPhiMetJ",      {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "",                      100, -3.14, 3.14,  true,  true,  "min #DeltaPhi(genZ, jet)", "Norm Events"));
     vh.push_back(PHS("mindPhigenZJ_baseline",      {PDC("single", "mindPhiMetJ",      {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv",      100, -3.14, 3.14,  true,  true,  "min #DeltaPhi(genZ, jet)", "Norm Events"));
     vh.push_back(PHS("mindPhigenZJ_baselineNoTag", {PDC("single", "mindPhiMetJ",      {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineNoTagZinv", 100, -3.14, 3.14,  true,  true,  "min #DeltaPhi(genZ, jet)", "Norm Events"));
-    vh.push_back(PHS("cleanJet1pt",               {PDC("single", "cleanJetVec[0](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "",                                    100, 0,     1500,  true,  true, "p_{T}(j1) [GeV]", "Norm Events"));
-    vh.push_back(PHS("cleanJet1pt_baseline",      {PDC("single", "cleanJetVec[0](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv",                    100, 0,     1500,  true,  true, "p_{T}(j1) [GeV]", "Norm Events"));
-    vh.push_back(PHS("cleanJet1pt_baseline_dPhi", {PDC("single", "cleanJetVec[0](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv;dPhiVecZinv[0]<0.5", 100, 0,     1500,  true,  true, "p_{T}(j1) [GeV]", "Norm Events"));
-    vh.push_back(PHS("cleanJet1pt_baselineNoTag", {PDC("single", "cleanJetVec[0](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineNoTagZinv",               100, 0,     1500,  true,  true, "p_{T}(j1) [GeV]", "Norm Events"));
-    vh.push_back(PHS("cleanJet2pt",               {PDC("single", "cleanJetVec[1](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "",                                    100, 0,     1500,  true,  true, "p_{T}(j2) [GeV]", "Norm Events"));
-    vh.push_back(PHS("cleanJet2pt_baseline",      {PDC("single", "cleanJetVec[1](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv",                    100, 0,     1500,  true,  true, "p_{T}(j2) [GeV]", "Norm Events"));
-    vh.push_back(PHS("cleanJet2pt_baseline_dPhi", {PDC("single", "cleanJetVec[1](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv;dPhiVecZinv[0]<0.5", 100, 0,     1500,  true,  true, "p_{T}(j2) [GeV]", "Norm Events"));
-    vh.push_back(PHS("cleanJet2pt_baselineNoTag", {PDC("single", "cleanJetVec[1](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineNoTagZinv",               100, 0,     1500,  true,  true, "p_{T}(j2) [GeV]", "Norm Events"));
-    vh.push_back(PHS("cleanJet3pt",               {PDC("single", "cleanJetVec[2](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "",                                    100, 0,     1500,  true,  true, "p_{T}(j3) [GeV]", "Norm Events"));
-    vh.push_back(PHS("cleanJet3pt_baseline",      {PDC("single", "cleanJetVec[2](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv",                    100, 0,     1500,  true,  true, "p_{T}(j3) [GeV]", "Norm Events"));
-    vh.push_back(PHS("cleanJet3pt_baseline_dPhi", {PDC("single", "cleanJetVec[2](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv;dPhiVecZinv[0]<0.5", 100, 0,     1500,  true,  true, "p_{T}(j3) [GeV]", "Norm Events"));
-    vh.push_back(PHS("cleanJet3pt_baselineNoTag", {PDC("single", "cleanJetVec[2](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineNoTagZinv",               100, 0,     1500,  true,  true, "p_{T}(j3) [GeV]", "Norm Events"));
+    vh.push_back(PHS("cleanJet1pt",               {PDC("single", "cleanJetVec[0](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "",                                    100, 0, 1500,  true,  true, "p_{T}(j1) [GeV]", "Norm Events"));
+    vh.push_back(PHS("cleanJet1pt_baseline",      {PDC("single", "cleanJetVec[0](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv",                    100, 0, 1500,  true,  true, "p_{T}(j1) [GeV]", "Norm Events"));
+    vh.push_back(PHS("cleanJet1pt_baseline_dPhi", {PDC("single", "cleanJetVec[0](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv;dPhiVecZinv[0]<0.5", 100, 0, 1500,  true,  true, "p_{T}(j1) [GeV]", "Norm Events"));
+    vh.push_back(PHS("cleanJet1pt_baselineNoTag", {PDC("single", "cleanJetVec[0](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineNoTagZinv",               100, 0, 1500,  true,  true, "p_{T}(j1) [GeV]", "Norm Events"));
+    vh.push_back(PHS("cleanJet2pt",               {PDC("single", "cleanJetVec[1](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "",                                    100, 0, 1500,  true,  true, "p_{T}(j2) [GeV]", "Norm Events"));
+    vh.push_back(PHS("cleanJet2pt_baseline",      {PDC("single", "cleanJetVec[1](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv",                    100, 0, 1500,  true,  true, "p_{T}(j2) [GeV]", "Norm Events"));
+    vh.push_back(PHS("cleanJet2pt_baseline_dPhi", {PDC("single", "cleanJetVec[1](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv;dPhiVecZinv[0]<0.5", 100, 0, 1500,  true,  true, "p_{T}(j2) [GeV]", "Norm Events"));
+    vh.push_back(PHS("cleanJet2pt_baselineNoTag", {PDC("single", "cleanJetVec[1](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineNoTagZinv",               100, 0, 1500,  true,  true, "p_{T}(j2) [GeV]", "Norm Events"));
+    vh.push_back(PHS("cleanJet3pt",               {PDC("single", "cleanJetVec[2](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "",                                    100, 0, 1500,  true,  true, "p_{T}(j3) [GeV]", "Norm Events"));
+    vh.push_back(PHS("cleanJet3pt_baseline",      {PDC("single", "cleanJetVec[2](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv",                    100, 0, 1500,  true,  true, "p_{T}(j3) [GeV]", "Norm Events"));
+    vh.push_back(PHS("cleanJet3pt_baseline_dPhi", {PDC("single", "cleanJetVec[2](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineZinv;dPhiVecZinv[0]<0.5", 100, 0, 1500,  true,  true, "p_{T}(j3) [GeV]", "Norm Events"));
+    vh.push_back(PHS("cleanJet3pt_baselineNoTag", {PDC("single", "cleanJetVec[2](pt)", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "passBaselineNoTagZinv",               100, 0, 1500,  true,  true, "p_{T}(j3) [GeV]", "Norm Events"));
 
     vh.push_back(PHS("cleanJetChargedEMFrac",              {PDC("single", "cleanChargedEMEFrac",    {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "",                 100, 0, 1.0, true, true, "Clean J Charged EM Frac", "Norm Events"));
     vh.push_back(PHS("cleanJetChargedEMFrac_j1",           {PDC("single", "cleanChargedEMEFrac[0]", {dsDY_ll, dsDY_nunu, dsDY_ll_zAcc})}, {1, 2}, "",                 100, 0, 1.0, true, true, "Clean J1 Charged EM Frac", "Norm Events"));
@@ -401,6 +400,44 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("genZEta",     {PDC("single", "genZEta",               {dsDY_ll, dsDY_nunu})}, {1, 2}, "", 100, -3, 3,    false, true,  "gen Z #eta",              "Norm Events"));
     vh.push_back(PHS("genZmass",    {PDC("single", "genZmass",              {dsDY_ll, dsDY_nunu})}, {1, 2}, "", 100, 0, 1000,  true,  true,  "gen M(Z) [GeV]",          "Norm Events"));
 
+    vh.push_back(PHS("ttbar_mht",         {PDC("single", "mht",                    {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "M(H_{t}) [GeV]",          "Norm Events"));
+    vh.push_back(PHS("ttbar_mt2",         {PDC("single", "best_had_brJet_MT2Zinv", {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "MT2 [GeV]",               "Norm Events"));
+    vh.push_back(PHS("ttbar_met",         {PDC("single", "met",                    {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "MET [GeV]",               "Norm Events"));
+    vh.push_back(PHS("ttbar_cleanMet",    {PDC("single", "cleanMetPt",             {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "MET [GeV]",               "Norm Events"));
+    vh.push_back(PHS("ttbar_bestZPt",     {PDC("single", "bestRecoZPt",            {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "Z p_{T} [GeV]",           "Norm Events"));
+    vh.push_back(PHS("ttbar_ht",          {PDC("single", "HT",                     {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 2000,  true,  true,  "H_{T} [GeV]",             "Norm Events"));
+    vh.push_back(PHS("ttbar_cleanht",     {PDC("single", "HTZinv",                 {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 2000,  true,  true,  "H_{T} [GeV]",             "Norm Events"));
+    vh.push_back(PHS("ttbar_nMuons",      {PDC("single", "cutMuVec(size)",         {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 10,  0, 10,    true,  false, "N(#mu)",                  "Events"));
+    vh.push_back(PHS("ttbar_jetPt",       {PDC("single", "jetsLVec(pt)",           {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "Jet p_{T} [GeV]",         "Norm Events"));
+    vh.push_back(PHS("ttbar_cleannJets",  {PDC("single", "cntNJetsPt30Eta24Zinv",  {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 20,  0, 20,    true,  false, "N(jets)",                 "Events"));
+    vh.push_back(PHS("ttbar_muPt",        {PDC("single", "cutMuVec(pt)",           {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]",         "Norm Events"));
+    vh.push_back(PHS("ttbar_mu1Pt",       {PDC("single", "cutMuVec[0](pt)",        {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]",         "Norm Events"));
+    vh.push_back(PHS("ttbar_mu2Pt",       {PDC("single", "cutMuVec[1](pt)",        {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]",         "Norm Events"));
+    vh.push_back(PHS("ttbar_elecPt",      {PDC("single", "cutElecVec(pt)",         {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]",         "Norm Events"));
+    vh.push_back(PHS("ttbar_elec1Pt",     {PDC("single", "cutElecVec[0](pt)",      {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]",         "Norm Events"));
+    vh.push_back(PHS("ttbar_elec2Pt",     {PDC("single", "cutElecVec[1](pt)",      {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]",         "Norm Events"));
+    vh.push_back(PHS("ttbar_nb",          {PDC("single", "cntCSVSZinv",            {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 10,  0, 10,    true,  false, "N(b)",                    "Events"));
+    vh.push_back(PHS("ttbar_nt",          {PDC("single", "nTopCandSortedCnt",      {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 10,  0, 10,    true,  false, "N(t)",                    "Events"));
+
+    vh.push_back(PHS("ttbar_baseline_mht",         {PDC("single", "mht",                    {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "M(H_{t}) [GeV]",  "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_mt2",         {PDC("single", "best_had_brJet_MT2Zinv", {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "MT2 [GeV]",       "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_met",         {PDC("single", "met",                    {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "MET [GeV]",       "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_cleanMet",    {PDC("single", "cleanMetPt",             {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "MET [GeV]",       "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_bestZPt",     {PDC("single", "bestRecoZPt",            {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "Z p_{T} [GeV]",   "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_ht",          {PDC("single", "HT",                     {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 2000,  true,  true,  "H_{T} [GeV]",     "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_cleanht",     {PDC("single", "HTZinv",                 {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 2000,  true,  true,  "H_{T} [GeV]",     "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_nMuons",      {PDC("single", "cutMuVec(size)",         {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 10,  0, 10,    true,  false, "N(#mu)",          "Events"));
+    vh.push_back(PHS("ttbar_baseline_jetPt",       {PDC("single", "jetsLVec(pt)",           {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "Jet p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_cleannJets",  {PDC("single", "cntNJetsPt30Eta24Zinv",  {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 20,  0, 20,    true,  false, "N(jets)",         "Events"));
+    vh.push_back(PHS("ttbar_baseline_muPt",        {PDC("single", "cutMuVec(pt)",           {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_mu1Pt",       {PDC("single", "cutMuVec[0](pt)",        {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_mu2Pt",       {PDC("single", "cutMuVec[1](pt)",        {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_elecPt",      {PDC("single", "cutElecVec(pt)",         {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_elec1Pt",     {PDC("single", "cutElecVec[0](pt)",      {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_elec2Pt",     {PDC("single", "cutElecVec[1](pt)",      {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 100, 0, 1500,  true,  true,  "#mu p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("ttbar_baseline_nb",          {PDC("single", "cntCSVSZinv",            {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 10,  0, 10,    true,  false, "N(b)",            "Events"));
+    vh.push_back(PHS("ttbar_baseline_nt",          {PDC("single", "nTopCandSortedCnt",      {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "passBaselineZinv", 10,  0, 10,    true,  false, "N(t)",            "Events"));
+
     // Simple Reco vs. Gen plots
     vh.push_back(PHS("bestRecoZPt"  ,         {PDC("single",  {{"bestRecoZPt", dsDY_ll},       {"genZPt", dsDY_ll_gen}})},          {1, 2}, "",              100, 0, 1500,  true,  true,  "Z p_{T} [GeV]",           "Norm Events"));
     vh.push_back(PHS("bestRecoZMass_nosel",   {PDC("single",  {{"bestRecoZM", dsDY_ll_noSel},  {"genZmass", dsDY_ll_gen_noSel}})},  {1, 2}, "",              100, 0, 1000,  true,  true,  "M(Z) [GeV]",              "Norm Events"));
@@ -436,18 +473,43 @@ int main(int argc, char* argv[])
     Plotter::DataCollection scaled_mht(  "single", "mht", {{dsDY_nunu},            {dsDY_ll_zWeight_scaled},               {dsDY_ll_zAcc_scaled}               });
     Plotter::DataCollection scaled_met(  "single", "met", {{dsDY_nunu},            {dsDY_ll_zWeight_scaled},               {dsDY_ll_zAcc_scaled}               });
 
-    Plotter::DataCollection scaled_cleanht(     "single", {{"HTZinv", dsDY_nunu},                 {"HTZinv", dsDY_ll_zAcc_scaled}               });
-    Plotter::DataCollection scaled_cleanmt2(    "single", {{"best_had_brJet_MT2Zinv", dsDY_nunu}, {"best_had_brJet_MT2Zinv", dsDY_ll_zAcc_scaled}});
-    Plotter::DataCollection scaled_cleanmht(    "single", {{"cleanMHt", dsDY_nunu},               {"cleanMHt", dsDY_ll_zAcc_scaled}              });
-    Plotter::DataCollection scaled_cleanmhtphi( "single", {{"cleanMHtPhi", dsDY_nunu},            {"cleanMHtPhi", dsDY_ll_zAcc_scaled}           });
-    Plotter::DataCollection scaled_cleanMet(    "single", {{"cleanMetPt", dsDY_nunu},             {"cleanMetPt", dsDY_ll_zAcc_scaled}            });
-    Plotter::DataCollection scaled_nCleanJet(   "single", {{"cntNJetsPt30Eta24Zinv", dsDY_nunu},  {"cntNJetsPt30Eta24Zinv", dsDY_ll_zAcc_scaled} });
-    Plotter::DataCollection scaled_nTop(        "single", {{"nTopCandSortedCntZinv", dsDY_nunu},  {"nTopCandSortedCntZinv", dsDY_ll_zAcc_scaled} });
-    Plotter::DataCollection scaled_nBottom(     "single", {{"cntCSVSZinv", dsDY_nunu},            {"cntCSVSZinv", dsDY_ll_zAcc_scaled}           });
+    Plotter::DataCollection scaled_cleanht(     "single", {{"HTZinv", dsDY_nunu},                 {"HTZinv", dsDY_ll_zAcc_scaled}                 });
+    Plotter::DataCollection scaled_cleanmt2(    "single", {{"best_had_brJet_MT2Zinv", dsDY_nunu}, {"best_had_brJet_MT2Zinv", dsDY_ll_zAcc_scaled} });
+    Plotter::DataCollection scaled_cleanmht(    "single", {{"cleanMHt", dsDY_nunu},               {"cleanMHt", dsDY_ll_zAcc_scaled}               });
+    Plotter::DataCollection scaled_cleanmhtphi( "single", {{"cleanMHtPhi", dsDY_nunu},            {"cleanMHtPhi", dsDY_ll_zAcc_scaled}            });
+    Plotter::DataCollection scaled_cleanMet(    "single", {{"cleanMetPt", dsDY_nunu},             {"cleanMetPt", dsDY_ll_zAcc_scaled}             });
+    Plotter::DataCollection scaled_nCleanJet(   "single", {{"cntNJetsPt30Eta24Zinv", dsDY_nunu},  {"cntNJetsPt30Eta24Zinv", dsDY_ll_zAcc_scaled}  });
+    Plotter::DataCollection scaled_nTop(        "single", {{"nTopCandSortedCntZinv", dsDY_nunu},  {"nTopCandSortedCntZinv", dsDY_ll_zAcc_scaled}  });
+    Plotter::DataCollection scaled_nBottom(     "single", {{"cntCSVSZinv", dsDY_nunu},            {"cntCSVSZinv", dsDY_ll_zAcc_scaled}            });
+
+    Plotter::DataCollection scaled_elec_ht(   "single", "ht",  {{dsDY_nunu},            {dsDY_ee_zWeight_scaled},               {dsDY_ee_zAcc_scaled}               });
+    Plotter::DataCollection scaled_elec_mht(  "single", "mht", {{dsDY_nunu},            {dsDY_ee_zWeight_scaled},               {dsDY_ee_zAcc_scaled}               });
+    Plotter::DataCollection scaled_elec_met(  "single", "met", {{dsDY_nunu},            {dsDY_ee_zWeight_scaled},               {dsDY_ee_zAcc_scaled}               });
+
+    Plotter::DataCollection scaled_elec_cleanht(     "single", {{"HTZinv",                 dsDY_nunu},                 {"HTZinv", dsDY_ee_zAcc_scaled} });
+    Plotter::DataCollection scaled_elec_cleanmt2(    "single", {{"best_had_brJet_MT2Zinv", dsDY_nunu}, {"best_had_brJet_MT2Zinv", dsDY_ee_zAcc_scaled} });
+    Plotter::DataCollection scaled_elec_cleanmht(    "single", {{"cleanMHt",               dsDY_nunu},               {"cleanMHt", dsDY_ee_zAcc_scaled} });
+    Plotter::DataCollection scaled_elec_cleanmhtphi( "single", {{"cleanMHtPhi",            dsDY_nunu},            {"cleanMHtPhi", dsDY_ee_zAcc_scaled} });
+    Plotter::DataCollection scaled_elec_cleanMet(    "single", {{"cleanMetPt",             dsDY_nunu},             {"cleanMetPt", dsDY_ee_zAcc_scaled} });
+    Plotter::DataCollection scaled_elec_nCleanJet(   "single", {{"cntNJetsPt30Eta24Zinv",  dsDY_nunu},  {"cntNJetsPt30Eta24Zinv", dsDY_ee_zAcc_scaled} });
+    Plotter::DataCollection scaled_elec_nTop(        "single", {{"nTopCandSortedCntZinv",  dsDY_nunu},  {"nTopCandSortedCntZinv", dsDY_ee_zAcc_scaled} });
+    Plotter::DataCollection scaled_elec_nBottom(     "single", {{"cntCSVSZinv",            dsDY_nunu},            {"cntCSVSZinv", dsDY_ee_zAcc_scaled} });
 
     Plotter::DataCollection scaled_nSearchBin(     "single", {{"nSearchBin", dsDY_nunu},             {"nSearchBin", dsDY_ll_zAcc_scaled}  });
+    Plotter::DataCollection scaled_nSearchBin_stat("single", {{"nSearchBin", dsDY_ll},               {"nb0BinsNW",  dsDY_ll}              });
     Plotter::DataCollection scaled_nSearchBinNb0(  "single", {{"nSearchBin", dsDY_nunu},             {"nb0Bins",    dsDY_ll_zAcc_scaled}  });
     Plotter::DataCollection scaled_nSearchBinNb0ZZ("single", {{"nSearchBin", dsDY_nunu_SBMb},        {"nb0Bins",    dsDY_nunu_SB0b}       });
+
+    Plotter::DataCollection scaled_Elec_nSearchBin(     "single", {{"nSearchBin", dsDY_nunu},             {"nSearchBin", dsDY_ee_zAcc_scaled}  });
+    Plotter::DataCollection scaled_Elec_nSearchBin_stat("single", {{"nSearchBin", dsDY_ee},               {"nb0BinsNW",  dsDY_ee}              });
+    Plotter::DataCollection scaled_Elec_nSearchBinNb0(  "single", {{"nSearchBin", dsDY_nunu},             {"nb0Bins",    dsDY_ee_zAcc_scaled}  });
+    Plotter::DataCollection scaled_Elec_nSearchBinNb0ZZ("single", {{"nSearchBin", dsDY_nunu_SBMb},        {"nb0Bins",    dsDY_nunu_SB0b}       });
+
+    Plotter::DataCollection scaled_nSearchBin_Sig_mm("stack", {{"nSearchBin", dsDY_ll}, {"nSearchBin",  dsTT_mm_lepSel} });
+    Plotter::DataCollection scaled_nSearchBin_Con_mm("stack", {{"nb0BinsNW", dsDY_ll},  {"nb0BinsNW",   dsTT_mm_lepSel} });
+    Plotter::DataCollection scaled_nSearchBin_Sig_ee("stack", {{"nSearchBin", dsDY_ee}, {"nSearchBin",  dsTT_ee_lepSel} });
+    Plotter::DataCollection scaled_nSearchBin_Con_ee("stack", {{"nb0BinsNW", dsDY_ee},  {"nb0BinsNW",   dsTT_ee_lepSel} });
+
 
     PDC trg_cleanht(  "single","HTZinv",               {dsDY_ll_zAcc, dsDY_ll_mu30_mu20, dsDY_ll_mu30_mu30, dsDY_ll_mu40_mu30, dsDY_ll_mu45_mu20, dsDY_ll_singleMu45});
     PDC trg_cleanmht( "single","cleanMHt",             {dsDY_ll_zAcc, dsDY_ll_mu30_mu20, dsDY_ll_mu30_mu30, dsDY_ll_mu40_mu30, dsDY_ll_mu45_mu20, dsDY_ll_singleMu45});
@@ -535,6 +597,8 @@ int main(int argc, char* argv[])
 
     vh.push_back(PHS("nSearchBin",               {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             45,  0,     45,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("nSearchBin_log",           {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_stat",          {scaled_nSearchBin_stat}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_stat_log",      {scaled_nSearchBin_stat}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("nSearchBinnb0",            {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("nSearchBinnb0_log",        {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("nSearchBinnb0ZZ",          {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", true));
@@ -545,6 +609,30 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("nSearchBinnb0_pull_log",   {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
     vh.push_back(PHS("nSearchBinnb0ZZ_pull",     {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", false));
     vh.push_back(PHS("nSearchBinnb0ZZ_pull_log", {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
+
+    vh.push_back(PHS("elec_nSearchBin",               {scaled_Elec_nSearchBin},      {2, 1}, "passBaselineZinv",                                      45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBin_log",           {scaled_Elec_nSearchBin},      {2, 1}, "passBaselineZinv",                                      45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBin_stat",          {scaled_Elec_nSearchBin_stat}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBin_stat_log",      {scaled_Elec_nSearchBin_stat}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBinnb0",            {scaled_Elec_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBinnb0_log",        {scaled_Elec_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBinnb0ZZ",          {scaled_Elec_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBinnb0ZZ_log",      {scaled_Elec_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBin_pull",          {scaled_Elec_nSearchBin},      {2, 1}, "passBaselineZinv",                                      45,  0,     45,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("elec_nSearchBin_pull_log",      {scaled_Elec_nSearchBin},      {2, 1}, "passBaselineZinv",                                      45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("elec_nSearchBinnb0_pull",       {scaled_Elec_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("elec_nSearchBinnb0_pull_log",   {scaled_Elec_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("elec_nSearchBinnb0ZZ_pull",     {scaled_Elec_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("elec_nSearchBinnb0ZZ_pull_log", {scaled_Elec_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
+
+    vh.push_back(PHS("nSearchBin_Sig_mm",          {scaled_nSearchBin_Sig_mm}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Sig_mm_log",      {scaled_nSearchBin_Sig_mm}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Con_mm",          {scaled_nSearchBin_Con_mm}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Con_mm_log",      {scaled_nSearchBin_Con_mm}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Sig_ee",          {scaled_nSearchBin_Sig_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Sig_ee_log",      {scaled_nSearchBin_Sig_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Con_ee",          {scaled_nSearchBin_Con_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Con_ee_log",      {scaled_nSearchBin_Con_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
 
     vh.push_back(PHS("mT2Zinv",                {scaled_cleanmt2},      {2, 1}, "",                                                             100, 0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
     vh.push_back(PHS("baseline_mT2Zinv",       {scaled_cleanmt2},      {2, 1}, "passBaselineZinv",                                             50,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
@@ -672,6 +760,133 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("baselineNoTAg_nBottom",  {scaled_nBottom},       {2, 1}, "passBaselineNoTagZinv",                                        10,  0,       10, true,  false,  "N(b)",           "Events"));
     vh.push_back(PHS("cleanmhtphi",            {scaled_cleanmhtphi},   {2, 1}, "",                                                             100, -3.14, 3.14, false, false,  "#phi(MH_{T})",   "Events"));
     vh.push_back(PHS("baseline_cleanmhtphi",   {scaled_cleanmhtphi},   {2, 1}, "passBaselineZinv",                                             100, -3.14, 3.14, false, false,  "#phi(MH_{T})",   "Events"));
+
+    vh.push_back(PHS("elec_mT2Zinv",                {scaled_elec_cleanmt2},      {2, 1}, "",                                                             100, 0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_baseline_mT2Zinv",       {scaled_elec_cleanmt2},      {2, 1}, "passBaselineZinv",                                             50,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_baselineNoTag_mT2Zinv",  {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv",                                        50,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_0_mT2Zinv",           {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0",                          100, 0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_1_mT2Zinv",           {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1",                          50,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_2_mT2Zinv",           {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2",                          25,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_3_mT2Zinv",           {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2",                          15,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nt_0_mT2Zinv",           {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagMT2Zinv;nTopCandSortedCntZinv=0",                  100, 0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nt_1_mT2Zinv",           {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv=1",                50,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nt_2_mT2Zinv",           {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv=2",                25,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nt_3_mT2Zinv",           {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv>2",                15,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_0_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0",    50,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_0_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv=1;nTopCandSortedCntZinv=0",    25,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_0_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv=2;nTopCandSortedCntZinv=0",    15,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_0_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv>2;nTopCandSortedCntZinv=0",    10,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_1_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=1",  50,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_1_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1;nTopCandSortedCntZinv=1",  25,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_1_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2;nTopCandSortedCntZinv=1",  15,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_1_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2;nTopCandSortedCntZinv=1",  10,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_2_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=2",  50,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_2_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1;nTopCandSortedCntZinv=2",  25,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_2_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2;nTopCandSortedCntZinv=2",  15,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_2_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2;nTopCandSortedCntZinv=2",  10,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_3_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0;nTopCandSortedCntZinv>2",  50,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_3_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1;nTopCandSortedCntZinv>2",  25,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_3_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2;nTopCandSortedCntZinv>2",  15,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_3_mT2Zinv",      {scaled_elec_cleanmt2},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2;nTopCandSortedCntZinv>2",  10,  0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_cleanht",                {scaled_elec_cleanht},       {2, 1}, "",                                                             100, 0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_baseline_cleanht",       {scaled_elec_cleanht},       {2, 1}, "passBaselineZinv",                                             50,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_baselineNoTag_cleanht",  {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv",                                        50,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_baseline_ht",            {scaled_elec_ht},            {2, 1}, "passBaselineZinv",                                             50,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_0_cleanht",           {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0",                          100, 0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_1_cleanht",           {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1",                          50,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_2_cleanht",           {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2",                          25,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_3_cleanht",           {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2",                          15,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nt_0_cleanht",           {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagMT2Zinv;nTopCandSortedCntZinv=0",                  100, 0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nt_1_cleanht",           {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv=1",                50,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nt_2_cleanht",           {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv=2",                25,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nt_3_cleanht",           {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv>2",                15,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_0_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0",    50,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_0_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv=1;nTopCandSortedCntZinv=0",    25,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_0_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv=2;nTopCandSortedCntZinv=0",    15,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_0_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv>2;nTopCandSortedCntZinv=0",    10,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_1_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=1",  50,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_1_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1;nTopCandSortedCntZinv=1",  25,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_1_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2;nTopCandSortedCntZinv=1",  15,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_1_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2;nTopCandSortedCntZinv=1",  10,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_2_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=2",  50,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_2_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1;nTopCandSortedCntZinv=2",  25,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_2_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2;nTopCandSortedCntZinv=2",  15,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_2_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2;nTopCandSortedCntZinv=2",  10,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_3_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0;nTopCandSortedCntZinv>2",  50,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_3_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1;nTopCandSortedCntZinv>2",  25,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_3_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2;nTopCandSortedCntZinv>2",  15,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_3_cleanht",      {scaled_elec_cleanht},       {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2;nTopCandSortedCntZinv>2",  10,  0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
+    vh.push_back(PHS("elec_cleanmht",               {scaled_elec_cleanmht},      {2, 1}, "",                                                             100, 0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_baseline_cleanmht",      {scaled_elec_cleanmht},      {2, 1}, "passBaselineZinv",                                             50,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_baselineNoTag_cleanmht", {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv",                                        50,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_baseline_mht",           {scaled_elec_mht},           {2, 1}, "passBaselineZinv",                                             50,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_0_cleanmht",          {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0",                          100, 0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_1_cleanmht",          {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1",                          50,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_2_cleanmht",          {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2",                          25,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_3_cleanmht",          {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2",                          15,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nt_0_cleanmht",          {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagMT2Zinv;nTopCandSortedCntZinv=0",                  100, 0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nt_1_cleanmht",          {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv=1",                50,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nt_2_cleanmht",          {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv=2",                25,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nt_3_cleanmht",          {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv>2",                15,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_0_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0",    50,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_0_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv=1;nTopCandSortedCntZinv=0",    25,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_0_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv=2;nTopCandSortedCntZinv=0",    15,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_0_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv>2;nTopCandSortedCntZinv=0",    10,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_1_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=1",  50,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_1_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1;nTopCandSortedCntZinv=1",  25,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_1_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2;nTopCandSortedCntZinv=1",  15,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_1_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2;nTopCandSortedCntZinv=1",  10,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_2_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=2",  50,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_2_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1;nTopCandSortedCntZinv=2",  25,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_2_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2;nTopCandSortedCntZinv=2",  15,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_2_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2;nTopCandSortedCntZinv=2",  10,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_3_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0;nTopCandSortedCntZinv>2",  50,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_3_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1;nTopCandSortedCntZinv>2",  25,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_3_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2;nTopCandSortedCntZinv>2",  15,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_3_cleanmht",     {scaled_elec_cleanmht},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2;nTopCandSortedCntZinv>2",  10,  0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
+    vh.push_back(PHS("elec_cleanmet",               {scaled_elec_cleanMet},      {2, 1}, "",                                                             100, 0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_cleanmet_gr",            {scaled_elec_cleanMet},      {2, 1}, "",                                                             200, 0,     3000, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_baseline_cleanmet",      {scaled_elec_cleanMet},      {2, 1}, "passBaselineZinv",                                             50,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_baselineNoTag_cleanmet", {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv",                                        50,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_0_cleanmet",          {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0",                          100, 0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_1_cleanmet",          {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1",                          50,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_2_cleanmet",          {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2",                          25,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_3_cleanmet",          {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2",                          15,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nt_0_cleanmet",          {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagMT2Zinv;nTopCandSortedCntZinv=0",                  100, 0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nt_1_cleanmet",          {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv=1",                50,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nt_2_cleanmet",          {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv=2",                25,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nt_3_cleanmet",          {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;nTopCandSortedCntZinv>2",                15,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_0_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0",    50,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_0_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv=1;nTopCandSortedCntZinv=0",    25,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_0_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv=2;nTopCandSortedCntZinv=0",    15,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_0_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagMT2Zinv;cntCSVSZinv>2;nTopCandSortedCntZinv=0",    10,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_1_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=1",  50,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_1_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1;nTopCandSortedCntZinv=1",  25,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_1_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2;nTopCandSortedCntZinv=1",  15,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_1_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2;nTopCandSortedCntZinv=1",  10,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_2_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=2",  50,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_2_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1;nTopCandSortedCntZinv=2",  25,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_2_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2;nTopCandSortedCntZinv=2",  15,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_2_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2;nTopCandSortedCntZinv=2",  10,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_0_nt_3_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0;nTopCandSortedCntZinv>2",  50,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_1_nt_3_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1;nTopCandSortedCntZinv>2",  25,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_2_nt_3_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2;nTopCandSortedCntZinv>2",  15,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nb_3_nt_3_cleanmet",     {scaled_elec_cleanMet},      {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2;nTopCandSortedCntZinv>2",  10,  0,     1500, true,  false,  "MET [GeV]",      "Events"));
+    vh.push_back(PHS("elec_nTop",                   {scaled_elec_nTop},          {2, 1}, "",                                                             10,  0,       10, true,  false,  "N(t)",           "Events"));
+    vh.push_back(PHS("elec_baseline_nTop",          {scaled_elec_nTop},          {2, 1}, "passBaselineZinv",                                             10,  0,       10, true,  false,  "N(t)",           "Events"));
+    vh.push_back(PHS("elec_baselineNoTag_nTop",     {scaled_elec_nTop},          {2, 1}, "passBaselineNoTagZinv",                                        10,  0,       10, true,  false,  "N(t)",           "Events"));
+    vh.push_back(PHS("elec_nb_0_nTop",              {scaled_elec_nTop},          {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0",                          10,  0,       10, true,  false,  "N(t)",           "Events"));
+    vh.push_back(PHS("elec_nb_1_nTop",              {scaled_elec_nTop},          {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=1",                          10,  0,       10, true,  false,  "N(t)",           "Events"));
+    vh.push_back(PHS("elec_nb_2_nTop",              {scaled_elec_nTop},          {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv=2",                          10,  0,       10, true,  false,  "N(t)",           "Events"));
+    vh.push_back(PHS("elec_nb_3_nTop",              {scaled_elec_nTop},          {2, 1}, "passBaselineNoTagZinv;cntCSVSZinv>2",                          10,  0,       10, true,  false,  "N(t)",           "Events"));
+    vh.push_back(PHS("elec_cleannJet",              {scaled_elec_nCleanJet},     {2, 1}, "",                                                             20,  0,       20, true,  false,  "N(jet)",         "Events"));
+    vh.push_back(PHS("elec_baseline_cleannJet",     {scaled_elec_nCleanJet},     {2, 1}, "passBaselineZinv",                                             20,  0,       20, true,  false,  "N(jet)",         "Events"));
+    vh.push_back(PHS("elec_baselineNoTag_cleannJet",{scaled_elec_nCleanJet},     {2, 1}, "passBaselineNoTagZinv",                                        20,  0,       20, true,  false,  "N(jet)",         "Events"));
+    vh.push_back(PHS("elec_nBottom",                {scaled_elec_nBottom},       {2, 1}, "",                                                             10,  0,       10, true,  false,  "N(b)",           "Events"));
+    vh.push_back(PHS("elec_baseline_nBottom",       {scaled_elec_nBottom},       {2, 1}, "passBaselineZinv",                                             10,  0,       10, true,  false,  "N(b)",           "Events"));
+    vh.push_back(PHS("elec_baselineNoTAg_nBottom",  {scaled_elec_nBottom},       {2, 1}, "passBaselineNoTagZinv",                                        10,  0,       10, true,  false,  "N(b)",           "Events"));
+    vh.push_back(PHS("elec_cleanmhtphi",            {scaled_elec_cleanmhtphi},   {2, 1}, "",                                                             100, -3.14, 3.14, false, false,  "#phi(MH_{T})",   "Events"));
+    vh.push_back(PHS("elec_baseline_cleanmhtphi",   {scaled_elec_cleanmhtphi},   {2, 1}, "passBaselineZinv",                                             100, -3.14, 3.14, false, false,  "#phi(MH_{T})",   "Events"));
 
     vh.push_back(PHS("fake1b_nTop",               {PDC("single", {{"nTopCandSortedCntZinv", dsDY_nunu_1b},         {"nTopCandSortedCntZinv1b", dsDY_nunu_0b_1fake}})},         {2, 1}, "", 10, 0, 10, true, true, "N(t)", "Norm Events"));
     vh.push_back(PHS("fake1b_baselineNoTag_nTop", {PDC("single", {{"nTopCandSortedCntZinv", dsDY_nunu_1b_blNoTag}, {"nTopCandSortedCntZinv1b", dsDY_nunu_0b_1fake_blNoTag}})}, {2, 1}, "", 10, 0, 10, true, true, "N(t)", "Norm Events"));
