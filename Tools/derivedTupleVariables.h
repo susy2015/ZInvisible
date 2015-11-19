@@ -34,7 +34,7 @@ namespace plotterFunctions
 
     void generateWeight(NTupleReader& tr)
     {
-        const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVec");
+        const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
         const std::vector<TLorentzVector>& cutMuVec         = tr.getVec<TLorentzVector>("cutMuVec");
         const std::vector<TLorentzVector>& cutElecVec       = tr.getVec<TLorentzVector>("cutElecVec");
         const std::vector<double>& cutMuActivity            = tr.getVec<double>("cutMuActivity");
@@ -133,6 +133,8 @@ namespace plotterFunctions
         double genCleanHt = ht;
         for(auto& tlvp : genMuInAcc) if(tlvp->Pt() > 50) genCleanHt -= tlvp->Pt();
 
+        const double MHT_jetPtMin = 30.0;
+        TLorentzVector MHT;
         double mu1dRMin = 99.9, mu2dRMin = 99.9;
         for(auto& jet : jetsLVec)
         {
@@ -141,6 +143,8 @@ namespace plotterFunctions
             if(cutMuVec.size() >= 2) mu2dR = ROOT::Math::VectorUtil::DeltaR(jet, cutMuVec[1]);
             mu1dRMin = std::min(mu1dRMin, mu1dR);
             mu2dRMin = std::min(mu2dRMin, mu2dR);
+
+            if(jet.Pt() > MHT_jetPtMin) MHT += jet;
         }
         
         double mudR = 99.9, genMudR = 99.9, genMudPhi = 99.9, genMudEta = 99.9;
@@ -200,6 +204,8 @@ namespace plotterFunctions
         tr.registerDerivedVar("zEffWgt", 1.0/zEff);
         tr.registerDerivedVar("zAcc", zAcc);
         tr.registerDerivedVar("zAccWgt", 1.0/zAcc);
+        tr.registerDerivedVar("cleanMHt", MHT.Pt());
+        tr.registerDerivedVar("cleanMHtPhi", MHT.Phi());
     }
 
     void muInfo(NTupleReader& tr)
@@ -450,8 +456,6 @@ namespace plotterFunctions
                 }
             }
         }
-
-
 
         double genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
         int nZ = 0;
