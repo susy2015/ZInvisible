@@ -1094,9 +1094,21 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_2015CD_nt_0b("data",  "nTopCandSortedCntZinv", {dsData_2015C_0b});
     Plotter::DataCollection dcDY_nt_0b("stack",  "nTopCandSortedCntZinv", {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
     // --> ntops with bfaking
-    Plotter::DataCollection dcData_2015CD_nt1b_0bnomt2("data",  "nTopCandSortedCntZinv1b", {dsData_2015C_0bnomt2});
+    // Plotter::DataCollection dcData_2015CD_nt1b_0bnomt2("data", {"nTopCandSortedCntZinv1b", weight1fakebComb}, {dsData_2015C_0bnomt2});
+    // Plotter::DataCollection dcDY_nt1b_0bnomt2("stack",  {"nTopCandSortedCntZinv1b", weight1fakebComb}, {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
+    // Plotter::DataCollection dcData_2015CD_nt1b_0b("data", {"nTopCandSortedCntZinv1b", weight1fakebComb}, {dsData_2015C_0b});
+    // Plotter::DataCollection dcDY_nt1b_0b("stack",  {"nTopCandSortedCntZinv1b", weight1fakebComb}, {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
+    // Plotter::DataCollection dcData_2015CD_nt2b_0bnomt2("data",  {"nTopCandSortedCntZinv2b", weight2fakebComb}, {dsData_2015C_0bnomt2});
+    // Plotter::DataCollection dcDY_nt2b_0bnomt2("stack",  {"nTopCandSortedCntZinv2b", weight2fakebComb}, {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
+    // Plotter::DataCollection dcData_2015CD_nt2b_0b("data",  {"nTopCandSortedCntZinv2b", weight2fakebComb}, {dsData_2015C_0b});
+    // Plotter::DataCollection dcDY_nt2b_0b("stack",  {"nTopCandSortedCntZinv2b", weight2fakebComb}, {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
+    // Plotter::DataCollection dcData_2015CD_nt3b_0bnomt2("data",  {"nTopCandSortedCntZinv3b", weight3fakebComb}, {dsData_2015C_0bnomt2});
+    // Plotter::DataCollection dcDY_nt3b_0bnomt2("stack",  {"nTopCandSortedCntZinv3b", weight3fakebComb}, {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
+    // Plotter::DataCollection dcData_2015CD_nt3b_0b("data", {"nTopCandSortedCntZinv3b", weight3fakebComb}, {dsData_2015C_0b});
+    // Plotter::DataCollection dcDY_nt3b_0b("stack",  {"nTopCandSortedCntZinv3b", weight3fakebComb}, {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
+    Plotter::DataCollection dcData_2015CD_nt1b_0bnomt2("data", "nTopCandSortedCntZinv1b", {dsData_2015C_0bnomt2});
     Plotter::DataCollection dcDY_nt1b_0bnomt2("stack",  "nTopCandSortedCntZinv1b", {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
-    Plotter::DataCollection dcData_2015CD_nt1b_0b("data",  "nTopCandSortedCntZinv1b", {dsData_2015C_0b});
+    Plotter::DataCollection dcData_2015CD_nt1b_0b("data", "nTopCandSortedCntZinv1b", {dsData_2015C_0b});
     Plotter::DataCollection dcDY_nt1b_0b("stack",  "nTopCandSortedCntZinv1b", {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
     Plotter::DataCollection dcData_2015CD_nt2b_0bnomt2("data",  "nTopCandSortedCntZinv2b", {dsData_2015C_0bnomt2});
     Plotter::DataCollection dcDY_nt2b_0bnomt2("stack",  "nTopCandSortedCntZinv2b", {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
@@ -1104,7 +1116,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcDY_nt2b_0b("stack",  "nTopCandSortedCntZinv2b", {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
     Plotter::DataCollection dcData_2015CD_nt3b_0bnomt2("data",  "nTopCandSortedCntZinv3b", {dsData_2015C_0bnomt2});
     Plotter::DataCollection dcDY_nt3b_0bnomt2("stack",  "nTopCandSortedCntZinv3b", {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
-    Plotter::DataCollection dcData_2015CD_nt3b_0b("data",  "nTopCandSortedCntZinv3b", {dsData_2015C_0b});
+    Plotter::DataCollection dcData_2015CD_nt3b_0b("data", "nTopCandSortedCntZinv3b", {dsData_2015C_0b});
     Plotter::DataCollection dcDY_nt3b_0b("stack",  "nTopCandSortedCntZinv3b", {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
     // --> nbs
     Plotter::DataCollection dcData_2015CD_nb_nosel("data",  "cntCSVSZinv", {dsData_2015C_nosel});
