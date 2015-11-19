@@ -612,6 +612,20 @@ namespace plotterFunctions
         tr.registerDerivedVar("ngenMatchMuInAcc", static_cast<double>(genMatchMuInAcc->size()));
         tr.registerDerivedVec("genMatchMuInAccAct", genMatchMuInAccAct);
         tr.registerDerivedVec("genMatchIsoMuInAccAct", genMatchIsoMuInAccAct);
+        
+        tr.registerDerivedVec("genElec", genElec);
+        tr.registerDerivedVar("ngenElec", static_cast<double>(genElec->size()));
+        tr.registerDerivedVec("genElecInAcc", genElecInAcc);
+        tr.registerDerivedVec("genElecAct", genElecAct);
+        tr.registerDerivedVar("ngenElecInAcc", static_cast<double>(genElecInAcc->size()));
+        tr.registerDerivedVec("genElecInAccAct", genElecInAccAct);
+        tr.registerDerivedVec("genMatchElecInAcc", genMatchElecInAcc);
+        tr.registerDerivedVec("genMatchElecInAccRes", genMatchElecInAccRes);
+        tr.registerDerivedVec("genMatchIsoElecInAcc", genMatchIsoElecInAcc);
+        tr.registerDerivedVar("ngenMatchElecInAcc", static_cast<double>(genMatchElecInAcc->size()));
+        tr.registerDerivedVec("genMatchElecInAccAct", genMatchElecInAccAct);
+        tr.registerDerivedVec("genMatchIsoElecInAccAct", genMatchIsoElecInAccAct);
+
         tr.registerDerivedVar("genZPt", genZPt);
         tr.registerDerivedVar("genZEta", genZEta);
         tr.registerDerivedVar("genZmass", genZmass);

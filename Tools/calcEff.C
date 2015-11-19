@@ -32,15 +32,25 @@ int main()
     TH2 *hMuEff_num_pf = new TH2D("hMuEff_num_pf", "hMuEff_num_pf", 200, 0, 2000, 300, 0, 3000);
     TH2 *hMuEff_num_fp = new TH2D("hMuEff_num_fp", "hMuEff_num_fp", 200, 0, 2000, 300, 0, 3000);
 
-    TH2 *hMuEffPtActReco_num = new TH2D("hMuEffPtActReco_num", "hMuEffPtActReco_num", 200, 0, 2000, 300, 0, 1500);
-    TH2 *hMuEffPtActReco_den = new TH2D("hMuEffPtActReco_den", "hMuEffPtActReco_den", 200, 0, 2000, 300, 0, 1500);
-    TH2 *hMuEffPtActIso_num = new TH2D("hMuEffPtActIso_num", "hMuEffPtActIso_num", 200, 0, 2000, 300, 0, 1500);
-    TH2 *hMuEffPtActIso_den = new TH2D("hMuEffPtActIso_den", "hMuEffPtActIso_den", 200, 0, 2000, 300, 0, 1500);
+    TH2 *hMuEffPtActReco_num = new TH2D("hMuEffPtActReco_num", "hMuEffPtActReco_num", 200, 0, 2000, 100, 0, 100);
+    TH2 *hMuEffPtActReco_den = new TH2D("hMuEffPtActReco_den", "hMuEffPtActReco_den", 200, 0, 2000, 100, 0, 100);
+    TH2 *hMuEffPtActIso_num = new TH2D("hMuEffPtActIso_num", "hMuEffPtActIso_num",    200, 0, 2000, 100, 0, 100);
+    TH2 *hMuEffPtActIso_den = new TH2D("hMuEffPtActIso_den", "hMuEffPtActIso_den",    200, 0, 2000, 100, 0, 100);
+
+    TH2 *hElecEffPtActReco_num = new TH2D("hElecEffPtActReco_num", "hElecEffPtActReco_num", 200, 0, 2000, 100, 0, 100);
+    TH2 *hElecEffPtActReco_den = new TH2D("hElecEffPtActReco_den", "hElecEffPtActReco_den", 200, 0, 2000, 100, 0, 100);
+    TH2 *hElecEffPtActIso_num =  new TH2D("hElecEffPtActIso_num",  "hElecEffPtActIso_num",  200, 0, 2000, 100, 0, 100);
+    TH2 *hElecEffPtActIso_den =  new TH2D("hElecEffPtActIso_den",  "hElecEffPtActIso_den",  200, 0, 2000, 100, 0, 100);
 
     TH1 *hMuEffPtReco_num = new TH1D("hMuEffPtReco_num", "hMuEffPtActReco_num", 200, 0, 2000);
     TH1 *hMuEffPtReco_den = new TH1D("hMuEffPtReco_den", "hMuEffPtActReco_den", 200, 0, 2000);
     TH1 *hMuEffPtIso_num = new TH1D("hMuEffPtIso_num", "hMuEffPtActIso_num", 200, 0, 2000);
     TH1 *hMuEffPtIso_den = new TH1D("hMuEffPtIso_den", "hMuEffPtActIso_den", 200, 0, 2000);
+
+    TH1 *hElecEffPtReco_num = new TH1D("hElecEffPtReco_num", "hElecEffPtActReco_num", 200, 0, 2000);
+    TH1 *hElecEffPtReco_den = new TH1D("hElecEffPtReco_den", "hElecEffPtActReco_den", 200, 0, 2000);
+    TH1 *hElecEffPtIso_num =  new TH1D("hElecEffPtIso_num",  "hElecEffPtActIso_num", 200, 0, 2000);
+    TH1 *hElecEffPtIso_den =  new TH1D("hElecEffPtIso_den",  "hElecEffPtActIso_den", 200, 0, 2000);
 
     TH2 *hMuEff_num_rand = new TH2D("hMuEff_num_rand", "hMuEff_num_rand", 200, 0, 2000, 300, 0, 3000);
 
@@ -54,6 +64,11 @@ int main()
     TH1 *hZAccPt_den = new TH1D("hZAccPt_den", "hZAccPt_den", 200, 0, 2000);
     TH1 *hZAccPtSmear_num = new TH1D("hZAccPtSmear_num", "hZAccPtSmear_num", 200, 0, 2000);
     TH1 *hZAccPtSmear_den = new TH1D("hZAccPtSmear_den", "hZAccPtSmear_den", 200, 0, 2000);
+
+    TH1 *hZElecAccPt_num = new TH1D("hZElecAccPt_num", "hZElecAccPt_num", 200, 0, 2000);
+    TH1 *hZElecAccPt_den = new TH1D("hZElecAccPt_den", "hZElecAccPt_den", 200, 0, 2000);
+    TH1 *hZElecAccPtSmear_num = new TH1D("hZElecAccPtSmear_num", "hZElecAccPtSmear_num", 200, 0, 2000);
+    TH1 *hZElecAccPtSmear_den = new TH1D("hZElecAccPtSmear_den", "hZElecAccPtSmear_den", 200, 0, 2000);
 
     TH2 *hZEff_num = new TH2D("hZEff_num", "hZEff_num", 200, 0, 2000, 300, 0, 3000);
     TH2 *hZEff_den = new TH2D("hZEff_den", "hZEff_den", 200, 0, 2000, 300, 0, 3000);
@@ -117,6 +132,15 @@ int main()
             const std::vector<double>& genMatchMuInAccAct      = tr.getVec<double>("genMatchMuInAccAct");
             const std::vector<double>& genMatchIsoMuInAccAct   = tr.getVec<double>("genMatchIsoMuInAccAct");
 
+            const std::vector<const TLorentzVector*>& genMatchIsoElecInAcc = tr.getVec<const TLorentzVector*>("genMatchIsoElecInAcc");
+            const std::vector<const TLorentzVector*>& genMatchElecInAcc    = tr.getVec<const TLorentzVector*>("genMatchElecInAcc");
+            const std::vector<const TLorentzVector*>& genElecInAcc         = tr.getVec<const TLorentzVector*>("genElecInAcc");
+            const std::vector<const TLorentzVector*>& genElec              = tr.getVec<const TLorentzVector*>("genElec");
+            const std::vector<double>& genElecAct                = tr.getVec<double>("genElecAct");
+            const std::vector<double>& genElecInAccAct           = tr.getVec<double>("genElecInAccAct");
+            const std::vector<double>& genMatchElecInAccAct      = tr.getVec<double>("genMatchElecInAccAct");
+            const std::vector<double>& genMatchIsoElecInAccAct   = tr.getVec<double>("genMatchIsoElecInAccAct");
+
             //const bool& passZinvBaselineNoTag = tr.getVar<bool>("passZinvBaselineNoTag");
             //const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
 
@@ -127,138 +151,198 @@ int main()
             const double& cleanMetPt = tr.getVar<double>("cleanMetPt");
             const int&    pdgIdZDec  = tr.getVar<int>("pdgIdZDec");
 
-            if(pdgIdZDec != 13) continue;
-
-            for(auto& tlv : genMu)
+            if(pdgIdZDec == 13)
             {
-                hMuAccPt_den->Fill(tlv->Pt(), file.getWeight());
-                hMuAccHt_den->Fill(cleanHt,   file.getWeight());
 
-                hMuAcc_den->Fill(tlv->Pt(), cleanHt, file.getWeight());
-            }
-
-            int count = 0, random = 0;//trg->Integer(400000000) & 1;
-            bool oneMatch = false, twoMatch = false;
-
-            double modHt = cleanHt;
-
-            for(auto& tlv : genMuInAcc)
-            {
-                if(tlv->Pt() > 50) modHt -= tlv->Pt();
-            }
-
-            //const std::vector<double>& jActR1 = tr.getVec<double>("jActR1");
-            //const std::vector<double>& jActR2 = tr.getVec<double>("jActR2");
-
-            for(auto& tlv : genMuInAcc)
-            {
-                hMuAccPt_num->Fill(tlv->Pt(), file.getWeight());
-                hMuAccHt_num->Fill(cleanHt,   file.getWeight());
-
-                hMuAcc_num->Fill(tlv->Pt(), cleanHt, file.getWeight());
-
-                hMuEffPt_den->Fill(tlv->Pt(), file.getWeight());
-                hMuEffHt_den->Fill(cleanHt,   file.getWeight());
-
-                hMuEff_den->Fill(tlv->Pt(), cleanHt, file.getWeight());
-
-                //hZEff_jActR1_den->Fill(tlv->Pt(), jActR1[count], file.getWeight());
-                //hZEff_jActR2_den->Fill(tlv->Pt(), jActR2[count], file.getWeight());
-
-                for(auto& tlv2 : genMatchMuInAcc)
+                for(auto& tlv : genMu)
                 {
-                    if(     count == 0 && tlv == tlv2) oneMatch = true;
-                    else if(count == 1 && tlv == tlv2) twoMatch = true;
+                    hMuAccPt_den->Fill(tlv->Pt(), file.getWeight());
+                    hMuAccHt_den->Fill(cleanHt,   file.getWeight());
 
-                    if(count == random && tlv == tlv2) hMuEff_num_rand->Fill(tlv->Pt(), cleanHt, file.getWeight());
+                    hMuAcc_den->Fill(tlv->Pt(), cleanHt, file.getWeight());
+                }
 
-                    if(tlv == tlv2)
+                int count = 0, random = 0;//trg->Integer(400000000) & 1;
+                bool oneMatch = false, twoMatch = false;
+
+                double modHt = cleanHt;
+
+                for(auto& tlv : genMuInAcc)
+                {
+                    if(tlv->Pt() > 50) modHt -= tlv->Pt();
+                }
+
+                //const std::vector<double>& jActR1 = tr.getVec<double>("jActR1");
+                //const std::vector<double>& jActR2 = tr.getVec<double>("jActR2");
+
+                for(auto& tlv : genMuInAcc)
+                {
+                    hMuAccPt_num->Fill(tlv->Pt(), file.getWeight());
+                    hMuAccHt_num->Fill(cleanHt,   file.getWeight());
+
+                    hMuAcc_num->Fill(tlv->Pt(), cleanHt, file.getWeight());
+
+                    hMuEffPt_den->Fill(tlv->Pt(), file.getWeight());
+                    hMuEffHt_den->Fill(cleanHt,   file.getWeight());
+
+                    hMuEff_den->Fill(tlv->Pt(), cleanHt, file.getWeight());
+
+                    //hZEff_jActR1_den->Fill(tlv->Pt(), jActR1[count], file.getWeight());
+                    //hZEff_jActR2_den->Fill(tlv->Pt(), jActR2[count], file.getWeight());
+
+                    for(auto& tlv2 : genMatchMuInAcc)
                     {
-                        //hZEff_jActR1_num->Fill(tlv->Pt(), jActR1[count], file.getWeight());
-                        //hZEff_jActR2_num->Fill(tlv->Pt(), jActR2[count], file.getWeight());
+                        if(     count == 0 && tlv == tlv2) oneMatch = true;
+                        else if(count == 1 && tlv == tlv2) twoMatch = true;
+
+                        if(count == random && tlv == tlv2) hMuEff_num_rand->Fill(tlv->Pt(), cleanHt, file.getWeight());
+
+                        if(tlv == tlv2)
+                        {
+                            //hZEff_jActR1_num->Fill(tlv->Pt(), jActR1[count], file.getWeight());
+                            //hZEff_jActR2_num->Fill(tlv->Pt(), jActR2[count], file.getWeight());
+                        }
+                    }
+                    count++;
+                }
+
+                for(auto& tlv : genMatchMuInAcc)
+                {
+                    hMuEffPt_num->Fill(tlv->Pt(), file.getWeight());
+                    hMuEffHt_num->Fill(cleanHt,   file.getWeight());
+
+                    hMuEff_num->Fill(tlv->Pt(), cleanHt, file.getWeight());
+
+                    if(      oneMatch && twoMatch) hMuEff_num_pp->Fill(tlv->Pt(), cleanHt, file.getWeight());
+                    else if(!oneMatch && twoMatch) hMuEff_num_fp->Fill(tlv->Pt(), cleanHt, file.getWeight());
+                    else if(oneMatch && !twoMatch) hMuEff_num_pf->Fill(tlv->Pt(), cleanHt, file.getWeight());
+                }
+
+                if(true)//passMuZinvSel)
+                {
+                    for(int i = 0; i < genMuInAcc.size(); ++i)
+                    {
+                        hMuEffPtActReco_den->Fill(genMuInAcc[i]->Pt(), genMuInAccAct[i]);
+
+                        hMuEffPtReco_den->Fill(genMuInAcc[i]->Pt());
+                    }
+                    for(int i = 0; i < genMatchMuInAcc.size(); ++i)
+                    {
+                        hMuEffPtActReco_num->Fill(genMatchMuInAcc[i]->Pt(), genMatchMuInAccAct[i]);
+
+                        hMuEffPtActIso_den->Fill(genMatchMuInAcc[i]->Pt(), genMatchMuInAccAct[i]);
+
+
+                        hMuEffPtReco_num->Fill(genMatchMuInAcc[i]->Pt());
+                    
+                        hMuEffPtIso_den->Fill(genMatchMuInAcc[i]->Pt());
+                    }
+                    for(int i = 0; i < genMatchIsoMuInAcc.size(); ++i)
+                    {
+                        hMuEffPtActIso_num->Fill(genMatchIsoMuInAcc[i]->Pt(), genMatchIsoMuInAccAct[i]);
+
+                        hMuEffPtIso_num->Fill(genMatchIsoMuInAcc[i]->Pt());
                     }
                 }
-                count++;
-            }
 
-            for(auto& tlv : genMatchMuInAcc)
-            {
-                hMuEffPt_num->Fill(tlv->Pt(), file.getWeight());
-                hMuEffHt_num->Fill(cleanHt,   file.getWeight());
 
-                hMuEff_num->Fill(tlv->Pt(), cleanHt, file.getWeight());
-
-                if(      oneMatch && twoMatch) hMuEff_num_pp->Fill(tlv->Pt(), cleanHt, file.getWeight());
-                else if(!oneMatch && twoMatch) hMuEff_num_fp->Fill(tlv->Pt(), cleanHt, file.getWeight());
-                else if(oneMatch && !twoMatch) hMuEff_num_pf->Fill(tlv->Pt(), cleanHt, file.getWeight());
-            }
-
-            if(true)//passMuZinvSel)
-            {
-                for(int i = 0; i < genMuInAcc.size(); ++i)
+                if(true)//passMuZinvSel && passZinvBaselineNoTag)
                 {
-                    hMuEffPtActReco_den->Fill(genMuInAcc[i]->Pt(), genMuInAccAct[i]);
-
-                    hMuEffPtReco_den->Fill(genMuInAcc[i]->Pt());
+                    for(int i = hZRes->FindBin(-0.3); i <= hZRes->FindBin(0.3); ++i)
+                    {
+                        hZAccPtSmear_den->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
+                    }
+                    hZAccPt_den->Fill(genZPt, file.getWeight());
+                    hZAcc_den->Fill(genZPt, modHt, file.getWeight());
+                    if(genMuInAcc.size() >= 2)// && genMuInAcc[0]->Pt() > 45 && genMuInAcc[1]->Pt() > 20 && genZM > 71 && genZM < 111)
+                    {
+                        // muon iso cut 
+                        double muDeltaR = ROOT::Math::VectorUtil::DeltaR(*genMuInAcc[0], *genMuInAcc[1]);
+                        double minMuPt = std::min(genMuInAcc[0]->Pt(), genMuInAcc[1]->Pt());
+                        double mudRMin = 10.0/minMuPt;
+                        if(minMuPt < 50)       mudRMin = 0.2;
+                        else if(minMuPt > 200) mudRMin = 0.05;
+                        //if(cleanMetPt > 1000) std::cout << muDeltaR << " > " << mudRMin << "\t" << genMuInAcc.size() << std::endl;
+                        if(true)//muDeltaR > mudRMin)
+                        {
+                            for(int i = hZRes->FindBin(-0.3); i <= hZRes->FindBin(0.3); ++i)
+                            {
+                                hZAccPtSmear_num->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
+                            }
+                            hZAccPt_num->Fill(genZPt, file.getWeight());
+                            hZAcc_num->Fill(genZPt, modHt, file.getWeight());
+                
+                            hZEffPt_den->Fill(genZPt, file.getWeight());
+                            hZEff_den->Fill(genZPt, modHt, file.getWeight());
+                            if(genMuInAcc[0]->Pt() > 45 && genMuInAcc[1]->Pt() > 20 && genZM > 71 && genZM < 111)//passMuZinvSel && passZinvBaselineNoTag)//genMatchMuInAcc.size() >= 2)
+                            {
+                                hZEffPt_num->Fill(genZPt, file.getWeight());
+                                hZEff_num->Fill(genZPt, modHt, file.getWeight());
+                            }
+                        }
+                    }
                 }
-                for(int i = 0; i < genMatchMuInAcc.size(); ++i)
+            }
+            if(pdgIdZDec == 11)
+            {
+                //Electrons 
+
+                double modHt = cleanHt;
+
+                for(auto& tlv : genElecInAcc)
                 {
-                    hMuEffPtActReco_num->Fill(genMatchMuInAcc[i]->Pt(), genMatchMuInAccAct[i]);
+                    if(tlv->Pt() > 50) modHt -= tlv->Pt();
+                }
 
-                    hMuEffPtActIso_den->Fill(genMatchMuInAcc[i]->Pt(), genMatchMuInAccAct[i]);
+                for(int i = 0; i < genElecInAcc.size(); ++i)
+                {
+                    hElecEffPtActReco_den->Fill(genElecInAcc[i]->Pt(), genElecInAccAct[i]);
+
+                    hElecEffPtReco_den->Fill(genElecInAcc[i]->Pt());
+                }
+                for(int i = 0; i < genMatchElecInAcc.size(); ++i)
+                {
+                    hElecEffPtActReco_num->Fill(genMatchElecInAcc[i]->Pt(), genMatchElecInAccAct[i]);
+
+                    hElecEffPtActIso_den->Fill(genMatchElecInAcc[i]->Pt(), genMatchElecInAccAct[i]);
 
 
-                    hMuEffPtReco_num->Fill(genMatchMuInAcc[i]->Pt());
+                    hElecEffPtReco_num->Fill(genMatchElecInAcc[i]->Pt());
                     
-                    hMuEffPtIso_den->Fill(genMatchMuInAcc[i]->Pt());
+                    hElecEffPtIso_den->Fill(genMatchElecInAcc[i]->Pt());
                 }
-                for(int i = 0; i < genMatchIsoMuInAcc.size(); ++i)
+                for(int i = 0; i < genMatchIsoElecInAcc.size(); ++i)
                 {
-                    hMuEffPtActIso_num->Fill(genMatchIsoMuInAcc[i]->Pt(), genMatchIsoMuInAccAct[i]);
+                    hElecEffPtActIso_num->Fill(genMatchIsoElecInAcc[i]->Pt(), genMatchIsoElecInAccAct[i]);
 
-                    hMuEffPtIso_num->Fill(genMatchIsoMuInAcc[i]->Pt());
+                    hElecEffPtIso_num->Fill(genMatchIsoElecInAcc[i]->Pt());
                 }
-            }
 
 
-            if(true)//passMuZinvSel && passZinvBaselineNoTag)
-            {
                 for(int i = hZRes->FindBin(-0.3); i <= hZRes->FindBin(0.3); ++i)
                 {
-                    hZAccPtSmear_den->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
+                    hZElecAccPtSmear_den->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
                 }
-                hZAccPt_den->Fill(genZPt, file.getWeight());
-                hZAcc_den->Fill(genZPt, modHt, file.getWeight());
-                if(genMuInAcc.size() >= 2)// && genMuInAcc[0]->Pt() > 45 && genMuInAcc[1]->Pt() > 20 && genZM > 71 && genZM < 111)
+                hZElecAccPt_den->Fill(genZPt, file.getWeight());
+                if(genElecInAcc.size() >= 2)
                 {
-                    // muon iso cut 
-                    double muDeltaR = ROOT::Math::VectorUtil::DeltaR(*genMuInAcc[0], *genMuInAcc[1]);
-                    double minMuPt = std::min(genMuInAcc[0]->Pt(), genMuInAcc[1]->Pt());
-                    double mudRMin = 10.0/minMuPt;
-                    if(minMuPt < 50)       mudRMin = 0.2;
-                    else if(minMuPt > 200) mudRMin = 0.05;
-                    //if(cleanMetPt > 1000) std::cout << muDeltaR << " > " << mudRMin << "\t" << genMuInAcc.size() << std::endl;
-                    if(true)//muDeltaR > mudRMin)
+                    for(int i = hZRes->FindBin(-0.3); i <= hZRes->FindBin(0.3); ++i)
                     {
-                        for(int i = hZRes->FindBin(-0.3); i <= hZRes->FindBin(0.3); ++i)
-                        {
-                            hZAccPtSmear_num->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
-                        }
-                        hZAccPt_num->Fill(genZPt, file.getWeight());
-                        hZAcc_num->Fill(genZPt, modHt, file.getWeight());
+                        hZElecAccPtSmear_num->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
+                    }
+                    hZElecAccPt_num->Fill(genZPt, file.getWeight());
                 
-                        hZEffPt_den->Fill(genZPt, file.getWeight());
-                        hZEff_den->Fill(genZPt, modHt, file.getWeight());
-                        if(genMuInAcc[0]->Pt() > 45 && genMuInAcc[1]->Pt() > 20 && genZM > 71 && genZM < 111)//passMuZinvSel && passZinvBaselineNoTag)//genMatchMuInAcc.size() >= 2)
-                        {
-                            hZEffPt_num->Fill(genZPt, file.getWeight());
-                            hZEff_num->Fill(genZPt, modHt, file.getWeight());
-                        }
+                    hZEffPt_den->Fill(genZPt, file.getWeight());
+                    hZEff_den->Fill(genZPt, modHt, file.getWeight());
+                    if(genElecInAcc[0]->Pt() > 45 && genElecInAcc[1]->Pt() > 20 && genZM > 71 && genZM < 111)//passElecZinvSel && passZinvBaselineNoTag)//genMatchElecInAcc.size() >= 2)
+                    {
+                        hZEffPt_num->Fill(genZPt, file.getWeight());
+                        hZEff_num->Fill(genZPt, modHt, file.getWeight());
                     }
                 }
             }
+
         }
-        //break;
     }
 
     f->cd();
@@ -288,6 +372,15 @@ int main()
     hMuEffPtIso_num->Write();
     hMuEffPtIso_den->Write();
 
+    hElecEffPtActReco_num->Write();
+    hElecEffPtActReco_den->Write();
+    hElecEffPtActIso_num->Write();
+    hElecEffPtActIso_den->Write();
+    hElecEffPtReco_num->Write();
+    hElecEffPtReco_den->Write();
+    hElecEffPtIso_num->Write();
+    hElecEffPtIso_den->Write();
+
     hMuEff_num_rand->Write();
 
     hZEffPt_num->Write();
@@ -296,6 +389,11 @@ int main()
     hZAccPt_den->Write();
     hZAccPtSmear_den->Write();
     hZAccPtSmear_num->Write();
+
+    hZElecAccPt_num->Write();
+    hZElecAccPt_den->Write();
+    hZElecAccPtSmear_den->Write();
+    hZElecAccPtSmear_num->Write();
 
     hZEff_num->Write();
     hZEff_den->Write();
