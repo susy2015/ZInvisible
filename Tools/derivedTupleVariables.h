@@ -34,8 +34,7 @@ namespace plotterFunctions
 
     void generateWeight(NTupleReader& tr)
     {
-        const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVec");
-        const std::vector<TLorentzVector>& cleanJetVec      = tr.getVec<TLorentzVector>("cleanJetVec");        
+        const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
         const std::vector<TLorentzVector>& cutMuVec         = tr.getVec<TLorentzVector>("cutMuVec");
         const std::vector<TLorentzVector>& cutElecVec       = tr.getVec<TLorentzVector>("cutElecVec");
         const std::vector<double>& cutMuActivity            = tr.getVec<double>("cutMuActivity");
@@ -134,14 +133,18 @@ namespace plotterFunctions
         double genCleanHt = ht;
         for(auto& tlvp : genMuInAcc) if(tlvp->Pt() > 50) genCleanHt -= tlvp->Pt();
 
+        const double MHT_jetPtMin = 30.0;
+        TLorentzVector MHT;
         double mu1dRMin = 99.9, mu2dRMin = 99.9;
-        for(auto& jet : cleanJetVec)
+        for(auto& jet : jetsLVec)
         {
             double mu1dR = 999.9, mu2dR = 999.9;
             if(cutMuVec.size() >= 1) mu1dR = ROOT::Math::VectorUtil::DeltaR(jet, cutMuVec[0]);
             if(cutMuVec.size() >= 2) mu2dR = ROOT::Math::VectorUtil::DeltaR(jet, cutMuVec[1]);
             mu1dRMin = std::min(mu1dRMin, mu1dR);
             mu2dRMin = std::min(mu2dRMin, mu2dR);
+
+            if(jet.Pt() > MHT_jetPtMin) MHT += jet;
         }
         
         double mudR = 99.9, genMudR = 99.9, genMudPhi = 99.9, genMudEta = 99.9;
@@ -201,6 +204,8 @@ namespace plotterFunctions
         tr.registerDerivedVar("zEffWgt", 1.0/zEff);
         tr.registerDerivedVar("zAcc", zAcc);
         tr.registerDerivedVar("zAccWgt", 1.0/zAcc);
+        tr.registerDerivedVar("cleanMHt", MHT.Pt());
+        tr.registerDerivedVar("cleanMHtPhi", MHT.Phi());
     }
 
     void muInfo(NTupleReader& tr)
@@ -216,6 +221,11 @@ namespace plotterFunctions
         const std::vector<double>& recoJetschargedEmEnergyFraction     = tr.getVec<double>("recoJetschargedEmEnergyFraction"); 
         const std::vector<double>& recoJetschargedHadronEnergyFraction = tr.getVec<double>("recoJetschargedHadronEnergyFraction");
         const std::vector<int> & muonsFlagIDVec = tr.getVec<int>("muonsFlagMedium");
+        const std::vector<int>&  elesFlagIDVec  = tr.getVec<int>("elesFlagVeto");
+
+        const std::vector<double>& muonspfActivity      = tr.getVec<double>("muonspfActivity");
+        const std::vector<double>& elespfActivity       = tr.getVec<double>("elespfActivity");
+        const std::vector<double>& W_emu_pfActivityVec  = tr.getVec<double>("W_emu_pfActivityVec");
 
         const double& ht                             = tr.getVar<double>("ht");
         const double& met                            = tr.getVar<double>("met");
@@ -226,12 +236,36 @@ namespace plotterFunctions
         const std::vector<double>& elesCharge           = tr.getVec<double>("elesCharge");
         const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
 
-        const bool& passMuonVeto  = tr.getVar<bool>("passMuonVeto");
-        const bool& passEleVeto   = tr.getVar<bool>("passEleVeto");
+        bool passMuonVeto = false;
+        bool passEleVeto = false;
+
+        try
+        {
+            const bool& passMuonVetoTmp  = tr.getVar<bool>("passMuonVeto");
+            const bool& passEleVetoTmp   = tr.getVar<bool>("passEleVeto");
+            if(&passMuonVetoTmp != nullptr) passMuonVeto = passMuonVetoTmp;
+            if(&passEleVetoTmp != nullptr) passEleVeto = passEleVetoTmp;
+        }
+        catch(const std::string e)
+        {
+            //std::cout << "void muInfo(NTupleReader& tr): Caught exception, variable \"" << e << "\" not found" << std::endl;
+        }
             
+        std::vector<const TLorentzVector*>* genMatchIsoElecInAcc = new std::vector<const TLorentzVector*>();
+        std::vector<const TLorentzVector*>* genMatchElecInAcc = new std::vector<const TLorentzVector*>();
+        std::vector<double>* genMatchElecInAccRes = new std::vector<double>();
+        std::vector<const TLorentzVector*>* genElecInAcc = new std::vector<const TLorentzVector*>();
+        std::vector<const TLorentzVector*>* genElec = new std::vector<const TLorentzVector*>();
+        std::vector<double>* genMatchIsoElecInAccAct = new std::vector<double>();
+        std::vector<double>* genMatchElecInAccAct = new std::vector<double>();
+        std::vector<double>* genElecInAccAct = new std::vector<double>();
+        std::vector<double>* genElecAct = new std::vector<double>();
+
         std::vector<TLorentzVector>* cutElecVec = new std::vector<TLorentzVector>();
         std::vector<double>* cutElecCharge = new std::vector<double>();
         std::vector<double>* cutElecActivity = new std::vector<double>();
+
+        std::vector<TLorentzVector> cutElecVecRecoOnly;
 
         std::vector<const TLorentzVector*>* genMatchIsoMuInAcc = new std::vector<const TLorentzVector*>();
         std::vector<const TLorentzVector*>* genMatchMuInAcc = new std::vector<const TLorentzVector*>();
@@ -266,7 +300,7 @@ namespace plotterFunctions
                 }
                 cutMuVec->push_back(muonsLVec[i]);
                 cutMuCharge->push_back(muonsCharge[i]);
-                cutMuActivity->push_back(AnaFunctions::getMuonActivity(muonsLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, recoJetschargedEmEnergyFraction, AnaConsts::muonsAct));
+                cutMuActivity->push_back(muonspfActivity[i]);
                 if(muonsCharge[i] > 0) sumMuCharge++;
                 else                   sumMuCharge--;
             }
@@ -276,7 +310,12 @@ namespace plotterFunctions
         int sumElecCharge = 0;
         for(int i = 0; i < elesLVec.size(); ++i)
         {
-            if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], -1, AnaConsts::elesMiniIsoArr))
+            if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr)) // emulates muons with pt but no iso requirements.  
+            {
+                cutElecVecRecoOnly.push_back(elesLVec[i]);
+            }
+
+            if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
             {
                 cutElecVec->push_back(elesLVec[i]);
                 cutElecCharge->push_back(elesCharge[i]);
@@ -310,8 +349,10 @@ namespace plotterFunctions
         double genHt = 0.0;
 
         const double minMuPt = 20.0, highMuPt = 45.0;
+        const double minElecPt = 33.0, highElecPt = 33.0;
         double nuPt1 = -999.9, nuPt2 = -999.9;
 
+        //Gen info parsing 
         if(&genDecayPdgIdVec != nullptr && &genDecayLVec != nullptr)
         {
             for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
@@ -320,11 +361,17 @@ namespace plotterFunctions
 
                 if(genDecayPdgIdVec[i] ==  13) nuPt1 = genDecayLVec[i].Pt();
                 if(genDecayPdgIdVec[i] == -13) nuPt2 = genDecayLVec[i].Pt();
+            }
+
+            for(int index = 0; index < W_emuVec.size(); ++index)
+            {
+                int i = W_emuVec[index];
                 
+                //muon efficiency and acceptance 
                 if(abs(genDecayPdgIdVec[i]) == 13)
                 {
                     genMu->push_back(&genDecayLVec[i]);
-                    genMuAct->push_back(AnaFunctions::getMuonActivity(genDecayLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, recoJetschargedEmEnergyFraction, AnaConsts::muonsAct));
+                    genMuAct->push_back(W_emu_pfActivityVec[index]);
                     if(AnaFunctions::passMuonAccOnly(genDecayLVec[i], AnaConsts::muonsMiniIsoArr) && genDecayLVec[i].Pt() > minMuPt)
                     {
                         genMuInAcc->push_back(&genDecayLVec[i]);
@@ -360,6 +407,50 @@ namespace plotterFunctions
                         {
                             genMatchIsoMuInAcc->push_back(&genDecayLVec[i]);
                             genMatchIsoMuInAccAct->push_back(genMuAct->back());
+                        }
+                    }
+                }
+
+                //Elec efficiency and acceptance
+                if(abs(genDecayPdgIdVec[i]) == 11)
+                {
+                    genElec->push_back(&genDecayLVec[i]);
+                    genElecAct->push_back(W_emu_pfActivityVec[index]);
+                    if(AnaFunctions::passElectronAccOnly(genDecayLVec[i], AnaConsts::elesMiniIsoArr) && genDecayLVec[i].Pt() > minElecPt)
+                    {
+                        genElecInAcc->push_back(&genDecayLVec[i]);
+                        genElecInAccAct->push_back(genElecAct->back());
+                        double dRMin = 999.9;
+                        double matchPt = -999.9;
+                        for(int j = 0; j < cutElecVecRecoOnly.size(); ++j)
+                        {
+                            double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVecRecoOnly[j]);
+                            if(dR < dRMin)
+                            {
+                                dRMin = dR;
+                                matchPt = cutElecVecRecoOnly[j].Pt();
+                            }
+                        }
+                        if(dRMin < 0.02)
+                        {
+                            genMatchElecInAcc->push_back(&genDecayLVec[i]);
+                            genMatchElecInAccAct->push_back(genElecAct->back());
+                            genMatchElecInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
+                        }
+                    
+                        dRMin = 999.9;
+                        for(int j = 0; j < cutElecVec->size(); ++j)
+                        {
+                            double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutElecVec)[j]);
+                            if(dR < dRMin)
+                            {
+                                dRMin = dR;
+                            }
+                        }
+                        if(dRMin < 0.02)
+                        {
+                            genMatchIsoElecInAcc->push_back(&genDecayLVec[i]);
+                            genMatchIsoElecInAccAct->push_back(genElecAct->back());
                         }
                     }
                 }
@@ -535,7 +626,7 @@ namespace plotterFunctions
 
     void fakebtagvectors(NTupleReader& tr)
     {
-        const std::vector<double>& cleanJetpt30ArrBTag = tr.getVec<double>("cleanJetpt30ArrBTag");
+        const std::vector<double>& cleanJetpt30ArrBTag = tr.getVec<double>("recoJetsBtag_forTaggerZinv");
 
         double maxCSV = 0.0;
         double secCSV = 0.0;
@@ -732,20 +823,20 @@ namespace plotterFunctions
 
         //register functions with NTupleReader
         tr.registerFunction(&muInfo);
-        stopFunctions::cjh.setMuonIso("mini");
-        stopFunctions::cjh.setElecIso("mini");
-        stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
-        stopFunctions::cjh.setBTagCollection("recoJetsBtag_0_MuCleaned");
-        stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
-        stopFunctions::cjh.setForceDr(true);
-        stopFunctions::cjh.setRemove(true);
-        //stopFunctions::cjh.setPhotoCleanThresh(0.7);
-        stopFunctions::cjh.setDisable(true);
-        stopFunctions::cjh.setDisableElec(false);
-        tr.registerFunction(&stopFunctions::cleanJets);
-        tr.registerFunction(&fakebtagvectors);
+        //stopFunctions::cjh.setMuonIso("mini");
+        //stopFunctions::cjh.setElecIso("mini");
+        //stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
+        //stopFunctions::cjh.setBTagCollection("recoJetsBtag_0_MuCleaned");
+        //stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
+        //stopFunctions::cjh.setForceDr(true);
+        //stopFunctions::cjh.setRemove(true);
+        ////stopFunctions::cjh.setPhotoCleanThresh(0.7);
+        //stopFunctions::cjh.setDisable(true);
+        //stopFunctions::cjh.setDisableElec(false);
+        //tr.registerFunction(&stopFunctions::cleanJets);
         tr.registerFunction(&generateWeight);
         tr.registerFunction(&zinvBaseline);
+        tr.registerFunction(&fakebtagvectors);
         tr.registerFunction(&zinvBaseline1b);
         tr.registerFunction(&zinvBaseline2b);
         tr.registerFunction(&zinvBaseline3b);

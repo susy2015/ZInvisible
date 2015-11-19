@@ -60,51 +60,17 @@ int main()
     TH2 *hZAcc_num = new TH2D("hZAcc_num", "hZAcc_num", 200, 0, 2000, 300, 0, 3000);
     TH2 *hZAcc_den = new TH2D("hZAcc_den", "hZAcc_den", 200, 0, 2000, 300, 0, 3000);
 
-    TH2 *hZEff_jActR1_num = new TH2D("hZEff_jActR1_num", "hZEff_jActR1_num", 200, 0, 2000, 500, 0, 5000);
-    TH2 *hZEff_jActR1_den = new TH2D("hZEff_jActR1_den", "hZEff_jActR1_den", 200, 0, 2000, 500, 0, 5000);
-    TH2 *hZEff_jActR2_num = new TH2D("hZEff_jActR2_num", "hZEff_jActR2_num", 200, 0, 2000, 500, 0, 5000);
-    TH2 *hZEff_jActR2_den = new TH2D("hZEff_jActR2_den", "hZEff_jActR2_den", 200, 0, 2000, 500, 0, 5000);
+    //TH2 *hZEff_jActR1_num = new TH2D("hZEff_jActR1_num", "hZEff_jActR1_num", 200, 0, 2000, 500, 0, 5000);
+    //TH2 *hZEff_jActR1_den = new TH2D("hZEff_jActR1_den", "hZEff_jActR1_den", 200, 0, 2000, 500, 0, 5000);
+    //TH2 *hZEff_jActR2_num = new TH2D("hZEff_jActR2_num", "hZEff_jActR2_num", 200, 0, 2000, 500, 0, 5000);
+    //TH2 *hZEff_jActR2_den = new TH2D("hZEff_jActR2_den", "hZEff_jActR2_den", 200, 0, 2000, 500, 0, 5000);
 
     TH2 *hdPhi1 = new TH2D("hdPhi1", "hdPhi1", 200, 0, 2000, 500, 0, 5000);
     TH2 *hdPhi2 = new TH2D("hdPhi2", "hdPhi2", 200, 0, 2000, 500, 0, 5000);
     TH2 *hdPhi3 = new TH2D("hdPhi3", "hdPhi3", 200, 0, 2000, 500, 0, 5000);
 
     std::set<std::string> activeBranches;
-
-    activeBranches.insert("run");
-    activeBranches.insert("lumi");
-    activeBranches.insert("event");
-    activeBranches.insert("ht");
-    activeBranches.insert("genDecayPdgIdVec");
-    activeBranches.insert("genDecayLVecOB");
-    activeBranches.insert("genDecayLVec");
-    activeBranches.insert("muonsLVec");
-    activeBranches.insert("muonsRelIso");
-    activeBranches.insert("muonsMiniIso");
-    activeBranches.insert("W_emuVec");
-    activeBranches.insert("muonsCharge");
-    activeBranches.insert("muonsMtw");
-    activeBranches.insert("elesMtw");
-    activeBranches.insert("loose_isoTrksLVec");
-    activeBranches.insert("loose_isoTrks_iso");
-    activeBranches.insert("loose_isoTrks_mtw");
-    activeBranches.insert("met");
-    activeBranches.insert("metphi");
-    activeBranches.insert("jetsLVec");
-    activeBranches.insert("elesLVec");
-    activeBranches.insert("elesRelIso");
-    activeBranches.insert("recoJetsBtag_0");
-    activeBranches.insert("muMatchedJetIdx");
-    activeBranches.insert("eleMatchedJetIdx");
-    activeBranches.insert("recoJetschargedEmEnergyFraction"); 
-    activeBranches.insert("recoJetschargedHadronEnergyFraction");
-    activeBranches.insert("elesisEB");
-    activeBranches.insert("cleanMetPt");
-    activeBranches.insert("prodJetsNoMu_jetsLVec");
-    activeBranches.insert("recoJetsBtag_0_MuCleaned");
-    activeBranches.insert("prodJetsNoMu_recoJetschargedEmEnergyFraction");
-    activeBranches.insert("prodJetsNoMu_recoJetsneutralEmEnergyFraction");
-    activeBranches.insert("prodJetsNoMu_recoJetschargedHadronEnergyFraction");
+    plotterFunctions::activateBranches(activeBranches);
 
     TRandom3 *trg = new TRandom3(12321);
     plotterFunctions::tr3 = new TRandom3(32123);
@@ -112,30 +78,34 @@ int main()
     TH1* hZRes = (TH1*)fZRes->Get("zRes");
     double hZRes_int = hZRes->Integral(hZRes->FindBin(-0.3), hZRes->FindBin(0.3));
 
+    plotterFunctions::blvZinv = new BaselineVessel("");
+    AnaFunctions::prepareTopTagger();
+
     for(auto& file : sc["DYJetsToLL"]) 
     {
-        TChain *t = new TChain(sc["DYJetsToLL"].front().treePath.c_str());
+        TChain *t = new TChain(file.treePath.c_str());
 
         for(const auto& fn : file.getFilelist()) t->Add(fn.c_str());
         //t->Add("root://cmsxrootd-site.fnal.gov//store/user/lpcsusyhad/PHYS14_720_Mar14_2014_v2/pastika/DYJetsToLL_M-50_HT-600toInf_Tune4C_13TeV-madgraph-tauola/PHYS14_PU20bx25_PHYS14_25_V1-FLAT/150328_003328/0000/stopFlatNtuples_15.root");
 
         std::cout << "Processing file(s): " << file.filePath << std::endl;
 
-        NTupleReader tr(t, activeBranches);
-        stopFunctions::cjh.setMuonIso("mini");
-        stopFunctions::cjh.setElecIso("rel");
-        stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
-        stopFunctions::cjh.setBTagCollection("recoJetsBtag_0_MuCleaned");
-        stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
-        stopFunctions::cjh.setForceDr(true);
-        stopFunctions::cjh.setRemove(true);
-        //stopFunctions::cjh.setPhotoCleanThresh(0.7);
-        stopFunctions::cjh.setDisable(true);
-        tr.registerFunction(&stopFunctions::cleanJets);
-        tr.registerFunction(&plotterFunctions::muInfo);
-        tr.registerFunction(&plotterFunctions::generateWeight);
-        //tr.registerFunction(&plotterFunctions::zinvBaseline);
 
+        NTupleReader tr(t, activeBranches);
+        //stopFunctions::cjh.setMuonIso("mini");
+        //stopFunctions::cjh.setElecIso("rel");
+        //stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
+        //stopFunctions::cjh.setBTagCollection("recoJetsBtag_0_MuCleaned");
+        //stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
+        //stopFunctions::cjh.setForceDr(true);
+        //stopFunctions::cjh.setRemove(true);
+        ////stopFunctions::cjh.setPhotoCleanThresh(0.7);
+        //stopFunctions::cjh.setDisable(true);
+        //tr.registerFunction(&stopFunctions::cleanJets);
+        tr.registerFunction(&plotterFunctions::zinvBaseline);
+        tr.registerFunction(&plotterFunctions::muInfo);
+        //tr.registerFunction(&plotterFunctions::generateWeight);
+        
         while(tr.getNextEvent())
         {
             const std::vector<const TLorentzVector*>& genMatchIsoMuInAcc = tr.getVec<const TLorentzVector*>("genMatchIsoMuInAcc");
@@ -177,8 +147,8 @@ int main()
                 if(tlv->Pt() > 50) modHt -= tlv->Pt();
             }
 
-            const std::vector<double>& jActR1 = tr.getVec<double>("jActR1");
-            const std::vector<double>& jActR2 = tr.getVec<double>("jActR2");
+            //const std::vector<double>& jActR1 = tr.getVec<double>("jActR1");
+            //const std::vector<double>& jActR2 = tr.getVec<double>("jActR2");
 
             for(auto& tlv : genMuInAcc)
             {
@@ -192,8 +162,8 @@ int main()
 
                 hMuEff_den->Fill(tlv->Pt(), cleanHt, file.getWeight());
 
-                hZEff_jActR1_den->Fill(tlv->Pt(), jActR1[count], file.getWeight());
-                hZEff_jActR2_den->Fill(tlv->Pt(), jActR2[count], file.getWeight());
+                //hZEff_jActR1_den->Fill(tlv->Pt(), jActR1[count], file.getWeight());
+                //hZEff_jActR2_den->Fill(tlv->Pt(), jActR2[count], file.getWeight());
 
                 for(auto& tlv2 : genMatchMuInAcc)
                 {
@@ -204,8 +174,8 @@ int main()
 
                     if(tlv == tlv2)
                     {
-                        hZEff_jActR1_num->Fill(tlv->Pt(), jActR1[count], file.getWeight());
-                        hZEff_jActR2_num->Fill(tlv->Pt(), jActR2[count], file.getWeight());
+                        //hZEff_jActR1_num->Fill(tlv->Pt(), jActR1[count], file.getWeight());
+                        //hZEff_jActR2_num->Fill(tlv->Pt(), jActR2[count], file.getWeight());
                     }
                 }
                 count++;
@@ -332,10 +302,10 @@ int main()
     hZAcc_num->Write();
     hZAcc_den->Write();
 
-    hZEff_jActR1_num->Write();
-    hZEff_jActR1_den->Write();
-    hZEff_jActR2_num->Write();
-    hZEff_jActR2_den->Write();
+    //hZEff_jActR1_num->Write();
+    //hZEff_jActR1_den->Write();
+    //hZEff_jActR2_num->Write();
+    //hZEff_jActR2_den->Write();
 
     f->Close();
 }
