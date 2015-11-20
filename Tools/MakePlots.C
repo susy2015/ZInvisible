@@ -1036,6 +1036,49 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsttZ_0b("t#bar{t}Z", fileMap["TTZ"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsVV_0b("Diboson", fileMap["Diboson"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "");
 
+    // --> 0b control region without mt2 cut
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w1b("Data Run 2015C", fileMap["Data_SingleMuon25ns"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsDY_0bnomt2_w1b("DY", fileMap["DYJetsToLL"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dstt2l_0bnomt2_w1b("t#bar{t} dilepton", fileMap["TTbarDiLep"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dstW_0bnomt2_w1b("single top", fileMap["tW"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsttZ_0bnomt2_w1b("t#bar{t}Z", fileMap["TTZ"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsVV_0bnomt2_w1b("Diboson", fileMap["Diboson"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    // --> 0b control region 
+    Plotter::DatasetSummary dsData_2015C_0b_w1b("Data Run 2015C", fileMap["Data_SingleMuon25ns"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsDY_0b_w1b("DY", fileMap["DYJetsToLL"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dstt2l_0b_w1b("t#bar{t} dilepton", fileMap["TTbarDiLep"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dstW_0b_w1b("single top", fileMap["tW"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsttZ_0b_w1b("t#bar{t}Z", fileMap["TTZ"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsVV_0b_w1b("Diboson", fileMap["Diboson"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    // --> 0b control region without mt2 cut
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w2b("Data Run 2015C", fileMap["Data_SingleMuon25ns"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsDY_0bnomt2_w2b("DY", fileMap["DYJetsToLL"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dstt2l_0bnomt2_w2b("t#bar{t} dilepton", fileMap["TTbarDiLep"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dstW_0bnomt2_w2b("single top", fileMap["tW"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsttZ_0bnomt2_w2b("t#bar{t}Z", fileMap["TTZ"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsVV_0bnomt2_w2b("Diboson", fileMap["Diboson"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    // --> 0b control region 
+    Plotter::DatasetSummary dsData_2015C_0b_w2b("Data Run 2015C", fileMap["Data_SingleMuon25ns"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsDY_0b_w2b("DY", fileMap["DYJetsToLL"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dstt2l_0b_w2b("t#bar{t} dilepton", fileMap["TTbarDiLep"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dstW_0b_w2b("single top", fileMap["tW"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsttZ_0b_w2b("t#bar{t}Z", fileMap["TTZ"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsVV_0b_w2b("Diboson", fileMap["Diboson"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    // --> 0b control region without mt2 cut
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w3b("Data Run 2015C", fileMap["Data_SingleMuon25ns"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsDY_0bnomt2_w3b("DY", fileMap["DYJetsToLL"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dstt2l_0bnomt2_w3b("t#bar{t} dilepton", fileMap["TTbarDiLep"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dstW_0bnomt2_w3b("single top", fileMap["tW"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsttZ_0bnomt2_w3b("t#bar{t}Z", fileMap["TTZ"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsVV_0bnomt2_w3b("Diboson", fileMap["Diboson"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    // --> 0b control region 
+    Plotter::DatasetSummary dsData_2015C_0b_w3b("Data Run 2015C", fileMap["Data_SingleMuon25ns"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsDY_0b_w3b("DY", fileMap["DYJetsToLL"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dstt2l_0b_w3b("t#bar{t} dilepton", fileMap["TTbarDiLep"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dstW_0b_w3b("single top", fileMap["tW"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsttZ_0b_w3b("t#bar{t}Z", fileMap["TTZ"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsVV_0b_w3b("Diboson", fileMap["Diboson"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+
 
     // Define the collections, i.e. variables per selection
     // --> met
@@ -1061,30 +1104,18 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_2015CD_nt_0b("data",  "nTopCandSortedCntZinv", {dsData_2015C_0b});
     Plotter::DataCollection dcDY_nt_0b("stack",  "nTopCandSortedCntZinv", {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
     // --> ntops with bfaking
-    // Plotter::DataCollection dcData_2015CD_nt1b_0bnomt2("data", {"nTopCandSortedCntZinv1b", weight1fakebComb}, {dsData_2015C_0bnomt2});
-    // Plotter::DataCollection dcDY_nt1b_0bnomt2("stack",  {"nTopCandSortedCntZinv1b", weight1fakebComb}, {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
-    // Plotter::DataCollection dcData_2015CD_nt1b_0b("data", {"nTopCandSortedCntZinv1b", weight1fakebComb}, {dsData_2015C_0b});
-    // Plotter::DataCollection dcDY_nt1b_0b("stack",  {"nTopCandSortedCntZinv1b", weight1fakebComb}, {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
-    // Plotter::DataCollection dcData_2015CD_nt2b_0bnomt2("data",  {"nTopCandSortedCntZinv2b", weight2fakebComb}, {dsData_2015C_0bnomt2});
-    // Plotter::DataCollection dcDY_nt2b_0bnomt2("stack",  {"nTopCandSortedCntZinv2b", weight2fakebComb}, {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
-    // Plotter::DataCollection dcData_2015CD_nt2b_0b("data",  {"nTopCandSortedCntZinv2b", weight2fakebComb}, {dsData_2015C_0b});
-    // Plotter::DataCollection dcDY_nt2b_0b("stack",  {"nTopCandSortedCntZinv2b", weight2fakebComb}, {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
-    // Plotter::DataCollection dcData_2015CD_nt3b_0bnomt2("data",  {"nTopCandSortedCntZinv3b", weight3fakebComb}, {dsData_2015C_0bnomt2});
-    // Plotter::DataCollection dcDY_nt3b_0bnomt2("stack",  {"nTopCandSortedCntZinv3b", weight3fakebComb}, {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
-    // Plotter::DataCollection dcData_2015CD_nt3b_0b("data", {"nTopCandSortedCntZinv3b", weight3fakebComb}, {dsData_2015C_0b});
-    // Plotter::DataCollection dcDY_nt3b_0b("stack",  {"nTopCandSortedCntZinv3b", weight3fakebComb}, {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
-    Plotter::DataCollection dcData_2015CD_nt1b_0bnomt2("data", "nTopCandSortedCntZinv1b", {dsData_2015C_0bnomt2});
-    Plotter::DataCollection dcDY_nt1b_0bnomt2("stack",  "nTopCandSortedCntZinv1b", {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
-    Plotter::DataCollection dcData_2015CD_nt1b_0b("data", "nTopCandSortedCntZinv1b", {dsData_2015C_0b});
-    Plotter::DataCollection dcDY_nt1b_0b("stack",  "nTopCandSortedCntZinv1b", {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
-    Plotter::DataCollection dcData_2015CD_nt2b_0bnomt2("data",  "nTopCandSortedCntZinv2b", {dsData_2015C_0bnomt2});
-    Plotter::DataCollection dcDY_nt2b_0bnomt2("stack",  "nTopCandSortedCntZinv2b", {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
-    Plotter::DataCollection dcData_2015CD_nt2b_0b("data",  "nTopCandSortedCntZinv2b", {dsData_2015C_0b});
-    Plotter::DataCollection dcDY_nt2b_0b("stack",  "nTopCandSortedCntZinv2b", {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
-    Plotter::DataCollection dcData_2015CD_nt3b_0bnomt2("data",  "nTopCandSortedCntZinv3b", {dsData_2015C_0bnomt2});
-    Plotter::DataCollection dcDY_nt3b_0bnomt2("stack",  "nTopCandSortedCntZinv3b", {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
-    Plotter::DataCollection dcData_2015CD_nt3b_0b("data", "nTopCandSortedCntZinv3b", {dsData_2015C_0b});
-    Plotter::DataCollection dcDY_nt3b_0b("stack",  "nTopCandSortedCntZinv3b", {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
+    Plotter::DataCollection dcData_2015CD_nt1b_0bnomt2("data", "nTopCandSortedCntZinv1b", {dsData_2015C_0bnomt2_w1b});
+    Plotter::DataCollection dcDY_nt1b_0bnomt2("stack",  "nTopCandSortedCntZinv1b", {dsDY_0bnomt2_w1b, dstt2l_0bnomt2_w1b, dstW_0bnomt2_w1b, dsttZ_0bnomt2_w1b, dsVV_0bnomt2_w1b});
+    Plotter::DataCollection dcData_2015CD_nt1b_0b("data", "nTopCandSortedCntZinv1b", {dsData_2015C_0b_w1b});
+    Plotter::DataCollection dcDY_nt1b_0b("stack",  "nTopCandSortedCntZinv1b", {dsDY_0b_w1b, dstt2l_0b_w1b, dstW_0b_w1b, dsttZ_0b_w1b, dsVV_0b_w1b});
+    Plotter::DataCollection dcData_2015CD_nt2b_0bnomt2("data",  "nTopCandSortedCntZinv2b", {dsData_2015C_0bnomt2_w2b});
+    Plotter::DataCollection dcDY_nt2b_0bnomt2("stack",  "nTopCandSortedCntZinv2b", {dsDY_0bnomt2_w2b, dstt2l_0bnomt2_w2b, dstW_0bnomt2_w2b, dsttZ_0bnomt2_w2b, dsVV_0bnomt2_w2b});
+    Plotter::DataCollection dcData_2015CD_nt2b_0b("data",  "nTopCandSortedCntZinv2b", {dsData_2015C_0b_w2b});
+    Plotter::DataCollection dcDY_nt2b_0b("stack",  "nTopCandSortedCntZinv2b", {dsDY_0b_w2b, dstt2l_0b_w2b, dstW_0b_w2b, dsttZ_0b_w2b, dsVV_0b_w2b});
+    Plotter::DataCollection dcData_2015CD_nt3b_0bnomt2("data",  "nTopCandSortedCntZinv3b", {dsData_2015C_0bnomt2_w3b});
+    Plotter::DataCollection dcDY_nt3b_0bnomt2("stack",  "nTopCandSortedCntZinv3b", {dsDY_0bnomt2_w3b, dstt2l_0bnomt2_w3b, dstW_0bnomt2_w3b, dsttZ_0bnomt2_w3b, dsVV_0bnomt2_w3b});
+    Plotter::DataCollection dcData_2015CD_nt3b_0b("data", "nTopCandSortedCntZinv3b", {dsData_2015C_0b_w3b});
+    Plotter::DataCollection dcDY_nt3b_0b("stack",  "nTopCandSortedCntZinv3b", {dsDY_0b_w3b, dstt2l_0b_w3b, dstW_0b_w3b, dsttZ_0b_w3b, dsVV_0b_w3b});
     // --> nbs
     Plotter::DataCollection dcData_2015CD_nb_nosel("data",  "cntCSVSZinv", {dsData_2015C_nosel});
     Plotter::DataCollection dcDY_nb_nosel("stack",  "cntCSVSZinv", {dsDY_nosel, dstt2l_nosel, dstW_nosel, dsttZ_nosel, dsVV_nosel});
