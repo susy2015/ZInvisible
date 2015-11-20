@@ -4,6 +4,7 @@
 from samples import SampleCollection
 from os import system
 import optparse 
+import subprocess
 
 submitFile = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
@@ -37,7 +38,7 @@ datasets = []
 if options.datasets:
     datasets = options.datasets.split(',')
 else:
-    print "No dataset pecified"
+    print "No dataset specified"
     exit(0)
 
 for ds in datasets:
@@ -62,3 +63,4 @@ fout.close()
 system('mkdir -p logs')
 system("echo 'condor_submit condor_submit.txt'")
 system('condor_submit condor_submit.txt')
+

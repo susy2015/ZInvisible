@@ -744,6 +744,11 @@ namespace plotterFunctions
         const double wnb02 = 2.586369e-03;//5.78052e-3;
         const double wnb03 = 1.640077e-04;//7.08235e-4;
 
+	// weights to apply when doing b-faking
+	const double w1b = wnb01 * weight1fakeb;
+	const double w2b = wnb02 * weight2fakeb;
+	const double w3b = wnb03 * weight3fakeb;
+	
         if(cntCSVS == 0)
         {
             //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
@@ -759,6 +764,9 @@ namespace plotterFunctions
         tr.registerDerivedVar("nSearchBin", nSearchBin);
         tr.registerDerivedVec("nb0BinsNW", nb0BinsNW);
         tr.registerDerivedVec("nb0Bins", nb0Bins);
+	tr.registerDerivedVar("weight1fakebComb", w1b);
+	tr.registerDerivedVar("weight2fakebComb", w2b);
+	tr.registerDerivedVar("weight3fakebComb", w3b);
     }
 
     void printInterestingEvents(NTupleReader& tr)
