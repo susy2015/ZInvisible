@@ -18,15 +18,40 @@ TH2* rebin2d(TH2* old, double xbins[], int nx, double ybins[], int ny)
     TH2 *h = new TH2F(hname, old->GetTitle(), nx, xbins, ny, ybins);
     TAxis *xaxis = old->GetXaxis();
     TAxis *yaxis = old->GetYaxis();
-    for (int i=1; i<=xaxis->GetNbins(); i++) 
+    for (int i=0; i<=xaxis->GetNbins() + 1; i++) 
     {
-        for(int j=1; j<=yaxis->GetNbins(); j++) 
+        for(int j=0; j<=yaxis->GetNbins() + 1; j++) 
         {
             h->Fill(xaxis->GetBinCenter(i), yaxis->GetBinCenter(j), old->GetBinContent(i, j));
         }
     }
 
     return h;
+}
+
+void combineActBins(TH2* hnum, TH2* hden, const int N = 5)
+{
+    TAxis *xaxis = hnum->GetXaxis();
+    TAxis *yaxis = hnum->GetYaxis();
+
+    for (int i=1; i<=xaxis->GetNbins(); i++)
+    {
+        int j;
+        double contentNum = 0.0, contentDen = 0.0;
+        for(j = yaxis->GetNbins() + 1; j >= 0; j--) 
+        {
+            contentNum += hnum->GetBinContent(i, j);
+            contentDen += hden->GetBinContent(i, j);
+            if(contentNum > N) break;
+        }
+        for(; j <= yaxis->GetNbins() + 1; j++)
+        {
+            hnum->SetBinContent(i, j, contentNum);
+            hnum->SetBinError(i, j, sqrt(contentNum));
+            hden->SetBinContent(i, j, contentDen);
+            hden->SetBinError(i, j, sqrt(contentDen));
+        }
+    }
 }
 
 static double dzbt[] = {0.0};
@@ -48,8 +73,6 @@ void makeRatio1D(std::string label, TFile *fin, TFile *fout, double bins[] = dzb
 
     fout->cd();
     ratio->Write();
-
-    std::cout << "HELLO!" << std::endl;
 }
 
 void makeRatio2D(std::string label, TFile *fin, TFile *fout, double binsX[] = dzbt, int nx = 0, double binsY[] = dzbt, int ny = 0)
@@ -64,12 +87,13 @@ void makeRatio2D(std::string label, TFile *fin, TFile *fout, double binsX[] = dz
         den = rebin2d(den, binsX, nx - 1, binsY, ny - 1);
     }
 
+    combineActBins(num, den);
+
     TH2 *ratio = (TH2*)num->Clone((label + "_ratio").c_str());
     ratio->Divide(den);
 
     fout->cd();
     ratio->Write();
-    std::cout << label << "\tTHERE!" << std::endl;
 }
 
 int main ()
@@ -78,6 +102,7 @@ int main ()
 
     double xbins[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 220.0, 240.0, 260.0, 280.0, 300.0, 340.0, 380.0, 420.0, 460.0, 500.0, 560.0, 2000.0};
     int nxbins = sizeof(xbins)/sizeof(double);
+
     double ybins[] = {0.0, 10.0, 40.0, 120.0, 200.0, 300.0, 400.0, 650.0, 800.0, 1000.0, 5000.0};
     int nybins = sizeof(ybins)/sizeof(double);
 
@@ -87,14 +112,15 @@ int main ()
     double muptbins[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 120.0, 140.0, 180.0, 200.0, 300.0, 400.0, 500.0, 600.0, 800.0, 2000.0};
     int nmuptbins = sizeof(muptbins)/sizeof(double);
 
-    double muptbins2[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 70.0, 100.0, 2000.0};
+    double muptbins2[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 70.0, 100.0, 150.0, 300.0, 500.0, 800.0, 1400.0, 2000.0};
     int nmuptbins2 = sizeof(muptbins2)/sizeof(double);
 
     double muptbins3[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 120.0, 140.0, 180.0, 200.0, 300.0, 400.0, 500.0, 600.0, 800.0, 1200.0, 2000.0};
     int nmuptbins3 = sizeof(muptbins3)/sizeof(double);
 
-    double atbins[] = {0.0, 5.0, 10.0, 20.0, 40.0, 60.0, 80.0, 100.0, 200.0, 500.0, 3000.0};
-    int nactbins = sizeof(atbins)/sizeof(double);
+    //double actbins[] = {0.0, 5.0, 10.0, 20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 200.0};//, 500.0, 3000.0};
+    double actbins[] = {0.0, 0.02, 0.05, 0.15, 1.0, 20.0};
+    int nactbins = sizeof(actbins)/sizeof(double);
 
     TFile  *fin = new TFile("effhists.root");
     TFile *fout = new TFile("lepEffHists2.root", "RECREATE");
@@ -123,17 +149,17 @@ int main ()
     //makeRatio2D("hZEff_jActR1", fin, fout, zptbins, nzptbins, ybins, nybins);
     //makeRatio2D("hZEff_jActR2", fin, fout);
     
-    makeRatio2D("hMuEffPtActReco", fin, fout, muptbins2, nmuptbins2, atbins, nactbins);
-    makeRatio2D("hMuEffPtActIso", fin, fout, muptbins2, nmuptbins2, atbins, nactbins);
+    makeRatio2D("hMuEffPtActReco", fin, fout, muptbins2, nmuptbins2, actbins, nactbins);
+    makeRatio2D("hMuEffPtActIso", fin, fout, muptbins2, nmuptbins2, actbins, nactbins);
 
-    makeRatio2D("hElecEffPtActReco", fin, fout, muptbins2, nmuptbins2, atbins, nactbins);
-    makeRatio2D("hElecEffPtActIso", fin, fout, muptbins2, nmuptbins2, atbins, nactbins);
+    makeRatio2D("hElecEffPtActReco", fin, fout, muptbins2, nmuptbins2, actbins, nactbins);
+    makeRatio2D("hElecEffPtActIso", fin, fout, muptbins2, nmuptbins2, actbins, nactbins);
     
     makeRatio1D("hMuEffPtReco", fin, fout, muptbins3, nmuptbins3);
-    makeRatio1D("hMuEffPtIso", fin, fout, muptbins3, nmuptbins3);
+    makeRatio1D("hMuEffPtIso",  fin, fout, muptbins3, nmuptbins3);
 
     makeRatio1D("hElecEffPtReco", fin, fout, muptbins3, nmuptbins3);
-    makeRatio1D("hElecEffPtIso", fin, fout, muptbins3, nmuptbins3);
+    makeRatio1D("hElecEffPtIso",  fin, fout, muptbins3, nmuptbins3);
 
     fout->Close();
 
@@ -147,7 +173,7 @@ int main ()
     TH1 *h_3b_fake = (TH1*)fin2->Get("fake3b_baselineNoTag_nTopnTopCandSortedCntZinv3bnTopCandSortedCntZinv3bZ#rightarrow#nu#nu N(b) = 0, 3 fake bsingle");
     
     printf("N(b) extrapolation scale factors\n");
-    printf("N(b) = 0 -> 1: %e\n", h_1b->Integral()/h_1b_fake->Integral());
-    printf("N(b) = 0 -> 2: %e\n", h_2b->Integral()/h_2b_fake->Integral());
-    printf("N(b) = 0 -> 3: %e\n", h_3b->Integral()/h_3b_fake->Integral());
+    if(h_1b && h_1b_fake) printf("N(b) = 0 -> 1: %e\n", h_1b->Integral()/h_1b_fake->Integral());
+    if(h_2b && h_2b_fake) printf("N(b) = 0 -> 2: %e\n", h_2b->Integral()/h_2b_fake->Integral());
+    if(h_3b && h_3b_fake) printf("N(b) = 0 -> 3: %e\n", h_3b->Integral()/h_3b_fake->Integral());
 }

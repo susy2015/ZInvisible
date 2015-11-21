@@ -32,15 +32,15 @@ int main()
     TH2 *hMuEff_num_pf = new TH2D("hMuEff_num_pf", "hMuEff_num_pf", 200, 0, 2000, 300, 0, 3000);
     TH2 *hMuEff_num_fp = new TH2D("hMuEff_num_fp", "hMuEff_num_fp", 200, 0, 2000, 300, 0, 3000);
 
-    TH2 *hMuEffPtActReco_num = new TH2D("hMuEffPtActReco_num", "hMuEffPtActReco_num", 200, 0, 2000, 100, 0, 100);
-    TH2 *hMuEffPtActReco_den = new TH2D("hMuEffPtActReco_den", "hMuEffPtActReco_den", 200, 0, 2000, 100, 0, 100);
-    TH2 *hMuEffPtActIso_num = new TH2D("hMuEffPtActIso_num", "hMuEffPtActIso_num",    200, 0, 2000, 100, 0, 100);
-    TH2 *hMuEffPtActIso_den = new TH2D("hMuEffPtActIso_den", "hMuEffPtActIso_den",    200, 0, 2000, 100, 0, 100);
+    TH2 *hMuEffPtActReco_num = new TH2D("hMuEffPtActReco_num", "hMuEffPtActReco_num", 200, 0, 2000, 1000, 0, 10);
+    TH2 *hMuEffPtActReco_den = new TH2D("hMuEffPtActReco_den", "hMuEffPtActReco_den", 200, 0, 2000, 1000, 0, 10);
+    TH2 *hMuEffPtActIso_num = new TH2D("hMuEffPtActIso_num", "hMuEffPtActIso_num",    200, 0, 2000, 1000, 0, 10);
+    TH2 *hMuEffPtActIso_den = new TH2D("hMuEffPtActIso_den", "hMuEffPtActIso_den",    200, 0, 2000, 1000, 0, 10);
 
-    TH2 *hElecEffPtActReco_num = new TH2D("hElecEffPtActReco_num", "hElecEffPtActReco_num", 200, 0, 2000, 100, 0, 100);
-    TH2 *hElecEffPtActReco_den = new TH2D("hElecEffPtActReco_den", "hElecEffPtActReco_den", 200, 0, 2000, 100, 0, 100);
-    TH2 *hElecEffPtActIso_num =  new TH2D("hElecEffPtActIso_num",  "hElecEffPtActIso_num",  200, 0, 2000, 100, 0, 100);
-    TH2 *hElecEffPtActIso_den =  new TH2D("hElecEffPtActIso_den",  "hElecEffPtActIso_den",  200, 0, 2000, 100, 0, 100);
+    TH2 *hElecEffPtActReco_num = new TH2D("hElecEffPtActReco_num", "hElecEffPtActReco_num", 200, 0, 2000, 1000, 0, 10);
+    TH2 *hElecEffPtActReco_den = new TH2D("hElecEffPtActReco_den", "hElecEffPtActReco_den", 200, 0, 2000, 1000, 0, 10);
+    TH2 *hElecEffPtActIso_num =  new TH2D("hElecEffPtActIso_num",  "hElecEffPtActIso_num",  200, 0, 2000, 1000, 0, 10);
+    TH2 *hElecEffPtActIso_den =  new TH2D("hElecEffPtActIso_den",  "hElecEffPtActIso_den",  200, 0, 2000, 1000, 0, 10);
 
     TH1 *hMuEffPtReco_num = new TH1D("hMuEffPtReco_num", "hMuEffPtActReco_num", 200, 0, 2000);
     TH1 *hMuEffPtReco_den = new TH1D("hMuEffPtReco_den", "hMuEffPtActReco_den", 200, 0, 2000);
