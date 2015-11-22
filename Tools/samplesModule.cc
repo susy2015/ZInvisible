@@ -3,7 +3,11 @@
 #include <string>
 
 extern "C" {
-    AnaSamples::SampleCollection* SC_new(){ return new AnaSamples::SampleCollection(*(new AnaSamples::SampleSet())); }
+    AnaSamples::SampleCollection* SC_new()
+    {
+        AnaSamples::SampleSet *ss = new AnaSamples::SampleSet();
+        return new AnaSamples::SampleCollection(*ss); 
+    }
     int SC_samples_size(AnaSamples::SampleCollection* sc, char *scn){ return (*sc)[std::string(scn)].size(); }
     char const ** SC_samples(AnaSamples::SampleCollection* sc, char *scn)
     {
@@ -24,6 +28,17 @@ extern "C" {
         for(auto& sample : sampleVec)
         {
             array[i++] = sample.c_str();
+        }
+        return array;
+    }
+    int SC_samplecollection_size(AnaSamples::SampleCollection* sc, char *scn){ return sc->size(); }
+    char const ** SC_samplecollection_names(AnaSamples::SampleCollection* sc)
+    {
+        const char **array = new const char*[sc->size()];
+        int i = 0;
+        for(auto& sample : *sc)
+        {
+            array[i++] = sample.first.c_str();
         }
         return array;
     }

@@ -10,7 +10,7 @@ Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/makePlots, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,  $ENV(CMSSW_BASE)/src/ZInvisible/Tools/muEffHists.root,  $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/makePlots, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,  $ENV(CMSSW_BASE)/src/ZInvisible/Tools/lepEffHists.root,  $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so
 Output = logs/makePlots_$(Process).stdout
 Error = logs/makePlots_$(Process).stderr
 Log = logs/makePlots_$(Process).log
@@ -23,16 +23,19 @@ parser = optparse.OptionParser("usage: %prog [options]\n")
 
 parser.add_option ('-n', dest='numfile', type='int', default = 5, help="number of files per job")
 parser.add_option ('-d', dest='datasets', type='string', default = '', help="List of datasets 'ZJetsToNuNu,DYJetsToLL'")
+parser.add_option ('-l', dest='dataCollections', action='store_true', default = False, help="List of datasets 'ZJetsToNuNu,DYJetsToLL'")
 
 options, args = parser.parse_args()
 
 nFilesPerJob = options.numfile
 
 fileParts = [submitFile]
-
 sc = SampleCollection()
-
 datasets = []
+
+if options.dataCollections:
+    print sc.sampleCollectionList()
+    exit(0)
 
 if options.datasets:
     datasets = options.datasets.split(',')
@@ -43,8 +46,9 @@ else:
 for ds in datasets:
     ds = ds.strip()
 
+    print ds
     for s, n in sc.sampleList(ds):
-        print n
+        print "\t%s"%n
         f = open(s)
         if not f == None:
             count = 0

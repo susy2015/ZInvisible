@@ -8,6 +8,7 @@ class SampleCollection:
         self.obj = self.lib.SC_new()
         self.lib.SC_samples.restype = POINTER(c_char_p)
         self.lib.SC_samples_names.restype = POINTER(c_char_p)
+        self.lib.SC_samplecollection_names.restype = POINTER(c_char_p)
 
     def nSamples(self, name):
         return self.lib.SC_samples_size(self.obj, name)
@@ -18,3 +19,7 @@ class SampleCollection:
         list = [(names[i],files[i]) for i in xrange(self.lib.SC_samples_size(self.obj, name))]
         return list
 
+    def sampleCollectionList(self):
+        names = self.lib.SC_samplecollection_names(self.obj)
+        list = [names[i] for i in xrange(self.lib.SC_samplecollection_size(self.obj))]
+        return list
