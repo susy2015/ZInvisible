@@ -24,7 +24,8 @@ parser = optparse.OptionParser("usage: %prog [options]\n")
 
 parser.add_option ('-n', dest='numfile', type='int', default = 5, help="number of files per job")
 parser.add_option ('-d', dest='datasets', type='string', default = '', help="List of datasets 'ZJetsToNuNu,DYJetsToLL'")
-parser.add_option ('-l', dest='dataCollections', action='store_true', default = False, help="List of datasets 'ZJetsToNuNu,DYJetsToLL'")
+parser.add_option ('-l', dest='dataCollections', action='store_true', default = False, help="List all datacollections")
+parser.add_option ('-r', dest='refLumi', type='string', default = None, help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
 
 options, args = parser.parse_args()
 
@@ -44,6 +45,11 @@ else:
     print "No dataset specified"
     exit(0)
 
+lumis = sc.sampleCollectionLumiList()
+lumi = sc.getFixedLumi()
+if options.refLumi != None:
+    lumi = lumis[options.refLumi]
+
 for ds in datasets:
     ds = ds.strip()
 
@@ -57,7 +63,7 @@ for ds in datasets:
                 if '.root' in l and not 'failed' in l:
                     count = count + 1
             for startFileNum in xrange(0, count, nFilesPerJob):
-                fileParts.append("Arguments = %s $ENV(CMSSW_BASE) %i %i\nQueue\n\n"%(n, nFilesPerJob, startFileNum))
+                fileParts.append("Arguments = %s $ENV(CMSSW_BASE) %i %i %f\nQueue\n\n"%(n, nFilesPerJob, startFileNum, lumi))
             f.close()
 
 fout = open("condor_submit.txt", "w")
@@ -66,5 +72,5 @@ fout.close()
 
 system('mkdir -p logs')
 system("echo 'condor_submit condor_submit.txt'")
-system('condor_submit condor_submit.txt')
+#system('condor_submit condor_submit.txt')
 

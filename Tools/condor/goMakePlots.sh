@@ -9,7 +9,7 @@ eval `scramv1 runtime -sh`
 cd ${_CONDOR_SCRATCH_DIR}
 
 
-./makePlots --condor -D $1 -N $3 -M $4
+./makePlots --condor -D $1 -N $3 -M $4 -L $5
 
 # Run 2015B
 #./makePlots --condor -D $1 -N $3 -M $4 -L 40.838

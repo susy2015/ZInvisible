@@ -1,8 +1,9 @@
 #include "../../SusyAnaTools/Tools/samples.h"
 
 #include <string>
-
+#include <iostream>
 extern "C" {
+    double SC_fixed_lumi(){ return AnaSamples::luminosity; }
     AnaSamples::SampleCollection* SC_new()
     {
         AnaSamples::SampleSet *ss = new AnaSamples::SampleSet();
@@ -42,4 +43,15 @@ extern "C" {
         }
         return array;
     }
+    double const * SC_samplecollection_lumis(AnaSamples::SampleCollection* sc)
+    {
+        double *array = new double[sc->size()];
+        int i = 0;
+        for(auto& sample : *sc)
+        {
+            array[i++] = sc->getSampleLumi(sample.first);
+        }
+        return array;
+    }
+
 }
