@@ -267,16 +267,17 @@ namespace plotterFunctions
         // electron Z pt acceptance corrections
         //functional form [2] - exp([0] + [1]*x)
         //Spring15
-        double elecAcc_p0 = -3.18955e-02;
-        double elecAcc_p1 = -5.16522e-03;
-        double elecAcc_p2 = 8.92280e-01;
+        //double elecAcc_p0 = -3.18955e-02;
+        //double elecAcc_p1 = -5.16522e-03;
+        //double elecAcc_p2 = 8.92280e-01;
+        double elecAcc_p0 = -2.50679e-01;
+        double elecAcc_p1 = -5.34976e-03;
+        double elecAcc_p2 = 9.33562e-01;
         
         if(hZAccElec) 
         {
-            //if(bestRecoZPt < 100) zAccElec = hZAccElec->GetBinContent(hZAccElec->GetXaxis()->FindBin(bestRecoZPt));
-            //else                  zAccElec = elecAcc_p2 - exp(elecAcc_p0 + elecAcc_p1 * bestRecoZPt);
-            if(bestRecoZPt < 100) zAccElec = hZAcc->GetBinContent(hZAcc->GetXaxis()->FindBin(bestRecoZPt));
-            else                  zAccElec = acc_p2 - exp(acc_p0 + acc_p1 * bestRecoZPt);
+            if(bestRecoZPt < 100) zAccElec = hZAccElec->GetBinContent(hZAccElec->GetXaxis()->FindBin(bestRecoZPt));
+            else                  zAccElec = elecAcc_p2 - exp(elecAcc_p0 + elecAcc_p1 * bestRecoZPt);
         }
 
         if(passElecZinvSel && zAccElec < 0.05) 
