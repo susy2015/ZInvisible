@@ -100,6 +100,7 @@ int main(int argc, char* argv[])
 //    const double zAcc = 0.5954;
 //    const double zAcc = 0.855;
     const double znunu_mumu_ratio = 5.942;
+    const double znunu_ee_ratio   = 5.942;
 
     map<string, vector<AnaSamples::FileSummary>> fileMap;
 
@@ -183,9 +184,9 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsTT_em_lepSel("t#bar{t}#rightarrowe#mu",   fileMap["TTbarDiLep"], "passElMuZinvSel", "");
 
     Plotter::DatasetSummary dsDY_ee(               "DY#rightarrowee",                 fileMap["DYJetsToLL"],   "pdgIdZDec=11;passElecZinvSel", "");
-    Plotter::DatasetSummary dsDY_ee_scaled(        "DY#rightarrowee",                 fileMap["DYJetsToLL"],   "pdgIdZDec=11;passElecZinvSel", "",                znunu_mumu_ratio / zAcc);
-    Plotter::DatasetSummary dsDY_ee_zAcc_scaled(   "DY#rightarrowee no e, Z eff+acc", fileMap["DYJetsToLL"],   "pdgIdZDec=11;passElecZinvSel", "zEffWgt;zAccWgt", znunu_mumu_ratio / zAcc);
-    Plotter::DatasetSummary dsDY_ee_zWeight_scaled("DY#rightarrowee no e, Z eff",     fileMap["DYJetsToLL"],   "pdgIdZDec=11;passElecZinvSel", "zEffWgt",         znunu_mumu_ratio / zAcc);
+    Plotter::DatasetSummary dsDY_ee_scaled(        "DY#rightarrowee",                 fileMap["DYJetsToLL"],   "pdgIdZDec=11;passElecZinvSel", "",                        znunu_ee_ratio / zAcc);
+    Plotter::DatasetSummary dsDY_ee_zAcc_scaled(   "DY#rightarrowee no e, Z eff+acc", fileMap["DYJetsToLL"],   "pdgIdZDec=11;passElecZinvSel", "zEffWgtElec;zAccWgtElec", znunu_ee_ratio / zAcc);
+    Plotter::DatasetSummary dsDY_ee_zWeight_scaled("DY#rightarrowee no e, Z eff",     fileMap["DYJetsToLL"],   "pdgIdZDec=11;passElecZinvSel", "zEffWgtElec",             znunu_ee_ratio / zAcc);
 
     Plotter::DatasetSummary dsDY_ll(        "DY#rightarrow#mu#mu",                   fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel", "");
     Plotter::DatasetSummary dsDY_ll_base(   "DY#rightarrow#mu#mu baseline",          fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel;passBaselineZinv", "");
