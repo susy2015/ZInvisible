@@ -175,10 +175,11 @@ void Plotter::DatasetSummary::parseWeights()
 double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
 {
     double retval = 1.0;
-    for(auto& weight : weightVec_)
+    for(auto& weightName : weightVec_)
     {
-        if(tr.getVar<double>(weight) > 250) std::cout << weight << "\t" << tr.getVar<double>(weight) << std::endl;
-        retval *= tr.getVar<double>(weight);
+        const double& weight = tr.getVar<double>(weightName);
+        if(weight > 300.0) std::cout << weightName << "\t" << weight << std::endl;
+        retval *= weight;
     }
     return retval;
 }
