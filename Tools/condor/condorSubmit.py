@@ -50,6 +50,7 @@ lumis = sc.sampleCollectionLumiList()
 lumi = sc.getFixedLumi()
 if options.refLumi != None:
     lumi = lumis[options.refLumi]
+    print "Normalizing to %s pb-1" % (lumi)
 
 for ds in datasets:
     ds = ds.strip()
