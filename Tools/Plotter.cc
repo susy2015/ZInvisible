@@ -644,8 +644,15 @@ void Plotter::plot()
             else
             {
                 if(     hvec.type.compare("ratio") == 0) hvec.h->Draw("hist same E1");
-                else if(hvec.type.compare("data") == 0)  hvec.h->Draw("same");
                 else                                     hvec.h->Draw("hist same");
+            }
+        }
+	// Make sure to always draw data on top 
+        for(auto& hvec : hist.hists)
+        {
+            if(hvec.h)
+            {
+                if(hvec.type.compare("data") == 0)  hvec.h->Draw("same");
             }
         }
         leg->Draw();
