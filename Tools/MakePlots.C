@@ -1144,7 +1144,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcDY_jpt_0bnomt2("stack",  "jetsLVecLepCleaned(pt)", {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2});
     Plotter::DataCollection dcData_2015CD_jpt_0b("data",  "jetsLVecLepCleaned(pt)", {dsData_2015C_0b});
     Plotter::DataCollection dcDY_jpt_0b("stack",  "jetsLVecLepCleaned(pt)", {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b});
-    // --> jet1 pt  // CHECK HERE
+    // --> jet1 pt 
     Plotter::DataCollection dcData_2015CD_j1pt_nosel("data",  "jetsLVecLepCleaned[0](pt)", {dsData_2015C_nosel});
     Plotter::DataCollection dcDY_j1pt_nosel("stack",  "jetsLVecLepCleaned[0](pt)", {dsDY_nosel, dstt2l_nosel, dstW_nosel, dsttZ_nosel, dsVV_nosel});
     Plotter::DataCollection dcData_2015CD_j1pt_blnotag("data",  "jetsLVecLepCleaned[0](pt)", {dsData_2015C_blnotag});
@@ -1288,7 +1288,7 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("DataMC_2015CD_nb_0bnomt2",  {dcData_2015CD_nb_0bnomt2, dcDY_nb_0bnomt2},   {1, 2}, "", 10, 0, 10,    true, false,  "nb",     ""));
     vh.push_back(PHS("DataMC_2015CD_nj_0bnomt2",  {dcData_2015CD_nj_0bnomt2, dcDY_nj_0bnomt2},   {1, 2}, "", 20, 0, 20,    true, false,  "nj",     ""));
     vh.push_back(PHS("DataMC_2015CD_mht_0bnomt2", {dcData_2015CD_mht_0bnomt2, dcDY_mht_0bnomt2}, {1, 2}, "", 150, 0, 1500, true, false,  "mht",    ""));
-    vh.push_back(PHS("DataMC_2015CD_jpt_0bnomt2", {dcData_2015CD_jpt_0bnomt2, dcDY_ht_0bnomt2},  {1, 2}, "", 150, 0, 1500, true, false,  "jet pt", ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_0bnomt2", {dcData_2015CD_jpt_0bnomt2, dcDY_jpt_0bnomt2},  {1, 2}, "", 150, 0, 1500, true, false,  "jet pt", ""));
     vh.push_back(PHS("DataMC_2015CD_j1pt_0bnomt2", {dcData_2015CD_j1pt_0bnomt2, dcDY_j1pt_0bnomt2},  {1, 2}, "", 150, 0, 1500,   true, false,  "jet1 pt",         ""));
     vh.push_back(PHS("DataMC_2015CD_j2pt_0bnomt2", {dcData_2015CD_j2pt_0bnomt2, dcDY_j2pt_0bnomt2}, {1, 2}, "", 150, 0, 1500,   true, false,  "jet2 pt",         ""));
     vh.push_back(PHS("DataMC_2015CD_j3pt_0bnomt2", {dcData_2015CD_j3pt_0bnomt2, dcDY_j3pt_0bnomt2},  {1, 2}, "", 150, 0, 1500,   true, false,  "jet3 pt",         ""));
@@ -1305,19 +1305,19 @@ int main(int argc, char* argv[])
 		     {PDC("data", "cutMuPt2", {dsData_2015C_0bnomt2}), PDC("stack", "cutMuPt2", {dsDY_0bnomt2, dstt2l_0bnomt2, dstW_0bnomt2, dsttZ_0bnomt2, dsVV_0bnomt2})},  
 		     {1, 2}, "", 100, 0, 1000,   true, false,  "mu2 pt",         ""));
     // --> 0b 
-    vh.push_back(PHS("DataMC_2015CD_met_0b", {dcDY_met_0b, dcData_2015CD_met_0b}, {1, 2}, "", 150, 0, 1500, true, false,  "met",    ""));
-    vh.push_back(PHS("DataMC_2015CD_ht_0b",  {dcDY_ht_0b, dcData_2015CD_ht_0b},   {1, 2}, "", 150, 0, 1500, true, false,  "ht",     ""));
-    vh.push_back(PHS("DataMC_2015CD_nt_0b",  {dcDY_nt_0b, dcData_2015CD_nt_0b},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop",   ""));
-    vh.push_back(PHS("DataMC_2015CD_nt1b_0b",  {dcDY_nt1b_0b, dcData_2015CD_nt1b_0b},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop(1b fake)",   ""));
-    vh.push_back(PHS("DataMC_2015CD_nt2b_0b",  {dcDY_nt2b_0b, dcData_2015CD_nt2b_0b},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop(2b fake)",   ""));
-    vh.push_back(PHS("DataMC_2015CD_nt3b_0b",  {dcDY_nt3b_0b, dcData_2015CD_nt3b_0b},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop(3b fake)",   ""));
-    vh.push_back(PHS("DataMC_2015CD_nb_0b",  {dcDY_nb_0b, dcData_2015CD_nb_0b},   {1, 2}, "", 10, 0, 10,    true, false,  "nb",     ""));
-    vh.push_back(PHS("DataMC_2015CD_nj_0b",  {dcDY_nj_0b, dcData_2015CD_nj_0b},   {1, 2}, "", 20, 0, 20,    true, false,  "nj",     ""));
-    vh.push_back(PHS("DataMC_2015CD_mht_0b", {dcDY_mht_0b, dcData_2015CD_mht_0b}, {1, 2}, "", 150, 0, 1500, true, false,  "mht",    ""));
-    vh.push_back(PHS("DataMC_2015CD_jpt_0b", {dcDY_ht_0b, dcData_2015CD_jpt_0b},  {1, 2}, "", 150, 0, 1500, true, false,  "jet pt", ""));
-    vh.push_back(PHS("DataMC_2015CD_j1pt_0b", {dcDY_j1pt_0b, dcData_2015CD_j1pt_0b},  {1, 2}, "", 150, 0, 1500,   true, false,  "jet1 pt",         ""));
-    vh.push_back(PHS("DataMC_2015CD_j2pt_0b", {dcDY_j2pt_0b, dcData_2015CD_j2pt_0b}, {1, 2}, "", 150, 0, 1500,   true, false,  "jet2 pt",         ""));
-    vh.push_back(PHS("DataMC_2015CD_j3pt_0b", {dcDY_j3pt_0b, dcData_2015CD_j3pt_0b},  {1, 2}, "", 150, 0, 1500,   true, false,  "jet3 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_met_0b", {dcData_2015CD_met_0b, dcDY_met_0b}, {1, 2}, "", 150, 0, 1500, true, false,  "met",    ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_0b",  {dcData_2015CD_ht_0b, dcDY_ht_0b},   {1, 2}, "", 150, 0, 1500, true, false,  "ht",     ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_0b",  {dcData_2015CD_nt_0b, dcDY_nt_0b},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt1b_0b",  {dcData_2015CD_nt1b_0b, dcDY_nt1b_0b},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop(1b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt2b_0b",  {dcData_2015CD_nt2b_0b, dcDY_nt2b_0b},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop(2b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt3b_0b",  {dcData_2015CD_nt3b_0b, dcDY_nt3b_0b},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop(3b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_0b",  {dcData_2015CD_nb_0b, dcDY_nb_0b},   {1, 2}, "", 10, 0, 10,    true, false,  "nb",     ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_0b",  {dcData_2015CD_nj_0b, dcDY_nj_0b},   {1, 2}, "", 20, 0, 20,    true, false,  "nj",     ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_0b", {dcData_2015CD_mht_0b, dcDY_mht_0b}, {1, 2}, "", 150, 0, 1500, true, false,  "mht",    ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_0b", {dcData_2015CD_jpt_0b, dcDY_jpt_0b},  {1, 2}, "", 150, 0, 1500, true, false,  "jet pt", ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_0b", {dcData_2015CD_j1pt_0b, dcDY_j1pt_0b},  {1, 2}, "", 150, 0, 1500,   true, false,  "jet1 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_0b", {dcData_2015CD_j2pt_0b, dcDY_j2pt_0b}, {1, 2}, "", 150, 0, 1500,   true, false,  "jet2 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_0b", {dcData_2015CD_j3pt_0b, dcDY_j3pt_0b},  {1, 2}, "", 150, 0, 1500,   true, false,  "jet3 pt",         ""));
     vh.push_back(PHS("DataMC_2015CD_mt2_0b",  
 		     {PDC("data", "best_had_brJet_MT2Zinv", {dsData_2015C_0b}), PDC("stack", "best_had_brJet_MT2Zinv", {dsDY_0b, dstt2l_0b, dstW_0b, dsttZ_0b, dsVV_0b})},  
 		     {1, 2}, "", 150, 0, 1500,   true, false,  "mt2",         ""));
