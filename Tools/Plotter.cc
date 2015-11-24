@@ -237,6 +237,9 @@ void Plotter::createHistsFromTuple()
                 }
             }
         }
+        
+        // Do not process files if there are no histograms asking for it
+        if(!histsToFill.size()) continue;
 
         //TChain *t = new TChain(file.treePath.c_str());
         //file.addFilesToChain(t);
