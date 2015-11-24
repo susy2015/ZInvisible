@@ -122,7 +122,16 @@ int main(int argc, char* argv[])
     }
     else
     {
-        if(sc[dataSets] != sc.null())
+        if(ss[dataSets] != ss.null())
+        {
+            fileMap[dataSets] = {ss[dataSets]};
+            for(const auto& colls : ss[dataSets].getCollections())
+            {
+                std::cout << "COLL ENTRY: " << colls << std::endl;
+                fileMap[colls] = {sc[colls]};
+            }
+        }
+        else if(sc[dataSets] != sc.null())
         {
             fileMap[dataSets] = {sc[dataSets]};
             int i = 0;
@@ -131,44 +140,7 @@ int main(int argc, char* argv[])
                 fileMap[sc.getSampleLabels(dataSets)[i++]].push_back(fs);
             }
         }
-        else if(ss[dataSets] != ss.null())
-        {
-            for(const auto& fsnp : sc)
-            {
-                if(dataSets.find(fsnp.first) !=std::string::npos)
-                {
-                    fileMap[fsnp.first] = {ss[dataSets]};
-                    fileMap[dataSets] = {ss[dataSets]};
-                    break;
-                }
-            }
-        }
-	// If we didn't find such a collection, we pass in the dataset itself
-        //if (fileMap.size() == 0)
-	//{
-	//    fileMap[dataSets] = {ss[dataSets]};
-	//	}
-
     }
-
-
-
-	/*
-    else if(dataSets.compare("Data_SingleMuon_2015C") == 0)
-    {
-        //add this to the 25ns filemap
-        fileMap[dataSets] = {ss[dataSets]};
-	fileMap["Data_SingleMuon25ns"] = {ss[dataSets]};
-    }
-    else if(dataSets.compare("Data_SingleMuon_2015D") == 0)
-    {
-        //add this to the 25ns filemap
-        fileMap[dataSets] = {ss[dataSets]};
-	fileMap["Data_SingleMuon25ns"] = {ss[dataSets]};
-    }
-	*/
-
-
 
     Plotter::DatasetSummary dsDY_ll_inc(    "DY#rightarrow#mu#mu Inc",               fileMap["IncDY"], "pdgIdZDec=13;passMuZinvSel", "");
 

@@ -26,6 +26,7 @@ parser.add_option ('-n', dest='numfile', type='int', default = 5, help="number o
 parser.add_option ('-d', dest='datasets', type='string', default = '', help="List of datasets 'ZJetsToNuNu,DYJetsToLL'")
 parser.add_option ('-l', dest='dataCollections', action='store_true', default = False, help="List all datacollections")
 parser.add_option ('-r', dest='refLumi', type='string', default = None, help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
+parser.add_option ('-c', dest='noSubmit', action='store_true', default = False, help="Do not submit jobs.  Only create condor_submit.txt.")
 
 options, args = parser.parse_args()
 
@@ -70,7 +71,8 @@ fout = open("condor_submit.txt", "w")
 fout.write(''.join(fileParts))
 fout.close()
 
-system('mkdir -p logs')
-system("echo 'condor_submit condor_submit.txt'")
-#system('condor_submit condor_submit.txt')
+if not options.noSubmit: 
+    system('mkdir -p logs')
+    system("echo 'condor_submit condor_submit.txt'")
+    system('condor_submit condor_submit.txt')
 

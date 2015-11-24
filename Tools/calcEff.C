@@ -11,7 +11,7 @@
 
 int main()
 {
-    AnaSamples::SampleSet        ss;
+/*    AnaSamples::SampleSet        ss;
     AnaSamples::SampleCollection sc(ss);
 
     TFile *f = new TFile("effhists.root","RECREATE");
@@ -405,5 +405,5 @@ int main()
     //hZEff_jActR2_num->Write();
     //hZEff_jActR2_den->Write();
 
-    f->Close();
+    f->Close();*/
 }

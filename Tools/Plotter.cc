@@ -237,6 +237,9 @@ void Plotter::createHistsFromTuple()
                 }
             }
         }
+        
+        // Do not process files if there are no histograms asking for it
+        if(!histsToFill.size()) continue;
 
         //TChain *t = new TChain(file.treePath.c_str());
         //file.addFilesToChain(t);
@@ -271,10 +274,11 @@ void Plotter::createHistsFromTuple()
             std::cout << "\t" << fname << std::endl;
 
             plotterFunctions::activateBranches(activeBranches);
+            plotterFunctions::RegisterFunctions rf;
 
             NTupleReader tr(t, activeBranches);
             tr.registerFunction(&passBaselineFunc);
-            plotterFunctions::registerFunctions(tr);
+            rf.registerFunctions(tr);
 
             while(tr.getNextEvent())
             {
