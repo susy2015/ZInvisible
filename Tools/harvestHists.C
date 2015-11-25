@@ -109,6 +109,9 @@ int main ()
     double zptbins[] = {0.0, 100.0, 140.0, 180.0, 220.0, 300.0, 400.0, 500.0, 600.0, 800.0, 2000.0};
     int nzptbins = sizeof(zptbins)/sizeof(double);
 
+    double zptbins2[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 290.0, 300.0, 310.0, 320.0, 330.0, 340.0, 350.0, 360.0, 370.0, 380.0, 390.0, 400.0, 420.0, 440.0, 460.0, 480.0, 500.0, 520.0, 540.0, 560.0, 580.0, 600.0, 640.0, 680.0, 720.0, 760.0, 800.0, 840.0, 880.0, 920.0, 960.0, 1000.0, 1200.0, 1400.0, 1500.0, 2000.0};
+    int nzptbins2 = sizeof(zptbins2)/sizeof(double);
+
     double muptbins[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 120.0, 140.0, 180.0, 200.0, 300.0, 400.0, 500.0, 600.0, 800.0, 2000.0};
     int nmuptbins = sizeof(muptbins)/sizeof(double);
 
@@ -137,11 +140,11 @@ int main ()
     makeRatio1D("hZEffPt", fin, fout, zptbins, nzptbins);
     makeRatio1D("hZAccPt", fin, fout, zptbins, nzptbins);
 
-    makeRatio1D("hZElecAccPt", fin, fout, zptbins, nzptbins);
+    makeRatio1D("hZElecAccPt", fin, fout, zptbins2, nzptbins2);
     
-    makeRatio1D("hZAccPtSmear", fin, fout);//, zptbins, nzptbins);
+    makeRatio1D("hZAccPtSmear", fin, fout, zptbins2, nzptbins2);
 
-    makeRatio1D("hZElecAccPtSmear", fin, fout);//, zptbins, nzptbins);
+    makeRatio1D("hZElecAccPtSmear", fin, fout, zptbins2, nzptbins2);
     
     makeRatio2D("hZEff", fin, fout);
     makeRatio2D("hZAcc", fin, fout);
