@@ -278,7 +278,8 @@ void Plotter::createHistsFromTuple()
             plotterFunctions::RegisterFunctions rf;
 
             NTupleReader tr(t, activeBranches);
-            BaselineVessel myBLV();
+            tr.setReThrow(false);
+            BaselineVessel myBLV;
             tr.registerFunction(myBLV);
             rf.registerFunctions(tr);
 
