@@ -278,7 +278,7 @@ void Plotter::createHistsFromTuple()
             plotterFunctions::RegisterFunctions rf;
 
             NTupleReader tr(t, activeBranches);
-            BaselineVessel myBLV("", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/SingleMuon_Nov14/SingleMuon_csc2015.txt");
+            BaselineVessel myBLV();
             tr.registerFunction(myBLV);
             rf.registerFunctions(tr);
 
