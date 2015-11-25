@@ -30,8 +30,8 @@ const int stackColors[] = {
     kAzure,
     kOrange + 7,
     kGreen + 2,
-    kYellow + 4,
     kMagenta - 1,
+    kYellow + 4,
     kRed,
     kBlue,
     kGreen
@@ -277,7 +277,8 @@ void Plotter::createHistsFromTuple()
             plotterFunctions::RegisterFunctions rf;
 
             NTupleReader tr(t, activeBranches);
-            tr.registerFunction(&passBaselineFunc);
+            BaselineVessel myBLV("", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/SingleMuon_Nov14/SingleMuon_csc2015.txt");
+            tr.registerFunction(myBLV);
             rf.registerFunctions(tr);
 
             while(tr.getNextEvent())
@@ -518,7 +519,7 @@ void Plotter::plot()
         leg->SetTextFont(42);
 
         double max = 0.0, lmax = 0.0, min = 1.0e300, minAvgWgt = 1.0e300;
-        int iSingle = 0, iStack = 0, iRatio = 0;
+        int iSingle = 0, iRatio = 0;
         char legEntry[128];
         for(auto& hvec : hist.hists)
         {
@@ -581,6 +582,20 @@ void Plotter::plot()
                 double sow = 0, te = 0;
                 bool firstHIS = true;
                 TH1* thstacksucks;
+                int iStack = 0;
+                for(auto ih = hvec.hcsVec.begin(); ih != hvec.hcsVec.end(); ++ih)
+                {
+                    (*ih)->h->SetLineColor(stackColors[iStack%NSTACKCOLORS]);
+                    (*ih)->h->SetFillColor(stackColors[iStack%NSTACKCOLORS]);
+                    iStack++;
+                    double integral = (*ih)->h->Integral(0, (*ih)->h->GetNbinsX() + 1);
+                    if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", (*ih)->label.c_str(), integral);
+                    else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", (*ih)->label.c_str(), integral);
+                    else                      sprintf(legEntry, "%s (%0.2e)",  (*ih)->label.c_str(), integral);
+                    leg->AddEntry((*ih)->h, legEntry);
+                    sow += (*ih)->h->GetSumOfWeights();
+                    te +=  (*ih)->h->GetEntries();
+                }
                 for(auto ih = hvec.hcsVec.rbegin(); ih != hvec.hcsVec.rend(); ++ih)
                 {
                     if(firstHIS)
@@ -592,20 +607,7 @@ void Plotter::plot()
                     {
                         thstacksucks->Add((*ih)->h);
                     }
-                    (*ih)->h->SetLineColor(stackColors[iStack%NSTACKCOLORS]);
-                    (*ih)->h->SetFillColor(stackColors[iStack%NSTACKCOLORS]);
-                    iStack++;
                     stack->Add((*ih)->h);
-                }
-                for(auto& h : hvec.hcsVec)
-                {
-                    double integral = h->h->Integral(0, h->h->GetNbinsX() + 1);
-                    if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", h->label.c_str(), integral);
-                    else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", h->label.c_str(), integral);
-                    else                      sprintf(legEntry, "%s (%0.2e)",  h->label.c_str(), integral);
-                    leg->AddEntry(h->h, legEntry);
-                    sow += h->h->GetSumOfWeights();
-                    te +=  h->h->GetEntries();
                 }
                 smartMax(thstacksucks, leg, static_cast<TPad*>(gPad), min, max, lmax);
                 minAvgWgt = std::min(minAvgWgt, sow/te);
