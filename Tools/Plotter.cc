@@ -47,6 +47,7 @@ Plotter::Plotter(std::vector<HistSummary>& h, std::set<AnaSamples::FileSummary>&
     hists_ = h;
     trees_ = t;
     readFromTuple_ = readFromTuple;
+    lumi_ = AnaSamples::luminosity;
     if(ofname.size() == 0) ofname = "histoutput.root";
     if(readFromTuple)
     {
@@ -456,6 +457,16 @@ void Plotter::setPlotDir(const std::string plotDir)
     plotDir_ = plotDir + "/";
 }
 
+void Plotter::setLumi(const double lumi)
+{
+    lumi_ = lumi;
+}
+
+double Plotter::getLumi()
+{
+    return lumi_;
+}
+
 void Plotter::plot()
 {
     //gROOT->SetStyle("Plain");
@@ -650,8 +661,15 @@ void Plotter::plot()
             else
             {
                 if(     hvec.type.compare("ratio") == 0) hvec.h->Draw("hist same E1");
-                else if(hvec.type.compare("data") == 0)  hvec.h->Draw("same");
-                else                                     hvec.h->Draw("hist same");
+                else if(hvec.type.compare("data") != 0)  hvec.h->Draw("hist same");
+            }
+        }
+	// Make sure to always draw data on top 
+        for(auto& hvec : hist.hists)
+        {
+            if(hvec.h)
+            {
+                if(hvec.type.compare("data") == 0)  hvec.h->Draw("same");
             }
         }
         leg->Draw();
@@ -802,7 +820,7 @@ void Plotter::plot()
 
         c->cd(1);
         char lumistamp[128];
-        sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", AnaSamples::luminosity / 1000.0);
+        sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", lumi_ / 1000.0);
         TLatex mark;
         mark.SetTextSize(0.042 * fontScale);
         mark.SetTextFont(42);

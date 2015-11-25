@@ -137,6 +137,9 @@ public:
     static void parseSingleVar(const std::string& name, VarName& var);
 
     void setPlotDir(const std::string plotDir);
+    void setLumi(const double lumi);
+
+    double getLumi();
 
     void plot();
     void saveHists();
@@ -150,6 +153,7 @@ private:
     const int nFile_;
     const int startFile_;
     const int maxEvts_;
+    double lumi_;
 
     class HistCutSummary
     {
