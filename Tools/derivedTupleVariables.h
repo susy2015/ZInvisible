@@ -774,6 +774,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("passElecZinvSel", passElecZinvSel);
             tr.registerDerivedVar("passElMuZinvSel", passElMuZinvSel);
         }
+
     public:
         LepInfo()
         {
