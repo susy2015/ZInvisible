@@ -134,10 +134,14 @@ public:
     Plotter(std::vector<HistSummary>& h, std::set<AnaSamples::FileSummary>& t, const bool readFromTuple = true, std::string ofname = "", const int nFile = -1, const int startFile = 0, const int nEvts = -1);
     ~Plotter();
 
+    void read();
+
     static void parseSingleVar(const std::string& name, VarName& var);
 
     void setPlotDir(const std::string plotDir);
     void setLumi(const double lumi);
+    void setDoHists(const bool doHists);
+    void setDoTuple(const bool doTuple);
 
     double getLumi();
 
@@ -154,6 +158,7 @@ private:
     const int startFile_;
     const int maxEvts_;
     double lumi_;
+    bool doHists_, doTuple_;
 
     class HistCutSummary
     {
