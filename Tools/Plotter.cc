@@ -2,6 +2,7 @@
 #include "derivedTupleVariables.h"
 #include "baselineDef.h"
 #include "tdrstyle.h"
+#include "MiniTupleMaker.h"
 
 #include "TROOT.h"
 #include "TCanvas.h"
@@ -52,13 +53,12 @@ Plotter::Plotter(std::vector<HistSummary>& h, std::set<AnaSamples::FileSummary>&
     if(readFromTuple)
     {
         fout_ = new TFile(ofname.c_str(), "RECREATE");
-        createHistsFromTuple();
     }
     else
     {
         fout_ = new TFile(ofname.c_str());
-        createHistsFromFile();
     }
+    doHists_ = doTuple_ = true;
 }
 
 Plotter::~Plotter()
@@ -67,6 +67,18 @@ Plotter::~Plotter()
     {
         fout_->Close();
         delete fout_;
+    }
+}
+
+void Plotter::read()
+{
+    if(readFromTuple_)
+    {
+        createHistsFromTuple();
+    }
+    else
+    {
+        createHistsFromFile();
     }
 }
 
@@ -246,6 +258,24 @@ void Plotter::createHistsFromTuple()
         //file.addFilesToChain(t);
         std::cout << "Processing file(s): " << file.filePath << std::endl;
 
+        //Set up mini tuple maker
+        TTree *tOut = nullptr;
+        MiniTupleMaker* mtm = nullptr;
+
+        if(doTuple_ && fout_)
+        {
+            size_t start = file.filePath.rfind('/');
+            size_t stop  = file.filePath.rfind('.');
+            if(int(stop) - (int(start) + 1) > 0)
+            {
+                std::string treeName = file.filePath.substr(start + 1, stop - start - 1);
+                fout_->cd();
+                tOut = new TTree(treeName.c_str(), treeName.c_str());
+                mtm = new MiniTupleMaker(tOut);
+                mtm->setTupleVars({"cleanMetPt", "HTZinv", "best_had_brJet_MT2Zinv", "cleanMHt", "cntNJetsPt30Eta24Zinv", "nTopCandSortedCntZinv", "cntCSVSZinv", "nSearchBin"});
+            }
+        }
+
         int fileCount = 0, startCount = 0;
         int NEvtsTotal = 0;
         for(const std::string& fname : file.filelist_)
@@ -285,25 +315,59 @@ void Plotter::createHistsFromTuple()
 
             while(tr.getNextEvent())
             {
+                //Things to run only on first event
+                if(NEvtsTotal < 1)
+                {
+                    //Initialize the mini tuple branches, needs to be done after first call of tr.getNextEvent()
+                    if(tOut && mtm)
+                    {
+                        try
+                        {
+                            mtm->initBranches(tr);
+                        }
+                        catch(const std::string e)
+                        {
+                            std::cout << "Exception caught in Plotter::createHistsFromTuple(), text follows" << std::endl << e << std::endl;
+                        }
+                    }
+                }
+
+                //If maxEvents_ is set, stop after so many events
                 if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;
                 if(tr.getEvtNum() %1000 == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
-                for(auto& hist : histsToFill)
+
+                //fill histograms
+                if(doHists_)
                 {
-                    // tree level dynamical cuts are applied here
-                    if(!hist->dss.passCuts(tr)) continue;
+                    for(auto& hist : histsToFill)
+                    {
+                        // tree level dynamical cuts are applied here
+                        if(!hist->dss.passCuts(tr)) continue;
 
-                    // parse hist level cuts here
-                    if(!hist->hs->passCuts(tr)) continue;
+                        // parse hist level cuts here
+                        if(!hist->hs->passCuts(tr)) continue;
 
-                    //fill histograms here
-                    double weight = file.getWeight() * hist->dss.getWeight(tr) * hist->dss.kfactor;
+                        //fill histograms here
+                        double weight = file.getWeight() * hist->dss.getWeight(tr) * hist->dss.kfactor;
 
-                    fillHist(hist->h, hist->variable, tr, weight);
+                        fillHist(hist->h, hist->variable, tr, weight);
+                    }
                 }
+
+                //fill mini tuple
+                if(tOut && mtm) mtm->fill();                    
+
                 ++NEvtsTotal;
             }
             f->Close();
         }
+
+        if(fout_ && tOut && mtm)
+        {
+            fout_->cd();
+            tOut->Write();
+        }
+        if(mtm) delete mtm;
     }
 }
 
@@ -461,6 +525,16 @@ void Plotter::setPlotDir(const std::string plotDir)
 void Plotter::setLumi(const double lumi)
 {
     lumi_ = lumi;
+}
+
+void Plotter::setDoHists(const bool doHists)
+{
+    doHists_ = doHists;
+}
+
+void Plotter::setDoTuple(const bool doTuple)
+{
+    doTuple_ = doTuple;
 }
 
 double Plotter::getLumi()
