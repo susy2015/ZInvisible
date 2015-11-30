@@ -1838,6 +1838,8 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_2015CD_el2pt_0b("data",  "cutElecPt2", {dsData_2015C_0b_el});
     Plotter::DataCollection dcMC_el2pt_0b("stack",  "cutElecPt2", {dsDY_0b_el, dstt2l_0b_el, dstW_0b_el, dsttZ_0b_el, dsVV_0b_el});
     // --> mll
+    Plotter::DataCollection dcData_2015CD_mll_2el("data",  "bestRecoZM", {dsData_2015C_2el});
+    Plotter::DataCollection dcMC_mll_2el("stack",  "bestRecoZM", {dsDY_2el, dstt2l_2el, dstW_2el, dsttZ_2el, dsVV_2el});
     Plotter::DataCollection dcData_2015CD_mll_elZinv("data",  "bestRecoZM", {dsData_2015C_elZinv});
     Plotter::DataCollection dcMC_mll_elZinv("stack",  "bestRecoZM", {dsDY_elZinv, dstt2l_elZinv, dstW_elZinv, dsttZ_elZinv, dsVV_elZinv});
     Plotter::DataCollection dcData_2015CD_mll_ht200_el("data",  "bestRecoZM", {dsData_2015C_ht200_el});
@@ -2019,6 +2021,155 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("DataMC_2015CD_mu1pt_0b", {dcData_2015CD_mu1pt_0b, dcMC_mu1pt_0b}, {1, 2}, "", 50, 0, 1000,   true, false,  "mu1 pt",           ""));
     vh.push_back(PHS("DataMC_2015CD_mu2pt_0b", {dcData_2015CD_mu2pt_0b, dcMC_mu2pt_0b}, {1, 2}, "", 50, 0, 1000,   true, false,  "mu2 pt",           ""));
     vh.push_back(PHS("DataMC_2015CD_mll_0b",   {dcData_2015CD_mll_0b, dcMC_mll_0b},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",              ""));
+
+
+    // electrons
+    // --> 2el
+    vh.push_back(PHS("DataMC_2015CD_met_2el",   {dcData_2015CD_met_2el, dcMC_met_2el},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",           ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_2el",    {dcData_2015CD_ht_2el, dcMC_ht_2el},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_2el",    {dcData_2015CD_nt_2el, dcMC_nt_2el},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",          ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_2el",   {dcData_2015CD_mt2_2el, dcMC_mt2_2el},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",           ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_2el",    {dcData_2015CD_nb_2el, dcMC_nb_2el},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_2el",    {dcData_2015CD_nj_2el, dcMC_nj_2el},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",            ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_2el",   {dcData_2015CD_mht_2el, dcMC_mht_2el},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",           ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_2el",   {dcData_2015CD_jpt_2el, dcMC_jpt_2el},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_2el",  {dcData_2015CD_j1pt_2el, dcMC_j1pt_2el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_2el",  {dcData_2015CD_j2pt_2el, dcMC_j2pt_2el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_2el",  {dcData_2015CD_j3pt_2el, dcMC_j3pt_2el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_elpt_2el",  {dcData_2015CD_elpt_2el, dcMC_elpt_2el},   {1, 2}, "", 50, 0, 1000,   true, false,  "el pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_2el", {dcData_2015CD_el1pt_2el, dcMC_el1pt_2el}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_el2pt_2el", {dcData_2015CD_el2pt_2el, dcMC_el2pt_2el}, {1, 2}, "", 50, 0, 1000,   true, false,  "el2 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_2el",   {dcData_2015CD_mll_2el, dcMC_mll_2el},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",           ""));
+    // --> 2mu
+    vh.push_back(PHS("DataMC_2015CD_met_elZinv",   {dcData_2015CD_met_elZinv, dcMC_met_elZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",           ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_elZinv",    {dcData_2015CD_ht_elZinv, dcMC_ht_elZinv},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_elZinv",    {dcData_2015CD_nt_elZinv, dcMC_nt_elZinv},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",          ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_elZinv",   {dcData_2015CD_mt2_elZinv, dcMC_mt2_elZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",           ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_elZinv",    {dcData_2015CD_nb_elZinv, dcMC_nb_elZinv},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_elZinv",    {dcData_2015CD_nj_elZinv, dcMC_nj_elZinv},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",            ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_elZinv",   {dcData_2015CD_mht_elZinv, dcMC_mht_elZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",           ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_elZinv",   {dcData_2015CD_jpt_elZinv, dcMC_jpt_elZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_elZinv",  {dcData_2015CD_j1pt_elZinv, dcMC_j1pt_elZinv},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_elZinv",  {dcData_2015CD_j2pt_elZinv, dcMC_j2pt_elZinv},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_elZinv",  {dcData_2015CD_j3pt_elZinv, dcMC_j3pt_elZinv},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_elpt_elZinv",  {dcData_2015CD_elpt_elZinv, dcMC_elpt_elZinv},   {1, 2}, "", 50, 0, 1000,   true, false,  "el pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_elZinv", {dcData_2015CD_el1pt_elZinv, dcMC_el1pt_elZinv}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_el2pt_elZinv", {dcData_2015CD_el2pt_elZinv, dcMC_el2pt_elZinv}, {1, 2}, "", 50, 0, 1000,   true, false,  "el2 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_elZinv",   {dcData_2015CD_mll_elZinv, dcMC_mll_elZinv},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",           ""));
+    // --> 2mu
+    vh.push_back(PHS("DataMC_2015CD_met_ht200_el",   {dcData_2015CD_met_ht200_el, dcMC_met_ht200_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",           ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_ht200_el",    {dcData_2015CD_ht_ht200_el, dcMC_ht_ht200_el},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_ht200_el",    {dcData_2015CD_nt_ht200_el, dcMC_nt_ht200_el},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",          ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_ht200_el",   {dcData_2015CD_mt2_ht200_el, dcMC_mt2_ht200_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",           ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_ht200_el",    {dcData_2015CD_nb_ht200_el, dcMC_nb_ht200_el},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_ht200_el",    {dcData_2015CD_nj_ht200_el, dcMC_nj_ht200_el},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",            ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_ht200_el",   {dcData_2015CD_mht_ht200_el, dcMC_mht_ht200_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",           ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_ht200_el",   {dcData_2015CD_jpt_ht200_el, dcMC_jpt_ht200_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_ht200_el",  {dcData_2015CD_j1pt_ht200_el, dcMC_j1pt_ht200_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_ht200_el",  {dcData_2015CD_j2pt_ht200_el, dcMC_j2pt_ht200_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_ht200_el",  {dcData_2015CD_j3pt_ht200_el, dcMC_j3pt_ht200_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_elpt_ht200",     {dcData_2015CD_elpt_ht200, dcMC_elpt_ht200},   {1, 2}, "", 50, 0, 1000,   true, false,  "el pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_ht200",    {dcData_2015CD_el1pt_ht200, dcMC_el1pt_ht200}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_el2pt_ht200",    {dcData_2015CD_el2pt_ht200, dcMC_el2pt_ht200}, {1, 2}, "", 50, 0, 1000,   true, false,  "el2 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_ht200_el",   {dcData_2015CD_mll_ht200_el, dcMC_mll_ht200_el},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",           ""));
+    // --> baselineNoTag
+    vh.push_back(PHS("DataMC_2015CD_met_baselineNoTag_el",   {dcData_2015CD_met_blnotag_el, dcMC_met_blnotag_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",        ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_baselineNoTag_el",    {dcData_2015CD_ht_blnotag_el, dcMC_ht_blnotag_el},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_baselineNoTag_el",    {dcData_2015CD_nt_blnotag_el, dcMC_nt_blnotag_el},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",       ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_baselineNoTag_el",   {dcData_2015CD_mt2_blnotag_el, dcMC_mt2_blnotag_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",        ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_baselineNoTag_el",    {dcData_2015CD_nb_blnotag_el, dcMC_nb_blnotag_el},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_baselineNoTag_el",    {dcData_2015CD_nj_blnotag_el, dcMC_nj_blnotag_el},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",         ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_baselineNoTag_el",   {dcData_2015CD_mht_blnotag_el, dcMC_mht_blnotag_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",        ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_baselineNoTag_el",   {dcData_2015CD_jpt_blnotag_el, dcMC_jpt_blnotag_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",     ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_baselineNoTag_el",  {dcData_2015CD_j1pt_blnotag_el, dcMC_j1pt_blnotag_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",    ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_baselineNoTag_el",  {dcData_2015CD_j2pt_blnotag_el, dcMC_j2pt_blnotag_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",    ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_baselineNoTag_el",  {dcData_2015CD_j3pt_blnotag_el, dcMC_j3pt_blnotag_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",    ""));
+    vh.push_back(PHS("DataMC_2015CD_elpt_baselineNoTag",     {dcData_2015CD_elpt_blnotag, dcMC_elpt_blnotag},   {1, 2}, "", 50, 0, 1000,   true, false,  "el pt",      ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_baselineNoTag",    {dcData_2015CD_el1pt_blnotag, dcMC_el1pt_blnotag}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",     ""));
+    vh.push_back(PHS("DataMC_2015CD_el2pt_baselineNoTag",    {dcData_2015CD_el2pt_blnotag, dcMC_el2pt_blnotag}, {1, 2}, "", 50, 0, 1000,   true, false,  "el2 pt",     ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_baselineNoTag_el",   {dcData_2015CD_mll_blnotag_el, dcMC_mll_blnotag_el},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",        ""));
+    // --> baseline
+    vh.push_back(PHS("DataMC_2015CD_met_baseline_el",   {dcData_2015CD_met_bl_el, dcMC_met_bl_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",            ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_baseline_el",    {dcData_2015CD_ht_bl_el, dcMC_ht_bl_el},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",             ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_baseline_el",    {dcData_2015CD_nt_bl_el, dcMC_nt_bl_el},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",           ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_baseline_el",   {dcData_2015CD_mt2_bl_el, dcMC_mt2_bl_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_baseline_el",    {dcData_2015CD_nb_bl_el, dcMC_nb_bl_el},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",             ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_baseline_el",    {dcData_2015CD_nj_bl_el, dcMC_nj_bl_el},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",             ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_baseline_el",   {dcData_2015CD_mht_bl_el, dcMC_mht_bl_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",            ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_baseline_el",   {dcData_2015CD_jpt_bl_el, dcMC_jpt_bl_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_baseline_el",  {dcData_2015CD_j1pt_bl_el, dcMC_j1pt_bl_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_baseline_el",  {dcData_2015CD_j2pt_bl_el, dcMC_j2pt_bl_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_baseline_el",  {dcData_2015CD_j3pt_bl_el, dcMC_j3pt_bl_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_elpt_baseline",  {dcData_2015CD_elpt_bl, dcMC_elpt_bl},   {1, 2}, "", 50, 0, 1000,   true, false,  "el pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_baseline", {dcData_2015CD_el1pt_bl, dcMC_el1pt_bl}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_el2pt_baseline", {dcData_2015CD_el2pt_bl, dcMC_el2pt_bl}, {1, 2}, "", 50, 0, 1000,   true, false,  "el2 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_baseline_el",   {dcData_2015CD_mll_bl_el, dcMC_mll_bl_el},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",            ""));
+    // --> 0b muZinv
+    vh.push_back(PHS("DataMC_2015CD_met_0belZinv",   {dcData_2015CD_met_0belZinv, dcMC_met_0belZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",              ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_0belZinv",    {dcData_2015CD_ht_0belZinv, dcMC_ht_0belZinv},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",               ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_0belZinv",    {dcData_2015CD_nt_0belZinv, dcMC_nt_0belZinv},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",             ""));
+    vh.push_back(PHS("DataMC_2015CD_nt1b_0belZinv",  {dcData_2015CD_nt1b_0belZinv, dcMC_nt1b_0belZinv},   {1, 2}, "", 5, 0, 5,       true, false,  "ntop (1b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt2b_0belZinv",  {dcData_2015CD_nt2b_0belZinv, dcMC_nt2b_0belZinv},   {1, 2}, "", 5, 0, 5,       true, false,  "ntop (2b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt3b_0belZinv",  {dcData_2015CD_nt3b_0belZinv, dcMC_nt3b_0belZinv},   {1, 2}, "", 5, 0, 5,       true, false,  "ntop (3b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_0belZinv",   {dcData_2015CD_mt2_0belZinv, dcMC_mt2_0belZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",              ""));
+    vh.push_back(PHS("DataMC_2015CD_mt21b_0belZinv", {dcData_2015CD_mt21b_0belZinv, dcMC_mt21b_0belZinv}, {1, 2}, "", 50, 0, 1500,   true, false,  "mt2 (1b fake)",    ""));
+    vh.push_back(PHS("DataMC_2015CD_mt22b_0belZinv", {dcData_2015CD_mt22b_0belZinv, dcMC_mt22b_0belZinv}, {1, 2}, "", 50, 0, 1500,   true, false,  "mt2 (2b fake)",    ""));
+    vh.push_back(PHS("DataMC_2015CD_mt23b_0belZinv", {dcData_2015CD_mt23b_0belZinv, dcMC_mt23b_0belZinv}, {1, 2}, "", 50, 0, 1500,   true, false,  "mt2 (3b fake)",    ""));
+    //vh.push_back(PHS("DataMC_2015CD_nb_0belZinv",    {dcData_2015CD_nb_0belZinv, dcMC_nb_0belZinv},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",               ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_0belZinv",    {dcData_2015CD_nj_0belZinv, dcMC_nj_0belZinv},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",               ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_0belZinv",   {dcData_2015CD_mht_0belZinv, dcMC_mht_0belZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",              ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_0belZinv",   {dcData_2015CD_jpt_0belZinv, dcMC_jpt_0belZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_0belZinv",  {dcData_2015CD_j1pt_0belZinv, dcMC_j1pt_0belZinv},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_0belZinv",  {dcData_2015CD_j2pt_0belZinv, dcMC_j2pt_0belZinv},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_0belZinv",  {dcData_2015CD_j3pt_0belZinv, dcMC_j3pt_0belZinv},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_elpt_0belZinv",  {dcData_2015CD_elpt_0belZinv, dcMC_elpt_0belZinv},   {1, 2}, "", 50, 0, 1000,   true, false,  "el pt",            ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_0belZinv", {dcData_2015CD_el1pt_0belZinv, dcMC_el1pt_0belZinv}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_el2pt_0belZinv", {dcData_2015CD_el2pt_0belZinv, dcMC_el2pt_0belZinv}, {1, 2}, "", 50, 0, 1000,   true, false,  "el2 pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_0belZinv",   {dcData_2015CD_mll_0belZinv, dcMC_mll_0belZinv},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",              ""));
+    // --> 0b no mt2
+    vh.push_back(PHS("DataMC_2015CD_met_0bnomt2_el",   {dcData_2015CD_met_0bnomt2_el, dcMC_met_0bnomt2_el},     {1, 2}, "", 50, 0, 1500,  true, false,  "met",             ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_0bnomt2_el",    {dcData_2015CD_ht_0bnomt2_el, dcMC_ht_0bnomt2_el},       {1, 2}, "", 50, 0, 1500,  true, false,  "ht",              ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_0bnomt2_el",    {dcData_2015CD_nt_0bnomt2_el, dcMC_nt_0bnomt2_el},       {1, 2}, "", 5, 0, 5,      true, false,  "ntop",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nt1b_0bnomt2_el",  {dcData_2015CD_nt1b_0bnomt2_el, dcMC_nt1b_0bnomt2_el},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop(1b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt2b_0bnomt2_el",  {dcData_2015CD_nt2b_0bnomt2_el, dcMC_nt2b_0bnomt2_el},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop(2b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt3b_0bnomt2_el",  {dcData_2015CD_nt3b_0bnomt2_el, dcMC_nt3b_0bnomt2_el},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop(3b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_0bnomt2_el",   {dcData_2015CD_mt2_0bnomt2_el, dcMC_mt2_0bnomt2_el},     {1, 2}, "", 50, 0, 1500,  true, false,  "mt2",             ""));
+    vh.push_back(PHS("DataMC_2015CD_mt21b_0bnomt2_el", {dcData_2015CD_mt21b_0bnomt2_el, dcMC_mt21b_0bnomt2_el}, {1, 2}, "", 50, 0, 1500,  true, false,  "mt2 (1b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_mt22b_0bnomt2_el", {dcData_2015CD_mt22b_0bnomt2_el, dcMC_mt22b_0bnomt2_el}, {1, 2}, "", 50, 0, 1500,  true, false,  "mt2 (2b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_mt23b_0bnomt2_el", {dcData_2015CD_mt23b_0bnomt2_el, dcMC_mt23b_0bnomt2_el}, {1, 2}, "", 50, 0, 1500,  true, false,  "mt2 (3b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_0bnomt2_el",    {dcData_2015CD_nb_0bnomt2_el, dcMC_nb_0bnomt2_el},       {1, 2}, "", 10, 0, 10,    true, false,  "nb",              ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_0bnomt2_el",    {dcData_2015CD_nj_0bnomt2_el, dcMC_nj_0bnomt2_el},       {1, 2}, "", 20, 0, 20,    true, false,  "nj",              ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_0bnomt2_el",   {dcData_2015CD_mht_0bnomt2_el, dcMC_mht_0bnomt2_el},     {1, 2}, "", 50, 0, 1500,  true, false,  "mht",             ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_0bnomt2_el",   {dcData_2015CD_jpt_0bnomt2_el, dcMC_jpt_0bnomt2_el},     {1, 2}, "", 50, 0, 1500,  true, false,  "jet pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_0bnomt2_el",  {dcData_2015CD_j1pt_0bnomt2_el, dcMC_j1pt_0bnomt2_el},   {1, 2}, "", 50, 0, 1500,  true, false,  "jet1 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_0bnomt2_el",  {dcData_2015CD_j2pt_0bnomt2_el, dcMC_j2pt_0bnomt2_el},   {1, 2}, "", 50, 0, 1500,  true, false,  "jet2 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_0bnomt2_el",  {dcData_2015CD_j3pt_0bnomt2_el, dcMC_j3pt_0bnomt2_el},   {1, 2}, "", 50, 0, 1500,  true, false,  "jet3 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_elpt_0bnomt2",     {dcData_2015CD_elpt_0bnomt2, dcMC_elpt_0bnomt2},         {1, 2}, "", 50, 0, 1000,  true, false,  "el pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_0bnomt2",    {dcData_2015CD_el1pt_0bnomt2, dcMC_el1pt_0bnomt2},       {1, 2}, "", 50, 0, 1000,  true, false,  "el1 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_el2pt_0bnomt2",    {dcData_2015CD_el2pt_0bnomt2, dcMC_el2pt_0bnomt2},       {1, 2}, "", 50, 0, 1000,  true, false,  "el2 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_0bnomt2_el",   {dcData_2015CD_mll_0bnomt2_el, dcMC_mll_0bnomt2_el},     {1, 2}, "", 50, 0, 1000,  true, false,  "mll",             ""));
+    // --> 0b
+    vh.push_back(PHS("DataMC_2015CD_met_0b_el",   {dcData_2015CD_met_0b_el, dcMC_met_0b_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",              ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_0b_el",    {dcData_2015CD_ht_0b_el, dcMC_ht_0b_el},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",               ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_0b_el",    {dcData_2015CD_nt_0b_el, dcMC_nt_0b_el},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",             ""));
+    vh.push_back(PHS("DataMC_2015CD_nt1b_0b_el",  {dcData_2015CD_nt1b_0b_el, dcMC_nt1b_0b_el},   {1, 2}, "", 5, 0, 5,       true, false,  "ntop (1b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt2b_0b_el",  {dcData_2015CD_nt2b_0b_el, dcMC_nt2b_0b_el},   {1, 2}, "", 5, 0, 5,       true, false,  "ntop (2b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt3b_0b_el",  {dcData_2015CD_nt3b_0b_el, dcMC_nt3b_0b_el},   {1, 2}, "", 5, 0, 5,       true, false,  "ntop (3b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_0b_el",   {dcData_2015CD_mt2_0b_el, dcMC_mt2_0b_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",              ""));
+    vh.push_back(PHS("DataMC_2015CD_mt21b_0b_el", {dcData_2015CD_mt21b_0b_el, dcMC_mt21b_0b_el}, {1, 2}, "", 50, 0, 1500,   true, false,  "mt2 (1b fake)",    ""));
+    vh.push_back(PHS("DataMC_2015CD_mt22b_0b_el", {dcData_2015CD_mt22b_0b_el, dcMC_mt22b_0b_el}, {1, 2}, "", 50, 0, 1500,   true, false,  "mt2 (2b fake)",    ""));
+    vh.push_back(PHS("DataMC_2015CD_mt23b_0b_el", {dcData_2015CD_mt23b_0b_el, dcMC_mt23b_0b_el}, {1, 2}, "", 50, 0, 1500,   true, false,  "mt2 (3b fake)",    ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_0b_el",    {dcData_2015CD_nb_0b_el, dcMC_nb_0b_el},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",               ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_0b_el",    {dcData_2015CD_nj_0b_el, dcMC_nj_0b_el},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",               ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_0b_el",   {dcData_2015CD_mht_0b_el, dcMC_mht_0b_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",              ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_0b_el",   {dcData_2015CD_jpt_0b_el, dcMC_jpt_0b_el},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_0b_el",  {dcData_2015CD_j1pt_0b_el, dcMC_j1pt_0b_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_0b_el",  {dcData_2015CD_j2pt_0b_el, dcMC_j2pt_0b_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_0b_el",  {dcData_2015CD_j3pt_0b_el, dcMC_j3pt_0b_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_elpt_0b",  {dcData_2015CD_elpt_0b, dcMC_elpt_0b},   {1, 2}, "", 50, 0, 1000,   true, false,  "el pt",            ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_0b", {dcData_2015CD_el1pt_0b, dcMC_el1pt_0b}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_el2pt_0b", {dcData_2015CD_el2pt_0b, dcMC_el2pt_0b}, {1, 2}, "", 50, 0, 1000,   true, false,  "el2 pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_0b_el",   {dcData_2015CD_mll_0b_el, dcMC_mll_0b_el},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",              ""));
 
 
     set<AnaSamples::FileSummary> vvf;
