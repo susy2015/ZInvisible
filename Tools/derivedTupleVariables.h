@@ -707,6 +707,11 @@ namespace plotterFunctions
             if(cutMuVec->size() >= 1) cutMuPt1 = cutMuVec->at(0).Pt();
             if(cutMuVec->size() >= 2) cutMuPt2 = cutMuVec->at(1).Pt();
 
+            double cutElecPt1 = -999.9;
+            double cutElecPt2 = -999.9;
+            if(cutElecVec->size() >= 1) cutElecPt1 = cutElecVec->at(0).Pt();
+            if(cutElecVec->size() >= 2) cutElecPt2 = cutElecVec->at(1).Pt();
+
             double mindPhiMetJ = 999.9;
             int jc = 0;
             for(const TLorentzVector& jet : jetsLVec)
@@ -729,6 +734,8 @@ namespace plotterFunctions
             tr.registerDerivedVar("genHt", genHt);
             tr.registerDerivedVar("cutMuPt1", cutMuPt1);
             tr.registerDerivedVar("cutMuPt2", cutMuPt2);
+            tr.registerDerivedVar("cutELecPt1", cutElecPt1);
+            tr.registerDerivedVar("cutElecPt2", cutElecPt2);
             tr.registerDerivedVar("mindPhiMetJ", mindPhiMetJ);
 
             tr.registerDerivedVar("ZPtRes", (bestRecoZPt - genZPt)/genZPt);
