@@ -309,7 +309,8 @@ void Plotter::createHistsFromTuple()
 
             NTupleReader tr(t, activeBranches);
             tr.setReThrow(false);
-            BaselineVessel myBLV;
+            BaselineVessel myBLV("","SingleMuon_csc2015.txt");
+            //BaselineVessel myBLV("","/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/SingleMuon_csc2015.txt");
             tr.registerFunction(myBLV);
             rf.registerFunctions(tr);
 
