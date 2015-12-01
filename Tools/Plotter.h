@@ -19,6 +19,8 @@
 #include "NTupleReader.h"
 #include "samples.h"
 
+class RegisterFunctions;
+
 class Plotter
 {
 private:
@@ -142,6 +144,8 @@ public:
     void setLumi(const double lumi);
     void setDoHists(const bool doHists);
     void setDoTuple(const bool doTuple);
+    void setRegisterFunction(RegisterFunctions* rf);
+    void setPrintInterval(const int printInterval);
 
     double getLumi();
 
@@ -157,8 +161,10 @@ private:
     const int nFile_;
     const int startFile_;
     const int maxEvts_;
+    int printInterval_;
     double lumi_;
     bool doHists_, doTuple_;
+    RegisterFunctions *registerfunc_;
 
     class HistCutSummary
     {

@@ -1,6 +1,6 @@
 #include "SusyAnaTools/Tools/samples.h"
-#include "SusyAnaTools/Tools/baselineDef.h"
-#include "derivedTupleVariables.h"
+#include "RegisterFunctions.h"
+#include "NTupleReader.h"
 
 #include <iostream>
 
@@ -8,10 +8,12 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TRandom3.h"
+#include "TChain.h"
+#include "Math/VectorUtil.h"
 
 int main()
 {
-/*    AnaSamples::SampleSet        ss;
+    AnaSamples::SampleSet        ss;
     AnaSamples::SampleCollection sc(ss);
 
     TFile *f = new TFile("effhists.root","RECREATE");
@@ -64,11 +66,15 @@ int main()
     TH1 *hZAccPt_den = new TH1D("hZAccPt_den", "hZAccPt_den", 200, 0, 2000);
     TH1 *hZAccPtSmear_num = new TH1D("hZAccPtSmear_num", "hZAccPtSmear_num", 200, 0, 2000);
     TH1 *hZAccPtSmear_den = new TH1D("hZAccPtSmear_den", "hZAccPtSmear_den", 200, 0, 2000);
+    TH1 *hZAccPtPtSmear_num = new TH1D("hZAccPtMuPtSmear_num", "hZAccPtMuPtSmear_num", 200, 0, 2000);
+    TH1 *hZAccPtPtSmear_den = new TH1D("hZAccPtMuPtSmear_den", "hZAccPtMuPtSmear_den", 200, 0, 2000);
 
     TH1 *hZElecAccPt_num = new TH1D("hZElecAccPt_num", "hZElecAccPt_num", 200, 0, 2000);
     TH1 *hZElecAccPt_den = new TH1D("hZElecAccPt_den", "hZElecAccPt_den", 200, 0, 2000);
     TH1 *hZElecAccPtSmear_num = new TH1D("hZElecAccPtSmear_num", "hZElecAccPtSmear_num", 200, 0, 2000);
     TH1 *hZElecAccPtSmear_den = new TH1D("hZElecAccPtSmear_den", "hZElecAccPtSmear_den", 200, 0, 2000);
+    TH1 *hZElecAccPtPtSmear_num = new TH1D("hZElecAccPtPtSmear_num", "hZElecAccPtPtSmear_num", 200, 0, 2000);
+    TH1 *hZElecAccPtPtSmear_den = new TH1D("hZElecAccPtPtSmear_den", "hZElecAccPtPtSmear_den", 200, 0, 2000);
 
     TH2 *hZEff_num = new TH2D("hZEff_num", "hZEff_num", 200, 0, 2000, 300, 0, 3000);
     TH2 *hZEff_den = new TH2D("hZEff_den", "hZEff_den", 200, 0, 2000, 300, 0, 3000);
@@ -84,17 +90,15 @@ int main()
     TH2 *hdPhi2 = new TH2D("hdPhi2", "hdPhi2", 200, 0, 2000, 500, 0, 5000);
     TH2 *hdPhi3 = new TH2D("hdPhi3", "hdPhi3", 200, 0, 2000, 500, 0, 5000);
 
+    RegisterFunctionsCalcEff rt;
+
     std::set<std::string> activeBranches;
-    plotterFunctions::activateBranches(activeBranches);
+    rt.activateBranches(activeBranches);
 
     TRandom3 *trg = new TRandom3(12321);
-    plotterFunctions::tr3 = new TRandom3(32123);
     TFile * fZRes = new TFile("zRes.root");
     TH1* hZRes = (TH1*)fZRes->Get("zRes");
     double hZRes_int = hZRes->Integral(hZRes->FindBin(-0.3), hZRes->FindBin(0.3));
-
-    plotterFunctions::blvZinv = new BaselineVessel("");
-    AnaFunctions::prepareTopTagger();
 
     for(auto& file : sc["DYJetsToLL"]) 
     {
@@ -105,22 +109,10 @@ int main()
 
         std::cout << "Processing file(s): " << file.filePath << std::endl;
 
-
         NTupleReader tr(t, activeBranches);
-        //stopFunctions::cjh.setMuonIso("mini");
-        //stopFunctions::cjh.setElecIso("rel");
-        //stopFunctions::cjh.setJetCollection("prodJetsNoMu_jetsLVec");
-        //stopFunctions::cjh.setBTagCollection("recoJetsBtag_0_MuCleaned");
-        //stopFunctions::cjh.setEnergyFractionCollections("prodJetsNoMu_recoJetschargedHadronEnergyFraction", "prodJetsNoMu_recoJetsneutralEmEnergyFraction", "prodJetsNoMu_recoJetschargedEmEnergyFraction");
-        //stopFunctions::cjh.setForceDr(true);
-        //stopFunctions::cjh.setRemove(true);
-        ////stopFunctions::cjh.setPhotoCleanThresh(0.7);
-        //stopFunctions::cjh.setDisable(true);
-        //tr.registerFunction(&stopFunctions::cleanJets);
-        tr.registerFunction(&plotterFunctions::zinvBaseline);
-        tr.registerFunction(&plotterFunctions::muInfo);
-        //tr.registerFunction(&plotterFunctions::generateWeight);
-        
+
+        rt.registerFunctions(tr);
+
         while(tr.getNextEvent())
         {
             const std::vector<const TLorentzVector*>& genMatchIsoMuInAcc = tr.getVec<const TLorentzVector*>("genMatchIsoMuInAcc");
@@ -268,6 +260,12 @@ int main()
                             for(int i = hZRes->FindBin(-0.3); i <= hZRes->FindBin(0.3); ++i)
                             {
                                 hZAccPtSmear_num->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
+
+                                hZAccPtPtSmear_den->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
+                                if((genMuInAcc[0]->Pt() > 45 && genMuInAcc[1]->Pt() > 20) || (genMuInAcc[1]->Pt() > 45 && genMuInAcc[0]->Pt() > 20)) 
+                                {
+                                    hZAccPtPtSmear_num->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
+                                }
                             }
                             hZAccPt_num->Fill(genZPt, file.getWeight());
                             hZAcc_num->Fill(genZPt, modHt, file.getWeight());
@@ -283,6 +281,7 @@ int main()
                     }
                 }
             }
+
             if(pdgIdZDec == 11)
             {
                 //Electrons 
@@ -329,6 +328,9 @@ int main()
                     for(int i = hZRes->FindBin(-0.3); i <= hZRes->FindBin(0.3); ++i)
                     {
                         hZElecAccPtSmear_num->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
+
+                        hZElecAccPtPtSmear_den->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
+                        if(genElecInAcc[0]->Pt() > 33 && genElecInAcc[1]->Pt()) hZElecAccPtPtSmear_num->Fill(genZPt*(1+hZRes->GetBinCenter(i)), hZRes->GetBinContent(i)/hZRes_int);
                     }
                     hZElecAccPt_num->Fill(genZPt, file.getWeight());
                 
@@ -389,11 +391,15 @@ int main()
     hZAccPt_den->Write();
     hZAccPtSmear_den->Write();
     hZAccPtSmear_num->Write();
+    hZAccPtPtSmear_den->Write();
+    hZAccPtPtSmear_num->Write();
 
     hZElecAccPt_num->Write();
     hZElecAccPt_den->Write();
     hZElecAccPtSmear_den->Write();
     hZElecAccPtSmear_num->Write();
+    hZElecAccPtPtSmear_den->Write();
+    hZElecAccPtPtSmear_num->Write();
 
     hZEff_num->Write();
     hZEff_den->Write();
@@ -405,5 +411,5 @@ int main()
     //hZEff_jActR2_num->Write();
     //hZEff_jActR2_den->Write();
 
-    f->Close();*/
+    f->Close();
 }

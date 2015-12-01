@@ -34,17 +34,18 @@ void combineActBins(TH2* hnum, TH2* hden, const int N = 5)
     TAxis *xaxis = hnum->GetXaxis();
     TAxis *yaxis = hnum->GetYaxis();
 
-    for (int i=1; i<=xaxis->GetNbins(); i++)
+    for (int j=1; j<=yaxis->GetNbins(); j++)
     {
-        int j;
+        int i;
         double contentNum = 0.0, contentDen = 0.0;
-        for(j = yaxis->GetNbins() + 1; j >= 0; j--) 
+        for(i = xaxis->GetNbins() + 1; i >= 0; i--) 
         {
             contentNum += hnum->GetBinContent(i, j);
             contentDen += hden->GetBinContent(i, j);
             if(contentNum > N) break;
         }
-        for(; j <= yaxis->GetNbins() + 1; j++)
+        if(i <= 1) i = 2;
+        for(; i <= xaxis->GetNbins() + 1; i++)
         {
             hnum->SetBinContent(i, j, contentNum);
             hnum->SetBinError(i, j, sqrt(contentNum));
@@ -87,12 +88,15 @@ void makeRatio2D(std::string label, TFile *fin, TFile *fout, double binsX[] = dz
         den = rebin2d(den, binsX, nx - 1, binsY, ny - 1);
     }
 
-    combineActBins(num, den);
+    combineActBins(num, den, 10);
+
+    fout->cd();
+    num->Write();
+    den->Write();
 
     TH2 *ratio = (TH2*)num->Clone((label + "_ratio").c_str());
     ratio->Divide(den);
 
-    fout->cd();
     ratio->Write();
 }
 
@@ -109,7 +113,7 @@ int main ()
     double zptbins[] = {0.0, 100.0, 140.0, 180.0, 220.0, 300.0, 400.0, 500.0, 600.0, 800.0, 2000.0};
     int nzptbins = sizeof(zptbins)/sizeof(double);
 
-    double zptbins2[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 290.0, 300.0, 310.0, 320.0, 330.0, 340.0, 350.0, 360.0, 370.0, 380.0, 390.0, 400.0, 420.0, 440.0, 460.0, 480.0, 500.0, 520.0, 540.0, 560.0, 580.0, 600.0, 640.0, 680.0, 720.0, 760.0, 800.0, 840.0, 880.0, 920.0, 960.0, 1000.0, 1200.0, 1400.0, 1500.0, 2000.0};
+    double zptbins2[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 290.0, 300.0, 310.0, 320.0, 330.0, 340.0, 350.0, 360.0, 370.0, 380.0, 390.0, 400.0, 420.0, 440.0, 460.0, 480.0, 500.0, 520.0, 540.0, 560.0, 580.0, 600.0, 640.0, 680.0, 720.0, 760.0, 800.0, 840.0, 920.0, 1000.0, 1400.0, 2000.0};
     int nzptbins2 = sizeof(zptbins2)/sizeof(double);
 
     double muptbins[] = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 120.0, 140.0, 180.0, 200.0, 300.0, 400.0, 500.0, 600.0, 800.0, 2000.0};
@@ -122,7 +126,7 @@ int main ()
     int nmuptbins3 = sizeof(muptbins3)/sizeof(double);
 
     //double actbins[] = {0.0, 5.0, 10.0, 20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 200.0};//, 500.0, 3000.0};
-    double actbins[] = {0.0, 0.02, 0.05, 0.15, 1.0, 20.0};
+    double actbins[] = {0.0, 0.02, 0.05, 0.10, 0.15, 0.40, 0.60, 1.0, 20.0};
     int nactbins = sizeof(actbins)/sizeof(double);
 
     TFile  *fin = new TFile("effhists.root");
@@ -143,8 +147,10 @@ int main ()
     makeRatio1D("hZElecAccPt", fin, fout, zptbins2, nzptbins2);
     
     makeRatio1D("hZAccPtSmear", fin, fout, zptbins2, nzptbins2);
+    makeRatio1D("hZAccPtMuPtSmear", fin, fout, zptbins2, nzptbins2);
 
     makeRatio1D("hZElecAccPtSmear", fin, fout, zptbins2, nzptbins2);
+    makeRatio1D("hZElecAccPtPtSmear", fin, fout, zptbins2, nzptbins2);
     
     makeRatio2D("hZEff", fin, fout);
     makeRatio2D("hZAcc", fin, fout);

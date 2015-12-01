@@ -1,4 +1,5 @@
 #include "Plotter.h"
+#include "RegisterFunctions.h"
 #include "SusyAnaTools/Tools/samples.h"
 
 #include <getopt.h>
@@ -2723,11 +2724,14 @@ int main(int argc, char* argv[])
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
+    RegisterFunctions* rf = new RegisterFunctionsNTuple();
+
     Plotter plotter(vh, vvf, fromTuple, histFile, nFiles, startFile, nEvts);
     plotter.setLumi(lumi);
     plotter.setPlotDir(plotDir);
     plotter.setDoHists(doSave || doPlots);
     plotter.setDoTuple(doTuple);
+    plotter.setRegisterFunction(rf);
     plotter.read();
     if(doSave)  plotter.saveHists();
     if(doPlots) plotter.plot();
