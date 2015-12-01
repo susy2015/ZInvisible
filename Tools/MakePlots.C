@@ -1236,6 +1236,132 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsVV_0b_w3b_el(        "Rare",       fileMap["Rare"],            "passBaselineNoTagZinv3b;passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
 
 
+    // emu datasetsummary for ttbar subtraction
+    // --> Loose region: only passElMuSel (no zmass cut)
+    Plotter::DatasetSummary dsData_2015C_elmu("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passElMuSel", "");
+    Plotter::DatasetSummary dsDY_elmu(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv;passElMuSel", "");
+    Plotter::DatasetSummary dstt2l_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv;passElMuSel", "");
+    Plotter::DatasetSummary dstW_elmu(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv;passElMuSel", "");
+    Plotter::DatasetSummary dsttZ_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passNoiseEventFilterZinv;passElMuSel", "");
+    Plotter::DatasetSummary dsVV_elmu(        "Rare",       fileMap["Rare"],            "passNoiseEventFilterZinv;passElMuSel", "");
+    // --> Loose region: only passElMuZinvSel
+    Plotter::DatasetSummary dsData_2015C_elmuZinv("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dsDY_elmuZinv(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dstt2l_elmuZinv(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dstW_elmuZinv(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dsttZ_elmuZinv(       "t#bar{t}Z",  fileMap["TTZ"],             "passNoiseEventFilterZinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dsVV_elmuZinv(        "Rare",       fileMap["Rare"],            "passNoiseEventFilterZinv;passElMuZinvSel", "");
+    // --> Loose region: only passElMuZinvSel + HT>200
+    Plotter::DatasetSummary dsData_2015C_ht200_elmu("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passElMuZinvSel;ht>200", "");
+    Plotter::DatasetSummary dsDY_ht200_elmu(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv;passElMuZinvSel;ht>200", "");
+    Plotter::DatasetSummary dstt2l_ht200_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv;passElMuZinvSel;ht>200", "");
+    Plotter::DatasetSummary dstW_ht200_elmu(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv;passElMuZinvSel;ht>200", "");
+    Plotter::DatasetSummary dsttZ_ht200_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passNoiseEventFilterZinv;passElMuZinvSel;ht>200", "");
+    Plotter::DatasetSummary dsVV_ht200_elmu(        "Rare",       fileMap["Rare"],            "passNoiseEventFilterZinv;passElMuZinvSel;ht>200", "");
+    // --> baseline without btag, top tag and mt2 cuts
+    Plotter::DatasetSummary dsData_2015C_blnotag_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dsDY_blnotag_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dstt2l_blnotag_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dstW_blnotag_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dsttZ_blnotag_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dsVV_blnotag_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv;passElMuZinvSel", "");
+    // --> full baseline
+    Plotter::DatasetSummary dsData_2015C_bl_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineZinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dsDY_bl_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineZinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dstt2l_bl_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineZinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dstW_bl_elmu(        "single top", fileMap["tW"],              "passBaselineZinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dsttZ_bl_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineZinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dsVV_bl_elmu(        "Rare",       fileMap["Rare"],            "passBaselineZinv;passElMuZinvSel", "");
+    // --> 0b + muZinv
+    Plotter::DatasetSummary dsData_2015C_0belmuZinv("Data",       fileMap["Data_SingleMuon"], "passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsDY_0belmuZinv(        "DY",         fileMap["DYJetsToLL"],      "passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dstt2l_0belmuZinv(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dstW_0belmuZinv(        "single top", fileMap["tW"],              "passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsttZ_0belmuZinv(       "t#bar{t}Z",  fileMap["TTZ"],             "passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsVV_0belmuZinv(        "Rare",       fileMap["Rare"],            "passElMuZinvSel;cntCSVSZinv=0", "");
+    // --> 0b control region without mt2 cut
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsDY_0bnomt2_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dstt2l_0bnomt2_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dstW_0bnomt2_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsttZ_0bnomt2_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsVV_0bnomt2_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    // --> 0b control region 
+    Plotter::DatasetSummary dsData_2015C_0b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsDY_0b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dstt2l_0b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dstW_0b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagZinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsttZ_0b_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagZinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsVV_0b_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagZinv;passElMuZinvSel;cntCSVSZinv=0", "");
+
+    // Weighted according to 1 fake b
+    // --> 0b control region, muZinv
+    Plotter::DatasetSummary dsData_2015C_0belmuZinv_w1b("Data",       fileMap["Data_SingleMuon"], "passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsDY_0belmuZinv_w1b(        "DY",         fileMap["DYJetsToLL"],      "passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dstt2l_0belmuZinv_w1b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dstW_0belmuZinv_w1b(        "single top", fileMap["tW"],              "passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsttZ_0belmuZinv_w1b(       "t#bar{t}Z",  fileMap["TTZ"],             "passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsVV_0belmuZinv_w1b(        "Rare",       fileMap["Rare"],            "passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    // --> 0b control region without mt2 cut
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w1b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsDY_0bnomt2_w1b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dstt2l_0bnomt2_w1b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dstW_0bnomt2_w1b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsttZ_0bnomt2_w1b_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsVV_0bnomt2_w1b_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    // --> 0b control region 
+    Plotter::DatasetSummary dsData_2015C_0b_w1b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsDY_0b_w1b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dstt2l_0b_w1b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dstW_0b_w1b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagZinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsttZ_0b_w1b_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagZinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsVV_0b_w1b_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagZinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+
+    // Weighted according to 2 fake b
+    // --> 0b control region, muZinv
+    Plotter::DatasetSummary dsData_2015C_0belmuZinv_w2b("Data",       fileMap["Data_SingleMuon"], "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsDY_0belmuZinv_w2b(        "DY",         fileMap["DYJetsToLL"],      "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dstt2l_0belmuZinv_w2b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dstW_0belmuZinv_w2b(        "single top", fileMap["tW"],              "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsttZ_0belmuZinv_w2b(       "t#bar{t}Z",  fileMap["TTZ"],             "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsVV_0belmuZinv_w2b(        "Rare",       fileMap["Rare"],            "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    // --> 0b control region without mt2 cut
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w2b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsDY_0bnomt2_w2b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dstt2l_0bnomt2_w2b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dstW_0bnomt2_w2b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsttZ_0bnomt2_w2b_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsVV_0bnomt2_w2b_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    // --> 0b control region 
+    Plotter::DatasetSummary dsData_2015C_0b_w2b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsDY_0b_w2b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dstt2l_0b_w2b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dstW_0b_w2b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagZinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsttZ_0b_w2b_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagZinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsVV_0b_w2b_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagZinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+
+    // Weighted according to 3 fake b
+    // --> 0b control region, muZinv
+    Plotter::DatasetSummary dsData_2015C_0belmuZinv_w3b("Data",       fileMap["Data_SingleMuon"], "passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsDY_0belmuZinv_w3b(        "DY",         fileMap["DYJetsToLL"],      "passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dstt2l_0belmuZinv_w3b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dstW_0belmuZinv_w3b(        "single top", fileMap["tW"],              "passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsttZ_0belmuZinv_w3b(       "t#bar{t}Z",  fileMap["TTZ"],             "passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsVV_0belmuZinv_w3b(        "Rare",       fileMap["Rare"],            "passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    // --> 0b control region without mt2 cut
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w3b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsDY_0bnomt2_w3b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dstt2l_0bnomt2_w3b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dstW_0bnomt2_w3b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsttZ_0bnomt2_w3b_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsVV_0bnomt2_w3b_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    // --> 0b control region 
+    Plotter::DatasetSummary dsData_2015C_0b_w3b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsDY_0b_w3b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dstt2l_0b_w3b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dstW_0b_w3b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagZinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsttZ_0b_w3b_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagZinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsVV_0b_w3b_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagZinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
 
 
 
@@ -1856,6 +1982,282 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_mll_0b_el("stack",  "bestRecoZM", {dsDY_0b_el, dstt2l_0b_el, dstW_0b_el, dsttZ_0b_el, dsVV_0b_el});
 
 
+    // all with e+mu
+    // --> met
+    Plotter::DataCollection dcData_2015CD_met_elmu(        "data",  "cleanMetPt", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_met_elmu(                 "stack", "cleanMetPt", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_met_elmuZinv(    "data",  "cleanMetPt", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_met_elmuZinv(             "stack", "cleanMetPt", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_met_ht200_elmu(  "data",  "cleanMetPt", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_met_ht200_elmu(           "stack", "cleanMetPt", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_met_blnotag_elmu("data",  "cleanMetPt", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_met_blnotag_elmu(         "stack", "cleanMetPt", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_met_bl_elmu(     "data",  "cleanMetPt", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_met_bl_elmu(              "stack", "cleanMetPt", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_met_0belmuZinv(  "data",  "cleanMetPt", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_met_0belmuZinv(           "stack", "cleanMetPt", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_met_0bnomt2_elmu("data",  "cleanMetPt", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_met_0bnomt2_elmu(         "stack", "cleanMetPt", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_met_0b_elmu(     "data",  "cleanMetPt", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_met_0b_elmu(              "stack", "cleanMetPt", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> ntops
+    Plotter::DataCollection dcData_2015CD_nt_elmu(        "data",  "nTopCandSortedCntZinv", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_nt_elmu(                 "stack", "nTopCandSortedCntZinv", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_nt_elmuZinv(    "data",  "nTopCandSortedCntZinv", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_nt_elmuZinv(             "stack", "nTopCandSortedCntZinv", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_nt_ht200_elmu(  "data",  "nTopCandSortedCntZinv", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_nt_ht200_elmu(           "stack", "nTopCandSortedCntZinv", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_nt_blnotag_elmu("data",  "nTopCandSortedCntZinv", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_nt_blnotag_elmu(         "stack", "nTopCandSortedCntZinv", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_nt_bl_elmu(     "data",  "nTopCandSortedCntZinv", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_nt_bl_elmu(              "stack", "nTopCandSortedCntZinv", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_nt_0belmuZinv(  "data",  "nTopCandSortedCntZinv", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_nt_0belmuZinv(           "stack", "nTopCandSortedCntZinv", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_nt_0bnomt2_elmu("data",  "nTopCandSortedCntZinv", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_nt_0bnomt2_elmu(         "stack", "nTopCandSortedCntZinv", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_nt_0b_elmu(     "data",  "nTopCandSortedCntZinv", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_nt_0b_elmu(              "stack", "nTopCandSortedCntZinv", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> MT2
+    Plotter::DataCollection dcData_2015CD_mt2_elmu(        "data",  "best_had_brJet_MT2Zinv", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_mt2_elmu(                 "stack", "best_had_brJet_MT2Zinv", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_mt2_elmuZinv(    "data",  "best_had_brJet_MT2Zinv", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_mt2_elmuZinv(             "stack", "best_had_brJet_MT2Zinv", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_mt2_ht200_elmu(  "data",  "best_had_brJet_MT2Zinv", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_mt2_ht200_elmu(           "stack", "best_had_brJet_MT2Zinv", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_mt2_blnotag_elmu("data",  "best_had_brJet_MT2Zinv", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_mt2_blnotag_elmu(         "stack", "best_had_brJet_MT2Zinv", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_mt2_bl_elmu(     "data",  "best_had_brJet_MT2Zinv", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_mt2_bl_elmu(              "stack", "best_had_brJet_MT2Zinv", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_mt2_0belmuZinv(  "data",  "best_had_brJet_MT2Zinv", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_mt2_0belmuZinv(           "stack", "best_had_brJet_MT2Zinv", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_mt2_0bnomt2_elmu("data",  "best_had_brJet_MT2Zinv", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_mt2_0bnomt2_elmu(         "stack", "best_had_brJet_MT2Zinv", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_mt2_0b_elmu(     "data",  "best_had_brJet_MT2Zinv", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_mt2_0b_elmu(              "stack", "best_had_brJet_MT2Zinv", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> ntops with bfaking
+    Plotter::DataCollection dcData_2015CD_nt1b_0belmuZinv(  "data",  "nTopCandSortedCntZinv1b", {dsData_2015C_0belmuZinv_w1b});
+    Plotter::DataCollection dcMC_nt1b_0belmuZinv(           "stack", "nTopCandSortedCntZinv1b", {dsDY_0belmuZinv_w1b, dstt2l_0belmuZinv_w1b, dstW_0belmuZinv_w1b, dsttZ_0belmuZinv_w1b, dsVV_0belmuZinv_w1b});
+    Plotter::DataCollection dcData_2015CD_nt1b_0bnomt2_elmu("data",  "nTopCandSortedCntZinv1b", {dsData_2015C_0bnomt2_w1b_elmu});
+    Plotter::DataCollection dcMC_nt1b_0bnomt2_elmu(         "stack", "nTopCandSortedCntZinv1b", {dsDY_0bnomt2_w1b_elmu, dstt2l_0bnomt2_w1b_elmu, dstW_0bnomt2_w1b_elmu, dsttZ_0bnomt2_w1b_elmu, dsVV_0bnomt2_w1b_elmu});
+    Plotter::DataCollection dcData_2015CD_nt1b_0b_elmu(     "data",  "nTopCandSortedCntZinv1b", {dsData_2015C_0b_w1b_elmu});
+    Plotter::DataCollection dcMC_nt1b_0b_elmu(              "stack", "nTopCandSortedCntZinv1b", {dsDY_0b_w1b_elmu, dstt2l_0b_w1b_elmu, dstW_0b_w1b_elmu, dsttZ_0b_w1b_elmu, dsVV_0b_w1b_elmu});
+    Plotter::DataCollection dcData_2015CD_nt2b_0belmuZinv(  "data",  "nTopCandSortedCntZinv2b", {dsData_2015C_0belmuZinv_w2b});
+    Plotter::DataCollection dcMC_nt2b_0belmuZinv(           "stack", "nTopCandSortedCntZinv2b", {dsDY_0belmuZinv_w2b, dstt2l_0belmuZinv_w2b, dstW_0belmuZinv_w2b, dsttZ_0belmuZinv_w2b, dsVV_0belmuZinv_w2b});
+    Plotter::DataCollection dcData_2015CD_nt2b_0bnomt2_elmu("data",  "nTopCandSortedCntZinv2b", {dsData_2015C_0bnomt2_w2b_elmu});
+    Plotter::DataCollection dcMC_nt2b_0bnomt2_elmu(         "stack", "nTopCandSortedCntZinv2b", {dsDY_0bnomt2_w2b_elmu, dstt2l_0bnomt2_w2b_elmu, dstW_0bnomt2_w2b_elmu, dsttZ_0bnomt2_w2b_elmu, dsVV_0bnomt2_w2b_elmu});
+    Plotter::DataCollection dcData_2015CD_nt2b_0b_elmu(     "data",  "nTopCandSortedCntZinv2b", {dsData_2015C_0b_w2b_elmu});
+    Plotter::DataCollection dcMC_nt2b_0b_elmu(              "stack", "nTopCandSortedCntZinv2b", {dsDY_0b_w2b_elmu, dstt2l_0b_w2b_elmu, dstW_0b_w2b_elmu, dsttZ_0b_w2b_elmu, dsVV_0b_w2b_elmu});
+    Plotter::DataCollection dcData_2015CD_nt3b_0belmuZinv(  "data",  "nTopCandSortedCntZinv3b", {dsData_2015C_0belmuZinv_w3b});
+    Plotter::DataCollection dcMC_nt3b_0belmuZinv(           "stack", "nTopCandSortedCntZinv3b", {dsDY_0belmuZinv_w3b, dstt2l_0belmuZinv_w3b, dstW_0belmuZinv_w3b, dsttZ_0belmuZinv_w3b, dsVV_0belmuZinv_w3b});
+    Plotter::DataCollection dcData_2015CD_nt3b_0bnomt2_elmu("data",  "nTopCandSortedCntZinv3b", {dsData_2015C_0bnomt2_w3b_elmu});
+    Plotter::DataCollection dcMC_nt3b_0bnomt2_elmu(         "stack", "nTopCandSortedCntZinv3b", {dsDY_0bnomt2_w3b_elmu, dstt2l_0bnomt2_w3b_elmu, dstW_0bnomt2_w3b_elmu, dsttZ_0bnomt2_w3b_elmu, dsVV_0bnomt2_w3b_elmu});
+    Plotter::DataCollection dcData_2015CD_nt3b_0b_elmu(     "data",  "nTopCandSortedCntZinv3b", {dsData_2015C_0b_w3b_elmu});
+    Plotter::DataCollection dcMC_nt3b_0b_elmu(              "stack", "nTopCandSortedCntZinv3b", {dsDY_0b_w3b_elmu, dstt2l_0b_w3b_elmu, dstW_0b_w3b_elmu, dsttZ_0b_w3b_elmu, dsVV_0b_w3b_elmu});
+    // --> MT2 with bfaking
+    Plotter::DataCollection dcData_2015CD_mt21b_0belmuZinv(  "data",  "best_had_brJet_MT2Zinv1b", {dsData_2015C_0belmuZinv_w1b});
+    Plotter::DataCollection dcMC_mt21b_0belmuZinv(           "stack", "best_had_brJet_MT2Zinv1b", {dsDY_0belmuZinv_w1b, dstt2l_0belmuZinv_w1b, dstW_0belmuZinv_w1b, dsttZ_0belmuZinv_w1b, dsVV_0belmuZinv_w1b});
+    Plotter::DataCollection dcData_2015CD_mt21b_0bnomt2_elmu("data",  "best_had_brJet_MT2Zinv1b", {dsData_2015C_0bnomt2_w1b_elmu});
+    Plotter::DataCollection dcMC_mt21b_0bnomt2_elmu(         "stack", "best_had_brJet_MT2Zinv1b", {dsDY_0bnomt2_w1b_elmu, dstt2l_0bnomt2_w1b_elmu, dstW_0bnomt2_w1b_elmu, dsttZ_0bnomt2_w1b_elmu, dsVV_0bnomt2_w1b_elmu});
+    Plotter::DataCollection dcData_2015CD_mt21b_0b_elmu(     "data",  "best_had_brJet_MT2Zinv1b", {dsData_2015C_0b_w1b_elmu});
+    Plotter::DataCollection dcMC_mt21b_0b_elmu(              "stack", "best_had_brJet_MT2Zinv1b", {dsDY_0b_w1b_elmu, dstt2l_0b_w1b_elmu, dstW_0b_w1b_elmu, dsttZ_0b_w1b_elmu, dsVV_0b_w1b_elmu});
+    Plotter::DataCollection dcData_2015CD_mt22b_0belmuZinv(  "data",  "best_had_brJet_MT2Zinv2b", {dsData_2015C_0belmuZinv_w2b});
+    Plotter::DataCollection dcMC_mt22b_0belmuZinv(           "stack", "best_had_brJet_MT2Zinv2b", {dsDY_0belmuZinv_w2b, dstt2l_0belmuZinv_w2b, dstW_0belmuZinv_w2b, dsttZ_0belmuZinv_w2b, dsVV_0belmuZinv_w2b});
+    Plotter::DataCollection dcData_2015CD_mt22b_0bnomt2_elmu("data",  "best_had_brJet_MT2Zinv2b", {dsData_2015C_0bnomt2_w2b_elmu});
+    Plotter::DataCollection dcMC_mt22b_0bnomt2_elmu(         "stack", "best_had_brJet_MT2Zinv2b", {dsDY_0bnomt2_w2b_elmu, dstt2l_0bnomt2_w2b_elmu, dstW_0bnomt2_w2b_elmu, dsttZ_0bnomt2_w2b_elmu, dsVV_0bnomt2_w2b_elmu});
+    Plotter::DataCollection dcData_2015CD_mt22b_0b_elmu(     "data",  "best_had_brJet_MT2Zinv2b", {dsData_2015C_0b_w2b_elmu});
+    Plotter::DataCollection dcMC_mt22b_0b_elmu(              "stack", "best_had_brJet_MT2Zinv2b", {dsDY_0b_w2b_elmu, dstt2l_0b_w2b_elmu, dstW_0b_w2b_elmu, dsttZ_0b_w2b_elmu, dsVV_0b_w2b_elmu});
+    Plotter::DataCollection dcData_2015CD_mt23b_0belmuZinv(  "data",  "best_had_brJet_MT2Zinv3b", {dsData_2015C_0belmuZinv_w3b});
+    Plotter::DataCollection dcMC_mt23b_0belmuZinv(           "stack", "best_had_brJet_MT2Zinv3b", {dsDY_0belmuZinv_w3b, dstt2l_0belmuZinv_w3b, dstW_0belmuZinv_w3b, dsttZ_0belmuZinv_w3b, dsVV_0belmuZinv_w3b});
+    Plotter::DataCollection dcData_2015CD_mt23b_0bnomt2_elmu("data",  "best_had_brJet_MT2Zinv3b", {dsData_2015C_0bnomt2_w3b_elmu});
+    Plotter::DataCollection dcMC_mt23b_0bnomt2_elmu(         "stack", "best_had_brJet_MT2Zinv3b", {dsDY_0bnomt2_w3b_elmu, dstt2l_0bnomt2_w3b_elmu, dstW_0bnomt2_w3b_elmu, dsttZ_0bnomt2_w3b_elmu, dsVV_0bnomt2_w3b_elmu});
+    Plotter::DataCollection dcData_2015CD_mt23b_0b_elmu(     "data",  "best_had_brJet_MT2Zinv3b", {dsData_2015C_0b_w3b_elmu});
+    Plotter::DataCollection dcMC_mt23b_0b_elmu(              "stack", "best_had_brJet_MT2Zinv3b", {dsDY_0b_w3b_elmu, dstt2l_0b_w3b_elmu, dstW_0b_w3b_elmu, dsttZ_0b_w3b_elmu, dsVV_0b_w3b_elmu});
+    // --> nbs
+    Plotter::DataCollection dcData_2015CD_nb_elmu(        "data",  "cntCSVSZinv", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_nb_elmu(                 "stack", "cntCSVSZinv", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_nb_elmuZinv(    "data",  "cntCSVSZinv", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_nb_elmuZinv(             "stack", "cntCSVSZinv", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_nb_ht200_elmu(  "data",  "cntCSVSZinv", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_nb_ht200_elmu(           "stack", "cntCSVSZinv", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_nb_blnotag_elmu("data",  "cntCSVSZinv", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_nb_blnotag_elmu(         "stack", "cntCSVSZinv", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_nb_bl_elmu(     "data",  "cntCSVSZinv", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_nb_bl_elmu(              "stack", "cntCSVSZinv", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_nb_0bnomt2_elmu("data",  "cntCSVSZinv", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_nb_0bnomt2_elmu(         "stack", "cntCSVSZinv", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_nb_0b_elmu(     "data",  "cntCSVSZinv", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_nb_0b_elmu(              "stack", "cntCSVSZinv", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> njets
+    Plotter::DataCollection dcData_2015CD_nj_elmu(        "data",  "cntNJetsPt30Eta24Zinv", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_nj_elmu(                 "stack", "cntNJetsPt30Eta24Zinv", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_nj_elmuZinv(    "data",  "cntNJetsPt30Eta24Zinv", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_nj_elmuZinv(             "stack", "cntNJetsPt30Eta24Zinv", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_nj_ht200_elmu(  "data",  "cntNJetsPt30Eta24Zinv", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_nj_ht200_elmu(           "stack", "cntNJetsPt30Eta24Zinv", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_nj_blnotag_elmu("data",  "cntNJetsPt30Eta24Zinv", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_nj_blnotag_elmu(         "stack", "cntNJetsPt30Eta24Zinv", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_nj_bl_elmu(     "data",  "cntNJetsPt30Eta24Zinv", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_nj_bl_elmu(              "stack", "cntNJetsPt30Eta24Zinv", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_nj_0belmuZinv(  "data",  "cntNJetsPt30Eta24Zinv", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_nj_0belmuZinv(           "stack", "cntNJetsPt30Eta24Zinv", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_nj_0bnomt2_elmu("data",  "cntNJetsPt30Eta24Zinv", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_nj_0bnomt2_elmu(         "stack", "cntNJetsPt30Eta24Zinv", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_nj_0b_elmu(     "data",  "cntNJetsPt30Eta24Zinv", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_nj_0b_elmu(              "stack", "cntNJetsPt30Eta24Zinv", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> HT
+    Plotter::DataCollection dcData_2015CD_ht_elmu("data",  "HTZinv", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_ht_elmu("stack",  "HTZinv", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_ht_elmuZinv("data",  "HTZinv", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_ht_elmuZinv("stack",  "HTZinv", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_ht_ht200_elmu("data",  "HTZinv", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_ht_ht200_elmu("stack",  "HTZinv", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_ht_blnotag_elmu("data",  "HTZinv", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_ht_blnotag_elmu("stack",  "HTZinv", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_ht_bl_elmu("data",  "HTZinv", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_ht_bl_elmu("stack",  "HTZinv", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_ht_0belmuZinv("data",  "HTZinv", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_ht_0belmuZinv("stack",  "HTZinv", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_ht_0bnomt2_elmu("data",  "HTZinv", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_ht_0bnomt2_elmu("stack",  "HTZinv", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_ht_0b_elmu("data",  "HTZinv", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_ht_0b_elmu("stack",  "HTZinv", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> MHT
+    Plotter::DataCollection dcData_2015CD_mht_elmu("data",  "cleanMHt", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_mht_elmu("stack",  "cleanMHt", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_mht_elmuZinv("data",  "cleanMHt", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_mht_elmuZinv("stack",  "cleanMHt", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_mht_ht200_elmu("data",  "cleanMHt", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_mht_ht200_elmu("stack",  "cleanMHt", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_mht_blnotag_elmu("data",  "cleanMHt", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_mht_blnotag_elmu("stack",  "cleanMHt", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_mht_bl_elmu("data",  "cleanMHt", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_mht_bl_elmu("stack",  "cleanMHt", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_mht_0belmuZinv("data",  "cleanMHt", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_mht_0belmuZinv("stack",  "cleanMHt", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_mht_0bnomt2_elmu("data",  "cleanMHt", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_mht_0bnomt2_elmu("stack",  "cleanMHt", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_mht_0b_elmu("data",  "cleanMHt", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_mht_0b_elmu("stack",  "cleanMHt", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> jet pt
+    Plotter::DataCollection dcData_2015CD_jpt_elmu("data",  "jetsLVecLepCleaned(pt)", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_jpt_elmu("stack",  "jetsLVecLepCleaned(pt)", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_jpt_elmuZinv("data",  "jetsLVecLepCleaned(pt)", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_jpt_elmuZinv("stack",  "jetsLVecLepCleaned(pt)", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_jpt_ht200_elmu("data",  "jetsLVecLepCleaned(pt)", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_jpt_ht200_elmu("stack",  "jetsLVecLepCleaned(pt)", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_jpt_blnotag_elmu("data",  "jetsLVecLepCleaned(pt)", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_jpt_blnotag_elmu("stack",  "jetsLVecLepCleaned(pt)", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_jpt_bl_elmu("data",  "jetsLVecLepCleaned(pt)", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_jpt_bl_elmu("stack",  "jetsLVecLepCleaned(pt)", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_jpt_0belmuZinv("data",  "jetsLVecLepCleaned(pt)", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_jpt_0belmuZinv("stack",  "jetsLVecLepCleaned(pt)", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_jpt_0bnomt2_elmu("data",  "jetsLVecLepCleaned(pt)", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_jpt_0bnomt2_elmu("stack",  "jetsLVecLepCleaned(pt)", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_jpt_0b_elmu("data",  "jetsLVecLepCleaned(pt)", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_jpt_0b_elmu("stack",  "jetsLVecLepCleaned(pt)", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> jet1 pt 
+    Plotter::DataCollection dcData_2015CD_j1pt_elmu("data",  "jetsLVecLepCleaned[0](pt)", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_j1pt_elmu("stack",  "jetsLVecLepCleaned[0](pt)", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_j1pt_elmuZinv("data",  "jetsLVecLepCleaned[0](pt)", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_j1pt_elmuZinv("stack",  "jetsLVecLepCleaned[0](pt)", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_j1pt_ht200_elmu("data",  "jetsLVecLepCleaned[0](pt)", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_j1pt_ht200_elmu("stack",  "jetsLVecLepCleaned[0](pt)", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_j1pt_blnotag_elmu("data",  "jetsLVecLepCleaned[0](pt)", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_j1pt_blnotag_elmu("stack",  "jetsLVecLepCleaned[0](pt)", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_j1pt_bl_elmu("data",  "jetsLVecLepCleaned[0](pt)", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_j1pt_bl_elmu("stack",  "jetsLVecLepCleaned[0](pt)", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_j1pt_0belmuZinv("data",  "jetsLVecLepCleaned[0](pt)", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_j1pt_0belmuZinv("stack",  "jetsLVecLepCleaned[0](pt)", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_j1pt_0bnomt2_elmu("data",  "jetsLVecLepCleaned[0](pt)", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_j1pt_0bnomt2_elmu("stack",  "jetsLVecLepCleaned[0](pt)", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_j1pt_0b_elmu("data",  "jetsLVecLepCleaned[0](pt)", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_j1pt_0b_elmu("stack",  "jetsLVecLepCleaned[0](pt)", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> jet2 pt
+    Plotter::DataCollection dcData_2015CD_j2pt_elmu("data",  "jetsLVecLepCleaned[1](pt)", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_j2pt_elmu("stack",  "jetsLVecLepCleaned[1](pt)", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_j2pt_elmuZinv("data",  "jetsLVecLepCleaned[1](pt)", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_j2pt_elmuZinv("stack",  "jetsLVecLepCleaned[1](pt)", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_j2pt_ht200_elmu("data",  "jetsLVecLepCleaned[1](pt)", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_j2pt_ht200_elmu("stack",  "jetsLVecLepCleaned[1](pt)", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_j2pt_blnotag_elmu("data",  "jetsLVecLepCleaned[1](pt)", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_j2pt_blnotag_elmu("stack",  "jetsLVecLepCleaned[1](pt)", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_j2pt_bl_elmu("data",  "jetsLVecLepCleaned[1](pt)", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_j2pt_bl_elmu("stack",  "jetsLVecLepCleaned[1](pt)", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_j2pt_0belmuZinv("data",  "jetsLVecLepCleaned[1](pt)", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_j2pt_0belmuZinv("stack",  "jetsLVecLepCleaned[1](pt)", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_j2pt_0bnomt2_elmu("data",  "jetsLVecLepCleaned[1](pt)", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_j2pt_0bnomt2_elmu("stack",  "jetsLVecLepCleaned[1](pt)", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_j2pt_0b_elmu("data",  "jetsLVecLepCleaned[1](pt)", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_j2pt_0b_elmu("stack",  "jetsLVecLepCleaned[1](pt)", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> jet3 pt
+    Plotter::DataCollection dcData_2015CD_j3pt_elmu("data",  "jetsLVecLepCleaned[2](pt)", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_j3pt_elmu("stack",  "jetsLVecLepCleaned[2](pt)", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_j3pt_elmuZinv("data",  "jetsLVecLepCleaned[2](pt)", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_j3pt_elmuZinv("stack",  "jetsLVecLepCleaned[2](pt)", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_j3pt_ht200_elmu("data",  "jetsLVecLepCleaned[2](pt)", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_j3pt_ht200_elmu("stack",  "jetsLVecLepCleaned[2](pt)", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_j3pt_blnotag_elmu("data",  "jetsLVecLepCleaned[2](pt)", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_j3pt_blnotag_elmu("stack",  "jetsLVecLepCleaned[2](pt)", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_j3pt_bl_elmu("data",  "jetsLVecLepCleaned[2](pt)", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_j3pt_bl_elmu("stack",  "jetsLVecLepCleaned[2](pt)", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_j3pt_0belmuZinv("data",  "jetsLVecLepCleaned[2](pt)", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_j3pt_0belmuZinv("stack",  "jetsLVecLepCleaned[2](pt)", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_j3pt_0bnomt2_elmu("data",  "jetsLVecLepCleaned[2](pt)", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_j3pt_0bnomt2_elmu("stack",  "jetsLVecLepCleaned[2](pt)", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_j3pt_0b_elmu("data",  "jetsLVecLepCleaned[2](pt)", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_j3pt_0b_elmu("stack",  "jetsLVecLepCleaned[2](pt)", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> mu pt
+    Plotter::DataCollection dcData_2015CD_mu1pt_elmu("data",  "cutMuPt1", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_mu1pt_elmu("stack",  "cutMuPt1", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_mu1pt_elmuZinv("data",  "cutMuPt1", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_mu1pt_elmuZinv("stack",  "cutMuPt1", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_mu1pt_ht200_elmu("data",  "cutMuPt1", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_mu1pt_ht200_elmu("stack",  "cutMuPt1", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_mu1pt_blnotag_elmu("data",  "cutMuPt1", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_mu1pt_blnotag_elmu("stack",  "cutMuPt1", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_mu1pt_bl_elmu("data",  "cutMuPt1", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_mu1pt_bl_elmu("stack",  "cutMuPt1", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_mu1pt_0belmuZinv("data",  "cutMuPt1", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_mu1pt_0belmuZinv("stack",  "cutMuPt1", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_mu1pt_0bnomt2_elmu("data",  "cutMuPt1", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_mu1pt_0bnomt2_elmu("stack",  "cutMuPt1", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_mu1pt_0b_elmu("data",  "cutMuPt1", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_mu1pt_0b_elmu("stack",  "cutMuPt1", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> el pt
+    Plotter::DataCollection dcData_2015CD_el1pt_elmu("data",  "cutElecPt1", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_el1pt_elmu("stack",  "cutElecPt1", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_el1pt_elmuZinv("data",  "cutElecPt1", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_el1pt_elmuZinv("stack",  "cutElecPt1", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_el1pt_ht200_elmu("data",  "cutElecPt1", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_el1pt_ht200_elmu("stack",  "cutElecPt1", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_el1pt_blnotag_elmu("data",  "cutElecPt1", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_el1pt_blnotag_elmu("stack",  "cutElecPt1", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_el1pt_bl_elmu("data",  "cutElecPt1", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_el1pt_bl_elmu("stack",  "cutElecPt1", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_el1pt_0belmuZinv("data",  "cutElecPt1", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_el1pt_0belmuZinv("stack",  "cutElecPt1", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_el1pt_0bnomt2_elmu("data",  "cutElecPt1", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_el1pt_0bnomt2_elmu("stack",  "cutElecPt1", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_el1pt_0b_elmu("data",  "cutElecPt1", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_el1pt_0b_elmu("stack",  "cutElecPt1", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+    // --> mll
+    Plotter::DataCollection dcData_2015CD_mll_elmu("data",  "bestRecoZM", {dsData_2015C_elmu});
+    Plotter::DataCollection dcMC_mll_elmu("stack",  "bestRecoZM", {dsDY_elmu, dstt2l_elmu, dstW_elmu, dsttZ_elmu, dsVV_elmu});
+    Plotter::DataCollection dcData_2015CD_mll_elmuZinv("data",  "bestRecoZM", {dsData_2015C_elmuZinv});
+    Plotter::DataCollection dcMC_mll_elmuZinv("stack",  "bestRecoZM", {dsDY_elmuZinv, dstt2l_elmuZinv, dstW_elmuZinv, dsttZ_elmuZinv, dsVV_elmuZinv});
+    Plotter::DataCollection dcData_2015CD_mll_ht200_elmu("data",  "bestRecoZM", {dsData_2015C_ht200_elmu});
+    Plotter::DataCollection dcMC_mll_ht200_elmu("stack",  "bestRecoZM", {dsDY_ht200_elmu, dstt2l_ht200_elmu, dstW_ht200_elmu, dsttZ_ht200_elmu, dsVV_ht200_elmu});
+    Plotter::DataCollection dcData_2015CD_mll_blnotag_elmu("data",  "bestRecoZM", {dsData_2015C_blnotag_elmu});
+    Plotter::DataCollection dcMC_mll_blnotag_elmu("stack",  "bestRecoZM", {dsDY_blnotag_elmu, dstt2l_blnotag_elmu, dstW_blnotag_elmu, dsttZ_blnotag_elmu, dsVV_blnotag_elmu});
+    Plotter::DataCollection dcData_2015CD_mll_bl_elmu("data",  "bestRecoZM", {dsData_2015C_bl_elmu});
+    Plotter::DataCollection dcMC_mll_bl_elmu("stack",  "bestRecoZM", {dsDY_bl_elmu, dstt2l_bl_elmu, dstW_bl_elmu, dsttZ_bl_elmu, dsVV_bl_elmu});
+    Plotter::DataCollection dcData_2015CD_mll_0belmuZinv("data",  "bestRecoZM", {dsData_2015C_0belmuZinv});
+    Plotter::DataCollection dcMC_mll_0belmuZinv("stack",  "bestRecoZM", {dsDY_0belmuZinv, dstt2l_0belmuZinv, dstW_0belmuZinv, dsttZ_0belmuZinv, dsVV_0belmuZinv});
+    Plotter::DataCollection dcData_2015CD_mll_0bnomt2_elmu("data",  "bestRecoZM", {dsData_2015C_0bnomt2_elmu});
+    Plotter::DataCollection dcMC_mll_0bnomt2_elmu("stack",  "bestRecoZM", {dsDY_0bnomt2_elmu, dstt2l_0bnomt2_elmu, dstW_0bnomt2_elmu, dsttZ_0bnomt2_elmu, dsVV_0bnomt2_elmu});
+    Plotter::DataCollection dcData_2015CD_mll_0b_elmu("data",  "bestRecoZM", {dsData_2015C_0b_elmu});
+    Plotter::DataCollection dcMC_mll_0b_elmu("stack",  "bestRecoZM", {dsDY_0b_elmu, dstt2l_0b_elmu, dstW_0b_elmu, dsttZ_0b_elmu, dsVV_0b_elmu});
+
 
 
 
@@ -2166,10 +2568,150 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("DataMC_2015CD_j1pt_0b_el",  {dcData_2015CD_j1pt_0b_el, dcMC_j1pt_0b_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",          ""));
     vh.push_back(PHS("DataMC_2015CD_j2pt_0b_el",  {dcData_2015CD_j2pt_0b_el, dcMC_j2pt_0b_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",          ""));
     vh.push_back(PHS("DataMC_2015CD_j3pt_0b_el",  {dcData_2015CD_j3pt_0b_el, dcMC_j3pt_0b_el},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",          ""));
-    vh.push_back(PHS("DataMC_2015CD_elpt_0b",  {dcData_2015CD_elpt_0b, dcMC_elpt_0b},   {1, 2}, "", 50, 0, 1000,   true, false,  "el pt",            ""));
-    vh.push_back(PHS("DataMC_2015CD_el1pt_0b", {dcData_2015CD_el1pt_0b, dcMC_el1pt_0b}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",           ""));
-    vh.push_back(PHS("DataMC_2015CD_el2pt_0b", {dcData_2015CD_el2pt_0b, dcMC_el2pt_0b}, {1, 2}, "", 50, 0, 1000,   true, false,  "el2 pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_elpt_0b",     {dcData_2015CD_elpt_0b, dcMC_elpt_0b},   {1, 2}, "", 50, 0, 1000,   true, false,  "el pt",            ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_0b",    {dcData_2015CD_el1pt_0b, dcMC_el1pt_0b}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_el2pt_0b",    {dcData_2015CD_el2pt_0b, dcMC_el2pt_0b}, {1, 2}, "", 50, 0, 1000,   true, false,  "el2 pt",           ""));
     vh.push_back(PHS("DataMC_2015CD_mll_0b_el",   {dcData_2015CD_mll_0b_el, dcMC_mll_0b_el},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",              ""));
+
+    // el + mu
+    // --> elmu
+    vh.push_back(PHS("DataMC_2015CD_met_elmu",   {dcData_2015CD_met_elmu, dcMC_met_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",           ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_elmu",    {dcData_2015CD_ht_elmu, dcMC_ht_elmu},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_elmu",    {dcData_2015CD_nt_elmu, dcMC_nt_elmu},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",          ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_elmu",   {dcData_2015CD_mt2_elmu, dcMC_mt2_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",           ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_elmu",    {dcData_2015CD_nb_elmu, dcMC_nb_elmu},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_elmu",    {dcData_2015CD_nj_elmu, dcMC_nj_elmu},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",            ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_elmu",   {dcData_2015CD_mht_elmu, dcMC_mht_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",           ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_elmu",   {dcData_2015CD_jpt_elmu, dcMC_jpt_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_elmu",  {dcData_2015CD_j1pt_elmu, dcMC_j1pt_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_elmu",  {dcData_2015CD_j2pt_elmu, dcMC_j2pt_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_elmu",  {dcData_2015CD_j3pt_elmu, dcMC_j3pt_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_mu1pt_elmu", {dcData_2015CD_mu1pt_elmu, dcMC_mu1pt_elmu}, {1, 2}, "", 50, 0, 1000,   true, false,  "mu1 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_elmu", {dcData_2015CD_el1pt_elmu, dcMC_el1pt_elmu}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_elmu",   {dcData_2015CD_mll_elmu, dcMC_mll_elmu},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",           ""));
+    // --> elmu Zinv
+    vh.push_back(PHS("DataMC_2015CD_met_elmuZinv",   {dcData_2015CD_met_elmuZinv, dcMC_met_elmuZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",           ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_elmuZinv",    {dcData_2015CD_ht_elmuZinv, dcMC_ht_elmuZinv},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_elmuZinv",    {dcData_2015CD_nt_elmuZinv, dcMC_nt_elmuZinv},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",          ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_elmuZinv",   {dcData_2015CD_mt2_elmuZinv, dcMC_mt2_elmuZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",           ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_elmuZinv",    {dcData_2015CD_nb_elmuZinv, dcMC_nb_elmuZinv},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_elmuZinv",    {dcData_2015CD_nj_elmuZinv, dcMC_nj_elmuZinv},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",            ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_elmuZinv",   {dcData_2015CD_mht_elmuZinv, dcMC_mht_elmuZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",           ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_elmuZinv",   {dcData_2015CD_jpt_elmuZinv, dcMC_jpt_elmuZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_elmuZinv",  {dcData_2015CD_j1pt_elmuZinv, dcMC_j1pt_elmuZinv},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_elmuZinv",  {dcData_2015CD_j2pt_elmuZinv, dcMC_j2pt_elmuZinv},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_elmuZinv",  {dcData_2015CD_j3pt_elmuZinv, dcMC_j3pt_elmuZinv},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_mu1pt_elmuZinv", {dcData_2015CD_mu1pt_elmuZinv, dcMC_mu1pt_elmuZinv}, {1, 2}, "", 50, 0, 1000,   true, false,  "mu1 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_elmuZinv", {dcData_2015CD_el1pt_elmuZinv, dcMC_el1pt_elmuZinv}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_elmuZinv",   {dcData_2015CD_mll_elmuZinv, dcMC_mll_elmuZinv},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",           ""));
+    // --> ht200
+    vh.push_back(PHS("DataMC_2015CD_met_ht200_elmu",   {dcData_2015CD_met_ht200_elmu, dcMC_met_ht200_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",           ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_ht200_elmu",    {dcData_2015CD_ht_ht200_elmu, dcMC_ht_ht200_elmu},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_ht200_elmu",    {dcData_2015CD_nt_ht200_elmu, dcMC_nt_ht200_elmu},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",          ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_ht200_elmu",   {dcData_2015CD_mt2_ht200_elmu, dcMC_mt2_ht200_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",           ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_ht200_elmu",    {dcData_2015CD_nb_ht200_elmu, dcMC_nb_ht200_elmu},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_ht200_elmu",    {dcData_2015CD_nj_ht200_elmu, dcMC_nj_ht200_elmu},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",            ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_ht200_elmu",   {dcData_2015CD_mht_ht200_elmu, dcMC_mht_ht200_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",           ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_ht200_elmu",   {dcData_2015CD_jpt_ht200_elmu, dcMC_jpt_ht200_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_ht200_elmu",  {dcData_2015CD_j1pt_ht200_elmu, dcMC_j1pt_ht200_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_ht200_elmu",  {dcData_2015CD_j2pt_ht200_elmu, dcMC_j2pt_ht200_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_ht200_elmu",  {dcData_2015CD_j3pt_ht200_elmu, dcMC_j3pt_ht200_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",       ""));
+    vh.push_back(PHS("DataMC_2015CD_mu1pt_ht200_elmu", {dcData_2015CD_mu1pt_ht200_elmu, dcMC_mu1pt_ht200_elmu}, {1, 2}, "", 50, 0, 1000,   true, false,  "mu1 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_ht200_elmu", {dcData_2015CD_el1pt_ht200_elmu, dcMC_el1pt_ht200_elmu}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_ht200_elmu",   {dcData_2015CD_mll_ht200_elmu, dcMC_mll_ht200_elmu},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",           ""));
+    // --> baselineNoTag
+    vh.push_back(PHS("DataMC_2015CD_met_baselineNoTag_elmu",   {dcData_2015CD_met_blnotag_elmu, dcMC_met_blnotag_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",        ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_baselineNoTag_elmu",    {dcData_2015CD_ht_blnotag_elmu, dcMC_ht_blnotag_elmu},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_baselineNoTag_elmu",    {dcData_2015CD_nt_blnotag_elmu, dcMC_nt_blnotag_elmu},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",       ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_baselineNoTag_elmu",   {dcData_2015CD_mt2_blnotag_elmu, dcMC_mt2_blnotag_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",        ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_baselineNoTag_elmu",    {dcData_2015CD_nb_blnotag_elmu, dcMC_nb_blnotag_elmu},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",         ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_baselineNoTag_elmu",    {dcData_2015CD_nj_blnotag_elmu, dcMC_nj_blnotag_elmu},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",         ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_baselineNoTag_elmu",   {dcData_2015CD_mht_blnotag_elmu, dcMC_mht_blnotag_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",        ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_baselineNoTag_elmu",   {dcData_2015CD_jpt_blnotag_elmu, dcMC_jpt_blnotag_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",     ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_baselineNoTag_elmu",  {dcData_2015CD_j1pt_blnotag_elmu, dcMC_j1pt_blnotag_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",    ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_baselineNoTag_elmu",  {dcData_2015CD_j2pt_blnotag_elmu, dcMC_j2pt_blnotag_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",    ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_baselineNoTag_elmu",  {dcData_2015CD_j3pt_blnotag_elmu, dcMC_j3pt_blnotag_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",    ""));
+    vh.push_back(PHS("DataMC_2015CD_mu1pt_baselineNoTag_elmu", {dcData_2015CD_mu1pt_blnotag_elmu, dcMC_mu1pt_blnotag_elmu}, {1, 2}, "", 50, 0, 1000,   true, false,  "mu1 pt",     ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_baselineNoTag_elmu", {dcData_2015CD_el1pt_blnotag_elmu, dcMC_el1pt_blnotag_elmu}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",     ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_baselineNoTag_elmu",   {dcData_2015CD_mll_blnotag_elmu, dcMC_mll_blnotag_elmu},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",        ""));
+    // --> baseline
+    vh.push_back(PHS("DataMC_2015CD_met_baseline_elmu",   {dcData_2015CD_met_bl_elmu, dcMC_met_bl_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",            ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_baseline_elmu",    {dcData_2015CD_ht_bl_elmu, dcMC_ht_bl_elmu},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",             ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_baseline_elmu",    {dcData_2015CD_nt_bl_elmu, dcMC_nt_bl_elmu},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",           ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_baseline_elmu",   {dcData_2015CD_mt2_bl_elmu, dcMC_mt2_bl_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_baseline_elmu",    {dcData_2015CD_nb_bl_elmu, dcMC_nb_bl_elmu},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",             ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_baseline_elmu",    {dcData_2015CD_nj_bl_elmu, dcMC_nj_bl_elmu},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",             ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_baseline_elmu",   {dcData_2015CD_mht_bl_elmu, dcMC_mht_bl_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",            ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_baseline_elmu",   {dcData_2015CD_jpt_bl_elmu, dcMC_jpt_bl_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_baseline_elmu",  {dcData_2015CD_j1pt_bl_elmu, dcMC_j1pt_bl_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_baseline_elmu",  {dcData_2015CD_j2pt_bl_elmu, dcMC_j2pt_bl_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_baseline_elmu",  {dcData_2015CD_j3pt_bl_elmu, dcMC_j3pt_bl_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",        ""));
+    vh.push_back(PHS("DataMC_2015CD_mu1pt_baseline_elmu", {dcData_2015CD_mu1pt_bl_elmu, dcMC_mu1pt_bl_elmu}, {1, 2}, "", 50, 0, 1000,   true, false,  "mu1 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_baseline_elmu", {dcData_2015CD_el1pt_bl_elmu, dcMC_el1pt_bl_elmu}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_baseline_elmu",   {dcData_2015CD_mll_bl_elmu, dcMC_mll_bl_elmu},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",            ""));
+    // --> 0b muZinv
+    vh.push_back(PHS("DataMC_2015CD_met_0belmuZinv",   {dcData_2015CD_met_0belmuZinv, dcMC_met_0belmuZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",              ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_0belmuZinv",    {dcData_2015CD_ht_0belmuZinv, dcMC_ht_0belmuZinv},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",               ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_0belmuZinv",    {dcData_2015CD_nt_0belmuZinv, dcMC_nt_0belmuZinv},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",             ""));
+    vh.push_back(PHS("DataMC_2015CD_nt1b_0belmuZinv",  {dcData_2015CD_nt1b_0belmuZinv, dcMC_nt1b_0belmuZinv},   {1, 2}, "", 5, 0, 5,       true, false,  "ntop (1b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt2b_0belmuZinv",  {dcData_2015CD_nt2b_0belmuZinv, dcMC_nt2b_0belmuZinv},   {1, 2}, "", 5, 0, 5,       true, false,  "ntop (2b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt3b_0belmuZinv",  {dcData_2015CD_nt3b_0belmuZinv, dcMC_nt3b_0belmuZinv},   {1, 2}, "", 5, 0, 5,       true, false,  "ntop (3b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_0belmuZinv",   {dcData_2015CD_mt2_0belmuZinv, dcMC_mt2_0belmuZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",              ""));
+    vh.push_back(PHS("DataMC_2015CD_mt21b_0belmuZinv", {dcData_2015CD_mt21b_0belmuZinv, dcMC_mt21b_0belmuZinv}, {1, 2}, "", 50, 0, 1500,   true, false,  "mt2 (1b fake)",    ""));
+    vh.push_back(PHS("DataMC_2015CD_mt22b_0belmuZinv", {dcData_2015CD_mt22b_0belmuZinv, dcMC_mt22b_0belmuZinv}, {1, 2}, "", 50, 0, 1500,   true, false,  "mt2 (2b fake)",    ""));
+    vh.push_back(PHS("DataMC_2015CD_mt23b_0belmuZinv", {dcData_2015CD_mt23b_0belmuZinv, dcMC_mt23b_0belmuZinv}, {1, 2}, "", 50, 0, 1500,   true, false,  "mt2 (3b fake)",    ""));
+    //vh.push_back(PHS("DataMC_2015CD_nb_0belmuZinv",    {dcData_2015CD_nb_0belmuZinv, dcMC_nb_0belmuZinv},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",               ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_0belmuZinv",    {dcData_2015CD_nj_0belmuZinv, dcMC_nj_0belmuZinv},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",               ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_0belmuZinv",   {dcData_2015CD_mht_0belmuZinv, dcMC_mht_0belmuZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",              ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_0belmuZinv",   {dcData_2015CD_jpt_0belmuZinv, dcMC_jpt_0belmuZinv},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_0belmuZinv",  {dcData_2015CD_j1pt_0belmuZinv, dcMC_j1pt_0belmuZinv},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_0belmuZinv",  {dcData_2015CD_j2pt_0belmuZinv, dcMC_j2pt_0belmuZinv},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_0belmuZinv",  {dcData_2015CD_j3pt_0belmuZinv, dcMC_j3pt_0belmuZinv},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_mu1pt_0belmuZinv", {dcData_2015CD_mu1pt_0belmuZinv, dcMC_mu1pt_0belmuZinv}, {1, 2}, "", 50, 0, 1000,   true, false,  "mu1 pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_0belmuZinv", {dcData_2015CD_el1pt_0belmuZinv, dcMC_el1pt_0belmuZinv}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_0belmuZinv",   {dcData_2015CD_mll_0belmuZinv, dcMC_mll_0belmuZinv},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",              ""));
+    // --> 0b no mt2
+    vh.push_back(PHS("DataMC_2015CD_met_0bnomt2_elmu",   {dcData_2015CD_met_0bnomt2_elmu, dcMC_met_0bnomt2_elmu},     {1, 2}, "", 50, 0, 1500,  true, false,  "met",             ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_0bnomt2_elmu",    {dcData_2015CD_ht_0bnomt2_elmu, dcMC_ht_0bnomt2_elmu},       {1, 2}, "", 50, 0, 1500,  true, false,  "ht",              ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_0bnomt2_elmu",    {dcData_2015CD_nt_0bnomt2_elmu, dcMC_nt_0bnomt2_elmu},       {1, 2}, "", 5, 0, 5,      true, false,  "ntop",            ""));
+    vh.push_back(PHS("DataMC_2015CD_nt1b_0bnomt2_elmu",  {dcData_2015CD_nt1b_0bnomt2_elmu, dcMC_nt1b_0bnomt2_elmu},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop(1b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt2b_0bnomt2_elmu",  {dcData_2015CD_nt2b_0bnomt2_elmu, dcMC_nt2b_0bnomt2_elmu},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop(2b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt3b_0bnomt2_elmu",  {dcData_2015CD_nt3b_0bnomt2_elmu, dcMC_nt3b_0bnomt2_elmu},   {1, 2}, "", 5, 0, 5,      true, false,  "ntop(3b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_0bnomt2_elmu",   {dcData_2015CD_mt2_0bnomt2_elmu, dcMC_mt2_0bnomt2_elmu},     {1, 2}, "", 50, 0, 1500,  true, false,  "mt2",             ""));
+    vh.push_back(PHS("DataMC_2015CD_mt21b_0bnomt2_elmu", {dcData_2015CD_mt21b_0bnomt2_elmu, dcMC_mt21b_0bnomt2_elmu}, {1, 2}, "", 50, 0, 1500,  true, false,  "mt2 (1b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_mt22b_0bnomt2_elmu", {dcData_2015CD_mt22b_0bnomt2_elmu, dcMC_mt22b_0bnomt2_elmu}, {1, 2}, "", 50, 0, 1500,  true, false,  "mt2 (2b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_mt23b_0bnomt2_elmu", {dcData_2015CD_mt23b_0bnomt2_elmu, dcMC_mt23b_0bnomt2_elmu}, {1, 2}, "", 50, 0, 1500,  true, false,  "mt2 (3b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_0bnomt2_elmu",    {dcData_2015CD_nb_0bnomt2_elmu, dcMC_nb_0bnomt2_elmu},       {1, 2}, "", 10, 0, 10,    true, false,  "nb",              ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_0bnomt2_elmu",    {dcData_2015CD_nj_0bnomt2_elmu, dcMC_nj_0bnomt2_elmu},       {1, 2}, "", 20, 0, 20,    true, false,  "nj",              ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_0bnomt2_elmu",   {dcData_2015CD_mht_0bnomt2_elmu, dcMC_mht_0bnomt2_elmu},     {1, 2}, "", 50, 0, 1500,  true, false,  "mht",             ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_0bnomt2_elmu",   {dcData_2015CD_jpt_0bnomt2_elmu, dcMC_jpt_0bnomt2_elmu},     {1, 2}, "", 50, 0, 1500,  true, false,  "jet pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_0bnomt2_elmu",  {dcData_2015CD_j1pt_0bnomt2_elmu, dcMC_j1pt_0bnomt2_elmu},   {1, 2}, "", 50, 0, 1500,  true, false,  "jet1 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_0bnomt2_elmu",  {dcData_2015CD_j2pt_0bnomt2_elmu, dcMC_j2pt_0bnomt2_elmu},   {1, 2}, "", 50, 0, 1500,  true, false,  "jet2 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_0bnomt2_elmu",  {dcData_2015CD_j3pt_0bnomt2_elmu, dcMC_j3pt_0bnomt2_elmu},   {1, 2}, "", 50, 0, 1500,  true, false,  "jet3 pt",         ""));
+    vh.push_back(PHS("DataMC_2015CD_mu1pt_0bnomt2_elmu", {dcData_2015CD_mu1pt_0bnomt2_elmu, dcMC_mu1pt_0bnomt2_elmu}, {1, 2}, "", 50, 0, 1000,  true, false,  "mu1 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_0bnomt2_elmu", {dcData_2015CD_el1pt_0bnomt2_elmu, dcMC_el1pt_0bnomt2_elmu}, {1, 2}, "", 50, 0, 1000,  true, false,  "el1 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_0bnomt2_elmu",   {dcData_2015CD_mll_0bnomt2_elmu, dcMC_mll_0bnomt2_elmu},     {1, 2}, "", 50, 0, 1000,  true, false,  "mll",             ""));
+    // --> 0b
+    vh.push_back(PHS("DataMC_2015CD_met_0b_elmu",   {dcData_2015CD_met_0b_elmu, dcMC_met_0b_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "met",              ""));
+    vh.push_back(PHS("DataMC_2015CD_ht_0b_elmu",    {dcData_2015CD_ht_0b_elmu, dcMC_ht_0b_elmu},       {1, 2}, "", 50, 0, 1500,   true, false,  "ht",               ""));
+    vh.push_back(PHS("DataMC_2015CD_nt_0b_elmu",    {dcData_2015CD_nt_0b_elmu, dcMC_nt_0b_elmu},       {1, 2}, "", 5, 0, 5,       true, false,  "ntop",             ""));
+    vh.push_back(PHS("DataMC_2015CD_nt1b_0b_elmu",  {dcData_2015CD_nt1b_0b_elmu, dcMC_nt1b_0b_elmu},   {1, 2}, "", 5, 0, 5,       true, false,  "ntop (1b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt2b_0b_elmu",  {dcData_2015CD_nt2b_0b_elmu, dcMC_nt2b_0b_elmu},   {1, 2}, "", 5, 0, 5,       true, false,  "ntop (2b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_nt3b_0b_elmu",  {dcData_2015CD_nt3b_0b_elmu, dcMC_nt3b_0b_elmu},   {1, 2}, "", 5, 0, 5,       true, false,  "ntop (3b fake)",   ""));
+    vh.push_back(PHS("DataMC_2015CD_mt2_0b_elmu",   {dcData_2015CD_mt2_0b_elmu, dcMC_mt2_0b_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "mt2",              ""));
+    vh.push_back(PHS("DataMC_2015CD_mt21b_0b_elmu", {dcData_2015CD_mt21b_0b_elmu, dcMC_mt21b_0b_elmu}, {1, 2}, "", 50, 0, 1500,   true, false,  "mt2 (1b fake)",    ""));
+    vh.push_back(PHS("DataMC_2015CD_mt22b_0b_elmu", {dcData_2015CD_mt22b_0b_elmu, dcMC_mt22b_0b_elmu}, {1, 2}, "", 50, 0, 1500,   true, false,  "mt2 (2b fake)",    ""));
+    vh.push_back(PHS("DataMC_2015CD_mt23b_0b_elmu", {dcData_2015CD_mt23b_0b_elmu, dcMC_mt23b_0b_elmu}, {1, 2}, "", 50, 0, 1500,   true, false,  "mt2 (3b fake)",    ""));
+    vh.push_back(PHS("DataMC_2015CD_nb_0b_elmu",    {dcData_2015CD_nb_0b_elmu, dcMC_nb_0b_elmu},       {1, 2}, "", 10, 0, 10,     true, false,  "nb",               ""));
+    vh.push_back(PHS("DataMC_2015CD_nj_0b_elmu",    {dcData_2015CD_nj_0b_elmu, dcMC_nj_0b_elmu},       {1, 2}, "", 20, 0, 20,     true, false,  "nj",               ""));
+    vh.push_back(PHS("DataMC_2015CD_mht_0b_elmu",   {dcData_2015CD_mht_0b_elmu, dcMC_mht_0b_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "mht",              ""));
+    vh.push_back(PHS("DataMC_2015CD_jpt_0b_elmu",   {dcData_2015CD_jpt_0b_elmu, dcMC_jpt_0b_elmu},     {1, 2}, "", 50, 0, 1500,   true, false,  "jet pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_j1pt_0b_elmu",  {dcData_2015CD_j1pt_0b_elmu, dcMC_j1pt_0b_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet1 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_j2pt_0b_elmu",  {dcData_2015CD_j2pt_0b_elmu, dcMC_j2pt_0b_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet2 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_j3pt_0b_elmu",  {dcData_2015CD_j3pt_0b_elmu, dcMC_j3pt_0b_elmu},   {1, 2}, "", 50, 0, 1500,   true, false,  "jet3 pt",          ""));
+    vh.push_back(PHS("DataMC_2015CD_mu1pt_0b_elmu", {dcData_2015CD_mu1pt_0b_elmu, dcMC_mu1pt_0b_elmu}, {1, 2}, "", 50, 0, 1000,   true, false,  "mu1 pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_el1pt_0b_elmu", {dcData_2015CD_el1pt_0b_elmu, dcMC_el1pt_0b_elmu}, {1, 2}, "", 50, 0, 1000,   true, false,  "el1 pt",           ""));
+    vh.push_back(PHS("DataMC_2015CD_mll_0b_elmu",   {dcData_2015CD_mll_0b_elmu, dcMC_mll_0b_elmu},     {1, 2}, "", 50, 0, 1000,   true, false,  "mll",              ""));
 
 
     set<AnaSamples::FileSummary> vvf;
