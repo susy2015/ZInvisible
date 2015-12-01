@@ -11,36 +11,42 @@ int main(int argc, char* argv[])
     int opt;
     int option_index = 0;
     static struct option long_options[] = {
-        {"plot",            no_argument, 0, 'p'},
-        {"savehist",        no_argument, 0, 's'},
-        {"fromFile",        no_argument, 0, 'f'},
-        {"condor",          no_argument, 0, 'c'},
-        {"histFile",  required_argument, 0, 'H'},
-        {"dataSets",  required_argument, 0, 'D'},
-        {"numFiles",  required_argument, 0, 'N'},
-        {"startFile", required_argument, 0, 'M'},
-        {"numEvts",   required_argument, 0, 'E'},
-        {"plotDir",   required_argument, 0, 'P'},
-	{"luminosity",      required_argument, 0, 'L'}
+        {"plot",             no_argument, 0, 'p'},
+        {"savehist",         no_argument, 0, 's'},
+        {"savetuple",        no_argument, 0, 't'},
+        {"fromFile",         no_argument, 0, 'f'},
+        {"condor",           no_argument, 0, 'c'},
+        {"histFile",   required_argument, 0, 'H'},
+        {"dataSets",   required_argument, 0, 'D'},
+        {"numFiles",   required_argument, 0, 'N'},
+        {"startFile",  required_argument, 0, 'M'},
+        {"numEvts",    required_argument, 0, 'E'},
+        {"plotDir",    required_argument, 0, 'P'},
+	{"luminosity", required_argument, 0, 'L'}
     };
 
-    bool doPlots = true, doSave = true, fromTuple = true, runOnCondor = false;
+    bool doPlots = true, doSave = true, doTuple = true, fromTuple = true, runOnCondor = false;
     string histFile = "", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
     double lumi = AnaSamples::luminosity;
 
-    while((opt = getopt_long(argc, argv, "psfcH:D:N:M:E:P:L:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "pstfcH:D:N:M:E:P:L:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
         case 'p':
-            if(doPlots) doSave  = false;
+            if(doPlots) doSave  = doTuple = false;
             else        doPlots = true;
             break;
 
         case 's':
-            if(doSave) doPlots = false;
+            if(doSave) doPlots = doTuple = false;
             else       doSave  = true;
+            break;
+
+        case 't':
+            if(doTuple) doPlots = doSave = false;
+            else        doTuple  = true;
             break;
 
         case 'f':
@@ -2720,6 +2726,9 @@ int main(int argc, char* argv[])
     Plotter plotter(vh, vvf, fromTuple, histFile, nFiles, startFile, nEvts);
     plotter.setLumi(lumi);
     plotter.setPlotDir(plotDir);
+    plotter.setDoHists(doSave || doPlots);
+    plotter.setDoTuple(doTuple);
+    plotter.read();
     if(doSave)  plotter.saveHists();
     if(doPlots) plotter.plot();
 }
