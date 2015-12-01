@@ -63,6 +63,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
     lepInfo              = new plotterFunctions::LepInfo;
     fakebtagvectors      = new plotterFunctions::Fakebtagvectors;
     getSearchBin         = new plotterFunctions::GetSearchBin;
+    triggerInfo          = new plotterFunctions::TriggerInfo;
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars;
 }
 
@@ -77,6 +78,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(lepInfo) delete lepInfo;
     if(fakebtagvectors) delete fakebtagvectors;
     if(getSearchBin) delete getSearchBin;
+    if(triggerInfo) delete triggerInfo;
     if(prepareMiniTupleVars) delete prepareMiniTupleVars;
 }
         
@@ -94,6 +96,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*blvZinv2b);
     tr.registerFunction(*blvZinv3b);
     tr.registerFunction(*getSearchBin);
+    tr.registerFunction(*triggerInfo);
     tr.registerFunction(*prepareMiniTupleVars);
     //tr.registerFunction(&printInterestingEvents);
 }

@@ -13,6 +13,7 @@ namespace plotterFunctions
     class LepInfo;
     class Fakebtagvectors;
     class GetSearchBin;
+    class TriggerInfo;
     class PrepareMiniTupleVars;
 }
 
@@ -40,6 +41,7 @@ private:
     plotterFunctions::LepInfo *lepInfo;
     plotterFunctions::Fakebtagvectors *fakebtagvectors;
     plotterFunctions::GetSearchBin *getSearchBin;
+    plotterFunctions::TriggerInfo *triggerInfo;
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
 
 public:
