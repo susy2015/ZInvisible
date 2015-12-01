@@ -1,8 +1,7 @@
 #include "Plotter.h"
-#include "derivedTupleVariables.h"
-#include "baselineDef.h"
 #include "tdrstyle.h"
 #include "MiniTupleMaker.h"
+#include "RegisterFunctions.h"
 
 #include "TROOT.h"
 #include "TCanvas.h"
@@ -43,8 +42,6 @@ Plotter::Plotter(std::vector<HistSummary>& h, std::set<AnaSamples::FileSummary>&
 {
     TH1::AddDirectory(false);
 
-    AnaFunctions::prepareTopTagger();
-
     hists_ = h;
     trees_ = t;
     readFromTuple_ = readFromTuple;
@@ -59,6 +56,8 @@ Plotter::Plotter(std::vector<HistSummary>& h, std::set<AnaSamples::FileSummary>&
         fout_ = new TFile(ofname.c_str());
     }
     doHists_ = doTuple_ = true;
+    registerfunc_ = nullptr;
+    printInterval_ = 1000;
 }
 
 Plotter::~Plotter()
@@ -68,6 +67,7 @@ Plotter::~Plotter()
         fout_->Close();
         delete fout_;
     }
+    if(registerfunc_) delete registerfunc_;
 }
 
 void Plotter::read()
@@ -262,6 +262,8 @@ void Plotter::createHistsFromTuple()
         TTree *tOut = nullptr;
         MiniTupleMaker* mtm = nullptr;
 
+        if(registerfunc_ == nullptr) registerfunc_ = new RegisterFunctions();
+
         if(doTuple_ && fout_)
         {
             size_t start = file.filePath.rfind('/');
@@ -272,7 +274,7 @@ void Plotter::createHistsFromTuple()
                 fout_->cd();
                 tOut = new TTree(treeName.c_str(), treeName.c_str());
                 mtm = new MiniTupleMaker(tOut);
-                mtm->setTupleVars({"cleanMetPt", "HTZinv", "best_had_brJet_MT2Zinv", "cleanMHt", "cntNJetsPt30Eta24Zinv", "nTopCandSortedCntZinv", "cntCSVSZinv", "nSearchBin"});
+                mtm->setTupleVars(registerfunc_->getMiniTupleSet());
             }
         }
 
@@ -284,7 +286,7 @@ void Plotter::createHistsFromTuple()
             if(nFile_ > 0 && fileCount++ >= nFile_) break;
 
             if(nFile_ > 0) NEvtsTotal = 0;
-            else if(NEvtsTotal > maxEvts_) break;
+            else if(maxEvts_ >= 0 && NEvtsTotal > maxEvts_) break;
 
             TFile *f = TFile::Open(fname.c_str());
 
@@ -293,7 +295,6 @@ void Plotter::createHistsFromTuple()
                 std::cout << "File \"" << fname << "\" not found!!!!!!" << std::endl;
                 continue;
             }
-
             TTree *t = (TTree*)f->Get(file.treePath.c_str());
 
             if(!t)
@@ -301,17 +302,13 @@ void Plotter::createHistsFromTuple()
                 std::cout << "Tree \"" << file.treePath << "\" not found in file \"" << fname << "\"!!!!!!" << std::endl;
                 continue;
             }
-
             std::cout << "\t" << fname << std::endl;
 
-            plotterFunctions::activateBranches(activeBranches);
-            plotterFunctions::RegisterFunctions rf;
+            registerfunc_->activateBranches(activeBranches);
 
             NTupleReader tr(t, activeBranches);
             tr.setReThrow(false);
-            BaselineVessel myBLV;
-            tr.registerFunction(myBLV);
-            rf.registerFunctions(tr);
+            registerfunc_->registerFunctions(tr);
 
             while(tr.getNextEvent())
             {
@@ -334,7 +331,7 @@ void Plotter::createHistsFromTuple()
 
                 //If maxEvents_ is set, stop after so many events
                 if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;
-                if(tr.getEvtNum() %1000 == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
+                if(tr.getEvtNum() % printInterval_ == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
 
                 //fill histograms
                 if(doHists_)
@@ -355,7 +352,13 @@ void Plotter::createHistsFromTuple()
                 }
 
                 //fill mini tuple
-                if(tOut && mtm) mtm->fill();                    
+                if(tOut && mtm)
+                {
+                    if(tr.getVar<bool>("passnJetsZinv"))
+                    {
+                        mtm->fill();
+                    }
+                }
 
                 ++NEvtsTotal;
             }
@@ -474,6 +477,10 @@ double Plotter::Cut::translateVar(const NTupleReader& tr) const
         if     (type.find("double")       != std::string::npos) return tr.getVar<double>(name.name);
         else if(type.find("unsigned int") != std::string::npos) return static_cast<double>(tr.getVar<unsigned int>(name.name));
         else if(type.find("int")          != std::string::npos) return static_cast<double>(tr.getVar<int>(name.name));
+        else if(type.find("float")        != std::string::npos) return static_cast<double>(tr.getVar<float>(name.name));
+        else if(type.find("char")         != std::string::npos) return static_cast<double>(tr.getVar<char>(name.name));
+        else if(type.find("short")        != std::string::npos) return static_cast<double>(tr.getVar<short>(name.name));
+        else if(type.find("long")         != std::string::npos) return static_cast<double>(tr.getVar<long>(name.name));
     }
 }
 
@@ -535,6 +542,16 @@ void Plotter::setDoHists(const bool doHists)
 void Plotter::setDoTuple(const bool doTuple)
 {
     doTuple_ = doTuple;
+}
+
+void Plotter::setRegisterFunction(RegisterFunctions* rf)
+{
+    registerfunc_ = rf;
+}
+
+void Plotter::setPrintInterval(const int printInterval)
+{
+    printInterval_ = printInterval;
 }
 
 double Plotter::getLumi()
@@ -942,6 +959,10 @@ void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& t
         if     (type.find("double")         != std::string::npos) h->Fill(tr.getVar<double>(name.name), weight);
         else if(type.find("unsigned int")   != std::string::npos) h->Fill(tr.getVar<unsigned int>(name.name), weight);
         else if(type.find("int")            != std::string::npos) h->Fill(tr.getVar<int>(name.name), weight);
+        else if(type.find("float")          != std::string::npos) h->Fill(tr.getVar<float>(name.name), weight);
+        else if(type.find("char")           != std::string::npos) h->Fill(tr.getVar<char>(name.name), weight);
+        else if(type.find("short")          != std::string::npos) h->Fill(tr.getVar<short>(name.name), weight);
+        else if(type.find("long")           != std::string::npos) h->Fill(tr.getVar<long>(name.name), weight);
     }
 }
 
