@@ -53,11 +53,12 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
 {            
     AnaFunctions::prepareTopTagger();
 
-    myBLV     = new BaselineVessel;
+    myBLV     = new BaselineVessel("", "SingleMuon_csc2015.txt");
     blvZinv   = new BaselineVessel("Zinv");
     blvZinv1b = new BaselineVessel("Zinv1b");
     blvZinv2b = new BaselineVessel("Zinv2b");
     blvZinv3b = new BaselineVessel("Zinv3b");
+
     weights              = new plotterFunctions::GenerateWeight;
     lepInfo              = new plotterFunctions::LepInfo;
     fakebtagvectors      = new plotterFunctions::Fakebtagvectors;

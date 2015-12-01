@@ -713,6 +713,10 @@ namespace plotterFunctions
             metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
             TLorentzVector cleanMet = metV + metZ;
 
+            bool passDiMuSel   =  passEleVeto && (cutMuVec->size() == 2   && sumMuCharge == 0   && (*cutMuVec)[0].Pt() > highMuPt     && (*cutMuVec)[1].Pt() > minMuPt);
+            bool passDiElecSel = passMuonVeto && (cutElecVec->size() == 2 && sumElecCharge == 0 && (*cutElecVec)[0].Pt() > highElecPt && (*cutElecVec)[1].Pt() > minElecPt);
+            bool passElMuSel = (cutMuVec->size() == 1 && cutElecVec->size() == 1 && sumElecCharge == -sumMuCharge && (*cutMuVec)[0].Pt() > highMuPt && (*cutElecVec)[0].Pt() > minMuPt);
+
             bool passMuZinvSel   =  passEleVeto && (cutMuVec->size() == 2   && sumMuCharge == 0   && (*cutMuVec)[0].Pt() > highMuPt     && (*cutMuVec)[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
             bool passElecZinvSel = passMuonVeto && (cutElecVec->size() == 2 && sumElecCharge == 0 && (*cutElecVec)[0].Pt() > highElecPt && (*cutElecVec)[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
             bool passElMuZinvSel = (cutMuVec->size() == 1 && cutElecVec->size() == 1 && sumElecCharge == -sumMuCharge && (*cutMuVec)[0].Pt() > highMuPt && (*cutElecVec)[0].Pt() > minMuPt) && (bestRecoElMuZ.M() > zMassMin) && (bestRecoElMuZ.M() < zMassMax);
@@ -721,6 +725,11 @@ namespace plotterFunctions
             double cutMuPt2 = -999.9;
             if(cutMuVec->size() >= 1) cutMuPt1 = cutMuVec->at(0).Pt();
             if(cutMuVec->size() >= 2) cutMuPt2 = cutMuVec->at(1).Pt();
+
+            double cutElecPt1 = -999.9;
+            double cutElecPt2 = -999.9;
+            if(cutElecVec->size() >= 1) cutElecPt1 = cutElecVec->at(0).Pt();
+            if(cutElecVec->size() >= 2) cutElecPt2 = cutElecVec->at(1).Pt();
 
             double mindPhiMetJ = 999.9;
             int jc = 0;
@@ -744,6 +753,8 @@ namespace plotterFunctions
             tr.registerDerivedVar("genHt", genHt);
             tr.registerDerivedVar("cutMuPt1", cutMuPt1);
             tr.registerDerivedVar("cutMuPt2", cutMuPt2);
+            tr.registerDerivedVar("cutELecPt1", cutElecPt1);
+            tr.registerDerivedVar("cutElecPt2", cutElecPt2);
             tr.registerDerivedVar("mindPhiMetJ", mindPhiMetJ);
 
             tr.registerDerivedVar("ZPtRes", (bestRecoZPt - genZPt)/genZPt);
@@ -788,6 +799,10 @@ namespace plotterFunctions
             tr.registerDerivedVar("passDiMuIsoTrig", passDiMuTrig);
             tr.registerDerivedVar("passSingleMu45", muTrigMu45);
         
+            tr.registerDerivedVar("passDiMuSel", passDiMuSel);
+            tr.registerDerivedVar("passDiElecSel", passDiElecSel);
+	    tr.registerDerivedVar("passElMuSel", passElMuSel);
+
             tr.registerDerivedVar("passMuZinvSel", passMuZinvSel);
             tr.registerDerivedVar("passElecZinvSel", passElecZinvSel);
             tr.registerDerivedVar("passElMuZinvSel", passElMuZinvSel);
