@@ -980,7 +980,7 @@ int main(int argc, char* argv[])
 
     // DatasetSummary for each cut level and process
     // --> No selection apart from noise filters -- mainly for basic debugging
-    Plotter::DatasetSummary dsData_2015C_nosel("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv", "");
+    Plotter::DatasetSummary dsData_2015C_nosel("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_nosel(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv", "");
     Plotter::DatasetSummary dstt2l_nosel(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv", "");
     Plotter::DatasetSummary dstW_nosel(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv", "");
@@ -989,56 +989,56 @@ int main(int argc, char* argv[])
 
     // 2mu datasetsummary
     // --> Loose region: only presence of 2 muons
-    Plotter::DatasetSummary dsData_2015C_2mu("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passDiMuSel", "");
+    Plotter::DatasetSummary dsData_2015C_2mu("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passDiMuSel;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_2mu(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv;passDiMuSel", "");
     Plotter::DatasetSummary dstt2l_2mu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv;passDiMuSel", "");
     Plotter::DatasetSummary dstW_2mu(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv;passDiMuSel", "");
     Plotter::DatasetSummary dsttZ_2mu(       "t#bar{t}Z",  fileMap["TTZ"],             "passNoiseEventFilterZinv;passDiMuSel", "");
     Plotter::DatasetSummary dsVV_2mu(        "Rare",       fileMap["Rare"],            "passNoiseEventFilterZinv;passDiMuSel", "");
     // --> Loose region: only passMuZinvSel
-    Plotter::DatasetSummary dsData_2015C_muZinv("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passMuZinvSel", "");
+    Plotter::DatasetSummary dsData_2015C_muZinv("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_muZinv(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv;passMuZinvSel", "");
     Plotter::DatasetSummary dstt2l_muZinv(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv;passMuZinvSel", "");
     Plotter::DatasetSummary dstW_muZinv(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv;passMuZinvSel", "");
     Plotter::DatasetSummary dsttZ_muZinv(       "t#bar{t}Z",  fileMap["TTZ"],             "passNoiseEventFilterZinv;passMuZinvSel", "");
     Plotter::DatasetSummary dsVV_muZinv(        "Rare",       fileMap["Rare"],            "passNoiseEventFilterZinv;passMuZinvSel", "");
     // --> Loose region: only passMuZinvSel + HT>200
-    Plotter::DatasetSummary dsData_2015C_ht200("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passMuZinvSel;ht>200", "");
+    Plotter::DatasetSummary dsData_2015C_ht200("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passMuZinvSel;ht>200;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_ht200(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv;passMuZinvSel;ht>200", "");
     Plotter::DatasetSummary dstt2l_ht200(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv;passMuZinvSel;ht>200", "");
     Plotter::DatasetSummary dstW_ht200(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv;passMuZinvSel;ht>200", "");
     Plotter::DatasetSummary dsttZ_ht200(       "t#bar{t}Z",  fileMap["TTZ"],             "passNoiseEventFilterZinv;passMuZinvSel;ht>200", "");
     Plotter::DatasetSummary dsVV_ht200(        "Rare",       fileMap["Rare"],            "passNoiseEventFilterZinv;passMuZinvSel;ht>200", "");
     // --> baseline without btag, top tag and mt2 cuts
-    Plotter::DatasetSummary dsData_2015C_blnotag("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv;passMuZinvSel", "");
+    Plotter::DatasetSummary dsData_2015C_blnotag("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv;passMuZinvSel;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_blnotag(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv;passMuZinvSel", "");
     Plotter::DatasetSummary dstt2l_blnotag(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv;passMuZinvSel", "");
     Plotter::DatasetSummary dstW_blnotag(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv;passMuZinvSel", "");
     Plotter::DatasetSummary dsttZ_blnotag(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv;passMuZinvSel", "");
     Plotter::DatasetSummary dsVV_blnotag(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv;passMuZinvSel", "");
     // --> full baseline
-    Plotter::DatasetSummary dsData_2015C_bl("Data",       fileMap["Data_SingleMuon"], "passBaselineZinv;passMuZinvSel", "");
+    Plotter::DatasetSummary dsData_2015C_bl("Data",       fileMap["Data_SingleMuon"], "passBaselineZinv;passMuZinvSel;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_bl(        "DY",         fileMap["DYJetsToLL"],      "passBaselineZinv;passMuZinvSel", "");
     Plotter::DatasetSummary dstt2l_bl(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineZinv;passMuZinvSel", "");
     Plotter::DatasetSummary dstW_bl(        "single top", fileMap["tW"],              "passBaselineZinv;passMuZinvSel", "");
     Plotter::DatasetSummary dsttZ_bl(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineZinv;passMuZinvSel", "");
     Plotter::DatasetSummary dsVV_bl(        "Rare",       fileMap["Rare"],            "passBaselineZinv;passMuZinvSel", "");
     // --> 0b + muZinv
-    Plotter::DatasetSummary dsData_2015C_0bmuZinv("Data",       fileMap["Data_SingleMuon"], "passMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsData_2015C_0bmuZinv("Data",       fileMap["Data_SingleMuon"], "passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_0bmuZinv(        "DY",         fileMap["DYJetsToLL"],      "passMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstt2l_0bmuZinv(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstW_0bmuZinv(        "single top", fileMap["tW"],              "passMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsttZ_0bmuZinv(       "t#bar{t}Z",  fileMap["TTZ"],             "passMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsVV_0bmuZinv(        "Rare",       fileMap["Rare"],            "passMuZinvSel;cntCSVSZinv=0", "");
     // --> 0b control region without mt2 cut
-    Plotter::DatasetSummary dsData_2015C_0bnomt2("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsData_2015C_0bnomt2("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_0bnomt2(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstt2l_0bnomt2(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstW_0bnomt2(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsttZ_0bnomt2(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsVV_0bnomt2(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv;passMuZinvSel;cntCSVSZinv=0", "");
     // --> 0b control region 
-    Plotter::DatasetSummary dsData_2015C_0b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsData_2015C_0b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_0b(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstt2l_0b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstW_0b(        "single top", fileMap["tW"],              "passBaselineNoTagZinv;passMuZinvSel;cntCSVSZinv=0", "");
@@ -1047,21 +1047,21 @@ int main(int argc, char* argv[])
 
     // Weighted according to 1 fake b
     // --> 0b control region, muZinv
-    Plotter::DatasetSummary dsData_2015C_0bmuZinv_w1b("Data",       fileMap["Data_SingleMuon"], "passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0bmuZinv_w1b("Data",       fileMap["Data_SingleMuon"], "passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight1fakebComb");
     Plotter::DatasetSummary dsDY_0bmuZinv_w1b(        "DY",         fileMap["DYJetsToLL"],      "passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstt2l_0bmuZinv_w1b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstW_0bmuZinv_w1b(        "single top", fileMap["tW"],              "passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dsttZ_0bmuZinv_w1b(       "t#bar{t}Z",  fileMap["TTZ"],             "passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dsVV_0bmuZinv_w1b(        "Rare",       fileMap["Rare"],            "passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     // --> 0b control region without mt2 cut
-    Plotter::DatasetSummary dsData_2015C_0bnomt2_w1b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv1b;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w1b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv1b;passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight1fakebComb");
     Plotter::DatasetSummary dsDY_0bnomt2_w1b(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv1b;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstt2l_0bnomt2_w1b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv1b;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstW_0bnomt2_w1b(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv1b;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dsttZ_0bnomt2_w1b(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv1b;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dsVV_0bnomt2_w1b(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv1b;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     // --> 0b control region 
-    Plotter::DatasetSummary dsData_2015C_0b_w1b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv1b;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0b_w1b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv1b;passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight1fakebComb");
     Plotter::DatasetSummary dsDY_0b_w1b(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv1b;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstt2l_0b_w1b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv1b;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstW_0b_w1b(        "single top", fileMap["tW"],              "passBaselineNoTagZinv1b;passMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
@@ -1070,21 +1070,21 @@ int main(int argc, char* argv[])
 
     // Weighted according to 2 fake b
     // --> 0b control region, muZinv
-    Plotter::DatasetSummary dsData_2015C_0bmuZinv_w2b("Data",       fileMap["Data_SingleMuon"], "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0bmuZinv_w2b("Data",       fileMap["Data_SingleMuon"], "passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight2fakebComb");
     Plotter::DatasetSummary dsDY_0bmuZinv_w2b(        "DY",         fileMap["DYJetsToLL"],      "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstt2l_0bmuZinv_w2b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstW_0bmuZinv_w2b(        "single top", fileMap["tW"],              "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dsttZ_0bmuZinv_w2b(       "t#bar{t}Z",  fileMap["TTZ"],             "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dsVV_0bmuZinv_w2b(        "Rare",       fileMap["Rare"],            "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     // --> 0b control region without mt2 cut
-    Plotter::DatasetSummary dsData_2015C_0bnomt2_w2b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv2b;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w2b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv2b;passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight2fakebComb");
     Plotter::DatasetSummary dsDY_0bnomt2_w2b(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv2b;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstt2l_0bnomt2_w2b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv2b;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstW_0bnomt2_w2b(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv2b;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dsttZ_0bnomt2_w2b(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv2b;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dsVV_0bnomt2_w2b(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv2b;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     // --> 0b control region 
-    Plotter::DatasetSummary dsData_2015C_0b_w2b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv2b;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0b_w2b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv2b;passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight2fakebComb");
     Plotter::DatasetSummary dsDY_0b_w2b(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv2b;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstt2l_0b_w2b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv2b;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstW_0b_w2b(        "single top", fileMap["tW"],              "passBaselineNoTagZinv2b;passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
@@ -1093,21 +1093,21 @@ int main(int argc, char* argv[])
 
     // Weighted according to 3 fake b
     // --> 0b control region, muZinv
-    Plotter::DatasetSummary dsData_2015C_0bmuZinv_w3b("Data",       fileMap["Data_SingleMuon"], "passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0bmuZinv_w3b("Data",       fileMap["Data_SingleMuon"], "passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight3fakebComb");
     Plotter::DatasetSummary dsDY_0bmuZinv_w3b(        "DY",         fileMap["DYJetsToLL"],      "passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstt2l_0bmuZinv_w3b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstW_0bmuZinv_w3b(        "single top", fileMap["tW"],              "passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dsttZ_0bmuZinv_w3b(       "t#bar{t}Z",  fileMap["TTZ"],             "passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dsVV_0bmuZinv_w3b(        "Rare",       fileMap["Rare"],            "passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     // --> 0b control region without mt2 cut
-    Plotter::DatasetSummary dsData_2015C_0bnomt2_w3b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv3b;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w3b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv3b;passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight3fakebComb");
     Plotter::DatasetSummary dsDY_0bnomt2_w3b(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv3b;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstt2l_0bnomt2_w3b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv3b;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstW_0bnomt2_w3b(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv3b;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dsttZ_0bnomt2_w3b(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv3b;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dsVV_0bnomt2_w3b(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv3b;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     // --> 0b control region 
-    Plotter::DatasetSummary dsData_2015C_0b_w3b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv3b;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0b_w3b("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv3b;passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight3fakebComb");
     Plotter::DatasetSummary dsDY_0b_w3b(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv3b;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstt2l_0b_w3b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv3b;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstW_0b_w3b(        "single top", fileMap["tW"],              "passBaselineNoTagZinv3b;passMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
@@ -1117,56 +1117,56 @@ int main(int argc, char* argv[])
 
     // 2e datasetsummary
     // --> Loose region: only presence of 2 electrons
-    Plotter::DatasetSummary dsData_2015C_2el("Data",       fileMap["Data_DoubleEG"],   "passNoiseEventFilterZinv;passDiElecSel", "");
+    Plotter::DatasetSummary dsData_2015C_2el("Data",       fileMap["Data_DoubleEG"],   "passNoiseEventFilterZinv;passDiElecSel;passElecTrigger", "");
     Plotter::DatasetSummary dsDY_2el(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv;passDiElecSel", "");
     Plotter::DatasetSummary dstt2l_2el(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv;passDiElecSel", "");
     Plotter::DatasetSummary dstW_2el(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv;passDiElecSel", "");
     Plotter::DatasetSummary dsttZ_2el(       "t#bar{t}Z",  fileMap["TTZ"],             "passNoiseEventFilterZinv;passDiElecSel", "");
     Plotter::DatasetSummary dsVV_2el(        "Rare",       fileMap["Rare"],            "passNoiseEventFilterZinv;passDiElecSel", "");
     // --> Loose region: only passElZinvSel
-    Plotter::DatasetSummary dsData_2015C_elZinv("Data",       fileMap["Data_DoubleEG"],   "passNoiseEventFilterZinv;passElecZinvSel", "");
+    Plotter::DatasetSummary dsData_2015C_elZinv("Data",       fileMap["Data_DoubleEG"],   "passNoiseEventFilterZinv;passElecZinvSel;passElecTrigger", "");
     Plotter::DatasetSummary dsDY_elZinv(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv;passElecZinvSel", "");
     Plotter::DatasetSummary dstt2l_elZinv(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv;passElecZinvSel", "");
     Plotter::DatasetSummary dstW_elZinv(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv;passElecZinvSel", "");
     Plotter::DatasetSummary dsttZ_elZinv(       "t#bar{t}Z",  fileMap["TTZ"],             "passNoiseEventFilterZinv;passElecZinvSel", "");
     Plotter::DatasetSummary dsVV_elZinv(        "Rare",       fileMap["Rare"],            "passNoiseEventFilterZinv;passElecZinvSel", "");
     // --> Loose region: only passElecZinvSel + HT>200
-    Plotter::DatasetSummary dsData_2015C_ht200_el("Data",       fileMap["Data_DoubleEG"],   "passNoiseEventFilterZinv;passElecZinvSel;ht>200", "");
+    Plotter::DatasetSummary dsData_2015C_ht200_el("Data",       fileMap["Data_DoubleEG"],   "passNoiseEventFilterZinv;passElecZinvSel;ht>200;passElecTrigger", "");
     Plotter::DatasetSummary dsDY_ht200_el(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv;passElecZinvSel;ht>200", "");
     Plotter::DatasetSummary dstt2l_ht200_el(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv;passElecZinvSel;ht>200", "");
     Plotter::DatasetSummary dstW_ht200_el(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv;passElecZinvSel;ht>200", "");
     Plotter::DatasetSummary dsttZ_ht200_el(       "t#bar{t}Z",  fileMap["TTZ"],             "passNoiseEventFilterZinv;passElecZinvSel;ht>200", "");
     Plotter::DatasetSummary dsVV_ht200_el(        "Rare",       fileMap["Rare"],            "passNoiseEventFilterZinv;passElecZinvSel;ht>200", "");
     // --> baseline without btag, top tag and mt2 cuts
-    Plotter::DatasetSummary dsData_2015C_blnotag_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagMT2Zinv;passElecZinvSel", "");
+    Plotter::DatasetSummary dsData_2015C_blnotag_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagMT2Zinv;passElecZinvSel;passElecTrigger", "");
     Plotter::DatasetSummary dsDY_blnotag_el(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv;passElecZinvSel", "");
     Plotter::DatasetSummary dstt2l_blnotag_el(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv;passElecZinvSel", "");
     Plotter::DatasetSummary dstW_blnotag_el(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv;passElecZinvSel", "");
     Plotter::DatasetSummary dsttZ_blnotag_el(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv;passElecZinvSel", "");
     Plotter::DatasetSummary dsVV_blnotag_el(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv;passElecZinvSel", "");
     // --> full baseline
-    Plotter::DatasetSummary dsData_2015C_bl_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineZinv;passElecZinvSel", "");
+    Plotter::DatasetSummary dsData_2015C_bl_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineZinv;passElecZinvSel;passElecTrigger", "");
     Plotter::DatasetSummary dsDY_bl_el(        "DY",         fileMap["DYJetsToLL"],      "passBaselineZinv;passElecZinvSel", "");
     Plotter::DatasetSummary dstt2l_bl_el(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineZinv;passElecZinvSel", "");
     Plotter::DatasetSummary dstW_bl_el(        "single top", fileMap["tW"],              "passBaselineZinv;passElecZinvSel", "");
     Plotter::DatasetSummary dsttZ_bl_el(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineZinv;passElecZinvSel", "");
     Plotter::DatasetSummary dsVV_bl_el(        "Rare",       fileMap["Rare"],            "passBaselineZinv;passElecZinvSel", "");
     // --> 0b + muZinv
-    Plotter::DatasetSummary dsData_2015C_0belZinv("Data",       fileMap["Data_DoubleEG"],   "passElecZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsData_2015C_0belZinv("Data",       fileMap["Data_DoubleEG"],   "passElecZinvSel;cntCSVSZinv=0;passElecTrigger", "");
     Plotter::DatasetSummary dsDY_0belZinv(        "DY",         fileMap["DYJetsToLL"],      "passElecZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstt2l_0belZinv(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passElecZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstW_0belZinv(        "single top", fileMap["tW"],              "passElecZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsttZ_0belZinv(       "t#bar{t}Z",  fileMap["TTZ"],             "passElecZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsVV_0belZinv(        "Rare",       fileMap["Rare"],            "passElecZinvSel;cntCSVSZinv=0", "");
     // --> 0b control region without mt2 cut
-    Plotter::DatasetSummary dsData_2015C_0bnomt2_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagMT2Zinv;passElecZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagMT2Zinv;passElecZinvSel;cntCSVSZinv=0;passElecTrigger", "");
     Plotter::DatasetSummary dsDY_0bnomt2_el(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv;passElecZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstt2l_0bnomt2_el(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv;passElecZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstW_0bnomt2_el(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv;passElecZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsttZ_0bnomt2_el(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv;passElecZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsVV_0bnomt2_el(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv;passElecZinvSel;cntCSVSZinv=0", "");
     // --> 0b control region 
-    Plotter::DatasetSummary dsData_2015C_0b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagZinv;passElecZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsData_2015C_0b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagZinv;passElecZinvSel;cntCSVSZinv=0;passElecTrigger", "");
     Plotter::DatasetSummary dsDY_0b_el(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv;passElecZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstt2l_0b_el(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv;passElecZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstW_0b_el(        "single top", fileMap["tW"],              "passBaselineNoTagZinv;passElecZinvSel;cntCSVSZinv=0", "");
@@ -1175,21 +1175,21 @@ int main(int argc, char* argv[])
 
     // Weighted according to 1 fake b
     // --> 0b control region, muZinv
-    Plotter::DatasetSummary dsData_2015C_0belZinv_w1b("Data",       fileMap["Data_DoubleEG"],   "passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0belZinv_w1b("Data",       fileMap["Data_DoubleEG"],   "passElecZinvSel;cntCSVSZinv=0;passElecTrigger", "weight1fakebComb");
     Plotter::DatasetSummary dsDY_0belZinv_w1b(        "DY",         fileMap["DYJetsToLL"],      "passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstt2l_0belZinv_w1b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstW_0belZinv_w1b(        "single top", fileMap["tW"],              "passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dsttZ_0belZinv_w1b(       "t#bar{t}Z",  fileMap["TTZ"],             "passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dsVV_0belZinv_w1b(        "Rare",       fileMap["Rare"],            "passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     // --> 0b control region without mt2 cut
-    Plotter::DatasetSummary dsData_2015C_0bnomt2_w1b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagMT2Zinv1b;passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w1b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagMT2Zinv1b;passElecZinvSel;cntCSVSZinv=0;passElecTrigger", "weight1fakebComb");
     Plotter::DatasetSummary dsDY_0bnomt2_w1b_el(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv1b;passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstt2l_0bnomt2_w1b_el(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv1b;passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstW_0bnomt2_w1b_el(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv1b;passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dsttZ_0bnomt2_w1b_el(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv1b;passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dsVV_0bnomt2_w1b_el(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv1b;passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     // --> 0b control region 
-    Plotter::DatasetSummary dsData_2015C_0b_w1b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagZinv1b;passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0b_w1b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagZinv1b;passElecZinvSel;cntCSVSZinv=0;passElecTrigger", "weight1fakebComb");
     Plotter::DatasetSummary dsDY_0b_w1b_el(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv1b;passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstt2l_0b_w1b_el(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv1b;passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstW_0b_w1b_el(        "single top", fileMap["tW"],              "passBaselineNoTagZinv1b;passElecZinvSel;cntCSVSZinv=0", "weight1fakebComb");
@@ -1198,21 +1198,21 @@ int main(int argc, char* argv[])
 
     // Weighted according to 2 fake b
     // --> 0b control region, muZinv
-    Plotter::DatasetSummary dsData_2015C_0belZinv_w2b("Data",       fileMap["Data_DoubleEG"],   "passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0belZinv_w2b("Data",       fileMap["Data_DoubleEG"],   "passElecZinvSel;cntCSVSZinv=0;passElecTrigger", "weight2fakebComb");
     Plotter::DatasetSummary dsDY_0belZinv_w2b(        "DY",         fileMap["DYJetsToLL"],      "passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstt2l_0belZinv_w2b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstW_0belZinv_w2b(        "single top", fileMap["tW"],              "passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dsttZ_0belZinv_w2b(       "t#bar{t}Z",  fileMap["TTZ"],             "passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dsVV_0belZinv_w2b(        "Rare",       fileMap["Rare"],            "passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     // --> 0b control region without mt2 cut
-    Plotter::DatasetSummary dsData_2015C_0bnomt2_w2b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagMT2Zinv2b;passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w2b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagMT2Zinv2b;passElecZinvSel;cntCSVSZinv=0;passElecTrigger", "weight2fakebComb");
     Plotter::DatasetSummary dsDY_0bnomt2_w2b_el(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv2b;passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstt2l_0bnomt2_w2b_el(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv2b;passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstW_0bnomt2_w2b_el(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv2b;passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dsttZ_0bnomt2_w2b_el(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv2b;passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dsVV_0bnomt2_w2b_el(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv2b;passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     // --> 0b control region 
-    Plotter::DatasetSummary dsData_2015C_0b_w2b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagZinv2b;passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0b_w2b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagZinv2b;passElecZinvSel;cntCSVSZinv=0;passElecTrigger", "weight2fakebComb");
     Plotter::DatasetSummary dsDY_0b_w2b_el(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv2b;passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstt2l_0b_w2b_el(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv2b;passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstW_0b_w2b_el(        "single top", fileMap["tW"],              "passBaselineNoTagZinv2b;passElecZinvSel;cntCSVSZinv=0", "weight2fakebComb");
@@ -1221,21 +1221,21 @@ int main(int argc, char* argv[])
 
     // Weighted according to 3 fake b
     // --> 0b control region, muZinv
-    Plotter::DatasetSummary dsData_2015C_0belZinv_w3b("Data",       fileMap["Data_DoubleEG"],   "passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0belZinv_w3b("Data",       fileMap["Data_DoubleEG"],   "passElecZinvSel;cntCSVSZinv=0;passElecTrigger", "weight3fakebComb");
     Plotter::DatasetSummary dsDY_0belZinv_w3b(        "DY",         fileMap["DYJetsToLL"],      "passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstt2l_0belZinv_w3b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstW_0belZinv_w3b(        "single top", fileMap["tW"],              "passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dsttZ_0belZinv_w3b(       "t#bar{t}Z",  fileMap["TTZ"],             "passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dsVV_0belZinv_w3b(        "Rare",       fileMap["Rare"],            "passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     // --> 0b control region without mt2 cut
-    Plotter::DatasetSummary dsData_2015C_0bnomt2_w3b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagMT2Zinv3b;passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w3b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagMT2Zinv3b;passElecZinvSel;cntCSVSZinv=0;passElecTrigger", "weight3fakebComb");
     Plotter::DatasetSummary dsDY_0bnomt2_w3b_el(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv3b;passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstt2l_0bnomt2_w3b_el(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv3b;passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstW_0bnomt2_w3b_el(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv3b;passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dsttZ_0bnomt2_w3b_el(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv3b;passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dsVV_0bnomt2_w3b_el(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv3b;passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     // --> 0b control region 
-    Plotter::DatasetSummary dsData_2015C_0b_w3b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagZinv3b;passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0b_w3b_el("Data",       fileMap["Data_DoubleEG"],   "passBaselineNoTagZinv3b;passElecZinvSel;cntCSVSZinv=0;passElecTrigger", "weight3fakebComb");
     Plotter::DatasetSummary dsDY_0b_w3b_el(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv3b;passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstt2l_0b_w3b_el(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv3b;passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstW_0b_w3b_el(        "single top", fileMap["tW"],              "passBaselineNoTagZinv3b;passElecZinvSel;cntCSVSZinv=0", "weight3fakebComb");
@@ -1245,56 +1245,56 @@ int main(int argc, char* argv[])
 
     // emu datasetsummary for ttbar subtraction
     // --> Loose region: only passElMuSel (no zmass cut)
-    Plotter::DatasetSummary dsData_2015C_elmu("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passElMuSel", "");
+    Plotter::DatasetSummary dsData_2015C_elmu("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passElMuSel;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_elmu(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv;passElMuSel", "");
     Plotter::DatasetSummary dstt2l_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv;passElMuSel", "");
     Plotter::DatasetSummary dstW_elmu(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv;passElMuSel", "");
     Plotter::DatasetSummary dsttZ_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passNoiseEventFilterZinv;passElMuSel", "");
     Plotter::DatasetSummary dsVV_elmu(        "Rare",       fileMap["Rare"],            "passNoiseEventFilterZinv;passElMuSel", "");
     // --> Loose region: only passElMuZinvSel
-    Plotter::DatasetSummary dsData_2015C_elmuZinv("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dsData_2015C_elmuZinv("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_elmuZinv(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv;passElMuZinvSel", "");
     Plotter::DatasetSummary dstt2l_elmuZinv(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv;passElMuZinvSel", "");
     Plotter::DatasetSummary dstW_elmuZinv(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv;passElMuZinvSel", "");
     Plotter::DatasetSummary dsttZ_elmuZinv(       "t#bar{t}Z",  fileMap["TTZ"],             "passNoiseEventFilterZinv;passElMuZinvSel", "");
     Plotter::DatasetSummary dsVV_elmuZinv(        "Rare",       fileMap["Rare"],            "passNoiseEventFilterZinv;passElMuZinvSel", "");
     // --> Loose region: only passElMuZinvSel + HT>200
-    Plotter::DatasetSummary dsData_2015C_ht200_elmu("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passElMuZinvSel;ht>200", "");
+    Plotter::DatasetSummary dsData_2015C_ht200_elmu("Data",       fileMap["Data_SingleMuon"], "passNoiseEventFilterZinv;passElMuZinvSel;ht>200;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_ht200_elmu(        "DY",         fileMap["DYJetsToLL"],      "passNoiseEventFilterZinv;passElMuZinvSel;ht>200", "");
     Plotter::DatasetSummary dstt2l_ht200_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passNoiseEventFilterZinv;passElMuZinvSel;ht>200", "");
     Plotter::DatasetSummary dstW_ht200_elmu(        "single top", fileMap["tW"],              "passNoiseEventFilterZinv;passElMuZinvSel;ht>200", "");
     Plotter::DatasetSummary dsttZ_ht200_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passNoiseEventFilterZinv;passElMuZinvSel;ht>200", "");
     Plotter::DatasetSummary dsVV_ht200_elmu(        "Rare",       fileMap["Rare"],            "passNoiseEventFilterZinv;passElMuZinvSel;ht>200", "");
     // --> baseline without btag, top tag and mt2 cuts
-    Plotter::DatasetSummary dsData_2015C_blnotag_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dsData_2015C_blnotag_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv;passElMuZinvSel;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_blnotag_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv;passElMuZinvSel", "");
     Plotter::DatasetSummary dstt2l_blnotag_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv;passElMuZinvSel", "");
     Plotter::DatasetSummary dstW_blnotag_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv;passElMuZinvSel", "");
     Plotter::DatasetSummary dsttZ_blnotag_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv;passElMuZinvSel", "");
     Plotter::DatasetSummary dsVV_blnotag_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv;passElMuZinvSel", "");
     // --> full baseline
-    Plotter::DatasetSummary dsData_2015C_bl_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineZinv;passElMuZinvSel", "");
+    Plotter::DatasetSummary dsData_2015C_bl_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineZinv;passElMuZinvSel;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_bl_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineZinv;passElMuZinvSel", "");
     Plotter::DatasetSummary dstt2l_bl_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineZinv;passElMuZinvSel", "");
     Plotter::DatasetSummary dstW_bl_elmu(        "single top", fileMap["tW"],              "passBaselineZinv;passElMuZinvSel", "");
     Plotter::DatasetSummary dsttZ_bl_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineZinv;passElMuZinvSel", "");
     Plotter::DatasetSummary dsVV_bl_elmu(        "Rare",       fileMap["Rare"],            "passBaselineZinv;passElMuZinvSel", "");
     // --> 0b + muZinv
-    Plotter::DatasetSummary dsData_2015C_0belmuZinv("Data",       fileMap["Data_SingleMuon"], "passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsData_2015C_0belmuZinv("Data",       fileMap["Data_SingleMuon"], "passElMuZinvSel;cntCSVSZinv=0;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_0belmuZinv(        "DY",         fileMap["DYJetsToLL"],      "passElMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstt2l_0belmuZinv(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passElMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstW_0belmuZinv(        "single top", fileMap["tW"],              "passElMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsttZ_0belmuZinv(       "t#bar{t}Z",  fileMap["TTZ"],             "passElMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsVV_0belmuZinv(        "Rare",       fileMap["Rare"],            "passElMuZinvSel;cntCSVSZinv=0", "");
     // --> 0b control region without mt2 cut
-    Plotter::DatasetSummary dsData_2015C_0bnomt2_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_0bnomt2_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstt2l_0bnomt2_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstW_0bnomt2_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsttZ_0bnomt2_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dsVV_0bnomt2_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv;passElMuZinvSel;cntCSVSZinv=0", "");
     // --> 0b control region 
-    Plotter::DatasetSummary dsData_2015C_0b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv;passElMuZinvSel;cntCSVSZinv=0", "");
+    Plotter::DatasetSummary dsData_2015C_0b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv;passElMuZinvSel;cntCSVSZinv=0;passMuTrigger", "");
     Plotter::DatasetSummary dsDY_0b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv;passElMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstt2l_0b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv;passElMuZinvSel;cntCSVSZinv=0", "");
     Plotter::DatasetSummary dstW_0b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagZinv;passElMuZinvSel;cntCSVSZinv=0", "");
@@ -1303,21 +1303,21 @@ int main(int argc, char* argv[])
 
     // Weighted according to 1 fake b
     // --> 0b control region, muZinv
-    Plotter::DatasetSummary dsData_2015C_0belmuZinv_w1b("Data",       fileMap["Data_SingleMuon"], "passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0belmuZinv_w1b("Data",       fileMap["Data_SingleMuon"], "passElMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight1fakebComb");
     Plotter::DatasetSummary dsDY_0belmuZinv_w1b(        "DY",         fileMap["DYJetsToLL"],      "passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstt2l_0belmuZinv_w1b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstW_0belmuZinv_w1b(        "single top", fileMap["tW"],              "passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dsttZ_0belmuZinv_w1b(       "t#bar{t}Z",  fileMap["TTZ"],             "passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dsVV_0belmuZinv_w1b(        "Rare",       fileMap["Rare"],            "passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     // --> 0b control region without mt2 cut
-    Plotter::DatasetSummary dsData_2015C_0bnomt2_w1b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w1b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight1fakebComb");
     Plotter::DatasetSummary dsDY_0bnomt2_w1b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstt2l_0bnomt2_w1b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstW_0bnomt2_w1b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dsttZ_0bnomt2_w1b_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dsVV_0bnomt2_w1b_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     // --> 0b control region 
-    Plotter::DatasetSummary dsData_2015C_0b_w1b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0b_w1b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv1b;passElMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight1fakebComb");
     Plotter::DatasetSummary dsDY_0b_w1b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstt2l_0b_w1b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
     Plotter::DatasetSummary dstW_0b_w1b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagZinv1b;passElMuZinvSel;cntCSVSZinv=0", "weight1fakebComb");
@@ -1326,21 +1326,21 @@ int main(int argc, char* argv[])
 
     // Weighted according to 2 fake b
     // --> 0b control region, muZinv
-    Plotter::DatasetSummary dsData_2015C_0belmuZinv_w2b("Data",       fileMap["Data_SingleMuon"], "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0belmuZinv_w2b("Data",       fileMap["Data_SingleMuon"], "passMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight2fakebComb");
     Plotter::DatasetSummary dsDY_0belmuZinv_w2b(        "DY",         fileMap["DYJetsToLL"],      "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstt2l_0belmuZinv_w2b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstW_0belmuZinv_w2b(        "single top", fileMap["tW"],              "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dsttZ_0belmuZinv_w2b(       "t#bar{t}Z",  fileMap["TTZ"],             "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dsVV_0belmuZinv_w2b(        "Rare",       fileMap["Rare"],            "passMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     // --> 0b control region without mt2 cut
-    Plotter::DatasetSummary dsData_2015C_0bnomt2_w2b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w2b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight2fakebComb");
     Plotter::DatasetSummary dsDY_0bnomt2_w2b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstt2l_0bnomt2_w2b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstW_0bnomt2_w2b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dsttZ_0bnomt2_w2b_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dsVV_0bnomt2_w2b_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     // --> 0b control region 
-    Plotter::DatasetSummary dsData_2015C_0b_w2b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0b_w2b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv2b;passElMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight2fakebComb");
     Plotter::DatasetSummary dsDY_0b_w2b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstt2l_0b_w2b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
     Plotter::DatasetSummary dstW_0b_w2b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagZinv2b;passElMuZinvSel;cntCSVSZinv=0", "weight2fakebComb");
@@ -1349,21 +1349,21 @@ int main(int argc, char* argv[])
 
     // Weighted according to 3 fake b
     // --> 0b control region, muZinv
-    Plotter::DatasetSummary dsData_2015C_0belmuZinv_w3b("Data",       fileMap["Data_SingleMuon"], "passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0belmuZinv_w3b("Data",       fileMap["Data_SingleMuon"], "passElMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight3fakebComb");
     Plotter::DatasetSummary dsDY_0belmuZinv_w3b(        "DY",         fileMap["DYJetsToLL"],      "passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstt2l_0belmuZinv_w3b(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstW_0belmuZinv_w3b(        "single top", fileMap["tW"],              "passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dsttZ_0belmuZinv_w3b(       "t#bar{t}Z",  fileMap["TTZ"],             "passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dsVV_0belmuZinv_w3b(        "Rare",       fileMap["Rare"],            "passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     // --> 0b control region without mt2 cut
-    Plotter::DatasetSummary dsData_2015C_0bnomt2_w3b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0bnomt2_w3b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight3fakebComb");
     Plotter::DatasetSummary dsDY_0bnomt2_w3b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstt2l_0bnomt2_w3b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstW_0bnomt2_w3b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dsttZ_0bnomt2_w3b_elmu(       "t#bar{t}Z",  fileMap["TTZ"],             "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dsVV_0bnomt2_w3b_elmu(        "Rare",       fileMap["Rare"],            "passBaselineNoTagMT2Zinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     // --> 0b control region 
-    Plotter::DatasetSummary dsData_2015C_0b_w3b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsData_2015C_0b_w3b_elmu("Data",       fileMap["Data_SingleMuon"], "passBaselineNoTagZinv3b;passElMuZinvSel;cntCSVSZinv=0;passMuTrigger", "weight3fakebComb");
     Plotter::DatasetSummary dsDY_0b_w3b_elmu(        "DY",         fileMap["DYJetsToLL"],      "passBaselineNoTagZinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstt2l_0b_w3b_elmu(      "t#bar{t}",   fileMap["TTbarNoHad"],      "passBaselineNoTagZinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
     Plotter::DatasetSummary dstW_0b_w3b_elmu(        "single top", fileMap["tW"],              "passBaselineNoTagZinv3b;passElMuZinvSel;cntCSVSZinv=0", "weight3fakebComb");
