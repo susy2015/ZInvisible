@@ -1,6 +1,7 @@
 #include "Plotter.h"
 #include "RegisterFunctions.h"
 #include "SusyAnaTools/Tools/samples.h"
+#include "Systematic.h"
 
 #include <getopt.h>
 #include <iostream>
@@ -92,6 +93,8 @@ int main(int argc, char* argv[])
         }
     }
 
+    RegisterFunctions *rf = new RegisterFunctionsSyst;
+
     vector<Plotter::HistSummary> vh;
 
     Plotter::DatasetSummary dsDY_mm( "DY#rightarrow#mu#mu", fileMap["DYJetsToLL"],  "", "");
@@ -104,6 +107,12 @@ int main(int argc, char* argv[])
 
     vh.push_back(PHS("cleanMet", {dcDY_mm_cleamMET, dcDY_ee_cleamMET, dcZ_nunu_cleamMET}, {1, 2}, "", 100, 0, 1500,  true,  true,  "MET [GeV]",  "Norm Events"));
 
+    TF1 *fit = new TF1("fit","pol1");
+    fit->SetParameters(0.98, 0.001);
+    Systematic test("systWgtTest", "cleanMetPt", fit);
+    test.bookHist(vh, fileMap["ZJetsToNuNu"]);
+    static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(test, std::placeholders::_1));
+
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
@@ -113,6 +122,7 @@ int main(int argc, char* argv[])
     plotter.setDoHists(true);
     plotter.setDoTuple(false);
     plotter.setPrintInterval(10000);
+    plotter.setRegisterFunction(rf);
     plotter.read();
     plotter.saveHists();
     plotter.plot();

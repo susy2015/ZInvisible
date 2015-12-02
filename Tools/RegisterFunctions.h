@@ -3,6 +3,8 @@
 
 #include <set>
 #include <string>
+#include <vector>
+#include <functional>
 
 class NTupleReader;
 class BaselineVessel;
@@ -62,6 +64,18 @@ public:
     ~RegisterFunctionsCalcEff();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);
+};
+
+class RegisterFunctionsSyst : public RegisterFunctions
+{
+private:
+    std::vector<std::function<void(NTupleReader&)> > funcs_;
+
+public:
+    RegisterFunctionsSyst() : RegisterFunctions() {}
+    ~RegisterFunctionsSyst() {}
+    void addFunction(std::function<void(NTupleReader&)> func);
+    void registerFunctions(NTupleReader& tr);
 };
 
 #endif
