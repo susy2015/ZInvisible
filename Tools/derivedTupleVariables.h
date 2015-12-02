@@ -753,7 +753,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("genHt", genHt);
             tr.registerDerivedVar("cutMuPt1", cutMuPt1);
             tr.registerDerivedVar("cutMuPt2", cutMuPt2);
-            tr.registerDerivedVar("cutELecPt1", cutElecPt1);
+            tr.registerDerivedVar("cutElecPt1", cutElecPt1);
             tr.registerDerivedVar("cutElecPt2", cutElecPt2);
             tr.registerDerivedVar("mindPhiMetJ", mindPhiMetJ);
 
@@ -970,6 +970,70 @@ namespace plotterFunctions
         {
             getSearchBin(tr);
         }
+    };
+
+
+    class TriggerInfo
+    {
+    private:
+	int indexMuTrigger;
+	int indexElecTrigger;
+
+        void triggerInfo(NTupleReader& tr)
+        { 
+            const std::vector<std::string>& triggerNames = tr.getVec<std::string>("TriggerNames");
+            const std::vector<int>& passTrigger          = tr.getVec<int>("PassTrigger");
+
+	    bool passMuTrigger = false;
+	    bool passElecTrigger = false;
+
+	    const std::string muTrigName = "HLT_Mu45_eta2p1_v";
+	    const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
+
+	    // Find the index of our triggers if we don't know them already
+	    if(indexMuTrigger == -1 || indexElecTrigger == -1)
+	    {
+		for(int i = 0; i < triggerNames.size(); ++i)
+		{
+		    if(triggerNames[i].find(muTrigName) != std::string::npos)
+		    {
+			indexMuTrigger = i;
+		    }
+		    else if(triggerNames[i].find(elecTrigName) != std::string::npos)
+		    {
+			indexElecTrigger = i;
+		    }
+		}
+	    }
+	    if(indexMuTrigger != -1 && indexElecTrigger != -1)
+	    {
+		// Check if the event passes the trigger, and double check that we are looking at the right trigger
+		if(triggerNames[indexMuTrigger].find(muTrigName) != std::string::npos && passTrigger[indexMuTrigger])
+		    passMuTrigger = true;
+		if(triggerNames[indexElecTrigger].find(elecTrigName) != std::string::npos && passTrigger[indexElecTrigger])
+		    passElecTrigger = true;
+	    }
+	    else
+	    {
+		std::cout << "Could not find trigger in the list of trigger names" << std::endl;
+	    }
+	    
+	    tr.registerDerivedVar("passMuTrigger",passMuTrigger);
+	    tr.registerDerivedVar("passElecTrigger",passElecTrigger);
+        }
+
+    public:
+	TriggerInfo()
+	{
+	    indexMuTrigger = -1;
+	    indexElecTrigger = -1;
+	}
+
+	void operator()(NTupleReader& tr)
+	{
+	    triggerInfo(tr);
+	}
+
     };
 
     class PrepareMiniTupleVars
