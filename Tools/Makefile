@@ -64,7 +64,7 @@ harvestHists: $(ODIR)/harvestHists.o
 makePlots: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/RegisterFunctions.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
-systematics: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/systematics.o $(ODIR)/MiniTupleMaker.o $(ODIR)/RegisterFunctions.o
+systematics: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/systematics.o $(ODIR)/MiniTupleMaker.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
 clean:

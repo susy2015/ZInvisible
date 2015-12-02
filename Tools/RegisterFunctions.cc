@@ -130,3 +130,13 @@ void RegisterFunctionsCalcEff::activateBranches(std::set<std::string>& activeBra
 {
     ::activateBranches(activeBranches);
 }
+
+void RegisterFunctionsSyst::addFunction(std::function<void(NTupleReader&)> func)
+{
+    funcs_.emplace_back(func);
+}
+
+void RegisterFunctionsSyst::registerFunctions(NTupleReader& tr)
+{
+    for(auto& f : funcs_) tr.registerFunction(f);
+}
