@@ -5,7 +5,7 @@ void Systematic::bookHist(std::vector<Plotter::HistSummary>& vh, std::vector<Ana
     Plotter::DatasetSummary dsDY_nunu_syst(  name_+"_"+var_+"_var", vfs, "", name_);
     Plotter::DatasetSummary dsDY_nunu_nosyst(name_+"_"+var_+"_Nom", vfs, "", "");
     Plotter::DataCollection dcDY_nunu( "single", "nSearchBin", {dsDY_nunu_nosyst, dsDY_nunu_syst});
-    vh.emplace_back(PHS(name_+"_"+var_, {dcDY_nunu}, {2, 1}, "", 45, 0, 45, true, false, "Search Bin", "Events"));
+    vh.emplace_back(PHS(name_+"_"+var_, {dcDY_nunu}, {2, 1}, "", 45, 0, 45, true, true, "Search Bin", "Events"));
 }
 
 void Systematic::modifyParameters(NTupleReader& tr)
