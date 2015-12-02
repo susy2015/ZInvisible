@@ -753,7 +753,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("genHt", genHt);
             tr.registerDerivedVar("cutMuPt1", cutMuPt1);
             tr.registerDerivedVar("cutMuPt2", cutMuPt2);
-            tr.registerDerivedVar("cutELecPt1", cutElecPt1);
+            tr.registerDerivedVar("cutElecPt1", cutElecPt1);
             tr.registerDerivedVar("cutElecPt2", cutElecPt2);
             tr.registerDerivedVar("mindPhiMetJ", mindPhiMetJ);
 
