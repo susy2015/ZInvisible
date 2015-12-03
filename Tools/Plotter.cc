@@ -216,8 +216,15 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
     for(auto& weightName : weightVec_)
     {
         const double& weight = tr.getVar<double>(weightName);
-        if(weight > 300.0) std::cout << weightName << "\t" << weight << std::endl;
-        retval *= weight;
+        if(weight == weight) 
+        {
+            if(weight > 300.0) std::cout << weightName << "\t" << weight << std::endl;
+            if(weight < 1e5) retval *= weight;
+        }
+        else
+        {
+            std::cout << weightName << "is NAN!!!" << std::endl;
+        }
     }
     return retval;
 }
@@ -580,7 +587,7 @@ void Plotter::saveHists()
 
     for(CutFlowSummary& cutFlow : cutFlows_)
     {
-        cutFlow.h->Write();
+        if(cutFlow.h) cutFlow.h->Write();
     }
 }
 
