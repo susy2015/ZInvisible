@@ -167,6 +167,31 @@ Plotter::HistCutSummary::~HistCutSummary()
     if(h) delete h;
 }
 
+Plotter::CutFlowSummary::CutFlowSummary(std::string n, Plotter::DataCollection ns, std::vector<std::string> cutLevels) : name(n), dc(ns)
+{
+    for(auto& str : cutLevels) cuts_.emplace_back(Cuttable(str));
+
+    h = nullptr;
+}
+
+void Plotter::CutFlowSummary::generateHist()
+{
+    if(!h) h = new TH1D(name.c_str(), name.c_str(), cuts_.size(), -0.5, -0.5 + cuts_.size());
+}
+
+void Plotter::CutFlowSummary::fillHist(const NTupleReader& tr, const double& weight)
+{
+    for(int i = 0; i < cuts_.size(); ++i)
+    {
+        if(cuts_[i].passCuts(tr)) h->Fill(i, weight);
+    }
+}
+
+Plotter::CutFlowSummary::~CutFlowSummary()
+{
+    if(h) delete h;
+}
+
 Plotter::DatasetSummary::DatasetSummary(std::string lab, std::vector<AnaSamples::FileSummary>& f, std::string cuts, std::string weights, double k) : Cuttable(cuts), label(lab), files(f), kfactor(k), weightStr(weights)
 {
     parseWeights();
@@ -250,9 +275,30 @@ void Plotter::createHistsFromTuple()
                 }
             }
         }
+
+        //make vector of cutflows to fill 
+        //std::vector<std::shared_ptr<CutFlowSummary>> cutFlowsToFill;
+        std::vector<CutFlowSummary*> cutFlowsToFill;
+        for(CutFlowSummary& cfs : cutFlows_)
+        {
+            for(auto& dssp : cfs.dc.datasets)
+            {
+                for(AnaSamples::FileSummary& fileToComp : dssp.second.files)
+                {
+                    if(file == fileToComp)
+                    {
+                        //cutFlowsToFill.push_back(std::shared_ptr<CutFlowSummary>(&cfs));
+                        cutFlowsToFill.push_back(&cfs);
+                        cutFlowsToFill.back()->setDSS(&dssp.second);
+                        cutFlowsToFill.back()->generateHist();
+                        break;
+                    }
+                }
+            }
+        }
         
         // Do not process files if there are no histograms asking for it
-        if(!histsToFill.size()) continue;
+        if(!histsToFill.size() && !cutFlowsToFill.size()) continue;
 
         //TChain *t = new TChain(file.treePath.c_str());
         //file.addFilesToChain(t);
@@ -349,6 +395,15 @@ void Plotter::createHistsFromTuple()
 
                         fillHist(hist->h, hist->variable, tr, weight);
                     }
+                }
+
+                //fill cut flows
+                for(auto& cutFlow : cutFlowsToFill)
+                {
+                    //get event weight here
+                    double weight = file.getWeight() * cutFlow->dss->getWeight(tr) * cutFlow->dss->kfactor;
+
+                    cutFlow->fillHist(tr, weight);
                 }
 
                 //fill mini tuple
@@ -522,6 +577,11 @@ void Plotter::saveHists()
             }
         }
     }
+
+    for(CutFlowSummary& cutFlow : cutFlows_)
+    {
+        cutFlow.h->Write();
+    }
 }
 
 void Plotter::setPlotDir(const std::string plotDir)
@@ -552,6 +612,11 @@ void Plotter::setRegisterFunction(RegisterFunctions* rf)
 void Plotter::setPrintInterval(const int printInterval)
 {
     printInterval_ = printInterval;
+}
+
+void Plotter::setCutFlows(std::vector<CutFlowSummary> cfs)
+{
+    cutFlows_ = cfs;
 }
 
 double Plotter::getLumi()
