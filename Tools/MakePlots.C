@@ -2721,12 +2721,38 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("DataMC_2015CD_mll_0b_elmu",   {dcData_2015CD_mll_0b_elmu, dcMC_mll_0b_elmu},     {1, 2}, "", 40, 0, 200,   true, false,  "mll",              ""));
 
 
+    //Generate cutflows
+    vector<string> cfsZ = {"",
+                           "passLeptVeto",
+                           "passLeptVeto;passnJetsZinv",
+                           "passLeptVeto;passnJetsZinv;passdPhisZinv",
+                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv",
+                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
+                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passMT2Zinv",
+                           "passLeptVeto;passBaselineZinv"};
+
+    vector<string> cfsDYmm = {"",
+                              "passMuZinvSel",
+                              "passMuZinvSel;passnJetsZinv",
+                              "passMuZinvSel;passnJetsZinv;passdPhisZinv",
+                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv",
+                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
+                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passMT2Zinv",
+                              "passMuZinvSel;passBaselineZinv"};
+
+    vector<Plotter::CutFlowSummary> cutFlowSummaries;
+    
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("ZtoNuNu",           PDC("", "", {dsDY_nunu}),      cfsZ));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu",          PDC("", "", {dsDY_ll_scaled}), cfsDYmm));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu_Unscaled", PDC("", "", {dsDY_ll}),        cfsDYmm));
+
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
     RegisterFunctions* rf = new RegisterFunctionsNTuple();
 
     Plotter plotter(vh, vvf, fromTuple, histFile, nFiles, startFile, nEvts);
+    plotter.setCutFlows(cutFlowSummaries);
     plotter.setLumi(lumi);
     plotter.setPlotDir(plotDir);
     plotter.setDoHists(doSave || doPlots);

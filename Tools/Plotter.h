@@ -133,6 +133,25 @@ public:
         void parseName(std::vector<Plotter::DataCollection>& ns);
     };
 
+    class CutFlowSummary
+    {
+    public:
+        TH1 *h;
+        std::string name;
+        Plotter::DataCollection dc;
+        Plotter::DatasetSummary* dss;
+
+        void setDSS(Plotter::DatasetSummary* d) { dss = d; }
+        void fillHist(const NTupleReader& tr, const double& weight);
+        void generateHist();
+
+        CutFlowSummary(std::string n, Plotter::DataCollection ns, std::vector<std::string> cutLevels);
+        ~CutFlowSummary();
+
+    private:
+        std::vector<Cuttable> cuts_;
+    };
+
     Plotter(std::vector<HistSummary>& h, std::set<AnaSamples::FileSummary>& t, const bool readFromTuple = true, std::string ofname = "", const int nFile = -1, const int startFile = 0, const int nEvts = -1);
     ~Plotter();
 
@@ -146,6 +165,7 @@ public:
     void setDoTuple(const bool doTuple);
     void setRegisterFunction(RegisterFunctions* rf);
     void setPrintInterval(const int printInterval);
+    void setCutFlows(std::vector<CutFlowSummary> cfs);
 
     double getLumi();
 
@@ -154,6 +174,7 @@ public:
 
 private:
     std::vector<HistSummary> hists_;
+    std::vector<CutFlowSummary> cutFlows_;
     std::set<AnaSamples::FileSummary> trees_;
     std::string plotDir_;
     TFile *fout_;
