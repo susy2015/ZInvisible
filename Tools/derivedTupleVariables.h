@@ -328,6 +328,18 @@ namespace plotterFunctions
     public:
         GenerateWeight()
         {
+            muEff          = nullptr;
+            muEffReco      = nullptr;
+            muEffIso       = nullptr;
+            muAcc          = nullptr;
+            hZEff          = nullptr;
+            hZAcc          = nullptr;
+            elecEffReco    = nullptr;
+            elecEffIso     = nullptr;
+            hZAccElec      = nullptr;
+            hZAccLepPt     = nullptr;
+            hZAccLepPtElec = nullptr;
+
             TH1::AddDirectory(false);
             TFile *f = new TFile("lepEffHists.root");
             if(f)
@@ -354,17 +366,17 @@ namespace plotterFunctions
 
         ~GenerateWeight()
         {
-            if(muEff)          delete muEff;
-            if(muEffReco)      delete muEffReco;
-            if(muEffIso)       delete muEffIso;
-            if(muAcc)          delete muAcc;
-            if(hZEff)          delete hZEff;
-            if(hZAcc)          delete hZAcc;
-            if(elecEffReco)    delete elecEffReco;
-            if(elecEffIso)     delete elecEffIso;
-            if(hZAccElec)      delete hZAccElec;
-            if(hZAccLepPt)     delete hZAccLepPt;
-            if(hZAccLepPtElec) delete hZAccLepPtElec;
+            //if(muEff)          delete muEff;
+            //if(muEffReco)      delete muEffReco;
+            //if(muEffIso)       delete muEffIso;
+            //if(muAcc)          delete muAcc;
+            //if(hZEff)          delete hZEff;
+            //if(hZAcc)          delete hZAcc;
+            //if(elecEffReco)    delete elecEffReco;
+            //if(elecEffIso)     delete elecEffIso;
+            //if(hZAccElec)      delete hZAccElec;
+            //if(hZAccLepPt)     delete hZAccLepPt;
+            //if(hZAccLepPtElec) delete hZAccLepPtElec;
         }
 
         void operator()(NTupleReader& tr)
@@ -397,6 +409,10 @@ namespace plotterFunctions
         NJetWeight()
         {
             TH1::AddDirectory(false);
+
+            njWTTbar = nullptr;
+            njWDYZ   = nullptr;
+
             TFile *f = new TFile("njetWgtHists.root");
             if(f)
             {
@@ -413,8 +429,8 @@ namespace plotterFunctions
 
         ~NJetWeight()
         {
-            if(njWTTbar) delete njWTTbar;
-            if(njWDYZ)   delete njWDYZ;
+            //if(njWTTbar) delete njWTTbar;
+            //if(njWDYZ)   delete njWDYZ;
         }
 
         void operator()(NTupleReader& tr)
