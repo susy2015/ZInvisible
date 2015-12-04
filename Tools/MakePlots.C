@@ -200,10 +200,10 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_ll_forEff_num( "DY#rightarrow#mu#mu no Sel N(#mu) match wgt",     fileMap["DYJetsToLL"],  "pdgIdZDec=13", "ngenMatchMuInAcc");
     Plotter::DatasetSummary dsDY_ll_forEff_den( "DY#rightarrow#mu#mu no Sel N(#mu) wgt",           fileMap["DYJetsToLL"],  "pdgIdZDec=13", "ngenMuInAcc");
 
-    Plotter::DatasetSummary dsDY_nunu(          "Z#rightarrow#nu#nu",                fileMap["ZJetsToNuNu"], "passLeptVeto", "");
-    Plotter::DatasetSummary dsDY_nunu_SB0b(   "Z#rightarrow#nu#nu, N(b) = 0",        fileMap["ZJetsToNuNu"], "passLeptVeto", "");
-    Plotter::DatasetSummary dsDY_nunu_SBMb(   "Z#rightarrow#nu#nu, Direct MC",       fileMap["ZJetsToNuNu"], "passLeptVeto", "");
-    Plotter::DatasetSummary dsDY_test(          "test",                              fileMap["ZJetsToNuNu"], "passLeptVeto", "");
+    Plotter::DatasetSummary dsDY_nunu(            "Z#rightarrow#nu#nu",                fileMap["ZJetsToNuNu"], "passLeptVeto", "");
+    Plotter::DatasetSummary dsDY_nunu_SB0b(       "Z#rightarrow#nu#nu, N(b) = 0",      fileMap["ZJetsToNuNu"], "passLeptVeto", "");
+    Plotter::DatasetSummary dsDY_nunu_SBMb(       "Z#rightarrow#nu#nu, Direct MC",     fileMap["ZJetsToNuNu"], "passLeptVeto", "");
+    Plotter::DatasetSummary dsDY_test(            "test",                              fileMap["ZJetsToNuNu"], "passLeptVeto", "");
 
     Plotter::DatasetSummary dsDY_ll_0t(        "DY#rightarrow#mu#mu N(t) = 0",       fileMap["DYJetsToLL"],  "pdgIdZDec=13;passMuZinvSel;nTopCandSortedCntZinv=0", "zEffWgt;zAccWgt");
     Plotter::DatasetSummary dsDY_ll_1t(        "DY#rightarrow#mu#mu N(t) = 1",       fileMap["DYJetsToLL"],  "pdgIdZDec=13;passMuZinvSel;nTopCandSortedCntZinv=1", "zEffWgt;zAccWgt");
@@ -1177,6 +1177,139 @@ int main(int argc, char* argv[])
     std::string s_elmuZinv_g1b_loose100   = "passElMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
     std::string s_elmuZinv_g1b_loose200   = "passElMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
     
+    //interlude for MC checks
+
+    std::string s_znunu_baseline      = "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0";  //THIS IS NOT PERFECT, clearly nTopCandSortedCntZinv and MT2 cuts need to be specialized by sample
+    std::string s_znunu_loose0        = "passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv";
+    std::string s_znunu_loose50       = "passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
+    std::string s_znunu_loose100      = "passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
+    std::string s_znunu_loose200      = "passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
+
+    Plotter::DatasetSummary dsDY_nunu_SB0b_Wgt1b( "Z#rightarrow#nu#nu, N(b) = 0, 1 fake",     fileMap["ZJetsToNuNu"], "cntCSVSZinv=0", "weight1fakebComb");
+    Plotter::DatasetSummary dsDY_nunu_SB0b_Wgt2b( "Z#rightarrow#nu#nu, N(b) = 0, 2 fake",     fileMap["ZJetsToNuNu"], "cntCSVSZinv=0", "weight2fakebComb");
+    Plotter::DatasetSummary dsDY_nunu_SB0b_Wgt3b( "Z#rightarrow#nu#nu, N(b) = 0, 3 fake",     fileMap["ZJetsToNuNu"], "cntCSVSZinv=0", "weight3fakebComb");
+    Plotter::DatasetSummary dsDY_nunu_SB1b(       "Z#rightarrow#nu#nu, Direct MC, N(b) = 1",  fileMap["ZJetsToNuNu"], "cntCSVSZinv=1", "");
+    Plotter::DatasetSummary dsDY_nunu_SB2b(       "Z#rightarrow#nu#nu, Direct MC, N(b) = 2",  fileMap["ZJetsToNuNu"], "cntCSVSZinv=2", "");
+    Plotter::DatasetSummary dsDY_nunu_SB3b(       "Z#rightarrow#nu#nu, Direct MC, N(b) >= 3", fileMap["ZJetsToNuNu"], "cntCSVSZinv>2", "");
+
+    //1 fake b
+    Plotter::DataCollection dcMC_nunu_Wgt1b_met("single", "cleanMetPt",                {dsDY_nunu_SB0b_Wgt1b,                             dsDY_nunu_SB1b});
+    Plotter::DataCollection dcMC_nunu_Wgt1b_ht( "single", "HTZinv",                    {dsDY_nunu_SB0b_Wgt1b,                             dsDY_nunu_SB1b});
+    Plotter::DataCollection dcMC_nunu_Wgt1b_nb( "single", "cntCSVSZinv",               {dsDY_nunu_SB0b_Wgt1b,                             dsDY_nunu_SB1b});
+    Plotter::DataCollection dcMC_nunu_Wgt1b_nj( "single", "cntNJetsPt30Eta24Zinv",     {dsDY_nunu_SB0b_Wgt1b,                             dsDY_nunu_SB1b});
+    Plotter::DataCollection dcMC_nunu_Wgt1b_nt( "single", {{ "nTopCandSortedCntZinv1b", dsDY_nunu_SB0b_Wgt1b}, { "nTopCandSortedCntZinv", dsDY_nunu_SB1b}});
+    Plotter::DataCollection dcMC_nunu_Wgt1b_mt2("single", {{"best_had_brJet_MT2Zinv1b", dsDY_nunu_SB0b_Wgt1b}, {"best_had_brJet_MT2Zinv", dsDY_nunu_SB1b}});
+    //2 fake b
+    Plotter::DataCollection dcMC_nunu_Wgt2b_met("single", "cleanMetPt",                {dsDY_nunu_SB0b_Wgt2b,                             dsDY_nunu_SB2b});
+    Plotter::DataCollection dcMC_nunu_Wgt2b_ht( "single", "HTZinv",                    {dsDY_nunu_SB0b_Wgt2b,                             dsDY_nunu_SB2b});
+    Plotter::DataCollection dcMC_nunu_Wgt2b_nb( "single", "cntCSVSZinv",               {dsDY_nunu_SB0b_Wgt2b,                             dsDY_nunu_SB2b});
+    Plotter::DataCollection dcMC_nunu_Wgt2b_nj( "single", "cntNJetsPt30Eta24Zinv",     {dsDY_nunu_SB0b_Wgt2b,                             dsDY_nunu_SB2b});
+    Plotter::DataCollection dcMC_nunu_Wgt2b_nt( "single", {{ "nTopCandSortedCntZinv1b", dsDY_nunu_SB0b_Wgt2b}, { "nTopCandSortedCntZinv", dsDY_nunu_SB2b}});
+    Plotter::DataCollection dcMC_nunu_Wgt2b_mt2("single", {{"best_had_brJet_MT2Zinv1b", dsDY_nunu_SB0b_Wgt2b}, {"best_had_brJet_MT2Zinv", dsDY_nunu_SB2b}});
+    //3 fake b
+    Plotter::DataCollection dcMC_nunu_Wgt3b_met("single", "cleanMetPt",                {dsDY_nunu_SB0b_Wgt3b,                             dsDY_nunu_SB3b});
+    Plotter::DataCollection dcMC_nunu_Wgt3b_ht( "single", "HTZinv",                    {dsDY_nunu_SB0b_Wgt3b,                             dsDY_nunu_SB3b});
+    Plotter::DataCollection dcMC_nunu_Wgt3b_nb( "single", "cntCSVSZinv",               {dsDY_nunu_SB0b_Wgt3b,                             dsDY_nunu_SB3b});
+    Plotter::DataCollection dcMC_nunu_Wgt3b_nj( "single", "cntNJetsPt30Eta24Zinv",     {dsDY_nunu_SB0b_Wgt3b,                             dsDY_nunu_SB3b});
+    Plotter::DataCollection dcMC_nunu_Wgt3b_nt( "single", {{ "nTopCandSortedCntZinv3b", dsDY_nunu_SB0b_Wgt3b}, { "nTopCandSortedCntZinv", dsDY_nunu_SB3b}});
+    Plotter::DataCollection dcMC_nunu_Wgt3b_mt2("single", {{"best_had_brJet_MT2Zinv3b", dsDY_nunu_SB0b_Wgt3b}, {"best_had_brJet_MT2Zinv", dsDY_nunu_SB3b}});
+
+    //Baseline cuts are flawed here, fix!
+    vh.push_back(PHS("ClosureNb_met_1fakeb_baseline",   {dcMC_nunu_Wgt1b_met}, {1, 2}, s_znunu_baseline,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_1fakeb_baseline",   {dcMC_nunu_Wgt1b_ht},  {1, 2}, s_znunu_baseline,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_1fakeb_baseline",   {dcMC_nunu_Wgt1b_nt},  {1, 2}, s_znunu_baseline,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_1fakeb_baseline",   {dcMC_nunu_Wgt1b_nb},  {1, 2}, s_znunu_baseline,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_1fakeb_baseline",   {dcMC_nunu_Wgt1b_mt2}, {1, 2}, s_znunu_baseline,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_1fakeb_baseline",   {dcMC_nunu_Wgt1b_nj},  {1, 2}, s_znunu_baseline,  20, 0,   20,   true, false,  "Nj",   ""));
+    vh.push_back(PHS("ClosureNb_met_2fakeb_baseline",   {dcMC_nunu_Wgt2b_met}, {1, 2}, s_znunu_baseline,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_2fakeb_baseline",   {dcMC_nunu_Wgt2b_ht},  {1, 2}, s_znunu_baseline,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_2fakeb_baseline",   {dcMC_nunu_Wgt2b_nt},  {1, 2}, s_znunu_baseline,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_2fakeb_baseline",   {dcMC_nunu_Wgt2b_nb},  {1, 2}, s_znunu_baseline,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_2fakeb_baseline",   {dcMC_nunu_Wgt2b_mt2}, {1, 2}, s_znunu_baseline,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_2fakeb_baseline",   {dcMC_nunu_Wgt2b_nj},  {1, 2}, s_znunu_baseline,  20, 0,   20,   true, false,  "Nj",   ""));
+    vh.push_back(PHS("ClosureNb_met_3fakeb_baseline",   {dcMC_nunu_Wgt3b_met}, {1, 2}, s_znunu_baseline,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_3fakeb_baseline",   {dcMC_nunu_Wgt3b_ht},  {1, 2}, s_znunu_baseline,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_3fakeb_baseline",   {dcMC_nunu_Wgt3b_nt},  {1, 2}, s_znunu_baseline,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_3fakeb_baseline",   {dcMC_nunu_Wgt3b_nb},  {1, 2}, s_znunu_baseline,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_3fakeb_baseline",   {dcMC_nunu_Wgt3b_mt2}, {1, 2}, s_znunu_baseline,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_3fakeb_baseline",   {dcMC_nunu_Wgt3b_nj},  {1, 2}, s_znunu_baseline,  20, 0,   20,   true, false,  "Nj",   ""));
+
+    vh.push_back(PHS("ClosureNb_met_1fakeb_loose0",   {dcMC_nunu_Wgt1b_met}, {1, 2}, s_znunu_loose0,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_1fakeb_loose0",   {dcMC_nunu_Wgt1b_ht},  {1, 2}, s_znunu_loose0,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_1fakeb_loose0",   {dcMC_nunu_Wgt1b_nt},  {1, 2}, s_znunu_loose0,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_1fakeb_loose0",   {dcMC_nunu_Wgt1b_nb},  {1, 2}, s_znunu_loose0,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_1fakeb_loose0",   {dcMC_nunu_Wgt1b_mt2}, {1, 2}, s_znunu_loose0,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_1fakeb_loose0",   {dcMC_nunu_Wgt1b_nj},  {1, 2}, s_znunu_loose0,  20, 0,   20,   true, false,  "Nj",   ""));
+    vh.push_back(PHS("ClosureNb_met_2fakeb_loose0",   {dcMC_nunu_Wgt2b_met}, {1, 2}, s_znunu_loose0,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_2fakeb_loose0",   {dcMC_nunu_Wgt2b_ht},  {1, 2}, s_znunu_loose0,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_2fakeb_loose0",   {dcMC_nunu_Wgt2b_nt},  {1, 2}, s_znunu_loose0,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_2fakeb_loose0",   {dcMC_nunu_Wgt2b_nb},  {1, 2}, s_znunu_loose0,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_2fakeb_loose0",   {dcMC_nunu_Wgt2b_mt2}, {1, 2}, s_znunu_loose0,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_2fakeb_loose0",   {dcMC_nunu_Wgt2b_nj},  {1, 2}, s_znunu_loose0,  20, 0,   20,   true, false,  "Nj",   ""));
+    vh.push_back(PHS("ClosureNb_met_3fakeb_loose0",   {dcMC_nunu_Wgt3b_met}, {1, 2}, s_znunu_loose0,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_3fakeb_loose0",   {dcMC_nunu_Wgt3b_ht},  {1, 2}, s_znunu_loose0,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_3fakeb_loose0",   {dcMC_nunu_Wgt3b_nt},  {1, 2}, s_znunu_loose0,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_3fakeb_loose0",   {dcMC_nunu_Wgt3b_nb},  {1, 2}, s_znunu_loose0,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_3fakeb_loose0",   {dcMC_nunu_Wgt3b_mt2}, {1, 2}, s_znunu_loose0,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_3fakeb_loose0",   {dcMC_nunu_Wgt3b_nj},  {1, 2}, s_znunu_loose0,  20, 0,   20,   true, false,  "Nj",   ""));
+
+    vh.push_back(PHS("ClosureNb_met_1fakeb_loose50",   {dcMC_nunu_Wgt1b_met}, {1, 2}, s_znunu_loose50,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_1fakeb_loose50",   {dcMC_nunu_Wgt1b_ht},  {1, 2}, s_znunu_loose50,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_1fakeb_loose50",   {dcMC_nunu_Wgt1b_nt},  {1, 2}, s_znunu_loose50,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_1fakeb_loose50",   {dcMC_nunu_Wgt1b_nb},  {1, 2}, s_znunu_loose50,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_1fakeb_loose50",   {dcMC_nunu_Wgt1b_mt2}, {1, 2}, s_znunu_loose50,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_1fakeb_loose50",   {dcMC_nunu_Wgt1b_nj},  {1, 2}, s_znunu_loose50,  20, 0,   20,   true, false,  "Nj",   ""));
+    vh.push_back(PHS("ClosureNb_met_2fakeb_loose50",   {dcMC_nunu_Wgt2b_met}, {1, 2}, s_znunu_loose50,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_2fakeb_loose50",   {dcMC_nunu_Wgt2b_ht},  {1, 2}, s_znunu_loose50,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_2fakeb_loose50",   {dcMC_nunu_Wgt2b_nt},  {1, 2}, s_znunu_loose50,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_2fakeb_loose50",   {dcMC_nunu_Wgt2b_nb},  {1, 2}, s_znunu_loose50,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_2fakeb_loose50",   {dcMC_nunu_Wgt2b_mt2}, {1, 2}, s_znunu_loose50,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_2fakeb_loose50",   {dcMC_nunu_Wgt2b_nj},  {1, 2}, s_znunu_loose50,  20, 0,   20,   true, false,  "Nj",   ""));
+    vh.push_back(PHS("ClosureNb_met_3fakeb_loose50",   {dcMC_nunu_Wgt3b_met}, {1, 2}, s_znunu_loose50,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_3fakeb_loose50",   {dcMC_nunu_Wgt3b_ht},  {1, 2}, s_znunu_loose50,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_3fakeb_loose50",   {dcMC_nunu_Wgt3b_nt},  {1, 2}, s_znunu_loose50,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_3fakeb_loose50",   {dcMC_nunu_Wgt3b_nb},  {1, 2}, s_znunu_loose50,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_3fakeb_loose50",   {dcMC_nunu_Wgt3b_mt2}, {1, 2}, s_znunu_loose50,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_3fakeb_loose50",   {dcMC_nunu_Wgt3b_nj},  {1, 2}, s_znunu_loose50,  20, 0,   20,   true, false,  "Nj",   ""));
+
+    vh.push_back(PHS("ClosureNb_met_1fakeb_loose100",   {dcMC_nunu_Wgt1b_met}, {1, 2}, s_znunu_loose100,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_1fakeb_loose100",   {dcMC_nunu_Wgt1b_ht},  {1, 2}, s_znunu_loose100,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_1fakeb_loose100",   {dcMC_nunu_Wgt1b_nt},  {1, 2}, s_znunu_loose100,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_1fakeb_loose100",   {dcMC_nunu_Wgt1b_nb},  {1, 2}, s_znunu_loose100,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_1fakeb_loose100",   {dcMC_nunu_Wgt1b_mt2}, {1, 2}, s_znunu_loose100,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_1fakeb_loose100",   {dcMC_nunu_Wgt1b_nj},  {1, 2}, s_znunu_loose100,  20, 0,   20,   true, false,  "Nj",   ""));
+    vh.push_back(PHS("ClosureNb_met_2fakeb_loose100",   {dcMC_nunu_Wgt2b_met}, {1, 2}, s_znunu_loose100,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_2fakeb_loose100",   {dcMC_nunu_Wgt2b_ht},  {1, 2}, s_znunu_loose100,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_2fakeb_loose100",   {dcMC_nunu_Wgt2b_nt},  {1, 2}, s_znunu_loose100,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_2fakeb_loose100",   {dcMC_nunu_Wgt2b_nb},  {1, 2}, s_znunu_loose100,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_2fakeb_loose100",   {dcMC_nunu_Wgt2b_mt2}, {1, 2}, s_znunu_loose100,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_2fakeb_loose100",   {dcMC_nunu_Wgt2b_nj},  {1, 2}, s_znunu_loose100,  20, 0,   20,   true, false,  "Nj",   ""));
+    vh.push_back(PHS("ClosureNb_met_3fakeb_loose100",   {dcMC_nunu_Wgt3b_met}, {1, 2}, s_znunu_loose100,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_3fakeb_loose100",   {dcMC_nunu_Wgt3b_ht},  {1, 2}, s_znunu_loose100,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_3fakeb_loose100",   {dcMC_nunu_Wgt3b_nt},  {1, 2}, s_znunu_loose100,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_3fakeb_loose100",   {dcMC_nunu_Wgt3b_nb},  {1, 2}, s_znunu_loose100,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_3fakeb_loose100",   {dcMC_nunu_Wgt3b_mt2}, {1, 2}, s_znunu_loose100,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_3fakeb_loose100",   {dcMC_nunu_Wgt3b_nj},  {1, 2}, s_znunu_loose100,  20, 0,   20,   true, false,  "Nj",   ""));
+
+    vh.push_back(PHS("ClosureNb_met_1fakeb_loose200",   {dcMC_nunu_Wgt1b_met}, {1, 2}, s_znunu_loose200,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_1fakeb_loose200",   {dcMC_nunu_Wgt1b_ht},  {1, 2}, s_znunu_loose200,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_1fakeb_loose200",   {dcMC_nunu_Wgt1b_nt},  {1, 2}, s_znunu_loose200,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_1fakeb_loose200",   {dcMC_nunu_Wgt1b_nb},  {1, 2}, s_znunu_loose200,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_1fakeb_loose200",   {dcMC_nunu_Wgt1b_mt2}, {1, 2}, s_znunu_loose200,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_1fakeb_loose200",   {dcMC_nunu_Wgt1b_nj},  {1, 2}, s_znunu_loose200,  20, 0,   20,   true, false,  "Nj",   ""));
+    vh.push_back(PHS("ClosureNb_met_2fakeb_loose200",   {dcMC_nunu_Wgt2b_met}, {1, 2}, s_znunu_loose200,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_2fakeb_loose200",   {dcMC_nunu_Wgt2b_ht},  {1, 2}, s_znunu_loose200,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_2fakeb_loose200",   {dcMC_nunu_Wgt2b_nt},  {1, 2}, s_znunu_loose200,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_2fakeb_loose200",   {dcMC_nunu_Wgt2b_nb},  {1, 2}, s_znunu_loose200,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_2fakeb_loose200",   {dcMC_nunu_Wgt2b_mt2}, {1, 2}, s_znunu_loose200,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_2fakeb_loose200",   {dcMC_nunu_Wgt2b_nj},  {1, 2}, s_znunu_loose200,  20, 0,   20,   true, false,  "Nj",   ""));
+    vh.push_back(PHS("ClosureNb_met_3fakeb_loose200",   {dcMC_nunu_Wgt3b_met}, {1, 2}, s_znunu_loose200,  50, 0, 1500,   true, false,  "met",  ""));
+    vh.push_back(PHS( "ClosureNb_ht_3fakeb_loose200",   {dcMC_nunu_Wgt3b_ht},  {1, 2}, s_znunu_loose200,  50, 0, 1500,   true, false,  "ht",   ""));
+    vh.push_back(PHS( "ClosureNb_nt_3fakeb_loose200",   {dcMC_nunu_Wgt3b_nt},  {1, 2}, s_znunu_loose200,   5, 0,    5,   true, false,  "Ntop", ""));
+    vh.push_back(PHS( "ClosureNb_nb_3fakeb_loose200",   {dcMC_nunu_Wgt3b_nb},  {1, 2}, s_znunu_loose200,  10, 0,   10,   true, false,  "Nb",   ""));
+    vh.push_back(PHS("ClosureNb_mt2_3fakeb_loose200",   {dcMC_nunu_Wgt3b_mt2}, {1, 2}, s_znunu_loose200,  50, 0, 1500,   true, false,  "mt2",  ""));
+    vh.push_back(PHS( "ClosureNb_nj_3fakeb_loose200",   {dcMC_nunu_Wgt3b_nj},  {1, 2}, s_znunu_loose200,  20, 0,   20,   true, false,  "Nj",   ""));
+    //MC interlude over
 
     // Define all the histograms
     // met
