@@ -352,6 +352,21 @@ namespace plotterFunctions
             }
         }
 
+        ~GenerateWeight()
+        {
+            if(muEff)          delete muEff;
+            if(muEffReco)      delete muEffReco;
+            if(muEffIso)       delete muEffIso;
+            if(muAcc)          delete muAcc;
+            if(hZEff)          delete hZEff;
+            if(hZAcc)          delete hZAcc;
+            if(elecEffReco)    delete elecEffReco;
+            if(elecEffIso)     delete elecEffIso;
+            if(hZAccElec)      delete hZAccElec;
+            if(hZAccLepPt)     delete hZAccLepPt;
+            if(hZAccLepPtElec) delete hZAccLepPtElec;
+        }
+
         void operator()(NTupleReader& tr)
         {
             generateWeight(tr);
