@@ -373,7 +373,7 @@ namespace plotterFunctions
         }
     };
 
-    class GenerateWeight
+    class NJetWeight
     {
     private:
         TH1* njWTTbar;
@@ -394,7 +394,7 @@ namespace plotterFunctions
         }
 
     public:
-        GenerateWeight()
+        NJetWeight()
         {
             TH1::AddDirectory(false);
             TFile *f = new TFile("njetWgtHists.root");
@@ -411,7 +411,7 @@ namespace plotterFunctions
             }
         }
 
-        ~GenerateWeight()
+        ~NJetWeight()
         {
             if(njWTTbar) delete njWTTbar;
             if(njWDYZ)   delete njWDYZ;
