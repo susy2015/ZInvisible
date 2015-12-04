@@ -328,6 +328,18 @@ namespace plotterFunctions
     public:
         GenerateWeight()
         {
+            muEff          = nullptr;
+            muEffReco      = nullptr;
+            muEffIso       = nullptr;
+            muAcc          = nullptr;
+            hZEff          = nullptr;
+            hZAcc          = nullptr;
+            elecEffReco    = nullptr;
+            elecEffIso     = nullptr;
+            hZAccElec      = nullptr;
+            hZAccLepPt     = nullptr;
+            hZAccLepPtElec = nullptr;
+
             TH1::AddDirectory(false);
             TFile *f = new TFile("lepEffHists.root");
             if(f)
@@ -348,8 +360,77 @@ namespace plotterFunctions
             }
             else
             {
-                std::cout << "Failed to open: muEffHists.root" << std::endl;
+                std::cout << "Failed to open: lepEffHists.root" << std::endl;
             }
+        }
+
+        ~GenerateWeight()
+        {
+            //if(muEff)          delete muEff;
+            //if(muEffReco)      delete muEffReco;
+            //if(muEffIso)       delete muEffIso;
+            //if(muAcc)          delete muAcc;
+            //if(hZEff)          delete hZEff;
+            //if(hZAcc)          delete hZAcc;
+            //if(elecEffReco)    delete elecEffReco;
+            //if(elecEffIso)     delete elecEffIso;
+            //if(hZAccElec)      delete hZAccElec;
+            //if(hZAccLepPt)     delete hZAccLepPt;
+            //if(hZAccLepPtElec) delete hZAccLepPtElec;
+        }
+
+        void operator()(NTupleReader& tr)
+        {
+            generateWeight(tr);
+        }
+    };
+
+    class NJetWeight
+    {
+    private:
+        TH1* njWTTbar;
+        TH1* njWDYZ;
+
+        void generateWeight(NTupleReader& tr)
+        {
+            const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+
+            double wTT = 1.0;
+            double wDY = 1.0;
+
+            if(njWTTbar) wTT = njWTTbar->GetBinContent(njWTTbar->FindBin(cntNJetsPt30Eta24Zinv));
+            if(njWDYZ)   wDY = njWDYZ->GetBinContent(njWDYZ->FindBin(cntNJetsPt30Eta24Zinv));
+
+            tr.registerDerivedVar("nJetWgtTTbar", wTT);
+            tr.registerDerivedVar("nJetWgtDYZ", wDY);
+        }
+
+    public:
+        NJetWeight()
+        {
+            TH1::AddDirectory(false);
+
+            njWTTbar = nullptr;
+            njWDYZ   = nullptr;
+
+            TFile *f = new TFile("njetWgtHists.root");
+            if(f)
+            {
+                njWTTbar = static_cast<TH1*>(f->Get("njWTTbar"));
+                njWDYZ   = static_cast<TH1*>(f->Get("njWDYZ"));
+                f->Close();
+                delete f;
+            }
+            else
+            {
+                std::cout << "Failed to open: njetWgtHists.root" << std::endl;
+            }
+        }
+
+        ~NJetWeight()
+        {
+            //if(njWTTbar) delete njWTTbar;
+            //if(njWDYZ)   delete njWDYZ;
         }
 
         void operator()(NTupleReader& tr)
