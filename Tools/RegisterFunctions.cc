@@ -92,8 +92,8 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*myBLV);
     tr.registerFunction(*lepInfo);
     tr.registerFunction(*weights);
-    tr.registerFunction(*njWeight);
     tr.registerFunction(*blvZinv);
+    tr.registerFunction(*njWeight);
     tr.registerFunction(*fakebtagvectors);
     tr.registerFunction(*blvZinv1b);
     tr.registerFunction(*blvZinv2b);
