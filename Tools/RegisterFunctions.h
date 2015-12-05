@@ -17,6 +17,7 @@ namespace plotterFunctions
     class GetSearchBin;
     class TriggerInfo;
     class PrepareMiniTupleVars;
+    class NJetWeight;
 }
 
 class RegisterFunctions
@@ -40,6 +41,7 @@ private:
     BaselineVessel *blvZinv2b;
     BaselineVessel *blvZinv3b;
     plotterFunctions::GenerateWeight *weights;
+    plotterFunctions::NJetWeight *njWeight;
     plotterFunctions::LepInfo *lepInfo;
     plotterFunctions::Fakebtagvectors *fakebtagvectors;
     plotterFunctions::GetSearchBin *getSearchBin;

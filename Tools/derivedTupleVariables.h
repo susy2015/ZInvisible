@@ -391,6 +391,10 @@ namespace plotterFunctions
         TH1* njWTTbar;
         TH1* njWDYZ;
 
+        TH1* MCfake1b;
+        TH1* MCfake2b;
+        TH1* MCfake3b;
+
         void generateWeight(NTupleReader& tr)
         {
             const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
@@ -401,8 +405,20 @@ namespace plotterFunctions
             if(njWTTbar) wTT = njWTTbar->GetBinContent(njWTTbar->FindBin(cntNJetsPt30Eta24Zinv));
             if(njWDYZ)   wDY = njWDYZ->GetBinContent(njWDYZ->FindBin(cntNJetsPt30Eta24Zinv));
 
+            double nJet1bfakeWgt = 1.0;
+            double nJet2bfakeWgt = 1.0;
+            double nJet3bfakeWgt = 1.0;
+
+            if(MCfake1b)   nJet1bfakeWgt = MCfake1b->GetBinContent(MCfake1b->FindBin(cntNJetsPt30Eta24Zinv));
+            if(MCfake2b)   nJet2bfakeWgt = MCfake2b->GetBinContent(MCfake2b->FindBin(cntNJetsPt30Eta24Zinv));
+            if(MCfake3b)   nJet3bfakeWgt = MCfake3b->GetBinContent(MCfake3b->FindBin(cntNJetsPt30Eta24Zinv));
+
             tr.registerDerivedVar("nJetWgtTTbar", wTT);
             tr.registerDerivedVar("nJetWgtDYZ", wDY);
+
+            tr.registerDerivedVar("nJet1bfakeWgt", nJet1bfakeWgt);
+            tr.registerDerivedVar("nJet2bfakeWgt", nJet2bfakeWgt);
+            tr.registerDerivedVar("nJet3bfakeWgt", nJet3bfakeWgt);
         }
 
     public:
@@ -412,12 +428,18 @@ namespace plotterFunctions
 
             njWTTbar = nullptr;
             njWDYZ   = nullptr;
+            MCfake1b = nullptr;
+            MCfake2b = nullptr;
+            MCfake3b = nullptr;
 
             TFile *f = new TFile("njetWgtHists.root");
             if(f)
             {
                 njWTTbar = static_cast<TH1*>(f->Get("njWTTbar"));
                 njWDYZ   = static_cast<TH1*>(f->Get("njWDYZ"));
+                MCfake1b = static_cast<TH1*>(f->Get("MCfake1b"));
+                MCfake2b = static_cast<TH1*>(f->Get("MCfake2b"));
+                MCfake3b = static_cast<TH1*>(f->Get("MCfake3b"));
                 f->Close();
                 delete f;
             }
