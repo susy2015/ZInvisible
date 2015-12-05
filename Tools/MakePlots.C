@@ -988,42 +988,46 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "");
     Plotter::DatasetSummary dsData_DoubleEG(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "");
     Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "", "");
+    Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "");
     Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "", "");
     Plotter::DatasetSummary dstW(             "single top", fileMap["tW"],              "", "");
-    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "", "");
+    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "", "genWeight");
     Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "", "");
-    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "", "");
-    std::vector<Plotter::DatasetSummary> stack_MC = {dsDY, dstt2l, dstW, dsttZ, dsVV, dsRare};
+    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "", "genWeight");
+    std::vector<Plotter::DatasetSummary> stack_MC = {dsDY, dsDYInc, dstt2l, dstW, dsttZ, dsVV, dsRare};
     // 1 fake b weight
     Plotter::DatasetSummary dsData_SingleMuon_w1b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight1fakebComb");
     Plotter::DatasetSummary dsData_DoubleEG_w1b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight1fakebComb");
     Plotter::DatasetSummary dsDY_w1b(             "DY",         fileMap["DYJetsToLL"],      "", "weight1fakebComb");
+    Plotter::DatasetSummary dsDYInc_w1b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "weight1fakebComb");
     Plotter::DatasetSummary dstt2l_w1b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "", "weight1fakebComb");
     Plotter::DatasetSummary dstW_w1b(             "single top", fileMap["tW"],              "", "weight1fakebComb");
-    Plotter::DatasetSummary dsttZ_w1b(            "t#bar{t}Z",  fileMap["TTZ"],             "", "weight1fakebComb");
+    Plotter::DatasetSummary dsttZ_w1b(            "t#bar{t}Z",  fileMap["TTZ"],             "", "genWeight;weight1fakebComb");
     Plotter::DatasetSummary dsVV_w1b(             "Diboson",    fileMap["Diboson"],         "", "weight1fakebComb");
-    Plotter::DatasetSummary dsRare_w1b(           "Rare",       fileMap["Rare"],            "", "weight1fakebComb");
-    std::vector<Plotter::DatasetSummary> stack_MC_w1b = {dsDY_w1b, dstt2l_w1b, dstW_w1b, dsttZ_w1b, dsVV_w1b, dsRare_w1b};
+    Plotter::DatasetSummary dsRare_w1b(           "Rare",       fileMap["Rare"],            "", "genWeight;weight1fakebComb");
+    std::vector<Plotter::DatasetSummary> stack_MC_w1b = {dsDY_w1b, dsDYInc_w1b, dstt2l_w1b, dstW_w1b, dsttZ_w1b, dsVV_w1b, dsRare_w1b};
     // 2 fake b weight
     Plotter::DatasetSummary dsData_SingleMuon_w2b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight2fakebComb");
     Plotter::DatasetSummary dsData_DoubleEG_w2b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight2fakebComb");
     Plotter::DatasetSummary dsDY_w2b(             "DY",         fileMap["DYJetsToLL"],      "", "weight2fakebComb");
+    Plotter::DatasetSummary dsDYInc_w2b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "weight2fakebComb");
     Plotter::DatasetSummary dstt2l_w2b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "", "weight2fakebComb");
     Plotter::DatasetSummary dstW_w2b(             "single top", fileMap["tW"],              "", "weight2fakebComb");
-    Plotter::DatasetSummary dsttZ_w2b(            "t#bar{t}Z",  fileMap["TTZ"],             "", "weight2fakebComb");
+    Plotter::DatasetSummary dsttZ_w2b(            "t#bar{t}Z",  fileMap["TTZ"],             "", "genWeight;weight2fakebComb");
     Plotter::DatasetSummary dsVV_w2b(             "Dibson",     fileMap["Diboson"],         "", "weight2fakebComb");
-    Plotter::DatasetSummary dsRare_w2b(           "Rare",       fileMap["Rare"],            "", "weight2fakebComb");
-    std::vector<Plotter::DatasetSummary> stack_MC_w2b = {dsDY_w2b, dstt2l_w2b, dstW_w2b, dsttZ_w2b, dsVV_w2b, dsRare_w2b};
+    Plotter::DatasetSummary dsRare_w2b(           "Rare",       fileMap["Rare"],            "", "genWeight;weight2fakebComb");
+    std::vector<Plotter::DatasetSummary> stack_MC_w2b = {dsDY_w2b, dsDYInc_w2b, dstt2l_w2b, dstW_w2b, dsttZ_w2b, dsVV_w2b, dsRare_w2b};
     // 3 fake b weight
     Plotter::DatasetSummary dsData_SingleMuon_w3b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight3fakebComb");
     Plotter::DatasetSummary dsData_DoubleEG_w3b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight3fakebComb");
     Plotter::DatasetSummary dsDY_w3b(             "DY",         fileMap["DYJetsToLL"],      "", "weight3fakebComb");
+    Plotter::DatasetSummary dsDYInc_w3b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "weight3fakebComb");
     Plotter::DatasetSummary dstt2l_w3b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "", "weight3fakebComb");
     Plotter::DatasetSummary dstW_w3b(             "single top", fileMap["tW"],              "", "weight3fakebComb");
-    Plotter::DatasetSummary dsttZ_w3b(            "t#bar{t}Z",  fileMap["TTZ"],             "", "weight3fakebComb");
+    Plotter::DatasetSummary dsttZ_w3b(            "t#bar{t}Z",  fileMap["TTZ"],             "", "genWeight;weight3fakebComb");
     Plotter::DatasetSummary dsVV_w3b(             "Diboson",    fileMap["Diboson"],         "", "weight3fakebComb");
-    Plotter::DatasetSummary dsRare_w3b(           "Rare",       fileMap["Rare"],            "", "weight3fakebComb");
-    std::vector<Plotter::DatasetSummary> stack_MC_w3b = {dsDY_w3b, dstt2l_w3b, dstW_w3b, dsttZ_w3b, dsVV_w3b, dsRare_w3b};
+    Plotter::DatasetSummary dsRare_w3b(           "Rare",       fileMap["Rare"],            "", "genWeight;weight3fakebComb");
+    std::vector<Plotter::DatasetSummary> stack_MC_w3b = {dsDY_w3b, dsDYInc_w3b, dstt2l_w3b, dstW_w3b, dsttZ_w3b, dsVV_w3b, dsRare_w3b};
 
     // Collections for all variables, no cuts applied yet
     // met

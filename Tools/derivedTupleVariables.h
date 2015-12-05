@@ -53,6 +53,8 @@ namespace plotterFunctions
             const double& bestRecoZPt = tr.getVar<double>("bestRecoZPt");
             const double& genZPt      = tr.getVar<double>("genZPt");
 
+	    const double& stored_weight = tr.getVar<double>("stored_weight");
+
             // Calculate PU weight
 
             // Calculate Z-eff weight
@@ -304,6 +306,12 @@ namespace plotterFunctions
                 zEffElec = 1.0e101;
             }
 
+	    // Process the generator weight
+	    double genWeight = 1.;
+	    // Never apply this weight for data! In the old ntuple version <=3 this is "-1", in the newer ones it is "0"
+	    if(stored_weight < 0)
+	      genWeight = -1.;
+
             tr.registerDerivedVar("mu1dRMin", mu1dRMin);
             tr.registerDerivedVar("mu2dRMin", mu2dRMin);
             tr.registerDerivedVar("mudR", mudR);
@@ -323,6 +331,8 @@ namespace plotterFunctions
 
             tr.registerDerivedVar("cleanMHt", MHT.Pt());
             tr.registerDerivedVar("cleanMHtPhi", MHT.Phi());
+
+	    tr.registerDerivedVar("genWeight", genWeight);
         }
 
     public:
