@@ -447,9 +447,9 @@ namespace plotterFunctions
             {
                 njWTTbar = static_cast<TH1*>(f->Get("njWTTbar"));
                 njWDYZ   = static_cast<TH1*>(f->Get("njWDYZ"));
-                MCfake1b = static_cast<TH1*>(f->Get("MCfake1b"));
-                MCfake2b = static_cast<TH1*>(f->Get("MCfake2b"));
-                MCfake3b = static_cast<TH1*>(f->Get("MCfake3b"));
+                MCfake1b = static_cast<TH1*>(f->Get("h_njRatio_1fake"));
+                MCfake2b = static_cast<TH1*>(f->Get("h_njRatio_2fake"));
+                MCfake3b = static_cast<TH1*>(f->Get("h_njRatio_3fake"));
                 f->Close();
                 delete f;
             }
