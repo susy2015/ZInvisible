@@ -60,6 +60,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
     blvZinv3b = new BaselineVessel("Zinv3b");
 
     weights              = new plotterFunctions::GenerateWeight;
+    njWeight             = new plotterFunctions::NJetWeight;
     lepInfo              = new plotterFunctions::LepInfo;
     fakebtagvectors      = new plotterFunctions::Fakebtagvectors;
     getSearchBin         = new plotterFunctions::GetSearchBin;
@@ -75,6 +76,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(blvZinv2b) delete blvZinv2b;
     if(blvZinv3b) delete blvZinv3b;
     if(weights) delete weights;
+    if(njWeight) delete njWeight;
     if(lepInfo) delete lepInfo;
     if(fakebtagvectors) delete fakebtagvectors;
     if(getSearchBin) delete getSearchBin;
@@ -90,6 +92,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*myBLV);
     tr.registerFunction(*lepInfo);
     tr.registerFunction(*weights);
+    tr.registerFunction(*njWeight);
     tr.registerFunction(*blvZinv);
     tr.registerFunction(*fakebtagvectors);
     tr.registerFunction(*blvZinv1b);
