@@ -988,132 +988,144 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "");
     Plotter::DatasetSummary dsData_DoubleEG(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "");
     Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "", "");
+    Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "");
     Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "", "");
     Plotter::DatasetSummary dstW(             "single top", fileMap["tW"],              "", "");
-    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "", "");
-    Plotter::DatasetSummary dsVV(             "Rare",       fileMap["Rare"],            "", "");
+    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "", "genWeight");
+    Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "", "");
+    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "", "genWeight");
+    std::vector<Plotter::DatasetSummary> stack_MC = {dsDY, dsDYInc, dstt2l, dstW, dsttZ, dsVV, dsRare};
     // 1 fake b weight
     Plotter::DatasetSummary dsData_SingleMuon_w1b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight1fakebComb");
     Plotter::DatasetSummary dsData_DoubleEG_w1b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight1fakebComb");
     Plotter::DatasetSummary dsDY_w1b(             "DY",         fileMap["DYJetsToLL"],      "", "weight1fakebComb");
+    Plotter::DatasetSummary dsDYInc_w1b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "weight1fakebComb");
     Plotter::DatasetSummary dstt2l_w1b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "", "weight1fakebComb");
     Plotter::DatasetSummary dstW_w1b(             "single top", fileMap["tW"],              "", "weight1fakebComb");
-    Plotter::DatasetSummary dsttZ_w1b(            "t#bar{t}Z",  fileMap["TTZ"],             "", "weight1fakebComb");
-    Plotter::DatasetSummary dsVV_w1b(             "Rare",       fileMap["Rare"],            "", "weight1fakebComb");
+    Plotter::DatasetSummary dsttZ_w1b(            "t#bar{t}Z",  fileMap["TTZ"],             "", "genWeight;weight1fakebComb");
+    Plotter::DatasetSummary dsVV_w1b(             "Diboson",    fileMap["Diboson"],         "", "weight1fakebComb");
+    Plotter::DatasetSummary dsRare_w1b(           "Rare",       fileMap["Rare"],            "", "genWeight;weight1fakebComb");
+    std::vector<Plotter::DatasetSummary> stack_MC_w1b = {dsDY_w1b, dsDYInc_w1b, dstt2l_w1b, dstW_w1b, dsttZ_w1b, dsVV_w1b, dsRare_w1b};
     // 2 fake b weight
     Plotter::DatasetSummary dsData_SingleMuon_w2b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight2fakebComb");
     Plotter::DatasetSummary dsData_DoubleEG_w2b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight2fakebComb");
     Plotter::DatasetSummary dsDY_w2b(             "DY",         fileMap["DYJetsToLL"],      "", "weight2fakebComb");
+    Plotter::DatasetSummary dsDYInc_w2b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "weight2fakebComb");
     Plotter::DatasetSummary dstt2l_w2b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "", "weight2fakebComb");
     Plotter::DatasetSummary dstW_w2b(             "single top", fileMap["tW"],              "", "weight2fakebComb");
-    Plotter::DatasetSummary dsttZ_w2b(            "t#bar{t}Z",  fileMap["TTZ"],             "", "weight2fakebComb");
-    Plotter::DatasetSummary dsVV_w2b(             "Rare",       fileMap["Rare"],            "", "weight2fakebComb");
+    Plotter::DatasetSummary dsttZ_w2b(            "t#bar{t}Z",  fileMap["TTZ"],             "", "genWeight;weight2fakebComb");
+    Plotter::DatasetSummary dsVV_w2b(             "Dibson",     fileMap["Diboson"],         "", "weight2fakebComb");
+    Plotter::DatasetSummary dsRare_w2b(           "Rare",       fileMap["Rare"],            "", "genWeight;weight2fakebComb");
+    std::vector<Plotter::DatasetSummary> stack_MC_w2b = {dsDY_w2b, dsDYInc_w2b, dstt2l_w2b, dstW_w2b, dsttZ_w2b, dsVV_w2b, dsRare_w2b};
     // 3 fake b weight
     Plotter::DatasetSummary dsData_SingleMuon_w3b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight3fakebComb");
     Plotter::DatasetSummary dsData_DoubleEG_w3b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight3fakebComb");
     Plotter::DatasetSummary dsDY_w3b(             "DY",         fileMap["DYJetsToLL"],      "", "weight3fakebComb");
+    Plotter::DatasetSummary dsDYInc_w3b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "weight3fakebComb");
     Plotter::DatasetSummary dstt2l_w3b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "", "weight3fakebComb");
     Plotter::DatasetSummary dstW_w3b(             "single top", fileMap["tW"],              "", "weight3fakebComb");
-    Plotter::DatasetSummary dsttZ_w3b(            "t#bar{t}Z",  fileMap["TTZ"],             "", "weight3fakebComb");
-    Plotter::DatasetSummary dsVV_w3b(             "Rare",       fileMap["Rare"],            "", "weight3fakebComb");
+    Plotter::DatasetSummary dsttZ_w3b(            "t#bar{t}Z",  fileMap["TTZ"],             "", "genWeight;weight3fakebComb");
+    Plotter::DatasetSummary dsVV_w3b(             "Diboson",    fileMap["Diboson"],         "", "weight3fakebComb");
+    Plotter::DatasetSummary dsRare_w3b(           "Rare",       fileMap["Rare"],            "", "genWeight;weight3fakebComb");
+    std::vector<Plotter::DatasetSummary> stack_MC_w3b = {dsDY_w3b, dsDYInc_w3b, dstt2l_w3b, dstW_w3b, dsttZ_w3b, dsVV_w3b, dsRare_w3b};
 
     // Collections for all variables, no cuts applied yet
     // met
     Plotter::DataCollection dcData_SingleMuon_met("data",   "cleanMetPt", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_met(  "data",   "cleanMetPt", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_met(             "stack",  "cleanMetPt", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_met(             "stack",  "cleanMetPt", stack_MC);
     // ntops
     Plotter::DataCollection dcData_SingleMuon_nt("data",   "nTopCandSortedCntZinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_nt(  "data",   "nTopCandSortedCntZinv", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_nt(             "stack",  "nTopCandSortedCntZinv", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_nt(             "stack",  "nTopCandSortedCntZinv", stack_MC);
     // ntops 1b fake
     Plotter::DataCollection dcData_SingleMuon_nt1b("data",   "nTopCandSortedCntZinv1b", {dsData_SingleMuon_w1b});
     Plotter::DataCollection dcData_DoubleEG_nt1b(  "data",   "nTopCandSortedCntZinv1b", {dsData_DoubleEG_w1b});
-    Plotter::DataCollection dcMC_nt1b(             "stack",  "nTopCandSortedCntZinv1b", {dsDY_w1b, dstt2l_w1b, dstW_w1b, dsttZ_w1b, dsVV_w1b});
+    Plotter::DataCollection dcMC_nt1b(             "stack",  "nTopCandSortedCntZinv1b", stack_MC_w1b);
     // ntops 2b fake
     Plotter::DataCollection dcData_SingleMuon_nt2b("data",   "nTopCandSortedCntZinv2b", {dsData_SingleMuon_w2b});
     Plotter::DataCollection dcData_DoubleEG_nt2b(  "data",   "nTopCandSortedCntZinv2b", {dsData_DoubleEG_w2b});
-    Plotter::DataCollection dcMC_nt2b(             "stack",  "nTopCandSortedCntZinv2b", {dsDY_w2b, dstt2l_w2b, dstW_w2b, dsttZ_w2b, dsVV_w2b});
+    Plotter::DataCollection dcMC_nt2b(             "stack",  "nTopCandSortedCntZinv2b", stack_MC_w2b);
     // ntops 3b fake
     Plotter::DataCollection dcData_SingleMuon_nt3b("data",   "nTopCandSortedCntZinv3b", {dsData_SingleMuon_w3b});
     Plotter::DataCollection dcData_DoubleEG_nt3b(  "data",   "nTopCandSortedCntZinv3b", {dsData_DoubleEG_w3b});
-    Plotter::DataCollection dcMC_nt3b(             "stack",  "nTopCandSortedCntZinv3b", {dsDY_w3b, dstt2l_w3b, dstW_w3b, dsttZ_w3b, dsVV_w3b});
+    Plotter::DataCollection dcMC_nt3b(             "stack",  "nTopCandSortedCntZinv3b", stack_MC_w3b);
     // MT2
     Plotter::DataCollection dcData_SingleMuon_mt2("data",   "best_had_brJet_MT2Zinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_mt2(  "data",   "best_had_brJet_MT2Zinv", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_mt2(             "stack",  "best_had_brJet_MT2Zinv", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_mt2(             "stack",  "best_had_brJet_MT2Zinv", stack_MC);
     // MT2 1b fake
     Plotter::DataCollection dcData_SingleMuon_mt21b("data",   "best_had_brJet_MT2Zinv1b", {dsData_SingleMuon_w1b});
     Plotter::DataCollection dcData_DoubleEG_mt21b(  "data",   "best_had_brJet_MT2Zinv1b", {dsData_DoubleEG_w1b});
-    Plotter::DataCollection dcMC_mt21b(             "stack",  "best_had_brJet_MT2Zinv1b", {dsDY_w1b, dstt2l_w1b, dstW_w1b, dsttZ_w1b, dsVV_w1b});
+    Plotter::DataCollection dcMC_mt21b(             "stack",  "best_had_brJet_MT2Zinv1b", stack_MC_w1b);
     // MT2 2b fake
     Plotter::DataCollection dcData_SingleMuon_mt22b("data",   "best_had_brJet_MT2Zinv2b", {dsData_SingleMuon_w2b});
     Plotter::DataCollection dcData_DoubleEG_mt22b(  "data",   "best_had_brJet_MT2Zinv2b", {dsData_DoubleEG_w2b});
-    Plotter::DataCollection dcMC_mt22b(             "stack",  "best_had_brJet_MT2Zinv2b", {dsDY_w2b, dstt2l_w2b, dstW_w2b, dsttZ_w2b, dsVV_w2b});
+    Plotter::DataCollection dcMC_mt22b(             "stack",  "best_had_brJet_MT2Zinv2b", stack_MC_w2b);
     // MT2 3b fake
     Plotter::DataCollection dcData_SingleMuon_mt23b("data",   "best_had_brJet_MT2Zinv3b", {dsData_SingleMuon_w3b});
     Plotter::DataCollection dcData_DoubleEG_mt23b(  "data",   "best_had_brJet_MT2Zinv3b", {dsData_DoubleEG_w3b});
-    Plotter::DataCollection dcMC_mt23b(             "stack",  "best_had_brJet_MT2Zinv3b", {dsDY_w3b, dstt2l_w3b, dstW_w3b, dsttZ_w3b, dsVV_w3b});
+    Plotter::DataCollection dcMC_mt23b(             "stack",  "best_had_brJet_MT2Zinv3b", stack_MC_w3b);
     // nb
     Plotter::DataCollection dcData_SingleMuon_nb("data",   "cntCSVSZinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_nb(  "data",   "cntCSVSZinv", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_nb(             "stack",  "cntCSVSZinv", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_nb(             "stack",  "cntCSVSZinv", stack_MC);
     // nj
     Plotter::DataCollection dcData_SingleMuon_nj("data",   "cntNJetsPt30Eta24Zinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_nj(  "data",   "cntNJetsPt30Eta24Zinv", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_nj(             "stack",  "cntNJetsPt30Eta24Zinv", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_nj(             "stack",  "cntNJetsPt30Eta24Zinv", stack_MC);
     // ht
     Plotter::DataCollection dcData_SingleMuon_ht("data",   "HTZinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_ht(  "data",   "HTZinv", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_ht(             "stack",  "HTZinv", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_ht(             "stack",  "HTZinv", stack_MC);
     // mht
     Plotter::DataCollection dcData_SingleMuon_mht("data",   "cleanMHt", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_mht(  "data",   "cleanMHt", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_mht(             "stack",  "cleanMHt", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_mht(             "stack",  "cleanMHt", stack_MC);
     // jpt
     Plotter::DataCollection dcData_SingleMuon_jpt("data",   "jetsLVecLepCleaned(pt)", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_jpt(  "data",   "jetsLVecLepCleaned(pt)", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_jpt(             "stack",  "jetsLVecLepCleaned(pt)", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_jpt(             "stack",  "jetsLVecLepCleaned(pt)", stack_MC);
     // j1pt
     Plotter::DataCollection dcData_SingleMuon_j1pt("data",   "jetsLVecLepCleaned[0](pt)", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_j1pt(  "data",   "jetsLVecLepCleaned[0](pt)", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_j1pt(             "stack",  "jetsLVecLepCleaned[0](pt)", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_j1pt(             "stack",  "jetsLVecLepCleaned[0](pt)", stack_MC);
     // j2pt
     Plotter::DataCollection dcData_SingleMuon_j2pt("data",   "jetsLVecLepCleaned[1](pt)", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_j2pt(  "data",   "jetsLVecLepCleaned[1](pt)", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_j2pt(             "stack",  "jetsLVecLepCleaned[1](pt)", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_j2pt(             "stack",  "jetsLVecLepCleaned[1](pt)", stack_MC);
     // j3pt
     Plotter::DataCollection dcData_SingleMuon_j3pt("data",   "jetsLVecLepCleaned[2](pt)", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_j3pt(  "data",   "jetsLVecLepCleaned[2](pt)", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_j3pt(             "stack",  "jetsLVecLepCleaned[2](pt)", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_j3pt(             "stack",  "jetsLVecLepCleaned[2](pt)", stack_MC);
     // mupt
     Plotter::DataCollection dcData_SingleMuon_mupt("data",   "cutMuVec(pt)", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_mupt(  "data",   "cutMuVec(pt)", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_mupt(             "stack",  "cutMuVec(pt)", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_mupt(             "stack",  "cutMuVec(pt)", stack_MC);
     // mu1pt
     Plotter::DataCollection dcData_SingleMuon_mu1pt("data",   "cutMuPt1", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_mu1pt(  "data",   "cutMuPt1", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_mu1pt(             "stack",  "cutMuPt1", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_mu1pt(             "stack",  "cutMuPt1", stack_MC);
     // mu2pt
     Plotter::DataCollection dcData_SingleMuon_mu2pt("data",   "cutMuPt2", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_mu2pt(  "data",   "cutMuPt2", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_mu2pt(             "stack",  "cutMuPt2", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_mu2pt(             "stack",  "cutMuPt2", stack_MC);
     // elpt
     Plotter::DataCollection dcData_SingleMuon_elpt("data",   "cutElecVec(pt)", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_elpt(  "data",   "cutElecVec(pt)", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_elpt(             "stack",  "cutElecVec(pt)", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_elpt(             "stack",  "cutElecVec(pt)", stack_MC);
     // el1pt
     Plotter::DataCollection dcData_SingleMuon_el1pt("data",   "cutElecPt1", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_el1pt(  "data",   "cutElecPt1", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_el1pt(             "stack",  "cutElecPt1", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_el1pt(             "stack",  "cutElecPt1", stack_MC);
     // el2pt
     Plotter::DataCollection dcData_SingleMuon_el2pt("data",   "cutElecPt2", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_el2pt(  "data",   "cutElecPt2", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_el2pt(             "stack",  "cutElecPt2", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_el2pt(             "stack",  "cutElecPt2", stack_MC);
     // mll
     Plotter::DataCollection dcData_SingleMuon_mll("data",   "bestRecoZM", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_mll(  "data",   "bestRecoZM", {dsData_DoubleEG});
-    Plotter::DataCollection dcMC_mll(             "stack",  "bestRecoZM", {dsDY, dstt2l, dstW, dsttZ, dsVV});
+    Plotter::DataCollection dcMC_mll(             "stack",  "bestRecoZM", stack_MC);
 
 
     // Define the cutlevels
