@@ -2645,28 +2645,65 @@ int main(int argc, char* argv[])
 
     //Generate cutflows
     vector<string> cfsZ = {"",
+                           "",
+                           "passLeptVeto",
                            "passLeptVeto",
                            "passLeptVeto;passnJetsZinv",
                            "passLeptVeto;passnJetsZinv;passdPhisZinv",
                            "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv",
                            "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
-                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passMT2Zinv",
+                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv",
+                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
                            "passLeptVeto;passBaselineZinv"};
 
     vector<string> cfsDYmm = {"",
+                              "",
+                              "passMuZinvSel",
                               "passMuZinvSel",
                               "passMuZinvSel;passnJetsZinv",
                               "passMuZinvSel;passnJetsZinv;passdPhisZinv",
                               "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv",
                               "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
-                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passMT2Zinv",
+                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv",
+                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
                               "passMuZinvSel;passBaselineZinv"};
+
+    vector<string> cfsDatamm = {"",
+                                "passNoiseEventFilterZinv;",
+                                "passNoiseEventFilterZinv;passMuZinvSel",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passBaselineZinv"};
+
+    vector<string> cfsDataem = {"",
+                                "passNoiseEventFilterZinv;",
+                                "passNoiseEventFilterZinv;passElMuZinvSel",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passBaselineZinv"};
 
     vector<Plotter::CutFlowSummary> cutFlowSummaries;
     
     cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("ZtoNuNu",           PDC("", "", {dsDY_nunu}),           cfsZ));
-    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu",          PDC("", "", {dsDY_ll_zAcc_scaled}),      cfsDYmm));
-    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu_Unscaled", PDC("", "", {dsDY_ll_scaled}), cfsDYmm));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu",          PDC("", "", {dsDY_ll_zAcc_scaled}), cfsDYmm));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu_Unscaled", PDC("", "", {dsDY_ll_scaled}),      cfsDYmm));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Data_MuMu",         PDC("", "", {dsData_SingleMuon}),   cfsDatamm));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Data_ElMu",         PDC("", "", {dsData_SingleMuon}),   cfsDataem));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("TTBar_ElMu",        PDC("", "", {dstt2l}),              cfsDataem));
 
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);

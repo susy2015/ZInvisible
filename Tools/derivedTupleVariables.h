@@ -1059,9 +1059,9 @@ namespace plotterFunctions
             //These weights are derived from the rato of events in the N(t) = 1, 2, 3 bins after all baseline cuts except b tag between the 
             //N(b) = 0 control region and each N(b) signal region using Z->nunu MC.  They account for both the combinatoric reweighting factor
             //as well as the different event yields between the control region and each signal region.  
-            const double wnb01 = 3.478840e-02;//6.26687e-2;
-            const double wnb02 = 2.586369e-03;//5.78052e-3;
-            const double wnb03 = 1.640077e-04;//7.08235e-4;
+            const double wnb01 = 3.820752e-02;//3.478840e-02;//6.26687e-2;
+            const double wnb02 = 2.946461e-03;//2.586369e-03;//5.78052e-3;
+            const double wnb03 = 1.474770e-04;//1.640077e-04;//7.08235e-4;
 
             // weights to apply when doing b-faking
             const double w1b = wnb01 * weight1fakeb;
