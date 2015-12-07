@@ -987,13 +987,13 @@ int main(int argc, char* argv[])
     // no weight
     Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "");
     Plotter::DatasetSummary dsData_DoubleEG(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "");
-    Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "", "");
-    Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "");
-    Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "", "");
-    Plotter::DatasetSummary dstW(             "single top", fileMap["tW"],              "", "");
-    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "", "genWeight");
-    Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "", "");
-    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "", "genWeight");
+    Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "",                "nJetWgtDYZ");
+    Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "nJetWgtDYZ");
+    Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "nJetWgtDYZ");
+    Plotter::DatasetSummary dstW(             "single top", fileMap["tW"],              "",                "nJetWgtDYZ");
+    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "nJetWgtDYZ;genWeight");
+    Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",                "nJetWgtDYZ");
+    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "",                "nJetWgtDYZ;genWeight");
     std::vector<Plotter::DatasetSummary> stack_MC = {dsDY, dsDYInc, dstt2l, dstW, dsttZ, dsVV, dsRare};
     // 1 fake b weight
     Plotter::DatasetSummary dsData_SingleMuon_w1b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight1fakebComb");
@@ -1148,10 +1148,10 @@ int main(int argc, char* argv[])
     std::string s_muZinv_0b_loose200      = "passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
     std::string s_muZinv_0b_blnotagmt2    = "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv";
     std::string s_muZinv_0b_blnotag       = "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv";
-    std::string s_muZinv_g1b_loose0       = "passMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv";
-    std::string s_muZinv_g1b_loose50      = "passMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
-    std::string s_muZinv_g1b_loose100     = "passMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
-    std::string s_muZinv_g1b_loose200     = "passMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
+    std::string s_muZinv_g1b_loose0       = "passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv";
+    std::string s_muZinv_g1b_loose50      = "passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
+    std::string s_muZinv_g1b_loose100     = "passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
+    std::string s_muZinv_g1b_loose200     = "passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
     // diele
     std::string s_2el                     = "passNoiseEventFilterZinv;passDiElecSel";
     std::string s_elZinv                  = "passNoiseEventFilterZinv;passElecZinvSel";
@@ -1184,10 +1184,10 @@ int main(int argc, char* argv[])
     std::string s_elmuZinv_0b_loose200    = "passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
     std::string s_elmuZinv_0b_blnotagmt2  = "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv";
     std::string s_elmuZinv_0b_blnotag     = "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv";
-    std::string s_elmuZinv_g1b_loose0     = "passElMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv";
-    std::string s_elmuZinv_g1b_loose50    = "passElMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
-    std::string s_elmuZinv_g1b_loose100   = "passElMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
-    std::string s_elmuZinv_g1b_loose200   = "passElMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
+    std::string s_elmuZinv_g1b_loose0     = "passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv";
+    std::string s_elmuZinv_g1b_loose50    = "passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
+    std::string s_elmuZinv_g1b_loose100   = "passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
+    std::string s_elmuZinv_g1b_loose200   = "passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
     
     //interlude for MC checks
 
@@ -1204,6 +1204,8 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_nunu_SB1b(       "Z#rightarrow#nu#nu, Direct MC, N(b) = 1",  fileMap["ZJetsToNuNu"], "cntCSVSZinv=1", "");
     Plotter::DatasetSummary dsDY_nunu_SB2b(       "Z#rightarrow#nu#nu, Direct MC, N(b) = 2",  fileMap["ZJetsToNuNu"], "cntCSVSZinv=2", "");
     Plotter::DatasetSummary dsDY_nunu_SB3b(       "Z#rightarrow#nu#nu, Direct MC, N(b) >= 3", fileMap["ZJetsToNuNu"], "cntCSVSZinv>2", "");
+
+    Plotter::DatasetSummary dsDY_nunu_njet(       "Z#rightarrow#nu#nu Data/MC weight",        fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ");
 
     //norm plots 
     Plotter::DataCollection dcMC_nunu_nj_1b( "single", "cntNJetsPt30Eta24Zinv", {dsDY_nunu_SB0b_2, dsDY_nunu_SB1b});
@@ -1231,6 +1233,13 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_nunu_Wgt3b_nj( "single", "cntNJetsPt30Eta24Zinv",     {dsDY_nunu_SB0b_Wgt3b,                             dsDY_nunu_SB3b});
     Plotter::DataCollection dcMC_nunu_Wgt3b_nt( "single", {{ "nTopCandSortedCntZinv3b", dsDY_nunu_SB0b_Wgt3b}, { "nTopCandSortedCntZinv", dsDY_nunu_SB3b}});
     Plotter::DataCollection dcMC_nunu_Wgt3b_mt2("single", {{"best_had_brJet_MT2Zinv3b", dsDY_nunu_SB0b_Wgt3b}, {"best_had_brJet_MT2Zinv", dsDY_nunu_SB3b}});
+
+    Plotter::DataCollection njetw_nSearchBin(  "single", {{"nSearchBin",                      dsDY_nunu_njet}, {"nSearchBin",             dsDY_nunu}  });
+
+    vh.push_back(PHS("NJetWgt_nSearchBin",            {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin_log",        {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin_pull",       {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("NJetWgt_nSearchBin_pull_log",   {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
 
     //Baseline cuts are flawed here, fix!
     vh.push_back(PHS( "ClosureNb_nj_nw_1fakeb_baseline",   {dcMC_nunu_nj_1b},     {1, 2}, s_znunu_baseline,  20, 0,   20,   true, false,  "Nj",   ""));
@@ -2645,28 +2654,65 @@ int main(int argc, char* argv[])
 
     //Generate cutflows
     vector<string> cfsZ = {"",
+                           "",
+                           "passLeptVeto",
                            "passLeptVeto",
                            "passLeptVeto;passnJetsZinv",
                            "passLeptVeto;passnJetsZinv;passdPhisZinv",
                            "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv",
                            "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
-                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passMT2Zinv",
+                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv",
+                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
                            "passLeptVeto;passBaselineZinv"};
 
     vector<string> cfsDYmm = {"",
+                              "",
+                              "passMuZinvSel",
                               "passMuZinvSel",
                               "passMuZinvSel;passnJetsZinv",
                               "passMuZinvSel;passnJetsZinv;passdPhisZinv",
                               "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv",
                               "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
-                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passMT2Zinv",
+                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv",
+                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
                               "passMuZinvSel;passBaselineZinv"};
+
+    vector<string> cfsDatamm = {"",
+                                "passNoiseEventFilterZinv;",
+                                "passNoiseEventFilterZinv;passMuZinvSel",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
+                                "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passBaselineZinv"};
+
+    vector<string> cfsDataem = {"",
+                                "passNoiseEventFilterZinv;",
+                                "passNoiseEventFilterZinv;passElMuZinvSel",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
+                                "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passBaselineZinv"};
 
     vector<Plotter::CutFlowSummary> cutFlowSummaries;
     
     cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("ZtoNuNu",           PDC("", "", {dsDY_nunu}),           cfsZ));
-    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu",          PDC("", "", {dsDY_ll_zAcc_scaled}),      cfsDYmm));
-    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu_Unscaled", PDC("", "", {dsDY_ll_scaled}), cfsDYmm));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu",          PDC("", "", {dsDY_ll_zAcc_scaled}), cfsDYmm));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu_Unscaled", PDC("", "", {dsDY_ll_scaled}),      cfsDYmm));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Data_MuMu",         PDC("", "", {dsData_SingleMuon}),   cfsDatamm));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Data_ElMu",         PDC("", "", {dsData_SingleMuon}),   cfsDataem));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("TTBar_ElMu",        PDC("", "", {dstt2l}),              cfsDataem));
 
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);

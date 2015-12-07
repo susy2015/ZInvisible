@@ -33,7 +33,7 @@ const int stackColors[] = {
     kMagenta - 1,
     kYellow + 4,
     kRed,
-    kBlue,
+    kAzure - 4,
     kGreen
 };
 const int NSTACKCOLORS = sizeof(stackColors) / sizeof(int);
@@ -362,70 +362,77 @@ void Plotter::createHistsFromTuple()
 
             registerfunc_->activateBranches(activeBranches);
 
-            NTupleReader tr(t, activeBranches);
-            tr.setReThrow(false);
-            registerfunc_->registerFunctions(tr);
-
-            while(tr.getNextEvent())
+            try
             {
-                //Things to run only on first event
-                if(NEvtsTotal < 1)
+                NTupleReader tr(t, activeBranches);
+                tr.setReThrow(false);
+                registerfunc_->registerFunctions(tr);
+
+                while(tr.getNextEvent())
                 {
-                    //Initialize the mini tuple branches, needs to be done after first call of tr.getNextEvent()
+                    //Things to run only on first event
+                    if(NEvtsTotal < 1)
+                    {
+                        //Initialize the mini tuple branches, needs to be done after first call of tr.getNextEvent()
+                        if(tOut && mtm)
+                        {
+                            try
+                            {
+                                mtm->initBranches(tr);
+                            }
+                            catch(const std::string e)
+                            {
+                                std::cout << "Exception caught in Plotter::createHistsFromTuple(), text follows" << std::endl << e << std::endl;
+                            }
+                        }
+                    }
+
+                    //If maxEvents_ is set, stop after so many events
+                    if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;
+                    if(tr.getEvtNum() % printInterval_ == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
+
+                    //fill histograms
+                    if(doHists_)
+                    {
+                        for(auto& hist : histsToFill)
+                        {
+                            // tree level dynamical cuts are applied here
+                            if(!hist->dss.passCuts(tr)) continue;
+
+                            // parse hist level cuts here
+                            if(!hist->hs->passCuts(tr)) continue;
+
+                            //fill histograms here
+                            double weight = file.getWeight() * hist->dss.getWeight(tr) * hist->dss.kfactor;
+
+                            fillHist(hist->h, hist->variable, tr, weight);
+                        }
+                    }
+
+                    //fill cut flows
+                    for(auto& cutFlow : cutFlowsToFill)
+                    {
+                        //get event weight here
+                        double weight = file.getWeight() * cutFlow->dss->getWeight(tr) * cutFlow->dss->kfactor;
+
+                        cutFlow->fillHist(tr, weight);
+                    }
+
+                    //fill mini tuple
                     if(tOut && mtm)
                     {
-                        try
+                        if(tr.getVar<bool>("passnJetsZinv"))
                         {
-                            mtm->initBranches(tr);
-                        }
-                        catch(const std::string e)
-                        {
-                            std::cout << "Exception caught in Plotter::createHistsFromTuple(), text follows" << std::endl << e << std::endl;
+                            mtm->fill();
                         }
                     }
+
+                    ++NEvtsTotal;
                 }
-
-                //If maxEvents_ is set, stop after so many events
-                if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;
-                if(tr.getEvtNum() % printInterval_ == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
-
-                //fill histograms
-                if(doHists_)
-                {
-                    for(auto& hist : histsToFill)
-                    {
-                        // tree level dynamical cuts are applied here
-                        if(!hist->dss.passCuts(tr)) continue;
-
-                        // parse hist level cuts here
-                        if(!hist->hs->passCuts(tr)) continue;
-
-                        //fill histograms here
-                        double weight = file.getWeight() * hist->dss.getWeight(tr) * hist->dss.kfactor;
-
-                        fillHist(hist->h, hist->variable, tr, weight);
-                    }
-                }
-
-                //fill cut flows
-                for(auto& cutFlow : cutFlowsToFill)
-                {
-                    //get event weight here
-                    double weight = file.getWeight() * cutFlow->dss->getWeight(tr) * cutFlow->dss->kfactor;
-
-                    cutFlow->fillHist(tr, weight);
-                }
-
-                //fill mini tuple
-                if(tOut && mtm)
-                {
-                    if(tr.getVar<bool>("passnJetsZinv"))
-                    {
-                        mtm->fill();
-                    }
-                }
-
-                ++NEvtsTotal;
+            }
+            catch(const std::string e)
+            {
+                std::cout << e << std::endl;
             }
             f->Close();
         }

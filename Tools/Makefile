@@ -39,7 +39,7 @@ $(ODIR)/samplesModule.so: $(ODIR)/samplesPyWrap.o $(ODIR)/samplesModulePyWrap.o
 $(ODIR)/samplesPyWrap.o: $(RSDIR)/samples.cc $(RSDIR)/samples.h 
 	$(CXX) --std=c++11 -c -fPIC -o $@ $<
 
-$(ODIR)/samplesModulePyWrap.o: $(SDIR)/samplesModule.cc
+$(ODIR)/samplesModulePyWrap.o: $(RSDIR)/samplesModule.cc
 	$(CXX) --std=c++11 -c -fPIC -o $@ $<
 
 
