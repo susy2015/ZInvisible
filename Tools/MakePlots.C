@@ -1148,10 +1148,10 @@ int main(int argc, char* argv[])
     std::string s_muZinv_0b_loose200      = "passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
     std::string s_muZinv_0b_blnotagmt2    = "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv";
     std::string s_muZinv_0b_blnotag       = "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv";
-    std::string s_muZinv_g1b_loose0       = "passMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv";
-    std::string s_muZinv_g1b_loose50      = "passMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
-    std::string s_muZinv_g1b_loose100     = "passMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
-    std::string s_muZinv_g1b_loose200     = "passMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
+    std::string s_muZinv_g1b_loose0       = "passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv";
+    std::string s_muZinv_g1b_loose50      = "passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
+    std::string s_muZinv_g1b_loose100     = "passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
+    std::string s_muZinv_g1b_loose200     = "passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
     // diele
     std::string s_2el                     = "passNoiseEventFilterZinv;passDiElecSel";
     std::string s_elZinv                  = "passNoiseEventFilterZinv;passElecZinvSel";
@@ -1184,10 +1184,10 @@ int main(int argc, char* argv[])
     std::string s_elmuZinv_0b_loose200    = "passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
     std::string s_elmuZinv_0b_blnotagmt2  = "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv";
     std::string s_elmuZinv_0b_blnotag     = "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv";
-    std::string s_elmuZinv_g1b_loose0     = "passElMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv";
-    std::string s_elmuZinv_g1b_loose50    = "passElMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
-    std::string s_elmuZinv_g1b_loose100   = "passElMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
-    std::string s_elmuZinv_g1b_loose200   = "passElMuZinvSel;passBJets;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
+    std::string s_elmuZinv_g1b_loose0     = "passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv";
+    std::string s_elmuZinv_g1b_loose50    = "passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
+    std::string s_elmuZinv_g1b_loose100   = "passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
+    std::string s_elmuZinv_g1b_loose200   = "passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
     
     //interlude for MC checks
 
