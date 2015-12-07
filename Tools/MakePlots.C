@@ -1205,6 +1205,8 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_nunu_SB2b(       "Z#rightarrow#nu#nu, Direct MC, N(b) = 2",  fileMap["ZJetsToNuNu"], "cntCSVSZinv=2", "");
     Plotter::DatasetSummary dsDY_nunu_SB3b(       "Z#rightarrow#nu#nu, Direct MC, N(b) >= 3", fileMap["ZJetsToNuNu"], "cntCSVSZinv>2", "");
 
+    Plotter::DatasetSummary dsDY_nunu_njet(       "Z#rightarrow#nu#nu Data/MC weight",        fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ");
+
     //norm plots 
     Plotter::DataCollection dcMC_nunu_nj_1b( "single", "cntNJetsPt30Eta24Zinv", {dsDY_nunu_SB0b_2, dsDY_nunu_SB1b});
     Plotter::DataCollection dcMC_nunu_nj_2b( "single", "cntNJetsPt30Eta24Zinv", {dsDY_nunu_SB0b_2, dsDY_nunu_SB2b});
@@ -1231,6 +1233,13 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_nunu_Wgt3b_nj( "single", "cntNJetsPt30Eta24Zinv",     {dsDY_nunu_SB0b_Wgt3b,                             dsDY_nunu_SB3b});
     Plotter::DataCollection dcMC_nunu_Wgt3b_nt( "single", {{ "nTopCandSortedCntZinv3b", dsDY_nunu_SB0b_Wgt3b}, { "nTopCandSortedCntZinv", dsDY_nunu_SB3b}});
     Plotter::DataCollection dcMC_nunu_Wgt3b_mt2("single", {{"best_had_brJet_MT2Zinv3b", dsDY_nunu_SB0b_Wgt3b}, {"best_had_brJet_MT2Zinv", dsDY_nunu_SB3b}});
+
+    Plotter::DataCollection njetw_nSearchBin(  "single", {{"nSearchBin",                      dsDY_nunu_njet}, {"nSearchBin",             dsDY_nunu}  });
+
+    vh.push_back(PHS("NJetWgt_nSearchBin",            {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin_log",        {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin_pull",       {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("NJetWgt_nSearchBin_pull_log",   {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
 
     //Baseline cuts are flawed here, fix!
     vh.push_back(PHS( "ClosureNb_nj_nw_1fakeb_baseline",   {dcMC_nunu_nj_1b},     {1, 2}, s_znunu_baseline,  20, 0,   20,   true, false,  "Nj",   ""));
