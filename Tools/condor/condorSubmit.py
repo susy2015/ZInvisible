@@ -1,8 +1,12 @@
 #!/cvmfs/cms.cern.ch/slc6_amd64_gcc491/cms/cmssw/CMSSW_7_4_8/external/slc6_amd64_gcc491/bin/python
 ####!${SRT_CMSSW_RELEASE_BASE_SCRAMRTDEL}/external/${SCRAM_ARCH}/bin/python
 
+import sys
+from os import system, environ
+print 
+sys.path = [environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/condor/",] + sys.path
+
 from samples import SampleCollection
-from os import system
 import optparse 
 import subprocess
 
