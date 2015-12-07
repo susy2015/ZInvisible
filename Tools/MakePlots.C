@@ -987,13 +987,13 @@ int main(int argc, char* argv[])
     // no weight
     Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "");
     Plotter::DatasetSummary dsData_DoubleEG(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "");
-    Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "", "");
-    Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "");
-    Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "", "");
-    Plotter::DatasetSummary dstW(             "single top", fileMap["tW"],              "", "");
-    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "", "genWeight");
-    Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "", "");
-    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "", "genWeight");
+    Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "",                "nJetWgtDYZ");
+    Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "nJetWgtDYZ");
+    Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "nJetWgtDYZ");
+    Plotter::DatasetSummary dstW(             "single top", fileMap["tW"],              "",                "nJetWgtDYZ");
+    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "nJetWgtDYZ;genWeight");
+    Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",                "nJetWgtDYZ");
+    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "",                "nJetWgtDYZ;genWeight");
     std::vector<Plotter::DatasetSummary> stack_MC = {dsDY, dsDYInc, dstt2l, dstW, dsttZ, dsVV, dsRare};
     // 1 fake b weight
     Plotter::DatasetSummary dsData_SingleMuon_w1b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight1fakebComb");

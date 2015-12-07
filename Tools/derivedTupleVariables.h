@@ -445,8 +445,6 @@ namespace plotterFunctions
             TFile *f = new TFile("njetWgtHists.root");
             if(f)
             {
-                njWTTbar = static_cast<TH1*>(f->Get("njWTTbar"));
-                njWDYZ   = static_cast<TH1*>(f->Get("njWDYZ"));
                 MCfake1b = static_cast<TH1*>(f->Get("h_njRatio_1fake"));
                 MCfake2b = static_cast<TH1*>(f->Get("h_njRatio_2fake"));
                 MCfake3b = static_cast<TH1*>(f->Get("h_njRatio_3fake"));
@@ -456,6 +454,19 @@ namespace plotterFunctions
             else
             {
                 std::cout << "Failed to open: njetWgtHists.root" << std::endl;
+            }
+
+            f = new TFile("dataMCweights.root");
+            if(f)
+            {
+                njWTTbar = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_loose0"));
+                njWDYZ   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_loose0"));
+                f->Close();
+                delete f;
+            }
+            else
+            {
+                std::cout << "Failed to open: dataMCweights.root" << std::endl;
             }
         }
 
