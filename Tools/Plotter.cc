@@ -33,7 +33,7 @@ const int stackColors[] = {
     kMagenta - 1,
     kYellow + 4,
     kRed,
-    kBlue,
+    kAzure - 4,
     kGreen
 };
 const int NSTACKCOLORS = sizeof(stackColors) / sizeof(int);
