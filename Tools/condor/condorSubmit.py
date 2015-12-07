@@ -65,7 +65,6 @@ for ds in datasets:
                 if '.root' in l and not 'failed' in l:
                     count = count + 1
             for startFileNum in xrange(0, count, nFilesPerJob):
-                fileParts.append("Transfer_Input_Files += %s\n"%(s))
                 fileParts.append("Arguments = %s $ENV(CMSSW_BASE) %i %i %f %s\nQueue\n\n"%(n, nFilesPerJob, startFileNum, lumi, s))
             f.close()
 
