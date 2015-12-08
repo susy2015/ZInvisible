@@ -2727,8 +2727,6 @@ int main(int argc, char* argv[])
     plotter.setDoTuple(doTuple);
     plotter.setRegisterFunction(rf);
     plotter.read();
-    if(doSave)  plotter.saveHists();
-    if(doPlots) plotter.plot();
+    if(doSave && !fromTuple)  plotter.saveHists();
+    if(doPlots)               plotter.plot();
 }
-
-//  LocalWords:  mll

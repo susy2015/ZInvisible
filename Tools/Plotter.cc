@@ -580,6 +580,8 @@ bool Plotter::Cuttable::passCuts(const NTupleReader& tr) const
 
 void Plotter::saveHists()
 {
+    if(!readFromTuple_) return;
+
     fout_->cd();
 
     for(HistSummary& hist : hists_)
