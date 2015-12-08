@@ -454,9 +454,10 @@ void Plotter::createHistsFromFile()
         {
             for(auto& hist : histvec.hcsVec)
             {
-                if(fout_) hist->h = static_cast<TH1*>(fout_->Get(hist->name.c_str()));
-                else std::cout << "Input file \"" << fout_ << "\" not found!!!!" << std::endl;
-                if(!hist->h) std::cout << "Histogram not found: \"" << hist->name << "\"!!!!!!" << std::endl;
+		std::string& dirname = hist->variable.name;
+                if(fout_) hist->h = static_cast<TH1*>(fout_->Get( (dirname+"/"+hist->name).c_str() ) );
+		else std::cout << "Input file \"" << fout_ << "\" not found!!!!" << std::endl;
+		if(!hist->h) std::cout << "Histogram not found: \"" << hist->name << "\"!!!!!!" << "dirname/histname " << dirname+"/"+hist->name << std::endl;
             }
         }
     }
@@ -589,16 +590,27 @@ void Plotter::saveHists()
             {
                 for(auto& h : hvec.hcsVec)
                 {
+		    std::string dirname = h->variable.name;
+		    TDirectory* mydir = fout_->GetDirectory(dirname.c_str());
+		    if(mydir == 0)
+		    {
+			mydir = fout_->mkdir(dirname.c_str(),dirname.c_str());
+		    }
+		    mydir->cd();
                     h->h->Write();
                 }
             }
         }
     }
 
+    TDirectory* d_cut = fout_->mkdir("CutFlows","CutFlows");
+    d_cut->cd();
     for(CutFlowSummary& cutFlow : cutFlows_)
     {
         if(cutFlow.h) cutFlow.h->Write();
     }
+
+    fout_->cd();
 }
 
 void Plotter::setPlotDir(const std::string plotDir)
