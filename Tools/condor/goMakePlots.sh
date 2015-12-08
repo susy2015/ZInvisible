@@ -8,7 +8,7 @@ eval `scramv1 runtime -sh`
 
 cd ${_CONDOR_SCRATCH_DIR}
 
-echo "xrdcp root://cmseos.fnal.gov/$(echo $5 | sed 's|/eos/uscms||') ."
+echo "xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') ."
 xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
 
 ls
@@ -17,18 +17,5 @@ ls
 
 ls
 
-rm $(echo $5 | sed 's|.*/||')
-
-# Run 2015B
-#./makePlots --condor -D $1 -N $3 -M $4 -L 40.838
-
-# Run 2015C
-#./makePlots --condor -D $1 -N $3 -M $4 -L 15.522
-
-# Run 2015D
-#./makePlots --condor -D $1 -N $3 -M $4 -L 209.797
-
-# Run 2015CD
-#./makePlots --condor -D $1 -N $3 -M $4 -L 225.319
-#./makePlots --condor -D $1 -N $3 -M $4 -L 569.495
+rm $(echo $6 | sed 's|.*/||')
 
