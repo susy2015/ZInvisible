@@ -2680,7 +2680,7 @@ int main(int argc, char* argv[])
                               "passMuZinvSel;passBaselineZinv"};
 
     vector<string> cfsDatamm = {"",
-                                "passNoiseEventFilterZinv;",
+                                "passNoiseEventFilterZinv",
                                 "passNoiseEventFilterZinv;passMuZinvSel",
                                 "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger",
                                 "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passnJetsZinv",
@@ -2693,7 +2693,7 @@ int main(int argc, char* argv[])
                                 "passNoiseEventFilterZinv;passMuZinvSel;passMuTrigger;passBaselineZinv"};
 
     vector<string> cfsDataem = {"",
-                                "passNoiseEventFilterZinv;",
+                                "passNoiseEventFilterZinv",
                                 "passNoiseEventFilterZinv;passElMuZinvSel",
                                 "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger",
                                 "passNoiseEventFilterZinv;passElMuZinvSel;passMuTrigger;passnJetsZinv",
