@@ -949,7 +949,8 @@ namespace plotterFunctions
     private:
         void fakebtagvectors(NTupleReader& tr)
         {
-            const std::vector<double>& cleanJetpt30ArrBTag = tr.getVec<double>("recoJetsBtag_forTaggerZinv");
+            const std::vector<TLorentzVector>& jetsLVecLepCleaned = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
+            const std::vector<double>& cleanJetpt30ArrBTag = tr.getVec<double>("recoJetsBtag_0_LepCleaned");
 
             double maxCSV = 0.0;
             double secCSV = 0.0;
@@ -958,9 +959,14 @@ namespace plotterFunctions
             int iSecCSV = -1;
             int iTenCSV = -1;
 
+            if(jetsLVecLepCleaned.size() != cleanJetpt30ArrBTag.size()) std::cout << "fakebtagvectors(...): Vector size missmatch!!!!" << std::endl;
+
             //find index of 3 highest CSV values
             for(int i = 0; i < cleanJetpt30ArrBTag.size(); ++i)
             {
+                //Skip jets which cannot pass bTag Acceptance requirements
+                if(!AnaFunctions::jetPassCuts(jetsLVecLepCleaned[i], AnaConsts::bTagArr)) continue;
+
                 if(cleanJetpt30ArrBTag[i] > maxCSV)
                 {
                     tenCSV = secCSV;
