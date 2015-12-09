@@ -218,9 +218,9 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
         const double& weight = tr.getVar<double>(weightName);
         if(weight == weight) 
         {
-            if(weight < 1e5) 
+            if(weight < 1e6)
             {
-                if(weight > 300.0) std::cout << weightName << "\t" << weight << std::endl;
+                if(weight > 2700.0) std::cout << weightName << "\t" << weight << std::endl;
                 retval *= weight;
             }
         }
