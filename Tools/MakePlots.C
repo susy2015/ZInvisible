@@ -620,18 +620,18 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MCClosure_muon_" + cut.first.first + "_cleanht",    {scaled_cleanht},    {2, 1}, cut.first.second,   cut.second, 0, 2000, true,  false,  "H_{T} [GeV]",    "Events"));
         vh.push_back(PHS("MCClosure_muon_" + cut.first.first + "_cleanmht",   {scaled_cleanmht},   {2, 1}, cut.first.second,   cut.second, 0, 1500, true,  false,  "MH_{T} [GeV]",   "Events"));
         vh.push_back(PHS("MCClosure_muon_" + cut.first.first + "_cleanmet",   {scaled_cleanMet},   {2, 1}, cut.first.second,   cut.second, 0, 1500, true,  false,  "MET [GeV]",      "Events"));
-        vh.push_back(PHS("MCClosure_muon_" + cut.first.first + "_nTop",       {scaled_nTop},       {2, 1}, cut.first.second,   cut.second, 0, 10,   true,  false,  "N(t)",           "Events"));
-        vh.push_back(PHS("MCClosure_muon_" + cut.first.first + "_cleannJet",  {scaled_nCleanJet},  {2, 1}, cut.first.second,   cut.second, 0, 20,   true,  false,  "N(jet)",         "Events"));
-        vh.push_back(PHS("MCClosure_muon_" + cut.first.first + "_nBottom",    {scaled_nBottom},    {2, 1}, cut.first.second,   cut.second, 0, 10,   true,  false,  "N(b)",           "Events"));
+        vh.push_back(PHS("MCClosure_muon_" + cut.first.first + "_nTop",       {scaled_nTop},       {2, 1}, cut.first.second,           10, 0, 10,   true,  false,  "N(t)",           "Events"));
+        vh.push_back(PHS("MCClosure_muon_" + cut.first.first + "_cleannJet",  {scaled_nCleanJet},  {2, 1}, cut.first.second,           20, 0, 20,   true,  false,  "N(jet)",         "Events"));
+        vh.push_back(PHS("MCClosure_muon_" + cut.first.first + "_nBottom",    {scaled_nBottom},    {2, 1}, cut.first.second,           10, 0, 10,   true,  false,  "N(b)",           "Events"));
 
         //electron
         vh.push_back(PHS("MCClosure_elec_" + cut.first.first + "_mT2Zinv",     {scaled_elec_cleanmt2},   {2, 1}, cut.first.second,   cut.second, 0,     2000, true,  false,  "M_{T2} [GeV]",   "Events"));
         vh.push_back(PHS("MCClosure_elec_" + cut.first.first + "_cleanht",     {scaled_elec_cleanht},    {2, 1}, cut.first.second,   cut.second, 0,     2000, true,  false,  "H_{T} [GeV]",    "Events"));
         vh.push_back(PHS("MCClosure_elec_" + cut.first.first + "_cleanmht",    {scaled_elec_cleanmht},   {2, 1}, cut.first.second,   cut.second, 0,     1500, true,  false,  "MH_{T} [GeV]",   "Events"));
         vh.push_back(PHS("MCClosure_elec_" + cut.first.first + "_cleanmet",    {scaled_elec_cleanMet},   {2, 1}, cut.first.second,   cut.second, 0,     1500, true,  false,  "MET [GeV]",      "Events"));
-        vh.push_back(PHS("MCClosure_elec_" + cut.first.first + "_nTop",        {scaled_elec_nTop},       {2, 1}, cut.first.second,   cut.second, 0,       10, true,  false,  "N(t)",           "Events"));
-        vh.push_back(PHS("MCClosure_elec_" + cut.first.first + "_cleannJet",   {scaled_elec_nCleanJet},  {2, 1}, cut.first.second,   cut.second, 0,       20, true,  false,  "N(jet)",         "Events"));
-        vh.push_back(PHS("MCClosure_elec_" + cut.first.first + "_nBottom",     {scaled_elec_nBottom},    {2, 1}, cut.first.second,   cut.second, 0,       10, true,  false,  "N(b)",           "Events"));
+        vh.push_back(PHS("MCClosure_elec_" + cut.first.first + "_nTop",        {scaled_elec_nTop},       {2, 1}, cut.first.second,           10, 0,       10, true,  false,  "N(t)",           "Events"));
+        vh.push_back(PHS("MCClosure_elec_" + cut.first.first + "_cleannJet",   {scaled_elec_nCleanJet},  {2, 1}, cut.first.second,           20, 0,       20, true,  false,  "N(jet)",         "Events"));
+        vh.push_back(PHS("MCClosure_elec_" + cut.first.first + "_nBottom",     {scaled_elec_nBottom},    {2, 1}, cut.first.second,           10, 0,       10, true,  false,  "N(b)",           "Events"));
     }
 
 
