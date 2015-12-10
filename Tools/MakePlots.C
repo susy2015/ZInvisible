@@ -1317,7 +1317,7 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_nunu_SB2b(       "Z#rightarrow#nu#nu, Direct MC, N(b) = 2",  fileMap["ZJetsToNuNu"], "cntCSVSZinv=2", "");
     Plotter::DatasetSummary dsDY_nunu_SB3b(       "Z#rightarrow#nu#nu, Direct MC, N(b) >= 3", fileMap["ZJetsToNuNu"], "cntCSVSZinv>2", "");
 
-    Plotter::DatasetSummary dsDY_nunu_njet(       "Z#rightarrow#nu#nu Data/MC weight",        fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ");
+    Plotter::DatasetSummary dsDY_nunu_njet(       "Z#rightarrow#nu#nu DataMC weight",        fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ");
 
     //norm plots 
     Plotter::DataCollection dcMC_nunu_nj_1b( "single", "cntNJetsPt30Eta24Zinv", {dsDY_nunu_SB0b_2, dsDY_nunu_SB1b});
@@ -1652,8 +1652,6 @@ int main(int argc, char* argv[])
     plotter.setDoTuple(doTuple);
     plotter.setRegisterFunction(rf);
     plotter.read();
-    if(doSave)  plotter.saveHists();
-    if(doPlots) plotter.plot();
+    if(doSave && fromTuple)  plotter.saveHists();
+    if(doPlots)              plotter.plot();
 }
-
-//  LocalWords:  mll PHS
