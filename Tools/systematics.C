@@ -105,7 +105,8 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcDY_ee_cleamMET( "single", "cleanMetPt", {dsDY_ee});
     Plotter::DataCollection dcZ_nunu_cleamMET("single", "cleanMetPt", {dsZ_nunu});
 
-    vh.push_back(PHS("cleanMet", {dcDY_mm_cleamMET, dcDY_ee_cleamMET, dcZ_nunu_cleamMET}, {1, 2}, "", 100, 0, 1500,  true,  true,  "MET [GeV]",  "Norm Events"));
+    vh.push_back(PHS("cleanMet",     {dcDY_mm_cleamMET, dcDY_ee_cleamMET, dcZ_nunu_cleamMET}, {1, 2}, "",            100, 0, 1500,  true,  true,  "MET [GeV]",  "Norm Events"));
+    vh.push_back(PHS("cleanMet_cut", {dcDY_mm_cleamMET, dcDY_ee_cleamMET, dcZ_nunu_cleamMET}, {1, 2}, "passMETZinv", 100, 0, 1500,  true,  true,  "MET [GeV]",  "Norm Events"));
 
     TF1 *fit = new TF1("fit","pol1");
     fit->SetParameters(0.98, 0.001);
