@@ -177,7 +177,8 @@ private:
     std::vector<CutFlowSummary> cutFlows_;
     std::set<AnaSamples::FileSummary> trees_;
     std::string plotDir_;
-    TFile *fout_;
+    std::string foutTupleName_;
+    TFile *fout_, *foutTuple_;
     bool readFromTuple_;
     const int nFile_;
     const int startFile_;
