@@ -72,10 +72,11 @@ class RegisterFunctionsSyst : public RegisterFunctions
 {
 private:
     std::vector<std::function<void(NTupleReader&)> > funcs_;
-
+    plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
+    plotterFunctions::NJetWeight *njWeight;
 public:
-    RegisterFunctionsSyst() : RegisterFunctions() {}
-    ~RegisterFunctionsSyst() {}
+    RegisterFunctionsSyst();
+    ~RegisterFunctionsSyst();
     void addFunction(std::function<void(NTupleReader&)> func);
     void registerFunctions(NTupleReader& tr);
 };

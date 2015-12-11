@@ -5,7 +5,7 @@
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
-    return std::set<std::string>({"HTZinv","cleanMetPt","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv"});
+    return std::set<std::string>({"HTZinv","cleanMetPt","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts"});
 }
 
 void activateBranches(std::set<std::string>& activeBranches)
@@ -49,6 +49,7 @@ void activateBranches(std::set<std::string>& activeBranches)
     activeBranches.insert("elesCharge");
 }
 
+
 RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
 {            
     AnaFunctions::prepareTopTagger();
@@ -65,7 +66,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
     fakebtagvectors      = new plotterFunctions::Fakebtagvectors;
     getSearchBin         = new plotterFunctions::GetSearchBin;
     triggerInfo          = new plotterFunctions::TriggerInfo;
-    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars;
+    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(true);
 }
 
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
@@ -109,6 +110,7 @@ void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBran
     ::activateBranches(activeBranches);
 }
 
+
 RegisterFunctionsCalcEff::RegisterFunctionsCalcEff() : RegisterFunctions()
 {
     AnaFunctions::prepareTopTagger();
@@ -137,12 +139,28 @@ void RegisterFunctionsCalcEff::activateBranches(std::set<std::string>& activeBra
     ::activateBranches(activeBranches);
 }
 
+
 void RegisterFunctionsSyst::addFunction(std::function<void(NTupleReader&)> func)
 {
     funcs_.emplace_back(func);
 }
 
+RegisterFunctionsSyst::RegisterFunctionsSyst() : RegisterFunctions()
+{
+    njWeight             = new plotterFunctions::NJetWeight;
+    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
+}
+
+RegisterFunctionsSyst::~RegisterFunctionsSyst()
+{
+    if(njWeight) delete njWeight;
+    if(prepareMiniTupleVars) delete prepareMiniTupleVars;
+}
+
 void RegisterFunctionsSyst::registerFunctions(NTupleReader& tr)
 {
     for(auto& f : funcs_) tr.registerFunction(f);
+
+    tr.registerFunction(*njWeight);
+    tr.registerFunction(*prepareMiniTupleVars);
 }
