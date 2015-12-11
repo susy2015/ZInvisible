@@ -1175,36 +1175,38 @@ namespace plotterFunctions
     {
     private:
 
-        static const int BIT_PASSLEPTVETO =             0x00000001;
-        static const int BIT_PASSMUONVETO =             0x00000002;
-        static const int BIT_PASSELEVETO =              0x00000004;
-        static const int BIT_PASSISOTRKVETO =           0x00000008;
-        static const int BIT_PASSNJETS =                0x00000010;
-        static const int BIT_PASSDPHIS =                0x00000020;
-        static const int BIT_PASSBJETS =                0x00000040;
-        static const int BIT_PASSMET =                  0x00000080;
-        static const int BIT_PASSMT2 =                  0x00000100;
-        static const int BIT_PASSHT =                   0x00000200;
-        static const int BIT_PASSTAGGER =               0x00000400;
-        static const int BIT_PASSNOISEEVENTFILTER =     0x00000800;
-        static const int BIT_PASSBASELINE =             0x00001000;
-        static const int BIT_PASSBASELINENOTAGMT2 =     0x00002000;
-        static const int BIT_PASSBASELINENOTAG =        0x00004000;
-        static const int BIT_PASSLEPTVETOZINV =         0x00008000;
-        static const int BIT_PASSMUONVETOZINV =         0x00010000;
-        static const int BIT_PASSELEVETOZINV =          0x00020000;
-        static const int BIT_PASSISOTRKVETOZINV =       0x00040000;
-        static const int BIT_PASSNJETSZINV =            0x00080000;
-        static const int BIT_PASSDPHISZINV =            0x00100000;
-        static const int BIT_PASSBJETSZINV =            0x00200000;
-        static const int BIT_PASSMETZINV =              0x00400000;
-        static const int BIT_PASSMT2ZINV =              0x00800000;
-        static const int BIT_PASSHTZINV =               0x01000000;
-        static const int BIT_PASSTAGGERZINV =           0x02000000;
+        static const int BIT_PASSLEPTVETO             = 0x00000001;
+        static const int BIT_PASSMUONVETO             = 0x00000002;
+        static const int BIT_PASSELEVETO              = 0x00000004;
+        static const int BIT_PASSISOTRKVETO           = 0x00000008;
+        static const int BIT_PASSNJETS                = 0x00000010;
+        static const int BIT_PASSDPHIS                = 0x00000020;
+        static const int BIT_PASSBJETS                = 0x00000040;
+        static const int BIT_PASSMET                  = 0x00000080;
+        static const int BIT_PASSMT2                  = 0x00000100;
+        static const int BIT_PASSHT                   = 0x00000200;
+        static const int BIT_PASSTAGGER               = 0x00000400;
+        static const int BIT_PASSNOISEEVENTFILTER     = 0x00000800;
+        static const int BIT_PASSBASELINE             = 0x00001000;
+        static const int BIT_PASSBASELINENOTAGMT2     = 0x00002000;
+        static const int BIT_PASSBASELINENOTAG        = 0x00004000;
+        static const int BIT_PASSLEPTVETOZINV         = 0x00008000;
+        static const int BIT_PASSMUONVETOZINV         = 0x00010000;
+        static const int BIT_PASSELEVETOZINV          = 0x00020000;
+        static const int BIT_PASSISOTRKVETOZINV       = 0x00040000;
+        static const int BIT_PASSNJETSZINV            = 0x00080000;
+        static const int BIT_PASSDPHISZINV            = 0x00100000;
+        static const int BIT_PASSBJETSZINV            = 0x00200000;
+        static const int BIT_PASSMETZINV              = 0x00400000;
+        static const int BIT_PASSMT2ZINV              = 0x00800000;
+        static const int BIT_PASSHTZINV               = 0x01000000;
+        static const int BIT_PASSTAGGERZINV           = 0x02000000;
         static const int BIT_PASSNOISEEVENTFILTERZINV = 0x04000000;
-        static const int BIT_PASSBASELINEZINV =         0x08000000;
+        static const int BIT_PASSBASELINEZINV         = 0x08000000;
         static const int BIT_PASSBASELINENOTAGMT2ZINV = 0x10000000;
-        static const int BIT_PASSBASELINENOTAGZINV =    0x20000000;
+        static const int BIT_PASSBASELINENOTAGZINV    = 0x20000000;
+        static const int BIT_PASSMUZINVSEL            = 0x40000000;
+        static const int BIT_PASSELMUZINVSEL          = 0x80000000;
 
         bool pack_;
 
@@ -1242,6 +1244,9 @@ namespace plotterFunctions
             const bool& passBaselineNoTagMT2Zinv = tr.getVar<bool>("passBaselineNoTagMT2Zinv");
             const bool& passBaselineNoTagZinv =    tr.getVar<bool>("passBaselineNoTagZinv");
 
+            const bool& passMuZinvSel =            tr.getVar<bool>("passMuZinvSel");
+            const bool& passElMuZinvSel =          tr.getVar<bool>("passElMuZinvSel");
+
             int cuts = 0;
 
             if(passLeptVeto)         cuts |= BIT_PASSLEPTVETO;
@@ -1275,6 +1280,9 @@ namespace plotterFunctions
             if(passBaselineZinv)         cuts |= BIT_PASSBASELINEZINV;
             if(passBaselineNoTagMT2Zinv) cuts |= BIT_PASSBASELINENOTAGMT2ZINV;
             if(passBaselineNoTagZinv)    cuts |= BIT_PASSBASELINENOTAGZINV;
+
+            if(passMuZinvSel)            cuts |= BIT_PASSMUZINVSEL;
+            if(passElMuZinvSel)          cuts |= BIT_PASSELMUZINVSEL;
 
             tr.registerDerivedVar("cuts", cuts);
         }
@@ -1314,6 +1322,9 @@ namespace plotterFunctions
             tr.registerDerivedVar("passBaselineZinv",         static_cast<bool>(cuts & BIT_PASSBASELINEZINV));
             tr.registerDerivedVar("passBaselineNoTagMT2Zinv", static_cast<bool>(cuts & BIT_PASSBASELINENOTAGMT2ZINV));
             tr.registerDerivedVar("passBaselineNoTagZinv",    static_cast<bool>(cuts & BIT_PASSBASELINENOTAGZINV));
+
+            tr.registerDerivedVar("passMuZinvSel",   static_cast<bool>(cuts & BIT_PASSMUZINVSEL));
+            tr.registerDerivedVar("passElMuZinvSel", static_cast<bool>(cuts & BIT_PASSELMUZINVSEL));
         }
 
     public:
