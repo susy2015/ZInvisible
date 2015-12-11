@@ -961,11 +961,16 @@ namespace plotterFunctions
 
             if(jetsLVecLepCleaned.size() != cleanJetpt30ArrBTag.size()) std::cout << "fakebtagvectors(...): Vector size missmatch!!!!" << std::endl;
 
+            int njet = 0;
+
             //find index of 3 highest CSV values
             for(int i = 0; i < cleanJetpt30ArrBTag.size(); ++i)
             {
                 //Skip jets which cannot pass bTag Acceptance requirements
                 if(!AnaFunctions::jetPassCuts(jetsLVecLepCleaned[i], AnaConsts::bTagArr)) continue;
+
+                //count possible fake b-jets
+                njet++;
 
                 if(cleanJetpt30ArrBTag[i] > maxCSV)
                 {
@@ -1009,14 +1014,14 @@ namespace plotterFunctions
             if(iTenCSV >= 0) fakedCSVValues->push_back(tenCSV);
 
             //Calculate the combinatoric weights for b-jet faking
-            double weight1fakeb = TMath::Binomial(cleanJetpt30ArrBTag.size(), 1);
-            double weight2fakeb = TMath::Binomial(cleanJetpt30ArrBTag.size(), 2);
-            double weight3fakeb = TMath::Binomial(cleanJetpt30ArrBTag.size(), 3);
+            double weight1fakeb = TMath::Binomial(njet, 1);
+            double weight2fakeb = TMath::Binomial(njet, 2);
+            double weight3fakeb = TMath::Binomial(njet, 3);
             //check for nans
             if(weight1fakeb != weight1fakeb) weight1fakeb = 0.0;
             if(weight2fakeb != weight2fakeb) weight2fakeb = 0.0;
             if(weight3fakeb != weight3fakeb) weight3fakeb = 0.0;
-        
+
             tr.registerDerivedVar("weight1fakeb", weight1fakeb);
             tr.registerDerivedVar("weight2fakeb", weight2fakeb);
             tr.registerDerivedVar("weight3fakeb", weight3fakeb);
