@@ -46,6 +46,7 @@ Plotter::Plotter(std::vector<HistSummary>& h, std::set<AnaSamples::FileSummary>&
     trees_ = t;
     readFromTuple_ = readFromTuple;
     lumi_ = AnaSamples::luminosity;
+    foutTuple_ = nullptr;
     if(ofname.size() == 0) ofname = "histoutput.root";
     if(readFromTuple)
     {
@@ -55,6 +56,7 @@ Plotter::Plotter(std::vector<HistSummary>& h, std::set<AnaSamples::FileSummary>&
     {
         fout_ = new TFile(ofname.c_str());
     }
+    foutTupleName_ = "minituple_" + ofname;
     doHists_ = doTuple_ = true;
     registerfunc_ = nullptr;
     printInterval_ = 1000;
@@ -66,6 +68,11 @@ Plotter::~Plotter()
     {
         fout_->Close();
         delete fout_;
+    }
+    if(foutTuple_)
+    {
+        foutTuple_->Close();
+        delete foutTuple_;
     }
     if(registerfunc_) delete registerfunc_;
 }
@@ -320,17 +327,19 @@ void Plotter::createHistsFromTuple()
 
         if(registerfunc_ == nullptr) registerfunc_ = new RegisterFunctions();
 
-        if(doTuple_ && fout_)
+        if(doTuple_)
         {
             size_t start = file.filePath.rfind('/');
             size_t stop  = file.filePath.rfind('.');
             if(int(stop) - (int(start) + 1) > 0)
             {
                 std::string treeName = file.filePath.substr(start + 1, stop - start - 1);
-                fout_->cd();
+                if(!foutTuple_) foutTuple_ = new TFile(foutTupleName_.c_str(), "RECREATE");
+                foutTuple_->cd();
                 tOut = new TTree(treeName.c_str(), treeName.c_str());
                 mtm = new MiniTupleMaker(tOut);
                 mtm->setTupleVars(registerfunc_->getMiniTupleSet());
+                fout_->cd();
             }
         }
 
@@ -423,7 +432,9 @@ void Plotter::createHistsFromTuple()
                     {
                         if(tr.getVar<bool>("passnJetsZinv"))
                         {
+                            foutTuple_->cd();
                             mtm->fill();
+                            fout_->cd();
                         }
                     }
 
@@ -437,9 +448,9 @@ void Plotter::createHistsFromTuple()
             f->Close();
         }
 
-        if(fout_ && tOut && mtm)
+        if(foutTuple_ && tOut && mtm)
         {
-            fout_->cd();
+            foutTuple_->cd();
             tOut->Write();
         }
         if(mtm) delete mtm;
