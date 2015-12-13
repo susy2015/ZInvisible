@@ -54,7 +54,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
 {            
     AnaFunctions::prepareTopTagger();
 
-    myBLV     = new BaselineVessel("", "SingleMuon_csc2015.txt");
+    myBLV     = new BaselineVessel("", "");
     blvZinv   = new BaselineVessel("Zinv");
     blvZinv1b = new BaselineVessel("Zinv1b");
     blvZinv2b = new BaselineVessel("Zinv2b");

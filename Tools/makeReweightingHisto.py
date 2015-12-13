@@ -19,11 +19,8 @@ def add(hs):
         hs[0].Add(h)
     return hs[0]
 
-def makeRatio(f, hname1, hnames2, bins, newname):
+def makeRatio(f, h1, h2s, bins, newname):
     """Make the data/stack ratio for the new bins."""
-    # Get all histos
-    h1 = f.Get(hname1)
-    h2s = [f.Get(hname2) for hname2 in hnames2]
     # Add stack together
     h2 = add(h2s)
     # Rebin the histograms
@@ -35,6 +32,33 @@ def makeRatio(f, hname1, hnames2, bins, newname):
     h1.SetTitle(newname)
     return h1
 
+def reweight(h, hsf):
+    new_h = h.Clone()
+    for i in xrange(new_h.GetNbinsX()):
+        # Get the scale factor
+        sfbin = hsf.FindBin(new_h.GetBinCenter(i+1))
+        sf = hsf.GetBinContent(sfbin)
+        sf_e = hsf.GetBinError(sfbin)
+        if sf == 0: continue
+        # Get the old bin info
+        bc_old = new_h.GetBinContent(i+1)
+        be_old = new_h.GetBinError(i+1)
+        if bc_old == 0: continue
+        # Get the new bin content
+        bc = bc_old*sf
+        # Get the new bin error, just use basic error propagation without correlations: [E(AB)/(AB)]^2 = [E(A)/A]^2 + [E(B)/B]^2
+        be = bc * TMath.Sqrt( (be_old/bc_old)*(be_old/bc_old) + (sf_e/sf)*(sf_e/sf) )
+        # Write the new info
+        new_h.SetBinContent(i+1,bc)
+        new_h.SetBinError(i+1,be)
+    return new_h
+
+def subtract(h, hlist):
+    new_h = h.Clone()
+    new_h.Sumw2()
+    for hl in hlist:
+        new_h.Add(hl,-1.)
+    return new_h
 
 if __name__ ==  "__main__":
     
@@ -49,26 +73,61 @@ if __name__ ==  "__main__":
     
     # How to rebin
     bins = [0,1,2,3,4,5,6,7,8,20]
+    bins_TT = [0,1,2,3,4,5,6,7,20]
     
     # Run over the relevant histograms
-    cuts = ["muZinv", "muZinv_0b", "muZinv_g1b"]
+    cuts_DY = ["muZinv", "muZinv_0b", "muZinv_g1b"]
+    cuts_TT = ["elmuZinv", "elmuZinv_0b", "elmuZinv_g1b"]
+    selection = "ht200_dphi"
+    # histo names
+    hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
+    hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDY HT<100stack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}stack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvsingle topstack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}Zstack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDibosonstack"
+               ]
     
     # Prepare writing to a file
     fout = TFile.Open("dataMCweights.root","RECREATE")
     fout.cd()
 
-    # Data/MC plots in loose region for njets
-    for cut in cuts:
-        hname1 = "DataMC_SingleMuon_nj_%s_loose0cntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"%(cut)
-        hnames2 = ["DataMC_SingleMuon_nj_%s_loose0cntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack"%(cut),
-                   "DataMC_SingleMuon_nj_%s_loose0cntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDY HT<100stack"%(cut),
-                   "DataMC_SingleMuon_nj_%s_loose0cntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}stack"%(cut),
-                   "DataMC_SingleMuon_nj_%s_loose0cntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvsingle topstack"%(cut),
-                   "DataMC_SingleMuon_nj_%s_loose0cntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}Zstack"%(cut),
-                   "DataMC_SingleMuon_nj_%s_loose0cntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDibosonstack"%(cut)
-                   ]
-        newname = "DataMC_nj_%s_loose0"%(cut)
-        newh = makeRatio(f, hname1, hnames2, bins, newname)
+    # dictionary to keep track of all the scale factors
+    SFs = {}
+
+    # First get TTbar reweighting, region is very pure, just take ratio of data/full stack and apply that to ttbar later
+    for cut in cuts_TT:
+        hname1_TT = hname1 % {"cut":cut, "selection":selection}
+        hnames2_TT = [elem % {"cut":cut, "selection":selection} for elem in hnames2]
+        # Get all histos
+        h1 = f.Get(hname1_TT)
+        h2s = [f.Get(hname2_TT) for hname2_TT in hnames2_TT]
+        newname = "DataMC_nj_%s_%s"%(cut,selection)
+        # Make the ratio
+        newh = makeRatio(f, h1, h2s, bins_TT, newname)
+        SFs["TT_%s"%(cut)] = newh
+        newh.Write()
+    
+    # Now get DY reweighting: 
+    # Procedure: 1. Apply TTbar reweighting to TTbar MC
+    #            2. Subtract non-DY MC from data
+    #            3. Make ratio of subtracted data and DY
+    for cut in cuts_DY:
+        hname1_DY = hname1 % {"cut":cut, "selection":selection}
+        hnames2_DY = [elem % {"cut":cut, "selection":selection} for elem in hnames2]
+        # Get all histos
+        h1 = f.Get(hname1_DY)
+        h2s = [f.Get(hname2_DY) for hname2_DY in hnames2_DY]
+
+        # apply weights to ttbar
+        h2s[2] = reweight(h2s[2], SFs["TT_%s"%(cut.replace("mu","elmu"))])
+
+        # subtract relevant histograms from data
+        data_subtracted = subtract(h1, h2s[2:])
+
+        newname = "DataMC_nj_%s_%s"%(cut,selection)
+        newh = makeRatio(f, data_subtracted, h2s[:1], bins, newname)
 
         newh.Write()
 

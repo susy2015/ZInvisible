@@ -398,8 +398,10 @@ namespace plotterFunctions
     class NJetWeight
     {
     private:
-        TH1* njWTTbar;
-        TH1* njWDYZ;
+        TH1* njWTTbar_0b;
+        TH1* njWDYZ_0b;
+        TH1* njWTTbar_g1b;
+        TH1* njWDYZ_g1b;
 
         TH1* MCfake1b;
         TH1* MCfake2b;
@@ -408,12 +410,21 @@ namespace plotterFunctions
         void generateWeight(NTupleReader& tr)
         {
             const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+            const int& cntCSVSZinv = tr.getVar<int>("cntCSVSZinv");
 
             double wTT = 1.0;
             double wDY = 1.0;
 
-            if(njWTTbar) wTT = njWTTbar->GetBinContent(njWTTbar->FindBin(cntNJetsPt30Eta24Zinv));
-            if(njWDYZ)   wDY = njWDYZ->GetBinContent(njWDYZ->FindBin(cntNJetsPt30Eta24Zinv));
+	    if(cntCSVSZinv == 0)
+	    {
+		if(njWTTbar_0b)  wTT = njWTTbar_0b->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
+		if(njWDYZ_0b)    wDY = njWDYZ_0b->GetBinContent(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
+	    } 
+	    else
+	    {
+		if(njWTTbar_g1b) wTT = njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+		if(njWDYZ_g1b)   wDY = njWDYZ_g1b->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+	    }
 
             double nJet1bfakeWgt = 1.0;
             double nJet2bfakeWgt = 1.0;
@@ -436,8 +447,10 @@ namespace plotterFunctions
         {
             TH1::AddDirectory(false);
 
-            njWTTbar = nullptr;
-            njWDYZ   = nullptr;
+            njWTTbar_0b  = nullptr;
+            njWDYZ_0b    = nullptr;
+            njWTTbar_g1b = nullptr;
+            njWDYZ_g1b   = nullptr;
             MCfake1b = nullptr;
             MCfake2b = nullptr;
             MCfake3b = nullptr;
@@ -459,8 +472,10 @@ namespace plotterFunctions
             f = new TFile("dataMCweights.root");
             if(f)
             {
-                njWTTbar = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_loose0"));
-                njWDYZ   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_loose0"));
+                njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_0b_ht200_dphi"));
+                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_ht200_dphi"));
+                njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_g1b_ht200_dphi"));
+                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_ht200_dphi"));
                 f->Close();
                 delete f;
             }
