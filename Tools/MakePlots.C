@@ -1102,11 +1102,12 @@ int main(int argc, char* argv[])
     //interlude for MC checks
 
     std::vector<std::pair<std::string,std::string>> cutlevels_MC = {
-	{"baseline",  "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0"},
-        {"loose0",    "passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv"},
-        {"loose50",   "passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50"},
-        {"loose100",  "passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100"},
-        {"loose200",  "passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv"}
+	{"nosel",     "passNoiseEventFilterZinv"},
+	{"baseline",  "passNoiseEventFilterZinv;passBaselineNoTagZinv;!nTopCandSortedCntZinv=0"},
+	{"loose0",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+        {"loose50",   "passNoiseEventFilterZinv;passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50"},
+        {"loose100",  "passNoiseEventFilterZinv;passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100"},
+        {"loose200",  "passNoiseEventFilterZinv;passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv"}
     };
 
     std::string s_znunu_baseline      = "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0";  //THIS IS NOT PERFECT, clearly nTopCandSortedCntZinv and MT2 cuts need to be specialized by sample
@@ -1150,7 +1151,10 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_nunu_Wgt3b_nt( "single", {{ "nTopCandSortedCntZinv3b", dsDY_nunu_SB0b_Wgt3b}, { "nTopCandSortedCntZinv", dsDY_nunu_SB3b}});
     Plotter::DataCollection dcMC_nunu_Wgt3b_mt2("single", {{"best_had_brJet_MT2Zinv3b", dsDY_nunu_SB0b_Wgt3b}, {"best_had_brJet_MT2Zinv", dsDY_nunu_SB3b}});
 
-    Plotter::DataCollection njetw_nSearchBin(  "single", {{"nSearchBin",                      dsDY_nunu_njet}, {"nSearchBin",             dsDY_nunu}  });
+    Plotter::DataCollection dcMC_nunu_nSearchBin(    "single", {{"nSearchBin",                      dsDY_nunu},      {"nb0Bins",                dsDY_nunu}  });
+    Plotter::DataCollection dcMC_nunu_nSearchBin_njW("single", {{"nSearchBin",                      dsDY_nunu},      {"nb0NJwBins",             dsDY_nunu}  });
+
+    Plotter::DataCollection njetw_nSearchBin(        "single", {{"nSearchBin",                      dsDY_nunu_njet}, {"nSearchBin",             dsDY_nunu}  });
 
     vh.push_back(PHS("NJetWgt_nSearchBin",            {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("NJetWgt_nSearchBin_log",        {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
@@ -1158,30 +1162,33 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("NJetWgt_nSearchBin_pull_log",   {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
 
     //Baseline cuts are flawed here, fix!
-    for(std::pair<std::string,std::string>& cut : cutlevels_muon)
+    for(std::pair<std::string,std::string>& cut : cutlevels_MC)
     {
-        vh.push_back(PHS( "ClosureNb_nj_nw_1fakeb_" + cut.first,   {dcMC_nunu_nj_1b},     {1, 2}, cut.second,  20, 0,   20,   true, false,  "Nj",   ""));
-        vh.push_back(PHS( "ClosureNb_nj_nw_2fakeb_" + cut.first,   {dcMC_nunu_nj_2b},     {1, 2}, cut.second,  20, 0,   20,   true, false,  "Nj",   ""));
-        vh.push_back(PHS( "ClosureNb_nj_nw_3fakeb_" + cut.first,   {dcMC_nunu_nj_3b},     {1, 2}, cut.second,  20, 0,   20,   true, false,  "Nj",   ""));
-        vh.push_back(PHS(   "ClosureNb_met_1fakeb_" + cut.first,   {dcMC_nunu_Wgt1b_met}, {1, 2}, cut.second,  50, 0, 1500,   true, false,  "met",  ""));
-        vh.push_back(PHS(    "ClosureNb_ht_1fakeb_" + cut.first,   {dcMC_nunu_Wgt1b_ht},  {1, 2}, cut.second,  50, 0, 1500,   true, false,  "ht",   ""));
-        vh.push_back(PHS(    "ClosureNb_nt_1fakeb_" + cut.first,   {dcMC_nunu_Wgt1b_nt},  {1, 2}, cut.second,   5, 0,    5,   true, false,  "Ntop", ""));
-        vh.push_back(PHS(    "ClosureNb_nb_1fakeb_" + cut.first,   {dcMC_nunu_Wgt1b_nb},  {1, 2}, cut.second,  10, 0,   10,   true, false,  "Nb",   ""));
-        vh.push_back(PHS(   "ClosureNb_mt2_1fakeb_" + cut.first,   {dcMC_nunu_Wgt1b_mt2}, {1, 2}, cut.second,  50, 0, 1500,   true, false,  "mt2",  ""));
-        vh.push_back(PHS(    "ClosureNb_nj_1fakeb_" + cut.first,   {dcMC_nunu_Wgt1b_nj},  {1, 2}, cut.second,  20, 0,   20,   true, false,  "Nj",   ""));
-        vh.push_back(PHS(   "ClosureNb_met_2fakeb_" + cut.first,   {dcMC_nunu_Wgt2b_met}, {1, 2}, cut.second,  50, 0, 1500,   true, false,  "met",  ""));
-        vh.push_back(PHS(    "ClosureNb_ht_2fakeb_" + cut.first,   {dcMC_nunu_Wgt2b_ht},  {1, 2}, cut.second,  50, 0, 1500,   true, false,  "ht",   ""));
-        vh.push_back(PHS(    "ClosureNb_nt_2fakeb_" + cut.first,   {dcMC_nunu_Wgt2b_nt},  {1, 2}, cut.second,   5, 0,    5,   true, false,  "Ntop", ""));
-        vh.push_back(PHS(    "ClosureNb_nb_2fakeb_" + cut.first,   {dcMC_nunu_Wgt2b_nb},  {1, 2}, cut.second,  10, 0,   10,   true, false,  "Nb",   ""));
-        vh.push_back(PHS(   "ClosureNb_mt2_2fakeb_" + cut.first,   {dcMC_nunu_Wgt2b_mt2}, {1, 2}, cut.second,  50, 0, 1500,   true, false,  "mt2",  ""));
-        vh.push_back(PHS(    "ClosureNb_nj_2fakeb_" + cut.first,   {dcMC_nunu_Wgt2b_nj},  {1, 2}, cut.second,  20, 0,   20,   true, false,  "Nj",   ""));
-        vh.push_back(PHS(   "ClosureNb_met_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_met}, {1, 2}, cut.second,  50, 0, 1500,   true, false,  "met",  ""));
-        vh.push_back(PHS(    "ClosureNb_ht_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_ht},  {1, 2}, cut.second,  50, 0, 1500,   true, false,  "ht",   ""));
-        vh.push_back(PHS(    "ClosureNb_nt_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_nt},  {1, 2}, cut.second,   5, 0,    5,   true, false,  "Ntop", ""));
-        vh.push_back(PHS(    "ClosureNb_nb_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_nb},  {1, 2}, cut.second,  10, 0,   10,   true, false,  "Nb",   ""));
-        vh.push_back(PHS(   "ClosureNb_mt2_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_mt2}, {1, 2}, cut.second,  50, 0, 1500,   true, false,  "mt2",  ""));
-        vh.push_back(PHS(    "ClosureNb_nj_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_nj},  {1, 2}, cut.second,  20, 0,   20,   true, false,  "Nj",   ""));
-    } //MC interlude over
+        vh.push_back(PHS(  "ClosureNb_nj_nw_1fakeb_" + cut.first,   {dcMC_nunu_nj_1b},          {1, 2}, cut.second,  20, 0,   20,   true,  false,  "Nj",   ""));
+        vh.push_back(PHS(  "ClosureNb_nj_nw_2fakeb_" + cut.first,   {dcMC_nunu_nj_2b},          {1, 2}, cut.second,  20, 0,   20,   true,  false,  "Nj",   ""));
+        vh.push_back(PHS(  "ClosureNb_nj_nw_3fakeb_" + cut.first,   {dcMC_nunu_nj_3b},          {1, 2}, cut.second,  20, 0,   20,   true,  false,  "Nj",   ""));
+        vh.push_back(PHS(    "ClosureNb_met_1fakeb_" + cut.first,   {dcMC_nunu_Wgt1b_met},      {1, 2}, cut.second,  50, 0, 1500,   true,  false,  "met",  ""));
+        vh.push_back(PHS(     "ClosureNb_ht_1fakeb_" + cut.first,   {dcMC_nunu_Wgt1b_ht},       {1, 2}, cut.second,  50, 0, 1500,   true,  false,  "ht",   ""));
+        vh.push_back(PHS(     "ClosureNb_nt_1fakeb_" + cut.first,   {dcMC_nunu_Wgt1b_nt},       {1, 2}, cut.second,   5, 0,    5,   true,  false,  "Ntop", ""));
+        vh.push_back(PHS(     "ClosureNb_nb_1fakeb_" + cut.first,   {dcMC_nunu_Wgt1b_nb},       {1, 2}, cut.second,  10, 0,   10,   true,  false,  "Nb",   ""));
+        vh.push_back(PHS(    "ClosureNb_mt2_1fakeb_" + cut.first,   {dcMC_nunu_Wgt1b_mt2},      {1, 2}, cut.second,  50, 0, 1500,   true,  false,  "mt2",  ""));
+        vh.push_back(PHS(     "ClosureNb_nj_1fakeb_" + cut.first,   {dcMC_nunu_Wgt1b_nj},       {1, 2}, cut.second,  20, 0,   20,   true,  false,  "Nj",   ""));
+        vh.push_back(PHS(    "ClosureNb_met_2fakeb_" + cut.first,   {dcMC_nunu_Wgt2b_met},      {1, 2}, cut.second,  50, 0, 1500,   true,  false,  "met",  ""));
+        vh.push_back(PHS(     "ClosureNb_ht_2fakeb_" + cut.first,   {dcMC_nunu_Wgt2b_ht},       {1, 2}, cut.second,  50, 0, 1500,   true,  false,  "ht",   ""));
+        vh.push_back(PHS(     "ClosureNb_nt_2fakeb_" + cut.first,   {dcMC_nunu_Wgt2b_nt},       {1, 2}, cut.second,   5, 0,    5,   true,  false,  "Ntop", ""));
+        vh.push_back(PHS(     "ClosureNb_nb_2fakeb_" + cut.first,   {dcMC_nunu_Wgt2b_nb},       {1, 2}, cut.second,  10, 0,   10,   true,  false,  "Nb",   ""));
+        vh.push_back(PHS(    "ClosureNb_mt2_2fakeb_" + cut.first,   {dcMC_nunu_Wgt2b_mt2},      {1, 2}, cut.second,  50, 0, 1500,   true,  false,  "mt2",  ""));
+        vh.push_back(PHS(     "ClosureNb_nj_2fakeb_" + cut.first,   {dcMC_nunu_Wgt2b_nj},       {1, 2}, cut.second,  20, 0,   20,   true,  false,  "Nj",   ""));
+        vh.push_back(PHS(    "ClosureNb_met_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_met},      {1, 2}, cut.second,  50, 0, 1500,   true,  false,  "met",  ""));
+        vh.push_back(PHS(     "ClosureNb_ht_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_ht},       {1, 2}, cut.second,  50, 0, 1500,   true,  false,  "ht",   ""));
+        vh.push_back(PHS(     "ClosureNb_nt_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_nt},       {1, 2}, cut.second,   5, 0,    5,   true,  false,  "Ntop", ""));
+        vh.push_back(PHS(     "ClosureNb_nb_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_nb},       {1, 2}, cut.second,  10, 0,   10,   true,  false,  "Nb",   ""));
+        vh.push_back(PHS(    "ClosureNb_mt2_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_mt2},      {1, 2}, cut.second,  50, 0, 1500,   true,  false,  "mt2",  ""));
+        vh.push_back(PHS(     "ClosureNb_nj_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_nj},       {1, 2}, cut.second,  20, 0,   20,   true,  false,  "Nj",   ""));
+        vh.push_back(PHS(    "ClosureNb_nSearchBin_" + cut.first,   {dcMC_nunu_nSearchBin},     {1, 2}, cut.second,  45, 0,   45,   true,  false,  "Search Bin", "Events"));
+        vh.push_back(PHS("ClosureNb_nSearchBin_njW_" + cut.first,   {dcMC_nunu_nSearchBin_njW}, {1, 2}, cut.second,  45, 0,   45,   true,  false,  "Search Bin", "Events"));
+    } 
+    //MC interlude over
 
     //push the histograms in a loop, save some copy-paste time
     for(std::pair<std::string,std::string>& cut : cutlevels_muon)
