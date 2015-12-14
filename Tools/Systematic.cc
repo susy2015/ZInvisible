@@ -37,3 +37,42 @@ void Systematic::modifyParameters(NTupleReader& tr)
     double weight = func_->Eval(val);
     tr.registerDerivedVar(name_, weight);
 }
+
+SystWeights::SystWeights()
+{
+    TH1::AddDirectory(false);
+    
+    njWTTbar_0b  = nullptr;
+    njWDYZ_0b    = nullptr;
+    njWTTbar_g1b = nullptr;
+    njWDYZ_g1b   = nullptr;
+    
+    TFile *f = new TFile("dataMCweights.root");
+    if(f)
+    {
+        njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_0b_ht200_dphi")->Clone());
+        njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_ht200_dphi")->Clone());
+        njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_g1b_ht200_dphi")->Clone());
+        njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_ht200_dphi")->Clone());
+        f->Close();
+        delete f;
+    }
+    else
+    {
+        std::cout << "Failed to open: dataMCweights.root" << std::endl;
+    }
+
+    tr3 = new TRandom3(187419);
+}
+
+SystWeights::~SystWeights()
+{
+    if(tr3) delete tr3;
+}
+
+void SystWeights::getWeights(NTupleReader& tr)
+{
+    const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+
+    
+}
