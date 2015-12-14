@@ -1076,9 +1076,14 @@ namespace plotterFunctions
             const double& weight2fakeb = tr.getVar<double>("weight2fakeb");
             const double& weight3fakeb = tr.getVar<double>("weight3fakeb");
 
+            const double& nJet1bfakeWgt = tr.getVar<double>("nJet1bfakeWgt");
+            const double& nJet2bfakeWgt = tr.getVar<double>("nJet2bfakeWgt");
+            const double& nJet3bfakeWgt = tr.getVar<double>("nJet3bfakeWgt");
+
             int nSearchBin = find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
 
             std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
+            std::vector<std::pair<double, double> > * nb0NJwBins = new std::vector<std::pair<double, double> >();
             std::vector<double> * nb0BinsNW = new std::vector<double>();
 
             //weights based on total N(b) yields vs. N(b) = 0 control region
@@ -1101,6 +1106,10 @@ namespace plotterFunctions
                 nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * weight2fakeb));
                 nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * weight3fakeb));
 
+                nb0NJwBins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), nJet1bfakeWgt));
+                nb0NJwBins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), nJet2bfakeWgt));
+                nb0NJwBins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), nJet3bfakeWgt));
+
                 nb0BinsNW->emplace_back(find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet));
                 nb0BinsNW->emplace_back(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet));
                 nb0BinsNW->emplace_back(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet));
@@ -1109,6 +1118,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("nSearchBin", nSearchBin);
             tr.registerDerivedVec("nb0BinsNW", nb0BinsNW);
             tr.registerDerivedVec("nb0Bins", nb0Bins);
+            tr.registerDerivedVec("nb0NJwBins", nb0NJwBins);
             tr.registerDerivedVar("weight1fakebComb", w1b);
             tr.registerDerivedVar("weight2fakebComb", w2b);
             tr.registerDerivedVar("weight3fakebComb", w3b);
