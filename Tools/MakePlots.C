@@ -986,65 +986,22 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_mll(  "data",   "bestRecoZM", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_mll(             "stack",  "bestRecoZM", stack_MC);
     Plotter::DataCollection dcwMC_mll(            "stack",  "bestRecoZM", stackw_MC);
+    // nsearchbins
+    Plotter::DataCollection dcData_SingleMuon_nSearchBin("data",   "nSearchBin", {dsData_SingleMuon});
+    Plotter::DataCollection dcData_DoubleEG_nSearchBin(  "data",   "nSearchBin", {dsData_DoubleEG});
+    Plotter::DataCollection dcMC_nSearchBin(             "stack",  "nSearchBin", stack_MC);
+    Plotter::DataCollection dcwMC_nSearchBin(            "stack",  "nSearchBin", stackw_MC);
+    // nb0Bins
+    Plotter::DataCollection dcData_SingleMuon_nb0Bins("data",   "nb0Bins", {dsData_SingleMuon});
+    Plotter::DataCollection dcData_DoubleEG_nb0Bins(  "data",   "nb0Bins", {dsData_DoubleEG});
+    Plotter::DataCollection dcMC_nb0Bins(             "stack",  "nb0Bins", stack_MC);
+    Plotter::DataCollection dcwMC_nb0Bins(            "stack",  "nb0Bins", stackw_MC);
+    // nb0NJwBins
+    Plotter::DataCollection dcData_SingleMuon_nb0NJwBins("data",   "nb0NJwBins", {dsData_SingleMuon});
+    Plotter::DataCollection dcData_DoubleEG_nb0NJwBins(  "data",   "nb0NJwBins", {dsData_DoubleEG});
+    Plotter::DataCollection dcMC_nb0NJwBins(             "stack",  "nb0NJwBins", stack_MC);
+    Plotter::DataCollection dcwMC_nb0NJwBins(            "stack",  "nb0NJwBins", stackw_MC);
 
-
-    // Define the cutlevels
-    std::string s_nosel                   = "passNoiseEventFilterZinv";
-    // dimu
-    std::string s_2mu                     = "passNoiseEventFilterZinv;passDiMuSel";
-    std::string s_muZinv                  = "passNoiseEventFilterZinv;passMuZinvSel";
-    std::string s_muZinv_ht200            = "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200";
-    std::string s_muZinv_loose0           = "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv";
-    std::string s_muZinv_loose50          = "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
-    std::string s_muZinv_loose100         = "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
-    std::string s_muZinv_loose200         = "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
-    std::string s_muZinv_blnotagmt2       = "passMuZinvSel;passBaselineNoTagMT2Zinv";
-    std::string s_muZinv_bl               = "passMuZinvSel;passBaselineZinv";
-    std::string s_muZinv_0b               = "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0";
-    std::string s_muZinv_0b_ht200         = "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200";
-    std::string s_muZinv_0b_loose0        = "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv";
-    std::string s_muZinv_0b_loose50       = "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
-    std::string s_muZinv_0b_loose100      = "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
-    std::string s_muZinv_0b_loose200      = "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
-    std::string s_muZinv_0b_blnotagmt2    = "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv";
-    std::string s_muZinv_0b_blnotag       = "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv";
-    std::string s_muZinv_g1b_loose0       = "passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv";
-    std::string s_muZinv_g1b_loose50      = "passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
-    std::string s_muZinv_g1b_loose100     = "passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
-    std::string s_muZinv_g1b_loose200     = "passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
-    // diele
-    std::string s_2el                     = "passNoiseEventFilterZinv;passDiElecSel";
-    std::string s_elZinv                  = "passNoiseEventFilterZinv;passElecZinvSel";
-    std::string s_elZinv_ht200            = "passNoiseEventFilterZinv;passElecZinvSel;HTZinv>200";
-    std::string s_elZinv_blnotagmt2       = "passElecZinvSel;passBaselineNoTagMT2Zinv";
-    std::string s_elZinv_bl               = "passElecZinvSel;passBaselineZinv";
-    std::string s_elZinv_0b               = "passElecZinvSel;cntCSVSZinv=0";
-    std::string s_elZinv_0b_ht200         = "passElecZinvSel;cntCSVSZinv=0;HTZinv>200";
-    //std::string s_elZinv_0b_loose0        = "passElecZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv";
-    std::string s_elZinv_0b_blnotagmt2    = "passElecZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv";
-    std::string s_elZinv_0b_blnotag       = "passElecZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv";
-    // elmu
-    std::string s_elmu                    = "passNoiseEventFilterZinv;passElMuSel";
-    std::string s_elmuZinv                = "passNoiseEventFilterZinv;passElMuZinvSel";
-    std::string s_elmuZinv_ht200          = "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200";
-    std::string s_elmuZinv_loose0         = "passElMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv";
-    std::string s_elmuZinv_loose50        = "passElMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
-    std::string s_elmuZinv_loose100       = "passElMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
-    std::string s_elmuZinv_loose200       = "passElMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
-    std::string s_elmuZinv_blnotagmt2     = "passElMuZinvSel;passBaselineNoTagMT2Zinv";
-    std::string s_elmuZinv_bl             = "passElMuZinvSel;passBaselineZinv";
-    std::string s_elmuZinv_0b             = "passElMuZinvSel;cntCSVSZinv=0";
-    std::string s_elmuZinv_0b_ht200       = "passElMuZinvSel;cntCSVSZinv=0;HTZinv>200";
-    std::string s_elmuZinv_0b_loose0      = "passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv";
-    std::string s_elmuZinv_0b_loose50     = "passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
-    std::string s_elmuZinv_0b_loose100    = "passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
-    std::string s_elmuZinv_0b_loose200    = "passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
-    std::string s_elmuZinv_0b_blnotagmt2  = "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv";
-    std::string s_elmuZinv_0b_blnotag     = "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv";
-    std::string s_elmuZinv_g1b_loose0     = "passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv";
-    std::string s_elmuZinv_g1b_loose50    = "passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50";
-    std::string s_elmuZinv_g1b_loose100   = "passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100";
-    std::string s_elmuZinv_g1b_loose200   = "passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv";
 
     // pair of cutlevels
     std::vector<std::pair<std::string,std::string>> cutlevels_muon = {
@@ -1218,6 +1175,10 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMC_SingleMuon_el1pt_" +cut.first,  {dcData_SingleMuon_el1pt, dcMC_el1pt},  {1, 2}, cut.second, 50, 0, 1000, true, false,  "el1 pt",         ""));
 	vh.push_back(PHS("DataMC_SingleMuon_el2pt_" +cut.first,  {dcData_SingleMuon_el2pt, dcMC_el2pt},  {1, 2}, cut.second, 50, 0, 1000, true, false,  "el2 pt",         ""));
 	vh.push_back(PHS("DataMC_SingleMuon_mll_"   +cut.first,  {dcData_SingleMuon_mll,   dcMC_mll},    {1, 2}, cut.second, 40, 0, 200,  true, false,  "mll",            ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcMC_nb0Bins},    {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcMC_nb0NJwBins}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
+
 	// DataMC weights applied
 	vh.push_back(PHS("DataMCw_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},   {1, 2}, cut.second, 50, 0, 1500, true, false,  "met",            ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwMC_ht},    {1, 2}, cut.second, 50, 0, 1500, true, false,  "ht",             ""));
@@ -1243,6 +1204,9 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMCw_SingleMuon_el1pt_" +cut.first,  {dcData_SingleMuon_el1pt, dcwMC_el1pt}, {1, 2}, cut.second, 50, 0, 1000, true, false,  "el1 pt",         ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_el2pt_" +cut.first,  {dcData_SingleMuon_el2pt, dcwMC_el2pt}, {1, 2}, cut.second, 50, 0, 1000, true, false,  "el2 pt",         ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_mll_"   +cut.first,  {dcData_SingleMuon_mll,   dcwMC_mll},   {1, 2}, cut.second, 40, 0, 200,  true, false,  "mll",            ""));
+	vh.push_back(PHS("DataMCw_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
+	vh.push_back(PHS("DataMCw_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcwMC_nb0Bins},    {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
+	vh.push_back(PHS("DataMCw_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwMC_nb0NJwBins}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
     }
 
     // Do no look at electron plots for now. Save some time and space
@@ -1301,6 +1265,25 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMC_DoubleEG_mll_"+cut.first,    {dcData_DoubleEG_mll, dcwMC_mll},     {1, 2}, cut.second, 40, 0, 200,  true, false,  "mll",            ""));
     }
     */
+
+
+    // other plots for Zhenbin
+    Plotter::DataCollection njetw_nj30(   "single", "cntNJetsPt30Eta24",    {dsDY_nunu_njet});
+    Plotter::DataCollection njetw_nj50(   "single", "cntNJetsPt50Eta24",    {dsDY_nunu_njet});
+    Plotter::DataCollection njetw_nt(     "single", "nTopCandSortedCnt",    {dsDY_nunu_njet});
+    Plotter::DataCollection njetw_nb(     "single", "cntCSVS",              {dsDY_nunu_njet});
+    Plotter::DataCollection njetw_met(    "single", "met",                  {dsDY_nunu_njet});
+    Plotter::DataCollection njetw_mt2(    "single", "best_had_brJet_MT2",   {dsDY_nunu_njet});
+    Plotter::DataCollection njetw_ht(     "single", "HT",                   {dsDY_nunu_njet});
+
+    vh.push_back(PHS("NJetWgt_nj30",  {njetw_nj30}, {1, 1}, "passBaseline",   10,  0,  10,      false, false,  "nj",   "Events"));
+    vh.push_back(PHS("NJetWgt_nj50",  {njetw_nj50}, {1, 1}, "passBaseline",   10,  0,  10,      false, false,  "nj50", "Events"));
+    vh.push_back(PHS("NJetWgt_nt",    {njetw_nt},   {1, 1}, "passBaseline",   5,  0,  5,        false, false,  "nt",   "Events"));
+    vh.push_back(PHS("NJetWgt_nb",    {njetw_nb},   {1, 1}, "passBaseline",   5,  0,  5,        false, false,  "nb",   "Events"));
+    vh.push_back(PHS("NJetWgt_met",   {njetw_met},  {1, 1}, "passBaseline",   24,  200,  800,   false, false,  "met",  "Events"));
+    vh.push_back(PHS("NJetWgt_mt2",   {njetw_mt2},  {1, 1}, "passBaseline",   24,  200,  800,   false, false,  "mt2",  "Events"));
+    vh.push_back(PHS("NJetWgt_ht",    {njetw_ht},   {1, 1}, "passBaseline",   20,  500,  1000,  false, false,  "ht",   "Events"));
+
 
     //Generate cutflows
     vector<string> cfsZ = {"",
