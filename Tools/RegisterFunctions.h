@@ -20,6 +20,8 @@ namespace plotterFunctions
     class NJetWeight;
 }
 
+class SystWeights;
+
 class RegisterFunctions
 {
 private:
@@ -74,6 +76,7 @@ private:
     std::vector<std::function<void(NTupleReader&)> > funcs_;
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
     plotterFunctions::NJetWeight *njWeight;
+    SystWeights *systWeights;
 public:
     RegisterFunctionsSyst();
     ~RegisterFunctionsSyst();

@@ -73,6 +73,32 @@ SystWeights::~SystWeights()
 void SystWeights::getWeights(NTupleReader& tr)
 {
     const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+    const int& nSearchBin = tr.getVar<int>("nSearchBin");
 
-    
+    double mean_0b_DY  = njWDYZ_0b   ->GetBinContent(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
+    double mean_g1b_DY = njWDYZ_g1b  ->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+    double mean_0b_tt  = njWTTbar_0b ->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
+    double mean_g1b_tt = njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+
+    double rms_0b_DY  = njWDYZ_0b   ->GetBinError(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
+    double rms_g1b_DY = njWDYZ_g1b  ->GetBinError(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+    double rms_0b_tt  = njWTTbar_0b ->GetBinError(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
+    double rms_g1b_tt = njWTTbar_g1b->GetBinError(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+
+    auto* weightedSB = new std::vector<std::pair<double, double> >();
+    auto* unweightedSB = new std::vector<int>();
+
+    for(int i = 0; i < 10; ++i)
+    {
+        double wgt_0b_DY  = tr3->Gaus(1.0, rms_0b_DY/mean_0b_DY);
+        double wgt_g1b_DY = tr3->Gaus(1.0, rms_g1b_DY/mean_g1b_DY);
+        double wgt_0b_tt  = tr3->Gaus(1.0, rms_0b_tt/mean_0b_tt);
+        double wgt_g1b_tt = tr3->Gaus(1.0, rms_g1b_tt/mean_g1b_tt);
+        
+        weightedSB->emplace_back(std::make_pair(static_cast<double>(nSearchBin), wgt_0b_DY*wgt_g1b_DY*wgt_0b_tt*wgt_g1b_tt));
+        unweightedSB->emplace_back(nSearchBin);
+    }
+
+    tr.registerDerivedVec("njSystWeightedSB", weightedSB);
+    tr.registerDerivedVec("njSystUnweightedSB", unweightedSB);
 }
