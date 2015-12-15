@@ -166,4 +166,5 @@ void RegisterFunctionsSyst::registerFunctions(NTupleReader& tr)
 
     tr.registerFunction(*njWeight);
     tr.registerFunction(*prepareMiniTupleVars);
+    //tr.registerFunction(*systWeights);
 }

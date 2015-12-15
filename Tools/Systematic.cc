@@ -38,7 +38,7 @@ void Systematic::modifyParameters(NTupleReader& tr)
     tr.registerDerivedVar(name_, weight);
 }
 
-SystWeights::SystWeights()
+SystWeights::SystWeights() : tr3(123384)
 {
     TH1::AddDirectory(false);
     
@@ -61,13 +61,11 @@ SystWeights::SystWeights()
     {
         std::cout << "Failed to open: dataMCweights.root" << std::endl;
     }
-
-    tr3 = new TRandom3(187419);
 }
 
 SystWeights::~SystWeights()
 {
-    if(tr3) delete tr3;
+    //if(tr3) delete tr3;
 }
 
 void SystWeights::getWeights(NTupleReader& tr)
@@ -88,12 +86,12 @@ void SystWeights::getWeights(NTupleReader& tr)
     auto* weightedSB = new std::vector<std::pair<double, double> >();
     auto* unweightedSB = new std::vector<int>();
 
-    for(int i = 0; i < 10; ++i)
+    for(int i = 0; i < 100; ++i)
     {
-        double wgt_0b_DY  = tr3->Gaus(1.0, rms_0b_DY/mean_0b_DY);
-        double wgt_g1b_DY = tr3->Gaus(1.0, rms_g1b_DY/mean_g1b_DY);
-        double wgt_0b_tt  = tr3->Gaus(1.0, rms_0b_tt/mean_0b_tt);
-        double wgt_g1b_tt = tr3->Gaus(1.0, rms_g1b_tt/mean_g1b_tt);
+        double wgt_0b_DY  = tr3.Gaus(1.0, rms_0b_DY/mean_0b_DY);
+        double wgt_g1b_DY = tr3.Gaus(1.0, rms_g1b_DY/mean_g1b_DY);
+        double wgt_0b_tt  = tr3.Gaus(1.0, rms_0b_tt/mean_0b_tt);
+        double wgt_g1b_tt = tr3.Gaus(1.0, rms_g1b_tt/mean_g1b_tt);
         
         weightedSB->emplace_back(std::make_pair(static_cast<double>(nSearchBin), wgt_0b_DY*wgt_g1b_DY*wgt_0b_tt*wgt_g1b_tt));
         unweightedSB->emplace_back(nSearchBin);

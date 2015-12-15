@@ -35,7 +35,7 @@ private:
     TH1* njWTTbar_g1b;
     TH1* njWDYZ_g1b;
 
-    TRandom3 *tr3;
+    TRandom3 tr3;
 
     void getWeights(NTupleReader& tr);
 
