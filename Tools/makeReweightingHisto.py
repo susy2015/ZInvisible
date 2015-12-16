@@ -1,5 +1,5 @@
-from ROOT import *
 from optparse import OptionParser
+from ROOT import TH1D, TMath, TFile
 import array
 
 ############################
@@ -150,7 +150,7 @@ def normWeight(filename):
     f = TFile.Open(filename)
     # Run over the relevant histograms
     cuts_DY = ["muZinv_0b"]
-    selection = "blnotagmt2"
+    selection = "blnotag"
     # histo names
     hname1 = "cntCSVSZinv/DataMC_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDatadata"
     hnames2 = ["cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDYstack",
