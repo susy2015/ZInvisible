@@ -67,8 +67,8 @@ makePlots: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/Ma
 systematics: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Systematic.o  $(ODIR)/Plotter.o $(ODIR)/systematics.o $(ODIR)/MiniTupleMaker.o $(ODIR)/RegisterFunctions.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
-nJetWgtSyst: $(ODIR)/NTupleReader.o $(ODIR)/nJetWgtSyst.o
-	$(LD) $^ $(LIBS) -o $@
+nJetWgtSyst: $(ODIR)/NTupleReader.o $(ODIR)/nJetWgtSyst.o $(ODIR)/samples.o
+	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
 clean:
 	rm -f $(ODIR)/*.o $(ODIR)/*.so $(ODIR)/*.d $(PROGRAMS) core 

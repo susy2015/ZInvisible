@@ -1,4 +1,6 @@
 #include "../../SusyAnaTools/Tools/NTupleReader.h"
+#include "../../SusyAnaTools/Tools/samples.h"
+#include "derivedTupleVariables.h"
 
 #include <iostream>
 #include <string>
@@ -37,24 +39,10 @@ int main()
         std::cout << "Failed to open: dataMCweights.root" << std::endl;
     }
 
-    std::cout << njWTTbar_0b << "\t" << njWDYZ_0b << "\t" << njWTTbar_g1b << "\t" << njWDYZ_g1b << std::endl;
-
+    AnaSamples::SampleSet        ss("", 3.0);
+    AnaSamples::SampleCollection sc(ss);
 
     f = TFile::Open("condor/minituple.root");
-
-    std::vector<std::string> treeNames_DY = {"DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                                             "DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                                             "DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                                             "DYJetsToLL_M-50_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"
-    };
-
-    std::vector<std::string> treeNames_tt = {"TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"};
-
-    std::vector<std::string> treeNames_other = {};
-
-    TCanvas c("c","c",800, 800);
-    
-    TLegend *leg = new TLegend(0.60, 0.60, 0.90, 0.90);
 
     TH1 *h[45];
 
@@ -62,19 +50,22 @@ int main()
     {
         char name[128];
         sprintf(name, "hSB_%d", i);
-        h[i] = new TH1D(name, name, 45, 0, 45);
+        h[i] = new TH1D(name, name, 1000, 0, 2);
     }
 
-    //double wgt_0b_DY  = tr3.Gaus(1.0, rms_0b_DY/mean_0b_DY);
-    //double wgt_g1b_DY = tr3.Gaus(1.0, rms_g1b_DY/mean_g1b_DY);
-    //double wgt_0b_tt  = tr3.Gaus(1.0, rms_0b_tt/mean_0b_tt);
-    //double wgt_g1b_tt = tr3.Gaus(1.0, rms_g1b_tt/mean_g1b_tt);
-
-    for(auto& treeName : treeNames_DY)
+    //for(auto& fs : sc["DYJetsToLL"])
+    for(auto& fs : sc["ZJetsToNuNu"])
     {
+        size_t start = fs.filePath.rfind('/');
+        size_t stop  = fs.filePath.rfind('.');
+        std::string treeName = fs.filePath.substr(start + 1, stop - start - 1);
+
         TTree * t = (TTree*)f->Get(treeName.c_str());
 
+        plotterFunctions::PrepareMiniTupleVars pmt(false);
+
         NTupleReader tr(t);
+        tr.registerFunction(pmt);
 
         while(tr.getNextEvent())
         {
@@ -82,24 +73,46 @@ int main()
 
             const int& nSearchBin = tr.getVar<int>("nSearchBin");
             const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+            const bool& passBaseline = tr.getVar<bool>("passBaseline");
 
-            double mean_0b_DY  = njWDYZ_0b   ->GetBinContent(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
-            double mean_g1b_DY = njWDYZ_g1b  ->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
-            double mean_0b_tt  = njWTTbar_0b ->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
-            double mean_g1b_tt = njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
-            
-            double rms_0b_DY  = njWDYZ_0b   ->GetBinError(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
-            double rms_g1b_DY = njWDYZ_g1b  ->GetBinError(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
-            double rms_0b_tt  = njWTTbar_0b ->GetBinError(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
-            double rms_g1b_tt = njWTTbar_g1b->GetBinError(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
-
-            if(nSearchBin >= 0 && nSearchBin < 45)
+            if(passBaseline)
             {
-                for(int iTrial = 0; iTrial < 500; ++iTrial)
+                double mean_g1b_DY = njWDYZ_g1b  ->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+            
+                double rms_g1b_DY = njWDYZ_g1b  ->GetBinError(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+
+                if(nSearchBin >= 0 && nSearchBin < 45)
                 {
-                    h[nSearchBin]->Fill(tr3.Gaus(1.0, rms_g1b_DY/mean_g1b_DY));
+                    for(int iTrial = 0; iTrial < 15000; ++iTrial)
+                    {
+                        h[nSearchBin]->Fill(tr3.Gaus(1.0, rms_g1b_DY/mean_g1b_DY), fs.getWeight());
+                    }
                 }
             }
         }
     }
+
+    TH1 *syst68 = new TH1D("syst68", "syst68", 45, 0, 45);
+    TH1 *systRMS = new TH1D("systRMS", "systRMS", 45, 0, 45);
+
+    TFile fout("syst_nJetWgt.root", "RECREATE");
+    for(int i = 0; i < 45; ++i) 
+    {
+        h[i]->Write();
+        h[i]->Scale(1/h[i]->Integral(0, h[i]->GetNbinsX() + 1));
+        double ll = -999.9, ul = -999.9;
+        TH1* hint = (TH1*)h[i]->Clone((std::string(h[i]->GetName())+"_int").c_str());
+        for(int iBin = 1; iBin <= h[i]->GetNbinsX(); ++iBin)
+        {
+            hint->SetBinContent(iBin, h[i]->Integral(0, iBin));
+            if     (ll < 0 && h[i]->Integral(0, iBin) > 0.16) ll = h[i]->GetBinCenter(iBin);
+            else if(ul < 0 && h[i]->Integral(0, iBin) > 0.84) ul = h[i]->GetBinCenter(iBin);
+        }
+        syst68->SetBinContent(i + 1, (ul - ll) / 2.0);
+        systRMS->SetBinContent(i + 1, h[i]->GetRMS());
+        //std::cout << "bin: " << i << "\tll: " << ll << "\tul: " << ul << "\tsym err: " << (ul - ll) / 2.0 << "\t:RMS: " << h[i]->GetRMS() << std::endl;
+        hint->Write();
+    }
+    syst68->Write();
+    systRMS->Write();
 }

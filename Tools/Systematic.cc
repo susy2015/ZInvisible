@@ -82,10 +82,9 @@ void SystWeights::getWeights(NTupleReader& tr)
     double rms_g1b_DY = njWDYZ_g1b  ->GetBinError(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
     double rms_0b_tt  = njWTTbar_0b ->GetBinError(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
     double rms_g1b_tt = njWTTbar_g1b->GetBinError(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
-
+    
     auto* weightedSB = new std::vector<std::pair<double, double> >();
-    auto* unweightedSB = new std::vector<int>();
-
+    
     for(int i = 0; i < 100; ++i)
     {
         double wgt_0b_DY  = tr3.Gaus(1.0, rms_0b_DY/mean_0b_DY);
@@ -98,5 +97,4 @@ void SystWeights::getWeights(NTupleReader& tr)
     }
 
     tr.registerDerivedVec("njSystWeightedSB", weightedSB);
-    tr.registerDerivedVec("njSystUnweightedSB", unweightedSB);
 }
