@@ -2,6 +2,7 @@
 #include "NTupleReader.h"
 #include "derivedTupleVariables.h"
 #include "baselineDef.h"
+#include "Systematic.h"
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
@@ -149,12 +150,14 @@ RegisterFunctionsSyst::RegisterFunctionsSyst() : RegisterFunctions()
 {
     njWeight             = new plotterFunctions::NJetWeight;
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
+    systWeights          = new SystWeights;
 }
 
 RegisterFunctionsSyst::~RegisterFunctionsSyst()
 {
     if(njWeight) delete njWeight;
     if(prepareMiniTupleVars) delete prepareMiniTupleVars;
+    if(systWeights) delete systWeights;
 }
 
 void RegisterFunctionsSyst::registerFunctions(NTupleReader& tr)
@@ -163,4 +166,5 @@ void RegisterFunctionsSyst::registerFunctions(NTupleReader& tr)
 
     tr.registerFunction(*njWeight);
     tr.registerFunction(*prepareMiniTupleVars);
+    //tr.registerFunction(*systWeights);
 }

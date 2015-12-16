@@ -6,6 +6,7 @@
 #include "NTupleReader.h"
 
 #include "TF1.h"
+#include "TRandom3.h"
 
 class Systematic
 {
@@ -24,6 +25,28 @@ private:
     TF1 * const func_;
 
     void modifyParameters(NTupleReader& tr);
+};
+
+class SystWeights
+{
+private:
+    TH1* njWTTbar_0b;
+    TH1* njWDYZ_0b;
+    TH1* njWTTbar_g1b;
+    TH1* njWDYZ_g1b;
+
+    TRandom3 tr3;
+
+    void getWeights(NTupleReader& tr);
+
+public:
+    SystWeights();
+    ~SystWeights();
+
+    void operator()(NTupleReader& tr)
+    {
+        getWeights(tr);
+    }        
 };
 
 #endif

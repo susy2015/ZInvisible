@@ -435,7 +435,7 @@ namespace plotterFunctions
             if(MCfake3b)   nJet3bfakeWgt = MCfake3b->GetBinContent(MCfake3b->FindBin(cntNJetsPt30Eta24Zinv));
 
             tr.registerDerivedVar("nJetWgtTTbar", wTT);
-            tr.registerDerivedVar("nJetWgtDYZ", wDY);
+            tr.registerDerivedVar("nJetWgtDYZ",   wDY);
 
             tr.registerDerivedVar("nJet1bfakeWgt", nJet1bfakeWgt);
             tr.registerDerivedVar("nJet2bfakeWgt", nJet2bfakeWgt);
