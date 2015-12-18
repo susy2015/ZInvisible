@@ -996,6 +996,11 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_nb0Bins(  "data",   "nb0Bins", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_nb0Bins(             "stack",  "nb0Bins", stack_MC);
     Plotter::DataCollection dcwMC_nb0Bins(            "stack",  "nb0Bins", stackw_MC);
+    // nb0BinsNW
+    Plotter::DataCollection dcData_SingleMuon_nb0BinsNW("data",   "nb0BinsNW", {dsData_SingleMuon});
+    Plotter::DataCollection dcData_DoubleEG_nb0BinsNW(  "data",   "nb0BinsNW", {dsData_DoubleEG});
+    Plotter::DataCollection dcMC_nb0BinsNW(             "stack",  "nb0BinsNW", stack_MC);
+    Plotter::DataCollection dcwMC_nb0BinsNE(            "stack",  "nb0BinsNW", stackw_MC);
     // nb0NJwBins
     Plotter::DataCollection dcData_SingleMuon_nb0NJwBins("data",   "nb0NJwBins", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_nb0NJwBins(  "data",   "nb0NJwBins", {dsData_DoubleEG});
@@ -1061,7 +1066,7 @@ int main(int argc, char* argv[])
     std::vector<std::pair<std::string,std::string>> cutlevels_MC = {
 	{"nosel",     "passNoiseEventFilterZinv"},
 	{"baseline",  "passNoiseEventFilterZinv;passBaselineNoTagZinv;!nTopCandSortedCntZinv=0"},
-	{"loose0",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+	{"loose0",    "passNoiseEventFilterZinv;passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv"},
         {"loose50",   "passNoiseEventFilterZinv;passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50"},
         {"loose100",  "passNoiseEventFilterZinv;passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100"},
         {"loose200",  "passNoiseEventFilterZinv;passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv"}
@@ -1108,8 +1113,8 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_nunu_Wgt3b_nt( "single", {{ "nTopCandSortedCntZinv3b", dsDY_nunu_SB0b_Wgt3b}, { "nTopCandSortedCntZinv", dsDY_nunu_SB3b}});
     Plotter::DataCollection dcMC_nunu_Wgt3b_mt2("single", {{"best_had_brJet_MT2Zinv3b", dsDY_nunu_SB0b_Wgt3b}, {"best_had_brJet_MT2Zinv", dsDY_nunu_SB3b}});
 
-    Plotter::DataCollection dcMC_nunu_nSearchBin(    "single", {{"nSearchBin",                      dsDY_nunu},      {"nb0Bins",                dsDY_nunu}  });
-    Plotter::DataCollection dcMC_nunu_nSearchBin_njW("single", {{"nSearchBin",                      dsDY_nunu},      {"nb0NJwBins",             dsDY_nunu}  });
+    Plotter::DataCollection dcMC_nunu_nSearchBin(    "single", {{"nSearchBin", dsDY_nunu}, {"nb0Bins",    dsDY_nunu}, {"nb0BinsNW", dsDY_nunu} });
+    Plotter::DataCollection dcMC_nunu_nSearchBin_njW("single", {{"nSearchBin", dsDY_nunu}, {"nb0NJwBins", dsDY_nunu}, {"nb0BinsNW", dsDY_nunu} });
 
     Plotter::DataCollection njetw_nSearchBin(        "single", {{"nSearchBin",                      dsDY_nunu_njet}, {"nSearchBin",             dsDY_nunu}  });
 
@@ -1177,6 +1182,7 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMC_SingleMuon_mll_"   +cut.first,  {dcData_SingleMuon_mll,   dcMC_mll},    {1, 2}, cut.second, 40, 0, 200,  true, false,  "mll",            ""));
 	vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
 	vh.push_back(PHS("DataMC_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcMC_nb0Bins},    {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcMC_nb0BinsNW},  {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
 	vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcMC_nb0NJwBins}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
 
 	// DataMC weights applied
