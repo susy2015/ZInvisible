@@ -4,6 +4,7 @@
 #include "SusyAnaTools/Tools/NTupleReader.h"
 #include "SusyAnaTools/Tools/customize.h"
 #include "SusyAnaTools/Tools/searchBins.h"
+#include "ScaleFactors.h"
 
 #include "TH1.h"
 #include "TH2.h"
@@ -434,12 +435,16 @@ namespace plotterFunctions
             if(MCfake2b)   nJet2bfakeWgt = MCfake2b->GetBinContent(MCfake2b->FindBin(cntNJetsPt30Eta24Zinv));
             if(MCfake3b)   nJet3bfakeWgt = MCfake3b->GetBinContent(MCfake3b->FindBin(cntNJetsPt30Eta24Zinv));
 
+	    double normWgt0b = ScaleFactors::sf_norm0b();
+
             tr.registerDerivedVar("nJetWgtTTbar", wTT);
             tr.registerDerivedVar("nJetWgtDYZ",   wDY);
 
             tr.registerDerivedVar("nJet1bfakeWgt", nJet1bfakeWgt);
             tr.registerDerivedVar("nJet2bfakeWgt", nJet2bfakeWgt);
             tr.registerDerivedVar("nJet3bfakeWgt", nJet3bfakeWgt);
+
+            tr.registerDerivedVar("normWgt0b", normWgt0b);
         }
 
     public:
