@@ -438,7 +438,7 @@ namespace plotterFunctions
 	    double normWgt0b = ScaleFactors::sf_norm0b();
 
             tr.registerDerivedVar("nJetWgtTTbar", wTT);
-            tr.registerDerivedVar("nJetWgtDYZ", wDY);
+            tr.registerDerivedVar("nJetWgtDYZ",   wDY);
 
             tr.registerDerivedVar("nJet1bfakeWgt", nJet1bfakeWgt);
             tr.registerDerivedVar("nJet2bfakeWgt", nJet2bfakeWgt);

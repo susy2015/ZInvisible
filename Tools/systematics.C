@@ -114,6 +114,9 @@ int main(int argc, char* argv[])
     test.bookHist(vh, fileMap["ZJetsToNuNu"]);
     static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(test, std::placeholders::_1));
 
+    Plotter::DataCollection dcDY_nunu_nJetWgtSyst( "single", {{"njSystWeightedSB", dsZ_nunu}, {"njSystUnweightedSB", dsZ_nunu}});
+    vh.emplace_back(PHS("systNJetWgtStat", {dcDY_nunu_nJetWgtSyst}, {2, 1}, "", 45, 0, 45, true, true, "Search Bin", "Events"));
+
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 

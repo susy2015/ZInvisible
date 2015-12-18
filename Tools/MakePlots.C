@@ -1206,7 +1206,7 @@ int main(int argc, char* argv[])
         vh.push_back(PHS(     "ClosureNb_nj_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_nj},       {1, 2}, cut.second,  20, 0,   20,   true,  false,  "Nj",   ""));
         vh.push_back(PHS(    "ClosureNb_nSearchBin_" + cut.first,   {dcMC_nunu_nSearchBin},     {1, 2}, cut.second,  45, 0,   45,   true,  false,  "Search Bin", "Events"));
         vh.push_back(PHS("ClosureNb_nSearchBin_njW_" + cut.first,   {dcMC_nunu_nSearchBin_njW}, {1, 2}, cut.second,  45, 0,   45,   true,  false,  "Search Bin", "Events"));
-    } 
+    }
     //MC interlude over
 
     //push the histograms in a loop, save some copy-paste time

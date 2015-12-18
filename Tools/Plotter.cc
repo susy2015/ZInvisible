@@ -380,7 +380,7 @@ void Plotter::createHistsFromTuple()
                 while(tr.getNextEvent())
                 {
                     //Things to run only on first event
-                    if(NEvtsTotal < 1)
+                    if(tr.IsFirstEvent())
                     {
                         //Initialize the mini tuple branches, needs to be done after first call of tr.getNextEvent()
                         if(tOut && mtm)
