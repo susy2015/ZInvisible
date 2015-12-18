@@ -1123,7 +1123,7 @@ int main(int argc, char* argv[])
     std::vector<std::pair<std::string,std::string>> cutlevels_MC = {
 	{"nosel",     "passNoiseEventFilterZinv"},
 	{"baseline",  "passNoiseEventFilterZinv;passBaselineNoTagZinv;!nTopCandSortedCntZinv=0"},
-	{"loose0",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+	{"loose0",    "passNoiseEventFilterZinv;passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv"},
         {"loose50",   "passNoiseEventFilterZinv;passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>50"},
         {"loose100",  "passNoiseEventFilterZinv;passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100"},
         {"loose200",  "passNoiseEventFilterZinv;passLeptVeto;HTZinv>200;passnJetsZinv;passdPhisZinv;passMETZinv"}
@@ -1170,8 +1170,8 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_nunu_Wgt3b_nt( "single", {{ "nTopCandSortedCntZinv3b", dsDY_nunu_SB0b_Wgt3b}, { "nTopCandSortedCntZinv", dsDY_nunu_SB3b}});
     Plotter::DataCollection dcMC_nunu_Wgt3b_mt2("single", {{"best_had_brJet_MT2Zinv3b", dsDY_nunu_SB0b_Wgt3b}, {"best_had_brJet_MT2Zinv", dsDY_nunu_SB3b}});
 
-    Plotter::DataCollection dcMC_nunu_nSearchBin(    "single", {{"nSearchBin",                      dsDY_nunu},      {"nb0Bins",                dsDY_nunu}  });
-    Plotter::DataCollection dcMC_nunu_nSearchBin_njW("single", {{"nSearchBin",                      dsDY_nunu},      {"nb0NJwBins",             dsDY_nunu}  });
+    Plotter::DataCollection dcMC_nunu_nSearchBin(    "single", {{"nSearchBin", dsDY_nunu}, {"nb0Bins",    dsDY_nunu}, {"nb0BinsNW", dsDY_nunu} });
+    Plotter::DataCollection dcMC_nunu_nSearchBin_njW("single", {{"nSearchBin", dsDY_nunu}, {"nb0NJwBins", dsDY_nunu}, {"nb0BinsNW", dsDY_nunu} });
 
     Plotter::DataCollection njetw_nSearchBin(        "single", {{"nSearchBin",                      dsDY_nunu_njet}, {"nSearchBin",             dsDY_nunu}  });
 

@@ -93,7 +93,7 @@ void SystWeights::getWeights(NTupleReader& tr)
         double wgt_g1b_tt = tr3.Gaus(1.0, rms_g1b_tt/mean_g1b_tt);
         
         weightedSB->emplace_back(std::make_pair(static_cast<double>(nSearchBin), wgt_0b_DY*wgt_g1b_DY*wgt_0b_tt*wgt_g1b_tt));
-        unweightedSB->emplace_back(nSearchBin);
+        //unweightedSB->emplace_back(nSearchBin);
     }
 
     tr.registerDerivedVec("njSystWeightedSB", weightedSB);
