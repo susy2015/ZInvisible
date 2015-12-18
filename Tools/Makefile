@@ -23,7 +23,8 @@ LIBS       = $(shell root-config --glibs)
 MT2LIB     = -L$(CMSSW_BASE)/lib/${SCRAM_ARCH}/ -lrecipeAUXOxbridgeMT2
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
-PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst
+
+PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot
 
 all: mkobj sampPyWrap $(PROGRAMS)
 
@@ -69,6 +70,9 @@ systematics: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Systematic.o  $(OD
 
 nJetWgtSyst: $(ODIR)/NTupleReader.o $(ODIR)/nJetWgtSyst.o $(ODIR)/samples.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
+
+moneyplot: $(ODIR)/moneyplot.o
+	$(LD) $^ $(LIBS) -o $@
 
 clean:
 	rm -f $(ODIR)/*.o $(ODIR)/*.so $(ODIR)/*.d $(PROGRAMS) core 
