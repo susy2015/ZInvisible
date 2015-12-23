@@ -793,6 +793,17 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",                "");
     Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "",                "genWeight");
     std::vector<Plotter::DatasetSummary> stack_MC = {dsDY, dsDYInc, dstt2l, dstW, dsttZ, dsVV, dsRare};
+    // eff*Acc*B(Z)/B(DY)
+    Plotter::DatasetSummary dsData_SingleMuon_effAcc("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dsData_DoubleEG_effAcc(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dsDY_effAcc(             "DY",         fileMap["DYJetsToLL"],      "",                "zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dsDYInc_effAcc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dstt2l_effAcc(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dstW_effAcc(             "single top", fileMap["tW"],              "",                "zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dsttZ_effAcc(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
+    Plotter::DatasetSummary dsVV_effAcc(             "Diboson",    fileMap["Diboson"],         "",                "zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dsRare_effAcc(           "Rare",       fileMap["Rare"],            "",                "zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
+    std::vector<Plotter::DatasetSummary> stack_MC_effAcc = {dsDY_effAcc, dsDYInc_effAcc, dstt2l_effAcc, dstW_effAcc, dsttZ_effAcc, dsVV_effAcc, dsRare_effAcc};
     // 1 fake b weight
     Plotter::DatasetSummary dsData_SingleMuon_w1b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight1fakebComb");
     Plotter::DatasetSummary dsData_DoubleEG_w1b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight1fakebComb");
@@ -1051,6 +1062,10 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_nb0NJwBins(             "stack",  "nb0NJwBins", stack_MC);
     Plotter::DataCollection dcwMC_nb0NJwBins(            "stack",  "nb0NJwBins", stackw_MC);
     Plotter::DataCollection dcwwMC_nb0NJwBins(           "stack",  "nb0NJwBins", stackww_MC);
+    // nb0NJwBins DY->Z
+    Plotter::DataCollection dcData_SingleMuon_nb0NJwBins_effAcc("data",   "nb0NJwBins", {dsData_SingleMuon_effAcc});
+    Plotter::DataCollection dcData_DoubleEG_nb0NJwBins_effAcc(  "data",   "nb0NJwBins", {dsData_DoubleEG_effAcc});
+    Plotter::DataCollection dcMC_nb0NJwBins_effAcc(             "stack",  "nb0NJwBins", stack_MC_effAcc);
 
 
     // pair of cutlevels
@@ -1170,8 +1185,8 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_nunu_Wgt3b_nt( "single", {{ "nTopCandSortedCntZinv3b", dsDY_nunu_SB0b_Wgt3b}, { "nTopCandSortedCntZinv", dsDY_nunu_SB3b}});
     Plotter::DataCollection dcMC_nunu_Wgt3b_mt2("single", {{"best_had_brJet_MT2Zinv3b", dsDY_nunu_SB0b_Wgt3b}, {"best_had_brJet_MT2Zinv", dsDY_nunu_SB3b}});
 
-    Plotter::DataCollection dcMC_nunu_nSearchBin(    "single", {{"nSearchBin", dsDY_nunu}, {"nb0Bins",    dsDY_nunu}, {"nb0BinsNW", dsDY_nunu} });
-    Plotter::DataCollection dcMC_nunu_nSearchBin_njW("single", {{"nSearchBin", dsDY_nunu}, {"nb0NJwBins", dsDY_nunu}, {"nb0BinsNW", dsDY_nunu} });
+    Plotter::DataCollection dcMC_nunu_nSearchBin(    "single", {{"nSearchBin", dsDY_nunu},      {"nb0Bins",    dsDY_nunu},      {"nb0BinsNW", dsDY_nunu} });
+    Plotter::DataCollection dcMC_nunu_nSearchBin_njW("single", {{"nSearchBin", dsDY_nunu_njet}, {"nb0NJwBins", dsDY_nunu_njet}, {"nb0BinsNW", dsDY_nunu_njet} });
 
     Plotter::DataCollection njetw_nSearchBin(        "single", {{"nSearchBin",                      dsDY_nunu_njet}, {"nSearchBin",             dsDY_nunu}  });
 
@@ -1213,34 +1228,35 @@ int main(int argc, char* argv[])
     for(std::pair<std::string,std::string>& cut : cutlevels_muon)
     {
 	// unweighted
-	vh.push_back(PHS("DataMC_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcMC_met},    {1, 2}, cut.second, 50, 0, 1500, true, false,  "met",            ""));
-	vh.push_back(PHS("DataMC_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcMC_ht},     {1, 2}, cut.second, 50, 0, 1500, true, false,  "ht",             ""));
-	vh.push_back(PHS("DataMC_SingleMuon_mht_"   +cut.first,  {dcData_SingleMuon_mht,   dcMC_mht},    {1, 2}, cut.second, 50, 0, 1500, true, false,  "mht",            ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nt_"    +cut.first,  {dcData_SingleMuon_nt,    dcMC_nt},     {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop",           ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nt1b_"  +cut.first,  {dcData_SingleMuon_nt1b,  dcMC_nt1b},   {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (1b fake)", ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nt2b_"  +cut.first,  {dcData_SingleMuon_nt2b,  dcMC_nt2b},   {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (2b fake)", ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nt3b_"  +cut.first,  {dcData_SingleMuon_nt3b,  dcMC_nt3b},   {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (3b fake)", ""));
-	vh.push_back(PHS("DataMC_SingleMuon_mt2_"   +cut.first,  {dcData_SingleMuon_mt2,   dcMC_mt2},    {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2",            ""));
-	vh.push_back(PHS("DataMC_SingleMuon_mt21b_" +cut.first,  {dcData_SingleMuon_mt21b, dcMC_mt21b},  {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (1b fake)",  ""));
-	vh.push_back(PHS("DataMC_SingleMuon_mt22b_" +cut.first,  {dcData_SingleMuon_mt22b, dcMC_mt22b},  {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (2b fake)",  ""));
-	vh.push_back(PHS("DataMC_SingleMuon_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcMC_mt23b},  {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (3b fake)",  ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nb_"    +cut.first,  {dcData_SingleMuon_nb,    dcMC_nb},     {1, 2}, cut.second, 10, 0, 10,   true, false,  "Nb",             ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nj_"    +cut.first,  {dcData_SingleMuon_nj,    dcMC_nj},     {1, 2}, cut.second, 20, 0, 20,   true, false,  "Nj",             ""));
-	vh.push_back(PHS("DataMC_SingleMuon_jpt_"   +cut.first,  {dcData_SingleMuon_jpt,   dcMC_jpt},    {1, 2}, cut.second, 50, 0, 1500, true, false,  "jet pt",         ""));
-	vh.push_back(PHS("DataMC_SingleMuon_j1pt_"  +cut.first,  {dcData_SingleMuon_j1pt,  dcMC_j1pt},   {1, 2}, cut.second, 50, 0, 1500, true, false,  "jet1 pt",        ""));
-	vh.push_back(PHS("DataMC_SingleMuon_j2pt_"  +cut.first,  {dcData_SingleMuon_j2pt,  dcMC_j2pt},   {1, 2}, cut.second, 50, 0, 1500, true, false,  "jet2 pt",        ""));
-	vh.push_back(PHS("DataMC_SingleMuon_j3pt_"  +cut.first,  {dcData_SingleMuon_j3pt,  dcMC_j3pt},   {1, 2}, cut.second, 50, 0, 1500, true, false,  "jet3 pt",        ""));
-	vh.push_back(PHS("DataMC_SingleMuon_mupt_"  +cut.first,  {dcData_SingleMuon_mupt,  dcMC_mupt},   {1, 2}, cut.second, 50, 0, 1000, true, false,  "mu pt",          ""));
-	vh.push_back(PHS("DataMC_SingleMuon_mu1pt_" +cut.first,  {dcData_SingleMuon_mu1pt, dcMC_mu1pt},  {1, 2}, cut.second, 50, 0, 1000, true, false,  "mu1 pt",         ""));
-	vh.push_back(PHS("DataMC_SingleMuon_mu2pt_" +cut.first,  {dcData_SingleMuon_mu2pt, dcMC_mu2pt},  {1, 2}, cut.second, 50, 0, 1000, true, false,  "mu2 pt",         ""));
-	vh.push_back(PHS("DataMC_SingleMuon_elpt_"  +cut.first,  {dcData_SingleMuon_elpt,  dcMC_elpt},   {1, 2}, cut.second, 50, 0, 1000, true, false,  "el pt",          ""));
-	vh.push_back(PHS("DataMC_SingleMuon_el1pt_" +cut.first,  {dcData_SingleMuon_el1pt, dcMC_el1pt},  {1, 2}, cut.second, 50, 0, 1000, true, false,  "el1 pt",         ""));
-	vh.push_back(PHS("DataMC_SingleMuon_el2pt_" +cut.first,  {dcData_SingleMuon_el2pt, dcMC_el2pt},  {1, 2}, cut.second, 50, 0, 1000, true, false,  "el2 pt",         ""));
-	vh.push_back(PHS("DataMC_SingleMuon_mll_"   +cut.first,  {dcData_SingleMuon_mll,   dcMC_mll},    {1, 2}, cut.second, 40, 0, 200,  true, false,  "mll",            ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcMC_nb0Bins},    {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcMC_nb0BinsNW},  {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcMC_nb0NJwBins}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
+	vh.push_back(PHS("DataMC_SingleMuon_met_"        +cut.first,  {dcData_SingleMuon_met,   dcMC_met},             {1, 2}, cut.second, 50, 0, 1500, true, false,  "met",            ""));
+	vh.push_back(PHS("DataMC_SingleMuon_ht_"         +cut.first,  {dcData_SingleMuon_ht,    dcMC_ht},              {1, 2}, cut.second, 50, 0, 1500, true, false,  "ht",             ""));
+	vh.push_back(PHS("DataMC_SingleMuon_mht_"        +cut.first,  {dcData_SingleMuon_mht,   dcMC_mht},             {1, 2}, cut.second, 50, 0, 1500, true, false,  "mht",            ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nt_"         +cut.first,  {dcData_SingleMuon_nt,    dcMC_nt},              {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop",           ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nt1b_"       +cut.first,  {dcData_SingleMuon_nt1b,  dcMC_nt1b},            {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (1b fake)", ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nt2b_"       +cut.first,  {dcData_SingleMuon_nt2b,  dcMC_nt2b},            {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (2b fake)", ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nt3b_"       +cut.first,  {dcData_SingleMuon_nt3b,  dcMC_nt3b},            {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (3b fake)", ""));
+	vh.push_back(PHS("DataMC_SingleMuon_mt2_"        +cut.first,  {dcData_SingleMuon_mt2,   dcMC_mt2},             {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2",            ""));
+	vh.push_back(PHS("DataMC_SingleMuon_mt21b_"      +cut.first,  {dcData_SingleMuon_mt21b, dcMC_mt21b},           {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (1b fake)",  ""));
+	vh.push_back(PHS("DataMC_SingleMuon_mt22b_"      +cut.first,  {dcData_SingleMuon_mt22b, dcMC_mt22b},           {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (2b fake)",  ""));
+	vh.push_back(PHS("DataMC_SingleMuon_mt23b_"      +cut.first,  {dcData_SingleMuon_mt23b, dcMC_mt23b},           {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (3b fake)",  ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nb_"         +cut.first,  {dcData_SingleMuon_nb,    dcMC_nb},              {1, 2}, cut.second, 10, 0, 10,   true, false,  "Nb",             ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nj_"         +cut.first,  {dcData_SingleMuon_nj,    dcMC_nj},              {1, 2}, cut.second, 20, 0, 20,   true, false,  "Nj",             ""));
+	vh.push_back(PHS("DataMC_SingleMuon_jpt_"        +cut.first,  {dcData_SingleMuon_jpt,   dcMC_jpt},             {1, 2}, cut.second, 50, 0, 1500, true, false,  "jet pt",         ""));
+	vh.push_back(PHS("DataMC_SingleMuon_j1pt_"       +cut.first,  {dcData_SingleMuon_j1pt,  dcMC_j1pt},            {1, 2}, cut.second, 50, 0, 1500, true, false,  "jet1 pt",        ""));
+	vh.push_back(PHS("DataMC_SingleMuon_j2pt_"       +cut.first,  {dcData_SingleMuon_j2pt,  dcMC_j2pt},            {1, 2}, cut.second, 50, 0, 1500, true, false,  "jet2 pt",        ""));
+	vh.push_back(PHS("DataMC_SingleMuon_j3pt_"       +cut.first,  {dcData_SingleMuon_j3pt,  dcMC_j3pt},            {1, 2}, cut.second, 50, 0, 1500, true, false,  "jet3 pt",        ""));
+	vh.push_back(PHS("DataMC_SingleMuon_mupt_"       +cut.first,  {dcData_SingleMuon_mupt,  dcMC_mupt},            {1, 2}, cut.second, 50, 0, 1000, true, false,  "mu pt",          ""));
+	vh.push_back(PHS("DataMC_SingleMuon_mu1pt_"      +cut.first,  {dcData_SingleMuon_mu1pt, dcMC_mu1pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  "mu1 pt",         ""));
+	vh.push_back(PHS("DataMC_SingleMuon_mu2pt_"      +cut.first,  {dcData_SingleMuon_mu2pt, dcMC_mu2pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  "mu2 pt",         ""));
+	vh.push_back(PHS("DataMC_SingleMuon_elpt_"       +cut.first,  {dcData_SingleMuon_elpt,  dcMC_elpt},            {1, 2}, cut.second, 50, 0, 1000, true, false,  "el pt",          ""));
+	vh.push_back(PHS("DataMC_SingleMuon_el1pt_"      +cut.first,  {dcData_SingleMuon_el1pt, dcMC_el1pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  "el1 pt",         ""));
+	vh.push_back(PHS("DataMC_SingleMuon_el2pt_"      +cut.first,  {dcData_SingleMuon_el2pt, dcMC_el2pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  "el2 pt",         ""));
+	vh.push_back(PHS("DataMC_SingleMuon_mll_"        +cut.first,  {dcData_SingleMuon_mll,   dcMC_mll},             {1, 2}, cut.second, 40, 0, 200,  true, false,  "mll",            ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,   true, false,  "Search Bin",     ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcMC_nb0Bins},    {1, 2}, cut.second, 45, 0, 45,   true, false,  "Search Bin",     ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcMC_nb0BinsNW},  {1, 2}, cut.second, 45, 0, 45,   true, false,  "Search Bin",     ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcMC_nb0NJwBins}, {1, 2}, cut.second, 45, 0, 45,   true, false,  "Search Bin",     ""));
+        vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_effAcc_" +cut.first,  {dcData_SingleMuon_nb0NJwBins_effAcc, dcMC_nb0NJwBins_effAcc}, {1, 2}, cut.second, 45, 0, 45,   true, false,  "Search Bin",     ""));
 
 	// DataMC weights applied
 	vh.push_back(PHS("DataMCw_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},   {1, 2}, cut.second, 50, 0, 1500, true, false,  "met",            ""));

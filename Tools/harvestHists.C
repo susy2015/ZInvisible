@@ -209,20 +209,47 @@ int main ()
     fout->Close();
 
     fout = new TFile("syst_searchBinStats.root", "RECREATE");
-    TH1 *h_nSB_NW = (TH1*)fin2->Get("nb0BinsNW/ClosureNb_nSearchBin_baselinenb0BinsNWnb0BinsNWZ#rightarrow#nu#nusingle");
-    TH1 *h_nSB =    (TH1*)fin2->Get("nb0NJwBins/ClosureNb_nSearchBin_njW_baselinenb0NJwBinsnb0NJwBinsZ#rightarrow#nu#nusingle");
+    TH1 *h_nSB_NW = (TH1*)fin2->Get("nb0BinsNW/DataMCww_SingleMuon_nb0BinsNW_muZinv_0b_blnotagnb0BinsNWnb0BinsNWDYstack")->Clone("h_nSB_MC_NW");
+    TH1 *h_nSB =    (TH1*)fin2->Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu DataMC weightsingle")->Clone("h_nSB_MC_pred");
     
-    TFile *fin3 = new TFile("dataplots_muon_Dec15.root");
+    TFile *fin3 = new TFile("condor/histoutput.root");
+    //TFile *fin3 = new TFile("dataplots_muon_Dec15.root");
     
-    TH1 *h_nSB_Data_0b = (TH1*)fin3->Get("nb0Bins/DataMC_SingleMuon_nb0Bins_muZinv_0b_blnotagnb0Binsnb0BinsDatadata")->Clone();
+    TH1 *h_nSB_Data_0b = (TH1*)fin3->Get("nb0BinsNW/DataMCww_SingleMuon_nb0BinsNW_muZinv_0b_blnotagnb0BinsNWnb0BinsNWDatadata")->Clone("h_nSB_Data_0b");
     h_nSB_Data_0b->Sumw2(false);
     h_nSB_Data_0b->SetBinErrorOption(TH1::kPoisson);
 
-    
+    TH1 *h_nSB_ratio = (TH1*)h_nSB->Clone("h_nSB_ratio");
+    h_nSB_ratio->Divide(h_nSB_NW);
+
+    TH1 *h_nSB_DDest = (TH1*)h_nSB_Data_0b->Clone("h_nSB_DDest");
+    h_nSB_DDest->Multiply(h_nSB_ratio);
+
+    TH1 *h_nSB_uncertUp = (TH1*)h_nSB_Data_0b->Clone("h_nSB_uncertUp");
+    TH1 *h_nSB_uncertDn = (TH1*)h_nSB_Data_0b->Clone("h_nSB_uncertDn");
+
+    printf("%8s  %8s  %8s  %8s  %8s  %8s  %8s  %8s  %8s\n", "bin", "data", "data up", "data dn", "ratio", "MC noWgt", "MC pred", "pred up", "pred dn");
+    for(int i = 1; i <= h_nSB_ratio->GetNbinsX(); ++i)
+    {
+        h_nSB_uncertUp->SetBinContent(i, h_nSB_Data_0b->GetBinErrorUp(i)  * h_nSB_ratio->GetBinContent(i));
+        h_nSB_uncertDn->SetBinContent(i, h_nSB_Data_0b->GetBinErrorLow(i) * h_nSB_ratio->GetBinContent(i));
+        printf("%8i  %8.0lf  +%7.4lf  -%7.4lf  %8.4lf  %8.4lf  %8.4lf  +%7.4lf  -%7.4lf\n", i - 1, h_nSB_Data_0b->GetBinContent(i), h_nSB_Data_0b->GetBinErrorUp(i), h_nSB_Data_0b->GetBinErrorLow(i), h_nSB_ratio->GetBinContent(i), h_nSB_NW->GetBinContent(i), h_nSB->GetBinContent(i), (h_nSB_Data_0b->GetBinErrorUp(i)  * h_nSB_ratio->GetBinContent(i)), (h_nSB_Data_0b->GetBinErrorLow(i)  * h_nSB_ratio->GetBinContent(i)));
+    }
+
+    TH1 *h_nSB_uncertUp_ratio = (TH1*)h_nSB_uncertUp->Clone("h_nSB_uncertUp_ratio");
+    TH1 *h_nSB_uncertDn_ratio = (TH1*)h_nSB_uncertDn->Clone("h_nSB_uncertDn_ratio");
+
+    h_nSB_uncertUp_ratio->Divide(h_nSB);
+    h_nSB_uncertDn_ratio->Divide(h_nSB);
 
     fout->cd();
     h_nSB_Data_0b->Write();
     h_nSB_NW->Write();
     h_nSB->Write();
-    
+    h_nSB_ratio->Write();
+    h_nSB_DDest->Write();
+    h_nSB_uncertUp->Write();
+    h_nSB_uncertDn->Write();
+    h_nSB_uncertUp_ratio->Write();
+    h_nSB_uncertDn_ratio->Write();
 }
