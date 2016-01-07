@@ -46,7 +46,13 @@ int main(int argc, char* argv[])
 
     TFile* f2 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_nJetWgt.root");
     TH1D* h2 = (TH1D*)f2->Get("syst68");
+
+    TFile* f3 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_searchBinStats.root");
+    TH1D* h3_up = (TH1D*)f3->Get("h_nSB_uncertUp");
+    TH1D* h3_dn = (TH1D*)f3->Get("h_nSB_uncertDn");
+
     //TGraphAsymmErrors* g1 = (TGraphAsymmErrors*)f2->Get("");
+    TGraphAsymmErrors* g3 = new TGraphAsymmErrors();
     const int n = h2->GetNbinsX();
     double x[n];
     double y[n];
@@ -69,6 +75,9 @@ int main(int argc, char* argv[])
 	e2_temp = y[i-1]*h2->GetBinContent(i);
 	eyl_2[i-1] = sqrt(eyl_1[i-1]*eyl_1[i-1] + e2_temp*e2_temp);
 	eyh_2[i-1] = sqrt(eyh_1[i-1]*eyh_1[i-1] + e2_temp*e2_temp);
+      
+        g3->SetPoint(i - 1, h1->GetBinCenter(i), h1->GetBinContent(i));
+        g3->SetPointError(i - 1, 0.5, 0.5, h3_dn->GetBinContent(i), h3_up->GetBinContent(i));
 	std::cout << "bin " << i << ", rel unc (njet): " << h2->GetBinContent(i) << ", rel unc (norm): " << rel_unc_2  << "" << std::endl;
     }
 
@@ -151,6 +160,9 @@ int main(int argc, char* argv[])
     g2->SetFillColor(kCyan-6);
     sprintf(legEntry, "%s", "Njet reweighting unc.");
     leg->AddEntry(g2, legEntry);
+    g3->SetFillColor(kMagenta);
+    sprintf(legEntry, "%s", "N(b) data unc.");
+    leg->AddEntry(g3, legEntry);
     //sprintf(legEntry, "%s", "unc. bla3 ");
     //leg->AddEntry(g1, legEntry);
 
@@ -166,7 +178,7 @@ int main(int argc, char* argv[])
 	    double scale = (log10(lmax) - log10(locMin)) / (legMin - log10(locMin));
 	    max = pow(max/locMin, scale)*locMin;
 	}
-	dummy->GetYaxis()->SetRangeUser(locMin, 5*max);
+	dummy->GetYaxis()->SetRangeUser(locMin, 50*max);
     }
     else
     {
@@ -178,6 +190,7 @@ int main(int argc, char* argv[])
 
     dummy->Draw();
     
+    g3->Draw("2 same");
     g2->Draw("2 same");
     g1->Draw("2 same");
     h1->Draw("histsame");

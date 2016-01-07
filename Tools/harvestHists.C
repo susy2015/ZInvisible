@@ -211,6 +211,12 @@ int main ()
     fout = new TFile("syst_searchBinStats.root", "RECREATE");
     TH1 *h_nSB_NW = (TH1*)fin2->Get("nb0BinsNW/DataMCww_SingleMuon_nb0BinsNW_muZinv_0b_blnotagnb0BinsNWnb0BinsNWDYstack")->Clone("h_nSB_MC_NW");
     TH1 *h_nSB =    (TH1*)fin2->Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu DataMC weightsingle")->Clone("h_nSB_MC_pred");
+
+    TH1 *h_nSB_ZZ_NW = (TH1*)fin2->Get("nb0BinsNW/ClosureNb_nSearchBin_njW_baselinenb0BinsNWnb0BinsNWZ#rightarrow#nu#nu DataMC weightsingle")->Clone("h_nSB_ZZ_MC_NW");
+    TH1 *h_nSB_ZZ =    (TH1*)fin2->Get("nb0Bins/ClosureNb_nSearchBin_baselinenb0Binsnb0BinsZ#rightarrow#nu#nusingle")->Clone("h_nSB_ZZ_MC_pred");
+
+    TH1 *h_nSB_DY_NW = (TH1*)fin2->Get("nb0Bins/nSearchBin_stat_lognb0Binsnb0BinsDY#rightarrow#mu#musingle")->Clone("h_nSB_DY_MC_NW");
+    TH1 *h_nSB_DY =    (TH1*)fin2->Get("nb0Bins/nSearchBinnb0_lognb0Binsnb0BinsDY#rightarrow#mu#mu no #mu, Z eff+accsingle")->Clone("h_nSB_DY_MC_pred");
     
     TFile *fin3 = new TFile("condor/histoutput.root");
     //TFile *fin3 = new TFile("dataplots_muon_Dec15.root");
@@ -222,18 +228,27 @@ int main ()
     TH1 *h_nSB_ratio = (TH1*)h_nSB->Clone("h_nSB_ratio");
     h_nSB_ratio->Divide(h_nSB_NW);
 
+    TH1 *h_nSB_ZZ_ratio = (TH1*)h_nSB->Clone("h_nSB_ZZ_ratio");
+    h_nSB_ZZ_ratio->Divide(h_nSB_ZZ_NW);
+
+    TH1 *h_nSB_DY_ratio = (TH1*)h_nSB->Clone("h_nSB_DY_ratio");
+    h_nSB_DY_ratio->Divide(h_nSB_DY_NW);
+
+    TH1 *h_nSB_ratio2 = (TH1*)h_nSB_ZZ_ratio->Clone("h_nSB_DY_ratio2");
+    h_nSB_ratio2->Multiply(h_nSB_DY_ratio);
+
     TH1 *h_nSB_DDest = (TH1*)h_nSB_Data_0b->Clone("h_nSB_DDest");
     h_nSB_DDest->Multiply(h_nSB_ratio);
 
     TH1 *h_nSB_uncertUp = (TH1*)h_nSB_Data_0b->Clone("h_nSB_uncertUp");
     TH1 *h_nSB_uncertDn = (TH1*)h_nSB_Data_0b->Clone("h_nSB_uncertDn");
 
-    printf("%8s  %8s  %8s  %8s  %8s  %8s  %8s  %8s  %8s\n", "bin", "data", "data up", "data dn", "ratio", "MC noWgt", "MC pred", "pred up", "pred dn");
-    for(int i = 1; i <= h_nSB_ratio->GetNbinsX(); ++i)
+    printf("%8s  %8s  %8s  %8s  %8s  %8s  %8s  %8s  %8s  %8s\n", "bin", "data", "data up", "data dn", "ratio", "MC noWgt", "MC pred", "pred up", "pred dn", "% uncert");
+    for(int i = 1; i <= h_nSB_ratio2->GetNbinsX(); ++i)
     {
-        h_nSB_uncertUp->SetBinContent(i, h_nSB_Data_0b->GetBinErrorUp(i)  * h_nSB_ratio->GetBinContent(i));
-        h_nSB_uncertDn->SetBinContent(i, h_nSB_Data_0b->GetBinErrorLow(i) * h_nSB_ratio->GetBinContent(i));
-        printf("%8i  %8.0lf  +%7.4lf  -%7.4lf  %8.4lf  %8.4lf  %8.4lf  +%7.4lf  -%7.4lf\n", i - 1, h_nSB_Data_0b->GetBinContent(i), h_nSB_Data_0b->GetBinErrorUp(i), h_nSB_Data_0b->GetBinErrorLow(i), h_nSB_ratio->GetBinContent(i), h_nSB_NW->GetBinContent(i), h_nSB->GetBinContent(i), (h_nSB_Data_0b->GetBinErrorUp(i)  * h_nSB_ratio->GetBinContent(i)), (h_nSB_Data_0b->GetBinErrorLow(i)  * h_nSB_ratio->GetBinContent(i)));
+        h_nSB_uncertUp->SetBinContent(i, h_nSB_Data_0b->GetBinErrorUp(i)  * h_nSB_ratio2->GetBinContent(i));
+        h_nSB_uncertDn->SetBinContent(i, h_nSB_Data_0b->GetBinErrorLow(i) * h_nSB_ratio2->GetBinContent(i));
+        printf("%8i  %8.0lf  +%7.4lf  -%7.4lf  %8.4lf  %8.4lf  %8.4lf  +%7.4lf  -%7.4lf  %8.1lf\n", i - 1, h_nSB_Data_0b->GetBinContent(i), h_nSB_Data_0b->GetBinErrorUp(i), h_nSB_Data_0b->GetBinErrorLow(i), h_nSB_ratio2->GetBinContent(i), h_nSB_NW->GetBinContent(i), h_nSB->GetBinContent(i), (h_nSB_Data_0b->GetBinErrorUp(i)  * h_nSB_ratio2->GetBinContent(i)), (h_nSB_Data_0b->GetBinErrorLow(i)  * h_nSB_ratio2->GetBinContent(i)), 100.0 * (h_nSB_Data_0b->GetBinErrorUp(i)  * h_nSB_ratio2->GetBinContent(i))/h_nSB->GetBinContent(i));
     }
 
     TH1 *h_nSB_uncertUp_ratio = (TH1*)h_nSB_uncertUp->Clone("h_nSB_uncertUp_ratio");
@@ -252,4 +267,7 @@ int main ()
     h_nSB_uncertDn->Write();
     h_nSB_uncertUp_ratio->Write();
     h_nSB_uncertDn_ratio->Write();
+    h_nSB_ZZ_ratio->Write();
+    h_nSB_DY_ratio->Write();
+    h_nSB_ratio2->Write();
 }
