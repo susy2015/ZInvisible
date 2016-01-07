@@ -1,0 +1,64 @@
+#include "../../SusyAnaTools/Tools/NTupleReader.h"
+#include "RegisterFunctions.h"
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+#include "TH1.h"
+#include "TH2.h"
+#include "TTree.h"
+#include "TCanvas.h"
+#include "TLegend.h"
+
+int main()
+{
+    TFile *f = TFile::Open("condor/minituple.root");
+
+    std::vector<std::string> treeNames = {"ZJetsToNuNu_HT-100To200_13TeV-madgraph", "ZJetsToNuNu_HT-200To400_13TeV-madgraph", "ZJetsToNuNu_HT-400To600_13TeV-madgraph", "ZJetsToNuNu_HT-600ToInf_13TeV-madgraph"};
+
+    TCanvas c("c","c",800, 800);
+    
+    TLegend *leg = new TLegend(0.60, 0.60, 0.90, 0.90);
+
+    TH2 *h = new TH2D("met_vs_ht", "hist", 50, 0, 1500, 50, 0, 1500);
+    TH2 *h2 = new TH2D("met_vs_mt2", "hist", 50, 0, 1500, 50, 0, 1500);
+
+    for(auto& treeName : treeNames)
+    {
+        TTree * t = (TTree*)f->Get(treeName.c_str());
+
+        RegisterFunctions2Dplot pvtm;
+
+        NTupleReader tr(t);
+        pvtm.registerFunctions(tr);
+
+        while(tr.getNextEvent())
+        {
+            const double& HT = tr.getVar<double>("HTZinv");
+            const double& cleanMetPt = tr.getVar<double>("cleanMetPt");
+            const double& best_had_brJet_MT2Zinv = tr.getVar<double>("best_had_brJet_MT2Zinv");
+
+            const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
+            const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
+            const bool& passnJetsZinv = tr.getVar<bool>("passnJetsZinv");
+            const bool& passdPhisZinv = tr.getVar<bool>("passdPhisZinv");
+
+            //std::cout << passNoiseEventFilterZinv << "\t" << passMuZinvSel << "\t" << passnJetsZinv << "\t" << passdPhisZinv << "\t" << (HT > 200) << std::endl;
+
+            if(passNoiseEventFilterZinv && passnJetsZinv && passdPhisZinv && HT > 200)
+            {
+                h->Fill(HT, cleanMetPt);
+                h2->Fill(best_had_brJet_MT2Zinv, cleanMetPt);
+            }
+            
+        }
+
+   }
+
+    TFile *fout = new TFile("test2dHist.root", "RECREATE");
+    h->Write();
+    h2->Write();
+    fout->Close();
+
+}

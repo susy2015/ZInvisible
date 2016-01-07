@@ -445,7 +445,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection scaled_elec_nBottom(     "single", {{"cntCSVSZinv",            dsDY_nunu},            {"cntCSVSZinv", dsDY_ee_zAcc_scaled} });
 
     Plotter::DataCollection scaled_nSearchBin(     "single", {{"nSearchBin", dsDY_nunu},             {"nSearchBin", dsDY_ll_zAcc_scaled}  });
-    Plotter::DataCollection scaled_nSearchBin_stat("single", {{"nSearchBin", dsDY_ll},               {"nb0BinsNW",  dsDY_ll}              });
+    Plotter::DataCollection scaled_nSearchBin_stat("single", {{"nSearchBin", dsDY_ll},               {"nb0BinsNW",  dsDY_ll},             {"nb0Bins",  dsDY_ll} });
     Plotter::DataCollection scaled_nSearchBinNb0(  "single", {{"nSearchBin", dsDY_nunu},             {"nb0Bins",    dsDY_ll_zAcc_scaled}  });
     Plotter::DataCollection scaled_nSearchBinNb0ZZ("single", {{"nSearchBin", dsDY_nunu_SBMb},        {"nb0Bins",    dsDY_nunu_SB0b}       });
 
@@ -1259,7 +1259,9 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_effAcc_" +cut.first,  {dcData_SingleMuon_nb0NJwBins_effAcc, dcMC_nb0NJwBins_effAcc}, {1, 2}, cut.second, 45, 0, 45,   true, false,  "Search Bin",     ""));
 
 	// DataMC weights applied
+        vector<double> metBins = {0, 50, 100, 150, 200, 275, 300, 350, 400, 450, 2000};
 	vh.push_back(PHS("DataMCw_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},   {1, 2}, cut.second, 50, 0, 1500, true, false,  "met",            ""));
+	vh.push_back(PHS("DataMCw_SingleMuon_rebin_met_" +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},   {1, 2}, cut.second, metBins, true, false,  "met",            ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwMC_ht},    {1, 2}, cut.second, 50, 0, 1500, true, false,  "ht",             ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_mht_"   +cut.first,  {dcData_SingleMuon_mht,   dcwMC_mht},   {1, 2}, cut.second, 50, 0, 1500, true, false,  "mht",            ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_nt_"    +cut.first,  {dcData_SingleMuon_nt,    dcwMC_nt},    {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop",           ""));
@@ -1402,29 +1404,29 @@ int main(int argc, char* argv[])
 
     //Generate cutflows
     vector<string> cfsZ = {"",
-                           "",
-                           "passLeptVeto",
-                           "passLeptVeto",
-                           "passLeptVeto;passnJetsZinv",
-                           "passLeptVeto;passnJetsZinv;passdPhisZinv",
-                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv",
-                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
-                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv",
-                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
-                           "passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
+                           "passNoiseEventFilterZinv",
+                           "passNoiseEventFilterZinv;passLeptVeto",
+                           "passNoiseEventFilterZinv;passLeptVeto",
+                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv",
+                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv",
+                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv",
+                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
+                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv",
+                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
                            "passLeptVeto;passBaselineZinv"};
 
     vector<string> cfsDYmm = {"",
-                              "",
-                              "passMuZinvSel",
-                              "passMuZinvSel",
-                              "passMuZinvSel;passnJetsZinv",
-                              "passMuZinvSel;passnJetsZinv;passdPhisZinv",
-                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv",
-                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
-                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv",
-                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
-                              "passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
+                              "passNoiseEventFilterZinv",
+                              "passNoiseEventFilterZinv;passMuZinvSel",
+                              "passNoiseEventFilterZinv;passMuZinvSel",
+                              "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv",
+                              "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv",
+                              "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv",
+                              "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv",
+                              "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv",
+                              "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                              "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
                               "passMuZinvSel;passBaselineZinv"};
 
     vector<string> cfsDatamm = {"",
@@ -1471,7 +1473,7 @@ int main(int argc, char* argv[])
 
     cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("ZtoNuNu",           PDC("", "", {dsDY_nunu}),           cfsZ));
     cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu",          PDC("", "", {dsDY_ll_zAcc_scaled}), cfsDYmm));
-    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu_Unscaled", PDC("", "", {dsDY_ll_scaled}),      cfsDYmm));
+    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("DYtoMuMu_Unscaled", PDC("", "", {dsDY_ll}),             cfsDYmm));
     cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Data_MuMu",         PDC("", "", {dsData_SingleMuon}),   cfsDatamm));
     cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Data_ElMu",         PDC("", "", {dsData_SingleMuon}),   cfsDataem));
     cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("TTBar_ElMu",        PDC("", "", {dstt2l}),              cfsDataem));
