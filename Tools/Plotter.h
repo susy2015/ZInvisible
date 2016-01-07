@@ -123,9 +123,11 @@ public:
         bool isLog, isNorm, isRatio;
         std::string xAxisLabel, yAxisLabel;
         std::pair<int, int> ratio;
+        std::vector<double> binEdges;
 
         HistSummary() {}
         HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, bool log, bool norm, std::string xal, std::string yal, bool isRatio = true);
+        HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, std::vector<double> be, bool log, bool norm, std::string xal, std::string yal, bool isRatio = true);
         ~HistSummary();
 
         TH1* fhist(){if(hists.size()) return hists.front().hcsVec.front()->h;}

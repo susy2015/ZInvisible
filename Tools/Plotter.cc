@@ -119,6 +119,11 @@ Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollec
     parseName(ns);
 }
 
+Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, std::vector<double> be, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : Cuttable(cuts), name(l), nBins(0), low(0.0), high(0.0), binEdges(be), isLog(log), isNorm(norm), xAxisLabel(xal), yAxisLabel(yal), ratio(ratio), isRatio(isRatio)
+{
+    parseName(ns);
+}
+
 void Plotter::HistSummary::parseName(std::vector<Plotter::DataCollection>& ns)
 {
     for(auto& n : ns)
@@ -272,7 +277,8 @@ void Plotter::createHistsFromTuple()
                     // Make histogram if it is blank
                     if(hist->h == nullptr)
                     {
-                        hist->h = new TH1D(hist->name.c_str(), hist->variable.name.c_str(), hs.nBins, hs.low, hs.high);
+                        if(hs.binEdges.size()) hist->h = new TH1D(hist->name.c_str(), hist->variable.name.c_str(), hs.binEdges.size() - 1, hs.binEdges.data());
+                        else                   hist->h = new TH1D(hist->name.c_str(), hist->variable.name.c_str(), hs.nBins, hs.low, hs.high);
                         hist->h->Sumw2();
                         hist->h->GetXaxis()->SetTitle(hs.xAxisLabel.c_str());
                         hist->h->GetYaxis()->SetTitle(hs.yAxisLabel.c_str());
