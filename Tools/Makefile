@@ -24,7 +24,7 @@ MT2LIB     = -L$(CMSSW_BASE)/lib/${SCRAM_ARCH}/ -lrecipeAUXOxbridgeMT2
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
 
-PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot
+PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d
 
 all: mkobj sampPyWrap $(PROGRAMS)
 
@@ -73,6 +73,9 @@ nJetWgtSyst: $(ODIR)/NTupleReader.o $(ODIR)/nJetWgtSyst.o $(ODIR)/samples.o
 
 moneyplot: $(ODIR)/moneyplot.o
 	$(LD) $^ $(LIBS) -o $@
+
+plot2d: $(ODIR)/plot2D.o $(ODIR)/NTupleReader.o $(ODIR)/Plotter.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/samples.o $(ODIR)/MiniTupleMaker.o
+	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
 clean:
 	rm -f $(ODIR)/*.o $(ODIR)/*.so $(ODIR)/*.d $(PROGRAMS) core 

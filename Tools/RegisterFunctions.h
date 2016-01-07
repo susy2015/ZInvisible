@@ -84,4 +84,14 @@ public:
     void registerFunctions(NTupleReader& tr);
 };
 
+class RegisterFunctions2Dplot : public RegisterFunctions
+{
+private:
+    plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
+public:
+    RegisterFunctions2Dplot();
+    ~RegisterFunctions2Dplot();
+    void registerFunctions(NTupleReader& tr);
+};
+
 #endif

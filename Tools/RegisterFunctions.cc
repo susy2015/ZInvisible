@@ -168,3 +168,18 @@ void RegisterFunctionsSyst::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*prepareMiniTupleVars);
     //tr.registerFunction(*systWeights);
 }
+
+RegisterFunctions2Dplot::RegisterFunctions2Dplot()
+{
+    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
+}
+
+RegisterFunctions2Dplot::~RegisterFunctions2Dplot()
+{
+    if(prepareMiniTupleVars) delete prepareMiniTupleVars;
+}
+
+void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
+{
+    tr.registerFunction(*prepareMiniTupleVars);
+}
