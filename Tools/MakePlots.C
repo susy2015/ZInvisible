@@ -1496,11 +1496,11 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("NJetWgt_ht_ht",    {njetw_ht},   {1, 1}, cutlevel_Zhenbin,   20,  500,  1000,  false, false,  "ht",   "Events"));
 
     // top kinematics
-    Plotter::DataCollection njetw_toppt(    "single", "vTop[0](pt)",  {dsDY_nunu_njet});
-    Plotter::DataCollection njetw_topeta(   "single", "vTop[0](eta)", {dsDY_nunu_njet});
-    Plotter::DataCollection njetw_topphi(   "single", "vTop[0](phi)", {dsDY_nunu_njet});
-    Plotter::DataCollection njetw_topmass(  "single", "vTop[0](M)",   {dsDY_nunu_njet});
-    std::string cutlevel_Zhenbin2 = "passNoiseEventFilter;passnJets;passMuonVeto;passEleVeto;passIsoTrkVeto;passdPhis;passBJets;passMET;passHT;nTopCandSortedCnt==1";
+    Plotter::DataCollection njetw_toppt(    "single", "vTops[0](pt)",  {dsDY_nunu_njet});
+    Plotter::DataCollection njetw_topeta(   "single", "vTops[0](eta)", {dsDY_nunu_njet});
+    Plotter::DataCollection njetw_topphi(   "single", "vTops[0](phi)", {dsDY_nunu_njet});
+    Plotter::DataCollection njetw_topmass(  "single", "vTops[0](M)",   {dsDY_nunu_njet});
+    std::string cutlevel_Zhenbin2 = "passNoiseEventFilter;passnJets;passMuonVeto;passEleVeto;passIsoTrkVeto;passdPhis;passBJets;passMET;passHT;nTopCandSortedCnt=1";
     vh.push_back(PHS("NJetWgt_ht_toppt",    {njetw_toppt},     {1, 1}, cutlevel_Zhenbin2,   50,  0,  1000,    false, false,  "top pt",     "Events"));
     vh.push_back(PHS("NJetWgt_ht_topeta",   {njetw_topeta},    {1, 1}, cutlevel_Zhenbin2,   20,  -5,  5,      false, false,  "top eta",    "Events"));
     vh.push_back(PHS("NJetWgt_ht_topphi",   {njetw_topphi},    {1, 1}, cutlevel_Zhenbin2,   20,  -5,  5,      false, false,  "top phi",    "Events"));

@@ -1,6 +1,9 @@
 from optparse import OptionParser
-from ROOT import TH1D, TMath, TFile
-import array
+import array, sys
+
+# Check if we want the help, if not import ROOT (otherwise ROOT overwrites the help)
+if '-h' not in sys.argv and '--help' not in sys.argv:
+    from ROOT import TH1D, TMath, TFile
 
 ############################
 ##  Some utilities first  ##
@@ -89,7 +92,7 @@ def njetWeights(filename):
     # Run over the relevant histograms
     cuts_DY = ["muZinv", "muZinv_0b", "muZinv_g1b"]
     cuts_TT = ["elmuZinv", "elmuZinv_0b", "elmuZinv_g1b"]
-    selections = "ht200_dphi"
+    selection = "ht200_dphi"
     # histo names
     hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
     hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
@@ -197,7 +200,7 @@ if __name__ ==  "__main__":
     (options, args) = parser.parse_args()
 
     if options.njetweight:
-        njetweights(options.filename)
+        njetWeights(options.filename)
     if options.normweight:
         normWeight(options.filename)
 
