@@ -1111,6 +1111,11 @@ int main(int argc, char* argv[])
 	{"muZinv_ht200_dphi",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passdPhisZinv"},
 	{"muZinv_ht50_met50_dphi",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
 	{"muZinv_loose0",             "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+	{"muZinv_loose0_mt2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
+	{"muZinv_loose0_mt21b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv1b>0"},
+	{"muZinv_loose0_mt22b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv2b>0"},
+	{"muZinv_loose0_mt23b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv3b>0"},
+	{"muZinv_loose0_ntop",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>0"},
 	{"muZinv_loose0_ht300",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_loose0_ht400",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>400;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_loose0_ht500",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>500;passnJetsZinv;passdPhisZinv"},
@@ -1295,6 +1300,7 @@ int main(int argc, char* argv[])
 
 	// DataMC weights applied
         vector<double> metBins = {0, 50, 100, 150, 200, 275, 300, 350, 400, 450, 2000};
+        vector<double> mt2Bins = {0, 50, 100, 150, 200, 250, 300, 350, 400, 2000};
 	vh.push_back(PHS("DataMCw_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},   {1, 2}, cut.second, 50, 0, 1500, true, false,  "met",            ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_rebin_met_" +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},   {1, 2}, cut.second, metBins, true, false,  "met",            ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwMC_ht},    {1, 2}, cut.second, 50, 0, 1500, true, false,  "ht",             ""));
@@ -1307,6 +1313,10 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMCw_SingleMuon_mt21b_" +cut.first,  {dcData_SingleMuon_mt21b, dcwMC_mt21b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (1b fake)",  ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_mt22b_" +cut.first,  {dcData_SingleMuon_mt22b, dcwMC_mt22b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (2b fake)",  ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcwMC_mt23b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (3b fake)",  ""));
+	vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt2_"   +cut.first,  {dcData_SingleMuon_mt2,   dcwMC_mt2},   {1, 2}, cut.second, mt2Bins, true, false,  "mt2",            ""));
+	vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt21b_" +cut.first,  {dcData_SingleMuon_mt21b, dcwMC_mt21b}, {1, 2}, cut.second, mt2Bins, true, false,  "mt2 (1b fake)",  ""));
+	vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt22b_" +cut.first,  {dcData_SingleMuon_mt22b, dcwMC_mt22b}, {1, 2}, cut.second, mt2Bins, true, false,  "mt2 (2b fake)",  ""));
+	vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcwMC_mt23b}, {1, 2}, cut.second, mt2Bins, true, false,  "mt2 (3b fake)",  ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_nb_"    +cut.first,  {dcData_SingleMuon_nb,    dcwMC_nb},    {1, 2}, cut.second, 10, 0, 10,   true, false,  "Nb",             ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_nj_"    +cut.first,  {dcData_SingleMuon_nj,    dcwMC_nj},    {1, 2}, cut.second, 20, 0, 20,   true, false,  "Nj",             ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_jpt_"   +cut.first,  {dcData_SingleMuon_jpt,   dcwMC_jpt},   {1, 2}, cut.second, 50, 0, 1500, true, false,  "jet pt",         ""));
