@@ -34,7 +34,9 @@ void Systematic::modifyParameters(NTupleReader& tr)
         }
     }
 
-    double weight = func_->Eval(val);
+    double weight = 1.0;
+    if(func_)      weight = func_->Eval(val);
+    else if(hist_) weight = hist_->GetBinContent(hist_->FindBin(val));
     tr.registerDerivedVar(name_, weight);
 }
 

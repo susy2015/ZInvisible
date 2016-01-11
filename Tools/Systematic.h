@@ -11,7 +11,8 @@
 class Systematic
 {
 public:
-    Systematic(const std::string name, const std::string var, TF1 *f) : name_(name), var_(var), func_(f) {};
+    Systematic(const std::string name, const std::string var, TF1 *f) : name_(name), var_(var), func_(f), hist_(nullptr) {};
+    Systematic(const std::string name, const std::string var, TH1 *h) : name_(name), var_(var), func_(nullptr), hist_{h} {};
 
     void bookHist(std::vector<Plotter::HistSummary>& vh, std::vector<AnaSamples::FileSummary>& vfs);
 
@@ -23,6 +24,7 @@ public:
 private:
     std::string name_, var_;
     TF1 * const func_;
+    TH1 * const hist_;
 
     void modifyParameters(NTupleReader& tr);
 };
