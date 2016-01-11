@@ -1158,6 +1158,32 @@ int main(int argc, char* argv[])
 	{"elmuZinv_g1b_loose0",       "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv"}
     };
 
+    std::vector<std::pair<std::string,std::string>> cutlevels_muon_syst = {
+	{"muZinv_1b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=1"},
+        {"muZinv_2b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=2"},
+        {"muZinv_3b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>2"},
+
+	{"muZinv_0t_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=1"},
+        {"muZinv_2t_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>2"},
+
+	{"muZinv_met_0_100_loose0",     "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>0;cleanMetPt<100"},
+        {"muZinv_met_100_200_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100;cleanMetPt<200"},
+        {"muZinv_met_200_300_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>200;cleanMetPt<300"},
+        {"muZinv_met_300_400_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>300;cleanMetPt<400"},
+        {"muZinv_met_gt400_loose0",     "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>400"},
+
+	{"muZinv_mt2_0_100_loose0",     "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;best_had_brJet_MT2Zinv<100"},
+        {"muZinv_mt2_100_200_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>100;best_had_brJet_MT2Zinv<200"},
+        {"muZinv_mt2_200_300_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;best_had_brJet_MT2Zinv<300"},
+        {"muZinv_mt2_300_400_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>300;best_had_brJet_MT2Zinv<400"},
+        {"muZinv_mt2_gt400_loose0",     "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>400"},
+
+        {"muZinv_ht_200_300_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;HTZinv>200;HTZinv<300"},
+        {"muZinv_ht_300_400_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;HTZinv>300;HTZinv<400"},
+        {"muZinv_ht_400_500_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;HTZinv>400;HTZinv<500"},
+        {"muZinv_ht_gt500_loose0",     "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;HTZinv>500"},
+    };
+
     std::vector<std::pair<std::string,std::string>> cutlevels_electron = {
 	{"nosel",                 "passNoiseEventFilterZinv"},
 	{"2el",                   "passNoiseEventFilterZinv;passDiElecSel"},
@@ -1404,6 +1430,23 @@ int main(int argc, char* argv[])
 	    vh.push_back(PHS("DataMCww_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwwMC_nb0NJwBins}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
 	    
 	}
+    }
+
+    //push the histograms in a loop, save some copy-paste time
+    for(std::pair<std::string,std::string>& cut : cutlevels_muon_syst)
+    {
+	// DataMC weights applied
+        vector<double> metBins = {0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 2000};
+        vector<double> mt2Bins = {0, 50, 100, 150, 200, 250, 300, 350, 400, 2000};
+	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},   {1, 2}, cut.second, metBins,     true, false,  "met",            ""));
+	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwMC_ht},    {1, 2}, cut.second, 50, 0, 1500, true, false,  "ht",             ""));
+	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_nt_"    +cut.first,  {dcData_SingleMuon_nt,    dcwMC_nt},    {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop",           ""));
+	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_mt2_"   +cut.first,  {dcData_SingleMuon_mt2,   dcwMC_mt2},   {1, 2}, cut.second, mt2Bins,     true, false,  "mt2",            ""));
+	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_nb_"    +cut.first,  {dcData_SingleMuon_nb,    dcwMC_nb},    {1, 2}, cut.second, 10, 0, 10,   true, false,  "Nb",             ""));
+	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_nj_"    +cut.first,  {dcData_SingleMuon_nj,    dcwMC_nj},    {1, 2}, cut.second, 20, 0, 20,   true, false,  "Nj",             ""));
+	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_jpt_"   +cut.first,  {dcData_SingleMuon_jpt,   dcwMC_jpt},   {1, 2}, cut.second, 50, 0, 1500, true, false,  "jet pt",         ""));
+	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_mupt_"  +cut.first,  {dcData_SingleMuon_mupt,  dcwMC_mupt},  {1, 2}, cut.second, 50, 0, 1000, true, false,  "mu pt",          ""));
+	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
     }
 
     // Do no look at electron plots for now. Save some time and space

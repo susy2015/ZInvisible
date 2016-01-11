@@ -15,7 +15,7 @@ int main()
 {
     TFile *f = TFile::Open("condor/minituple.root");
 
-    std::vector<std::string> treeNames = {"ZJetsToNuNu_HT-100To200_13TeV-madgraph", "ZJetsToNuNu_HT-200To400_13TeV-madgraph", "ZJetsToNuNu_HT-400To600_13TeV-madgraph", "ZJetsToNuNu_HT-600ToInf_13TeV-madgraph"};
+    std::vector<std::string> treeNames = /*{"ZJetsToNuNu_HT-100To200_13TeV-madgraph", "ZJetsToNuNu_HT-200To400_13TeV-madgraph", "ZJetsToNuNu_HT-400To600_13TeV-madgraph",*/ {"ZJetsToNuNu_HT-600ToInf_13TeV-madgraph"};
 
     TCanvas c("c","c",800, 800);
     
@@ -23,6 +23,7 @@ int main()
 
     TH2 *h = new TH2D("met_vs_ht", "hist", 50, 0, 1500, 50, 0, 1500);
     TH2 *h2 = new TH2D("met_vs_mt2", "hist", 50, 0, 1500, 50, 0, 1500);
+    TH2 *h3 = new TH2D("nt_vs_nj", "hist", 10, 0, 10, 20, 0, 20);
 
     for(auto& treeName : treeNames)
     {
@@ -38,6 +39,8 @@ int main()
             const double& HT = tr.getVar<double>("HTZinv");
             const double& cleanMetPt = tr.getVar<double>("cleanMetPt");
             const double& best_had_brJet_MT2Zinv = tr.getVar<double>("best_had_brJet_MT2Zinv");
+            const double& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+            const double& nTopCandSortedCntZinv = tr.getVar<int>("nTopCandSortedCntZinv");
 
             const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
             const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
@@ -50,6 +53,7 @@ int main()
             {
                 h->Fill(HT, cleanMetPt);
                 h2->Fill(best_had_brJet_MT2Zinv, cleanMetPt);
+                h3->Fill(cntNJetsPt30Eta24Zinv, nTopCandSortedCntZinv);
             }
             
         }
@@ -59,6 +63,7 @@ int main()
     TFile *fout = new TFile("test2dHist.root", "RECREATE");
     h->Write();
     h2->Write();
+    h3->Write();
     fout->Close();
 
 }

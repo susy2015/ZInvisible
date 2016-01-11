@@ -114,6 +114,39 @@ int main(int argc, char* argv[])
     test.bookHist(vh, fileMap["ZJetsToNuNu"]);
     static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(test, std::placeholders::_1));
 
+    //Met shape syst 
+    TF1 *MET_fit = new TF1("MET_fit","pol1");
+    //Chi2                      =      15.5107
+    //NDf                       =            8
+    //p0                        =      1.07008   +/-   0.0388147   
+    //p1                        = -0.000571054   +/-   0.000167846 
+    MET_fit->SetParameters(1.07008, -0.000571054);
+    Systematic METSyst("systWgtMET", "cleanMetPt", MET_fit);
+    METSyst.bookHist(vh, fileMap["ZJetsToNuNu"]);
+    static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(METSyst, std::placeholders::_1));
+
+    //MT2 shape syst 
+    TF1 *MT2_fit = new TF1("MT2_fit","pol1");
+    //Chi2                      =      3.58173
+    //NDf                       =            5
+    //p0                        =      1.12231   +/-   0.0812922   
+    //p1                        =  -0.00068574   +/-   0.000258897 
+    MT2_fit->SetParameters(1.12231, -0.00068574);
+    Systematic MT2Syst("systWgtMT2", "best_had_brJet_MT2Zinv", MT2_fit);
+    MT2Syst.bookHist(vh, fileMap["ZJetsToNuNu"]);
+    static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(MT2Syst, std::placeholders::_1));
+
+    //NT shape uncertainty
+    double bins[] = {0, 1, 2, 8};
+    TH1 *NT_hist = new TH1D("NT_hist","NT_hist", 3, bins);
+    NT_hist->SetBinContent(1, 1.00401505518);
+    NT_hist->SetBinContent(2, 0.988165174802);
+    NT_hist->SetBinContent(3, 0.612896486706);
+
+    Systematic NTSyst("systWgtNT", "nTopCandSortedCntZinv", NT_hist);
+    NTSyst.bookHist(vh, fileMap["ZJetsToNuNu"]);
+    static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(NTSyst, std::placeholders::_1));
+
     Plotter::DataCollection dcDY_nunu_nJetWgtSyst( "single", {{"njSystWeightedSB", dsZ_nunu}, {"njSystUnweightedSB", dsZ_nunu}});
     vh.emplace_back(PHS("systNJetWgtStat", {dcDY_nunu_nJetWgtSyst}, {2, 1}, "", 45, 0, 45, true, true, "Search Bin", "Events"));
 

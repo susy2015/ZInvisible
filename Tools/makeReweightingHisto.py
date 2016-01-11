@@ -1,23 +1,25 @@
 from optparse import OptionParser
-import array, sys
 
+import array, sys
 # Check if we want the help, if not import ROOT (otherwise ROOT overwrites the help)
 if '-h' not in sys.argv and '--help' not in sys.argv:
-    from ROOT import TH1D, TMath, TFile
+    from ROOT import TH1D, TMath, TFile, TCanvas, TF1
 
 ############################
 ##  Some utilities first  ##
 ############################
 
+c = TCanvas("c1", "c1", 800, 800)
+
 def rebin1D(h, bins):
     """Rebin histo h to bins and recompute the errors."""
-    new_h = TH1D("%s_rebin"%(h.GetName()), "%s_rebin"%(h.GetName()), 
+    new_h = TH1D("%s_rebin"%(h.GetName()), "%s_rebin"%(h.GetName()),
                  len(bins)-1, array.array('d', bins))
     new_h.Sumw2()
     for i in xrange(h.GetNbinsX()):
         bin_to_fill = new_h.FindBin(h.GetBinCenter(i+1))
         new_h.SetBinContent(bin_to_fill, h.GetBinContent(i+1) + new_h.GetBinContent(bin_to_fill))
-        new_h.SetBinError(bin_to_fill, TMath.Sqrt(h.GetBinError(i+1)*h.GetBinError(i+1) + new_h.GetBinError(bin_to_fill)*new_h.GetBinError(bin_to_fill) ) )    
+        new_h.SetBinError(bin_to_fill, TMath.Sqrt(h.GetBinError(i+1)*h.GetBinError(i+1) + new_h.GetBinError(bin_to_fill)*new_h.GetBinError(bin_to_fill) ) )
     return new_h
 
 def add(hs):
@@ -75,12 +77,12 @@ def subtract(h, hlist):
 ##############################
 
 ##################
-## Njet weights ## 
+## Njet weights ##
 ##################
 def njetWeights(filename):
     # Get the file
     f = TFile.Open(filename)
-    
+
     # Prepare writing to a file
     fout = TFile.Open("dataMCweights.root","RECREATE")
     fout.cd()
@@ -88,7 +90,7 @@ def njetWeights(filename):
     # How to rebin
     bins = [0,1,2,3,4,5,6,7,8,20]
     bins_TT = [0,1,2,3,4,5,6,7,20]
-    
+
     # Run over the relevant histograms
     cuts_DY = ["muZinv", "muZinv_0b", "muZinv_g1b"]
     cuts_TT = ["elmuZinv", "elmuZinv_0b", "elmuZinv_g1b"]
@@ -102,7 +104,7 @@ def njetWeights(filename):
                "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}Zstack",
                "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDibosonstack"
                ]
-    
+
     # dictionary to keep track of all the scale factors
     SFs = {}
 
@@ -118,8 +120,8 @@ def njetWeights(filename):
         newh = makeRatio(h1, h2s, bins_TT, newname)
         SFs["TT_%s"%(cut)] = newh
         newh.Write()
-    
-    # Now get DY reweighting: 
+
+    # Now get DY reweighting:
     # Procedure: 1. Apply TTbar reweighting to TTbar MC
     #            2. Subtract non-DY MC from data
     #            3. Make ratio of subtracted data and DY
@@ -146,7 +148,7 @@ def njetWeights(filename):
     f.Close()
 
 ##################
-## norm weights ## 
+## norm weights ##
 ##################
 def normWeight(filename):
     # Get the file
@@ -185,9 +187,52 @@ def normWeight(filename):
 
     f.Close()
 
+def shapeSyst(filename):
+    # Get the file
+    f = TFile.Open(filename)
+    # Run over the relevant histograms
+    # histo names
+    hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sDatadata"
+    hnames2 =  ["%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sDYstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sDY HT<100stack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)st#bar{t}stack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)ssingle topstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)st#bar{t}Zstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sDibosonstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sRarestack"]
+
+    varList = [["met", "cleanMetPt",             [0, 50, 100, 150, 200, 275, 300, 350, 400, 450, 1500]],
+               ["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500]],
+               ["nt",  "nTopCandSortedCntZinv",  [0, 1, 2, 8 ]],
+               ["nb",  "cntCSVSZinv",            [0, 1, 2, 3, 4, 5, 6, 7, 8 ]]]
+
+    for var in varList:
+        # Procedure: 1. Grab the njet reweighted MC
+        #            2. Subtract non-DY MC from data
+        #            3. Make ratio of subtracted data and DY
+        # Get all histos
+        hData = f.Get(hnameData%{"name":var[0], "var":var[1]})
+        h2s   = [f.Get(hname2%{"name":var[0], "var":var[1]}) for hname2 in hnames2]
+        
+        # subtract relevant histograms from data
+        data_subtracted = subtract(hData, h2s[2:])
+
+        newname = "DataMC"
+        newh = makeRatio(data_subtracted, h2s[:1], newname=newname, bins=var[2])
+
+        for i in xrange(1, newh.GetNbinsX() + 1):
+            print newh.GetBinContent(i)
+
+        fit = TF1("fit", "pol1")
+        newh.Fit(fit, "")
+        #newh.DrawCopy()
+        c.Print("shapeSyst_%s.png"%var[0])
+
+    f.Close()
+
 
 if __name__ ==  "__main__":
-    
+
     parser = OptionParser()
     parser.add_option("-f", "--file", dest="filename",
                       help="Grab histogram from FILE", metavar="FILE")
@@ -195,7 +240,8 @@ if __name__ ==  "__main__":
                       help="Compute the normalization weight", action='store_true')
     parser.add_option("--njet", dest="njetweight", default=False,
                       help="Compute the njet weights", action='store_true')
-
+    parser.add_option("--shape", dest="shape", default=False,
+                      help="Compute the shape systematics", action='store_true')
 
     (options, args) = parser.parse_args()
 
@@ -203,6 +249,7 @@ if __name__ ==  "__main__":
         njetWeights(options.filename)
     if options.normweight:
         normWeight(options.filename)
+    if options.shape:
+        shapeSyst(options.filename)
 
-    
 
