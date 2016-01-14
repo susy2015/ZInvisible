@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
     h1->Scale(ScaleFactors::sf_norm0b());
 
     TFile* f2 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_nJetWgt.root");
-    TH1D* h2 = (TH1D*)f2->Get("syst68");
+    TH1D* h2 = (TH1D*)f2->Get("syst68Max");
 
     TFile* f3 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_searchBinStats.root");
     TH1D* h3_up = (TH1D*)f3->Get("h_nSB_uncertUp");
@@ -158,11 +158,12 @@ int main(int argc, char* argv[])
     sprintf(legEntry, "%s", "Normalization unc.");
     leg->AddEntry(g1, legEntry);
     g2->SetFillColor(kCyan-6);
-    sprintf(legEntry, "%s", "Njet reweighting unc.");
+    //sprintf(legEntry, "%s", "Njet reweighting unc.");
+    sprintf(legEntry, "%s", "Njet/shape stat. unc.");
     leg->AddEntry(g2, legEntry);
-    g3->SetFillColor(kMagenta);
-    sprintf(legEntry, "%s", "N(b) data unc.");
-    leg->AddEntry(g3, legEntry);
+    //g3->SetFillColor(kMagenta);
+    //sprintf(legEntry, "%s", "N(b) data unc.");
+    //leg->AddEntry(g3, legEntry);
     //sprintf(legEntry, "%s", "unc. bla3 ");
     //leg->AddEntry(g1, legEntry);
 
@@ -190,7 +191,7 @@ int main(int argc, char* argv[])
 
     dummy->Draw();
     
-    g3->Draw("2 same");
+    //g3->Draw("2 same");
     g2->Draw("2 same");
     g1->Draw("2 same");
     h1->Draw("histsame");

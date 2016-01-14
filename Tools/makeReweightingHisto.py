@@ -5,6 +5,8 @@ import array, sys
 if '-h' not in sys.argv and '--help' not in sys.argv:
     from ROOT import TH1D, TMath, TFile, TCanvas, TF1
 
+from math import sqrt
+
 ############################
 ##  Some utilities first  ##
 ############################
@@ -190,6 +192,7 @@ def normWeight(filename):
 def shapeSyst(filename):
     # Get the file
     f = TFile.Open(filename)
+    fout = TFile.Open("syst_shape.root", "RECREATE")
     # Run over the relevant histograms
     # histo names
     hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sDatadata"
@@ -201,10 +204,10 @@ def shapeSyst(filename):
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sDibosonstack",
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sRarestack"]
 
-    varList = [["met", "cleanMetPt",             [0, 50, 100, 150, 200, 275, 300, 350, 400, 450, 1500]],
-               ["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500]],
-               ["nt",  "nTopCandSortedCntZinv",  [0, 1, 2, 8 ]],
-               ["nb",  "cntCSVSZinv",            [0, 1, 2, 3, 4, 5, 6, 7, 8 ]]]
+    varList = [["met", "cleanMetPt",             [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 1500], "MET" ],
+               ["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500],      "M_{T2}" ],
+               ["nt",  "nTopCandSortedCntZinv",  [0, 1, 2, 8 ],                                         "N(t)" ],
+               ["nb",  "cntCSVSZinv",            [0, 1, 2, 3, 8 ],                                      "N(b)" ]]
 
     for var in varList:
         # Procedure: 1. Grab the njet reweighted MC
@@ -217,19 +220,106 @@ def shapeSyst(filename):
         # subtract relevant histograms from data
         data_subtracted = subtract(hData, h2s[2:])
 
-        newname = "DataMC"
+        newname = "ShapeRatio_%s"%var[0]
         newh = makeRatio(data_subtracted, h2s[:1], newname=newname, bins=var[2])
 
         for i in xrange(1, newh.GetNbinsX() + 1):
             print newh.GetBinContent(i)
 
-        fit = TF1("fit", "pol1")
-        newh.Fit(fit, "")
+        fit = TF1("fit_%s"%var[0], "pol1")
+        newh.SetLineWidth(2)
+        newh.GetXaxis().SetTitle(var[3])
+        newh.SetStats(0)
+        newh.SetTitle("")
+        if not "nt" in var[0] and not "nb" in var[0]:
+            newh.Fit(fit, "")
+        else:
+            newh.Draw()
+        #
+        #    fit.Draw("same")
         #newh.DrawCopy()
         c.Print("shapeSyst_%s.png"%var[0])
+        c.Print("shapeSyst_%s.pdf"%var[0])
+
+        fout.cd()
+        newh.Write()
 
     f.Close()
+    fout.Close()
 
+def systHarvest():
+    # Get the file
+    #f = TFile.Open(filename)
+    #fout = TFile.Open("syst_shape.root", "RECREATE")
+    # Run over the relevant histograms
+    # histo names
+
+    # Get shape central value uncertainty
+    f = TFile("systematics.root")
+    hShape_MET_Nom = f.Get("nSearchBin/systWgtMET_cleanMetPtnSearchBinnSearchBinsystWgtMET_cleanMetPt_Nomsingle")
+    hShape_MET_Var = f.Get("nSearchBin/systWgtMET_cleanMetPtnSearchBinnSearchBinsystWgtMET_cleanMetPt_varsingle")
+    hShape_MT2_Nom = f.Get("nSearchBin/systWgtMT2_best_had_brJet_MT2ZinvnSearchBinnSearchBinsystWgtMT2_best_had_brJet_MT2Zinv_Nomsingle")
+    hShape_MT2_Var = f.Get("nSearchBin/systWgtMT2_best_had_brJet_MT2ZinvnSearchBinnSearchBinsystWgtMT2_best_had_brJet_MT2Zinv_varsingle")
+    hShape_NT_Nom  = f.Get("nSearchBin/systWgtNT_nTopCandSortedCntZinvnSearchBinnSearchBinsystWgtNT_nTopCandSortedCntZinv_Nomsingle")
+    hShape_NT_Var  = f.Get("nSearchBin/systWgtNT_nTopCandSortedCntZinvnSearchBinnSearchBinsystWgtNT_nTopCandSortedCntZinv_varsingle")
+    hShape_NB_Nom  = f.Get("nSearchBin/systWgtNB_cntCSVSZinvnSearchBinnSearchBinsystWgtNB_cntCSVSZinv_Nomsingle")
+    hShape_NB_Var  = f.Get("nSearchBin/systWgtNB_cntCSVSZinvnSearchBinnSearchBinsystWgtNB_cntCSVSZinv_varsingle")
+
+    hShape_MET_ratio = hShape_MET_Var.Clone(hShape_MET_Nom.GetName()+"_ratio")
+    hShape_MET_ratio.Divide(hShape_MET_Nom)
+
+    hShape_MT2_ratio = hShape_MT2_Var.Clone(hShape_MT2_Nom.GetName()+"_ratio")
+    hShape_MT2_ratio.Divide(hShape_MT2_Nom)
+
+    hShape_NT_ratio = hShape_NT_Var.Clone(hShape_NT_Nom.GetName()+"_ratio")
+    hShape_NT_ratio.Divide(hShape_NT_Nom)
+
+    hShape_NB_ratio = hShape_NB_Var.Clone(hShape_NB_Nom.GetName()+"_ratio")
+    hShape_NB_ratio.Divide(hShape_NB_Nom)
+
+    hShape_final = hShape_MET_ratio.Clone("shape_central")
+
+    for i in xrange(1, 46):
+        uncertMET = hShape_MET_ratio.GetBinContent(i) - 1
+        uncertMT2 = hShape_MT2_ratio.GetBinContent(i) - 1
+        uncertNT = hShape_NT_ratio.GetBinContent(i) - 1
+        uncertNB = hShape_NB_ratio.GetBinContent(i) - 1
+        hShape_final.SetBinContent(i, sqrt(uncertMET**2 + uncertMT2**2 + uncertNT**2 + uncertNB**2))
+
+    fout = TFile("syst_all.root", "RECREATE")
+    hShape_final.Write()
+
+    # Get shape stats uncertainty
+    f = TFile("syst_nJetWgt.root")
+    hShapeStat = f.Get("syst68Max").Clone("shape_stat")
+    fout.cd()
+    hShapeStat.Write()
+
+    # Get MC stats uncertainty
+    f = TFile("/uscms/home/nstrobbe/nobackup/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Jan08.root")
+    hMC = f.Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle")
+    hMCstats = hMC.Clone("MC_stats")
+    for i in xrange(1, 46):
+        if hMC.GetBinContent(i) > 0.00000001:
+            hMCstats.SetBinContent(i, hMC.GetBinError(i) / hMC.GetBinContent(i))
+        else:
+            hMCstats.SetBinContent(i, 0.0)
+    fout.cd()
+    hMCstats.Write()
+
+    hClosureZ = f.Get("nSearchBin/nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle")
+    hClosureDY = f.Get("nSearchBin/nSearchBinnSearchBinnSearchBinDY#rightarrow#mu#mu no #mu, Z eff+accsingle")
+    hClosureRatio = hClosureZ.Clone("MC_closure")
+    hClosureRatio.Add(hClosureDY, -1)
+    hClosureRatio.Divide(hClosureZ)
+    for i in xrange(1, 46):
+        hClosureRatio.SetBinContent(i, abs(hClosureRatio.GetBinContent(i)))
+    fout.cd()
+    hClosureRatio.Write()
+    hClosureZ.Write()
+    hClosureDY.Write()
+
+    fout.Close()
 
 if __name__ ==  "__main__":
 
@@ -242,6 +332,8 @@ if __name__ ==  "__main__":
                       help="Compute the njet weights", action='store_true')
     parser.add_option("--shape", dest="shape", default=False,
                       help="Compute the shape systematics", action='store_true')
+    parser.add_option("--systHarvest", dest="systHarvest", default=False,
+                      help="Harvest systematics", action='store_true')
 
     (options, args) = parser.parse_args()
 
@@ -251,5 +343,6 @@ if __name__ ==  "__main__":
         normWeight(options.filename)
     if options.shape:
         shapeSyst(options.filename)
-
+    if options.systHarvest:
+        systHarvest()
 
