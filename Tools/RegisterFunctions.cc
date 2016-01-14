@@ -3,6 +3,7 @@
 #include "derivedTupleVariables.h"
 #include "baselineDef.h"
 #include "Systematic.h"
+#include "PDFUncertainty.h"
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
@@ -68,6 +69,8 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
     getSearchBin         = new plotterFunctions::GetSearchBin;
     triggerInfo          = new plotterFunctions::TriggerInfo;
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(true);
+
+    myPDFUnc = new PDFUncertainty();
 }
 
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
@@ -84,6 +87,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(getSearchBin) delete getSearchBin;
     if(triggerInfo) delete triggerInfo;
     if(prepareMiniTupleVars) delete prepareMiniTupleVars;
+    if(myPDFUnc) delete myPDFUnc;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -104,6 +108,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*triggerInfo);
     tr.registerFunction(*prepareMiniTupleVars);
     //tr.registerFunction(&printInterestingEvents);
+    tr.registerFunction(*myPDFUnc);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
