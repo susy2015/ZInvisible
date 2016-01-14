@@ -116,11 +116,11 @@ int main(int argc, char* argv[])
 
     //Met shape syst 
     TF1 *MET_fit = new TF1("MET_fit","pol1");
-    //Chi2                      =      15.5107
+    //Chi2                      =      14.9941
     //NDf                       =            8
-    //p0                        =      1.07008   +/-   0.0388147   
-    //p1                        = -0.000571054   +/-   0.000167846 
-    MET_fit->SetParameters(1.07008, -0.000571054);
+    //p0                        =      1.06536   +/-   0.0387901   
+    //p1                        = -0.000572832   +/-   0.000167341
+    MET_fit->SetParameters(1.06536, -0.000572832);
     Systematic METSyst("systWgtMET", "cleanMetPt", MET_fit);
     METSyst.bookHist(vh, fileMap["ZJetsToNuNu"]);
     static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(METSyst, std::placeholders::_1));
@@ -146,6 +146,18 @@ int main(int argc, char* argv[])
     Systematic NTSyst("systWgtNT", "nTopCandSortedCntZinv", NT_hist);
     NTSyst.bookHist(vh, fileMap["ZJetsToNuNu"]);
     static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(NTSyst, std::placeholders::_1));
+
+    //NB shape uncertainty
+    double binsNB[] = {0, 1, 2, 3, 8};
+    TH1 *NB_hist = new TH1D("NB_hist","NB_hist", 3, binsNB);
+    NB_hist->SetBinContent(1, 0.991595739276);
+    NB_hist->SetBinContent(2, 1.00730730293);
+    NB_hist->SetBinContent(3, 0.926764760063);
+    NB_hist->SetBinContent(4, 1.10944458397);
+
+    Systematic NBSyst("systWgtNB", "cntCSVSZinv", NB_hist);
+    NBSyst.bookHist(vh, fileMap["ZJetsToNuNu"]);
+    static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(NBSyst, std::placeholders::_1));
 
     Plotter::DataCollection dcDY_nunu_nJetWgtSyst( "single", {{"njSystWeightedSB", dsZ_nunu}, {"njSystUnweightedSB", dsZ_nunu}});
     vh.emplace_back(PHS("systNJetWgtStat", {dcDY_nunu_nJetWgtSyst}, {2, 1}, "", 45, 0, 45, true, true, "Search Bin", "Events"));

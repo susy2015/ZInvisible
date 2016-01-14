@@ -1201,6 +1201,32 @@ namespace plotterFunctions
 
     };
 
+    class SystematicPrep
+    {
+    private:
+
+        topTagger::type3TopTagger tp3;
+
+        void systematicPrep(NTupleReader& tr)
+        {
+            const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
+            const std::vector<double>& recoJetsJecUncLepCleaned = tr.getVec<double>("recoJetsJecUncLepCleaned");
+
+        }
+
+    public:
+	SystematicPrep()
+	{
+
+	}
+
+	void operator()(NTupleReader& tr)
+	{
+	    systematicPrep(tr);
+	}
+
+    };
+
     class PrepareMiniTupleVars
     {
     private:
