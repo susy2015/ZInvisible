@@ -71,6 +71,8 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
     getSearchBin         = new plotterFunctions::GetSearchBin;
     triggerInfo          = new plotterFunctions::TriggerInfo;
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(true);
+    systematicPrep       = new plotterFunctions::SystematicPrep;
+    systematicCalc       = new plotterFunctions::SystematicCalc;
 
     myPDFUnc = new PDFUncertainty();
 }
@@ -92,6 +94,8 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(triggerInfo) delete triggerInfo;
     if(prepareMiniTupleVars) delete prepareMiniTupleVars;
     if(myPDFUnc) delete myPDFUnc;
+    if(systematicPrep) delete systematicPrep;
+    if(systematicCalc) delete systematicCalc;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -108,9 +112,11 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*blvZinv1b);
     tr.registerFunction(*blvZinv2b);
     tr.registerFunction(*blvZinv3b);
+    tr.registerFunction(*systematicPrep);
     tr.registerFunction(*blvZinvJEUUp);
     tr.registerFunction(*blvZinvJEUDn);
     tr.registerFunction(*getSearchBin);
+    tr.registerFunction(*systematicCalc);
     tr.registerFunction(*triggerInfo);
     tr.registerFunction(*prepareMiniTupleVars);
     //tr.registerFunction(&printInterestingEvents);

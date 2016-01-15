@@ -420,7 +420,7 @@ namespace plotterFunctions
 	    {
 		if(njWTTbar_0b)  wTT = njWTTbar_0b->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
 		if(njWDYZ_0b)    wDY = njWDYZ_0b->GetBinContent(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
-	    } 
+	    }
 	    else
 	    {
 		if(njWTTbar_g1b) wTT = njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
@@ -1205,36 +1205,22 @@ namespace plotterFunctions
     {
     private:
 
-        topTagger::type3TopTagger tp3;
-
         void systematicPrep(NTupleReader& tr)
         {
             const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const std::vector<double>& recoJetsBtag_0    = tr.getVec<double>("recoJetsBtag_0_LepCleaned");
             const std::vector<double>& recoJetsJecUnc    = tr.getVec<double>("recoJetsJecUncLepCleaned");
 
             std::vector<TLorentzVector> jetLVecUp;
             std::vector<TLorentzVector> jetLVecDn;
-            
+
             for(int iJet = 0; iJet < jetsLVec; ++iJet)
             {
                 jetLVecUp.push_back(jetsLVec[iJet] * (1 + recoJetsJecUnc[iJet]));
                 jetLVecDn.push_back(jetsLVec[iJet] * (1 - recoJetsJecUnc[iJet]));
             }
 
-            std::vector<TLorentzVector> jetLVecUp_forTagger;
-            std::vector<TLorentzVector> jetLVecDn_forTagger;
-            std::vector<double> recoJetsBtagUp_forTagger;
-            std::vector<double> recoJetsBtagDn_forTagger;
-
-            prepareJetsForTagger(jetsLVecUp, recoJetsBtag_0, jetsLVecUp_forTagger, recoJetsBtagUp_forTagger);
-            prepareJetsForTagger(jetsLVecDn, recoJetsBtag_0, jetsLVecDn_forTagger, recoJetsBtagDn_forTagger);
-
-            tr.registerDerivedVec("jetsLVecUp_forTagger", jetsLVecUp_forTagger);
-            tr.registerDerivedVar("recoJetsBtagUp_forTagger", recoJetsBtagUp_forTagger);
-            
-            tr.registerDerivedVec("jetsLVecDn_forTagger", jetsLVecDn_forTagger);
-            tr.registerDerivedVar("recoJetsBtagDn_forTagger", recoJetsBtagDn_forTagger);
+            tr.registerDerivedVec("jetLVecUp", jetLVecUp);
+            tr.registerDerivedVec("jetLVecDn", jetLVecDn);
         }
 
     public:
@@ -1246,6 +1232,42 @@ namespace plotterFunctions
 	void operator()(NTupleReader& tr)
 	{
 	    systematicPrep(tr);
+	}
+
+    };
+
+    class SystematicCalc
+    {
+    private:
+
+        void systematicCalc(NTupleReader& tr)
+        {
+            const int& cntCSVSJEUUp = tr.getVar<int>("cntCSVSZinvJEUUp");
+            const int& nTopCandSortedCntJEUUp = tr.getVar<int>("nTopCandSortedCntZinvJEUUp");
+            const double& MT2JEUUp = tr.getVar<double>("best_had_brJet_MT2ZinvJEUUp");
+
+            const int& cntCSVSJEUDn = tr.getVar<int>("cntCSVSZinvJEUDn");
+            const int& nTopCandSortedCntJEUDn = tr.getVar<int>("nTopCandSortedCntZinvJEUDn");
+            const double& MT2JEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvJEUDn");
+
+            const double& cleanMet = tr.getVar<double>("cleanMetPt");
+            
+            int nSearchBinJEUUp = find_Binning_Index(cntCSVSJEUUp, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet);
+            int nSearchBinJEUDn = find_Binning_Index(cntCSVSJEUDn, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet);
+            
+            tr.registerDerivedVar("nSearchBinJEUUp", nSearchBinJEUUp);
+            tr.registerDerivedVar("nSearchBinJEUDn", nSearchBinJEUDn);
+        }
+
+    public:
+	SystematicCalc()
+	{
+
+	}
+
+	void operator()(NTupleReader& tr)
+	{
+	    systematicCalc(tr);
 	}
 
     };
