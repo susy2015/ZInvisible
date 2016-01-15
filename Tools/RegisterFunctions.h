@@ -19,6 +19,8 @@ namespace plotterFunctions
     class TriggerInfo;
     class PrepareMiniTupleVars;
     class NJetWeight;
+    class SystematicPrep;
+    class SystematicCalc;
 }
 
 class SystWeights;
@@ -52,6 +54,8 @@ private:
     plotterFunctions::GetSearchBin *getSearchBin;
     plotterFunctions::TriggerInfo *triggerInfo;
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
+    plotterFunctions::SystematicPrep *systematicPrep;
+    plotterFunctions::SystematicCalc *systematicCalc;
     PDFUncertainty *myPDFUnc;
 
 public:
