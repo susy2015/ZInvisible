@@ -5,7 +5,7 @@ RSDIR      = $(CMSSW_BASE)/src/SusyAnaTools/Tools
 
 CXX        = g++
 
-CXXFLAGS  += -I. -I$(CMSSW_BASE)/src -std=c++0x -I$(LHAPDF_DATA_PATH)/../../include
+CXXFLAGS  += -I. -I$(CMSSW_BASE)/src -std=c++0x -I$(LHAPDF_DATA_PATH)/../../include -I/cvmfs/cms.cern.ch/slc6_amd64_gcc491/external/boost/1.57.0-jlbgio/include
 ## Optimization flag
 CXXFLAGS += -g #-O3
 ## Enable the maximun warning
