@@ -5,7 +5,7 @@ RSDIR      = $(CMSSW_BASE)/src/SusyAnaTools/Tools
 
 CXX        = g++
 
-CXXFLAGS  += -I. -I$(CMSSW_BASE)/src -std=c++0x
+CXXFLAGS  += -I. -I$(CMSSW_BASE)/src -std=c++0x -I$(LHAPDF_DATA_PATH)/../../include
 ## Optimization flag
 CXXFLAGS += -g #-O3
 ## Enable the maximun warning
@@ -21,10 +21,11 @@ LDFLAGS    =
 
 LIBS       = $(shell root-config --glibs)
 MT2LIB     = -L$(CMSSW_BASE)/lib/${SCRAM_ARCH}/ -lrecipeAUXOxbridgeMT2
+LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
 
-PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d
+PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d scalefactorplot
 
 all: mkobj sampPyWrap $(PROGRAMS)
 
@@ -56,26 +57,29 @@ $(ODIR)/%.o : $(RSDIR)/%.C
 $(ODIR)/%.o : $(RSDIR)/%.cc
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -o $@ -c $<
 
-calcEff: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/calcEff.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/Plotter.o $(ODIR)/MiniTupleMaker.o
-	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
+calcEff: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/calcEff.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/Plotter.o $(ODIR)/MiniTupleMaker.o
+	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
 harvestHists: $(ODIR)/harvestHists.o
 	$(LD) $^ $(LIBS) -o $@
 
-makePlots: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o 
-	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
+makePlots: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o 
+	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-systematics: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Systematic.o  $(ODIR)/Plotter.o $(ODIR)/systematics.o $(ODIR)/MiniTupleMaker.o $(ODIR)/RegisterFunctions.o
-	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
+systematics: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Systematic.o  $(ODIR)/Plotter.o $(ODIR)/systematics.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o
+	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
 nJetWgtSyst: $(ODIR)/NTupleReader.o $(ODIR)/nJetWgtSyst.o $(ODIR)/samples.o
-	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
+	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
 moneyplot: $(ODIR)/moneyplot.o
 	$(LD) $^ $(LIBS) -o $@
 
-plot2d: $(ODIR)/plot2D.o $(ODIR)/NTupleReader.o $(ODIR)/Plotter.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/samples.o $(ODIR)/MiniTupleMaker.o
-	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
+scalefactorplot: $(ODIR)/scalefactorplot.o
+	$(LD) $^ $(LIBS) -o $@
+
+plot2d: $(ODIR)/plot2D.o $(ODIR)/NTupleReader.o $(ODIR)/Plotter.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/samples.o $(ODIR)/MiniTupleMaker.o
+	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
 clean:
 	rm -f $(ODIR)/*.o $(ODIR)/*.so $(ODIR)/*.d $(PROGRAMS) core 

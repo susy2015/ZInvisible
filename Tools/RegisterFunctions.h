@@ -8,6 +8,7 @@
 
 class NTupleReader;
 class BaselineVessel;
+class PDFUncertainty;
 
 namespace plotterFunctions
 {
@@ -51,6 +52,7 @@ private:
     plotterFunctions::GetSearchBin *getSearchBin;
     plotterFunctions::TriggerInfo *triggerInfo;
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
+    PDFUncertainty *myPDFUnc;
 
 public:
     RegisterFunctionsNTuple();
