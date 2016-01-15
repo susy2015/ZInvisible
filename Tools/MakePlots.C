@@ -1231,6 +1231,9 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_nunu_njetnorm_scaleDown( "Z#rightarrow#nu#nu Scale weight Down", fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;Scaled_Variations_Down");
     Plotter::DatasetSummary dsDY_nunu_njetnorm_PDFUp(   "Z#rightarrow#nu#nu PDF weight Up",   fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;NNPDF_From_Median_Up");
     Plotter::DatasetSummary dsDY_nunu_njetnorm_PDFDown( "Z#rightarrow#nu#nu PDF weight Down", fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;NNPDF_From_Median_Down");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerCentral( "Z#rightarrow#nu#nu Trigger weight Central",   fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;TriggerEffMC");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerUp(   "Z#rightarrow#nu#nu Trigger weight Up",   fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;TriggerEffUpMC");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerDown( "Z#rightarrow#nu#nu Trigger weight Down", fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;TriggerEffDownMC");
 
     Plotter::DatasetSummary dsTT_inc(           "t#bar{t} Inc",   fileMap["TTbar"], "", "");
 
@@ -1267,6 +1270,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection njetw_nSearchBin(    "single", {{"nSearchBin",    dsDY_nunu_njet},     {"nSearchBin",    dsDY_nunu}  });
     Plotter::DataCollection scalew_nSearchBin(   "single", {{"nSearchBin",    dsDY_nunu_njetnorm}, {"nSearchBin",    dsDY_nunu_njetnorm_scaleUp}, {"nSearchBin",    dsDY_nunu_njetnorm_scaleDown}  });
     Plotter::DataCollection pdfw_nSearchBin(     "single", {{"nSearchBin",    dsDY_nunu_njetnorm}, {"nSearchBin",    dsDY_nunu_njetnorm_PDFUp}, {"nSearchBin",    dsDY_nunu_njetnorm_PDFDown}  });
+    Plotter::DataCollection trigger_nSearchBin( "single", {{"nSearchBin",    dsDY_nunu_njetnorm}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown}  });
 
     vh.push_back(PHS("NJetWgt_nSearchBin",            {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("NJetWgt_nSearchBin_log",        {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
@@ -1274,6 +1278,7 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("NJetWgt_nSearchBin_pull_log",   {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",   45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
     vh.push_back(PHS("ScaleWgt_nSearchBin",           {scalew_nSearchBin},{2, 1}, "passBaselineZinv",   45,  0,     45,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("PDFWgt_nSearchBin",             {pdfw_nSearchBin},  {2, 1}, "passBaselineZinv",   45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nSearchBin",         {trigger_nSearchBin},  {2, 1}, "passBaselineZinv",   45,  0,     45,   false, false,  "Search Bin",     "Events", true));
 
     //Baseline cuts are flawed here, fix!
     for(std::pair<std::string,std::string>& cut : cutlevels_MC)

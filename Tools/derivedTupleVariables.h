@@ -1236,6 +1236,7 @@ namespace plotterFunctions
 	    }
 
 	    // MC trigger efficiencies
+	    double triggerEff = GetTriggerEffWeight(met);
 	    double triggerEffStatUncUp = GetTriggerEffStatUncHi(met);
 	    double triggerEffSystUncUp = GetTriggerEffSystUncHi(met);
 	    double triggerEffUncUp     = TMath::Sqrt(triggerEffStatUncUp*triggerEffStatUncUp + triggerEffSystUncUp*triggerEffSystUncUp);
@@ -1245,9 +1246,9 @@ namespace plotterFunctions
 
 	    tr.registerDerivedVar("passMuTrigger",passMuTrigger);
 	    tr.registerDerivedVar("passElecTrigger",passElecTrigger);
-	    tr.registerDerivedVar("TriggerEffMC",GetTriggerEffWeight(met));
-	    tr.registerDerivedVar("TriggerEffUncUpMC",triggerEffUncUp);
-	    tr.registerDerivedVar("TriggerEffUncDownMC",triggerEffUncDown);
+	    tr.registerDerivedVar("TriggerEffMC",triggerEff);
+	    tr.registerDerivedVar("TriggerEffUpMC",triggerEff+triggerEffUncUp);
+	    tr.registerDerivedVar("TriggerEffDownMC",triggerEff-triggerEffUncDown);
         }
 
     public:
