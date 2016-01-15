@@ -1144,10 +1144,62 @@ namespace plotterFunctions
 	int indexMuTrigger;
 	int indexElecTrigger;
 
+	double GetTriggerEffWeight(const double& met) 
+	{
+	    if (met<100) return 0.0130;
+	    else if (met<150) return 0.3239;
+	    else if (met<175) return 0.7855;
+	    else if (met<200) return 0.9429;
+	    else if (met<275) return 0.9736;
+	    else if (met<400) return 0.9952; 
+	    else return 1.0;
+	}
+	double GetTriggerEffStatUncHi(const double& met) 
+	{
+	    if (met<100) return 0.0011;
+	    else if (met<150) return 0.0131;
+	    else if (met<175) return 0.0226;
+	    else if (met<200) return 0.0149;
+	    else if (met<275) return 0.0078;
+	    else if (met<400) return 0.0040; 
+	    else return 0.0;
+	}
+	double GetTriggerEffStatUncLo(const double& met) 
+	{
+	    if (met<100) return 0.0010;
+	    else if (met<150) return 0.0128;
+	    else if (met<175) return 0.0244;
+	    else if (met<200) return 0.0190;
+	    else if (met<275) return 0.0104;
+	    else if (met<400) return 0.0109; 
+	    else return 0.0109;
+	}
+	double GetTriggerEffSystUncHi(const double& met) 
+	{
+	    if (met<100) return 0.0272;
+	    else if (met<150) return 0.0872;
+	    else if (met<175) return 0.1505;
+	    else if (met<200) return 0.0423;
+	    else if (met<275) return 0.0112;
+	    else if (met<400) return 0.0001; 
+	    else return 0.0;
+	}
+	double GetTriggerEffSystUncLo(const double& met) 
+	{
+	    if (met<100) return 0.0120;
+	    else if (met<150) return 0.0872;
+	    else if (met<175) return 0.1505;
+	    else if (met<200) return 0.0792;
+	    else if (met<275) return 0.0112;
+	    else if (met<400) return 0.0001; 
+	    else return 0.0018;
+	}
+
         void triggerInfo(NTupleReader& tr)
         {
             const std::vector<std::string>& triggerNames = tr.getVec<std::string>("TriggerNames");
             const std::vector<int>& passTrigger          = tr.getVec<int>("PassTrigger");
+            const double& met                            = tr.getVar<double>("cleanMetPt");
 
 	    bool passMuTrigger = false;
 	    bool passElecTrigger = false;
@@ -1183,8 +1235,19 @@ namespace plotterFunctions
 		std::cout << "Could not find trigger in the list of trigger names" << std::endl;
 	    }
 
+	    // MC trigger efficiencies
+	    double triggerEffStatUncUp = GetTriggerEffStatUncHi(met);
+	    double triggerEffSystUncUp = GetTriggerEffSystUncHi(met);
+	    double triggerEffUncUp     = TMath::Sqrt(triggerEffStatUncUp*triggerEffStatUncUp + triggerEffSystUncUp*triggerEffSystUncUp);
+	    double triggerEffStatUncDown = GetTriggerEffStatUncLo(met);
+	    double triggerEffSystUncDown = GetTriggerEffSystUncLo(met);
+	    double triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
+
 	    tr.registerDerivedVar("passMuTrigger",passMuTrigger);
 	    tr.registerDerivedVar("passElecTrigger",passElecTrigger);
+	    tr.registerDerivedVar("TriggerEffMC",GetTriggerEffWeight(met));
+	    tr.registerDerivedVar("TriggerEffUncUpMC",triggerEffUncUp);
+	    tr.registerDerivedVar("TriggerEffUncDownMC",triggerEffUncDown);
         }
 
     public:
