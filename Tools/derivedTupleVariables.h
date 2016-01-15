@@ -1273,9 +1273,32 @@ namespace plotterFunctions
 
         void systematicPrep(NTupleReader& tr)
         {
-            const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const std::vector<double>& recoJetsJecUncLepCleaned = tr.getVec<double>("recoJetsJecUncLepCleaned");
+            const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
+            const std::vector<double>& recoJetsBtag_0    = tr.getVec<double>("recoJetsBtag_0_LepCleaned");
+            const std::vector<double>& recoJetsJecUnc    = tr.getVec<double>("recoJetsJecUncLepCleaned");
 
+            std::vector<TLorentzVector> jetLVecUp;
+            std::vector<TLorentzVector> jetLVecDn;
+            
+            for(int iJet = 0; iJet < jetsLVec; ++iJet)
+            {
+                jetLVecUp.push_back(jetsLVec[iJet] * (1 + recoJetsJecUnc[iJet]));
+                jetLVecDn.push_back(jetsLVec[iJet] * (1 - recoJetsJecUnc[iJet]));
+            }
+
+            std::vector<TLorentzVector> jetLVecUp_forTagger;
+            std::vector<TLorentzVector> jetLVecDn_forTagger;
+            std::vector<double> recoJetsBtagUp_forTagger;
+            std::vector<double> recoJetsBtagDn_forTagger;
+
+            prepareJetsForTagger(jetsLVecUp, recoJetsBtag_0, jetsLVecUp_forTagger, recoJetsBtagUp_forTagger);
+            prepareJetsForTagger(jetsLVecDn, recoJetsBtag_0, jetsLVecDn_forTagger, recoJetsBtagDn_forTagger);
+
+            tr.registerDerivedVec("jetsLVecUp_forTagger", jetsLVecUp_forTagger);
+            tr.registerDerivedVar("recoJetsBtagUp_forTagger", recoJetsBtagUp_forTagger);
+            
+            tr.registerDerivedVec("jetsLVecDn_forTagger", jetsLVecDn_forTagger);
+            tr.registerDerivedVar("recoJetsBtagDn_forTagger", recoJetsBtagDn_forTagger);
         }
 
     public:
