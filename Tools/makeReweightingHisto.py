@@ -280,10 +280,10 @@ def systHarvest():
     hShape_final = hShape_MET_ratio.Clone("shape_central")
 
     for i in xrange(1, 46):
-        uncertMET = hShape_MET_ratio.GetBinContent(i) - 1
-        uncertMT2 = hShape_MT2_ratio.GetBinContent(i) - 1
-        uncertNT = hShape_NT_ratio.GetBinContent(i) - 1
-        uncertNB = hShape_NB_ratio.GetBinContent(i) - 1
+        uncertMET = hShape_MET_ratio.GetBinContent(i) - 1 if hShape_MET_ratio.GetBinContent(i) > 0 else 0
+        uncertMT2 = hShape_MT2_ratio.GetBinContent(i) - 1 if hShape_MT2_ratio.GetBinContent(i) > 0 else 0
+        uncertNT = hShape_NT_ratio.GetBinContent(i) - 1 if hShape_NT_ratio.GetBinContent(i) > 0 else 0
+        uncertNB = hShape_NB_ratio.GetBinContent(i) - 1 if hShape_NB_ratio.GetBinContent(i) > 0 else 0
         hShape_final.SetBinContent(i, sqrt(uncertMET**2 + uncertMT2**2 + uncertNT**2 + uncertNB**2))
 
     fout = TFile("syst_all.root", "RECREATE")
@@ -316,8 +316,6 @@ def systHarvest():
         hClosureRatio.SetBinContent(i, abs(hClosureRatio.GetBinContent(i)))
     fout.cd()
     hClosureRatio.Write()
-    hClosureZ.Write()
-    hClosureDY.Write()
 
     fout.Close()
 

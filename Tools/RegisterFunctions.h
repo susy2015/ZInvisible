@@ -19,6 +19,8 @@ namespace plotterFunctions
     class TriggerInfo;
     class PrepareMiniTupleVars;
     class NJetWeight;
+    class SystematicPrep;
+    class SystematicCalc;
 }
 
 class SystWeights;
@@ -43,6 +45,10 @@ private:
     BaselineVessel *blvZinv1b;
     BaselineVessel *blvZinv2b;
     BaselineVessel *blvZinv3b;
+    BaselineVessel *blvZinvJEUUp;
+    BaselineVessel *blvZinvJEUDn;
+    BaselineVessel *blvZinvMEUUp;
+    BaselineVessel *blvZinvMEUDn;
     plotterFunctions::GenerateWeight *weights;
     plotterFunctions::NJetWeight *njWeight;
     plotterFunctions::LepInfo *lepInfo;
@@ -50,6 +56,8 @@ private:
     plotterFunctions::GetSearchBin *getSearchBin;
     plotterFunctions::TriggerInfo *triggerInfo;
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
+    plotterFunctions::SystematicPrep *systematicPrep;
+    plotterFunctions::SystematicCalc *systematicCalc;
     PDFUncertainty *myPDFUnc;
 
 public:

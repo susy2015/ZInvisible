@@ -13,6 +13,7 @@
 #include "TLorentzVector.h"
 #include "Math/VectorUtil.h"
 #include "TRandom3.h"
+#include "TVector2.h"
 
 #include <vector>
 #include <iostream>
@@ -420,7 +421,7 @@ namespace plotterFunctions
 	    {
 		if(njWTTbar_0b)  wTT = njWTTbar_0b->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
 		if(njWDYZ_0b)    wDY = njWDYZ_0b->GetBinContent(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
-	    } 
+	    }
 	    else
 	    {
 		if(njWTTbar_g1b) wTT = njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
@@ -1269,13 +1270,52 @@ namespace plotterFunctions
     {
     private:
 
-        topTagger::type3TopTagger tp3;
-
         void systematicPrep(NTupleReader& tr)
         {
-            const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const std::vector<double>& recoJetsJecUncLepCleaned = tr.getVec<double>("recoJetsJecUncLepCleaned");
+            const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
+            const std::vector<double>& recoJetsJecUnc    = tr.getVec<double>("recoJetsJecUncLepCleaned");
 
+            const std::vector<double>& metMagUp   = tr.getVec<double>("metMagUp");
+            const std::vector<double>& metMagDown = tr.getVec<double>("metMagDown");
+            const std::vector<double>& metPhiUp   = tr.getVec<double>("metPhiUp");
+            const std::vector<double>& metPhiDown = tr.getVec<double>("metPhiDown");
+
+            const double& met    = tr.getVar<double>("met");
+            const double& metphi = tr.getVar<double>("metphi");
+
+            std::vector<TLorentzVector> *jetLVecUp = new std::vector<TLorentzVector>;
+            std::vector<TLorentzVector> *jetLVecDn = new std::vector<TLorentzVector>;
+
+            std::vector<double> *dPtMet = new std::vector<double>;
+            std::vector<double> *dPhiMet = new std::vector<double>;
+
+            double metUp = 0.0, metDn = 99990.0;
+
+            for(int iMet = 0; iMet < metMagUp.size(); ++iMet)
+            {
+                metUp = std::max(metUp, metMagUp[iMet]);
+                metDn = std::max(metDn, metMagDown[iMet]);
+                
+                dPtMet->push_back((metMagUp[iMet] - met)/met);
+                dPtMet->push_back((metMagDown[iMet] - met)/met);
+                dPhiMet->push_back(TVector2::Phi_mpi_pi(metPhiUp[iMet] - metphi));
+                dPhiMet->push_back(TVector2::Phi_mpi_pi(metPhiDown[iMet] - metphi));
+            }
+
+            for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
+            {
+                jetLVecUp->push_back(jetsLVec[iJet] * (1 + recoJetsJecUnc[iJet]));
+                jetLVecDn->push_back(jetsLVec[iJet] * (1 - recoJetsJecUnc[iJet]));
+            }
+
+            tr.registerDerivedVar("metMEUUp", metUp);
+            tr.registerDerivedVar("metMEUDn", metDn);
+
+            tr.registerDerivedVec("dPtMet", dPtMet);
+            tr.registerDerivedVec("dPhiMet", dPhiMet);
+
+            tr.registerDerivedVec("jetLVecUp", jetLVecUp);
+            tr.registerDerivedVec("jetLVecDn", jetLVecDn);
         }
 
     public:
@@ -1287,6 +1327,58 @@ namespace plotterFunctions
 	void operator()(NTupleReader& tr)
 	{
 	    systematicPrep(tr);
+	}
+
+    };
+
+    class SystematicCalc
+    {
+    private:
+
+        void systematicCalc(NTupleReader& tr)
+        {
+            const int& cntCSVSJEUUp = tr.getVar<int>("cntCSVSZinvJEUUp");
+            const int& nTopCandSortedCntJEUUp = tr.getVar<int>("nTopCandSortedCntZinvJEUUp");
+            const double& MT2JEUUp = tr.getVar<double>("best_had_brJet_MT2ZinvJEUUp");
+
+            const int& cntCSVSJEUDn = tr.getVar<int>("cntCSVSZinvJEUDn");
+            const int& nTopCandSortedCntJEUDn = tr.getVar<int>("nTopCandSortedCntZinvJEUDn");
+            const double& MT2JEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvJEUDn");
+
+            const double& cleanMet = tr.getVar<double>("cleanMetPt");
+
+            const int& cntCSVSMEUUp = tr.getVar<int>("cntCSVSZinvMEUUp");
+            const int& nTopCandSortedCntMEUUp = tr.getVar<int>("nTopCandSortedCntZinvMEUUp");
+            const double& MT2MEUUp = tr.getVar<double>("best_had_brJet_MT2ZinvMEUUp");
+            const double& cleanMetMEUUp = tr.getVar<double>("metMEUUp");
+
+            const int& cntCSVSMEUDn = tr.getVar<int>("cntCSVSZinvMEUDn");
+            const int& nTopCandSortedCntMEUDn = tr.getVar<int>("nTopCandSortedCntZinvMEUDn");
+            const double& MT2MEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvMEUDn");
+            const double& cleanMetMEUDn = tr.getVar<double>("metMEUDn");
+
+            int nSearchBinJEUUp = find_Binning_Index(cntCSVSJEUUp, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet);
+            int nSearchBinJEUDn = find_Binning_Index(cntCSVSJEUDn, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet);
+
+            int nSearchBinMEUUp = find_Binning_Index(cntCSVSMEUUp, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp);
+            int nSearchBinMEUDn = find_Binning_Index(cntCSVSMEUDn, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn);
+            
+            tr.registerDerivedVar("nSearchBinJEUUp", nSearchBinJEUUp);
+            tr.registerDerivedVar("nSearchBinJEUDn", nSearchBinJEUDn);
+
+            tr.registerDerivedVar("nSearchBinMEUUp", nSearchBinMEUUp);
+            tr.registerDerivedVar("nSearchBinMEUDn", nSearchBinMEUDn);
+        }
+
+    public:
+	SystematicCalc()
+	{
+
+	}
+
+	void operator()(NTupleReader& tr)
+	{
+	    systematicCalc(tr);
 	}
 
     };
