@@ -63,6 +63,8 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
     blvZinv3b = new BaselineVessel("Zinv3b");
     blvZinvJEUUp = new BaselineVessel("ZinvJEUUp");
     blvZinvJEUDn = new BaselineVessel("ZinvJEUDn");
+    blvZinvMEUUp = new BaselineVessel("ZinvMEUUp");
+    blvZinvMEUDn = new BaselineVessel("ZinvMEUDn");
 
     weights              = new plotterFunctions::GenerateWeight;
     njWeight             = new plotterFunctions::NJetWeight;
@@ -86,6 +88,8 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(blvZinv3b) delete blvZinv3b;
     if(blvZinvJEUUp) delete blvZinvJEUUp;
     if(blvZinvJEUDn) delete blvZinvJEUDn;
+    if(blvZinvMEUUp) delete blvZinvMEUUp;
+    if(blvZinvMEUDn) delete blvZinvMEUDn;
     if(weights) delete weights;
     if(njWeight) delete njWeight;
     if(lepInfo) delete lepInfo;
@@ -115,6 +119,8 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*systematicPrep);
     tr.registerFunction(*blvZinvJEUUp);
     tr.registerFunction(*blvZinvJEUDn);
+    tr.registerFunction(*blvZinvMEUUp);
+    tr.registerFunction(*blvZinvMEUDn);
     tr.registerFunction(*getSearchBin);
     tr.registerFunction(*systematicCalc);
     tr.registerFunction(*triggerInfo);

@@ -47,6 +47,8 @@ private:
     BaselineVessel *blvZinv3b;
     BaselineVessel *blvZinvJEUUp;
     BaselineVessel *blvZinvJEUDn;
+    BaselineVessel *blvZinvMEUUp;
+    BaselineVessel *blvZinvMEUDn;
     plotterFunctions::GenerateWeight *weights;
     plotterFunctions::NJetWeight *njWeight;
     plotterFunctions::LepInfo *lepInfo;
