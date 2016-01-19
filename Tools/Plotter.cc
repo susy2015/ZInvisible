@@ -727,7 +727,19 @@ void Plotter::plot()
         dummy->GetYaxis()->SetLabelSize(0.20 * 2 / 6.5 * fontScale);
         if(dummy->GetNdivisions() % 100 > 5) dummy->GetXaxis()->SetNdivisions(6, 5, 0);
 
-        TLegend *leg = new TLegend(0.50, 0.70, 0.89, 0.88);
+        int NlegEntries = 0;
+        for(auto& hvec : hist.hists)
+        {
+            if(hvec.type.compare("data") == 0) 
+            {
+                if(hvec.hcsVec.size()) ++NlegEntries;
+            }
+            else if(hvec.type.compare("single") == 0)                            NlegEntries += hvec.hcsVec.size();
+            else if(hvec.type.compare("ratio") == 0 && hvec.hcsVec.size() >= 2)  ++NlegEntries;
+            else if(hvec.type.compare("stack") == 0)                             NlegEntries += hvec.hcsVec.size();
+        }
+
+        TLegend *leg = new TLegend(0.50, 0.88 - NlegEntries * 0.045, 0.89, 0.88);
         leg->SetFillStyle(0);
         leg->SetBorderSize(0);
         leg->SetLineWidth(1);
@@ -737,6 +749,7 @@ void Plotter::plot()
         double max = 0.0, lmax = 0.0, min = 1.0e300, minAvgWgt = 1.0e300;
         int iSingle = 0, iRatio = 0;
         char legEntry[128];
+
         for(auto& hvec : hist.hists)
         {
             if(hvec.type.compare("data") == 0)
@@ -1026,13 +1039,25 @@ void Plotter::plot()
         c->cd(1);
         char lumistamp[128];
         sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", lumi_ / 1000.0);
+
         TLatex mark;
-        mark.SetTextSize(0.042 * fontScale);
-        mark.SetTextFont(42);
         mark.SetNDC(true);
-        mark.DrawLatex(gPad->GetLeftMargin(), 0.95, "CMS Preliminary");
+
+        //Draw CMS mark
+        mark.SetTextAlign(11);
+        mark.SetTextSize(0.042 * fontScale * 1.25);
+        //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * 1.25 * fontScale);
+        mark.SetTextFont(61);
+        mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
+        mark.SetTextSize(0.042 * fontScale);
+        //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
+        mark.SetTextFont(52);
+        mark.DrawLatex(gPad->GetLeftMargin() + 0.12, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+
+        //Draw lumistamp 
+        mark.SetTextFont(42);
         mark.SetTextAlign(31);
-        mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
+        mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
 
         fixOverlay();
         c->Print((plotDir_ + hist.name+".png").c_str());
