@@ -766,7 +766,7 @@ void Plotter::plot()
                     else                      sprintf(legEntry, "%s (%0.2e)",  hvec.hcsVec.front()->label.c_str(), integral);
                     leg->AddEntry(hvec.hcsVec.front()->h, legEntry, "PE");
                     if(hist.isNorm) hvec.hcsVec.front()->h->Scale(hist.fhist()->Integral()/hvec.hcsVec.front()->h->Integral());
-                    smartMax(hvec.hcsVec.front()->h, leg, static_cast<TPad*>(gPad), min, max, lmax);
+                    smartMax(hvec.hcsVec.front()->h, leg, static_cast<TPad*>(gPad), min, max, lmax, true);
 
                     hvec.h = static_cast<TNamed*>(hvec.hcsVec.front()->h->Clone());
                 }
@@ -800,7 +800,7 @@ void Plotter::plot()
                 if(hist.isNorm) hratio->Scale((*hIter)->h->Integral()/hratio->Integral());
                 hratio->Divide((*hIter)->h);
                 leg->AddEntry(hratio, hvec.flabel().c_str());
-                smartMax(hratio, leg, static_cast<TPad*>(gPad), min, max, lmax);
+                smartMax(hratio, leg, static_cast<TPad*>(gPad), min, max, lmax, true);
                 minAvgWgt = std::min(minAvgWgt, 1.0);
             }
             else if(hvec.type.compare("stack") == 0)
@@ -976,10 +976,12 @@ void Plotter::plot()
                 if(hist.isRatio)
                 {
                     fline->SetParameter(0, 1);
-                    drawOptions = "same E1";
+                    drawOptions = "same PE1";
 
                     h1->Divide(h2);
                     //h1->SetLineColor(kBlack);
+                    h1->SetMarkerStyle(20);
+                    h1->SetMarkerColor(h1->GetLineColor());
                     double d2ymin = 0.0;
                     double d2ymax = 1.5;
                     for(int iBin = 1; iBin <= h1->GetNbinsX(); ++iBin)
@@ -1114,7 +1116,7 @@ template<> inline void Plotter::vectorFill(TH1 * const h, const VarName& name, c
     h->Fill(obj.first, obj.second * weight);
 }
 
-void Plotter::smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, double& gmin, double& gmax, double& gpThreshMax) const
+void Plotter::smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, double& gmin, double& gmax, double& gpThreshMax, const bool error) const
 {
     const bool isLog = p->GetLogy();
     double min = 9e99;
@@ -1124,7 +1126,9 @@ void Plotter::smartMax(const TH1* const h, const TLegend* const l, const TPad* c
 
     for(int i = 1; i <= h->GetNbinsX(); ++i)
     {
-        double bin = h->GetBinContent(i);
+        double bin = 0.0;
+        if(error) bin = h->GetBinContent(i) + h->GetBinError(i);
+        else      bin = h->GetBinContent(i);
         if(bin > max) max = bin;
         else if(bin > 1e-10 && bin < min) min = bin;
         if(i >= threshold && bin > pThreshMax) pThreshMax = bin;

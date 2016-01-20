@@ -44,15 +44,15 @@ int main(int argc, char* argv[])
     // Scale the prediction by the normalization factor by hand for now
     h1->Scale(ScaleFactors::sf_norm0b());
 
-    TFile* f2 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_nJetWgt.root");
-    TH1D* h2 = (TH1D*)f2->Get("syst68Max");
-
-    TFile* f3 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_searchBinStats.root");
-    TH1D* h3_up = (TH1D*)f3->Get("h_nSB_uncertUp");
-    TH1D* h3_dn = (TH1D*)f3->Get("h_nSB_uncertDn");
+    //TFile* f2 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_nJetWgt.root");
+    TFile* f2 = TFile::Open("syst_all.root");
+    TH1D* h2 = (TH1D*)f2->Get("shape_central");
+    TH1D* h3 = (TH1D*)f2->Get("shape_stat");
+    TH1D* h4 = (TH1D*)f2->Get("MC_stats");
 
     //TGraphAsymmErrors* g1 = (TGraphAsymmErrors*)f2->Get("");
     TGraphAsymmErrors* g3 = new TGraphAsymmErrors();
+    TGraphAsymmErrors* g4 = new TGraphAsymmErrors();
     const int n = h2->GetNbinsX();
     double x[n];
     double y[n];
@@ -76,8 +76,14 @@ int main(int argc, char* argv[])
 	eyl_2[i-1] = sqrt(eyl_1[i-1]*eyl_1[i-1] + e2_temp*e2_temp);
 	eyh_2[i-1] = sqrt(eyh_1[i-1]*eyh_1[i-1] + e2_temp*e2_temp);
       
+        double err = h3->GetBinContent(i) * h1->GetBinContent(i);
+        err = sqrt(err*err + eyl_2[i-1]*eyl_2[i-1]);
         g3->SetPoint(i - 1, h1->GetBinCenter(i), h1->GetBinContent(i));
-        g3->SetPointError(i - 1, 0.5, 0.5, h3_dn->GetBinContent(i), h3_up->GetBinContent(i));
+        g3->SetPointError(i - 1, 0.5, 0.5, err, err);
+
+        err = sqrt(err*err + pow(h4->GetBinContent(i) * h1->GetBinContent(i), 2));
+        g4->SetPoint(i - 1, h1->GetBinCenter(i), h1->GetBinContent(i));
+        g4->SetPointError(i - 1, 0.5, 0.5, err, err);
 	std::cout << "bin " << i << ", rel unc (njet): " << h2->GetBinContent(i) << ", rel unc (norm): " << rel_unc_2  << "" << std::endl;
     }
 
@@ -159,15 +165,16 @@ int main(int argc, char* argv[])
     leg->AddEntry(g1, legEntry);
     g2->SetFillColor(kCyan-6);
     //sprintf(legEntry, "%s", "Njet reweighting unc.");
-    sprintf(legEntry, "%s", "Njet/shape stat. unc.");
+    sprintf(legEntry, "%s", "Data/MC shape uncertinty");
     leg->AddEntry(g2, legEntry);
-    //g3->SetFillColor(kMagenta);
-    //sprintf(legEntry, "%s", "N(b) data unc.");
-    //leg->AddEntry(g3, legEntry);
-    //sprintf(legEntry, "%s", "unc. bla3 ");
-    //leg->AddEntry(g1, legEntry);
+    g3->SetFillColor(kMagenta);
+    sprintf(legEntry, "%s", "Njet/shape stat. unc.");
+    leg->AddEntry(g3, legEntry);
+    g4->SetFillColor(kGreen+2);
+    sprintf(legEntry, "%s", "MC Stats");
+    leg->AddEntry(g4, legEntry);
 
-    bool isLog = true;
+    bool isLog = false;
     gPad->SetLogy(isLog);
     if(isLog)
     {
@@ -179,19 +186,21 @@ int main(int argc, char* argv[])
 	    double scale = (log10(lmax) - log10(locMin)) / (legMin - log10(locMin));
 	    max = pow(max/locMin, scale)*locMin;
 	}
-	dummy->GetYaxis()->SetRangeUser(locMin, 50*max);
+	//dummy->GetYaxis()->SetRangeUser(locMin, 50*max);
+        dummy->GetYaxis()->SetRangeUser(0.001, 15*max);
     }
     else
     {
 	double locMin = 0.0;
 	double legMin = (1.2*max - locMin) * (leg->GetY1() - gPad->GetBottomMargin()) / ((1 - gPad->GetTopMargin()) - gPad->GetBottomMargin());
 	if(lmax > legMin) max *= (lmax - locMin)/(legMin - locMin);
-	dummy->GetYaxis()->SetRangeUser(0.0, max*1.2);
+	dummy->GetYaxis()->SetRangeUser(0.0, max*1.4);
     }
 
     dummy->Draw();
     
-    //g3->Draw("2 same");
+    g4->Draw("2 same");
+    g3->Draw("2 same");
     g2->Draw("2 same");
     g1->Draw("2 same");
     h1->Draw("histsame");
