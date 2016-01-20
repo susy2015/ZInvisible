@@ -206,7 +206,7 @@ private:
     void createHistsFromTuple();
     void createHistsFromFile();
     void fillHist(TH1 * const h, const VarName& name, const NTupleReader& tr, const double weight);
-    void smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, double& gmin, double& gmax, double& gpThreshMax) const;
+    void smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, double& gmin, double& gmax, double& gpThreshMax, const bool error = false) const;
 
     template<typename T> static const double& tlvGetValue(const std::string& name, const T& v)
     {
