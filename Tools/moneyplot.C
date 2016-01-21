@@ -1,5 +1,6 @@
 #include "tdrstyle.h"
 #include "ScaleFactors.h"
+#include "searchBins.h"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -39,13 +40,13 @@ int main(int argc, char* argv[])
 {
 
     // Get the relevant information
-    TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Dec15.root");
+    TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Jan20.root");
     TH1D* h1 = (TH1D*)f1->Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle");
     // Scale the prediction by the normalization factor by hand for now
     h1->Scale(ScaleFactors::sf_norm0b());
 
     //TFile* f2 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_nJetWgt.root");
-    TFile* f2 = TFile::Open("syst_all.root");
+    TFile* f2 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_all.root");
     TH1D* h2 = (TH1D*)f2->Get("shape_central");
     TH1D* h3 = (TH1D*)f2->Get("shape_stat");
     TH1D* h4 = (TH1D*)f2->Get("MC_stats");
@@ -64,6 +65,7 @@ int main(int argc, char* argv[])
     double eyh_2[n];
     double rel_unc_2 = ScaleFactors::sfunc_norm0b()/ScaleFactors::sf_norm0b();
     double e2_temp;
+    std::vector<double> v_uncertainty;
     for(int i = 1; i < n+1; ++i)
     {
 	x[i-1] = h1->GetBinCenter(i);
@@ -84,6 +86,7 @@ int main(int argc, char* argv[])
         err = sqrt(err*err + pow(h4->GetBinContent(i) * h1->GetBinContent(i), 2));
         g4->SetPoint(i - 1, h1->GetBinCenter(i), h1->GetBinContent(i));
         g4->SetPointError(i - 1, 0.5, 0.5, err, err);
+	v_uncertainty.push_back(err);
 	std::cout << "bin " << i << ", rel unc (njet): " << h2->GetBinContent(i) << ", rel unc (norm): " << rel_unc_2  << "" << std::endl;
     }
 
@@ -222,6 +225,15 @@ int main(int argc, char* argv[])
     fixOverlay();
     c->Print("moneyplot.png");
     c->Print("moneyplot.pdf");
+
+
+    // Now also make a table containing the information
+    std::vector<double> prediction;
+    for(int i=0; i<h1->GetNbinsX(); ++i)
+    {
+	prediction.push_back(h1->GetBinContent(i+1));
+    }
+    print_searchBins_latex(prediction, v_uncertainty, "& $\\cPZ\\rightarrow\\nu\\nu$ prediction \\\\");
 
     f1->Close();
     
