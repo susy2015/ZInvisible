@@ -894,6 +894,12 @@ void Plotter::plot()
 
         fixOverlay();
 
+	// Add the search bin boundaries for the search bin plots
+	if(hist.name.find("nSearchBin") != std::string::npos)
+	{
+	    drawSBregionDefCopy(dummy->GetMinimum(),dummy->GetMaximum());
+	}
+
         TH1 *dummy2 = nullptr, *h1 = nullptr, *h2 = nullptr;
         if(showRatio)
         {
