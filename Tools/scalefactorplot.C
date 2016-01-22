@@ -34,7 +34,7 @@ void smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, d
     gmin = std::min(gmin, min);
 }
 
-void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylow, double yhigh, std::string prefix, bool log = false)
+void makeplot(TFile* f, std::string hname)
 {
 
     TH1D* h = (TH1D*)f->Get(hname.c_str());
@@ -60,10 +60,10 @@ void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylo
     TH1 *dummy = new TH1F("dummy", "dummy", 1000, h->GetBinLowEdge(1), h->GetBinLowEdge(h->GetNbinsX()) + h->GetBinWidth(h->GetNbinsX()));
     dummy->SetStats(0);
     dummy->SetTitle(0);
-    dummy->GetYaxis()->SetTitle("Systematic uncertainty");
+    dummy->GetYaxis()->SetTitle("Scale factor");
     dummy->GetYaxis()->SetTitleOffset(.9*1.05 / (fontScale));
     dummy->GetXaxis()->SetTitleOffset(1.05);
-    dummy->GetXaxis()->SetTitle("Search Bin");
+    dummy->GetXaxis()->SetTitle("Jet multiplicity");
     dummy->GetXaxis()->SetTitleSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetXaxis()->SetLabelSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetYaxis()->SetTitleSize(0.20 * 2 / 6.5 * fontScale);
@@ -79,11 +79,11 @@ void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylo
     h->SetLineWidth(3);
     iSingle++;
     
-    dummy->GetXaxis()->SetRangeUser(xlow, xhigh);
-    dummy->GetYaxis()->SetRangeUser(ylow, yhigh);
+    dummy->GetXaxis()->SetRangeUser(4, 20);
+    dummy->GetYaxis()->SetRangeUser(0.0, 2.0);
     dummy->Draw();
     
-    h->Draw("hist same");
+    h->Draw("Esame");
 
     fixOverlay();
 
@@ -100,9 +100,9 @@ void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylo
     
     fixOverlay();
     char outname[128];
-    sprintf(outname, (prefix + "_%s.pdf").c_str(), hname.c_str());
+    sprintf(outname, "SF_njet_%s.pdf", hname.c_str());
     c->Print(outname);
-    sprintf(outname, (prefix + "_%s.png").c_str(), hname.c_str());
+    sprintf(outname, "SF_njet_%s.png", hname.c_str());
     c->Print(outname);
 
     c->Close();
@@ -120,19 +120,7 @@ int main(int argc, char* argv[])
 				       "DataMC_nj_muZinv_g1b_ht200_dphi"};
     for(std::string const& hname : hnames)
     {
-	makeplot(f1, hname, 4, 20, 0.0, 2.0, "SF_njet");
-    }
-
-    f1->Close();
-
-    f1 = TFile::Open("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_all.root");
-    hnames = {"shape_central",
-              "shape_stat",
-              "MC_stats"};
-
-    for(std::string const& hname : hnames)
-    {
-        makeplot(f1, hname, 0, 45, 0.0, 1.1, "Syst");
+	makeplot(f1, hname);
     }
 
     f1->Close();
