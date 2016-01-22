@@ -195,14 +195,14 @@ def shapeSyst(filename):
     fout = TFile.Open("syst_shape.root", "RECREATE")
     # Run over the relevant histograms
     # histo names
-    hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sDatadata"
-    hnames2 =  ["%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sDYstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sDY HT<100stack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)st#bar{t}stack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)ssingle topstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)st#bar{t}Zstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sDibosonstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0%(var)s%(var)sRarestack"]
+    hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDatadata"
+    hnames2 =  ["%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDYstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDY HT<100stack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}stack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)ssingle topstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}Zstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDibosonstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sRarestack"]
 
     varList = [["met", "cleanMetPt",             [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 1500], "MET" ],
                ["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500],      "M_{T2}" ],
@@ -256,14 +256,14 @@ def systHarvest():
 
     # Get shape central value uncertainty
     f = TFile("systematics.root")
-    hShape_MET_Nom = f.Get("nSearchBin/systWgtMET_cleanMetPtnSearchBinnSearchBinsystWgtMET_cleanMetPt_Nomsingle")
-    hShape_MET_Var = f.Get("nSearchBin/systWgtMET_cleanMetPtnSearchBinnSearchBinsystWgtMET_cleanMetPt_varsingle")
-    hShape_MT2_Nom = f.Get("nSearchBin/systWgtMT2_best_had_brJet_MT2ZinvnSearchBinnSearchBinsystWgtMT2_best_had_brJet_MT2Zinv_Nomsingle")
-    hShape_MT2_Var = f.Get("nSearchBin/systWgtMT2_best_had_brJet_MT2ZinvnSearchBinnSearchBinsystWgtMT2_best_had_brJet_MT2Zinv_varsingle")
-    hShape_NT_Nom  = f.Get("nSearchBin/systWgtNT_nTopCandSortedCntZinvnSearchBinnSearchBinsystWgtNT_nTopCandSortedCntZinv_Nomsingle")
-    hShape_NT_Var  = f.Get("nSearchBin/systWgtNT_nTopCandSortedCntZinvnSearchBinnSearchBinsystWgtNT_nTopCandSortedCntZinv_varsingle")
-    hShape_NB_Nom  = f.Get("nSearchBin/systWgtNB_cntCSVSZinvnSearchBinnSearchBinsystWgtNB_cntCSVSZinv_Nomsingle")
-    hShape_NB_Var  = f.Get("nSearchBin/systWgtNB_cntCSVSZinvnSearchBinnSearchBinsystWgtNB_cntCSVSZinv_varsingle")
+    hShape_MET_Nom = f.Get("nSearchBin/systWgtMET_cleanMetPtnSearchBinnSearchBinNominalsingle")
+    hShape_MET_Var = f.Get("nSearchBin/systWgtMET_cleanMetPtnSearchBinnSearchBinvariedsingle")
+    hShape_MT2_Nom = f.Get("nSearchBin/systWgtMT2_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
+    hShape_MT2_Var = f.Get("nSearchBin/systWgtMT2_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
+    hShape_NT_Nom  = f.Get("nSearchBin/systWgtNT_nTopCandSortedCntZinvnSearchBinnSearchBinNominalsingle")
+    hShape_NT_Var  = f.Get("nSearchBin/systWgtNT_nTopCandSortedCntZinvnSearchBinnSearchBinvariedsingle")
+    hShape_NB_Nom  = f.Get("nSearchBin/systWgtNB_cntCSVSZinvnSearchBinnSearchBinNominalsingle")
+    hShape_NB_Var  = f.Get("nSearchBin/systWgtNB_cntCSVSZinvnSearchBinnSearchBinvariedsingle")
 
     hShape_MET_ratio = hShape_MET_Var.Clone(hShape_MET_Nom.GetName()+"_ratio")
     hShape_MET_ratio.Divide(hShape_MET_Nom)
@@ -296,7 +296,7 @@ def systHarvest():
     hShapeStat.Write()
 
     # Get MC stats uncertainty
-    f = TFile("/uscms/home/nstrobbe/nobackup/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Jan08.root")
+    f = TFile("/uscms/home/nstrobbe/nobackup/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Jan20.root")
     hMC = f.Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle")
     hMCstats = hMC.Clone("MC_stats")
     for i in xrange(1, 46):

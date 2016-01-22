@@ -800,7 +800,7 @@ void Plotter::plot()
                 if(hist.isNorm) hratio->Scale((*hIter)->h->Integral()/hratio->Integral());
                 hratio->Divide((*hIter)->h);
                 leg->AddEntry(hratio, hvec.flabel().c_str());
-                smartMax(hratio, leg, static_cast<TPad*>(gPad), min, max, lmax, true);
+                smartMax(hratio, leg, static_cast<TPad*>(gPad), min, max, lmax);
                 minAvgWgt = std::min(minAvgWgt, 1.0);
             }
             else if(hvec.type.compare("stack") == 0)
@@ -878,7 +878,7 @@ void Plotter::plot()
             }
             else
             {
-                if(     hvec.type.compare("ratio") == 0) hvec.h->Draw("hist same E1");
+                if(     hvec.type.compare("ratio") == 0) hvec.h->Draw("hist same");
                 else if(hvec.type.compare("data") != 0)  hvec.h->Draw("hist same");
             }
         }

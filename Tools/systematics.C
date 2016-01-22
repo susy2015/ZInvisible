@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 	{"luminosity", required_argument, 0, 'L'}
     };
 
-    string dataSets = "";
+    string dataSets = "ZJetsToNuNu";
     double lumi = AnaSamples::luminosity;
 
     while((opt = getopt_long(argc, argv, "pD:L:", long_options, &option_index)) != -1)
@@ -116,22 +116,22 @@ int main(int argc, char* argv[])
 
     //Met shape syst 
     TF1 *MET_fit = new TF1("MET_fit","pol1");
-    //Chi2                      =      14.9941
+    //Chi2                      =      10.0185
     //NDf                       =            8
-    //p0                        =      1.06536   +/-   0.0387901   
-    //p1                        = -0.000572832   +/-   0.000167341
-    MET_fit->SetParameters(1.06536, -0.000572832);
+    //p0                        =      1.08688   +/-   0.0689733   
+    //p1                        =  -0.00079217   +/-   0.000223161 
+    MET_fit->SetParameters(1.08688, -0.00079217);
     Systematic METSyst("systWgtMET", "cleanMetPt", MET_fit);
     METSyst.bookHist(vh, fileMap["ZJetsToNuNu"]);
     static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(METSyst, std::placeholders::_1));
 
     //MT2 shape syst 
     TF1 *MT2_fit = new TF1("MT2_fit","pol1");
-    //Chi2                      =      3.58173
+    //Chi2                      =      3.44991
     //NDf                       =            5
-    //p0                        =      1.12231   +/-   0.0812922   
-    //p1                        =  -0.00068574   +/-   0.000258897 
-    MT2_fit->SetParameters(1.12231, -0.00068574);
+    //p0                        =      1.11303   +/-   0.0809109   
+    //p1                        = -0.000670589   +/-   0.000259671 
+    MT2_fit->SetParameters(1.11303, -0.000670589);
     Systematic MT2Syst("systWgtMT2", "best_had_brJet_MT2Zinv", MT2_fit);
     MT2Syst.bookHist(vh, fileMap["ZJetsToNuNu"]);
     static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(MT2Syst, std::placeholders::_1));
@@ -140,8 +140,8 @@ int main(int argc, char* argv[])
     double bins[] = {0, 1, 2, 8};
     TH1 *NT_hist = new TH1D("NT_hist","NT_hist", 3, bins);
     NT_hist->SetBinContent(1, 1.00401505518);
-    NT_hist->SetBinContent(2, 0.988165174802);
-    NT_hist->SetBinContent(3, 0.612896486706);
+    NT_hist->SetBinContent(2, 0.981637373833);
+    NT_hist->SetBinContent(3, 0.617594525252);
 
     Systematic NTSyst("systWgtNT", "nTopCandSortedCntZinv", NT_hist);
     NTSyst.bookHist(vh, fileMap["ZJetsToNuNu"]);
@@ -150,10 +150,10 @@ int main(int argc, char* argv[])
     //NB shape uncertainty
     double binsNB[] = {0, 1, 2, 3, 8};
     TH1 *NB_hist = new TH1D("NB_hist","NB_hist", 3, binsNB);
-    NB_hist->SetBinContent(1, 0.991595739276);
-    NB_hist->SetBinContent(2, 1.00730730293);
-    NB_hist->SetBinContent(3, 0.926764760063);
-    NB_hist->SetBinContent(4, 1.10944458397);
+    NB_hist->SetBinContent(1, 0.986938983347);
+    NB_hist->SetBinContent(2, 0.981886953393);
+    NB_hist->SetBinContent(3, 0.610958135550);
+    NB_hist->SetBinContent(4, 0.467353090212);
 
     Systematic NBSyst("systWgtNB", "cntCSVSZinv", NB_hist);
     NBSyst.bookHist(vh, fileMap["ZJetsToNuNu"]);
