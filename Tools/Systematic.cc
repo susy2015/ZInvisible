@@ -2,8 +2,8 @@
 
 void Systematic::bookHist(std::vector<Plotter::HistSummary>& vh, std::vector<AnaSamples::FileSummary>& vfs)
 {
-    Plotter::DatasetSummary dsDY_nunu_syst(  name_+"_"+var_+"_var", vfs, "", name_);
-    Plotter::DatasetSummary dsDY_nunu_nosyst(name_+"_"+var_+"_Nom", vfs, "", "");
+    Plotter::DatasetSummary dsDY_nunu_syst(  "varied", vfs, "", name_);
+    Plotter::DatasetSummary dsDY_nunu_nosyst("Nominal", vfs, "", "");
     Plotter::DataCollection dcDY_nunu( "single", "nSearchBin", {dsDY_nunu_nosyst, dsDY_nunu_syst});
     vh.emplace_back(PHS(name_+"_"+var_, {dcDY_nunu}, {2, 1}, "", 45, 0, 45, true, true, "Search Bin", "Events"));
 }

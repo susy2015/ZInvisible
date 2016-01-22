@@ -174,7 +174,7 @@ int main(int argc, char* argv[])
     sprintf(legEntry, "%s", "MC Stats");
     leg->AddEntry(g4, legEntry);
 
-    bool isLog = false;
+    bool isLog = true;
     gPad->SetLogy(isLog);
     if(isLog)
     {
