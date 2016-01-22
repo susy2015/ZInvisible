@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
     sprintf(legEntry, "%s", "MC Stats");
     leg->AddEntry(g4, legEntry);
 
-    bool isLog = false;
+    bool isLog = true;
     gPad->SetLogy(isLog);
     if(isLog)
     {
@@ -223,6 +223,7 @@ int main(int argc, char* argv[])
     mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     fixOverlay();
+    drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
     c->Print("moneyplot.png");
     c->Print("moneyplot.pdf");
 
