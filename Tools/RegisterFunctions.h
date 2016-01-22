@@ -104,4 +104,6 @@ public:
     void registerFunctions(NTupleReader& tr);
 };
 
+void drawSBregionDefCopy(const double ymin_Yields = 0.05, const double ymax_Yields = 500.);
+
 #endif

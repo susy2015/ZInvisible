@@ -1294,7 +1294,7 @@ namespace plotterFunctions
             for(int iMet = 0; iMet < metMagUp.size(); ++iMet)
             {
                 metUp = std::max(metUp, metMagUp[iMet]);
-                metDn = std::max(metDn, metMagDown[iMet]);
+                metDn = std::min(metDn, metMagDown[iMet]);
                 
                 dPtMet->push_back((metMagUp[iMet] - met)/met);
                 dPtMet->push_back((metMagDown[iMet] - met)/met);

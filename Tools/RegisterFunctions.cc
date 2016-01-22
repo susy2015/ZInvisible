@@ -206,3 +206,8 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 {
     tr.registerFunction(*prepareMiniTupleVars);
 }
+
+void drawSBregionDefCopy(const double ymin_Yields, const double ymax_Yields)
+{
+    drawSBregionDef(ymin_Yields, ymax_Yields);
+}
