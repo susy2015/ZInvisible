@@ -25,7 +25,7 @@ LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
 
-PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d scalefactorplot
+PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d scalefactorplot systplot
 
 all: mkobj sampPyWrap $(PROGRAMS)
 
@@ -76,6 +76,9 @@ moneyplot: $(ODIR)/moneyplot.o
 	$(LD) $^ $(LIBS) -o $@
 
 scalefactorplot: $(ODIR)/scalefactorplot.o
+	$(LD) $^ $(LIBS) -o $@
+
+systplot: $(ODIR)/systplot.o
 	$(LD) $^ $(LIBS) -o $@
 
 plot2d: $(ODIR)/plot2D.o $(ODIR)/NTupleReader.o $(ODIR)/Plotter.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/samples.o $(ODIR)/MiniTupleMaker.o
