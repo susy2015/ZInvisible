@@ -1297,7 +1297,9 @@ int main(int argc, char* argv[])
 
     Plotter::DataCollection njetw_nSearchBin(    "single", {{"nSearchBin",    dsDY_nunu_njet},     {"nSearchBin",    dsDY_nunu}  });
     Plotter::DataCollection scalew_nSearchBin(   "single", {{"nSearchBin",    dsDY_nunu_njetnorm}, {"nSearchBin",    dsDY_nunu_njetnorm_scaleUp}, {"nSearchBin",    dsDY_nunu_njetnorm_scaleDown}  });
+    Plotter::DataCollection scalew_nj(   "single", {{"cntNJetsPt30Eta24Zinv",    dsDY_nunu_njetnorm}, {"cntNJetsPt30Eta24Zinv",    dsDY_nunu_njetnorm_scaleUp}, {"cntNJetsPt30Eta24Zinv",    dsDY_nunu_njetnorm_scaleDown}  });
     Plotter::DataCollection pdfw_nSearchBin(     "single", {{"nSearchBin",    dsDY_nunu_njetnorm}, {"nSearchBin",    dsDY_nunu_njetnorm_PDFUp},   {"nSearchBin",    dsDY_nunu_njetnorm_PDFDown}    });
+    Plotter::DataCollection pdfw_nj(     "single", {{"cntNJetsPt30Eta24Zinv",    dsDY_nunu_njetnorm}, {"cntNJetsPt30Eta24Zinv",    dsDY_nunu_njetnorm_PDFUp},   {"cntNJetsPt30Eta24Zinv",    dsDY_nunu_njetnorm_PDFDown}    });
     Plotter::DataCollection JEU_nSearchBin(      "single", {{"nSearchBin",    dsDY_nunu_njetnorm_bl}, {"nSearchBinJEUUp", dsDY_nunu_njetnorm_JEUUp}, {"nSearchBinJEUDn", dsDY_nunu_njetnorm_JEUDown}  });
     Plotter::DataCollection MEU_nSearchBin(      "single", {{"nSearchBin",    dsDY_nunu_njetnorm_bl}, {"nSearchBinMEUUp", dsDY_nunu_njetnorm_MEUUp}, {"nSearchBinMEUDn", dsDY_nunu_njetnorm_MEUDown}  });
     Plotter::DataCollection trigger_nSearchBin( "single", {{"nSearchBin",    dsDY_nunu_njetnorm}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown}  });
@@ -1481,8 +1483,8 @@ int main(int argc, char* argv[])
 	    vh.push_back(PHS("DataMCww_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwwMC_nb0NJwBins}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
 
 	    // PDF and scale
-	    vh.push_back(PHS("DataMCwwscale_SingleMuon_nj_"    +cut.first,  {scalew_nSearchBin},    {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,             ""));
-	    vh.push_back(PHS("DataMCwwpdf_SingleMuon_nj_"    +cut.first,    {pdfw_nSearchBin},      {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,             ""));
+	    vh.push_back(PHS("DataMCwwscale_SingleMuon_nj_"    +cut.first,  {scalew_nj},    {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,             ""));
+	    vh.push_back(PHS("DataMCwwpdf_SingleMuon_nj_"    +cut.first,    {pdfw_nj},      {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,             ""));
 	    
 	}
     }
