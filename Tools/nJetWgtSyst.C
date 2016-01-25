@@ -67,6 +67,21 @@ int main()
     TH1 *h[5][45];
     std::vector<std::string> hnames = {"njet", "met", "mt2", "nt", "nb"};
 
+    const int NTRIALS = 1000;
+
+    float N0[45];
+    float N[5][45][NTRIALS];
+
+    float variations[5][20][NTRIALS];
+    for(int iT = 0; iT < NTRIALS; ++iT)
+    {
+        for(int i = 0; i <= njWDYZ_g1b->GetNbinsX() + 1; ++i) variations[0][i][iT] = (float)tr3.Gaus(1.0, njWDYZ_g1b->GetBinError(i)/njWDYZ_g1b->GetBinContent(i));
+        for(int i = 0; i <= shapeMET  ->GetNbinsX() + 1; ++i) variations[1][i][iT] = (float)tr3.Gaus(1.0, shapeMET->GetBinError(i)/shapeMET->GetBinContent(i));
+        for(int i = 0; i <= shapeMT2  ->GetNbinsX() + 1; ++i) variations[2][i][iT] = (float)tr3.Gaus(1.0, shapeMT2->GetBinError(i)/shapeMT2->GetBinContent(i));
+        for(int i = 0; i <= shapeNT   ->GetNbinsX() + 1; ++i) variations[3][i][iT] = (float)tr3.Gaus(1.0, shapeNT->GetBinError(i)/shapeNT->GetBinContent(i));
+        for(int i = 0; i <= shapeNB   ->GetNbinsX() + 1; ++i) variations[4][i][iT] = (float)tr3.Gaus(1.0, shapeNB->GetBinError(i)/shapeNB->GetBinContent(i));
+    }
+
     for(int ih = 0; ih < 5; ++ih)
     {
         for(int i = 0; i < 45; ++i)
@@ -74,8 +89,15 @@ int main()
             char name[128];
             sprintf(name, "hSB_%s_%d", hnames[ih].c_str(), i);
             h[ih][i] = new TH1D(name, name, 1000, 0, 2);
+
+            for(int j = 0; j < NTRIALS; ++j)
+            {
+                N[ih][i][j] = 0.0;
+            }
         }
     }
+
+    for(int i = 0; i < 45; ++i) N0[i] = 0.0;
 
     //for(auto& fs : sc["DYJetsToLL"])
     for(auto& fs : sc["ZJetsToNuNu"])
@@ -105,32 +127,53 @@ int main()
 
             if(passBaseline)
             {
-                double mean_g1b_DY = njWDYZ_g1b  ->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
-                double rms_g1b_DY = njWDYZ_g1b  ->GetBinError(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
-
-                double mean_met = shapeMET->GetBinContent(shapeMET->FindBin(cleanMetPt));
-                double rms_met =  shapeMET->GetBinError(  shapeMET->FindBin(cleanMetPt));
+                //double mean_g1b_DY = njWDYZ_g1b  ->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+                //double rms_g1b_DY = njWDYZ_g1b  ->GetBinError(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+                //
+                //double mean_met = shapeMET->GetBinContent(shapeMET->FindBin(cleanMetPt));
+                //double rms_met =  shapeMET->GetBinError(  shapeMET->FindBin(cleanMetPt));
+                //
+                //double mean_mt2 = shapeMT2->GetBinContent(shapeMT2->FindBin(best_had_brJet_MT2Zinv));
+                //double rms_mt2 =  shapeMT2->GetBinError(  shapeMT2->FindBin(best_had_brJet_MT2Zinv));
+                //
+                //double mean_nt = shapeNT->GetBinContent(shapeNT->FindBin(nTopCandSortedCntZinv));
+                //double rms_nt =  shapeNT->GetBinError(  shapeNT->FindBin(nTopCandSortedCntZinv));
+                //
+                //double mean_nb = shapeNB->GetBinContent(shapeNB->FindBin(cntCSVSZinv));
+                //double rms_nb =  shapeNB->GetBinError(  shapeNB->FindBin(cntCSVSZinv));
                 
-                double mean_mt2 = shapeMT2->GetBinContent(shapeMT2->FindBin(best_had_brJet_MT2Zinv));
-                double rms_mt2 =  shapeMT2->GetBinError(  shapeMT2->FindBin(best_had_brJet_MT2Zinv));
-                
-                double mean_nt = shapeNT->GetBinContent(shapeNT->FindBin(nTopCandSortedCntZinv));
-                double rms_nt =  shapeNT->GetBinError(  shapeNT->FindBin(nTopCandSortedCntZinv));
-                
-                double mean_nb = shapeNB->GetBinContent(shapeNB->FindBin(cntCSVSZinv));
-                double rms_nb =  shapeNB->GetBinError(  shapeNB->FindBin(cntCSVSZinv));
-
                 if(nSearchBin >= 0 && nSearchBin < 45)
                 {
-                    for(int iTrial = 0; iTrial < 15000; ++iTrial)
+                    N0[nSearchBin] += fs.getWeight();
+                    for(int iTrial = 0; iTrial < NTRIALS; ++iTrial)
                     {
-                        h[0][nSearchBin]->Fill(tr3.Gaus(1.0, rms_g1b_DY/mean_g1b_DY), fs.getWeight());
-                        h[1][nSearchBin]->Fill(tr3.Gaus(1.0, rms_met/mean_met),       fs.getWeight());
-                        h[2][nSearchBin]->Fill(tr3.Gaus(1.0, rms_mt2/mean_mt2),       fs.getWeight());
-                        h[3][nSearchBin]->Fill(tr3.Gaus(1.0, rms_nt/mean_nt),         fs.getWeight());
-                        h[4][nSearchBin]->Fill(tr3.Gaus(1.0, rms_nb/mean_nb),         fs.getWeight());
+                        //h[0][nSearchBin]->Fill(tr3.Gaus(1.0, rms_g1b_DY/mean_g1b_DY), fs.getWeight());
+                        //h[1][nSearchBin]->Fill(tr3.Gaus(1.0, rms_met/mean_met),       fs.getWeight());
+                        //h[2][nSearchBin]->Fill(tr3.Gaus(1.0, rms_mt2/mean_mt2),       fs.getWeight());
+                        //h[3][nSearchBin]->Fill(tr3.Gaus(1.0, rms_nt/mean_nt),         fs.getWeight());
+                        //h[4][nSearchBin]->Fill(tr3.Gaus(1.0, rms_nb/mean_nb),         fs.getWeight());
+                        
+                        if(iTrial < NTRIALS)
+                        {
+                            N[0][nSearchBin][iTrial] += variations[0][njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv)][iTrial] * fs.getWeight();
+                            N[1][nSearchBin][iTrial] += variations[1][shapeMET->FindBin(cleanMetPt)][iTrial]              * fs.getWeight();
+                            N[2][nSearchBin][iTrial] += variations[2][shapeMT2->FindBin(best_had_brJet_MT2Zinv)][iTrial]  * fs.getWeight();
+                            N[3][nSearchBin][iTrial] += variations[3][shapeNT->FindBin(nTopCandSortedCntZinv)][iTrial]    * fs.getWeight();
+                            N[4][nSearchBin][iTrial] += variations[4][shapeNB->FindBin(cntCSVSZinv)][iTrial]              * fs.getWeight();
+                        }
                     }
                 }
+            }
+        }
+    }
+    
+    for(int ih = 0; ih < 5; ++ih)
+    {
+        for(int i = 0; i < 45; ++i)
+        {
+            for(int iTrial = 0; iTrial < 1000; ++iTrial)
+            {
+                h[ih][i]->Fill(N[ih][i][iTrial]/N0[i]);
             }
         }
     }
@@ -157,6 +200,8 @@ int main()
                 if     (ll < 0 && h[ih][i]->Integral(0, iBin) > 0.16) ll = h[ih][i]->GetBinCenter(iBin);
                 else if(ul < 0 && h[ih][i]->Integral(0, iBin) > 0.84) ul = h[ih][i]->GetBinCenter(iBin);
             }
+            if(ll < 0) ll = 0;
+            if(ul < 0) ul = 2.0;
             syst68->SetBinContent(i + 1, (ul - ll) / 2.0);
             syst68Max->SetBinContent(i + 1, std::max(syst68Max->GetBinContent(i + 1), (ul - ll) / 2.0));
             systRMS->SetBinContent(i + 1, h[ih][i]->GetRMS());
