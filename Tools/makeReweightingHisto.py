@@ -11,7 +11,7 @@ from math import sqrt
 ##  Some utilities first  ##
 ############################
 
-c = TCanvas("c1", "c1", 800, 800)
+#c = TCanvas("c1", "c1", 800, 800)
 
 def rebin1D(h, bins):
     """Rebin histo h to bins and recompute the errors."""
@@ -319,6 +319,83 @@ def systHarvest():
 
     fout.Close()
 
+
+def systScalePDF(filename):
+    # Open file
+    f = TFile.Open(filename)
+
+    # Get scale and PDF histograms
+    hScale     = f.Get("nSearchBin/syst_ScaleWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle")
+    hScaleUp   = f.Get("nSearchBin/syst_ScaleWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Scale weight Upsingle")
+    hScaleDown = f.Get("nSearchBin/syst_ScaleWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Scale weight Downsingle")
+    hPDF     = f.Get("nSearchBin/syst_PDFWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle")
+    hPDFUp   = f.Get("nSearchBin/syst_PDFWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu PDF weight Upsingle")
+    hPDFDown = f.Get("nSearchBin/syst_PDFWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu PDF weight Downsingle")
+
+    # Get normalization histograms
+    hnScale     = f.Get("cntNJetsPt30Eta24Zinv/DataMCwwscale_SingleMuon_nj_0b_blnotagcntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvZ#rightarrow#nu#nu Njet+norm weightsingle")
+    hnScaleUp   = f.Get("cntNJetsPt30Eta24Zinv/DataMCwwscale_SingleMuon_nj_0b_blnotagcntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvZ#rightarrow#nu#nu Scale weight Upsingle")
+    hnScaleDown = f.Get("cntNJetsPt30Eta24Zinv/DataMCwwscale_SingleMuon_nj_0b_blnotagcntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvZ#rightarrow#nu#nu Scale weight Downsingle")
+    hnPDF     = f.Get("cntNJetsPt30Eta24Zinv/DataMCwwpdf_SingleMuon_nj_0b_blnotagcntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvZ#rightarrow#nu#nu Njet+norm weightsingle")
+    hnPDFUp   = f.Get("cntNJetsPt30Eta24Zinv/DataMCwwpdf_SingleMuon_nj_0b_blnotagcntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvZ#rightarrow#nu#nu PDF weight Upsingle")
+    hnPDFDown = f.Get("cntNJetsPt30Eta24Zinv/DataMCwwpdf_SingleMuon_nj_0b_blnotagcntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvZ#rightarrow#nu#nu PDF weight Downsingle")
+
+    # Determine scale factors
+    sf_Scale     = hnScale.Integral()
+    sf_ScaleUp   = hnScaleUp.Integral()
+    sf_ScaleDown = hnScaleDown.Integral()
+    sf_PDF     = hnPDF.Integral()
+    sf_PDFUp   = hnPDFUp.Integral()
+    sf_PDFDown = hnPDFDown.Integral()
+
+    # Normalize histograms
+    hScale.Scale(1./sf_Scale)
+    hScaleUp.Scale(1./sf_ScaleUp)
+    hScaleDown.Scale(1./sf_ScaleDown)
+    hPDF.Scale(1./sf_PDF)
+    hPDFUp.Scale(1./sf_PDFUp)
+    hPDFDown.Scale(1./sf_PDFDown)
+
+    # Get the ratios (Up - nominal)/nominal etc
+    hratio_ScaleUp = hScaleUp.Clone("nSearchBin_ratio_scale_up")
+    hratio_ScaleUp.Add(hScale,-1.0)
+    hratio_ScaleUp.Divide(hScale)
+    hratio_ScaleDown = hScale.Clone("nSearchBin_ratio_scale_down")
+    hratio_ScaleDown.Add(hScaleDown,-1.0)
+    hratio_ScaleDown.Divide(hScale)
+    hratio_PDFUp = hPDFUp.Clone("nSearchBin_ratio_pdf_up")
+    hratio_PDFUp.Add(hPDF,-1.0)
+    hratio_PDFUp.Divide(hPDF)
+    hratio_PDFDown = hPDF.Clone("nSearchBin_ratio_pdf_down")
+    hratio_PDFDown.Add(hPDFDown,-1.0)
+    hratio_PDFDown.Divide(hPDF)
+
+    # Write the histograms
+    fout = TFile.Open("syst_scalePDF.root","RECREATE")
+    fout.cd()
+
+    hScale.Write("nSearchBin_scale_nominal")
+    hScaleUp.Write("nSearchBin_scale_up")
+    hScaleDown.Write("nSearchBin_scale_down")
+    hratio_ScaleUp.Write()
+    hratio_ScaleDown.Write()
+    hPDF.Write("nSearchBin_pdf_nominal")
+    hPDFUp.Write("nSearchBin_pdf_up")
+    hPDFDown.Write("nSearchBin_pdf_down")
+    hratio_PDFUp.Write()
+    hratio_PDFDown.Write()
+
+    # Print some info
+    print "Scale uncertainty: "
+    for i in range(hratio_ScaleUp.GetNbinsX()):
+        print "Bin %s: %.3f, %.3f" % (i, hratio_ScaleUp.GetBinContent(i+1), hratio_ScaleDown.GetBinContent(i+1))
+    print "PDF uncertainty: "
+    for i in range(hratio_PDFUp.GetNbinsX()):
+        print "Bin %s: %.3f, %.3f" % (i, hratio_PDFUp.GetBinContent(i+1), hratio_PDFDown.GetBinContent(i+1))
+
+    fout.Close()
+    f.Close()
+
 if __name__ ==  "__main__":
 
     parser = OptionParser()
@@ -332,6 +409,8 @@ if __name__ ==  "__main__":
                       help="Compute the shape systematics", action='store_true')
     parser.add_option("--systHarvest", dest="systHarvest", default=False,
                       help="Harvest systematics", action='store_true')
+    parser.add_option("--systScale", dest="systScale", default=False,
+                      help="Grab information for scale and PDF systematics", action='store_true')
 
     (options, args) = parser.parse_args()
 
@@ -343,4 +422,5 @@ if __name__ ==  "__main__":
         shapeSyst(options.filename)
     if options.systHarvest:
         systHarvest()
-
+    if options.systScale:
+        systScalePDF(options.filename)        
