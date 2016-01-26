@@ -6,6 +6,7 @@ if '-h' not in sys.argv and '--help' not in sys.argv:
     from ROOT import TH1D, TMath, TFile, TCanvas, TF1
 
 from math import sqrt
+import math
 
 ############################
 ##  Some utilities first  ##
@@ -400,6 +401,13 @@ def systHarvest():
         hPDF_sym      .SetBinContent(i, max(abs(hPDFUp.GetBinContent(i)),        abs(hPDFDn.GetBinContent(i))))
         hTrig_sym     .SetBinContent(i, max(abs(hTrigUp_ratio.GetBinContent(i)), abs(hTrigDn_ratio.GetBinContent(i))))
 
+    fout.cd()
+    hJEC_ratio_sym.Write()
+    hMEC_ratio_sym.Write()
+    hScale_sym    .Write()
+    hPDF_sym      .Write()
+    hTrig_sym     .Write()
+
     hists = [("syst_unc_shape_central_up",   hShape_final), 
              ("syst_unc_shape_central_dn",   hShape_final), 
              ("syst_unc_shape_stat_up",      hShapeStat), 
@@ -421,34 +429,41 @@ def systHarvest():
     print "luminosity = 2153.74"
     print "channels = 45"
     print "sample = zinv"
+    print ""
+
+    print "%-25s = %s"%("# bin", ' '.join(["%8i" % datum for datum in xrange(0, 45)]))
+    print ""
 
     data = []
     for i in xrange(1, 46):
         datum = hPrediction.GetBinContent(i)
-        data.append("%0.5f" % datum)
-    print "%s = %s"%("rate", ' '.join(data))
+        data.append("%8.5f" % datum)
+    print "%-25s = %s"%("rate", ' '.join(data))
+    print ""
 
     data = []
     for i in xrange(1, 46):
         datum = hNEff.GetBinContent(i)
-        data.append("%0.5f" % datum)
-    print "%s = %s"%("cs_weight", ' '.join(data))
+        data.append("%8.0f" % math.floor(datum))
+    print "%-25s = %s"%("cs_event", ' '.join(data))
 
     data = []
     for i in xrange(1, 46):
         datum = hAvgWgt.GetBinContent(i)
-        data.append("%0.5f" % datum)
-    print "%s = %s"%("avg_weight", ' '.join(data))
+        data.append("%8.5f" % datum)
+    print "%-25s = %s"%("avg_weight", ' '.join(data))
 
+    print ""
     print "stat_unc_up = xxx yy zz"
     print "stat_unc_dn = xxx yy zz"
+    print ""
 
     for (name, h) in hists:
         data = []
         for i in xrange(1, 46):
             datum = hPrediction.GetBinContent(i) * h.GetBinContent(i)
             data.append(datum)
-        print "%s = %s"%(name, ' '.join(["%0.5f" % datum for datum in data]))
+        print "%-25s = %s"%(name, ' '.join(["%8.5f" % datum for datum in data]))
 
     fout.Close()
 
