@@ -51,10 +51,16 @@ int main(int argc, char* argv[])
     TH1D* h2 = (TH1D*)f2->Get("shape_central");
     TH1D* h3 = (TH1D*)f2->Get("shape_stat");
     TH1D* h4 = (TH1D*)f2->Get("MC_stats");
+    TH1D* h5 = (TH1D*)f2->Get("hJEC_ratio_sym");
+    TH1D* h6 = (TH1D*)f2->Get("hMEC_ratio_sym");
+    TH1D* h7 = (TH1D*)f2->Get("hScale_sym");
+    TH1D* h8 = (TH1D*)f2->Get("hPDF_sym");
+    TH1D* h9 = (TH1D*)f2->Get("hTrig_sym");
 
     //TGraphAsymmErrors* g1 = (TGraphAsymmErrors*)f2->Get("");
     TGraphAsymmErrors* g3 = new TGraphAsymmErrors();
     TGraphAsymmErrors* g4 = new TGraphAsymmErrors();
+    TGraphAsymmErrors* g5 = new TGraphAsymmErrors();
     const int n = h2->GetNbinsX();
     double x[n];
     double y[n];
@@ -87,6 +93,16 @@ int main(int argc, char* argv[])
         err = sqrt(err*err + pow(h4->GetBinContent(i) * h1->GetBinContent(i), 2));
         g4->SetPoint(i - 1, h1->GetBinCenter(i), h1->GetBinContent(i));
         g4->SetPointError(i - 1, 0.5, 0.5, err, err);
+
+        double err5 = h5->GetBinContent(i) * h1->GetBinContent(i);
+        double err6 = h6->GetBinContent(i) * h1->GetBinContent(i);
+        double err7 = h7->GetBinContent(i) * h1->GetBinContent(i);
+        double err8 = h8->GetBinContent(i) * h1->GetBinContent(i);
+        double err9 = h9->GetBinContent(i) * h1->GetBinContent(i);
+        err = sqrt(err*err + err5*err5 + err6*err6 + err7*err7 + err8*err8 + err9*err9);
+        g5->SetPoint(i - 1, h1->GetBinCenter(i), h1->GetBinContent(i));
+        g5->SetPointError(i - 1, 0.5, 0.5, err, err);
+
 	v_uncertainty.push_back(err);
 	std::cout << "bin " << i << ", rel unc (njet): " << h2->GetBinContent(i) << ", rel unc (norm): " << rel_unc_2  << "" << std::endl;
     }
@@ -142,7 +158,7 @@ int main(int argc, char* argv[])
     dummy->GetYaxis()->SetLabelSize(0.20 * 2 / 6.5 * fontScale);
     if(dummy->GetNdivisions() % 100 > 5) dummy->GetXaxis()->SetNdivisions(6, 5, 0);
 
-    TLegend *leg = new TLegend(0.55, 0.73, 0.89, 0.89);
+    TLegend *leg = new TLegend(0.57, 0.73, 0.90, 0.89);
     leg->SetFillStyle(0);
     leg->SetBorderSize(0);
     leg->SetLineWidth(1);
@@ -177,6 +193,9 @@ int main(int argc, char* argv[])
     g4->SetFillColor(kGreen+2);
     sprintf(legEntry, "%s", "MC Stats");
     leg->AddEntry(g4, legEntry);
+    g5->SetFillColor(kOrange);
+    sprintf(legEntry, "%s", "Other ");
+    leg->AddEntry(g5, legEntry);
 
     bool isLog = true;
     gPad->SetLogy(isLog);
@@ -203,6 +222,7 @@ int main(int argc, char* argv[])
 
     dummy->Draw();
     
+    g5->Draw("2 same");
     g4->Draw("2 same");
     g3->Draw("2 same");
     g2->Draw("2 same");
@@ -213,15 +233,35 @@ int main(int argc, char* argv[])
     fixOverlay();
 
     c->cd(1);
+
     char lumistamp[128];
     sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 2156. / 1000.0);
+
     TLatex mark;
+    mark.SetNDC();
+
+    //Draw CMS mark
+    mark.SetTextAlign(11);
+    mark.SetTextSize(0.042 * fontScale * 1.25);
+    //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * 1.25 * fontScale);
+    mark.SetTextFont(61);
+    mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
     mark.SetTextSize(0.042 * fontScale);
+    //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
+    mark.SetTextFont(52);
+    mark.DrawLatex(gPad->GetLeftMargin() + 0.062, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+
+    //Draw lumistamp 
     mark.SetTextFont(42);
-    mark.SetNDC(true);
-    mark.DrawLatex(gPad->GetLeftMargin(), 0.95, "CMS Preliminary");
     mark.SetTextAlign(31);
-    mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
+    mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
+
+    //mark.SetTextSize(0.042 * fontScale);
+    //mark.SetTextFont(42);
+    //mark.SetNDC(true);
+    //mark.DrawLatex(gPad->GetLeftMargin(), 0.95, "CMS Preliminary");
+    //mark.SetTextAlign(31);
+    //mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     fixOverlay();
     drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
