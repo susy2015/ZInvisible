@@ -1144,6 +1144,7 @@ namespace plotterFunctions
     private:
 	int indexMuTrigger;
 	int indexElecTrigger;
+        bool miniTuple_;
 
 	double GetTriggerEffWeight(const double& met) 
 	{
@@ -1200,7 +1201,6 @@ namespace plotterFunctions
         {
             const std::vector<std::string>& triggerNames = tr.getVec<std::string>("TriggerNames");
             const std::vector<int>& passTrigger          = tr.getVec<int>("PassTrigger");
-            const double& met                            = tr.getVar<double>("cleanMetPt");
 
 	    bool passMuTrigger = false;
 	    bool passElecTrigger = false;
@@ -1236,6 +1236,14 @@ namespace plotterFunctions
 		std::cout << "Could not find trigger in the list of trigger names" << std::endl;
 	    }
 
+	    tr.registerDerivedVar("passMuTrigger",passMuTrigger);
+	    tr.registerDerivedVar("passElecTrigger",passElecTrigger);
+        }
+
+        void triggerInfoMC(NTupleReader& tr)
+        {
+            const double& met                            = tr.getVar<double>("cleanMetPt");
+
 	    // MC trigger efficiencies
 	    double triggerEff = GetTriggerEffWeight(met);
 	    double triggerEffStatUncUp = GetTriggerEffStatUncHi(met);
@@ -1245,23 +1253,23 @@ namespace plotterFunctions
 	    double triggerEffSystUncDown = GetTriggerEffSystUncLo(met);
 	    double triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
 
-	    tr.registerDerivedVar("passMuTrigger",passMuTrigger);
-	    tr.registerDerivedVar("passElecTrigger",passElecTrigger);
 	    tr.registerDerivedVar("TriggerEffMC",triggerEff);
 	    tr.registerDerivedVar("TriggerEffUpMC",triggerEff+triggerEffUncUp);
 	    tr.registerDerivedVar("TriggerEffDownMC",triggerEff-triggerEffUncDown);
         }
 
     public:
-	TriggerInfo()
+	TriggerInfo(bool miniTuple = false)
 	{
 	    indexMuTrigger = -1;
 	    indexElecTrigger = -1;
+            miniTuple_ = miniTuple;
 	}
 
 	void operator()(NTupleReader& tr)
 	{
-	    triggerInfo(tr);
+	    if(!miniTuple_) triggerInfo(tr);
+            triggerInfoMC(tr);
 	}
 
     };
