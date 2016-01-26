@@ -173,6 +173,7 @@ RegisterFunctionsSyst::RegisterFunctionsSyst() : RegisterFunctions()
 {
     njWeight             = new plotterFunctions::NJetWeight;
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
+    triggerInfo          = new plotterFunctions::TriggerInfo(true);
     systWeights          = new SystWeights;
 }
 
@@ -180,6 +181,7 @@ RegisterFunctionsSyst::~RegisterFunctionsSyst()
 {
     if(njWeight) delete njWeight;
     if(prepareMiniTupleVars) delete prepareMiniTupleVars;
+    if(triggerInfo) delete triggerInfo;
     if(systWeights) delete systWeights;
 }
 
@@ -189,6 +191,7 @@ void RegisterFunctionsSyst::registerFunctions(NTupleReader& tr)
 
     tr.registerFunction(*njWeight);
     tr.registerFunction(*prepareMiniTupleVars);
+    tr.registerFunction(*triggerInfo);
     //tr.registerFunction(*systWeights);
 }
 

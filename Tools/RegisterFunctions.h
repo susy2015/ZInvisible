@@ -86,6 +86,7 @@ private:
     std::vector<std::function<void(NTupleReader&)> > funcs_;
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
     plotterFunctions::NJetWeight *njWeight;
+    plotterFunctions::TriggerInfo *triggerInfo;
     SystWeights *systWeights;
 public:
     RegisterFunctionsSyst();
