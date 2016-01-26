@@ -59,7 +59,7 @@ int main()
         std::cout << "Failed to open: dataMCweights.root" << std::endl;
     }
 
-    AnaSamples::SampleSet        ss("", 3.0);
+    AnaSamples::SampleSet        ss("", 2153.74);
     AnaSamples::SampleCollection sc(ss);
 
     f = TFile::Open("condor/minituple.root");
@@ -70,6 +70,7 @@ int main()
     const int NTRIALS = 1000;
 
     float N0[45];
+    float N0square[45];
     float N[5][45][NTRIALS];
 
     float variations[5][20][NTRIALS];
@@ -88,7 +89,7 @@ int main()
         {
             char name[128];
             sprintf(name, "hSB_%s_%d", hnames[ih].c_str(), i);
-            h[ih][i] = new TH1D(name, name, 1000, 0, 2);
+            h[ih][i] = new TH1D(name, name, 2000, -1, 3);
 
             for(int j = 0; j < NTRIALS; ++j)
             {
@@ -97,7 +98,11 @@ int main()
         }
     }
 
-    for(int i = 0; i < 45; ++i) N0[i] = 0.0;
+    for(int i = 0; i < 45; ++i)
+    {
+        N0square[i] = 0.0;
+        N0[i] = 0.0;
+    }
 
     //for(auto& fs : sc["DYJetsToLL"])
     for(auto& fs : sc["ZJetsToNuNu"])
@@ -109,9 +114,13 @@ int main()
         TTree * t = (TTree*)f->Get(treeName.c_str());
 
         plotterFunctions::PrepareMiniTupleVars pmt(false);
+        plotterFunctions::NJetWeight njWeight;
+        plotterFunctions::TriggerInfo triggerInfo(true);
 
         NTupleReader tr(t);
         tr.registerFunction(pmt);
+        tr.registerFunction(njWeight);
+        tr.registerFunction(triggerInfo);
 
         while(tr.getNextEvent())
         {
@@ -124,6 +133,12 @@ int main()
             const int& cntCSVSZinv            = tr.getVar<int>("cntCSVSZinv");
             const int& nTopCandSortedCntZinv  = tr.getVar<int>("nTopCandSortedCntZinv");
             const bool& passBaseline = tr.getVar<bool>("passBaseline");
+
+            const double& triggerEffMC = tr.getVar<double>("TriggerEffMC");
+            const double& nJetWgtDYZ   = tr.getVar<double>("nJetWgtDYZ");
+            const double& normWgt0b    = tr.getVar<double>("normWgt0b");
+
+            double weight = triggerEffMC * nJetWgtDYZ * normWgt0b * fs.getWeight();
 
             if(passBaseline)
             {
@@ -144,7 +159,8 @@ int main()
                 
                 if(nSearchBin >= 0 && nSearchBin < 45)
                 {
-                    N0[nSearchBin] += fs.getWeight();
+                    N0[nSearchBin] += weight;
+                    N0square[nSearchBin] += weight*weight;
                     for(int iTrial = 0; iTrial < NTRIALS; ++iTrial)
                     {
                         //h[0][nSearchBin]->Fill(tr3.Gaus(1.0, rms_g1b_DY/mean_g1b_DY), fs.getWeight());
@@ -155,11 +171,11 @@ int main()
                         
                         if(iTrial < NTRIALS)
                         {
-                            N[0][nSearchBin][iTrial] += variations[0][njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv)][iTrial] * fs.getWeight();
-                            N[1][nSearchBin][iTrial] += variations[1][shapeMET->FindBin(cleanMetPt)][iTrial]              * fs.getWeight();
-                            N[2][nSearchBin][iTrial] += variations[2][shapeMT2->FindBin(best_had_brJet_MT2Zinv)][iTrial]  * fs.getWeight();
-                            N[3][nSearchBin][iTrial] += variations[3][shapeNT->FindBin(nTopCandSortedCntZinv)][iTrial]    * fs.getWeight();
-                            N[4][nSearchBin][iTrial] += variations[4][shapeNB->FindBin(cntCSVSZinv)][iTrial]              * fs.getWeight();
+                            N[0][nSearchBin][iTrial] += variations[0][njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv)][iTrial] * weight;
+                            N[1][nSearchBin][iTrial] += variations[1][shapeMET->FindBin(cleanMetPt)][iTrial]              * weight;
+                            N[2][nSearchBin][iTrial] += variations[2][shapeMT2->FindBin(best_had_brJet_MT2Zinv)][iTrial]  * weight;
+                            N[3][nSearchBin][iTrial] += variations[3][shapeNT->FindBin(nTopCandSortedCntZinv)][iTrial]    * weight;
+                            N[4][nSearchBin][iTrial] += variations[4][shapeNB->FindBin(cntCSVSZinv)][iTrial]              * weight;
                         }
                     }
                 }
@@ -171,7 +187,7 @@ int main()
     {
         for(int i = 0; i < 45; ++i)
         {
-            for(int iTrial = 0; iTrial < 1000; ++iTrial)
+            for(int iTrial = 0; iTrial < NTRIALS; ++iTrial)
             {
                 h[ih][i]->Fill(N[ih][i][iTrial]/N0[i]);
             }
@@ -212,4 +228,19 @@ int main()
         systRMS->Write();
     }
     syst68Max->Write();
+
+    TH1 *centralvalue = new TH1D("centralvalue", "centralvalue", 45, 0, 45);
+    TH1 *avgWgt = new TH1D("avgWgt", "avgWgt", 45, 0, 45);
+    TH1 *neff = new TH1D("neff", "neff", 45, 0, 45);
+    
+    for(int i = 0; i < 45; ++i)
+    {
+        centralvalue->SetBinContent(i + 1, N0[i]);
+        if(N0[i] > 1e-10) avgWgt->SetBinContent(i + 1, N0square[i]/N0[i]);
+        if(N0square[i] > 1e-10) neff->SetBinContent(i + 1, N0[i]*N0[i]/N0square[i]);
+    }
+
+    centralvalue->Write();
+    avgWgt->Write();
+    neff->Write();
 }
