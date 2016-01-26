@@ -292,6 +292,10 @@ def systHarvest():
     # Get shape stats uncertainty
     f2 = TFile("syst_nJetWgt.root")
     hShapeStat = f2.Get("syst68Max").Clone("shape_stat")
+
+    hAvgWgt = f2.Get("avgWgt").Clone("avgWgt")
+    hNEff   = f2.Get("neff").Clone("neff")
+
     fout.cd()
     hShapeStat.Write()
 
@@ -309,7 +313,7 @@ def systHarvest():
     hPDFUp.Write()
     hPDFDn.Write()
 
-    # Get central, MC stats, closure, MEU, and JEU
+    # Get central, MC stats, closure, trigger, MEU, and JEU
     f4 = TFile("/uscms/home/nstrobbe/nobackup/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Jan24.root")
     hMC = f4.Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle")
     hMCstats = hMC.Clone("MC_stats")
@@ -361,25 +365,58 @@ def systHarvest():
     hMECUp_ratio.Write()
     hMECDn_ratio.Write()
 
+    hTrigNom = f4.Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Centralsingle")
+    hTrigUp =  f4.Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Upsingle")
+    hTrigDn =  f4.Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Downsingle")
+
+    hTrigUp_ratio = hTrigUp.Clone("trig_up")
+    hTrigUp_ratio.Add(hTrigNom, -1.0)
+    hTrigUp_ratio.Divide(hTrigNom)
+
+    hTrigDn_ratio = hTrigDn.Clone("trig_dn")
+    hTrigDn_ratio.Add(hTrigNom, -1.0)
+    hTrigDn_ratio.Divide(hTrigNom)
+    
+    fout.cd()
+    hTrigUp_ratio.Write()
+    hTrigDn_ratio.Write()
+
     hPrediction = f4.Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle").Clone("central_prediction")
     fout.cd()
     hPrediction.Write()
 
     # make proto data card 
+
+    hJEC_ratio_sym = hJECUp_ratio.Clone("hJEC_ratio_sym")
+    hMEC_ratio_sym = hMECUp_ratio.Clone("hMEC_ratio_sym")
+    hScale_sym     = hScaleUp.Clone("hScale_sym")
+    hPDF_sym       = hPDFUp.Clone("hPDF_sym")
+    hTrig_sym      = hTrigUp_ratio.Clone("hTrig_sym")
+
+    for i in xrange(1, 46):
+        hJEC_ratio_sym.SetBinContent(i, max(abs(hJECUp_ratio.GetBinContent(i)),  abs(hJECDn_ratio.GetBinContent(i))))
+        hMEC_ratio_sym.SetBinContent(i, max(abs(hMECUp_ratio.GetBinContent(i)),  abs(hMECDn_ratio.GetBinContent(i))))
+        hScale_sym    .SetBinContent(i, max(abs(hScaleUp.GetBinContent(i)),      abs(hScaleDn.GetBinContent(i))))
+        hPDF_sym      .SetBinContent(i, max(abs(hPDFUp.GetBinContent(i)),        abs(hPDFDn.GetBinContent(i))))
+        hTrig_sym     .SetBinContent(i, max(abs(hTrigUp_ratio.GetBinContent(i)), abs(hTrigDn_ratio.GetBinContent(i))))
+
     hists = [("syst_unc_shape_central_up",   hShape_final), 
              ("syst_unc_shape_central_dn",   hShape_final), 
              ("syst_unc_shape_stat_up",      hShapeStat), 
              ("syst_unc_shape_stat_dn",      hShapeStat), 
-             ("stat_unc_up",                 hMCstats), 
-             ("stat_unc_dn",                 hMCstats), 
-             ("stat_unc_jeu_up",             hJECUp_ratio),
-             ("stat_unc_jeu_dn",             hJECDn_ratio), 
-             ("stat_unc_meu_up",             hMECUp_ratio), 
-             ("stat_unc_meu_dn",             hMECDn_ratio), 
-             ("stat_unc_scale_up",           hScaleUp),
-             ("stat_unc_scale_dn",           hScaleDn), 
-             ("stat_unc_pdf_up",             hPDFUp),
-             ("stat_unc_pdf_dn",             hPDFDn)]
+             #("stat_unc_up",                 hMCstats), 
+             #("stat_unc_dn",                 hMCstats), 
+             ("syst_unc_jeu_up",             hJEC_ratio_sym),
+             ("syst_unc_jeu_dn",             hJEC_ratio_sym), 
+             ("syst_unc_meu_up",             hMEC_ratio_sym), 
+             ("syst_unc_meu_dn",             hMEC_ratio_sym), 
+             ("syst_unc_scale_up",           hScale_sym),
+             ("syst_unc_scale_dn",           hScale_sym), 
+             ("syst_unc_pdf_up",             hPDF_sym),
+             ("syst_unc_pdf_dn",             hPDF_sym),
+             ("syst_unc_trig_dn",            hTrig_sym),
+             ("syst_unc_trig_dn",            hTrig_sym),
+             ]
     
     print "luminosity = 2153.74"
     print "channels = 45"
@@ -390,6 +427,21 @@ def systHarvest():
         datum = hPrediction.GetBinContent(i)
         data.append("%0.5f" % datum)
     print "%s = %s"%("rate", ' '.join(data))
+
+    data = []
+    for i in xrange(1, 46):
+        datum = hNEff.GetBinContent(i)
+        data.append("%0.5f" % datum)
+    print "%s = %s"%("cs_weight", ' '.join(data))
+
+    data = []
+    for i in xrange(1, 46):
+        datum = hAvgWgt.GetBinContent(i)
+        data.append("%0.5f" % datum)
+    print "%s = %s"%("avg_weight", ' '.join(data))
+
+    print "stat_unc_up = xxx yy zz"
+    print "stat_unc_dn = xxx yy zz"
 
     for (name, h) in hists:
         data = []
