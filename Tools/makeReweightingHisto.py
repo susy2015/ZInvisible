@@ -431,27 +431,15 @@ def systHarvest():
     print "sample = zinv"
     print ""
 
-    print "%-25s = %s"%("# bin", ' '.join(["%8i" % datum for datum in xrange(0, 45)]))
+    print "%-25s = %s"%("channel", ' '.join(["%8s" % ("bin%i" % i) for i in xrange(1, 46)]))
     print ""
 
-    data = []
-    for i in xrange(1, 46):
-        datum = hPrediction.GetBinContent(i)
-        data.append("%8.5f" % datum)
-    print "%-25s = %s"%("rate", ' '.join(data))
+    print "%-25s = %s"%("rate", ' '.join(["%8.5f" % hPrediction.GetBinContent(i) for i in xrange(1, 46)]))
     print ""
 
-    data = []
-    for i in xrange(1, 46):
-        datum = hNEff.GetBinContent(i)
-        data.append("%8.0f" % math.floor(datum))
-    print "%-25s = %s"%("cs_event", ' '.join(data))
+    print "%-25s = %s"%("cs_event", ' '.join(["%8.5f" % hNEff.GetBinContent(i) for i in xrange(1, 46)]))
 
-    data = []
-    for i in xrange(1, 46):
-        datum = hAvgWgt.GetBinContent(i)
-        data.append("%8.5f" % datum)
-    print "%-25s = %s"%("avg_weight", ' '.join(data))
+    print "%-25s = %s"%("avg_weight", ' '.join(["%8.5f" % hAvgWgt.GetBinContent(i) for i in xrange(1, 46)]))
 
     print ""
     print "stat_unc_up = xxx yy zz"
@@ -459,11 +447,7 @@ def systHarvest():
     print ""
 
     for (name, h) in hists:
-        data = []
-        for i in xrange(1, 46):
-            datum = hPrediction.GetBinContent(i) * h.GetBinContent(i)
-            data.append(datum)
-        print "%-25s = %s"%(name, ' '.join(["%8.5f" % datum for datum in data]))
+        print "%-25s = %s"%(name, ' '.join(["%8.5f" % (hPrediction.GetBinContent(i) * h.GetBinContent(i)) for i in xrange(1, 46)]))
 
     fout.Close()
 
