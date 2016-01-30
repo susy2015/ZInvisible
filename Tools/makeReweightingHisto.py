@@ -408,6 +408,11 @@ def systHarvest():
     hPDF_sym      .Write()
     hTrig_sym     .Write()
 
+    hOther = hJEC_ratio_sym.Clone("hOther")
+    for i in xrange(1, 46):
+        hOther.SetBinContent(i, sqrt(hJEC_ratio_sym.GetBinContent(i)**2 + hMEC_ratio_sym.GetBinContent(i)**2 + hScale_sym.GetBinContent(i)**2 + hPDF_sym.GetBinContent(i)**2 + hTrig_sym.GetBinContent(i)**2))
+    hOther.Write()
+
     hists = [("syst_unc_shape_central_up",   hShape_final), 
              ("syst_unc_shape_central_dn",   hShape_final), 
              ("syst_unc_shape_stat_up",      hShapeStat), 
@@ -422,7 +427,7 @@ def systHarvest():
              ("syst_unc_scale_dn",           hScale_sym), 
              ("syst_unc_pdf_up",             hPDF_sym),
              ("syst_unc_pdf_dn",             hPDF_sym),
-             ("syst_unc_trig_dn",            hTrig_sym),
+             ("syst_unc_trig_up",            hTrig_sym),
              ("syst_unc_trig_dn",            hTrig_sym),
              ]
     
@@ -437,9 +442,15 @@ def systHarvest():
     print "%-25s = %s"%("rate", ' '.join(["%8.5f" % hPrediction.GetBinContent(i) for i in xrange(1, 46)]))
     print ""
 
-    print "%-25s = %s"%("cs_event", ' '.join(["%8.5f" % hNEff.GetBinContent(i) for i in xrange(1, 46)]))
+    print "%-25s = %s"%("cs_event", ' '.join(["%8.0f" % math.floor(hNEff.GetBinContent(i)) for i in xrange(1, 46)]))
 
-    print "%-25s = %s"%("avg_weight", ' '.join(["%8.5f" % hAvgWgt.GetBinContent(i) for i in xrange(1, 46)]))
+    data = []
+    for i in xrange(1, 46):
+        if hNEff.GetBinContent(i) > 0:
+            data.append("%8.5f" % (hPrediction.GetBinContent(i)/math.floor(hNEff.GetBinContent(i))))
+        else:
+            data.append("%8.5f" % 0.00)
+    print "%-25s = %s"%("avg_weight", ' '.join(data))
 
     print ""
     print "stat_unc_up = xxx yy zz"
@@ -447,7 +458,7 @@ def systHarvest():
     print ""
 
     for (name, h) in hists:
-        print "%-25s = %s"%(name, ' '.join(["%8.5f" % (hPrediction.GetBinContent(i) * h.GetBinContent(i)) for i in xrange(1, 46)]))
+        print "%-25s = %s"%(name, ' '.join(["%8.5f" % (h.GetBinContent(i)) for i in xrange(1, 46)]))
 
     fout.Close()
 

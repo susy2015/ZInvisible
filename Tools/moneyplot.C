@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
     //TH1D* h1 = (TH1D*)f1->Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle");
     TH1D* h1 = (TH1D*)f1->Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle");
     // Scale the prediction by the normalization factor by hand for now
-    h1->Scale(ScaleFactors::sf_norm0b());
+    //h1->Scale(ScaleFactors::sf_norm0b());
 
     //TFile* f2 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_nJetWgt.root");
     TFile* f2 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_all.root");
@@ -56,6 +56,8 @@ int main(int argc, char* argv[])
     TH1D* h7 = (TH1D*)f2->Get("hScale_sym");
     TH1D* h8 = (TH1D*)f2->Get("hPDF_sym");
     TH1D* h9 = (TH1D*)f2->Get("hTrig_sym");
+
+    TH1D* h5_2 = (TH1D*)h5->Clone("hOther_ratio_sym");
 
     //TGraphAsymmErrors* g1 = (TGraphAsymmErrors*)f2->Get("");
     TGraphAsymmErrors* g3 = new TGraphAsymmErrors();
@@ -99,6 +101,7 @@ int main(int argc, char* argv[])
         double err7 = h7->GetBinContent(i) * h1->GetBinContent(i);
         double err8 = h8->GetBinContent(i) * h1->GetBinContent(i);
         double err9 = h9->GetBinContent(i) * h1->GetBinContent(i);
+        h5_2->SetBinContent(i, sqrt(err5*err5 + err6*err6 + err7*err7 + err8*err8 + err9*err9));
         err = sqrt(err*err + err5*err5 + err6*err6 + err7*err7 + err8*err8 + err9*err9);
         g5->SetPoint(i - 1, h1->GetBinCenter(i), h1->GetBinContent(i));
         g5->SetPointError(i - 1, 0.5, 0.5, err, err);
@@ -276,6 +279,32 @@ int main(int argc, char* argv[])
 	prediction.push_back(h1->GetBinContent(i+1));
     }
     print_searchBins_latex(prediction, v_uncertainty, "& $\\cPZ\\rightarrow\\nu\\nu$ prediction \\\\");
+
+    // Format errors                                                                                                                                                                                                                         
+    g1->SetFillColor(kRed-7);
+    sprintf(legEntry, "%s", "Normalization unc.");
+    leg->AddEntry(g1, legEntry);
+    g2->SetFillColor(kCyan-6);
+    //sprintf(legEntry, "%s", "Njet reweighting unc.");                                                                                                                                                                                      
+    sprintf(legEntry, "%s", "Data/MC shape uncertinty");
+    leg->AddEntry(g2, legEntry);
+    g3->SetFillColor(kMagenta);
+    sprintf(legEntry, "%s", "Njet/shape stat. unc.");
+    leg->AddEntry(g3, legEntry);
+    g4->SetFillColor(kGreen+2);
+    sprintf(legEntry, "%s", "MC Stats");
+    leg->AddEntry(g4, legEntry);
+    g5->SetFillColor(kOrange);
+    sprintf(legEntry, "%s", "Other");
+    leg->AddEntry(g5, legEntry);
+
+    print_searchBins_headerstr("& Norm & Data/MC \\\\ shape & Njet/shape \\\\ stat. & MC Stats & Other \\\\ \n");
+    for(int i=0; i<h1->GetNbinsX(); ++i)
+    {
+        char formatStr[256];
+        sprintf(formatStr, "& %8.4f & %8.4f & %8.4f & %8.4f & %8.4f \\\\", rel_unc_2, h2->GetBinContent(i + 1), h3->GetBinContent(i + 1), h4->GetBinContent(i + 1), h5_2->GetBinContent(i + 1));
+        printf(get_searchBins_defstr(i, formatStr).c_str());
+    }
 
     f1->Close();
     
