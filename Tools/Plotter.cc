@@ -228,7 +228,7 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
     for(auto& weightName : weightVec_)
     {
         const double& weight = tr.getVar<double>(weightName);
-        if(weight == weight) 
+        if(weight == weight)
         {
             if(weight < 1e6)
             {
@@ -299,7 +299,7 @@ void Plotter::createHistsFromTuple()
             }
         }
 
-        //make vector of cutflows to fill 
+        //make vector of cutflows to fill
         //std::vector<std::shared_ptr<CutFlowSummary>> cutFlowsToFill;
         std::vector<CutFlowSummary*> cutFlowsToFill;
         for(CutFlowSummary& cfs : cutFlows_)
@@ -319,7 +319,7 @@ void Plotter::createHistsFromTuple()
                 }
             }
         }
-        
+
         // Do not process files if there are no histograms asking for it
         if(!histsToFill.size() && !cutFlowsToFill.size()) continue;
 
@@ -730,7 +730,7 @@ void Plotter::plot()
         int NlegEntries = 0;
         for(auto& hvec : hist.hists)
         {
-            if(hvec.type.compare("data") == 0) 
+            if(hvec.type.compare("data") == 0)
             {
                 if(hvec.hcsVec.size()) ++NlegEntries;
             }
@@ -882,7 +882,7 @@ void Plotter::plot()
                 else if(hvec.type.compare("data") != 0)  hvec.h->Draw("hist same");
             }
         }
-	// Make sure to always draw data on top 
+	// Make sure to always draw data on top
         for(auto& hvec : hist.hists)
         {
             if(hvec.h)
@@ -1008,13 +1008,37 @@ void Plotter::plot()
                     h1->SetMarkerStyle(20);
                     h1->SetMarkerColor(h1->GetLineColor());
 
-                    h1->Add(h2, -1.0);
+                    //h1->Add(h2, -1.0);
                     const double absoluteMaxPull = 10.0;
                     double maxPull = 2.0;
+                    double sumW2_1 = 0.0, sumW_1 = 0.0;
+                    double sumW2_2 = 0.0, sumW_2 = 0.0;
                     for(int iBin = 1; iBin <= h1->GetNbinsX(); ++iBin)
                     {
-                        if(h1->GetBinError(iBin) > 0.00001) h1->SetBinContent(iBin, h1->GetBinContent(iBin)/h1->GetBinError(iBin));
-                        else h1->SetBinContent(iBin, -999.9);
+                        sumW_1 += h1->GetBinContent(iBin);
+                        sumW_2 += h2->GetBinContent(iBin);
+                        sumW2_1 += pow(h1->GetBinError(iBin), 2);
+                        sumW2_2 += pow(h2->GetBinError(iBin), 2);
+                    }
+                    for(int iBin = 1; iBin <= h1->GetNbinsX(); ++iBin)
+                    {
+                        //if(h1->GetBinError(iBin) > 0.00001) h1->SetBinContent(iBin, h1->GetBinContent(iBin)/h1->GetBinError(iBin));
+                        //else h1->SetBinContent(iBin, -999.9);
+                        double binVal = binVal = h1->GetBinContent(iBin) - h2->GetBinContent(iBin);
+                        double binErr = -999.9;
+                        if(h1->GetBinContent(iBin) > 1e-10 && h2->GetBinContent(iBin) > 1e-10)
+                        {
+                            binErr = sqrt(pow(h1->GetBinError(iBin), 2) + pow(h2->GetBinError(iBin), 2));
+                        }
+                        else if(h1->GetBinContent(iBin) > 1e-10)
+                        {
+                            binErr = sqrt(pow(h1->GetBinError(iBin), 2) + pow(1.8 * sumW2_1/sumW_1, 2));
+                        }
+                        else if(h2->GetBinContent(iBin) > 1e-10)
+                        {
+                            binErr = sqrt(pow(h2->GetBinError(iBin), 2) + pow(1.8 * sumW2_2/sumW_2, 2));
+                        }
+                        h1->SetBinContent(iBin, binVal/binErr);
                         if(fabs(h1->GetBinContent(iBin)) < absoluteMaxPull) maxPull = std::max(maxPull, fabs(h1->GetBinContent(iBin)));
                     }
                     double d2ymin = -std::min(ceil(maxPull*1.2), absoluteMaxPull);
@@ -1062,7 +1086,7 @@ void Plotter::plot()
         mark.SetTextFont(52);
         mark.DrawLatex(gPad->GetLeftMargin() + 0.12, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
 
-        //Draw lumistamp 
+        //Draw lumistamp
         mark.SetTextFont(42);
         mark.SetTextAlign(31);
         mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);

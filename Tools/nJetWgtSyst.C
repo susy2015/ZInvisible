@@ -56,7 +56,7 @@ int main()
     }
     else
     {
-        std::cout << "Failed to open: dataMCweights.root" << std::endl;
+        std::cout << "Failed to open: syst_shape.root" << std::endl;
     }
 
     AnaSamples::SampleSet        ss("", 2153.74);

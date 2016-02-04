@@ -205,8 +205,10 @@ def shapeSyst(filename):
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDibosonstack",
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sRarestack"]
 
-    varList = [["met", "cleanMetPt",             [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 1500], "MET" ],
-               ["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500],      "M_{T2}" ],
+    varList = [#["met", "cleanMetPt",             [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 1500], "MET" ],
+               #["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500],      "M_{T2}" ],
+               ["met", "cleanMetPt",             [0, 100, 200, 300, 600, 1500], "MET" ],
+               ["mt2", "best_had_brJet_MT2Zinv", [0, 100, 200, 300, 400, 1500],      "M_{T2}" ],
                ["nt",  "nTopCandSortedCntZinv",  [0, 1, 2, 8 ],                                         "N(t)" ],
                ["nb",  "cntCSVSZinv",            [0, 1, 2, 3, 8 ],                                      "N(b)" ]]
 
@@ -230,12 +232,15 @@ def shapeSyst(filename):
         fit = TF1("fit_%s"%var[0], "pol1")
         newh.SetLineWidth(2)
         newh.GetXaxis().SetTitle(var[3])
+        newh.GetYaxis().SetTitle("Data/MC")
+        newh.GetYaxis().SetTitleOffset(1.15)
         newh.SetStats(0)
         newh.SetTitle("")
-        if not "nt" in var[0] and not "nb" in var[0]:
-            newh.Fit(fit, "")
-        else:
-            newh.Draw()
+        #if not "nt" in var[0] and not "nb" in var[0]:
+        #    newh.Fit(fit, "")
+        #else:
+        #    newh.Draw()
+        newh.Draw()
         #
         #    fit.Draw("same")
         #newh.DrawCopy()
@@ -539,6 +544,10 @@ def systScalePDF(filename):
 
     fout.Close()
     f.Close()
+
+def extrapolationSyst():
+    print "hello"
+
 
 if __name__ ==  "__main__":
 

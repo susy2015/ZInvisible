@@ -10,6 +10,8 @@ int main(int argc, char* argv[])
 {
     using namespace std;
 
+    TH1::AddDirectory(false);
+
     int opt;
     int option_index = 0;
     static struct option long_options[] = {
@@ -93,6 +95,23 @@ int main(int argc, char* argv[])
         }
     }
 
+    TH1 *shapeMET, *shapeMT2, *shapeNT, *shapeNB;
+    
+    TFile *f = new TFile("syst_shape.root");
+    if(f)
+    {
+        shapeMET = static_cast<TH1*>(f->Get("ShapeRatio_met")->Clone());
+        shapeMT2 = static_cast<TH1*>(f->Get("ShapeRatio_mt2")->Clone());
+        shapeNT  = static_cast<TH1*>(f->Get("ShapeRatio_nt")->Clone());
+        shapeNB  = static_cast<TH1*>(f->Get("ShapeRatio_nb")->Clone());
+        f->Close();
+        delete f;
+    }
+    else
+    {
+        std::cout << "Failed to open: syst_shape.root" << std::endl;
+    }
+
     RegisterFunctions *rf = new RegisterFunctionsSyst;
 
     vector<Plotter::HistSummary> vh;
@@ -115,47 +134,22 @@ int main(int argc, char* argv[])
     static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(test, std::placeholders::_1));
 
     //Met shape syst 
-    TF1 *MET_fit = new TF1("MET_fit","pol1");
-    //Chi2                      =      10.0185
-    //NDf                       =            8
-    //p0                        =      1.08688   +/-   0.0689733   
-    //p1                        =  -0.00079217   +/-   0.000223161 
-    MET_fit->SetParameters(1.08688, -0.00079217);
-    Systematic METSyst("systWgtMET", "cleanMetPt", MET_fit);
+    Systematic METSyst("systWgtMET", "cleanMetPt", shapeMET);
     METSyst.bookHist(vh, fileMap["ZJetsToNuNu"]);
     static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(METSyst, std::placeholders::_1));
 
     //MT2 shape syst 
-    TF1 *MT2_fit = new TF1("MT2_fit","pol1");
-    //Chi2                      =      3.44991
-    //NDf                       =            5
-    //p0                        =      1.11303   +/-   0.0809109   
-    //p1                        = -0.000670589   +/-   0.000259671 
-    MT2_fit->SetParameters(1.11303, -0.000670589);
-    Systematic MT2Syst("systWgtMT2", "best_had_brJet_MT2Zinv", MT2_fit);
+    Systematic MT2Syst("systWgtMT2", "best_had_brJet_MT2Zinv", shapeMT2);
     MT2Syst.bookHist(vh, fileMap["ZJetsToNuNu"]);
     static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(MT2Syst, std::placeholders::_1));
 
     //NT shape uncertainty
-    double bins[] = {0, 1, 2, 8};
-    TH1 *NT_hist = new TH1D("NT_hist","NT_hist", 3, bins);
-    NT_hist->SetBinContent(1, 1.00401505518);
-    NT_hist->SetBinContent(2, 0.981637373833);
-    NT_hist->SetBinContent(3, 0.617594525252);
-
-    Systematic NTSyst("systWgtNT", "nTopCandSortedCntZinv", NT_hist);
+    Systematic NTSyst("systWgtNT", "nTopCandSortedCntZinv", shapeNT);
     NTSyst.bookHist(vh, fileMap["ZJetsToNuNu"]);
     static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(NTSyst, std::placeholders::_1));
 
     //NB shape uncertainty
-    double binsNB[] = {0, 1, 2, 3, 8};
-    TH1 *NB_hist = new TH1D("NB_hist","NB_hist", 3, binsNB);
-    NB_hist->SetBinContent(1, 0.986938983347);
-    NB_hist->SetBinContent(2, 0.981886953393);
-    NB_hist->SetBinContent(3, 0.610958135550);
-    NB_hist->SetBinContent(4, 0.467353090212);
-
-    Systematic NBSyst("systWgtNB", "cntCSVSZinv", NB_hist);
+    Systematic NBSyst("systWgtNB", "cntCSVSZinv", shapeNB);
     NBSyst.bookHist(vh, fileMap["ZJetsToNuNu"]);
     static_cast<RegisterFunctionsSyst*>(rf)->addFunction(std::bind(NBSyst, std::placeholders::_1));
 
