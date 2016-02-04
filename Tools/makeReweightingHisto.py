@@ -205,8 +205,10 @@ def shapeSyst(filename):
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDibosonstack",
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sRarestack"]
 
-    varList = [["met", "cleanMetPt",             [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 1500], "MET" ],
-               ["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500],      "M_{T2}" ],
+    varList = [#["met", "cleanMetPt",             [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 1500], "MET" ],
+               #["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500],      "M_{T2}" ],
+               ["met", "cleanMetPt",             [0, 100, 200, 300, 600, 1500], "MET" ],
+               ["mt2", "best_had_brJet_MT2Zinv", [0, 100, 200, 300, 400, 1500],      "M_{T2}" ],
                ["nt",  "nTopCandSortedCntZinv",  [0, 1, 2, 8 ],                                         "N(t)" ],
                ["nb",  "cntCSVSZinv",            [0, 1, 2, 3, 8 ],                                      "N(b)" ]]
 
@@ -230,12 +232,15 @@ def shapeSyst(filename):
         fit = TF1("fit_%s"%var[0], "pol1")
         newh.SetLineWidth(2)
         newh.GetXaxis().SetTitle(var[3])
+        newh.GetYaxis().SetTitle("Data/MC")
+        newh.GetYaxis().SetTitleOffset(1.15)
         newh.SetStats(0)
         newh.SetTitle("")
-        if not "nt" in var[0] and not "nb" in var[0]:
-            newh.Fit(fit, "")
-        else:
-            newh.Draw()
+        #if not "nt" in var[0] and not "nb" in var[0]:
+        #    newh.Fit(fit, "")
+        #else:
+        #    newh.Draw()
+        newh.Draw()
         #
         #    fit.Draw("same")
         #newh.DrawCopy()
@@ -408,6 +413,11 @@ def systHarvest():
     hPDF_sym      .Write()
     hTrig_sym     .Write()
 
+    hOther = hJEC_ratio_sym.Clone("hOther")
+    for i in xrange(1, 46):
+        hOther.SetBinContent(i, sqrt(hJEC_ratio_sym.GetBinContent(i)**2 + hMEC_ratio_sym.GetBinContent(i)**2 + hScale_sym.GetBinContent(i)**2 + hPDF_sym.GetBinContent(i)**2 + hTrig_sym.GetBinContent(i)**2))
+    hOther.Write()
+
     hists = [("syst_unc_shape_central_up",   hShape_final), 
              ("syst_unc_shape_central_dn",   hShape_final), 
              ("syst_unc_shape_stat_up",      hShapeStat), 
@@ -422,7 +432,7 @@ def systHarvest():
              ("syst_unc_scale_dn",           hScale_sym), 
              ("syst_unc_pdf_up",             hPDF_sym),
              ("syst_unc_pdf_dn",             hPDF_sym),
-             ("syst_unc_trig_dn",            hTrig_sym),
+             ("syst_unc_trig_up",            hTrig_sym),
              ("syst_unc_trig_dn",            hTrig_sym),
              ]
     
@@ -431,26 +441,20 @@ def systHarvest():
     print "sample = zinv"
     print ""
 
-    print "%-25s = %s"%("# bin", ' '.join(["%8i" % datum for datum in xrange(0, 45)]))
+    print "%-25s = %s"%("channel", ' '.join(["%8s" % ("bin%i" % i) for i in xrange(1, 46)]))
     print ""
 
-    data = []
-    for i in xrange(1, 46):
-        datum = hPrediction.GetBinContent(i)
-        data.append("%8.5f" % datum)
-    print "%-25s = %s"%("rate", ' '.join(data))
+    print "%-25s = %s"%("rate", ' '.join(["%8.5f" % hPrediction.GetBinContent(i) for i in xrange(1, 46)]))
     print ""
 
-    data = []
-    for i in xrange(1, 46):
-        datum = hNEff.GetBinContent(i)
-        data.append("%8.0f" % math.floor(datum))
-    print "%-25s = %s"%("cs_event", ' '.join(data))
+    print "%-25s = %s"%("cs_event", ' '.join(["%8.0f" % math.floor(hNEff.GetBinContent(i)) for i in xrange(1, 46)]))
 
     data = []
     for i in xrange(1, 46):
-        datum = hAvgWgt.GetBinContent(i)
-        data.append("%8.5f" % datum)
+        if hNEff.GetBinContent(i) > 0:
+            data.append("%8.5f" % (hPrediction.GetBinContent(i)/math.floor(hNEff.GetBinContent(i))))
+        else:
+            data.append("%8.5f" % 0.00)
     print "%-25s = %s"%("avg_weight", ' '.join(data))
 
     print ""
@@ -459,11 +463,7 @@ def systHarvest():
     print ""
 
     for (name, h) in hists:
-        data = []
-        for i in xrange(1, 46):
-            datum = hPrediction.GetBinContent(i) * h.GetBinContent(i)
-            data.append(datum)
-        print "%-25s = %s"%(name, ' '.join(["%8.5f" % datum for datum in data]))
+        print "%-25s = %s"%(name, ' '.join(["%8.5f" % (h.GetBinContent(i)) for i in xrange(1, 46)]))
 
     fout.Close()
 
@@ -544,6 +544,10 @@ def systScalePDF(filename):
 
     fout.Close()
     f.Close()
+
+def extrapolationSyst():
+    print "hello"
+
 
 if __name__ ==  "__main__":
 

@@ -271,7 +271,8 @@ int main(int argc, char* argv[])
     TFile* f1 = TFile::Open("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_all.root");
     std::vector<std::string> hnames = {"shape_central",
 				       "shape_stat",
-				       "MC_stats"};
+				       "MC_stats",
+                                       "hOther"};
 
     for(std::string const& hname : hnames)
     {

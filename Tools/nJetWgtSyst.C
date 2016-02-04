@@ -56,7 +56,7 @@ int main()
     }
     else
     {
-        std::cout << "Failed to open: dataMCweights.root" << std::endl;
+        std::cout << "Failed to open: syst_shape.root" << std::endl;
     }
 
     AnaSamples::SampleSet        ss("", 2153.74);
@@ -76,11 +76,12 @@ int main()
     float variations[5][20][NTRIALS];
     for(int iT = 0; iT < NTRIALS; ++iT)
     {
-        for(int i = 0; i <= njWDYZ_g1b->GetNbinsX() + 1; ++i) variations[0][i][iT] = (float)tr3.Gaus(1.0, njWDYZ_g1b->GetBinError(i)/njWDYZ_g1b->GetBinContent(i));
-        for(int i = 0; i <= shapeMET  ->GetNbinsX() + 1; ++i) variations[1][i][iT] = (float)tr3.Gaus(1.0, shapeMET->GetBinError(i)/shapeMET->GetBinContent(i));
-        for(int i = 0; i <= shapeMT2  ->GetNbinsX() + 1; ++i) variations[2][i][iT] = (float)tr3.Gaus(1.0, shapeMT2->GetBinError(i)/shapeMT2->GetBinContent(i));
-        for(int i = 0; i <= shapeNT   ->GetNbinsX() + 1; ++i) variations[3][i][iT] = (float)tr3.Gaus(1.0, shapeNT->GetBinError(i)/shapeNT->GetBinContent(i));
-        for(int i = 0; i <= shapeNB   ->GetNbinsX() + 1; ++i) variations[4][i][iT] = (float)tr3.Gaus(1.0, shapeNB->GetBinError(i)/shapeNB->GetBinContent(i));
+        for(int i = 0; i < 5; ++i) for(int j = 0; j < 20; ++j) variations[i][j][iT] = 1.0;
+        for(int i = 0; i <= njWDYZ_g1b->GetNbinsX() + 1; ++i) if(njWDYZ_g1b->GetBinContent(i) > 1e-10) variations[0][i][iT] = (float)tr3.Gaus(1.0, njWDYZ_g1b->GetBinError(i)/njWDYZ_g1b->GetBinContent(i));
+        for(int i = 0; i <= shapeMET  ->GetNbinsX() + 1; ++i) if(shapeMET->GetBinContent(i) > 1e-10)   variations[1][i][iT] = (float)tr3.Gaus(1.0, shapeMET->GetBinError(i)/shapeMET->GetBinContent(i));
+        for(int i = 0; i <= shapeMT2  ->GetNbinsX() + 1; ++i) if(shapeMT2->GetBinContent(i) > 1e-10)   variations[2][i][iT] = (float)tr3.Gaus(1.0, shapeMT2->GetBinError(i)/shapeMT2->GetBinContent(i));
+        for(int i = 0; i <= shapeNT   ->GetNbinsX() + 1; ++i) if(shapeNT->GetBinContent(i) > 1e-10)    variations[3][i][iT] = (float)tr3.Gaus(1.0, shapeNT->GetBinError(i)/shapeNT->GetBinContent(i));
+        for(int i = 0; i <= shapeNB   ->GetNbinsX() + 1; ++i) if(shapeNB->GetBinContent(i) > 1e-10)    variations[4][i][iT] = (float)tr3.Gaus(1.0, shapeNB->GetBinError(i)/shapeNB->GetBinContent(i));
     }
 
     for(int ih = 0; ih < 5; ++ih)

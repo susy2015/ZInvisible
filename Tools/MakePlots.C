@@ -1188,12 +1188,14 @@ int main(int argc, char* argv[])
     };
 
     std::vector<std::pair<std::string,std::string>> cutlevels_muon_syst = {
-	{"muZinv_1b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=1"},
-        {"muZinv_2b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=2"},
-        {"muZinv_3b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>2"},
+	{"muZinv_0b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cntCSVSZinv=0"},
+        {"muZinv_1b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cntCSVSZinv=1"},
+        {"muZinv_2b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cntCSVSZinv=2"},
+        {"muZinv_3b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cntCSVSZinv>2"},
 
-	{"muZinv_1t_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=1"},
-        {"muZinv_2t_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>2"},
+	{"muZinv_0t_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0"},
+        {"muZinv_1t_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=1"},
+        {"muZinv_2t_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>1"},
 
 	{"muZinv_met_0_100_loose0",     "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>0;cleanMetPt<100"},
         {"muZinv_met_100_200_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100;cleanMetPt<200"},
