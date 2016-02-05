@@ -13,6 +13,7 @@
 #include "TPad.h"
 #include "TLegend.h"
 #include "TGraphAsymmErrors.h"
+#include "TLine.h"
 
 void smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, double& gmin, double& gmax, double& gpThreshMax)
 {
@@ -35,7 +36,7 @@ void smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, d
     gmin = std::min(gmin, min);
 }
 
-void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylow, double yhigh, std::string prefix, bool log = false)
+void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylow, double yhigh, std::string xtitle, std::string ytitle, std::string prefix, bool log = false, bool overlay = true)
 {
 
     TH1D* h = (TH1D*)f->Get(hname.c_str());
@@ -61,10 +62,10 @@ void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylo
     TH1 *dummy = new TH1F("dummy", "dummy", 1000, h->GetBinLowEdge(1), h->GetBinLowEdge(h->GetNbinsX()) + h->GetBinWidth(h->GetNbinsX()));
     dummy->SetStats(0);
     dummy->SetTitle(0);
-    dummy->GetYaxis()->SetTitle("Systematic uncertainty");
+    dummy->GetYaxis()->SetTitle(ytitle.c_str());
     dummy->GetYaxis()->SetTitleOffset(.9*1.05 / (fontScale));
     dummy->GetXaxis()->SetTitleOffset(1.05);
-    dummy->GetXaxis()->SetTitle("Search Bin");
+    dummy->GetXaxis()->SetTitle(xtitle.c_str());
     dummy->GetXaxis()->SetTitleSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetXaxis()->SetLabelSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetYaxis()->SetTitleSize(0.20 * 2 / 6.5 * fontScale);
@@ -83,9 +84,22 @@ void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylo
     dummy->GetXaxis()->SetRangeUser(xlow, xhigh);
     dummy->GetYaxis()->SetRangeUser(ylow, yhigh);
     dummy->Draw();
-    
-    h->Draw("hist same");
 
+    if(overlay)
+    {
+	h->Draw("hist same");
+    } else 
+    {
+	// draw a line at 1
+	TLine* l = new TLine();
+	l->SetNDC(true);
+	l->SetLineColor(kGray+2);
+	l->SetLineWidth(3);
+	l->SetLineStyle(7);
+	l->DrawLine(xlow, 1, xhigh, 1);
+	// Draw the histogram
+	h->Draw("Esame");
+    }
     fixOverlay();
 
     c->cd(1);
@@ -100,8 +114,10 @@ void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylo
     mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     fixOverlay();
-    drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum(),false);
-
+    if(overlay)
+    {
+	drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum(),false);
+    }
     char outname[128];
     sprintf(outname, (prefix + "_%s.pdf").c_str(), hname.c_str());
     c->Print(outname);
@@ -276,7 +292,7 @@ int main(int argc, char* argv[])
 
     for(std::string const& hname : hnames)
     {
-        makeplot(f1, hname, 0, 45, 0.0, 1.18, "Syst");
+	makeplot(f1, hname, 0, 45, 0.0, 1.18, "Search Bin", "Systematic uncertainty", "Syst");
     }
 
     f1->Close();
@@ -297,10 +313,55 @@ int main(int argc, char* argv[])
     makeplotratio(f1, hnames1, hnamesratio1, 0, 45, 0.00002, 0.3, "Syst");
     makeplotratio(f1, hnames2, hnamesratio2, 0, 45, 0.00002, 0.3, "Syst",0.25);
 
-
     f1->Close();
 
+
+    f1 = TFile::Open("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/loostToTight.root");
+    std::map<std::string, std::pair<std::string, double> > hnames3 = {
+	{"DoubleRatioTight_nj_cut_mt2",{"N_{jets}", 20}},
+	{"DoubleRatioTight_nj_cut_met",{"N_{jets}", 20}},
+	{"DoubleRatioTight_nj_cut_nb",{"N_{jets}", 20}},
+	{"DoubleRatioTight_nj_cut_nt",{"N_{jets}", 20}},
+	{"DoubleRatioTight_nj_cut_ht",{"N_{jets}", 20}},
+	{"DoubleRatioTight_mt2_cut_mt2",{"M_{T2} [GeV]", 2000}},
+	{"DoubleRatioTight_mt2_cut_met",{"M_{T2} [GeV]", 2000}},
+	{"DoubleRatioTight_mt2_cut_nb",{"M_{T2} [GeV]", 2000}},
+	{"DoubleRatioTight_mt2_cut_nt",{"M_{T2} [GeV]", 2000}},
+	{"DoubleRatioTight_mt2_cut_ht",{"M_{T2} [GeV]", 2000}},
+	{"DoubleRatioTight_nb_cut_mt2",{"N_{b-jets}", 10}},
+	{"DoubleRatioTight_nb_cut_met",{"N_{b-jets}", 10}},
+	{"DoubleRatioTight_nb_cut_nb",{"N_{b-jets}", 10}},
+	{"DoubleRatioTight_nb_cut_nt",{"N_{b-jets}", 10}},
+	{"DoubleRatioTight_nb_cut_ht",{"N_{b-jets}", 10}},
+	{"DoubleRatioTight_ht_cut_mt2",{"H_{T} [GeV]", 1500}},
+	{"DoubleRatioTight_ht_cut_met",{"H_{T} [GeV]", 1500}},
+	{"DoubleRatioTight_ht_cut_nb",{"H_{T} [GeV]", 1500}},
+	{"DoubleRatioTight_ht_cut_nt",{"H_{T} [GeV]", 1500}},
+	{"DoubleRatioTight_ht_cut_ht",{"H_{T} [GeV]", 1500}},
+	//{"DoubleRatioTight_nSearchBin_cut_mt2",},
+	//{"DoubleRatioTight_nSearchBin_cut_met",},
+	//{"DoubleRatioTight_nSearchBin_cut_nb",},
+	//{"DoubleRatioTight_nSearchBin_cut_nt",},
+	//{"DoubleRatioTight_nSearchBin_cut_ht",},
+	{"DoubleRatioTight_met_cut_mt2",{"p_{T}^{miss} [GeV]", 2000}},
+	{"DoubleRatioTight_met_cut_met",{"p_{T}^{miss} [GeV]", 2000}},
+	{"DoubleRatioTight_met_cut_nb",{"p_{T}^{miss} [GeV]", 2000}},
+	{"DoubleRatioTight_met_cut_nt",{"p_{T}^{miss} [GeV]", 2000}},
+	{"DoubleRatioTight_met_cut_ht",{"p_{T}^{miss} [GeV]", 2000}},
+	{"DoubleRatioTight_nt_cut_mt2",{"N_{tops}", 5}},
+	{"DoubleRatioTight_nt_cut_met",{"N_{tops}", 5}},
+	{"DoubleRatioTight_nt_cut_nb",{"N_{tops}", 5}},
+	{"DoubleRatioTight_nt_cut_nt",{"N_{tops}", 5}},
+	{"DoubleRatioTight_nt_cut_ht",{"N_{tops}", 5}}
+    };
+
+    for(auto const& kv : hnames3)
+    {
+	makeplot(f1, kv.first, 0, kv.second.second, 0, 2, kv.second.first, "Double ratio", "Syst", false, false);
+    }
 
     return 0;
 
 }
+
+
