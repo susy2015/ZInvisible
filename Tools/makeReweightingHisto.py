@@ -27,9 +27,11 @@ def rebin1D(h, bins):
 
 def add(hs):
     """Add all histograms in list hs and return output."""
-    for h in hs[1:]:
-        hs[0].Add(h)
-    return hs[0]
+    hNew = hs[0].Clone()
+    if len(hs) > 1:
+        for h in hs[1:]:
+            hNew.Add(h)
+    return hNew
 
 def makeRatio(h1, h2s, bins=None, newname="test"):
     """Make the data/stack ratio for the new bins."""
@@ -253,7 +255,7 @@ def shapeSyst(filename):
     f.Close()
     fout.Close()
 
-def systHarvest():
+def systHarvest(filename):
     # Get the file
     #f = TFile.Open(filename)
     #fout = TFile.Open("syst_shape.root", "RECREATE")
@@ -320,7 +322,8 @@ def systHarvest():
     hPDFDn.Write()
 
     # Get central, MC stats, closure, trigger, MEU, and JEU
-    f4 = TFile("/uscms/home/nstrobbe/nobackup/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Jan24.root")
+    #f4 = TFile("/uscms/home/nstrobbe/nobackup/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Jan24.root")
+    f4 = TFile(filename)
     hMC = f4.Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle")
     hMCstats = hMC.Clone("MC_stats")
     for i in xrange(1, 46):
@@ -545,8 +548,109 @@ def systScalePDF(filename):
     fout.Close()
     f.Close()
 
-def extrapolationSyst():
-    print "hello"
+def extrapolationSyst(filename):
+    f = TFile.Open(filename)
+    
+    dataName = "%(varName)s/SystPlots_DataMCw_SingleMuon_%(varLabel)s_%(cutStr)s%(varName)s%(varName)sDatadata"
+    baseName = "%(varName)s/SystPlots_DataMCw_SingleMuon_%(varLabel)s_%(cutStr)s%(varName)s%(varName)s%(sample)s"
+
+    varDict = {"met":("cleanMetPt", [0, 100, 200, 300, 450, 2000]),
+               "ht":("HTZinv", [0, 150, 300, 450, 600, 2000]),
+               "nt":("nTopCandSortedCntZinv", None),
+               "mt2":("best_had_brJet_MT2Zinv", [0, 100, 200, 300, 400, 2000]),
+               "nb":("cntCSVSZinv", None),
+               "nj":("cntNJetsPt30Eta24Zinv", None),
+               #"jpt":"",
+               #"mupt":"",
+               "nSearchBin":("nSearchBin", None)}
+
+    cutLists = {"nb":[(False,  "muZinv_0b_loose0"),
+                      (True,   "muZinv_1b_loose0"),
+                      (True,   "muZinv_2b_loose0"),
+                      (True,   "muZinv_3b_loose0")],
+                "nt":[(False,  "muZinv_0t_loose0"),
+                      (True,   "muZinv_1t_loose0"),
+                      (True,   "muZinv_2t_loose0")],
+                "met":[(False, "muZinv_met_0_100_loose0"),
+                       (False, "muZinv_met_100_200_loose0"),
+                       (True,  "muZinv_met_200_300_loose0"),
+                       (True,  "muZinv_met_300_400_loose0"),
+                       (True,  "muZinv_met_gt400_loose0")],
+                "mt2":[(False, "muZinv_mt2_0_100_loose0"),
+                       (False, "muZinv_mt2_100_200_loose0"),
+                       (True,  "muZinv_mt2_200_300_loose0"),
+                       (True,  "muZinv_mt2_300_400_loose0"),
+                       (True,  "muZinv_mt2_gt400_loose0")],
+                "ht":[(False,  "muZinv_ht_200_300_loose0"),
+                      (False,  "muZinv_ht_300_400_loose0"),
+                      (False,  "muZinv_ht_400_500_loose0"),
+                      (True,   "muZinv_ht_gt500_loose0")]
+                }
+
+    samples = ["DYstack",
+               "DY HT<100stack",
+               "t#bar{t}stack",
+               "single topstack",
+               "t#bar{t}Zstack",
+               "Dibosonstack",
+               "Rarestack"
+               ]
+
+    fout = TFile.Open("looseToTight.root", "RECREATE")
+    
+    for varLabel, (varName, theBins) in varDict.iteritems():
+        print "Processing variable: " , varName
+        hDataTotal = {}
+        hBGTotal = {}
+        hDataTight = {}
+        hBGTight = {}
+        for cutNames, cutStrs in cutLists.iteritems():
+            tmpDataTotal = []
+            tmpBGTotal = []
+            tmpDataTight = []
+            tmpBGTight = []
+            print "VarName: ", varName, "  CutName: ", cutNames
+            for (isTight, cutStr) in cutStrs:
+                hData = f.Get(dataName%locals())
+                tmpDataTotal.append(hData)
+                if isTight:
+                    tmpDataTight.append(hData)
+                hBGs = []
+                hBGsTight = []
+                for sample in samples:
+                    hBGs.append(f.Get(baseName%locals()))
+                    if isTight:
+                        hBGsTight.append(f.Get(baseName%locals()))
+                tmpBGTotal.append(add(hBGs))
+                if len(hBGsTight):
+                    tmpBGTight.append(add(hBGsTight))
+            hDataTotal[varLabel+"_cut_"+cutNames] = add(tmpDataTotal)
+            hBGTotal[varLabel+"_cut_"+cutNames] = add(tmpBGTotal)
+            hDataTight[varLabel+"_cut_"+cutNames] = add(tmpDataTight)
+            hBGTight[varLabel+"_cut_"+cutNames] = add(tmpBGTight)
+
+        # The first loop sank into the swamp, so we built it again!
+        # but no really my boy, we had to calculate the total histograms from the individual
+        # slices first, then make the double ratios here
+        # Yes, I know, this is stupidly inefficient 
+        for cutNames, cutStrs in cutLists.iteritems():
+            hRatioTotal = makeRatio(hDataTotal[varLabel+"_cut_"+cutNames], [hBGTotal[varLabel+"_cut_"+cutNames]], bins=theBins, newname="".join(["totalRatio_", varLabel, "_cut_", cutNames]))
+            hRatioTotal.Write()
+            for (isTight, cutStr) in cutStrs:
+                hData = f.Get(dataName%locals())
+                hBGs = []
+                for sample in samples:
+                    hBGs.append(f.Get(baseName%locals()))
+                hRatio = makeRatio(hData, hBGs, bins=theBins, newname="_".join(["BoringRatio", varLabel, cutStr]))
+                hRatio.Write()
+                hDoubleRatio = makeRatio(hRatio, [hRatioTotal], newname="_".join(["DoubleRatio", varLabel, cutStr]))
+                hDoubleRatio.Write()
+            hTightRatio = makeRatio(hDataTight[varLabel+"_cut_"+cutNames], [hBGTight[varLabel+"_cut_"+cutNames]], bins=theBins, newname="_".join(["tightRatio", varLabel, "cut", cutNames]))
+            hTightRatio.Write()
+            hDoubleRatioTL = makeRatio(hTightRatio, [hRatioTotal], newname="_".join(["DoubleRatioTight", varLabel, "cut", cutNames]))
+            hDoubleRatioTL.Write()
+    f.Close()
+    fout.Close()
 
 
 if __name__ ==  "__main__":
@@ -564,6 +668,8 @@ if __name__ ==  "__main__":
                       help="Harvest systematics", action='store_true')
     parser.add_option("--systScale", dest="systScale", default=False,
                       help="Grab information for scale and PDF systematics", action='store_true')
+    parser.add_option("--extrapolationSyst", dest="extrapolationSyst", default=False,
+                      help="Grab information for scale and PDF systematics", action='store_true')
 
     (options, args) = parser.parse_args()
 
@@ -574,6 +680,8 @@ if __name__ ==  "__main__":
     if options.shape:
         shapeSyst(options.filename)
     if options.systHarvest:
-        systHarvest()
+        systHarvest(options.filename)
     if options.systScale:
         systScalePDF(options.filename)        
+    if options.extrapolationSyst:
+        extrapolationSyst(options.filename)

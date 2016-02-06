@@ -62,7 +62,7 @@ int main()
     AnaSamples::SampleSet        ss("", 2153.74);
     AnaSamples::SampleCollection sc(ss);
 
-    f = TFile::Open("condor/minituple.root");
+    f = TFile::Open("condor/minituple-Feb5.root");
 
     TH1 *h[5][45];
     std::vector<std::string> hnames = {"njet", "met", "mt2", "nt", "nb"};
