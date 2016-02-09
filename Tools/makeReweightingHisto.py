@@ -11,8 +11,8 @@ import math
 ############################
 ##  Some utilities first  ##
 ############################
-
-c = TCanvas("c1", "c1", 800, 800)
+if '-h' not in sys.argv and '--help' not in sys.argv:
+    c = TCanvas("c1", "c1", 800, 800)
 
 def rebin1D(h, bins):
     """Rebin histo h to bins and recompute the errors."""
@@ -159,8 +159,9 @@ def normWeight(filename):
     # Get the file
     f = TFile.Open(filename)
     # Run over the relevant histograms
-    cuts_DY = ["muZinv_0b"]
-    selection = "blnotag"
+    cuts_DY = ["muZinv"]
+    selections = ["bl","0b_blnotag"]
+    selection2 = "bl"
     # histo names
     hname1 = "cntCSVSZinv/DataMC_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDatadata"
     hnames2 = ["cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDYstack",
@@ -175,19 +176,18 @@ def normWeight(filename):
     #            2. Subtract non-DY MC from data
     #            3. Make ratio of subtracted data and DY
     for cut in cuts_DY:
-        hname1_DY = hname1 % {"cut":cut, "selection":selection}
-        hnames2_DY = [elem % {"cut":cut, "selection":selection} for elem in hnames2]
+        hname1_DY = [hname1 % {"cut":cut, "selection":selection} for selection in selections]
+        hnames2_DY = [[elem % {"cut":cut, "selection":selection} for selection in selections] for elem in hnames2]
         # Get all histos
-        h1 = f.Get(hname1_DY)
-        h2s = [f.Get(hname2_DY) for hname2_DY in hnames2_DY]
+        h1 = add([f.Get(hname1a_DY) for hname1a_DY in hname1_DY])
+        h2s = [add([f.Get(sel) for sel in hname2a_DY]) for hname2a_DY in hnames2_DY]
 
         # subtract relevant histograms from data
         data_subtracted = subtract(h1, h2s[2:])
-
         newname = "DataMC_nb_%s_%s"%(cut,selection)
-        newh = makeRatio(data_subtracted, h2s[:1], newname=newname)
+        newh = makeRatio(data_subtracted, h2s[:1], newname=newname, bins=[0,5])
         #newh = makeRatio(h1, h2s, newname=newname)
-
+        
         print "Data/MC normalization scale factor in region %s_%s: %.3f +- %.3f" % (cuts_DY[0], selection, newh.GetBinContent(1), newh.GetBinError(1))
 
     f.Close()
