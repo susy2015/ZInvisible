@@ -3,6 +3,7 @@
 #include "NTupleReader.h"
 
 #include <iostream>
+#include <getopt.h>
 
 #include "TFile.h"
 #include "TH1.h"
@@ -11,12 +12,66 @@
 #include "TChain.h"
 #include "Math/VectorUtil.h"
 
-int main()
+int main(int argc, char* argv[])
 {
-    AnaSamples::SampleSet        ss;
+    using namespace std;
+
+    int opt;
+    int option_index = 0;
+    static struct option long_options[] = {
+        {"condor",           no_argument, 0, 'c'},
+        {"dataSets",   required_argument, 0, 'D'},
+        {"numFiles",   required_argument, 0, 'N'},
+        {"startFile",  required_argument, 0, 'M'},
+        {"numEvts",    required_argument, 0, 'E'},
+    };
+
+    bool runOnCondor = false;
+    int nFiles = -1, startFile = 0, nEvts = -1;
+    string dataSets = "";
+
+    while((opt = getopt_long(argc, argv, "cD:N:M:E:", long_options, &option_index)) != -1)
+    {
+        switch(opt)
+        {
+        case 'c':
+            runOnCondor = true;
+            break;
+
+        case 'D':
+            dataSets = optarg;
+            break;
+
+        case 'N':
+            nFiles = int(atoi(optarg));
+            break;
+
+        case 'M':
+            startFile = int(atoi(optarg));
+            break;
+
+        case 'E':
+            nEvts = int(atoi(optarg));
+            break;
+        }
+    }
+
+    string filename = "effhists.root";
+    string sampleloc = AnaSamples::fileDir;
+
+    //if running on condor override all optional settings
+    if(runOnCondor)
+    {
+        char thistFile[128];
+        sprintf(thistFile, "effhists_%s_%d.root", dataSets.c_str(), startFile);
+        filename = thistFile;
+        sampleloc = "condor";
+    }
+
+    AnaSamples::SampleSet        ss(sampleloc);
     AnaSamples::SampleCollection sc(ss);
 
-    TFile *f = new TFile("effhists.root","RECREATE");
+    TFile *f = new TFile(filename.c_str(),"RECREATE");
     f->cd();
 
     TH1 *hMuEffPt_num = new TH1D("hMuEffPt_num", "hMuEffPt_num", 200, 0, 2000);
@@ -100,11 +155,13 @@ int main()
     TH1* hZRes = (TH1*)fZRes->Get("zRes");
     double hZRes_int = hZRes->Integral(hZRes->FindBin(-0.3), hZRes->FindBin(0.3));
 
-    for(auto& file : sc["DYJetsToLL"]) 
+    //for(auto& file : sc["DYJetsToLL"]) 
+    auto& file = ss[dataSets];
     {
         TChain *t = new TChain(file.treePath.c_str());
 
-        for(const auto& fn : file.getFilelist()) t->Add(fn.c_str());
+        //for(const auto& fn : file.getFilelist()) t->Add(fn.c_str());
+        file.addFilesToChain(t, startFile, nFiles);
         //t->Add("root://cmsxrootd-site.fnal.gov//store/user/lpcsusyhad/PHYS14_720_Mar14_2014_v2/pastika/DYJetsToLL_M-50_HT-600toInf_Tune4C_13TeV-madgraph-tauola/PHYS14_PU20bx25_PHYS14_25_V1-FLAT/150328_003328/0000/stopFlatNtuples_15.root");
 
         std::cout << "Processing file(s): " << file.filePath << std::endl;
