@@ -374,6 +374,11 @@ def systHarvest(filename):
     hMECDn_ratio.Add(hMECNom, -1.0)
     hMECDn_ratio.Divide(hMECNom)
 
+    hJECUp_ratio.SetBinContent(45, hJECUp_ratio.GetBinContent(44))
+    hJECDn_ratio.SetBinContent(45, hJECDn_ratio.GetBinContent(44))
+    hMECUp_ratio.SetBinContent(45, hMECUp_ratio.GetBinContent(44))
+    hMECDn_ratio.SetBinContent(45, hMECDn_ratio.GetBinContent(44))
+
     fout.cd()
     hJECUp_ratio.Write()
     hJECDn_ratio.Write()
@@ -445,7 +450,7 @@ def systHarvest(filename):
              ("syst_unc_trig_dn",            hTrig_sym),
              ]
     
-    print "luminosity = 2153.74"
+    print "luminosity = 2262"
     print "channels = 45"
     print "sample = zinv"
     print ""
@@ -470,6 +475,9 @@ def systHarvest(filename):
     print "stat_unc_up = xxx yy zz"
     print "stat_unc_dn = xxx yy zz"
     print ""
+
+    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(45*["%8.5f" % 0.18318]))
+    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(45*["%8.5f" % 0.18318]))
 
     for (name, h) in hists:
         print "%-25s = %s"%(name, ' '.join(["%8.5f" % (h.GetBinContent(i)) for i in xrange(1, 46)]))

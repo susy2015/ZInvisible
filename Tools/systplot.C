@@ -104,7 +104,7 @@ void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylo
 
     c->cd(1);
     char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 2156. / 1000.0);
+    sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 2262. / 1000.0);
     TLatex mark;
     mark.SetTextSize(0.042 * fontScale);
     mark.SetTextFont(42);
