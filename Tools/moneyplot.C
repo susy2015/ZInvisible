@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 
     // Get the relevant information
     //TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Jan20.root");
-    TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Feb5_2016_oldTTZ.root");
+    TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Feb11.root");
     //TH1D* h1 = (TH1D*)f1->Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle");
     TH1D* h1 = (TH1D*)f1->Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle");
     // Scale the prediction by the normalization factor by hand for now
@@ -52,11 +52,12 @@ int main(int argc, char* argv[])
     TH1D* h2 = (TH1D*)f2->Get("shape_central");
     TH1D* h3 = (TH1D*)f2->Get("shape_stat");
     TH1D* h4 = (TH1D*)f2->Get("MC_stats");
-    TH1D* h5 = (TH1D*)f2->Get("hJEC_ratio_sym");
-    TH1D* h6 = (TH1D*)f2->Get("hMEC_ratio_sym");
-    TH1D* h7 = (TH1D*)f2->Get("hScale_sym");
-    TH1D* h8 = (TH1D*)f2->Get("hPDF_sym");
-    TH1D* h9 = (TH1D*)f2->Get("hTrig_sym");
+    TH1D* h5 = (TH1D*)f2->Get("hOther");
+    //TH1D* h5 = (TH1D*)f2->Get("hJEC_ratio_sym");
+    //TH1D* h6 = (TH1D*)f2->Get("hMEC_ratio_sym");
+    //TH1D* h7 = (TH1D*)f2->Get("hScale_sym");
+    //TH1D* h8 = (TH1D*)f2->Get("hPDF_sym");
+    //TH1D* h9 = (TH1D*)f2->Get("hTrig_sym");
 
     TH1D* h5_2 = (TH1D*)h5->Clone("hOther_ratio_sym");
 
@@ -98,12 +99,12 @@ int main(int argc, char* argv[])
         g4->SetPointError(i - 1, 0.5, 0.5, err, err);
 
         double err5 = h5->GetBinContent(i) * h1->GetBinContent(i);
-        double err6 = h6->GetBinContent(i) * h1->GetBinContent(i);
-        double err7 = h7->GetBinContent(i) * h1->GetBinContent(i);
-        double err8 = h8->GetBinContent(i) * h1->GetBinContent(i);
-        double err9 = h9->GetBinContent(i) * h1->GetBinContent(i);
-        h5_2->SetBinContent(i, sqrt(err5*err5 + err6*err6 + err7*err7 + err8*err8 + err9*err9));
-        err = sqrt(err*err + err5*err5 + err6*err6 + err7*err7 + err8*err8 + err9*err9);
+        //double err6 = h6->GetBinContent(i) * h1->GetBinContent(i);
+        //double err7 = h7->GetBinContent(i) * h1->GetBinContent(i);
+        //double err8 = h8->GetBinContent(i) * h1->GetBinContent(i);
+        //double err9 = h9->GetBinContent(i) * h1->GetBinContent(i);
+        //h5_2->SetBinContent(i, sqrt(err5*err5 + err6*err6 + err7*err7 + err8*err8 + err9*err9));
+        err = sqrt(err*err + err5*err5);// + err6*err6 + err7*err7 + err8*err8 + err9*err9);
         g5->SetPoint(i - 1, h1->GetBinCenter(i), h1->GetBinContent(i));
         g5->SetPointError(i - 1, 0.5, 0.5, err, err);
 
@@ -239,7 +240,7 @@ int main(int argc, char* argv[])
     c->cd(1);
 
     char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 2156. / 1000.0);
+    sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 2262. / 1000.0);
 
     TLatex mark;
     mark.SetNDC();
@@ -303,7 +304,7 @@ int main(int argc, char* argv[])
     for(int i=0; i<h1->GetNbinsX(); ++i)
     {
         char formatStr[256];
-        sprintf(formatStr, "& %8.4f & %8.4f & %8.4f & %8.4f & %8.4f \\\\", rel_unc_2, h2->GetBinContent(i + 1), h3->GetBinContent(i + 1), h4->GetBinContent(i + 1), h5_2->GetBinContent(i + 1));
+        sprintf(formatStr, "& %8.4f & %8.4f & %8.4f & %8.4f & %8.4f \\\\", rel_unc_2, h2->GetBinContent(i + 1), h3->GetBinContent(i + 1), h4->GetBinContent(i + 1), h5->GetBinContent(i + 1));
         printf(get_searchBins_defstr(i, formatStr).c_str());
     }
 

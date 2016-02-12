@@ -102,10 +102,16 @@ namespace plotterFunctions
                             //const double p0 =  9.83467e-01; // +/- 1.54469e+00
                             //const double p1 = -7.81897e-06; // +/- 4.16487e-03
                             //const double p2 = -1.22092e-08; // +/- 2.18556e-06
+                            //Spring15 low stats
+                            //const double fitStart = 200.0;  // extended to 2000 GeV
+                            //const double p0 =     0.979238; //   +/-   1.17313
+                            //const double p1 = -6.47338e-06; //   +/-   0.00342715
+                            //const double p2 = -1.16258e-08; //   +/-   1.87837e-06
+                            //Spring15 extended samples
                             const double fitStart = 200.0;  // extended to 2000 GeV
-                            const double p0 =     0.979238; //   +/-   1.17313
-                            const double p1 = -6.47338e-06; //   +/-   0.00342715
-                            const double p2 = -1.16258e-08; //   +/-   1.87837e-06
+                            const double p0 =      0.97431; //   +/-   1.17119     
+                            const double p1 =  2.87484e-05; //   +/-   0.00341371  
+                            const double p2 = -5.37058e-08; //   +/-   1.86309e-06 
 
                             double muRecoEff = 0.0;
 
@@ -167,7 +173,7 @@ namespace plotterFunctions
                         if(elecEffReco && elecEffIso)
                         {
                             //Fit to iso eff (eff = p0 + p1*pt + p2*pt^2
-                            const double fitStart = 200.0;  // extended to 2000 GeV
+                            const double fitStart =200.0;  // extended to 2000 GeV
                             const double p0 =     0.989411; //   +/-   1.18467
                             const double p1 =  3.66321e-06; //   +/-   0.00346729
                             const double p2 = -5.68292e-09; //   +/-   1.90334e-06
@@ -249,15 +255,19 @@ namespace plotterFunctions
             //double acc_p0 = -2.91374e-01;
             //double acc_p1 = -4.42884e-03;
             //double acc_p2 =  9.51190e-01;
-            //Spring15
-            double acc_p0 = -2.64921e-01;
-            double acc_p1 = -4.65305e-03;
-            double acc_p2 =  9.50493e-01;
+            //Spring15 low stats
+            //double acc_p0 = -2.64921e-01;
+            //double acc_p1 = -4.65305e-03;
+            //double acc_p2 =  9.50493e-01;
+            //Spring15 extended sample
+            const double acc_p0 = -2.60663e-01;
+            const double acc_p1 = -4.60623e-03;
+            const double acc_p2 = 9.49434e-01;
 
             if(hZAcc && hZAccLepPt)
             {
                 //Eta portion of acceptance
-                if(bestRecoZPt < 100) zAcc = hZAcc->GetBinContent(hZAcc->GetXaxis()->FindBin(bestRecoZPt));
+                if(bestRecoZPt < 150) zAcc = hZAcc->GetBinContent(hZAcc->GetXaxis()->FindBin(bestRecoZPt));
                 else                  zAcc = acc_p2 - exp(acc_p0 + acc_p1 * bestRecoZPt);
 
                 //pt portion of acceptance
