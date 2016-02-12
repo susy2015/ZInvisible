@@ -73,8 +73,9 @@ def subtract(h, hlist):
     """Subtract all histograms in hlist from h"""
     new_h = h.Clone()
     new_h.Sumw2()
-    for hl in hlist:
+    for hl in hlist:        
         new_h.Add(hl,-1.)
+        #print hl.GetName(), new_h.Integral()
     return new_h
 
 ##############################
@@ -169,7 +170,8 @@ def normWeight(filename):
                "cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvt#bar{t}stack",
                "cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvsingle topstack",
                "cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvt#bar{t}Zstack",
-               "cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDibosonstack"
+               "cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDibosonstack",
+               "cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvRarestack"
                ]
 
     # Procedure: 1. Grab the njet reweighted MC
@@ -185,9 +187,9 @@ def normWeight(filename):
         #h2s = [add([f.Get(sel) for sel in hname2a_DY]) for hname2a_DY in hnames2_DY]
         h1 = f.Get(hname1_DY) 
         h2s = [f.Get(sel) for sel in hnames2_DY]
-
         # subtract relevant histograms from data
         data_subtracted = subtract(h1, h2s[2:])
+        #print data_subtracted.Integral()
         newname = "DataMC_nb_%s_%s"%(cut,selection2)
         newh = makeRatio(data_subtracted, h2s[:1], newname=newname, bins=[0,6])
         #newh = makeRatio(h1, h2s, newname=newname)
