@@ -344,7 +344,8 @@ void Plotter::createHistsFromTuple()
                 foutTuple_->cd();
                 tOut = new TTree(treeName.c_str(), treeName.c_str());
                 mtm = new MiniTupleMaker(tOut);
-                mtm->setTupleVars(registerfunc_->getMiniTupleSet());
+                if(file.isData_) mtm->setTupleVars(registerfunc_->getMiniTupleSetData());
+                else             mtm->setTupleVars(registerfunc_->getMiniTupleSet());
                 fout_->cd();
             }
         }
@@ -436,7 +437,7 @@ void Plotter::createHistsFromTuple()
                     //fill mini tuple
                     if(tOut && mtm)
                     {
-                        if(tr.getVar<bool>("passnJetsZinv"))
+                        if(tr.getVar<bool>("passnJetsZinv") && tr.getVar<bool>("passMuZinvSel"))
                         {
                             foutTuple_->cd();
                             mtm->fill();

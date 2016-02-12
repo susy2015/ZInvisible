@@ -439,7 +439,7 @@ def systHarvest(filename):
              ("syst_unc_trig_dn",            hTrig_sym),
              ]
     
-    print "luminosity = 2153.74"
+    print "luminosity = 2262"
     print "channels = 45"
     print "sample = zinv"
     print ""

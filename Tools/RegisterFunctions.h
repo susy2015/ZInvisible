@@ -35,6 +35,7 @@ public:
     virtual void registerFunctions(NTupleReader& tr) {};
     virtual void activateBranches(std::set<std::string>& activeBranches) {};
     virtual const std::set<std::string> getMiniTupleSet();
+    virtual const std::set<std::string> getMiniTupleSetData();
 };
 
 class RegisterFunctionsNTuple : public RegisterFunctions
