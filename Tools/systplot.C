@@ -316,7 +316,7 @@ int main(int argc, char* argv[])
     f1->Close();
 
 
-    f1 = TFile::Open("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/loostToTight.root");
+    f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/looseToTight.root");
     std::map<std::string, std::pair<std::string, double> > hnames3 = {
 	{"DoubleRatioTight_nj_cut_mt2",   {"N_{jets}", 20}},
 	{"DoubleRatioTight_nj_cut_met",   {"N_{jets}", 20}},
