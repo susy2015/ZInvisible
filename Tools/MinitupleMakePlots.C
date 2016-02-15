@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     };
 
     bool doPlots = true, doSave = true, doTuple = true, fromTuple = true, runOnCondor = false;
-    string histFile = "", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
+    string histFile = "", dataSets = "", sampleloc = "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/", plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
     double lumi = AnaSamples::luminosity;
 
@@ -211,9 +211,6 @@ int main(int argc, char* argv[])
 
     // Extra MC stack that have njet weight applied for ttbar but not for DY (to make plots for AN)
     std::vector<Plotter::DatasetSummary> stackwtt_MC = {dsDY, dsDYInc, dswtt2l, dstW, dsttZ, dsVV, dsRare};
-    std::vector<Plotter::DatasetSummary> stackwtt_MC_w1b = {dsDY_w1b, dsDYInc_w1b, dswtt2l_w1b, dstW_w1b, dsttZ_w1b, dsVV_w1b, dsRare_w1b};
-    std::vector<Plotter::DatasetSummary> stackwtt_MC_w2b = {dsDY_w2b, dsDYInc_w2b, dswtt2l_w2b, dstW_w2b, dsttZ_w2b, dsVV_w2b, dsRare_w2b};
-    std::vector<Plotter::DatasetSummary> stackwtt_MC_w3b = {dsDY_w3b, dsDYInc_w3b, dswtt2l_w3b, dstW_w3b, dsttZ_w3b, dsVV_w3b, dsRare_w3b};
 
     // Apply data/mc njet weight for DY and ttbar & apply the normalization weight
     Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "nJetWgtDYZ;normWgt0b");
