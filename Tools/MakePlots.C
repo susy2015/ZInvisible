@@ -148,6 +148,8 @@ int main(int argc, char* argv[])
         }
     }
 
+    // Number of searchbins
+    int NSB = 37; // 45
 
     // Shortcuts for axis labels
     std::string label_met = "p_{T}^{miss} [GeV]";
@@ -571,44 +573,44 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("nb_0_cleanmht_DY_nunu_stack",     {scaled_stacked_DYtonunu_cleanmht},  {1, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0",  100, 0,     1500, true,  false,  label_mht,   "Events"));
     vh.push_back(PHS("nb_0_cleanmet_DY_nunu_stack",     {scaled_stacked_DYtonunu_cleanMet},  {1, 1}, "passBaselineNoTagZinv;cntCSVSZinv=0",  100, 0,     1500, true,  false,  label_met,      "Events"));
 
-    vh.push_back(PHS("nSearchBin",               {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBin_log",           {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBin_stat",          {scaled_nSearchBin_stat}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBin_stat_log",      {scaled_nSearchBin_stat}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBinnb0",            {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBinnb0_log",        {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBinnb0ZZ",          {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBinnb0ZZ_log",      {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBin_pull",          {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             45,  0,     45,   false, false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("nSearchBin_pull_log",      {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("nSearchBinnb0_pull",       {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("nSearchBinnb0_pull_log",   {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("nSearchBinnb0ZZ_pull",     {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   false, false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("nSearchBinnb0ZZ_pull_log", {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("nSearchBin",               {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_log",           {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_stat",          {scaled_nSearchBin_stat}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_stat_log",      {scaled_nSearchBin_stat}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBinnb0",            {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBinnb0_log",        {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBinnb0ZZ",          {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBinnb0ZZ_log",      {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_pull",          {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("nSearchBin_pull_log",      {scaled_nSearchBin},      {2, 1}, "passBaselineZinv",                                             NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("nSearchBinnb0_pull",       {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("nSearchBinnb0_pull_log",   {scaled_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("nSearchBinnb0ZZ_pull",     {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("nSearchBinnb0ZZ_pull_log", {scaled_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",               NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", false));
 
-    vh.push_back(PHS("elec_nSearchBin",               {scaled_Elec_nSearchBin},      {2, 1}, "passBaselineZinv",                                      45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("elec_nSearchBin_log",           {scaled_Elec_nSearchBin},      {2, 1}, "passBaselineZinv",                                      45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("elec_nSearchBin_stat",          {scaled_Elec_nSearchBin_stat}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("elec_nSearchBin_stat_log",      {scaled_Elec_nSearchBin_stat}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("elec_nSearchBinnb0",            {scaled_Elec_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("elec_nSearchBinnb0_log",        {scaled_Elec_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("elec_nSearchBinnb0ZZ",          {scaled_Elec_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("elec_nSearchBinnb0ZZ_log",      {scaled_Elec_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("elec_nSearchBin_pull",          {scaled_Elec_nSearchBin},      {2, 1}, "passBaselineZinv",                                      45,  0,     45,   false, false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("elec_nSearchBin_pull_log",      {scaled_Elec_nSearchBin},      {2, 1}, "passBaselineZinv",                                      45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("elec_nSearchBinnb0_pull",       {scaled_Elec_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("elec_nSearchBinnb0_pull_log",   {scaled_Elec_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("elec_nSearchBinnb0ZZ_pull",     {scaled_Elec_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("elec_nSearchBinnb0ZZ_pull_log", {scaled_Elec_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("elec_nSearchBin",               {scaled_Elec_nSearchBin},      {2, 1}, "passBaselineZinv",                                      NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBin_log",           {scaled_Elec_nSearchBin},      {2, 1}, "passBaselineZinv",                                      NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBin_stat",          {scaled_Elec_nSearchBin_stat}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBin_stat_log",      {scaled_Elec_nSearchBin_stat}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBinnb0",            {scaled_Elec_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBinnb0_log",        {scaled_Elec_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBinnb0ZZ",          {scaled_Elec_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBinnb0ZZ_log",      {scaled_Elec_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("elec_nSearchBin_pull",          {scaled_Elec_nSearchBin},      {2, 1}, "passBaselineZinv",                                      NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("elec_nSearchBin_pull_log",      {scaled_Elec_nSearchBin},      {2, 1}, "passBaselineZinv",                                      NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("elec_nSearchBinnb0_pull",       {scaled_Elec_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("elec_nSearchBinnb0_pull_log",   {scaled_Elec_nSearchBinNb0},   {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("elec_nSearchBinnb0ZZ_pull",     {scaled_Elec_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("elec_nSearchBinnb0ZZ_pull_log", {scaled_Elec_nSearchBinNb0ZZ}, {2, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", false));
 
-    vh.push_back(PHS("nSearchBin_Sig_mm",          {scaled_nSearchBin_Sig_mm}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBin_Sig_mm_log",      {scaled_nSearchBin_Sig_mm}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBin_Con_mm",          {scaled_nSearchBin_Con_mm}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBin_Con_mm_log",      {scaled_nSearchBin_Con_mm}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBin_Sig_ee",          {scaled_nSearchBin_Sig_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBin_Sig_ee_log",      {scaled_nSearchBin_Sig_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBin_Con_ee",          {scaled_nSearchBin_Con_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("nSearchBin_Con_ee_log",      {scaled_nSearchBin_Con_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Sig_mm",          {scaled_nSearchBin_Sig_mm}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Sig_mm_log",      {scaled_nSearchBin_Sig_mm}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Con_mm",          {scaled_nSearchBin_Con_mm}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Con_mm_log",      {scaled_nSearchBin_Con_mm}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Sig_ee",          {scaled_nSearchBin_Sig_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Sig_ee_log",      {scaled_nSearchBin_Sig_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Con_ee",          {scaled_nSearchBin_Con_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("nSearchBin_Con_ee_log",      {scaled_nSearchBin_Con_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
 
     std::vector<std::pair<std::pair<std::string,std::string>, int>> cutlevels_MCCLosure = {
         {{"",                ""                                                                 },  100},
@@ -1309,15 +1311,15 @@ int main(int argc, char* argv[])
     Plotter::DataCollection MEU_nSearchBin(      "single", {{"nSearchBin",    dsDY_nunu_njetnorm_bl}, {"nSearchBinMEUUp", dsDY_nunu_njetnorm_MEUUp}, {"nSearchBinMEUDn", dsDY_nunu_njetnorm_MEUDown}  });
     Plotter::DataCollection trigger_nSearchBin( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBin",    dsDY_nunu_njetnorm}  });
 
-    vh.push_back(PHS("NJetWgt_nSearchBin",            {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("NJetWgt_nSearchBin_log",        {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        45,  0,     45,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("NJetWgt_nSearchBin_pull",       {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        45,  0,     45,   false, false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("NJetWgt_nSearchBin_pull_log",   {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        45,  0,     45,   true,  false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("syst_ScaleWgt_nSearchBin",      {scalew_nSearchBin},{2, 1}, "passBaselineZinv",        45,  0,     45,   false, true,   "Search Bin",     "Events", true));
-    vh.push_back(PHS("syst_PDFWgt_nSearchBin",        {pdfw_nSearchBin},  {2, 1}, "passBaselineZinv",        45,  0,     45,   false, true,   "Search Bin",     "Events", true));
-    vh.push_back(PHS("syst_JESUncert_nSearchBin",     {JEU_nSearchBin},   {2, 1}, "",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("syst_MESUncert_nSearchBin",     {MEU_nSearchBin},   {2, 1}, "",        45,  0,     45,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("TriggerWgt_nSearchBin",         {trigger_nSearchBin},  {2, 1}, "passBaselineZinv",   45,  0,     45,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin",            {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin_log",        {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin_pull",       {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("NJetWgt_nSearchBin_pull_log",   {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("syst_ScaleWgt_nSearchBin",      {scalew_nSearchBin},{2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   false, true,   "Search Bin",     "Events", true));
+    vh.push_back(PHS("syst_PDFWgt_nSearchBin",        {pdfw_nSearchBin},  {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   false, true,   "Search Bin",     "Events", true));
+    vh.push_back(PHS("syst_JESUncert_nSearchBin",     {JEU_nSearchBin},   {2, 1}, "",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("syst_MESUncert_nSearchBin",     {MEU_nSearchBin},   {2, 1}, "",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nSearchBin",         {trigger_nSearchBin},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     // PDF and scale
     vh.push_back(PHS("DataMCwwscale_SingleMuon_nj_0b_blnotag",  {scalew_nj},    {1, 2}, "cntCSVSZinv=0;passBaselineNoTagZinv", 20, 0, 20,   true, false,  label_nj,    ""));
     vh.push_back(PHS("DataMCwwpdf_SingleMuon_nj_0b_blnotag",    {pdfw_nj},      {1, 2}, "cntCSVSZinv=0;passBaselineNoTagZinv", 20, 0, 20,   true, false,  label_nj,    ""));
@@ -1346,8 +1348,8 @@ int main(int argc, char* argv[])
         vh.push_back(PHS(     "ClosureNb_nb_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_nb},       {1, 2}, cut.second,  10, 0,   10,   true,  false,  label_nb,   ""));
         vh.push_back(PHS(    "ClosureNb_mt2_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_mt2},      {1, 2}, cut.second,  50, 0, 1500,   true,  false,  label_mt2,  ""));
         vh.push_back(PHS(     "ClosureNb_nj_3fakeb_" + cut.first,   {dcMC_nunu_Wgt3b_nj},       {1, 2}, cut.second,  20, 0,   20,   true,  false,  label_nj,   ""));
-        vh.push_back(PHS(    "ClosureNb_nSearchBin_" + cut.first,   {dcMC_nunu_nSearchBin},     {1, 2}, cut.second,  45, 0,   45,   true,  false,  "Search Bin", "Events"));
-        vh.push_back(PHS("ClosureNb_nSearchBin_njW_" + cut.first,   {dcMC_nunu_nSearchBin_njW}, {1, 2}, cut.second,  45, 0,   45,   true,  false,  "Search Bin", "Events"));
+        vh.push_back(PHS(    "ClosureNb_nSearchBin_" + cut.first,   {dcMC_nunu_nSearchBin},     {1, 2}, cut.second,  NSB, 0,   NSB,   true,  false,  "Search Bin", "Events"));
+        vh.push_back(PHS("ClosureNb_nSearchBin_njW_" + cut.first,   {dcMC_nunu_nSearchBin_njW}, {1, 2}, cut.second,  NSB, 0,   NSB,   true,  false,  "Search Bin", "Events"));
     }
     //MC interlude over
 
@@ -1379,11 +1381,11 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMC_SingleMuon_el1pt_"      +cut.first,  {dcData_SingleMuon_el1pt, dcMC_el1pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_el1pt,         ""));
 	vh.push_back(PHS("DataMC_SingleMuon_el2pt_"      +cut.first,  {dcData_SingleMuon_el2pt, dcMC_el2pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_el2pt,         ""));
 	vh.push_back(PHS("DataMC_SingleMuon_mll_"        +cut.first,  {dcData_SingleMuon_mll,   dcMC_mll},             {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,            ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,   true, false,  "Search Bin",     ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcMC_nb0Bins},    {1, 2}, cut.second, 45, 0, 45,   true, false,  "Search Bin",     ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcMC_nb0BinsNW},  {1, 2}, cut.second, 45, 0, 45,   true, false,  "Search Bin",     ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcMC_nb0NJwBins}, {1, 2}, cut.second, 45, 0, 45,   true, false,  "Search Bin",     ""));
-        vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_effAcc_" +cut.first,  {dcData_SingleMuon_nb0NJwBins_effAcc, dcMC_nb0NJwBins_effAcc}, {1, 2}, cut.second, 45, 0, 45,   true, false,  "Search Bin",     ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin",     ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcMC_nb0Bins},    {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin",     ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcMC_nb0BinsNW},  {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin",     ""));
+	vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcMC_nb0NJwBins}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin",     ""));
+        vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_effAcc_" +cut.first,  {dcData_SingleMuon_nb0NJwBins_effAcc, dcMC_nb0NJwBins_effAcc}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin",     ""));
 
 	// DataMC weights applied
         vector<double> metBins = {0, 50, 100, 150, 200, 275, 300, 350, 400, 450, 2000};
@@ -1417,10 +1419,10 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMCw_SingleMuon_el1pt_" +cut.first,  {dcData_SingleMuon_el1pt, dcwMC_el1pt}, {1, 2}, cut.second, 50, 0, 1000, true, false,  label_el1pt,         ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_el2pt_" +cut.first,  {dcData_SingleMuon_el2pt, dcwMC_el2pt}, {1, 2}, cut.second, 50, 0, 1000, true, false,  label_el2pt,         ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_mll_"   +cut.first,  {dcData_SingleMuon_mll,   dcwMC_mll},   {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,            ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcwMC_nb0Bins},    {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcwMC_nb0BinsNW},  {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwMC_nb0NJwBins}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
+	vh.push_back(PHS("DataMCw_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
+	vh.push_back(PHS("DataMCw_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcwMC_nb0Bins},    {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
+	vh.push_back(PHS("DataMCw_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcwMC_nb0BinsNW},  {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
+	vh.push_back(PHS("DataMCw_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwMC_nb0NJwBins}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
 
 	// Normalization weight applied for ttbar only, only for loose0 selections
 	if(cut.first.rfind("loose0") == (cut.first.size()-6))
@@ -1450,10 +1452,10 @@ int main(int argc, char* argv[])
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_el1pt_" +cut.first,  {dcData_SingleMuon_el1pt, dcwttMC_el1pt}, {1, 2}, cut.second, 50, 0, 1000, true, false,  label_el1pt,         ""));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_el2pt_" +cut.first,  {dcData_SingleMuon_el2pt, dcwttMC_el2pt}, {1, 2}, cut.second, 50, 0, 1000, true, false,  label_el2pt,         ""));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_mll_"   +cut.first,  {dcData_SingleMuon_mll,   dcwttMC_mll},   {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,            ""));
-	    vh.push_back(PHS("DataMCwtt_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwttMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-	    vh.push_back(PHS("DataMCwtt_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcwttMC_nb0Bins},    {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-	    vh.push_back(PHS("DataMCwtt_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcwttMC_nb0BinsNW},  {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-	    vh.push_back(PHS("DataMCwtt_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwttMC_nb0NJwBins}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
+	    vh.push_back(PHS("DataMCwtt_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwttMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
+	    vh.push_back(PHS("DataMCwtt_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcwttMC_nb0Bins},    {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
+	    vh.push_back(PHS("DataMCwtt_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcwttMC_nb0BinsNW},  {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
+	    vh.push_back(PHS("DataMCwtt_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwttMC_nb0NJwBins}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
 	    
 	}
 
@@ -1485,10 +1487,10 @@ int main(int argc, char* argv[])
 	    vh.push_back(PHS("DataMCww_SingleMuon_el1pt_" +cut.first,  {dcData_SingleMuon_el1pt, dcwwMC_el1pt}, {1, 2}, cut.second, 50, 0, 1000, true, false,  label_el1pt,         ""));
 	    vh.push_back(PHS("DataMCww_SingleMuon_el2pt_" +cut.first,  {dcData_SingleMuon_el2pt, dcwwMC_el2pt}, {1, 2}, cut.second, 50, 0, 1000, true, false,  label_el2pt,         ""));
 	    vh.push_back(PHS("DataMCww_SingleMuon_mll_"   +cut.first,  {dcData_SingleMuon_mll,   dcwwMC_mll},   {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,            ""));
-	    vh.push_back(PHS("DataMCww_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwwMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-	    vh.push_back(PHS("DataMCww_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcwwMC_nb0Bins},    {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-	    vh.push_back(PHS("DataMCww_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcwwMC_nb0BinsNW},  {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-	    vh.push_back(PHS("DataMCww_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwwMC_nb0NJwBins}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
+	    vh.push_back(PHS("DataMCww_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwwMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
+	    vh.push_back(PHS("DataMCww_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcwwMC_nb0Bins},    {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
+	    vh.push_back(PHS("DataMCww_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcwwMC_nb0BinsNW},  {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
+	    vh.push_back(PHS("DataMCww_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwwMC_nb0NJwBins}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
 	    
 	}
     }
@@ -1507,7 +1509,7 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_nj_"    +cut.first,  {dcData_SingleMuon_nj,    dcwMC_nj},    {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,             ""));
 	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_jpt_"   +cut.first,  {dcData_SingleMuon_jpt,   dcwMC_jpt},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_jpt,         ""));
 	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_mupt_"  +cut.first,  {dcData_SingleMuon_mupt,  dcwMC_mupt},  {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mupt,          ""));
-	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
+	vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
     }
 
     // Do no look at electron plots for now. Save some time and space
