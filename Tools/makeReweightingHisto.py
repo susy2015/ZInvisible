@@ -73,8 +73,9 @@ def subtract(h, hlist):
     """Subtract all histograms in hlist from h"""
     new_h = h.Clone()
     new_h.Sumw2()
-    for hl in hlist:
+    for hl in hlist:        
         new_h.Add(hl,-1.)
+        #print hl.GetName(), new_h.Integral()
     return new_h
 
 ##############################
@@ -161,7 +162,7 @@ def normWeight(filename):
     # Run over the relevant histograms
     cuts_DY = ["muZinv"]
     selections = ["bl","0b_blnotag"]
-    selection2 = "bl"
+    selection2 = "blnotag"
     # histo names
     hname1 = "cntCSVSZinv/DataMC_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDatadata"
     hnames2 = ["cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDYstack",
@@ -169,26 +170,31 @@ def normWeight(filename):
                "cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvt#bar{t}stack",
                "cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvsingle topstack",
                "cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvt#bar{t}Zstack",
-               "cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDibosonstack"
+               "cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDibosonstack",
+               "cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvRarestack"
                ]
 
     # Procedure: 1. Grab the njet reweighted MC
     #            2. Subtract non-DY MC from data
     #            3. Make ratio of subtracted data and DY
     for cut in cuts_DY:
-        hname1_DY = [hname1 % {"cut":cut, "selection":selection} for selection in selections]
-        hnames2_DY = [[elem % {"cut":cut, "selection":selection} for selection in selections] for elem in hnames2]
+        #hname1_DY = [hname1 % {"cut":cut, "selection":selection} for selection in selections]
+        #hnames2_DY = [[elem % {"cut":cut, "selection":selection} for selection in selections] for elem in hnames2]
+        hname1_DY = hname1 % {"cut":cut, "selection":selection2} 
+        hnames2_DY = [elem % {"cut":cut, "selection":selection2} for elem in hnames2]
         # Get all histos
-        h1 = add([f.Get(hname1a_DY) for hname1a_DY in hname1_DY])
-        h2s = [add([f.Get(sel) for sel in hname2a_DY]) for hname2a_DY in hnames2_DY]
-
+        #h1 = add([f.Get(hname1a_DY) for hname1a_DY in hname1_DY])
+        #h2s = [add([f.Get(sel) for sel in hname2a_DY]) for hname2a_DY in hnames2_DY]
+        h1 = f.Get(hname1_DY) 
+        h2s = [f.Get(sel) for sel in hnames2_DY]
         # subtract relevant histograms from data
         data_subtracted = subtract(h1, h2s[2:])
-        newname = "DataMC_nb_%s_%s"%(cut,selection)
-        newh = makeRatio(data_subtracted, h2s[:1], newname=newname, bins=[0,5])
+        #print data_subtracted.Integral()
+        newname = "DataMC_nb_%s_%s"%(cut,selection2)
+        newh = makeRatio(data_subtracted, h2s[:1], newname=newname, bins=[0,6])
         #newh = makeRatio(h1, h2s, newname=newname)
         
-        print "Data/MC normalization scale factor in region %s_%s: %.3f +- %.3f" % (cuts_DY[0], selection, newh.GetBinContent(1), newh.GetBinError(1))
+        print "Data/MC normalization scale factor in region %s_%s: %.3f +- %.3f" % (cuts_DY[0], selection2, newh.GetBinContent(1), newh.GetBinError(1))
 
     f.Close()
 
@@ -368,6 +374,11 @@ def systHarvest(filename):
     hMECDn_ratio.Add(hMECNom, -1.0)
     hMECDn_ratio.Divide(hMECNom)
 
+    hJECUp_ratio.SetBinContent(45, hJECUp_ratio.GetBinContent(44))
+    hJECDn_ratio.SetBinContent(45, hJECDn_ratio.GetBinContent(44))
+    hMECUp_ratio.SetBinContent(45, hMECUp_ratio.GetBinContent(44))
+    hMECDn_ratio.SetBinContent(45, hMECDn_ratio.GetBinContent(44))
+
     fout.cd()
     hJECUp_ratio.Write()
     hJECDn_ratio.Write()
@@ -465,6 +476,9 @@ def systHarvest(filename):
     print "stat_unc_dn = xxx yy zz"
     print ""
 
+    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(45*["%8.5f" % 0.18318]))
+    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(45*["%8.5f" % 0.18318]))
+
     for (name, h) in hists:
         print "%-25s = %s"%(name, ' '.join(["%8.5f" % (h.GetBinContent(i)) for i in xrange(1, 46)]))
 
@@ -550,6 +564,7 @@ def systScalePDF(filename):
 
 def extrapolationSyst(filename):
     f = TFile.Open(filename)
+    print "Opened file", filename, f
     
     dataName = "%(varName)s/SystPlots_DataMCw_SingleMuon_%(varLabel)s_%(cutStr)s%(varName)s%(varName)sDatadata"
     baseName = "%(varName)s/SystPlots_DataMCw_SingleMuon_%(varLabel)s_%(cutStr)s%(varName)s%(varName)s%(sample)s"
