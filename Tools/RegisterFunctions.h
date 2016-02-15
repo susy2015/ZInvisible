@@ -68,6 +68,20 @@ public:
     void activateBranches(std::set<std::string>& activeBranches);
 };
 
+class RegisterFunctionsMiniTuple : public RegisterFunctions
+{
+private:
+    plotterFunctions::NJetWeight *njWeight;
+    plotterFunctions::TriggerInfo *triggerInfo;
+    plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
+
+public:
+    RegisterFunctionsMiniTuple();
+    ~RegisterFunctionsMiniTuple();
+    void registerFunctions(NTupleReader& tr);
+    void activateBranches(std::set<std::string>& activeBranches);
+};
+
 class RegisterFunctionsCalcEff : public RegisterFunctions
 {
 private:
