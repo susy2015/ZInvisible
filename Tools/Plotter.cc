@@ -437,11 +437,14 @@ void Plotter::createHistsFromTuple()
                     //fill mini tuple
                     if(tOut && mtm)
                     {
-                        if(tr.getVar<bool>("passnJetsZinv") && tr.getVar<bool>("passMuZinvSel"))
+                        if(tr.getVar<bool>("passnJetsZinv"))
                         {
-                            foutTuple_->cd();
-                            mtm->fill();
-                            fout_->cd();
+                            if(file.filePath.find("ZJetsToNuNu_HT-100To200_13TeV-madgraph") != file.end() || file.filePath.find("ZJetsToNuNu_HT-200To400_13TeV-madgraph") != file.end() || file.filePath.find("ZJetsToNuNu_HT-400To600_13TeV-madgraph") != file.end() || file.filePath.find("ZJetsToNuNu_HT-600ToInf_13TeV-madgraph") != file.end() || tr.getVar<bool>("passMuZinvSel"))
+                            {
+                                foutTuple_->cd();
+                                mtm->fill();
+                                fout_->cd();
+                            }
                         }
                     }
 
