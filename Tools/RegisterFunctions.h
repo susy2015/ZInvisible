@@ -35,6 +35,7 @@ public:
     virtual void registerFunctions(NTupleReader& tr) {};
     virtual void activateBranches(std::set<std::string>& activeBranches) {};
     virtual const std::set<std::string> getMiniTupleSet();
+    virtual const std::set<std::string> getMiniTupleSetData();
 };
 
 class RegisterFunctionsNTuple : public RegisterFunctions
@@ -63,6 +64,20 @@ private:
 public:
     RegisterFunctionsNTuple();
     ~RegisterFunctionsNTuple();
+    void registerFunctions(NTupleReader& tr);
+    void activateBranches(std::set<std::string>& activeBranches);
+};
+
+class RegisterFunctionsMiniTuple : public RegisterFunctions
+{
+private:
+    plotterFunctions::NJetWeight *njWeight;
+    plotterFunctions::TriggerInfo *triggerInfo;
+    plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
+
+public:
+    RegisterFunctionsMiniTuple();
+    ~RegisterFunctionsMiniTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);
 };

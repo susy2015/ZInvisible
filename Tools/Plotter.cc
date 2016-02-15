@@ -344,7 +344,8 @@ void Plotter::createHistsFromTuple()
                 foutTuple_->cd();
                 tOut = new TTree(treeName.c_str(), treeName.c_str());
                 mtm = new MiniTupleMaker(tOut);
-                mtm->setTupleVars(registerfunc_->getMiniTupleSet());
+                if(file.isData_) mtm->setTupleVars(registerfunc_->getMiniTupleSetData());
+                else             mtm->setTupleVars(registerfunc_->getMiniTupleSet());
                 fout_->cd();
             }
         }
@@ -438,9 +439,12 @@ void Plotter::createHistsFromTuple()
                     {
                         if(tr.getVar<bool>("passnJetsZinv"))
                         {
-                            foutTuple_->cd();
-                            mtm->fill();
-                            fout_->cd();
+                            if(file.filePath.find("ZJetsToNuNu_HT-100To200_13TeV-madgraph") != std::string::npos || file.filePath.find("ZJetsToNuNu_HT-200To400_13TeV-madgraph") != std::string::npos || file.filePath.find("ZJetsToNuNu_HT-400To600_13TeV-madgraph") != std::string::npos || file.filePath.find("ZJetsToNuNu_HT-600ToInf_13TeV-madgraph") != std::string::npos || tr.getVar<bool>("passMuZinvSel"))
+                            {
+                                foutTuple_->cd();
+                                mtm->fill();
+                                fout_->cd();
+                            }
                         }
                     }
 

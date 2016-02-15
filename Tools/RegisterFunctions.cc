@@ -7,7 +7,12 @@
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
-    return std::set<std::string>({"HTZinv","cleanMetPt","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts"});
+    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT"});
+}
+
+const std::set<std::string> RegisterFunctions::getMiniTupleSetData()
+{
+    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
 }
 
 void activateBranches(std::set<std::string>& activeBranches)
@@ -132,6 +137,36 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
 {
     ::activateBranches(activeBranches);
+}
+
+RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()
+{            
+    AnaFunctions::prepareTopTagger();
+
+    njWeight             = new plotterFunctions::NJetWeight;
+    triggerInfo          = new plotterFunctions::TriggerInfo(true);
+    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
+}
+
+RegisterFunctionsMiniTuple::~RegisterFunctionsMiniTuple()
+{
+    if(njWeight) delete njWeight;
+    if(triggerInfo) delete triggerInfo;
+    if(prepareMiniTupleVars) delete prepareMiniTupleVars;
+}
+        
+void RegisterFunctionsMiniTuple::registerFunctions(NTupleReader& tr)
+{
+    //Make some global "constants" here
+
+    //register functions with NTupleReader
+    tr.registerFunction(*njWeight);
+    tr.registerFunction(*triggerInfo);
+    tr.registerFunction(*prepareMiniTupleVars);
+}
+
+void RegisterFunctionsMiniTuple::activateBranches(std::set<std::string>& activeBranches)
+{
 }
 
 

@@ -13,7 +13,7 @@
 
 int main()
 {
-    TFile *f = TFile::Open("condor/minituple.root");
+    TFile *f = TFile::Open("condor/minituple-Feb5.root");
 
     std::vector<std::string> treeNames = /*{"ZJetsToNuNu_HT-100To200_13TeV-madgraph", "ZJetsToNuNu_HT-200To400_13TeV-madgraph", "ZJetsToNuNu_HT-400To600_13TeV-madgraph",*/ {"ZJetsToNuNu_HT-600ToInf_13TeV-madgraph"};
 
@@ -36,6 +36,8 @@ int main()
 
         while(tr.getNextEvent())
         {
+            if(tr.getEvtNum() % 10000 == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
+
             const double& HT = tr.getVar<double>("HTZinv");
             const double& cleanMetPt = tr.getVar<double>("cleanMetPt");
             const double& best_had_brJet_MT2Zinv = tr.getVar<double>("best_had_brJet_MT2Zinv");
