@@ -21,6 +21,7 @@ namespace plotterFunctions
     class NJetWeight;
     class SystematicPrep;
     class SystematicCalc;
+    class MetSmear;
 }
 
 class SystWeights;
@@ -74,6 +75,7 @@ private:
     plotterFunctions::NJetWeight *njWeight;
     plotterFunctions::TriggerInfo *triggerInfo;
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
+    plotterFunctions::MetSmear *metSmear;
 
 public:
     RegisterFunctionsMiniTuple();

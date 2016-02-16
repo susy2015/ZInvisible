@@ -1401,6 +1401,90 @@ namespace plotterFunctions
 
     };
 
+    class MetSmear
+    {
+    private:
+
+        TRandom3 *trand;
+        
+        void metSmear(NTupleReader& tr)
+        {
+            const double& met     = tr.getVar<double>("cleanMetPt");
+            const double& metphi  = tr.getVar<double>("cleanMetPhi");
+            
+            // Give met constant downward smearing
+            double met_sub_10 = met - 10;
+            double met_sub_20 = met - 20;
+            double met_sub_30 = met - 30;
+            double met_sub_40 = met - 40;
+            double met_sub_50 = met - 50;
+            double met_sub_60 = met - 60;
+
+            // MET proportional smearing
+            double met_prop_1  = met * (1 - 0.01);
+            double met_prop_2  = met * (1 - 0.02);
+            double met_prop_3  = met * (1 - 0.03);
+            double met_prop_4  = met * (1 - 0.04);
+            double met_prop_5  = met * (1 - 0.05);
+            double met_prop_7  = met * (1 - 0.07);
+            double met_prop_10 = met * (1 - 0.10);
+            double met_prop_15 = met * (1 - 0.15);
+            double met_prop_20 = met * (1 - 0.20);
+
+            // gaussian smearing 
+            double met_gaus_5  = trand->Gaus(met, 5);
+            double met_gaus_10 = trand->Gaus(met, 10);
+            double met_gaus_15 = trand->Gaus(met, 15);
+            double met_gaus_20 = trand->Gaus(met, 20);
+            double met_gaus_25 = trand->Gaus(met, 25);
+            double met_gaus_30 = trand->Gaus(met, 30);
+            double met_gaus_40 = trand->Gaus(met, 40);
+            double met_gaus_50 = trand->Gaus(met, 50);
+
+            tr.registerDerivedVar("met_sub_10", met_sub_10);
+            tr.registerDerivedVar("met_sub_20", met_sub_20);
+            tr.registerDerivedVar("met_sub_30", met_sub_30);
+            tr.registerDerivedVar("met_sub_40", met_sub_40);
+            tr.registerDerivedVar("met_sub_50", met_sub_50);
+            tr.registerDerivedVar("met_sub_60", met_sub_60);
+
+            tr.registerDerivedVar("met_prop_1",  met_prop_1 );
+            tr.registerDerivedVar("met_prop_2",  met_prop_2 );
+            tr.registerDerivedVar("met_prop_3",  met_prop_3 );
+            tr.registerDerivedVar("met_prop_4",  met_prop_4 );
+            tr.registerDerivedVar("met_prop_5",  met_prop_5 );
+            tr.registerDerivedVar("met_prop_7",  met_prop_7 );
+            tr.registerDerivedVar("met_prop_10", met_prop_10);
+            tr.registerDerivedVar("met_prop_15", met_prop_15);
+            tr.registerDerivedVar("met_prop_20", met_prop_20);
+
+            tr.registerDerivedVar("met_gaus_5",  met_gaus_5 );
+            tr.registerDerivedVar("met_gaus_10", met_gaus_10);
+            tr.registerDerivedVar("met_gaus_15", met_gaus_15);
+            tr.registerDerivedVar("met_gaus_20", met_gaus_20);
+            tr.registerDerivedVar("met_gaus_25", met_gaus_25);
+            tr.registerDerivedVar("met_gaus_30", met_gaus_30);
+            tr.registerDerivedVar("met_gaus_40", met_gaus_40);
+            tr.registerDerivedVar("met_gaus_50", met_gaus_50);
+        }
+
+    public:
+        MetSmear()
+        {
+            trand = new TRandom3(452147);
+        }
+
+        //~MetSmear()
+        // {
+        //    if(trand) delete trand;
+        // }
+
+        void operator()(NTupleReader& tr)
+        {
+            metSmear(tr);
+        }
+    };
+
     class PrepareMiniTupleVars
     {
     private:
