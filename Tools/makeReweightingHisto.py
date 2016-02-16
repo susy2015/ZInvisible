@@ -293,7 +293,7 @@ def systHarvest(filename):
 
     hShape_final = hShape_MET_ratio.Clone("shape_central")
 
-    for i in xrange(1, 46):
+    for i in xrange(1, hShape_MET_ratio.GetNbinsX() + 1):
         uncertMET = hShape_MET_ratio.GetBinContent(i) - 1 if hShape_MET_ratio.GetBinContent(i) > 0 else 0
         uncertMT2 = hShape_MT2_ratio.GetBinContent(i) - 1 if hShape_MT2_ratio.GetBinContent(i) > 0 else 0
         uncertNT = hShape_NT_ratio.GetBinContent(i) - 1 if hShape_NT_ratio.GetBinContent(i) > 0 else 0
@@ -332,7 +332,7 @@ def systHarvest(filename):
     f4 = TFile(filename)
     hMC = f4.Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle")
     hMCstats = hMC.Clone("MC_stats")
-    for i in xrange(1, 46):
+    for i in xrange(1, hMCstats.GetNbinsX() + 1):
         if hMC.GetBinContent(i) > 0.00000001:
             hMCstats.SetBinContent(i, hMC.GetBinError(i) / hMC.GetBinContent(i))
         else:
@@ -345,7 +345,7 @@ def systHarvest(filename):
     hClosureRatio = hClosureZ.Clone("MC_closure")
     hClosureRatio.Add(hClosureDY, -1)
     hClosureRatio.Divide(hClosureZ)
-    for i in xrange(1, 46):
+    for i in xrange(1, hClosureRatio.GetNbinsX() + 1):
         hClosureRatio.SetBinContent(i, abs(hClosureRatio.GetBinContent(i)))
     fout.cd()
     hClosureRatio.Write()
@@ -413,7 +413,7 @@ def systHarvest(filename):
     hPDF_sym       = hPDFUp.Clone("hPDF_sym")
     hTrig_sym      = hTrigUp_ratio.Clone("hTrig_sym")
 
-    for i in xrange(1, 46):
+    for i in xrange(1, hJEC_ratio_sym.GetNbinsX() + 1):
         hJEC_ratio_sym.SetBinContent(i, max(abs(hJECUp_ratio.GetBinContent(i)),  abs(hJECDn_ratio.GetBinContent(i))))
         hMEC_ratio_sym.SetBinContent(i, max(abs(hMECUp_ratio.GetBinContent(i)),  abs(hMECDn_ratio.GetBinContent(i))))
         hScale_sym    .SetBinContent(i, max(abs(hScaleUp.GetBinContent(i)),      abs(hScaleDn.GetBinContent(i))))
@@ -428,7 +428,7 @@ def systHarvest(filename):
     hTrig_sym     .Write()
 
     hOther = hJEC_ratio_sym.Clone("hOther")
-    for i in xrange(1, 46):
+    for i in xrange(1, hOther.GetNbinsX() + 1):
         hOther.SetBinContent(i, sqrt(hJEC_ratio_sym.GetBinContent(i)**2 + hMEC_ratio_sym.GetBinContent(i)**2 + hScale_sym.GetBinContent(i)**2 + hPDF_sym.GetBinContent(i)**2 + hTrig_sym.GetBinContent(i)**2))
     hOther.Write()
 
@@ -464,7 +464,7 @@ def systHarvest(filename):
     print "%-25s = %s"%("cs_event", ' '.join(["%8.0f" % math.floor(hNEff.GetBinContent(i)) for i in xrange(1, 46)]))
 
     data = []
-    for i in xrange(1, 46):
+    for i in xrange(1, hNEff.GetNbinsX() + 1):
         if hNEff.GetBinContent(i) > 0:
             data.append("%8.5f" % (hPrediction.GetBinContent(i)/math.floor(hNEff.GetBinContent(i))))
         else:
