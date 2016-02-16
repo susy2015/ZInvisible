@@ -64,14 +64,15 @@ int main()
 
     f = TFile::Open("condor/minituple-Feb5.root");
 
-    TH1 *h[5][45];
+    const int NTRIALS = 1000;
+    const int NSEARCHBINS = 38;
+
+    TH1 *h[5][NSEARCHBINS];
     std::vector<std::string> hnames = {"njet", "met", "mt2", "nt", "nb"};
 
-    const int NTRIALS = 1000;
-
-    float N0[45];
-    float N0square[45];
-    float N[5][45][NTRIALS];
+    float N0[NSEARCHBINS];
+    float N0square[NSEARCHBINS];
+    float N[5][NSEARCHBINS][NTRIALS];
 
     float variations[5][20][NTRIALS];
     for(int iT = 0; iT < NTRIALS; ++iT)
@@ -86,7 +87,7 @@ int main()
 
     for(int ih = 0; ih < 5; ++ih)
     {
-        for(int i = 0; i < 45; ++i)
+        for(int i = 0; i < NSEARCHBINS; ++i)
         {
             char name[128];
             sprintf(name, "hSB_%s_%d", hnames[ih].c_str(), i);
@@ -99,7 +100,7 @@ int main()
         }
     }
 
-    for(int i = 0; i < 45; ++i)
+    for(int i = 0; i < NSEARCHBINS; ++i)
     {
         N0square[i] = 0.0;
         N0[i] = 0.0;
@@ -158,7 +159,7 @@ int main()
                 //double mean_nb = shapeNB->GetBinContent(shapeNB->FindBin(cntCSVSZinv));
                 //double rms_nb =  shapeNB->GetBinError(  shapeNB->FindBin(cntCSVSZinv));
                 
-                if(nSearchBin >= 0 && nSearchBin < 45)
+                if(nSearchBin >= 0 && nSearchBin < NSEARCHBINS)
                 {
                     N0[nSearchBin] += weight;
                     N0square[nSearchBin] += weight*weight;
@@ -186,7 +187,7 @@ int main()
     
     for(int ih = 0; ih < 5; ++ih)
     {
-        for(int i = 0; i < 45; ++i)
+        for(int i = 0; i < NSEARCHBINS; ++i)
         {
             for(int iTrial = 0; iTrial < NTRIALS; ++iTrial)
             {
@@ -196,16 +197,16 @@ int main()
     }
 
     TFile fout("syst_nJetWgt.root", "RECREATE");
-    TH1 *syst68Max = new TH1D("syst68Max", "syst68Max", 45, 0, 45);
+    TH1 *syst68Max = new TH1D("syst68Max", "syst68Max", NSEARCHBINS, 0, NSEARCHBINS);
     for(int ih = 0; ih < 5; ++ih)
     {
         char name[128];
         sprintf(name, "syst68_%s", hnames[ih].c_str());
-        TH1 *syst68 = new TH1D(name, name, 45, 0, 45);
+        TH1 *syst68 = new TH1D(name, name, NSEARCHBINS, 0, NSEARCHBINS);
         sprintf(name, "systRMS_%s", hnames[ih].c_str());
-        TH1 *systRMS = new TH1D(name, name, 45, 0, 45);
+        TH1 *systRMS = new TH1D(name, name, NSEARCHBINS, 0, NSEARCHBINS);
 
-        for(int i = 0; i < 45; ++i) 
+        for(int i = 0; i < NSEARCHBINS; ++i) 
         {
             h[ih][i]->Write();
             h[ih][i]->Scale(1/h[ih][i]->Integral(0, h[ih][i]->GetNbinsX() + 1));
@@ -230,11 +231,11 @@ int main()
     }
     syst68Max->Write();
 
-    TH1 *centralvalue = new TH1D("centralvalue", "centralvalue", 45, 0, 45);
-    TH1 *avgWgt = new TH1D("avgWgt", "avgWgt", 45, 0, 45);
-    TH1 *neff = new TH1D("neff", "neff", 45, 0, 45);
+    TH1 *centralvalue = new TH1D("centralvalue", "centralvalue", NSEARCHBINS, 0, NSEARCHBINS);
+    TH1 *avgWgt = new TH1D("avgWgt", "avgWgt", NSEARCHBINS, 0, NSEARCHBINS);
+    TH1 *neff = new TH1D("neff", "neff", NSEARCHBINS, 0, NSEARCHBINS);
     
-    for(int i = 0; i < 45; ++i)
+    for(int i = 0; i < NSEARCHBINS; ++i)
     {
         centralvalue->SetBinContent(i + 1, N0[i]);
         if(N0[i] > 1e-10) avgWgt->SetBinContent(i + 1, N0square[i]/N0[i]);
