@@ -1406,66 +1406,175 @@ namespace plotterFunctions
     private:
 
         TRandom3 *trand;
+
+        double calcB(double x1, double x2, double e1, double e2)
+        {
+            return (x2*x2*(e1-1) - x1*x1*(e2-1)) / (x1*x2*(x2-x1));
+        }
+
+        double calcC(double x1, double x2, double e1, double e2)
+        {
+            return (x2*(e1-1) - x1*(e2-1)) / (x1*x2*(x1-x2));
+        }
+
+        double calcQuad(double x, double x1, double x2, double e1, double e2)
+        {
+            return 1 + x*calcB(x1, x2, e1, e2) + x*x*calcC(x1, x2, e1, e2);
+        }
+
+        double logistical(double met, double A, double B, double C)
+        {
+            return 1 - A/(1 + exp(-(B*(met - C))));
+        }
         
         void metSmear(NTupleReader& tr)
         {
             const double& met     = tr.getVar<double>("cleanMetPt");
-            const double& metphi  = tr.getVar<double>("cleanMetPhi");
             
             // Give met constant downward smearing
-            double met_sub_10 = met - 10;
-            double met_sub_20 = met - 20;
-            double met_sub_30 = met - 30;
-            double met_sub_40 = met - 40;
-            double met_sub_50 = met - 50;
-            double met_sub_60 = met - 60;
+            //double met_sub_10 = met - 10;
+            //double met_sub_20 = met - 20;
+            //double met_sub_30 = met - 30;
+            //double met_sub_40 = met - 40;
+            //double met_sub_50 = met - 50;
+            //double met_sub_60 = met - 60;
+            //
+            //// MET proportional smearing
+            //double met_prop_1  = met * (1 - 0.01);
+            //double met_prop_2  = met * (1 - 0.02);
+            //double met_prop_3  = met * (1 - 0.03);
+            //double met_prop_4  = met * (1 - 0.04);
+            //double met_prop_5  = met * (1 - 0.05);
+            //double met_prop_7  = met * (1 - 0.07);
+            //double met_prop_10 = met * (1 - 0.10);
+            //double met_prop_15 = met * (1 - 0.15);
+            //double met_prop_20 = met * (1 - 0.20);
+            //
+            //// MET quadratic smearing
+            //double met_quad_1_5         = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.05);
+            //double met_quad_1_10        = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.10);
+            //double met_quad_1_15        = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.15);
+            //double met_quad_1_18        = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.18);
+            //double met_quad_1_20        = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.20);
+            //double met_quad_1_22        = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.22);
+            //double met_quad_1_24        = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.24);
+            //double met_quad_2_5         = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.05);
+            //double met_quad_2_10        = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.10);
+            //double met_quad_2_15        = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.15);
+            //double met_quad_2_18        = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.18);
+            //double met_quad_2_20        = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.20);
+            //double met_quad_2_22        = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.22);
+            //double met_quad_2_24        = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.24);
+            //double met_quad_3_5         = met * calcQuad(met, 400, 700, 1 - 0.03, 1 - 0.05);
+            //double met_quad_3_10        = met * calcQuad(met, 400, 700, 1 - 0.03, 1 - 0.10);
+            //double met_quad_3_15        = met * calcQuad(met, 400, 700, 1 - 0.03, 1 - 0.15);
+            //double met_quad_3_20        = met * calcQuad(met, 400, 700, 1 - 0.03, 1 - 0.20);
+            //double met_quad_2_20_ip_300 = met * calcQuad(met, 300, 700, 1 - 0.02, 1 - 0.20);
+            //double met_quad_2_20_ip_350 = met * calcQuad(met, 350, 700, 1 - 0.02, 1 - 0.20);
+            //double met_quad_2_20_ip_500 = met * calcQuad(met, 450, 700, 1 - 0.02, 1 - 0.20);
+            //double met_quad_2_20_ip_450 = met * calcQuad(met, 500, 700, 1 - 0.02, 1 - 0.20);
 
-            // MET proportional smearing
-            double met_prop_1  = met * (1 - 0.01);
-            double met_prop_2  = met * (1 - 0.02);
-            double met_prop_3  = met * (1 - 0.03);
-            double met_prop_4  = met * (1 - 0.04);
-            double met_prop_5  = met * (1 - 0.05);
-            double met_prop_7  = met * (1 - 0.07);
-            double met_prop_10 = met * (1 - 0.10);
-            double met_prop_15 = met * (1 - 0.15);
-            double met_prop_20 = met * (1 - 0.20);
+            // Logistical smearing 
+            double met_logi_1 = met * logistical(met, 0.15, 0.01, 300);
+            double met_logi_2 = met * logistical(met, 0.20, 0.01, 400);
+            double met_logi_3 = met * logistical(met, 0.25, 0.01, 500);
+            double met_logi_4 = met * logistical(met, 0.20, 0.01, 400);
+            double met_logi_5 = met * logistical(met, 0.20, 0.02, 400);
+            double met_logi_6 = met * logistical(met, 0.20, 0.03, 400);
+            double met_logi_7 = met * logistical(met, 0.20, 0.02, 300);
+            double met_logi_8 = met * logistical(met, 0.20, 0.02, 400);
+            double met_logi_9 = met * logistical(met, 0.20, 0.02, 500);
 
             // gaussian smearing 
-            double met_gaus_5  = trand->Gaus(met, 5);
-            double met_gaus_10 = trand->Gaus(met, 10);
-            double met_gaus_15 = trand->Gaus(met, 15);
+            //double met_gaus_5  = trand->Gaus(met, 5);
+            //double met_gaus_10 = trand->Gaus(met, 10);
+            //double met_gaus_15 = trand->Gaus(met, 15);
             double met_gaus_20 = trand->Gaus(met, 20);
-            double met_gaus_25 = trand->Gaus(met, 25);
+            //double met_gaus_25 = trand->Gaus(met, 25);
             double met_gaus_30 = trand->Gaus(met, 30);
             double met_gaus_40 = trand->Gaus(met, 40);
             double met_gaus_50 = trand->Gaus(met, 50);
 
-            tr.registerDerivedVar("met_sub_10", met_sub_10);
-            tr.registerDerivedVar("met_sub_20", met_sub_20);
-            tr.registerDerivedVar("met_sub_30", met_sub_30);
-            tr.registerDerivedVar("met_sub_40", met_sub_40);
-            tr.registerDerivedVar("met_sub_50", met_sub_50);
-            tr.registerDerivedVar("met_sub_60", met_sub_60);
+            
 
-            tr.registerDerivedVar("met_prop_1",  met_prop_1 );
-            tr.registerDerivedVar("met_prop_2",  met_prop_2 );
-            tr.registerDerivedVar("met_prop_3",  met_prop_3 );
-            tr.registerDerivedVar("met_prop_4",  met_prop_4 );
-            tr.registerDerivedVar("met_prop_5",  met_prop_5 );
-            tr.registerDerivedVar("met_prop_7",  met_prop_7 );
-            tr.registerDerivedVar("met_prop_10", met_prop_10);
-            tr.registerDerivedVar("met_prop_15", met_prop_15);
-            tr.registerDerivedVar("met_prop_20", met_prop_20);
+            //tr.registerDerivedVar("met_sub_10", met_sub_10);
+            //tr.registerDerivedVar("met_sub_20", met_sub_20);
+            //tr.registerDerivedVar("met_sub_30", met_sub_30);
+            //tr.registerDerivedVar("met_sub_40", met_sub_40);
+            //tr.registerDerivedVar("met_sub_50", met_sub_50);
+            //tr.registerDerivedVar("met_sub_60", met_sub_60);
+            //
+            //tr.registerDerivedVar("met_prop_1",  met_prop_1 );
+            //tr.registerDerivedVar("met_prop_2",  met_prop_2 );
+            //tr.registerDerivedVar("met_prop_3",  met_prop_3 );
+            //tr.registerDerivedVar("met_prop_4",  met_prop_4 );
+            //tr.registerDerivedVar("met_prop_5",  met_prop_5 );
+            //tr.registerDerivedVar("met_prop_7",  met_prop_7 );
+            //tr.registerDerivedVar("met_prop_10", met_prop_10);
+            //tr.registerDerivedVar("met_prop_15", met_prop_15);
+            //tr.registerDerivedVar("met_prop_20", met_prop_20);
+            //
+            //tr.registerDerivedVar("met_quad_1_5",          met_quad_1_5        );
+            //tr.registerDerivedVar("met_quad_1_10",         met_quad_1_10       );
+            //tr.registerDerivedVar("met_quad_1_15",         met_quad_1_15       );
+            //tr.registerDerivedVar("met_quad_1_18",         met_quad_1_18       );
+            //tr.registerDerivedVar("met_quad_1_20",         met_quad_1_20       );
+            //tr.registerDerivedVar("met_quad_1_22",         met_quad_1_22       );
+            //tr.registerDerivedVar("met_quad_1_24",         met_quad_1_24       );
+            //tr.registerDerivedVar("met_quad_2_5",          met_quad_2_5        );
+            //tr.registerDerivedVar("met_quad_2_10",         met_quad_2_10       );
+            //tr.registerDerivedVar("met_quad_2_15",         met_quad_2_15       );
+            //tr.registerDerivedVar("met_quad_2_18",         met_quad_2_18       );
+            //tr.registerDerivedVar("met_quad_2_20",         met_quad_2_20       );
+            //tr.registerDerivedVar("met_quad_2_22",         met_quad_2_22       );
+            //tr.registerDerivedVar("met_quad_2_24",         met_quad_2_24       );
+            //tr.registerDerivedVar("met_quad_3_5",          met_quad_3_5        );
+            //tr.registerDerivedVar("met_quad_3_10",         met_quad_3_10       );
+            //tr.registerDerivedVar("met_quad_3_15",         met_quad_3_15       );
+            //tr.registerDerivedVar("met_quad_3_20",         met_quad_3_20       );
+            //tr.registerDerivedVar("met_quad_2_20_ip_300",  met_quad_2_20_ip_300);
+            //tr.registerDerivedVar("met_quad_2_20_ip_350",  met_quad_2_20_ip_350);
+            //tr.registerDerivedVar("met_quad_2_20_ip_500",  met_quad_2_20_ip_500);
+            //tr.registerDerivedVar("met_quad_2_20_ip_450",  met_quad_2_20_ip_450);
 
-            tr.registerDerivedVar("met_gaus_5",  met_gaus_5 );
-            tr.registerDerivedVar("met_gaus_10", met_gaus_10);
-            tr.registerDerivedVar("met_gaus_15", met_gaus_15);
+            //tr.registerDerivedVar("met_gaus_5",  met_gaus_5 );
+            //tr.registerDerivedVar("met_gaus_10", met_gaus_10);
+            //tr.registerDerivedVar("met_gaus_15", met_gaus_15);
             tr.registerDerivedVar("met_gaus_20", met_gaus_20);
-            tr.registerDerivedVar("met_gaus_25", met_gaus_25);
+            //tr.registerDerivedVar("met_gaus_25", met_gaus_25);
             tr.registerDerivedVar("met_gaus_30", met_gaus_30);
             tr.registerDerivedVar("met_gaus_40", met_gaus_40);
             tr.registerDerivedVar("met_gaus_50", met_gaus_50);
+
+            tr.registerDerivedVar("met_logi_1", met_logi_1);
+            tr.registerDerivedVar("met_logi_2", met_logi_2);
+            tr.registerDerivedVar("met_logi_3", met_logi_3);
+            tr.registerDerivedVar("met_logi_4", met_logi_4);
+            tr.registerDerivedVar("met_logi_5", met_logi_5);
+            tr.registerDerivedVar("met_logi_6", met_logi_6);
+            tr.registerDerivedVar("met_logi_7", met_logi_7);
+            tr.registerDerivedVar("met_logi_8", met_logi_8);
+            tr.registerDerivedVar("met_logi_9", met_logi_9);
+        }
+
+        void mt2Smear(NTupleReader& tr)
+        {
+            const double& metphi       = tr.getVar<double>("cleanMetPhi");
+            const double& met_logi_1   = tr.getVar<double>("met_logi_1");
+            const double& met_gaus_30  = tr.getVar<double>("met_gaus_30");
+            
+            const std::vector<TLorentzVector>& jetsLVec_forTagger  = tr.getVec<TLorentzVector>("jetsLVec_forTaggerZinv");
+            const std::vector<double>&     recoJetsBtag_forTagger  = tr.getVec<double>("recoJetsBtag_forTaggerZinv");
+
+            //We choose 30 GeV gaussian smearing and logi_1 for the study
+
+            // Form TLorentzVector of MET
+            TLorentzVector metLVec_Logi;
+            metLVec_Logi.SetPtEtaPhiM(met_logi_1, 0, metphi, 0);
+            
+            type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Logi);
+
+            tr.registerDerivedVar("mt2_gaus_30", type3Ptr->best_had_brJet_MT2);
         }
 
     public:
@@ -1482,6 +1591,7 @@ namespace plotterFunctions
         void operator()(NTupleReader& tr)
         {
             metSmear(tr);
+            mt2Smear(tr);
         }
     };
 

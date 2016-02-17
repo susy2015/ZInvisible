@@ -291,46 +291,79 @@ int main(int argc, char* argv[])
     std::vector<std::pair<std::string,std::string>> cutlevels_muon = {
 	{"muZinv_loose0",             "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_loose0_mt2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
-	{"muZinv_loose0_ntop",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>0"},
-	{"muZinv_loose0_ht500",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>500;passnJetsZinv;passdPhisZinv"},
+	//{"muZinv_loose0_ntop",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>0"},
+	//{"muZinv_loose0_ht500",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>500;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_blnotagmt2",         "passMuZinvSel;passBaselineNoTagMT2Zinv"},
-	{"muZinv_bl",                 "passMuZinvSel;passBaselineZinv"},
-	{"muZinv_0b_loose0",          "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_0b_loose0_ht500",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>500;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_0b_blnotagmt2",      "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv"},
-	{"muZinv_0b_blnotag",         "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
-	{"muZinv_g1b_loose0",         "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_g1b_loose0_ht500",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>500;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_g1b_blnotagmt2",     "passMuZinvSel;passBJetsZinv;passBaselineNoTagMT2Zinv"},
-	{"muZinv_g1b_blnotag",        "passMuZinvSel;passBJetsZinv;passBaselineNoTagZinv"},
+	//{"muZinv_bl",                 "passMuZinvSel;passBaselineZinv"},
+	//{"muZinv_0b_loose0",          "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+	//{"muZinv_0b_loose0_ht500",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>500;passnJetsZinv;passdPhisZinv"},
+	//{"muZinv_0b_blnotagmt2",      "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv"},
+	//{"muZinv_0b_blnotag",         "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
+	//{"muZinv_g1b_loose0",         "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+	//{"muZinv_g1b_loose0_ht500",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>500;passnJetsZinv;passdPhisZinv"},
+	//{"muZinv_g1b_blnotagmt2",     "passMuZinvSel;passBJetsZinv;passBaselineNoTagMT2Zinv"},
+	//{"muZinv_g1b_blnotag",        "passMuZinvSel;passBJetsZinv;passBaselineNoTagZinv"},
     };
 
-    // perturbed met variables 
-    vector<string> metNames = {"met_sub_10", 
-                               "met_sub_20", 
-                               "met_sub_30", 
-                               "met_sub_40", 
-                               "met_sub_50", 
-                               "met_sub_60", 
-                      
-                               "met_prop_1", 
-                               "met_prop_2", 
-                               "met_prop_3", 
-                               "met_prop_4", 
-                               "met_prop_5", 
-                               "met_prop_7", 
-                               "met_prop_10", 
-                               "met_prop_15", 
-                               "met_prop_20", 
-                      
-                               "met_gaus_5", 
-                               "met_gaus_10", 
-                               "met_gaus_15", 
-                               "met_gaus_20", 
-                               "met_gaus_25", 
-                               "met_gaus_30", 
-                               "met_gaus_40", 
-                               "met_gaus_50"};
+    // perturbed met variables
+    vector<string> metNames = {//"met_sub_10",
+                               //"met_sub_20",
+                               //"met_sub_30",
+                               //"met_sub_40",
+                               //"met_sub_50",
+                               //"met_sub_60",
+                               //
+                               //"met_prop_1",
+                               //"met_prop_2",
+                               //"met_prop_3",
+                               //"met_prop_4",
+                               //"met_prop_5",
+                               //"met_prop_7",
+                               //"met_prop_10",
+                               //"met_prop_15",
+                               //"met_prop_20",
+                               //
+                               //"met_quad_1_5",
+                               //"met_quad_1_10",
+                               //"met_quad_1_15",
+                               //"met_quad_1_18",
+                               //"met_quad_1_20",
+                               //"met_quad_1_22",
+                               //"met_quad_1_24",
+                               //"met_quad_2_5",
+                               //"met_quad_2_10",
+                               //"met_quad_2_15",
+                               //"met_quad_2_18",
+                               //"met_quad_2_20",
+                               //"met_quad_2_22",
+                               //"met_quad_2_24",
+                               //"met_quad_3_5",
+                               //"met_quad_3_10",
+                               //"met_quad_3_15",
+                               //"met_quad_3_20",
+                               //"met_quad_2_20_ip_300",
+                               //"met_quad_2_20_ip_350",
+                               //"met_quad_2_20_ip_500",
+                               //"met_quad_2_20_ip_450",
+                               //
+                               //"met_gaus_5",
+                               //"met_gaus_10",
+                               //"met_gaus_15",
+                               //"met_gaus_20",
+                               //"met_gaus_25",
+                               //"met_gaus_30",
+                               //"met_gaus_40",
+                               //"met_gaus_50"
+
+                               "met_logi_1",
+                               "met_logi_2",
+                               "met_logi_3",
+                               "met_logi_4",
+                               "met_logi_5",
+                               "met_logi_6",
+                               "met_logi_7",
+                               "met_logi_8",
+                               "met_logi_9"};
 
     for(auto& var : metNames)
     {
@@ -365,7 +398,7 @@ int main(int argc, char* argv[])
     //    vh.push_back(PHS("DataMC_SingleMuon_nb_"         +cut.first,  {dcData_SingleMuon_nb,    dcMC_nb},              {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,             ""));
     //    vh.push_back(PHS("DataMC_SingleMuon_nj_"         +cut.first,  {dcData_SingleMuon_nj,    dcMC_nj},              {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,             ""));
     //    vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,   true, false,  "Search Bin",     ""));
-    //    
+    //
     //    // DataMC weights applied
     //    vh.push_back(PHS("DataMCw_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_met,            ""));
     //    vh.push_back(PHS("DataMCw_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwMC_ht},    {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,             ""));
@@ -375,7 +408,7 @@ int main(int argc, char* argv[])
     //    vh.push_back(PHS("DataMCw_SingleMuon_nb_"    +cut.first,  {dcData_SingleMuon_nb,    dcwMC_nb},    {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,             ""));
     //    vh.push_back(PHS("DataMCw_SingleMuon_nj_"    +cut.first,  {dcData_SingleMuon_nj,    dcwMC_nj},    {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,             ""));
     //    vh.push_back(PHS("DataMCw_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin}, {1, 2}, cut.second, 45, 0, 45,  true, false,  "Search Bin",            ""));
-    //    
+    //
     //    // Normalization weight applied, only for blnotag selections
     //    if(cut.first.rfind("blnotag") == (cut.first.size()-7))
     //    {
