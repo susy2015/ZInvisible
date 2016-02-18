@@ -72,7 +72,7 @@ miniMakePlots: $(ODIR)/NTupleReader.o $(ODIR)/miniTupleSamples.o $(ODIR)/Plotter
 systematics: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Systematic.o  $(ODIR)/Plotter.o $(ODIR)/systematics.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-nJetWgtSyst: $(ODIR)/NTupleReader.o $(ODIR)/nJetWgtSyst.o $(ODIR)/samples.o
+nJetWgtSyst: $(ODIR)/NTupleReader.o $(ODIR)/nJetWgtSyst.o $(ODIR)/miniTupleSamples.o
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
 moneyplot: $(ODIR)/moneyplot.o

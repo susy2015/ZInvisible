@@ -146,6 +146,7 @@ RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()
     njWeight             = new plotterFunctions::NJetWeight;
     triggerInfo          = new plotterFunctions::TriggerInfo(true);
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
+    metSmear             = new plotterFunctions::MetSmear;
 }
 
 RegisterFunctionsMiniTuple::~RegisterFunctionsMiniTuple()
@@ -153,6 +154,7 @@ RegisterFunctionsMiniTuple::~RegisterFunctionsMiniTuple()
     if(njWeight) delete njWeight;
     if(triggerInfo) delete triggerInfo;
     if(prepareMiniTupleVars) delete prepareMiniTupleVars;
+    if(metSmear) delete metSmear;
 }
         
 void RegisterFunctionsMiniTuple::registerFunctions(NTupleReader& tr)
@@ -163,6 +165,7 @@ void RegisterFunctionsMiniTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*njWeight);
     tr.registerFunction(*triggerInfo);
     tr.registerFunction(*prepareMiniTupleVars);
+    tr.registerFunction(*metSmear);
 }
 
 void RegisterFunctionsMiniTuple::activateBranches(std::set<std::string>& activeBranches)
