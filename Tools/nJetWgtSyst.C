@@ -59,13 +59,14 @@ int main()
         std::cout << "Failed to open: syst_shape.root" << std::endl;
     }
 
-    AnaSamples::SampleSet        ss("", 2153.74);
+    AnaSamples::SampleSet        ss("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/", 2153.74);
     AnaSamples::SampleCollection sc(ss);
 
-    f = TFile::Open("condor/minituple-Feb5.root");
+    //f = TFile::Open("condor/minituple-Feb5.root");
 
+    //Prep variables for nJet and shape systematic weights
     const int NTRIALS = 1000;
-    const int NSEARCHBINS = 38;
+    const int NSEARCHBINS = 37;
 
     TH1 *h[5][NSEARCHBINS];
     std::vector<std::string> hnames = {"njet", "met", "mt2", "nt", "nb"};
@@ -106,23 +107,41 @@ int main()
         N0[i] = 0.0;
     }
 
+    //prep histograms for MET-MT2 corrolation study
+    TH1* hMET_nom  = new TH1D("hMET_nom",  "hMET_nom",  200, 0, 2000);
+    TH1* hMET_Gaus = new TH1D("hMET_Gaus", "hMET_Gaus", 200, 0, 2000);
+    TH1* hMET_Logi = new TH1D("hMET_Logi", "hMET_Logi", 200, 0, 2000);
+
+    TH1* hMT2_nom  = new TH1D("hMT2_nom",  "hMT2_nom",  200, 0, 2000);
+    TH1* hMT2_Gaus = new TH1D("hMT2_Gaus", "hMT2_Gaus", 200, 0, 2000);
+    TH1* hMT2_Logi = new TH1D("hMT2_Logi", "hMT2_Logi", 200, 0, 2000);
+
+    TH2* h2D_nom  = new TH2D("hMT2vMET_nom",  "h2D_nom ;MET;MT2",  200, 0, 2000, 200, 0, 2000);
+    TH2* h2D_Gaus = new TH2D("hMT2vMET_Gaus", "h2D_Gaus;MET;MT2", 200, 0, 2000, 200, 0, 2000);
+    TH2* h2D_Logi = new TH2D("hMT2vMET_Logi", "h2D_Logi;MET;MT2", 200, 0, 2000, 200, 0, 2000);
+
+    AnaFunctions::prepareTopTagger();
+
     //for(auto& fs : sc["DYJetsToLL"])
     for(auto& fs : sc["ZJetsToNuNu"])
     {
-        size_t start = fs.filePath.rfind('/');
-        size_t stop  = fs.filePath.rfind('.');
-        std::string treeName = fs.filePath.substr(start + 1, stop - start - 1);
+        //size_t start = fs.filePath.rfind('/');
+        //size_t stop  = fs.filePath.rfind('.');
+        //std::string treeName = fs.filePath.substr(start + 1, stop - start - 1);
 
-        TTree * t = (TTree*)f->Get(treeName.c_str());
+        TChain *t = new TChain(fs.treePath.c_str());
+        fs.addFilesToChain(t);
 
         plotterFunctions::PrepareMiniTupleVars pmt(false);
         plotterFunctions::NJetWeight njWeight;
         plotterFunctions::TriggerInfo triggerInfo(true);
+        plotterFunctions::MetSmear metSmear;
 
         NTupleReader tr(t);
         tr.registerFunction(pmt);
         tr.registerFunction(njWeight);
         tr.registerFunction(triggerInfo);
+        tr.registerFunction(metSmear);
 
         while(tr.getNextEvent())
         {
@@ -140,37 +159,52 @@ int main()
             const double& nJetWgtDYZ   = tr.getVar<double>("nJetWgtDYZ");
             const double& normWgt0b    = tr.getVar<double>("normWgt0b");
 
-            double weight = triggerEffMC * nJetWgtDYZ * normWgt0b * fs.getWeight();
+            //Variables required only for MET-MT2 
+            const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
+            const bool& passLeptVetoZinv         = tr.getVar<bool>("passLeptVetoZinv");
+            const bool& passnJetsZinv            = tr.getVar<bool>("passnJetsZinv");
+            const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
 
+            const double& HTZinv                 = tr.getVar<double>("HTZinv");
+
+            const double& met_logi_1   = tr.getVar<double>("met_logi_1");
+            const double& met_gaus_30  = tr.getVar<double>("met_gaus_30");
+
+            const double& mt2_logi_1   = tr.getVar<double>("mt2_logi_1");
+            const double& mt2_gaus_30  = tr.getVar<double>("mt2_gaus_30");
+            
+            // Recreation of loose0 cut level - we remove passMuZinvSel and replace with passLeptVetoZinv for Zinvisible
+            bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv;
+
+            // Fill MET-MT2 histograms here
+            if(passLoose0)
+            {
+                double weight = triggerEffMC * nJetWgtDYZ * fs.getWeight();
+
+                hMET_nom ->Fill(cleanMetPt,  weight);
+                hMET_Gaus->Fill(met_gaus_30, weight);
+                hMET_Logi->Fill(met_logi_1,  weight);
+
+                hMT2_nom ->Fill(best_had_brJet_MT2Zinv, weight);
+                hMT2_Gaus->Fill(mt2_gaus_30,            weight);
+                hMT2_Logi->Fill(mt2_logi_1,             weight);
+
+                h2D_nom ->Fill(cleanMetPt,  best_had_brJet_MT2Zinv, weight);
+                h2D_Gaus->Fill(met_gaus_30, mt2_gaus_30,            weight);
+                h2D_Logi->Fill(met_logi_1,  mt2_logi_1,             weight);
+            }
+
+            //fill stat uncertainty histograms here
             if(passBaseline)
             {
-                //double mean_g1b_DY = njWDYZ_g1b  ->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
-                //double rms_g1b_DY = njWDYZ_g1b  ->GetBinError(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
-                //
-                //double mean_met = shapeMET->GetBinContent(shapeMET->FindBin(cleanMetPt));
-                //double rms_met =  shapeMET->GetBinError(  shapeMET->FindBin(cleanMetPt));
-                //
-                //double mean_mt2 = shapeMT2->GetBinContent(shapeMT2->FindBin(best_had_brJet_MT2Zinv));
-                //double rms_mt2 =  shapeMT2->GetBinError(  shapeMT2->FindBin(best_had_brJet_MT2Zinv));
-                //
-                //double mean_nt = shapeNT->GetBinContent(shapeNT->FindBin(nTopCandSortedCntZinv));
-                //double rms_nt =  shapeNT->GetBinError(  shapeNT->FindBin(nTopCandSortedCntZinv));
-                //
-                //double mean_nb = shapeNB->GetBinContent(shapeNB->FindBin(cntCSVSZinv));
-                //double rms_nb =  shapeNB->GetBinError(  shapeNB->FindBin(cntCSVSZinv));
-                
+                double weight = triggerEffMC * nJetWgtDYZ * normWgt0b * fs.getWeight();
+
                 if(nSearchBin >= 0 && nSearchBin < NSEARCHBINS)
                 {
                     N0[nSearchBin] += weight;
                     N0square[nSearchBin] += weight*weight;
                     for(int iTrial = 0; iTrial < NTRIALS; ++iTrial)
                     {
-                        //h[0][nSearchBin]->Fill(tr3.Gaus(1.0, rms_g1b_DY/mean_g1b_DY), fs.getWeight());
-                        //h[1][nSearchBin]->Fill(tr3.Gaus(1.0, rms_met/mean_met),       fs.getWeight());
-                        //h[2][nSearchBin]->Fill(tr3.Gaus(1.0, rms_mt2/mean_mt2),       fs.getWeight());
-                        //h[3][nSearchBin]->Fill(tr3.Gaus(1.0, rms_nt/mean_nt),         fs.getWeight());
-                        //h[4][nSearchBin]->Fill(tr3.Gaus(1.0, rms_nb/mean_nb),         fs.getWeight());
-                        
                         if(iTrial < NTRIALS)
                         {
                             N[0][nSearchBin][iTrial] += variations[0][njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv)][iTrial] * weight;
@@ -245,4 +279,22 @@ int main()
     centralvalue->Write();
     avgWgt->Write();
     neff->Write();
+    fout.Close();
+
+    //Write out MET-MT2 histograms
+    TFile fout2("Corrolation_MET-MT2.root", "RECREATE");
+
+    hMET_nom ->Write();
+    hMET_Gaus->Write();
+    hMET_Logi->Write();
+
+    hMT2_nom ->Write();
+    hMT2_Gaus->Write();
+    hMT2_Logi->Write();
+
+    h2D_nom ->Write();
+    h2D_Gaus->Write();
+    h2D_Logi->Write();
+
+    fout2.Close();
 }
