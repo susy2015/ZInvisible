@@ -59,13 +59,13 @@ int main()
         std::cout << "Failed to open: syst_shape.root" << std::endl;
     }
 
-    AnaSamples::SampleSet        ss("", 2153.74);
+    AnaSamples::SampleSet        ss("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/", 2153.74);
     AnaSamples::SampleCollection sc(ss);
 
-    f = TFile::Open("condor/minituple-Feb5.root");
+    //f = TFile::Open("condor/minituple-Feb5.root");
 
     const int NTRIALS = 1000;
-    const int NSEARCHBINS = 38;
+    const int NSEARCHBINS = 37;
 
     TH1 *h[5][NSEARCHBINS];
     std::vector<std::string> hnames = {"njet", "met", "mt2", "nt", "nb"};
@@ -109,11 +109,12 @@ int main()
     //for(auto& fs : sc["DYJetsToLL"])
     for(auto& fs : sc["ZJetsToNuNu"])
     {
-        size_t start = fs.filePath.rfind('/');
-        size_t stop  = fs.filePath.rfind('.');
-        std::string treeName = fs.filePath.substr(start + 1, stop - start - 1);
+        //size_t start = fs.filePath.rfind('/');
+        //size_t stop  = fs.filePath.rfind('.');
+        //std::string treeName = fs.filePath.substr(start + 1, stop - start - 1);
 
-        TTree * t = (TTree*)f->Get(treeName.c_str());
+        TChain *t = new TChain(fs.treePath.c_str());
+        fs.addFilesToChain(t);
 
         plotterFunctions::PrepareMiniTupleVars pmt(false);
         plotterFunctions::NJetWeight njWeight;
