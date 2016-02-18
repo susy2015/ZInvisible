@@ -3,7 +3,7 @@ from optparse import OptionParser
 import array, sys
 # Check if we want the help, if not import ROOT (otherwise ROOT overwrites the help)
 if '-h' not in sys.argv and '--help' not in sys.argv:
-    from ROOT import TH1D, TMath, TFile, TCanvas, TF1
+    from ROOT import TH1D, TMath, TFile, TCanvas, TF1, TH2D
 
 from math import sqrt
 import math
@@ -25,6 +25,20 @@ def rebin1D(h, bins):
         new_h.SetBinError(bin_to_fill, TMath.Sqrt(h.GetBinError(i+1)*h.GetBinError(i+1) + new_h.GetBinError(bin_to_fill)*new_h.GetBinError(bin_to_fill) ) )
     return new_h
 
+def rebin2D(h, binsx, binsy):
+    """Rebin histo h to binsx and binsy and recompute the errors."""
+    new_h = TH2D("%s_rebin"%(h.GetName()), "%s_rebin"%(h.GetName()),
+                 len(binsx)-1, array.array('d', binsx), len(binsy)-1, array.array('d', binsy))
+    new_h.Sumw2()
+    for i in xrange(h.GetNbinsX()):
+        bin_to_fill_x = new_h.GetXaxis().FindBin(h.GetXaxis().GetBinCenter(i+1))
+        for j in xrange(h.GetNbinsY()):
+            bin_to_fill_y = new_h.GetYaxis().FindBin(h.GetYaxis().GetBinCenter(j+1))
+            new_h.SetBinContent(bin_to_fill_x, bin_to_fill_y, h.GetBinContent(i+1,j+1) + new_h.GetBinContent(bin_to_fill_x, bin_to_fill_y))
+            new_h.SetBinError(bin_to_fill_x, bin_to_fill_y, 
+                              TMath.Sqrt(h.GetBinError(i+1, j+1)*h.GetBinError(i+1,j+1) + new_h.GetBinError(bin_to_fill_x, bin_to_fill_y)*new_h.GetBinError(bin_to_fill_x, bin_to_fill_y) ) )
+    return new_h
+
 def add(hs):
     """Add all histograms in list hs and return output."""
     hNew = hs[0].Clone()
@@ -39,8 +53,12 @@ def makeRatio(h1, h2s, bins=None, newname="test"):
     h2 = add(h2s)
     if bins != None:
         # Rebin the histograms
-        h1 = rebin1D(h1, bins)
-        h2 = rebin1D(h2, bins)
+        if type(bins) is list:
+            h1 = rebin1D(h1, bins)
+            h2 = rebin1D(h2, bins)
+        elif type(bins) is tuple:
+            h1 = rebin2D(h1, bins[0], bins[1])
+            h2 = rebin2D(h2, bins[0], bins[1])
     # Make the ratio
     h1.Divide(h2)
     h1.SetName(newname)
@@ -261,65 +279,45 @@ def shapeSyst(filename):
     f.Close()
     fout.Close()
 
-def CorrCheck(filename):
+def corrCheck():
     # Get the file
-    f = TFile.Open(filename)
+    f = TFile.Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/Corrolation_MET-MT2.root")
     fout = TFile.Open("correlations_ratio.root", "RECREATE")
+
+    # Make 1D and 2D ratios for both smearing options 
+
     # Run over the relevant histograms
     # histo names
-    hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDatadata"
-    hnames2 =  ["%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDYstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDY HT<100stack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}stack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)ssingle topstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}Zstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDibosonstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sRarestack"]
+    types = ["Gaus", "Logi"]
+    variables = ["MET", "MT2", "MT2vMET"]
+    basename = "h%(var)s_%(typ)s"
 
-    varList = [#["met", "cleanMetPt",             [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 1500], "MET" ],
-               #["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500],      "M_{T2}" ],
-               ["met", "cleanMetPt",             [0, 100, 200, 300, 600, 1500], "MET" ],
-               ["mt2", "best_had_brJet_MT2Zinv", [0, 100, 200, 300, 400, 1500],      "M_{T2}" ],
-               ["nt",  "nTopCandSortedCntZinv",  [0, 1, 2, 8 ],                                         "N(t)" ],
-               ["nb",  "cntCSVSZinv",            [0, 1, 2, 3, 8 ],                                      "N(b)" ]]
-
-    for var in varList:
-        # Procedure: 1. Grab the njet reweighted MC
-        #            2. Subtract non-DY MC from data
-        #            3. Make ratio of subtracted data and DY
-        # Get all histos
-        hData = f.Get(hnameData%{"name":var[0], "var":var[1]})
-        h2s   = [f.Get(hname2%{"name":var[0], "var":var[1]}) for hname2 in hnames2]
+    bins_var = {"MET": [0, 100, 200, 300, 600, 1500],
+                "MT2": [0, 100, 200, 300, 400, 1500],
+                "MT2vMET": ([0, 100, 200, 300, 600, 1500],[0, 100, 200, 300, 400, 1500])}
+    for typ in types:
+        # Procedure: 1. Grab the nominal and varied
+        #            2. Make ratio
+        for var in variables:
+            # Get all histos
+            hnom = f.Get("h%(var)s_nom"%locals())
+            hsmeared   = f.Get(basename%locals())
         
-        # subtract relevant histograms from data
-        data_subtracted = subtract(hData, h2s[2:])
+            newname = "Ratio_%s_%s"%(var,typ)
+            newh = makeRatio(hsmeared, [hnom], newname=newname, bins=bins_var[var])
 
-        newname = "ShapeRatio_%s"%var[0]
-        newh = makeRatio(data_subtracted, h2s[:1], newname=newname, bins=var[2])
+            for i in xrange(1, newh.GetNbinsX() + 1):
+                print newh.GetBinContent(i)
 
-        for i in xrange(1, newh.GetNbinsX() + 1):
-            print newh.GetBinContent(i)
+            newh.SetLineWidth(2)
+            newh.GetXaxis().SetTitle(var)
+            newh.GetYaxis().SetTitle("Smeared/Nom")
+            newh.GetYaxis().SetTitleOffset(1.15)
+            newh.SetStats(0)
+            newh.SetTitle("")
 
-        fit = TF1("fit_%s"%var[0], "pol1")
-        newh.SetLineWidth(2)
-        newh.GetXaxis().SetTitle(var[3])
-        newh.GetYaxis().SetTitle("Data/MC")
-        newh.GetYaxis().SetTitleOffset(1.15)
-        newh.SetStats(0)
-        newh.SetTitle("")
-        #if not "nt" in var[0] and not "nb" in var[0]:
-        #    newh.Fit(fit, "")
-        #else:
-        #    newh.Draw()
-        newh.Draw()
-        #
-        #    fit.Draw("same")
-        #newh.DrawCopy()
-        c.Print("shapeSyst_%s.png"%var[0])
-        c.Print("shapeSyst_%s.pdf"%var[0])
-
-        fout.cd()
-        newh.Write()
+            fout.cd()
+            newh.Write()
 
     f.Close()
     fout.Close()
@@ -750,6 +748,8 @@ if __name__ ==  "__main__":
                       help="Grab information for scale and PDF systematics", action='store_true')
     parser.add_option("--extrapolationSyst", dest="extrapolationSyst", default=False,
                       help="Grab information for scale and PDF systematics", action='store_true')
+    parser.add_option("--corr", dest="corr", default=False,
+                      help="Get the ratios for correlation study", action='store_true')
 
     (options, args) = parser.parse_args()
 
@@ -765,3 +765,5 @@ if __name__ ==  "__main__":
         systScalePDF(options.filename)        
     if options.extrapolationSyst:
         extrapolationSyst(options.filename)
+    if options.corr:
+        corrCheck()
