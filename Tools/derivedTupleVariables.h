@@ -1573,8 +1573,16 @@ namespace plotterFunctions
             metLVec_Logi.SetPtEtaPhiM(met_logi_1, 0, metphi, 0);
             
             type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Logi);
+            double MT2_Logi = type3Ptr->best_had_brJet_MT2;
 
-            tr.registerDerivedVar("mt2_gaus_30", type3Ptr->best_had_brJet_MT2);
+            TLorentzVector metLVec_Gaus;
+            metLVec_Gaus.SetPtEtaPhiM(met_gaus_30, 0, metphi, 0);
+            
+            type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Gaus); 
+            double MT2_Gaus = type3Ptr->best_had_brJet_MT2;
+
+            tr.registerDerivedVar("mt2_logi_1",  MT2_Logi);
+            tr.registerDerivedVar("mt2_gaus_30", MT2_Gaus);
         }
 
     public:
