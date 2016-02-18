@@ -6,13 +6,15 @@
 #include "NTupleReader.h"
 
 #include "TF1.h"
+#include "TH2.h"
 #include "TRandom3.h"
 
 class Systematic
 {
 public:
-    Systematic(const std::string name, const std::string var, TF1 *f) : name_(name), var_(var), func_(f), hist_(nullptr) {};
-    Systematic(const std::string name, const std::string var, TH1 *h) : name_(name), var_(var), func_(nullptr), hist_{h} {};
+    Systematic(const std::string name, const std::string var, TF1 *f) : name_(name), var_(var), func_(f), hist_(nullptr), hist2_(nullptr) {};
+    Systematic(const std::string name, const std::string var, TH1 *h) : name_(name), var_(var), func_(nullptr), hist_{h}, hist2_(nullptr) {};
+    Systematic(const std::string name, const std::string var, const std::string var2, TH2 *h) : name_(name), var_(var), var2_(var2), func_(nullptr), hist_(nullptr), hist2_{h} {};
 
     void bookHist(std::vector<Plotter::HistSummary>& vh, std::vector<AnaSamples::FileSummary>& vfs);
 
@@ -22,9 +24,10 @@ public:
     }
 
 private:
-    std::string name_, var_;
+    std::string name_, var_, var2_;
     TF1 * const func_;
     TH1 * const hist_;
+    TH2 * const hist2_;
 
     void modifyParameters(NTupleReader& tr);
 };

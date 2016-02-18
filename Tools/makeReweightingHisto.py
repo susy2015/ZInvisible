@@ -261,12 +261,77 @@ def shapeSyst(filename):
     f.Close()
     fout.Close()
 
+def CorrCheck(filename):
+    # Get the file
+    f = TFile.Open(filename)
+    fout = TFile.Open("correlations_ratio.root", "RECREATE")
+    # Run over the relevant histograms
+    # histo names
+    hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDatadata"
+    hnames2 =  ["%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDYstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDY HT<100stack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}stack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)ssingle topstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}Zstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDibosonstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sRarestack"]
+
+    varList = [#["met", "cleanMetPt",             [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 1500], "MET" ],
+               #["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500],      "M_{T2}" ],
+               ["met", "cleanMetPt",             [0, 100, 200, 300, 600, 1500], "MET" ],
+               ["mt2", "best_had_brJet_MT2Zinv", [0, 100, 200, 300, 400, 1500],      "M_{T2}" ],
+               ["nt",  "nTopCandSortedCntZinv",  [0, 1, 2, 8 ],                                         "N(t)" ],
+               ["nb",  "cntCSVSZinv",            [0, 1, 2, 3, 8 ],                                      "N(b)" ]]
+
+    for var in varList:
+        # Procedure: 1. Grab the njet reweighted MC
+        #            2. Subtract non-DY MC from data
+        #            3. Make ratio of subtracted data and DY
+        # Get all histos
+        hData = f.Get(hnameData%{"name":var[0], "var":var[1]})
+        h2s   = [f.Get(hname2%{"name":var[0], "var":var[1]}) for hname2 in hnames2]
+        
+        # subtract relevant histograms from data
+        data_subtracted = subtract(hData, h2s[2:])
+
+        newname = "ShapeRatio_%s"%var[0]
+        newh = makeRatio(data_subtracted, h2s[:1], newname=newname, bins=var[2])
+
+        for i in xrange(1, newh.GetNbinsX() + 1):
+            print newh.GetBinContent(i)
+
+        fit = TF1("fit_%s"%var[0], "pol1")
+        newh.SetLineWidth(2)
+        newh.GetXaxis().SetTitle(var[3])
+        newh.GetYaxis().SetTitle("Data/MC")
+        newh.GetYaxis().SetTitleOffset(1.15)
+        newh.SetStats(0)
+        newh.SetTitle("")
+        #if not "nt" in var[0] and not "nb" in var[0]:
+        #    newh.Fit(fit, "")
+        #else:
+        #    newh.Draw()
+        newh.Draw()
+        #
+        #    fit.Draw("same")
+        #newh.DrawCopy()
+        c.Print("shapeSyst_%s.png"%var[0])
+        c.Print("shapeSyst_%s.pdf"%var[0])
+
+        fout.cd()
+        newh.Write()
+
+    f.Close()
+    fout.Close()
+
+
 def systHarvest(filename):
     # Get the file
     #f = TFile.Open(filename)
     #fout = TFile.Open("syst_shape.root", "RECREATE")
     # Run over the relevant histograms
     # histo names
+    NSB = 37
 
     # Get shape central value uncertainty
     f = TFile("systematics.root")
@@ -374,10 +439,10 @@ def systHarvest(filename):
     hMECDn_ratio.Add(hMECNom, -1.0)
     hMECDn_ratio.Divide(hMECNom)
 
-    hJECUp_ratio.SetBinContent(45, hJECUp_ratio.GetBinContent(44))
-    hJECDn_ratio.SetBinContent(45, hJECDn_ratio.GetBinContent(44))
-    hMECUp_ratio.SetBinContent(45, hMECUp_ratio.GetBinContent(44))
-    hMECDn_ratio.SetBinContent(45, hMECDn_ratio.GetBinContent(44))
+    hJECUp_ratio.SetBinContent(NSB, hJECUp_ratio.GetBinContent(NSB-1))
+    hJECDn_ratio.SetBinContent(NSB, hJECDn_ratio.GetBinContent(NSB-1))
+    hMECUp_ratio.SetBinContent(NSB, hMECUp_ratio.GetBinContent(NSB-1))
+    hMECDn_ratio.SetBinContent(NSB, hMECDn_ratio.GetBinContent(NSB-1))
 
     fout.cd()
     hJECUp_ratio.Write()
@@ -451,17 +516,17 @@ def systHarvest(filename):
              ]
     
     print "luminosity = 2262"
-    print "channels = 45"
+    print "channels =", NSB
     print "sample = zinv"
     print ""
 
-    print "%-25s = %s"%("channel", ' '.join(["%8s" % ("bin%i" % i) for i in xrange(1, 46)]))
+    print "%-25s = %s"%("channel", ' '.join(["%8s" % ("bin%i" % i) for i in xrange(1, NSB+1)]))
     print ""
 
-    print "%-25s = %s"%("rate", ' '.join(["%8.5f" % hPrediction.GetBinContent(i) for i in xrange(1, 46)]))
+    print "%-25s = %s"%("rate", ' '.join(["%8.5f" % hPrediction.GetBinContent(i) for i in xrange(1, NSB+1)]))
     print ""
 
-    print "%-25s = %s"%("cs_event", ' '.join(["%8.0f" % math.floor(hNEff.GetBinContent(i)) for i in xrange(1, 46)]))
+    print "%-25s = %s"%("cs_event", ' '.join(["%8.0f" % math.floor(hNEff.GetBinContent(i)) for i in xrange(1, NSB+1)]))
 
     data = []
     for i in xrange(1, hNEff.GetNbinsX() + 1):
@@ -480,7 +545,7 @@ def systHarvest(filename):
     print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(45*["%8.5f" % 0.18318]))
 
     for (name, h) in hists:
-        print "%-25s = %s"%(name, ' '.join(["%8.5f" % (h.GetBinContent(i)) for i in xrange(1, 46)]))
+        print "%-25s = %s"%(name, ' '.join(["%8.5f" % (h.GetBinContent(i)) for i in xrange(1, NSB+1)]))
 
     fout.Close()
 

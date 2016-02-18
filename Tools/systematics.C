@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    AnaSamples::SampleSet        ss(AnaSamples::fileDir, lumi);
+    AnaSamples::SampleSet        ss("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/", lumi);
     AnaSamples::SampleCollection sc(ss);
 
     map<string, vector<AnaSamples::FileSummary>> fileMap;
@@ -80,20 +80,20 @@ int main(int argc, char* argv[])
         }
     }
 
-    for(auto& vfs : fileMap)
-    {
-        for(auto& fs : vfs.second)
-        {
-            size_t start = fs.filePath.rfind('/');
-            size_t stop  = fs.filePath.rfind('.');
-            if(int(stop) - (int(start) + 1) > 0)
-            {
-                fs.treePath = fs.filePath.substr(start + 1, stop - start - 1);
-                fs.filePath = "stupidFileList.txt";
-                fs.readFileList();
-            }
-        }
-    }
+    // for(auto& vfs : fileMap)
+    // {
+    //     for(auto& fs : vfs.second)
+    //     {
+    //         size_t start = fs.filePath.rfind('/');
+    //         size_t stop  = fs.filePath.rfind('.');
+    //         if(int(stop) - (int(start) + 1) > 0)
+    //         {
+    //             fs.treePath = fs.filePath.substr(start + 1, stop - start - 1);
+    //             fs.filePath = "stupidFileList.txt";
+    //             fs.readFileList();
+    //         }
+    //     }
+    // }
 
     TH1 *shapeMET, *shapeMT2, *shapeNT, *shapeNB;
     

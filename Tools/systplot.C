@@ -284,7 +284,9 @@ int main(int argc, char* argv[])
 
     // f1->Close();
 
-    TFile* f1 = TFile::Open("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_all.root");
+  
+    //TFile* f1 = TFile::Open("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_all.root");
+    TFile* f1 = TFile::Open("syst_all.root");
     std::vector<std::string> hnames = {"shape_central",
 				       "shape_stat",
 				       "MC_stats",
@@ -296,7 +298,7 @@ int main(int argc, char* argv[])
     }
 
     f1->Close();
-
+  
 
     f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/syst_scalePDF.root");
     std::vector<std::string> hnames1 = {"nSearchBin_scale_up",
@@ -315,7 +317,7 @@ int main(int argc, char* argv[])
 
     f1->Close();
 
-
+    
     f1 = TFile::Open("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/looseToTight.root");
     std::map<std::string, std::pair<std::string, double> > hnames3 = {
 	{"DoubleRatioTight_nj_cut_mt2",   {"N_{jets}", 20}},
@@ -354,7 +356,7 @@ int main(int argc, char* argv[])
     {
 	makeplot(f1, kv.first, 0, kv.second.second, 0, 2, kv.second.first, "Double ratio", "Syst", false, false);
     }
-
+    
     return 0;
 
 }

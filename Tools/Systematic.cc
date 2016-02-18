@@ -1,44 +1,59 @@
 #include "Systematic.h"
 
-static const int NSEARCHBINS = 38;
+static const int NSEARCHBINS = 37;
 
 void Systematic::bookHist(std::vector<Plotter::HistSummary>& vh, std::vector<AnaSamples::FileSummary>& vfs)
 {
     Plotter::DatasetSummary dsDY_nunu_syst(  "varied", vfs, "", name_);
     Plotter::DatasetSummary dsDY_nunu_nosyst("Nominal", vfs, "", "");
     Plotter::DataCollection dcDY_nunu( "single", "nSearchBin", {dsDY_nunu_nosyst, dsDY_nunu_syst});
-    vh.emplace_back(PHS(name_+"_"+var_, {dcDY_nunu}, {2, 1}, "", NSEARCHBINS, 0, NSEARCHBINS, true, true, "Search Bin", "Events"));
+    if(!var2_.size())
+    {
+	vh.emplace_back(PHS(name_+"_"+var_, {dcDY_nunu}, {2, 1}, "", NSEARCHBINS, 0, NSEARCHBINS, true, true, "Search Bin", "Events"));
+    } else
+    {
+	vh.emplace_back(PHS(name_+"_"+var_+"_"+var2_, {dcDY_nunu}, {2, 1}, "", NSEARCHBINS, 0, NSEARCHBINS, true, true, "Search Bin", "Events"));
+    }
 }
 
 void Systematic::modifyParameters(NTupleReader& tr)
 {
     std::string type;
+    std::string type2;
     tr.getType(var_, type);
+    std::vector<std::pair<std::string, std::pair<std::string, double>>> typevarvals = {{type, {var_, -999.}}};
 
-    double val = -999.9;
-
-    if(type.find("vector") != std::string::npos)
+    if(var2_.size())
     {
-        throw "Systematic::modifyParameters(...): Variables cannot be vectors. Var: " + var_; 
-    }
-    else
-    {
-        if     (type.find("double")       != std::string::npos) val = tr.getVar<double>(var_);
-        else if(type.find("unsigned int") != std::string::npos) val = static_cast<double>(tr.getVar<unsigned int>(var_));
-        else if(type.find("int")          != std::string::npos) val = static_cast<double>(tr.getVar<int>(var_));
-        else if(type.find("float")        != std::string::npos) val = static_cast<double>(tr.getVar<float>(var_));
-        else if(type.find("char")         != std::string::npos) val = static_cast<double>(tr.getVar<char>(var_));
-        else if(type.find("short")        != std::string::npos) val = static_cast<double>(tr.getVar<short>(var_));
-        else if(type.find("long")         != std::string::npos) val = static_cast<double>(tr.getVar<long>(var_));
-        else
-        {
-            throw "Systematic::modifyParameters(...): variable not defined. Var: " + var_;
-        }
+	tr.getType(var2_,type2);
+	typevarvals.emplace_back(std::pair<std::string, std::pair<std::string, double>>({type2, {var2_, -999.}}));
     }
 
+    for(auto& typevarval : typevarvals)
+    {
+	if(typevarval.first.find("vector") != std::string::npos)
+	{
+	    throw "Systematic::modifyParameters(...): Variables cannot be vectors. Var: " + typevarval.second.first; 
+	}
+	else
+	{
+	    if     (typevarval.first.find("double")       != std::string::npos) typevarval.second.second = tr.getVar<double>(typevarval.second.first);
+	    else if(typevarval.first.find("unsigned int") != std::string::npos) typevarval.second.second = static_cast<double>(tr.getVar<unsigned int>(typevarval.second.first));
+	    else if(typevarval.first.find("int")          != std::string::npos) typevarval.second.second = static_cast<double>(tr.getVar<int>(typevarval.second.first));
+	    else if(typevarval.first.find("float")        != std::string::npos) typevarval.second.second = static_cast<double>(tr.getVar<float>(typevarval.second.first));
+	    else if(typevarval.first.find("char")         != std::string::npos) typevarval.second.second = static_cast<double>(tr.getVar<char>(typevarval.second.first));
+	    else if(typevarval.first.find("short")        != std::string::npos) typevarval.second.second = static_cast<double>(tr.getVar<short>(typevarval.second.first));
+	    else if(typevarval.first.find("long")         != std::string::npos) typevarval.second.second = static_cast<double>(tr.getVar<long>(typevarval.second.first));
+	    else
+	    {
+		throw "Systematic::modifyParameters(...): variable not defined. Var: " + typevarval.second.first;
+	    }
+	}
+    }
     double weight = 1.0;
-    if(func_)      weight = func_->Eval(val);
-    else if(hist_) weight = hist_->GetBinContent(hist_->FindBin(val));
+    if(func_)      weight = func_->Eval(typevarvals[0].second.second);
+    else if(hist_) weight = hist_->GetBinContent(hist_->FindBin(typevarvals[0].second.second));
+    else if(hist2_) weight = hist2_->GetBinContent(hist2_->GetXaxis()->FindBin(typevarvals[0].second.second),hist2_->GetYaxis()->FindBin(typevarvals[1].second.second));
     tr.registerDerivedVar(name_, weight);
 }
 
