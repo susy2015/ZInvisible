@@ -116,7 +116,7 @@ int main()
     TH1* hMT2_Gaus = new TH1D("hMT2_Gaus", "hMT2_Gaus", 200, 0, 2000);
     TH1* hMT2_Logi = new TH1D("hMT2_Logi", "hMT2_Logi", 200, 0, 2000);
 
-    TH2* h2D_nom  = new TH2D("hMT2vMET_nom",  "h2D_nom ;MET;MT2",  200, 0, 2000, 200, 0, 2000);
+    TH2* h2D_nom  = new TH2D("hMT2vMET_nom",  "h2D_nom ;MET;MT2", 200, 0, 2000, 200, 0, 2000);
     TH2* h2D_Gaus = new TH2D("hMT2vMET_Gaus", "h2D_Gaus;MET;MT2", 200, 0, 2000, 200, 0, 2000);
     TH2* h2D_Logi = new TH2D("hMT2vMET_Logi", "h2D_Logi;MET;MT2", 200, 0, 2000, 200, 0, 2000);
 
@@ -131,6 +131,9 @@ int main()
 
         TChain *t = new TChain(fs.treePath.c_str());
         fs.addFilesToChain(t);
+
+        std::cout << "Tree: " << fs.treePath << std::endl;
+        std::cout << "sigma*lumi: " << fs.getWeight() << std::endl;
 
         plotterFunctions::PrepareMiniTupleVars pmt(false);
         plotterFunctions::NJetWeight njWeight;
@@ -181,7 +184,8 @@ int main()
             // Fill MET-MT2 histograms here
             if(passLoose0)
             {
-                double weight = triggerEffMC * nJetWgtDYZ * fs.getWeight();
+                //trigger efficiency is too coursely binned in low MET region, irrelivant in MET > 200 region
+                double weight = /*triggerEffMC * */nJetWgtDYZ * fs.getWeight();
 
                 hMET_nom ->Fill(cleanMetPt,  weight);
                 hMET_Gaus->Fill(met_gaus_30, weight);

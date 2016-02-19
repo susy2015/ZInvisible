@@ -64,9 +64,9 @@ namespace AnaSamples
 
         //Z -> nunu
         // From https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns#DY_Z, kz = 1.23
-        sampleSet_["ZJetsToNuNu_HT_100to200"] = FileSummary(fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-100To200_13TeV-madgraph", 280.35, lumi, 5154824, 1.23,  kTeal+4);
+        sampleSet_["ZJetsToNuNu_HT_100to200"] = FileSummary(fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-100To200_13TeV-madgraph", 280.35, lumi, 5154824,  1.23,  kTeal+4);
         sampleSet_["ZJetsToNuNu_HT_200to400"] = FileSummary(fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-200To400_13TeV-madgraph", 77.67,  lumi, 24863552, 1.23,  kTeal+4);
-        sampleSet_["ZJetsToNuNu_HT_400to600"] = FileSummary(fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-400To600_13TeV-madgraph", 10.73,  lumi, 9591908, 1.23,  kTeal+4);
+        sampleSet_["ZJetsToNuNu_HT_400to600"] = FileSummary(fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-400To600_13TeV-madgraph", 10.73,  lumi, 9591908,  1.23,  kTeal+4);
         sampleSet_["ZJetsToNuNu_HT_600toInf"] = FileSummary(fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-600ToInf_13TeV-madgraph", 4.116,  lumi, 10202299, 1.23,  kTeal+4);
 
         //DY->ll
