@@ -176,7 +176,7 @@ int main()
             const double& mt2_gaus_30  = tr.getVar<double>("mt2_gaus_30");
             
             // Recreation of loose0 cut level - we remove passMuZinvSel and replace with passLeptVetoZinv for Zinvisible
-            bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv;
+            bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv && (nTopCandSortedCntZinv>0);
 
             // Fill MET-MT2 histograms here
             if(passLoose0)
