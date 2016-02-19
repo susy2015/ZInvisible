@@ -366,6 +366,64 @@ def systHarvest(filename):
     fout = TFile("syst_all.root", "RECREATE")
     hShape_final.Write()
 
+
+    # Get correlation study info
+    hCorr_METGaus_Nom = f.Get("nSearchBin/CorrMETGaus_cleanMetPtnSearchBinnSearchBinNominalsingle")
+    hCorr_METGaus_Var = f.Get("nSearchBin/CorrMETGaus_cleanMetPtnSearchBinnSearchBinvariedsingle")
+    hCorr_MT2Gaus_Nom = f.Get("nSearchBin/CorrMT2Gaus_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
+    hCorr_MT2Gaus_Var = f.Get("nSearchBin/CorrMT2Gaus_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
+    hCorr_MT2vMETGaus_Nom = f.Get("nSearchBin/CorrMT2vMETGaus_cleanMetPt_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
+    hCorr_MT2vMETGaus_Var = f.Get("nSearchBin/CorrMT2vMETGaus_cleanMetPt_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
+    hCorr_METLogi_Nom = f.Get("nSearchBin/CorrMETLogi_cleanMetPtnSearchBinnSearchBinNominalsingle")
+    hCorr_METLogi_Var = f.Get("nSearchBin/CorrMETLogi_cleanMetPtnSearchBinnSearchBinvariedsingle")
+    hCorr_MT2Logi_Nom = f.Get("nSearchBin/CorrMT2Logi_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
+    hCorr_MT2Logi_Var = f.Get("nSearchBin/CorrMT2Logi_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
+    hCorr_MT2vMETLogi_Nom = f.Get("nSearchBin/CorrMT2vMETLogi_cleanMetPt_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
+    hCorr_MT2vMETLogi_Var = f.Get("nSearchBin/CorrMT2vMETLogi_cleanMetPt_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
+
+    hCorr_METGaus_ratio = hCorr_METGaus_Var.Clone(hCorr_METGaus_Nom.GetName()+"_ratio")
+    hCorr_METGaus_ratio.Divide(hCorr_METGaus_Nom)
+    #hCorr_METGaus_ratio.Write()
+
+    hCorr_MT2Gaus_ratio = hCorr_MT2Gaus_Var.Clone(hCorr_MT2Gaus_Nom.GetName()+"_ratio")
+    hCorr_MT2Gaus_ratio.Divide(hCorr_MT2Gaus_Nom)
+    #hCorr_MT2Gaus_ratio.Write()
+
+    hCorr_MT2vMETGaus_ratio = hCorr_MT2vMETGaus_Var.Clone(hCorr_MT2vMETGaus_Nom.GetName()+"_ratio")
+    hCorr_MT2vMETGaus_ratio.Divide(hCorr_MT2vMETGaus_Nom)
+
+    hCorr_METLogi_ratio = hCorr_METLogi_Var.Clone(hCorr_METLogi_Nom.GetName()+"_ratio")
+    hCorr_METLogi_ratio.Divide(hCorr_METLogi_Nom)
+    #hCorr_METLogi_ratio.Write()
+
+    hCorr_MT2Logi_ratio = hCorr_MT2Logi_Var.Clone(hCorr_MT2Logi_Nom.GetName()+"_ratio")
+    hCorr_MT2Logi_ratio.Divide(hCorr_MT2Logi_Nom)
+    #hCorr_MT2Logi_ratio.Write()
+
+    hCorr_MT2vMETLogi_ratio = hCorr_MT2vMETLogi_Var.Clone(hCorr_MT2vMETLogi_Nom.GetName()+"_ratio")
+    hCorr_MT2vMETLogi_ratio.Divide(hCorr_MT2vMETLogi_Nom)
+
+    hCorr_Gaus_final = hCorr_METGaus_ratio.Clone("Corr_1D_Gauss")
+    hCorr_Logi_final = hCorr_METLogi_ratio.Clone("Corr_1D_Logistic")
+    for i in xrange(1, hCorr_METGaus_ratio.GetNbinsX() + 1):
+        uncertCorrMET = hCorr_METGaus_ratio.GetBinContent(i) - 1 if hCorr_METGaus_ratio.GetBinContent(i) > 0 else 0
+        uncertCorrMT2 = hCorr_MT2Gaus_ratio.GetBinContent(i) - 1 if hCorr_MT2Gaus_ratio.GetBinContent(i) > 0 else 0
+        hCorr_Gaus_final.SetBinContent(i, sqrt(uncertCorrMET**2 + uncertCorrMT2**2))
+    for i in xrange(1, hCorr_METLogi_ratio.GetNbinsX() + 1):
+        uncertCorrMET = hCorr_METLogi_ratio.GetBinContent(i) - 1 if hCorr_METLogi_ratio.GetBinContent(i) > 0 else 0
+        uncertCorrMT2 = hCorr_MT2Logi_ratio.GetBinContent(i) - 1 if hCorr_MT2Logi_ratio.GetBinContent(i) > 0 else 0
+        hCorr_Logi_final.SetBinContent(i, sqrt(uncertCorrMET**2 + uncertCorrMT2**2))
+    for i in xrange(1, hCorr_MT2vMETGaus_ratio.GetNbinsX()+1):
+        hCorr_MT2vMETGaus_ratio.SetBinContent(i,abs(hCorr_MT2vMETGaus_ratio.GetBinContent(i)-1) if hCorr_MT2vMETGaus_ratio.GetBinContent(i)>0 else 0)
+        hCorr_MT2vMETLogi_ratio.SetBinContent(i,abs(hCorr_MT2vMETLogi_ratio.GetBinContent(i)-1) if hCorr_MT2vMETLogi_ratio.GetBinContent(i)>0 else 0)
+
+    hCorr_Gaus_final.Write()
+    hCorr_Logi_final.Write()
+    hCorr_MT2vMETGaus_ratio.Write("Corr_2D_Gauss")
+    hCorr_MT2vMETLogi_ratio.Write("Corr_2D_Logistic")
+
+
+
     # Get shape stats uncertainty
     f2 = TFile("syst_nJetWgt.root")
     hShapeStat = f2.Get("syst68Max").Clone("shape_stat")
