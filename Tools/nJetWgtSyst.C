@@ -59,7 +59,7 @@ int main()
         std::cout << "Failed to open: syst_shape.root" << std::endl;
     }
 
-    AnaSamples::SampleSet        ss("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/", 2153.74);
+    AnaSamples::SampleSet        ss("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/", AnaSamples::luminosity);
     AnaSamples::SampleCollection sc(ss);
 
     //f = TFile::Open("condor/minituple-Feb5.root");
@@ -154,6 +154,8 @@ int main()
             const int& cntCSVSZinv            = tr.getVar<int>("cntCSVSZinv");
             const int& nTopCandSortedCntZinv  = tr.getVar<int>("nTopCandSortedCntZinv");
             const bool& passBaseline = tr.getVar<bool>("passBaseline");
+            const bool& passBaselineZinv = tr.getVar<bool>("passBaselineZinv");
+            const bool& passLeptVeto = tr.getVar<bool>("passLeptVeto");
 
             const double& triggerEffMC = tr.getVar<double>("TriggerEffMC");
             const double& nJetWgtDYZ   = tr.getVar<double>("nJetWgtDYZ");
@@ -195,7 +197,7 @@ int main()
             }
 
             //fill stat uncertainty histograms here
-            if(passBaseline)
+            if(passBaselineZinv && passLeptVeto)
             {
                 double weight = triggerEffMC * nJetWgtDYZ * normWgt0b * fs.getWeight();
 
