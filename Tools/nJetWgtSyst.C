@@ -157,6 +157,8 @@ int main()
             const int& cntCSVSZinv            = tr.getVar<int>("cntCSVSZinv");
             const int& nTopCandSortedCntZinv  = tr.getVar<int>("nTopCandSortedCntZinv");
             const bool& passBaseline = tr.getVar<bool>("passBaseline");
+            const bool& passBaselineZinv = tr.getVar<bool>("passBaselineZinv");
+            const bool& passLeptVeto = tr.getVar<bool>("passLeptVeto");
 
             const double& triggerEffMC = tr.getVar<double>("TriggerEffMC");
             const double& nJetWgtDYZ   = tr.getVar<double>("nJetWgtDYZ");
@@ -177,7 +179,7 @@ int main()
             const double& mt2_gaus_30  = tr.getVar<double>("mt2_gaus_30");
             
             // Recreation of loose0 cut level - we remove passMuZinvSel and replace with passLeptVetoZinv for Zinvisible
-            bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv;
+            bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv && (nTopCandSortedCntZinv>0);
 
             // Fill MET-MT2 histograms here
             if(passLoose0)
@@ -199,7 +201,7 @@ int main()
             }
 
             //fill stat uncertainty histograms here
-            if(passBaseline)
+            if(passBaselineZinv && passLeptVeto)
             {
                 double weight = triggerEffMC * nJetWgtDYZ * normWgt0b * fs.getWeight();
 

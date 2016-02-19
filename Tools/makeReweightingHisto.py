@@ -3,7 +3,7 @@ from optparse import OptionParser
 import array, sys
 # Check if we want the help, if not import ROOT (otherwise ROOT overwrites the help)
 if '-h' not in sys.argv and '--help' not in sys.argv:
-    from ROOT import TH1D, TMath, TFile, TCanvas, TF1
+    from ROOT import TH1D, TMath, TFile, TCanvas, TF1, TH2D
 
 from math import sqrt
 import math
@@ -25,6 +25,20 @@ def rebin1D(h, bins):
         new_h.SetBinError(bin_to_fill, TMath.Sqrt(h.GetBinError(i+1)*h.GetBinError(i+1) + new_h.GetBinError(bin_to_fill)*new_h.GetBinError(bin_to_fill) ) )
     return new_h
 
+def rebin2D(h, binsx, binsy):
+    """Rebin histo h to binsx and binsy and recompute the errors."""
+    new_h = TH2D("%s_rebin"%(h.GetName()), "%s_rebin"%(h.GetName()),
+                 len(binsx)-1, array.array('d', binsx), len(binsy)-1, array.array('d', binsy))
+    new_h.Sumw2()
+    for i in xrange(h.GetNbinsX()):
+        bin_to_fill_x = new_h.GetXaxis().FindBin(h.GetXaxis().GetBinCenter(i+1))
+        for j in xrange(h.GetNbinsY()):
+            bin_to_fill_y = new_h.GetYaxis().FindBin(h.GetYaxis().GetBinCenter(j+1))
+            new_h.SetBinContent(bin_to_fill_x, bin_to_fill_y, h.GetBinContent(i+1,j+1) + new_h.GetBinContent(bin_to_fill_x, bin_to_fill_y))
+            new_h.SetBinError(bin_to_fill_x, bin_to_fill_y, 
+                              TMath.Sqrt(h.GetBinError(i+1, j+1)*h.GetBinError(i+1,j+1) + new_h.GetBinError(bin_to_fill_x, bin_to_fill_y)*new_h.GetBinError(bin_to_fill_x, bin_to_fill_y) ) )
+    return new_h
+
 def add(hs):
     """Add all histograms in list hs and return output."""
     hNew = hs[0].Clone()
@@ -39,9 +53,14 @@ def makeRatio(h1, h2s, bins=None, newname="test"):
     h2 = add(h2s)
     if bins != None:
         # Rebin the histograms
-        h1 = rebin1D(h1, bins)
-        h2 = rebin1D(h2, bins)
+        if type(bins) is list:
+            h1 = rebin1D(h1, bins)
+            h2 = rebin1D(h2, bins)
+        elif type(bins) is tuple:
+            h1 = rebin2D(h1, bins[0], bins[1])
+            h2 = rebin2D(h2, bins[0], bins[1])
     # Make the ratio
+    h1.Sumw2()
     h1.Divide(h2)
     h1.SetName(newname)
     h1.SetTitle(newname)
@@ -261,12 +280,67 @@ def shapeSyst(filename):
     f.Close()
     fout.Close()
 
+def corrCheck():
+    # Get the file
+    f = TFile.Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/Corrolation_MET-MT2.root")
+    fout = TFile.Open("correlations_ratio.root", "RECREATE")
+
+    # Make 1D and 2D ratios for both smearing options 
+
+    # Run over the relevant histograms
+    # histo names
+    types = ["Gaus", "Logi"]
+    variables = ["MET", "MT2", "MT2vMET"]
+    basename = "h%(var)s_%(typ)s"
+
+    bins_var = {"MET": [0, 100, 200, 300, 600, 1500],
+                "MT2": [0, 100, 200, 300, 400, 1500],
+                "MT2vMET": ([0, 100, 200, 300, 600, 1500],[0, 100, 200, 300, 400, 1500])}
+    for typ in types:
+        # Procedure: 1. Grab the nominal and varied
+        #            2. Make ratio
+        for var in variables:
+            # Get all histos
+            hnom = f.Get("h%(var)s_nom"%locals())
+            hsmeared   = f.Get(basename%locals())
+            hnom_rebin = hnom.Clone(hnom.GetName()+"_rebin")
+            hsmeared_rebin = hsmeared.Clone(hsmeared.GetName()+"_rebin")
+            if type(bins_var[var]) is list:
+                hnom_rebin = rebin1D(hnom_rebin, bins_var[var])
+                hsmeared_rebin = rebin1D(hsmeared, bins_var[var])
+            elif type(bins_var[var]) is tuple:
+                hnom_rebin = rebin2D(hnom_rebin, bins_var[var][0], bins_var[var][1])
+                hsmeared_rebin = rebin2D(hsmeared, bins_var[var][0], bins_var[var][1])
+
+            newname = "Ratio_%s_%s"%(var,typ)
+            newh = makeRatio(hsmeared, [hnom], newname=newname, bins=bins_var[var])
+
+            for i in xrange(1, newh.GetNbinsX() + 1):
+                print newh.GetBinContent(i)
+
+            newh.SetLineWidth(2)
+            newh.GetXaxis().SetTitle(var)
+            newh.GetYaxis().SetTitle("Smeared/Nom")
+            newh.GetYaxis().SetTitleOffset(1.15)
+            newh.SetStats(0)
+            newh.SetTitle("")
+
+            fout.cd()
+            newh.Write()
+            hsmeared_rebin.Write()
+            hnom_rebin.Write()
+
+    f.Close()
+    fout.Close()
+
+
 def systHarvest(filename):
     # Get the file
     #f = TFile.Open(filename)
     #fout = TFile.Open("syst_shape.root", "RECREATE")
     # Run over the relevant histograms
     # histo names
+    NSB = 37
 
     # Get shape central value uncertainty
     f = TFile("systematics.root")
@@ -303,6 +377,70 @@ def systHarvest(filename):
     fout = TFile("syst_all.root", "RECREATE")
     hShape_final.Write()
 
+
+    # Get correlation study info
+    hCorr_METGaus_Nom = f.Get("nSearchBin/CorrMETGaus_cleanMetPtnSearchBinnSearchBinNominalsingle")
+    hCorr_METGaus_Var = f.Get("nSearchBin/CorrMETGaus_cleanMetPtnSearchBinnSearchBinvariedsingle")
+    hCorr_MT2Gaus_Nom = f.Get("nSearchBin/CorrMT2Gaus_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
+    hCorr_MT2Gaus_Var = f.Get("nSearchBin/CorrMT2Gaus_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
+    hCorr_MT2vMETGaus_Nom = f.Get("nSearchBin/CorrMT2vMETGaus_cleanMetPt_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
+    hCorr_MT2vMETGaus_Var = f.Get("nSearchBin/CorrMT2vMETGaus_cleanMetPt_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
+    hCorr_METLogi_Nom = f.Get("nSearchBin/CorrMETLogi_cleanMetPtnSearchBinnSearchBinNominalsingle")
+    hCorr_METLogi_Var = f.Get("nSearchBin/CorrMETLogi_cleanMetPtnSearchBinnSearchBinvariedsingle")
+    hCorr_MT2Logi_Nom = f.Get("nSearchBin/CorrMT2Logi_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
+    hCorr_MT2Logi_Var = f.Get("nSearchBin/CorrMT2Logi_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
+    hCorr_MT2vMETLogi_Nom = f.Get("nSearchBin/CorrMT2vMETLogi_cleanMetPt_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
+    hCorr_MT2vMETLogi_Var = f.Get("nSearchBin/CorrMT2vMETLogi_cleanMetPt_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
+
+    hCorr_METGaus_ratio = hCorr_METGaus_Var.Clone(hCorr_METGaus_Nom.GetName()+"_ratio")
+    hCorr_METGaus_ratio.Divide(hCorr_METGaus_Nom)
+    hCorr_METGaus_ratio.Write()
+
+    hCorr_MT2Gaus_ratio = hCorr_MT2Gaus_Var.Clone(hCorr_MT2Gaus_Nom.GetName()+"_ratio")
+    hCorr_MT2Gaus_ratio.Divide(hCorr_MT2Gaus_Nom)
+    hCorr_MT2Gaus_ratio.Write()
+
+    hCorr_MT2vMETGaus_ratio = hCorr_MT2vMETGaus_Var.Clone(hCorr_MT2vMETGaus_Nom.GetName()+"_ratio")
+    hCorr_MT2vMETGaus_ratio.Divide(hCorr_MT2vMETGaus_Nom)
+
+    hCorr_METLogi_ratio = hCorr_METLogi_Var.Clone(hCorr_METLogi_Nom.GetName()+"_ratio")
+    hCorr_METLogi_ratio.Divide(hCorr_METLogi_Nom)
+    hCorr_METLogi_ratio.Write()
+
+    hCorr_MT2Logi_ratio = hCorr_MT2Logi_Var.Clone(hCorr_MT2Logi_Nom.GetName()+"_ratio")
+    hCorr_MT2Logi_ratio.Divide(hCorr_MT2Logi_Nom)
+    hCorr_MT2Logi_ratio.Write()
+
+    hCorr_MT2vMETLogi_ratio = hCorr_MT2vMETLogi_Var.Clone(hCorr_MT2vMETLogi_Nom.GetName()+"_ratio")
+    hCorr_MT2vMETLogi_ratio.Divide(hCorr_MT2vMETLogi_Nom)
+
+    hCorr_Gaus_final = hCorr_METGaus_ratio.Clone("Corr_1D_Gauss")
+    hCorr_Logi_final = hCorr_METLogi_ratio.Clone("Corr_1D_Logistic")
+    for i in xrange(1, hCorr_METGaus_ratio.GetNbinsX() + 1):
+        uncertCorrMET = hCorr_METGaus_ratio.GetBinContent(i) - 1 if hCorr_METGaus_ratio.GetBinContent(i) > 0 else 0
+        uncertCorrMT2 = hCorr_MT2Gaus_ratio.GetBinContent(i) - 1 if hCorr_MT2Gaus_ratio.GetBinContent(i) > 0 else 0
+        hCorr_Gaus_final.SetBinContent(i, sqrt(uncertCorrMET**2 + uncertCorrMT2**2))
+    for i in xrange(1, hCorr_METLogi_ratio.GetNbinsX() + 1):
+        uncertCorrMET = hCorr_METLogi_ratio.GetBinContent(i) - 1 if hCorr_METLogi_ratio.GetBinContent(i) > 0 else 0
+        uncertCorrMT2 = hCorr_MT2Logi_ratio.GetBinContent(i) - 1 if hCorr_MT2Logi_ratio.GetBinContent(i) > 0 else 0
+        hCorr_Logi_final.SetBinContent(i, sqrt(uncertCorrMET**2 + uncertCorrMT2**2))
+    for i in xrange(1, hCorr_MT2vMETGaus_ratio.GetNbinsX()+1):
+        hCorr_MT2vMETGaus_ratio.SetBinContent(i,abs(hCorr_MT2vMETGaus_ratio.GetBinContent(i)-1) if hCorr_MT2vMETGaus_ratio.GetBinContent(i)>0 else 0)
+        hCorr_MT2vMETLogi_ratio.SetBinContent(i,abs(hCorr_MT2vMETLogi_ratio.GetBinContent(i)-1) if hCorr_MT2vMETLogi_ratio.GetBinContent(i)>0 else 0)
+
+    hCorr_Gaus_final.Write()
+    hCorr_Logi_final.Write()
+    hCorr_MT2vMETGaus_ratio.Write("Corr_2D_Gauss")
+    hCorr_MT2vMETLogi_ratio.Write("Corr_2D_Logistic")
+
+    # Pull 
+    hPull = hCorr_MT2vMETLogi_ratio.Clone("Pull_Logi")
+    hPull.Add(hCorr_Logi_final,-1)
+    for i in xrange(1, hPull.GetNbinsX()+1):
+        sf = sqrt(hCorr_Logi_final.GetBinError(i)**2 + hCorr_MT2vMETLogi_ratio.GetBinError(i)**2)
+        hPull.SetBinContent(i, hPull.GetBinContent(i)/sf)
+    hPull.Write()
+    
     # Get shape stats uncertainty
     f2 = TFile("syst_nJetWgt.root")
     hShapeStat = f2.Get("syst68Max").Clone("shape_stat")
@@ -374,10 +512,10 @@ def systHarvest(filename):
     hMECDn_ratio.Add(hMECNom, -1.0)
     hMECDn_ratio.Divide(hMECNom)
 
-    hJECUp_ratio.SetBinContent(45, hJECUp_ratio.GetBinContent(44))
-    hJECDn_ratio.SetBinContent(45, hJECDn_ratio.GetBinContent(44))
-    hMECUp_ratio.SetBinContent(45, hMECUp_ratio.GetBinContent(44))
-    hMECDn_ratio.SetBinContent(45, hMECDn_ratio.GetBinContent(44))
+    hJECUp_ratio.SetBinContent(NSB, hJECUp_ratio.GetBinContent(NSB-1))
+    hJECDn_ratio.SetBinContent(NSB, hJECDn_ratio.GetBinContent(NSB-1))
+    hMECUp_ratio.SetBinContent(NSB, hMECUp_ratio.GetBinContent(NSB-1))
+    hMECDn_ratio.SetBinContent(NSB, hMECDn_ratio.GetBinContent(NSB-1))
 
     fout.cd()
     hJECUp_ratio.Write()
@@ -451,17 +589,17 @@ def systHarvest(filename):
              ]
     
     print "luminosity = 2262"
-    print "channels = 45"
+    print "channels =", NSB
     print "sample = zinv"
     print ""
 
-    print "%-25s = %s"%("channel", ' '.join(["%8s" % ("bin%i" % i) for i in xrange(1, 46)]))
+    print "%-25s = %s"%("channel", ' '.join(["%8s" % ("bin%i" % i) for i in xrange(1, NSB+1)]))
     print ""
 
-    print "%-25s = %s"%("rate", ' '.join(["%8.5f" % hPrediction.GetBinContent(i) for i in xrange(1, 46)]))
+    print "%-25s = %s"%("rate", ' '.join(["%8.5f" % hPrediction.GetBinContent(i) for i in xrange(1, NSB+1)]))
     print ""
 
-    print "%-25s = %s"%("cs_event", ' '.join(["%8.0f" % math.floor(hNEff.GetBinContent(i)) for i in xrange(1, 46)]))
+    print "%-25s = %s"%("cs_event", ' '.join(["%8.0f" % math.floor(hNEff.GetBinContent(i)) for i in xrange(1, NSB+1)]))
 
     data = []
     for i in xrange(1, hNEff.GetNbinsX() + 1):
@@ -480,7 +618,7 @@ def systHarvest(filename):
     print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(45*["%8.5f" % 0.18318]))
 
     for (name, h) in hists:
-        print "%-25s = %s"%(name, ' '.join(["%8.5f" % (h.GetBinContent(i)) for i in xrange(1, 46)]))
+        print "%-25s = %s"%(name, ' '.join(["%8.5f" % (h.GetBinContent(i)) for i in xrange(1, NSB+1)]))
 
     fout.Close()
 
@@ -685,6 +823,8 @@ if __name__ ==  "__main__":
                       help="Grab information for scale and PDF systematics", action='store_true')
     parser.add_option("--extrapolationSyst", dest="extrapolationSyst", default=False,
                       help="Grab information for scale and PDF systematics", action='store_true')
+    parser.add_option("--corr", dest="corr", default=False,
+                      help="Get the ratios for correlation study", action='store_true')
 
     (options, args) = parser.parse_args()
 
@@ -700,3 +840,5 @@ if __name__ ==  "__main__":
         systScalePDF(options.filename)        
     if options.extrapolationSyst:
         extrapolationSyst(options.filename)
+    if options.corr:
+        corrCheck()
