@@ -1074,6 +1074,7 @@ namespace plotterFunctions
     class GetSearchBin
     {
     private:
+        SearchBins sbins;
 
         void getSearchBin(NTupleReader& tr)
         {
@@ -1096,7 +1097,7 @@ namespace plotterFunctions
             const double& nJet2bfakeWgt = tr.getVar<double>("nJet2bfakeWgt");
             const double& nJet3bfakeWgt = tr.getVar<double>("nJet3bfakeWgt");
 
-            int nSearchBin = find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
+            int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
 
             std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
             std::vector<std::pair<double, double> > * nb0NJwBins = new std::vector<std::pair<double, double> >();
@@ -1118,17 +1119,17 @@ namespace plotterFunctions
             if(cntCSVS == 0)
             {
                 //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
-                nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), wnb01 * weight1fakeb));
-                nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * weight2fakeb));
-                nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * weight3fakeb));
+                nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), wnb01 * weight1fakeb));
+                nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * weight2fakeb));
+                nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * weight3fakeb));
 
-                nb0NJwBins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), nJet1bfakeWgt));
-                nb0NJwBins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), nJet2bfakeWgt));
-                nb0NJwBins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), nJet3bfakeWgt));
+                nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), nJet1bfakeWgt));
+                nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), nJet2bfakeWgt));
+                nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), nJet3bfakeWgt));
 
-                nb0BinsNW->emplace_back(find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet));
-                nb0BinsNW->emplace_back(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet));
-                nb0BinsNW->emplace_back(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet));
+                nb0BinsNW->emplace_back(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet));
+                nb0BinsNW->emplace_back(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet));
+                nb0BinsNW->emplace_back(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet));
             }
 
             tr.registerDerivedVar("nSearchBin", nSearchBin);
@@ -1352,6 +1353,7 @@ namespace plotterFunctions
     class SystematicCalc
     {
     private:
+        SearchBins sbins;
 
         void systematicCalc(NTupleReader& tr)
         {
@@ -1375,11 +1377,11 @@ namespace plotterFunctions
             const double& MT2MEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvMEUDn");
             const double& cleanMetMEUDn = tr.getVar<double>("metMEUDn");
 
-            int nSearchBinJEUUp = find_Binning_Index(cntCSVSJEUUp, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet);
-            int nSearchBinJEUDn = find_Binning_Index(cntCSVSJEUDn, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet);
+            int nSearchBinJEUUp = sbins.find_Binning_Index(cntCSVSJEUUp, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet);
+            int nSearchBinJEUDn = sbins.find_Binning_Index(cntCSVSJEUDn, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet);
 
-            int nSearchBinMEUUp = find_Binning_Index(cntCSVSMEUUp, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp);
-            int nSearchBinMEUDn = find_Binning_Index(cntCSVSMEUDn, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn);
+            int nSearchBinMEUUp = sbins.find_Binning_Index(cntCSVSMEUUp, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp);
+            int nSearchBinMEUDn = sbins.find_Binning_Index(cntCSVSMEUDn, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn);
             
             tr.registerDerivedVar("nSearchBinJEUUp", nSearchBinJEUUp);
             tr.registerDerivedVar("nSearchBinJEUDn", nSearchBinJEUDn);

@@ -57,34 +57,34 @@ $(ODIR)/%.o : $(RSDIR)/%.C
 $(ODIR)/%.o : $(RSDIR)/%.cc
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -o $@ -c $<
 
-calcEff: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/calcEff.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/Plotter.o $(ODIR)/MiniTupleMaker.o
+calcEff: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/calcEff.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/Plotter.o $(ODIR)/MiniTupleMaker.o $(ODIR)/searchBins.o
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
 harvestHists: $(ODIR)/harvestHists.o
 	$(LD) $^ $(LIBS) -o $@
 
-makePlots: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o 
+makePlots: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-miniMakePlots: $(ODIR)/NTupleReader.o $(ODIR)/miniTupleSamples.o $(ODIR)/Plotter.o $(ODIR)/MinitupleMakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o 
+miniMakePlots: $(ODIR)/NTupleReader.o $(ODIR)/miniTupleSamples.o $(ODIR)/Plotter.o $(ODIR)/MinitupleMakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-systematics: $(ODIR)/NTupleReader.o $(ODIR)/miniTupleSamples.o $(ODIR)/Systematic.o  $(ODIR)/Plotter.o $(ODIR)/systematics.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o
+systematics: $(ODIR)/NTupleReader.o $(ODIR)/miniTupleSamples.o $(ODIR)/Systematic.o  $(ODIR)/Plotter.o $(ODIR)/systematics.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/searchBins.o
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-nJetWgtSyst: $(ODIR)/NTupleReader.o $(ODIR)/nJetWgtSyst.o $(ODIR)/miniTupleSamples.o
+nJetWgtSyst: $(ODIR)/NTupleReader.o $(ODIR)/nJetWgtSyst.o $(ODIR)/miniTupleSamples.o $(ODIR)/searchBins.o
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-moneyplot: $(ODIR)/moneyplot.o
+moneyplot: $(ODIR)/moneyplot.o $(ODIR)/searchBins.o
 	$(LD) $^ $(LIBS) -o $@
 
 scalefactorplot: $(ODIR)/scalefactorplot.o
 	$(LD) $^ $(LIBS) -o $@
 
-systplot: $(ODIR)/systplot.o
+systplot: $(ODIR)/systplot.o $(ODIR)/searchBins.o
 	$(LD) $^ $(LIBS) -o $@
 
-plot2d: $(ODIR)/plot2D.o $(ODIR)/NTupleReader.o $(ODIR)/Plotter.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/samples.o $(ODIR)/MiniTupleMaker.o
+plot2d: $(ODIR)/plot2D.o $(ODIR)/NTupleReader.o $(ODIR)/Plotter.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/samples.o $(ODIR)/MiniTupleMaker.o $(ODIR)/searchBins.o
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
 clean:

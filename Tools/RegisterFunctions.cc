@@ -250,5 +250,5 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 
 void drawSBregionDefCopy(const double ymin_Yields, const double ymax_Yields, const bool logscale)
 {
-    drawSBregionDef(ymin_Yields, ymax_Yields, logscale);
+    SearchBins::drawSBregionDef(ymin_Yields, ymax_Yields, logscale);
 }

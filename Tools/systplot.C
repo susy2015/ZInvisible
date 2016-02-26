@@ -116,7 +116,7 @@ void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylo
     fixOverlay();
     if(overlay)
     {
-	drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum(),false);
+        SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum(),false);
     }
     char outname[128];
     sprintf(outname, (prefix + "_%s.pdf").c_str(), hname.c_str());
@@ -217,7 +217,7 @@ void makeplotratio(TFile* f, std::vector<std::string> hnames, std::vector<std::s
     mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     fixOverlay();
-    drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum(),true);
+    SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum(),true);
 
     c->cd(2);
     gPad->SetPad("p2", "p2", 0, 0, 1, 2.5 / 9.0, kWhite, 0, 0);

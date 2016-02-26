@@ -120,6 +120,9 @@ int main(int argc, char* argv[])
     // Set the style
     setTDRStyle();
 
+    //Set up search bins
+    SearchBins sbins;
+
     // Prepare canvas
     TCanvas *c;
     double fontScale;
@@ -270,7 +273,7 @@ int main(int argc, char* argv[])
     //mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     fixOverlay();
-    drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
+    SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
     c->Print("moneyplot.png");
     c->Print("moneyplot.pdf");
 
@@ -281,7 +284,7 @@ int main(int argc, char* argv[])
     {
 	prediction.push_back(h1->GetBinContent(i+1));
     }
-    print_searchBins_latex(prediction, v_uncertainty, "& $\\cPZ\\rightarrow\\nu\\nu$ prediction \\\\");
+    sbins.print_searchBins_latex(prediction, v_uncertainty, "& $\\cPZ\\rightarrow\\nu\\nu$ prediction \\\\");
 
     // Format errors                                                                                                                                                                                                                         
     g1->SetFillColor(kRed-7);
@@ -301,12 +304,12 @@ int main(int argc, char* argv[])
     sprintf(legEntry, "%s", "Other");
     leg->AddEntry(g5, legEntry);
 
-    print_searchBins_headerstr("& Norm & Data/MC \\\\ shape & Njet/shape \\\\ stat. & MC Stats & Other \\\\ \n");
+    sbins.print_searchBins_headerstr("& Norm & Data/MC \\\\ shape & Njet/shape \\\\ stat. & MC Stats & Other \\\\ \n");
     for(int i=0; i<h1->GetNbinsX(); ++i)
     {
         char formatStr[256];
         sprintf(formatStr, "& %8.4f & %8.4f & %8.4f & %8.4f & %8.4f \\\\", rel_unc_2, h2->GetBinContent(i + 1), h3->GetBinContent(i + 1), h4->GetBinContent(i + 1), h5->GetBinContent(i + 1));
-        printf(get_searchBins_defstr(i, formatStr).c_str());
+        printf(sbins.get_searchBins_defstr(i, formatStr).c_str());
     }
 
     f1->Close();
