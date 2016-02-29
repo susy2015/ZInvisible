@@ -119,6 +119,7 @@ int main(int argc, char* argv[])
         fileMap["DYJetsToLL_HT_600toInf"] = {ss["DYJetsToLL_HT_600toInf"]};
         fileMap["ZJetsToNuNu_HT_600toInf"] = {ss["ZJetsToNuNu_HT_600toInf"]};
         fileMap["TTbarDiLep"] = {ss["TTbarDiLep"]};
+        fileMap["TTbarNoHad"] = {ss["TTbarDiLep"]};
     }
     else if(dataSets.compare("TEST2") == 0)
     {
@@ -814,8 +815,8 @@ int main(int argc, char* argv[])
 
     // Datasetsummaries we are using
     // no weight (genWeight deals with negative weights)
-    Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsData_DoubleEG(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "bTagSF_EventWeightSimple_Central");
+    Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "");
+    Plotter::DatasetSummary dsData_DoubleEG(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "");
     Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "",                "bTagSF_EventWeightSimple_Central");
     Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "bTagSF_EventWeightSimple_Central");
     Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "bTagSF_EventWeightSimple_Central");
@@ -825,8 +826,8 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "",                "bTagSF_EventWeightSimple_Central;genWeight");
     std::vector<Plotter::DatasetSummary> stack_MC = {dsDY, dsDYInc, dstt2l, dstW, dsttZ, dsVV, dsRare};
     // eff*Acc*B(Z)/B(DY)
-    Plotter::DatasetSummary dsData_SingleMuon_effAcc("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
-    Plotter::DatasetSummary dsData_DoubleEG_effAcc(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dsData_SingleMuon_effAcc("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dsData_DoubleEG_effAcc(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "zEffWgt;zAccWgt",           znunu_mumu_ratio);
     Plotter::DatasetSummary dsDY_effAcc(             "DY",         fileMap["DYJetsToLL"],      "",                "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
     Plotter::DatasetSummary dsDYInc_effAcc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
     Plotter::DatasetSummary dstt2l_effAcc(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
@@ -1152,6 +1153,12 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerUp(      "Z#rightarrow#nu#nu Trigger weight Up",      fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffUpMC");
     Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerDown(    "Z#rightarrow#nu#nu Trigger weight Down",    fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffDownMC");
 
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_btagUp(    "Z#rightarrow#nu#nu Trigger weight Central", fileMap["ZJetsToNuNu"], "passLeptVeto",   "bTagSF_EventWeightSimple_Up;nJetWgtDYZ;normWgt0b;TriggerEffMC");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_btagDn(    "Z#rightarrow#nu#nu Trigger weight Central", fileMap["ZJetsToNuNu"], "passLeptVeto",   "bTagSF_EventWeightSimple_Down;nJetWgtDYZ;normWgt0b;TriggerEffMC");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_bmistagUp( "Z#rightarrow#nu#nu Trigger weight Central", fileMap["ZJetsToNuNu"], "passLeptVeto",   "mistagSF_EventWeightSimple_Up;nJetWgtDYZ;normWgt0b;TriggerEffMC");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_bmistagDn( "Z#rightarrow#nu#nu Trigger weight Central", fileMap["ZJetsToNuNu"], "passLeptVeto",   "mistagSF_EventWeightSimple_Down;nJetWgtDYZ;normWgt0b;TriggerEffMC");
+
+
     Plotter::DatasetSummary dsTT_inc(           "t#bar{t} Inc",   fileMap["TTbar"], "", "");
 
     //norm plots
@@ -1192,6 +1199,9 @@ int main(int argc, char* argv[])
     Plotter::DataCollection JEU_nSearchBin(      "single", {{"nSearchBin",    dsDY_nunu_njetnorm_bl}, {"nSearchBinJEUUp", dsDY_nunu_njetnorm_JEUUp}, {"nSearchBinJEUDn", dsDY_nunu_njetnorm_JEUDown}  });
     Plotter::DataCollection MEU_nSearchBin(      "single", {{"nSearchBin",    dsDY_nunu_njetnorm_bl}, {"nSearchBinMEUUp", dsDY_nunu_njetnorm_MEUUp}, {"nSearchBinMEUDn", dsDY_nunu_njetnorm_MEUDown}  });
     Plotter::DataCollection trigger_nSearchBin( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBin",    dsDY_nunu_njetnorm}  });
+    Plotter::DataCollection btag_nSearchBin(    "single", {{"nSearchBin", dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin", dsDY_nunu_njetnorm_btagUp}, {"nSearchBin", dsDY_nunu_njetnorm_btagDn}});
+    Plotter::DataCollection bmistag_nSearchBin( "single", {{"nSearchBin", dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin", dsDY_nunu_njetnorm_bmistagUp}, {"nSearchBin", dsDY_nunu_njetnorm_bmistagDn}});
+
 
     vh.push_back(PHS("NJetWgt_nSearchBin",            {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("NJetWgt_nSearchBin_log",        {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
@@ -1202,9 +1212,15 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("syst_JESUncert_nSearchBin",     {JEU_nSearchBin},   {2, 1}, "",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("syst_MESUncert_nSearchBin",     {MEU_nSearchBin},   {2, 1}, "",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("TriggerWgt_nSearchBin",         {trigger_nSearchBin},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    //b-tagging uncertainty
+    vh.push_back(PHS("BTagUncert_nSearchBin",         {btag_nSearchBin},     {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("BMistagUncert_nSearchBin",      {bmistag_nSearchBin},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     // PDF and scale
     vh.push_back(PHS("DataMCwwscale_SingleMuon_nj_0b_blnotag",  {scalew_nj},    {1, 2}, "cntCSVSZinv=0;passBaselineNoTagZinv", 20, 0, 20,   true, false,  label_nj,    ""));
     vh.push_back(PHS("DataMCwwpdf_SingleMuon_nj_0b_blnotag",    {pdfw_nj},      {1, 2}, "cntCSVSZinv=0;passBaselineNoTagZinv", 20, 0, 20,   true, false,  label_nj,    ""));
+
+    vh.push_back(PHS("btagWeights",       {PDC("single", "bTagSF_EventWeightSimple_Central", {dsDY, dstt2l, dsDY_nunu_njetnorm_TriggerCentral})},{1, 1}, "",                 100, 0, 5,  false, false,  "b-tag correction weight",    ""));
+    vh.push_back(PHS("btagWeights_bl",    {PDC("single", "bTagSF_EventWeightSimple_Central", {dsDY, dstt2l, dsDY_nunu_njetnorm_TriggerCentral})},{1, 1}, "passBaselineZinv", 100, 0, 5,  false, false,  "b-tag correction weight",    ""));
 
     //Baseline cuts are flawed here, fix!
     for(std::pair<std::string,std::string>& cut : cutlevels_MC)
