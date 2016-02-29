@@ -38,6 +38,20 @@ x509userproxy = $ENV(X509_USER_PROXY)
 
 """
 
+submitFileGBE = """universe = vanilla
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeBeff.sh
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/beffCalc, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeBeff.sh
+Output = logs/makePlots_$(Process).stdout
+Error = logs/makePlots_$(Process).stderr
+Log = logs/makePlots_$(Process).log
+notify_user = ${LOGNAME}@FNAL.GOV
+x509userproxy = $ENV(X509_USER_PROXY)
+
+"""
+
 parser = optparse.OptionParser("usage: %prog [options]\n")
 
 parser.add_option ('-n', dest='numfile', type='int', default = 5, help="number of files per job")
@@ -46,6 +60,7 @@ parser.add_option ('-l', dest='dataCollections', action='store_true', default = 
 parser.add_option ('-r', dest='refLumi', type='string', default = None, help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
 parser.add_option ('-c', dest='noSubmit', action='store_true', default = False, help="Do not submit jobs.  Only create condor_submit.txt.")
 parser.add_option ('-e', dest='goMakeEff', action='store_true', default = False, help="Run calcEff instead of makePlots.")
+parser.add_option ('-b', dest='goMakeBeff', action='store_true', default = False, help="Run beffCalc instead of makePlots.")
 
 options, args = parser.parse_args()
 
@@ -53,6 +68,8 @@ submitFile = ""
 
 if options.goMakeEff:
     submitFile = submitFileGME
+elif options.goMakeBeff:
+    submitFile = submitFileGBE
 else:
     submitFile = submitFileGMP
 

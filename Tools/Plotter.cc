@@ -332,6 +332,7 @@ void Plotter::createHistsFromTuple()
         MiniTupleMaker* mtm = nullptr;
 
         if(registerfunc_ == nullptr) registerfunc_ = new RegisterFunctions();
+        registerfunc_->remakeBTagCorrector(file.tag);
 
         if(doTuple_)
         {
@@ -400,6 +401,28 @@ void Plotter::createHistsFromTuple()
                             {
                                 std::cout << "Exception caught in Plotter::createHistsFromTuple(), text follows" << std::endl << e << std::endl;
                             }
+                        }
+                    }
+
+                    //ugly event print for 1l search
+                    if(file.isData_)
+                    {
+                        const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
+                        const bool& passLeptVetoZinv         = tr.getVar<bool>("passLeptVetoZinv");
+                        const bool& passnJetsZinv            = tr.getVar<bool>("passnJetsZinv");
+                        const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
+                        const double& HTZinv                 = tr.getVar<double>("HTZinv");
+
+                        // Recreation of loose0 cut level - we remove passMuZinvSel and replace with passLeptVetoZinv for Zinvisible
+                        bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv;
+
+                        if(passLoose0)
+                        {
+                            const unsigned int& run   = tr.getVar<unsigned int>("run");
+                            const unsigned int& lumi  = tr.getVar<unsigned int>("lumi");
+                            const unsigned int& event = tr.getVar<unsigned int>("event");
+
+                            std::cout << "FORHANNSJORG " << run << ":" << lumi << ":" << event << std::endl;
                         }
                     }
 
