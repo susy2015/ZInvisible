@@ -835,39 +835,39 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsVV_effAcc(             "Diboson",    fileMap["Diboson"],         "",                "zEffWgt;zAccWgt",           znunu_mumu_ratio);
     Plotter::DatasetSummary dsRare_effAcc(           "Rare",       fileMap["Rare"],            "",                "zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
     std::vector<Plotter::DatasetSummary> stack_MC_effAcc = {dsDY_effAcc, dsDYInc_effAcc, dstt2l_effAcc, dstW_effAcc, dsttZ_effAcc, dsVV_effAcc, dsRare_effAcc};
-    // 1 fake b weight
-    Plotter::DatasetSummary dsData_SingleMuon_w1b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight1fakebComb");
-    Plotter::DatasetSummary dsData_DoubleEG_w1b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight1fakebComb");
-    Plotter::DatasetSummary dsDY_w1b(             "DY",         fileMap["DYJetsToLL"],      "",                "weight1fakebComb");
-    Plotter::DatasetSummary dsDYInc_w1b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "weight1fakebComb");
-    Plotter::DatasetSummary dstt2l_w1b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "weight1fakebComb");
-    Plotter::DatasetSummary dstW_w1b(             "single top", fileMap["tW"],              "",                "weight1fakebComb");
-    Plotter::DatasetSummary dsttZ_w1b(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "genWeight;weight1fakebComb");
-    Plotter::DatasetSummary dsVV_w1b(             "Diboson",    fileMap["Diboson"],         "",                "weight1fakebComb");
-    Plotter::DatasetSummary dsRare_w1b(           "Rare",       fileMap["Rare"],            "",                "genWeight;weight1fakebComb");
-    std::vector<Plotter::DatasetSummary> stack_MC_w1b = {dsDY_w1b, dsDYInc_w1b, dstt2l_w1b, dstW_w1b, dsttZ_w1b, dsVV_w1b, dsRare_w1b};
-    // 2 fake b weight
-    Plotter::DatasetSummary dsData_SingleMuon_w2b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight2fakebComb");
-    Plotter::DatasetSummary dsData_DoubleEG_w2b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight2fakebComb");
-    Plotter::DatasetSummary dsDY_w2b(             "DY",         fileMap["DYJetsToLL"],      "",                "weight2fakebComb");
-    Plotter::DatasetSummary dsDYInc_w2b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "weight2fakebComb");
-    Plotter::DatasetSummary dstt2l_w2b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "weight2fakebComb");
-    Plotter::DatasetSummary dstW_w2b(             "single top", fileMap["tW"],              "",                "weight2fakebComb");
-    Plotter::DatasetSummary dsttZ_w2b(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "genWeight;weight2fakebComb");
-    Plotter::DatasetSummary dsVV_w2b(             "Dibson",     fileMap["Diboson"],         "",                "weight2fakebComb");
-    Plotter::DatasetSummary dsRare_w2b(           "Rare",       fileMap["Rare"],            "",                "genWeight;weight2fakebComb");
-    std::vector<Plotter::DatasetSummary> stack_MC_w2b = {dsDY_w2b, dsDYInc_w2b, dstt2l_w2b, dstW_w2b, dsttZ_w2b, dsVV_w2b, dsRare_w2b};
-    // 3 fake b weight
-    Plotter::DatasetSummary dsData_SingleMuon_w3b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight3fakebComb");
-    Plotter::DatasetSummary dsData_DoubleEG_w3b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight3fakebComb");
-    Plotter::DatasetSummary dsDY_w3b(             "DY",         fileMap["DYJetsToLL"],      "",                "weight3fakebComb");
-    Plotter::DatasetSummary dsDYInc_w3b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "weight3fakebComb");
-    Plotter::DatasetSummary dstt2l_w3b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "weight3fakebComb");
-    Plotter::DatasetSummary dstW_w3b(             "single top", fileMap["tW"],              "",                "weight3fakebComb");
-    Plotter::DatasetSummary dsttZ_w3b(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "genWeight;weight3fakebComb");
-    Plotter::DatasetSummary dsVV_w3b(             "Diboson",    fileMap["Diboson"],         "",                "weight3fakebComb");
-    Plotter::DatasetSummary dsRare_w3b(           "Rare",       fileMap["Rare"],            "",                "genWeight;weight3fakebComb");
-    std::vector<Plotter::DatasetSummary> stack_MC_w3b = {dsDY_w3b, dsDYInc_w3b, dstt2l_w3b, dstW_w3b, dsttZ_w3b, dsVV_w3b, dsRare_w3b};
+    //// 1 fake b weight
+    //Plotter::DatasetSummary dsData_SingleMuon_w1b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight1fakebComb");
+    //Plotter::DatasetSummary dsData_DoubleEG_w1b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight1fakebComb");
+    //Plotter::DatasetSummary dsDY_w1b(             "DY",         fileMap["DYJetsToLL"],      "",                "weight1fakebComb");
+    //Plotter::DatasetSummary dsDYInc_w1b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "weight1fakebComb");
+    //Plotter::DatasetSummary dstt2l_w1b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "weight1fakebComb");
+    //Plotter::DatasetSummary dstW_w1b(             "single top", fileMap["tW"],              "",                "weight1fakebComb");
+    //Plotter::DatasetSummary dsttZ_w1b(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "genWeight;weight1fakebComb");
+    //Plotter::DatasetSummary dsVV_w1b(             "Diboson",    fileMap["Diboson"],         "",                "weight1fakebComb");
+    //Plotter::DatasetSummary dsRare_w1b(           "Rare",       fileMap["Rare"],            "",                "genWeight;weight1fakebComb");
+    //std::vector<Plotter::DatasetSummary> stack_MC_w1b = {dsDY_w1b, dsDYInc_w1b, dstt2l_w1b, dstW_w1b, dsttZ_w1b, dsVV_w1b, dsRare_w1b};
+    //// 2 fake b weight
+    //Plotter::DatasetSummary dsData_SingleMuon_w2b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight2fakebComb");
+    //Plotter::DatasetSummary dsData_DoubleEG_w2b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight2fakebComb");
+    //Plotter::DatasetSummary dsDY_w2b(             "DY",         fileMap["DYJetsToLL"],      "",                "weight2fakebComb");
+    //Plotter::DatasetSummary dsDYInc_w2b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "weight2fakebComb");
+    //Plotter::DatasetSummary dstt2l_w2b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "weight2fakebComb");
+    //Plotter::DatasetSummary dstW_w2b(             "single top", fileMap["tW"],              "",                "weight2fakebComb");
+    //Plotter::DatasetSummary dsttZ_w2b(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "genWeight;weight2fakebComb");
+    //Plotter::DatasetSummary dsVV_w2b(             "Dibson",     fileMap["Diboson"],         "",                "weight2fakebComb");
+    //Plotter::DatasetSummary dsRare_w2b(           "Rare",       fileMap["Rare"],            "",                "genWeight;weight2fakebComb");
+    //std::vector<Plotter::DatasetSummary> stack_MC_w2b = {dsDY_w2b, dsDYInc_w2b, dstt2l_w2b, dstW_w2b, dsttZ_w2b, dsVV_w2b, dsRare_w2b};
+    //// 3 fake b weight
+    //Plotter::DatasetSummary dsData_SingleMuon_w3b("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "weight3fakebComb");
+    //Plotter::DatasetSummary dsData_DoubleEG_w3b(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "weight3fakebComb");
+    //Plotter::DatasetSummary dsDY_w3b(             "DY",         fileMap["DYJetsToLL"],      "",                "weight3fakebComb");
+    //Plotter::DatasetSummary dsDYInc_w3b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "weight3fakebComb");
+    //Plotter::DatasetSummary dstt2l_w3b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "weight3fakebComb");
+    //Plotter::DatasetSummary dstW_w3b(             "single top", fileMap["tW"],              "",                "weight3fakebComb");
+    //Plotter::DatasetSummary dsttZ_w3b(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "genWeight;weight3fakebComb");
+    //Plotter::DatasetSummary dsVV_w3b(             "Diboson",    fileMap["Diboson"],         "",                "weight3fakebComb");
+    //Plotter::DatasetSummary dsRare_w3b(           "Rare",       fileMap["Rare"],            "",                "genWeight;weight3fakebComb");
+    //std::vector<Plotter::DatasetSummary> stack_MC_w3b = {dsDY_w3b, dsDYInc_w3b, dstt2l_w3b, dstW_w3b, dsttZ_w3b, dsVV_w3b, dsRare_w3b};
 
     // Apply data/mc njet weight for DY and ttbar
     Plotter::DatasetSummary dswDY(             "DY",         fileMap["DYJetsToLL"],      "",            "nJetWgtDYZ");
@@ -878,56 +878,56 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dswVV(             "Diboson",    fileMap["Diboson"],         "",            "");
     Plotter::DatasetSummary dswRare(           "Rare",       fileMap["Rare"],            "",            "genWeight");
     std::vector<Plotter::DatasetSummary> stackw_MC = {dswDY, dswDYInc, dswtt2l, dswtW, dswttZ, dswVV, dswRare};
-    // 1 fake b weight
-    Plotter::DatasetSummary dswDY_w1b(             "DY",         fileMap["DYJetsToLL"],      "",          "nJetWgtDYZ;weight1fakebComb");
-    Plotter::DatasetSummary dswDYInc_w1b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "nJetWgtDYZ;weight1fakebComb");
-    Plotter::DatasetSummary dswtt2l_w1b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",          "nJetWgtTTbar;weight1fakebComb");
-    Plotter::DatasetSummary dswtW_w1b(             "single top", fileMap["tW"],              "",          "weight1fakebComb");
-    Plotter::DatasetSummary dswttZ_w1b(            "t#bar{t}Z",  fileMap["TTZ"],             "",          "genWeight;weight1fakebComb");
-    Plotter::DatasetSummary dswVV_w1b(             "Diboson",    fileMap["Diboson"],         "",          "weight1fakebComb");
-    Plotter::DatasetSummary dswRare_w1b(           "Rare",       fileMap["Rare"],            "",          "genWeight;weight1fakebComb");
-    std::vector<Plotter::DatasetSummary> stackw_MC_w1b = {dswDY_w1b, dswDYInc_w1b, dswtt2l_w1b, dswtW_w1b, dswttZ_w1b, dswVV_w1b, dswRare_w1b};
-    // 2 fake b weight
-    Plotter::DatasetSummary dswDY_w2b(             "DY",         fileMap["DYJetsToLL"],      "",          "nJetWgtDYZ;weight2fakebComb");
-    Plotter::DatasetSummary dswDYInc_w2b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "nJetWgtDYZ;weight2fakebComb");
-    Plotter::DatasetSummary dswtt2l_w2b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",          "nJetWgtTTbar;weight2fakebComb");
-    Plotter::DatasetSummary dswtW_w2b(             "single top", fileMap["tW"],              "",          "weight2fakebComb");
-    Plotter::DatasetSummary dswttZ_w2b(            "t#bar{t}Z",  fileMap["TTZ"],             "",          "genWeight;weight2fakebComb");
-    Plotter::DatasetSummary dswVV_w2b(             "Dibson",     fileMap["Diboson"],         "",          "weight2fakebComb");
-    Plotter::DatasetSummary dswRare_w2b(           "Rare",       fileMap["Rare"],            "",          "genWeight;weight2fakebComb");
-    std::vector<Plotter::DatasetSummary> stackw_MC_w2b = {dswDY_w2b, dswDYInc_w2b, dswtt2l_w2b, dswtW_w2b, dswttZ_w2b, dswVV_w2b, dswRare_w2b};
-    // 3 fake b weight
-    Plotter::DatasetSummary dswDY_w3b(             "DY",         fileMap["DYJetsToLL"],      "",          "nJetWgtDYZ;weight3fakebComb");
-    Plotter::DatasetSummary dswDYInc_w3b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "nJetWgtDYZ;weight3fakebComb");
-    Plotter::DatasetSummary dswtt2l_w3b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",          "nJetWgtTTbar;weight3fakebComb");
-    Plotter::DatasetSummary dswtW_w3b(             "single top", fileMap["tW"],              "",          "weight3fakebComb");
-    Plotter::DatasetSummary dswttZ_w3b(            "t#bar{t}Z",  fileMap["TTZ"],             "",          "genWeight;weight3fakebComb");
-    Plotter::DatasetSummary dswVV_w3b(             "Diboson",    fileMap["Diboson"],         "",          "weight3fakebComb");
-    Plotter::DatasetSummary dswRare_w3b(           "Rare",       fileMap["Rare"],            "",          "genWeight;weight3fakebComb");
-    std::vector<Plotter::DatasetSummary> stackw_MC_w3b = {dswDY_w3b, dswDYInc_w3b, dswtt2l_w3b, dswtW_w3b, dswttZ_w3b, dswVV_w3b, dswRare_w3b};
+    //// 1 fake b weight
+    //Plotter::DatasetSummary dswDY_w1b(             "DY",         fileMap["DYJetsToLL"],      "",          "nJetWgtDYZ;weight1fakebComb");
+    //Plotter::DatasetSummary dswDYInc_w1b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "nJetWgtDYZ;weight1fakebComb");
+    //Plotter::DatasetSummary dswtt2l_w1b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",          "nJetWgtTTbar;weight1fakebComb");
+    //Plotter::DatasetSummary dswtW_w1b(             "single top", fileMap["tW"],              "",          "weight1fakebComb");
+    //Plotter::DatasetSummary dswttZ_w1b(            "t#bar{t}Z",  fileMap["TTZ"],             "",          "genWeight;weight1fakebComb");
+    //Plotter::DatasetSummary dswVV_w1b(             "Diboson",    fileMap["Diboson"],         "",          "weight1fakebComb");
+    //Plotter::DatasetSummary dswRare_w1b(           "Rare",       fileMap["Rare"],            "",          "genWeight;weight1fakebComb");
+    //std::vector<Plotter::DatasetSummary> stackw_MC_w1b = {dswDY_w1b, dswDYInc_w1b, dswtt2l_w1b, dswtW_w1b, dswttZ_w1b, dswVV_w1b, dswRare_w1b};
+    //// 2 fake b weight
+    //Plotter::DatasetSummary dswDY_w2b(             "DY",         fileMap["DYJetsToLL"],      "",          "nJetWgtDYZ;weight2fakebComb");
+    //Plotter::DatasetSummary dswDYInc_w2b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "nJetWgtDYZ;weight2fakebComb");
+    //Plotter::DatasetSummary dswtt2l_w2b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",          "nJetWgtTTbar;weight2fakebComb");
+    //Plotter::DatasetSummary dswtW_w2b(             "single top", fileMap["tW"],              "",          "weight2fakebComb");
+    //Plotter::DatasetSummary dswttZ_w2b(            "t#bar{t}Z",  fileMap["TTZ"],             "",          "genWeight;weight2fakebComb");
+    //Plotter::DatasetSummary dswVV_w2b(             "Dibson",     fileMap["Diboson"],         "",          "weight2fakebComb");
+    //Plotter::DatasetSummary dswRare_w2b(           "Rare",       fileMap["Rare"],            "",          "genWeight;weight2fakebComb");
+    //std::vector<Plotter::DatasetSummary> stackw_MC_w2b = {dswDY_w2b, dswDYInc_w2b, dswtt2l_w2b, dswtW_w2b, dswttZ_w2b, dswVV_w2b, dswRare_w2b};
+    //// 3 fake b weight
+    //Plotter::DatasetSummary dswDY_w3b(             "DY",         fileMap["DYJetsToLL"],      "",          "nJetWgtDYZ;weight3fakebComb");
+    //Plotter::DatasetSummary dswDYInc_w3b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "nJetWgtDYZ;weight3fakebComb");
+    //Plotter::DatasetSummary dswtt2l_w3b(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",          "nJetWgtTTbar;weight3fakebComb");
+    //Plotter::DatasetSummary dswtW_w3b(             "single top", fileMap["tW"],              "",          "weight3fakebComb");
+    //Plotter::DatasetSummary dswttZ_w3b(            "t#bar{t}Z",  fileMap["TTZ"],             "",          "genWeight;weight3fakebComb");
+    //Plotter::DatasetSummary dswVV_w3b(             "Diboson",    fileMap["Diboson"],         "",          "weight3fakebComb");
+    //Plotter::DatasetSummary dswRare_w3b(           "Rare",       fileMap["Rare"],            "",          "genWeight;weight3fakebComb");
+    //std::vector<Plotter::DatasetSummary> stackw_MC_w3b = {dswDY_w3b, dswDYInc_w3b, dswtt2l_w3b, dswtW_w3b, dswttZ_w3b, dswVV_w3b, dswRare_w3b};
 
     // Extra MC stack that have njet weight applied for ttbar but not for DY (to make plots for AN)
     std::vector<Plotter::DatasetSummary> stackwtt_MC = {dsDY, dsDYInc, dswtt2l, dstW, dsttZ, dsVV, dsRare};
-    std::vector<Plotter::DatasetSummary> stackwtt_MC_w1b = {dsDY_w1b, dsDYInc_w1b, dswtt2l_w1b, dstW_w1b, dsttZ_w1b, dsVV_w1b, dsRare_w1b};
-    std::vector<Plotter::DatasetSummary> stackwtt_MC_w2b = {dsDY_w2b, dsDYInc_w2b, dswtt2l_w2b, dstW_w2b, dsttZ_w2b, dsVV_w2b, dsRare_w2b};
-    std::vector<Plotter::DatasetSummary> stackwtt_MC_w3b = {dsDY_w3b, dsDYInc_w3b, dswtt2l_w3b, dstW_w3b, dsttZ_w3b, dsVV_w3b, dsRare_w3b};
+    //std::vector<Plotter::DatasetSummary> stackwtt_MC_w1b = {dsDY_w1b, dsDYInc_w1b, dswtt2l_w1b, dstW_w1b, dsttZ_w1b, dsVV_w1b, dsRare_w1b};
+    //std::vector<Plotter::DatasetSummary> stackwtt_MC_w2b = {dsDY_w2b, dsDYInc_w2b, dswtt2l_w2b, dstW_w2b, dsttZ_w2b, dsVV_w2b, dsRare_w2b};
+    //std::vector<Plotter::DatasetSummary> stackwtt_MC_w3b = {dsDY_w3b, dsDYInc_w3b, dswtt2l_w3b, dstW_w3b, dsttZ_w3b, dsVV_w3b, dsRare_w3b};
 
     // Apply data/mc njet weight for DY and ttbar & apply the normalization weight
     Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "nJetWgtDYZ;normWgt0b");
     Plotter::DatasetSummary dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "nJetWgtDYZ;normWgt0b");
     std::vector<Plotter::DatasetSummary> stackww_MC = {dswwDY, dswwDYInc, dswtt2l, dswtW, dswttZ, dswVV, dswRare};
-    // 1 fake b weight
-    Plotter::DatasetSummary dswwDY_w1b(             "DY",         fileMap["DYJetsToLL"],      "",          "nJetWgtDYZ;normWgt0b;weight1fakebComb");
-    Plotter::DatasetSummary dswwDYInc_w1b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "nJetWgtDYZ;normWgt0b;weight1fakebComb");
-    std::vector<Plotter::DatasetSummary> stackww_MC_w1b = {dswwDY_w1b, dswwDYInc_w1b, dswtt2l_w1b, dswtW_w1b, dswttZ_w1b, dswVV_w1b, dswRare_w1b};
-    // 2 fake b weight
-    Plotter::DatasetSummary dswwDY_w2b(             "DY",         fileMap["DYJetsToLL"],      "",          "nJetWgtDYZ;normWgt0b;weight2fakebComb");
-    Plotter::DatasetSummary dswwDYInc_w2b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "nJetWgtDYZ;normWgt0b;weight2fakebComb");
-    std::vector<Plotter::DatasetSummary> stackww_MC_w2b = {dswwDY_w2b, dswwDYInc_w2b, dswtt2l_w2b, dswtW_w2b, dswttZ_w2b, dswVV_w2b, dswRare_w2b};
-    // 3 fake b weight
-    Plotter::DatasetSummary dswwDY_w3b(             "DY",         fileMap["DYJetsToLL"],      "",          "nJetWgtDYZ;normWgt0b;weight3fakebComb");
-    Plotter::DatasetSummary dswwDYInc_w3b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "nJetWgtDYZ;normWgt0b;weight3fakebComb");
-    std::vector<Plotter::DatasetSummary> stackww_MC_w3b = {dswwDY_w3b, dswwDYInc_w3b, dswtt2l_w3b, dswtW_w3b, dswttZ_w3b, dswVV_w3b, dswRare_w3b};
+    //// 1 fake b weight
+    //Plotter::DatasetSummary dswwDY_w1b(             "DY",         fileMap["DYJetsToLL"],      "",          "nJetWgtDYZ;normWgt0b;weight1fakebComb");
+    //Plotter::DatasetSummary dswwDYInc_w1b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "nJetWgtDYZ;normWgt0b;weight1fakebComb");
+    //std::vector<Plotter::DatasetSummary> stackww_MC_w1b = {dswwDY_w1b, dswwDYInc_w1b, dswtt2l_w1b, dswtW_w1b, dswttZ_w1b, dswVV_w1b, dswRare_w1b};
+    //// 2 fake b weight
+    //Plotter::DatasetSummary dswwDY_w2b(             "DY",         fileMap["DYJetsToLL"],      "",          "nJetWgtDYZ;normWgt0b;weight2fakebComb");
+    //Plotter::DatasetSummary dswwDYInc_w2b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "nJetWgtDYZ;normWgt0b;weight2fakebComb");
+    //std::vector<Plotter::DatasetSummary> stackww_MC_w2b = {dswwDY_w2b, dswwDYInc_w2b, dswtt2l_w2b, dswtW_w2b, dswttZ_w2b, dswVV_w2b, dswRare_w2b};
+    //// 3 fake b weight
+    //Plotter::DatasetSummary dswwDY_w3b(             "DY",         fileMap["DYJetsToLL"],      "",          "nJetWgtDYZ;normWgt0b;weight3fakebComb");
+    //Plotter::DatasetSummary dswwDYInc_w3b(          "DY HT<100",  fileMap["IncDY"],           "genHT<100", "nJetWgtDYZ;normWgt0b;weight3fakebComb");
+    //std::vector<Plotter::DatasetSummary> stackww_MC_w3b = {dswwDY_w3b, dswwDYInc_w3b, dswtt2l_w3b, dswtW_w3b, dswttZ_w3b, dswVV_w3b, dswRare_w3b};
 
 
     // Collections for all variables, no cuts applied yet
@@ -945,27 +945,27 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwMC_nt(            "stack",  "nTopCandSortedCntZinv", stackw_MC);
     Plotter::DataCollection dcwttMC_nt(          "stack",  "nTopCandSortedCntZinv", stackwtt_MC);
     Plotter::DataCollection dcwwMC_nt(           "stack",  "nTopCandSortedCntZinv", stackww_MC);
-    // ntops 1b fake
-    Plotter::DataCollection dcData_SingleMuon_nt1b("data",   "nTopCandSortedCntZinv1b", {dsData_SingleMuon_w1b});
-    Plotter::DataCollection dcData_DoubleEG_nt1b(  "data",   "nTopCandSortedCntZinv1b", {dsData_DoubleEG_w1b});
-    Plotter::DataCollection dcMC_nt1b(             "stack",  "nTopCandSortedCntZinv1b", stack_MC_w1b);
-    Plotter::DataCollection dcwMC_nt1b(            "stack",  "nTopCandSortedCntZinv1b", stackw_MC_w1b);
-    Plotter::DataCollection dcwttMC_nt1b(          "stack",  "nTopCandSortedCntZinv1b", stackwtt_MC_w1b);
-    Plotter::DataCollection dcwwMC_nt1b(           "stack",  "nTopCandSortedCntZinv1b", stackww_MC_w1b);
-    // ntops 2b fake
-    Plotter::DataCollection dcData_SingleMuon_nt2b("data",   "nTopCandSortedCntZinv2b", {dsData_SingleMuon_w2b});
-    Plotter::DataCollection dcData_DoubleEG_nt2b(  "data",   "nTopCandSortedCntZinv2b", {dsData_DoubleEG_w2b});
-    Plotter::DataCollection dcMC_nt2b(             "stack",  "nTopCandSortedCntZinv2b", stack_MC_w2b);
-    Plotter::DataCollection dcwMC_nt2b(            "stack",  "nTopCandSortedCntZinv2b", stackw_MC_w2b);
-    Plotter::DataCollection dcwttMC_nt2b(          "stack",  "nTopCandSortedCntZinv2b", stackwtt_MC_w2b);
-    Plotter::DataCollection dcwwMC_nt2b(           "stack",  "nTopCandSortedCntZinv2b", stackww_MC_w2b);
-    // ntops 3b fake
-    Plotter::DataCollection dcData_SingleMuon_nt3b("data",   "nTopCandSortedCntZinv3b", {dsData_SingleMuon_w3b});
-    Plotter::DataCollection dcData_DoubleEG_nt3b(  "data",   "nTopCandSortedCntZinv3b", {dsData_DoubleEG_w3b});
-    Plotter::DataCollection dcMC_nt3b(             "stack",  "nTopCandSortedCntZinv3b", stack_MC_w3b);
-    Plotter::DataCollection dcwMC_nt3b(            "stack",  "nTopCandSortedCntZinv3b", stackw_MC_w3b);
-    Plotter::DataCollection dcwttMC_nt3b(          "stack",  "nTopCandSortedCntZinv3b", stackwtt_MC_w3b);
-    Plotter::DataCollection dcwwMC_nt3b(           "stack",  "nTopCandSortedCntZinv3b", stackww_MC_w3b);
+    //// ntops 1b fake
+    //Plotter::DataCollection dcData_SingleMuon_nt1b("data",   "nTopCandSortedCntZinv1b", {dsData_SingleMuon_w1b});
+    //Plotter::DataCollection dcData_DoubleEG_nt1b(  "data",   "nTopCandSortedCntZinv1b", {dsData_DoubleEG_w1b});
+    //Plotter::DataCollection dcMC_nt1b(             "stack",  "nTopCandSortedCntZinv1b", stack_MC_w1b);
+    //Plotter::DataCollection dcwMC_nt1b(            "stack",  "nTopCandSortedCntZinv1b", stackw_MC_w1b);
+    //Plotter::DataCollection dcwttMC_nt1b(          "stack",  "nTopCandSortedCntZinv1b", stackwtt_MC_w1b);
+    //Plotter::DataCollection dcwwMC_nt1b(           "stack",  "nTopCandSortedCntZinv1b", stackww_MC_w1b);
+    //// ntops 2b fake
+    //Plotter::DataCollection dcData_SingleMuon_nt2b("data",   "nTopCandSortedCntZinv2b", {dsData_SingleMuon_w2b});
+    //Plotter::DataCollection dcData_DoubleEG_nt2b(  "data",   "nTopCandSortedCntZinv2b", {dsData_DoubleEG_w2b});
+    //Plotter::DataCollection dcMC_nt2b(             "stack",  "nTopCandSortedCntZinv2b", stack_MC_w2b);
+    //Plotter::DataCollection dcwMC_nt2b(            "stack",  "nTopCandSortedCntZinv2b", stackw_MC_w2b);
+    //Plotter::DataCollection dcwttMC_nt2b(          "stack",  "nTopCandSortedCntZinv2b", stackwtt_MC_w2b);
+    //Plotter::DataCollection dcwwMC_nt2b(           "stack",  "nTopCandSortedCntZinv2b", stackww_MC_w2b);
+    //// ntops 3b fake
+    //Plotter::DataCollection dcData_SingleMuon_nt3b("data",   "nTopCandSortedCntZinv3b", {dsData_SingleMuon_w3b});
+    //Plotter::DataCollection dcData_DoubleEG_nt3b(  "data",   "nTopCandSortedCntZinv3b", {dsData_DoubleEG_w3b});
+    //Plotter::DataCollection dcMC_nt3b(             "stack",  "nTopCandSortedCntZinv3b", stack_MC_w3b);
+    //Plotter::DataCollection dcwMC_nt3b(            "stack",  "nTopCandSortedCntZinv3b", stackw_MC_w3b);
+    //Plotter::DataCollection dcwttMC_nt3b(          "stack",  "nTopCandSortedCntZinv3b", stackwtt_MC_w3b);
+    //Plotter::DataCollection dcwwMC_nt3b(           "stack",  "nTopCandSortedCntZinv3b", stackww_MC_w3b);
     // MT2
     Plotter::DataCollection dcData_SingleMuon_mt2("data",   "best_had_brJet_MT2Zinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_mt2(  "data",   "best_had_brJet_MT2Zinv", {dsData_DoubleEG});
@@ -973,27 +973,27 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwMC_mt2(            "stack",  "best_had_brJet_MT2Zinv", stackw_MC);
     Plotter::DataCollection dcwttMC_mt2(          "stack",  "best_had_brJet_MT2Zinv", stackwtt_MC);
     Plotter::DataCollection dcwwMC_mt2(           "stack",  "best_had_brJet_MT2Zinv", stackww_MC);
-    // MT2 1b fake
-    Plotter::DataCollection dcData_SingleMuon_mt21b("data",   "best_had_brJet_MT2Zinv1b", {dsData_SingleMuon_w1b});
-    Plotter::DataCollection dcData_DoubleEG_mt21b(  "data",   "best_had_brJet_MT2Zinv1b", {dsData_DoubleEG_w1b});
-    Plotter::DataCollection dcMC_mt21b(             "stack",  "best_had_brJet_MT2Zinv1b", stack_MC_w1b);
-    Plotter::DataCollection dcwMC_mt21b(            "stack",  "best_had_brJet_MT2Zinv1b", stackw_MC_w1b);
-    Plotter::DataCollection dcwttMC_mt21b(          "stack",  "best_had_brJet_MT2Zinv1b", stackwtt_MC_w1b);
-    Plotter::DataCollection dcwwMC_mt21b(           "stack",  "best_had_brJet_MT2Zinv1b", stackww_MC_w1b);
-    // MT2 2b fake
-    Plotter::DataCollection dcData_SingleMuon_mt22b("data",   "best_had_brJet_MT2Zinv2b", {dsData_SingleMuon_w2b});
-    Plotter::DataCollection dcData_DoubleEG_mt22b(  "data",   "best_had_brJet_MT2Zinv2b", {dsData_DoubleEG_w2b});
-    Plotter::DataCollection dcMC_mt22b(             "stack",  "best_had_brJet_MT2Zinv2b", stack_MC_w2b);
-    Plotter::DataCollection dcwMC_mt22b(            "stack",  "best_had_brJet_MT2Zinv2b", stackw_MC_w2b);
-    Plotter::DataCollection dcwttMC_mt22b(          "stack",  "best_had_brJet_MT2Zinv2b", stackwtt_MC_w2b);
-    Plotter::DataCollection dcwwMC_mt22b(           "stack",  "best_had_brJet_MT2Zinv2b", stackww_MC_w2b);
-    // MT2 3b fake
-    Plotter::DataCollection dcData_SingleMuon_mt23b("data",   "best_had_brJet_MT2Zinv3b", {dsData_SingleMuon_w3b});
-    Plotter::DataCollection dcData_DoubleEG_mt23b(  "data",   "best_had_brJet_MT2Zinv3b", {dsData_DoubleEG_w3b});
-    Plotter::DataCollection dcMC_mt23b(             "stack",  "best_had_brJet_MT2Zinv3b", stack_MC_w3b);
-    Plotter::DataCollection dcwMC_mt23b(            "stack",  "best_had_brJet_MT2Zinv3b", stackw_MC_w3b);
-    Plotter::DataCollection dcwttMC_mt23b(          "stack",  "best_had_brJet_MT2Zinv3b", stackwtt_MC_w3b);
-    Plotter::DataCollection dcwwMC_mt23b(           "stack",  "best_had_brJet_MT2Zinv3b", stackww_MC_w3b);
+    //// MT2 1b fake
+    //Plotter::DataCollection dcData_SingleMuon_mt21b("data",   "best_had_brJet_MT2Zinv1b", {dsData_SingleMuon_w1b});
+    //Plotter::DataCollection dcData_DoubleEG_mt21b(  "data",   "best_had_brJet_MT2Zinv1b", {dsData_DoubleEG_w1b});
+    //Plotter::DataCollection dcMC_mt21b(             "stack",  "best_had_brJet_MT2Zinv1b", stack_MC_w1b);
+    //Plotter::DataCollection dcwMC_mt21b(            "stack",  "best_had_brJet_MT2Zinv1b", stackw_MC_w1b);
+    //Plotter::DataCollection dcwttMC_mt21b(          "stack",  "best_had_brJet_MT2Zinv1b", stackwtt_MC_w1b);
+    //Plotter::DataCollection dcwwMC_mt21b(           "stack",  "best_had_brJet_MT2Zinv1b", stackww_MC_w1b);
+    //// MT2 2b fake
+    //Plotter::DataCollection dcData_SingleMuon_mt22b("data",   "best_had_brJet_MT2Zinv2b", {dsData_SingleMuon_w2b});
+    //Plotter::DataCollection dcData_DoubleEG_mt22b(  "data",   "best_had_brJet_MT2Zinv2b", {dsData_DoubleEG_w2b});
+    //Plotter::DataCollection dcMC_mt22b(             "stack",  "best_had_brJet_MT2Zinv2b", stack_MC_w2b);
+    //Plotter::DataCollection dcwMC_mt22b(            "stack",  "best_had_brJet_MT2Zinv2b", stackw_MC_w2b);
+    //Plotter::DataCollection dcwttMC_mt22b(          "stack",  "best_had_brJet_MT2Zinv2b", stackwtt_MC_w2b);
+    //Plotter::DataCollection dcwwMC_mt22b(           "stack",  "best_had_brJet_MT2Zinv2b", stackww_MC_w2b);
+    //// MT2 3b fake
+    //Plotter::DataCollection dcData_SingleMuon_mt23b("data",   "best_had_brJet_MT2Zinv3b", {dsData_SingleMuon_w3b});
+    //Plotter::DataCollection dcData_DoubleEG_mt23b(  "data",   "best_had_brJet_MT2Zinv3b", {dsData_DoubleEG_w3b});
+    //Plotter::DataCollection dcMC_mt23b(             "stack",  "best_had_brJet_MT2Zinv3b", stack_MC_w3b);
+    //Plotter::DataCollection dcwMC_mt23b(            "stack",  "best_had_brJet_MT2Zinv3b", stackw_MC_w3b);
+    //Plotter::DataCollection dcwttMC_mt23b(          "stack",  "best_had_brJet_MT2Zinv3b", stackwtt_MC_w3b);
+    //Plotter::DataCollection dcwwMC_mt23b(           "stack",  "best_had_brJet_MT2Zinv3b", stackww_MC_w3b);
     // nb
     Plotter::DataCollection dcData_SingleMuon_nb("data",   "cntCSVSZinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_nb(  "data",   "cntCSVSZinv", {dsData_DoubleEG});
@@ -1255,20 +1255,20 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_nunu_SB2b(       "Z#rightarrow#nu#nu, Direct MC, N(b) = 2",  fileMap["ZJetsToNuNu"], "cntCSVSZinv=2", "");
     Plotter::DatasetSummary dsDY_nunu_SB3b(       "Z#rightarrow#nu#nu, Direct MC, N(b) >= 3", fileMap["ZJetsToNuNu"], "cntCSVSZinv>2", "");
 
-    Plotter::DatasetSummary dsDY_nunu_njet(       "Z#rightarrow#nu#nu DataMC weight",        fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm(   "Z#rightarrow#nu#nu Njet+norm weight",        fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_bl("Z#rightarrow#nu#nu Njet+norm weight",        fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinv", "nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_scaleUp(   "Z#rightarrow#nu#nu Scale weight Up", fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;Scaled_Variations_Up");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_scaleDown( "Z#rightarrow#nu#nu Scale weight Down", fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;Scaled_Variations_Down");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_PDFUp(   "Z#rightarrow#nu#nu PDF weight Up",   fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;NNPDF_From_Median_Up");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_PDFDown( "Z#rightarrow#nu#nu PDF weight Down", fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;NNPDF_From_Median_Down");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUUp(   "Z#rightarrow#nu#nu JEC Up",          fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvJEUUp", "nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUDown( "Z#rightarrow#nu#nu JEC Down",        fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvJEUDn", "nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUUp(   "Z#rightarrow#nu#nu MEC Up",          fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvMEUUp", "nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUDown( "Z#rightarrow#nu#nu MEC Down",        fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvMEUDn", "nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerCentral( "Z#rightarrow#nu#nu Trigger weight Central",   fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;TriggerEffMC");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerUp(   "Z#rightarrow#nu#nu Trigger weight Up",   fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;TriggerEffUpMC");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerDown( "Z#rightarrow#nu#nu Trigger weight Down", fileMap["ZJetsToNuNu"], "passLeptVeto", "nJetWgtDYZ;normWgt0b;TriggerEffDownMC");
+    Plotter::DatasetSummary dsDY_nunu_njet(                    "Z#rightarrow#nu#nu DataMC weight",          fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm(                "Z#rightarrow#nu#nu Njet+norm weight",       fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_bl(             "Z#rightarrow#nu#nu Njet+norm weight",       fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinv",      "nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_scaleUp(        "Z#rightarrow#nu#nu Scale weight Up",        fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;Scaled_Variations_Up");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_scaleDown(      "Z#rightarrow#nu#nu Scale weight Down",      fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;Scaled_Variations_Down");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_PDFUp(          "Z#rightarrow#nu#nu PDF weight Up",          fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;NNPDF_From_Median_Up");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_PDFDown(        "Z#rightarrow#nu#nu PDF weight Down",        fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;NNPDF_From_Median_Down");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUUp(          "Z#rightarrow#nu#nu JEC Up",                 fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvJEUUp", "nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUDown(        "Z#rightarrow#nu#nu JEC Down",               fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvJEUDn", "nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUUp(          "Z#rightarrow#nu#nu MEC Up",                 fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvMEUUp", "nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUDown(        "Z#rightarrow#nu#nu MEC Down",               fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvMEUDn", "nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerCentral( "Z#rightarrow#nu#nu Trigger weight Central", fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;TriggerEffMC");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerUp(      "Z#rightarrow#nu#nu Trigger weight Up",      fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;TriggerEffUpMC");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerDown(    "Z#rightarrow#nu#nu Trigger weight Down",    fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;TriggerEffDownMC");
 
     Plotter::DatasetSummary dsTT_inc(           "t#bar{t} Inc",   fileMap["TTbar"], "", "");
 
@@ -1361,13 +1361,13 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMC_SingleMuon_ht_"         +cut.first,  {dcData_SingleMuon_ht,    dcMC_ht},              {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,             ""));
 	vh.push_back(PHS("DataMC_SingleMuon_mht_"        +cut.first,  {dcData_SingleMuon_mht,   dcMC_mht},             {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mht,            ""));
 	vh.push_back(PHS("DataMC_SingleMuon_nt_"         +cut.first,  {dcData_SingleMuon_nt,    dcMC_nt},              {1, 2}, cut.second, 5,  0, 5,    true, false,  label_nt,           ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nt1b_"       +cut.first,  {dcData_SingleMuon_nt1b,  dcMC_nt1b},            {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (1b fake)", ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nt2b_"       +cut.first,  {dcData_SingleMuon_nt2b,  dcMC_nt2b},            {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (2b fake)", ""));
-	vh.push_back(PHS("DataMC_SingleMuon_nt3b_"       +cut.first,  {dcData_SingleMuon_nt3b,  dcMC_nt3b},            {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (3b fake)", ""));
+	//vh.push_back(PHS("DataMC_SingleMuon_nt1b_"       +cut.first,  {dcData_SingleMuon_nt1b,  dcMC_nt1b},            {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (1b fake)", ""));
+	//vh.push_back(PHS("DataMC_SingleMuon_nt2b_"       +cut.first,  {dcData_SingleMuon_nt2b,  dcMC_nt2b},            {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (2b fake)", ""));
+	//vh.push_back(PHS("DataMC_SingleMuon_nt3b_"       +cut.first,  {dcData_SingleMuon_nt3b,  dcMC_nt3b},            {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (3b fake)", ""));
 	vh.push_back(PHS("DataMC_SingleMuon_mt2_"        +cut.first,  {dcData_SingleMuon_mt2,   dcMC_mt2},             {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mt2,            ""));
-	vh.push_back(PHS("DataMC_SingleMuon_mt21b_"      +cut.first,  {dcData_SingleMuon_mt21b, dcMC_mt21b},           {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (1b fake)",  ""));
-	vh.push_back(PHS("DataMC_SingleMuon_mt22b_"      +cut.first,  {dcData_SingleMuon_mt22b, dcMC_mt22b},           {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (2b fake)",  ""));
-	vh.push_back(PHS("DataMC_SingleMuon_mt23b_"      +cut.first,  {dcData_SingleMuon_mt23b, dcMC_mt23b},           {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (3b fake)",  ""));
+	//vh.push_back(PHS("DataMC_SingleMuon_mt21b_"      +cut.first,  {dcData_SingleMuon_mt21b, dcMC_mt21b},           {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (1b fake)",  ""));
+	//vh.push_back(PHS("DataMC_SingleMuon_mt22b_"      +cut.first,  {dcData_SingleMuon_mt22b, dcMC_mt22b},           {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (2b fake)",  ""));
+	//vh.push_back(PHS("DataMC_SingleMuon_mt23b_"      +cut.first,  {dcData_SingleMuon_mt23b, dcMC_mt23b},           {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (3b fake)",  ""));
 	vh.push_back(PHS("DataMC_SingleMuon_nb_"         +cut.first,  {dcData_SingleMuon_nb,    dcMC_nb},              {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,             ""));
 	vh.push_back(PHS("DataMC_SingleMuon_nj_"         +cut.first,  {dcData_SingleMuon_nj,    dcMC_nj},              {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,             ""));
 	vh.push_back(PHS("DataMC_SingleMuon_jpt_"        +cut.first,  {dcData_SingleMuon_jpt,   dcMC_jpt},             {1, 2}, cut.second, 50, 0, 1500, true, false,  label_jpt,         ""));
@@ -1395,17 +1395,17 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMCw_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwMC_ht},    {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,             ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_mht_"   +cut.first,  {dcData_SingleMuon_mht,   dcwMC_mht},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mht,            ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_nt_"    +cut.first,  {dcData_SingleMuon_nt,    dcwMC_nt},    {1, 2}, cut.second, 5,  0, 5,    true, false,  label_nt,           ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_nt1b_"  +cut.first,  {dcData_SingleMuon_nt1b,  dcwMC_nt1b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (1b fake)", ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_nt2b_"  +cut.first,  {dcData_SingleMuon_nt2b,  dcwMC_nt2b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (2b fake)", ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_nt3b_"  +cut.first,  {dcData_SingleMuon_nt3b,  dcwMC_nt3b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (3b fake)", ""));
+	//vh.push_back(PHS("DataMCw_SingleMuon_nt1b_"  +cut.first,  {dcData_SingleMuon_nt1b,  dcwMC_nt1b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (1b fake)", ""));
+	//vh.push_back(PHS("DataMCw_SingleMuon_nt2b_"  +cut.first,  {dcData_SingleMuon_nt2b,  dcwMC_nt2b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (2b fake)", ""));
+	//vh.push_back(PHS("DataMCw_SingleMuon_nt3b_"  +cut.first,  {dcData_SingleMuon_nt3b,  dcwMC_nt3b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (3b fake)", ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_mt2_"   +cut.first,  {dcData_SingleMuon_mt2,   dcwMC_mt2},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mt2,            ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_mt21b_" +cut.first,  {dcData_SingleMuon_mt21b, dcwMC_mt21b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (1b fake)",  ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_mt22b_" +cut.first,  {dcData_SingleMuon_mt22b, dcwMC_mt22b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (2b fake)",  ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcwMC_mt23b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (3b fake)",  ""));
+	//vh.push_back(PHS("DataMCw_SingleMuon_mt21b_" +cut.first,  {dcData_SingleMuon_mt21b, dcwMC_mt21b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (1b fake)",  ""));
+	//vh.push_back(PHS("DataMCw_SingleMuon_mt22b_" +cut.first,  {dcData_SingleMuon_mt22b, dcwMC_mt22b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (2b fake)",  ""));
+	//vh.push_back(PHS("DataMCw_SingleMuon_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcwMC_mt23b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (3b fake)",  ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt2_"   +cut.first,  {dcData_SingleMuon_mt2,   dcwMC_mt2},   {1, 2}, cut.second, mt2Bins, true, false,  label_mt2,            ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt21b_" +cut.first,  {dcData_SingleMuon_mt21b, dcwMC_mt21b}, {1, 2}, cut.second, mt2Bins, true, false,  "mt2 (1b fake)",  ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt22b_" +cut.first,  {dcData_SingleMuon_mt22b, dcwMC_mt22b}, {1, 2}, cut.second, mt2Bins, true, false,  "mt2 (2b fake)",  ""));
-	vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcwMC_mt23b}, {1, 2}, cut.second, mt2Bins, true, false,  "mt2 (3b fake)",  ""));
+	//vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt21b_" +cut.first,  {dcData_SingleMuon_mt21b, dcwMC_mt21b}, {1, 2}, cut.second, mt2Bins, true, false,  "mt2 (1b fake)",  ""));
+	//vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt22b_" +cut.first,  {dcData_SingleMuon_mt22b, dcwMC_mt22b}, {1, 2}, cut.second, mt2Bins, true, false,  "mt2 (2b fake)",  ""));
+	//vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcwMC_mt23b}, {1, 2}, cut.second, mt2Bins, true, false,  "mt2 (3b fake)",  ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_nb_"    +cut.first,  {dcData_SingleMuon_nb,    dcwMC_nb},    {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,             ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_nj_"    +cut.first,  {dcData_SingleMuon_nj,    dcwMC_nj},    {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,             ""));
 	vh.push_back(PHS("DataMCw_SingleMuon_jpt_"   +cut.first,  {dcData_SingleMuon_jpt,   dcwMC_jpt},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_jpt,         ""));
@@ -1432,13 +1432,13 @@ int main(int argc, char* argv[])
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwttMC_ht},    {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,             ""));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_mht_"   +cut.first,  {dcData_SingleMuon_mht,   dcwttMC_mht},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mht,            ""));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_nt_"    +cut.first,  {dcData_SingleMuon_nt,    dcwttMC_nt},    {1, 2}, cut.second, 5,  0, 5,    true, false,  label_nt,           ""));
-	    vh.push_back(PHS("DataMCwtt_SingleMuon_nt1b_"  +cut.first,  {dcData_SingleMuon_nt1b,  dcwttMC_nt1b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (1b fake)", ""));
-	    vh.push_back(PHS("DataMCwtt_SingleMuon_nt2b_"  +cut.first,  {dcData_SingleMuon_nt2b,  dcwttMC_nt2b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (2b fake)", ""));
-	    vh.push_back(PHS("DataMCwtt_SingleMuon_nt3b_"  +cut.first,  {dcData_SingleMuon_nt3b,  dcwttMC_nt3b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (3b fake)", ""));
+	    //vh.push_back(PHS("DataMCwtt_SingleMuon_nt1b_"  +cut.first,  {dcData_SingleMuon_nt1b,  dcwttMC_nt1b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (1b fake)", ""));
+	    //vh.push_back(PHS("DataMCwtt_SingleMuon_nt2b_"  +cut.first,  {dcData_SingleMuon_nt2b,  dcwttMC_nt2b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (2b fake)", ""));
+	    //vh.push_back(PHS("DataMCwtt_SingleMuon_nt3b_"  +cut.first,  {dcData_SingleMuon_nt3b,  dcwttMC_nt3b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (3b fake)", ""));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_mt2_"   +cut.first,  {dcData_SingleMuon_mt2,   dcwttMC_mt2},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mt2,            ""));
-	    vh.push_back(PHS("DataMCwtt_SingleMuon_mt21b_" +cut.first,  {dcData_SingleMuon_mt21b, dcwttMC_mt21b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (1b fake)",  ""));
-	    vh.push_back(PHS("DataMCwtt_SingleMuon_mt22b_" +cut.first,  {dcData_SingleMuon_mt22b, dcwttMC_mt22b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (2b fake)",  ""));
-	    vh.push_back(PHS("DataMCwtt_SingleMuon_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcwttMC_mt23b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (3b fake)",  ""));
+	    //vh.push_back(PHS("DataMCwtt_SingleMuon_mt21b_" +cut.first,  {dcData_SingleMuon_mt21b, dcwttMC_mt21b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (1b fake)",  ""));
+	    //vh.push_back(PHS("DataMCwtt_SingleMuon_mt22b_" +cut.first,  {dcData_SingleMuon_mt22b, dcwttMC_mt22b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (2b fake)",  ""));
+	    //vh.push_back(PHS("DataMCwtt_SingleMuon_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcwttMC_mt23b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (3b fake)",  ""));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_nb_"    +cut.first,  {dcData_SingleMuon_nb,    dcwttMC_nb},    {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,             ""));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_nj_"    +cut.first,  {dcData_SingleMuon_nj,    dcwttMC_nj},    {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,             ""));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_jpt_"   +cut.first,  {dcData_SingleMuon_jpt,   dcwttMC_jpt},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_jpt,         ""));
@@ -1467,13 +1467,13 @@ int main(int argc, char* argv[])
 	    vh.push_back(PHS("DataMCww_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwwMC_ht},    {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,             ""));
 	    vh.push_back(PHS("DataMCww_SingleMuon_mht_"   +cut.first,  {dcData_SingleMuon_mht,   dcwwMC_mht},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mht,            ""));
 	    vh.push_back(PHS("DataMCww_SingleMuon_nt_"    +cut.first,  {dcData_SingleMuon_nt,    dcwwMC_nt},    {1, 2}, cut.second, 5,  0, 5,    true, false,  label_nt,           ""));
-	    vh.push_back(PHS("DataMCww_SingleMuon_nt1b_"  +cut.first,  {dcData_SingleMuon_nt1b,  dcwwMC_nt1b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (1b fake)", ""));
-	    vh.push_back(PHS("DataMCww_SingleMuon_nt2b_"  +cut.first,  {dcData_SingleMuon_nt2b,  dcwwMC_nt2b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (2b fake)", ""));
-	    vh.push_back(PHS("DataMCww_SingleMuon_nt3b_"  +cut.first,  {dcData_SingleMuon_nt3b,  dcwwMC_nt3b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (3b fake)", ""));
+	    //vh.push_back(PHS("DataMCww_SingleMuon_nt1b_"  +cut.first,  {dcData_SingleMuon_nt1b,  dcwwMC_nt1b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (1b fake)", ""));
+	    //vh.push_back(PHS("DataMCww_SingleMuon_nt2b_"  +cut.first,  {dcData_SingleMuon_nt2b,  dcwwMC_nt2b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (2b fake)", ""));
+	    //vh.push_back(PHS("DataMCww_SingleMuon_nt3b_"  +cut.first,  {dcData_SingleMuon_nt3b,  dcwwMC_nt3b},  {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (3b fake)", ""));
 	    vh.push_back(PHS("DataMCww_SingleMuon_mt2_"   +cut.first,  {dcData_SingleMuon_mt2,   dcwwMC_mt2},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mt2,            ""));
-	    vh.push_back(PHS("DataMCww_SingleMuon_mt21b_" +cut.first,  {dcData_SingleMuon_mt21b, dcwwMC_mt21b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (1b fake)",  ""));
-	    vh.push_back(PHS("DataMCww_SingleMuon_mt22b_" +cut.first,  {dcData_SingleMuon_mt22b, dcwwMC_mt22b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (2b fake)",  ""));
-	    vh.push_back(PHS("DataMCww_SingleMuon_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcwwMC_mt23b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (3b fake)",  ""));
+	    //vh.push_back(PHS("DataMCww_SingleMuon_mt21b_" +cut.first,  {dcData_SingleMuon_mt21b, dcwwMC_mt21b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (1b fake)",  ""));
+	    //vh.push_back(PHS("DataMCww_SingleMuon_mt22b_" +cut.first,  {dcData_SingleMuon_mt22b, dcwwMC_mt22b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (2b fake)",  ""));
+	    //vh.push_back(PHS("DataMCww_SingleMuon_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcwwMC_mt23b}, {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (3b fake)",  ""));
 	    vh.push_back(PHS("DataMCww_SingleMuon_nb_"    +cut.first,  {dcData_SingleMuon_nb,    dcwwMC_nb},    {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,             ""));
 	    vh.push_back(PHS("DataMCww_SingleMuon_nj_"    +cut.first,  {dcData_SingleMuon_nj,    dcwwMC_nj},    {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,             ""));
 	    vh.push_back(PHS("DataMCww_SingleMuon_jpt_"   +cut.first,  {dcData_SingleMuon_jpt,   dcwwMC_jpt},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_jpt,         ""));
