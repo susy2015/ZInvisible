@@ -9,6 +9,7 @@
 class NTupleReader;
 class BaselineVessel;
 class PDFUncertainty;
+class BTagCorrector;
 
 namespace plotterFunctions
 {
@@ -61,6 +62,7 @@ private:
     plotterFunctions::SystematicPrep *systematicPrep;
     plotterFunctions::SystematicCalc *systematicCalc;
     PDFUncertainty *myPDFUnc;
+    BTagCorrector *bTagCorrector;
 
 public:
     RegisterFunctionsNTuple();

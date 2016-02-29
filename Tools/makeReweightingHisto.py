@@ -806,6 +806,78 @@ def extrapolationSyst(filename):
     fout.Close()
 
 
+def calcBeffs(filePath):
+
+    fileNames = ["bTagEfficiency_TTbarSingleLepT.root",
+                 "bTagEfficiency_TTbarDiLep.root",
+                 "bTagEfficiency_TTbarSingleLepTbar.root",
+                 "bTagEfficiency_DYJetsToLL_HT_100to200.root",
+                 "bTagEfficiency_DYJetsToLL_HT_200to400.root",
+                 "bTagEfficiency_DYJetsToLL_HT_400to600.root",
+                 "bTagEfficiency_DYJetsToLL_HT_600toInf.root",
+                 "bTagEfficiency_ZJetsToNuNu_HT_600toInf.root",
+                 "bTagEfficiency_ZJetsToNuNu_HT_400to600.root",
+                 "bTagEfficiency_ZJetsToNuNu_HT_200to400.root",
+                 "bTagEfficiency_ZJetsToNuNu_HT_100to200.root",
+                 "bTagEfficiency_ttHJetTobb.root",
+                 "bTagEfficiency_ttHJetToNonbb.root",
+                 "bTagEfficiency_tW_top.root",
+                 "bTagEfficiency_tW_antitop.root",
+                 "bTagEfficiency_ZZ.root",
+                 "bTagEfficiency_WZ.root",
+                 "bTagEfficiency_WW.root",
+                 "bTagEfficiency_WWZ.root",
+                 "bTagEfficiency_WZZ.root",
+                 "bTagEfficiency_ZZZ.root",
+                 "bTagEfficiency_TTZToQQ.root",
+                 "bTagEfficiency_TTZToLLNuNu.root",
+                 "bTagEfficiency_TTWJetsToQQ.root",
+                 "bTagEfficiency_TTWJetsToLNu.root",
+                 "bTagEfficiency_TTGJets.root",
+                 "bTagEfficiency_DYJetsToLL_Inc.root"]
+
+    fout = TFile.Open("bTagEffHists.root", "RECREATE")
+
+    for filename in fileNames:
+
+        f = TFile.Open(filePath + filename)
+
+        if not f is None:
+        
+            n_eff_b = f.Get("h_eff_b")
+            n_eff_c = f.Get("h_eff_c")
+            n_eff_udsg = f.Get("h_eff_udsg")
+            d_eff_b = f.Get("d_eff_b")
+            d_eff_c = f.Get("d_eff_c")
+            d_eff_udsg = f.Get("d_eff_udsg")
+
+            n_eff_b.Sumw2()
+            n_eff_c.Sumw2()
+            n_eff_udsg.Sumw2()
+            d_eff_b.Sumw2()
+            d_eff_c.Sumw2()
+            d_eff_udsg.Sumw2()
+            
+            dataset = filename.strip("bTagEfficiency_").strip(".root")
+            eff_b = n_eff_b.Clone("eff_b_" + dataset)
+            eff_c = n_eff_c.Clone("eff_c_" + dataset)
+            eff_udsg = n_eff_udsg.Clone("eff_udsg_" + dataset)
+            
+            eff_b.Divide(d_eff_b)
+            eff_c.Divide(d_eff_c)
+            eff_udsg.Divide(d_eff_udsg)
+            
+            fout.cd()
+            eff_b.Write()
+            eff_c.Write()
+            eff_udsg.Write()
+
+        f.Close()
+    
+    fout.Close()
+        
+        
+
 if __name__ ==  "__main__":
 
     parser = OptionParser()
@@ -825,6 +897,8 @@ if __name__ ==  "__main__":
                       help="Grab information for scale and PDF systematics", action='store_true')
     parser.add_option("--corr", dest="corr", default=False,
                       help="Get the ratios for correlation study", action='store_true')
+    parser.add_option("--btag", dest="btag", default=False,
+                      help="Calculate the b-tag efficiencies.  Treats -f input as a path, not a file.", action='store_true')
 
     (options, args) = parser.parse_args()
 
@@ -842,3 +916,6 @@ if __name__ ==  "__main__":
         extrapolationSyst(options.filename)
     if options.corr:
         corrCheck()
+    if options.btag:
+        calcBeffs(options.filename)
+
