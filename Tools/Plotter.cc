@@ -332,6 +332,7 @@ void Plotter::createHistsFromTuple()
         MiniTupleMaker* mtm = nullptr;
 
         if(registerfunc_ == nullptr) registerfunc_ = new RegisterFunctions();
+        registerfunc_->remakeBTagCorrector(file.tag);
 
         if(doTuple_)
         {

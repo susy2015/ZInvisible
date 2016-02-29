@@ -58,7 +58,7 @@ void activateBranches(std::set<std::string>& activeBranches)
 }
 
 
-RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
+RegisterFunctionsNTuple::RegisterFunctionsNTuple(std::string sampleName) : RegisterFunctions()
 {            
     AnaFunctions::prepareTopTagger();
 
@@ -83,7 +83,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
     systematicCalc       = new plotterFunctions::SystematicCalc;
 
     myPDFUnc = new PDFUncertainty();
-    bTagCorrector = new BTagCorrector("bTagEffHists.root");
+    bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/CSVFiles/", false);
 }
 
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
@@ -141,6 +141,11 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
 {
     ::activateBranches(activeBranches);
+}
+
+void RegisterFunctionsNTuple::remakeBTagCorrector(std::string sampleName)
+{
+    if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
 }
 
 RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()

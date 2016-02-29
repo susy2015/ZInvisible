@@ -858,7 +858,7 @@ def calcBeffs(filePath):
             d_eff_c.Sumw2()
             d_eff_udsg.Sumw2()
             
-            dataset = filename.strip("bTagEfficiency_").strip(".root")
+            dataset = filename.replace(".root", "").replace("bTagEfficiency_", "")
             eff_b = n_eff_b.Clone("eff_b_" + dataset)
             eff_c = n_eff_c.Clone("eff_c_" + dataset)
             eff_udsg = n_eff_udsg.Clone("eff_udsg_" + dataset)
