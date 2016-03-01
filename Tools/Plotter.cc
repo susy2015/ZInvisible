@@ -413,8 +413,8 @@ void Plotter::createHistsFromTuple()
                         const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
                         const double& HTZinv                 = tr.getVar<double>("HTZinv");
 
-                        // Recreation of loose0 cut level - we remove passMuZinvSel and replace with passLeptVetoZinv for Zinvisible
-                        bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv;
+                        // Recreation of loose0 cut level 
+                        bool passLoose0 = passNoiseEventFilterZinv && passMuZinvSel && (HTZinv > 200) && passnJetsZinv && passdPhisZinv;
 
                         if(passLoose0)
                         {
