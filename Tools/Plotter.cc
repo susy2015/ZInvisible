@@ -408,7 +408,7 @@ void Plotter::createHistsFromTuple()
                     if(file.isData_)
                     {
                         const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
-                        const bool& passLeptVetoZinv         = tr.getVar<bool>("passLeptVetoZinv");
+                        const bool& passMuZinvSel            = tr.getVar<bool>("passMuZinvSel");
                         const bool& passnJetsZinv            = tr.getVar<bool>("passnJetsZinv");
                         const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
                         const double& HTZinv                 = tr.getVar<double>("HTZinv");
