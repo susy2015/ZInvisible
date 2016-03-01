@@ -58,7 +58,7 @@ void activateBranches(std::set<std::string>& activeBranches)
 }
 
 
-RegisterFunctionsNTuple::RegisterFunctionsNTuple(std::string sampleName) : RegisterFunctions()
+RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor) : RegisterFunctions()
 {            
     AnaFunctions::prepareTopTagger();
 
@@ -83,7 +83,14 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(std::string sampleName) : Regis
     systematicCalc       = new plotterFunctions::SystematicCalc;
 
     myPDFUnc = new PDFUncertainty();
-    bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/CSVFiles/", false);
+    if(isCondor)
+    {
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "", false);
+    }
+    else
+    {
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/CSVFiles/", false);
+    }
 }
 
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()

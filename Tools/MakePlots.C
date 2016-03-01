@@ -1591,7 +1591,7 @@ int main(int argc, char* argv[])
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
-    RegisterFunctions* rf = new RegisterFunctionsNTuple();
+    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor);
 
     Plotter plotter(vh, vvf, fromTuple, histFile, nFiles, startFile, nEvts);
     plotter.setCutFlows(cutFlowSummaries);
