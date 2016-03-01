@@ -66,7 +66,7 @@ private:
     BTagCorrector *bTagCorrector;
 
 public:
-    RegisterFunctionsNTuple(std::string sampleName = "");
+    RegisterFunctionsNTuple(bool isCondor = false);
     ~RegisterFunctionsNTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);
