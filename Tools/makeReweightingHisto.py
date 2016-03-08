@@ -35,7 +35,7 @@ def rebin2D(h, binsx, binsy):
         for j in xrange(h.GetNbinsY()):
             bin_to_fill_y = new_h.GetYaxis().FindBin(h.GetYaxis().GetBinCenter(j+1))
             new_h.SetBinContent(bin_to_fill_x, bin_to_fill_y, h.GetBinContent(i+1,j+1) + new_h.GetBinContent(bin_to_fill_x, bin_to_fill_y))
-            new_h.SetBinError(bin_to_fill_x, bin_to_fill_y, 
+            new_h.SetBinError(bin_to_fill_x, bin_to_fill_y,
                               TMath.Sqrt(h.GetBinError(i+1, j+1)*h.GetBinError(i+1,j+1) + new_h.GetBinError(bin_to_fill_x, bin_to_fill_y)*new_h.GetBinError(bin_to_fill_x, bin_to_fill_y) ) )
     return new_h
 
@@ -92,7 +92,7 @@ def subtract(h, hlist):
     """Subtract all histograms in hlist from h"""
     new_h = h.Clone()
     new_h.Sumw2()
-    for hl in hlist:        
+    for hl in hlist:
         new_h.Add(hl,-1.)
         #print hl.GetName(), new_h.Integral()
     return new_h
@@ -199,12 +199,12 @@ def normWeight(filename):
     for cut in cuts_DY:
         #hname1_DY = [hname1 % {"cut":cut, "selection":selection} for selection in selections]
         #hnames2_DY = [[elem % {"cut":cut, "selection":selection} for selection in selections] for elem in hnames2]
-        hname1_DY = hname1 % {"cut":cut, "selection":selection2} 
+        hname1_DY = hname1 % {"cut":cut, "selection":selection2}
         hnames2_DY = [elem % {"cut":cut, "selection":selection2} for elem in hnames2]
         # Get all histos
         #h1 = add([f.Get(hname1a_DY) for hname1a_DY in hname1_DY])
         #h2s = [add([f.Get(sel) for sel in hname2a_DY]) for hname2a_DY in hnames2_DY]
-        h1 = f.Get(hname1_DY) 
+        h1 = f.Get(hname1_DY)
         h2s = [f.Get(sel) for sel in hnames2_DY]
         # subtract relevant histograms from data
         data_subtracted = subtract(h1, h2s[2:])
@@ -212,7 +212,7 @@ def normWeight(filename):
         newname = "DataMC_nb_%s_%s"%(cut,selection2)
         newh = makeRatio(data_subtracted, h2s[:1], newname=newname, bins=[0,6])
         #newh = makeRatio(h1, h2s, newname=newname)
-        
+
         print "Data/MC normalization scale factor in region %s_%s: %.3f +- %.3f" % (cuts_DY[0], selection2, newh.GetBinContent(1), newh.GetBinError(1))
 
     f.Close()
@@ -246,7 +246,7 @@ def shapeSyst(filename):
         # Get all histos
         hData = f.Get(hnameData%{"name":var[0], "var":var[1]})
         h2s   = [f.Get(hname2%{"name":var[0], "var":var[1]}) for hname2 in hnames2]
-        
+
         # subtract relevant histograms from data
         data_subtracted = subtract(hData, h2s[2:])
 
@@ -285,7 +285,7 @@ def corrCheck():
     f = TFile.Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/Corrolation_MET-MT2.root")
     fout = TFile.Open("correlations_ratio.root", "RECREATE")
 
-    # Make 1D and 2D ratios for both smearing options 
+    # Make 1D and 2D ratios for both smearing options
 
     # Run over the relevant histograms
     # histo names
@@ -433,14 +433,14 @@ def systHarvest(filename):
     hCorr_MT2vMETGaus_ratio.Write("Corr_2D_Gauss")
     hCorr_MT2vMETLogi_ratio.Write("Corr_2D_Logistic")
 
-    # Pull 
+    # Pull
     hPull = hCorr_MT2vMETLogi_ratio.Clone("Pull_Logi")
     hPull.Add(hCorr_Logi_final,-1)
     for i in xrange(1, hPull.GetNbinsX()+1):
         sf = sqrt(hCorr_Logi_final.GetBinError(i)**2 + hCorr_MT2vMETLogi_ratio.GetBinError(i)**2)
         hPull.SetBinContent(i, hPull.GetBinContent(i)/sf)
     hPull.Write()
-    
+
     # Get shape stats uncertainty
     f2 = TFile("syst_nJetWgt.root")
     hShapeStat = f2.Get("syst68Max").Clone("shape_stat")
@@ -452,7 +452,7 @@ def systHarvest(filename):
     hShapeStat.Write()
 
 
-    # Get PDF and scale uncertainties 
+    # Get PDF and scale uncertainties
     f3 = TFile("syst_scalePDF.root")
     hScaleUp = f3.Get("nSearchBin_ratio_scale_up").Clone("scale_up")
     hScaleDn = f3.Get("nSearchBin_ratio_scale_down").Clone("scale_down")
@@ -534,22 +534,56 @@ def systHarvest(filename):
     hTrigDn_ratio = hTrigDn.Clone("trig_dn")
     hTrigDn_ratio.Add(hTrigNom, -1.0)
     hTrigDn_ratio.Divide(hTrigNom)
-    
+
     fout.cd()
     hTrigUp_ratio.Write()
     hTrigDn_ratio.Write()
 
+    # b-tag uncertanties
+    hBTagNom = f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Centralsingle")
+    hBTagUp =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu btag weight Upsingle")
+    hBTagDn =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu btag weight Downsingle")
+
+    hBMistagNom = f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Centralsingle")
+    hBMistagUp =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu bmistag weight Upsingle")
+    hBMistagDn =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu bmistag weight Downsingle")
+
+    hBTagUp_Ratio = hBTagUp.Clone("btag_up")
+    hBTagUp_Ratio.Add(hBTagNom, -1.0)
+    hBTagUp_Ratio.Divide(hBTagNom)
+
+    hBTagDn_Ratio = hBTagDn.Clone("btag_dn")
+    hBTagDn_Ratio.Add(hBTagNom, -1.0)
+    hBTagDn_Ratio.Divide(hBTagNom)
+
+    hBMistagUp_Ratio = hBMistagUp.Clone("bmistag_up")
+    hBMistagUp_Ratio.Add(hBMistagNom, -1.0)
+    hBMistagUp_Ratio.Divide(hBMistagNom)
+
+    hBMistagDn_Ratio = hBMistagDn.Clone("bmistag_dn")
+    hBMistagDn_Ratio.Add(hBMistagNom, -1.0)
+    hBMistagDn_Ratio.Divide(hBMistagNom)
+
+    fout.cd()
+    hBTagUp_Ratio.Write()
+    hBTagDn_Ratio.Write()
+    hBMistagUp_Ratio.Write()
+    hBMistagDn_Ratio.Write()
+
+    #Central value
     hPrediction = f4.Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle").Clone("central_prediction")
     fout.cd()
     hPrediction.Write()
 
-    # make proto data card 
+    # make proto data card
 
     hJEC_ratio_sym = hJECUp_ratio.Clone("hJEC_ratio_sym")
     hMEC_ratio_sym = hMECUp_ratio.Clone("hMEC_ratio_sym")
     hScale_sym     = hScaleUp.Clone("hScale_sym")
     hPDF_sym       = hPDFUp.Clone("hPDF_sym")
     hTrig_sym      = hTrigUp_ratio.Clone("hTrig_sym")
+    hBTag_sym      = hBTagUp_Ratio.Clone("hBTag_sym")
+    hBMistag_sym   = hBMistagUp_Ratio.Clone("hBMistag_sym")
 
     for i in xrange(1, hJEC_ratio_sym.GetNbinsX() + 1):
         hJEC_ratio_sym.SetBinContent(i, max(abs(hJECUp_ratio.GetBinContent(i)),  abs(hJECDn_ratio.GetBinContent(i))))
@@ -567,27 +601,31 @@ def systHarvest(filename):
 
     hOther = hJEC_ratio_sym.Clone("hOther")
     for i in xrange(1, hOther.GetNbinsX() + 1):
-        hOther.SetBinContent(i, sqrt(hJEC_ratio_sym.GetBinContent(i)**2 + hMEC_ratio_sym.GetBinContent(i)**2 + hScale_sym.GetBinContent(i)**2 + hPDF_sym.GetBinContent(i)**2 + hTrig_sym.GetBinContent(i)**2))
+        hOther.SetBinContent(i, sqrt(hJEC_ratio_sym.GetBinContent(i)**2 + hMEC_ratio_sym.GetBinContent(i)**2 + hScale_sym.GetBinContent(i)**2 + hPDF_sym.GetBinContent(i)**2 + hTrig_sym.GetBinContent(i)**2 ++ hBTag_sym.GetBinContent(i)**2 + hBMistag_sym.GetBinContent(i)**2))
     hOther.Write()
 
-    hists = [("syst_unc_shape_central_up",   hShape_final), 
-             ("syst_unc_shape_central_dn",   hShape_final), 
-             ("syst_unc_shape_stat_up",      hShapeStat), 
-             ("syst_unc_shape_stat_dn",      hShapeStat), 
-             #("stat_unc_up",                 hMCstats), 
-             #("stat_unc_dn",                 hMCstats), 
+    hists = [("syst_unc_shape_central_up",   hShape_final),
+             ("syst_unc_shape_central_dn",   hShape_final),
+             ("syst_unc_shape_stat_up",      hShapeStat),
+             ("syst_unc_shape_stat_dn",      hShapeStat),
+             #("stat_unc_up",                 hMCstats),
+             #("stat_unc_dn",                 hMCstats),
              ("syst_unc_jeu_up",             hJEC_ratio_sym),
-             ("syst_unc_jeu_dn",             hJEC_ratio_sym), 
-             ("syst_unc_meu_up",             hMEC_ratio_sym), 
-             ("syst_unc_meu_dn",             hMEC_ratio_sym), 
+             ("syst_unc_jeu_dn",             hJEC_ratio_sym),
+             ("syst_unc_meu_up",             hMEC_ratio_sym),
+             ("syst_unc_meu_dn",             hMEC_ratio_sym),
              ("syst_unc_scale_up",           hScale_sym),
-             ("syst_unc_scale_dn",           hScale_sym), 
+             ("syst_unc_scale_dn",           hScale_sym),
              ("syst_unc_pdf_up",             hPDF_sym),
              ("syst_unc_pdf_dn",             hPDF_sym),
              ("syst_unc_trig_up",            hTrig_sym),
              ("syst_unc_trig_dn",            hTrig_sym),
+             ("syst_unc_btag_up",            hBTagUp_Ratio),
+             ("syst_unc_btag_dn",            hBTagDn_Ratio),
+             ("syst_unc_bmistag_up",         hBMistagUp_Ratio),
+             ("syst_unc_bmistag_dn",         hBMistagDn_Ratio),
              ]
-    
+
     print "luminosity = 2262"
     print "channels =", NSB
     print "sample = zinv"
@@ -614,11 +652,11 @@ def systHarvest(filename):
     print "stat_unc_dn = xxx yy zz"
     print ""
 
-    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(45*["%8.5f" % 0.18318]))
-    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(45*["%8.5f" % 0.18318]))
+    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.194125]))
+    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.194125]))
 
     for (name, h) in hists:
-        print "%-25s = %s"%(name, ' '.join(["%8.5f" % (h.GetBinContent(i)) for i in xrange(1, NSB+1)]))
+        print "%-25s = %s"%(name, ' '.join(["%8.5f" % (abs(h.GetBinContent(i))) for i in xrange(1, NSB+1)]))
 
     fout.Close()
 
@@ -703,7 +741,7 @@ def systScalePDF(filename):
 def extrapolationSyst(filename):
     f = TFile.Open(filename)
     print "Opened file", filename, f
-    
+
     dataName = "%(varName)s/SystPlots_DataMCw_SingleMuon_%(varLabel)s_%(cutStr)s%(varName)s%(varName)sDatadata"
     baseName = "%(varName)s/SystPlots_DataMCw_SingleMuon_%(varLabel)s_%(cutStr)s%(varName)s%(varName)s%(sample)s"
 
@@ -750,7 +788,7 @@ def extrapolationSyst(filename):
                ]
 
     fout = TFile.Open("looseToTight.root", "RECREATE")
-    
+
     for varLabel, (varName, theBins) in varDict.iteritems():
         print "Processing variable: " , varName
         hDataTotal = {}
@@ -785,7 +823,7 @@ def extrapolationSyst(filename):
         # The first loop sank into the swamp, so we built it again!
         # but no really my boy, we had to calculate the total histograms from the individual
         # slices first, then make the double ratios here
-        # Yes, I know, this is stupidly inefficient 
+        # Yes, I know, this is stupidly inefficient
         for cutNames, cutStrs in cutLists.iteritems():
             hRatioTotal = makeRatio(hDataTotal[varLabel+"_cut_"+cutNames], [hBGTotal[varLabel+"_cut_"+cutNames]], bins=theBins, newname="".join(["totalRatio_", varLabel, "_cut_", cutNames]))
             hRatioTotal.Write()
@@ -843,7 +881,7 @@ def calcBeffs(filePath):
         f = TFile.Open(filePath + filename)
 
         if not f is None:
-        
+
             n_eff_b = f.Get("h_eff_b")
             n_eff_c = f.Get("h_eff_c")
             n_eff_udsg = f.Get("h_eff_udsg")
@@ -857,26 +895,26 @@ def calcBeffs(filePath):
             d_eff_b.Sumw2()
             d_eff_c.Sumw2()
             d_eff_udsg.Sumw2()
-            
+
             dataset = filename.replace(".root", "").replace("bTagEfficiency_", "")
             eff_b = n_eff_b.Clone("eff_b_" + dataset)
             eff_c = n_eff_c.Clone("eff_c_" + dataset)
             eff_udsg = n_eff_udsg.Clone("eff_udsg_" + dataset)
-            
+
             eff_b.Divide(d_eff_b)
             eff_c.Divide(d_eff_c)
             eff_udsg.Divide(d_eff_udsg)
-            
+
             fout.cd()
             eff_b.Write()
             eff_c.Write()
             eff_udsg.Write()
 
         f.Close()
-    
+
     fout.Close()
-        
-        
+
+
 
 if __name__ ==  "__main__":
 
@@ -911,7 +949,7 @@ if __name__ ==  "__main__":
     if options.systHarvest:
         systHarvest(options.filename)
     if options.systScale:
-        systScalePDF(options.filename)        
+        systScalePDF(options.filename)
     if options.extrapolationSyst:
         extrapolationSyst(options.filename)
     if options.corr:
