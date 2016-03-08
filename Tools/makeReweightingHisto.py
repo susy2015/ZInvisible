@@ -452,7 +452,6 @@ def systHarvest(filename):
     fout.cd()
     hShapeStat.Write()
 
-
     # Get PDF and scale uncertainties
     f3 = TFile("syst_scalePDF.root")
     hScaleUp = f3.Get("nSearchBin_ratio_scale_up").Clone("scale_up")
@@ -570,6 +569,22 @@ def systHarvest(filename):
     hBTagDn_Ratio.Write()
     hBMistagUp_Ratio.Write()
     hBMistagDn_Ratio.Write()
+
+    # calculate stupid pull histo here
+    hZnunu = f4.Get("nSearchBin/nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle")
+    hDYll  = f4.Get("nSearchBin/nSearchBinnSearchBinnSearchBinDY#rightarrow#mu#mu no #mu, Z eff+accsingle")
+
+    hMCPull = TH1D("MCpull", "MCpull", 15, -5, 5)
+    hMCPull.Sumw2()
+    hMCPull2 = hZnunu.Clone("MCPull2")
+    for i in xrange(1, hZnunu.GetNbinsX() + 1):
+        pull = (hZnunu.GetBinContent(i) - hDYll.GetBinContent(i)) / math.sqrt(hZnunu.GetBinError(i)**2 + hDYll.GetBinError(i)**2)
+        hMCPull.Fill(pull)
+        hMCPull2.SetBinContent(i, pull)
+
+    fout.cd()
+    hMCPull.Write()
+    hMCPull2.Write()
 
     #Central value
     hPrediction = f4.Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle").Clone("central_prediction")
