@@ -144,7 +144,7 @@ int main()
         tr.registerFunction(pmt);
         tr.registerFunction(njWeight);
         tr.registerFunction(triggerInfo);
-        tr.registerFunction(metSmear);
+        //tr.registerFunction(metSmear);
 
         while(tr.getNextEvent())
         {
@@ -159,51 +159,52 @@ int main()
             const bool& passBaseline = tr.getVar<bool>("passBaseline");
             const bool& passBaselineZinv = tr.getVar<bool>("passBaselineZinv");
             const bool& passLeptVeto = tr.getVar<bool>("passLeptVeto");
+            const double& bTagSF_EventWeightSimple_Central = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
 
             const double& triggerEffMC = tr.getVar<double>("TriggerEffMC");
             const double& nJetWgtDYZ   = tr.getVar<double>("nJetWgtDYZ");
             const double& normWgt0b    = tr.getVar<double>("normWgt0b");
 
             //Variables required only for MET-MT2 
-            const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
-            const bool& passLeptVetoZinv         = tr.getVar<bool>("passLeptVetoZinv");
-            const bool& passnJetsZinv            = tr.getVar<bool>("passnJetsZinv");
-            const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
-
-            const double& HTZinv                 = tr.getVar<double>("HTZinv");
-
-            const double& met_logi_1   = tr.getVar<double>("met_logi_1");
-            const double& met_gaus_30  = tr.getVar<double>("met_gaus_30");
-
-            const double& mt2_logi_1   = tr.getVar<double>("mt2_logi_1");
-            const double& mt2_gaus_30  = tr.getVar<double>("mt2_gaus_30");
-            
-            // Recreation of loose0 cut level - we remove passMuZinvSel and replace with passLeptVetoZinv for Zinvisible
-            bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv && (nTopCandSortedCntZinv>0);
-
-            // Fill MET-MT2 histograms here
-            if(passLoose0)
-            {
-                //trigger efficiency is too coursely binned in low MET region, irrelivant in MET > 200 region
-                double weight = /*triggerEffMC * */nJetWgtDYZ * fs.getWeight();
-
-                hMET_nom ->Fill(cleanMetPt,  weight);
-                hMET_Gaus->Fill(met_gaus_30, weight);
-                hMET_Logi->Fill(met_logi_1,  weight);
-
-                hMT2_nom ->Fill(best_had_brJet_MT2Zinv, weight);
-                hMT2_Gaus->Fill(mt2_gaus_30,            weight);
-                hMT2_Logi->Fill(mt2_logi_1,             weight);
-
-                h2D_nom ->Fill(cleanMetPt,  best_had_brJet_MT2Zinv, weight);
-                h2D_Gaus->Fill(met_gaus_30, mt2_gaus_30,            weight);
-                h2D_Logi->Fill(met_logi_1,  mt2_logi_1,             weight);
-            }
+            //const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
+            //const bool& passLeptVetoZinv         = tr.getVar<bool>("passLeptVetoZinv");
+            //const bool& passnJetsZinv            = tr.getVar<bool>("passnJetsZinv");
+            //const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
+            //
+            //const double& HTZinv                 = tr.getVar<double>("HTZinv");
+            //
+            //const double& met_logi_1   = tr.getVar<double>("met_logi_1");
+            //const double& met_gaus_30  = tr.getVar<double>("met_gaus_30");
+            //
+            //const double& mt2_logi_1   = tr.getVar<double>("mt2_logi_1");
+            //const double& mt2_gaus_30  = tr.getVar<double>("mt2_gaus_30");
+            //
+            //// Recreation of loose0 cut level - we remove passMuZinvSel and replace with passLeptVetoZinv for Zinvisible
+            //bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv && (nTopCandSortedCntZinv>0);
+            //
+            //// Fill MET-MT2 histograms here
+            //if(passLoose0)
+            //{
+            //    //trigger efficiency is too coursely binned in low MET region, irrelivant in MET > 200 region
+            //    double weight = /*triggerEffMC * */nJetWgtDYZ * bTagSF_EventWeightSimple_Central * fs.getWeight();
+            //
+            //    hMET_nom ->Fill(cleanMetPt,  weight);
+            //    hMET_Gaus->Fill(met_gaus_30, weight);
+            //    hMET_Logi->Fill(met_logi_1,  weight);
+            //
+            //    hMT2_nom ->Fill(best_had_brJet_MT2Zinv, weight);
+            //    hMT2_Gaus->Fill(mt2_gaus_30,            weight);
+            //    hMT2_Logi->Fill(mt2_logi_1,             weight);
+            //
+            //    h2D_nom ->Fill(cleanMetPt,  best_had_brJet_MT2Zinv, weight);
+            //    h2D_Gaus->Fill(met_gaus_30, mt2_gaus_30,            weight);
+            //    h2D_Logi->Fill(met_logi_1,  mt2_logi_1,             weight);
+            //}
 
             //fill stat uncertainty histograms here
             if(passBaselineZinv && passLeptVeto)
             {
-                double weight = triggerEffMC * nJetWgtDYZ * normWgt0b * fs.getWeight();
+                double weight = triggerEffMC * nJetWgtDYZ * normWgt0b * bTagSF_EventWeightSimple_Central * fs.getWeight();
 
                 if(nSearchBin >= 0 && nSearchBin < NSEARCHBINS)
                 {
