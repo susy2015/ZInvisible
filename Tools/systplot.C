@@ -356,6 +356,15 @@ int main(int argc, char* argv[])
     {
 	makeplot(f1, kv.first, 0, kv.second.second, 0, 2, kv.second.first, "Double ratio", "Syst", false, false);
     }
+
+    f1->Close();
+
+    
+    f1 = TFile::Open("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_all.root");
+
+    makeplot(f1, "MCPull2", 0, 45, -3, 5, "n search bin", "pull", "Syst", true, true);
+
+    f1->Close();
     
     return 0;
 

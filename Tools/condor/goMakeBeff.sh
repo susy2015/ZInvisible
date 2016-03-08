@@ -13,7 +13,8 @@ xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
 
 ls
 
-./makePlots -st --condor -D $1 -N $3 -M $4 -L $5
+./beffCalc $1 $3 $4 condor
+#./makePlots -s --condor -D $1 -N $3 -M $4 -L $5
 
 ls
 

@@ -58,67 +58,67 @@ namespace AnaSamples
 
 
         // Calculated from PDG BRs'. Not from the kt * xSec in McM.
-        sampleSet_["TTbarDiLep"]         = FileSummary(fDir_ + MCloc + "minituple_TTbarDiLep.txt",         "TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",             831.76*TTbar_DiLept_BR,         lumi, 30498962, 1.0, kGreen);
-        sampleSet_["TTbarSingleLepT"]    = FileSummary(fDir_ + MCloc + "minituple_TTbarSingleLepT.txt",    "TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",    831.76*0.5*TTbar_SingleLept_BR, lumi, 60144642, 1.0, kGreen);
-        sampleSet_["TTbarSingleLepTbar"] = FileSummary(fDir_ + MCloc + "minituple_TTbarSingleLepTbar.txt", "TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8", 831.76*0.5*TTbar_SingleLept_BR, lumi, 59816364, 1.0, kGreen);
+        addSample("TTbarDiLep", fDir_ + MCloc + "minituple_TTbarDiLep.txt",         "TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",             831.76*TTbar_DiLept_BR,         lumi, 30498962, 1.0, kGreen);
+        addSample("TTbarSingleLepT", fDir_ + MCloc + "minituple_TTbarSingleLepT.txt",    "TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",    831.76*0.5*TTbar_SingleLept_BR, lumi, 60144642, 1.0, kGreen);
+        addSample("TTbarSingleLepTbar", fDir_ + MCloc + "minituple_TTbarSingleLepTbar.txt", "TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8", 831.76*0.5*TTbar_SingleLept_BR, lumi, 59816364, 1.0, kGreen);
 
         //Z -> nunu
         // From https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns#DY_Z, kz = 1.23
-        sampleSet_["ZJetsToNuNu_HT_100to200"] = FileSummary(fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-100To200_13TeV-madgraph", 280.35, lumi, 5154824,  1.23,  kTeal+4);
-        sampleSet_["ZJetsToNuNu_HT_200to400"] = FileSummary(fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-200To400_13TeV-madgraph", 77.67,  lumi, 24863552, 1.23,  kTeal+4);
-        sampleSet_["ZJetsToNuNu_HT_400to600"] = FileSummary(fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-400To600_13TeV-madgraph", 10.73,  lumi, 9591908,  1.23,  kTeal+4);
-        sampleSet_["ZJetsToNuNu_HT_600toInf"] = FileSummary(fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-600ToInf_13TeV-madgraph", 4.116,  lumi, 10202299, 1.23,  kTeal+4);
+        addSample("ZJetsToNuNu_HT_100to200", fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-100To200_13TeV-madgraph", 280.35, lumi, 5154824,  1.23,  kTeal+4);
+        addSample("ZJetsToNuNu_HT_200to400", fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-200To400_13TeV-madgraph", 77.67,  lumi, 24863552, 1.23,  kTeal+4);
+        addSample("ZJetsToNuNu_HT_400to600", fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-400To600_13TeV-madgraph", 10.73,  lumi, 9591908,  1.23,  kTeal+4);
+        addSample("ZJetsToNuNu_HT_600toInf", fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-600ToInf_13TeV-madgraph", 4.116,  lumi, 10202299, 1.23,  kTeal+4);
 
         //DY->ll
         // kz = 1.23
-        sampleSet_["DYJetsToLL_HT_100to200"] = FileSummary(fDir_ + MCloc + "minituple_DYJetsToLL_HT.txt", "DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8", 147.4, lumi, 11079482, 1.23,  kYellow-7);
-        sampleSet_["DYJetsToLL_HT_200to400"] = FileSummary(fDir_ + MCloc + "minituple_DYJetsToLL_HT.txt", "DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8", 40.99, lumi, 10548654, 1.23,  kYellow-7);
-        sampleSet_["DYJetsToLL_HT_400to600"] = FileSummary(fDir_ + MCloc + "minituple_DYJetsToLL_HT.txt", "DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8", 5.678, lumi, 10420186, 1.23,  kYellow-7);
-        sampleSet_["DYJetsToLL_HT_600toInf"] = FileSummary(fDir_ + MCloc + "minituple_DYJetsToLL_HT.txt", "DYJetsToLL_M-50_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8", 2.198, lumi, 4631933,  1.23,  kYellow-7);
+        addSample("DYJetsToLL_HT_100to200", fDir_ + MCloc + "minituple_DYJetsToLL_HT.txt", "DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8", 147.4, lumi, 11079482, 1.23,  kYellow-7);
+        addSample("DYJetsToLL_HT_200to400", fDir_ + MCloc + "minituple_DYJetsToLL_HT.txt", "DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8", 40.99, lumi, 10548654, 1.23,  kYellow-7);
+        addSample("DYJetsToLL_HT_400to600", fDir_ + MCloc + "minituple_DYJetsToLL_HT.txt", "DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8", 5.678, lumi, 10420186, 1.23,  kYellow-7);
+        addSample("DYJetsToLL_HT_600toInf", fDir_ + MCloc + "minituple_DYJetsToLL_HT.txt", "DYJetsToLL_M-50_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8", 2.198, lumi, 4631933,  1.23,  kYellow-7);
         // NNLO
-        sampleSet_["DYJetsToLL_Inc"]         = FileSummary(fDir_ + MCloc + "minituple_DYJetsToLL_Inc.txt", "DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8", 6025.2, lumi, 9042031, 1.0,  kYellow-7);
+        addSample("DYJetsToLL_Inc", fDir_ + MCloc + "minituple_DYJetsToLL_Inc.txt", "DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8", 6025.2, lumi, 9042031, 1.0,  kYellow-7);
 
         //Other Samples
         // Aprox. NNLO
-        sampleSet_["tW_top"]                    = FileSummary(fDir_ + MCloc + "minituple_tW.txt", "ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1", 35.6, lumi,  995600,  1.0,  kYellow);
+        addSample("tW_top", fDir_ + MCloc + "minituple_tW.txt", "ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1", 35.6, lumi,  995600,  1.0,  kYellow);
         // Aprox. NNLO
-        sampleSet_["tW_antitop"]                = FileSummary(fDir_ + MCloc + "minituple_tW.txt", "ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1", 35.6, lumi, 988500,  1.0,  kYellow);
+        addSample("tW_antitop", fDir_ + MCloc + "minituple_tW.txt", "ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1", 35.6, lumi, 988500,  1.0,  kYellow);
 
         // NLO --> negative weights!
         // (sign of gen weight) * (lumi*xsec)/(effective number of events): effective number of events = N(evt) with positive weight - N(evt) with negative weight
-        sampleSet_["TTZToLLNuNu"]         = FileSummary(fDir_ + MCloc + "minituple_TTZ.txt", "TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8", 0.2529, lumi, 291495 - 106505,  1.0,  kOrange+2);
-        sampleSet_["TTZToQQ"]             = FileSummary(fDir_ + MCloc + "minituple_TTZ.txt", "TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",          0.5297, lumi, 550599 - 199201,  1.0,  kOrange+2);
+        addSample("TTZToLLNuNu", fDir_ + MCloc + "minituple_TTZ.txt", "TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8", 0.2529, lumi, 291495 - 106505,  1.0,  kOrange+2);
+        addSample("TTZToQQ", fDir_ + MCloc + "minituple_TTZ.txt", "TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",          0.5297, lumi, 550599 - 199201,  1.0,  kOrange+2);
 
         // NLO --> negative weights!
-        sampleSet_["TTWJetsToLNu"]        = FileSummary(fDir_ + MCloc + "minituple_TTWJets.txt", "TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8", 0.2043, lumi, 191379 - 61529,   1.0,  kSpring+2);
-        sampleSet_["TTWJetsToQQ"]         = FileSummary(fDir_ + MCloc + "minituple_TTWJets.txt", "TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8",  0.4062, lumi, 632147 - 201817,  1.0,  kSpring+2);
+        addSample("TTWJetsToLNu", fDir_ + MCloc + "minituple_TTWJets.txt", "TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8", 0.2043, lumi, 191379 - 61529,   1.0,  kSpring+2);
+        addSample("TTWJetsToQQ", fDir_ + MCloc + "minituple_TTWJets.txt", "TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8",  0.4062, lumi, 632147 - 201817,  1.0,  kSpring+2);
 
         // NLO --> negative weights! 
-        sampleSet_["TTGJets"]             = FileSummary(fDir_ + MCloc + "minituple_TTGJets.txt", "TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8", 3.697, lumi,  3199309 - 1632921,  1.0,  kOrange+2);
+        addSample("TTGJets", fDir_ + MCloc + "minituple_TTGJets.txt", "TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8", 3.697, lumi,  3199309 - 1632921,  1.0,  kOrange+2);
 
         // ttH --> negative weights!
-	sampleSet_["ttHJetTobb"]     = FileSummary(fDir_ + MCloc + "minituple_ttHJetTobb.txt",    "ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8",             0.2934,  lumi, 1047463 - 565141,   1.0,  kOrange+2);
-	sampleSet_["ttHJetToNonbb"]  = FileSummary(fDir_ + MCloc + "minituple_ttHJetToNonbb.txt", "ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_mWCutfix", 0.2151,  lumi, 5206759 - 2818464,  1.0,  kOrange+2);
+	addSample("ttHJetTobb", fDir_ + MCloc + "minituple_ttHJetTobb.txt",    "ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8",             0.2934,  lumi, 1047463 - 565141,   1.0,  kOrange+2);
+	addSample("ttHJetToNonbb", fDir_ + MCloc + "minituple_ttHJetToNonbb.txt", "ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_mWCutfix", 0.2151,  lumi, 5206759 - 2818464,  1.0,  kOrange+2);
         
         // Di-boson
 	// Ref. https://indico.cern.ch/event/439995/session/0/contribution/6/attachments/1143460/1638648/diboson_final.pdf (NNLO is given)
-        sampleSet_["WW"]              = FileSummary(fDir_ + MCloc + "minituple_WW.txt", "WW_TuneCUETP8M1_13TeV-pythia8", 115.0,  lumi, 993640,  1.0,  kViolet+4); 
+        addSample("WW", fDir_ + MCloc + "minituple_WW.txt", "WW_TuneCUETP8M1_13TeV-pythia8", 115.0,  lumi, 993640,  1.0,  kViolet+4); 
 	// Ref. https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns (NLO from MCFM)
-        sampleSet_["WZ"]              = FileSummary(fDir_ + MCloc + "minituple_WZ.txt", "WZ_TuneCUETP8M1_13TeV-pythia8", 47.13,  lumi, 978512,  1.0,  kViolet+4);
-        sampleSet_["ZZ"]              = FileSummary(fDir_ + MCloc + "minituple_ZZ.txt", "ZZ_TuneCUETP8M1_13TeV-pythia8", 16.523, lumi, 996944,  1.0,  kViolet+4);
+        addSample("WZ", fDir_ + MCloc + "minituple_WZ.txt", "WZ_TuneCUETP8M1_13TeV-pythia8", 47.13,  lumi, 978512,  1.0,  kViolet+4);
+        addSample("ZZ", fDir_ + MCloc + "minituple_ZZ.txt", "ZZ_TuneCUETP8M1_13TeV-pythia8", 16.523, lumi, 996944,  1.0,  kViolet+4);
 
         // Tri-boson: negative weights!
-        sampleSet_["WWZ"]             = FileSummary(fDir_ + MCloc + "minituple_WWZ.txt", "WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8", 0.1651,  lumi, 235734 - 14266,  1.0,  kViolet+2);
-        sampleSet_["WZZ"]             = FileSummary(fDir_ + MCloc + "minituple_WZZ.txt", "WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8", 0.05565, lumi, 234584 - 15416,  1.0,  kViolet+2);
-        sampleSet_["ZZZ"]             = FileSummary(fDir_ + MCloc + "minituple_ZZZ.txt", "ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8", 0.01398, lumi, 231925 - 18075,  1.0,  kViolet+2);
+        addSample("WWZ", fDir_ + MCloc + "minituple_WWZ.txt", "WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8", 0.1651,  lumi, 235734 - 14266,  1.0,  kViolet+2);
+        addSample("WZZ", fDir_ + MCloc + "minituple_WZZ.txt", "WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8", 0.05565, lumi, 234584 - 15416,  1.0,  kViolet+2);
+        addSample("ZZZ", fDir_ + MCloc + "minituple_ZZZ.txt", "ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8", 0.01398, lumi, 231925 - 18075,  1.0,  kViolet+2);
 
         // --------
         // - data -
         // --------
 	
-	sampleSet_["Data_SingleMuon_2015C"]            = FileSummary(fDir_ + DATAloc + "minituple_Data_SingleMuon_2015C.txt",            "Spring15_74X_Jan_2016_Ntp_v5p0_SingleMuon-Run2015C-25ns-05Oct2015", 17.226, 1.0,  kBlack);
-	sampleSet_["Data_SingleMuon_2015D_05Oct2015"]  = FileSummary(fDir_ + DATAloc + "minituple_Data_SingleMuon_2015D_05Oct2015.txt",  "Spring15_74X_Jan_2016_Ntp_v5p0_SingleMuon-Run2015D-05Oct2015", 575.34, 1.0,  kBlack);
-	sampleSet_["Data_SingleMuon_2015D_PromptReco"] = FileSummary(fDir_ + DATAloc + "minituple_Data_SingleMuon_2015D_PromptReco.txt", "Spring15_74X_Jan_2016_Ntp_v5p0_SingleMuon-Run2015D-PromptReco", 1670.38, 1.0,  kBlack);
+	addSample("Data_SingleMuon_2015C", fDir_ + DATAloc + "minituple_Data_SingleMuon_2015C.txt",            "Spring15_74X_Jan_2016_Ntp_v5p0_SingleMuon-Run2015C-25ns-05Oct2015", 17.226, 1.0,  kBlack);
+	addSample("Data_SingleMuon_2015D_05Oct2015", fDir_ + DATAloc + "minituple_Data_SingleMuon_2015D_05Oct2015.txt",  "Spring15_74X_Jan_2016_Ntp_v5p0_SingleMuon-Run2015D-05Oct2015", 575.34, 1.0,  kBlack);
+	addSample("Data_SingleMuon_2015D_PromptReco", fDir_ + DATAloc + "minituple_Data_SingleMuon_2015D_PromptReco.txt", "Spring15_74X_Jan_2016_Ntp_v5p0_SingleMuon-Run2015D-PromptReco", 1670.38, 1.0,  kBlack);
     }
 
     SampleCollection::SampleCollection(SampleSet& samples)

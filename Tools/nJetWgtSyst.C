@@ -215,8 +215,8 @@ int main()
         tr.registerFunction(pmt);
         tr.registerFunction(njWeight);
         tr.registerFunction(triggerInfo);
-        tr.registerFunction(metSmear);
-        tr.registerFunction(GetnTops);
+        //tr.registerFunction(metSmear);
+        //tr.registerFunction(GetnTops);
 
         while(tr.getNextEvent())
         {
@@ -231,117 +231,155 @@ int main()
             const bool& passBaseline = tr.getVar<bool>("passBaseline");
             const bool& passBaselineZinv = tr.getVar<bool>("passBaselineZinv");
             const bool& passLeptVeto = tr.getVar<bool>("passLeptVeto");
+            const double& bTagSF_EventWeightSimple_Central = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
 
             const double& triggerEffMC = tr.getVar<double>("TriggerEffMC");
             const double& nJetWgtDYZ   = tr.getVar<double>("nJetWgtDYZ");
             const double& normWgt0b    = tr.getVar<double>("normWgt0b");
 
-            //Variables required only for MET-MT2
-            const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
-            const bool& passLeptVetoZinv         = tr.getVar<bool>("passLeptVetoZinv");
-            const bool& passnJetsZinv            = tr.getVar<bool>("passnJetsZinv");
-            const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
-
-            const double& HTZinv                 = tr.getVar<double>("HTZinv");
-
-            const double& met_logi_1   = tr.getVar<double>("met_logi_1");
-            const double& met_gaus_30  = tr.getVar<double>("met_gaus_30");
-
-            const double& mt2_logi_1   = tr.getVar<double>("mt2_logi_1");
-            const double& mt2_gaus_30  = tr.getVar<double>("mt2_gaus_30");
-
-            const double& cleanMetPhi = tr.getVar<double>("cleanMetPhi");
-            const std::vector<TLorentzVector>& vTops = tr.getVec<TLorentzVector>("vTops");
-            const std::vector<TLorentzVector>& vMT2Inputs = tr.getVec<TLorentzVector>("vMT2Inputs");
-
-            // Recreation of loose0 cut level - we remove passMuZinvSel and replace with passLeptVetoZinv for Zinvisible
-            bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv && (nTopCandSortedCntZinv>0);
-
-            // Fill MET-MT2 histograms here
-            if(passLoose0)
-            {
-                double weight = nJetWgtDYZ * fs.getWeight();
-
-                h_ratio_MET_nom->Fill(met_logi_1/cleanMetPt,  weight);
-                h_ratio_MT2_nom->Fill(mt2_logi_1/best_had_brJet_MT2Zinv,  weight);
-                h_ratio_2D_nom->Fill(met_logi_1/cleanMetPt, mt2_logi_1/best_had_brJet_MT2Zinv,  weight);
-                h_ratio_2Dvmet_nom->Fill(cleanMetPt, mt2_logi_1/best_had_brJet_MT2Zinv,  weight);
-                h_ratio_2Dvmt2_nom->Fill(best_had_brJet_MT2Zinv, mt2_logi_1/best_had_brJet_MT2Zinv,  weight);
-
-                using namespace ROOT::Math::VectorUtil;
-
-                TLorentzVector met;
-                met.SetPtEtaPhiM(cleanMetPt, 0, cleanMetPhi, 0);
-
-                double angle_t1_met = -999.9;
-                if(vMT2Inputs.size() >= 1) angle_t1_met = DeltaPhi(vMT2Inputs[0], met);
-                double angle_t2_met = -999.9, angle_t1_t2 = -999.9, deta_t1_t2 = -999.9;
-                if(vMT2Inputs.size() >= 2)
-                {
-                    angle_t2_met = DeltaPhi(vMT2Inputs[1], met);
-                    angle_t1_t2 = DeltaPhi(vMT2Inputs[0],vMT2Inputs[1]);
-                    deta_t1_t2 = vMT2Inputs[0].Eta() - vMT2Inputs[1].Eta();
-                }
-
-                double metRatio = met_logi_1/cleanMetPt;
-                double mt2Ratio = mt2_logi_1/best_had_brJet_MT2Zinv;
-
-                h_met_angle_t1_met->Fill(angle_t1_met, metRatio, weight);
-                h_met_angle_t2_met->Fill(angle_t2_met, metRatio, weight);
-                h_met_angle_t1_t2->Fill(angle_t1_t2, metRatio, weight);
-                h_met_deta_t1_t2->Fill(deta_t1_t2, metRatio, weight);
-                if(vMT2Inputs.size() >= 1) 
-                {
-                    h_met_pt_t1->Fill(vMT2Inputs[0].Pt(), metRatio, weight);
-                    h_met_eta_t1->Fill(vMT2Inputs[0].Eta(), metRatio, weight);
-                    h_met_mass_t1->Fill(vMT2Inputs[0].M(), metRatio, weight);
-                    h_met_tmt_mt2->Fill(vMT2Inputs[0].Mt()/best_had_brJet_MT2Zinv, metRatio, weight);
-                }
-                if(vMT2Inputs.size() >= 2) 
-                {
-                    h_met_pt_t2->Fill(vMT2Inputs[1].Pt(), metRatio, weight);
-                    h_met_eta_t2->Fill(vMT2Inputs[1].Eta(), metRatio, weight);
-                    h_met_mass_t2->Fill(vMT2Inputs[1].M(), metRatio, weight);
-                }
-                h_met_metPhi->Fill(cleanMetPhi, metRatio, weight);
-
-                h_mt2_angle_t1_met->Fill(angle_t1_met, mt2Ratio, weight);
-                h_mt2_angle_t2_met->Fill(angle_t2_met, mt2Ratio, weight);
-                h_mt2_angle_t1_t2->Fill(angle_t1_t2, mt2Ratio, weight);
-                h_mt2_deta_t1_t2->Fill(deta_t1_t2, mt2Ratio, weight);
-                if(vMT2Inputs.size() >= 1) 
-                {
-                    h_mt2_pt_t1->Fill(vMT2Inputs[0].Pt(), mt2Ratio, weight);
-                    h_mt2_eta_t1->Fill(vMT2Inputs[0].Eta(), mt2Ratio, weight);
-                    h_mt2_mass_t1->Fill(vMT2Inputs[0].M(), mt2Ratio, weight);
-                    h_mt2_tmt_mt2->Fill(vMT2Inputs[0].Mt()/best_had_brJet_MT2Zinv, mt2Ratio, weight);
-                }
-                if(vMT2Inputs.size() >= 2) 
-                {
-                    h_mt2_pt_t2->Fill(vMT2Inputs[1].Pt(), mt2Ratio, weight);
-                    h_mt2_eta_t2->Fill(vMT2Inputs[1].Eta(), mt2Ratio, weight);
-                    h_mt2_mass_t2->Fill(vMT2Inputs[1].M(), mt2Ratio, weight);
-                }
-                h_mt2_metPhi->Fill(cleanMetPhi, mt2Ratio, weight);
-
-
-                hMET_nom ->Fill(cleanMetPt,  weight);
-                hMET_Gaus->Fill(met_gaus_30, weight);
-                hMET_Logi->Fill(met_logi_1,  weight);
-
-                hMT2_nom ->Fill(best_had_brJet_MT2Zinv, weight);
-                hMT2_Gaus->Fill(mt2_gaus_30,            weight);
-                hMT2_Logi->Fill(mt2_logi_1,             weight);
-
-                h2D_nom ->Fill(cleanMetPt,  best_had_brJet_MT2Zinv, weight);
-                h2D_Gaus->Fill(met_gaus_30, mt2_gaus_30,            weight);
-                h2D_Logi->Fill(met_logi_1,  mt2_logi_1,             weight);
-            }
+////<<<<<<< HEAD
+////            //Variables required only for MET-MT2
+////            const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
+////            const bool& passLeptVetoZinv         = tr.getVar<bool>("passLeptVetoZinv");
+////            const bool& passnJetsZinv            = tr.getVar<bool>("passnJetsZinv");
+////            const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
+////
+////            const double& HTZinv                 = tr.getVar<double>("HTZinv");
+////
+////            const double& met_logi_1   = tr.getVar<double>("met_logi_1");
+////            const double& met_gaus_30  = tr.getVar<double>("met_gaus_30");
+////
+////            const double& mt2_logi_1   = tr.getVar<double>("mt2_logi_1");
+////            const double& mt2_gaus_30  = tr.getVar<double>("mt2_gaus_30");
+////
+////            const double& cleanMetPhi = tr.getVar<double>("cleanMetPhi");
+////            const std::vector<TLorentzVector>& vTops = tr.getVec<TLorentzVector>("vTops");
+////            const std::vector<TLorentzVector>& vMT2Inputs = tr.getVec<TLorentzVector>("vMT2Inputs");
+////
+////            // Recreation of loose0 cut level - we remove passMuZinvSel and replace with passLeptVetoZinv for Zinvisible
+////            bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv && (nTopCandSortedCntZinv>0);
+////
+////            // Fill MET-MT2 histograms here
+////            if(passLoose0)
+////            {
+////                double weight = nJetWgtDYZ * fs.getWeight();
+////
+////                h_ratio_MET_nom->Fill(met_logi_1/cleanMetPt,  weight);
+////                h_ratio_MT2_nom->Fill(mt2_logi_1/best_had_brJet_MT2Zinv,  weight);
+////                h_ratio_2D_nom->Fill(met_logi_1/cleanMetPt, mt2_logi_1/best_had_brJet_MT2Zinv,  weight);
+////                h_ratio_2Dvmet_nom->Fill(cleanMetPt, mt2_logi_1/best_had_brJet_MT2Zinv,  weight);
+////                h_ratio_2Dvmt2_nom->Fill(best_had_brJet_MT2Zinv, mt2_logi_1/best_had_brJet_MT2Zinv,  weight);
+////
+////                using namespace ROOT::Math::VectorUtil;
+////
+////                TLorentzVector met;
+////                met.SetPtEtaPhiM(cleanMetPt, 0, cleanMetPhi, 0);
+////
+////                double angle_t1_met = -999.9;
+////                if(vMT2Inputs.size() >= 1) angle_t1_met = DeltaPhi(vMT2Inputs[0], met);
+////                double angle_t2_met = -999.9, angle_t1_t2 = -999.9, deta_t1_t2 = -999.9;
+////                if(vMT2Inputs.size() >= 2)
+////                {
+////                    angle_t2_met = DeltaPhi(vMT2Inputs[1], met);
+////                    angle_t1_t2 = DeltaPhi(vMT2Inputs[0],vMT2Inputs[1]);
+////                    deta_t1_t2 = vMT2Inputs[0].Eta() - vMT2Inputs[1].Eta();
+////                }
+////
+////                double metRatio = met_logi_1/cleanMetPt;
+////                double mt2Ratio = mt2_logi_1/best_had_brJet_MT2Zinv;
+////
+////                h_met_angle_t1_met->Fill(angle_t1_met, metRatio, weight);
+////                h_met_angle_t2_met->Fill(angle_t2_met, metRatio, weight);
+////                h_met_angle_t1_t2->Fill(angle_t1_t2, metRatio, weight);
+////                h_met_deta_t1_t2->Fill(deta_t1_t2, metRatio, weight);
+////                if(vMT2Inputs.size() >= 1) 
+////                {
+////                    h_met_pt_t1->Fill(vMT2Inputs[0].Pt(), metRatio, weight);
+////                    h_met_eta_t1->Fill(vMT2Inputs[0].Eta(), metRatio, weight);
+////                    h_met_mass_t1->Fill(vMT2Inputs[0].M(), metRatio, weight);
+////                    h_met_tmt_mt2->Fill(vMT2Inputs[0].Mt()/best_had_brJet_MT2Zinv, metRatio, weight);
+////                }
+////                if(vMT2Inputs.size() >= 2) 
+////                {
+////                    h_met_pt_t2->Fill(vMT2Inputs[1].Pt(), metRatio, weight);
+////                    h_met_eta_t2->Fill(vMT2Inputs[1].Eta(), metRatio, weight);
+////                    h_met_mass_t2->Fill(vMT2Inputs[1].M(), metRatio, weight);
+////                }
+////                h_met_metPhi->Fill(cleanMetPhi, metRatio, weight);
+////
+////                h_mt2_angle_t1_met->Fill(angle_t1_met, mt2Ratio, weight);
+////                h_mt2_angle_t2_met->Fill(angle_t2_met, mt2Ratio, weight);
+////                h_mt2_angle_t1_t2->Fill(angle_t1_t2, mt2Ratio, weight);
+////                h_mt2_deta_t1_t2->Fill(deta_t1_t2, mt2Ratio, weight);
+////                if(vMT2Inputs.size() >= 1) 
+////                {
+////                    h_mt2_pt_t1->Fill(vMT2Inputs[0].Pt(), mt2Ratio, weight);
+////                    h_mt2_eta_t1->Fill(vMT2Inputs[0].Eta(), mt2Ratio, weight);
+////                    h_mt2_mass_t1->Fill(vMT2Inputs[0].M(), mt2Ratio, weight);
+////                    h_mt2_tmt_mt2->Fill(vMT2Inputs[0].Mt()/best_had_brJet_MT2Zinv, mt2Ratio, weight);
+////                }
+////                if(vMT2Inputs.size() >= 2) 
+////                {
+////                    h_mt2_pt_t2->Fill(vMT2Inputs[1].Pt(), mt2Ratio, weight);
+////                    h_mt2_eta_t2->Fill(vMT2Inputs[1].Eta(), mt2Ratio, weight);
+////                    h_mt2_mass_t2->Fill(vMT2Inputs[1].M(), mt2Ratio, weight);
+////                }
+////                h_mt2_metPhi->Fill(cleanMetPhi, mt2Ratio, weight);
+////
+////
+////                hMET_nom ->Fill(cleanMetPt,  weight);
+////                hMET_Gaus->Fill(met_gaus_30, weight);
+////                hMET_Logi->Fill(met_logi_1,  weight);
+////
+////                hMT2_nom ->Fill(best_had_brJet_MT2Zinv, weight);
+////                hMT2_Gaus->Fill(mt2_gaus_30,            weight);
+////                hMT2_Logi->Fill(mt2_logi_1,             weight);
+////
+////                h2D_nom ->Fill(cleanMetPt,  best_had_brJet_MT2Zinv, weight);
+////                h2D_Gaus->Fill(met_gaus_30, mt2_gaus_30,            weight);
+////                h2D_Logi->Fill(met_logi_1,  mt2_logi_1,             weight);
+////            }
+////=======
+            //Variables required only for MET-MT2 
+            //const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
+            //const bool& passLeptVetoZinv         = tr.getVar<bool>("passLeptVetoZinv");
+            //const bool& passnJetsZinv            = tr.getVar<bool>("passnJetsZinv");
+            //const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
+            //
+            //const double& HTZinv                 = tr.getVar<double>("HTZinv");
+            //
+            //const double& met_logi_1   = tr.getVar<double>("met_logi_1");
+            //const double& met_gaus_30  = tr.getVar<double>("met_gaus_30");
+            //
+            //const double& mt2_logi_1   = tr.getVar<double>("mt2_logi_1");
+            //const double& mt2_gaus_30  = tr.getVar<double>("mt2_gaus_30");
+            //
+            //// Recreation of loose0 cut level - we remove passMuZinvSel and replace with passLeptVetoZinv for Zinvisible
+            //bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv && (nTopCandSortedCntZinv>0);
+            //
+            //// Fill MET-MT2 histograms here
+            //if(passLoose0)
+            //{
+            //    //trigger efficiency is too coursely binned in low MET region, irrelivant in MET > 200 region
+            //    double weight = /*triggerEffMC * */nJetWgtDYZ * bTagSF_EventWeightSimple_Central * fs.getWeight();
+            //
+            //    hMET_nom ->Fill(cleanMetPt,  weight);
+            //    hMET_Gaus->Fill(met_gaus_30, weight);
+            //    hMET_Logi->Fill(met_logi_1,  weight);
+            //
+            //    hMT2_nom ->Fill(best_had_brJet_MT2Zinv, weight);
+            //    hMT2_Gaus->Fill(mt2_gaus_30,            weight);
+            //    hMT2_Logi->Fill(mt2_logi_1,             weight);
+            //
+            //    h2D_nom ->Fill(cleanMetPt,  best_had_brJet_MT2Zinv, weight);
+            //    h2D_Gaus->Fill(met_gaus_30, mt2_gaus_30,            weight);
+            //    h2D_Logi->Fill(met_logi_1,  mt2_logi_1,             weight);
+            //}
 
             //fill stat uncertainty histograms here
             if(passBaselineZinv && passLeptVeto)
             {
-                double weight = triggerEffMC * nJetWgtDYZ * normWgt0b * fs.getWeight();
+                double weight = triggerEffMC * nJetWgtDYZ * normWgt0b * bTagSF_EventWeightSimple_Central * fs.getWeight();
 
                 if(nSearchBin >= 0 && nSearchBin < NSEARCHBINS)
                 {

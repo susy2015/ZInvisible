@@ -4,10 +4,11 @@
 #include "baselineDef.h"
 #include "Systematic.h"
 #include "PDFUncertainty.h"
+#include "BTagCorrector.h"
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
+  return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central"});
 }
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSetData()
@@ -57,7 +58,7 @@ void activateBranches(std::set<std::string>& activeBranches)
 }
 
 
-RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
+RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor) : RegisterFunctions()
 {            
     AnaFunctions::prepareTopTagger();
 
@@ -82,6 +83,14 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple() : RegisterFunctions()
     systematicCalc       = new plotterFunctions::SystematicCalc;
 
     myPDFUnc = new PDFUncertainty();
+    if(isCondor)
+    {
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "", false);
+    }
+    else
+    {
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/CSVFiles/", false);
+    }
 }
 
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
@@ -105,6 +114,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(myPDFUnc) delete myPDFUnc;
     if(systematicPrep) delete systematicPrep;
     if(systematicCalc) delete systematicCalc;
+    if(bTagCorrector) delete bTagCorrector;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -132,11 +142,17 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*prepareMiniTupleVars);
     //tr.registerFunction(&printInterestingEvents);
     tr.registerFunction(*myPDFUnc);
+    tr.registerFunction(*bTagCorrector);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
 {
     ::activateBranches(activeBranches);
+}
+
+void RegisterFunctionsNTuple::remakeBTagCorrector(std::string sampleName)
+{
+    if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
 }
 
 RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()
