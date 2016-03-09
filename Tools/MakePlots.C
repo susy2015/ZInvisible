@@ -1,5 +1,6 @@
 #include "Plotter.h"
 #include "RegisterFunctions.h"
+#include "SusyAnaTools/Tools/searchBins.h"
 #include "SusyAnaTools/Tools/samples.h"
 
 #include <getopt.h>
@@ -23,15 +24,17 @@ int main(int argc, char* argv[])
         {"startFile",  required_argument, 0, 'M'},
         {"numEvts",    required_argument, 0, 'E'},
         {"plotDir",    required_argument, 0, 'P'},
-	{"luminosity", required_argument, 0, 'L'}
+	{"luminosity", required_argument, 0, 'L'},
+	{"sbEra",      required_argument, 0, 'S'}
     };
 
     bool doPlots = true, doSave = true, doTuple = true, fromTuple = true, runOnCondor = false;
     string histFile = "", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
     double lumi = AnaSamples::luminosity;
+    std::string sbEra = "SB_37_2015";
 
-    while((opt = getopt_long(argc, argv, "pstfcH:D:N:M:E:P:L:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "pstfcH:D:N:M:E:P:L:S:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
@@ -84,6 +87,10 @@ int main(int argc, char* argv[])
 
 	case 'L':
             lumi = atof(optarg);
+            break;
+
+        case 'S':
+            sbEra = optarg;
             break;
         }
     }
@@ -150,7 +157,8 @@ int main(int argc, char* argv[])
     }
 
     // Number of searchbins
-    int NSB = 37; // 45
+    SearchBins sb(sbEra);
+    int NSB = sb.nSearchBins();//37; // 45
 
     // Shortcuts for axis labels
     std::string label_met = "p_{T}^{miss} [GeV]";
@@ -1591,7 +1599,7 @@ int main(int argc, char* argv[])
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
-    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor);
+    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
 
     Plotter plotter(vh, vvf, fromTuple, histFile, nFiles, startFile, nEvts);
     plotter.setCutFlows(cutFlowSummaries);

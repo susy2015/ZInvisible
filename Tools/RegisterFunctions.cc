@@ -58,7 +58,7 @@ void activateBranches(std::set<std::string>& activeBranches)
 }
 
 
-RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor) : RegisterFunctions()
+RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra) : RegisterFunctions()
 {            
     AnaFunctions::prepareTopTagger();
 
@@ -76,11 +76,11 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor) : RegisterFuncti
     njWeight             = new plotterFunctions::NJetWeight;
     lepInfo              = new plotterFunctions::LepInfo;
     fakebtagvectors      = new plotterFunctions::Fakebtagvectors;
-    getSearchBin         = new plotterFunctions::GetSearchBin;
+    getSearchBin         = new plotterFunctions::GetSearchBin(sbEra);
     triggerInfo          = new plotterFunctions::TriggerInfo;
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(true);
     systematicPrep       = new plotterFunctions::SystematicPrep;
-    systematicCalc       = new plotterFunctions::SystematicCalc;
+    systematicCalc       = new plotterFunctions::SystematicCalc(sbEra);
 
     myPDFUnc = new PDFUncertainty();
     if(isCondor)

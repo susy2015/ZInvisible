@@ -66,7 +66,7 @@ private:
     BTagCorrector *bTagCorrector;
 
 public:
-    RegisterFunctionsNTuple(bool isCondor = false);
+    RegisterFunctionsNTuple(bool isCondor = false, std::string sbEra = "SB_37_2015");
     ~RegisterFunctionsNTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);

@@ -1143,6 +1143,8 @@ namespace plotterFunctions
 
     public:
 
+        GetSearchBin(std::string sb_era) : sbins(sb_era) {}
+
         void operator()(NTupleReader& tr)
         {
             getSearchBin(tr);
@@ -1391,9 +1393,9 @@ namespace plotterFunctions
         }
 
     public:
-	SystematicCalc()
+        SystematicCalc(std::string sb_era) : sbins(sb_era)
 	{
-
+            
 	}
 
 	void operator()(NTupleReader& tr)
