@@ -220,7 +220,7 @@ int main(int argc, char* argv[])
 	    max = pow(max/locMin, scale)*locMin;
 	}
 	//dummy->GetYaxis()->SetRangeUser(locMin, 50*max);
-        dummy->GetYaxis()->SetRangeUser(0.01, 25*max);
+        dummy->GetYaxis()->SetRangeUser(0.01, 120*max);
     }
     else
     {
