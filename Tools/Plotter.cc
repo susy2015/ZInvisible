@@ -135,11 +135,10 @@ void Plotter::HistSummary::parseName(std::vector<Plotter::DataCollection>& ns)
             VarName var;
             Plotter::parseSingleVar(dataset.first, var);
 
-            std::stringstream sint;
-            sint << var.index;
-            std::string histname = name + var.name + ((var.index >= 0)?(sint.str()):("")) + var.var + dataset.first + dataset.second.label + n.type;
+            //std::string histname = name + "__" + var.name + "__" + ((var.index >= 0)?(std::to_string(var.index):("")) + "__" + var.var + "__" + dataset.first + "__" + dataset.second.front().label + "__" + n.type;
+            std::string histname = name +  var.name + ((var.index >= 0)?(std::to_string(var.index)):("")) + var.var + dataset.first + dataset.second.front().label + n.type;
 
-            tmphtp.push_back(std::shared_ptr<HistCutSummary>(new HistCutSummary(dataset.second.label, histname, var, nullptr, dataset.second)));
+            tmphtp.push_back(std::shared_ptr<HistCutSummary>(new HistCutSummary(dataset.second.front().label, histname, var, nullptr, dataset.second)));
         }
         hists.push_back(HistVecAndType(tmphtp, n.type));
     }
@@ -249,11 +248,31 @@ double Plotter::DatasetSummary::extractWeightNames(std::set<std::string>& ab) co
     for(auto& w : weightVec_) ab.insert(w);
 }
 
+Plotter::DataCollection::DataCollection(std::string type, std::vector<std::pair<std::string, DatasetSummary>> ds) : type(type)
+{
+    for(auto& dataset : ds)   
+    {
+        datasets.push_back(std::make_pair(dataset.first, std::vector<DatasetSummary>({dataset.second})));
+    }
+}
+
 Plotter::DataCollection::DataCollection(std::string type, std::string var, std::vector<DatasetSummary> ds) : type(type)
 {
     for(auto& dataset : ds)
     {
-        datasets.push_back(std::make_pair(var, dataset));
+        datasets.push_back(std::make_pair(var, std::vector<DatasetSummary>({dataset})));
+    }
+}
+
+Plotter::DataCollection::DataCollection(std::string type, std::vector<std::pair<std::string, std::vector<DatasetSummary>>> ds) : type(type), datasets(ds)
+{
+}
+
+Plotter::DataCollection::DataCollection(std::string type, std::string var, std::vector<std::vector<DatasetSummary>> vvds) : type(type)
+{
+    for(auto& vds : vvds)
+    { 
+        datasets.push_back(std::make_pair(var, vds)));
     }
 }
 
@@ -288,11 +307,15 @@ void Plotter::createHistsFromTuple()
                     //hist->dss.extractWeightNames(activeBranches);
                     //hist->hs->extractCuts(activeBranches);
 
-                    for(AnaSamples::FileSummary& fileToComp : hist->dss.files)
+                    for(const DatasetSummary& ds : hist->dss)
                     {
-                        if(file == fileToComp)
+                        for(const AnaSamples::FileSummary& fileToComp : ds.files)
                         {
-                            histsToFill.push_back(hist);
+                            if(file == fileToComp)
+                            {
+                                hist->dssp = &ds;
+                                histsToFill.push_back(hist);
+                            }
                         }
                     }
                 }
@@ -304,17 +327,20 @@ void Plotter::createHistsFromTuple()
         std::vector<CutFlowSummary*> cutFlowsToFill;
         for(CutFlowSummary& cfs : cutFlows_)
         {
-            for(auto& dssp : cfs.dc.datasets)
+            for(auto& dss : cfs.dc.datasets)
             {
-                for(AnaSamples::FileSummary& fileToComp : dssp.second.files)
+                for(const DatasetSummary& ds : dss.second)
                 {
-                    if(file == fileToComp)
+                    for(const AnaSamples::FileSummary& fileToComp : ds.files)
                     {
-                        //cutFlowsToFill.push_back(std::shared_ptr<CutFlowSummary>(&cfs));
-                        cutFlowsToFill.push_back(&cfs);
-                        cutFlowsToFill.back()->setDSS(&dssp.second);
-                        cutFlowsToFill.back()->generateHist();
-                        break;
+                        if(file == fileToComp)
+                        {
+                            //cutFlowsToFill.push_back(std::shared_ptr<CutFlowSummary>(&cfs));
+                            cutFlowsToFill.push_back(&cfs);
+                            cutFlowsToFill.back()->setDSS(&ds);
+                            cutFlowsToFill.back()->generateHist();
+                            break;
+                        }
                     }
                 }
             }
@@ -436,13 +462,13 @@ void Plotter::createHistsFromTuple()
                         for(auto& hist : histsToFill)
                         {
                             // tree level dynamical cuts are applied here
-                            if(!hist->dss.passCuts(tr)) continue;
+                            if(!hist->dssp->passCuts(tr)) continue;
 
                             // parse hist level cuts here
                             if(!hist->hs->passCuts(tr)) continue;
 
                             //fill histograms here
-                            double weight = file.getWeight() * hist->dss.getWeight(tr) * hist->dss.kfactor;
+                            double weight = file.getWeight() * hist->dssp->getWeight(tr) * hist->dssp->kfactor;
 
                             fillHist(hist->h, hist->variable, tr, weight);
                         }
@@ -452,7 +478,7 @@ void Plotter::createHistsFromTuple()
                     for(auto& cutFlow : cutFlowsToFill)
                     {
                         //get event weight here
-                        double weight = file.getWeight() * cutFlow->dss->getWeight(tr) * cutFlow->dss->kfactor;
+                        double weight = file.getWeight() * cutFlow->dssp->getWeight(tr) * cutFlow->dssp->kfactor;
 
                         cutFlow->fillHist(tr, weight);
                     }
@@ -874,7 +900,7 @@ void Plotter::plot()
         gPad->SetLogy(hist.isLog);
         if(hist.isLog)
         {
-            double locMin = std::min(0.2*minAvgWgt, std::max(0.0001, 0.05 * min));
+            double locMin = std::min(0.2*minAvgWgt, std::max(0.00011, 0.05 * min));
             double legSpan = (log10(3*max) - log10(locMin)) * (leg->GetY1() - gPad->GetBottomMargin()) / ((1 - gPad->GetTopMargin()) - gPad->GetBottomMargin());
             double legMin = legSpan + log10(locMin);
             if(log10(lmax) > legMin)
@@ -939,7 +965,7 @@ void Plotter::plot()
 
             dummy2 = new TH1F("dummy2", "dummy2", 1000, hist.fhist()->GetBinLowEdge(1), hist.fhist()->GetBinLowEdge(hist.fhist()->GetNbinsX()) + hist.fhist()->GetBinWidth(hist.fhist()->GetNbinsX()));
             dummy2->GetXaxis()->SetTitle(hist.xAxisLabel.c_str());
-            dummy2->GetXaxis()->SetTitleOffset(1.05);
+            dummy2->GetXaxis()->SetTitleOffset(0.97);
             dummy2->GetYaxis()->SetTitle("Ratio");
             dummy2->GetYaxis()->SetTitleOffset(0.42);
             dummy2->GetYaxis()->SetNdivisions(3, 5, 0, true);
@@ -1111,7 +1137,7 @@ void Plotter::plot()
         mark.SetTextSize(0.042 * fontScale);
         //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
         mark.SetTextFont(52);
-        mark.DrawLatex(gPad->GetLeftMargin() + 0.12, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+        mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
 
         //Draw lumistamp
         mark.SetTextFont(42);
