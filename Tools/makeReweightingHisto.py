@@ -235,7 +235,8 @@ def shapeSyst(filename):
 
     varList = [#["met", "cleanMetPt",             [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 1500], "MET" ],
                #["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500],      "M_{T2}" ],
-               ["met", "cleanMetPt",             [0, 100, 200, 275, 350, 450, 1500], "MET" ],
+               #["met", "cleanMetPt",             [0, 100, 200, 275, 350, 450, 1500], "MET" ],
+               ["met", "cleanMetPt",             [0, 100, 200, 300, 600, 1500], "MET" ],
                ["mt2", "best_had_brJet_MT2Zinv", [0, 100, 200, 300, 400, 1500],      "M_{T2}" ],
                ["nt",  "nTopCandSortedCntZinv",  [0, 1, 2, 8 ],                                         "N(t)" ],
                ["nb",  "cntCSVSZinv",            [0, 1, 2, 3, 8 ],                                      "N(b)" ]]
@@ -540,13 +541,23 @@ def systHarvest(filename):
     hTrigDn_ratio.Write()
 
     # b-tag uncertanties
-    hBTagNom = f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Centralsingle")
-    hBTagUp =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu btag weight Upsingle")
-    hBTagDn =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu btag weight Downsingle")
+    #hBTagNom = f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Centralsingle")
+    #hBTagUp =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu btag weight Upsingle")
+    #hBTagDn =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu btag weight Downsingle")
+    #
+    #hBMistagNom = f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Centralsingle")
+    #hBMistagUp =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu bmistag weight Upsingle")
+    #hBMistagDn =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu bmistag weight Downsingle")
 
+
+    hBTagNom = f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Centralsingle")
+    hBTagUp =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu b tag Upsingle")
+    hBTagDn =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu b tag Downsingle")
+    
     hBMistagNom = f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Centralsingle")
-    hBMistagUp =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu bmistag weight Upsingle")
-    hBMistagDn =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu bmistag weight Downsingle")
+    hBMistagUp =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu b mistag Upsingle")
+    hBMistagDn =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu b mistag Downsingle")
+
 
     hBTagUp_Ratio = hBTagUp.Clone("btag_up")
     hBTagUp_Ratio.Add(hBTagNom, -1.0)
