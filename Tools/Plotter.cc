@@ -272,7 +272,7 @@ Plotter::DataCollection::DataCollection(std::string type, std::string var, std::
 {
     for(auto& vds : vvds)
     { 
-        datasets.push_back(std::make_pair(var, vds)));
+        datasets.push_back(std::make_pair(var, vds));
     }
 }
 
