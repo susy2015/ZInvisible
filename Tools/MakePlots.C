@@ -130,10 +130,12 @@ int main(int argc, char* argv[])
     }
     else if(dataSets.compare("TEST2") == 0)
     {
-        fileMap["DYJetsToLL"]  = {ss["DYJetsToLL_HT_400to600"]};
-        fileMap["ZJetsToNuNu"] = {ss["ZJetsToNuNu_HT_400to600"]};
-        fileMap["DYJetsToLL_HT_400to600"] = {ss["DYJetsToLL_HT_400to600"]};
-        fileMap["ZJetsToNuNu_HT_400to600"] = {ss["ZJetsToNuNu_HT_400to600"]};
+        fileMap["DYJetsToLL"]  = {ss["DYJetsToLL_HT_600toInf"]};
+        fileMap["DYJetsToLL_HT_600toInf"] = {ss["DYJetsToLL_HT_600toInf"]};
+        fileMap["IncDY"] = {ss["DYJetsToLL_Inc"]}; 
+        fileMap["TTbarDiLep"] = {ss["TTbarDiLep"]};
+        fileMap["TTbarNoHad"] = {ss["TTbarDiLep"]};
+        fileMap["Data_SingleMuon"] = {ss["Data_SingleMuon_2015C"]};
     }
     else
     {
@@ -457,9 +459,9 @@ int main(int argc, char* argv[])
     Plotter::DataCollection nTop(        "single", {{"nTopCandSortedCnt", dsDY_nunu},  {"nTopCandSortedCntZinv", dsDY_ll_zAcc}, {"nTopCandSortedCntZinv", dsDY_ll_trig_scaled} });
     Plotter::DataCollection nBottom(     "single", {{"cntCSVS", dsDY_nunu},            {"cntCSVSZinv", dsDY_ll_zAcc},           {"cntCSVSZinv",           dsDY_ll_trig_scaled} });
 
-    Plotter::DataCollection scaled_ht(   "single", "ht",  {{dsDY_nunu},            {dsDY_ll_zWeight_scaled},               {dsDY_ll_zAcc_scaled}               });
-    Plotter::DataCollection scaled_mht(  "single", "mht", {{dsDY_nunu},            {dsDY_ll_zWeight_scaled},               {dsDY_ll_zAcc_scaled}               });
-    Plotter::DataCollection scaled_met(  "single", "met", {{dsDY_nunu},            {dsDY_ll_zWeight_scaled},               {dsDY_ll_zAcc_scaled}               });
+    Plotter::DataCollection scaled_ht(   "single", "ht",  {dsDY_nunu,            dsDY_ll_zWeight_scaled,               dsDY_ll_zAcc_scaled               });
+    Plotter::DataCollection scaled_mht(  "single", "mht", {dsDY_nunu,            dsDY_ll_zWeight_scaled,               dsDY_ll_zAcc_scaled               });
+    Plotter::DataCollection scaled_met(  "single", "met", {dsDY_nunu,            dsDY_ll_zWeight_scaled,               dsDY_ll_zAcc_scaled               });
 
     Plotter::DataCollection scaled_cleanht(     "single", {{"HTZinv", dsDY_nunu},                 {"HTZinv", dsDY_ll_zAcc_scaled}                 });
     Plotter::DataCollection scaled_cleanmt2(    "single", {{"best_had_brJet_MT2Zinv", dsDY_nunu}, {"best_had_brJet_MT2Zinv", dsDY_ll_zAcc_scaled} });
@@ -470,9 +472,9 @@ int main(int argc, char* argv[])
     Plotter::DataCollection scaled_nTop(        "single", {{"nTopCandSortedCntZinv", dsDY_nunu},  {"nTopCandSortedCntZinv", dsDY_ll_zAcc_scaled}  });
     Plotter::DataCollection scaled_nBottom(     "single", {{"cntCSVSZinv", dsDY_nunu},            {"cntCSVSZinv", dsDY_ll_zAcc_scaled}            });
 
-    Plotter::DataCollection scaled_elec_ht(   "single", "ht",  {{dsDY_nunu},            {dsDY_ee_zWeight_scaled},               {dsDY_ee_zAcc_scaled}               });
-    Plotter::DataCollection scaled_elec_mht(  "single", "mht", {{dsDY_nunu},            {dsDY_ee_zWeight_scaled},               {dsDY_ee_zAcc_scaled}               });
-    Plotter::DataCollection scaled_elec_met(  "single", "met", {{dsDY_nunu},            {dsDY_ee_zWeight_scaled},               {dsDY_ee_zAcc_scaled}               });
+    Plotter::DataCollection scaled_elec_ht(   "single", "ht",  {dsDY_nunu,            dsDY_ee_zWeight_scaled,               dsDY_ee_zAcc_scaled               });
+    Plotter::DataCollection scaled_elec_mht(  "single", "mht", {dsDY_nunu,            dsDY_ee_zWeight_scaled,               dsDY_ee_zAcc_scaled               });
+    Plotter::DataCollection scaled_elec_met(  "single", "met", {dsDY_nunu,            dsDY_ee_zWeight_scaled,               dsDY_ee_zAcc_scaled               });
 
     Plotter::DataCollection scaled_elec_cleanht(     "single", {{"HTZinv",                 dsDY_nunu},                 {"HTZinv", dsDY_ee_zAcc_scaled} });
     Plotter::DataCollection scaled_elec_cleanmt2(    "single", {{"best_had_brJet_MT2Zinv", dsDY_nunu}, {"best_had_brJet_MT2Zinv", dsDY_ee_zAcc_scaled} });
@@ -833,7 +835,7 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "bTagSF_EventWeightSimple_Central;genWeight");
     Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",                "bTagSF_EventWeightSimple_Central");
     Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "",                "bTagSF_EventWeightSimple_Central;genWeight");
-    std::vector<Plotter::DatasetSummary> stack_MC = {dsDY, dsDYInc, dstt2l, dstW, dsttZ, dsVV, dsRare};
+    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dsDY, dsDYInc}, {dstt2l}, {dstW}, {dsttZ}, {dsVV}, {dsRare}};
     // eff*Acc*B(Z)/B(DY)
     Plotter::DatasetSummary dsData_SingleMuon_effAcc("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "zEffWgt;zAccWgt",           znunu_mumu_ratio);
     Plotter::DatasetSummary dsData_DoubleEG_effAcc(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "zEffWgt;zAccWgt",           znunu_mumu_ratio);
@@ -844,7 +846,7 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsttZ_effAcc(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
     Plotter::DatasetSummary dsVV_effAcc(             "Diboson",    fileMap["Diboson"],         "",                "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
     Plotter::DatasetSummary dsRare_effAcc(           "Rare",       fileMap["Rare"],            "",                "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
-    std::vector<Plotter::DatasetSummary> stack_MC_effAcc = {dsDY_effAcc, dsDYInc_effAcc, dstt2l_effAcc, dstW_effAcc, dsttZ_effAcc, dsVV_effAcc, dsRare_effAcc};
+    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_effAcc = {{dsDY_effAcc, dsDYInc_effAcc}, {dstt2l_effAcc}, {dstW_effAcc}, {dsttZ_effAcc}, {dsVV_effAcc}, {dsRare_effAcc}};
 
     // Apply data/mc njet weight for DY and ttbar
     Plotter::DatasetSummary dswDY(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;nJetWgtDYZ");
@@ -854,15 +856,15 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dswttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "bTagSF_EventWeightSimple_Central;genWeight");
     Plotter::DatasetSummary dswVV(             "Diboson",    fileMap["Diboson"],         "",            "bTagSF_EventWeightSimple_Central");
     Plotter::DatasetSummary dswRare(           "Rare",       fileMap["Rare"],            "",            "bTagSF_EventWeightSimple_Central;genWeight");
-    std::vector<Plotter::DatasetSummary> stackw_MC = {dswDY, dswDYInc, dswtt2l, dswtW, dswttZ, dswVV, dswRare};
+    std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare}};
 
     // Extra MC stack that have njet weight applied for ttbar but not for DY (to make plots for AN)
-    std::vector<Plotter::DatasetSummary> stackwtt_MC = {dsDY, dsDYInc, dswtt2l, dstW, dsttZ, dsVV, dsRare};
+    std::vector<std::vector<Plotter::DatasetSummary>> stackwtt_MC = {{dsDY, dsDYInc}, {dswtt2l}, {dstW}, {dsttZ}, {dsVV}, {dsRare}};
 
     // Apply data/mc njet weight for DY and ttbar & apply the normalization weight
     Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
     Plotter::DatasetSummary dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
-    std::vector<Plotter::DatasetSummary> stackww_MC = {dswwDY, dswwDYInc, dswtt2l, dswtW, dswttZ, dswVV, dswRare};
+    std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare}};
 
     // Collections for all variables, no cuts applied yet
     // met
@@ -1027,60 +1029,60 @@ int main(int argc, char* argv[])
 
     // pair of cutlevels
     std::vector<std::pair<std::string,std::string>> cutlevels_muon = {
-	{"nosel",                     "passNoiseEventFilterZinv"},
-	{"2mu",                       "passNoiseEventFilterZinv;passDiMuSel"},
-	{"muZinv",                    "passNoiseEventFilterZinv;passMuZinvSel"},
-	{"muZinv_ht200",              "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200"},
-	{"muZinv_ht200_dphi",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passdPhisZinv"},
-	{"muZinv_ht50_met50_dphi",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
+//	{"nosel",                     "passNoiseEventFilterZinv"},
+//	{"2mu",                       "passNoiseEventFilterZinv;passDiMuSel"},
+//	{"muZinv",                    "passNoiseEventFilterZinv;passMuZinvSel"},
+//	{"muZinv_ht200",              "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200"},
+//	{"muZinv_ht200_dphi",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passdPhisZinv"},
+//	{"muZinv_ht50_met50_dphi",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
 	{"muZinv_loose0",             "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_loose0_mt2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
-	{"muZinv_loose0_mt21b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv1b>0"},
-	{"muZinv_loose0_mt22b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv2b>0"},
-	{"muZinv_loose0_mt23b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv3b>0"},
-	{"muZinv_loose0_ntop",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>0"},
-	{"muZinv_loose0_nb2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cntCSVSZinv>=2"},
-	{"muZinv_loose0_ht300",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_loose0_ht400",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>400;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_loose0_ht500",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>500;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_blnotagmt2",         "passMuZinvSel;passBaselineNoTagMT2Zinv"},
-	{"muZinv_blnotag",            "passMuZinvSel;passBaselineNoTagZinv"},
-	{"muZinv_bl",                 "passMuZinvSel;passBaselineZinv"},
-	{"muZinv_0b",                 "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0"},
-	{"muZinv_0b_ht200",           "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200"},
-	{"muZinv_0b_ht200_dphi",      "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passdPhisZinv"},
-	{"muZinv_0b_ht50_met50_dphi", "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
-	{"muZinv_0b_loose0",          "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_0b_loose0_ht300",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_0b_loose0_ht400",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>400;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_0b_loose0_ht500",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>500;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_0b_blnotagmt2",      "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv"},
-	{"muZinv_0b_blnotag",         "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
-	{"muZinv_g1b",                "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv"},
-	{"muZinv_g1b_ht200",          "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200"},
-	{"muZinv_g1b_ht200_dphi",     "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passdPhisZinv"},
-	{"muZinv_g1b_ht50_met50_dphi","passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
-	{"muZinv_g1b_loose0",         "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_g1b_loose0_ht300",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>300;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_g1b_loose0_ht400",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>400;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_g1b_loose0_ht500",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>500;passnJetsZinv;passdPhisZinv"},
-	{"elmu",                      "passNoiseEventFilterZinv;passElMuSel"},
-	{"elmuZinv",                  "passNoiseEventFilterZinv;passElMuZinvSel"},
-	{"elmuZinv_ht200",            "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200"},
-	{"elmuZinv_ht200_dphi",       "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200;passdPhisZinv"},
-	{"elmuZinv_loose0",           "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv"},
-	{"elmuZinv_blnotagmt2",       "passElMuZinvSel;passBaselineNoTagMT2Zinv"},
-	{"elmuZinv_bl",               "passElMuZinvSel;passBaselineZinv"},
-	{"elmuZinv_0b",               "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0"},
-	{"elmuZinv_0b_ht200",         "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>200"},
-	{"elmuZinv_0b_ht200_dphi",    "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passdPhisZinv"},
-	{"elmuZinv_0b_loose0",        "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv"},
-	{"elmuZinv_0b_blnotagmt2",    "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv"},
-	{"elmuZinv_0b_blnotag",       "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
-	{"elmuZinv_g1b",              "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv"},
-	{"elmuZinv_g1b_ht200",        "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200"},
-	{"elmuZinv_g1b_ht200_dphi",   "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200;passdPhisZinv"},
-	{"elmuZinv_g1b_loose0",       "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv"}
+//	{"muZinv_loose0_mt2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
+//	{"muZinv_loose0_mt21b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv1b>0"},
+//	{"muZinv_loose0_mt22b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv2b>0"},
+//	{"muZinv_loose0_mt23b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv3b>0"},
+//	{"muZinv_loose0_ntop",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>0"},
+//	{"muZinv_loose0_nb2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cntCSVSZinv>=2"},
+//	{"muZinv_loose0_ht300",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
+//	{"muZinv_loose0_ht400",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>400;passnJetsZinv;passdPhisZinv"},
+//	{"muZinv_loose0_ht500",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>500;passnJetsZinv;passdPhisZinv"},
+//	{"muZinv_blnotagmt2",         "passMuZinvSel;passBaselineNoTagMT2Zinv"},
+//	{"muZinv_blnotag",            "passMuZinvSel;passBaselineNoTagZinv"},
+//	{"muZinv_bl",                 "passMuZinvSel;passBaselineZinv"},
+//	{"muZinv_0b",                 "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0"},
+//	{"muZinv_0b_ht200",           "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200"},
+//	{"muZinv_0b_ht200_dphi",      "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passdPhisZinv"},
+//	{"muZinv_0b_ht50_met50_dphi", "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
+//	{"muZinv_0b_loose0",          "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+//	{"muZinv_0b_loose0_ht300",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv"},
+//	{"muZinv_0b_loose0_ht400",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>400;passnJetsZinv;passdPhisZinv"},
+//	{"muZinv_0b_loose0_ht500",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>500;passnJetsZinv;passdPhisZinv"},
+//	{"muZinv_0b_blnotagmt2",      "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv"},
+//	{"muZinv_0b_blnotag",         "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
+//	{"muZinv_g1b",                "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv"},
+//	{"muZinv_g1b_ht200",          "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200"},
+//	{"muZinv_g1b_ht200_dphi",     "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passdPhisZinv"},
+//	{"muZinv_g1b_ht50_met50_dphi","passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
+//	{"muZinv_g1b_loose0",         "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+//	{"muZinv_g1b_loose0_ht300",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>300;passnJetsZinv;passdPhisZinv"},
+//	{"muZinv_g1b_loose0_ht400",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>400;passnJetsZinv;passdPhisZinv"},
+//	{"muZinv_g1b_loose0_ht500",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>500;passnJetsZinv;passdPhisZinv"},
+//	{"elmu",                      "passNoiseEventFilterZinv;passElMuSel"},
+//	{"elmuZinv",                  "passNoiseEventFilterZinv;passElMuZinvSel"},
+//	{"elmuZinv_ht200",            "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200"},
+//	{"elmuZinv_ht200_dphi",       "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200;passdPhisZinv"},
+//	{"elmuZinv_loose0",           "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+//	{"elmuZinv_blnotagmt2",       "passElMuZinvSel;passBaselineNoTagMT2Zinv"},
+//	{"elmuZinv_bl",               "passElMuZinvSel;passBaselineZinv"},
+//	{"elmuZinv_0b",               "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0"},
+//	{"elmuZinv_0b_ht200",         "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>200"},
+//	{"elmuZinv_0b_ht200_dphi",    "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passdPhisZinv"},
+//	{"elmuZinv_0b_loose0",        "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+//	{"elmuZinv_0b_blnotagmt2",    "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv"},
+//	{"elmuZinv_0b_blnotag",       "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
+//	{"elmuZinv_g1b",              "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv"},
+//	{"elmuZinv_g1b_ht200",        "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200"},
+//	{"elmuZinv_g1b_ht200_dphi",   "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200;passdPhisZinv"},
+//	{"elmuZinv_g1b_loose0",       "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv"}
     };
 
     std::vector<std::pair<std::string,std::string>> cutlevels_muon_syst = {
@@ -1261,6 +1263,8 @@ int main(int argc, char* argv[])
     }
     //MC interlude over
 
+    vector<Plotter::HistSummary> vh2;
+
     //push the histograms in a loop, save some copy-paste time
     for(std::pair<std::string,std::string>& cut : cutlevels_muon)
     {
@@ -1298,7 +1302,7 @@ int main(int argc, char* argv[])
 	// DataMC weights applied
         vector<double> metBins = {0, 50, 100, 150, 200, 275, 300, 350, 400, 450, 2000};
         vector<double> mt2Bins = {0, 50, 100, 150, 200, 250, 300, 350, 400, 2000};
-	vh.push_back(PHS("DataMCw_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_met,                                        "Events"));
+	vh2.push_back(PHS("DataMCw_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},   {1, 2}, cut.second, 25, 0, 1500, true, false,  label_met,                                        "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_rebin_met_" +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},   {1, 2}, cut.second, metBins, true, false,  label_met,                                        "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwMC_ht},    {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,                                         "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_mht_"   +cut.first,  {dcData_SingleMuon_mht,   dcwMC_mht},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mht,                                        "Events"));
@@ -1602,7 +1606,7 @@ int main(int argc, char* argv[])
 
     RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
 
-    Plotter plotter(vh, vvf, fromTuple, histFile, nFiles, startFile, nEvts);
+    Plotter plotter(vh2, vvf, fromTuple, histFile, nFiles, startFile, nEvts);
     plotter.setCutFlows(cutFlowSummaries);
     plotter.setLumi(lumi);
     plotter.setPlotDir(plotDir);
