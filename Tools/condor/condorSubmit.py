@@ -107,7 +107,6 @@ for ds in datasets:
             for l in f:
                 if '.root' in l and not 'failed' in l:
                     count = count + 1
-            print "I ARE HERE"
             for startFileNum in xrange(0, count, nFilesPerJob):
                 fileParts.append("Arguments = %s $ENV(CMSSW_BASE) %i %i %f %s\nQueue\n\n"%(n, nFilesPerJob, startFileNum, lumi, s))
             f.close()
