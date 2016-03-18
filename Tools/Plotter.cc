@@ -27,14 +27,21 @@ const int colors[] = {
 const int NCOLORS = sizeof(colors)/sizeof(int);
 
 const int stackColors[] = {
+    kAzure+2,
+    kOrange+2,
+    kSpring-5,
+    kMagenta-2,
+    kAzure-4,
+    kTeal-7,
+    kRed-7,
     kAzure,
-    kOrange + 7,
     kGreen + 2,
     kMagenta - 1,
     kYellow + 4,
     kRed + 1,
     kAzure - 4,
-    kCyan + 2
+    kCyan + 2,
+    kOrange + 7
 };
 const int NSTACKCOLORS = sizeof(stackColors) / sizeof(int);
 
@@ -525,7 +532,9 @@ void Plotter::createHistsFromFile()
             for(auto& hist : histvec.hcsVec)
             {
 		std::string& dirname = hist->variable.name;
-                if(fout_) hist->h = static_cast<TH1*>(fout_->Get( (dirname+"/"+hist->name).c_str() ) );
+                std::string histName = hist->name;
+
+                if(fout_) hist->h = static_cast<TH1*>(fout_->Get( (dirname+"/"+histName).c_str() ) );
 		else std::cout << "Input file \"" << fout_ << "\" not found!!!!" << std::endl;
 		if(!hist->h) std::cout << "Histogram not found: \"" << hist->name << "\"!!!!!!" << "dirname/histname " << dirname+"/"+hist->name << std::endl;
             }
@@ -867,6 +876,7 @@ void Plotter::plot()
                 int iStack = 0;
                 for(auto ih = hvec.hcsVec.begin(); ih != hvec.hcsVec.end(); ++ih)
                 {
+                    (*ih)->h->SetMarkerColor(stackColors[iStack%NSTACKCOLORS]);
                     (*ih)->h->SetLineColor(stackColors[iStack%NSTACKCOLORS]);
                     (*ih)->h->SetFillColor(stackColors[iStack%NSTACKCOLORS]);
                     iStack++;
@@ -874,7 +884,7 @@ void Plotter::plot()
                     if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", (*ih)->label.c_str(), integral);
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", (*ih)->label.c_str(), integral);
                     else                      sprintf(legEntry, "%s (%0.2e)",  (*ih)->label.c_str(), integral);
-                    leg->AddEntry((*ih)->h, legEntry);
+                    leg->AddEntry((*ih)->h, legEntry, "F");
                     sow += (*ih)->h->GetSumOfWeights();
                     te +=  (*ih)->h->GetEntries();
                 }
@@ -1137,7 +1147,8 @@ void Plotter::plot()
         mark.SetTextSize(0.042 * fontScale);
         //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
         mark.SetTextFont(52);
-        mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+        //mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+        mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
 
         //Draw lumistamp
         mark.SetTextFont(42);

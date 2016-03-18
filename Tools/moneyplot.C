@@ -161,14 +161,14 @@ int main(int argc, char* argv[])
     dummy->GetYaxis()->SetTitleOffset(.9*1.05 / (fontScale));
     dummy->GetXaxis()->SetTitleOffset(1.05);
     if(showRatio) dummy->GetXaxis()->SetTitle("");
-    else          dummy->GetXaxis()->SetTitle("Search Bin");
+    else          dummy->GetXaxis()->SetTitle("Search region bin number");
     dummy->GetXaxis()->SetTitleSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetXaxis()->SetLabelSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetYaxis()->SetTitleSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetYaxis()->SetLabelSize(0.20 * 2 / 6.5 * fontScale);
     if(dummy->GetNdivisions() % 100 > 5) dummy->GetXaxis()->SetNdivisions(6, 5, 0);
 
-    TLegend *leg = new TLegend(0.58, 0.7, 0.90, 0.91);
+    TLegend *leg = new TLegend(0.61, 0.7, 0.90, 0.91);
     leg->SetFillStyle(0);
     leg->SetBorderSize(0);
     leg->SetLineWidth(1);
@@ -245,7 +245,7 @@ int main(int argc, char* argv[])
     c->cd(1);
 
     char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 2262. / 1000.0);
+    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", 2262. / 1000.0);
 
     TLatex mark;
     mark.SetNDC();
@@ -259,7 +259,7 @@ int main(int argc, char* argv[])
     mark.SetTextSize(0.042 * fontScale);
     //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
     mark.SetTextFont(52);
-    mark.DrawLatex(gPad->GetLeftMargin() + 0.062, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+    mark.DrawLatex(gPad->GetLeftMargin() + 0.062, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
 
     //Draw lumistamp 
     mark.SetTextFont(42);
