@@ -23,6 +23,7 @@ namespace plotterFunctions
     class SystematicPrep;
     class SystematicCalc;
     class MetSmear;
+    class PrepareTopVars;
 }
 
 class SystWeights;
@@ -123,6 +124,16 @@ private:
 public:
     RegisterFunctions2Dplot();
     ~RegisterFunctions2Dplot();
+    void registerFunctions(NTupleReader& tr);
+};
+
+class RegisterFunctionsTopStudy : public RegisterFunctions
+{
+private:
+    plotterFunctions::PrepareTopVars *prepareTopVars;
+public:
+    RegisterFunctionsTopStudy();
+    ~RegisterFunctionsTopStudy();
     void registerFunctions(NTupleReader& tr);
 };
 

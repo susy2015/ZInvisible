@@ -342,7 +342,7 @@ def systHarvest(filename):
     #fout = TFile.Open("syst_shape.root", "RECREATE")
     # Run over the relevant histograms
     # histo names
-    NSB = 37
+    NSB = 45
 
     # Get shape central value uncertainty
     f = TFile("systematics.root")

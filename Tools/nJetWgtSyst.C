@@ -102,7 +102,7 @@ int main()
 
     //Prep variables for nJet and shape systematic weights
     const int NTRIALS = 1000;
-    const int NSEARCHBINS = 37;
+    const int NSEARCHBINS = 45;
 
     TH1 *h[5][NSEARCHBINS];
     std::vector<std::string> hnames = {"njet", "met", "mt2", "nt", "nb"};

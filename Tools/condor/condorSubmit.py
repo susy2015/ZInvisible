@@ -10,6 +10,7 @@ from samples import SampleCollection
 import optparse 
 import subprocess
 
+#go make plots!
 submitFileGMP = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
@@ -24,12 +25,13 @@ x509userproxy = $ENV(X509_USER_PROXY)
 
 """
 
-submitFileGME = """universe = vanilla
-Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEff.sh
+#go make top plots!
+submitFileGTP = """universe = vanilla
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeTopPlots.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/calcEff, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEff.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/zRes.root, $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/makeTopPlots, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/bTagEffHists.root,  $ENV(CMSSW_BASE)/src/ZInvisible/Tools/lepEffHists.root,  $ENV(CMSSW_BASE)/src/ZInvisible/Tools/njetWgtHists.root, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/dataMCweights.root, $ENV(CMSSW_BASE)/src/SusyAnaTools/Tools/CSVFiles/CSVv2_mod.csv, $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so, $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/libTopTaggerTopTagger.so
 Output = logs/makePlots_$(Process).stdout
 Error = logs/makePlots_$(Process).stderr
 Log = logs/makePlots_$(Process).log
@@ -38,12 +40,40 @@ x509userproxy = $ENV(X509_USER_PROXY)
 
 """
 
+#go make lepton efficiency
+submitFileGME = """universe = vanilla
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEff.sh
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/calcEff, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEff.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/zRes.root, $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so
+notify_user = ${LOGNAME}@FNAL.GOV
+x509userproxy = $ENV(X509_USER_PROXY)
+
+"""
+
+#go B Efficiency calc
 submitFileGBE = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeBeff.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/beffCalc, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeBeff.sh
+Output = logs/makePlots_$(Process).stdout
+Error = logs/makePlots_$(Process).stderr
+Log = logs/makePlots_$(Process).log
+notify_user = ${LOGNAME}@FNAL.GOV
+x509userproxy = $ENV(X509_USER_PROXY)
+
+"""
+
+#go Signal Efficiency
+submitFileGSE = """universe = vanilla
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeSigEff.sh
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/makeSignalHistograms, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeSigEff.sh
 Output = logs/makePlots_$(Process).stdout
 Error = logs/makePlots_$(Process).stderr
 Log = logs/makePlots_$(Process).log
@@ -61,16 +91,28 @@ parser.add_option ('-r', dest='refLumi', type='string', default = None, help="Da
 parser.add_option ('-c', dest='noSubmit', action='store_true', default = False, help="Do not submit jobs.  Only create condor_submit.txt.")
 parser.add_option ('-e', dest='goMakeEff', action='store_true', default = False, help="Run calcEff instead of makePlots.")
 parser.add_option ('-b', dest='goMakeBeff', action='store_true', default = False, help="Run beffCalc instead of makePlots.")
+parser.add_option ('-s', dest='goMakeSigEff', action='store_true', default = False, help="Run makeSignalHistograms instead of makePlots.")
+parser.add_option ('-t', dest='goMakeTopPlots', action='store_true', default = False, help="Run makeTopPlots instead of makePlots.")
 
 options, args = parser.parse_args()
 
 submitFile = ""
+exeName = ""
 
 if options.goMakeEff:
+    exeName = "calcEff"
     submitFile = submitFileGME
 elif options.goMakeBeff:
+    exeName = "beffCalc"
     submitFile = submitFileGBE
+elif options.goMakeSigEff:
+    exeName = "makeSignalHistograms"
+    submitFile = submitFileGSE
+elif options.goMakeTopPlots:
+    exeName = "makeTopPlots"
+    submitFile = submitFileGTP
 else:
+    exeName = "makePlots"
     submitFile = submitFileGMP
 
 nFilesPerJob = options.numfile
@@ -108,7 +150,12 @@ for ds in datasets:
                 if '.root' in l and not 'failed' in l:
                     count = count + 1
             for startFileNum in xrange(0, count, nFilesPerJob):
-                fileParts.append("Arguments = %s $ENV(CMSSW_BASE) %i %i %f %s\nQueue\n\n"%(n, nFilesPerJob, startFileNum, lumi, s))
+                fileParts.append("Arguments = %s $ENV(CMSSW_BASE) %i %i %f %s\n"%(n, nFilesPerJob, startFileNum, lumi, s))
+                fileParts.append("Output = logs/%s_%s_%i.stdout\n"%(exeName, n, startFileNum))
+                fileParts.append("Error = logs/%s_%s_%i.stderr\n"%(exeName, n, startFileNum))
+                fileParts.append("Log = logs/%s_%s_%i.log\n"%(exeName, n, startFileNum))
+                fileParts.append("Queue\n\n")
+
             f.close()
 
 fout = open("condor_submit.txt", "w")

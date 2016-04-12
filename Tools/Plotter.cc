@@ -416,6 +416,7 @@ void Plotter::createHistsFromTuple()
             {
                 NTupleReader tr(t, activeBranches);
                 tr.setReThrow(false);
+
                 registerfunc_->registerFunctions(tr);
 
                 while(tr.getNextEvent())
