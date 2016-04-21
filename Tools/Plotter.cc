@@ -384,6 +384,10 @@ void Plotter::createHistsFromTuple()
             }
         }
 
+        //prime filelist if it is not already filled
+        //THIS IS A TERRIBLE HACK THAT NEEDS BETTER FIXING
+        const_cast<AnaSamples::FileSummary*>(&file)->readFileList();
+
         int fileCount = 0, startCount = 0;
         int NEvtsTotal = 0;
         for(const std::string& fname : file.filelist_)

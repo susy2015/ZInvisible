@@ -9,7 +9,6 @@
 #include "TopTagger.h"
 #include "TTModule.h"
 #include "TopTaggerUtilities.h"
-#include "TopTaggerFactory.h"
 #include "TopTaggerResults.h"
 
 #include "TH1.h"
@@ -1417,7 +1416,6 @@ namespace plotterFunctions
     private:
 
         topTagger::type3TopTagger t3tagger;
-        TopTaggerFactory ttf;
         TopTagger* tt;
 
         void prepareTopVars(NTupleReader& tr)
@@ -1526,22 +1524,22 @@ namespace plotterFunctions
             }
             else if(cntCSVS >= 1 && jetsLVec.size() >= 4)
             {
-                std::cout << std::endl;
-                std::cout << "nJets: " << jetsLVec_forTagger.size() << "   nb: " << cntCSVS << std::endl;
-                std::cout << "NEW AND OLD TOP VECTOR ARE NOT SAME SIZE!!!!! old: " << vTops->size() << "   new: " << vTopsNew->size() << std::endl;
-                if(vTopsNew->size() >= 1) std::cout << "NEW TOP nConstituents: " << ttr.getTops()[0]->getConstituents().size() << "   pt: " << ttr.getTops()[0]->p().Pt() << "   eta: " << ttr.getTops()[0]->p().Eta() << "   phi: " << ttr.getTops()[0]->p().Phi() << "   M: " << ttr.getTops()[0]->p().M() << "   dRmax: " << ttr.getTops()[0]->getDRmax() << std::endl;
-                int nbInTop = 0;
-                for(auto& jet : ttr.getTops()[0]->getConstituents()) if(jet->getBTagDisc() > 0.89) ++nbInTop;
-                std::cout << "NEW nb in top: " << nbInTop << std::endl;
-
-                if(t3tagger.topJetCand_idx123Vec.size())
-                {
-                    TLorentzVector topLVec = t3tagger.buildLVec(jetsLVec_forTagger, t3tagger.topJetCand_idx123Vec[0]);
-                    std::cout << "OLD TOP nConstituents: " << t3tagger.topJetCand_idx123Vec[0].size() << "   pt: " << topLVec.Pt() << "   eta: " << topLVec.Eta() << "   phi: " << topLVec.Phi() << "   M: " << topLVec.M() << std::endl;
-                }
-                std::cout << "NEW TOP nCandidates: " << ttr.getTopCandidates().size() << std::endl;
-                std::cout << "OLD TOP nCandidates: " << t3tagger.finalCombfatJets.size() << std::endl;
-                std::cout << std::endl;
+                //std::cout << std::endl;
+                //std::cout << "nJets: " << jetsLVec_forTagger.size() << "   nb: " << cntCSVS << std::endl;
+                //std::cout << "NEW AND OLD TOP VECTOR ARE NOT SAME SIZE!!!!! old: " << vTops->size() << "   new: " << vTopsNew->size() << std::endl;
+                //if(vTopsNew->size() >= 1) std::cout << "NEW TOP nConstituents: " << ttr.getTops()[0]->getConstituents().size() << "   pt: " << ttr.getTops()[0]->p().Pt() << "   eta: " << ttr.getTops()[0]->p().Eta() << "   phi: " << ttr.getTops()[0]->p().Phi() << "   M: " << ttr.getTops()[0]->p().M() << "   dRmax: " << ttr.getTops()[0]->getDRmax() << std::endl;
+                //int nbInTop = 0;
+                //for(auto& jet : ttr.getTops()[0]->getConstituents()) if(jet->getBTagDisc() > 0.89) ++nbInTop;
+                //std::cout << "NEW nb in top: " << nbInTop << std::endl;
+                //
+                //if(t3tagger.topJetCand_idx123Vec.size())
+                //{
+                //    TLorentzVector topLVec = t3tagger.buildLVec(jetsLVec_forTagger, t3tagger.topJetCand_idx123Vec[0]);
+                //    std::cout << "OLD TOP nConstituents: " << t3tagger.topJetCand_idx123Vec[0].size() << "   pt: " << topLVec.Pt() << "   eta: " << topLVec.Eta() << "   phi: " << topLVec.Phi() << "   M: " << topLVec.M() << std::endl;
+                //}
+                //std::cout << "NEW TOP nCandidates: " << ttr.getTopCandidates().size() << std::endl;
+                //std::cout << "OLD TOP nCandidates: " << t3tagger.finalCombfatJets.size() << std::endl;
+                //std::cout << std::endl;
             }
             
 
@@ -1574,7 +1572,17 @@ namespace plotterFunctions
             t3tagger.setnJetsSel(1);
             t3tagger.setCSVS(AnaConsts::cutCSVS);
 
-            tt = ttf.makeTopTagger();
+            std::string cfgDocText =
+                "TopTagger\n"
+                "{\n"
+                "    module[0] = \"TTMLazyClusterAlgo\""
+                "    module[1] = \"TTMHEPRequirements\""
+                "    module[2] = \"TTMOverlapResolution\""
+                "}\n";
+
+            tt = new TopTagger();
+            tt->setCfgFile("TopTagger.cfg");
+            //tt = ttf.makeTopTagger();
 	}
 
         ~PrepareTopVars()

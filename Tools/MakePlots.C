@@ -868,6 +868,7 @@ int main(int argc, char* argv[])
 
     // Collections for all variables, no cuts applied yet
     // met
+
     Plotter::DataCollection dcData_SingleMuon_met("data",   "cleanMetPt", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_met(  "data",   "cleanMetPt", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_met(             "stack",  "cleanMetPt", stack_MC);

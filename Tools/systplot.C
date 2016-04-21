@@ -194,7 +194,7 @@ void makeplotratio(TFile* f, std::vector<std::string> hnames, std::vector<std::s
     leg->AddEntry(histos[1],"Nominal variation","l");
     leg->AddEntry(histos[2],"Down variation","l");
     
-    dummy->GetXaxis()->SetRangeUser(xlow, xhigh);
+    //dummy->GetXaxis()->SetRangeUser(xlow, xhigh);
     dummy->GetYaxis()->SetRangeUser(ylow, yhigh);
     dummy->Draw();
     
@@ -250,7 +250,7 @@ void makeplotratio(TFile* f, std::vector<std::string> hnames, std::vector<std::s
 	h->SetMarkerStyle(8);
 	h->SetMarkerSize(1);
     }
-    dummy2->GetXaxis()->SetRangeUser(xlow, xhigh);
+    //dummy2->GetXaxis()->SetRangeUser(xlow, xhigh);
     dummy2->GetYaxis()->SetRangeUser(-0.07, ratiomax);
     dummy2->Draw();
     for(TH1D* h : histosratio)

@@ -4,6 +4,7 @@ SDIR       = .
 RSDIR      = $(CMSSW_BASE)/src/SusyAnaTools/Tools
 
 TTIDIR     = $(CMSSW_BASE)/src/TopTagger/TopTagger/include
+TPIDIR     = $(CMSSW_BASE)/src/TopTagger/CfgParser/include
 
 CXX        = g++
 
@@ -22,7 +23,7 @@ LD         = g++
 LDFLAGS    =
 
 LIBS       = $(shell root-config --glibs)
-MT2LIB     = -L$(CMSSW_BASE)/lib/${SCRAM_ARCH}/ -lrecipeAUXOxbridgeMT2 -lTopTaggerTopTagger
+MT2LIB     = -L$(CMSSW_BASE)/lib/${SCRAM_ARCH}/ -lrecipeAUXOxbridgeMT2 -lTopTaggerTopTagger -lTopTaggerCfgParser
 LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
@@ -48,16 +49,16 @@ $(ODIR)/samplesModulePyWrap.o: $(RSDIR)/samplesModule.cc
 
 
 $(ODIR)/%.o : $(SDIR)/%.C
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -o $@ -c $<
 
 $(ODIR)/%.o : $(SDIR)/%.cc
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -o $@ -c $<
 
 $(ODIR)/%.o : $(RSDIR)/%.C
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -o $@ -c $<
 
 $(ODIR)/%.o : $(RSDIR)/%.cc
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -o $@ -c $<
 
 calcEff: $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/calcEff.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/Plotter.o $(ODIR)/MiniTupleMaker.o $(ODIR)/searchBins.o $(ODIR)/BTagCorrector.o $(ODIR)/BTagCalibrationStandalone.o
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
