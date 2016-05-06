@@ -152,19 +152,78 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary ds_T2tt(    "T2tt (500, 325)",    fileMap["Signal_T2tt_mStop500_mLSP325"],      "", "");
     Plotter::DatasetSummary ds_T1tttt(  "T1tttt (1200, 800)", fileMap["Signal_T1tttt_mGluino1200_mLSP800"], "", "");
     Plotter::DatasetSummary ds_T1tttt_2("T1tttt (1500, 100)", fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "", "");
-    
+
+    auto PDSCutBind = [](Plotter::DatasetSummary pds, std::string cuts) { pds.setCuts(cuts); return pds; };
+
     auto PDCMaker = [&](std::string var) { return Plotter::DataCollection( "single", var, {ds_Znunu, ds_ttbar, ds_T2tt, ds_T1tttt, ds_T1tttt_2}); };
 
-    auto PDCMaker_nTops = [&](Plotter::DatasetSummary& pds) { return Plotter::DataCollection( "single", {{"nTops", pds}, {"nTopsNew", pds}}); };
+    auto PDCMaker_nTops   = [&](Plotter::DatasetSummary& pds) { return Plotter::DataCollection( "single", {{"nTops", pds}, {"nTopsNew", pds}}); };
+    auto PDCMaker_topProp = [&](Plotter::DatasetSummary& pds, int iTop = 0, std::string var = "pt") 
+    {
+        std::string afterVar = ((iTop<0)?(""):("[" + std::to_string(iTop) + "]")) + "(" + var + ")";
+        return Plotter::DataCollection( "single", { {"vTops"    + afterVar, pds}, 
+                                                    {"vTopsNew" + afterVar, pds} });
+    };
+    auto PDCMaker_topMultComp = [&](Plotter::DatasetSummary& pds, std::string var = "pt")
+    {
+        std::string varStr = "vTopsNew(" + var + ")";
+        return Plotter::DataCollection( "single", {{varStr, PDSCutBind(pds, "nTopsNew=0")}, {varStr, PDSCutBind(pds, "nTopsNew=1")}, {varStr, PDSCutBind(pds, "nTopsNew=2")}, {varStr, PDSCutBind(pds, "nTopsNew>2")} });
+    };
+    auto PDCMaker_topMT2Comp = [&](Plotter::DatasetSummary& pds)
+    {
+        std::string varStr = "newMT2";
+        return Plotter::DataCollection( "single", {{varStr, PDSCutBind(pds, "nTopsNew=0")}, {varStr, PDSCutBind(pds, "nTopsNew=1")}, {varStr, PDSCutBind(pds, "nTopsNew=2")}, {varStr, PDSCutBind(pds, "nTopsNew>2")} });
+    };
+    auto PDCMaker_dR      = [&](Plotter::DatasetSummary& pds) { return Plotter::DataCollection( "single", {{"deltaRt1t2New", pds}, {"deltaRt1t2New", pds}}); };
+    //auto PDCMaker_mt2     = [&](Plotter::DatasetSummary& pds) { return Plotter::DataCollection( "single", {{"oldMT2", pds}, {"newMT2", pds}}); };
+    auto PDCMaker_mt2 = [&](Plotter::DatasetSummary& pds, int ntops = -1) 
+    { 
+        std::string cutNew, cutOld;
+        if(ntops >= 0)
+        {
+            if(ntops >= 3)
+            {
+                cutNew = "nTopsNew>2";
+                cutOld = "nTops>2";
+            }
+            else
+            {
+                cutNew = "nTopsNew="+std::to_string(ntops);
+                cutOld = "nTops="+std::to_string(ntops);
+            }
+        }
+        return Plotter::DataCollection( "single", {{"oldMT2", PDSCutBind(pds, cutOld)}, {"newMT2", PDSCutBind(pds, cutNew)}}); 
+    };
+    auto PDCMaker_Rsys    = [&](Plotter::DatasetSummary& pds, std::string var) { return Plotter::DataCollection( "single", {{"oldRsysVec_" + var + "", pds}, {"newRsysVec_" + var + "", pds}}); };
                                           
     vh.push_back(PHS("nTops",    {PDCMaker("nTops")},    {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
     vh.push_back(PHS("nTopsNew", {PDCMaker("nTopsNew")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
 
-    vh.push_back(PHS("nTops_Znunu",    {PDCMaker_nTops(ds_Znunu)},    {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
-    vh.push_back(PHS("nTops_ttbar",    {PDCMaker_nTops(ds_ttbar)},    {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
-    vh.push_back(PHS("nTops_T2tt",     {PDCMaker_nTops(ds_T2tt)},     {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
-    vh.push_back(PHS("nTops_T1tttt_1", {PDCMaker_nTops(ds_T1tttt)},   {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
-    vh.push_back(PHS("nTops_T1tttt_2", {PDCMaker_nTops(ds_T1tttt_2)}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
+    std::vector<std::pair<PDS, std::string>> pdsVec = {{ds_Znunu, "Znunu"}, {ds_ttbar, "ttbar"}, {ds_T2tt, "T2tt"}, {ds_T1tttt, "T1tttt_1"}, {ds_T1tttt_2, "T1tttt_2"}};
+    for(auto& pds : pdsVec)
+    {
+        vh.push_back(PHS("nTops_" + pds.second,           {PDCMaker_nTops(pds.first)},              {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
+        vh.push_back(PHS("mt2_" + pds.second,             {PDCMaker_mt2(pds.first)},                {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 1500,  true,  true,  "M_{T2} [GeV]", "Norm Events"));
+        vh.push_back(PHS("mt2_0top_" + pds.second,        {PDCMaker_mt2(pds.first,    0)},          {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 1500,  true,  true,  "M_{T2} [GeV]", "Norm Events"));
+        vh.push_back(PHS("mt2_1top_" + pds.second,        {PDCMaker_mt2(pds.first,    1)},          {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 1500,  true,  true,  "M_{T2} [GeV]", "Norm Events"));
+        vh.push_back(PHS("mt2_2top_" + pds.second,        {PDCMaker_mt2(pds.first,    2)},          {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 1500,  true,  true,  "M_{T2} [GeV]", "Norm Events"));
+        vh.push_back(PHS("mt2_3top_" + pds.second,        {PDCMaker_mt2(pds.first,    3)},          {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 1500,  true,  true,  "M_{T2} [GeV]", "Norm Events"));
+        vh.push_back(PHS("ZeroMT2_rsys_pt_" + pds.second, {PDCMaker_Rsys(pds.first,    "pt")},      {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5;newMT2<20",  100, 0, 1000,  true,  true,  "Rsys p_{T} [GeV]", "Norm Events"));
+        vh.push_back(PHS("ZeroMT2_t1_pt_" + pds.second,   {PDCMaker_topProp(pds.first,  0, "pt")},  {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5;newMT2<20",  100, 0, 1000,  true,  true,  "p_{T} top 1 [GeV]", "Norm Events"));
+        vh.push_back(PHS("tAll_pt_" + pds.second,         {PDCMaker_topProp(pds.first, -1, "pt")},  {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 2000,  true,  true,  "p_{T} top [GeV]", "Norm Events"));
+        vh.push_back(PHS("t1_pt_" + pds.second,           {PDCMaker_topProp(pds.first,  0, "pt")},  {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 2000,  true,  true,  "p_{T} top 1 [GeV]", "Norm Events"));
+        vh.push_back(PHS("t2_pt_" + pds.second,           {PDCMaker_topProp(pds.first,  1, "pt")},  {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 2000,  true,  true,  "p_{T} top 2 [GeV]", "Norm Events"));
+        vh.push_back(PHS("t3_pt_" + pds.second,           {PDCMaker_topProp(pds.first,  2, "pt")},  {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 2000,  true,  true,  "p_{T} top 3 [GeV]", "Norm Events"));
+        vh.push_back(PHS("t4_pt_" + pds.second,           {PDCMaker_topProp(pds.first,  3, "pt")},  {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 2000,  true,  true,  "p_{T} top 4 [GeV]", "Norm Events"));
+        vh.push_back(PHS("dRt12_" + pds.second,           {PDCMaker_dR(pds.first)},                 {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 8,  true,  true,  "#DeltaR", "Norm Events"));
+        vh.push_back(PHS("rsys_pt_" + pds.second,         {PDCMaker_Rsys(pds.first,    "pt")},      {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 1000,  true,  true,  "Rsys p_{T} [GeV]", "Norm Events"));
+        vh.push_back(PHS("rsys_eta_" + pds.second,        {PDCMaker_Rsys(pds.first,    "eta")},     {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, -3, 3,  true,  true,  "Rsys #eta", "Norm Events"));
+        vh.push_back(PHS("rsys_phi_" + pds.second,        {PDCMaker_Rsys(pds.first,    "phi")},     {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, -4, 4,  true,  true,  "Rsys #phi", "Norm Events"));
+        vh.push_back(PHS("rsys_m_" + pds.second,          {PDCMaker_Rsys(pds.first,    "M")},       {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 1000,  true,  true,  "Rsys M [GeV]", "Norm Events"));
+        vh.push_back(PHS("tops_pt_" + pds.second,         {PDCMaker_topMultComp(pds.first,  "pt")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 2000,  true,  true,  "p_{T} top [GeV]", "Norm Events"));
+        vh.push_back(PHS("tops_m_" + pds.second,          {PDCMaker_topMultComp(pds.first,  "M")},  {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 1000,  true,  true,  "mass top [GeV]", "Norm Events"));
+        vh.push_back(PHS("tops_mt2_" + pds.second,        {PDCMaker_topMT2Comp(pds.first)},         {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 2000,  true,  true,  "M_{T2} [GeV]", "Norm Events"));
+    }
 
     vh.push_back(PHS("dTopsPt",    {PDCMaker("vdTops(pt)")},    {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, -25, 25,  true,  true,  "#Deltap_{T}(t)", "Norm Events"));
     vh.push_back(PHS("dTopsEta",   {PDCMaker("vdTops(eta)")},   {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, -5,   5,  true,  true,  "#Delta#eta(t)", "Norm Events"));
@@ -172,23 +231,29 @@ int main(int argc, char* argv[])
 
     vh.push_back(PHS("met", {PDCMaker("met")}, {1, 2}, "",  100, 0, 1000,  true,  true,  "MET [GeV]", "Norm Events"));
 
-    vh.push_back(PHS("topMass1", {PDCMaker("vTops[0](M)")}, {1, 2}, "met>200",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass2", {PDCMaker("vTops[1](M)")}, {1, 2}, "met>200",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass3", {PDCMaker("vTops[2](M)")}, {1, 2}, "met>200",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass4", {PDCMaker("vTops[3](M)")}, {1, 2}, "met>200",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass1", {PDCMaker("vTops[0](M)")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass2", {PDCMaker("vTops[1](M)")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass3", {PDCMaker("vTops[2](M)")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass4", {PDCMaker("vTops[3](M)")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
 
-    vh.push_back(PHS("topMass1New", {PDCMaker("vTopsNew[0](M)")}, {1, 2}, "met>200",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass2New", {PDCMaker("vTopsNew[1](M)")}, {1, 2}, "met>200",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass3New", {PDCMaker("vTopsNew[2](M)")}, {1, 2}, "met>200",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass4New", {PDCMaker("vTopsNew[3](M)")}, {1, 2}, "met>200",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass1New", {PDCMaker("vTopsNew[0](M)")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass2New", {PDCMaker("vTopsNew[1](M)")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass3New", {PDCMaker("vTopsNew[2](M)")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass4New", {PDCMaker("vTopsNew[3](M)")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
 
-    vh.push_back(PHS("t3j_dr12", {PDCMaker("v3j_dr12[0]")}, {1, 2}, "met>200",  100, 0, 10,  true,  true,  "#DeltaR", "Norm Events"));
-    vh.push_back(PHS("t3j_dr23", {PDCMaker("v3j_dr23[0]")}, {1, 2}, "met>200",  100, 0, 10,  true,  true,  "#DeltaR", "Norm Events"));
-    vh.push_back(PHS("t3j_dr13", {PDCMaker("v3j_dr13[0]")}, {1, 2}, "met>200",  100, 0, 10,  true,  true,  "#DeltaR", "Norm Events"));
+    vh.push_back(PHS("topPtAllNew", {PDCMaker("vTopsNew(pt)")},    {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("topPt1New",   {PDCMaker("vTopsNew[0](pt)")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("topPt2New",   {PDCMaker("vTopsNew[1](pt)")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("topPt3New",   {PDCMaker("vTopsNew[2](pt)")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("topPt4New",   {PDCMaker("vTopsNew[3](pt)")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
 
-    vh.push_back(PHS("t3j_cm_dr12", {PDCMaker("v3j_cm_dr12[0]")}, {1, 2}, "met>200",  100, 0, 10,  true,  true,  "#DeltaR", "Norm Events"));
-    vh.push_back(PHS("t3j_cm_dr23", {PDCMaker("v3j_cm_dr13[0]")}, {1, 2}, "met>200",  100, 0, 10,  true,  true,  "#DeltaR", "Norm Events"));
-    vh.push_back(PHS("t3j_dcm_r13", {PDCMaker("v3j_cm_dr23[0]")}, {1, 2}, "met>200",  100, 0, 10,  true,  true,  "#DeltaR", "Norm Events"));
+    vh.push_back(PHS("t3j_dr12", {PDCMaker("v3j_dr12[0]")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 10,  true,  true,  "#DeltaR", "Norm Events"));
+    vh.push_back(PHS("t3j_dr23", {PDCMaker("v3j_dr23[0]")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 10,  true,  true,  "#DeltaR", "Norm Events"));
+    vh.push_back(PHS("t3j_dr13", {PDCMaker("v3j_dr13[0]")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 10,  true,  true,  "#DeltaR", "Norm Events"));
+
+    vh.push_back(PHS("t3j_cm_dr12", {PDCMaker("v3j_cm_dr12[0]")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 10,  true,  true,  "#DeltaR", "Norm Events"));
+    vh.push_back(PHS("t3j_cm_dr23", {PDCMaker("v3j_cm_dr13[0]")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 10,  true,  true,  "#DeltaR", "Norm Events"));
+    vh.push_back(PHS("t3j_dcm_r13", {PDCMaker("v3j_cm_dr23[0]")}, {1, 2}, "met>200;nTaggerJets>3;cntCSVS>0.5",  100, 0, 10,  true,  true,  "#DeltaR", "Norm Events"));
 
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);

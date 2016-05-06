@@ -289,6 +289,9 @@ void Plotter::createHistsFromTuple()
     {
         std::set<std::string> activeBranches;
 
+        //get file list 
+        file.readFileList();
+
         //make vector of hists to fill
         std::vector<std::shared_ptr<HistCutSummary>> histsToFill;
         for(HistSummary& hs : hists_)

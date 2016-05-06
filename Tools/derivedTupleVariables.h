@@ -1417,6 +1417,7 @@ namespace plotterFunctions
 
         topTagger::type3TopTagger t3tagger;
         TopTagger* tt;
+        Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
 
         void prepareTopVars(NTupleReader& tr)
         {
@@ -1541,7 +1542,69 @@ namespace plotterFunctions
                 //std::cout << "OLD TOP nCandidates: " << t3tagger.finalCombfatJets.size() << std::endl;
                 //std::cout << std::endl;
             }
+
+            //Rsys variables 
+            TLorentzVector oldRsysVec = t3tagger.best_had_brJet;
+            TLorentzVector newRsysVec = ttr.getRsys().p();
+
+            double oldMT2 = t3tagger.best_had_brJet_MT2;
+            double newMT2 = -999.9;
+            double deltaR = -999;
+            if(ttr.getTops().size() >= 1)
+            {
+                const double massOfSystemA = ttr.getTops()[0]->P().M(); // GeV
+                const double pxOfSystemA   = ttr.getTops()[0]->P().Px(); // GeV
+                const double pyOfSystemA   = ttr.getTops()[0]->P().Py(); // GeV
             
+                double massOfSystemB =  newRsysVec.M(); // GeV
+                double pxOfSystemB   =  newRsysVec.Px(); // GeV
+                double pyOfSystemB   =  newRsysVec.Py(); // GeV
+
+                deltaR = ttr.getTops()[0]->P().DeltaR(newRsysVec);
+
+                if(ttr.getTops().size() >= 2)
+                {
+                    massOfSystemB = ttr.getTops()[1]->P().M(); // GeV 
+                    pxOfSystemB   = ttr.getTops()[1]->P().Px(); // GeV
+                    pyOfSystemB   = ttr.getTops()[1]->P().Py(); // GeV
+
+                    deltaR = ttr.getTops()[0]->P().DeltaR(ttr.getTops()[1]->P());
+                }
+            
+                // The missing transverse momentum:
+                const double pxMiss        = metLVec.Px(); // GeV
+                const double pyMiss        = metLVec.Py(); // GeV
+            
+                const double invis_mass    = metLVec.M(); // GeV
+          
+                Mt2::LorentzTransverseVector  vis_A(Mt2::TwoVector(pxOfSystemA, pyOfSystemA), massOfSystemA);
+                Mt2::LorentzTransverseVector  vis_B(Mt2::TwoVector(pxOfSystemB, pyOfSystemB), massOfSystemB);
+                Mt2::TwoVector                pT_Miss(pxMiss, pyMiss);
+          
+                newMT2 = mt2Calculator.mt2_332(vis_A, vis_B, pT_Miss, invis_mass);
+            }
+
+            double oldptt1 = (vTops->size())?((*vTops)[0].Pt()):(0);
+            double newptt1 = (vTops->size())?((*vTopsNew)[0].Pt()):(0);
+
+            tr.registerDerivedVar("deltaRt1t2New", deltaR);
+
+            tr.registerDerivedVar("oldRsysVec_pt", oldRsysVec.Pt());
+            tr.registerDerivedVar("newRsysVec_pt", newRsysVec.Pt());
+            tr.registerDerivedVar("oldRsysVec_eta", oldRsysVec.Eta());
+            tr.registerDerivedVar("newRsysVec_eta", newRsysVec.Eta());
+            tr.registerDerivedVar("oldRsysVec_phi", oldRsysVec.Phi());
+            tr.registerDerivedVar("newRsysVec_phi", newRsysVec.Phi());
+            tr.registerDerivedVar("oldRsysVec_m", oldRsysVec.M());
+            tr.registerDerivedVar("newRsysVec_m", newRsysVec.M());
+
+            tr.registerDerivedVar("oldMT2", oldMT2);
+            tr.registerDerivedVar("newMT2", newMT2);
+
+            tr.registerDerivedVar("oldt1pt", oldptt1);
+            tr.registerDerivedVar("newt1pt", newptt1);
+
+            tr.registerDerivedVar("nSnbJetRsys", int(ttr.getRsys().getNConstituents()));
 
             tr.registerDerivedVar("nTaggerJets", int(jetsLVec_forTagger.size()));
 

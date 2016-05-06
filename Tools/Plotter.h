@@ -246,7 +246,7 @@ private:
         }
         else
         {
-            printf("Invalid lorentz variable: %s returning nullptr segfault incoming!!!\n", name.c_str());
+            printf("Invalid lorentz variable: \"%s\", returning nullptr segfault incoming!!!\n", name.c_str());
             fflush(stdin);
             return *static_cast<double*>(nullptr);
         }
