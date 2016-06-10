@@ -13,6 +13,42 @@
 #include "TLegend.h"
 #include "TRandom3.h"
 
+void GetnTops(NTupleReader& tr)
+{
+    try
+    {
+        int nTops = tr.getVar<int>("nTopCandSortedCntZinv");
+        std::vector<TLorentzVector> *vTops = new std::vector<TLorentzVector>();
+
+        for(int it=0; it<nTops; it++)
+        {
+            TLorentzVector topLVec = type3Ptr->buildLVec(tr.getVec<TLorentzVector>("jetsLVec_forTaggerZinv"),
+                                                         type3Ptr->finalCombfatJets[type3Ptr->ori_pickedTopCandSortedVec[it]]);
+            vTops->push_back(topLVec);
+        }
+
+        auto& mt2inputs = type3Ptr->had_brJetLVecMap;
+        std::vector<TLorentzVector> *vMT2Inputs = new std::vector<TLorentzVector>();
+        if(vTops->size())
+        {
+            vMT2Inputs->push_back(vTops->at(0));
+        }
+        if(!mt2inputs.empty())
+        {
+            vMT2Inputs->push_back(mt2inputs.begin()->second);
+        }
+
+        tr.registerDerivedVec("vTops", vTops);
+        tr.registerDerivedVec("vMT2Inputs", vMT2Inputs);
+    }
+    catch(const std::string e)
+    {
+        std::cout << e << std::endl;
+    }
+
+    return;
+}
+
 int main()
 {
     TH1::AddDirectory(false);
@@ -26,7 +62,7 @@ int main()
     TH1* shapeMT2;
     TH1* shapeNT;
     TH1* shapeNB;
-    
+
     TRandom3 tr3(153474);
 
     TFile *f = new TFile("dataMCweights.root");
@@ -66,7 +102,7 @@ int main()
 
     //Prep variables for nJet and shape systematic weights
     const int NTRIALS = 1000;
-    const int NSEARCHBINS = 37;
+    const int NSEARCHBINS = 45;
 
     TH1 *h[5][NSEARCHBINS];
     std::vector<std::string> hnames = {"njet", "met", "mt2", "nt", "nb"};
@@ -108,6 +144,41 @@ int main()
     }
 
     //prep histograms for MET-MT2 corrolation study
+    TH1* h_ratio_MET_nom  = new TH1D("h_ratio_MET_nom",      "hMET_nom",  400, 0, 2);
+    TH1* h_ratio_MT2_nom  = new TH1D("h_ratio_MT2_nom",      "hMET_nom",  400, 0, 2);
+    TH2* h_ratio_2D_nom   = new TH2D("h_ratio_MT2vMET_nom",  "h2D_nom ;MET;MT2", 400, 0, 2, 400, 0, 2);
+    TH2* h_ratio_2Dvmet_nom   = new TH2D("h_ratiovmet_MT2vMET_nom",  "h2D_nom ;MET;MT2", 200, 0, 2000, 400, 0, 2);
+    TH2* h_ratio_2Dvmt2_nom   = new TH2D("h_ratiovmt2_MT2vMET_nom",  "h2D_nom ;MET;MT2", 200, 0, 2000, 400, 0, 2);
+
+    //more debug histograms
+    // angle betwee MET and tops
+    TH2* h_met_angle_t1_met = new TH2D("h_met_angle_t1_met", "h_met_angle_t1_met", 160, -3.2, 3.2, 400, 0, 2);
+    TH2* h_met_angle_t2_met = new TH2D("h_met_angle_t2_met", "h_met_angle_t2_met", 160, -3.2, 3.2, 400, 0, 2);
+    TH2* h_met_angle_t1_t2  = new TH2D("h_met_angle_t1_t2",  "h_met_angle_t1_t2",  160, -3.2, 3.2, 400, 0, 2);
+    TH2* h_met_deta_t1_t2   = new TH2D("h_met_deta_t1_t2",   "h_met_deta_t1_t2",   100, -2.5, 2.5, 400, 0, 2);
+    TH2* h_met_pt_t1        = new TH2D("h_met_pt_t1",        "h_met_pt_t1",        150,   0, 1500, 400, 0, 2);
+    TH2* h_met_pt_t2        = new TH2D("h_met_pt_t2",        "h_met_pt_t2",        150,   0, 1500, 400, 0, 2);
+    TH2* h_met_eta_t1       = new TH2D("h_met_eta_t1",       "h_met_eta_t1",       100, -2.5, 2.5, 400, 0, 2);
+    TH2* h_met_eta_t2       = new TH2D("h_met_eta_t2",       "h_met_eta_t2",       100, -2.5, 2.5, 400, 0, 2);
+    TH2* h_met_metPhi       = new TH2D("h_met_metPhi",       "h_met_metPhi",       160, -3.2, 3.2, 400, 0, 2);
+    TH2* h_met_mass_t1      = new TH2D("h_met_mass_t1",      "h_met_mass_t1",      200,   0, 1000, 400, 0, 2);
+    TH2* h_met_mass_t2      = new TH2D("h_met_mass_t2",      "h_met_mass_t2",      200,   0, 1000, 400, 0, 2);
+    TH2* h_met_tmt_mt2      = new TH2D("h_met_tmt_mt2",      "h_met_tmt_mt2",      400,   0,    2, 400, 0, 2);
+
+    TH2* h_mt2_angle_t1_met = new TH2D("h_mt2_angle_t1_met", "h_mt2_angle_t1_met", 160, -3.2, 3.2, 400, 0, 2);
+    TH2* h_mt2_angle_t2_met = new TH2D("h_mt2_angle_t2_met", "h_mt2_angle_t2_met", 160, -3.2, 3.2, 400, 0, 2);
+    TH2* h_mt2_angle_t1_t2  = new TH2D("h_mt2_angle_t1_t2",  "h_mt2_angle_t1_t2",  160, -3.2, 3.2, 400, 0, 2);
+    TH2* h_mt2_deta_t1_t2   = new TH2D("h_mt2_deta_t1_t2",   "h_mt2_deta_t1_t2",   100, -2.5, 2.5, 400, 0, 2);
+    TH2* h_mt2_pt_t1        = new TH2D("h_mt2_pt_t1",        "h_mt2_pt_t1",        150,   0, 1500, 400, 0, 2);
+    TH2* h_mt2_pt_t2        = new TH2D("h_mt2_pt_t2",        "h_mt2_pt_t2",        150,   0, 1500, 400, 0, 2);
+    TH2* h_mt2_eta_t1       = new TH2D("h_mt2_eta_t1",       "h_mt2_eta_t1",       100, -2.5, 2.5, 400, 0, 2);
+    TH2* h_mt2_eta_t2       = new TH2D("h_mt2_eta_t2",       "h_mt2_eta_t2",       100, -2.5, 2.5, 400, 0, 2);
+    TH2* h_mt2_metPhi       = new TH2D("h_mt2_metPhi",       "h_mt2_metPhi",       160, -3.2, 3.2, 400, 0, 2);
+    TH2* h_mt2_mass_t1      = new TH2D("h_mt2_mass_t1",      "h_mt2_mass_t1",      200,   0, 1000, 400, 0, 2);
+    TH2* h_mt2_mass_t2      = new TH2D("h_mt2_mass_t2",      "h_mt2_mass_t2",      200,   0, 1000, 400, 0, 2);
+    TH2* h_mt2_tmt_mt2      = new TH2D("h_mt2_tmt_mt2",      "h_mt2_tmt_mt2",      400,   0,    2, 400, 0, 2);
+
+
     TH1* hMET_nom  = new TH1D("hMET_nom",  "hMET_nom",  200, 0, 2000);
     TH1* hMET_Gaus = new TH1D("hMET_Gaus", "hMET_Gaus", 200, 0, 2000);
     TH1* hMET_Logi = new TH1D("hMET_Logi", "hMET_Logi", 200, 0, 2000);
@@ -133,7 +204,7 @@ int main()
         fs.addFilesToChain(t);
 
         std::cout << "Tree: " << fs.treePath << std::endl;
-        std::cout << "sigma*lumi: " << fs.getWeight() << std::endl;
+        //std::cout << "sigma*lumi: " << fs.getWeight() << std::endl;
 
         plotterFunctions::PrepareMiniTupleVars pmt(false);
         plotterFunctions::NJetWeight njWeight;
@@ -145,6 +216,7 @@ int main()
         tr.registerFunction(njWeight);
         tr.registerFunction(triggerInfo);
         //tr.registerFunction(metSmear);
+        //tr.registerFunction(GetnTops);
 
         while(tr.getNextEvent())
         {
@@ -165,41 +237,6 @@ int main()
             const double& nJetWgtDYZ   = tr.getVar<double>("nJetWgtDYZ");
             const double& normWgt0b    = tr.getVar<double>("normWgt0b");
 
-            //Variables required only for MET-MT2 
-            //const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
-            //const bool& passLeptVetoZinv         = tr.getVar<bool>("passLeptVetoZinv");
-            //const bool& passnJetsZinv            = tr.getVar<bool>("passnJetsZinv");
-            //const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
-            //
-            //const double& HTZinv                 = tr.getVar<double>("HTZinv");
-            //
-            //const double& met_logi_1   = tr.getVar<double>("met_logi_1");
-            //const double& met_gaus_30  = tr.getVar<double>("met_gaus_30");
-            //
-            //const double& mt2_logi_1   = tr.getVar<double>("mt2_logi_1");
-            //const double& mt2_gaus_30  = tr.getVar<double>("mt2_gaus_30");
-            //
-            //// Recreation of loose0 cut level - we remove passMuZinvSel and replace with passLeptVetoZinv for Zinvisible
-            //bool passLoose0 = passNoiseEventFilterZinv && passLeptVetoZinv && (HTZinv > 200) && passnJetsZinv && passdPhisZinv && (nTopCandSortedCntZinv>0);
-            //
-            //// Fill MET-MT2 histograms here
-            //if(passLoose0)
-            //{
-            //    //trigger efficiency is too coursely binned in low MET region, irrelivant in MET > 200 region
-            //    double weight = /*triggerEffMC * */nJetWgtDYZ * bTagSF_EventWeightSimple_Central * fs.getWeight();
-            //
-            //    hMET_nom ->Fill(cleanMetPt,  weight);
-            //    hMET_Gaus->Fill(met_gaus_30, weight);
-            //    hMET_Logi->Fill(met_logi_1,  weight);
-            //
-            //    hMT2_nom ->Fill(best_had_brJet_MT2Zinv, weight);
-            //    hMT2_Gaus->Fill(mt2_gaus_30,            weight);
-            //    hMT2_Logi->Fill(mt2_logi_1,             weight);
-            //
-            //    h2D_nom ->Fill(cleanMetPt,  best_had_brJet_MT2Zinv, weight);
-            //    h2D_Gaus->Fill(met_gaus_30, mt2_gaus_30,            weight);
-            //    h2D_Logi->Fill(met_logi_1,  mt2_logi_1,             weight);
-            //}
 
             //fill stat uncertainty histograms here
             if(passBaselineZinv && passLeptVeto)
@@ -225,7 +262,7 @@ int main()
             }
         }
     }
-    
+
     for(int ih = 0; ih < 5; ++ih)
     {
         for(int i = 0; i < NSEARCHBINS; ++i)
@@ -247,7 +284,7 @@ int main()
         sprintf(name, "systRMS_%s", hnames[ih].c_str());
         TH1 *systRMS = new TH1D(name, name, NSEARCHBINS, 0, NSEARCHBINS);
 
-        for(int i = 0; i < NSEARCHBINS; ++i) 
+        for(int i = 0; i < NSEARCHBINS; ++i)
         {
             h[ih][i]->Write();
             h[ih][i]->Scale(1/h[ih][i]->Integral(0, h[ih][i]->GetNbinsX() + 1));
@@ -275,7 +312,7 @@ int main()
     TH1 *centralvalue = new TH1D("centralvalue", "centralvalue", NSEARCHBINS, 0, NSEARCHBINS);
     TH1 *avgWgt = new TH1D("avgWgt", "avgWgt", NSEARCHBINS, 0, NSEARCHBINS);
     TH1 *neff = new TH1D("neff", "neff", NSEARCHBINS, 0, NSEARCHBINS);
-    
+
     for(int i = 0; i < NSEARCHBINS; ++i)
     {
         centralvalue->SetBinContent(i + 1, N0[i]);
@@ -291,6 +328,12 @@ int main()
     //Write out MET-MT2 histograms
     TFile fout2("Corrolation_MET-MT2.root", "RECREATE");
 
+    h_ratio_MET_nom->Write();
+    h_ratio_MT2_nom->Write();
+    h_ratio_2D_nom ->Write();
+    h_ratio_2Dvmet_nom->Write();
+    h_ratio_2Dvmt2_nom->Write();
+
     hMET_nom ->Write();
     hMET_Gaus->Write();
     hMET_Logi->Write();
@@ -302,6 +345,32 @@ int main()
     h2D_nom ->Write();
     h2D_Gaus->Write();
     h2D_Logi->Write();
+
+    h_met_angle_t1_met->Write();
+    h_met_angle_t2_met->Write();
+    h_met_angle_t1_t2 ->Write();
+    h_met_deta_t1_t2  ->Write();
+    h_met_pt_t1       ->Write();
+    h_met_pt_t2       ->Write();
+    h_met_eta_t1      ->Write();
+    h_met_eta_t2      ->Write();
+    h_met_metPhi      ->Write();
+    h_met_mass_t1     ->Write();
+    h_met_mass_t2     ->Write();
+    h_met_tmt_mt2     ->Write();
+
+    h_mt2_angle_t1_met->Write();
+    h_mt2_angle_t2_met->Write();
+    h_mt2_angle_t1_t2 ->Write();
+    h_mt2_deta_t1_t2  ->Write();
+    h_mt2_pt_t1       ->Write();
+    h_mt2_pt_t2       ->Write();
+    h_mt2_eta_t1      ->Write();
+    h_mt2_eta_t2      ->Write();
+    h_mt2_metPhi      ->Write();
+    h_mt2_mass_t1     ->Write();
+    h_mt2_mass_t2     ->Write();
+    h_mt2_tmt_mt2     ->Write();
 
     fout2.Close();
 }

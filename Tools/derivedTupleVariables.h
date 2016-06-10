@@ -6,6 +6,11 @@
 #include "SusyAnaTools/Tools/searchBins.h"
 #include "ScaleFactors.h"
 
+#include "TopTagger.h"
+#include "TTModule.h"
+#include "TopTaggerUtilities.h"
+#include "TopTaggerResults.h"
+
 #include "TH1.h"
 #include "TH2.h"
 #include "TFile.h"
@@ -537,7 +542,7 @@ namespace plotterFunctions
             const std::vector<double>& elespfActivity       = tr.getVec<double>("elespfActivity");
             const std::vector<double>& W_emu_pfActivityVec  = tr.getVec<double>("W_emu_pfActivityVec");
 
-            const double& ht                             = tr.getVar<double>("ht");
+            //const double& ht                             = tr.getVar<double>("ht");
             const double& met                            = tr.getVar<double>("met");
             const double& metphi                         = tr.getVar<double>("metphi");
 
@@ -595,6 +600,7 @@ namespace plotterFunctions
             //muon selections
             int sumMuCharge = 0;
             int nTriggerMuons = 0;
+
             for(int i = 0; i < muonsLVec.size(); ++i)
             {
                 if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements.
@@ -1074,6 +1080,7 @@ namespace plotterFunctions
     class GetSearchBin
     {
     private:
+        SearchBins sbins;
 
         void getSearchBin(NTupleReader& tr)
         {
@@ -1096,7 +1103,7 @@ namespace plotterFunctions
             const double& nJet2bfakeWgt = tr.getVar<double>("nJet2bfakeWgt");
             const double& nJet3bfakeWgt = tr.getVar<double>("nJet3bfakeWgt");
 
-            int nSearchBin = find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
+            int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
 
             std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
             std::vector<std::pair<double, double> > * nb0NJwBins = new std::vector<std::pair<double, double> >();
@@ -1118,17 +1125,17 @@ namespace plotterFunctions
             if(cntCSVS == 0)
             {
                 //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
-                nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), wnb01 * weight1fakeb));
-                nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * weight2fakeb));
-                nb0Bins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * weight3fakeb));
+                nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), wnb01 * weight1fakeb));
+                nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * weight2fakeb));
+                nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * weight3fakeb));
 
-                nb0NJwBins->emplace_back(std::pair<double, double>(find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), nJet1bfakeWgt));
-                nb0NJwBins->emplace_back(std::pair<double, double>(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), nJet2bfakeWgt));
-                nb0NJwBins->emplace_back(std::pair<double, double>(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), nJet3bfakeWgt));
+                nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), nJet1bfakeWgt));
+                nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), nJet2bfakeWgt));
+                nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), nJet3bfakeWgt));
 
-                nb0BinsNW->emplace_back(find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet));
-                nb0BinsNW->emplace_back(find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet));
-                nb0BinsNW->emplace_back(find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet));
+                nb0BinsNW->emplace_back(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet));
+                nb0BinsNW->emplace_back(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet));
+                nb0BinsNW->emplace_back(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet));
             }
 
             tr.registerDerivedVar("nSearchBin", nSearchBin);
@@ -1141,6 +1148,8 @@ namespace plotterFunctions
         }
 
     public:
+
+        GetSearchBin(std::string sb_era) : sbins(sb_era) {}
 
         void operator()(NTupleReader& tr)
         {
@@ -1352,6 +1361,7 @@ namespace plotterFunctions
     class SystematicCalc
     {
     private:
+        SearchBins sbins;
 
         void systematicCalc(NTupleReader& tr)
         {
@@ -1375,11 +1385,11 @@ namespace plotterFunctions
             const double& MT2MEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvMEUDn");
             const double& cleanMetMEUDn = tr.getVar<double>("metMEUDn");
 
-            int nSearchBinJEUUp = find_Binning_Index(cntCSVSJEUUp, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet);
-            int nSearchBinJEUDn = find_Binning_Index(cntCSVSJEUDn, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet);
+            int nSearchBinJEUUp = sbins.find_Binning_Index(cntCSVSJEUUp, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet);
+            int nSearchBinJEUDn = sbins.find_Binning_Index(cntCSVSJEUDn, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet);
 
-            int nSearchBinMEUUp = find_Binning_Index(cntCSVSMEUUp, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp);
-            int nSearchBinMEUDn = find_Binning_Index(cntCSVSMEUDn, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn);
+            int nSearchBinMEUUp = sbins.find_Binning_Index(cntCSVSMEUUp, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp);
+            int nSearchBinMEUDn = sbins.find_Binning_Index(cntCSVSMEUDn, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn);
             
             tr.registerDerivedVar("nSearchBinJEUUp", nSearchBinJEUUp);
             tr.registerDerivedVar("nSearchBinJEUDn", nSearchBinJEUDn);
@@ -1389,9 +1399,9 @@ namespace plotterFunctions
         }
 
     public:
-	SystematicCalc()
+        SystematicCalc(std::string sb_era) : sbins(sb_era)
 	{
-
+            
 	}
 
 	void operator()(NTupleReader& tr)
@@ -1400,6 +1410,256 @@ namespace plotterFunctions
 	}
 
     };
+
+    class PrepareTopVars
+    {
+    private:
+
+        topTagger::type3TopTagger t3tagger;
+        TopTagger* tt;
+        Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
+
+        void prepareTopVars(NTupleReader& tr)
+        {
+            const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVec");
+            const std::vector<double>& recoJetsBtag      = tr.getVec<double>("recoJetsBtag_0");
+
+            const double& met    = tr.getVar<double>("met");
+            const double& metphi = tr.getVar<double>("metphi");
+            
+            TLorentzVector metLVec;
+            metLVec.SetPtEtaPhiM(met, 0, metphi, 0);
+
+            std::vector<TLorentzVector> jetsLVec_forTagger;
+            std::vector<double> recoJetsBtag_forTagger;
+            AnaFunctions::prepareJetsForTagger(jetsLVec, recoJetsBtag, jetsLVec_forTagger, recoJetsBtag_forTagger);
+
+            int cntCSVS = AnaFunctions::countCSVS(jetsLVec_forTagger, recoJetsBtag_forTagger, AnaConsts::cutCSVS, AnaConsts::bTagArr);
+
+            t3tagger.processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec);
+            int nTops = t3tagger.nTopCandSortedCnt;
+
+            std::vector<TLorentzVector> *vTops = new std::vector<TLorentzVector>();
+
+            std::vector<std::vector<TLorentzVector> >* vTopConstituents = new std::vector<std::vector<TLorentzVector> >();;
+            
+            //variables for tri-jet tops 
+            std::vector<std::vector<TLorentzVector> >* v3j_diJets = new std::vector<std::vector<TLorentzVector> >();;
+
+            std::vector<double>* v3j_dr12 = new std::vector<double>();
+            std::vector<double>* v3j_dr23 = new std::vector<double>();
+            std::vector<double>* v3j_dr13 = new std::vector<double>();
+            std::vector<double>* v3j_cm_dr12 = new std::vector<double>();
+            std::vector<double>* v3j_cm_dr13 = new std::vector<double>();
+            std::vector<double>* v3j_cm_dr23 = new std::vector<double>();
+            
+            for(int it = 0; it < nTops; it++)
+            {
+                TLorentzVector topLVec = t3tagger.buildLVec(jetsLVec_forTagger,
+                                                            t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]]);
+                vTops->push_back(topLVec);
+
+                std::vector<TLorentzVector> tmpVec;
+                for(const int& jetIndex : t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]])
+                {
+                    tmpVec.emplace_back(jetsLVec_forTagger[jetIndex]);
+                }
+                vTopConstituents->emplace_back(tmpVec);
+
+                //Make properties of triplet tops here
+                if(tmpVec.size() == 3)
+                {
+                    double dR12 = ROOT::Math::VectorUtil::DeltaR(tmpVec[0], tmpVec[1]);
+                    double dR23 = ROOT::Math::VectorUtil::DeltaR(tmpVec[1], tmpVec[2]);
+                    double dR13 = ROOT::Math::VectorUtil::DeltaR(tmpVec[0], tmpVec[2]);
+
+                    v3j_dr12->push_back(dR12);
+                    v3j_dr23->push_back(dR23);
+                    v3j_dr13->push_back(dR13);
+
+                    //jet copies for playing with
+                    TLorentzVector j1 = tmpVec[0];
+                    TLorentzVector j2 = tmpVec[1];
+                    TLorentzVector j3 = tmpVec[2];
+
+                    //subtract out the top boost to get to top CM frame
+                    j1 = j1 - topLVec;
+                    j2 = j2 - topLVec;
+                    j3 = j3 - topLVec;
+
+                    double cm_dR12 = ROOT::Math::VectorUtil::DeltaR(j1, j2);
+                    double cm_dR23 = ROOT::Math::VectorUtil::DeltaR(j2, j3);
+                    double cm_dR13 = ROOT::Math::VectorUtil::DeltaR(j1, j3);
+                    
+                    v3j_cm_dr12->push_back(cm_dR12);
+                    v3j_cm_dr13->push_back(cm_dR23);
+                    v3j_cm_dr23->push_back(cm_dR13);
+                    
+                    //make di-jet systems 
+                    v3j_diJets->push_back({tmpVec[0] + tmpVec[1], tmpVec[1] + tmpVec[2], tmpVec[0] + tmpVec[2]});
+                }
+            }
+
+            //New Tagger starts here
+            //prep input object (constituent) vector
+            std::vector<Constituent> constituents = ttUtility::packageCandidates(jetsLVec_forTagger, recoJetsBtag_forTagger);
+            //run tagger
+            tt->runTagger(constituents);
+            //retrieve results
+            const TopTaggerResults& ttr = tt->getResults();
+
+            std::vector<TLorentzVector> *vTopsNew = new std::vector<TLorentzVector>();
+            for(auto& top : ttr.getTops())
+            {
+                vTopsNew->push_back(top->p());
+            }
+
+            //compare tops from each tagger here
+            std::vector<TLorentzVector> *vdTops = new std::vector<TLorentzVector>();
+            if(vTops->size() == vTopsNew->size())
+            {
+                for(int it = 0; it < vTops->size(); it++)
+                {
+                    vdTops->push_back(vTops->at(it) - vTopsNew->at(it));
+                }
+            }
+            else if(cntCSVS >= 1 && jetsLVec.size() >= 4)
+            {
+                //std::cout << std::endl;
+                //std::cout << "nJets: " << jetsLVec_forTagger.size() << "   nb: " << cntCSVS << std::endl;
+                //std::cout << "NEW AND OLD TOP VECTOR ARE NOT SAME SIZE!!!!! old: " << vTops->size() << "   new: " << vTopsNew->size() << std::endl;
+                //if(vTopsNew->size() >= 1) std::cout << "NEW TOP nConstituents: " << ttr.getTops()[0]->getConstituents().size() << "   pt: " << ttr.getTops()[0]->p().Pt() << "   eta: " << ttr.getTops()[0]->p().Eta() << "   phi: " << ttr.getTops()[0]->p().Phi() << "   M: " << ttr.getTops()[0]->p().M() << "   dRmax: " << ttr.getTops()[0]->getDRmax() << std::endl;
+                //int nbInTop = 0;
+                //for(auto& jet : ttr.getTops()[0]->getConstituents()) if(jet->getBTagDisc() > 0.89) ++nbInTop;
+                //std::cout << "NEW nb in top: " << nbInTop << std::endl;
+                //
+                //if(t3tagger.topJetCand_idx123Vec.size())
+                //{
+                //    TLorentzVector topLVec = t3tagger.buildLVec(jetsLVec_forTagger, t3tagger.topJetCand_idx123Vec[0]);
+                //    std::cout << "OLD TOP nConstituents: " << t3tagger.topJetCand_idx123Vec[0].size() << "   pt: " << topLVec.Pt() << "   eta: " << topLVec.Eta() << "   phi: " << topLVec.Phi() << "   M: " << topLVec.M() << std::endl;
+                //}
+                //std::cout << "NEW TOP nCandidates: " << ttr.getTopCandidates().size() << std::endl;
+                //std::cout << "OLD TOP nCandidates: " << t3tagger.finalCombfatJets.size() << std::endl;
+                //std::cout << std::endl;
+            }
+
+            //Rsys variables 
+            TLorentzVector oldRsysVec = t3tagger.best_had_brJet;
+            TLorentzVector newRsysVec = ttr.getRsys().p();
+
+            double oldMT2 = t3tagger.best_had_brJet_MT2;
+            double newMT2 = -999.9;
+            double deltaR = -999;
+            if(ttr.getTops().size() >= 1)
+            {
+                const double massOfSystemA = ttr.getTops()[0]->P().M(); // GeV
+                const double pxOfSystemA   = ttr.getTops()[0]->P().Px(); // GeV
+                const double pyOfSystemA   = ttr.getTops()[0]->P().Py(); // GeV
+            
+                double massOfSystemB =  newRsysVec.M(); // GeV
+                double pxOfSystemB   =  newRsysVec.Px(); // GeV
+                double pyOfSystemB   =  newRsysVec.Py(); // GeV
+
+                deltaR = ttr.getTops()[0]->P().DeltaR(newRsysVec);
+
+                if(ttr.getTops().size() >= 2)
+                {
+                    massOfSystemB = ttr.getTops()[1]->P().M(); // GeV 
+                    pxOfSystemB   = ttr.getTops()[1]->P().Px(); // GeV
+                    pyOfSystemB   = ttr.getTops()[1]->P().Py(); // GeV
+
+                    deltaR = ttr.getTops()[0]->P().DeltaR(ttr.getTops()[1]->P());
+                }
+            
+                // The missing transverse momentum:
+                const double pxMiss        = metLVec.Px(); // GeV
+                const double pyMiss        = metLVec.Py(); // GeV
+            
+                const double invis_mass    = metLVec.M(); // GeV
+          
+                Mt2::LorentzTransverseVector  vis_A(Mt2::TwoVector(pxOfSystemA, pyOfSystemA), massOfSystemA);
+                Mt2::LorentzTransverseVector  vis_B(Mt2::TwoVector(pxOfSystemB, pyOfSystemB), massOfSystemB);
+                Mt2::TwoVector                pT_Miss(pxMiss, pyMiss);
+          
+                newMT2 = mt2Calculator.mt2_332(vis_A, vis_B, pT_Miss, invis_mass);
+            }
+
+            double oldptt1 = (vTops->size())?((*vTops)[0].Pt()):(0);
+            double newptt1 = (vTops->size())?((*vTopsNew)[0].Pt()):(0);
+
+            tr.registerDerivedVar("deltaRt1t2New", deltaR);
+
+            tr.registerDerivedVar("oldRsysVec_pt", oldRsysVec.Pt());
+            tr.registerDerivedVar("newRsysVec_pt", newRsysVec.Pt());
+            tr.registerDerivedVar("oldRsysVec_eta", oldRsysVec.Eta());
+            tr.registerDerivedVar("newRsysVec_eta", newRsysVec.Eta());
+            tr.registerDerivedVar("oldRsysVec_phi", oldRsysVec.Phi());
+            tr.registerDerivedVar("newRsysVec_phi", newRsysVec.Phi());
+            tr.registerDerivedVar("oldRsysVec_m", oldRsysVec.M());
+            tr.registerDerivedVar("newRsysVec_m", newRsysVec.M());
+
+            tr.registerDerivedVar("oldMT2", oldMT2);
+            tr.registerDerivedVar("newMT2", newMT2);
+
+            tr.registerDerivedVar("oldt1pt", oldptt1);
+            tr.registerDerivedVar("newt1pt", newptt1);
+
+            tr.registerDerivedVar("nSnbJetRsys", int(ttr.getRsys().getNConstituents()));
+
+            tr.registerDerivedVar("nTaggerJets", int(jetsLVec_forTagger.size()));
+
+            tr.registerDerivedVar("nTops", nTops);
+
+            tr.registerDerivedVar("nTopsNew", int(ttr.getTops().size()));
+
+            tr.registerDerivedVar("cntCSVS", cntCSVS);
+
+            tr.registerDerivedVec("vTops", vTops);
+
+            tr.registerDerivedVec("vTopsNew", vTopsNew);
+
+            tr.registerDerivedVec("vdTops", vdTops);
+
+            tr.registerDerivedVec("v3j_dr12", v3j_dr12);
+            tr.registerDerivedVec("v3j_dr23", v3j_dr23);
+            tr.registerDerivedVec("v3j_dr13", v3j_dr13);
+            tr.registerDerivedVec("v3j_cm_dr12", v3j_cm_dr12);
+            tr.registerDerivedVec("v3j_cm_dr13", v3j_cm_dr13);
+            tr.registerDerivedVec("v3j_cm_dr23", v3j_cm_dr23);
+            tr.registerDerivedVec("v3j_diJets", v3j_diJets);
+        }
+
+    public:
+        PrepareTopVars() : tt(nullptr)
+	{
+            t3tagger.setnJetsSel(1);
+            t3tagger.setCSVS(AnaConsts::cutCSVS);
+
+            std::string cfgDocText =
+                "TopTagger\n"
+                "{\n"
+                "    module[0] = \"TTMLazyClusterAlgo\""
+                "    module[1] = \"TTMHEPRequirements\""
+                "    module[2] = \"TTMOverlapResolution\""
+                "}\n";
+
+            tt = new TopTagger();
+            tt->setCfgFile("TopTagger.cfg");
+            //tt = ttf.makeTopTagger();
+	}
+
+        ~PrepareTopVars()
+        {
+            //if(tt) delete tt;
+        }
+
+	void operator()(NTupleReader& tr)
+	{
+	    prepareTopVars(tr);
+	}
+
+    };
+
 
     class MetSmear
     {
@@ -1431,49 +1691,6 @@ namespace plotterFunctions
         {
             const double& met     = tr.getVar<double>("cleanMetPt");
             
-            // Give met constant downward smearing
-            //double met_sub_10 = met - 10;
-            //double met_sub_20 = met - 20;
-            //double met_sub_30 = met - 30;
-            //double met_sub_40 = met - 40;
-            //double met_sub_50 = met - 50;
-            //double met_sub_60 = met - 60;
-            //
-            //// MET proportional smearing
-            //double met_prop_1  = met * (1 - 0.01);
-            //double met_prop_2  = met * (1 - 0.02);
-            //double met_prop_3  = met * (1 - 0.03);
-            //double met_prop_4  = met * (1 - 0.04);
-            //double met_prop_5  = met * (1 - 0.05);
-            //double met_prop_7  = met * (1 - 0.07);
-            //double met_prop_10 = met * (1 - 0.10);
-            //double met_prop_15 = met * (1 - 0.15);
-            //double met_prop_20 = met * (1 - 0.20);
-            //
-            //// MET quadratic smearing
-            //double met_quad_1_5         = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.05);
-            //double met_quad_1_10        = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.10);
-            //double met_quad_1_15        = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.15);
-            //double met_quad_1_18        = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.18);
-            //double met_quad_1_20        = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.20);
-            //double met_quad_1_22        = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.22);
-            //double met_quad_1_24        = met * calcQuad(met, 400, 700, 1 - 0.01, 1 - 0.24);
-            //double met_quad_2_5         = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.05);
-            //double met_quad_2_10        = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.10);
-            //double met_quad_2_15        = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.15);
-            //double met_quad_2_18        = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.18);
-            //double met_quad_2_20        = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.20);
-            //double met_quad_2_22        = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.22);
-            //double met_quad_2_24        = met * calcQuad(met, 400, 700, 1 - 0.02, 1 - 0.24);
-            //double met_quad_3_5         = met * calcQuad(met, 400, 700, 1 - 0.03, 1 - 0.05);
-            //double met_quad_3_10        = met * calcQuad(met, 400, 700, 1 - 0.03, 1 - 0.10);
-            //double met_quad_3_15        = met * calcQuad(met, 400, 700, 1 - 0.03, 1 - 0.15);
-            //double met_quad_3_20        = met * calcQuad(met, 400, 700, 1 - 0.03, 1 - 0.20);
-            //double met_quad_2_20_ip_300 = met * calcQuad(met, 300, 700, 1 - 0.02, 1 - 0.20);
-            //double met_quad_2_20_ip_350 = met * calcQuad(met, 350, 700, 1 - 0.02, 1 - 0.20);
-            //double met_quad_2_20_ip_500 = met * calcQuad(met, 450, 700, 1 - 0.02, 1 - 0.20);
-            //double met_quad_2_20_ip_450 = met * calcQuad(met, 500, 700, 1 - 0.02, 1 - 0.20);
-
             // Logistical smearing 
             double met_logi_1 = met * logistical(met, 0.15, 0.01, 300);
             double met_logi_2 = met * logistical(met, 0.20, 0.01, 400);
@@ -1495,51 +1712,6 @@ namespace plotterFunctions
             double met_gaus_40 = trand->Gaus(met, 40);
             double met_gaus_50 = trand->Gaus(met, 50);
 
-            
-
-            //tr.registerDerivedVar("met_sub_10", met_sub_10);
-            //tr.registerDerivedVar("met_sub_20", met_sub_20);
-            //tr.registerDerivedVar("met_sub_30", met_sub_30);
-            //tr.registerDerivedVar("met_sub_40", met_sub_40);
-            //tr.registerDerivedVar("met_sub_50", met_sub_50);
-            //tr.registerDerivedVar("met_sub_60", met_sub_60);
-            //
-            //tr.registerDerivedVar("met_prop_1",  met_prop_1 );
-            //tr.registerDerivedVar("met_prop_2",  met_prop_2 );
-            //tr.registerDerivedVar("met_prop_3",  met_prop_3 );
-            //tr.registerDerivedVar("met_prop_4",  met_prop_4 );
-            //tr.registerDerivedVar("met_prop_5",  met_prop_5 );
-            //tr.registerDerivedVar("met_prop_7",  met_prop_7 );
-            //tr.registerDerivedVar("met_prop_10", met_prop_10);
-            //tr.registerDerivedVar("met_prop_15", met_prop_15);
-            //tr.registerDerivedVar("met_prop_20", met_prop_20);
-            //
-            //tr.registerDerivedVar("met_quad_1_5",          met_quad_1_5        );
-            //tr.registerDerivedVar("met_quad_1_10",         met_quad_1_10       );
-            //tr.registerDerivedVar("met_quad_1_15",         met_quad_1_15       );
-            //tr.registerDerivedVar("met_quad_1_18",         met_quad_1_18       );
-            //tr.registerDerivedVar("met_quad_1_20",         met_quad_1_20       );
-            //tr.registerDerivedVar("met_quad_1_22",         met_quad_1_22       );
-            //tr.registerDerivedVar("met_quad_1_24",         met_quad_1_24       );
-            //tr.registerDerivedVar("met_quad_2_5",          met_quad_2_5        );
-            //tr.registerDerivedVar("met_quad_2_10",         met_quad_2_10       );
-            //tr.registerDerivedVar("met_quad_2_15",         met_quad_2_15       );
-            //tr.registerDerivedVar("met_quad_2_18",         met_quad_2_18       );
-            //tr.registerDerivedVar("met_quad_2_20",         met_quad_2_20       );
-            //tr.registerDerivedVar("met_quad_2_22",         met_quad_2_22       );
-            //tr.registerDerivedVar("met_quad_2_24",         met_quad_2_24       );
-            //tr.registerDerivedVar("met_quad_3_5",          met_quad_3_5        );
-            //tr.registerDerivedVar("met_quad_3_10",         met_quad_3_10       );
-            //tr.registerDerivedVar("met_quad_3_15",         met_quad_3_15       );
-            //tr.registerDerivedVar("met_quad_3_20",         met_quad_3_20       );
-            //tr.registerDerivedVar("met_quad_2_20_ip_300",  met_quad_2_20_ip_300);
-            //tr.registerDerivedVar("met_quad_2_20_ip_350",  met_quad_2_20_ip_350);
-            //tr.registerDerivedVar("met_quad_2_20_ip_500",  met_quad_2_20_ip_500);
-            //tr.registerDerivedVar("met_quad_2_20_ip_450",  met_quad_2_20_ip_450);
-
-            //tr.registerDerivedVar("met_gaus_5",  met_gaus_5 );
-            //tr.registerDerivedVar("met_gaus_10", met_gaus_10);
-            //tr.registerDerivedVar("met_gaus_15", met_gaus_15);
             tr.registerDerivedVar("met_gaus_20", met_gaus_20);
             //tr.registerDerivedVar("met_gaus_25", met_gaus_25);
             tr.registerDerivedVar("met_gaus_30", met_gaus_30);

@@ -60,10 +60,10 @@ void makeplot(TFile* f, std::string hname)
     TH1 *dummy = new TH1F("dummy", "dummy", 1000, h->GetBinLowEdge(1), h->GetBinLowEdge(h->GetNbinsX()) + h->GetBinWidth(h->GetNbinsX()));
     dummy->SetStats(0);
     dummy->SetTitle(0);
-    dummy->GetYaxis()->SetTitle("Scale factor");
+    dummy->GetYaxis()->SetTitle("S_{DY} scale factor");
     dummy->GetYaxis()->SetTitleOffset(.9*1.05 / (fontScale));
     dummy->GetXaxis()->SetTitleOffset(1.05);
-    dummy->GetXaxis()->SetTitle("Jet multiplicity");
+    dummy->GetXaxis()->SetTitle("N_{j}");
     dummy->GetXaxis()->SetTitleSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetXaxis()->SetLabelSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetYaxis()->SetTitleSize(0.20 * 2 / 6.5 * fontScale);
@@ -88,16 +88,38 @@ void makeplot(TFile* f, std::string hname)
     fixOverlay();
 
     c->cd(1);
-    char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 2156. / 1000.0);
-    TLatex mark;
-    mark.SetTextSize(0.042 * fontScale);
-    mark.SetTextFont(42);
-    mark.SetNDC(true);
-    mark.DrawLatex(gPad->GetLeftMargin(), 0.95, "CMS Preliminary");
-    mark.SetTextAlign(31);
-    mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
+    //char lumistamp[128];
+    //sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 2156. / 1000.0);
+    //TLatex mark;
+    //mark.SetTextSize(0.042 * fontScale);
+    //mark.SetTextFont(42);
+    //mark.SetNDC(true);
+    //mark.DrawLatex(gPad->GetLeftMargin(), 0.95, "CMS Preliminary");
+    //mark.SetTextAlign(31);
+    //mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
+    char lumistamp[128];
+    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)",  2262.0 / 1000.0);
+
+    TLatex mark;
+    mark.SetNDC(true);
+
+    //Draw CMS mark
+    mark.SetTextAlign(11);
+    mark.SetTextSize(0.042 * fontScale * 1.25);
+    //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * 1.25 * fontScale);
+    mark.SetTextFont(61);
+    mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
+    mark.SetTextSize(0.042 * fontScale);
+    //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
+    mark.SetTextFont(52);
+    mark.DrawLatex(gPad->GetLeftMargin() + 0.065, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
+
+    //Draw lumistamp
+    mark.SetTextFont(42);
+    mark.SetTextAlign(31);
+    mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
+
     fixOverlay();
     char outname[128];
     sprintf(outname, "SF_njet_%s.pdf", hname.c_str());

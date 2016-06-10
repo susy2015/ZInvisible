@@ -23,6 +23,7 @@ namespace plotterFunctions
     class SystematicPrep;
     class SystematicCalc;
     class MetSmear;
+    class PrepareTopVars;
 }
 
 class SystWeights;
@@ -66,7 +67,7 @@ private:
     BTagCorrector *bTagCorrector;
 
 public:
-    RegisterFunctionsNTuple(bool isCondor = false);
+    RegisterFunctionsNTuple(bool isCondor = false, std::string sbEra = "SB_37_2015");
     ~RegisterFunctionsNTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);
@@ -123,6 +124,16 @@ private:
 public:
     RegisterFunctions2Dplot();
     ~RegisterFunctions2Dplot();
+    void registerFunctions(NTupleReader& tr);
+};
+
+class RegisterFunctionsTopStudy : public RegisterFunctions
+{
+private:
+    plotterFunctions::PrepareTopVars *prepareTopVars;
+public:
+    RegisterFunctionsTopStudy();
+    ~RegisterFunctionsTopStudy();
     void registerFunctions(NTupleReader& tr);
 };
 

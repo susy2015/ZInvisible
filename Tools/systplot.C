@@ -116,7 +116,7 @@ void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylo
     fixOverlay();
     if(overlay)
     {
-	drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum(),false);
+        SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum(),false);
     }
     char outname[128];
     sprintf(outname, (prefix + "_%s.pdf").c_str(), hname.c_str());
@@ -194,7 +194,7 @@ void makeplotratio(TFile* f, std::vector<std::string> hnames, std::vector<std::s
     leg->AddEntry(histos[1],"Nominal variation","l");
     leg->AddEntry(histos[2],"Down variation","l");
     
-    dummy->GetXaxis()->SetRangeUser(xlow, xhigh);
+    //dummy->GetXaxis()->SetRangeUser(xlow, xhigh);
     dummy->GetYaxis()->SetRangeUser(ylow, yhigh);
     dummy->Draw();
     
@@ -217,7 +217,7 @@ void makeplotratio(TFile* f, std::vector<std::string> hnames, std::vector<std::s
     mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     fixOverlay();
-    drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum(),true);
+    SearchBins::drawSBregionDef(ylow, yhigh, true);
 
     c->cd(2);
     gPad->SetPad("p2", "p2", 0, 0, 1, 2.5 / 9.0, kWhite, 0, 0);
@@ -250,7 +250,7 @@ void makeplotratio(TFile* f, std::vector<std::string> hnames, std::vector<std::s
 	h->SetMarkerStyle(8);
 	h->SetMarkerSize(1);
     }
-    dummy2->GetXaxis()->SetRangeUser(xlow, xhigh);
+    //dummy2->GetXaxis()->SetRangeUser(xlow, xhigh);
     dummy2->GetYaxis()->SetRangeUser(-0.07, ratiomax);
     dummy2->Draw();
     for(TH1D* h : histosratio)
@@ -294,7 +294,7 @@ int main(int argc, char* argv[])
 
     for(std::string const& hname : hnames)
     {
-	makeplot(f1, hname, 0, 45, 0.0, 1.18, "Search Bin", "Systematic uncertainty", "Syst");
+	makeplot(f1, hname, 0, 45, 0.0, 1.88, "Search Bin", "Systematic uncertainty", "Syst");
     }
 
     f1->Close();
@@ -354,7 +354,7 @@ int main(int argc, char* argv[])
 
     for(auto const& kv : hnames3)
     {
-	makeplot(f1, kv.first, 0, kv.second.second, 0, 2, kv.second.first, "Double ratio", "Syst", false, false);
+        makeplot(f1, kv.first, 0, kv.second.second, 0, 2, kv.second.first, "Double ratio", "Syst", false, false);
     }
 
     f1->Close();
@@ -362,7 +362,7 @@ int main(int argc, char* argv[])
     
     f1 = TFile::Open("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_all.root");
 
-    makeplot(f1, "MCPull2", 0, 45, -3, 5, "n search bin", "pull", "Syst", true, true);
+    makeplot(f1, "MCPull2", 0, 45, -3, 6, "n search bin", "pull", "Syst", true, true);
 
     f1->Close();
     

@@ -57,8 +57,9 @@ void activateBranches(std::set<std::string>& activeBranches)
     activeBranches.insert("elesCharge");
 }
 
+////////////////////////////////
 
-RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor) : RegisterFunctions()
+RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra) : RegisterFunctions()
 {            
     AnaFunctions::prepareTopTagger();
 
@@ -76,11 +77,11 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor) : RegisterFuncti
     njWeight             = new plotterFunctions::NJetWeight;
     lepInfo              = new plotterFunctions::LepInfo;
     fakebtagvectors      = new plotterFunctions::Fakebtagvectors;
-    getSearchBin         = new plotterFunctions::GetSearchBin;
+    getSearchBin         = new plotterFunctions::GetSearchBin(sbEra);
     triggerInfo          = new plotterFunctions::TriggerInfo;
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(true);
     systematicPrep       = new plotterFunctions::SystematicPrep;
-    systematicCalc       = new plotterFunctions::SystematicCalc;
+    systematicCalc       = new plotterFunctions::SystematicCalc(sbEra);
 
     myPDFUnc = new PDFUncertainty();
     if(isCondor)
@@ -155,6 +156,8 @@ void RegisterFunctionsNTuple::remakeBTagCorrector(std::string sampleName)
     if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
 }
 
+////////////////////////////////
+
 RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()
 {            
     AnaFunctions::prepareTopTagger();
@@ -188,6 +191,7 @@ void RegisterFunctionsMiniTuple::activateBranches(std::set<std::string>& activeB
 {
 }
 
+////////////////////////////////
 
 RegisterFunctionsCalcEff::RegisterFunctionsCalcEff() : RegisterFunctions()
 {
@@ -217,6 +221,7 @@ void RegisterFunctionsCalcEff::activateBranches(std::set<std::string>& activeBra
     ::activateBranches(activeBranches);
 }
 
+////////////////////////////////
 
 void RegisterFunctionsSyst::addFunction(std::function<void(NTupleReader&)> func)
 {
@@ -249,6 +254,8 @@ void RegisterFunctionsSyst::registerFunctions(NTupleReader& tr)
     //tr.registerFunction(*systWeights);
 }
 
+////////////////////////////////
+
 RegisterFunctions2Dplot::RegisterFunctions2Dplot()
 {
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
@@ -264,7 +271,26 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*prepareMiniTupleVars);
 }
 
+////////////////////////////////
+
+RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
+{
+    prepareTopVars = new plotterFunctions::PrepareTopVars();
+}
+
+RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
+{
+    if(prepareTopVars) delete prepareTopVars;
+}
+
+void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
+{
+    tr.registerFunction(*prepareTopVars);
+}
+
+/////////////////////////////////
+
 void drawSBregionDefCopy(const double ymin_Yields, const double ymax_Yields, const bool logscale)
 {
-    drawSBregionDef(ymin_Yields, ymax_Yields, logscale);
+    SearchBins::drawSBregionDef(ymin_Yields, ymax_Yields, logscale);
 }

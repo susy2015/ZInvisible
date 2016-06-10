@@ -41,7 +41,8 @@ int main(int argc, char* argv[])
 
     // Get the relevant information
     //TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Feb15_NSB37.root");
-    TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Mar1_v3.root");
+    //TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Mar1_v3.root");
+    TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Mar10_45Bin_v3.root");
     //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Feb11.root");
     //TH1D* h1 = (TH1D*)f1->Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle");
     TH1D* h1 = (TH1D*)f1->Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle");
@@ -121,6 +122,9 @@ int main(int argc, char* argv[])
     // Set the style
     setTDRStyle();
 
+    //Set up search bins
+    SearchBins sbins("SB_45_2015");
+
     // Prepare canvas
     TCanvas *c;
     double fontScale;
@@ -158,14 +162,14 @@ int main(int argc, char* argv[])
     dummy->GetYaxis()->SetTitleOffset(.9*1.05 / (fontScale));
     dummy->GetXaxis()->SetTitleOffset(1.05);
     if(showRatio) dummy->GetXaxis()->SetTitle("");
-    else          dummy->GetXaxis()->SetTitle("Search Bin");
+    else          dummy->GetXaxis()->SetTitle("Search region bin number");
     dummy->GetXaxis()->SetTitleSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetXaxis()->SetLabelSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetYaxis()->SetTitleSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetYaxis()->SetLabelSize(0.20 * 2 / 6.5 * fontScale);
     if(dummy->GetNdivisions() % 100 > 5) dummy->GetXaxis()->SetNdivisions(6, 5, 0);
 
-    TLegend *leg = new TLegend(0.58, 0.7, 0.90, 0.91);
+    TLegend *leg = new TLegend(0.61, 0.7, 0.90, 0.91);
     leg->SetFillStyle(0);
     leg->SetBorderSize(0);
     leg->SetLineWidth(1);
@@ -217,7 +221,7 @@ int main(int argc, char* argv[])
 	    max = pow(max/locMin, scale)*locMin;
 	}
 	//dummy->GetYaxis()->SetRangeUser(locMin, 50*max);
-        dummy->GetYaxis()->SetRangeUser(0.01, 25*max);
+        dummy->GetYaxis()->SetRangeUser(0.0007, 1200*max);
     }
     else
     {
@@ -242,7 +246,7 @@ int main(int argc, char* argv[])
     c->cd(1);
 
     char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 2262. / 1000.0);
+    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", 2262. / 1000.0);
 
     TLatex mark;
     mark.SetNDC();
@@ -256,7 +260,7 @@ int main(int argc, char* argv[])
     mark.SetTextSize(0.042 * fontScale);
     //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
     mark.SetTextFont(52);
-    mark.DrawLatex(gPad->GetLeftMargin() + 0.062, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+    mark.DrawLatex(gPad->GetLeftMargin() + 0.062, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
 
     //Draw lumistamp 
     mark.SetTextFont(42);
@@ -271,7 +275,7 @@ int main(int argc, char* argv[])
     //mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     fixOverlay();
-    drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
+    SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
     c->Print("moneyplot.png");
     c->Print("moneyplot.pdf");
 
@@ -282,7 +286,7 @@ int main(int argc, char* argv[])
     {
 	prediction.push_back(h1->GetBinContent(i+1));
     }
-    print_searchBins_latex(prediction, v_uncertainty, "& $\\cPZ\\rightarrow\\nu\\nu$ prediction \\\\");
+    sbins.print_searchBins_latex(prediction, v_uncertainty, "& $\\cPZ\\rightarrow\\nu\\nu$ prediction \\\\");
 
     // Format errors                                                                                                                                                                                                                         
     g1->SetFillColor(kRed-7);
@@ -302,12 +306,12 @@ int main(int argc, char* argv[])
     sprintf(legEntry, "%s", "Other");
     leg->AddEntry(g5, legEntry);
 
-    print_searchBins_headerstr("& Norm & Data/MC \\\\ shape & Njet/shape \\\\ stat. & MC Stats & Other \\\\ \n");
+    sbins.print_searchBins_headerstr("& Norm & Data/MC \\\\ shape & Njet/shape \\\\ stat. & MC Stats & Other \\\\ \n");
     for(int i=0; i<h1->GetNbinsX(); ++i)
     {
         char formatStr[256];
         sprintf(formatStr, "& %8.4f & %8.4f & %8.4f & %8.4f & %8.4f \\\\", rel_unc_2, h2->GetBinContent(i + 1), h3->GetBinContent(i + 1), h4->GetBinContent(i + 1), h5->GetBinContent(i + 1));
-        printf(get_searchBins_defstr(i, formatStr).c_str());
+        printf(sbins.get_searchBins_defstr(i, formatStr).c_str());
     }
 
     f1->Close();

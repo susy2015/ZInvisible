@@ -1,6 +1,6 @@
 #include "Systematic.h"
 
-static const int NSEARCHBINS = 37;
+static const int NSEARCHBINS = 45;
 
 void Systematic::bookHist(std::vector<Plotter::HistSummary>& vh, std::vector<AnaSamples::FileSummary>& vfs)
 {
