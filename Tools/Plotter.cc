@@ -314,7 +314,12 @@ void Plotter::createHistsFromTuple()
                     }
 
                     //hist->dss.extractCuts(activeBranches);
-                    //hist->dss.extractWeightNames(activeBranches);
+                    //for(const auto& dss : hist->dss)
+                    //{
+                    //    std::set<std::string> weights;
+                    //    dss.extractWeightNames(weights);
+                    //    for(const auto& weight : weights) std::cout << "Weight: " << weight << std::endl;
+                    //}
                     //hist->hs->extractCuts(activeBranches);
 
                     for(const DatasetSummary& ds : hist->dss)
@@ -442,26 +447,26 @@ void Plotter::createHistsFromTuple()
                     }
 
                     //ugly event print for 1l search
-                    if(file.isData_)
-                    {
-                        const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
-                        const bool& passMuZinvSel            = tr.getVar<bool>("passMuZinvSel");
-                        const bool& passnJetsZinv            = tr.getVar<bool>("passnJetsZinv");
-                        const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
-                        const double& HTZinv                 = tr.getVar<double>("HTZinv");
-
-                        // Recreation of loose0 cut level 
-                        bool passLoose0 = passNoiseEventFilterZinv && passMuZinvSel && (HTZinv > 200) && passnJetsZinv && passdPhisZinv;
-
-                        if(passLoose0)
-                        {
-                            const unsigned int& run   = tr.getVar<unsigned int>("run");
-                            const unsigned int& lumi  = tr.getVar<unsigned int>("lumi");
-                            const unsigned int& event = tr.getVar<unsigned int>("event");
-
-                            std::cout << "FORHANNSJORG " << run << ":" << lumi << ":" << event << std::endl;
-                        }
-                    }
+                    //if(file.isData_)
+                    //{
+                    //    const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
+                    //    const bool& passMuZinvSel            = tr.getVar<bool>("passMuZinvSel");
+                    //    const bool& passnJetsZinv            = tr.getVar<bool>("passnJetsZinv");
+                    //    const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
+                    //    const double& HTZinv                 = tr.getVar<double>("HTZinv");
+                    //
+                    //    // Recreation of loose0 cut level 
+                    //    bool passLoose0 = passNoiseEventFilterZinv && passMuZinvSel && (HTZinv > 200) && passnJetsZinv && passdPhisZinv;
+                    //
+                    //    if(passLoose0)
+                    //    {
+                    //        const unsigned int& run   = tr.getVar<unsigned int>("run");
+                    //        const unsigned int& lumi  = tr.getVar<unsigned int>("lumi");
+                    //        const unsigned int& event = tr.getVar<unsigned int>("event");
+                    //
+                    //        std::cout << "FORHANNSJORG " << run << ":" << lumi << ":" << event << std::endl;
+                    //    }
+                    //}
 
                     //If maxEvents_ is set, stop after so many events
                     if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;
