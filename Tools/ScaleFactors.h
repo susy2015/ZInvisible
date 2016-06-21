@@ -6,11 +6,11 @@ class ScaleFactors
 public:
     static double sf_norm0b() 
     {
-	return 0.783;
+	return 0.794;
     }
     static double sfunc_norm0b() 
     {
-	return 0.152;
+	return  0.131;
     }
 };
 
