@@ -114,7 +114,7 @@ def njetWeights(filename):
 
     # How to rebin
     bins = [0,1,2,3,4,5,6,7,8,20]
-    bins_TT = [0,1,2,3,4,5,6,7,20]
+    bins_TT = [0,1,2,3,4,5,6,20]
 
     # Run over the relevant histograms
     cuts_DY = ["muZinv", "muZinv_0b", "muZinv_g1b"]
@@ -142,10 +142,19 @@ def njetWeights(filename):
         h1 = f.Get(hname1_TT)
         h2s = [f.Get(hname2_TT) for hname2_TT in hnames2_TT]
         newname = "DataMC_nj_%s_%s"%(cut,selection)
-        print h1
-        print h2s
+
+        #data subtraction
+        data_subtracted = subtract(h1, [h2s[0]])
+        data_subtracted = subtract(data_subtracted, h2s[2:])
+
         # Make the ratio
-        newh = makeRatio(h1, h2s, bins_TT, newname)
+        newh = makeRatio(data_subtracted, h2s, bins_TT, newname)
+        #mild hack to remove negative bins in the first few bins
+        #these are not used for search and only provide presentational issues
+        for iBin in xrange(1, min(newh.GetNbinsX() + 1, 4)):
+            if newh.GetBinContent(iBin) < -0.000001:
+                newh.SetBinContent(iBin, 1.0)
+                newh.SetBinError(iBin, 1.0)
         SFs["TT_%s"%(cut)] = newh
         newh.Write()
 
@@ -161,13 +170,13 @@ def njetWeights(filename):
         h2s = [f.Get(hname2_DY) for hname2_DY in hnames2_DY]
 
         # apply weights to ttbar
-        h2s[2] = reweight(h2s[2], SFs["TT_%s"%(cut.replace("mu","elmu"))])
+        h2s[1] = reweight(h2s[1], SFs["TT_%s"%(cut.replace("mu","elmu"))])
 
         # subtract relevant histograms from data
-        data_subtracted = subtract(h1, h2s[2:])
+        data_subtracted = subtract(h1, h2s[1:])
 
         newname = "DataMC_nj_%s_%s"%(cut,selection)
-        newh = makeRatio(data_subtracted, h2s[:1], bins, newname)
+        newh = makeRatio(data_subtracted, [h2s[0]], bins, newname)
 
         newh.Write()
 
