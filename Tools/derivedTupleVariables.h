@@ -493,9 +493,9 @@ namespace plotterFunctions
             f = new TFile("dataMCweights.root");
             if(f)
             {
-                njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_0b_ht200_dphi"));
+                njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_ht200_dphi"));
                 njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_ht200_dphi"));
-                njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_g1b_ht200_dphi"));
+                njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_ht200_dphi"));
                 njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_ht200_dphi"));
                 f->Close();
                 delete f;
