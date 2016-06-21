@@ -42,7 +42,8 @@ int main(int argc, char* argv[])
     // Get the relevant information
     //TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Feb15_NSB37.root");
     //TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Mar1_v3.root");
-    TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Mar10_45Bin_v3.root");
+    //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Mar10_45Bin_v3.root");
+    TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Jun14_2016.root");
     //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Feb11.root");
     //TH1D* h1 = (TH1D*)f1->Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle");
     TH1D* h1 = (TH1D*)f1->Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle");
@@ -221,7 +222,7 @@ int main(int argc, char* argv[])
 	    max = pow(max/locMin, scale)*locMin;
 	}
 	//dummy->GetYaxis()->SetRangeUser(locMin, 50*max);
-        dummy->GetYaxis()->SetRangeUser(0.0007, 1200*max);
+        dummy->GetYaxis()->SetRangeUser(0.000007, 120*max);
     }
     else
     {
@@ -246,7 +247,7 @@ int main(int argc, char* argv[])
     c->cd(1);
 
     char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", 2262. / 1000.0);
+    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", 8000.0 / 1000.0);
 
     TLatex mark;
     mark.SetNDC();
@@ -260,7 +261,8 @@ int main(int argc, char* argv[])
     mark.SetTextSize(0.042 * fontScale);
     //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
     mark.SetTextFont(52);
-    mark.DrawLatex(gPad->GetLeftMargin() + 0.062, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
+    //mark.DrawLatex(gPad->GetLeftMargin() + 0.062, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
+    mark.DrawLatex(gPad->GetLeftMargin() + 0.062, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
 
     //Draw lumistamp 
     mark.SetTextFont(42);
@@ -275,7 +277,7 @@ int main(int argc, char* argv[])
     //mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     fixOverlay();
-    SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
+    //SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
     c->Print("moneyplot.png");
     c->Print("moneyplot.pdf");
 
