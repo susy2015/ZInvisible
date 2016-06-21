@@ -84,14 +84,15 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     systematicCalc       = new plotterFunctions::SystematicCalc(sbEra);
 
     myPDFUnc = new PDFUncertainty();
-    if(isCondor)
-    {
-        bTagCorrector = new BTagCorrector("bTagEffHists.root", "", false);
-    }
-    else
-    {
-        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/CSVFiles/", false);
-    }
+    bTagCorrector = nullptr;
+    //if(isCondor)
+    //{
+    //    bTagCorrector = new BTagCorrector("bTagEffHists.root", "", false);
+    //}
+    //else
+    //{
+    //    bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/CSVFiles/", false);
+    //}
 }
 
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
@@ -115,7 +116,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(myPDFUnc) delete myPDFUnc;
     if(systematicPrep) delete systematicPrep;
     if(systematicCalc) delete systematicCalc;
-    if(bTagCorrector) delete bTagCorrector;
+    //if(bTagCorrector) delete bTagCorrector;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -143,7 +144,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*prepareMiniTupleVars);
     //tr.registerFunction(&printInterestingEvents);
     tr.registerFunction(*myPDFUnc);
-    tr.registerFunction(*bTagCorrector);
+    //tr.registerFunction(*bTagCorrector);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)

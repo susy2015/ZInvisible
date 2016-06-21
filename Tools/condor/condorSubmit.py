@@ -3,7 +3,6 @@
 
 import sys
 from os import system, environ
-print 
 sys.path = [environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/condor/",] + sys.path
 
 from samples import SampleCollection
@@ -84,15 +83,16 @@ x509userproxy = $ENV(X509_USER_PROXY)
 
 parser = optparse.OptionParser("usage: %prog [options]\n")
 
-parser.add_option ('-n', dest='numfile', type='int', default = 5, help="number of files per job")
-parser.add_option ('-d', dest='datasets', type='string', default = '', help="List of datasets 'ZJetsToNuNu,DYJetsToLL'")
-parser.add_option ('-l', dest='dataCollections', action='store_true', default = False, help="List all datacollections")
-parser.add_option ('-r', dest='refLumi', type='string', default = None, help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
-parser.add_option ('-c', dest='noSubmit', action='store_true', default = False, help="Do not submit jobs.  Only create condor_submit.txt.")
-parser.add_option ('-e', dest='goMakeEff', action='store_true', default = False, help="Run calcEff instead of makePlots.")
-parser.add_option ('-b', dest='goMakeBeff', action='store_true', default = False, help="Run beffCalc instead of makePlots.")
-parser.add_option ('-s', dest='goMakeSigEff', action='store_true', default = False, help="Run makeSignalHistograms instead of makePlots.")
-parser.add_option ('-t', dest='goMakeTopPlots', action='store_true', default = False, help="Run makeTopPlots instead of makePlots.")
+parser.add_option ('-n',  dest='numfile', type='int', default = 5, help="number of files per job")
+parser.add_option ('-d',  dest='datasets', type='string', default = '', help="List of datasets 'ZJetsToNuNu,DYJetsToLL'")
+parser.add_option ('-l',  dest='dataCollections', action='store_true', default = False, help="List all datacollections")
+parser.add_option ('-L', dest='dataCollectionslong', action='store_true', default = False, help="List all datacollections and sub collections")
+parser.add_option ('-r',  dest='refLumi', type='string', default = None, help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
+parser.add_option ('-c',  dest='noSubmit', action='store_true', default = False, help="Do not submit jobs.  Only create condor_submit.txt.")
+parser.add_option ('-e',  dest='goMakeEff', action='store_true', default = False, help="Run calcEff instead of makePlots.")
+parser.add_option ('-b',  dest='goMakeBeff', action='store_true', default = False, help="Run beffCalc instead of makePlots.")
+parser.add_option ('-s',  dest='goMakeSigEff', action='store_true', default = False, help="Run makeSignalHistograms instead of makePlots.")
+parser.add_option ('-t',  dest='goMakeTopPlots', action='store_true', default = False, help="Run makeTopPlots instead of makePlots.")
 
 options, args = parser.parse_args()
 
@@ -121,8 +121,17 @@ fileParts = [submitFile]
 sc = SampleCollection()
 datasets = []
 
-if options.dataCollections:
-    print sc.sampleCollectionList()
+if options.dataCollections or options.dataCollectionslong:
+    scl = sc.sampleCollectionList()
+    for sampleCollection in scl:
+        sl = sc.sampleList(sampleCollection)
+        print sampleCollection
+        if options.dataCollectionslong:
+            sys.stdout.write("\t")
+            for sample in sl:
+                sys.stdout.write("%s  "%sample[1])
+            print ""
+            print ""
     exit(0)
 
 if options.datasets:

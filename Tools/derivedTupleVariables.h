@@ -1502,7 +1502,7 @@ namespace plotterFunctions
 
             //New Tagger starts here
             //prep input object (constituent) vector
-            std::vector<Constituent> constituents = ttUtility::packageCandidates(jetsLVec_forTagger, recoJetsBtag_forTagger);
+            std::vector<Constituent> constituents = ttUtility::packageConstituents(jetsLVec_forTagger, recoJetsBtag_forTagger);
             //run tagger
             tt->runTagger(constituents);
             //retrieve results
@@ -1544,7 +1544,7 @@ namespace plotterFunctions
             }
 
             //Rsys variables 
-            TLorentzVector oldRsysVec = t3tagger.best_had_brJet;
+            TLorentzVector oldRsysVec;// = t3tagger.best_had_brJet;
             TLorentzVector newRsysVec = ttr.getRsys().p();
 
             double oldMT2 = t3tagger.best_had_brJet_MT2;
