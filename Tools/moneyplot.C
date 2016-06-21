@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
     setTDRStyle();
 
     //Set up search bins
-    SearchBins sbins("SB_45_2015");
+    SearchBins sbins("SB_59_2016");
 
     // Prepare canvas
     TCanvas *c;
