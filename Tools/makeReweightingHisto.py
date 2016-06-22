@@ -114,7 +114,7 @@ def njetWeights(filename):
 
     # How to rebin
     bins = [0,1,2,3,4,5,6,7,8,20]
-    bins_TT = [0,1,2,3,4,5,6,7,20]
+    bins_TT = [0,1,2,3,4,5,6,20]
 
     # Run over the relevant histograms
     cuts_DY = ["muZinv", "muZinv_0b", "muZinv_g1b"]
@@ -142,10 +142,19 @@ def njetWeights(filename):
         h1 = f.Get(hname1_TT)
         h2s = [f.Get(hname2_TT) for hname2_TT in hnames2_TT]
         newname = "DataMC_nj_%s_%s"%(cut,selection)
-        print h1
-        print h2s
+
+        #data subtraction
+        data_subtracted = subtract(h1, [h2s[0]])
+        data_subtracted = subtract(data_subtracted, h2s[2:])
+
         # Make the ratio
-        newh = makeRatio(h1, h2s, bins_TT, newname)
+        newh = makeRatio(data_subtracted, h2s, bins_TT, newname)
+        #mild hack to remove negative bins in the first few bins
+        #these are not used for search and only provide presentational issues
+        for iBin in xrange(1, min(newh.GetNbinsX() + 1, 4)):
+            if newh.GetBinContent(iBin) < -0.000001:
+                newh.SetBinContent(iBin, 1.0)
+                newh.SetBinError(iBin, 1.0)
         SFs["TT_%s"%(cut)] = newh
         newh.Write()
 
@@ -161,13 +170,13 @@ def njetWeights(filename):
         h2s = [f.Get(hname2_DY) for hname2_DY in hnames2_DY]
 
         # apply weights to ttbar
-        h2s[2] = reweight(h2s[2], SFs["TT_%s"%(cut.replace("mu","elmu"))])
+        h2s[1] = reweight(h2s[1], SFs["TT_%s"%(cut.replace("mu","elmu"))])
 
         # subtract relevant histograms from data
-        data_subtracted = subtract(h1, h2s[2:])
+        data_subtracted = subtract(h1, h2s[1:])
 
         newname = "DataMC_nj_%s_%s"%(cut,selection)
-        newh = makeRatio(data_subtracted, h2s[:1], bins, newname)
+        newh = makeRatio(data_subtracted, [h2s[0]], bins, newname)
 
         newh.Write()
 
@@ -228,9 +237,9 @@ def shapeSyst(filename):
     # histo names
     hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDatadata"
     hnames2 =  ["%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDYstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDY HT<100stack",
+                #"%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDY HT<100stack",
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}stack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)ssingle topstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sSingle topstack",
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}Zstack",
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDibosonstack",
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sRarestack"]
@@ -241,7 +250,7 @@ def shapeSyst(filename):
                ["met", "cleanMetPt",             [0, 100, 200, 300, 600, 1500], "MET" ],
                ["mt2", "best_had_brJet_MT2Zinv", [0, 100, 200, 300, 400, 1500],      "M_{T2}" ],
                ["nt",  "nTopCandSortedCntZinv",  [0, 1, 2, 8 ],                                         "N(t)" ],
-               ["nb",  "cntCSVSZinv",            [0, 1, 2, 3, 8 ],                                      "N(b)" ]]
+               ["nb",  "cntCSVSZinv",            [0, 1, 2, 8 ],                                      "N(b)" ]]
 
     for var in varList:
         # Procedure: 1. Grab the njet reweighted MC
@@ -252,10 +261,10 @@ def shapeSyst(filename):
         h2s   = [f.Get(hname2%{"name":var[0], "var":var[1]}) for hname2 in hnames2]
 
         # subtract relevant histograms from data
-        data_subtracted = subtract(hData, h2s[2:])
+        data_subtracted = subtract(hData, h2s[1:])
 
         newname = "ShapeRatio_%s"%var[0]
-        newh = makeRatio(data_subtracted, h2s[:1], newname=newname, bins=var[2])
+        newh = makeRatio(data_subtracted, [h2s[0]], newname=newname, bins=var[2])
 
         for i in xrange(1, newh.GetNbinsX() + 1):
             print newh.GetBinContent(i)
