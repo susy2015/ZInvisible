@@ -68,9 +68,9 @@ int main()
     TFile *f = new TFile("dataMCweights.root");
     if(f)
     {
-        njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_0b_ht200_dphi")->Clone());
+        njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_ht200_dphi")->Clone());
         njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_ht200_dphi")->Clone());
-        njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_g1b_ht200_dphi")->Clone());
+        njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_ht200_dphi")->Clone());
         njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_ht200_dphi")->Clone());
         f->Close();
         delete f;
@@ -102,7 +102,7 @@ int main()
 
     //Prep variables for nJet and shape systematic weights
     const int NTRIALS = 1000;
-    const int NSEARCHBINS = 45;
+    const int NSEARCHBINS = 59;
 
     TH1 *h[5][NSEARCHBINS];
     std::vector<std::string> hnames = {"njet", "met", "mt2", "nt", "nb"};

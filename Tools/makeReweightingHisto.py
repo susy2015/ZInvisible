@@ -237,9 +237,9 @@ def shapeSyst(filename):
     # histo names
     hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDatadata"
     hnames2 =  ["%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDYstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDY HT<100stack",
+                #"%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDY HT<100stack",
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}stack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)ssingle topstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sSingle topstack",
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}Zstack",
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDibosonstack",
                 "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sRarestack"]
@@ -250,7 +250,7 @@ def shapeSyst(filename):
                ["met", "cleanMetPt",             [0, 100, 200, 300, 600, 1500], "MET" ],
                ["mt2", "best_had_brJet_MT2Zinv", [0, 100, 200, 300, 400, 1500],      "M_{T2}" ],
                ["nt",  "nTopCandSortedCntZinv",  [0, 1, 2, 8 ],                                         "N(t)" ],
-               ["nb",  "cntCSVSZinv",            [0, 1, 2, 3, 8 ],                                      "N(b)" ]]
+               ["nb",  "cntCSVSZinv",            [0, 1, 2, 8 ],                                      "N(b)" ]]
 
     for var in varList:
         # Procedure: 1. Grab the njet reweighted MC
@@ -261,10 +261,10 @@ def shapeSyst(filename):
         h2s   = [f.Get(hname2%{"name":var[0], "var":var[1]}) for hname2 in hnames2]
 
         # subtract relevant histograms from data
-        data_subtracted = subtract(hData, h2s[2:])
+        data_subtracted = subtract(hData, h2s[1:])
 
         newname = "ShapeRatio_%s"%var[0]
-        newh = makeRatio(data_subtracted, h2s[:1], newname=newname, bins=var[2])
+        newh = makeRatio(data_subtracted, [h2s[0]], newname=newname, bins=var[2])
 
         for i in xrange(1, newh.GetNbinsX() + 1):
             print newh.GetBinContent(i)
