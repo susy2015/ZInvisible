@@ -148,7 +148,7 @@ def njetWeights(filename):
         data_subtracted = subtract(data_subtracted, h2s[2:])
 
         # Make the ratio
-        newh = makeRatio(data_subtracted, h2s, bins_TT, newname)
+        newh = makeRatio(data_subtracted, [h2s[1]], bins_TT, newname)
         #mild hack to remove negative bins in the first few bins
         #these are not used for search and only provide presentational issues
         for iBin in xrange(1, min(newh.GetNbinsX() + 1, 4)):
