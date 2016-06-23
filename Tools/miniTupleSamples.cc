@@ -68,14 +68,13 @@ namespace AnaSamples
         //addSample("ZJetsToNuNu_HT_200to400", fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-200To400_13TeV-madgraph", 77.67,  lumi, 24863552, 1.23,  kTeal+4);
         //addSample("ZJetsToNuNu_HT_400to600", fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-400To600_13TeV-madgraph", 10.73,  lumi, 9591908,  1.23,  kTeal+4);
         //addSample("ZJetsToNuNu_HT_600toInf", fDir_ + MCloc + "minituple_ZJetsToNuNu_HT.txt", "ZJetsToNuNu_HT-600ToInf_13TeV-madgraph", 4.116,  lumi, 10202299, 1.23,  kTeal+4);
-        addSample("ZJetsToNuNu_HT_100to200",   fDir_ + MCloc + "minituple_ZJetsToNuNu.txt", "ZJetsToNuNu_HT_100to200_13TeV-madgraph",   280.35,     lumi, 18665303, 1.23,  kTeal+4);
-        addSample("ZJetsToNuNu_HT_200to400",   fDir_ + MCloc + "minituple_ZJetsToNuNu.txt", "ZJetsToNuNu_HT_200to400_13TeV-madgraph",   77.67,      lumi, 19914665, 1.23,  kTeal+4);
-        addSample("ZJetsToNuNu_HT_400to600",   fDir_ + MCloc + "minituple_ZJetsToNuNu.txt", "ZJetsToNuNu_HT_400to600_13TeV-madgraph",   10.73,      lumi, 9591908,  1.23,  kTeal+4);
-        //addSample("ZJetsToNuNu_HT_600toInf",   fDir_ + MCloc + "minituple_ZJetsToNuNu.txt", "ZJetsToNuNu_HT_600toInf_13TeV-madgraph",   4.116,      lumi, 10202299, 1.23,  kTeal+4);
-        addSample("ZJetsToNuNu_HT_600to800",   fDir_ + MCloc + "minituple_ZJetsToNuNu.txt", "ZJetsToNuNu_HT_600to800_13TeV-madgraph",   0.853*3,    lumi, 5650700,  1.23,  kTeal+4);
-        addSample("ZJetsToNuNu_HT_800to1200",  fDir_ + MCloc + "minituple_ZJetsToNuNu.txt", "ZJetsToNuNu_HT_800to1200_13TeV-madgraph",  0.394*3,    lumi, 2156175,  1.23,  kTeal+4);
-        addSample("ZJetsToNuNu_HT_1200to2500", fDir_ + MCloc + "minituple_ZJetsToNuNu.txt", "ZJetsToNuNu_HT_1200to2500_13TeV-madgraph", 0.0974*3,   lumi, 365216,   1.23,  kTeal+4);
-        addSample("ZJetsToNuNu_HT_2500toInf",  fDir_ + MCloc + "minituple_ZJetsToNuNu.txt", "ZJetsToNuNu_HT_2500toInf_13TeV-madgraph",  0.00230*3,  lumi, 405752,   1.23,  kTeal+4);
+        addSample("ZJetsToNuNu_HT_100to200",   fDir_ + MCloc + "minituple-ZJetsToNuNu.txt", "ZJetsToNuNu_HT-100To200_13TeV-madgraph",   280.35,     lumi, 18665303, 1.23,  kTeal+4);
+        addSample("ZJetsToNuNu_HT_200to400",   fDir_ + MCloc + "minituple-ZJetsToNuNu.txt", "ZJetsToNuNu_HT-200To400_13TeV-madgraph",   77.67,      lumi, 19914665, 1.23,  kTeal+4);
+        addSample("ZJetsToNuNu_HT_400to600",   fDir_ + MCloc + "minituple-ZJetsToNuNu.txt", "ZJetsToNuNu_HT-400To600_13TeV-madgraph",   10.73,      lumi, 9591908,  1.23,  kTeal+4);
+        addSample("ZJetsToNuNu_HT_600to800",   fDir_ + MCloc + "minituple-ZJetsToNuNu.txt", "ZJetsToNuNu_HT-600To800_13TeV-madgraph",   0.853*3,    lumi, 5650700,  1.23,  kTeal+4);
+        addSample("ZJetsToNuNu_HT_800to1200",  fDir_ + MCloc + "minituple-ZJetsToNuNu.txt", "ZJetsToNuNu_HT-800To1200_13TeV-madgraph",  0.394*3,    lumi, 2156175,  1.23,  kTeal+4);
+        addSample("ZJetsToNuNu_HT_1200to2500", fDir_ + MCloc + "minituple-ZJetsToNuNu.txt", "ZJetsToNuNu_HT-1200To2500_13TeV-madgraph", 0.0974*3,   lumi, 365216,   1.23,  kTeal+4);
+        addSample("ZJetsToNuNu_HT_2500toInf",  fDir_ + MCloc + "minituple-ZJetsToNuNu.txt", "ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph",  0.00230*3,  lumi, 405752,   1.23,  kTeal+4);
 
         //DY->ll
         // kz = 1.23

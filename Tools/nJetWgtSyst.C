@@ -193,74 +193,83 @@ int main()
 
     AnaFunctions::prepareTopTagger();
 
-    //for(auto& fs : sc["DYJetsToLL"])
-    for(auto& fs : sc["ZJetsToNuNu"])
+    try
     {
-        //size_t start = fs.filePath.rfind('/');
-        //size_t stop  = fs.filePath.rfind('.');
-        //std::string treeName = fs.filePath.substr(start + 1, stop - start - 1);
 
-        TChain *t = new TChain(fs.treePath.c_str());
-        fs.addFilesToChain(t);
-
-        std::cout << "Tree: " << fs.treePath << std::endl;
-        //std::cout << "sigma*lumi: " << fs.getWeight() << std::endl;
-
-        plotterFunctions::PrepareMiniTupleVars pmt(false);
-        plotterFunctions::NJetWeight njWeight;
-        plotterFunctions::TriggerInfo triggerInfo(true);
-        plotterFunctions::MetSmear metSmear;
-
-        NTupleReader tr(t);
-        tr.registerFunction(pmt);
-        tr.registerFunction(njWeight);
-        tr.registerFunction(triggerInfo);
-        //tr.registerFunction(metSmear);
-        //tr.registerFunction(GetnTops);
-
-        while(tr.getNextEvent())
+        //for(auto& fs : sc["DYJetsToLL"])
+        for(auto& fs : sc["ZJetsToNuNu"])
         {
-            if(tr.getEvtNum() % 10000 == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
+            //size_t start = fs.filePath.rfind('/');
+            //size_t stop  = fs.filePath.rfind('.');
+            //std::string treeName = fs.filePath.substr(start + 1, stop - start - 1);
 
-            const int& nSearchBin = tr.getVar<int>("nSearchBin");
-            const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
-            const double& cleanMetPt = tr.getVar<double>("cleanMetPt");
-            const double& best_had_brJet_MT2Zinv = tr.getVar<double>("best_had_brJet_MT2Zinv");
-            const int& cntCSVSZinv            = tr.getVar<int>("cntCSVSZinv");
-            const int& nTopCandSortedCntZinv  = tr.getVar<int>("nTopCandSortedCntZinv");
-            const bool& passBaseline = tr.getVar<bool>("passBaseline");
-            const bool& passBaselineZinv = tr.getVar<bool>("passBaselineZinv");
-            const bool& passLeptVeto = tr.getVar<bool>("passLeptVeto");
-            const double& bTagSF_EventWeightSimple_Central = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+            TChain *t = new TChain(fs.treePath.c_str());
+            fs.addFilesToChain(t);
 
-            const double& triggerEffMC = tr.getVar<double>("TriggerEffMC");
-            const double& nJetWgtDYZ   = tr.getVar<double>("nJetWgtDYZ");
-            const double& normWgt0b    = tr.getVar<double>("normWgt0b");
+            std::cout << "Tree: " << fs.treePath << std::endl;
+            //std::cout << "sigma*lumi: " << fs.getWeight() << std::endl;
 
+            plotterFunctions::PrepareMiniTupleVars pmt(false);
+            plotterFunctions::NJetWeight njWeight;
+            plotterFunctions::TriggerInfo triggerInfo(true);
+            plotterFunctions::MetSmear metSmear;
 
-            //fill stat uncertainty histograms here
-            if(passBaselineZinv && passLeptVeto)
+            NTupleReader tr(t);
+            tr.registerFunction(pmt);
+            tr.registerFunction(njWeight);
+            tr.registerFunction(triggerInfo);
+            //tr.registerFunction(metSmear);
+            //tr.registerFunction(GetnTops);
+
+            while(tr.getNextEvent())
             {
-                double weight = triggerEffMC * nJetWgtDYZ * normWgt0b * bTagSF_EventWeightSimple_Central * fs.getWeight();
+                if(tr.getEvtNum() % 10000 == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
 
-                if(nSearchBin >= 0 && nSearchBin < NSEARCHBINS)
+                const int& nSearchBin = tr.getVar<int>("nSearchBin");
+                const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+                const double& cleanMetPt = tr.getVar<double>("cleanMetPt");
+                const double& best_had_brJet_MT2Zinv = tr.getVar<double>("best_had_brJet_MT2Zinv");
+                const int& cntCSVSZinv            = tr.getVar<int>("cntCSVSZinv");
+                const int& nTopCandSortedCntZinv  = tr.getVar<int>("nTopCandSortedCntZinv");
+                const bool& passBaseline = tr.getVar<bool>("passBaseline");
+                const bool& passBaselineZinv = tr.getVar<bool>("passBaselineZinv");
+                const bool& passLeptVeto = tr.getVar<bool>("passLeptVeto");
+                const double& bTagSF_EventWeightSimple_Central = 1.0;//tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+
+                const double& triggerEffMC = tr.getVar<double>("TriggerEffMC");
+                const double& nJetWgtDYZ   = tr.getVar<double>("nJetWgtDYZ");
+                const double& normWgt0b    = tr.getVar<double>("normWgt0b");
+
+
+                //fill stat uncertainty histograms here
+                if(passBaselineZinv && passLeptVeto)
                 {
-                    N0[nSearchBin] += weight;
-                    N0square[nSearchBin] += weight*weight;
-                    for(int iTrial = 0; iTrial < NTRIALS; ++iTrial)
+                    double weight = triggerEffMC * nJetWgtDYZ * normWgt0b * bTagSF_EventWeightSimple_Central * fs.getWeight();
+
+                    if(nSearchBin >= 0 && nSearchBin < NSEARCHBINS)
                     {
-                        if(iTrial < NTRIALS)
+                        N0[nSearchBin] += weight;
+                        N0square[nSearchBin] += weight*weight;
+                        for(int iTrial = 0; iTrial < NTRIALS; ++iTrial)
                         {
-                            N[0][nSearchBin][iTrial] += variations[0][njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv)][iTrial] * weight;
-                            N[1][nSearchBin][iTrial] += variations[1][shapeMET->FindBin(cleanMetPt)][iTrial]              * weight;
-                            N[2][nSearchBin][iTrial] += variations[2][shapeMT2->FindBin(best_had_brJet_MT2Zinv)][iTrial]  * weight;
-                            N[3][nSearchBin][iTrial] += variations[3][shapeNT->FindBin(nTopCandSortedCntZinv)][iTrial]    * weight;
-                            N[4][nSearchBin][iTrial] += variations[4][shapeNB->FindBin(cntCSVSZinv)][iTrial]              * weight;
+                            if(iTrial < NTRIALS)
+                            {
+                                N[0][nSearchBin][iTrial] += variations[0][njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv)][iTrial] * weight;
+                                N[1][nSearchBin][iTrial] += variations[1][shapeMET->FindBin(cleanMetPt)][iTrial]              * weight;
+                                N[2][nSearchBin][iTrial] += variations[2][shapeMT2->FindBin(best_had_brJet_MT2Zinv)][iTrial]  * weight;
+                                N[3][nSearchBin][iTrial] += variations[3][shapeNT->FindBin(nTopCandSortedCntZinv)][iTrial]    * weight;
+                                N[4][nSearchBin][iTrial] += variations[4][shapeNB->FindBin(cntCSVSZinv)][iTrial]              * weight;
+                            }
                         }
                     }
                 }
             }
         }
+    }
+    catch(const std::string e)
+    {
+        std::cout << e << std::endl;
+        return 0;
     }
 
     for(int ih = 0; ih < 5; ++ih)
