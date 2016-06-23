@@ -353,7 +353,7 @@ def systHarvest(filename):
     #fout = TFile.Open("syst_shape.root", "RECREATE")
     # Run over the relevant histograms
     # histo names
-    NSB = 45
+    NSB = 59
 
     # Get shape central value uncertainty
     f = TFile("systematics.root")
@@ -658,10 +658,10 @@ def systHarvest(filename):
              ("syst_unc_pdf_dn",             hPDF_sym),
              ("syst_unc_trig_up",            hTrig_sym),
              ("syst_unc_trig_dn",            hTrig_sym),
-             ("syst_unc_btag_up",            hBTagUp_Ratio),
-             ("syst_unc_btag_dn",            hBTagDn_Ratio),
-             ("syst_unc_bmistag_up",         hBMistagUp_Ratio),
-             ("syst_unc_bmistag_dn",         hBMistagDn_Ratio),
+             #("syst_unc_btag_up",            hBTagUp_Ratio),
+             #("syst_unc_btag_dn",            hBTagDn_Ratio),
+             #("syst_unc_bmistag_up",         hBMistagUp_Ratio),
+             #("syst_unc_bmistag_dn",         hBMistagDn_Ratio),
              ]
 
     print "luminosity = 2262"
@@ -685,13 +685,13 @@ def systHarvest(filename):
             data.append("%8.5f" % 0.00)
     print "%-25s = %s"%("avg_weight", ' '.join(data))
 
-    print ""
-    print "stat_unc_up = xxx yy zz"
-    print "stat_unc_dn = xxx yy zz"
-    print ""
+    #print ""
+    #print "stat_unc_up = xxx yy zz"
+    #print "stat_unc_dn = xxx yy zz"
+    #print ""
 
-    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.194125]))
-    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.194125]))
+    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.165882]))
+    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.165882]))
 
     for (name, h) in hists:
         print "%-25s = %s"%(name, ' '.join(["%8.5f" % (abs(h.GetBinContent(i))) for i in xrange(1, NSB+1)]))
