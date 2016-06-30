@@ -1210,6 +1210,9 @@ int main(int argc, char* argv[])
     Plotter::DataCollection scalew_nj(   "single", {{"cntNJetsPt30Eta24Zinv",    dsDY_nunu_njetnorm}, {"cntNJetsPt30Eta24Zinv",    dsDY_nunu_njetnorm_scaleUp}, {"cntNJetsPt30Eta24Zinv",    dsDY_nunu_njetnorm_scaleDown}  });
     Plotter::DataCollection pdfw_nSearchBin(     "single", {{"nSearchBin",    dsDY_nunu_njetnorm}, {"nSearchBin",    dsDY_nunu_njetnorm_PDFUp},   {"nSearchBin",    dsDY_nunu_njetnorm_PDFDown}    });
     Plotter::DataCollection pdfw_nj(     "single", {{"cntNJetsPt30Eta24Zinv",    dsDY_nunu_njetnorm}, {"cntNJetsPt30Eta24Zinv",    dsDY_nunu_njetnorm_PDFUp},   {"cntNJetsPt30Eta24Zinv",    dsDY_nunu_njetnorm_PDFDown}    });
+
+    Plotter::DataCollection pdfw_zinv(     "single", {{"NNPDF_From_Median_Up",    dsDY_nunu_njetnorm}, {"NNPDF_From_Median_Central",    dsDY_nunu_njetnorm},   {"NNPDF_From_Median_Down",    dsDY_nunu_njetnorm}    });
+
     Plotter::DataCollection JEU_nSearchBin(      "single", {{"nSearchBin",    dsDY_nunu_njetnorm_bl}, {"nSearchBinJEUUp", dsDY_nunu_njetnorm_JEUUp}, {"nSearchBinJEUDn", dsDY_nunu_njetnorm_JEUDown}  });
     Plotter::DataCollection MEU_nSearchBin(      "single", {{"nSearchBin",    dsDY_nunu_njetnorm_bl}, {"nSearchBinMEUUp", dsDY_nunu_njetnorm_MEUUp}, {"nSearchBinMEUDn", dsDY_nunu_njetnorm_MEUDown}  });
     Plotter::DataCollection trigger_nSearchBin( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBin",    dsDY_nunu_njetnorm}  });
@@ -1223,6 +1226,9 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("NJetWgt_nSearchBin_pull_log",   {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", false));
     vh.push_back(PHS("syst_ScaleWgt_nSearchBin",      {scalew_nSearchBin},{2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   false, true,   "Search Bin",     "Events", true));
     vh.push_back(PHS("syst_PDFWgt_nSearchBin",        {pdfw_nSearchBin},  {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   false, true,   "Search Bin",     "Events", true));
+
+    vh.push_back(PHS("zinv_PDFWgts",        {pdfw_zinv},  {2, 1}, "passBaselineZinv",        100,  0,     2,   false, true,   "Weight",     "Events", true));
+
     vh.push_back(PHS("syst_JESUncert_nSearchBin",     {JEU_nSearchBin},   {2, 1}, "",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("syst_MESUncert_nSearchBin",     {MEU_nSearchBin},   {2, 1}, "",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("TriggerWgt_nSearchBin",         {trigger_nSearchBin},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
