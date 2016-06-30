@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
 	    max = pow(max/locMin, scale)*locMin;
 	}
 	//dummy->GetYaxis()->SetRangeUser(locMin, 50*max);
-        dummy->GetYaxis()->SetRangeUser(0.000007, 120*max);
+        dummy->GetYaxis()->SetRangeUser(0.00007, 12000*max);
     }
     else
     {
@@ -247,7 +247,7 @@ int main(int argc, char* argv[])
     c->cd(1);
 
     char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", 8000.0 / 1000.0);
+    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", 4000.0 / 1000.0);
 
     TLatex mark;
     mark.SetNDC();
@@ -277,7 +277,7 @@ int main(int argc, char* argv[])
     //mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     fixOverlay();
-    //SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
+    SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
     c->Print("moneyplot.png");
     c->Print("moneyplot.pdf");
 

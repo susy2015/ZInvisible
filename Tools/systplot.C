@@ -284,6 +284,7 @@ int main(int argc, char* argv[])
 
     // f1->Close();
 
+    const int NBIN = 59;
   
     //TFile* f1 = TFile::Open("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_all.root");
     TFile* f1 = TFile::Open("syst_all.root");
@@ -294,7 +295,7 @@ int main(int argc, char* argv[])
 
     for(std::string const& hname : hnames)
     {
-	makeplot(f1, hname, 0, 45, 0.0, 1.88, "Search Bin", "Systematic uncertainty", "Syst");
+	makeplot(f1, hname, 0, NBIN, 0.0, 1.88, "Search Bin", "Systematic uncertainty", "Syst");
     }
 
     f1->Close();
@@ -312,8 +313,8 @@ int main(int argc, char* argv[])
     std::vector<std::string> hnamesratio2 = {"nSearchBin_pdf_up",
 					     "nSearchBin_ratio_pdf_down"};
 
-    makeplotratio(f1, hnames1, hnamesratio1, 0, 45, 0.00002, 0.3, "Syst");
-    makeplotratio(f1, hnames2, hnamesratio2, 0, 45, 0.00002, 0.3, "Syst",0.25);
+    makeplotratio(f1, hnames1, hnamesratio1, 0, NBIN, 0.00002, 0.3, "Syst");
+    makeplotratio(f1, hnames2, hnamesratio2, 0, NBIN, 0.00002, 0.3, "Syst",0.25);
 
     f1->Close();
 
@@ -362,7 +363,7 @@ int main(int argc, char* argv[])
     
     f1 = TFile::Open("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_all.root");
 
-    makeplot(f1, "MCPull2", 0, 45, -3, 6, "n search bin", "pull", "Syst", true, true);
+    makeplot(f1, "MCPull2", 0, NBIN, -3, 6, "n search bin", "pull", "Syst", true, true);
 
     f1->Close();
     

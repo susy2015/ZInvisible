@@ -685,13 +685,13 @@ def systHarvest(filename):
             data.append("%8.5f" % 0.00)
     print "%-25s = %s"%("avg_weight", ' '.join(data))
 
-    #print ""
+    print ""
     #print "stat_unc_up = xxx yy zz"
     #print "stat_unc_dn = xxx yy zz"
     #print ""
 
-    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.165882]))
-    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.165882]))
+    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.13310185]))
+    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.13310185]))
 
     for (name, h) in hists:
         print "%-25s = %s"%(name, ' '.join(["%8.5f" % (abs(h.GetBinContent(i))) for i in xrange(1, NSB+1)]))
@@ -817,9 +817,9 @@ def extrapolationSyst(filename):
                 }
 
     samples = ["DYstack",
-               "DY HT<100stack",
+               #"DY HT<100stack",
                "t#bar{t}stack",
-               "single topstack",
+               "Single topstack",
                "t#bar{t}Zstack",
                "Dibosonstack",
                "Rarestack"
