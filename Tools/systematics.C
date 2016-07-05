@@ -61,15 +61,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        if(ss[dataSets] != ss.null())
-        {
-            fileMap[dataSets] = {ss[dataSets]};
-            for(const auto& colls : ss[dataSets].getCollections())
-            {
-                fileMap[colls] = {ss[dataSets]};
-            }
-        }
-        else if(sc[dataSets] != sc.null())
+        if(sc[dataSets] != sc.null())
         {
             fileMap[dataSets] = {sc[dataSets]};
             int i = 0;
@@ -78,7 +70,18 @@ int main(int argc, char* argv[])
                 fileMap[sc.getSampleLabels(dataSets)[i++]].push_back(fs);
             }
         }
+        else if(ss[dataSets] != ss.null())
+        {
+            fileMap[dataSets] = {ss[dataSets]};
+            for(const auto& colls : ss[dataSets].getCollections())
+            {
+                fileMap[colls] = {ss[dataSets]};
+            }
+        }
+        
     }
+
+    std::cout << dataSets << "\t" << fileMap.size() <<std::endl;
 
     // for(auto& vfs : fileMap)
     // {
@@ -118,12 +121,12 @@ int main(int argc, char* argv[])
     TFile *f2 = new TFile("correlations_ratio.root");
     if(f2)
     {
-        shapeMETGaus = static_cast<TH1*>(f->Get("Ratio_MET_Gaus")->Clone());
-        shapeMT2Gaus = static_cast<TH1*>(f->Get("Ratio_MT2_Gaus")->Clone());
-        shapeMT2vMETGaus = static_cast<TH2*>(f->Get("Ratio_MT2vMET_Gaus")->Clone());
-        shapeMETLogi  = static_cast<TH1*>(f->Get("Ratio_MET_Logi")->Clone());
-        shapeMT2Logi  = static_cast<TH1*>(f->Get("Ratio_MT2_Logi")->Clone());
-        shapeMT2vMETLogi  = static_cast<TH2*>(f->Get("Ratio_MT2vMET_Logi")->Clone());
+        shapeMETGaus = static_cast<TH1*>(f2->Get("Ratio_MET_Gaus")->Clone());
+        shapeMT2Gaus = static_cast<TH1*>(f2->Get("Ratio_MT2_Gaus")->Clone());
+        shapeMT2vMETGaus = static_cast<TH2*>(f2->Get("Ratio_MT2vMET_Gaus")->Clone());
+        shapeMETLogi  = static_cast<TH1*>(f2->Get("Ratio_MET_Logi")->Clone());
+        shapeMT2Logi  = static_cast<TH1*>(f2->Get("Ratio_MT2_Logi")->Clone());
+        shapeMT2vMETLogi  = static_cast<TH2*>(f2->Get("Ratio_MT2vMET_Logi")->Clone());
         f2->Close();
         delete f2;
     }

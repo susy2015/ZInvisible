@@ -301,7 +301,8 @@ int main(int argc, char* argv[])
     f1->Close();
   
 
-    f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/syst_scalePDF.root");
+    //f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/syst_scalePDF.root");
+    f1 = TFile::Open("syst_scalePDF.root");
     std::vector<std::string> hnames1 = {"nSearchBin_scale_up",
 					"nSearchBin_scale_nominal",
 					"nSearchBin_scale_down"};

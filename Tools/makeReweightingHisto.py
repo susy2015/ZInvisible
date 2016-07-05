@@ -626,8 +626,8 @@ def systHarvest(filename):
     for i in xrange(1, hJEC_ratio_sym.GetNbinsX() + 1):
         hJEC_ratio_sym.SetBinContent(i, max(abs(hJECUp_ratio.GetBinContent(i)),  abs(hJECDn_ratio.GetBinContent(i))))
         hMEC_ratio_sym.SetBinContent(i, max(abs(hMECUp_ratio.GetBinContent(i)),  abs(hMECDn_ratio.GetBinContent(i))))
-        hScale_sym    .SetBinContent(i, max(abs(hScaleUp.GetBinContent(i)),      abs(hScaleDn.GetBinContent(i))))
-        hPDF_sym      .SetBinContent(i, max(abs(hPDFUp.GetBinContent(i)),        abs(hPDFDn.GetBinContent(i))))
+        #hScale_sym    .SetBinContent(i, max(abs(hScaleUp.GetBinContent(i)),      abs(hScaleDn.GetBinContent(i))))
+        #hPDF_sym      .SetBinContent(i, max(abs(hPDFUp.GetBinContent(i)),        abs(hPDFDn.GetBinContent(i))))
         hTrig_sym     .SetBinContent(i, max(abs(hTrigUp_ratio.GetBinContent(i)), abs(hTrigDn_ratio.GetBinContent(i))))
 
     fout.cd()
@@ -639,7 +639,7 @@ def systHarvest(filename):
 
     hOther = hJEC_ratio_sym.Clone("hOther")
     for i in xrange(1, hOther.GetNbinsX() + 1):
-        hOther.SetBinContent(i, sqrt(hJEC_ratio_sym.GetBinContent(i)**2 + hMEC_ratio_sym.GetBinContent(i)**2 + hScale_sym.GetBinContent(i)**2 + hPDF_sym.GetBinContent(i)**2 + hTrig_sym.GetBinContent(i)**2 ++ hBTag_sym.GetBinContent(i)**2 + hBMistag_sym.GetBinContent(i)**2))
+        hOther.SetBinContent(i, sqrt(hJEC_ratio_sym.GetBinContent(i)**2 + hMEC_ratio_sym.GetBinContent(i)**2 + hScale_sym.GetBinContent(i)**2 + hPDF_sym.GetBinContent(i)**2 + hTrig_sym.GetBinContent(i)**2)) #+ hBTag_sym.GetBinContent(i)**2 + hBMistag_sym.GetBinContent(i)**2))
     hOther.Write()
 
     hists = [("syst_unc_shape_central_up",   hShape_final),
@@ -664,7 +664,7 @@ def systHarvest(filename):
              #("syst_unc_bmistag_dn",         hBMistagDn_Ratio),
              ]
 
-    print "luminosity = 2262"
+    print "luminosity = 4001.911"
     print "channels =", NSB
     print "sample = zinv"
     print ""
@@ -690,8 +690,8 @@ def systHarvest(filename):
     #print "stat_unc_dn = xxx yy zz"
     #print ""
 
-    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.13310185]))
-    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.13310185]))
+    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.13647342995]))
+    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.13647342995]))
 
     for (name, h) in hists:
         print "%-25s = %s"%(name, ' '.join(["%8.5f" % (abs(h.GetBinContent(i))) for i in xrange(1, NSB+1)]))
