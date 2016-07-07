@@ -1225,7 +1225,7 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("NJetWgt_nSearchBin_pull",       {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", false));
     vh.push_back(PHS("NJetWgt_nSearchBin_pull_log",   {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", false));
     vh.push_back(PHS("syst_ScaleWgt_nSearchBin",      {scalew_nSearchBin},{2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   false, true,   "Search Bin",     "Events", true));
-    vh.push_back(PHS("syst_PDFWgt_nSearchBin",        {pdfw_nSearchBin},  {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   false, true,   "Search Bin",     "Events", true));
+    vh.push_back(PHS("syst_PDFWgt_nSearchBin",        {pdfw_nSearchBin},  {2, 1}, "passBaselineZinv;NNPDF_From_Median_Up>0;NNPDF_From_Median_Up<2;NNPDF_From_Median_Down>0;NNPDF_From_Median_Down<2",        NSB,  0,     NSB,   false, true,   "Search Bin",     "Events", true));
 
     vh.push_back(PHS("zinv_PDFWgts",        {pdfw_zinv},  {2, 1}, "passBaselineZinv",        100,  0,     2,   false, true,   "Weight",     "Events", true));
 
