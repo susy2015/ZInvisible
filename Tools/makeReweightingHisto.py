@@ -155,7 +155,7 @@ def njetWeights(filename):
             if newh.GetBinContent(iBin) < -0.000001:
                 newh.SetBinContent(iBin, 1.0)
                 newh.SetBinError(iBin, 1.0)
-        SFs["TT_%s"%(cut)] = newh
+        SFs["TT_%s"%(cut)] = newh.Clone()
         newh.Write()
 
     # Now get DY reweighting:
@@ -178,11 +178,79 @@ def njetWeights(filename):
         newname = "DataMC_nj_%s_%s"%(cut,selection)
         newh = makeRatio(data_subtracted, [h2s[0]], bins, newname)
 
+        SFs["DY_%s"%(cut)] = newh.Clone()
         newh.Write()
+
+    #calculate Rnorm
+    normWeightwithReweight(f, SFs)
 
     # Close files
     fout.Close()
     f.Close()
+
+##################
+## norm weights ##
+##################
+def normWeightwithReweight(f, SFs):
+    # Run over the relevant histograms
+    cuts_DY = ["muZinv"]
+    selections = ["bl","0b_blnotag"]
+    selection2 = "blnotag"
+    # histo names
+    hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
+    hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
+               #"cntNJetsPt30Eta24Zinv/DataMCw_SingleMuon_nj_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDY HT<100stack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}stack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvSingle topstack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}Zstack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDibosonstack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvRarestack"
+               ]
+
+    # Procedure: 1. Grab the njet reweighted MC
+    #            2. Subtract non-DY MC from data
+    #            3. Make ratio of subtracted data and DY
+    for cut in cuts_DY:
+        hname1_DY_0b = hname1 % {"cut":cut, "selection":selections[1]}
+        hnames2_DY_0b = [elem % {"cut":cut, "selection":selections[1]} for elem in hnames2]
+        hname1_DY_g1b = hname1 % {"cut":cut, "selection":selections[0]}
+        hnames2_DY_g1b = [elem % {"cut":cut, "selection":selections[0]} for elem in hnames2]
+        # Get all histos
+        h1_0b = f.Get(hname1_DY_0b)
+        print h1_0b.Integral()
+        h2s_0b = [f.Get(sel) for sel in hnames2_DY_0b]
+        h1_g1b = f.Get(hname1_DY_g1b)
+        print h1_g1b.Integral()
+        h2s_g1b = [f.Get(sel) for sel in hnames2_DY_g1b]
+
+        h1test = f.Get(hname1%{"cut":cut, "selection":selection2})
+        print h1test.Integral()
+
+        # apply weights to DY
+        h2s_0b[0]  = reweight(h2s_0b[0],  SFs["DY_muZinv_0b"])
+        h2s_g1b[0] = reweight(h2s_g1b[0], SFs["DY_muZinv_g1b"])
+
+        # apply weights to ttbar
+        h2s_0b[1]  = reweight(h2s_0b[1],  SFs["TT_elmuZinv_0b"])
+        h2s_g1b[1] = reweight(h2s_g1b[1], SFs["TT_elmuZinv_g1b"])
+
+        # Combine histograms
+        h1 = h1_0b.Clone()
+        h1.Add(h1_g1b)
+        h2s = []
+        for i in xrange(len(h2s_0b)):
+            h2s.append(h2s_0b[i].Clone())
+            h2s[i].Add(h2s_g1b[i])
+
+        # subtract relevant histograms from data
+        data_subtracted = subtract(h1, h2s[1:])
+        #print data_subtracted.Integral()
+        newname = "DataMC_nb_%s_%s"%(cut,selection2)
+        newh = makeRatio(data_subtracted, [h2s[0]], newname=newname, bins=[0,20])
+        #newh = makeRatio(h1, h2s, newname=newname)
+
+        print "Data/MC normalization scale factor in region %s_%s: %.3f +- %.3f" % (cut, selection2, newh.GetBinContent(1), newh.GetBinError(1))
+
 
 ##################
 ## norm weights ##
@@ -219,10 +287,10 @@ def normWeight(filename):
         h1 = f.Get(hname1_DY)
         h2s = [f.Get(sel) for sel in hnames2_DY]
         # subtract relevant histograms from data
-        data_subtracted = subtract(h1, h2s[2:])
+        data_subtracted = subtract(h1, h2s[1:])
         #print data_subtracted.Integral()
         newname = "DataMC_nb_%s_%s"%(cut,selection2)
-        newh = makeRatio(data_subtracted, h2s[:1], newname=newname, bins=[0,6])
+        newh = makeRatio(data_subtracted, [h2s[0]], newname=newname, bins=[0,6])
         #newh = makeRatio(h1, h2s, newname=newname)
 
         print "Data/MC normalization scale factor in region %s_%s: %.3f +- %.3f" % (cuts_DY[0], selection2, newh.GetBinContent(1), newh.GetBinError(1))
@@ -626,8 +694,8 @@ def systHarvest(filename):
     for i in xrange(1, hJEC_ratio_sym.GetNbinsX() + 1):
         hJEC_ratio_sym.SetBinContent(i, max(abs(hJECUp_ratio.GetBinContent(i)),  abs(hJECDn_ratio.GetBinContent(i))))
         hMEC_ratio_sym.SetBinContent(i, max(abs(hMECUp_ratio.GetBinContent(i)),  abs(hMECDn_ratio.GetBinContent(i))))
-        #hScale_sym    .SetBinContent(i, max(abs(hScaleUp.GetBinContent(i)),      abs(hScaleDn.GetBinContent(i))))
-        #hPDF_sym      .SetBinContent(i, max(abs(hPDFUp.GetBinContent(i)),        abs(hPDFDn.GetBinContent(i))))
+        hScale_sym    .SetBinContent(i, max(abs(hScaleUp.GetBinContent(i)),      abs(hScaleDn.GetBinContent(i))))
+        hPDF_sym      .SetBinContent(i, max(abs(hPDFUp.GetBinContent(i)),        abs(hPDFDn.GetBinContent(i))))
         hTrig_sym     .SetBinContent(i, max(abs(hTrigUp_ratio.GetBinContent(i)), abs(hTrigDn_ratio.GetBinContent(i))))
 
     fout.cd()
