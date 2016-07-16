@@ -183,7 +183,7 @@ int main(int argc, char* argv[])
     std::string label_j2pt = "j_{2} p_{T} [GeV]";
     std::string label_j3pt = "j_{3} p_{T} [GeV]";
     std::string label_mll  = "m_{ll} [GeV]";
-
+    std::string label_toppt = "top p_{T} [GeV]";
 
     vector<Plotter::HistSummary> vh;
 
@@ -868,8 +868,14 @@ int main(int argc, char* argv[])
     std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare}};
 
     // Collections for all variables, no cuts applied yet
-    // met
 
+    // lambda functions for shorthand
+    auto PDCData    = [&](std::string var){ return vector<PDC>({PDC("data", var, {dsData_SingleMuon}), PDC("stack", var, stack_MC)});   };
+    auto PDCDataw   = [&](std::string var){ return vector<PDC>({PDC("data", var, {dsData_SingleMuon}), PDC("stack", var, stackw_MC)});   };
+    auto PDCDatawtt = [&](std::string var){ return vector<PDC>({PDC("data", var, {dsData_SingleMuon}), PDC("stack", var, stackwtt_MC)}); };
+    auto PDCDataww  = [&](std::string var){ return vector<PDC>({PDC("data", var, {dsData_SingleMuon}), PDC("stack", var, stackww_MC)});  };
+
+    // met
     Plotter::DataCollection dcData_SingleMuon_met("data",   "cleanMetPt", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_met(  "data",   "cleanMetPt", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_met(             "stack",  "cleanMetPt", stack_MC);
@@ -1289,6 +1295,7 @@ int main(int argc, char* argv[])
 	//vh.push_back(PHS("DataMC_SingleMuon_mt23b_"      +cut.first,  {dcData_SingleMuon_mt23b, dcMC_mt23b},           {1, 2}, cut.second, 50, 0, 1500, true, false,  "mt2 (3b fake)",                   "Events"));
 	vh.push_back(PHS("DataMC_SingleMuon_nb_"         +cut.first,  {dcData_SingleMuon_nb,    dcMC_nb},              {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,                            "Events"));
 	vh.push_back(PHS("DataMC_SingleMuon_nj_"         +cut.first,  {dcData_SingleMuon_nj,    dcMC_nj},              {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,                            "Events"));
+	vh.push_back(PHS("DataMC_SingleMuon_toppt_"      +cut.first,  PDCData("vTopsZinv[0](pt)"),                     {1, 2}, cut.second, 50, 0, 1500, true, false,  label_toppt,                         "Events"));
 	vh.push_back(PHS("DataMC_SingleMuon_jpt_"        +cut.first,  {dcData_SingleMuon_jpt,   dcMC_jpt},             {1, 2}, cut.second, 50, 0, 1500, true, false,  label_jpt,                           "Events"));
 	vh.push_back(PHS("DataMC_SingleMuon_j1pt_"       +cut.first,  {dcData_SingleMuon_j1pt,  dcMC_j1pt},            {1, 2}, cut.second, 50, 0, 1500, true, false,  label_j1pt,                          "Events"));
 	vh.push_back(PHS("DataMC_SingleMuon_j2pt_"       +cut.first,  {dcData_SingleMuon_j2pt,  dcMC_j2pt},            {1, 2}, cut.second, 50, 0, 1500, true, false,  label_j2pt,                          "Events"));
@@ -1327,6 +1334,7 @@ int main(int argc, char* argv[])
 	//vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcwMC_mt23b}, {1, 2}, cut.second, mt2Bins, true, false,  "mt2 (3b fake)",                              "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_nb_"    +cut.first,  {dcData_SingleMuon_nb,    dcwMC_nb},    {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,                                         "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_nj_"    +cut.first,  {dcData_SingleMuon_nj,    dcwMC_nj},    {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,                                         "Events"));
+        vh.push_back(PHS("DataMCw_SingleMuon_toppt_" +cut.first,  PDCDataw("vTopsZinv[0](pt)"),           {1, 2}, cut.second, 50, 0, 1500, true, false,  label_toppt,                                      "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_jpt_"   +cut.first,  {dcData_SingleMuon_jpt,   dcwMC_jpt},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_jpt,                                        "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_j1pt_"  +cut.first,  {dcData_SingleMuon_j1pt,  dcwMC_j1pt},  {1, 2}, cut.second, 50, 0, 1500, true, false,  label_j1pt,                                       "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_j2pt_"  +cut.first,  {dcData_SingleMuon_j2pt,  dcwMC_j2pt},  {1, 2}, cut.second, 50, 0, 1500, true, false,  label_j2pt,                                       "Events"));
