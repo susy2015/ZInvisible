@@ -1165,55 +1165,116 @@ namespace plotterFunctions
 	int indexElecTrigger;
         bool miniTuple_;
 
-	double GetTriggerEffWeight(const double& met) 
+	double GetTriggerEffWeight(const double& met, const double& ht) 
 	{
-	    if (met<100) return 0.0130;
-	    else if (met<150) return 0.3239;
-	    else if (met<175) return 0.7855;
-	    else if (met<200) return 0.9429;
-	    else if (met<275) return 0.9736;
-	    else if (met<400) return 0.9952; 
-	    else return 1.0;
+	    if (ht<1000)
+	    {
+		if (met<25) return 0.002;
+		else if (met<50) return 0.003;
+		else if (met<75) return 0.011;
+		else if (met<100) return 0.053;
+		else if (met<125) return 0.211;
+		else if (met<150) return 0.484;
+		else if (met<175) return 0.751;
+		else if (met<200) return 0.897;
+		else if (met<275) return 0.970;
+		else if (met<400) return 0.986; 
+		else return 0.97;
+	    } 
+	    else 
+	    {
+		if (met<25) return 0.014;
+		else if (met<50) return 0.019;
+		else if (met<75) return 0.037;
+		else if (met<100) return 0.089;
+		else if (met<125) return 0.204;
+		else if (met<150) return 0.358;
+		else if (met<175) return 0.568;
+		else if (met<200) return 0.747;
+		else if (met<275) return 0.907;
+		else if (met<400) return 0.988; 
+		else return 0.972;
+	    }
 	}
-	double GetTriggerEffStatUncHi(const double& met) 
+	double GetTriggerEffStatUncHi(const double& met, const double& ht) 
 	{
-	    if (met<100) return 0.0011;
-	    else if (met<150) return 0.0131;
-	    else if (met<175) return 0.0226;
-	    else if (met<200) return 0.0149;
-	    else if (met<275) return 0.0078;
-	    else if (met<400) return 0.0040; 
-	    else return 0.0;
+	    if (ht<1000)
+	    {
+		if (met<75) return 0.0;
+		else if (met<100) return 0.001;
+		else if (met<125) return 0.004;
+		else if (met<150) return 0.006;
+		else if (met<175) return 0.006;
+		else if (met<200) return 0.005;
+		else if (met<275) return 0.002;
+		else if (met<400) return 0.002; 
+		else return 0.007;
+	    } 
+	    else 
+	    {
+		if (met<25) return 0.002;
+		else if (met<50) return 0.002;
+		else if (met<75) return 0.003;
+		else if (met<100) return 0.005;
+		else if (met<125) return 0.010;
+		else if (met<150) return 0.015;
+		else if (met<175) return 0.020;
+		else if (met<200) return 0.021;
+		else if (met<275) return 0.010;
+		else if (met<400) return 0.005; 
+		else return 0.009;
+	    }
 	}
-	double GetTriggerEffStatUncLo(const double& met) 
+	double GetTriggerEffStatUncLo(const double& met, const double& ht) 
 	{
-	    if (met<100) return 0.0010;
-	    else if (met<150) return 0.0128;
-	    else if (met<175) return 0.0244;
-	    else if (met<200) return 0.0190;
-	    else if (met<275) return 0.0104;
-	    else if (met<400) return 0.0109; 
-	    else return 0.0109;
+	    if (ht<1000)
+	    {
+		if (met<75) return 0.0;
+		else if (met<100) return 0.001;
+		else if (met<125) return 0.004;
+		else if (met<150) return 0.006;
+		else if (met<175) return 0.007;
+		else if (met<200) return 0.006;
+		else if (met<275) return 0.003;
+		else if (met<400) return 0.003; 
+		else return 0.009;
+	    } 
+	    else 
+	    {
+		if (met<25) return 0.002;
+		else if (met<50) return 0.002;
+		else if (met<75) return 0.002;
+		else if (met<100) return 0.005;
+		else if (met<125) return 0.010;
+		else if (met<150) return 0.015;
+		else if (met<175) return 0.020;
+		else if (met<200) return 0.022;
+		else if (met<275) return 0.011;
+		else if (met<400) return 0.007; 
+		else return 0.012;
+	    }
 	}
-	double GetTriggerEffSystUncHi(const double& met) 
+	double GetTriggerEffSystUncHi(const double& met, const double& ht) 
 	{
-	    if (met<100) return 0.0272;
-	    else if (met<150) return 0.0872;
-	    else if (met<175) return 0.1505;
-	    else if (met<200) return 0.0423;
-	    else if (met<275) return 0.0112;
-	    else if (met<400) return 0.0001; 
-	    else return 0.0;
+	    return 0.0;
+	    /* if (met<100) return 0.0272; */
+	    /* else if (met<150) return 0.0872; */
+	    /* else if (met<175) return 0.1505; */
+	    /* else if (met<200) return 0.0423; */
+	    /* else if (met<275) return 0.0112; */
+	    /* else if (met<400) return 0.0001;  */
+	    /* else return 0.0; */
 	}
-	double GetTriggerEffSystUncLo(const double& met) 
+	double GetTriggerEffSystUncLo(const double& met, const double& ht) 
 	{
-	    if (met<100) return 0.0120;
-	    else if (met<150) return 0.0872;
-	    else if (met<175) return 0.1505;
-	    else if (met<200) return 0.0792;
-	    else if (met<275) return 0.0112;
-	    else if (met<400) return 0.0001; 
-	    else return 0.0018;
+	    return 0.0;
+	    /* if (met<100) return 0.0120; */
+	    /* else if (met<150) return 0.0872; */
+	    /* else if (met<175) return 0.1505; */
+	    /* else if (met<200) return 0.0792; */
+	    /* else if (met<275) return 0.0112; */
+	    /* else if (met<400) return 0.0001;  */
+	    /* else return 0.0018; */
 	}
 
         void triggerInfo(NTupleReader& tr)
@@ -1262,14 +1323,15 @@ namespace plotterFunctions
         void triggerInfoMC(NTupleReader& tr)
         {
             const double& met                            = tr.getVar<double>("cleanMetPt");
+            const double& ht                             = tr.getVar<double>("HTZinv");
 
 	    // MC trigger efficiencies
-	    double triggerEff = GetTriggerEffWeight(met);
-	    double triggerEffStatUncUp = GetTriggerEffStatUncHi(met);
-	    double triggerEffSystUncUp = GetTriggerEffSystUncHi(met);
+	    double triggerEff = GetTriggerEffWeight(met,ht);
+	    double triggerEffStatUncUp = GetTriggerEffStatUncHi(met,ht);
+	    double triggerEffSystUncUp = GetTriggerEffSystUncHi(met,ht);
 	    double triggerEffUncUp     = TMath::Sqrt(triggerEffStatUncUp*triggerEffStatUncUp + triggerEffSystUncUp*triggerEffSystUncUp);
-	    double triggerEffStatUncDown = GetTriggerEffStatUncLo(met);
-	    double triggerEffSystUncDown = GetTriggerEffSystUncLo(met);
+	    double triggerEffStatUncDown = GetTriggerEffStatUncLo(met,ht);
+	    double triggerEffSystUncDown = GetTriggerEffSystUncLo(met,ht);
 	    double triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
 
 	    tr.registerDerivedVar("TriggerEffMC",triggerEff);
