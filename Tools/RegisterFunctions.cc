@@ -92,7 +92,8 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     }
     else
     {
-        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/CSVFiles/", false);
+      //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/CSVFiles/", false);
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
     }
 }
 
@@ -117,7 +118,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(myPDFUnc) delete myPDFUnc;
     if(systematicPrep) delete systematicPrep;
     if(systematicCalc) delete systematicCalc;
-    //if(bTagCorrector) delete bTagCorrector;
+    if(bTagCorrector) delete bTagCorrector;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -155,7 +156,9 @@ void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBran
 
 void RegisterFunctionsNTuple::remakeBTagCorrector(std::string sampleName)
 {
+  if(sampleName.find("Data") == std::string::npos){
     if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
+  }
 }
 
 ////////////////////////////////
