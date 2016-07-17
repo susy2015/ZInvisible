@@ -827,8 +827,8 @@ int main(int argc, char* argv[])
 
     // Datasetsummaries we are using
     // no weight (genWeight deals with negative weights); also add btag weights here
-    Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsData_DoubleEG(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "bTagSF_EventWeightSimple_Central");
+    Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "");
+    Plotter::DatasetSummary dsData_DoubleEG(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "");
     Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "",                "bTagSF_EventWeightSimple_Central");
     Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "bTagSF_EventWeightSimple_Central");
     Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "bTagSF_EventWeightSimple_Central");
