@@ -840,13 +840,13 @@ int main(int argc, char* argv[])
     // eff*Acc*B(Z)/B(DY)
     Plotter::DatasetSummary dsData_SingleMuon_effAcc("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "zEffWgt;zAccWgt",           znunu_mumu_ratio);
     Plotter::DatasetSummary dsData_DoubleEG_effAcc(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger", "zEffWgt;zAccWgt",           znunu_mumu_ratio);
-    Plotter::DatasetSummary dsDY_effAcc(             "DY",         fileMap["DYJetsToLL"],      "",                "zEffWgt;zAccWgt",           znunu_mumu_ratio);
-    Plotter::DatasetSummary dsDYInc_effAcc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "zEffWgt;zAccWgt",           znunu_mumu_ratio);
-    Plotter::DatasetSummary dstt2l_effAcc(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "zEffWgt;zAccWgt",           znunu_mumu_ratio);
-    Plotter::DatasetSummary dstW_effAcc(             "Single top", fileMap["tW"],              "",                "zEffWgt;zAccWgt",           znunu_mumu_ratio);
-    Plotter::DatasetSummary dsttZ_effAcc(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
-    Plotter::DatasetSummary dsVV_effAcc(             "Diboson",    fileMap["Diboson"],         "",                "zEffWgt;zAccWgt",           znunu_mumu_ratio);
-    Plotter::DatasetSummary dsRare_effAcc(           "Rare",       fileMap["Rare"],            "",                "zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
+    Plotter::DatasetSummary dsDY_effAcc(             "DY",         fileMap["DYJetsToLL"],      "",                "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dsDYInc_effAcc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dstt2l_effAcc(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dstW_effAcc(             "Single top", fileMap["tW"],              "",                "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dsttZ_effAcc(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
+    Plotter::DatasetSummary dsVV_effAcc(             "Diboson",    fileMap["Diboson"],         "",                "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dsRare_effAcc(           "Rare",       fileMap["Rare"],            "",                "bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_effAcc = {{dsDY_effAcc, dsDYInc_effAcc}, {dstt2l_effAcc}, {dstW_effAcc}, {dsttZ_effAcc}, {dsVV_effAcc}, {dsRare_effAcc}};
 
     // Apply data/mc njet weight for DY and ttbar
@@ -1151,28 +1151,28 @@ int main(int argc, char* argv[])
 
     std::string s_znunu_baseline      = "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0";  //THIS IS NOT PERFECT, clearly nTopCandSortedCntZinv and MT2 cuts need to be specialized by sample
 
-    Plotter::DatasetSummary dsDY_nunu_SB0b_Wgt1b( "Z#rightarrow#nu#nu, N(b) = 0, 1 fake",     fileMap["ZJetsToNuNu"], "cntCSVSZinv=0", "nJet1bfakeWgt");
-    Plotter::DatasetSummary dsDY_nunu_SB0b_Wgt2b( "Z#rightarrow#nu#nu, N(b) = 0, 2 fake",     fileMap["ZJetsToNuNu"], "cntCSVSZinv=0", "nJet2bfakeWgt");
-    Plotter::DatasetSummary dsDY_nunu_SB0b_Wgt3b( "Z#rightarrow#nu#nu, N(b) = 0, 3 fake",     fileMap["ZJetsToNuNu"], "cntCSVSZinv=0", "nJet3bfakeWgt");
-    Plotter::DatasetSummary dsDY_nunu_SB0b_2(     "Z#rightarrow#nu#nu, N(b) = 0",             fileMap["ZJetsToNuNu"], "cntCSVSZinv=0", "");
-    Plotter::DatasetSummary dsDY_nunu_SB1b(       "Z#rightarrow#nu#nu, Direct MC, N(b) = 1",  fileMap["ZJetsToNuNu"], "cntCSVSZinv=1", "");
-    Plotter::DatasetSummary dsDY_nunu_SB2b(       "Z#rightarrow#nu#nu, Direct MC, N(b) = 2",  fileMap["ZJetsToNuNu"], "cntCSVSZinv=2", "");
-    Plotter::DatasetSummary dsDY_nunu_SB3b(       "Z#rightarrow#nu#nu, Direct MC, N(b) >= 3", fileMap["ZJetsToNuNu"], "cntCSVSZinv>2", "");
+    Plotter::DatasetSummary dsDY_nunu_SB0b_Wgt1b( "Z#rightarrow#nu#nu, N(b) = 0, 1 fake",     fileMap["ZJetsToNuNu"], "cntCSVSZinv=0", "bTagSF_EventWeightSimple_Central;nJet1bfakeWgt");
+    Plotter::DatasetSummary dsDY_nunu_SB0b_Wgt2b( "Z#rightarrow#nu#nu, N(b) = 0, 2 fake",     fileMap["ZJetsToNuNu"], "cntCSVSZinv=0", "bTagSF_EventWeightSimple_Central;nJet2bfakeWgt");
+    Plotter::DatasetSummary dsDY_nunu_SB0b_Wgt3b( "Z#rightarrow#nu#nu, N(b) = 0, 3 fake",     fileMap["ZJetsToNuNu"], "cntCSVSZinv=0", "bTagSF_EventWeightSimple_Central;nJet3bfakeWgt");
+    Plotter::DatasetSummary dsDY_nunu_SB0b_2(     "Z#rightarrow#nu#nu, N(b) = 0",             fileMap["ZJetsToNuNu"], "cntCSVSZinv=0", "bTagSF_EventWeightSimple_Central");
+    Plotter::DatasetSummary dsDY_nunu_SB1b(       "Z#rightarrow#nu#nu, Direct MC, N(b) = 1",  fileMap["ZJetsToNuNu"], "cntCSVSZinv=1", "bTagSF_EventWeightSimple_Central");
+    Plotter::DatasetSummary dsDY_nunu_SB2b(       "Z#rightarrow#nu#nu, Direct MC, N(b) = 2",  fileMap["ZJetsToNuNu"], "cntCSVSZinv=2", "bTagSF_EventWeightSimple_Central");
+    Plotter::DatasetSummary dsDY_nunu_SB3b(       "Z#rightarrow#nu#nu, Direct MC, N(b) >= 3", fileMap["ZJetsToNuNu"], "cntCSVSZinv>2", "bTagSF_EventWeightSimple_Central");
 
-    Plotter::DatasetSummary dsDY_nunu_njet(                    "Z#rightarrow#nu#nu DataMC weight",          fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm(                "Z#rightarrow#nu#nu Njet+norm weight",       fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_bl(             "Z#rightarrow#nu#nu Njet+norm weight",       fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinv",      "nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_scaleUp(        "Z#rightarrow#nu#nu Scale weight Up",        fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;Scaled_Variations_Up");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_scaleDown(      "Z#rightarrow#nu#nu Scale weight Down",      fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;Scaled_Variations_Down");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_PDFUp(          "Z#rightarrow#nu#nu PDF weight Up",          fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;NNPDF_From_Median_Up");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_PDFDown(        "Z#rightarrow#nu#nu PDF weight Down",        fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;NNPDF_From_Median_Down");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUUp(          "Z#rightarrow#nu#nu JEC Up",                 fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvJEUUp", "nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUDown(        "Z#rightarrow#nu#nu JEC Down",               fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvJEUDn", "nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUUp(          "Z#rightarrow#nu#nu MEC Up",                 fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvMEUUp", "nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUDown(        "Z#rightarrow#nu#nu MEC Down",               fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvMEUDn", "nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerCentral( "Z#rightarrow#nu#nu Trigger weight Central", fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;TriggerEffMC");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerUp(      "Z#rightarrow#nu#nu Trigger weight Up",      fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;TriggerEffUpMC");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerDown(    "Z#rightarrow#nu#nu Trigger weight Down",    fileMap["ZJetsToNuNu"], "passLeptVeto",                       "nJetWgtDYZ;normWgt0b;TriggerEffDownMC");
+    Plotter::DatasetSummary dsDY_nunu_njet(                    "Z#rightarrow#nu#nu DataMC weight",          fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm(                "Z#rightarrow#nu#nu Njet+norm weight",       fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_bl(             "Z#rightarrow#nu#nu Njet+norm weight",       fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinv",      "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_scaleUp(        "Z#rightarrow#nu#nu Scale weight Up",        fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;Scaled_Variations_Up");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_scaleDown(      "Z#rightarrow#nu#nu Scale weight Down",      fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;Scaled_Variations_Down");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_PDFUp(          "Z#rightarrow#nu#nu PDF weight Up",          fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;NNPDF_From_Median_Up");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_PDFDown(        "Z#rightarrow#nu#nu PDF weight Down",        fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;NNPDF_From_Median_Down");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUUp(          "Z#rightarrow#nu#nu JEC Up",                 fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvJEUUp", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUDown(        "Z#rightarrow#nu#nu JEC Down",               fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvJEUDn", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUUp(          "Z#rightarrow#nu#nu MEC Up",                 fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvMEUUp", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUDown(        "Z#rightarrow#nu#nu MEC Down",               fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvMEUDn", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerCentral( "Z#rightarrow#nu#nu Trigger weight Central", fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffMC");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerUp(      "Z#rightarrow#nu#nu Trigger weight Up",      fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffUpMC");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerDown(    "Z#rightarrow#nu#nu Trigger weight Down",    fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffDownMC");
 
     Plotter::DatasetSummary dsDY_nunu_njetnorm_btagCentral(    "Z#rightarrow#nu#nu b tag Central",      fileMap["ZJetsToNuNu"], "passLeptVeto",   "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffMC");//"bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffMC");
     Plotter::DatasetSummary dsDY_nunu_njetnorm_btagUp(    "Z#rightarrow#nu#nu b tag Up",      fileMap["ZJetsToNuNu"], "passLeptVeto",   "bTagSF_EventWeightSimple_Up;nJetWgtDYZ;normWgt0b;TriggerEffMC");//"bTagSF_EventWeightSimple_Up;nJetWgtDYZ;normWgt0b;TriggerEffMC");
