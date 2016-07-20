@@ -726,10 +726,10 @@ def systHarvest(filename):
              ("syst_unc_pdf_dn",             hPDF_sym),
              ("syst_unc_trig_up",            hTrig_sym),
              ("syst_unc_trig_dn",            hTrig_sym),
-             #("syst_unc_btag_up",            hBTagUp_Ratio),
-             #("syst_unc_btag_dn",            hBTagDn_Ratio),
-             #("syst_unc_bmistag_up",         hBMistagUp_Ratio),
-             #("syst_unc_bmistag_dn",         hBMistagDn_Ratio),
+             ("syst_unc_btag_up",            hBTagUp_Ratio),
+             ("syst_unc_btag_dn",            hBTagDn_Ratio),
+             ("syst_unc_bmistag_up",         hBMistagUp_Ratio),
+             ("syst_unc_bmistag_dn",         hBMistagDn_Ratio),
              ]
 
     print "luminosity = 7634.834"
