@@ -1167,19 +1167,19 @@ namespace plotterFunctions
 
 	double GetMuonTriggerEff(const double& muEta) 
 	{
-                if     (-2.6 >= muEta && muEta > -2.2) return 0.016; //+/-0.013/0.008
-                else if(-2.2 >= muEta && muEta > -1.8) return 0.680; //+/-0.017/0.017
-                else if(-1.8 >= muEta && muEta > -1.4) return 0.787; //+/-0.012/0.012
-                else if(-1.4 >= muEta && muEta > -1.0) return 0.866; //+/-0.008/0.009
-                else if(-1.0 >= muEta && muEta > -0.6) return 0.902; //+/-0.006/0.007
-                else if(-0.6 >= muEta && muEta > -0.2) return 0.892; //+/-0.006/0.007
-                else if(-0.2 >= muEta && muEta >  0.2) return 0.927; //+/-0.005/0.006
-                else if( 0.2 >= muEta && muEta >  0.6) return 0.892; //+/-0.006/0.007
-                else if( 0.6 >= muEta && muEta >  1.0) return 0.911; //+/-0.006/0.007
-                else if( 1.0 >= muEta && muEta >  1.4) return 0.864; //+/-0.008/0.009
-                else if( 1.4 >= muEta && muEta >  1.8) return 0.808; //+/-0.011/0.012
-                else if( 1.8 >= muEta && muEta >  2.2) return 0.652; //+/-0.017/0.017
-                else if( 2.2 >= muEta && muEta >  2.6) return 0.026; //+/-0.015/0.01
+                if     (-2.6 <= muEta && muEta < -2.2) return 0.016; //+/-0.013/0.008
+                else if(-2.2 <= muEta && muEta < -1.8) return 0.680; //+/-0.017/0.017
+                else if(-1.8 <= muEta && muEta < -1.4) return 0.787; //+/-0.012/0.012
+                else if(-1.4 <= muEta && muEta < -1.0) return 0.866; //+/-0.008/0.009
+                else if(-1.0 <= muEta && muEta < -0.6) return 0.902; //+/-0.006/0.007
+                else if(-0.6 <= muEta && muEta < -0.2) return 0.892; //+/-0.006/0.007
+                else if(-0.2 <= muEta && muEta <  0.2) return 0.927; //+/-0.005/0.006
+                else if( 0.2 <= muEta && muEta <  0.6) return 0.892; //+/-0.006/0.007
+                else if( 0.6 <= muEta && muEta <  1.0) return 0.911; //+/-0.006/0.007
+                else if( 1.0 <= muEta && muEta <  1.4) return 0.864; //+/-0.008/0.009
+                else if( 1.4 <= muEta && muEta <  1.8) return 0.808; //+/-0.011/0.012
+                else if( 1.8 <= muEta && muEta <  2.2) return 0.652; //+/-0.017/0.017
+                else if( 2.2 <= muEta && muEta <  2.6) return 0.026; //+/-0.015/0.01
                 else                                   return 0.000;
 	}
 
