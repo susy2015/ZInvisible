@@ -1165,6 +1165,24 @@ namespace plotterFunctions
 	int indexElecTrigger;
         bool miniTuple_;
 
+	double GetMuonTriggerEff(const double& muEta) 
+	{
+                if     (-2.6 <= muEta && muEta < -2.2) return 0.016; //+/-0.013/0.008
+                else if(-2.2 <= muEta && muEta < -1.8) return 0.680; //+/-0.017/0.017
+                else if(-1.8 <= muEta && muEta < -1.4) return 0.787; //+/-0.012/0.012
+                else if(-1.4 <= muEta && muEta < -1.0) return 0.866; //+/-0.008/0.009
+                else if(-1.0 <= muEta && muEta < -0.6) return 0.902; //+/-0.006/0.007
+                else if(-0.6 <= muEta && muEta < -0.2) return 0.892; //+/-0.006/0.007
+                else if(-0.2 <= muEta && muEta <  0.2) return 0.927; //+/-0.005/0.006
+                else if( 0.2 <= muEta && muEta <  0.6) return 0.892; //+/-0.006/0.007
+                else if( 0.6 <= muEta && muEta <  1.0) return 0.911; //+/-0.006/0.007
+                else if( 1.0 <= muEta && muEta <  1.4) return 0.864; //+/-0.008/0.009
+                else if( 1.4 <= muEta && muEta <  1.8) return 0.808; //+/-0.011/0.012
+                else if( 1.8 <= muEta && muEta <  2.2) return 0.652; //+/-0.017/0.017
+                else if( 2.2 <= muEta && muEta <  2.6) return 0.026; //+/-0.015/0.01
+                else                                   return 0.000;
+	}
+
 	double GetTriggerEffWeight(const double& met, const double& ht) 
 	{
 	    if (ht<1000)
@@ -1324,6 +1342,7 @@ namespace plotterFunctions
         {
             const double& met                            = tr.getVar<double>("cleanMetPt");
             const double& ht                             = tr.getVar<double>("HT");
+            const std::vector<TLorentzVector>& cutMuVec  = tr.getVec<TLorentzVector>("cutMuVec");
 
 	    // MC trigger efficiencies
 	    double triggerEff = GetTriggerEffWeight(met,ht);
@@ -1334,9 +1353,26 @@ namespace plotterFunctions
 	    double triggerEffSystUncDown = GetTriggerEffSystUncLo(met,ht);
 	    double triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
 
+            //Calculate muon trigger weights
+            double muTrigWgt = 0.0;
+            if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 45 && cutMuVec[1].Pt() > 45)
+            {
+                double muEff1 = GetMuonTriggerEff(cutMuVec[0].Eta());
+                double muEff2 = GetMuonTriggerEff(cutMuVec[1].Eta());
+
+                muTrigWgt = 1 - (1 - muEff1)*(1 - muEff2);
+            }
+            else if(cutMuVec.size() == 1 && cutMuVec[0].Pt() > 45)
+            {
+                //For events with only 1 muon (emu events in particular or events with a subleading muon below 45 GeV) just use the single muon eff
+                muTrigWgt = GetMuonTriggerEff(cutMuVec[0].Eta());
+            }
+
 	    tr.registerDerivedVar("TriggerEffMC",triggerEff);
 	    tr.registerDerivedVar("TriggerEffUpMC",triggerEff+triggerEffUncUp);
 	    tr.registerDerivedVar("TriggerEffDownMC",triggerEff-triggerEffUncDown);
+
+            tr.registerDerivedVar("muTrigWgt", muTrigWgt);
         }
 
     public:
