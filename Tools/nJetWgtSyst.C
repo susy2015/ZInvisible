@@ -234,7 +234,7 @@ int main()
                 const bool& passBaseline = tr.getVar<bool>("passBaseline");
                 const bool& passBaselineZinv = tr.getVar<bool>("passBaselineZinv");
                 const bool& passLeptVeto = tr.getVar<bool>("passLeptVeto");
-                const double& bTagSF_EventWeightSimple_Central = 1.0;//tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+                const double& bTagSF_EventWeightSimple_Central = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
 
                 const double& triggerEffMC = tr.getVar<double>("TriggerEffMC");
                 const double& nJetWgtDYZ   = tr.getVar<double>("nJetWgtDYZ");

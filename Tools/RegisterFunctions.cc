@@ -8,8 +8,8 @@
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
-    //return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central"});
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
+    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central"});
+    //return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
 }
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSetData()
@@ -86,14 +86,15 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 
     myPDFUnc = new PDFUncertainty();
     bTagCorrector = nullptr;
-    //if(isCondor)
-    //{
-    //    bTagCorrector = new BTagCorrector("bTagEffHists.root", "", false);
-    //}
-    //else
-    //{
-    //    bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/CSVFiles/", false);
-    //}
+    if(isCondor)
+    {
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "", false);
+    }
+    else
+    {
+      //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/CSVFiles/", false);
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
+    }
 }
 
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
@@ -117,7 +118,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(myPDFUnc) delete myPDFUnc;
     if(systematicPrep) delete systematicPrep;
     if(systematicCalc) delete systematicCalc;
-    //if(bTagCorrector) delete bTagCorrector;
+    if(bTagCorrector) delete bTagCorrector;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -145,7 +146,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*prepareMiniTupleVars);
     //tr.registerFunction(&printInterestingEvents);
     tr.registerFunction(*myPDFUnc);
-    //tr.registerFunction(*bTagCorrector);
+    tr.registerFunction(*bTagCorrector);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
@@ -155,7 +156,9 @@ void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBran
 
 void RegisterFunctionsNTuple::remakeBTagCorrector(std::string sampleName)
 {
+  if(sampleName.find("Data") == std::string::npos){
     if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
+  }
 }
 
 ////////////////////////////////

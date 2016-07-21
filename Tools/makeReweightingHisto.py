@@ -194,7 +194,7 @@ def njetWeights(filename):
 def normWeightwithReweight(f, SFs):
     # Run over the relevant histograms
     cuts_DY = ["muZinv"]
-    selections = ["bl","0b_blnotag"]
+    selections = ["g1b_blnotag","0b_blnotag"]
     selection2 = "blnotag"
     # histo names
     hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
@@ -629,11 +629,11 @@ def systHarvest(filename):
     #hBMistagDn =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu bmistag weight Downsingle")
 
 
-    hBTagNom = f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Centralsingle")
+    hBTagNom = f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu b tag Centralsingle")
     hBTagUp =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu b tag Upsingle")
     hBTagDn =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu b tag Downsingle")
     
-    hBMistagNom = f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Centralsingle")
+    hBMistagNom = f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu b tag Centralsingle")
     hBMistagUp =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu b mistag Upsingle")
     hBMistagDn =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu b mistag Downsingle")
 
@@ -726,18 +726,18 @@ def systHarvest(filename):
              ("syst_unc_pdf_dn",             hPDF_sym),
              ("syst_unc_trig_up",            hTrig_sym),
              ("syst_unc_trig_dn",            hTrig_sym),
-             #("syst_unc_btag_up",            hBTagUp_Ratio),
-             #("syst_unc_btag_dn",            hBTagDn_Ratio),
-             #("syst_unc_bmistag_up",         hBMistagUp_Ratio),
-             #("syst_unc_bmistag_dn",         hBMistagDn_Ratio),
+             ("syst_unc_btag_up",            hBTagUp_Ratio),
+             ("syst_unc_btag_dn",            hBTagDn_Ratio),
+             ("syst_unc_bmistag_up",         hBMistagUp_Ratio),
+             ("syst_unc_bmistag_dn",         hBMistagDn_Ratio),
              ]
 
-    print "luminosity = 4001.911"
+    print "luminosity = 7634.834"
     print "channels =", NSB
     print "sample = zinv"
     print ""
 
-    print "%-25s = %s"%("channel", ' '.join(["%8s" % ("bin%i" % i) for i in xrange(1, NSB+1)]))
+    print "%-25s = %s"%("channel", ' '.join(["%8s" % ("bin%i" % (i-1)) for i in xrange(1, NSB+1)]))
     print ""
 
     print "%-25s = %s"%("rate", ' '.join(["%8.5f" % hPrediction.GetBinContent(i) for i in xrange(1, NSB+1)]))
@@ -758,8 +758,8 @@ def systHarvest(filename):
     #print "stat_unc_dn = xxx yy zz"
     #print ""
 
-    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.13647342995]))
-    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.13647342995]))
+    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.1078199052 ]))
+    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.1078199052 ]))
 
     for (name, h) in hists:
         print "%-25s = %s"%(name, ' '.join(["%8.5f" % (abs(h.GetBinContent(i))) for i in xrange(1, NSB+1)]))

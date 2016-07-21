@@ -99,7 +99,7 @@ void makeplot(TFile* f, std::string hname)
     //mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)",  2262.0 / 1000.0);
+    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)",  7600 / 1000.0);
 
     TLatex mark;
     mark.SetNDC(true);
