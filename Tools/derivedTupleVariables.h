@@ -1323,7 +1323,7 @@ namespace plotterFunctions
         void triggerInfoMC(NTupleReader& tr)
         {
             const double& met                            = tr.getVar<double>("cleanMetPt");
-            const double& ht                             = tr.getVar<double>("HTZinv");
+            const double& ht                             = tr.getVar<double>("HT");
 
 	    // MC trigger efficiencies
 	    double triggerEff = GetTriggerEffWeight(met,ht);
