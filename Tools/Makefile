@@ -30,13 +30,13 @@ LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d scalefactorplot systplot miniMakePlots beffCalc makeSignalHistograms makeTopPlots
 
-all: mkobj sampPyWrap $(PROGRAMS)
+all: mkobj PyWraps $(PROGRAMS)
 
 
 mkobj:
 	@mkdir -p obj
 
-sampPyWrap: $(ODIR)/samplesModule.so
+PyWraps: $(ODIR)/samplesModule.so $(ODIR)/ScaleFactors.so
 
 $(ODIR)/samplesModule.so: $(ODIR)/samplesPyWrap.o $(ODIR)/samplesModulePyWrap.o
 	$(CXX) -shared -o $@ $^
@@ -45,6 +45,12 @@ $(ODIR)/samplesPyWrap.o: $(RSDIR)/samples.cc $(RSDIR)/samples.h
 	$(CXX) --std=c++11 -c -fPIC -o $@ $<
 
 $(ODIR)/samplesModulePyWrap.o: $(RSDIR)/samplesModule.cc
+	$(CXX) --std=c++11 -c -fPIC -o $@ $<
+
+$(ODIR)/ScaleFactors.so: $(ODIR)/ScaleFactorsPyWrap.o
+	$(CXX) -shared -o $@ $^
+
+$(ODIR)/ScaleFactorsPyWrap.o: $(SDIR)/ScaleFactors.cc $(SDIR)/ScaleFactors.h
 	$(CXX) --std=c++11 -c -fPIC -o $@ $<
 
 
