@@ -8,6 +8,21 @@ if '-h' not in sys.argv and '--help' not in sys.argv:
 from math import sqrt
 import math
 
+from ctypes import cdll
+from ctypes import c_double
+
+class ScaleFactors:
+    def __init__(self):
+        self.lib = cdll.LoadLibrary('obj/ScaleFactors.so')
+        self.lib.python_sf_norm0b.restype = c_double
+        self.lib.python_sf_norm0b_err.restype = c_double
+
+    def getRnorm(self):
+        return float(self.lib.python_sf_norm0b())
+
+    def getRnormErr(self):
+        return float(self.lib.python_sf_norm0b_err())
+
 ############################
 ##  Some utilities first  ##
 ############################
@@ -191,6 +206,41 @@ def njetWeights(filename):
 ##################
 ## norm weights ##
 ##################
+
+includeBase = """#ifndef SCALEFACTORS_H
+#define SCALEFACTORS_H
+
+class ScaleFactors
+{
+public:
+    static double sf_norm0b()
+    {
+	return %0.3f;
+    }
+    static double sfunc_norm0b()
+    {
+	return %0.3f;
+    }
+};
+
+#endif
+"""
+
+sourceBase = """#include "ScaleFactors.h"
+
+extern "C" 
+{
+    static double python_sf_norm0b()
+    {
+        return ScaleFactors::sf_norm0b();
+    }
+    static double python_sf_norm0b_err()
+    {
+        return ScaleFactors::sfunc_norm0b();
+    }
+}
+"""
+
 def normWeightwithReweight(f, SFs):
     # Run over the relevant histograms
     cuts_DY = ["muZinv"]
@@ -250,6 +300,15 @@ def normWeightwithReweight(f, SFs):
         #newh = makeRatio(h1, h2s, newname=newname)
 
         print "Data/MC normalization scale factor in region %s_%s: %.3f +- %.3f" % (cut, selection2, newh.GetBinContent(1), newh.GetBinError(1))
+
+        includeFile = open("ScaleFactors.h", "w")
+        includeFile.write(includeBase%(newh.GetBinContent(1), newh.GetBinError(1)))
+        includeFile.close()
+
+        sourceFile = open("ScaleFactors.cc", "w") 
+        sourceFile.write(sourceBase)
+        sourceFile.close()
+
 
 
 ##################
@@ -707,7 +766,7 @@ def systHarvest(filename):
 
     hOther = hJEC_ratio_sym.Clone("hOther")
     for i in xrange(1, hOther.GetNbinsX() + 1):
-        hOther.SetBinContent(i, sqrt(hJEC_ratio_sym.GetBinContent(i)**2 + hMEC_ratio_sym.GetBinContent(i)**2 + hScale_sym.GetBinContent(i)**2 + hPDF_sym.GetBinContent(i)**2 + hTrig_sym.GetBinContent(i)**2)) #+ hBTag_sym.GetBinContent(i)**2 + hBMistag_sym.GetBinContent(i)**2))
+        hOther.SetBinContent(i, sqrt(hJEC_ratio_sym.GetBinContent(i)**2 + hMEC_ratio_sym.GetBinContent(i)**2 + hScale_sym.GetBinContent(i)**2 + hPDF_sym.GetBinContent(i)**2 + hTrig_sym.GetBinContent(i)**2 + hBTag_sym.GetBinContent(i)**2 + hBMistag_sym.GetBinContent(i)**2))
     hOther.Write()
 
     hists = [("syst_unc_shape_central_up",   hShape_final),
@@ -758,8 +817,10 @@ def systHarvest(filename):
     #print "stat_unc_dn = xxx yy zz"
     #print ""
 
-    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.1078199052 ]))
-    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.1078199052 ]))
+    sf = ScaleFactors()
+
+    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % (sf.getRnormErr()/sf.getRnorm()) ]))
+    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % (sf.getRnormErr()/sf.getRnorm()) ]))
 
     for (name, h) in hists:
         print "%-25s = %s"%(name, ' '.join(["%8.5f" % (abs(h.GetBinContent(i))) for i in xrange(1, NSB+1)]))

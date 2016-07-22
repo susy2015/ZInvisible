@@ -1362,7 +1362,7 @@ namespace plotterFunctions
 
                 muTrigWgt = 1 - (1 - muEff1)*(1 - muEff2);
             }
-            else if(cutMuVec.size() == 1 && cutMuVec[0].Pt() > 45)
+            else if(cutMuVec.size() >= 1 && cutMuVec[0].Pt() > 45)
             {
                 //For events with only 1 muon (emu events in particular or events with a subleading muon below 45 GeV) just use the single muon eff
                 muTrigWgt = GetMuonTriggerEff(cutMuVec[0].Eta());
