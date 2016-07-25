@@ -1,9 +1,15 @@
+#!/cvmfs/cms.cern.ch/slc6_amd64_gcc491/cms/cmssw/CMSSW_7_4_8/external/slc6_amd64_gcc491/bin/python
+
 from optparse import OptionParser
 
 import array, sys
 # Check if we want the help, if not import ROOT (otherwise ROOT overwrites the help)
 if '-h' not in sys.argv and '--help' not in sys.argv:
     from ROOT import TH1D, TMath, TFile, TCanvas, TF1, TH2D
+
+from os import environ
+sys.path = [environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/condor/",] + sys.path
+from samples import SampleCollection
 
 from math import sqrt
 import math
@@ -14,6 +20,7 @@ from ctypes import c_double
 class ScaleFactors:
     def __init__(self):
         self.lib = cdll.LoadLibrary('obj/ScaleFactors.so')
+        print(dir(self.lib))
         self.lib.python_sf_norm0b.restype = c_double
         self.lib.python_sf_norm0b_err.restype = c_double
 
@@ -791,7 +798,10 @@ def systHarvest(filename):
              ("syst_unc_bmistag_dn",         hBMistagDn_Ratio),
              ]
 
-    print "luminosity = 7634.834"
+    #sc = SampleCollection()
+    #lumi = sc.sampleCollectionLumiList()["Data_SingleMuon"]
+
+    print "luminosity = %f"%(12905.3378)
     print "channels =", NSB
     print "sample = zinv"
     print ""
@@ -817,10 +827,10 @@ def systHarvest(filename):
     #print "stat_unc_dn = xxx yy zz"
     #print ""
 
-    sf = ScaleFactors()
+    #sf = ScaleFactors()
 
-    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % (sf.getRnormErr()/sf.getRnorm()) ]))
-    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % (sf.getRnormErr()/sf.getRnorm()) ]))
+    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.0830140 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
+    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.0830140 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
 
     for (name, h) in hists:
         print "%-25s = %s"%(name, ' '.join(["%8.5f" % (abs(h.GetBinContent(i))) for i in xrange(1, NSB+1)]))
