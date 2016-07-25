@@ -1341,7 +1341,7 @@ namespace plotterFunctions
         void triggerInfoMC(NTupleReader& tr)
         {
             const double& met                            = tr.getVar<double>("cleanMetPt");
-            const double& ht                             = tr.getVar<double>("HT");
+            const double& ht                             = tr.getVar<double>("HTZinv");
             const std::vector<TLorentzVector>& cutMuVec  = tr.getVec<TLorentzVector>("cutMuVec");
 
 	    // MC trigger efficiencies
