@@ -669,7 +669,7 @@ namespace plotterFunctions
             double nuPt1 = -999.9, nuPt2 = -999.9;
 
             //Gen info parsing
-            if(&genDecayPdgIdVec != nullptr && &genDecayLVec != nullptr)
+            if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
             {
                 for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
                 {
@@ -1684,6 +1684,28 @@ namespace plotterFunctions
 
             double oldptt1 = (vTops->size())?((*vTops)[0].Pt()):(0);
             double newptt1 = (vTops->size())?((*vTopsNew)[0].Pt()):(0);
+
+            // Calculate number of jets and b-tagged jets
+            int cntCSVSAna = AnaFunctions::countCSVS(jetsLVec, recoJetsBtag, AnaConsts::cutCSVS, AnaConsts::bTagArr);
+            int cntNJetsPt50Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt50Eta24Arr);
+            int cntNJetsPt30Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt30Eta24Arr);
+
+
+            // Pass number of jets?
+            bool passnJets = true;
+            if( cntNJetsPt50Eta24 < AnaConsts::nJetsSelPt50Eta24 ){ passnJets = false; }
+            if( cntNJetsPt30Eta24 < AnaConsts::nJetsSelPt30Eta24 ){ passnJets = false; }
+
+            // Pass number of b-tagged jets?
+            bool passBJets = true;
+            if( !( (AnaConsts::low_nJetsSelBtagged == -1 || cntCSVSAna >= AnaConsts::low_nJetsSelBtagged) && (AnaConsts::high_nJetsSelBtagged == -1 || cntCSVSAna < AnaConsts::high_nJetsSelBtagged ) ) ){passBJets = false; }
+
+            // Pass the baseline MET requirement?
+            bool passMET = (metLVec.Pt() >= AnaConsts::defaultMETcut);
+
+            tr.registerDerivedVar("passnJets", passnJets);
+            tr.registerDerivedVar("passBJets", passBJets);
+            tr.registerDerivedVar("passMET", passMET);
 
             tr.registerDerivedVar("deltaRt1t2New", deltaR);
 

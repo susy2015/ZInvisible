@@ -99,7 +99,7 @@ void makeplot(TFile* f, std::string hname)
     //mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)",  7600 / 1000.0);
+    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)",  12900 / 1000.0);
 
     TLatex mark;
     mark.SetNDC(true);
@@ -113,7 +113,8 @@ void makeplot(TFile* f, std::string hname)
     mark.SetTextSize(0.042 * fontScale);
     //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
     mark.SetTextFont(52);
-    mark.DrawLatex(gPad->GetLeftMargin() + 0.065, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
+    //mark.DrawLatex(gPad->GetLeftMargin() + 0.065, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
+    mark.DrawLatex(gPad->GetLeftMargin() + 0.065, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
 
     //Draw lumistamp
     mark.SetTextFont(42);

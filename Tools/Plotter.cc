@@ -430,7 +430,7 @@ void Plotter::createHistsFromTuple()
                 while(tr.getNextEvent())
                 {
                     //Things to run only on first event
-                    if(tr.IsFirstEvent())
+                    if(tr.isFirstEvent())
                     {
                         //Initialize the mini tuple branches, needs to be done after first call of tr.getNextEvent()
                         if(tOut && mtm)
@@ -1070,6 +1070,7 @@ void Plotter::plot()
                         }
                     }
                     dummy2->GetYaxis()->SetRangeUser(d2ymin, 1.5*d2ymax);
+                    //dummy2->GetYaxis()->SetRangeUser(0.3, 1.6);
                 }
                 else // pull distribution
                 {
@@ -1156,8 +1157,8 @@ void Plotter::plot()
         mark.SetTextSize(0.042 * fontScale);
         //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
         mark.SetTextFont(52);
-        //mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
-        mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
+        mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+        //mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
 
         //Draw lumistamp
         mark.SetTextFont(42);
