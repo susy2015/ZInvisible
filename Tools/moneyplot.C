@@ -261,8 +261,8 @@ int main(int argc, char* argv[])
     mark.SetTextSize(0.042 * fontScale);
     //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
     mark.SetTextFont(52);
-    mark.DrawLatex(gPad->GetLeftMargin() + 0.062, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
-    //mark.DrawLatex(gPad->GetLeftMargin() + 0.062, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+    //mark.DrawLatex(gPad->GetLeftMargin() + 0.062, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
+    mark.DrawLatex(gPad->GetLeftMargin() + 0.062, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
 
     //Draw lumistamp 
     mark.SetTextFont(42);
