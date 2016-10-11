@@ -376,8 +376,8 @@ int main(int argc, char* argv[])
        vh.push_back(PHS("DataMC_HTMTH_model_htNoratio_"  + cut.first,  PDCMaker12("HT"),     {1, 1}, cut.second, 40, 500, 2500, true, true,  label_ht,   "Events"));
        vh.push_back(PHS("DataMC_HTMTH_model_NBJEtsNoratio_"  + cut.first,  PDCMaker12("cntCSVS"),     {1, 1}, cut.second, 5, 1, 6, false, true,  label_nb,   "Events"));
        vh.push_back(PHS("DataMC_HTMTH_model_NJEtsNoratio_"  + cut.first,  PDCMaker12("cntNJetsPt30Eta24"),{1, 1}, cut.second, 12, 4, 16, false, true,  label_nj,   "Events"));
-       vh.push_back(PHS("DataMC_HTMTH_model_NTopsNoratio_"  + cut.first,  PDCMaker12("match1"),     {1, 1}, cut.second, 5, 1, 6, false, true,  label_nt,   "Events"));
-       vh.push_back(PHS("DataMC_HTMTH_model_MT2Noratio_"  + cut.first,  PDCMaker12("slimmedJetsAK8"),  {1, 1}, cut.second, 20, 200, 1200, false, true,  label_mt2,   "Events"));
+      // vh.push_back(PHS("DataMC_HTMTH_model_NTopsNoratio_"  + cut.first,  PDCMaker12("match1"),     {1, 1}, cut.second, 5, 1, 6, false, true,  label_nt,   "Events"));
+      // vh.push_back(PHS("DataMC_HTMTH_model_MT2Noratio_"  + cut.first,  PDCMaker12("slimmedJetsAK8"),  {1, 1}, cut.second, 20, 200, 1200, false, true,  label_mt2,   "Events"));
        vh.push_back(PHS("Tau1"  + cut.first,  PDCMaker12("tau1"),  {1, 1}, cut.second, 10, 0, 1, false, true,  "tau1",   "Events"));
        vh.push_back(PHS("Tau2"  + cut.first,  PDCMaker12("tau2"),  {1, 1}, cut.second, 10, 0, 1, false, true,  "tau2",   "Events"));
        vh.push_back(PHS("Tau1"  + cut.first,  PDCMaker12("tau3"),  {1, 1}, cut.second, 10, 0, 1, false, true,  "tau3",   "Events"));
