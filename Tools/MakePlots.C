@@ -273,7 +273,7 @@ int main(int argc, char* argv[])
     std::vector<std::pair<std::string,std::string>> cutlevels_muon = {
         //cut name                    cut string
 	//{"Koushik",                     "passnJets;passdPhis;passMET;passBJets;passTagger;passHT;passMT2;passNoiseEventFilter"},//;passKoushik"},
-	{"Empty",                       " "},
+	{"Empty",                       ""},
 	//{"muZinv",                    "passNoiseEventFilterZinv;passMuZinvSel"},
 	//{"muZinv_ht200",              "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200"},
 	//{"muZinv_ht200_dphi",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passdPhisZinv"},
@@ -387,6 +387,8 @@ int main(int argc, char* argv[])
        vh.push_back(PHS("ak8rapi"  + cut.first,  PDCMaker12("ak8rapidity"),  {1, 1}, cut.second, 9, -4, 4, false, true,  "ak8rapidity",   "Events"));
        vh.push_back(PHS("ak8Pmass"  + cut.first,  PDCMaker12("ak8prunedMass"),  {1, 1}, cut.second, 10, 0, 150, false, true,  "ak8prunedMass",   "Events"));
        vh.push_back(PHS("ak8softDrop"  + cut.first,  PDCMaker12("ak8softDropMass"),  {1, 1}, cut.second, 10, 0, 150, false, true,  "ak8Soft",   "Events"));
+       vh.push_back(PHS("nJetsak8"+ cut.first,  PDCMaker12("nJetsak8"),  {1, 1}, cut.second, 15, 0, 15, false, true,  "nJetsak8",   "Events"));
+       vh.push_back(PHS("nJets"+ cut.first,  PDCMaker12("nJets"),  {1, 1}, cut.second, 15, 0, 15, false, true,  "nJets",   "Events"));
     }
 /*
     for(std::pair<std::string,std::string>& cut : cutlevels_muon)
