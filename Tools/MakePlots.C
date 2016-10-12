@@ -362,7 +362,7 @@ int main(int argc, char* argv[])
     {
        vh.push_back(PHS("DataMC_HTMHT_model_metZinv_" + cut.first,  PDCMaker12("cleanMetPt"), {1, 2}, cut.second, 26, 200, 1500, true, true,  label_met,  "Events"));
        vh.push_back(PHS("DataMC_HTMTH_model_ht_Zinv"  + cut.first,  PDCMaker12("HTZinv"), {1, 2}, cut.second, 40, 500, 2500, true, true,  label_ht,   "Events"));
-       vh.push_back(PHS("DataMC_HTMTH_model_ht_"      + cut.first,  PDCMaker12("HT"),     {1, 2}, cut.second, 40, 500, 2500, true, true,  label_ht,   "Events"));
+       vh.push_back(PHS("DataMC_HTMTH_model_ht_"      + cut.first,  PDCMaker12("ht"),     {1, 2}, cut.second, 40, 500, 2500, true, true,  label_ht,   "Events"));
        vh.push_back(PHS("DataMC_HTMTH_model_met_"     + cut.first,  PDCMaker12("met"),     {1, 2}, cut.second, 26, 200, 1500, true, true,  label_met,   "Events"));
        vh.push_back(PHS("DataMC_HTMTH_model_NBJetsZInv_" + cut.first,  PDCMaker12("cntCSVSZinv"),   {1, 2}, cut.second, 5, 1, 6, false, true,  label_nb,   "Events"));
        vh.push_back(PHS("DataMC_HTMTH_model_NBJEts_"     + cut.first,  PDCMaker12("cntCSVS"),     {1, 2}, cut.second, 5, 1, 6, false, true,  label_nb,   "Events"));
@@ -378,16 +378,16 @@ int main(int argc, char* argv[])
        vh.push_back(PHS("DataMC_HTMTH_model_NJEtsNoratio_"  + cut.first,  PDCMaker12("cntNJetsPt30Eta24"),{1, 1}, cut.second, 12, 4, 16, false, true,  label_nj,   "Events"));
       // vh.push_back(PHS("DataMC_HTMTH_model_NTopsNoratio_"  + cut.first,  PDCMaker12("match1"),     {1, 1}, cut.second, 5, 1, 6, false, true,  label_nt,   "Events"));
       // vh.push_back(PHS("DataMC_HTMTH_model_MT2Noratio_"  + cut.first,  PDCMaker12("slimmedJetsAK8"),  {1, 1}, cut.second, 20, 200, 1200, false, true,  label_mt2,   "Events"));
-       vh.push_back(PHS("Tau1"  + cut.first,  PDCMaker12("tau1"),  {1, 1}, cut.second, 10, 0, 1, false, true,  "tau1",   "Events"));
-       vh.push_back(PHS("Tau2"  + cut.first,  PDCMaker12("tau2"),  {1, 1}, cut.second, 10, 0, 1, false, true,  "tau2",   "Events"));
-       vh.push_back(PHS("Tau1"  + cut.first,  PDCMaker12("tau3"),  {1, 1}, cut.second, 10, 0, 1, false, true,  "tau3",   "Events"));
-       vh.push_back(PHS("SubjetB"  + cut.first,  PDCMaker12("subjectBdisc"),  {1, 1}, cut.second, 9, -11, 2, false, true,  "SubjetBdisc",   "Events"));
-       vh.push_back(PHS("ak8pt"  + cut.first,  PDCMaker12("ak8pt"),  {1, 1}, cut.second, 20, 0, 400, false, true,  "ak8PT",   "Events"));
-       vh.push_back(PHS("ak8mass"  + cut.first,  PDCMaker12("ak8mass"),  {1, 1}, cut.second, 10, 0, 150, false, true,  "ak8mass",   "Events"));
-       vh.push_back(PHS("ak8rapi"  + cut.first,  PDCMaker12("ak8rapidity"),  {1, 1}, cut.second, 9, -4, 4, false, true,  "ak8rapidity",   "Events"));
-       vh.push_back(PHS("ak8Pmass"  + cut.first,  PDCMaker12("ak8prunedMass"),  {1, 1}, cut.second, 10, 0, 150, false, true,  "ak8prunedMass",   "Events"));
-       vh.push_back(PHS("ak8softDrop"  + cut.first,  PDCMaker12("ak8softDropMass"),  {1, 1}, cut.second, 10, 0, 150, false, true,  "ak8Soft",   "Events"));
-       vh.push_back(PHS("nJetsak8"+ cut.first,  PDCMaker12("nJetsak8"),  {1, 1}, cut.second, 15, 0, 15, false, true,  "nJetsak8",   "Events"));
+      // vh.push_back(PHS("Tau1"  + cut.first,  PDCMaker12("tau1"),  {1, 1}, cut.second, 10, 0, 1, false, true,  "tau1",   "Events"));
+      // vh.push_back(PHS("Tau2"  + cut.first,  PDCMaker12("tau2"),  {1, 1}, cut.second, 10, 0, 1, false, true,  "tau2",   "Events"));
+      // vh.push_back(PHS("Tau1"  + cut.first,  PDCMaker12("tau3"),  {1, 1}, cut.second, 10, 0, 1, false, true,  "tau3",   "Events"));
+     //  vh.push_back(PHS("SubjetB"  + cut.first,  PDCMaker12("subjectBdisc"),  {1, 1}, cut.second, 9, -11, 2, false, true,  "SubjetBdisc",   "Events"));
+      // vh.push_back(PHS("ak8pt"  + cut.first,  PDCMaker12("ak8pt"),  {1, 1}, cut.second, 20, 0, 400, false, true,  "ak8PT",   "Events"));
+      // vh.push_back(PHS("ak8mass"  + cut.first,  PDCMaker12("ak8mass"),  {1, 1}, cut.second, 10, 0, 150, false, true,  "ak8mass",   "Events"));
+      // vh.push_back(PHS("ak8rapi"  + cut.first,  PDCMaker12("ak8rapidity"),  {1, 1}, cut.second, 9, -4, 4, false, true,  "ak8rapidity",   "Events"));
+      // vh.push_back(PHS("ak8Pmass"  + cut.first,  PDCMaker12("ak8prunedMass"),  {1, 1}, cut.second, 10, 0, 150, false, true,  "ak8prunedMass",   "Events"));
+      // vh.push_back(PHS("ak8softDrop"  + cut.first,  PDCMaker12("ak8softDropMass"),  {1, 1}, cut.second, 10, 0, 150, false, true,  "ak8Soft",   "Events"));
+      // vh.push_back(PHS("nJetsak8"+ cut.first,  PDCMaker12("nJetsak8"),  {1, 1}, cut.second, 15, 0, 15, false, true,  "nJetsak8",   "Events"));
        vh.push_back(PHS("nJets"+ cut.first,  PDCMaker12("nJets"),  {1, 1}, cut.second, 15, 0, 15, false, true,  "nJets",   "Events"));
     }
 /*
