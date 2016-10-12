@@ -60,6 +60,8 @@ namespace plotterFunctions
             const double& bestRecoZPt = tr.getVar<double>("bestRecoZPt");
             const double& genZPt      = tr.getVar<double>("genZPt");
 
+            const int& nJets     =  tr.getVar<int>("nJets");
+
 	    const double& stored_weight = tr.getVar<double>("stored_weight");
 
             // Calculate PU weight

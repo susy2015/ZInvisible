@@ -362,7 +362,7 @@ int main(int argc, char* argv[])
     {
        vh.push_back(PHS("DataMC_HTMHT_model_metZinv_" + cut.first,  PDCMaker12("cleanMetPt"), {1, 2}, cut.second, 26, 200, 1500, true, true,  label_met,  "Events"));
        vh.push_back(PHS("DataMC_HTMTH_model_ht_Zinv"  + cut.first,  PDCMaker12("HTZinv"), {1, 2}, cut.second, 40, 500, 2500, true, true,  label_ht,   "Events"));
-       vh.push_back(PHS("DataMC_HTMTH_model_ht_"      + cut.first,  PDCMaker12("ht"),     {1, 2}, cut.second, 40, 500, 2500, true, true,  label_ht,   "Events"));
+       vh.push_back(PHS("_ht_"      + cut.first,  PDCMaker12("ht"),     {1, 2}, cut.second, 40, 500, 2500, true, true,  label_ht,   "Events"));
        vh.push_back(PHS("DataMC_HTMTH_model_met_"     + cut.first,  PDCMaker12("met"),     {1, 2}, cut.second, 26, 200, 1500, true, true,  label_met,   "Events"));
        vh.push_back(PHS("DataMC_HTMTH_model_NBJetsZInv_" + cut.first,  PDCMaker12("cntCSVSZinv"),   {1, 2}, cut.second, 5, 1, 6, false, true,  label_nb,   "Events"));
        vh.push_back(PHS("DataMC_HTMTH_model_NBJEts_"     + cut.first,  PDCMaker12("cntCSVS"),     {1, 2}, cut.second, 5, 1, 6, false, true,  label_nb,   "Events"));
