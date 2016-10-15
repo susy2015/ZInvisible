@@ -6,6 +6,8 @@ RSDIR      = $(CMSSW_BASE)/src/SusyAnaTools/Tools
 TTIDIR     = $(CMSSW_BASE)/src/TopTagger/TopTagger/include
 TPIDIR     = $(CMSSW_BASE)/src/TopTagger/CfgParser/include
 
+OPENCV_DIRECTORY=$(CMSSW_BASE)/src/opencv
+
 CXX        = g++
 
 CXXFLAGS  += -I. -I$(CMSSW_BASE)/src -std=c++0x -I$(LHAPDF_DATA_PATH)/../../include
@@ -23,7 +25,7 @@ LD         = g++
 LDFLAGS    =
 
 LIBS       = $(shell root-config --glibs)
-MT2LIB     = -L$(CMSSW_BASE)/lib/${SCRAM_ARCH}/ -lrecipeAUXOxbridgeMT2 -lTopTaggerTopTagger -lTopTaggerCfgParser
+MT2LIB     = -L$(CMSSW_BASE)/lib/${SCRAM_ARCH}/ -lrecipeAUXOxbridgeMT2 -lTopTaggerTopTagger -lTopTaggerCfgParser -L$(OPENCV_DIRECTORY)/lib/ -lopencv_ml -lopencv_core
 LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
