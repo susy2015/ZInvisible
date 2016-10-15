@@ -1521,6 +1521,8 @@ namespace plotterFunctions
         {
             const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVec");
             const std::vector<double>& recoJetsBtag      = tr.getVec<double>("recoJetsBtag_0");
+            const std::vector<double>& qgLikelihood      = tr.getVec<double>("qgLikelihood");
+            const std::vector<double>& recoJetsCharge    = tr.getVec<double>("recoJetsCharge_0");
 
             const double& met    = tr.getVar<double>("met");
             const double& metphi = tr.getVar<double>("metphi");
@@ -1530,7 +1532,10 @@ namespace plotterFunctions
 
             std::vector<TLorentzVector> jetsLVec_forTagger;
             std::vector<double> recoJetsBtag_forTagger;
-            AnaFunctions::prepareJetsForTagger(jetsLVec, recoJetsBtag, jetsLVec_forTagger, recoJetsBtag_forTagger);
+            std::vector<double> qgLikelihood_forTagger;
+            std::vector<double> recoJetsCharge_forTagger;
+            
+            AnaFunctions::prepareJetsForTagger(jetsLVec, recoJetsBtag, jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood, qgLikelihood_forTagger, recoJetsCharge, recoJetsCharge_forTagger);
 
             int cntCSVS = AnaFunctions::countCSVS(jetsLVec_forTagger, recoJetsBtag_forTagger, AnaConsts::cutCSVS, AnaConsts::bTagArr);
 
@@ -1600,7 +1605,7 @@ namespace plotterFunctions
 
             //New Tagger starts here
             //prep input object (constituent) vector
-            std::vector<Constituent> constituents = ttUtility::packageConstituents(jetsLVec_forTagger, recoJetsBtag_forTagger);
+            std::vector<Constituent> constituents = ttUtility::packageConstituents(jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood_forTagger, recoJetsCharge_forTagger);
             //run tagger
             tt->runTagger(constituents);
             //retrieve results
@@ -1683,7 +1688,7 @@ namespace plotterFunctions
             }
 
             double oldptt1 = (vTops->size())?((*vTops)[0].Pt()):(0);
-            double newptt1 = (vTops->size())?((*vTopsNew)[0].Pt()):(0);
+            double newptt1 = (vTopsNew->size())?((*vTopsNew)[0].Pt()):(0);
 
             // Calculate number of jets and b-tagged jets
             int cntCSVSAna = AnaFunctions::countCSVS(jetsLVec, recoJetsBtag, AnaConsts::cutCSVS, AnaConsts::bTagArr);
