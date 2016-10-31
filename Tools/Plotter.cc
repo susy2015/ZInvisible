@@ -45,6 +45,15 @@ const int stackColors[] = {
 };
 const int NSTACKCOLORS = sizeof(stackColors) / sizeof(int);
 
+const int hatches[] = {
+    1001,
+    3345,
+    3354,
+    3144,
+    3001
+};
+const int NHATCHES = sizeof(hatches) / sizeof(int);
+
 Plotter::Plotter(std::vector<HistSummary>& h, std::set<AnaSamples::FileSummary>& t, const bool readFromTuple, std::string ofname, const int nFile, const int startFile, const int nEvts) : nFile_(nFile), startFile_(startFile), maxEvts_(nEvts)
 {
     TH1::AddDirectory(false);
@@ -142,8 +151,8 @@ void Plotter::HistSummary::parseName(std::vector<Plotter::DataCollection>& ns)
             VarName var;
             Plotter::parseSingleVar(dataset.first, var);
 
-            //std::string histname = name + "__" + var.name + "__" + ((var.index >= 0)?(std::to_string(var.index):("")) + "__" + var.var + "__" + dataset.first + "__" + dataset.second.front().label + "__" + n.type;
-            std::string histname = name +  var.name + ((var.index >= 0)?(std::to_string(var.index)):("")) + var.var + dataset.first + dataset.second.front().label + n.type;
+            std::string histname = name + "__" + var.name + "__" + ((var.index >= 0)?(std::to_string(var.index)):("")) + "__" + var.var + "__" + dataset.first + "__" + dataset.second.front().label + "__" + n.type;
+            //std::string histname = name +  var.name + ((var.index >= 0)?(std::to_string(var.index)):("")) + var.var + dataset.first + dataset.second.front().label + n.type;
 
             tmphtp.push_back(std::shared_ptr<HistCutSummary>(new HistCutSummary(dataset.second.front().label, histname, var, nullptr, dataset.second)));
         }
@@ -818,7 +827,7 @@ void Plotter::plot()
         leg->SetTextFont(42);
 
         double max = 0.0, lmax = 0.0, min = 1.0e300, minAvgWgt = 1.0e300;
-        int iSingle = 0, iRatio = 0;
+        int iSingle = 0, iRatio = 0, iFill = 0;
         char legEntry[128];
 
         for(auto& hvec : hist.hists)
@@ -842,18 +851,26 @@ void Plotter::plot()
                     hvec.h = static_cast<TNamed*>(hvec.hcsVec.front()->h->Clone());
                 }
             }
-            else if(hvec.type.compare("single") == 0)
+            else if(hvec.type.compare("single") == 0 || hvec.type.compare("fill") == 0)
             {
                 for(auto& h : hvec.hcsVec)
                 {
+                    std::string drawOptions = "L";
                     h->h->SetLineColor(colors[iSingle%NCOLORS]);
+                    if(hvec.type.compare("fill") == 0)
+                    {
+                        h->h->SetFillColor(colors[iSingle%NCOLORS]);
+                        h->h->SetFillStyle(hatches[iFill%NHATCHES]);
+                        drawOptions = "F";
+                        iFill++;
+                    }
                     h->h->SetLineWidth(3);
                     iSingle++;
                     double integral = h->h->Integral(0, h->h->GetNbinsX() + 1);
                     if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", h->label.c_str(), integral);
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", h->label.c_str(), integral);
                     else                      sprintf(legEntry, "%s (%0.2e)",  h->label.c_str(), integral);
-                    leg->AddEntry(h->h, legEntry);
+                    leg->AddEntry(h->h, legEntry, drawOptions.c_str());
                     if(hist.isNorm) h->h->Scale(hist.fhist()->Integral()/h->h->Integral());
                     smartMax(h->h, leg, static_cast<TPad*>(gPad), min, max, lmax);
                     minAvgWgt = std::min(minAvgWgt, h->h->GetSumOfWeights()/h->h->GetEntries());

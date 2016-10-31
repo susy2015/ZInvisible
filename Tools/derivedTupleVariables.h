@@ -4,6 +4,8 @@
 #include "SusyAnaTools/Tools/NTupleReader.h"
 #include "SusyAnaTools/Tools/customize.h"
 #include "SusyAnaTools/Tools/searchBins.h"
+#include "TopTagger/Tools/TaggerUtility.h"
+#include "TopTagger/Tools/PlotUtility.h"
 #include "ScaleFactors.h"
 
 #include "TopTagger.h"
@@ -1514,8 +1516,9 @@ namespace plotterFunctions
     private:
 
         topTagger::type3TopTagger t3tagger;
-        TopTagger* tt;
+        TopTagger *tt, *ttMVA;
         Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
+        TopCat topMatcher_;
 
         void prepareTopVars(NTupleReader& tr)
         {
@@ -1523,6 +1526,11 @@ namespace plotterFunctions
             const std::vector<double>& recoJetsBtag      = tr.getVec<double>("recoJetsBtag_0");
             const std::vector<double>& qgLikelihood      = tr.getVec<double>("qgLikelihood");
             const std::vector<double>& recoJetsCharge    = tr.getVec<double>("recoJetsCharge_0");
+
+            const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+            const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+            const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
+            const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
 
             const double& met    = tr.getVar<double>("met");
             const double& metphi = tr.getVar<double>("metphi");
@@ -1534,6 +1542,8 @@ namespace plotterFunctions
             std::vector<double> recoJetsBtag_forTagger;
             std::vector<double> qgLikelihood_forTagger;
             std::vector<double> recoJetsCharge_forTagger;
+
+            std::vector<TLorentzVector> *genTops = new std::vector<TLorentzVector>(genUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
             
             AnaFunctions::prepareJetsForTagger(jetsLVec, recoJetsBtag, jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood, qgLikelihood_forTagger, recoJetsCharge, recoJetsCharge_forTagger);
 
@@ -1546,20 +1556,9 @@ namespace plotterFunctions
 
             std::vector<std::vector<TLorentzVector> >* vTopConstituents = new std::vector<std::vector<TLorentzVector> >();;
             
-            //variables for tri-jet tops 
-            std::vector<std::vector<TLorentzVector> >* v3j_diJets = new std::vector<std::vector<TLorentzVector> >();;
-
-            std::vector<double>* v3j_dr12 = new std::vector<double>();
-            std::vector<double>* v3j_dr23 = new std::vector<double>();
-            std::vector<double>* v3j_dr13 = new std::vector<double>();
-            std::vector<double>* v3j_cm_dr12 = new std::vector<double>();
-            std::vector<double>* v3j_cm_dr13 = new std::vector<double>();
-            std::vector<double>* v3j_cm_dr23 = new std::vector<double>();
-            
             for(int it = 0; it < nTops; it++)
             {
-                TLorentzVector topLVec = t3tagger.buildLVec(jetsLVec_forTagger,
-                                                            t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]]);
+                TLorentzVector topLVec = t3tagger.buildLVec(jetsLVec_forTagger, t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]]);
                 vTops->push_back(topLVec);
 
                 std::vector<TLorentzVector> tmpVec;
@@ -1568,39 +1567,6 @@ namespace plotterFunctions
                     tmpVec.emplace_back(jetsLVec_forTagger[jetIndex]);
                 }
                 vTopConstituents->emplace_back(tmpVec);
-
-                //Make properties of triplet tops here
-                if(tmpVec.size() == 3)
-                {
-                    double dR12 = ROOT::Math::VectorUtil::DeltaR(tmpVec[0], tmpVec[1]);
-                    double dR23 = ROOT::Math::VectorUtil::DeltaR(tmpVec[1], tmpVec[2]);
-                    double dR13 = ROOT::Math::VectorUtil::DeltaR(tmpVec[0], tmpVec[2]);
-
-                    v3j_dr12->push_back(dR12);
-                    v3j_dr23->push_back(dR23);
-                    v3j_dr13->push_back(dR13);
-
-                    //jet copies for playing with
-                    TLorentzVector j1 = tmpVec[0];
-                    TLorentzVector j2 = tmpVec[1];
-                    TLorentzVector j3 = tmpVec[2];
-
-                    //subtract out the top boost to get to top CM frame
-                    j1 = j1 - topLVec;
-                    j2 = j2 - topLVec;
-                    j3 = j3 - topLVec;
-
-                    double cm_dR12 = ROOT::Math::VectorUtil::DeltaR(j1, j2);
-                    double cm_dR23 = ROOT::Math::VectorUtil::DeltaR(j2, j3);
-                    double cm_dR13 = ROOT::Math::VectorUtil::DeltaR(j1, j3);
-                    
-                    v3j_cm_dr12->push_back(cm_dR12);
-                    v3j_cm_dr13->push_back(cm_dR23);
-                    v3j_cm_dr23->push_back(cm_dR13);
-                    
-                    //make di-jet systems 
-                    v3j_diJets->push_back({tmpVec[0] + tmpVec[1], tmpVec[1] + tmpVec[2], tmpVec[0] + tmpVec[2]});
-                }
             }
 
             //New Tagger starts here
@@ -1611,90 +1577,78 @@ namespace plotterFunctions
             //retrieve results
             const TopTaggerResults& ttr = tt->getResults();
 
+            //get matches
+            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatches = topMatcher_.TopConst(ttr.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+
             std::vector<TLorentzVector> *vTopsNew = new std::vector<TLorentzVector>();
-            for(auto& top : ttr.getTops())
+            std::vector<TLorentzVector> *vTopsMatchNew = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *vTopsGenMatchNew = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *vTopsParMatchNew = new std::vector<TLorentzVector>();
+            
+            for(int iTop = 0; iTop < ttr.getTops().size(); ++iTop)
             {
-                vTopsNew->push_back(top->p());
+                vTopsNew->emplace_back(ttr.getTops()[iTop]->p());
+                if(genMatches.second.first[iTop] == 3) 
+                {
+                    vTopsMatchNew->emplace_back(ttr.getTops()[iTop]->p());
+                    vTopsGenMatchNew->emplace_back(genMatches.second.second[iTop]);
+                }
+                else if(genMatches.second.first[iTop] == 2)
+                {
+                    vTopsParMatchNew->emplace_back(ttr.getTops()[iTop]->p());
+                } 
             }
 
-            //compare tops from each tagger here
-            std::vector<TLorentzVector> *vdTops = new std::vector<TLorentzVector>();
-            if(vTops->size() == vTopsNew->size())
+            //New MVA resolved Tagger starts here
+            //run tagger
+            ttMVA->runTagger(constituents);
+            //retrieve results
+            const TopTaggerResults& ttrMVA = ttMVA->getResults();
+
+            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVA = topMatcher_.TopConst(ttrMVA.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+
+            std::vector<TLorentzVector> *vTopsNewMVA = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *vTopsMatchNewMVA = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *vTopsGenMatchNewMVA = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *vTopsParMatchNewMVA = new std::vector<TLorentzVector>();
+            std::vector<double>* discriminators = new std::vector<double>();
+            std::vector<double>* discriminatorsMatch = new std::vector<double>();
+            std::vector<double>* discriminatorsParMatch = new std::vector<double>();
+
+            for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
             {
-                for(int it = 0; it < vTops->size(); it++)
+                vTopsNewMVA->emplace_back(ttrMVA.getTops()[iTop]->p());
+                discriminators->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
+                if(genMatchesMVA.second.first[iTop] == 3)
                 {
-                    vdTops->push_back(vTops->at(it) - vTopsNew->at(it));
+                    vTopsMatchNewMVA->emplace_back(ttrMVA.getTops()[iTop]->p());
+                    vTopsGenMatchNewMVA->emplace_back(genMatchesMVA.second.second[iTop]);
+                    discriminatorsMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
+                }
+                if(genMatchesMVA.second.first[iTop] == 2)
+                {
+                    vTopsParMatchNewMVA->emplace_back(ttrMVA.getTops()[iTop]->p());
+                    discriminatorsParMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 }
             }
-            else if(cntCSVS >= 1 && jetsLVec.size() >= 4)
-            {
-                //std::cout << std::endl;
-                //std::cout << "nJets: " << jetsLVec_forTagger.size() << "   nb: " << cntCSVS << std::endl;
-                //std::cout << "NEW AND OLD TOP VECTOR ARE NOT SAME SIZE!!!!! old: " << vTops->size() << "   new: " << vTopsNew->size() << std::endl;
-                //if(vTopsNew->size() >= 1) std::cout << "NEW TOP nConstituents: " << ttr.getTops()[0]->getConstituents().size() << "   pt: " << ttr.getTops()[0]->p().Pt() << "   eta: " << ttr.getTops()[0]->p().Eta() << "   phi: " << ttr.getTops()[0]->p().Phi() << "   M: " << ttr.getTops()[0]->p().M() << "   dRmax: " << ttr.getTops()[0]->getDRmax() << std::endl;
-                //int nbInTop = 0;
-                //for(auto& jet : ttr.getTops()[0]->getConstituents()) if(jet->getBTagDisc() > 0.89) ++nbInTop;
-                //std::cout << "NEW nb in top: " << nbInTop << std::endl;
-                //
-                //if(t3tagger.topJetCand_idx123Vec.size())
-                //{
-                //    TLorentzVector topLVec = t3tagger.buildLVec(jetsLVec_forTagger, t3tagger.topJetCand_idx123Vec[0]);
-                //    std::cout << "OLD TOP nConstituents: " << t3tagger.topJetCand_idx123Vec[0].size() << "   pt: " << topLVec.Pt() << "   eta: " << topLVec.Eta() << "   phi: " << topLVec.Phi() << "   M: " << topLVec.M() << std::endl;
-                //}
-                //std::cout << "NEW TOP nCandidates: " << ttr.getTopCandidates().size() << std::endl;
-                //std::cout << "OLD TOP nCandidates: " << t3tagger.finalCombfatJets.size() << std::endl;
-                //std::cout << std::endl;
-            }
 
-            //Rsys variables 
-            TLorentzVector oldRsysVec;// = t3tagger.best_had_brJet;
-            TLorentzVector newRsysVec = ttr.getRsys().p();
+            // Calculate number of leptons
+            std::string muonsFlagIDLabel = "muonsFlagMedium";
+            std::string elesFlagIDLabel = "elesFlagVeto";
+            const std::vector<int> & muonsFlagIDVec = muonsFlagIDLabel.empty()? std::vector<int>(tr.getVec<double>("muonsMiniIso").size(), 1):tr.getVec<int>(muonsFlagIDLabel.c_str());
+            const std::vector<int> & elesFlagIDVec = elesFlagIDLabel.empty()? std::vector<int>(tr.getVec<double>("elesMiniIso").size(), 1):tr.getVec<int>(elesFlagIDLabel.c_str());
+            int nMuons = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
+            int nElectrons = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesMiniIso"), tr.getVec<double>("elesMtw"), tr.getVec<unsigned int>("elesisEB"), elesFlagIDVec, AnaConsts::elesMiniIsoArr);
+            int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
 
-            double oldMT2 = t3tagger.best_had_brJet_MT2;
-            double newMT2 = -999.9;
-            double deltaR = -999;
-            if(ttr.getTops().size() >= 1)
-            {
-                const double massOfSystemA = ttr.getTops()[0]->P().M(); // GeV
-                const double pxOfSystemA   = ttr.getTops()[0]->P().Px(); // GeV
-                const double pyOfSystemA   = ttr.getTops()[0]->P().Py(); // GeV
-            
-                double massOfSystemB =  newRsysVec.M(); // GeV
-                double pxOfSystemB   =  newRsysVec.Px(); // GeV
-                double pyOfSystemB   =  newRsysVec.Py(); // GeV
-
-                deltaR = ttr.getTops()[0]->P().DeltaR(newRsysVec);
-
-                if(ttr.getTops().size() >= 2)
-                {
-                    massOfSystemB = ttr.getTops()[1]->P().M(); // GeV 
-                    pxOfSystemB   = ttr.getTops()[1]->P().Px(); // GeV
-                    pyOfSystemB   = ttr.getTops()[1]->P().Py(); // GeV
-
-                    deltaR = ttr.getTops()[0]->P().DeltaR(ttr.getTops()[1]->P());
-                }
-            
-                // The missing transverse momentum:
-                const double pxMiss        = metLVec.Px(); // GeV
-                const double pyMiss        = metLVec.Py(); // GeV
-            
-                const double invis_mass    = metLVec.M(); // GeV
-          
-                Mt2::LorentzTransverseVector  vis_A(Mt2::TwoVector(pxOfSystemA, pyOfSystemA), massOfSystemA);
-                Mt2::LorentzTransverseVector  vis_B(Mt2::TwoVector(pxOfSystemB, pyOfSystemB), massOfSystemB);
-                Mt2::TwoVector                pT_Miss(pxMiss, pyMiss);
-          
-                newMT2 = mt2Calculator.mt2_332(vis_A, vis_B, pT_Miss, invis_mass);
-            }
-
-            double oldptt1 = (vTops->size())?((*vTops)[0].Pt()):(0);
-            double newptt1 = (vTopsNew->size())?((*vTopsNew)[0].Pt()):(0);
+            // Pass lepton veto?
+            bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel), passEleVeto = (nElectrons == AnaConsts::nElectronsSel), passIsoTrkVeto = (nIsoTrks == AnaConsts::nIsoTrksSel);
+            bool passLeptVeto = passMuonVeto && passEleVeto && passIsoTrkVeto;
 
             // Calculate number of jets and b-tagged jets
             int cntCSVSAna = AnaFunctions::countCSVS(jetsLVec, recoJetsBtag, AnaConsts::cutCSVS, AnaConsts::bTagArr);
             int cntNJetsPt50Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt50Eta24Arr);
             int cntNJetsPt30Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt30Eta24Arr);
-
 
             // Pass number of jets?
             bool passnJets = true;
@@ -1711,47 +1665,35 @@ namespace plotterFunctions
             tr.registerDerivedVar("passnJets", passnJets);
             tr.registerDerivedVar("passBJets", passBJets);
             tr.registerDerivedVar("passMET", passMET);
+            tr.registerDerivedVar("passLeptVeto", passLeptVeto);
 
-            tr.registerDerivedVar("deltaRt1t2New", deltaR);
-
-            tr.registerDerivedVar("oldRsysVec_pt", oldRsysVec.Pt());
-            tr.registerDerivedVar("newRsysVec_pt", newRsysVec.Pt());
-            tr.registerDerivedVar("oldRsysVec_eta", oldRsysVec.Eta());
-            tr.registerDerivedVar("newRsysVec_eta", newRsysVec.Eta());
-            tr.registerDerivedVar("oldRsysVec_phi", oldRsysVec.Phi());
-            tr.registerDerivedVar("newRsysVec_phi", newRsysVec.Phi());
-            tr.registerDerivedVar("oldRsysVec_m", oldRsysVec.M());
-            tr.registerDerivedVar("newRsysVec_m", newRsysVec.M());
-
-            tr.registerDerivedVar("oldMT2", oldMT2);
-            tr.registerDerivedVar("newMT2", newMT2);
-
-            tr.registerDerivedVar("oldt1pt", oldptt1);
-            tr.registerDerivedVar("newt1pt", newptt1);
-
-            tr.registerDerivedVar("nSnbJetRsys", int(ttr.getRsys().getNConstituents()));
-
+            tr.registerDerivedVar("nbjets", cntCSVSAna);
+            tr.registerDerivedVar("cntNJetsPt50Eta24", cntNJetsPt50Eta24);
             tr.registerDerivedVar("nTaggerJets", int(jetsLVec_forTagger.size()));
 
             tr.registerDerivedVar("nTops", nTops);
 
             tr.registerDerivedVar("nTopsNew", int(ttr.getTops().size()));
+            tr.registerDerivedVar("nTopsNewMVA", int(ttrMVA.getTops().size()));
 
             tr.registerDerivedVar("cntCSVS", cntCSVS);
 
             tr.registerDerivedVec("vTops", vTops);
 
             tr.registerDerivedVec("vTopsNew", vTopsNew);
+            tr.registerDerivedVec("vTopsNewMVA", vTopsNewMVA);
+            tr.registerDerivedVec("vTopsMatchNew", vTopsMatchNew);
+            tr.registerDerivedVec("vTopsMatchNewMVA", vTopsMatchNewMVA);
+            tr.registerDerivedVec("vTopsGenMatchNew", vTopsGenMatchNew);
+            tr.registerDerivedVec("vTopsGenMatchNewMVA", vTopsGenMatchNewMVA);
+            tr.registerDerivedVec("vTopsParMatchNew", vTopsParMatchNew);
+            tr.registerDerivedVec("vTopsParMatchNewMVA", vTopsParMatchNewMVA);
 
-            tr.registerDerivedVec("vdTops", vdTops);
+            tr.registerDerivedVec("genTops", genTops);
 
-            tr.registerDerivedVec("v3j_dr12", v3j_dr12);
-            tr.registerDerivedVec("v3j_dr23", v3j_dr23);
-            tr.registerDerivedVec("v3j_dr13", v3j_dr13);
-            tr.registerDerivedVec("v3j_cm_dr12", v3j_cm_dr12);
-            tr.registerDerivedVec("v3j_cm_dr13", v3j_cm_dr13);
-            tr.registerDerivedVec("v3j_cm_dr23", v3j_cm_dr23);
-            tr.registerDerivedVec("v3j_diJets", v3j_diJets);
+            tr.registerDerivedVec("discriminators", discriminators);
+            tr.registerDerivedVec("discriminatorsMatch", discriminatorsMatch);
+            tr.registerDerivedVec("discriminatorsParMatch", discriminatorsParMatch);
         }
 
     public:
@@ -1760,17 +1702,11 @@ namespace plotterFunctions
             t3tagger.setnJetsSel(1);
             t3tagger.setCSVS(AnaConsts::cutCSVS);
 
-            std::string cfgDocText =
-                "TopTagger\n"
-                "{\n"
-                "    module[0] = \"TTMLazyClusterAlgo\""
-                "    module[1] = \"TTMHEPRequirements\""
-                "    module[2] = \"TTMOverlapResolution\""
-                "}\n";
-
             tt = new TopTagger();
-            tt->setCfgFile("TopTagger.cfg");
-            //tt = ttf.makeTopTagger();
+            tt->setCfgFile("TopTagger_noMVA.cfg");
+
+            ttMVA = new TopTagger();
+            ttMVA->setCfgFile("TopTagger.cfg");
 	}
 
         ~PrepareTopVars()
