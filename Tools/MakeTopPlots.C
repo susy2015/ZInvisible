@@ -122,6 +122,7 @@ int main(int argc, char* argv[])
         //fileMap["TTbarInc"] = {ss["TTbarInc"]};
         fileMap["TTbar"] = sc["TTbar"];
         fileMap["Signal_T2tt_mStop500_mLSP325"] = sc["Signal_T2tt_mStop500_mLSP325"];
+        fileMap["Signal_T2tt_mStop850_mLSP100"] = sc["Signal_T2tt_mStop850_mLSP100"];
         fileMap["Signal_T1tttt_mGluino1200_mLSP800"] = sc["Signal_T1tttt_mGluino1200_mLSP800"];
         fileMap["Signal_T1tttt_mGluino1500_mLSP100"] = sc["Signal_T1tttt_mGluino1500_mLSP100"];
     }
@@ -152,34 +153,35 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary ds_ttbar(   "t#bar{t} inc",       fileMap["TTbar"],                             "", "");
     Plotter::DatasetSummary ds_ttbar1l( "t#bar{t} l1",        fileMap["TTbarSingleLep"],                    "", "");
     Plotter::DatasetSummary ds_T2tt(    "T2tt (500, 325)",    fileMap["Signal_T2tt_mStop500_mLSP325"],      "", "");
+    Plotter::DatasetSummary ds_T2tt_2(  "T2tt (850, 100)",    fileMap["Signal_T2tt_mStop850_mLSP100"],      "", "");
     Plotter::DatasetSummary ds_T1tttt(  "T1tttt (1200, 800)", fileMap["Signal_T1tttt_mGluino1200_mLSP800"], "", "");
     Plotter::DatasetSummary ds_T1tttt_2("T1tttt (1500, 100)", fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "", "");
 
     auto PDSCutBind = [](Plotter::DatasetSummary pds, std::string cuts) { pds.setCuts(cuts); pds.label = pds.label + " " + cuts; return pds; };
     auto PDSLabelBind = [](Plotter::DatasetSummary pds, std::string label) { pds.label = pds.label + " " + label; return pds; };
 
-    auto PDCMaker = [&](std::string var) { return Plotter::DataCollection( "single", var, {ds_T1tttt, ds_T1tttt_2, ds_T2tt, ds_Znunu, ds_ttbar, ds_ttbar1l}); };
+    auto PDCMaker = [&](std::string var) { return Plotter::DataCollection( "single", var, {ds_T1tttt, ds_T1tttt_2, ds_T2tt, ds_T2tt_2, ds_Znunu, ds_ttbar, ds_ttbar1l}); };
 
     auto PDCMaker_nTops   = [&](Plotter::DatasetSummary& pds) { return Plotter::DataCollection( "single", {{"nTops", pds}, {"nTopsNew", pds}, {"nTopsNewMVA", pds}, {"vTopsMatchNewMVA(size)", pds}}); };
-    auto vPDCMaker_disc    = [&](Plotter::DatasetSummary& pds) 
+    auto vPDCMaker_disc    = [&](Plotter::DatasetSummary& pds)
     {
         return std::vector<Plotter::DataCollection>( { Plotter::DataCollection( "single", {{"discriminators", pds}}),
                     Plotter::DataCollection( "stack",  {{"discriminatorsParMatch", PDSLabelBind(pds, "2 jet match")}, {"discriminatorsMatch", PDSLabelBind(pds, "3 jet match")} }),
-                    } ); 
+                    } );
     };
-    auto PDCMaker_topProp = [&](Plotter::DatasetSummary& pds, int iTop = 0, std::string var = "pt") 
+    auto PDCMaker_topProp = [&](Plotter::DatasetSummary& pds, int iTop = 0, std::string var = "pt")
     {
         std::string afterVar = ((iTop<0)?(""):("[" + std::to_string(iTop) + "]")) + "(" + var + ")";
-        return Plotter::DataCollection( "single", { {"vTops"       + afterVar, PDSLabelBind(pds, "Orig")}, 
+        return Plotter::DataCollection( "single", { {"vTops"       + afterVar, PDSLabelBind(pds, "Orig")},
                                                     {"vTopsNew"    + afterVar, PDSLabelBind(pds, "New trijet only")},
                                                     {"vTopsNewMVA" + afterVar, PDSLabelBind(pds, "MVA trijet only")} });
     };
-    auto vPDCMaker_topProp = [&](Plotter::DatasetSummary& pds, int iTop = 0, std::string var = "pt") 
+    auto vPDCMaker_topProp = [&](Plotter::DatasetSummary& pds, int iTop = 0, std::string var = "pt")
     {
         std::string afterVar = ((iTop<0)?(""):("[" + std::to_string(iTop) + "]")) + "(" + var + ")";
         return std::vector<Plotter::DataCollection>({
-                Plotter::DataCollection( "fill",   { {"vTopsNew"    + afterVar, PDSLabelBind(pds, "New trijet only")}, {"vTopsMatchNew"    + afterVar, PDSLabelBind(pds, "New trijet Match")}, {"vTopsParMatchNew"    + afterVar, PDSLabelBind(pds, "New trijet Match")} }),
-                Plotter::DataCollection( "single", { {"vTopsNewMVA" + afterVar, PDSLabelBind(pds, "MVA trijet only")}, {"vTopsMatchNewMVA" + afterVar, PDSLabelBind(pds, "MVA trijet Match")}, {"vTopsParMatchNewMVA" + afterVar, PDSLabelBind(pds, "MVA trijet Match")} }),
+                //Plotter::DataCollection( "fill",   { {"vTopsNew"    + afterVar, PDSLabelBind(pds, "New trijet only")}, {"vTopsMatchNew"    + afterVar, PDSLabelBind(pds, "New trijet Match")}, {"vTopsParMatchNew"    + afterVar, PDSLabelBind(pds, "New trijet Match")} }),
+                Plotter::DataCollection( "single", { {"vTopsNewMVA" + afterVar, PDSLabelBind(pds, "MVA trijet only")}, {"vTopsMatchNewMVA" + afterVar, PDSLabelBind(pds, "MVA trijet 3 Match")}, {"vTopsParMatchNewMVA" + afterVar, PDSLabelBind(pds, "MVA trijet 2+3 Match")} }),
                     });
     };
     auto PDCMaker_topMultComp = [&](Plotter::DatasetSummary& pds, std::string var = "pt")
@@ -190,8 +192,9 @@ int main(int argc, char* argv[])
     auto vPDCMaker_Eff = [&](Plotter::DatasetSummary & pds, std::string var = "pt")
     {
         std::string varStr = "(" + var + ")";
-        return std::vector<Plotter::DataCollection>({Plotter::DataCollection( "ratio", {{"vTopsGenMatchNew"    + varStr, PDSLabelBind(pds, "New trijet only")}, {"genTops" + varStr, PDSLabelBind(pds, "New trijet only")}}),
-                                                     Plotter::DataCollection( "ratio", {{"vTopsGenMatchNewMVA" + varStr, PDSLabelBind(pds, "MVA trijet only")}, {"genTops" + varStr, PDSLabelBind(pds, "MVA trijet only")}})
+        return std::vector<Plotter::DataCollection>({Plotter::DataCollection( "ratio", {{"vTopsGenMatchAllComb" + varStr, PDSLabelBind(pds, "Max eff"        )}, {"genTops" + varStr, PDSLabelBind(pds, "Max eff        ")}}),
+                                                     Plotter::DataCollection( "ratio", {{"vTopsGenMatchNew"     + varStr, PDSLabelBind(pds, "New trijet only")}, {"genTops" + varStr, PDSLabelBind(pds, "New trijet only")}}),
+                                                     Plotter::DataCollection( "ratio", {{"vTopsGenMatchNewMVA"  + varStr, PDSLabelBind(pds, "MVA trijet only")}, {"genTops" + varStr, PDSLabelBind(pds, "MVA trijet only")}})
                     });
     };
     auto vPDCMaker_Purity = [&](Plotter::DatasetSummary & pds, std::string var = "pt")
@@ -208,36 +211,36 @@ int main(int argc, char* argv[])
                     });
     };
 
-    std::string cuts = "passLeptVeto;passBJets;passnJets;passMET;nTaggerJets>4";                                          
+    std::string cuts = "passLeptVeto;passBJets;passnJets;passMET";
     vh.push_back(PHS("nTops",    {PDCMaker("nTops")},       {1, 2}, cuts,  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
     vh.push_back(PHS("nTopsNew", {PDCMaker("nTopsNewMVA")}, {1, 2}, cuts,  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
 
-    std::vector<std::pair<PDS, std::string>> pdsVec = {{ds_T1tttt, "T1tttt_1"}, {ds_T1tttt_2, "T1tttt_2"}, {ds_T2tt, "T2tt"}, {ds_Znunu, "Znunu"}, {ds_ttbar, "ttbar"}, {ds_ttbar1l, "ttbar1l"}};
+    std::vector<std::pair<PDS, std::string>> pdsVec = {{ds_T1tttt, "T1tttt_1"}, {ds_T1tttt_2, "T1tttt_2"}, {ds_T2tt, "T2tt"}, {ds_T2tt_2, "T2tt_2"}, {ds_Znunu, "Znunu"}, {ds_ttbar, "ttbar"}, {ds_ttbar1l, "ttbar1l"}};
     for(auto& pds : pdsVec)
     {
-        vh.push_back(PHS("nTops_"          + pds.second,  {PDCMaker_topProp(pds.first, -1, "size")},  {1, 2}, cuts + "",  10,   0, 10,    false,  false,  "N_{T}",             "Events"));
-        vh.push_back(PHS("disc_"           + pds.second,  vPDCMaker_disc(pds.first),                  {1, 2}, cuts + "",   50,  0, 1,     false,  false,  "disc",              "Events"));
-        vh.push_back(PHS("tAll_pt_"        + pds.second,  {PDCMaker_topProp(pds.first, -1, "pt")},    {1, 2}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top [GeV]",   "Events"));
-        vh.push_back(PHS("t1_pt_"          + pds.second,  {PDCMaker_topProp(pds.first,  0, "pt")},    {1, 2}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top 1 [GeV]", "Events"));
-        vh.push_back(PHS("t2_pt_"          + pds.second,  {PDCMaker_topProp(pds.first,  1, "pt")},    {1, 2}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top 2 [GeV]", "Events"));
-        vh.push_back(PHS("t3_pt_"          + pds.second,  {PDCMaker_topProp(pds.first,  2, "pt")},    {1, 2}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top 3 [GeV]", "Events"));
-        vh.push_back(PHS("t4_pt_"          + pds.second,  {PDCMaker_topProp(pds.first,  3, "pt")},    {1, 2}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top 4 [GeV]", "Events"));
-        vh.push_back(PHS("tAll_eta_"       + pds.second,  {PDCMaker_topProp(pds.first, -1, "eta")},   {1, 2}, cuts + "",  100, -5, 5,     false,  false,  "eta top",           "Events"));
-        vh.push_back(PHS("t1_eta_"         + pds.second,  {PDCMaker_topProp(pds.first,  0, "eta")},   {1, 2}, cuts + "",  100, -5, 5,     false,  false,  "eta top 1",         "Events"));
-        vh.push_back(PHS("t2_eta_"         + pds.second,  {PDCMaker_topProp(pds.first,  1, "eta")},   {1, 2}, cuts + "",  100, -5, 5,     false,  false,  "eta top 2",         "Events"));
-        vh.push_back(PHS("t3_eta_"         + pds.second,  {PDCMaker_topProp(pds.first,  2, "eta")},   {1, 2}, cuts + "",  100, -5, 5,     false,  false,  "eta top 3",         "Events"));
-        vh.push_back(PHS("t4_eta_"         + pds.second,  {PDCMaker_topProp(pds.first,  3, "eta")},   {1, 2}, cuts + "",  100, -5, 5,     false,  false,  "eta top 4",         "Events"));
+        vh.push_back(PHS("nTops_"          + pds.second,  {PDCMaker_topProp(pds.first, -1, "size")},  {1, 1}, cuts + "",  10,   0, 10,    false,  false,  "N_{T}",             "Events"));
+        vh.push_back(PHS("disc_"           + pds.second,  vPDCMaker_disc(pds.first),                  {1, 1}, cuts + "",   50,  0, 1,     false,  false,  "disc",              "Events"));
+        vh.push_back(PHS("tAll_pt_"        + pds.second,  {PDCMaker_topProp(pds.first, -1, "pt")},    {1, 1}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top [GeV]",   "Events"));
+        vh.push_back(PHS("t1_pt_"          + pds.second,  {PDCMaker_topProp(pds.first,  0, "pt")},    {1, 1}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top 1 [GeV]", "Events"));
+        vh.push_back(PHS("t2_pt_"          + pds.second,  {PDCMaker_topProp(pds.first,  1, "pt")},    {1, 1}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top 2 [GeV]", "Events"));
+        vh.push_back(PHS("t3_pt_"          + pds.second,  {PDCMaker_topProp(pds.first,  2, "pt")},    {1, 1}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top 3 [GeV]", "Events"));
+        vh.push_back(PHS("t4_pt_"          + pds.second,  {PDCMaker_topProp(pds.first,  3, "pt")},    {1, 1}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top 4 [GeV]", "Events"));
+        vh.push_back(PHS("tAll_eta_"       + pds.second,  {PDCMaker_topProp(pds.first, -1, "eta")},   {1, 1}, cuts + "",  100, -5, 5,     false,  false,  "eta top",           "Events"));
+        vh.push_back(PHS("t1_eta_"         + pds.second,  {PDCMaker_topProp(pds.first,  0, "eta")},   {1, 1}, cuts + "",  100, -5, 5,     false,  false,  "eta top 1",         "Events"));
+        vh.push_back(PHS("t2_eta_"         + pds.second,  {PDCMaker_topProp(pds.first,  1, "eta")},   {1, 1}, cuts + "",  100, -5, 5,     false,  false,  "eta top 2",         "Events"));
+        vh.push_back(PHS("t3_eta_"         + pds.second,  {PDCMaker_topProp(pds.first,  2, "eta")},   {1, 1}, cuts + "",  100, -5, 5,     false,  false,  "eta top 3",         "Events"));
+        vh.push_back(PHS("t4_eta_"         + pds.second,  {PDCMaker_topProp(pds.first,  3, "eta")},   {1, 1}, cuts + "",  100, -5, 5,     false,  false,  "eta top 4",         "Events"));
         vh.push_back(PHS("match_nTops_"    + pds.second,  vPDCMaker_topProp(pds.first, -1, "size"),   {1, 1}, cuts + "",  10,   0, 10,    false,  false,  "N_{T}",             "Events"));
         vh.push_back(PHS("match_tAll_pt_"  + pds.second,  vPDCMaker_topProp(pds.first, -1, "pt"),     {1, 1}, cuts + "",  100,  0, 2000,  false,  false,  "p_{T} top [GeV]",   "Events"));
         vh.push_back(PHS("match_tAll_eta_" + pds.second,  vPDCMaker_topProp(pds.first, -1, "eta"),    {1, 1}, cuts + "",  100, -5, 5,     false,  false,  "eta top",           "Events"));
-        vh.push_back(PHS("tops_pt_"        + pds.second,  {PDCMaker_topMultComp(pds.first,  "pt")},   {1, 2}, cuts + "",  100, -5, 2000,  false,  false,  "p_{T} top [GeV]",   "Events"));
-        vh.push_back(PHS("tops_m_"         + pds.second,  {PDCMaker_topMultComp(pds.first,  "M")},    {1, 2}, cuts + "",  100, -5, 500,   false,  false,  "mass top [GeV]",    "Events"));
-        vh.push_back(PHS("tops_eta_"       + pds.second,  {PDCMaker_topMultComp(pds.first,  "eta")},  {1, 2}, cuts + "",  100, -5, 5,     false,  false,  "eta top",           "Events"));
-        vh.push_back(PHS("tops_eta_"       + pds.second,  {PDCMaker_topMultComp(pds.first,  "eta")},  {1, 2}, cuts + "",  100, -5, 5,     false,  false,  "eta top",           "Events"));
-        
-        vh.push_back(PHS("eff_eta_" + pds.second,  vPDCMaker_Eff(pds.first, "eta"),  {1, 1}, cuts + "",  100, -5,    5,     false,  false,  "top eta",          "Efficiency"));
-        vh.push_back(PHS("eff_pt_"  + pds.second,  vPDCMaker_Eff(pds.first, "pt"),   {1, 1}, cuts + "",  100,  0, 2000,     false,  false,  "top pt [GeV]",     "Efficiency"));
-        vh.push_back(PHS("eff_m_"   + pds.second,  vPDCMaker_Eff(pds.first, "M"),    {1, 1}, cuts + "",  100,  0,  500,     false,  false,  "top mass [GeV]",   "Efficiency"));
+        vh.push_back(PHS("tops_pt_"        + pds.second,  {PDCMaker_topMultComp(pds.first,  "pt")},   {1, 1}, cuts + "",  100, -5, 2000,  false,  false,  "p_{T} top [GeV]",   "Events"));
+        vh.push_back(PHS("tops_m_"         + pds.second,  {PDCMaker_topMultComp(pds.first,  "M")},    {1, 1}, cuts + "",  100, -5, 500,   false,  false,  "mass top [GeV]",    "Events"));
+        vh.push_back(PHS("tops_eta_"       + pds.second,  {PDCMaker_topMultComp(pds.first,  "eta")},  {1, 1}, cuts + "",  100, -5, 5,     false,  false,  "eta top",           "Events"));
+        vh.push_back(PHS("tops_eta_"       + pds.second,  {PDCMaker_topMultComp(pds.first,  "eta")},  {1, 1}, cuts + "",  100, -5, 5,     false,  false,  "eta top",           "Events"));
+
+        vh.push_back(PHS("eff_eta_" + pds.second,  vPDCMaker_Eff(pds.first, "eta"),  {1, 1}, cuts + "",   20, -5,    5,     false,  false,  "top eta",          "Efficiency"));
+        vh.push_back(PHS("eff_pt_"  + pds.second,  vPDCMaker_Eff(pds.first, "pt"),   {1, 1}, cuts + "",   20,  0, 1000,     false,  false,  "top pt [GeV]",     "Efficiency"));
+        vh.push_back(PHS("eff_m_"   + pds.second,  vPDCMaker_Eff(pds.first, "M"),    {1, 1}, cuts + "",   20,  0,  500,     false,  false,  "top mass [GeV]",   "Efficiency"));
 
         vh.push_back(PHS("purity_eta_" + pds.second,  vPDCMaker_Purity(pds.first, "eta"),  {1, 1}, cuts + "",  100, -5,    5,     false,  false,  "top eta",          "Purity"));
         vh.push_back(PHS("purity_pt_"  + pds.second,  vPDCMaker_Purity(pds.first, "pt"),   {1, 1}, cuts + "",  100,  0, 2000,     false,  false,  "top pt [GeV]",     "Purity"));

@@ -1516,7 +1516,7 @@ namespace plotterFunctions
     private:
 
         topTagger::type3TopTagger t3tagger;
-        TopTagger *tt, *ttMVA;
+        TopTagger *tt, *ttMVA, *ttAllComb;
         Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
         TopCat topMatcher_;
 
@@ -1525,7 +1525,7 @@ namespace plotterFunctions
             const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVec");
             const std::vector<double>& recoJetsBtag      = tr.getVec<double>("recoJetsBtag_0");
             const std::vector<double>& qgLikelihood      = tr.getVec<double>("qgLikelihood");
-            const std::vector<double>& recoJetsCharge    = tr.getVec<double>("recoJetsCharge_0");
+            //const std::vector<double>& recoJetsCharge    = tr.getVec<double>("recoJetsCharge_0");
 
             const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
             const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
@@ -1545,7 +1545,7 @@ namespace plotterFunctions
 
             std::vector<TLorentzVector> *genTops = new std::vector<TLorentzVector>(genUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
             
-            AnaFunctions::prepareJetsForTagger(jetsLVec, recoJetsBtag, jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood, qgLikelihood_forTagger, recoJetsCharge, recoJetsCharge_forTagger);
+            AnaFunctions::prepareJetsForTagger(jetsLVec, recoJetsBtag, jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood, qgLikelihood_forTagger);
 
             int cntCSVS = AnaFunctions::countCSVS(jetsLVec_forTagger, recoJetsBtag_forTagger, AnaConsts::cutCSVS, AnaConsts::bTagArr);
 
@@ -1554,7 +1554,7 @@ namespace plotterFunctions
 
             std::vector<TLorentzVector> *vTops = new std::vector<TLorentzVector>();
 
-            std::vector<std::vector<TLorentzVector> >* vTopConstituents = new std::vector<std::vector<TLorentzVector> >();;
+            std::vector<std::vector<TLorentzVector> >* vTopConstituents = new std::vector<std::vector<TLorentzVector> >();
             
             for(int it = 0; it < nTops; it++)
             {
@@ -1571,8 +1571,38 @@ namespace plotterFunctions
 
             //New Tagger starts here
             //prep input object (constituent) vector
-            std::vector<Constituent> constituents = ttUtility::packageConstituents(jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood_forTagger, recoJetsCharge_forTagger);
-            //run tagger
+            std::vector<Constituent> constituents = ttUtility::packageConstituents(jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood_forTagger);
+            
+            //run custom tagger to get maximum eff info
+            ttAllComb->runTagger(constituents);
+            //retrieve results
+            const TopTaggerResults& ttrAllComb = ttAllComb->getResults();
+
+            //get matches
+            std::cout << "N cands: " << ttrAllComb.getTopCandidates().size() << std::endl;
+
+            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesAllComb = topMatcher_.TopConst(ttrAllComb.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+
+            std::vector<TLorentzVector> *vTopsAllComb = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *vTopsMatchAllComb = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *vTopsGenMatchAllComb = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *vTopsParMatchAllComb = new std::vector<TLorentzVector>();
+            
+            for(int iTop = 0; iTop < ttrAllComb.getTopCandidates().size(); ++iTop)
+            {
+                vTopsAllComb->emplace_back(ttrAllComb.getTopCandidates()[iTop].p());
+                if(genMatchesAllComb.second.first[iTop] == 3) 
+                {
+                    vTopsMatchAllComb->emplace_back(ttrAllComb.getTopCandidates()[iTop].p());
+                    vTopsGenMatchAllComb->emplace_back(genMatchesAllComb.second.second[iTop]);
+                }
+                if(genMatchesAllComb.second.first[iTop] >= 2)
+                {
+                    vTopsParMatchAllComb->emplace_back(ttrAllComb.getTopCandidates()[iTop].p());
+                } 
+            }
+
+            //run non-MVA tagger
             tt->runTagger(constituents);
             //retrieve results
             const TopTaggerResults& ttr = tt->getResults();
@@ -1593,7 +1623,7 @@ namespace plotterFunctions
                     vTopsMatchNew->emplace_back(ttr.getTops()[iTop]->p());
                     vTopsGenMatchNew->emplace_back(genMatches.second.second[iTop]);
                 }
-                else if(genMatches.second.first[iTop] == 2)
+                if(genMatches.second.first[iTop] >= 2)
                 {
                     vTopsParMatchNew->emplace_back(ttr.getTops()[iTop]->p());
                 } 
@@ -1625,7 +1655,7 @@ namespace plotterFunctions
                     vTopsGenMatchNewMVA->emplace_back(genMatchesMVA.second.second[iTop]);
                     discriminatorsMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 }
-                if(genMatchesMVA.second.first[iTop] == 2)
+                if(genMatchesMVA.second.first[iTop] >= 2)
                 {
                     vTopsParMatchNewMVA->emplace_back(ttrMVA.getTops()[iTop]->p());
                     discriminatorsParMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
@@ -1688,6 +1718,10 @@ namespace plotterFunctions
             tr.registerDerivedVec("vTopsGenMatchNewMVA", vTopsGenMatchNewMVA);
             tr.registerDerivedVec("vTopsParMatchNew", vTopsParMatchNew);
             tr.registerDerivedVec("vTopsParMatchNewMVA", vTopsParMatchNewMVA);
+            tr.registerDerivedVec("vTopsAllComb", vTopsAllComb);
+            tr.registerDerivedVec("vTopsMatchAllComb", vTopsMatchAllComb);
+            tr.registerDerivedVec("vTopsGenMatchAllComb", vTopsGenMatchAllComb);
+            tr.registerDerivedVec("vTopsParMatchAllComb", vTopsParMatchAllComb);
 
             tr.registerDerivedVec("genTops", genTops);
 
@@ -1707,6 +1741,9 @@ namespace plotterFunctions
 
             ttMVA = new TopTagger();
             ttMVA->setCfgFile("TopTagger.cfg");
+
+            ttAllComb = new TopTagger();
+            ttAllComb->setCfgFile("TopTagger_AllComb.cfg");
 	}
 
         ~PrepareTopVars()
