@@ -2066,6 +2066,179 @@ namespace plotterFunctions
         }
     };
 
+    class NJetAk8 {
+     private:
+        void generateNJetAk8(NTupleReader& tr) {
+          const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec"); 
+          const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
+          const int& nJetsAk8 = ak8JetsLVec.size();
+          const int& nJetsPuppi = puppiJetsLVec.size();
+        tr.registerDerivedVar("nJetsAk8", nJetsAk8);
+        tr.registerDerivedVar("nJetsPuppi", nJetsPuppi);
+        }
+     public:
+     NJetAk8(){}
+    ~NJetAk8(){}
+             void operator()(NTupleReader& tr)
+          {
+            generateNJetAk8(tr);
+          }
+        };   
+
+
+     class Taudiv {
+      private:
+          void generateTaudiv(NTupleReader& tr) {
+	    const std::vector<double>& tau1    = tr.getVec<double>("tau1");
+	    const std::vector<double>& tau2    = tr.getVec<double>("tau2");
+	    const std::vector<double>& tau3    = tr.getVec<double>("tau3");
+            const std::vector<double>& puppitau1    = tr.getVec<double>("puppitau1");
+            const std::vector<double>& puppitau2    = tr.getVec<double>("puppitau2");
+            const std::vector<double>& puppitau3    = tr.getVec<double>("puppitau3");
+            const std::vector<double>& softDropMass = tr.getVec<double>("softDropMass");
+            const std::vector<double>& puppisoftDropMass = tr.getVec<double>("puppisoftDropMass");
+            const std::vector<TLorentzVector>& jetsLVec     = tr.getVec<TLorentzVector>("jetsLVec");
+            const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec");
+            const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
+            std::vector<TLorentzVector> *puppiLVecLoose_top = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *puppiLVectight_top = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *puppiLVecLoose_w = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *puppiLVectight_w = new std::vector<TLorentzVector>();
+            const int& nJetsAk8 = tr.getVar<int>("nJetsAk8");
+            const int& nJetsPuppi = tr.getVar<int>("nJetsPuppi");
+            std::vector<double>* tau2Dtau1 = new std::vector<double>();
+            std::vector<double>* tau3Dtau2 = new std::vector<double>();
+            
+            if(tau2.size()!=0 && tau1.size()!=0 && tau2.size()==tau1.size())
+            for(int iJet = 0; iJet < nJetsAk8+1; ++iJet){
+	      tau2Dtau1->push_back(tau2[iJet]/(tau1[iJet]));
+              }
+	    else 
+	      tau2Dtau1->push_back( -1);
+            if(tau2.size()!=0 && tau3.size()!=0 && tau2.size()==tau3.size())
+             for(int iJet = 0; iJet < nJetsAk8+1; ++iJet){
+               tau3Dtau2->push_back(tau3[iJet]/(tau2[iJet]));
+               }
+            else
+              tau3Dtau2->push_back( -1);
+            std::cout << tau3Dtau2 << std::endl;
+	               for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
+            {
+                     if (tau2Dtau1[iJet] < 0.54){
+            std::cout << "OMG! OMG! OMG! What's the STD?" << std::endl;
+            }
+} 
+           //tr.registerDerivedVec("tau2Dtau1", tau2Dtau1);
+            //tr.registerDerivedVec("tau3Dtau2", tau3Dtau2);
+            
+             ///WTagging
+	    
+            // for(int iJet = 0; iJet < nJetsAk8+1; ++iJet){
+            // if(tau2Dtau1[iJet]< 0.6 && puppisoftDropMass[nJetsPuppi] >65 && puppisoftDropMass[nJetsPuppi] > 100){
+            // puppiLVecLoose_w->push_back(puppiJetsLVec[nJetsPuppi]);
+            // }
+            //}
+            //Top 1%
+            if( puppisoftDropMass[nJetsPuppi] >105 && puppisoftDropMass[nJetsPuppi] > 210)
+            {
+            puppiLVecLoose_top->push_back(puppiJetsLVec[nJetsPuppi]);
+             }
+                       tr.registerDerivedVec("tau2Dtau1", tau2Dtau1);
+            tr.registerDerivedVec("tau3Dtau2", tau3Dtau2);
+          }
+	public:
+	  Taudiv() { 
+	    //std::cout << "OMG! OMG! OMG! What's the STD?" << std::endl;
+	  }
+	  ~Taudiv() {}
+	  void operator()(NTupleReader& tr)
+	  {
+	    generateTaudiv(tr);
+	  }       
+	};
+class Ak8DrMatch {
+ private:
+    void generateAk8DrMatch(NTupleReader& tr) {
+        const std::vector<TLorentzVector>& jetsLVec     = tr.getVec<TLorentzVector>("jetsLVec");
+        const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec");
+        const std::vector<double>& tau2Dtau1 = tr.getVec<double>("tau2Dtau1");
+           int nJetsAK41_min =0;
+           int  nJetsAK41_med=0; 
+           int  nJetsAK41_lar=0;
+           int nJetsAK42_min=0;
+           int  nJetsAK42_med=0;
+           int  nJetsAK42_lar=0; 
+            std::vector<double>* ak81dRMin = new std::vector<double>();
+            std::vector<double>* ak82dRMin = new std::vector<double>(); 
+            //double ak81dRMin = 99.9, ak82dRMin = 99.9;
+            //for(auto& jet : jetsLVec)
+            for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
+            {
+                     if (tau2Dtau1[iJet] < 0.54){
+            std::cout << "OMG! OMG! OMG! What's the STD?" << std::endl;
+            }
+                if(ak8JetsLVec.size() >= 1) ak81dRMin-> push_back(ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[0]));
+                if(ak8JetsLVec.size() >= 2) ak82dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[1]));
+                std::sort (ak81dRMin->begin(),ak81dRMin->end());
+                std::sort (ak82dRMin->begin(),ak82dRMin->end());
+            }
+           tr.registerDerivedVec("ak81dRMin", ak81dRMin);
+           tr.registerDerivedVec("ak82dRMin", ak82dRMin);
+          
+          for(int iJet1 = 0; iJet1 < ak81dRMin->size(); ++iJet1)
+            {
+            if(ak81dRMin->at(iJet1) <=0.2) nJetsAK41_min++;
+            if(ak81dRMin->at(iJet1) <=0.4 && ak81dRMin->at(iJet1) > 0.2) nJetsAK41_med++;
+            if(ak81dRMin->at(iJet1) <=0.8 && ak81dRMin->at(iJet1) > 0.4) nJetsAK41_lar++;
+            
+             } 
+          for(int iJet2 = 0; iJet2 < ak82dRMin->size(); ++iJet2)
+            {
+               if(ak82dRMin->at(iJet2) <=0.2) nJetsAK42_min++;
+               if(ak82dRMin->at(iJet2) <=0.4 && ak82dRMin->at(iJet2) > 0.2) nJetsAK42_med++;                         
+               if(ak82dRMin->at(iJet2) <=0.8 && ak82dRMin->at(iJet2) > 0.4) nJetsAK42_lar++;
+   
+           }          
+           tr.registerDerivedVar("nJetsAK41_min",nJetsAK41_min);
+           tr.registerDerivedVar("nJetsAK41_med",nJetsAK41_med);
+           tr.registerDerivedVar("nJetsAK41_lar",nJetsAK41_lar);
+           tr.registerDerivedVar("nJetsAK42_min",nJetsAK42_min);
+           tr.registerDerivedVar("nJetsAK42_med",nJetsAK42_med);
+           tr.registerDerivedVar("nJetsAK42_lar",nJetsAK42_lar);
+           }
+        public:
+          Ak8DrMatch() {
+          }
+          ~Ak8DrMatch() {}
+          void operator()(NTupleReader& tr)
+          {
+            generateAk8DrMatch(tr);
+          }
+        };
+//void ak8DrMatch(NTupleReader& tr)
+//{
+   //int jetdRMatch(const std::vector<TLorentzVector>& ak8JetsLVec, const std::vector<TLorentzVector>& jetsLVec, const double jak8dRMax)
+  // {
+  /*
+       double dRmin = 999.0;
+       int minJMatch = -1;
+
+       const int nJetsak8 = ak8JetsLVec.size();
+
+       for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
+       {
+           double dR = ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[iJet]);
+           if(dR < dRmin)
+           {
+               dRmin = dR;
+               minJMatch = iJet;
+           }
+       }
+       if(dRmin < jak8dRMax) return minJMatch;
+       else                return -1;
+   //}
+   */
+//}
     //void printInterestingEvents(NTupleReader& tr)
     //{
     //    const unsigned int& run   = tr.getVar<unsigned int>("run");
