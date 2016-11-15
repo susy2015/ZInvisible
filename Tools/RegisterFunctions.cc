@@ -8,7 +8,7 @@
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central"});
+    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});//,"bTagSF_EventWeightSimple_Central"});
     //return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
 }
 
@@ -56,6 +56,20 @@ void activateBranches(std::set<std::string>& activeBranches)
     activeBranches.insert("elesisEB");
     activeBranches.insert("elesMiniIso");
     activeBranches.insert("elesCharge");
+    activeBranches.insert("tau1");
+    activeBranches.insert("tau2");
+    activeBranches.insert("tau3");
+    activeBranches.insert("subjetBdisc");
+    activeBranches.insert("puppiJetsLVec");
+    activeBranches.insert("ak8mass");
+    activeBranches.insert("ak8rapidity");
+    activeBranches.insert("softDropMass");
+    activeBranches.insert("prunedMass");
+    activeBranches.insert("slimmedJetsAK8");
+    activeBranches.insert("ak8pt");
+    activeBranches.insert("nJetsAk8");
+    activeBranches.insert("ak82dRMin");
+    activeBranches.insert("ak81dRMin");
 }
 
 ////////////////////////////////
@@ -84,17 +98,22 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     systematicPrep       = new plotterFunctions::SystematicPrep;
     systematicCalc       = new plotterFunctions::SystematicCalc(sbEra);
 
+    taudiv               = new plotterFunctions::Taudiv;
+    nJetAk8              = new plotterFunctions::NJetAk8;
+    ak8DrMatch           = new plotterFunctions::Ak8DrMatch;
     myPDFUnc = new PDFUncertainty();
-    bTagCorrector = nullptr;
+   // bTagCorrector = nullptr;
+/*
     if(isCondor)
     {
-        bTagCorrector = new BTagCorrector("bTagEffHists.root", "", false);
+        bTagCorrector = new BTagCorrector("TTbarNoHad_bTagEff.root", "", false);//"bTagEffHists.root", "", false);
     }
     else
     {
-        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
+        bTagCorrector = new BTagCorrector("TTbarNoHad_bTagEff.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
         //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
     }
+*/
 }
 
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
@@ -118,7 +137,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(myPDFUnc) delete myPDFUnc;
     if(systematicPrep) delete systematicPrep;
     if(systematicCalc) delete systematicCalc;
-    if(bTagCorrector) delete bTagCorrector;
+    //if(bTagCorrector) delete bTagCorrector;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -146,7 +165,10 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*prepareMiniTupleVars);
     //tr.registerFunction(&printInterestingEvents);
     tr.registerFunction(*myPDFUnc);
-    tr.registerFunction(*bTagCorrector);
+    //tr.registerFunction(*bTagCorrector);
+    tr.registerFunction(*nJetAk8);
+    tr.registerFunction(*taudiv);
+    tr.registerFunction(*ak8DrMatch);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
@@ -156,9 +178,10 @@ void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBran
 
 void RegisterFunctionsNTuple::remakeBTagCorrector(std::string sampleName)
 {
-  if(sampleName.find("Data") == std::string::npos){
-    if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
-  }
+  int tjajaja=1;
+ // if(sampleName.find("Data") == std::string::npos){
+   // if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
+ // }
 }
 
 ////////////////////////////////

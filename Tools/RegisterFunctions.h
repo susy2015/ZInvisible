@@ -24,6 +24,9 @@ namespace plotterFunctions
     class SystematicCalc;
     class MetSmear;
     class PrepareTopVars;
+    class Taudiv;
+    class NJetAk8;
+    class Ak8DrMatch; 
 }
 
 class SystWeights;
@@ -65,6 +68,9 @@ private:
     plotterFunctions::SystematicCalc *systematicCalc;
     PDFUncertainty *myPDFUnc;
     BTagCorrector *bTagCorrector;
+    plotterFunctions::Taudiv *taudiv;
+    plotterFunctions::NJetAk8 *nJetAk8;
+    plotterFunctions::Ak8DrMatch *ak8DrMatch;
 
 public:
     RegisterFunctionsNTuple(bool isCondor = false, std::string sbEra = "SB_37_2015");
