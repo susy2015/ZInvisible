@@ -408,14 +408,14 @@ int main(int argc, char* argv[])
        vh.push_back(PHS("nJetsAK41_l0.2"+ cut.first,  PDCMaker12("nJetsAK42_min"),  {1, 1}, cut.second, 7, 0, 7, false, true,  "nJets",   "Events"));
        vh.push_back(PHS("nJetsAK41_b0.20.4"+ cut.first,  PDCMaker12("nJetsAK42_med"),  {1, 1}, cut.second, 7, 0, 7, false, true,  "nJets",   "Events"));
        vh.push_back(PHS("nJetsAK41_b0.40.8"+ cut.first,  PDCMaker12("nJetsAK42_lar"),  {1, 1}, cut.second, 7, 0, 7, false, true,  "nJets",   "Events"));
-       vh.push_back(PHS("puppi_Top_T_PT"+ cut.first,  PDCMaker12("puppiLVectight_top(pt)"),  {1, 1}, cut.second, 20, 0, 400, false, false,  "PT",   "Events"));
+       vh.push_back(PHS("puppi_Top_T_PT"+ cut.first,  PDCMaker12("puppiLVectight_top(pt)"),  {1, 1}, cut.second, 20, 0, 1200, false, true,  "PT",   "Events"));
        vh.push_back(PHS("puppi_Top_T_Num"+ cut.first,  PDCMaker12("puppiLVectight_top(size)"),  {1, 1}, cut.second, 15, 0, 15, false, true,  "nJets",   "Events")); 
-       vh.push_back(PHS("puppi_Top_L_PT"+ cut.first,  PDCMaker12("puppiLVecLoose_top(pt)"),  {1, 1}, cut.second, 20, 0, 400, false, false,  "PT",   "Events"));
+       vh.push_back(PHS("puppi_Top_L_PT"+ cut.first,  PDCMaker12("puppiLVecLoose_top(pt)"),  {1, 1}, cut.second, 20, 0, 1200, false, true,  "PT",   "Events"));
        vh.push_back(PHS("puppi_Top_L_Num"+ cut.first,  PDCMaker12("puppiLVecLoose_top(size)"),  {1, 1}, cut.second, 15, 0, 15, false, true,  "nJets",   "Events"));
-       vh.push_back(PHS("puppi_w_T_PT"+ cut.first,  PDCMaker12("puppiLVectight_w(pt)"),  {1, 1}, cut.second, 50, 0, 1200, false, false,  "PT",   "Events"));
+       vh.push_back(PHS("puppi_w_T_PT"+ cut.first,  PDCMaker12("puppiLVectight_w(pt)"),  {1, 1}, cut.second, 50, 0, 1200, false, true,  "PT",   "Events"));
        vh.push_back(PHS("puppi_w_T_Num"+ cut.first,  PDCMaker12("puppiLVectight_w(size)"),  {1, 1}, cut.second, 15, 0, 15, false, true,  "nJets",   "Events"));
        vh.push_back(PHS("puppi_w_L_Num"+ cut.first,  PDCMaker12("puppiLVecLoose_w(size)"),  {1, 1}, cut.second, 15, 0, 15, false, true,  "nJets",   "Events"));
-       vh.push_back(PHS("puppi_w_L_PT"+ cut.first,  PDCMaker12("puppiLVecLoose_w(pt)"),  {1, 1}, cut.second, 50, 0, 1200, false, false,  "PT",   "Events"));
+       vh.push_back(PHS("puppi_w_L_PT"+ cut.first,  PDCMaker12("puppiLVecLoose_w(pt)"),  {1, 1}, cut.second, 50, 0, 1200, false, true,  "PT",   "Events"));
        vh.push_back(PHS("nJetsPuppi_L_l0.2"+ cut.first,  PDCMaker12("nJetsPuppi_L1_min"),  {1, 1}, cut.second, 7, 0, 7, false, true,  "nJets",   "Events"));
        vh.push_back(PHS("nJetsPuppi_L_.20.4"+ cut.first,  PDCMaker12("nJetsPuppi_L1_med"),  {1, 1}, cut.second, 7, 0, 7, false, true,  "nJets",   "Events"));
        vh.push_back(PHS("nJetsPuppi_L_b0.40.8"+ cut.first,  PDCMaker12("nJetsPuppi_L1_lar"),  {1, 1}, cut.second, 7, 0, 7, false, true,  "nJets",   "Events"));

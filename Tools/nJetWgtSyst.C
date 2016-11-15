@@ -213,6 +213,7 @@ int main()
             plotterFunctions::NJetWeight njWeight;
             plotterFunctions::TriggerInfo triggerInfo(true);
             plotterFunctions::MetSmear metSmear;
+	    
 
             NTupleReader tr(t);
             tr.registerFunction(pmt);

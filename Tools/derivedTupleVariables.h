@@ -2133,26 +2133,26 @@ namespace plotterFunctions
              ///WTagging
 	    for(int tau = 0; tau < (*puppitau2Dtau1).size(); ++tau){
                if ((*puppitau2Dtau1)[tau] < 0.6 && puppisoftDropMass[tau]>65 && puppisoftDropMass[tau]<100){
-                   puppiLVectight_w->push_back(puppiJetsLVec[tau]);  
+                   puppiLVecLoose_w->push_back(puppiJetsLVec[tau]);  
                   //std::cout <<"PT_puupi"<< (*puppiLVectight_w).size()  << std::endl;    // (*puppiLVectight_w)[0].Pt() 
                    }
                } 
             for(int tau = 0; tau < (*puppitau2Dtau1).size(); ++tau){
                if ((*puppitau2Dtau1)[tau] < 0.45 && puppisoftDropMass[tau]>65 && puppisoftDropMass[tau]<100){
-                  puppiLVecLoose_w->push_back(puppiJetsLVec[tau]); 
+                  puppiLVectight_w->push_back(puppiJetsLVec[tau]); 
                    }
                }
              //}
             //Top 1%
              for(int tau = 0; tau < (*puppitau3Dtau2).size(); ++tau){
                  if ((*puppitau3Dtau2)[tau] < 0.54 && puppisoftDropMass[tau]>105 && puppisoftDropMass[tau]<210){
-                    puppiLVecLoose_top->push_back(puppiJetsLVec[tau]);
+                    puppiLVectight_top->push_back(puppiJetsLVec[tau]);
                     }
                  }
 
              for(int tau = 0; tau < (*puppitau3Dtau2).size(); ++tau){
                  if ((*puppitau3Dtau2)[tau] < 0.65 && puppisoftDropMass[tau]>105 && puppisoftDropMass[tau]<210){
-                  puppiLVectight_top->push_back(puppiJetsLVec[tau]);
+                  puppiLVecLoose_top->push_back(puppiJetsLVec[tau]);
                   }
                 }
              tr.registerDerivedVec("puppiLVectight_top", puppiLVectight_top);
