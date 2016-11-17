@@ -2285,73 +2285,74 @@ namespace plotterFunctions
 
 	     // For each tagged top/W, find the corresponding subjets
 	     std::vector< std::vector<TLorentzVector> > W_subjets;
-	     std::vector<double> W_subjets_pt_reldiff;
-	     std::cout << "Starting W subjet checks" << std::endl;
+	     std::vector<double>* W_subjets_pt_reldiff = new std::vector<double>();
 	     for( TLorentzVector myW : puppiLVecLoose_w)
 	     {
-		 std::vector<double> dR_W_subjet;
 		 std::vector<TLorentzVector> myW_subjets;
-		 std::vector<int> myW_subjets_index;
 		 int i = 0;
 		 for(TLorentzVector puppiSubJet : puppiSubJetsLVec)
 		 {
 		     double myDR = ROOT::Math::VectorUtil::DeltaR(myW, puppiSubJet);
-		     dR_W_subjet.push_back(myDR);
 		     if (myDR < 0.8)
 		     {
 			 myW_subjets.push_back(puppiSubJet);
-			 myW_subjets_index.push_back(i);
-			 std::cout << "matched subjet with index " << i << std::endl;
 		     }
 		     ++i;
 		 }
-		 W_subjets.push_back(myW_subjets);
-		 std::cout << "Number of subjets within 0.8: " << myW_subjets.size() << std::endl;
-		 std::sort( dR_W_subjet.begin(), dR_W_subjet.end() );
-		 std::cout << "closest subjets: " << dR_W_subjet[0] << " " << dR_W_subjet[1] << " " << dR_W_subjet[2] << std::endl;
-		 std::cout << "jet info: " << myW.Pt() << " " << myW.Eta() << " " << myW.Phi() << std::endl;
-		 std::cout << "subjet info: " << myW_subjets[0].Pt() << " " << myW_subjets[0].Eta() << " " << myW_subjets[0].Phi() << std::endl;
-		 std::cout << "subjet info: " << myW_subjets[1].Pt() << " " << myW_subjets[1].Eta() << " " << myW_subjets[1].Phi() << std::endl;
-		 TLorentzVector subjet_sum = myW_subjets[0] + myW_subjets[1];
-		 std::cout << "added jet info: " << subjet_sum.Pt() << " " << subjet_sum.Eta() << " " << subjet_sum.Phi() << " " << subjet_sum.M() << std::endl;
-
-		 W_subjets_pt_reldiff.push_back((subjet_sum.Pt()-myW.Pt())/myW.Pt());
+		 // If more than 2 matches, find the best combination of two subjets by checking diff in 4-vector
+		 if (myW_subjets.size() > 2) {
+		     double min_diff = 999999.;
+		     int min_j=0, min_k=1;
+		     for (int j=0 ; j<myW_subjets.size(); ++j)
+		     {
+			 for (int k=j+1; k<myW_subjets.size(); ++k)
+			 {
+			     TLorentzVector diff_LV = myW - myW_subjets[j] - myW_subjets[k];
+			     double diff = abs(diff_LV.M());
+			     if(diff < min_diff)
+			     {
+				 min_diff = diff;
+				 min_j = j;
+				 min_k = k;
+			     }
+			 }
+		     }
+		     std::vector<TLorentzVector> mynewW_subjets = {myW_subjets[min_j], myW_subjets[min_k]};
+		     W_subjets.push_back(mynewW_subjets);
+		     W_subjets_pt_reldiff->push_back( ((myW_subjets[min_j]+myW_subjets[min_k]).Pt()-myW.Pt())/myW.Pt());
+		 } else {
+		     W_subjets.push_back(myW_subjets);
+		     W_subjets_pt_reldiff->push_back( ((myW_subjets[0]+myW_subjets[1]).Pt()-myW.Pt())/myW.Pt());
+		 }
 	     }
+	     tr.registerDerivedVec("W_subjets_pt_reldiff", W_subjets_pt_reldiff);
 
 	     // For each tagged top/W, find the corresponding subjets
-	     //std::vector< std::vector< std::pair<double, TLorentzVector> > > top_subjets;
 	     std::vector< std::vector< TLorentzVector> > top_subjets;
-	     std::vector<double> top_subjets_pt_reldiff;
-	     std::cout << "Starting top subjet checks" << std::endl;
+	     std::vector<double>* top_subjets_pt_reldiff = new std::vector<double>();
 	     for( TLorentzVector mytop : puppiLVecLoose_top)
 	     {
-		 //std::vector<double> dR_top_subjet;
-		 //std::vector<std::pair <double,TLorentzVector> > mytop_subjets;
 		 std::vector<TLorentzVector> mytop_subjets;
 		 int i = 0;
 		 for(TLorentzVector puppiSubJet : puppiSubJetsLVec)
 		 {
 		     double myDR = ROOT::Math::VectorUtil::DeltaR(mytop, puppiSubJet);
-		     //dR_top_subjet.push_back(myDR);
 		     if (myDR < 0.8)
 		     {
-			 //mytop_subjets.push_back(std::make_pair(myDR, puppiSubJet));
 			 mytop_subjets.push_back(puppiSubJet);
-			 std::cout << "matched subjet with index " << i << " and pt, eta, phi, DR: " << puppiSubJet.Pt() << " " << puppiSubJet.Eta() << " " << puppiSubJet.Phi() << " " << myDR << std::endl;
 		     }
 		     ++i;
 		 }
 		 // If more than 2 matches, find the best combination of two subjets
-		 if (mytop_subjets.size() > 2)
-		 {
-		     double min_diff = 99999.;
+		 if (mytop_subjets.size() > 2) {
+		     double min_diff = 999999.;
 		     int min_j=0, min_k=1;
 		     for (int j=0 ; j<mytop_subjets.size(); ++j)
 		     {
 			 for (int k=j+1; k<mytop_subjets.size(); ++k)
 			 {
 			     TLorentzVector diff_LV = mytop - mytop_subjets[j] - mytop_subjets[k];
-			     double diff = diff_LV.M();
+			     double diff = abs(diff_LV.M());
 			     if(diff < min_diff)
 			     {
 				 min_diff = diff;
@@ -2362,29 +2363,21 @@ namespace plotterFunctions
 		     }
 		     std::vector<TLorentzVector> mynewtop_subjets = {mytop_subjets[min_j], mytop_subjets[min_k]};
 		     top_subjets.push_back(mynewtop_subjets);
+		     top_subjets_pt_reldiff->push_back( ((mytop_subjets[min_j]+mytop_subjets[min_k]).Pt()-mytop.Pt())/mytop.Pt());
 		 } else {
 		     top_subjets.push_back(mytop_subjets);
+		     top_subjets_pt_reldiff->push_back( ((mytop_subjets[0]+mytop_subjets[1]).Pt()-mytop.Pt())/mytop.Pt());
 		 }
-		 //std::cout << "Number of subjets within 0.8: " << mytop_subjets.size() << std::endl;
-		 //std::sort( dR_top_subjet.begin(), dR_top_subjet.end() );
-		 //std::sort(mytop_subjets.begin(), mytop_subjets.end(), 
-		 //   [](const std::pair<double,TLorentzVector>& a, const std::pair<double,TLorentzVector>& b){return a.first < b.first;} );
-		 //std::cout << "closest subjets: ";
-		 //for(int j=0; j<mytop_subjets.size(); ++j){
-		 //    std::cout << mytop_subjets[j].first << " ";
-		 // }
-		 //std::cout << std::endl;
-
-		 //std::cout << "jet info: " << mytop.Pt() << " " << mytop.Eta() << " " << mytop.Phi() << std::endl;
-		 //std::cout << "subjet info: " << mytop_subjets[0].second.Pt() << " " << mytop_subjets[0].second.Eta() << " " << mytop_subjets[0].second.Phi() << std::endl;
-		 //std::cout << "subjet info: " << mytop_subjets[1].second.Pt() << " " << mytop_subjets[1].second.Eta() << " " << mytop_subjets[1].second.Phi() << std::endl;
-		 //TLorentzVector subjet_sum = mytop_subjets[0].second + mytop_subjets[1].second;
-		 //std::cout << "added jet info: " << subjet_sum.Pt() << " " << subjet_sum.Eta() << " " << subjet_sum.Phi() << " " << subjet_sum.M() << std::endl;
-
-		 //top_subjets_pt_reldiff.push_back((subjet_sum.Pt()-mytop.Pt())/mytop.Pt());
 	     }
+	     tr.registerDerivedVec("top_subjets_pt_reldiff", top_subjets_pt_reldiff);
 
 	     // Figure out gen matching..
+	     //const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+	     //const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+	     //if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
+	     // {
+		 
+	     //}
 	     
 
 	 }
