@@ -10,6 +10,7 @@
 #include "TTModule.h"
 #include "TopTaggerUtilities.h"
 #include "TopTaggerResults.h"
+#include "TopTagger/Tools/PlotUtility.h"
 
 #include "TH1.h"
 #include "TH2.h"
@@ -2286,7 +2287,7 @@ namespace plotterFunctions
 	     // For each tagged top/W, find the corresponding subjets
 	     std::vector< std::vector<TLorentzVector> > W_subjets;
 	     std::vector<double>* W_subjets_pt_reldiff = new std::vector<double>();
-	     for( TLorentzVector myW : puppiLVecLoose_w)
+	     for( TLorentzVector myW : puppiLVectight_w)
 	     {
 		 std::vector<TLorentzVector> myW_subjets;
 		 int i = 0;
@@ -2330,7 +2331,7 @@ namespace plotterFunctions
 	     // For each tagged top/W, find the corresponding subjets
 	     std::vector< std::vector< TLorentzVector> > top_subjets;
 	     std::vector<double>* top_subjets_pt_reldiff = new std::vector<double>();
-	     for( TLorentzVector mytop : puppiLVecLoose_top)
+	     for( TLorentzVector mytop : puppiLVectight_top)
 	     {
 		 std::vector<TLorentzVector> mytop_subjets;
 		 int i = 0;
@@ -2372,19 +2373,66 @@ namespace plotterFunctions
 	     tr.registerDerivedVec("top_subjets_pt_reldiff", top_subjets_pt_reldiff);
 
 	     // Figure out gen matching..
-	     //const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
-	     //const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
-	     //if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
-	     // {
-		 
-	     //}
-	     
+	     const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+	     const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
+	     const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
+	     const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+
+	     std::vector<bool>* gentop_match = new std::vector<bool>(); // helpful to make plots of matched and unmatched number of tops
+	     if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
+	     {
+		 // For each tagged top, find the matching gen particles
+
+		 // These are the hadronically decaying top quarks in the event:
+		 std::vector<TLorentzVector> hadtopLVec = genUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+		 // check all tagged tops
+		 for(TLorentzVector mytop : puppiLVectight_top) 
+		 {
+		     //std::cout << "Mytop info: " << mytop.Pt() << " " << mytop.Eta() << " " << mytop.Phi() << std::endl;
+		     // For now find the closest hadtop in deltaR
+		     TLorentzVector temp_gentop_match_LV;
+		     double min_DR = 99.;
+		     for(TLorentzVector myhadtop : hadtopLVec)
+		     {
+			 double DR_top = ROOT::Math::VectorUtil::DeltaR(mytop, myhadtop);
+			 if (DR_top < min_DR) 
+			 {
+			     temp_gentop_match_LV = myhadtop;
+			     min_DR = DR_top;
+			 }
+		     }
+		     // DR should be small for it to actually be a match
+		     if(min_DR < 0.4)
+		     {
+			 gentop_match->push_back(true);
+			 // Now find the gen daughters for this gentop
+			 std::vector<TLorentzVector> gentopdauLVec = genUtility::GetTopdauLVec(temp_gentop_match_LV, genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+			 // Now we have the tagged top (mytop), the gen had top (temp_gentop_match_LV), and the gen daughters (gentopdauLVec)
+			 // ready for some matching FUN!
+
+			 // PART 1: Removing AK4 jets based on DR matching with tagged top
+			 // Scarlet to work here
+
+
+
+
+			 // PART 2: Removing AK4 jets based on DR matching with subjets of tagged top
+			 // Nadja to work here
+
+
+
+			 
+		     } else // No match
+		     { 
+			 gentop_match->push_back(false);
+		     }
+
+		 }
+	     }
+	     tr.registerDerivedVec("gentop_match", gentop_match);
 
 	 }
 
-	 //bool mycompare(const std::pair<double, TLorentzVector>& first, const std::pair<double, TLorentzVector>& second){
-	 //    return first.first < second.first;
-	 //}
      public:
 	 Ak8DrMatch() {
 	 }
