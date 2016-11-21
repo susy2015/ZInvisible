@@ -445,6 +445,13 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("top_N_AK4_matched_notgenmatched_0p6",     PDCMaker_boost("top_N_AK4_matched_notgenmatched_0p6"),     {1, 1}, "", 10, 0, 10, false, false,  "N_AK4",   "Entries"));
     vh.push_back(PHS("top_N_AK4_notmatched_genmatched_0p6",     PDCMaker_boost("top_N_AK4_notmatched_genmatched_0p6"),     {1, 1}, "", 10, 0, 10, false, false,  "N_AK4",   "Entries"));
     vh.push_back(PHS("top_N_AK4_notmatched_notgenmatched_0p6",  PDCMaker_boost("top_N_AK4_notmatched_notgenmatched_0p6"),  {1, 1}, "", 10, 0, 10, false, false,  "N_AK4",   "Entries"));
+
+    vh.push_back(PHS("top_N_AK4_matched_genmatchedother",        PDCMaker_boost("top_N_AK4_matched_genmatchedother"),        {1, 1}, "", 10, 0, 10, false, false,  "N_AK4",   "Entries"));
+    vh.push_back(PHS("top_N_AK4_matched_notgenmatchedother",     PDCMaker_boost("top_N_AK4_matched_notgenmatchedother"),     {1, 1}, "", 10, 0, 10, false, false,  "N_AK4",   "Entries"));
+    vh.push_back(PHS("top_N_AK4_matched_genmatchedother_0p6",        PDCMaker_boost("top_N_AK4_matched_genmatchedother_0p6"),        {1, 1}, "", 10, 0, 10, false, false,  "N_AK4",   "Entries"));
+    vh.push_back(PHS("top_N_AK4_matched_notgenmatchedother_0p6",     PDCMaker_boost("top_N_AK4_matched_notgenmatchedother_0p6"),     {1, 1}, "", 10, 0, 10, false, false,  "N_AK4",   "Entries"));
+
+
     vh.push_back(PHS("dR_top_gentop",  PDCMaker_boost("dR_top_gentop"),  {1, 1}, "", 50, 0, 5, true, false,  "#DeltaR(top, gentop)",   "Entries"));
     vh.push_back(PHS("dR_AK4_topsubjet_genmatched",  PDCMaker_boost("dR_AK4_topsubjet_genmatched"),  {1, 1}, "", 50, 0, 5, true, false,  "min #DeltaR(AK4, subjet)",   "Entries"));
     vh.push_back(PHS("dR_AK4_top_genmatched",  PDCMaker_boost("dR_AK4_top_genmatched"),  {1, 1}, "", 50, 0, 5, true, false,  "#DeltaR(AK4, top)",   "Entries"));
