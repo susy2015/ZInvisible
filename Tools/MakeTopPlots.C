@@ -166,7 +166,24 @@ int main(int argc, char* argv[])
     auto vPDCMaker_disc    = [&](Plotter::DatasetSummary& pds)
     {
         return std::vector<Plotter::DataCollection>( { Plotter::DataCollection( "single", {{"discriminators", pds}}),
-                    Plotter::DataCollection( "stack",  {{"discriminatorsParMatch", PDSLabelBind(pds, "2 jet match")}, {"discriminatorsMatch", PDSLabelBind(pds, "3 jet match")} }),
+                    Plotter::DataCollection( "fill",  {{"discriminatorsParMatch", PDSLabelBind(pds, "2 + 3 jet match")}, {"discriminatorsMatch", PDSLabelBind(pds, "3 jet match")} }),
+                    } );
+    };
+    auto vPDCMaker_disc2    = [&](Plotter::DatasetSummary& pds)
+    {
+        return std::vector<Plotter::DataCollection>( { Plotter::DataCollection( "single", {{"discriminators", pds}}),
+                                                        Plotter::DataCollection( "fill",  {{"discriminatorsNoMatch", PDSLabelBind(pds, "Not matched")}, {"discriminatorsMatch", PDSLabelBind(pds, "Matched")} }),
+                    } );
+    };
+    auto vPDCMaker_disc3    = [&](Plotter::DatasetSummary& pds)
+    {
+        return std::vector<Plotter::DataCollection>( { Plotter::DataCollection( "single", {{"discriminators", pds}}),
+                                                        Plotter::DataCollection( "fill",  {{"discriminatorsParNoMatch", PDSLabelBind(pds, "Not matched")}, {"discriminatorsParMatch", PDSLabelBind(pds, "Matched")} }),
+                    } );
+    };
+    auto vPDCMaker_disc4    = [&](Plotter::DatasetSummary& pds)
+    {
+        return std::vector<Plotter::DataCollection>( { Plotter::DataCollection( "single", {{"discriminatorsMatch", PDSLabelBind(pds, "3 match")}, {"discriminatorsMatch2", PDSLabelBind(pds, "2 match")}, {"discriminatorsMatch1", PDSLabelBind(pds, "1 match")}, {"discriminatorsMatch0", PDSLabelBind(pds, "0 match")}}),
                     } );
     };
     auto PDCMaker_topProp = [&](Plotter::DatasetSummary& pds, int iTop = 0, std::string var = "pt")
@@ -212,14 +229,17 @@ int main(int argc, char* argv[])
     };
 
     std::string cuts = "passLeptVeto;passBJets;passnJets;passMET";
-    vh.push_back(PHS("nTops",    {PDCMaker("nTops")},       {1, 2}, cuts,  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
-    vh.push_back(PHS("nTopsNew", {PDCMaker("nTopsNewMVA")}, {1, 2}, cuts,  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
+    vh.push_back(PHS("nTops",    {PDCMaker("nTops")},       {1, 1}, cuts,  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
+    vh.push_back(PHS("nTopsNew", {PDCMaker("nTopsNewMVA")}, {1, 1}, cuts,  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
 
     std::vector<std::pair<PDS, std::string>> pdsVec = {{ds_T1tttt, "T1tttt_1"}, {ds_T1tttt_2, "T1tttt_2"}, {ds_T2tt, "T2tt"}, {ds_T2tt_2, "T2tt_2"}, {ds_Znunu, "Znunu"}, {ds_ttbar, "ttbar"}, {ds_ttbar1l, "ttbar1l"}};
     for(auto& pds : pdsVec)
     {
         vh.push_back(PHS("nTops_"          + pds.second,  {PDCMaker_topProp(pds.first, -1, "size")},  {1, 1}, cuts + "",  10,   0, 10,    false,  false,  "N_{T}",             "Events"));
         vh.push_back(PHS("disc_"           + pds.second,  vPDCMaker_disc(pds.first),                  {1, 1}, cuts + "",   50,  0, 1,     false,  false,  "disc",              "Events"));
+        vh.push_back(PHS("disc_3match_"    + pds.second,  vPDCMaker_disc2(pds.first),                 {1, 1}, cuts + "",   50,  0, 1,     false,  false,  "disc",              "Events"));
+        vh.push_back(PHS("disc_2_3match_"  + pds.second,  vPDCMaker_disc3(pds.first),                 {1, 1}, cuts + "",   50,  0, 1,     false,  false,  "disc",              "Events"));
+        vh.push_back(PHS("disc_byCatagory" + pds.second,  vPDCMaker_disc4(pds.first),                 {1, 1}, cuts + "",   50,  0, 1,     false,  true,   "disc",              "Norm Events"));
         vh.push_back(PHS("tAll_pt_"        + pds.second,  {PDCMaker_topProp(pds.first, -1, "pt")},    {1, 1}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top [GeV]",   "Events"));
         vh.push_back(PHS("t1_pt_"          + pds.second,  {PDCMaker_topProp(pds.first,  0, "pt")},    {1, 1}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top 1 [GeV]", "Events"));
         vh.push_back(PHS("t2_pt_"          + pds.second,  {PDCMaker_topProp(pds.first,  1, "pt")},    {1, 1}, cuts + "",   50,  0, 2000,  false,  false,  "p_{T} top 2 [GeV]", "Events"));
@@ -253,22 +273,22 @@ int main(int argc, char* argv[])
 
     vh.push_back(PHS("met", {PDCMaker("met")}, {1, 2}, "",  100, 0, 1000,  true,  true,  "MET [GeV]", "Norm Events"));
 
-    vh.push_back(PHS("topMass1", {PDCMaker("vTops[0](M)")}, {1, 2}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass2", {PDCMaker("vTops[1](M)")}, {1, 2}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass3", {PDCMaker("vTops[2](M)")}, {1, 2}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass4", {PDCMaker("vTops[3](M)")}, {1, 2}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass1", {PDCMaker("vTops[0](M)")}, {1, 1}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass2", {PDCMaker("vTops[1](M)")}, {1, 1}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass3", {PDCMaker("vTops[2](M)")}, {1, 1}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass4", {PDCMaker("vTops[3](M)")}, {1, 1}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
 
-    vh.push_back(PHS("topMassAllNew", {PDCMaker("vTopsNewMVA(M)")},    {1, 2}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass1New",   {PDCMaker("vTopsNewMVA[0](M)")}, {1, 2}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass2New",   {PDCMaker("vTopsNewMVA[1](M)")}, {1, 2}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass3New",   {PDCMaker("vTopsNewMVA[2](M)")}, {1, 2}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
-    vh.push_back(PHS("topMass4New",   {PDCMaker("vTopsNewMVA[3](M)")}, {1, 2}, cuts,  100, 0, 500,  true,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMassAllNew", {PDCMaker("vTopsNewMVA(M)")},    {1, 1}, cuts,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass1New",   {PDCMaker("vTopsNewMVA[0](M)")}, {1, 1}, cuts,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass2New",   {PDCMaker("vTopsNewMVA[1](M)")}, {1, 1}, cuts,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass3New",   {PDCMaker("vTopsNewMVA[2](M)")}, {1, 1}, cuts,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+    vh.push_back(PHS("topMass4New",   {PDCMaker("vTopsNewMVA[3](M)")}, {1, 1}, cuts,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
 
-    vh.push_back(PHS("topPtAllNew", {PDCMaker("vTopsNewMVA(pt)")},    {1, 2}, cuts,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
-    vh.push_back(PHS("topPt1New",   {PDCMaker("vTopsNewMVA[0](pt)")}, {1, 2}, cuts,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
-    vh.push_back(PHS("topPt2New",   {PDCMaker("vTopsNewMVA[1](pt)")}, {1, 2}, cuts,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
-    vh.push_back(PHS("topPt3New",   {PDCMaker("vTopsNewMVA[2](pt)")}, {1, 2}, cuts,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
-    vh.push_back(PHS("topPt4New",   {PDCMaker("vTopsNewMVA[3](pt)")}, {1, 2}, cuts,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("topPtAllNew", {PDCMaker("vTopsNewMVA(pt)")},    {1, 1}, cuts,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("topPt1New",   {PDCMaker("vTopsNewMVA[0](pt)")}, {1, 1}, cuts,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("topPt2New",   {PDCMaker("vTopsNewMVA[1](pt)")}, {1, 1}, cuts,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("topPt3New",   {PDCMaker("vTopsNewMVA[2](pt)")}, {1, 1}, cuts,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+    vh.push_back(PHS("topPt4New",   {PDCMaker("vTopsNewMVA[3](pt)")}, {1, 1}, cuts,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
 
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
@@ -284,4 +304,6 @@ int main(int argc, char* argv[])
     plotter.read();
     if(doSave && fromTuple)  plotter.saveHists();
     if(doPlots)              plotter.plot();
+
+    if(!runOnCondor) throw "NOT ACTAULLY AN ERROR";
 }

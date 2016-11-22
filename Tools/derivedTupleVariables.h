@@ -1525,7 +1525,6 @@ namespace plotterFunctions
             const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVec");
             const std::vector<double>& recoJetsBtag      = tr.getVec<double>("recoJetsBtag_0");
             const std::vector<double>& qgLikelihood      = tr.getVec<double>("qgLikelihood");
-            //const std::vector<double>& recoJetsCharge    = tr.getVec<double>("recoJetsCharge_0");
 
             const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
             const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
@@ -1579,8 +1578,6 @@ namespace plotterFunctions
             const TopTaggerResults& ttrAllComb = ttAllComb->getResults();
 
             //get matches
-            std::cout << "N cands: " << ttrAllComb.getTopCandidates().size() << std::endl;
-
             std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesAllComb = topMatcher_.TopConst(ttrAllComb.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
 
             std::vector<TLorentzVector> *vTopsAllComb = new std::vector<TLorentzVector>();
@@ -1636,6 +1633,7 @@ namespace plotterFunctions
             const TopTaggerResults& ttrMVA = ttMVA->getResults();
 
             std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVA = topMatcher_.TopConst(ttrMVA.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVACand = topMatcher_.TopConst(ttrMVA.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
 
             std::vector<TLorentzVector> *vTopsNewMVA = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsMatchNewMVA = new std::vector<TLorentzVector>();
@@ -1643,10 +1641,75 @@ namespace plotterFunctions
             std::vector<TLorentzVector> *vTopsParMatchNewMVA = new std::vector<TLorentzVector>();
             std::vector<double>* discriminators = new std::vector<double>();
             std::vector<double>* discriminatorsMatch = new std::vector<double>();
+            std::vector<double>* discriminatorsMatch2 = new std::vector<double>();
+            std::vector<double>* discriminatorsMatch1 = new std::vector<double>();
+            std::vector<double>* discriminatorsMatch0 = new std::vector<double>();
             std::vector<double>* discriminatorsParMatch = new std::vector<double>();
+            std::vector<double>* discriminatorsNoMatch = new std::vector<double>();
+            std::vector<double>* discriminatorsParNoMatch = new std::vector<double>();
+
+            auto sortFunc = [](const TopObject& t1, const TopObject& t2)
+            {
+                int nb1 = t1.getNBConstituents(0.800);
+                int nb2 = t2.getNBConstituents(0.800);
+                if     (nb1 == 1 && nb2 == 0) return true;
+                else if(nb1 == 0 && nb2 == 1) return false;
+                else if(nb1 < nb2)            return true;
+                else if(nb1 > nb2)            return false;
+
+                if(t1.getDiscriminator() > t2.getDiscriminator()) return true;
+
+                return false;
+            };
+            auto sortFunc2 = [](const TopObject& t1, const TopObject& t2)
+            {
+                if(t1.getGenTopMatch() > t2.getGenTopMatch()) return true;
+                else if(t1.getGenTopMatch() < t2.getGenTopMatch()) return false;
+                
+
+                if(t1.getGenDaughterMatch() > t2.getGenDaughterMatch()) return true;
+
+                return false;
+            };
+            std::vector<TopObject> topMVACands = ttrMVA.getTopCandidates();
+            for(int iTop = 0; iTop < topMVACands.size(); ++iTop)
+            {
+                auto& top = topMVACands[iTop];
+                top.setGenTopMatch(genMatchesMVACand.first[iTop]);
+                top.setGenDaughterMatch(genMatchesMVACand.second.first[iTop]);
+            }
+            std::sort(topMVACands.begin(), topMVACands.end(), sortFunc2);
+
+            int count = 0;
+            std::map<const Constituent*, int> theMap;
+            for(int iTop = 0; iTop < topMVACands.size(); ++iTop)
+            {
+                auto& top = topMVACands[iTop];
+                if(top.getDiscriminator() < 0.5) continue; 
+                std::cout << top.getDiscriminator() << "\t" << top.getNBConstituents(0.800) << "\t" << top.p().Pt() << "\t" << top.p().M() << "\t" << top.getDRmax() << "\t\t" << top.getGenTopMatch() << "\t"<< top.getGenDaughterMatch() << "\t";
+
+                for(auto& constituent : top.getConstituents())
+                {
+                    if(theMap.find(constituent) == theMap.end())
+                    {
+                        theMap[constituent] = count++;
+                    }
+                    std::cout << "\t" << theMap[constituent]/* << "\t" << constituent->p().Eta() << "\t" << constituent->p().Phi()*/ << "\t" << constituent->getQGLikelihood();
+                }
+                std::cout << std::endl;
+            }
+            std::cout << std::endl;
 
             for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
             {
+                auto& top = *ttrMVA.getTops()[iTop];
+                std::cout << top.getDiscriminator() << "\t" << top.getNBConstituents(0.800) << "\t" << top.p().Pt() << "\t" << top.p().M() << "\t\t" << genMatchesMVA.first[iTop] << "\t" << genMatchesMVA.second.first[iTop] << "\t";
+                for(auto& constituent : top.getConstituents())
+                {
+                    std::cout << "\t" << theMap[constituent];// << "\t" << constituent->p().Eta() << "\t" << constituent->p().Phi();
+                }
+                std::cout << std::endl;
+
                 vTopsNewMVA->emplace_back(ttrMVA.getTops()[iTop]->p());
                 discriminators->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 if(genMatchesMVA.second.first[iTop] == 3)
@@ -1655,12 +1718,26 @@ namespace plotterFunctions
                     vTopsGenMatchNewMVA->emplace_back(genMatchesMVA.second.second[iTop]);
                     discriminatorsMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 }
+                else
+                {
+                    discriminatorsNoMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
+                }
                 if(genMatchesMVA.second.first[iTop] >= 2)
                 {
                     vTopsParMatchNewMVA->emplace_back(ttrMVA.getTops()[iTop]->p());
                     discriminatorsParMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 }
+                else
+                {
+                    discriminatorsParNoMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
+                }
+                if(genMatchesMVA.second.first[iTop] == 2) discriminatorsMatch2->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
+                if(genMatchesMVA.second.first[iTop] == 1) discriminatorsMatch1->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
+                if(genMatchesMVA.second.first[iTop] == 0) discriminatorsMatch0->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
             }
+            std::cout << std::endl;
+            std::cout << "==================================================================================================" << std::endl;
+            std::cout << std::endl;
 
             // Calculate number of leptons
             std::string muonsFlagIDLabel = "muonsFlagMedium";
@@ -1728,6 +1805,11 @@ namespace plotterFunctions
             tr.registerDerivedVec("discriminators", discriminators);
             tr.registerDerivedVec("discriminatorsMatch", discriminatorsMatch);
             tr.registerDerivedVec("discriminatorsParMatch", discriminatorsParMatch);
+            tr.registerDerivedVec("discriminatorsMatch2", discriminatorsMatch2);
+            tr.registerDerivedVec("discriminatorsMatch1", discriminatorsMatch1);
+            tr.registerDerivedVec("discriminatorsMatch0", discriminatorsMatch0);
+            tr.registerDerivedVec("discriminatorsNoMatch", discriminatorsNoMatch);
+            tr.registerDerivedVec("discriminatorsParNoMatch", discriminatorsParNoMatch);
         }
 
     public:
