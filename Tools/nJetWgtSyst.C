@@ -20,26 +20,28 @@ void GetnTops(NTupleReader& tr)
         int nTops = tr.getVar<int>("nTopCandSortedCntZinv");
         std::vector<TLorentzVector> *vTops = new std::vector<TLorentzVector>();
 
-        for(int it=0; it<nTops; it++)
-        {
-            TLorentzVector topLVec = type3Ptr->buildLVec(tr.getVec<TLorentzVector>("jetsLVec_forTaggerZinv"),
-                                                         type3Ptr->finalCombfatJets[type3Ptr->ori_pickedTopCandSortedVec[it]]);
-            vTops->push_back(topLVec);
-        }
+        throw "FIX ME WITH NEW TAGGER";
 
-        auto& mt2inputs = type3Ptr->had_brJetLVecMap;
-        std::vector<TLorentzVector> *vMT2Inputs = new std::vector<TLorentzVector>();
-        if(vTops->size())
-        {
-            vMT2Inputs->push_back(vTops->at(0));
-        }
-        if(!mt2inputs.empty())
-        {
-            vMT2Inputs->push_back(mt2inputs.begin()->second);
-        }
-
-        tr.registerDerivedVec("vTops", vTops);
-        tr.registerDerivedVec("vMT2Inputs", vMT2Inputs);
+        //for(int it=0; it<nTops; it++)
+        //{
+        //    TLorentzVector topLVec = type3Ptr->buildLVec(tr.getVec<TLorentzVector>("jetsLVec_forTaggerZinv"),
+        //                                                 type3Ptr->finalCombfatJets[type3Ptr->ori_pickedTopCandSortedVec[it]]);
+        //    vTops->push_back(topLVec);
+        //}
+        //
+        //auto& mt2inputs = type3Ptr->had_brJetLVecMap;
+        //std::vector<TLorentzVector> *vMT2Inputs = new std::vector<TLorentzVector>();
+        //if(vTops->size())
+        //{
+        //    vMT2Inputs->push_back(vTops->at(0));
+        //}
+        //if(!mt2inputs.empty())
+        //{
+        //    vMT2Inputs->push_back(mt2inputs.begin()->second);
+        //}
+        //
+        //tr.registerDerivedVec("vTops", vTops);
+        //tr.registerDerivedVec("vMT2Inputs", vMT2Inputs);
     }
     catch(const std::string e)
     {
@@ -191,7 +193,7 @@ int main()
     TH2* h2D_Gaus = new TH2D("hMT2vMET_Gaus", "h2D_Gaus;MET;MT2", 200, 0, 2000, 200, 0, 2000);
     TH2* h2D_Logi = new TH2D("hMT2vMET_Logi", "h2D_Logi;MET;MT2", 200, 0, 2000, 200, 0, 2000);
 
-    AnaFunctions::prepareTopTagger();
+    //AnaFunctions::prepareTopTagger();
 
     try
     {

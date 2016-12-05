@@ -76,17 +76,17 @@ void activateBranches(std::set<std::string>& activeBranches)
 
 RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra) : RegisterFunctions()
 {            
-    AnaFunctions::prepareTopTagger();
+    //AnaFunctions::prepareTopTagger();
 
-    myBLV     = new BaselineVessel("", "");
-    blvZinv   = new BaselineVessel("Zinv");
-    blvZinv1b = new BaselineVessel("Zinv1b");
-    blvZinv2b = new BaselineVessel("Zinv2b");
-    blvZinv3b = new BaselineVessel("Zinv3b");
-    blvZinvJEUUp = new BaselineVessel("ZinvJEUUp");
-    blvZinvJEUDn = new BaselineVessel("ZinvJEUDn");
-    blvZinvMEUUp = new BaselineVessel("ZinvMEUUp");
-    blvZinvMEUDn = new BaselineVessel("ZinvMEUDn");
+    myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
+    blvZinv   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    blvZinv1b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv1b");
+    blvZinv2b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv2b");
+    blvZinv3b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv3b");
+    blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
+    blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
+    blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
+    blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
 
     weights              = new plotterFunctions::GenerateWeight;
     njWeight             = new plotterFunctions::NJetWeight;
@@ -188,7 +188,7 @@ void RegisterFunctionsNTuple::remakeBTagCorrector(std::string sampleName)
 
 RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()
 {            
-    AnaFunctions::prepareTopTagger();
+    //AnaFunctions::prepareTopTagger();
 
     njWeight             = new plotterFunctions::NJetWeight;
     triggerInfo          = new plotterFunctions::TriggerInfo(true);
@@ -223,9 +223,9 @@ void RegisterFunctionsMiniTuple::activateBranches(std::set<std::string>& activeB
 
 RegisterFunctionsCalcEff::RegisterFunctionsCalcEff() : RegisterFunctions()
 {
-    AnaFunctions::prepareTopTagger();
+    //AnaFunctions::prepareTopTagger();
 
-    myBLV     = new BaselineVessel;
+    myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
     lepInfo   = new plotterFunctions::LepInfo;
 }
 

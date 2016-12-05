@@ -455,28 +455,6 @@ void Plotter::createHistsFromTuple()
                         }
                     }
 
-                    //ugly event print for 1l search
-                    //if(file.isData_)
-                    //{
-                    //    const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
-                    //    const bool& passMuZinvSel            = tr.getVar<bool>("passMuZinvSel");
-                    //    const bool& passnJetsZinv            = tr.getVar<bool>("passnJetsZinv");
-                    //    const bool& passdPhisZinv            = tr.getVar<bool>("passdPhisZinv");
-                    //    const double& HTZinv                 = tr.getVar<double>("HTZinv");
-                    //
-                    //    // Recreation of loose0 cut level 
-                    //    bool passLoose0 = passNoiseEventFilterZinv && passMuZinvSel && (HTZinv > 200) && passnJetsZinv && passdPhisZinv;
-                    //
-                    //    if(passLoose0)
-                    //    {
-                    //        const unsigned int& run   = tr.getVar<unsigned int>("run");
-                    //        const unsigned int& lumi  = tr.getVar<unsigned int>("lumi");
-                    //        const unsigned int& event = tr.getVar<unsigned int>("event");
-                    //
-                    //        std::cout << "FORHANNSJORG " << run << ":" << lumi << ":" << event << std::endl;
-                    //    }
-                    //}
-
                     //If maxEvents_ is set, stop after so many events
                     if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;
                     if(tr.getEvtNum() % printInterval_ == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
@@ -529,7 +507,10 @@ void Plotter::createHistsFromTuple()
             {
                 std::cout << e << std::endl;
             }
+            t->Reset();
+            delete t;
             f->Close();
+            delete f;
         }
 
         if(foutTuple_ && tOut && mtm)
@@ -845,7 +826,8 @@ void Plotter::plot()
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", hvec.hcsVec.front()->label.c_str(), integral);
                     else                      sprintf(legEntry, "%s (%0.2e)",  hvec.hcsVec.front()->label.c_str(), integral);
                     leg->AddEntry(hvec.hcsVec.front()->h, legEntry, "PE");
-                    if(hist.isNorm) hvec.hcsVec.front()->h->Scale(hist.fhist()->Integral()/hvec.hcsVec.front()->h->Integral());
+                    //if(hist.isNorm) hvec.hcsVec.front()->h->Scale(hist.fhist()->Integral()/hvec.hcsVec.front()->h->Integral());
+                    if(hist.isNorm) hvec.hcsVec.front()->h->Scale(1.0/hvec.hcsVec.front()->h->Integral());
                     smartMax(hvec.hcsVec.front()->h, leg, static_cast<TPad*>(gPad), min, max, lmax, true);
 
                     hvec.h = static_cast<TNamed*>(hvec.hcsVec.front()->h->Clone());
@@ -871,7 +853,8 @@ void Plotter::plot()
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", h->label.c_str(), integral);
                     else                      sprintf(legEntry, "%s (%0.2e)",  h->label.c_str(), integral);
                     leg->AddEntry(h->h, legEntry, drawOptions.c_str());
-                    if(hist.isNorm) h->h->Scale(hist.fhist()->Integral()/h->h->Integral());
+                    //if(hist.isNorm) h->h->Scale(hist.fhist()->Integral()/h->h->Integral());
+                    if(hist.isNorm) h->h->Scale(1.0/h->h->Integral());
                     smartMax(h->h, leg, static_cast<TPad*>(gPad), min, max, lmax);
                     minAvgWgt = std::min(minAvgWgt, h->h->GetSumOfWeights()/h->h->GetEntries());
                 }
@@ -885,7 +868,7 @@ void Plotter::plot()
                 ++iRatio;
                 hvec.h = static_cast<TNamed*>(hratio);
                 ++hIter;
-                if(hist.isNorm) hratio->Scale((*hIter)->h->Integral()/hratio->Integral());
+                //if(hist.isNorm) hratio->Scale((*hIter)->h->Integral()/hratio->Integral());
                 hratio->Divide((*hIter)->h);
                 leg->AddEntry(hratio, hvec.flabel().c_str());
                 smartMax(hratio, leg, static_cast<TPad*>(gPad), min, max, lmax);

@@ -1537,6 +1537,14 @@ namespace plotterFunctions
             const double& met    = tr.getVar<double>("met");
             const double& metphi = tr.getVar<double>("metphi");
             
+            //AK8 variables 
+            const std::vector<double>& puppitau1    = tr.getVec<double>("puppitau1");
+            const std::vector<double>& puppitau2    = tr.getVec<double>("puppitau2");
+            const std::vector<double>& puppitau3    = tr.getVec<double>("puppitau3");
+            const std::vector<double>& puppisoftDropMass = tr.getVec<double>("puppisoftDropMass");
+            const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
+            const std::vector<TLorentzVector>& puppiSubJetsLVec  = tr.getVec<TLorentzVector>("puppiSubJetsLVec");
+
             TLorentzVector metLVec;
             metLVec.SetPtEtaPhiM(met, 0, metphi, 0);
 
@@ -1545,7 +1553,12 @@ namespace plotterFunctions
             std::vector<double> qgLikelihood_forTagger;
             std::vector<double> recoJetsCharge_forTagger;
 
-            std::vector<TLorentzVector> *genTops = new std::vector<TLorentzVector>(genUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
+            std::vector<TLorentzVector> *genTops;
+            if(&genDecayLVec != nullptr)
+            {
+                genTops = new std::vector<TLorentzVector>(genUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
+            }
+            else genTops = new std::vector<TLorentzVector>();
             
             AnaFunctions::prepareJetsForTagger(jetsLVec, recoJetsBtag, jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood, qgLikelihood_forTagger);
 
@@ -1572,16 +1585,61 @@ namespace plotterFunctions
             }
 
             //New Tagger starts here
-            //prep input object (constituent) vector
-            std::vector<Constituent> constituents = ttUtility::packageConstituents(jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood_forTagger);
-            
-            //run custom tagger to get maximum eff info
-            ttAllComb->runTagger(constituents);
+            std::vector<TLorentzVector> hadGenTops;
+            std::vector<std::vector<const TLorentzVector*>> hadGenTopDaughters;
+            std::vector<Constituent> constituents;
+            std::vector<Constituent> constituentsMVA;
+            if(&genDecayLVec != nullptr)
+            {
+                //prep input object (constituent) vector
+                hadGenTops = ttUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+                for(const auto& top : hadGenTops)
+                {
+                    hadGenTopDaughters.push_back(ttUtility::GetTopdauLVec(top, genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
+                }
+                ttUtility::ConstAK4Inputs myConstAK4Inputs = ttUtility::ConstAK4Inputs(jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood_forTagger, hadGenTops, hadGenTopDaughters);
+                ttUtility::ConstAK8Inputs myConstAK8Inputs = ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec, hadGenTops, hadGenTopDaughters);
+                
+                constituents = ttUtility::packageConstituents(myConstAK4Inputs);
+
+                //run custom tagger to get maximum eff info
+                ttAllComb->runTagger(constituents);
+
+                //run new tagger
+                tt->runTagger(constituents);
+
+                //New MVA resolved Tagger starts here
+                constituentsMVA = ttUtility::packageConstituents(myConstAK4Inputs, myConstAK8Inputs);
+                //run tagger
+                ttMVA->runTagger(constituentsMVA);
+            }
+            else
+            {
+                //prep input object (constituent) vector
+                ttUtility::ConstAK4Inputs myConstAK4Inputs = ttUtility::ConstAK4Inputs(jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood_forTagger);
+                ttUtility::ConstAK8Inputs myConstAK8Inputs = ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec);
+                
+                constituents = ttUtility::packageConstituents(myConstAK4Inputs);
+
+                //run custom tagger to get maximum eff info
+                ttAllComb->runTagger(constituents);
+
+                //run new tagger
+                tt->runTagger(constituents);
+
+                //New MVA resolved Tagger starts here
+                constituentsMVA = ttUtility::packageConstituents(myConstAK4Inputs, myConstAK8Inputs);
+                //run tagger
+                ttMVA->runTagger(constituentsMVA);
+            }
+
+
             //retrieve results
             const TopTaggerResults& ttrAllComb = ttAllComb->getResults();
 
             //get matches
-            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesAllComb = topMatcher_.TopConst(ttrAllComb.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesAllComb;
+            if(&genDecayLVec != nullptr) genMatchesAllComb = topMatcher_.TopConst(ttrAllComb.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
 
             std::vector<TLorentzVector> *vTopsAllComb = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsMatchAllComb = new std::vector<TLorentzVector>();
@@ -1602,50 +1660,55 @@ namespace plotterFunctions
                 } 
             }
 
-            //New Tagger starts here
-            //prep input object (constituent) vector
-	    ttUtility::ConstAK4Inputs myConstAK4Inputs = ttUtility::ConstAK4Inputs(jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood);
-            std::vector<Constituent> constituents = ttUtility::packageConstituents(myConstAK4Inputs);
-            //run tagger
-            tt->runTagger(constituents);
             //retrieve results
             const TopTaggerResults& ttr = tt->getResults();
 
             //get matches
-            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatches = topMatcher_.TopConst(ttr.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatches;
+            if(&genDecayLVec != nullptr) genMatches = topMatcher_.TopConst(ttr.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
 
             std::vector<TLorentzVector> *vTopsNew = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsMatchNew = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsGenMatchNew = new std::vector<TLorentzVector>();
+
             std::vector<TLorentzVector> *vTopsParMatchNew = new std::vector<TLorentzVector>();
             
             for(int iTop = 0; iTop < ttr.getTops().size(); ++iTop)
             {
                 vTopsNew->emplace_back(ttr.getTops()[iTop]->p());
-                if(genMatches.second.first[iTop] == 3) 
+                //if(genMatches.second.first[iTop] == 3) 
+                //if(genMatches.first[iTop])
+                const auto* genMatch = ttr.getTops()[iTop]->getBestGenTopMatch(0.6);
+                if(genMatch)
                 {
-                    vTopsMatchNew->emplace_back(ttr.getTops()[iTop]->p());
+                    vTopsMatchNew->emplace_back(*genMatch);
                     vTopsGenMatchNew->emplace_back(genMatches.second.second[iTop]);
                 }
-                if(genMatches.second.first[iTop] >= 2)
+                if(genMatches.second.first.size() && genMatches.second.first[iTop] >= 2)
                 {
                     vTopsParMatchNew->emplace_back(ttr.getTops()[iTop]->p());
                 } 
             }
 
-            //New MVA resolved Tagger starts here
-            //run tagger
-            ttMVA->runTagger(constituents);
             //retrieve results
             const TopTaggerResults& ttrMVA = ttMVA->getResults();
 
-            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVA = topMatcher_.TopConst(ttrMVA.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
-            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVACand = topMatcher_.TopConst(ttrMVA.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVA;
+            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVACand;
+            if(&genDecayLVec != nullptr)
+            {
+                genMatchesMVA = topMatcher_.TopConst(ttrMVA.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+                genMatchesMVACand = topMatcher_.TopConst(ttrMVA.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+            }
 
             std::vector<TLorentzVector> *vTopsNewMVA = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsMatchNewMVA = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsGenMatchNewMVA = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *vTopsGenMatchMonoNewMVA = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *vTopsGenMatchDiNewMVA = new std::vector<TLorentzVector>();
+            std::vector<TLorentzVector> *vTopsGenMatchTriNewMVA = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsParMatchNewMVA = new std::vector<TLorentzVector>();
+            std::vector<int> *vTopsNCandNewMVA = new std::vector<int>();
             std::vector<double>* discriminators = new std::vector<double>();
             std::vector<double>* discriminatorsMatch = new std::vector<double>();
             std::vector<double>* discriminatorsMatch2 = new std::vector<double>();
@@ -1670,65 +1733,62 @@ namespace plotterFunctions
             };
             auto sortFunc2 = [](const TopObject& t1, const TopObject& t2)
             {
-                if(t1.getGenTopMatch() > t2.getGenTopMatch()) return true;
-                else if(t1.getGenTopMatch() < t2.getGenTopMatch()) return false;
-                
-                if(t1.getGenDaughterMatch() > t2.getGenDaughterMatch()) return true;
+                //if(t1.getGenTopMatch() > t2.getGenTopMatch()) return true;
+                //else if(t1.getGenTopMatch() < t2.getGenTopMatch()) return false;
+                //
+                //if(t1.getGenDaughterMatch() > t2.getGenDaughterMatch()) return true;
 
                 return false;
             };
             std::vector<TopObject> topMVACands = ttrMVA.getTopCandidates();
-            for(int iTop = 0; iTop < topMVACands.size(); ++iTop)
-            {
-                auto& top = topMVACands[iTop];
-                top.setGenTopMatch(genMatchesMVACand.first[iTop]);
-                top.setGenDaughterMatch(genMatchesMVACand.second.first[iTop]);
-            }
-            std::sort(topMVACands.begin(), topMVACands.end(), sortFunc2);
 
             int count = 0;
             std::map<const Constituent*, int> theMap;
             for(int iTop = 0; iTop < topMVACands.size(); ++iTop)
             {
                 auto& top = topMVACands[iTop];
-                if(top.getDiscriminator() < 0.5) continue; 
-                std::cout << top.getDiscriminator() << "\t" << top.getNBConstituents(0.800) << "\t" << top.p().Pt() << "\t" << top.p().M() << "\t" << top.getDRmax() << "\t\t" << top.getGenTopMatch() << "\t"<< top.getGenDaughterMatch() << "\t";
-
-                for(auto& constituent : top.getConstituents())
-                {
-                    if(theMap.find(constituent) == theMap.end())
-                    {
-                        theMap[constituent] = count++;
-                    }
-                    std::cout << "\t" << theMap[constituent]/* << "\t" << constituent->p().Eta() << "\t" << constituent->p().Phi()*/ << "\t" << constituent->getQGLikelihood();
-                }
-                std::cout << std::endl;
+                if(top.getNConstituents() == 3 && top.getDiscriminator() < 0.5) continue; 
             }
-            std::cout << std::endl;
+
+            //get tuple variaables 
+            auto MVAvars = ttUtility::getMVAVars();
+            std::vector<std::pair<std::string, std::vector<double>*>> mvaVars;
+            for(auto& var : MVAvars)
+            {
+                mvaVars.emplace_back(var, new std::vector<double>);
+            }
 
             for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
             {
                 auto& top = *ttrMVA.getTops()[iTop];
-                std::cout << top.getDiscriminator() << "\t" << top.getNBConstituents(0.800) << "\t" << top.p().Pt() << "\t" << top.p().M() << "\t\t" << genMatchesMVA.first[iTop] << "\t" << genMatchesMVA.second.first[iTop] << "\t";
-                for(auto& constituent : top.getConstituents())
-                {
-                    std::cout << "\t" << theMap[constituent];// << "\t" << constituent->p().Eta() << "\t" << constituent->p().Phi();
-                }
-                std::cout << std::endl;
+                vTopsNCandNewMVA->push_back(top.getNConstituents());
 
-                vTopsNewMVA->emplace_back(ttrMVA.getTops()[iTop]->p());
-                discriminators->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
-                if(genMatchesMVA.second.first[iTop] == 3)
+                auto MVAinputs = ttUtility::createMVAInputs(top);
+                for(auto& vec : mvaVars)
                 {
-                    vTopsMatchNewMVA->emplace_back(ttrMVA.getTops()[iTop]->p());
-                    vTopsGenMatchNewMVA->emplace_back(genMatchesMVA.second.second[iTop]);
-                    discriminatorsMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
+                    vec.second->push_back(MVAinputs[vec.first]);
+                }
+
+                vTopsNewMVA->emplace_back(top.p());
+                discriminators->push_back(top.getDiscriminator());
+                //if(genMatchesMVA.second.first[iTop] == 3)
+                //if(genMatchesMVA.first[iTop])
+                const TLorentzVector* genMatch = top.getBestGenTopMatch(0.6);
+                if(genMatch)
+                {
+                    vTopsMatchNewMVA->emplace_back(top.p());
+                    vTopsGenMatchNewMVA->emplace_back(*genMatch);
+                    discriminatorsMatch->push_back(top.getDiscriminator());
+
+                    if(top.getNConstituents() == 1)      vTopsGenMatchMonoNewMVA->emplace_back(*genMatch);
+                    else if(top.getNConstituents() == 2) vTopsGenMatchDiNewMVA->emplace_back(*genMatch);
+                    else if(top.getNConstituents() == 3) vTopsGenMatchTriNewMVA->emplace_back(*genMatch);
                 }
                 else
                 {
                     discriminatorsNoMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 }
-                if(genMatchesMVA.second.first[iTop] >= 2)
+                if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] >= 2)
                 {
                     vTopsParMatchNewMVA->emplace_back(ttrMVA.getTops()[iTop]->p());
                     discriminatorsParMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
@@ -1737,13 +1797,10 @@ namespace plotterFunctions
                 {
                     discriminatorsParNoMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 }
-                if(genMatchesMVA.second.first[iTop] == 2) discriminatorsMatch2->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
-                if(genMatchesMVA.second.first[iTop] == 1) discriminatorsMatch1->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
-                if(genMatchesMVA.second.first[iTop] == 0) discriminatorsMatch0->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
+                if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 2) discriminatorsMatch2->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
+                if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 1) discriminatorsMatch1->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
+                if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 0) discriminatorsMatch0->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
             }
-            std::cout << std::endl;
-            std::cout << "==================================================================================================" << std::endl;
-            std::cout << std::endl;
 
             // Calculate number of leptons
             std::string muonsFlagIDLabel = "muonsFlagMedium";
@@ -1775,6 +1832,11 @@ namespace plotterFunctions
             // Pass the baseline MET requirement?
             bool passMET = (metLVec.Pt() >= AnaConsts::defaultMETcut);
 
+            for(auto& vec : mvaVars)
+            {
+                tr.registerDerivedVec("MVAvartop_" + vec.first, vec.second);
+            }
+
             tr.registerDerivedVar("passnJets", passnJets);
             tr.registerDerivedVar("passBJets", passBJets);
             tr.registerDerivedVar("passMET", passMET);
@@ -1799,8 +1861,12 @@ namespace plotterFunctions
             tr.registerDerivedVec("vTopsMatchNewMVA", vTopsMatchNewMVA);
             tr.registerDerivedVec("vTopsGenMatchNew", vTopsGenMatchNew);
             tr.registerDerivedVec("vTopsGenMatchNewMVA", vTopsGenMatchNewMVA);
+            tr.registerDerivedVec("vTopsGenMatchMonoNewMVA", vTopsGenMatchMonoNewMVA);
+            tr.registerDerivedVec("vTopsGenMatchDiNewMVA", vTopsGenMatchDiNewMVA);
+            tr.registerDerivedVec("vTopsGenMatchTriNewMVA", vTopsGenMatchTriNewMVA);
             tr.registerDerivedVec("vTopsParMatchNew", vTopsParMatchNew);
             tr.registerDerivedVec("vTopsParMatchNewMVA", vTopsParMatchNewMVA);
+            tr.registerDerivedVec("vTopsNCandNewMVA", vTopsNCandNewMVA);
             tr.registerDerivedVec("vTopsAllComb", vTopsAllComb);
             tr.registerDerivedVec("vTopsMatchAllComb", vTopsMatchAllComb);
             tr.registerDerivedVec("vTopsGenMatchAllComb", vTopsGenMatchAllComb);
@@ -1930,14 +1996,14 @@ namespace plotterFunctions
             TLorentzVector metLVec_Logi;
             metLVec_Logi.SetPtEtaPhiM(met_logi_1, 0, metphi, 0);
             
-            type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Logi);
-            double MT2_Logi = type3Ptr->best_had_brJet_MT2;
+            //type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Logi);
+            double MT2_Logi = 0.0;//type3Ptr->best_had_brJet_MT2;
 
             TLorentzVector metLVec_Gaus;
             metLVec_Gaus.SetPtEtaPhiM(met_gaus_30, 0, metphi, 0);
             
-            type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Gaus); 
-            double MT2_Gaus = type3Ptr->best_had_brJet_MT2;
+            //type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Gaus); 
+            double MT2_Gaus = 0.0;//type3Ptr->best_had_brJet_MT2;
 
             tr.registerDerivedVar("mt2_logi_1",  MT2_Logi);
             tr.registerDerivedVar("mt2_gaus_30", MT2_Gaus);

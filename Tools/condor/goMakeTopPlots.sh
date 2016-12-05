@@ -15,7 +15,7 @@ ls -lh
 
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${_CONDOR_SCRATCH_DIR}
 
-./makeTopPlots -s --condor -D $1 -N $3 -M $4
+./makeTopPlots -s --condor -D $1 -N $3 -M $4 -L $5
 
 ls -lh
 
