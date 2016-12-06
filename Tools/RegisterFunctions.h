@@ -137,6 +137,8 @@ class RegisterFunctionsTopStudy : public RegisterFunctions
 {
 private:
     plotterFunctions::PrepareTopVars *prepareTopVars;
+    plotterFunctions::Taudiv *taudiv;
+    plotterFunctions::Ak8DrMatch *ak8DrMatch;
 public:
     RegisterFunctionsTopStudy();
     ~RegisterFunctionsTopStudy();
