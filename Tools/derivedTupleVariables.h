@@ -1518,6 +1518,7 @@ namespace plotterFunctions
     {
     private:
 
+        int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
         topTagger::type3TopTagger t3tagger;
         TopTagger *tt, *ttMVA, *ttAllComb;
         Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
@@ -1742,20 +1743,27 @@ namespace plotterFunctions
             };
             std::vector<TopObject> topMVACands = ttrMVA.getTopCandidates();
 
+            //get tuple variaables 
+            auto MVAvars = ttUtility::getMVAVars();
+            std::vector<std::pair<std::string, std::vector<double>*>> mvaVars;
+            std::vector<std::pair<std::string, std::vector<double>*>> mvaCandVars;
+            for(auto& var : MVAvars)
+            {
+                mvaVars.emplace_back(var, new std::vector<double>);
+                mvaCandVars.emplace_back(var, new std::vector<double>);
+            }
+
             int count = 0;
             std::map<const Constituent*, int> theMap;
             for(int iTop = 0; iTop < topMVACands.size(); ++iTop)
             {
                 auto& top = topMVACands[iTop];
-                if(top.getNConstituents() == 3 && top.getDiscriminator() < 0.5) continue; 
-            }
-
-            //get tuple variaables 
-            auto MVAvars = ttUtility::getMVAVars();
-            std::vector<std::pair<std::string, std::vector<double>*>> mvaVars;
-            for(auto& var : MVAvars)
-            {
-                mvaVars.emplace_back(var, new std::vector<double>);
+                
+                auto MVAinputs = ttUtility::createMVAInputs(top);
+                for(auto& vec : mvaCandVars)
+                {
+                    vec.second->push_back(MVAinputs[vec.first]);
+                }
             }
 
             for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
@@ -1808,6 +1816,8 @@ namespace plotterFunctions
             const std::vector<int> & muonsFlagIDVec = muonsFlagIDLabel.empty()? std::vector<int>(tr.getVec<double>("muonsMiniIso").size(), 1):tr.getVec<int>(muonsFlagIDLabel.c_str());
             const std::vector<int> & elesFlagIDVec = elesFlagIDLabel.empty()? std::vector<int>(tr.getVec<double>("elesMiniIso").size(), 1):tr.getVec<int>(elesFlagIDLabel.c_str());
             int nMuons = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
+            const AnaConsts::IsoAccRec muonsMiniIsoArr20GeV = {   -1,       2.4,      20,     -1,       0.2,     -1  };
+            int nMuons_20GeV = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
             int nElectrons = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesMiniIso"), tr.getVec<double>("elesMtw"), tr.getVec<unsigned int>("elesisEB"), elesFlagIDVec, AnaConsts::elesMiniIsoArr);
             int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
 
@@ -1837,10 +1847,19 @@ namespace plotterFunctions
                 tr.registerDerivedVec("MVAvartop_" + vec.first, vec.second);
             }
 
+            for(auto& vec : mvaCandVars)
+            {
+                tr.registerDerivedVec("MVAvarcand_" + vec.first, vec.second);
+            }
+
+            //get one mu of 20 GeV pt
+            tr.registerDerivedVar("passSingleLep", nMuons_20GeV == 1);
+
             tr.registerDerivedVar("passnJets", passnJets);
             tr.registerDerivedVar("passBJets", passBJets);
             tr.registerDerivedVar("passMET", passMET);
             tr.registerDerivedVar("passLeptVeto", passLeptVeto);
+            tr.registerDerivedVar("passLeptVetoNoMu", passEleVeto && passIsoTrkVeto);
 
             tr.registerDerivedVar("nbjets", cntCSVSAna);
             tr.registerDerivedVar("cntNJetsPt50Eta24", cntNJetsPt50Eta24);
@@ -1884,6 +1903,69 @@ namespace plotterFunctions
             tr.registerDerivedVec("discriminatorsParNoMatch", discriminatorsParNoMatch);
         }
 
+        void triggerInfo(NTupleReader& tr)
+        {
+            const std::vector<std::string>& triggerNames = tr.getVec<std::string>("TriggerNames");
+            const std::vector<int>& passTrigger          = tr.getVec<int>("PassTrigger");
+
+            bool passMuTrigger = false;
+            bool passElecTrigger = false;
+            bool passHTMHTTrigger = false;
+            bool passMuHTTrigger = false;
+
+            const std::string muTrigName = "HLT_Mu45_eta2p1_v";
+            const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
+            const std::string htmhtTrigName = "HLT_PFMET110_PFMHT110_IDTight_v";
+            const std::string muHTTrigName = "HLT_Mu15_IsoVVVL_PFHT350_v";
+
+            // Find the index of our triggers if we don't know them already
+            if(indexMuTrigger == -1 || indexElecTrigger == -1 || indexHTMHTTrigger == -1 || indexMuHTTrigger == -1)
+            {
+                for(int i = 0; i < triggerNames.size(); ++i)
+                {
+                    if(triggerNames[i].find(muTrigName) != std::string::npos)
+                    {
+                        indexMuTrigger = i;
+                    }
+                    else if(triggerNames[i].find(elecTrigName) != std::string::npos)
+                    {
+                        indexElecTrigger = i;
+                    }
+                    else if(triggerNames[i].find(htmhtTrigName) != std::string::npos)
+                    {
+                        indexHTMHTTrigger = i;
+                    }
+                    else if(triggerNames[i].find(muHTTrigName) != std::string::npos)
+                    {
+                        indexMuHTTrigger = i;
+                    }
+                }
+            }
+            if(indexMuTrigger != -1 && indexElecTrigger != -1)
+            {
+                // Check if the event passes the trigger, and double check that we are looking at the right trigger
+                if(triggerNames[indexMuTrigger].find(muTrigName) != std::string::npos && passTrigger[indexMuTrigger])
+                    passMuTrigger = true;
+                if(triggerNames[indexElecTrigger].find(elecTrigName) != std::string::npos && passTrigger[indexElecTrigger])
+                    passElecTrigger = true;
+                if(triggerNames[indexHTMHTTrigger].find(htmhtTrigName) != std::string::npos && passTrigger[indexHTMHTTrigger])
+                    passHTMHTTrigger = true;
+                if(triggerNames[indexMuHTTrigger].find(muHTTrigName) != std::string::npos && passTrigger[indexMuHTTrigger])
+                    passMuHTTrigger = true;
+            }
+            else
+            {
+                std::cout << "Could not find trigger in the list of trigger names" << std::endl;
+            }
+
+            tr.registerDerivedVar("passMuTrigger",passMuTrigger);
+            tr.registerDerivedVar("passElecTrigger",passElecTrigger);
+            tr.registerDerivedVar("passHTMHTTrigger",passHTMHTTrigger);
+            tr.registerDerivedVar("passMuHTTrigger", passMuHTTrigger);
+            tr.registerDerivedVar("passMuHTorHTMHTTrigger", passHTMHTTrigger || passMuHTTrigger);
+        }
+
+
     public:
         PrepareTopVars() : tt(nullptr)
 	{
@@ -1898,6 +1980,8 @@ namespace plotterFunctions
 
             ttAllComb = new TopTagger();
             ttAllComb->setCfgFile("TopTagger_AllComb.cfg");
+
+            indexMuTrigger = indexElecTrigger = indexHTMHTTrigger = indexMuHTTrigger = -1;
 	}
 
         ~PrepareTopVars()
@@ -1907,7 +1991,8 @@ namespace plotterFunctions
 
 	void operator()(NTupleReader& tr)
 	{
-	    prepareTopVars(tr);
+            triggerInfo(tr);
+            prepareTopVars(tr);
 	}
 
     };
