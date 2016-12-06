@@ -126,8 +126,8 @@ int main(int argc, char* argv[])
         fileMap["Signal_T2tt_mStop850_mLSP100"] = sc["Signal_T2tt_mStop850_mLSP100"];
         fileMap["Signal_T1tttt_mGluino1200_mLSP800"] = sc["Signal_T1tttt_mGluino1200_mLSP800"];
         fileMap["Signal_T1tttt_mGluino1500_mLSP100"] = sc["Signal_T1tttt_mGluino1500_mLSP100"];
-        fileMap["Data_SingleMuon"] = {ss["Data_SingleMuon_2016"]};
-        fileMap["Data_HTMHT"] = {ss["Data_HTMHT_2016"]};
+        fileMap["Data_SingleMuon_Run2016G"] = {ss["Data_SingleMuon_Run2016G"]};
+        fileMap["Data_MET_Run2016G"] = {ss["Data_MET_Run2016G"]};
         fileMap["WJetsToLNu"] = {ss["WJetsToLNu_HT_800to1200"]};
     }
     else
@@ -162,9 +162,9 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary ds_T1tttt(  "T1tttt (1200, 800)", fileMap["Signal_T1tttt_mGluino1200_mLSP800"], "", "");
     Plotter::DatasetSummary ds_T1tttt_2("T1tttt (1500, 100)", fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "", "");
 
-    Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",          "");
+    Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon_Run2016G"], "passMuTrigger",          "");
     Plotter::DatasetSummary dsData_DoubleEG(  "Data",       fileMap["Data_DoubleEG"],   "passElecTrigger",        "");
-    Plotter::DatasetSummary dsData_HTMHT(     "Data",       fileMap["Data_HTMHT"],      "passMuHTorHTMHTTrigger", "");
+    Plotter::DatasetSummary dsData_HTMHT(     "Data",       fileMap["Data_MET_Run2016G"],      "passMuHTorHTMHTTrigger", "");
     Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "",                "");
     Plotter::DatasetSummary dsWj(             "W+Jets",     fileMap["WJetsToLNu"],      "",                "");
     Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "");
@@ -276,11 +276,10 @@ int main(int argc, char* argv[])
     
     //std::vector<std::pair<std::string, std::string>> cutslistData = {{"SingleMu_baseline", "passSingleLep;passLeptVetoNoMu;passBJets;passnJets;passMET;HT>300"}, {"SingleMu_lowMet", "passSingleLep;passLeptVetoNoMu;passBJets;passnJets;!passMET;met>150;HT>300"}};
     std::vector<std::pair<std::string, std::string>> cutslistData_1l = {
-        {"DoubleMu_baseline", "passSingleLep;passLeptVetoNoMu;passBJets;passnJets;passMET;HT>300"}, 
-        {"DoubleMu_lowMet",   "passSingleLep;passLeptVetoNoMu;passBJets;passnJets;!passMET;met>150;HT>300"},
-        {"DoubleMu_nJetMet",  "passSingleLep;passLeptVetoNoMu;passnJets;met>150"},
+        {"SingleMu_baseline", "passNoiseEventFilter;passSingleLep;passLeptVetoNoMu;passBJets;passnJets;passMET;HT>300"}, 
+        {"SingleMu_lowMet",   "passNoiseEventFilter;passSingleLep;passLeptVetoNoMu;passBJets;passnJets;!passMET;met>150;HT>300"},
+        {"SingleMu_nJetMet",  "passNoiseEventFilter;passSingleLep;passLeptVetoNoMu;passnJets;met>150"},
     };
-
 
     for(auto& cuts : cutslistData_1l)
     {
@@ -312,9 +311,9 @@ int main(int argc, char* argv[])
     }
 
     std::vector<std::pair<std::string, std::string>> cutslistData_2l = {
-        {"SingleMu_baseline", "passSingleLep;passLeptVetoNoMu;passBJets;passnJets;passMET"}, 
-        {"SingleMu_lowMet",   "passSingleLep;passLeptVetoNoMu;passBJets;passnJets;!passMET"},
-        {"SingleMu_nJet",     "passSingleLep;passLeptVetoNoMu;passnJets"},
+        {"DoubleMu_baseline", "passNoiseEventFilter;passDoubleLep;passLeptVetoNoMu;passBJets;passnJets;passMET"}, 
+        {"DoubleMu_lowMet",   "passNoiseEventFilter;passDoubleLep;passLeptVetoNoMu;passBJets;passnJets;!passMET"},
+        {"DoubleMu_nJet",     "passNoiseEventFilter;passDoubleLep;passLeptVetoNoMu;passnJets"},
     };
 
     for(auto& cuts : cutslistData_2l)
