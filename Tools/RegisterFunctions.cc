@@ -314,6 +314,8 @@ RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
 void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
 {
     tr.registerFunction(*prepareTopVars);
+    tr.registerFunction(*taudiv);
+    tr.registerFunction(*ak8DrMatch);
 }
 
 /////////////////////////////////
