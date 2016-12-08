@@ -309,14 +309,14 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMC_TopProp_" + cuts.first + "_" + "pt",            vPDCMaker_DataMC_1l("vTopsNewMVA(pt)"),    {1, 2}, cuts.second + "",  50,   0, 1000,     true,  false,  "pt [GeV]",      "Events"));
         vh.push_back(PHS("DataMC_TopProp_" + cuts.first + "_" + "eta",           vPDCMaker_DataMC_1l("vTopsNewMVA(eta)"),   {1, 2}, cuts.second + "",  50,  -3,    3,    false,  false,  "#eta",          "Events"));
         vh.push_back(PHS("DataMC_TopProp_" + cuts.first + "_" + "discriminator", vPDCMaker_DataMC_1l("discriminators"),     {1, 2}, cuts.second + "",  50,   0,    1,    false,  false,  "discriminator", "Events"));
-   vh.push_back(PHS("puppi_Top_T_PT"+ cuts.first + "_" + "pt",   vPDCMaker_DataMC_2l("puppiLVectight_top(pt)"),  {1, 2}, cuts.second + "", 20, 0, 1200, true, false,  "top p_{T} [GeV]",   "Events"));
-       vh.push_back(PHS("puppi_Top_T_Num"+ cuts.first + "_" + "nTops",  vPDCMaker_DataMC_2l("puppiLVectight_top(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, false,  "N_{t}",   "Events"));
-       vh.push_back(PHS("puppi_Top_L_PT"+ cuts.first + "_" + "pt", vPDCMaker_DataMC_2l("puppiLVecLoose_top(pt)"),  {1, 2}, cuts.second + "", 20, 0, 1200, true, false,  "top p_{T} [GeV]",   "Events"));
-       vh.push_back(PHS("puppi_Top_L_Num"+ cuts.first + "_" + "nTops",  vPDCMaker_DataMC_2l("puppiLVecLoose_top(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, false,  "N_{t}",   "Events"));
-       vh.push_back(PHS("puppi_w_T_PT"+ cuts.first + "_" + "nW",  vPDCMaker_DataMC_2l("puppiLVectight_w(pt)"),  {1, 2}, cuts.second + "", 50, 0, 1200, true, true,  "W p_{T} [GeV]",   "Events"));
-       vh.push_back(PHS("puppi_w_T_Num"+ cuts.first + "_" + "nTops", vPDCMaker_DataMC_2l("puppiLVectight_w(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, true,  "N_{W}",   "Events"));
-       vh.push_back(PHS("puppi_w_L_Num"+ cuts.first + "_" + "nTops", vPDCMaker_DataMC_2l("puppiLVecLoose_w(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, true,  "N_{W}",   "Events"));
-       vh.push_back(PHS("puppi_w_L_PT"+ cuts.first + "_" + "nW",  vPDCMaker_DataMC_2l("puppiLVecLoose_w(pt)"),  {1, 2}, cuts.second + "", 50, 0, 1200, true, true,  "W p_{T} [GeV]",   "Events"));
+   vh.push_back(PHS("puppi_Top_T_PT"+ cuts.first + "_" + "pt",   vPDCMaker_DataMC_1l("puppiLVectight_top(pt)"),  {1, 2}, cuts.second + "", 20, 0, 1200, true, false,  "top p_{T} [GeV]",   "Events"));
+       vh.push_back(PHS("puppi_Top_T_Num"+ cuts.first + "_" + "nTops",  vPDCMaker_DataMC_1l("puppiLVectight_top(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, false,  "N_{t}",   "Events"));
+       vh.push_back(PHS("puppi_Top_L_PT"+ cuts.first + "_" + "pt", vPDCMaker_DataMC_1l("puppiLVecLoose_top(pt)"),  {1, 2}, cuts.second + "", 20, 0, 1200, true, false,  "top p_{T} [GeV]",   "Events"));
+       vh.push_back(PHS("puppi_Top_L_Num"+ cuts.first + "_" + "nTops",  vPDCMaker_DataMC_1l("puppiLVecLoose_top(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, false,  "N_{t}",   "Events"));
+       vh.push_back(PHS("puppi_w_T_PT"+ cuts.first + "_" + "PT",  vPDCMaker_DataMC_1l("puppiLVectight_w(pt)"),  {1, 2}, cuts.second + "", 50, 0, 1200, true, true,  "W p_{T} [GeV]",   "Events"));
+       vh.push_back(PHS("puppi_w_T_Num"+ cuts.first + "_" + "nW", vPDCMaker_DataMC_1l("puppiLVectight_w(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, true,  "N_{W}",   "Events"));
+       vh.push_back(PHS("puppi_w_L_Num"+ cuts.first + "_" + "nW", vPDCMaker_DataMC_1l("puppiLVecLoose_w(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, true,  "N_{W}",   "Events"));
+       vh.push_back(PHS("puppi_w_L_PT"+ cuts.first + "_" + "PT",  vPDCMaker_DataMC_1l("puppiLVecLoose_w(pt)"),  {1, 2}, cuts.second + "", 50, 0, 1200, true, true,  "W p_{T} [GeV]",   "Events"));
     }
 
 
@@ -360,10 +360,10 @@ int main(int argc, char* argv[])
        vh.push_back(PHS("puppi_Top_T_Num"+ cuts.first + "_" + "nTops",  vPDCMaker_DataMC_2l("puppiLVectight_top(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, false,  "N_{t}",   "Events")); 
        vh.push_back(PHS("puppi_Top_L_PT"+ cuts.first + "_" + "pt", vPDCMaker_DataMC_2l("puppiLVecLoose_top(pt)"),  {1, 2}, cuts.second + "", 20, 0, 1200, true, false,  "top p_{T} [GeV]",   "Events"));
        vh.push_back(PHS("puppi_Top_L_Num"+ cuts.first + "_" + "nTops",  vPDCMaker_DataMC_2l("puppiLVecLoose_top(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, false,  "N_{t}",   "Events"));
-       vh.push_back(PHS("puppi_w_T_PT"+ cuts.first + "_" + "nW",  vPDCMaker_DataMC_2l("puppiLVectight_w(pt)"),  {1, 2}, cuts.second + "", 50, 0, 1200, true, true,  "W p_{T} [GeV]",   "Events"));
-       vh.push_back(PHS("puppi_w_T_Num"+ cuts.first + "_" + "nTops", vPDCMaker_DataMC_2l("puppiLVectight_w(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, true,  "N_{W}",   "Events"));
-       vh.push_back(PHS("puppi_w_L_Num"+ cuts.first + "_" + "nTops", vPDCMaker_DataMC_2l("puppiLVecLoose_w(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, true,  "N_{W}",   "Events"));
-       vh.push_back(PHS("puppi_w_L_PT"+ cuts.first + "_" + "nW",  vPDCMaker_DataMC_2l("puppiLVecLoose_w(pt)"),  {1, 2}, cuts.second + "", 50, 0, 1200, true, true,  "W p_{T} [GeV]",   "Events")); 
+       vh.push_back(PHS("puppi_w_T_PT"+ cuts.first + "_" + "pt",  vPDCMaker_DataMC_2l("puppiLVectight_w(pt)"),  {1, 2}, cuts.second + "", 50, 0, 1200, true, true,  "W p_{T} [GeV]",   "Events"));
+       vh.push_back(PHS("puppi_w_T_Num"+ cuts.first + "_" + "nW", vPDCMaker_DataMC_2l("puppiLVectight_w(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, true,  "N_{W}",   "Events"));
+       vh.push_back(PHS("puppi_w_L_Num"+ cuts.first + "_" + "nW", vPDCMaker_DataMC_2l("puppiLVecLoose_w(size)"),  {1, 2}, cuts.second + "", 5, 0, 5, false, true,  "N_{W}",   "Events"));
+       vh.push_back(PHS("puppi_w_L_PT"+ cuts.first + "_" + "pt",  vPDCMaker_DataMC_2l("puppiLVecLoose_w(pt)"),  {1, 2}, cuts.second + "", 50, 0, 1200, true, true,  "W p_{T} [GeV]",   "Events")); 
 }
 
 
