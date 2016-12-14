@@ -1654,7 +1654,7 @@ namespace plotterFunctions
                 constituents = ttUtility::packageConstituents(myConstAK4Inputs);
 
                 //run custom tagger to get maximum eff info
-                ttAllComb->runTagger(constituents);
+                //ttAllComb->runTagger(constituents);
 
                 //run new tagger
                 tt->runTagger(constituents);
@@ -1673,7 +1673,7 @@ namespace plotterFunctions
                 constituents = ttUtility::packageConstituents(myConstAK4Inputs);
 
                 //run custom tagger to get maximum eff info
-                ttAllComb->runTagger(constituents);
+                //ttAllComb->runTagger(constituents);
 
                 //run new tagger
                 tt->runTagger(constituents);
@@ -1686,30 +1686,30 @@ namespace plotterFunctions
 
 
             //retrieve results
-            const TopTaggerResults& ttrAllComb = ttAllComb->getResults();
+            //const TopTaggerResults& ttrAllComb = ttAllComb->getResults();
 
             //get matches
             std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesAllComb;
-            if(&genDecayLVec != nullptr) genMatchesAllComb = topMatcher_.TopConst(ttrAllComb.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+            //if(&genDecayLVec != nullptr) genMatchesAllComb = topMatcher_.TopConst(ttrAllComb.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
 
             std::vector<TLorentzVector> *vTopsAllComb = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsMatchAllComb = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsGenMatchAllComb = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsParMatchAllComb = new std::vector<TLorentzVector>();
             
-            for(int iTop = 0; iTop < ttrAllComb.getTopCandidates().size(); ++iTop)
-            {
-                vTopsAllComb->emplace_back(ttrAllComb.getTopCandidates()[iTop].p());
-                if(genMatchesAllComb.second.first[iTop] == 3) 
-                {
-                    vTopsMatchAllComb->emplace_back(ttrAllComb.getTopCandidates()[iTop].p());
-                    vTopsGenMatchAllComb->emplace_back(genMatchesAllComb.second.second[iTop]);
-                }
-                if(genMatchesAllComb.second.first[iTop] >= 2)
-                {
-                    vTopsParMatchAllComb->emplace_back(ttrAllComb.getTopCandidates()[iTop].p());
-                } 
-            }
+            //for(int iTop = 0; iTop < ttrAllComb.getTopCandidates().size(); ++iTop)
+            //{
+            //    vTopsAllComb->emplace_back(ttrAllComb.getTopCandidates()[iTop].p());
+            //    if(genMatchesAllComb.second.first[iTop] == 3) 
+            //    {
+            //        vTopsMatchAllComb->emplace_back(ttrAllComb.getTopCandidates()[iTop].p());
+            //        vTopsGenMatchAllComb->emplace_back(genMatchesAllComb.second.second[iTop]);
+            //    }
+            //    if(genMatchesAllComb.second.first[iTop] >= 2)
+            //    {
+            //        vTopsParMatchAllComb->emplace_back(ttrAllComb.getTopCandidates()[iTop].p());
+            //    } 
+            //}
 
             //retrieve results
             const TopTaggerResults& ttr = tt->getResults();
@@ -1732,8 +1732,8 @@ namespace plotterFunctions
                 const auto* genMatch = ttr.getTops()[iTop]->getBestGenTopMatch(0.6);
                 if(genMatch)
                 {
-                    vTopsMatchNew->emplace_back(*genMatch);
-                    vTopsGenMatchNew->emplace_back(genMatches.second.second[iTop]);
+                    vTopsMatchNew->emplace_back(ttr.getTops()[iTop]->p());
+                    vTopsGenMatchNew->emplace_back(*genMatch);
                 }
                 if(genMatches.second.first.size() && genMatches.second.first[iTop] >= 2)
                 {
@@ -1904,9 +1904,16 @@ namespace plotterFunctions
                 tr.registerDerivedVec("MVAvarcand_" + vec.first, vec.second);
             }
 
+            const auto& usedJets = ttrMVA.getUsedConstituents();
+            int nBNotInTop = 0;
+            for(auto& constituent : constituentsMVA)
+            {
+                if(constituent.getType() == AK4JET && constituent.getBTagDisc() > 0.8 && usedJets.count(&constituent) == 0) ++nBNotInTop;
+            }
+
             //get one mu of 20 GeV pt
             tr.registerDerivedVar("passSingleLep", nMuons_20GeV == 1);
-            tr.registerDerivedVar("passDoubleLep", nMuons_50GeV == 1 && nMuons_20GeV == 2);
+            tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2);
 
             tr.registerDerivedVar("passnJets", passnJets);
             tr.registerDerivedVar("passBJets", passBJets);
@@ -1919,6 +1926,8 @@ namespace plotterFunctions
             tr.registerDerivedVar("nTaggerJets", int(jetsLVec_forTagger.size()));
 
             tr.registerDerivedVar("nTops", nTops);
+
+            tr.registerDerivedVar("nBNotInTop", nBNotInTop);
 
             tr.registerDerivedVar("nTopsNew", int(ttr.getTops().size()));
             tr.registerDerivedVar("nTopsNewMVA", int(ttrMVA.getTops().size()));

@@ -885,6 +885,7 @@ void Plotter::plot()
                 int iStack = 0;
                 for(auto ih = hvec.hcsVec.begin(); ih != hvec.hcsVec.end(); ++ih)
                 {
+                    //(*ih)->h->Scale(1.27);
                     (*ih)->h->SetMarkerColor(stackColors[iStack%NSTACKCOLORS]);
                     (*ih)->h->SetLineColor(stackColors[iStack%NSTACKCOLORS]);
                     (*ih)->h->SetFillColor(stackColors[iStack%NSTACKCOLORS]);
