@@ -8,6 +8,8 @@ eval `scramv1 runtime -sh`
 
 cd ${_CONDOR_SCRATCH_DIR}
 
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$2/src/opencv/lib/
+
 echo "xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') ."
 xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
 
