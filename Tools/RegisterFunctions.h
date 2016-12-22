@@ -140,6 +140,8 @@ private:
     plotterFunctions::PrepareTopVars *prepareTopVars;
     plotterFunctions::Taudiv *taudiv;
     plotterFunctions::Ak8DrMatch *ak8DrMatch;
+    plotterFunctions::TriggerInfo *triggerInfo;
+
 public:
     RegisterFunctionsTopStudy();
     ~RegisterFunctionsTopStudy();

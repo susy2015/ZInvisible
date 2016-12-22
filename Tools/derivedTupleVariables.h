@@ -1168,7 +1168,8 @@ namespace plotterFunctions
     private:
 	int indexMuTrigger;
 	int indexElecTrigger;
-        bool miniTuple_;
+        int indexMETMHTTrigger;
+        bool miniTuple_, noMC_;
 
 	double GetMuonTriggerEff(const double& muEta) 
 	{
@@ -1305,42 +1306,51 @@ namespace plotterFunctions
             const std::vector<std::string>& triggerNames = tr.getVec<std::string>("TriggerNames");
             const std::vector<int>& passTrigger          = tr.getVec<int>("PassTrigger");
 
-	    bool passMuTrigger = false;
-	    bool passElecTrigger = false;
+            bool passMuTrigger = false;
+            bool passElecTrigger = false;
+            bool passMETMHTTrigger = false;
 
-	    const std::string muTrigName = "HLT_Mu45_eta2p1_v";
-	    const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
+            const std::string muTrigName = "HLT_Mu45_eta2p1_v";
+            const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
+            const std::string metmhtTrigName = "HLT_PFMET110_PFMHT110_IDTight_v";
 
-	    // Find the index of our triggers if we don't know them already
-	    if(indexMuTrigger == -1 || indexElecTrigger == -1)
-	    {
-		for(int i = 0; i < triggerNames.size(); ++i)
-		{
-		    if(triggerNames[i].find(muTrigName) != std::string::npos)
-		    {
-			indexMuTrigger = i;
-		    }
-		    else if(triggerNames[i].find(elecTrigName) != std::string::npos)
-		    {
-			indexElecTrigger = i;
-		    }
-		}
-	    }
-	    if(indexMuTrigger != -1 && indexElecTrigger != -1)
-	    {
-		// Check if the event passes the trigger, and double check that we are looking at the right trigger
-		if(triggerNames[indexMuTrigger].find(muTrigName) != std::string::npos && passTrigger[indexMuTrigger])
-		    passMuTrigger = true;
-		if(triggerNames[indexElecTrigger].find(elecTrigName) != std::string::npos && passTrigger[indexElecTrigger])
-		    passElecTrigger = true;
-	    }
-	    else
-	    {
-		std::cout << "Could not find trigger in the list of trigger names" << std::endl;
-	    }
+            // Find the index of our triggers if we don't know them already
+            if(indexMuTrigger == -1 || indexElecTrigger == -1 || indexMETMHTTrigger == -1)
+            {
+                for(int i = 0; i < triggerNames.size(); ++i)
+                {
+                    if(triggerNames[i].find(muTrigName) != std::string::npos)
+                    {
+                        indexMuTrigger = i;
+                    }
+                    else if(triggerNames[i].find(elecTrigName) != std::string::npos)
+                    {
+                        indexElecTrigger = i;
+                    }
+                    else if(triggerNames[i].find(metmhtTrigName) != std::string::npos)
+                    {
+                        indexMETMHTTrigger = i;
+                    }
+                }
+            }
+            if(indexMuTrigger != -1 && indexElecTrigger != -1)
+            {
+                // Check if the event passes the trigger, and double check that we are looking at the right trigger
+                if(triggerNames[indexMuTrigger].find(muTrigName) != std::string::npos && passTrigger[indexMuTrigger])
+                    passMuTrigger = true;
+                if(triggerNames[indexElecTrigger].find(elecTrigName) != std::string::npos && passTrigger[indexElecTrigger])
+                    passElecTrigger = true;
+                if(triggerNames[indexMETMHTTrigger].find(metmhtTrigName) != std::string::npos && passTrigger[indexMETMHTTrigger])
+                    passMETMHTTrigger = true;
+            }
+            else
+            {
+                std::cout << "Could not find trigger in the list of trigger names" << std::endl;
+            }
 
-	    tr.registerDerivedVar("passMuTrigger",passMuTrigger);
-	    tr.registerDerivedVar("passElecTrigger",passElecTrigger);
+            tr.registerDerivedVar("passMuTrigger",passMuTrigger);
+            tr.registerDerivedVar("passElecTrigger",passElecTrigger);
+            tr.registerDerivedVar("passMETMHTTrigger",passMETMHTTrigger);
         }
 
         void triggerInfoMC(NTupleReader& tr)
@@ -1381,17 +1391,19 @@ namespace plotterFunctions
         }
 
     public:
-	TriggerInfo(bool miniTuple = false)
+	TriggerInfo(bool miniTuple = false, bool noMC = false)
 	{
 	    indexMuTrigger = -1;
 	    indexElecTrigger = -1;
+            indexMETMHTTrigger = -1;
             miniTuple_ = miniTuple;
+            noMC_ = noMC;
 	}
 
 	void operator()(NTupleReader& tr)
 	{
 	    if(!miniTuple_) triggerInfo(tr);
-            triggerInfoMC(tr);
+            if(!noMC_)       triggerInfoMC(tr);
 	}
 
     };
@@ -1524,56 +1536,6 @@ namespace plotterFunctions
         Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
         TopCat topMatcher_;
 
-
-        //void passNoiseEventFilterFunc(NTupleReader& tr)
-        //{
-        //    bool passNoiseEventFilter = true;
-        //
-        //    try
-        //    {
-        //        bool cached_rethrow = tr.getReThrow();
-        //        tr.setReThrow(false);
-        //
-        //        bool passDataSpec = true;
-        //        if( tr.getVar<unsigned int>("run") >= 100000 ){ // hack to know if it's data or MC...
-        //            int goodVerticesFilter = tr.getVar<int>("goodVerticesFilter");
-        //            // new filters
-        //            const int & globalTightHalo2016Filter = tr.getVar<int>("globalTightHalo2016Filter");
-        //            bool passglobalTightHalo2016Filter = (&globalTightHalo2016Filter) != nullptr? tr.getVar<int>("globalTightHalo2016Filter") !=0 : true;
-        //
-        //            int eeBadScFilter = tr.getVar<int>("eeBadScFilter");
-        //
-        //            passDataSpec = goodVerticesFilter && eeBadScFilter && passglobalTightHalo2016Filter;
-        //        }
-        //
-        //        bool isfastsim = false;
-        //        unsigned int hbheNoiseFilter = isfastsim? 1:tr.getVar<unsigned int>("HBHENoiseFilter");
-        //        unsigned int hbheIsoNoiseFilter = isfastsim? 1:tr.getVar<unsigned int>("HBHEIsoNoiseFilter");
-        //        int ecalTPFilter = tr.getVar<int>("EcalDeadCellTriggerPrimitiveFilter");
-        //
-        //        int jetIDFilter = isfastsim? 1:tr.getVar<int>("looseJetID_NoLep");
-        //        // new filters
-        //        const unsigned int & BadPFMuonFilter = tr.getVar<unsigned int>("BadPFMuonFilter");
-        //        bool passBadPFMuonFilter = (&BadPFMuonFilter) != nullptr? tr.getVar<unsigned int>("BadPFMuonFilter") !=0 : true;
-        //
-        //        const unsigned int & BadChargedCandidateFilter = tr.getVar<unsigned int>("BadChargedCandidateFilter");
-        //        bool passBadChargedCandidateFilter = (&BadChargedCandidateFilter) != nullptr? tr.getVar<unsigned int>("BadChargedCandidateFilter") !=0 : true;
-        //
-        //        tr.setReThrow(cached_rethrow);
-        //        passNoiseEventFilter = passDataSpec && hbheNoiseFilter && hbheIsoNoiseFilter && ecalTPFilter && jetIDFilter && passBadPFMuonFilter && passBadChargedCandidateFilter;
-        //    }
-        //    catch (std::string var)
-        //    {
-        //        if(tr.isFirstEvent()) 
-        //        {
-        //            printf("NTupleReader::getTupleObj(const std::string var):  Variable not found: \"%s\"!!!\n", var.c_str());
-        //            printf("Running with PHYS14 Config\n");
-        //        }
-        //    }
-        //    
-        //    tr.registerDerivedVar("passNoiseEventFilter", passNoiseEventFilter);
-        //}
-
         void prepareTopVars(NTupleReader& tr)
         {
             const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
@@ -1697,20 +1659,6 @@ namespace plotterFunctions
             std::vector<TLorentzVector> *vTopsGenMatchAllComb = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsParMatchAllComb = new std::vector<TLorentzVector>();
             
-            //for(int iTop = 0; iTop < ttrAllComb.getTopCandidates().size(); ++iTop)
-            //{
-            //    vTopsAllComb->emplace_back(ttrAllComb.getTopCandidates()[iTop].p());
-            //    if(genMatchesAllComb.second.first[iTop] == 3) 
-            //    {
-            //        vTopsMatchAllComb->emplace_back(ttrAllComb.getTopCandidates()[iTop].p());
-            //        vTopsGenMatchAllComb->emplace_back(genMatchesAllComb.second.second[iTop]);
-            //    }
-            //    if(genMatchesAllComb.second.first[iTop] >= 2)
-            //    {
-            //        vTopsParMatchAllComb->emplace_back(ttrAllComb.getTopCandidates()[iTop].p());
-            //    } 
-            //}
-
             //retrieve results
             const TopTaggerResults& ttr = tt->getResults();
 
@@ -1875,24 +1823,6 @@ namespace plotterFunctions
             //
             //// Pass lepton veto?
             bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel), passEleVeto = (nElectrons == AnaConsts::nElectronsSel), passIsoTrkVeto = (nIsoTrks == AnaConsts::nIsoTrksSel);
-            //bool passLeptVeto = passMuonVeto && passEleVeto && passIsoTrkVeto;
-            //
-            //// Calculate number of jets and b-tagged jets
-            //int cntCSVSAna = AnaFunctions::countCSVS(jetsLVec, recoJetsBtag, AnaConsts::cutCSVS, AnaConsts::bTagArr);
-            //int cntNJetsPt50Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt50Eta24Arr);
-            //int cntNJetsPt30Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt30Eta24Arr);
-            //
-            //// Pass number of jets?
-            //bool passnJets = true;
-            //if( cntNJetsPt50Eta24 < AnaConsts::nJetsSelPt50Eta24 ){ passnJets = false; }
-            //if( cntNJetsPt30Eta24 < AnaConsts::nJetsSelPt30Eta24 ){ passnJets = false; }
-            //
-            //// Pass number of b-tagged jets?
-            //bool passBJets = true;
-            //if( !( (AnaConsts::low_nJetsSelBtagged == -1 || cntCSVSAna >= AnaConsts::low_nJetsSelBtagged) && (AnaConsts::high_nJetsSelBtagged == -1 || cntCSVSAna < AnaConsts::high_nJetsSelBtagged ) ) ){passBJets = false; }
-            //
-            //// Pass the baseline MET requirement?
-            //bool passMET = (metLVec.Pt() >= AnaConsts::defaultMETcut);
 
             for(auto& vec : mvaVars)
             {
@@ -1915,15 +1845,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("passSingleLep", nMuons_20GeV == 1);
             tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2);
 
-            //tr.registerDerivedVar("passnJets", passnJets);
-            //tr.registerDerivedVar("passBJets", passBJets);
-            //tr.registerDerivedVar("passMET", passMET);
-            //tr.registerDerivedVar("passLeptVeto", passLeptVeto);
             tr.registerDerivedVar("passLeptVetoNoMu", passEleVeto && passIsoTrkVeto);
-            //
-            //tr.registerDerivedVar("nbjets", cntCSVSAna);
-            //tr.registerDerivedVar("cntNJetsPt50Eta24", cntNJetsPt50Eta24);
-            //tr.registerDerivedVar("nTaggerJets", int(jetsLVec_forTagger.size()));
 
             tr.registerDerivedVar("nTops", nTops);
 
@@ -1965,68 +1887,6 @@ namespace plotterFunctions
             tr.registerDerivedVec("discriminatorsParNoMatch", discriminatorsParNoMatch);
         }
 
-        void triggerInfo(NTupleReader& tr)
-        {
-            const std::vector<std::string>& triggerNames = tr.getVec<std::string>("TriggerNames");
-            const std::vector<int>& passTrigger          = tr.getVec<int>("PassTrigger");
-
-            bool passMuTrigger = false;
-            bool passElecTrigger = false;
-            bool passHTMHTTrigger = false;
-            bool passMuHTTrigger = false;
-
-            const std::string muTrigName = "HLT_Mu45_eta2p1_v";
-            const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
-            const std::string htmhtTrigName = "HLT_PFMET110_PFMHT110_IDTight_v";
-            const std::string muHTTrigName = "HLT_Mu15_IsoVVVL_PFHT350_v";
-
-            // Find the index of our triggers if we don't know them already
-            if(indexMuTrigger == -1 || indexElecTrigger == -1 || indexHTMHTTrigger == -1 || indexMuHTTrigger == -1)
-            {
-                for(int i = 0; i < triggerNames.size(); ++i)
-                {
-                    if(triggerNames[i].find(muTrigName) != std::string::npos)
-                    {
-                        indexMuTrigger = i;
-                    }
-                    else if(triggerNames[i].find(elecTrigName) != std::string::npos)
-                    {
-                        indexElecTrigger = i;
-                    }
-                    else if(triggerNames[i].find(htmhtTrigName) != std::string::npos)
-                    {
-                        indexHTMHTTrigger = i;
-                    }
-                    else if(triggerNames[i].find(muHTTrigName) != std::string::npos)
-                    {
-                        indexMuHTTrigger = i;
-                    }
-                }
-            }
-            if(indexMuTrigger != -1 && indexElecTrigger != -1)
-            {
-                // Check if the event passes the trigger, and double check that we are looking at the right trigger
-                if(triggerNames[indexMuTrigger].find(muTrigName) != std::string::npos && passTrigger[indexMuTrigger])
-                    passMuTrigger = true;
-                if(triggerNames[indexElecTrigger].find(elecTrigName) != std::string::npos && passTrigger[indexElecTrigger])
-                    passElecTrigger = true;
-                if(triggerNames[indexHTMHTTrigger].find(htmhtTrigName) != std::string::npos && passTrigger[indexHTMHTTrigger])
-                    passHTMHTTrigger = true;
-                if(triggerNames[indexMuHTTrigger].find(muHTTrigName) != std::string::npos && passTrigger[indexMuHTTrigger])
-                    passMuHTTrigger = true;
-            }
-            else
-            {
-                std::cout << "Could not find trigger in the list of trigger names" << std::endl;
-            }
-
-            tr.registerDerivedVar("passMuTrigger",passMuTrigger);
-            tr.registerDerivedVar("passElecTrigger",passElecTrigger);
-            tr.registerDerivedVar("passHTMHTTrigger",passHTMHTTrigger);
-            tr.registerDerivedVar("passMuHTTrigger", passMuHTTrigger);
-            tr.registerDerivedVar("passMuHTorHTMHTTrigger", passHTMHTTrigger || passMuHTTrigger);
-        }
-
     public:
         PrepareTopVars() : tt(nullptr)
 	{
@@ -2052,8 +1912,6 @@ namespace plotterFunctions
 
 	void operator()(NTupleReader& tr)
 	{
-            //passNoiseEventFilterFunc(tr);
-            triggerInfo(tr);
             prepareTopVars(tr);
 	}
 

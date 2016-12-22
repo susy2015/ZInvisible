@@ -305,6 +305,7 @@ RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
     myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
     prepareTopVars = new plotterFunctions::PrepareTopVars();
+    triggerInfo = new plotterFunctions::TriggerInfo(false, true);
 }
 
 RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
@@ -317,6 +318,7 @@ void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
 {
     tr.registerFunction(*myBLV);
     tr.registerFunction(*prepareTopVars);
+    tr.registerFunction(*triggerInfo);
     tr.registerFunction(*taudiv);
     tr.registerFunction(*ak8DrMatch);
 }
