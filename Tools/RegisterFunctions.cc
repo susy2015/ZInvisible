@@ -8,13 +8,13 @@
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});//,"bTagSF_EventWeightSimple_Central"});
+    return std::set<std::string>({});//"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});//,"bTagSF_EventWeightSimple_Central"});
     //return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
 }
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSetData()
 {
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
+    return std::set<std::string>({});//"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
 }
 
 void activateBranches(std::set<std::string>& activeBranches)
@@ -303,16 +303,19 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 
 RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
+    myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
     prepareTopVars = new plotterFunctions::PrepareTopVars();
 }
 
 RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
 {
+    if(myBLV) delete myBLV;
     if(prepareTopVars) delete prepareTopVars;
 }
 
 void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
 {
+    tr.registerFunction(*myBLV);
     tr.registerFunction(*prepareTopVars);
     tr.registerFunction(*taudiv);
     tr.registerFunction(*ak8DrMatch);

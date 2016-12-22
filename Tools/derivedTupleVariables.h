@@ -1525,54 +1525,54 @@ namespace plotterFunctions
         TopCat topMatcher_;
 
 
-        void passNoiseEventFilterFunc(NTupleReader& tr)
-        {
-            bool passNoiseEventFilter = true;
-
-            try
-            {
-                bool cached_rethrow = tr.getReThrow();
-                tr.setReThrow(false);
-
-                bool passDataSpec = true;
-                if( tr.getVar<unsigned int>("run") >= 100000 ){ // hack to know if it's data or MC...
-                    int goodVerticesFilter = tr.getVar<int>("goodVerticesFilter");
-                    // new filters
-                    const int & globalTightHalo2016Filter = tr.getVar<int>("globalTightHalo2016Filter");
-                    bool passglobalTightHalo2016Filter = (&globalTightHalo2016Filter) != nullptr? tr.getVar<int>("globalTightHalo2016Filter") !=0 : true;
-
-                    int eeBadScFilter = tr.getVar<int>("eeBadScFilter");
-
-                    passDataSpec = goodVerticesFilter && eeBadScFilter && passglobalTightHalo2016Filter;
-                }
-
-                bool isfastsim = false;
-                unsigned int hbheNoiseFilter = isfastsim? 1:tr.getVar<unsigned int>("HBHENoiseFilter");
-                unsigned int hbheIsoNoiseFilter = isfastsim? 1:tr.getVar<unsigned int>("HBHEIsoNoiseFilter");
-                int ecalTPFilter = tr.getVar<int>("EcalDeadCellTriggerPrimitiveFilter");
-
-                int jetIDFilter = isfastsim? 1:tr.getVar<int>("looseJetID_NoLep");
-                // new filters
-                const unsigned int & BadPFMuonFilter = tr.getVar<unsigned int>("BadPFMuonFilter");
-                bool passBadPFMuonFilter = (&BadPFMuonFilter) != nullptr? tr.getVar<unsigned int>("BadPFMuonFilter") !=0 : true;
-
-                const unsigned int & BadChargedCandidateFilter = tr.getVar<unsigned int>("BadChargedCandidateFilter");
-                bool passBadChargedCandidateFilter = (&BadChargedCandidateFilter) != nullptr? tr.getVar<unsigned int>("BadChargedCandidateFilter") !=0 : true;
-
-                tr.setReThrow(cached_rethrow);
-                passNoiseEventFilter = passDataSpec && hbheNoiseFilter && hbheIsoNoiseFilter && ecalTPFilter && jetIDFilter && passBadPFMuonFilter && passBadChargedCandidateFilter;
-            }
-            catch (std::string var)
-            {
-                if(tr.isFirstEvent()) 
-                {
-                    printf("NTupleReader::getTupleObj(const std::string var):  Variable not found: \"%s\"!!!\n", var.c_str());
-                    printf("Running with PHYS14 Config\n");
-                }
-            }
-            
-            tr.registerDerivedVar("passNoiseEventFilter", passNoiseEventFilter);
-        }
+        //void passNoiseEventFilterFunc(NTupleReader& tr)
+        //{
+        //    bool passNoiseEventFilter = true;
+        //
+        //    try
+        //    {
+        //        bool cached_rethrow = tr.getReThrow();
+        //        tr.setReThrow(false);
+        //
+        //        bool passDataSpec = true;
+        //        if( tr.getVar<unsigned int>("run") >= 100000 ){ // hack to know if it's data or MC...
+        //            int goodVerticesFilter = tr.getVar<int>("goodVerticesFilter");
+        //            // new filters
+        //            const int & globalTightHalo2016Filter = tr.getVar<int>("globalTightHalo2016Filter");
+        //            bool passglobalTightHalo2016Filter = (&globalTightHalo2016Filter) != nullptr? tr.getVar<int>("globalTightHalo2016Filter") !=0 : true;
+        //
+        //            int eeBadScFilter = tr.getVar<int>("eeBadScFilter");
+        //
+        //            passDataSpec = goodVerticesFilter && eeBadScFilter && passglobalTightHalo2016Filter;
+        //        }
+        //
+        //        bool isfastsim = false;
+        //        unsigned int hbheNoiseFilter = isfastsim? 1:tr.getVar<unsigned int>("HBHENoiseFilter");
+        //        unsigned int hbheIsoNoiseFilter = isfastsim? 1:tr.getVar<unsigned int>("HBHEIsoNoiseFilter");
+        //        int ecalTPFilter = tr.getVar<int>("EcalDeadCellTriggerPrimitiveFilter");
+        //
+        //        int jetIDFilter = isfastsim? 1:tr.getVar<int>("looseJetID_NoLep");
+        //        // new filters
+        //        const unsigned int & BadPFMuonFilter = tr.getVar<unsigned int>("BadPFMuonFilter");
+        //        bool passBadPFMuonFilter = (&BadPFMuonFilter) != nullptr? tr.getVar<unsigned int>("BadPFMuonFilter") !=0 : true;
+        //
+        //        const unsigned int & BadChargedCandidateFilter = tr.getVar<unsigned int>("BadChargedCandidateFilter");
+        //        bool passBadChargedCandidateFilter = (&BadChargedCandidateFilter) != nullptr? tr.getVar<unsigned int>("BadChargedCandidateFilter") !=0 : true;
+        //
+        //        tr.setReThrow(cached_rethrow);
+        //        passNoiseEventFilter = passDataSpec && hbheNoiseFilter && hbheIsoNoiseFilter && ecalTPFilter && jetIDFilter && passBadPFMuonFilter && passBadChargedCandidateFilter;
+        //    }
+        //    catch (std::string var)
+        //    {
+        //        if(tr.isFirstEvent()) 
+        //        {
+        //            printf("NTupleReader::getTupleObj(const std::string var):  Variable not found: \"%s\"!!!\n", var.c_str());
+        //            printf("Running with PHYS14 Config\n");
+        //        }
+        //    }
+        //    
+        //    tr.registerDerivedVar("passNoiseEventFilter", passNoiseEventFilter);
+        //}
 
         void prepareTopVars(NTupleReader& tr)
         {
@@ -1860,39 +1860,39 @@ namespace plotterFunctions
                 if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 0) discriminatorsMatch0->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
             }
 
-            // Calculate number of leptons
+            //// Calculate number of leptons
             std::string muonsFlagIDLabel = "muonsFlagMedium";
             std::string elesFlagIDLabel = "elesFlagVeto";
             const std::vector<int> & muonsFlagIDVec = muonsFlagIDLabel.empty()? std::vector<int>(tr.getVec<double>("muonsMiniIso").size(), 1):tr.getVec<int>(muonsFlagIDLabel.c_str());
             const std::vector<int> & elesFlagIDVec = elesFlagIDLabel.empty()? std::vector<int>(tr.getVec<double>("elesMiniIso").size(), 1):tr.getVec<int>(elesFlagIDLabel.c_str());
             int nMuons = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
             const AnaConsts::IsoAccRec muonsMiniIsoArr20GeV = {   -1,       2.4,      20,     -1,       0.2,     -1  };
-            int nMuons_20GeV = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
+            int nMuons_20GeV = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, muonsMiniIsoArr20GeV);
             const AnaConsts::IsoAccRec muonsMiniIsoArr50GeV = {   -1,       2.4,      50,     -1,       0.2,     -1  };
-            int nMuons_50GeV = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
+            int nMuons_50GeV = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, muonsMiniIsoArr50GeV);
             int nElectrons = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesMiniIso"), tr.getVec<double>("elesMtw"), tr.getVec<unsigned int>("elesisEB"), elesFlagIDVec, AnaConsts::elesMiniIsoArr);
             int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
-
-            // Pass lepton veto?
+            //
+            //// Pass lepton veto?
             bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel), passEleVeto = (nElectrons == AnaConsts::nElectronsSel), passIsoTrkVeto = (nIsoTrks == AnaConsts::nIsoTrksSel);
-            bool passLeptVeto = passMuonVeto && passEleVeto && passIsoTrkVeto;
-
-            // Calculate number of jets and b-tagged jets
-            int cntCSVSAna = AnaFunctions::countCSVS(jetsLVec, recoJetsBtag, AnaConsts::cutCSVS, AnaConsts::bTagArr);
-            int cntNJetsPt50Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt50Eta24Arr);
-            int cntNJetsPt30Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt30Eta24Arr);
-
-            // Pass number of jets?
-            bool passnJets = true;
-            if( cntNJetsPt50Eta24 < AnaConsts::nJetsSelPt50Eta24 ){ passnJets = false; }
-            if( cntNJetsPt30Eta24 < AnaConsts::nJetsSelPt30Eta24 ){ passnJets = false; }
-
-            // Pass number of b-tagged jets?
-            bool passBJets = true;
-            if( !( (AnaConsts::low_nJetsSelBtagged == -1 || cntCSVSAna >= AnaConsts::low_nJetsSelBtagged) && (AnaConsts::high_nJetsSelBtagged == -1 || cntCSVSAna < AnaConsts::high_nJetsSelBtagged ) ) ){passBJets = false; }
-
-            // Pass the baseline MET requirement?
-            bool passMET = (metLVec.Pt() >= AnaConsts::defaultMETcut);
+            //bool passLeptVeto = passMuonVeto && passEleVeto && passIsoTrkVeto;
+            //
+            //// Calculate number of jets and b-tagged jets
+            //int cntCSVSAna = AnaFunctions::countCSVS(jetsLVec, recoJetsBtag, AnaConsts::cutCSVS, AnaConsts::bTagArr);
+            //int cntNJetsPt50Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt50Eta24Arr);
+            //int cntNJetsPt30Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt30Eta24Arr);
+            //
+            //// Pass number of jets?
+            //bool passnJets = true;
+            //if( cntNJetsPt50Eta24 < AnaConsts::nJetsSelPt50Eta24 ){ passnJets = false; }
+            //if( cntNJetsPt30Eta24 < AnaConsts::nJetsSelPt30Eta24 ){ passnJets = false; }
+            //
+            //// Pass number of b-tagged jets?
+            //bool passBJets = true;
+            //if( !( (AnaConsts::low_nJetsSelBtagged == -1 || cntCSVSAna >= AnaConsts::low_nJetsSelBtagged) && (AnaConsts::high_nJetsSelBtagged == -1 || cntCSVSAna < AnaConsts::high_nJetsSelBtagged ) ) ){passBJets = false; }
+            //
+            //// Pass the baseline MET requirement?
+            //bool passMET = (metLVec.Pt() >= AnaConsts::defaultMETcut);
 
             for(auto& vec : mvaVars)
             {
@@ -1915,15 +1915,15 @@ namespace plotterFunctions
             tr.registerDerivedVar("passSingleLep", nMuons_20GeV == 1);
             tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2);
 
-            tr.registerDerivedVar("passnJets", passnJets);
-            tr.registerDerivedVar("passBJets", passBJets);
-            tr.registerDerivedVar("passMET", passMET);
-            tr.registerDerivedVar("passLeptVeto", passLeptVeto);
+            //tr.registerDerivedVar("passnJets", passnJets);
+            //tr.registerDerivedVar("passBJets", passBJets);
+            //tr.registerDerivedVar("passMET", passMET);
+            //tr.registerDerivedVar("passLeptVeto", passLeptVeto);
             tr.registerDerivedVar("passLeptVetoNoMu", passEleVeto && passIsoTrkVeto);
-
-            tr.registerDerivedVar("nbjets", cntCSVSAna);
-            tr.registerDerivedVar("cntNJetsPt50Eta24", cntNJetsPt50Eta24);
-            tr.registerDerivedVar("nTaggerJets", int(jetsLVec_forTagger.size()));
+            //
+            //tr.registerDerivedVar("nbjets", cntCSVSAna);
+            //tr.registerDerivedVar("cntNJetsPt50Eta24", cntNJetsPt50Eta24);
+            //tr.registerDerivedVar("nTaggerJets", int(jetsLVec_forTagger.size()));
 
             tr.registerDerivedVar("nTops", nTops);
 
@@ -2052,7 +2052,7 @@ namespace plotterFunctions
 
 	void operator()(NTupleReader& tr)
 	{
-            passNoiseEventFilterFunc(tr);
+            //passNoiseEventFilterFunc(tr);
             triggerInfo(tr);
             prepareTopVars(tr);
 	}

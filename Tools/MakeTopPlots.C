@@ -320,9 +320,9 @@ int main(int argc, char* argv[])
     
     //std::vector<std::pair<std::string, std::string>> cutslistData = {{"SingleMu_baseline", "passSingleLep;passLeptVetoNoMu;passBJets;passnJets;passMET;HT>300"}, {"SingleMu_lowMet", "passSingleLep;passLeptVetoNoMu;passBJets;passnJets;!passMET;met>150;HT>300"}};
     std::vector<std::pair<std::string, std::string>> cutslistData_1l = {
-        {"SingleMu_baseline", "passSingleLep;passLeptVetoNoMu;passBJets;passnJets;passMET;HT>300"}, 
-        {"SingleMu_lowMet",   "passSingleLep;passLeptVetoNoMu;passBJets;passnJets;!passMET;met>150;HT>300"},
-        {"SingleMu_nJetMet",  "passSingleLep;passLeptVetoNoMu;passnJets;met>150"},
+        {"SingleMu_baseline", "passSingleLep;passLeptVetoNoMu;passBJetsTopTag;passnJetsTopTag;passMETTopTag;HTTopTag>300"}, 
+        {"SingleMu_lowMet",   "passSingleLep;passLeptVetoNoMu;passBJetsTopTag;passnJetsTopTag;!passMETTopTag;met>150;HTTopTag>300"},
+        {"SingleMu_nJetMet",  "passSingleLep;passLeptVetoNoMu;passnJetsTopTag;met>150"},
     };
 
     //for(auto& cuts : cutslistData_1l)
@@ -374,9 +374,9 @@ int main(int argc, char* argv[])
     //
     //
     //std::vector<std::pair<std::string, std::string>> cutslistData_2l = {
-    //    {"DoubleMu_baseline", "passDoubleLep;passLeptVetoNoMu;passBJets;passnJets;passMET"}, 
-    //    {"DoubleMu_lowMet",   "passDoubleLep;passLeptVetoNoMu;passBJets;passnJets;!passMET"},
-    //    {"DoubleMu_nJet",     "passDoubleLep;passLeptVetoNoMu;passnJets"},
+    //    {"DoubleMu_baseline", "passDoubleLep;passLeptVetoNoMu;passBJetsTopTag;passnJetsTopTag;passMETTopTag"}, 
+    //    {"DoubleMu_lowMet",   "passDoubleLep;passLeptVetoNoMu;passBJetsTopTag;passnJetsTopTag;!passMETTopTag"},
+    //    {"DoubleMu_nJet",     "passDoubleLep;passLeptVetoNoMu;passnJetsTopTag"},
     //};
     //
     //for(auto& cuts : cutslistData_2l)
@@ -423,8 +423,8 @@ int main(int argc, char* argv[])
 
 
     std::vector<std::pair<std::string, std::string>> cutslist = {
-        {"baseline", "passLeptVeto;passBJets;passnJets;passMET"}, 
-        {"lowMet", "passLeptVeto;passBJets;passnJets;!passMET"}
+        {"baseline", "passLeptVetoTopTag;passBJetsTopTag;passnJetsTopTag;passMETTopTag"}, 
+        {"lowMet",   "passLeptVetoTopTag;passBJetsTopTag;passnJetsTopTag;!passMETTopTag"}
     };
     std::vector<std::pair<PDS, std::string>> pdsVec = {{ds_T1tttt, "T1tttt_1"}, {ds_T1tttt_2, "T1tttt_2"}, {ds_T2tt, "T2tt"}, {ds_T2tt_2, "T2tt_2"}, {ds_Znunu, "Znunu"}, {ds_ttbar, "ttbar"}, {ds_ttbar1l, "ttbar1l"}};
 
