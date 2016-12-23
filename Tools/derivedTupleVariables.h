@@ -1842,7 +1842,7 @@ namespace plotterFunctions
             }
 
             //get one mu of 20 GeV pt
-            tr.registerDerivedVar("passSingleLep", nMuons_20GeV == 1);
+            tr.registerDerivedVar("passSingleLep", nMuons_50GeV == 1);
             tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2);
 
             tr.registerDerivedVar("passLeptVetoNoMu", passEleVeto && passIsoTrkVeto);

@@ -555,7 +555,7 @@ void Plotter::Cuttable::parseCutString()
         npos = cuts_.find(';', pos + 1);
         if(npos == size_t(-1)) npos = cuts_.size();
         std::string tmp = cuts_.substr(pos, npos - pos);
-        size_t sepPos = 0;
+        size_t sepPos = 0, sepLen = 1;
         char cutType = ' ';
         bool inverted = false;
         if((sepPos = tmp.find("!")) != size_t(-1))
@@ -564,16 +564,26 @@ void Plotter::Cuttable::parseCutString()
             tmp = tmp.substr(sepPos + 1, size_t(-1));
         }
         sepPos = 0;
-        if(     (sepPos = tmp.find('>')) != size_t(-1)) cutType = '>';
-        else if((sepPos = tmp.find('<')) != size_t(-1)) cutType = '<';
-        else if((sepPos = tmp.find('=')) != size_t(-1)) cutType = '=';
+        if(     (sepPos = tmp.find('>'))  != std::string::npos) cutType = '>';
+        else if((sepPos = tmp.find('<'))  != std::string::npos) cutType = '<';
+        else if((sepPos = tmp.find('='))  != std::string::npos) cutType = '=';
+        else if((sepPos = tmp.find(">=")) != std::string::npos)
+        {
+            cutType = 'G';
+            sepLen = 2;
+        }
+        else if((sepPos = tmp.find("<=")) != std::string::npos)
+        {
+            cutType = 'L';
+            sepLen = 2;
+        }
         else
         {
             cutType = 'B';
             cutVec_.push_back(Cut(tmp, cutType, inverted, 0.0));
             continue;
         }
-        std::string t1 = tmp.substr(0, sepPos), t2 = tmp.substr(sepPos + 1, (size_t(-1)));
+        std::string t1 = tmp.substr(0, sepPos), t2 = tmp.substr(sepPos + sepLen, std::string::npos);
         t1.erase(remove(t1.begin(),t1.end(),' '),t1.end());
         t2.erase(remove(t2.begin(),t2.end(),' '),t2.end());
         char vname[32];
@@ -588,13 +598,19 @@ void Plotter::Cuttable::parseCutString()
 
 bool Plotter::Cut::passCut(const NTupleReader& tr) const
 {
-    if     (type == '<') return translateVar(tr) < val;
-    else if(type == '>') return translateVar(tr) > val;
-    else if(type == '=') return translateVar(tr) == val;
-    else if(type == '-') return translateVar(tr) > val && translateVar(tr) < val2;
-    else if(type == 'B') return boolReturn(tr);
-    else printf("Unrecognized cut type, %c\n", type);
-    return false;
+    switch(type)
+    {
+    case '<': return translateVar(tr) < val;
+    case '>': return translateVar(tr) > val;
+    case '=': return translateVar(tr) == val;
+    case 'G': return translateVar(tr) >= val;
+    case 'L': return translateVar(tr) <= val;
+    case '-': return translateVar(tr) > val && translateVar(tr) < val2;
+    case 'B': return boolReturn(tr);
+    default:
+        printf("Unrecognized cut type, %c\n", type);
+        return false;
+    }
 }
 
 template<> const double& Plotter::getVarFromVec<TLorentzVector, double>(const VarName& name, const NTupleReader& tr)
