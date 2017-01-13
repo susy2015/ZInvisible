@@ -650,10 +650,10 @@ namespace plotterFunctions
             //mu45 non-iso trigger emulation
             const double effsnom2012ABC[] = {0.928,0.8302,0.8018};
             const double upedge2012ABC[] = { 0.9, 1.2, 2.1};
-            bool muTrigMu45 = false;
+            bool muTrigMu45 = false; // this is now Mu50
             for(TLorentzVector& mu : *cutMuVec)
             {
-                if(mu.Pt() > 45)
+                if(mu.Pt() > 50)
                 {
                     for(int iBin = 0; iBin < sizeof(effsnom2012ABC)/sizeof(double); ++iBin)
                     {
@@ -669,7 +669,7 @@ namespace plotterFunctions
 
             double genHt = 0.0;
 
-            const double   minMuPt = 20.0,   highMuPt = 45.0;
+            const double   minMuPt = 20.0,   highMuPt = 50.0;
             const double minElecPt = 33.0, highElecPt = 33.0;
             double nuPt1 = -999.9, nuPt2 = -999.9;
 
@@ -1309,7 +1309,8 @@ namespace plotterFunctions
 	    bool passMuTrigger = false;
 	    bool passElecTrigger = false;
 
-	    const std::string muTrigName = "HLT_Mu45_eta2p1_v";
+	    //const std::string muTrigName = "HLT_Mu45_eta2p1_v";
+	    const std::string muTrigName = "HLT_Mu50_v";
 	    const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
 
 	    // Find the index of our triggers if we don't know them already
@@ -1361,14 +1362,14 @@ namespace plotterFunctions
 
             //Calculate muon trigger weights
             double muTrigWgt = 0.0;
-            if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 45 && cutMuVec[1].Pt() > 45)
+            if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 50 && cutMuVec[1].Pt() > 50)
             {
                 double muEff1 = GetMuonTriggerEff(cutMuVec[0].Eta());
                 double muEff2 = GetMuonTriggerEff(cutMuVec[1].Eta());
 
                 muTrigWgt = 1 - (1 - muEff1)*(1 - muEff2);
             }
-            else if(cutMuVec.size() >= 1 && cutMuVec[0].Pt() > 45)
+            else if(cutMuVec.size() >= 1 && cutMuVec[0].Pt() > 50)
             {
                 //For events with only 1 muon (emu events in particular or events with a subleading muon below 45 GeV) just use the single muon eff
                 muTrigWgt = GetMuonTriggerEff(cutMuVec[0].Eta());
@@ -1914,7 +1915,7 @@ namespace plotterFunctions
             bool passHTMHTTrigger = false;
             bool passMuHTTrigger = false;
 
-            const std::string muTrigName = "HLT_Mu45_eta2p1_v";
+            const std::string muTrigName = "HLT_Mu50_v";
             const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
             const std::string htmhtTrigName = "HLT_PFMET110_PFMHT110_IDTight_v";
             const std::string muHTTrigName = "HLT_Mu15_IsoVVVL_PFHT350_v";
