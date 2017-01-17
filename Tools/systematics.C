@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    AnaSamples::SampleSet        ss("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/", lumi);
+    AnaSamples::SampleSet        ss("/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools/", lumi);
     AnaSamples::SampleCollection sc(ss);
 
     map<string, vector<AnaSamples::FileSummary>> fileMap;
@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
 
     TH1 *shapeMETGaus, *shapeMT2Gaus, *shapeMETLogi, *shapeMT2Logi;
     TH2 *shapeMT2vMETGaus, *shapeMT2vMETLogi;
-    
+   //Used for some correlation 
     TFile *f2 = new TFile("correlations_ratio.root");
     if(f2)
     {
@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
     {
         std::cout << "Failed to open: correlations_ratio.root" << std::endl;
     }
-
+    
 
     RegisterFunctions *rf = new RegisterFunctionsSyst;
 

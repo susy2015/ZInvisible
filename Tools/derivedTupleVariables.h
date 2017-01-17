@@ -88,7 +88,6 @@ namespace plotterFunctions
                         zMassCurrent = zm;
                         double mu1pt = cutMuVec[i].Pt();
                         double mu2pt = cutMuVec[j].Pt();
-
                         double mu1Act = cutMuActivity[i];
                         double mu2Act = cutMuActivity[j];
 
@@ -498,10 +497,10 @@ namespace plotterFunctions
             f = new TFile("dataMCweights.root");
             if(f)
             {
-                njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_ht200_dphi"));
-                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_ht200_dphi"));
-                njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_ht200_dphi"));
-                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_ht200_dphi"));
+                njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
+                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_loose0"));
+                njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
+                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_loose0"));
                 f->Close();
                 delete f;
             }
@@ -620,6 +619,7 @@ namespace plotterFunctions
                         else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
                     }
                     cutMuVec->push_back(muonsLVec[i]);
+                    //std::cout<<"cutMuVec PT "<<muonsLVec[i].Pt()<<std::endl; 
                     cutMuCharge->push_back(muonsCharge[i]);
                     cutMuActivity->push_back(muonspfActivity[i]);
                     if(muonsCharge[i] > 0) sumMuCharge++;
@@ -653,7 +653,7 @@ namespace plotterFunctions
             bool muTrigMu45 = false;
             for(TLorentzVector& mu : *cutMuVec)
             {
-                if(mu.Pt() > 45)
+                if(mu.Pt() > 50)
                 {
                     for(int iBin = 0; iBin < sizeof(effsnom2012ABC)/sizeof(double); ++iBin)
                     {
@@ -669,7 +669,7 @@ namespace plotterFunctions
 
             double genHt = 0.0;
 
-            const double   minMuPt = 20.0,   highMuPt = 45.0;
+            const double   minMuPt = 20.0,   highMuPt = 50.0;
             const double minElecPt = 33.0, highElecPt = 33.0;
             double nuPt1 = -999.9, nuPt2 = -999.9;
 
@@ -873,13 +873,13 @@ namespace plotterFunctions
             TLorentzVector metV, metZ;
             metV.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
 
-            TLorentzVector bestRecoZ = (fabs(bestRecoElecZ.M() - zMass) > fabs(bestRecoMuZ.M() - zMass))?(bestRecoMuZ):(bestRecoElecZ);
-            if(fabs(bestRecoZ.M() - zMass) > fabs(bestRecoElMuZ.M() - zMass)) bestRecoZ = bestRecoElMuZ;
+            TLorentzVector bestRecoZ = (true/*fabs(bestRecoElecZ.M() - zMass) > fabs(bestRecoMuZ.M() - zMass)*/)?(bestRecoMuZ):(bestRecoElecZ);
+            //if(fabs(bestRecoZ.M() - zMass) > fabs(bestRecoElMuZ.M() - zMass)) bestRecoZ = bestRecoElMuZ;
 
             metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
             TLorentzVector cleanMet = metV + metZ;
-            std::cout<<"metZ "<<bestRecoZ.Pt()<<std::endl;
-            std::cout<<"met "<<met<<std::endl;
+            //std::cout<<"metZ "<<metZ.Pt()<<std::endl;
+            //std::cout<<"metV "<<metV.Pt()<<std::endl;
             bool passDiMuSel   =  passEleVeto && (cutMuVec->size() == 2   && sumMuCharge == 0   && (*cutMuVec)[0].Pt() > highMuPt     && (*cutMuVec)[1].Pt() > minMuPt);
             bool passDiElecSel = passMuonVeto && (cutElecVec->size() == 2 && sumElecCharge == 0 && (*cutElecVec)[0].Pt() > highElecPt && (*cutElecVec)[1].Pt() > minElecPt);
             bool passElMuSel = (cutMuVec->size() == 1 && cutElecVec->size() == 1 && sumElecCharge == -sumMuCharge && (*cutMuVec)[0].Pt() > highMuPt && (*cutElecVec)[0].Pt() > minMuPt);
@@ -908,7 +908,8 @@ namespace plotterFunctions
             }
             //if(genZPt > 600) std::cout << "HELLO THERE!!!!" << std::endl;
             //if(genZPt > 600 && mindPhiMetJ < 0.5) std::cout << "BONJOUR!!! \t" << genZPt << "\t" << mindPhiMetJ << "\t" << run << "\t" << lumi << "\t" << event << std::endl;
-            std::cout<<"cleanMetPt "<<cleanMet.Pt()<<std::endl;
+            //std::cout<<"cleanMetPt "<<cleanMet.Pt()<<std::endl;
+            //std::cout<<" "<<std::endl;
             double bestRecoZPt = bestRecoZ.Pt();
             double cleanMetPt = cleanMet.Pt();
             //double cleanMet2Pt = cleanMet2.Pt();
@@ -1108,8 +1109,10 @@ namespace plotterFunctions
             const double& nJet1bfakeWgt = tr.getVar<double>("nJet1bfakeWgt");
             const double& nJet2bfakeWgt = tr.getVar<double>("nJet2bfakeWgt");
             const double& nJet3bfakeWgt = tr.getVar<double>("nJet3bfakeWgt");
+            const double& HT            = tr.getVar<double>("HTZinv");
 
-            int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
+            //int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
+            int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);            
 
             std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
             std::vector<std::pair<double, double> > * nb0NJwBins = new std::vector<std::pair<double, double> >();
@@ -1131,17 +1134,17 @@ namespace plotterFunctions
             if(cntCSVS == 0)
             {
                 //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
-                nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), wnb01 * weight1fakeb));
-                nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), wnb02 * weight2fakeb));
-                nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), wnb03 * weight3fakeb));
+                nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT), wnb01 * weight1fakeb));
+                nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT), wnb02 * weight2fakeb));
+                nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT), wnb03 * weight3fakeb));
 
-                nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet), nJet1bfakeWgt));
-                nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet), nJet2bfakeWgt));
-                nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet), nJet3bfakeWgt));
+                nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT), nJet1bfakeWgt));
+                nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT), nJet2bfakeWgt));
+                nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT), nJet3bfakeWgt));
 
-                nb0BinsNW->emplace_back(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet));
-                nb0BinsNW->emplace_back(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet));
-                nb0BinsNW->emplace_back(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet));
+                nb0BinsNW->emplace_back(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT));
+                nb0BinsNW->emplace_back(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT));
+                nb0BinsNW->emplace_back(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT));
             }
 
             tr.registerDerivedVar("nSearchBin", nSearchBin);
@@ -1309,7 +1312,7 @@ namespace plotterFunctions
 	    bool passMuTrigger = false;
 	    bool passElecTrigger = false;
 
-	    const std::string muTrigName = "HLT_Mu45_eta2p1_v";
+	    const std::string muTrigName = "HLT_Mu50_v";//"HLT_Mu45_eta2p1_v";
 	    const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
 
 	    // Find the index of our triggers if we don't know them already
@@ -1361,14 +1364,14 @@ namespace plotterFunctions
 
             //Calculate muon trigger weights
             double muTrigWgt = 0.0;
-            if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 45 && cutMuVec[1].Pt() > 45)
+            if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 50 && cutMuVec[1].Pt() > 50)
             {
                 double muEff1 = GetMuonTriggerEff(cutMuVec[0].Eta());
                 double muEff2 = GetMuonTriggerEff(cutMuVec[1].Eta());
 
                 muTrigWgt = 1 - (1 - muEff1)*(1 - muEff2);
             }
-            else if(cutMuVec.size() >= 1 && cutMuVec[0].Pt() > 45)
+            else if(cutMuVec.size() >= 1 && cutMuVec[0].Pt() > 50)
             {
                 //For events with only 1 muon (emu events in particular or events with a subleading muon below 45 GeV) just use the single muon eff
                 muTrigWgt = GetMuonTriggerEff(cutMuVec[0].Eta());
@@ -1489,11 +1492,16 @@ namespace plotterFunctions
             const double& MT2MEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvMEUDn");
             const double& cleanMetMEUDn = tr.getVar<double>("metMEUDn");
 
-            int nSearchBinJEUUp = sbins.find_Binning_Index(cntCSVSJEUUp, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet);
-            int nSearchBinJEUDn = sbins.find_Binning_Index(cntCSVSJEUDn, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet);
+            const double& HTUp           = tr.getVar<double>("HTZinvJEUUp");
+            const double& HTDn           = tr.getVar<double>("HTZinvJEUDn");
+            const double& HTMEUUp           = tr.getVar<double>("HTZinvMEUUp");
+            const double& HTMEUDn           = tr.getVar<double>("HTZinvMEUDn");
 
-            int nSearchBinMEUUp = sbins.find_Binning_Index(cntCSVSMEUUp, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp);
-            int nSearchBinMEUDn = sbins.find_Binning_Index(cntCSVSMEUDn, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn);
+            int nSearchBinJEUUp = sbins.find_Binning_Index(cntCSVSJEUUp, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet, HTUp);
+            int nSearchBinJEUDn = sbins.find_Binning_Index(cntCSVSJEUDn, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet, HTDn);
+
+            int nSearchBinMEUUp = sbins.find_Binning_Index(cntCSVSMEUUp, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp, HTMEUUp);
+            int nSearchBinMEUDn = sbins.find_Binning_Index(cntCSVSMEUDn, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn, HTMEUDn);
             
             tr.registerDerivedVar("nSearchBinJEUUp", nSearchBinJEUUp);
             tr.registerDerivedVar("nSearchBinJEUDn", nSearchBinJEUDn);
@@ -1914,7 +1922,7 @@ namespace plotterFunctions
             bool passHTMHTTrigger = false;
             bool passMuHTTrigger = false;
 
-            const std::string muTrigName = "HLT_Mu45_eta2p1_v";
+            const std::string muTrigName = "HLT_Mu50_v";//"HLT_Mu45_eta2p1_v";
             const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
             const std::string htmhtTrigName = "HLT_PFMET110_PFMHT110_IDTight_v";
             const std::string muHTTrigName = "HLT_Mu15_IsoVVVL_PFHT350_v";
@@ -2317,6 +2325,11 @@ namespace plotterFunctions
             const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec");
             const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
 
+            const std::vector<TLorentzVector>& genDecayLVec   = tr.getVec<TLorentzVector>("genDecayLVec");
+            const std::vector<int>& genDecayPdgIdVec   = tr.getVec<int>("genDecayPdgIdVec");
+            const std::vector<int>& genDecayIdxVec   = tr.getVec<int>("genDecayIdxVec");
+            const std::vector<int>& genDecayMomIdxVec   = tr.getVec<int>("genDecayMomIdxVec");
+
             std::vector<TLorentzVector> *puppiLVecLoose_top = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *puppiLVectight_top = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *puppiLVecLoose_w = new std::vector<TLorentzVector>();
@@ -2326,7 +2339,9 @@ namespace plotterFunctions
             std::vector<double>* puppitau2Dtau1_SDM = new std::vector<double>();
             std::vector<double>* puppitau3Dtau2_SDM = new std::vector<double>();
 
-            const int& nJetsAk8 = ak8JetsLVec.size();
+            std::vector<TLorentzVector> *hadWLVec = new std::vector<TLorentzVector>();
+
+            const int& nJetsAk8 = ak8JetsLVec.size(); 
             const int& nJetsPuppi = puppiJetsLVec.size();
             tr.registerDerivedVar("nJetsAk8", nJetsAk8);
             tr.registerDerivedVar("nJetsPuppi", nJetsPuppi);
@@ -2389,6 +2404,8 @@ namespace plotterFunctions
 	    tr.registerDerivedVec("puppiLVecLoose_w", puppiLVecLoose_w);
 	    tr.registerDerivedVec("puppitau2Dtau1_SDM", puppitau2Dtau1_SDM);
 	    tr.registerDerivedVec("puppitau3Dtau2_SDM", puppitau3Dtau2_SDM);
+
+            (*hadWLVec) = genUtility::GetHadWLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
 	  }
 
         public:

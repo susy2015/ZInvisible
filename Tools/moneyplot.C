@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 
     // Get the relevant information
     //TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Feb15_NSB37.root");
-    TFile* f1 = TFile::Open("condor/histoutput-Jul24_2016_postWgt.root");
+    TFile* f1 = TFile::Open("condor/fourth_with_histo.root");//fifth_njets_loose_weight.root");//condor/histoutput-Jul24_2016_postWgt.root");
     //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Mar10_45Bin_v3.root");
     //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Jul6_Rnorm.root");
     //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Feb11.root");
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
     //TH1D* h8 = (TH1D*)f2->Get("hPDF_sym");
     //TH1D* h9 = (TH1D*)f2->Get("hTrig_sym");
 
-    TH1D* h5_2 = (TH1D*)h5->Clone("hOther_ratio_sym");
+    //TH1D* h5_2 = (TH1D*)h5->Clone("hOther_ratio_sym"); WTF JOE!!!!
 
     //TGraphAsymmErrors* g1 = (TGraphAsymmErrors*)f2->Get("");
     TGraphAsymmErrors* g3 = new TGraphAsymmErrors();
@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
     setTDRStyle();
 
     //Set up search bins
-    SearchBins sbins("SB_59_2016");
+    SearchBins sbins("SB_v1_2017");
 
     // Prepare canvas
     TCanvas *c;
@@ -247,7 +247,7 @@ int main(int argc, char* argv[])
     c->cd(1);
 
     char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", 12900.0 / 1000.0);
+    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", 36000.0 / 1000.0);
 
     TLatex mark;
     mark.SetNDC();
@@ -277,7 +277,8 @@ int main(int argc, char* argv[])
     //mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     fixOverlay();
-    SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
+    //Below line is the overall for the binng
+    //SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
     c->Print("moneyplot.png");
     c->Print("moneyplot.pdf");
 
