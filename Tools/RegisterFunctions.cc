@@ -8,13 +8,13 @@
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central"});
+    return std::set<std::string>({});//"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});//,"bTagSF_EventWeightSimple_Central"});
     //return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
 }
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSetData()
 {
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
+    return std::set<std::string>({});//"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
 }
 
 void activateBranches(std::set<std::string>& activeBranches)
@@ -56,6 +56,20 @@ void activateBranches(std::set<std::string>& activeBranches)
     activeBranches.insert("elesisEB");
     activeBranches.insert("elesMiniIso");
     activeBranches.insert("elesCharge");
+    activeBranches.insert("tau1");
+    activeBranches.insert("tau2");
+    activeBranches.insert("tau3");
+    activeBranches.insert("subjetBdisc");
+    activeBranches.insert("puppiJetsLVec");
+    activeBranches.insert("ak8mass");
+    activeBranches.insert("ak8rapidity");
+    activeBranches.insert("softDropMass");
+    activeBranches.insert("prunedMass");
+    activeBranches.insert("slimmedJetsAK8");
+    activeBranches.insert("ak8pt");
+    activeBranches.insert("nJetsAk8");
+    activeBranches.insert("ak82dRMin");
+    activeBranches.insert("ak81dRMin");
 }
 
 ////////////////////////////////
@@ -63,7 +77,6 @@ void activateBranches(std::set<std::string>& activeBranches)
 RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra) : RegisterFunctions()
 {            
     //AnaFunctions::prepareTopTagger();
-    
     myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
     blvZinv   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
     blvZinv1b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv1b");
@@ -73,7 +86,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
     blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
     blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
-                                    
+
     weights              = new plotterFunctions::GenerateWeight;
     njWeight             = new plotterFunctions::NJetWeight;
     lepInfo              = new plotterFunctions::LepInfo;
@@ -84,11 +97,15 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     systematicPrep       = new plotterFunctions::SystematicPrep;
     systematicCalc       = new plotterFunctions::SystematicCalc(sbEra);
 
+    taudiv               = new plotterFunctions::Taudiv;
+    nJetAk8              = new plotterFunctions::NJetAk8;
+    ak8DrMatch           = new plotterFunctions::Ak8DrMatch;
+
     myPDFUnc = new PDFUncertainty();
     bTagCorrector = nullptr;
     if(isCondor)
     {
-        bTagCorrector = new BTagCorrector("bTagEffHists.root", "", false);
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "", false);//"bTagEffHists.root", "", false);
     }
     else
     {
@@ -147,6 +164,9 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     //tr.registerFunction(&printInterestingEvents);
     tr.registerFunction(*myPDFUnc);
     tr.registerFunction(*bTagCorrector);
+    tr.registerFunction(*nJetAk8);
+    tr.registerFunction(*taudiv);
+    tr.registerFunction(*ak8DrMatch);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
@@ -156,9 +176,9 @@ void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBran
 
 void RegisterFunctionsNTuple::remakeBTagCorrector(std::string sampleName)
 {
-  if(sampleName.find("Data") == std::string::npos){
-    if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
-  }
+    if(sampleName.find("Data") == std::string::npos){
+        if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
+    }
 }
 
 ////////////////////////////////
@@ -280,17 +300,24 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 
 RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
+    myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
     prepareTopVars = new plotterFunctions::PrepareTopVars();
+    triggerInfo = new plotterFunctions::TriggerInfo(false, true);
 }
 
 RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
 {
+    if(myBLV) delete myBLV;
     if(prepareTopVars) delete prepareTopVars;
 }
 
 void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
 {
+    tr.registerFunction(*myBLV);
     tr.registerFunction(*prepareTopVars);
+    tr.registerFunction(*triggerInfo);
+    tr.registerFunction(*taudiv);
+    tr.registerFunction(*ak8DrMatch);
 }
 
 /////////////////////////////////
