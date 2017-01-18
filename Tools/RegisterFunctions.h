@@ -24,6 +24,9 @@ namespace plotterFunctions
     class SystematicCalc;
     class MetSmear;
     class PrepareTopVars;
+    class Taudiv;
+    class NJetAk8;
+    class Ak8DrMatch; 
 }
 
 class SystWeights;
@@ -65,6 +68,9 @@ private:
     plotterFunctions::SystematicCalc *systematicCalc;
     PDFUncertainty *myPDFUnc;
     BTagCorrector *bTagCorrector;
+    plotterFunctions::Taudiv *taudiv;
+    plotterFunctions::NJetAk8 *nJetAk8;
+    plotterFunctions::Ak8DrMatch *ak8DrMatch;
 
 public:
     RegisterFunctionsNTuple(bool isCondor = false, std::string sbEra = "SB_v1_2017");
@@ -130,7 +136,12 @@ public:
 class RegisterFunctionsTopStudy : public RegisterFunctions
 {
 private:
+    BaselineVessel *myBLV;
     plotterFunctions::PrepareTopVars *prepareTopVars;
+    plotterFunctions::Taudiv *taudiv;
+    plotterFunctions::Ak8DrMatch *ak8DrMatch;
+    plotterFunctions::TriggerInfo *triggerInfo;
+
 public:
     RegisterFunctionsTopStudy();
     ~RegisterFunctionsTopStudy();

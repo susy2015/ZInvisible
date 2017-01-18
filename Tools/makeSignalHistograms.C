@@ -195,8 +195,8 @@ int main(int argc, char* argv[])
 
     AnaSamples::SampleSet        ss(sampleloc, AnaSamples::luminosity);
     AnaSamples::SampleCollection sc(ss);
-   
-   topTagger::type3TopTagger* type3Ptr;
+
+    topTagger::type3TopTagger* type3Ptr;
 
     try
     {
@@ -223,8 +223,8 @@ int main(int argc, char* argv[])
 
             std::string fastsim = "";
             if(fs.filePath.find("SMS") != std::string::npos) fastsim = "fastsim";
-            BaselineVessel blv(*static_cast<NTupleReader*>(nullptr),"", fastsim);
-            BaselineVessel blvZinv(*static_cast<NTupleReader*>(nullptr),"Zinv", fastsim);
+            BaselineVessel blv(*static_cast<NTupleReader*>(nullptr), "", fastsim);
+            BaselineVessel blvZinv(*static_cast<NTupleReader*>(nullptr), "Zinv", fastsim);
             plotterFunctions::LepInfo lepInfo;
 
             NTupleReader tr(t, activatedBranch);
