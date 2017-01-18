@@ -1,6 +1,6 @@
 #include "Systematic.h"
 
-static const int NSEARCHBINS = 59;
+static const int NSEARCHBINS = 84;//59;//84
 
 void Systematic::bookHist(std::vector<Plotter::HistSummary>& vh, std::vector<AnaSamples::FileSummary>& vfs)
 {
@@ -69,10 +69,10 @@ SystWeights::SystWeights() : tr3(123384)
     TFile *f = new TFile("dataMCweights.root");
     if(f)
     {
-        njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_0b_ht200_dphi")->Clone());
-        njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_ht200_dphi")->Clone());
-        njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_g1b_ht200_dphi")->Clone());
-        njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_ht200_dphi")->Clone());
+        njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_0b_loose0")->Clone());//_ht200_dphi")->Clone());
+        njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_loose0")->Clone());//ht200_dphi")->Clone());
+        njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_g1b_loose0")->Clone());//ht200_dphi")->Clone());
+        njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_loose0")->Clone());//ht200_dphi")->Clone());
         f->Close();
         delete f;
     }

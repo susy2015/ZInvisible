@@ -20,26 +20,28 @@ void GetnTops(NTupleReader& tr)
         int nTops = tr.getVar<int>("nTopCandSortedCntZinv");
         std::vector<TLorentzVector> *vTops = new std::vector<TLorentzVector>();
 
-        for(int it=0; it<nTops; it++)
-        {
-            TLorentzVector topLVec = type3Ptr->buildLVec(tr.getVec<TLorentzVector>("jetsLVec_forTaggerZinv"),
-                                                         type3Ptr->finalCombfatJets[type3Ptr->ori_pickedTopCandSortedVec[it]]);
-            vTops->push_back(topLVec);
-        }
+        throw "FIX ME WITH NEW TAGGER";
 
-        auto& mt2inputs = type3Ptr->had_brJetLVecMap;
-        std::vector<TLorentzVector> *vMT2Inputs = new std::vector<TLorentzVector>();
-        if(vTops->size())
-        {
-            vMT2Inputs->push_back(vTops->at(0));
-        }
-        if(!mt2inputs.empty())
-        {
-            vMT2Inputs->push_back(mt2inputs.begin()->second);
-        }
-
-        tr.registerDerivedVec("vTops", vTops);
-        tr.registerDerivedVec("vMT2Inputs", vMT2Inputs);
+        //for(int it=0; it<nTops; it++)
+        //{
+        //    TLorentzVector topLVec = type3Ptr->buildLVec(tr.getVec<TLorentzVector>("jetsLVec_forTaggerZinv"),
+        //                                                 type3Ptr->finalCombfatJets[type3Ptr->ori_pickedTopCandSortedVec[it]]);
+        //    vTops->push_back(topLVec);
+        //}
+        //
+        //auto& mt2inputs = type3Ptr->had_brJetLVecMap;
+        //std::vector<TLorentzVector> *vMT2Inputs = new std::vector<TLorentzVector>();
+        //if(vTops->size())
+        //{
+        //    vMT2Inputs->push_back(vTops->at(0));
+        //}
+        //if(!mt2inputs.empty())
+        //{
+        //    vMT2Inputs->push_back(mt2inputs.begin()->second);
+        //}
+        //
+        //tr.registerDerivedVec("vTops", vTops);
+        //tr.registerDerivedVec("vMT2Inputs", vMT2Inputs);
     }
     catch(const std::string e)
     {
@@ -68,10 +70,10 @@ int main()
     TFile *f = new TFile("dataMCweights.root");
     if(f)
     {
-        njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_ht200_dphi")->Clone());
-        njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_ht200_dphi")->Clone());
-        njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_ht200_dphi")->Clone());
-        njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_ht200_dphi")->Clone());
+        njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0")->Clone());//ht200_dphi")->Clone());
+        njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_loose0")->Clone());//ht200_dphi")->Clone());
+        njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0")->Clone());//ht200_dphi")->Clone());
+        njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_loose0")->Clone());//ht200_dphi")->Clone());
         f->Close();
         delete f;
     }
@@ -95,14 +97,14 @@ int main()
         std::cout << "Failed to open: syst_shape.root" << std::endl;
     }
 
-    AnaSamples::SampleSet        ss("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/", AnaSamples::luminosity);
+    AnaSamples::SampleSet        ss("/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools/", AnaSamples::luminosity);
     AnaSamples::SampleCollection sc(ss);
 
     //f = TFile::Open("condor/minituple-Feb5.root");
 
     //Prep variables for nJet and shape systematic weights
     const int NTRIALS = 1000;
-    const int NSEARCHBINS = 59;
+    const int NSEARCHBINS = 84;
 
     TH1 *h[5][NSEARCHBINS];
     std::vector<std::string> hnames = {"njet", "met", "mt2", "nt", "nb"};
@@ -110,6 +112,22 @@ int main()
     float N0[NSEARCHBINS];
     float N0square[NSEARCHBINS];
     float N[5][NSEARCHBINS][NTRIALS];
+    float N0_83=0.0;
+    float N0square_83=0.0;
+    float N0_divide_83=0.0; 
+    float N0_83_top=0.0;
+    float N0square_83_top=0.0;
+    float N0_divide_83_top=0.0;
+    float N0_84=0.0;
+    float N0square_84=0.0;
+    float N0_divide_84=0.0;
+    float N0_84_top=0.0;
+    float N0square_84_top=0.0;
+    float N0_divide_84_top=0.0;
+    int n83_num =0;
+    int n83t_num =0;
+    int n84_num= 0;
+    int n84t_num=0;
 
     float variations[5][20][NTRIALS];
     for(int iT = 0; iT < NTRIALS; ++iT)
@@ -191,7 +209,7 @@ int main()
     TH2* h2D_Gaus = new TH2D("hMT2vMET_Gaus", "h2D_Gaus;MET;MT2", 200, 0, 2000, 200, 0, 2000);
     TH2* h2D_Logi = new TH2D("hMT2vMET_Logi", "h2D_Logi;MET;MT2", 200, 0, 2000, 200, 0, 2000);
 
-    AnaFunctions::prepareTopTagger();
+    //AnaFunctions::prepareTopTagger();
 
     try
     {
@@ -213,6 +231,7 @@ int main()
             plotterFunctions::NJetWeight njWeight;
             plotterFunctions::TriggerInfo triggerInfo(true);
             plotterFunctions::MetSmear metSmear;
+	    
 
             NTupleReader tr(t);
             tr.registerFunction(pmt);
@@ -240,7 +259,43 @@ int main()
                 const double& nJetWgtDYZ   = tr.getVar<double>("nJetWgtDYZ");
                 const double& normWgt0b    = tr.getVar<double>("normWgt0b");
 
+                if(passBaselineZinv && passLeptVeto && cntCSVSZinv>=1 && nTopCandSortedCntZinv >= 3 && cleanMetPt < 350)
+                {
+                    double weight_1 = triggerEffMC * nJetWgtDYZ * normWgt0b * bTagSF_EventWeightSimple_Central * fs.getWeight();
+                        N0_83 += weight_1;
+                        N0square_83 += weight_1*weight_1;
+                        //N0_divide_83 = N0_83/N0square_83;
+                        //std::cout<<"events bin 83 "<<tr.getEvtNum() <<std::endl;
+                        n83_num ++;
+                }
+                if(passBaselineZinv && passLeptVeto && cntCSVSZinv>=3 && nTopCandSortedCntZinv >= 2 && cleanMetPt < 350)
+                {
+                    double weight_2 = triggerEffMC * nJetWgtDYZ * normWgt0b * bTagSF_EventWeightSimple_Central * fs.getWeight();
+                        N0_83_top += weight_2;
+                        N0square_83_top += weight_2*weight_2;
+                        //std::cout<<"events bin 83 top "<<tr.getEvtNum() <<std::endl;
+                        n83t_num ++;
+                }
 
+               if(passBaselineZinv && passLeptVeto && cntCSVSZinv>=2 && nTopCandSortedCntZinv >= 3 && cleanMetPt > 350)
+                {
+                    double weight_3 = triggerEffMC * nJetWgtDYZ * normWgt0b * bTagSF_EventWeightSimple_Central * fs.getWeight();
+                        N0_84 += weight_3;
+                        N0square_84 += weight_3*weight_3;
+                        n84_num ++;
+                }
+                if(passBaselineZinv && passLeptVeto && cntCSVSZinv>=3 && nTopCandSortedCntZinv >= 2 && cleanMetPt > 350)
+                {
+                    double weight_4 = triggerEffMC * nJetWgtDYZ * normWgt0b * bTagSF_EventWeightSimple_Central * fs.getWeight();
+                        N0_84_top += weight_4;
+                        N0square_84_top += weight_4*weight_4;
+                        n84t_num ++;
+                }
+                N0_divide_83 = N0square_83/N0_83;
+                N0_divide_83_top = N0square_83_top/N0_83_top;
+                N0_divide_84 = N0square_84/N0_84;
+                N0_divide_84_top = N0square_84_top/N0_84_top;
+                //std::cout<<"N0_divide_83 "<<N0_divide_83<<std::endl;
                 //fill stat uncertainty histograms here
                 if(passBaselineZinv && passLeptVeto)
                 {
@@ -265,6 +320,10 @@ int main()
                 }
             }
         }
+    std::cout<<"N0_divide_83 "<<N0_divide_83 <<" number "<< n83_num <<std::endl;
+    std::cout<<"N0_divide_83_top "<<N0_divide_83_top <<" number "<< n83t_num <<std::endl;
+    std::cout<<"N0_divide_84 "<<N0_divide_84 <<" number "<< n84_num <<std::endl;
+    std::cout<<"N0_divide_84_top "<<N0_divide_84_top <<" number "<< n84t_num <<std::endl;
     }
     catch(const std::string e)
     {

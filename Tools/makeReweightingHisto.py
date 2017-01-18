@@ -38,7 +38,7 @@ if '-h' not in sys.argv and '--help' not in sys.argv:
 
 def rebin1D(h, bins):
     """Rebin histo h to bins and recompute the errors."""
-    new_h = TH1D("%s_rebin"%(h.GetName()), "%s_rebin"%(h.GetName()),
+    new_h = TH1D("%s_rebin_"%(h.GetName()), "%s_rebin_"%(h.GetName()),
                  len(bins)-1, array.array('d', bins))
     new_h.Sumw2()
     for i in xrange(h.GetNbinsX()):
@@ -49,7 +49,7 @@ def rebin1D(h, bins):
 
 def rebin2D(h, binsx, binsy):
     """Rebin histo h to binsx and binsy and recompute the errors."""
-    new_h = TH2D("%s_rebin"%(h.GetName()), "%s_rebin"%(h.GetName()),
+    new_h = TH2D("%s_rebin_"%(h.GetName()), "%s_rebin_"%(h.GetName()),
                  len(binsx)-1, array.array('d', binsx), len(binsy)-1, array.array('d', binsy))
     new_h.Sumw2()
     for i in xrange(h.GetNbinsX()):
@@ -141,7 +141,7 @@ def njetWeights(filename):
     # Run over the relevant histograms
     cuts_DY = ["muZinv", "muZinv_0b", "muZinv_g1b"]
     cuts_TT = ["elmuZinv", "elmuZinv_0b", "elmuZinv_g1b"]
-    selection = "ht200_dphi"
+    selection = "loose0"#"loose0_mt2"#"ht300_dphi"
     # histo names
     hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
     hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
@@ -487,7 +487,7 @@ def systHarvest(filename):
     #fout = TFile.Open("syst_shape.root", "RECREATE")
     # Run over the relevant histograms
     # histo names
-    NSB = 59
+    NSB = 84
 
     # Get shape central value uncertainty
     f = TFile("systematics.root")
@@ -581,12 +581,13 @@ def systHarvest(filename):
     hCorr_MT2vMETLogi_ratio.Write("Corr_2D_Logistic")
 
     # Pull
-    hPull = hCorr_MT2vMETLogi_ratio.Clone("Pull_Logi")
-    hPull.Add(hCorr_Logi_final,-1)
-    for i in xrange(1, hPull.GetNbinsX()+1):
-        sf = sqrt(hCorr_Logi_final.GetBinError(i)**2 + hCorr_MT2vMETLogi_ratio.GetBinError(i)**2)
-        hPull.SetBinContent(i, hPull.GetBinContent(i)/sf)
-    hPull.Write()
+    #hPull = hCorr_MT2vMETLogi_ratio.Clone("Pull_Logi")
+    #hPull.Add(hCorr_Logi_final,-1)
+    #for i in xrange(1, hPull.GetNbinsX()+1):
+    #    sf = sqrt(hCorr_Logi_final.GetBinError(i)**2 + hCorr_MT2vMETLogi_ratio.GetBinError(i)**2)
+    #    print sf
+    #    hPull.SetBinContent(i, hPull.GetBinContent(i)/sf)
+    #hPull.Write()
 
     # Get shape stats uncertainty
     f2 = TFile("syst_nJetWgt.root")
@@ -730,17 +731,17 @@ def systHarvest(filename):
     hZnunu = f4.Get("nSearchBin/nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle")
     hDYll  = f4.Get("nSearchBin/nSearchBinnSearchBinnSearchBinDY#rightarrow#mu#mu no #mu, Z eff+accsingle")
 
-    hMCPull = TH1D("MCpull", "MCpull", 15, -5, 5)
-    hMCPull.Sumw2()
-    hMCPull2 = hZnunu.Clone("MCPull2")
-    for i in xrange(1, hZnunu.GetNbinsX() + 1):
-        pull = (hZnunu.GetBinContent(i) - hDYll.GetBinContent(i)) / math.sqrt(hZnunu.GetBinError(i)**2 + hDYll.GetBinError(i)**2)
-        hMCPull.Fill(pull)
-        hMCPull2.SetBinContent(i, pull)
+    #hMCPull = TH1D("MCpull", "MCpull", 15, -5, 5)
+    #hMCPull.Sumw2()
+    #hMCPull2 = hZnunu.Clone("MCPull2")
+    #for i in xrange(1, hZnunu.GetNbinsX() + 1):
+        #pull = (hZnunu.GetBinContent(i) - hDYll.GetBinContent(i)) / math.sqrt(hZnunu.GetBinError(i)**2 + hDYll.GetBinError(i)**2)
+        #hMCPull.Fill(pull)
+        #hMCPull2.SetBinContent(i, pull)
 
-    fout.cd()
-    hMCPull.Write()
-    hMCPull2.Write()
+    #fout.cd()
+    #hMCPull.Write()
+    #hMCPull2.Write()
 
     #Central value
     hPrediction = f4.Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle").Clone("central_prediction")
@@ -801,7 +802,7 @@ def systHarvest(filename):
     #sc = SampleCollection()
     #lumi = sc.sampleCollectionLumiList()["Data_SingleMuon"]
 
-    print "luminosity = %f"%(12905.3378)
+    print "luminosity = %f"%(36352.970569733)#12905.3378)
     print "channels =", NSB
     print "sample = zinv"
     print ""
@@ -812,14 +813,15 @@ def systHarvest(filename):
     print "%-25s = %s"%("rate", ' '.join(["%8.5f" % hPrediction.GetBinContent(i) for i in xrange(1, NSB+1)]))
     print ""
 
-    print "%-25s = %s"%("cs_event", ' '.join(["%8.0f" % math.floor(hNEff.GetBinContent(i)) for i in xrange(1, NSB+1)]))
+    print "%-25s = %s"%("cs_event", ' '.join(["%8.0f" % (1.0 if 0< hNEff.GetBinContent(i) <1 else  math.floor(hNEff.GetBinContent(i))) for i in xrange(1, NSB+1)]))
+    #print "%-25s = %s"%("cs_event", ' '.join(["%8.3f" % (hNEff.GetBinContent(i)) for i in xrange(1, NSB+1)]))
 
     data = []
     for i in xrange(1, hNEff.GetNbinsX() + 1):
-        if hNEff.GetBinContent(i) > 0:
+        if hNEff.GetBinContent(i) >= 1:
             data.append("%8.5f" % (hPrediction.GetBinContent(i)/math.floor(hNEff.GetBinContent(i))))
         else:
-            data.append("%8.5f" % 0.00)
+            data.append("%8.5f" % hPrediction.GetBinContent(i))
     print "%-25s = %s"%("avg_weight", ' '.join(data))
 
     print ""
@@ -828,6 +830,9 @@ def systHarvest(filename):
     #print ""
 
     #sf = ScaleFactors()
+
+    #print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["36f" % 0.0830140 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
+    #print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%36f" % 0.0830140 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
 
     print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.0830140 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
     print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.0830140 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
