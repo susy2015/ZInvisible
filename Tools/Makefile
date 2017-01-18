@@ -110,19 +110,19 @@ systematics: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/miniTupleSamp
 nJetWgtSyst: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/nJetWgtSyst.o $(ODIR)/miniTupleSamples.o $(ODIR)/searchBins.o $(ODIR)/baselineDef.o $(ODIR)/customize.o
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-moneyplot: $(ODIR)/moneyplot.o $(ODIR)/searchBins.o
+moneyplot: $(ODIR)/moneyplot.o $(ODIR)/searchBins.o $(ODIR)/SATException.o
 	$(LD) $^ $(LIBS) -o $@
 
 scalefactorplot: $(ODIR)/scalefactorplot.o
 	$(LD) $^ $(LIBS) -o $@
 
-systplot: $(ODIR)/systplot.o $(ODIR)/searchBins.o
+systplot: $(ODIR)/systplot.o $(ODIR)/searchBins.o $(ODIR)/SATException.o
 	$(LD) $^ $(LIBS) -o $@
 
 plot2d: $(ODIR)/plot2D.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/Plotter.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/samples.o $(ODIR)/MiniTupleMaker.o $(ODIR)/searchBins.o $(ODIR)/BTagCorrector.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-beffCalc: $(ODIR)/bTagEfficiencyCalc.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/baselineDef.o $(ODIR)/customize.o
+beffCalc: $(ODIR)/bTagEfficiencyCalc.o $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/SATException.o
 	$(LD) $^ $(LIBS)  $(MT2LIB) -o $@
 
 makeSignalHistograms: $(ODIR)/makeSignalHistograms.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o

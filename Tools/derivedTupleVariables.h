@@ -1668,7 +1668,7 @@ namespace plotterFunctions
             std::vector<TLorentzVector> *vTopsParMatchAllComb = new std::vector<TLorentzVector>();
             
             //retrieve results
-            const TopTaggerResults& ttrAllComb = ttAllComb->getResults();
+            const TopTaggerResults& ttr = tt->getResults();
 
             //get matches
             std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatches;

@@ -87,7 +87,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
     blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
 
-x    weights              = new plotterFunctions::GenerateWeight;
+    weights              = new plotterFunctions::GenerateWeight;
     njWeight             = new plotterFunctions::NJetWeight;
     lepInfo              = new plotterFunctions::LepInfo;
     fakebtagvectors      = new plotterFunctions::Fakebtagvectors;
@@ -100,19 +100,18 @@ x    weights              = new plotterFunctions::GenerateWeight;
     taudiv               = new plotterFunctions::Taudiv;
     nJetAk8              = new plotterFunctions::NJetAk8;
     ak8DrMatch           = new plotterFunctions::Ak8DrMatch;
+
     myPDFUnc = new PDFUncertainty();
-   // bTagCorrector = nullptr;
-/*
+    bTagCorrector = nullptr;
     if(isCondor)
     {
-        bTagCorrector = new BTagCorrector("TTbarNoHad_bTagEff.root", "", false);//"bTagEffHists.root", "", false);
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "", false);//"bTagEffHists.root", "", false);
     }
     else
     {
-        bTagCorrector = new BTagCorrector("TTbarNoHad_bTagEff.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
         //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
     }
-*/
 }
 
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
@@ -136,7 +135,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(myPDFUnc) delete myPDFUnc;
     if(systematicPrep) delete systematicPrep;
     if(systematicCalc) delete systematicCalc;
-    //if(bTagCorrector) delete bTagCorrector;
+    if(bTagCorrector) delete bTagCorrector;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -164,7 +163,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*prepareMiniTupleVars);
     //tr.registerFunction(&printInterestingEvents);
     tr.registerFunction(*myPDFUnc);
-    //tr.registerFunction(*bTagCorrector);
+    tr.registerFunction(*bTagCorrector);
     tr.registerFunction(*nJetAk8);
     tr.registerFunction(*taudiv);
     tr.registerFunction(*ak8DrMatch);
@@ -177,10 +176,9 @@ void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBran
 
 void RegisterFunctionsNTuple::remakeBTagCorrector(std::string sampleName)
 {
-  int tjajaja=1;
- // if(sampleName.find("Data") == std::string::npos){
-   // if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
- // }
+    if(sampleName.find("Data") == std::string::npos){
+        if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
+    }
 }
 
 ////////////////////////////////
