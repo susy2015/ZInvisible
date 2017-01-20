@@ -10,6 +10,7 @@ class NTupleReader;
 class BaselineVessel;
 class PDFUncertainty;
 class BTagCorrector;
+class ISRCorrector;
 
 namespace plotterFunctions
 {
@@ -68,6 +69,7 @@ private:
     plotterFunctions::SystematicCalc *systematicCalc;
     PDFUncertainty *myPDFUnc;
     BTagCorrector *bTagCorrector;
+    ISRCorrector *ISRcorrector;
     plotterFunctions::Taudiv *taudiv;
     plotterFunctions::NJetAk8 *nJetAk8;
     plotterFunctions::Ak8DrMatch *ak8DrMatch;

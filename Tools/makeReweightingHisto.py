@@ -157,28 +157,28 @@ def njetWeights(filename):
     SFs = {}
 
     # First get TTbar reweighting, region is very pure, just take ratio of data/full stack and apply that to ttbar later
-    for cut in cuts_TT:
-        hname1_TT = hname1 % {"cut":cut, "selection":selection}
-        hnames2_TT = [elem % {"cut":cut, "selection":selection} for elem in hnames2]
-        # Get all histos
-        h1 = f.Get(hname1_TT)
-        h2s = [f.Get(hname2_TT) for hname2_TT in hnames2_TT]
-        newname = "DataMC_nj_%s_%s"%(cut,selection)
+    #for cut in cuts_TT:
+    #    hname1_TT = hname1 % {"cut":cut, "selection":selection}
+    #    hnames2_TT = [elem % {"cut":cut, "selection":selection} for elem in hnames2]
+    #    # Get all histos
+    #    h1 = f.Get(hname1_TT)
+    #    h2s = [f.Get(hname2_TT) for hname2_TT in hnames2_TT]
+    #    newname = "DataMC_nj_%s_%s"%(cut,selection)
 
         #data subtraction
-        data_subtracted = subtract(h1, [h2s[0]])
-        data_subtracted = subtract(data_subtracted, h2s[2:])
+    #    data_subtracted = subtract(h1, [h2s[0]])
+    #    data_subtracted = subtract(data_subtracted, h2s[2:])
 
         # Make the ratio
-        newh = makeRatio(data_subtracted, [h2s[1]], bins_TT, newname)
+    #    newh = makeRatio(data_subtracted, [h2s[1]], bins_TT, newname)
         #mild hack to remove negative bins in the first few bins
         #these are not used for search and only provide presentational issues
-        for iBin in xrange(1, min(newh.GetNbinsX() + 1, 4)):
-            if newh.GetBinContent(iBin) < -0.000001:
-                newh.SetBinContent(iBin, 1.0)
-                newh.SetBinError(iBin, 1.0)
-        SFs["TT_%s"%(cut)] = newh.Clone()
-        newh.Write()
+    #    for iBin in xrange(1, min(newh.GetNbinsX() + 1, 4)):
+    #        if newh.GetBinContent(iBin) < -0.000001:
+    #            newh.SetBinContent(iBin, 1.0)
+    #            newh.SetBinError(iBin, 1.0)
+    #    SFs["TT_%s"%(cut)] = newh.Clone()
+    #    newh.Write()
 
     # Now get DY reweighting:
     # Procedure: 1. Apply TTbar reweighting to TTbar MC
@@ -192,7 +192,7 @@ def njetWeights(filename):
         h2s = [f.Get(hname2_DY) for hname2_DY in hnames2_DY]
 
         # apply weights to ttbar
-        h2s[1] = reweight(h2s[1], SFs["TT_%s"%(cut.replace("mu","elmu"))])
+        #h2s[1] = reweight(h2s[1], SFs["TT_elmuZinv"])#"TT_%s"%(cut.replace("mu","elmu"))])#weight applied to Njet for the Rnorm or DY correction
 
         # subtract relevant histograms from data
         data_subtracted = subtract(h1, h2s[1:])
@@ -491,17 +491,19 @@ def systHarvest(filename):
 
     # Get shape central value uncertainty
     f = TFile("systematics.root")
-    hShape_MET_Nom = f.Get("nSearchBin/systWgtMET_cleanMetPtnSearchBinnSearchBinNominalsingle")
-    hShape_MET_Var = f.Get("nSearchBin/systWgtMET_cleanMetPtnSearchBinnSearchBinvariedsingle")
-    hShape_MT2_Nom = f.Get("nSearchBin/systWgtMT2_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
-    hShape_MT2_Var = f.Get("nSearchBin/systWgtMT2_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
-    hShape_NT_Nom  = f.Get("nSearchBin/systWgtNT_nTopCandSortedCntZinvnSearchBinnSearchBinNominalsingle")
-    hShape_NT_Var  = f.Get("nSearchBin/systWgtNT_nTopCandSortedCntZinvnSearchBinnSearchBinvariedsingle")
-    hShape_NB_Nom  = f.Get("nSearchBin/systWgtNB_cntCSVSZinvnSearchBinnSearchBinNominalsingle")
-    hShape_NB_Var  = f.Get("nSearchBin/systWgtNB_cntCSVSZinvnSearchBinnSearchBinvariedsingle")
+    hShape_MET_Nom1 = f.Get("nSearchBin/systWgtTest_cleanMetPt__nSearchBin______nSearchBin__Nominal__single")
+    hShape_MET_Var = f.Get("nSearchBin/systWgtMET_cleanMetPt__nSearchBin______nSearchBin__varied__single")
+    hShape_MT2_Nom = f.Get("nSearchBin/systWgtMT2_best_had_brJet_MT2Zinv__nSearchBin______nSearchBin__Nominal__single")
+    hShape_MT2_Var = f.Get("nSearchBin/systWgtMT2_best_had_brJet_MT2Zinv__nSearchBin______nSearchBin__varied__single")
+    hShape_NT_Nom  = f.Get("nSearchBin/systWgtNT_nTopCandSortedCntZinv__nSearchBin______nSearchBin__Nominal__single")
+    hShape_NT_Var  = f.Get("nSearchBin/systWgtNT_nTopCandSortedCntZinv__nSearchBin______nSearchBin__varied__single")
+    hShape_NB_Nom  = f.Get("nSearchBin/systWgtNB_cntCSVSZinv__nSearchBin______nSearchBin__Nominal__single")
+    hShape_NB_Var  = f.Get("nSearchBin/systWgtNB_cntCSVSZinv__nSearchBin______nSearchBin__varied__single")
 
-    hShape_MET_ratio = hShape_MET_Var.Clone(hShape_MET_Nom.GetName()+"_ratio")
-    hShape_MET_ratio.Divide(hShape_MET_Nom)
+    print hShape_MET_Var.Clone("nSearchBin/"+hShape_MET_Nom1.GetName()+"_ratio").GetName(), f
+    hShape_MET_ratio = hShape_MET_Var.Clone("nSearchBin/"+hShape_MET_Nom1.GetName()+"_ratio")
+    print hShape_MET_Var.GetName()
+    hShape_MET_ratio.Divide(hShape_MET_Nom1)
 
     hShape_MT2_ratio = hShape_MT2_Var.Clone(hShape_MT2_Nom.GetName()+"_ratio")
     hShape_MT2_ratio.Divide(hShape_MT2_Nom)
@@ -526,18 +528,18 @@ def systHarvest(filename):
 
 
     # Get correlation study info
-    hCorr_METGaus_Nom = f.Get("nSearchBin/CorrMETGaus_cleanMetPtnSearchBinnSearchBinNominalsingle")
-    hCorr_METGaus_Var = f.Get("nSearchBin/CorrMETGaus_cleanMetPtnSearchBinnSearchBinvariedsingle")
-    hCorr_MT2Gaus_Nom = f.Get("nSearchBin/CorrMT2Gaus_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
-    hCorr_MT2Gaus_Var = f.Get("nSearchBin/CorrMT2Gaus_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
-    hCorr_MT2vMETGaus_Nom = f.Get("nSearchBin/CorrMT2vMETGaus_cleanMetPt_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
-    hCorr_MT2vMETGaus_Var = f.Get("nSearchBin/CorrMT2vMETGaus_cleanMetPt_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
-    hCorr_METLogi_Nom = f.Get("nSearchBin/CorrMETLogi_cleanMetPtnSearchBinnSearchBinNominalsingle")
-    hCorr_METLogi_Var = f.Get("nSearchBin/CorrMETLogi_cleanMetPtnSearchBinnSearchBinvariedsingle")
-    hCorr_MT2Logi_Nom = f.Get("nSearchBin/CorrMT2Logi_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
-    hCorr_MT2Logi_Var = f.Get("nSearchBin/CorrMT2Logi_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
-    hCorr_MT2vMETLogi_Nom = f.Get("nSearchBin/CorrMT2vMETLogi_cleanMetPt_best_had_brJet_MT2ZinvnSearchBinnSearchBinNominalsingle")
-    hCorr_MT2vMETLogi_Var = f.Get("nSearchBin/CorrMT2vMETLogi_cleanMetPt_best_had_brJet_MT2ZinvnSearchBinnSearchBinvariedsingle")
+    hCorr_METGaus_Nom = f.Get("nSearchBin/CorrMETGaus_cleanMetPt__nSearchBin______nSearchBin__Nominal__single")
+    hCorr_METGaus_Var = f.Get("nSearchBin/CorrMETGaus_cleanMetPt__nSearchBin______nSearchBin__varied__single")
+    hCorr_MT2Gaus_Nom = f.Get("nSearchBin/CorrMT2Gaus_best_had_brJet_MT2Zinv__nSearchBin______nSearchBin__Nominal__single")
+    hCorr_MT2Gaus_Var = f.Get("nSearchBin/CorrMT2Gaus_best_had_brJet_MT2Zinv__nSearchBin______nSearchBin__varied__single")
+    hCorr_MT2vMETGaus_Nom = f.Get("nSearchBin/CorrMT2vMETGaus_cleanMetPt_best_had_brJet_MT2Zinv__nSearchBin______nSearchBin__Nominal__single")
+    hCorr_MT2vMETGaus_Var = f.Get("nSearchBin/CorrMT2vMETGaus_cleanMetPt_best_had_brJet_MT2Zinv__nSearchBin______nSearchBin__varied__single")
+    hCorr_METLogi_Nom = f.Get("nSearchBin/CorrMETLogi_cleanMetPt__nSearchBin______nSearchBin__Nominal__single")
+    hCorr_METLogi_Var = f.Get("nSearchBin/CorrMETLogi_cleanMetPt__nSearchBin______nSearchBin__varied__single")
+    hCorr_MT2Logi_Nom = f.Get("nSearchBin/CorrMT2Logi_best_had_brJet_MT2Zinv__nSearchBin______nSearchBin__Nominal__single")
+    hCorr_MT2Logi_Var = f.Get("nSearchBin/CorrMT2Logi_best_had_brJet_MT2Zinv__nSearchBin______nSearchBin__varied__single")
+    hCorr_MT2vMETLogi_Nom = f.Get("nSearchBin/CorrMT2vMETLogi_cleanMetPt_best_had_brJet_MT2Zinv__nSearchBin______nSearchBin__Nominal__single")
+    hCorr_MT2vMETLogi_Var = f.Get("nSearchBin/CorrMT2vMETLogi_cleanMetPt_best_had_brJet_MT2Zinv__nSearchBin______nSearchBin__varied__single")
 
     hCorr_METGaus_ratio = hCorr_METGaus_Var.Clone(hCorr_METGaus_Nom.GetName()+"_ratio")
     hCorr_METGaus_ratio.Divide(hCorr_METGaus_Nom)

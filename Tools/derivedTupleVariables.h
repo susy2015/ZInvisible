@@ -437,12 +437,12 @@ namespace plotterFunctions
 
 	    if(cntCSVSZinv == 0)
 	    {
-		if(njWTTbar_0b)  wTT = njWTTbar_0b->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
+		if(njWTTbar_0b)  wTT = 1.0;//njWTTbar_0b->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
 		if(njWDYZ_0b)    wDY = njWDYZ_0b->GetBinContent(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
 	    }
 	    else
 	    {
-		if(njWTTbar_g1b) wTT = njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+		if(njWTTbar_g1b) wTT = 1.0;//njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
 		if(njWDYZ_g1b)   wDY = njWDYZ_g1b->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
 	    }
 
@@ -496,9 +496,9 @@ namespace plotterFunctions
             f = new TFile("dataMCweights.root");
             if(f)
             {
-                njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
+                //njWTTbar_0b  = 1;//static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
                 njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_loose0"));
-                njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
+                //njWTTbar_g1b = 1;//static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
                 njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_loose0"));
                 f->Close();
                 delete f;
@@ -1177,18 +1177,18 @@ namespace plotterFunctions
 	double GetMuonTriggerEff(const double& muEta) 
 	{
                 if     (-2.6 <= muEta && muEta < -2.2) return 0.016; //+/-0.013/0.008
-                else if(-2.2 <= muEta && muEta < -1.8) return 0.680; //+/-0.017/0.017
-                else if(-1.8 <= muEta && muEta < -1.4) return 0.787; //+/-0.012/0.012
-                else if(-1.4 <= muEta && muEta < -1.0) return 0.866; //+/-0.008/0.009
-                else if(-1.0 <= muEta && muEta < -0.6) return 0.902; //+/-0.006/0.007
-                else if(-0.6 <= muEta && muEta < -0.2) return 0.892; //+/-0.006/0.007
-                else if(-0.2 <= muEta && muEta <  0.2) return 0.927; //+/-0.005/0.006
-                else if( 0.2 <= muEta && muEta <  0.6) return 0.892; //+/-0.006/0.007
-                else if( 0.6 <= muEta && muEta <  1.0) return 0.911; //+/-0.006/0.007
-                else if( 1.0 <= muEta && muEta <  1.4) return 0.864; //+/-0.008/0.009
-                else if( 1.4 <= muEta && muEta <  1.8) return 0.808; //+/-0.011/0.012
-                else if( 1.8 <= muEta && muEta <  2.2) return 0.652; //+/-0.017/0.017
-                else if( 2.2 <= muEta && muEta <  2.6) return 0.026; //+/-0.015/0.01
+                else if(-2.2 <= muEta && muEta < -1.8) return 0.74641;//0.680; //+/-0.017/0.017
+                else if(-1.8 <= muEta && muEta < -1.4) return 0.806; //+/-0.012/0.012
+                else if(-1.4 <= muEta && muEta < -1.0) return 0.7961;//0.866; //+/-0.008/0.009
+                else if(-1.0 <= muEta && muEta < -0.6) return 0.768; //+/-0.006/0.007
+                else if(-0.6 <= muEta && muEta < -0.2) return 0.818;//0.892; //+/-0.006/0.007
+                else if(-0.2 <= muEta && muEta <  0.2) return 0.807;//0.927; //+/-0.005/0.006
+                else if( 0.2 <= muEta && muEta <  0.6) return 0.7205;//0.892; //+/-0.006/0.007
+                else if( 0.6 <= muEta && muEta <  1.0) return 0.877;//0.911; //+/-0.006/0.007
+                else if( 1.0 <= muEta && muEta <  1.4) return 0.810;//0.864; //+/-0.008/0.009
+                else if( 1.4 <= muEta && muEta <  1.8) return 0.801;//0.808; //+/-0.011/0.012
+                else if( 1.8 <= muEta && muEta <  2.2) return 0.936;//0.652; //+/-0.017/0.017
+                else if( 2.2 <= muEta && muEta <  2.6) return 0.889;//0.026; //+/-0.015/0.01
                 else                                   return 0.000;
 	}
 
