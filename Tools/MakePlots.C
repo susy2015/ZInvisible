@@ -6,8 +6,12 @@
 #include <getopt.h>
 #include <iostream>
 
+#include "TopTagger/CfgParser/include/TTException.h"
+
 int main(int argc, char* argv[])
 {
+//try
+//{
     using namespace std;
 
     int opt;
@@ -1637,3 +1641,11 @@ int main(int argc, char* argv[])
     if(doSave && fromTuple)  plotter.saveHists();
     if(doPlots)              plotter.plot();
 }
+/*
+}
+catch(const TTException& e)
+{
+    std::cout<< e <<std::endl;//e.Print();
+}
+}
+*/
