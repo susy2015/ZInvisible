@@ -125,6 +125,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     {  
         ISRcorrector= new ISRCorrector("TTbarNoHad_NJetsISR.root","/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/SusyAnaTools/Tools/ISR_Root_Files/","");
     }
+
 }
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {

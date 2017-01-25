@@ -157,17 +157,31 @@ def njetWeights(filename):
     SFs = {}
 
     # First get TTbar reweighting, region is very pure, just take ratio of data/full stack and apply that to ttbar later
-    #for cut in cuts_TT:
-    #    hname1_TT = hname1 % {"cut":cut, "selection":selection}
-    #    hnames2_TT = [elem % {"cut":cut, "selection":selection} for elem in hnames2]
+    for cut in cuts_TT:
+        hname1_TT = hname1 % {"cut":cut, "selection":selection}
+        hnames2_TT = [elem % {"cut":cut, "selection":selection} for elem in hnames2]
     #    # Get all histos
-    #    h1 = f.Get(hname1_TT)
-    #    h2s = [f.Get(hname2_TT) for hname2_TT in hnames2_TT]
-    #    newname = "DataMC_nj_%s_%s"%(cut,selection)
+        h1 = f.Get(hname1_TT)
+        h2s = [f.Get(hname2_TT) for hname2_TT in hnames2_TT]
+        newname = "DataMC_nj_%s_%s"%(cut,selection)
 
         #data subtraction
-    #    data_subtracted = subtract(h1, [h2s[0]])
-    #    data_subtracted = subtract(data_subtracted, h2s[2:])
+        data_subtracted = subtract(h1, [h2s[0]])
+        data_subtracted = subtract(data_subtracted, h2s[2:])
+
+        #newname = "DataMC_nb1_%s_%s"%(cut,selection)
+        newh = makeRatio(data_subtracted, [h2s[1]], newname=newname, bins=[0,20])
+        #newh = makeRatio(h1, h2s, newname=newname)
+
+        print "Data/MC normalization scale factor in region %s_%s: %.3f +- %.3f" % (cut, selection, newh.GetBinContent(1), newh.GetBinError(1))
+
+        includeFile = open("ScaleFactorsttBar.h", "w")
+        includeFile.write(includeBasettBar%(newh.GetBinContent(1), newh.GetBinError(1)))
+        includeFile.close()
+
+        sourceFile = open("ScaleFactorsttBar.cc", "w")
+        sourceFile.write(sourceBasettBar)
+        sourceFile.close()
 
         # Make the ratio
     #    newh = makeRatio(data_subtracted, [h2s[1]], bins_TT, newname)
@@ -177,7 +191,7 @@ def njetWeights(filename):
     #        if newh.GetBinContent(iBin) < -0.000001:
     #            newh.SetBinContent(iBin, 1.0)
     #            newh.SetBinError(iBin, 1.0)
-    #    SFs["TT_%s"%(cut)] = newh.Clone()
+        SFs["TT_%s"%(cut)] = newh.Clone()
     #    newh.Write()
 
     # Now get DY reweighting:
@@ -209,6 +223,41 @@ def njetWeights(filename):
     # Close files
     fout.Close()
     f.Close()
+##For new ttbar SF normalization##
+includeBasettBar = """#ifndef SCALEFACTORSTTBAR_H
+#define SCALEFACTORSTTBAR_H
+
+class ScaleFactorsttBar
+{
+public:
+    static double sf_norm0b()
+    {
+        return %0.3f;
+    }
+    static double sfunc_norm0b()
+    {
+        return %0.3f;
+    }
+};
+
+#endif
+"""
+
+sourceBasettBar = """#include "ScaleFactorsttBar.h"
+
+extern "C"
+{
+    static double python_sf_norm0b()
+    {
+        return ScaleFactors::sf_norm0b();
+    }
+    static double python_sf_norm0b_err()
+    {
+        return ScaleFactors::sfunc_norm0b();
+    }
+}
+"""
+
 
 ##################
 ## norm weights ##
@@ -288,8 +337,8 @@ def normWeightwithReweight(f, SFs):
         h2s_g1b[0] = reweight(h2s_g1b[0], SFs["DY_muZinv_g1b"])
 
         # apply weights to ttbar
-        h2s_0b[1]  = reweight(h2s_0b[1],  SFs["TT_elmuZinv_0b"])
-        h2s_g1b[1] = reweight(h2s_g1b[1], SFs["TT_elmuZinv_g1b"])
+        h2s_0b[1]  = reweight(h2s_0b[1], SFs["TT_elmuZinv_0b"])
+        h2s_g1b[1] = reweight(h2s_g1b[1], SFs["TT_elmuZinv_0b"])
 
         # Combine histograms
         h1 = h1_0b.Clone()

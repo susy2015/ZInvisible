@@ -7,6 +7,7 @@
 #include "TopTagger/Tools/TaggerUtility.h"
 #include "TopTagger/Tools/PlotUtility.h"
 #include "ScaleFactors.h"
+#include "ScaleFactorsttBar.h"
 
 #include "TopTagger.h"
 #include "TTModule.h"
@@ -455,6 +456,7 @@ namespace plotterFunctions
             if(MCfake3b)   nJet3bfakeWgt = MCfake3b->GetBinContent(MCfake3b->FindBin(cntNJetsPt30Eta24Zinv));
 
 	    double normWgt0b = ScaleFactors::sf_norm0b();
+            double normttbar = ScaleFactorsttBar::sf_norm0b(); 
 
             tr.registerDerivedVar("nJetWgtTTbar", wTT);
             tr.registerDerivedVar("nJetWgtDYZ",   wDY);
@@ -464,6 +466,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("nJet3bfakeWgt", nJet3bfakeWgt);
 
             tr.registerDerivedVar("normWgt0b", normWgt0b);
+            tr.registerDerivedVar("normttbar", normttbar);
         }
 
     public:
@@ -2615,7 +2618,10 @@ namespace plotterFunctions
 			 for (unsigned int j=0; j<jetsLVec.size(); ++j)
 			 {
 			     double DR1 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[0]);
-			     double DR2 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[1]);
+			     double DR2 = DR1;
+                             if(mysubjets.size()>1) {
+                             double DR2 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[1]);
+                             }
 			     //std::cout << "DR1, DR2: " << DR1 << " " << DR2 << std::endl;
 			     // Check if it matches a gen daughter
 			     bool genmatch = false;

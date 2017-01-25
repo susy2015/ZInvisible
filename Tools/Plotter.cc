@@ -151,8 +151,8 @@ void Plotter::HistSummary::parseName(std::vector<Plotter::DataCollection>& ns)
             VarName var;
             Plotter::parseSingleVar(dataset.first, var);
 
-           // std::string histname = name + "__" + var.name + "__" + ((var.index >= 0)?(std::to_string(var.index)):("")) + "__" + var.var + "__" + dataset.first + "__" + dataset.second.front().label + "__" + n.type;
-            std::string histname = name +  var.name + ((var.index >= 0)?(std::to_string(var.index)):("")) + var.var + dataset.first + dataset.second.front().label + n.type;
+           std::string histname = name + "__" + var.name + "__" + ((var.index >= 0)?(std::to_string(var.index)):("")) + "__" + var.var + "__" + dataset.first + "__" + dataset.second.front().label + "__" + n.type;
+           // std::string histname = name +  var.name + ((var.index >= 0)?(std::to_string(var.index)):("")) + var.var + dataset.first + dataset.second.front().label + n.type;
 
             tmphtp.push_back(std::shared_ptr<HistCutSummary>(new HistCutSummary(dataset.second.front().label, histname, var, nullptr, dataset.second)));
         }

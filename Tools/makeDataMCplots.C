@@ -6,6 +6,8 @@
 #include <getopt.h>
 #include <iostream>
 
+#include "TopTagger/CfgParser/include/TTException.h"
+
 int main(int argc, char* argv[])
 {
     using namespace std;
