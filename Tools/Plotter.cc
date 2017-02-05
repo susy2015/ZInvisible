@@ -392,6 +392,7 @@ void Plotter::createHistsFromTuple()
 
         if(registerfunc_ == nullptr) registerfunc_ = new RegisterFunctions();
         registerfunc_->remakeBTagCorrector(file.tag);
+        //registerfunc_->remakeISRreweight(file.tag);
 
         if(doTuple_)
         {
@@ -511,10 +512,10 @@ void Plotter::createHistsFromTuple()
                     {
                         if(tr.getVar<bool>("passnJetsZinv"))
                         {
-                            std::cout<<"FUCK YEAH WORKING"<<std::endl;
+                            //std::cout<<"FUCK YEAH WORKING"<<std::endl;
                             if(file.filePath.find("ZJetsToNuNu_") != std::string::npos || tr.getVar<bool>("passMuZinvSel"))
                             {
-                                std::cout<<"Made it to the end of the line"<<std::endl;
+                                //std::cout<<"Made it to the end of the line"<<std::endl;
                                 foutTuple_->cd();
                                 mtm->fill();
                                 fout_->cd();
@@ -537,6 +538,7 @@ void Plotter::createHistsFromTuple()
 
         if(foutTuple_ && tOut && mtm)
         {
+            //std::cout<<"This is the end my friend"<<std::endl;
             foutTuple_->cd();
             tOut->Write();
         }

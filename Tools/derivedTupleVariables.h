@@ -446,7 +446,7 @@ namespace plotterFunctions
 		if(njWTTbar_g1b) wTT = 1.0;//njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
 		if(njWDYZ_g1b)   wDY = njWDYZ_g1b->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
 	    }
-
+            //std::cout<<wDY<<std::endl;
             double nJet1bfakeWgt = 1.0;
             double nJet2bfakeWgt = 1.0;
             double nJet3bfakeWgt = 1.0;
@@ -500,9 +500,9 @@ namespace plotterFunctions
             if(f)
             {
                 //njWTTbar_0b  = 1;//static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
-                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_loose0"));
+                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_blnotag"));//0b_loose0"));
                 //njWTTbar_g1b = 1;//static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
-                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_loose0"));
+                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_blnotag"));//g1b_loose0"));
                 f->Close();
                 delete f;
             }
@@ -528,7 +528,7 @@ namespace plotterFunctions
     {
     private:
         TRandom3 *tr3;
-
+        TopTagger *tt, *ttMVA, *ttAllComb;
         void lepInfo(NTupleReader& tr)
         {
             const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
@@ -559,6 +559,7 @@ namespace plotterFunctions
 
             bool passMuonVeto = false;
             bool passEleVeto = false;
+
 
             try
             {
@@ -600,6 +601,8 @@ namespace plotterFunctions
             std::vector<TLorentzVector>* cutMuVec = new std::vector<TLorentzVector>();
             std::vector<double>* cutMuCharge = new std::vector<double>();
             std::vector<double>* cutMuActivity = new std::vector<double>();
+
+            std::vector<TLorentzVector>* Zrecopt = new std::vector<TLorentzVector>();
 
             std::vector<TLorentzVector> cutMuVecRecoOnly;
 
@@ -822,6 +825,7 @@ namespace plotterFunctions
             TLorentzVector bestRecoMuZ;
             for(int i = 0; i < cutMuVec->size(); ++i)
             {
+            Zrecopt->push_back( muonsLVec[0]+muonsLVec[1]);//(*cutMuVec)[0] + (*cutMuVec)[1];
                 if((*cutMuVec)[i].Pt() < minMuPt) continue;
                 for(int j = 0; j < i && j < cutMuVec->size(); ++j)
                 {
@@ -835,7 +839,7 @@ namespace plotterFunctions
                     }
                 }
             }
-
+            //Zrecopt = muonsLVec[0]+muonsLVec[1];//(*cutMuVec)[0] + (*cutMuVec)[1];
             double zElecMassCurrent = 1.0e300;
             TLorentzVector bestRecoElecZ;
             for(int i = 0; i < cutElecVec->size(); ++i)
@@ -908,6 +912,47 @@ namespace plotterFunctions
                 jc++;
                 mindPhiMetJ = std::min(mindPhiMetJ, fabs(ROOT::Math::VectorUtil::DeltaPhi(genZ, jet)));
             }
+            //vTopsNCandNewMVA->push_back(top.getNConstituents());
+/*
+            int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
+            topTagger::type3TopTagger t3tagger;
+            TopTagger *tt, *ttMVA, *ttAllComb;
+            Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
+            TopCat topMatcher_;
+
+            const TopTaggerResults& ttrMVA = ttMVA->getResults();
+            std::vector<TopObject> topMVACands = ttrMVA.getTopCandidates();
+            int monoJet;
+            int diJet;
+            int triJet;
+            for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
+            {
+                auto& top = *ttrMVA.getTops()[iTop];
+            if top.getNConstituents() =1 monoJet++;
+            if top.getNConstituents() =2 diJet++;
+            if top.getNConstituents() =3 triJet++;
+            }
+*/
+            //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+            int monoJet;
+            //TopTagger *tt, *ttMVA, *ttAllComb;
+            //ttMVA = new TopTagger();
+            //ttMVA->setCfgFile("TopTagger.cfg");
+            //const TopTaggerResults& ttResults = ttMVA->getResults();
+            //std::vector<TopObject>& topCandidates = ttResults.getTopCandidates();
+            //if(topCandidates.getNConstituents() = 1) monoJet++;
+            //TopTagger *tt, *ttMVA, *ttAllComb;
+            //ttMVA->setCfgFile("TopTagger.cfg");
+            /*
+            const TopTaggerResults& ttrMVA = ttMVA->getResults();
+            for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
+            {
+                auto& top = *ttrMVA.getTops()[iTop];
+             
+             if(top.getNConstituents() == 1) monoJet++;
+             }
+            std::cout<< monoJet << std::endl;
+            */
             //if(genZPt > 600) std::cout << "HELLO THERE!!!!" << std::endl;
             //if(genZPt > 600 && mindPhiMetJ < 0.5) std::cout << "BONJOUR!!! \t" << genZPt << "\t" << mindPhiMetJ << "\t" << run << "\t" << lumi << "\t" << event << std::endl;
             //std::cout<<"cleanMetPt "<<cleanMet.Pt()<<std::endl;
@@ -976,6 +1021,8 @@ namespace plotterFunctions
             tr.registerDerivedVar("passMuZinvSel", passMuZinvSel);
             tr.registerDerivedVar("passElecZinvSel", passElecZinvSel);
             tr.registerDerivedVar("passElMuZinvSel", passElMuZinvSel);
+
+            tr.registerDerivedVar("Zrecopt",Zrecopt);
         }
 
     public:
@@ -1179,19 +1226,19 @@ namespace plotterFunctions
 
 	double GetMuonTriggerEff(const double& muEta) 
 	{
-                if     (-2.6 <= muEta && muEta < -2.2) return 0.016; //+/-0.013/0.008
-                else if(-2.2 <= muEta && muEta < -1.8) return 0.74641;//0.680; //+/-0.017/0.017
-                else if(-1.8 <= muEta && muEta < -1.4) return 0.806; //+/-0.012/0.012
-                else if(-1.4 <= muEta && muEta < -1.0) return 0.7961;//0.866; //+/-0.008/0.009
-                else if(-1.0 <= muEta && muEta < -0.6) return 0.768; //+/-0.006/0.007
-                else if(-0.6 <= muEta && muEta < -0.2) return 0.818;//0.892; //+/-0.006/0.007
-                else if(-0.2 <= muEta && muEta <  0.2) return 0.807;//0.927; //+/-0.005/0.006
-                else if( 0.2 <= muEta && muEta <  0.6) return 0.7205;//0.892; //+/-0.006/0.007
-                else if( 0.6 <= muEta && muEta <  1.0) return 0.877;//0.911; //+/-0.006/0.007
-                else if( 1.0 <= muEta && muEta <  1.4) return 0.810;//0.864; //+/-0.008/0.009
-                else if( 1.4 <= muEta && muEta <  1.8) return 0.801;//0.808; //+/-0.011/0.012
-                else if( 1.8 <= muEta && muEta <  2.2) return 0.936;//0.652; //+/-0.017/0.017
-                else if( 2.2 <= muEta && muEta <  2.6) return 0.889;//0.026; //+/-0.015/0.01
+                if     (-2.6 <= muEta && muEta < -2.2) return 0.7804878; //+/-0.013/0.008
+                else if(-2.2 <= muEta && muEta < -1.8) return 0.7993958;//0.680; //+/-0.017/0.017
+                else if(-1.8 <= muEta && muEta < -1.4) return 0.8064625; //+/-0.012/0.012
+                else if(-1.4 <= muEta && muEta < -1.0) return 0.8913597;//0.866; //+/-0.008/0.009
+                else if(-1.0 <= muEta && muEta < -0.6) return 0.9080544; //+/-0.006/0.007
+                else if(-0.6 <= muEta && muEta < -0.2) return 0.890334;//0.892; //+/-0.006/0.007
+                else if(-0.2 <= muEta && muEta <  0.2) return 0.9306838;//0.927; //+/-0.005/0.006
+                else if( 0.2 <= muEta && muEta <  0.6) return 0.887492;//0.892; //+/-0.006/0.007
+                else if( 0.6 <= muEta && muEta <  1.0) return 0.9045519;//0.911; //+/-0.006/0.007
+                else if( 1.0 <= muEta && muEta <  1.4) return 0.8910615;//0.864; //+/-0.008/0.009
+                else if( 1.4 <= muEta && muEta <  1.8) return 0.8241979;//0.808; //+/-0.011/0.012
+                else if( 1.8 <= muEta && muEta <  2.2) return 0.8274559;//0.652; //+/-0.017/0.017
+                else if( 2.2 <= muEta && muEta <  2.6) return 0.762419;//0.026; //+/-0.015/0.01
                 else                                   return 0.000;
 	}
 
@@ -2328,7 +2375,7 @@ namespace plotterFunctions
 	    tr.registerDerivedVec("puppitau2Dtau1_SDM", puppitau2Dtau1_SDM);
 	    tr.registerDerivedVec("puppitau3Dtau2_SDM", puppitau3Dtau2_SDM);
 
-            (*hadWLVec) = genUtility::GetHadWLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+            //(*hadWLVec) = genUtility::GetHadWLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
 	  }
 
         public:
