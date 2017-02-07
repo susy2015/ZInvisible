@@ -2322,7 +2322,7 @@ namespace plotterFunctions
 
      class Taudiv {
       private:
-          std::shared_ptr<TopTagger> ttPtr;
+          std::shared_ptr<TopTagger> ttPtr_mine;
           void generateTaudiv(NTupleReader& tr) {
             const std::vector<double>& tau1    = tr.getVec<double>("tau1");
             const std::vector<double>& tau2    = tr.getVec<double>("tau2");
@@ -2358,8 +2358,8 @@ namespace plotterFunctions
             int monoJet;
              //TopTagger tt;
              //tt.setCfgFile("TopTagger.cfg");
-             const TopTaggerResults& ttr = ttPtr.getResults();
-             std::vector<TopObject*> Ntop = ttr.getTops();
+             //const TopTaggerResults& ttr = ttPtr_mine.getResults();
+             std::vector<TopObject*> Ntop = ttPtr_mine.getTops();
               for(int i=1; i<nTopCandSortedCnt; i++){
                if(Ntop[i]->getNConstituents() == 1) monoJet++;
                   }
@@ -2433,9 +2433,9 @@ namespace plotterFunctions
 	  }
 
         public:
-          Taudiv(std::shared_ptr<TopTagger> ttPtr_) { 
+          Taudiv(std::shared_ptr<TopTagger> ttPtr) { 
             //std::cout << "OMG! OMG! OMG! What's the STD?" << std::endl;
-           ttPtr_ = ttPtr;
+           ttPtr = ttPtr_mine;
           }
           ~Taudiv() {}
           void operator()(NTupleReader& tr)
