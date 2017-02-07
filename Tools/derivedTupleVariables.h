@@ -2322,6 +2322,7 @@ namespace plotterFunctions
 
      class Taudiv {
       private:
+          std::shared_ptr<TopTagger> ttPtr;
           void generateTaudiv(NTupleReader& tr) {
             const std::vector<double>& tau1    = tr.getVec<double>("tau1");
             const std::vector<double>& tau2    = tr.getVec<double>("tau2");
@@ -2352,12 +2353,12 @@ namespace plotterFunctions
             std::vector<TLorentzVector> *hadWLVec = new std::vector<TLorentzVector>();
 
              const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
-            std::shared_ptr<TopTagger> ttPtr;
+           //std::shared_ptr<TopTagger> ttPtr;
             //const TopTaggerResults& ttr = ttPtr->getResults();
             int monoJet;
              //TopTagger tt;
              //tt.setCfgFile("TopTagger.cfg");
-             //const TopTaggerResults& ttr = tt.getResults();
+             const TopTaggerResults& ttr = ttPtr.getResults();
              std::vector<TopObject*> Ntop = ttr.getTops();
               for(int i=1; i<nTopCandSortedCnt; i++){
                if(Ntop[i]->getNConstituents() == 1) monoJet++;
@@ -2432,10 +2433,9 @@ namespace plotterFunctions
 	  }
 
         public:
-          Taudiv(std::shared_ptr<TopTagger> ttPtr) { 
+          Taudiv(std::shared_ptr<TopTagger> ttPtr_) { 
             //std::cout << "OMG! OMG! OMG! What's the STD?" << std::endl;
-           //std::shared_ptr<TopTagger> ttPtr;
-           //ttPtr_ = ttPtr;
+           ttPtr_ = ttPtr;
           }
           ~Taudiv() {}
           void operator()(NTupleReader& tr)
