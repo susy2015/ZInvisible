@@ -99,7 +99,8 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     systematicPrep       = new plotterFunctions::SystematicPrep;
     systematicCalc       = new plotterFunctions::SystematicCalc(sbEra);
 
-    taudiv               = new plotterFunctions::Taudiv;
+    //taudiv               = new plotterFunctions::Taudiv;
+    taudiv               = new plotterFunctions::Taudiv(blvZinv->GetTopTaggerPtr());
     nJetAk8              = new plotterFunctions::NJetAk8;
     ak8DrMatch           = new plotterFunctions::Ak8DrMatch;
 

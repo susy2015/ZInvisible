@@ -2353,10 +2353,11 @@ namespace plotterFunctions
 
              const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
             std::shared_ptr<TopTagger> ttPtr;
+            //const TopTaggerResults& ttr = ttPtr->getResults();
             int monoJet;
-             TopTagger tt;
-             tt.setCfgFile("TopTagger.cfg");
-             const TopTaggerResults& ttr = tt.getResults();
+             //TopTagger tt;
+             //tt.setCfgFile("TopTagger.cfg");
+             //const TopTaggerResults& ttr = tt.getResults();
              std::vector<TopObject*> Ntop = ttr.getTops();
               for(int i=1; i<nTopCandSortedCnt; i++){
                if(Ntop[i]->getNConstituents() == 1) monoJet++;
@@ -2431,8 +2432,10 @@ namespace plotterFunctions
 	  }
 
         public:
-          Taudiv() { 
+          Taudiv(std::shared_ptr<TopTagger> ttPtr) { 
             //std::cout << "OMG! OMG! OMG! What's the STD?" << std::endl;
+           //std::shared_ptr<TopTagger> ttPtr;
+           //ttPtr_ = ttPtr;
           }
           ~Taudiv() {}
           void operator()(NTupleReader& tr)
