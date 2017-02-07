@@ -15,6 +15,8 @@
 #include "TopTaggerResults.h"
 #include "TopTagger/Tools/PlotUtility.h"
 
+#include "TopTagger/TopTagger/include/TopObject.h"
+
 #include "TH1.h"
 #include "TH2.h"
 #include "TFile.h"
@@ -66,7 +68,7 @@ namespace plotterFunctions
 
             const int& nJets     =  tr.getVar<int>("nJets");
 	    const double& stored_weight = tr.getVar<double>("stored_weight");
-            //std::cout<<"cutMuVec "<<cutMuVec.size()<<std::endl;
+
             // Calculate PU weight
 
             // Calculate Z-eff weight
@@ -557,6 +559,8 @@ namespace plotterFunctions
             const std::vector<double>& elesCharge           = tr.getVec<double>("elesCharge");
             const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
 
+            //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+
             bool passMuonVeto = false;
             bool passEleVeto = false;
 
@@ -602,7 +606,7 @@ namespace plotterFunctions
             std::vector<double>* cutMuCharge = new std::vector<double>();
             std::vector<double>* cutMuActivity = new std::vector<double>();
 
-            std::vector<TLorentzVector>* Zrecopt = new std::vector<TLorentzVector>();
+            //std::vector<TLorentzVector>* Zrecopt = new std::vector<TLorentzVector>();
 
             std::vector<TLorentzVector> cutMuVecRecoOnly;
 
@@ -823,9 +827,10 @@ namespace plotterFunctions
 
             double zMuMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
             TLorentzVector bestRecoMuZ;
+            TLorentzVector Zrecopt;
             for(int i = 0; i < cutMuVec->size(); ++i)
             {
-            Zrecopt->push_back( muonsLVec[0]+muonsLVec[1]);//(*cutMuVec)[0] + (*cutMuVec)[1];
+            Zrecopt =  muonsLVec[0]+muonsLVec[1];//(*cutMuVec)[0] + (*cutMuVec)[1];
                 if((*cutMuVec)[i].Pt() < minMuPt) continue;
                 for(int j = 0; j < i && j < cutMuVec->size(); ++j)
                 {
@@ -839,7 +844,7 @@ namespace plotterFunctions
                     }
                 }
             }
-            //std::cout<<Zrecopt.at(4)<<" the fourth one"<<std::endl;
+            //std::cout<<Zrecopt.Pt()<<" the fourth one"<<std::endl;
             //Zrecopt = muonsLVec[0]+muonsLVec[1];//(*cutMuVec)[0] + (*cutMuVec)[1];
             double zElecMassCurrent = 1.0e300;
             TLorentzVector bestRecoElecZ;
@@ -935,7 +940,17 @@ namespace plotterFunctions
             }
 */
             //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+            /*
+            std::shared_ptr<TopTagger> ttPtr;
             int monoJet;
+            const TopTaggerResults& ttr = ttPtr->getResults();
+            std::vector<TopObject*> Ntop = ttr.getTops();
+            for(int i=1; i<nTopCandSortedCnt; i++){
+            if(Ntop[i]->getNConstituents() == 1) monoJet++;
+            }
+            std::cout<<monoJet<<std::endl;
+            */
+            //tr.getTops();
             //TopTagger *tt, *ttMVA, *ttAllComb;
             //ttMVA = new TopTagger();
             //ttMVA->setCfgFile("TopTagger.cfg");
@@ -960,6 +975,7 @@ namespace plotterFunctions
             //std::cout<<" "<<std::endl;
             double bestRecoZPt = bestRecoZ.Pt();
             double cleanMetPt = cleanMet.Pt();
+            double Zrecoptpt = Zrecopt.Pt();
             //double cleanMet2Pt = cleanMet2.Pt();
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
             tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
@@ -1023,7 +1039,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("passElecZinvSel", passElecZinvSel);
             tr.registerDerivedVar("passElMuZinvSel", passElMuZinvSel);
 
-            tr.registerDerivedVar("Zrecopt",Zrecopt);
+            tr.registerDerivedVar("Zrecopt",Zrecoptpt);
         }
 
     public:
@@ -1160,7 +1176,18 @@ namespace plotterFunctions
             const double& nJet2bfakeWgt = tr.getVar<double>("nJet2bfakeWgt");
             const double& nJet3bfakeWgt = tr.getVar<double>("nJet3bfakeWgt");
             const double& HT            = tr.getVar<double>("HTZinv");
-
+            //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+            //            //top
+            /*
+            std::shared_ptr<TopTagger> ttPtr;
+            int monoJet;
+           const TopTaggerResults& ttr = ttPtr->getResults();
+               std::vector<TopObject*> Ntop = ttr.getTops();
+              for(int i=1; i<nTopCandSortedCnt; i++){
+               if(Ntop[i]->getNConstituents() == 1) monoJet++;
+                  }
+             std::cout<<monoJet<<std::endl;
+            */
             //int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
             int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);            
 
@@ -2324,6 +2351,18 @@ namespace plotterFunctions
 
             std::vector<TLorentzVector> *hadWLVec = new std::vector<TLorentzVector>();
 
+             const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+            std::shared_ptr<TopTagger> ttPtr;
+            int monoJet;
+             TopTagger tt;
+             tt.setCfgFile("TopTagger.cfg");
+             const TopTaggerResults& ttr = tt.getResults();
+             std::vector<TopObject*> Ntop = ttr.getTops();
+              for(int i=1; i<nTopCandSortedCnt; i++){
+               if(Ntop[i]->getNConstituents() == 1) monoJet++;
+                  }
+             std::cout<<monoJet<<std::endl;
+             
             const int& nJetsAk8 = ak8JetsLVec.size(); 
             const int& nJetsPuppi = puppiJetsLVec.size();
             tr.registerDerivedVar("nJetsAk8", nJetsAk8);
