@@ -839,6 +839,7 @@ namespace plotterFunctions
                     }
                 }
             }
+            //std::cout<<Zrecopt.at(4)<<" the fourth one"<<std::endl;
             //Zrecopt = muonsLVec[0]+muonsLVec[1];//(*cutMuVec)[0] + (*cutMuVec)[1];
             double zElecMassCurrent = 1.0e300;
             TLorentzVector bestRecoElecZ;
@@ -1774,6 +1775,9 @@ namespace plotterFunctions
             std::vector<double>* discriminatorsParMatch = new std::vector<double>();
             std::vector<double>* discriminatorsNoMatch = new std::vector<double>();
             std::vector<double>* discriminatorsParNoMatch = new std::vector<double>();
+            int typeMono;
+            int typeDi;
+            int typeTri;
 
             auto sortFunc = [](const TopObject& t1, const TopObject& t2)
             {
@@ -1864,8 +1868,13 @@ namespace plotterFunctions
                 if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 2) discriminatorsMatch2->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 1) discriminatorsMatch1->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 0) discriminatorsMatch0->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
-            }
+                
+                if(top.getNConstituents() == 1) std::cout<<"Mono jet "<< std::endl; //typeMono++;
+                if(top.getNConstituents() == 2) typeDi++;
+                if(top.getNConstituents() == 3) typeTri++;
 
+            }
+            std::cout<<"Mono jet "<< typeMono<<std::endl;
             //// Calculate number of leptons
             std::string muonsFlagIDLabel = "muonsFlagMedium";
             std::string elesFlagIDLabel = "elesFlagVeto";
@@ -1943,6 +1952,10 @@ namespace plotterFunctions
             tr.registerDerivedVec("discriminatorsMatch0", discriminatorsMatch0);
             tr.registerDerivedVec("discriminatorsNoMatch", discriminatorsNoMatch);
             tr.registerDerivedVec("discriminatorsParNoMatch", discriminatorsParNoMatch);
+   
+            tr.registerDerivedVar("typeMono",typeMono);
+            tr.registerDerivedVar("typeDi",typeDi);
+            tr.registerDerivedVar("typeTri",typeTri);
         }
 
 

@@ -434,8 +434,9 @@ def shapeSyst(filename):
                ["met", "cleanMetPt",             [0, 100, 200, 350, 500, 650, 1500], "MET" ],
                ["mt2", "best_had_brJet_MT2Zinv", [0, 100, 200, 350, 450, 1500],      "M_{T2}" ],
                ["nt",  "nTopCandSortedCntZinv",  [0, 1, 2, 8 ],                                         "N(t)" ],
-               ["nb",  "cntCSVSZinv",            [0, 1, 2, 8 ],                                      "N(b)" ]]
-
+               ["nb",  "cntCSVSZinv",            [0, 1, 2, 8 ],                                      "N(b)" ],
+               ["ht",  "HTZinv",                 [0, 100, 200, 350, 500, 650,800,1200, 1500],   "HT"],
+               ["nj",  "cntNJetsPt30Eta24Zinv",            [4,5,6,7,8,15 ],                                      "N(jets)" ]]
     for var in varList:
         # Procedure: 1. Grab the njet reweighted MC
         #            2. Subtract non-DY MC from data

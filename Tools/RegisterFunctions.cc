@@ -116,7 +116,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
         //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
     }
 
-
+    //int bTagSF_EventWeightSimple_Central =1;
      ISRcorrector = nullptr;
     if(isCondor)
     {
@@ -196,6 +196,7 @@ void RegisterFunctionsNTuple::remakeBTagCorrector(std::string sampleName)
         if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
     }
 }
+
 /*
 void RegisterFunctionsNTuple::remakeISRreweight(std::string sampleName)
 {

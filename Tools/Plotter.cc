@@ -243,6 +243,7 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
     for(auto& weightName : weightVec_)
     {
         const double& weight = tr.getVar<double>(weightName);
+        //std::cout<<weightName<<std::endl;
         if(weight == weight)
         {
             if(weight < 1e6)
