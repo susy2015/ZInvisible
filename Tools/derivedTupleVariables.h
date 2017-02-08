@@ -1802,9 +1802,9 @@ namespace plotterFunctions
             std::vector<double>* discriminatorsParMatch = new std::vector<double>();
             std::vector<double>* discriminatorsNoMatch = new std::vector<double>();
             std::vector<double>* discriminatorsParNoMatch = new std::vector<double>();
-            int typeMono;
-            int typeDi;
-            int typeTri;
+            //int typeMono;
+            //int typeDi;
+            //int typeTri;
 
             auto sortFunc = [](const TopObject& t1, const TopObject& t2)
             {
@@ -1896,12 +1896,12 @@ namespace plotterFunctions
                 if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 1) discriminatorsMatch1->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 0) discriminatorsMatch0->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 
-                if(top.getNConstituents() == 1) std::cout<<"Mono jet "<< std::endl; //typeMono++;
-                if(top.getNConstituents() == 2) typeDi++;
-                if(top.getNConstituents() == 3) typeTri++;
+                //if(top.getNConstituents() == 1) std::cout<<"Mono jet "<< std::endl; //typeMono++;
+                //if(top.getNConstituents() == 2) typeDi++;
+                //if(top.getNConstituents() == 3) typeTri++;
 
             }
-            std::cout<<"Mono jet "<< typeMono<<std::endl;
+            //std::cout<<"Mono jet "<< typeMono<<std::endl;
             //// Calculate number of leptons
             std::string muonsFlagIDLabel = "muonsFlagMedium";
             std::string elesFlagIDLabel = "elesFlagVeto";
@@ -1980,9 +1980,9 @@ namespace plotterFunctions
             tr.registerDerivedVec("discriminatorsNoMatch", discriminatorsNoMatch);
             tr.registerDerivedVec("discriminatorsParNoMatch", discriminatorsParNoMatch);
    
-            tr.registerDerivedVar("typeMono",typeMono);
-            tr.registerDerivedVar("typeDi",typeDi);
-            tr.registerDerivedVar("typeTri",typeTri);
+            //tr.registerDerivedVar("typeMono",typeMono);
+            //tr.registerDerivedVar("typeDi",typeDi);
+            //tr.registerDerivedVar("typeTri",typeTri);
         }
 
 
@@ -2356,19 +2356,28 @@ namespace plotterFunctions
            //std::shared_ptr<TopTagger> ttPtr;
             //const TopTaggerResults& ttr = ttPtr->getResults();
             int monoJet;
+            int diJet;
+            int triJet;
              //TopTagger tt;
              //tt.setCfgFile("TopTagger.cfg");
              //const TopTaggerResults& ttr = ttPtr_mine.getResults();
-             std::vector<TopObject*> Ntop = ttPtr_mine.getTops();
+             const TopTaggerResults& ttr =ttPtr_mine->getResults();
+             std::vector<TopObject*> Ntop = ttr.getTops();
               for(int i=1; i<nTopCandSortedCnt; i++){
                if(Ntop[i]->getNConstituents() == 1) monoJet++;
+               if (Ntop[i]->getNConstituents() ==2) diJet++;
+               if(Ntop[i]->getNConstituents() ==3) triJet++;
+               //std::cout<<monoJet<<std::endl;
                   }
-             std::cout<<monoJet<<std::endl;
+             //std::cout<<monoJet<<std::endl;
              
             const int& nJetsAk8 = ak8JetsLVec.size(); 
             const int& nJetsPuppi = puppiJetsLVec.size();
             tr.registerDerivedVar("nJetsAk8", nJetsAk8);
             tr.registerDerivedVar("nJetsPuppi", nJetsPuppi);
+            tr.registerDerivedVar("typeMono",monoJet);
+            tr.registerDerivedVar("typeDi",diJet);
+            tr.registerDerivedVar("typeTri",triJet);
             
             if(puppitau2.size()!=0 && puppitau1.size()!=0 && puppitau2.size()==puppitau1.size()){
 		for(int iJet = 0; iJet < nJetsPuppi; ++iJet){
@@ -2435,7 +2444,7 @@ namespace plotterFunctions
         public:
           Taudiv(std::shared_ptr<TopTagger> ttPtr) { 
             //std::cout << "OMG! OMG! OMG! What's the STD?" << std::endl;
-           ttPtr = ttPtr_mine;
+           ttPtr_mine = ttPtr;
           }
           ~Taudiv() {}
           void operator()(NTupleReader& tr)

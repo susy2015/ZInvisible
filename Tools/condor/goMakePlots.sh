@@ -7,7 +7,7 @@ cd $2/src
 eval `scramv1 runtime -sh`
 
 cd ${_CONDOR_SCRATCH_DIR}
-#cd /uscms_data/d3/snorberg/CMSSW_8_0_12/src/ZInvisible/Tools/
+#cd /uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools/
 
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$2/src/opencv/lib/
 
