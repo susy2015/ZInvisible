@@ -22,14 +22,22 @@ Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/makePlots, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/bTagEffHists.root, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/TTbarNoHad_NJetsISR.root, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/lepEffHists.root,  $ENV(CMSSW_BASE)/src/ZInvisible/Tools/njetWgtHists.root, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/dataMCweights.root, $ENV(CMSSW_BASE)/src/SusyAnaTools/Tools/CSVv2_ichep.csv, $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so, $ENV(CMSSW_BASE)/src/opencv/lib/libopencv_core.so.3.1, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/%(trainingFile)s, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/TopTagger.cfg, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/ISRWeights.root
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/CMSSW_8_0_23_patch1.tar.gz
 Output = logs/makePlots_$(Process).stdout
 Error = logs/makePlots_$(Process).stderr
 Log = logs/makePlots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
-"""%{"trainingFile":mvaFileName} 
+"""%{"trainingFile":mvaFileName}
+##$ENV(CMSSW_BASE)/src/ZInvisible/Tools/makePlots, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/bTagEffHists.root, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/TTbarNoHad_NJetsISR.root, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/lepEffHists.root,  $ENV(CMSSW_BASE)/src/ZInvisible/Tools/njetWgtHists.root, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/dataMCweights.root, $ENV(CMSSW_BASE)/src/SusyAnaTools/Tools/CSVv2_ichep.csv, $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so, $ENV(CMSSW_BASE)/src/opencv/lib/libopencv_core.so.3.1, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/%(trainingFile)s, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/TopTagger.cfg, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/ISRWeights.root
+#Output = logs/makePlots_$(Process).stdout
+#Error = logs/makePlots_$(Process).stderr
+#Log = logs/makePlots_$(Process).log
+#notify_user = ${LOGNAME}@FNAL.GOV
+#x509userproxy = $ENV(X509_USER_PROXY)
+
+#"""%{"trainingFile":mvaFileName} 
 
 #go make top plots!
 submitFileGTP = """universe = vanilla

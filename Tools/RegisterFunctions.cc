@@ -113,12 +113,13 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     }
     else
     {
-        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools", false);
         //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
     }
 
     //int bTagSF_EventWeightSimple_Central =1;
-     ISRcorrector = nullptr;
+
+    ISRcorrector = nullptr;
     if(isCondor)
     {
        ISRcorrector= new ISRCorrector("TTbarNoHad_NJetsISR.root","","");   
