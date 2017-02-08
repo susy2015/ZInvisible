@@ -2378,7 +2378,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("typeMono",monoJet);
             tr.registerDerivedVar("typeDi",diJet);
             tr.registerDerivedVar("typeTri",triJet);
-            
+           /* 
             if(puppitau2.size()!=0 && puppitau1.size()!=0 && puppitau2.size()==puppitau1.size()){
 		for(int iJet = 0; iJet < nJetsPuppi; ++iJet){
 		    puppitau2Dtau1->push_back(puppitau2[iJet]/(puppitau1[iJet]));
@@ -2437,7 +2437,7 @@ namespace plotterFunctions
 	    tr.registerDerivedVec("puppiLVecLoose_w", puppiLVecLoose_w);
 	    tr.registerDerivedVec("puppitau2Dtau1_SDM", puppitau2Dtau1_SDM);
 	    tr.registerDerivedVec("puppitau3Dtau2_SDM", puppitau3Dtau2_SDM);
-
+              */
             //(*hadWLVec) = genUtility::GetHadWLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
 	  }
 
@@ -2488,19 +2488,19 @@ namespace plotterFunctions
 	     {
 		 if(ak8JetsLVec.size() >= 1) ak81dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[0]));
 		 if(ak8JetsLVec.size() >= 2) ak82dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[1]));
-		 if(puppiLVectight_top.size() >= 1) puppi_top_L_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[0]));
-		 if(puppiLVectight_top.size() >= 2) puppi_top_L_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[1]));
-		 if(puppiLVecLoose_top.size() >= 1) puppi_top_T_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[0]));
-		 if(puppiLVecLoose_top.size() >= 2) puppi_top_T_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[1]));
+	//	 if(puppiLVectight_top.size() >= 1) puppi_top_L_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[0]));
+	//	 if(puppiLVectight_top.size() >= 2) puppi_top_L_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[1]));
+	//	 if(puppiLVecLoose_top.size() >= 1) puppi_top_T_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[0]));
+	//	 if(puppiLVecLoose_top.size() >= 2) puppi_top_T_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[1]));
 		 std::sort( ak81dRMin->begin(),ak81dRMin->end() );
 		 std::sort( ak82dRMin->begin(),ak82dRMin->end() );
 	     }
 	     tr.registerDerivedVec("ak81dRMin", ak81dRMin);
 	     tr.registerDerivedVec("ak82dRMin", ak82dRMin);
-	     tr.registerDerivedVec("puppi_top_L_1dRMin", puppi_top_L_1dRMin);
-	     tr.registerDerivedVec("puppi_top_L_2dRMin", puppi_top_L_2dRMin);    
-	     tr.registerDerivedVec("puppi_top_T_1dRMin", puppi_top_T_1dRMin);
-	     tr.registerDerivedVec("puppi_top_T_2dRMin", puppi_top_T_2dRMin);     
+	  //   tr.registerDerivedVec("puppi_top_L_1dRMin", puppi_top_L_1dRMin);
+	   //  tr.registerDerivedVec("puppi_top_L_2dRMin", puppi_top_L_2dRMin);    
+	    // tr.registerDerivedVec("puppi_top_T_1dRMin", puppi_top_T_1dRMin);
+	     //tr.registerDerivedVec("puppi_top_T_2dRMin", puppi_top_T_2dRMin);     
  
 	     for(int iJet1 = 0; iJet1 < ak81dRMin->size(); ++iJet1)
 	     {
@@ -2549,6 +2549,7 @@ namespace plotterFunctions
 	     const std::vector<double>& puppiSubJetsBdisc = tr.getVec<double>("puppiSubJetsBdisc");
 
 	     // For each tagged top/W, find the corresponding subjets
+	     /*
 	     std::vector< std::vector<TLorentzVector> > W_subjets;
 	     std::vector<double>* W_subjets_pt_reldiff = new std::vector<double>();
 	     for( TLorentzVector myW : puppiLVectight_w)
@@ -2591,10 +2592,11 @@ namespace plotterFunctions
 		 }
 	     }
 	     tr.registerDerivedVec("W_subjets_pt_reldiff", W_subjets_pt_reldiff);
-
+             */
 	     // For each tagged top/W, find the corresponding subjets
 	     std::vector< std::vector< TLorentzVector> > top_subjets;
 	     std::vector<double>* top_subjets_pt_reldiff = new std::vector<double>();
+             /*
 	     for( TLorentzVector mytop : puppiLVectight_top)
 	     {
 		 std::vector<TLorentzVector> mytop_subjets;
@@ -2635,7 +2637,7 @@ namespace plotterFunctions
 		 }
 	     }
 	     tr.registerDerivedVec("top_subjets_pt_reldiff", top_subjets_pt_reldiff);
-
+             */
 	     // Figure out gen matching..
 	     const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
 	     const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
@@ -2671,6 +2673,7 @@ namespace plotterFunctions
 		 }
 
 		 // check all tagged tops
+		 /*
 		 for(unsigned int imytop=0; imytop<puppiLVectight_top.size(); ++imytop) 
 		 {
 		     TLorentzVector mytop = puppiLVectight_top[imytop];
@@ -2844,7 +2847,9 @@ namespace plotterFunctions
 		     }
 
 		 }
+             */
 	     }
+             
 	     tr.registerDerivedVec("gentop_match", gentop_match);
 	     tr.registerDerivedVec("dR_top_gentop", dR_top_gentop);
 	     tr.registerDerivedVec("dR_AK4_topsubjet_genmatched", dR_AK4_topsubjet_genmatched);
