@@ -32,19 +32,6 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiSoftdropResol.root"]
 
-system("tar --exclude-caches-all --exclude-vcs -zcf ${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION} --exclude=src --exclude=tmp")
-
-#WORLDSWORSESOLUTIONTOAPROBLEM
-system("mkdir -p WORLDSWORSESOLUTIONTOAPROBLEM")
-for fn in filestoTransferGMP:
-    system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s"%fn)
-
-tarallinputs = "tar czf gmp.tar.gz WORLDSWORSESOLUTIONTOAPROBLEM --dereference"
-print tarallinputs
-system(tarallinputs)
-system("rm -r WORLDSWORSESOLUTIONTOAPROBLEM")
-
-exit()
 
 #go make plots!
 submitFileGMP = """universe = vanilla
@@ -132,7 +119,7 @@ parser = optparse.OptionParser("usage: %prog [options]\n")
 parser.add_option ('-n',  dest='numfile', type='int', default = 5, help="number of files per job")
 parser.add_option ('-d',  dest='datasets', type='string', default = '', help="List of datasets 'ZJetsToNuNu,DYJetsToLL'")
 parser.add_option ('-l',  dest='dataCollections', action='store_true', default = False, help="List all datacollections")
-parser.add_option ('-L', dest='dataCollectionslong', action='store_true', default = False, help="List all datacollections and sub collections")
+parser.add_option ('-L',  dest='dataCollectionslong', action='store_true', default = False, help="List all datacollections and sub collections")
 parser.add_option ('-r',  dest='refLumi', type='string', default = None, help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
 parser.add_option ('-c',  dest='noSubmit', action='store_true', default = False, help="Do not submit jobs.  Only create condor_submit.txt.")
 parser.add_option ('-e',  dest='goMakeEff', action='store_true', default = False, help="Run calcEff instead of makePlots.")
@@ -160,6 +147,19 @@ elif options.goMakeTopPlots:
 else:
     exeName = "makePlots"
     submitFile = submitFileGMP
+    if not options.dataCollections and not options.dataCollectionslong:
+        system("tar --exclude-caches-all --exclude-vcs -zcf ${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION} --exclude=src --exclude=tmp")
+
+        #WORLDSWORSESOLUTIONTOAPROBLEM
+        system("mkdir -p WORLDSWORSESOLUTIONTOAPROBLEM")
+        for fn in filestoTransferGMP:
+            system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s"%fn)
+        
+        tarallinputs = "tar czf gmp.tar.gz WORLDSWORSESOLUTIONTOAPROBLEM --dereference"
+        print tarallinputs
+        system(tarallinputs)
+        system("rm -r WORLDSWORSESOLUTIONTOAPROBLEM")
+        
 
 nFilesPerJob = options.numfile
 
