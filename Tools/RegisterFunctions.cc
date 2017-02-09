@@ -340,8 +340,8 @@ void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*myBLV);
     tr.registerFunction(*prepareTopVars);
     tr.registerFunction(*triggerInfo);
-    tr.registerFunction(*taudiv);
-    tr.registerFunction(*ak8DrMatch);
+//    tr.registerFunction(*taudiv);
+//    tr.registerFunction(*ak8DrMatch);
 }
 
 /////////////////////////////////
