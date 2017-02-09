@@ -30,4 +30,4 @@ mv histoutput_* ${_CONDOR_SCRATCH_DIR}
 mv minituple_histoutput_* ${_CONDOR_SCRATCH_DIR}
 
 rm $(echo $6 | sed 's|.*/||')
-rm ${_CONDOR_SCRATCH_DIR}/$2
+rm -r ${_CONDOR_SCRATCH_DIR}/$2
