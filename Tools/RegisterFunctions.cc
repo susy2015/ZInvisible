@@ -122,11 +122,11 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     ISRcorrector = nullptr;
     if(isCondor)
     {
-       ISRcorrector= new ISRCorrector("TTbarNoHad_NJetsISR.root","","");   
+       ISRcorrector = new ISRCorrector("ISRhistos.root","","");   
     }
     else
     {  
-        ISRcorrector= new ISRCorrector("TTbarNoHad_NJetsISR.root","/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/SusyAnaTools/Tools/ISR_Root_Files/","");
+        ISRcorrector = new ISRCorrector("ISRhistos.root","/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/SusyAnaTools/Tools/ISR_Root_Files/","");
     }
 
 }
@@ -199,14 +199,14 @@ void RegisterFunctionsNTuple::remakeBTagCorrector(std::string sampleName)
     }
 }
 
-/*
+
 void RegisterFunctionsNTuple::remakeISRreweight(std::string sampleName)
 {
     if(sampleName.find("Data") == std::string::npos){
-        if(ISRcorrector) ISRcorrector->resetEffs(sampleName);
+        if(ISRcorrector) ISRcorrector->resetSample(sampleName);
     }
 }
-*/
+
 ////////////////////////////////
 
 RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()

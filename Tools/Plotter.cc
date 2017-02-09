@@ -393,7 +393,7 @@ void Plotter::createHistsFromTuple()
 
         if(registerfunc_ == nullptr) registerfunc_ = new RegisterFunctions();
         registerfunc_->remakeBTagCorrector(file.tag);
-        //registerfunc_->remakeISRreweight(file.tag);
+        registerfunc_->remakeISRreweight(file.tag);
 
         if(doTuple_)
         {
