@@ -60,20 +60,20 @@ x509userproxy = $ENV(X509_USER_PROXY)
 #"""%{"trainingFile":mvaFileName} 
 
 filestoTransferGTP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeTopPlots",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/bTagEffHists.root",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TTbarNoHad_NJetsISR.root",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root",
-                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/CSVv2_ichep.csv",
-                      environ["CMSSW_BASE"] + "/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so",
-                      environ["CMSSW_BASE"] + "/lib/$ENV(SCRAM_ARCH)/libTopTaggerTopTagger.so",
+#                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/bTagEffHists.root",
+#                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TTbarNoHad_NJetsISR.root",
+#                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root",
+#                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root",
+#                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root",
+#                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/CSVv2_ichep.csv",
+                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so",
+                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/libTopTaggerTopTagger.so",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_noMVA.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_AllComb.cfg",
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1",
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)"%{"trainingFile":mvaFileName}]
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
 
 
 #go make top plots!
