@@ -151,8 +151,8 @@ void Plotter::HistSummary::parseName(std::vector<Plotter::DataCollection>& ns)
             VarName var;
             Plotter::parseSingleVar(dataset.first, var);
 
-            std::string histname = name + "__" + var.name + "__" + ((var.index >= 0)?(std::to_string(var.index)):("")) + "__" + var.var + "__" + dataset.first + "__" + dataset.second.front().label + "__" + n.type;
-            //std::string histname = name +  var.name + ((var.index >= 0)?(std::to_string(var.index)):("")) + var.var + dataset.first + dataset.second.front().label + n.type;
+           //std::string histname = name + "__" + var.name + "__" + ((var.index >= 0)?(std::to_string(var.index)):("")) + "__" + var.var + "__" + dataset.first + "__" + dataset.second.front().label + "__" + n.type;
+            std::string histname = name +  var.name + ((var.index >= 0)?(std::to_string(var.index)):("")) + var.var + dataset.first + dataset.second.front().label + n.type;
 
             tmphtp.push_back(std::shared_ptr<HistCutSummary>(new HistCutSummary(dataset.second.front().label, histname, var, nullptr, dataset.second)));
         }
@@ -243,6 +243,7 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
     for(auto& weightName : weightVec_)
     {
         const double& weight = tr.getVar<double>(weightName);
+        //std::cout<<weightName<<std::endl;
         if(weight == weight)
         {
             if(weight < 1e6)
@@ -392,6 +393,7 @@ void Plotter::createHistsFromTuple()
 
         if(registerfunc_ == nullptr) registerfunc_ = new RegisterFunctions();
         registerfunc_->remakeBTagCorrector(file.tag);
+        registerfunc_->remakeISRreweight(file.tag);
 
         if(doTuple_)
         {
@@ -511,8 +513,10 @@ void Plotter::createHistsFromTuple()
                     {
                         if(tr.getVar<bool>("passnJetsZinv"))
                         {
+                            //std::cout<<"FUCK YEAH WORKING"<<std::endl;
                             if(file.filePath.find("ZJetsToNuNu_") != std::string::npos || tr.getVar<bool>("passMuZinvSel"))
                             {
+                                //std::cout<<"Made it to the end of the line"<<std::endl;
                                 foutTuple_->cd();
                                 mtm->fill();
                                 fout_->cd();
@@ -535,6 +539,7 @@ void Plotter::createHistsFromTuple()
 
         if(foutTuple_ && tOut && mtm)
         {
+            //std::cout<<"This is the end my friend"<<std::endl;
             foutTuple_->cd();
             tOut->Write();
         }

@@ -5,16 +5,18 @@
 #include "Systematic.h"
 #include "PDFUncertainty.h"
 #include "BTagCorrector.h"
+#include "ISRCorrector.h"
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
-    return std::set<std::string>({});//"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});//,"bTagSF_EventWeightSimple_Central"});
+    //if you want to mot fill the minituple return std::set<std::string>({});
+    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});//,"bTagSF_EventWeightSimple_Central"});
     //return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
 }
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSetData()
 {
-    return std::set<std::string>({});//"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
+    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
 }
 
 void activateBranches(std::set<std::string>& activeBranches)
@@ -97,23 +99,37 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     systematicPrep       = new plotterFunctions::SystematicPrep;
     systematicCalc       = new plotterFunctions::SystematicCalc(sbEra);
 
-    taudiv               = new plotterFunctions::Taudiv;
+    //taudiv               = new plotterFunctions::Taudiv;
+    taudiv               = new plotterFunctions::Taudiv(blvZinv->GetTopTaggerPtr());
     nJetAk8              = new plotterFunctions::NJetAk8;
     ak8DrMatch           = new plotterFunctions::Ak8DrMatch;
 
     myPDFUnc = new PDFUncertainty();
     bTagCorrector = nullptr;
+
     if(isCondor)
     {
         bTagCorrector = new BTagCorrector("bTagEffHists.root", "", false);//"bTagEffHists.root", "", false);
     }
     else
     {
-        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools", false);
         //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
     }
-}
 
+    //int bTagSF_EventWeightSimple_Central =1;
+
+    ISRcorrector = nullptr;
+    if(isCondor)
+    {
+       ISRcorrector = new ISRCorrector("ISRhistos.root","","");   
+    }
+    else
+    {  
+        ISRcorrector = new ISRCorrector("ISRhistos.root","/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/SusyAnaTools/Tools/ISR_Root_Files/","");
+    }
+
+}
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {
     if(myBLV) delete myBLV;
@@ -136,6 +152,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(systematicPrep) delete systematicPrep;
     if(systematicCalc) delete systematicCalc;
     if(bTagCorrector) delete bTagCorrector;
+    if(ISRcorrector) delete ISRcorrector;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -167,6 +184,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*nJetAk8);
     tr.registerFunction(*taudiv);
     tr.registerFunction(*ak8DrMatch);
+    tr.registerFunction(*ISRcorrector);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
@@ -178,6 +196,14 @@ void RegisterFunctionsNTuple::remakeBTagCorrector(std::string sampleName)
 {
     if(sampleName.find("Data") == std::string::npos){
         if(bTagCorrector) bTagCorrector->resetEffs(sampleName);
+    }
+}
+
+
+void RegisterFunctionsNTuple::remakeISRreweight(std::string sampleName)
+{
+    if(sampleName.find("Data") == std::string::npos){
+        if(ISRcorrector) ISRcorrector->resetSample(sampleName);
     }
 }
 

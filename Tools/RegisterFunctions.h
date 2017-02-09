@@ -10,6 +10,7 @@ class NTupleReader;
 class BaselineVessel;
 class PDFUncertainty;
 class BTagCorrector;
+class ISRCorrector;
 
 namespace plotterFunctions
 {
@@ -43,6 +44,7 @@ public:
     virtual const std::set<std::string> getMiniTupleSet();
     virtual const std::set<std::string> getMiniTupleSetData();
     virtual void remakeBTagCorrector(std::string sampleName) {};
+    virtual void remakeISRreweight(std::string sampleName) {};
 };
 
 class RegisterFunctionsNTuple : public RegisterFunctions
@@ -68,6 +70,7 @@ private:
     plotterFunctions::SystematicCalc *systematicCalc;
     PDFUncertainty *myPDFUnc;
     BTagCorrector *bTagCorrector;
+    ISRCorrector *ISRcorrector;
     plotterFunctions::Taudiv *taudiv;
     plotterFunctions::NJetAk8 *nJetAk8;
     plotterFunctions::Ak8DrMatch *ak8DrMatch;
@@ -78,6 +81,7 @@ public:
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);
     void remakeBTagCorrector(std::string sampleName);
+    void remakeISRreweight(std::string sampleName);
 };
 
 class RegisterFunctionsMiniTuple : public RegisterFunctions

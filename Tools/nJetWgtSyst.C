@@ -128,6 +128,7 @@ int main()
     int n83t_num =0;
     int n84_num= 0;
     int n84t_num=0;
+    int n80_num=0;
 
     float variations[5][20][NTRIALS];
     for(int iT = 0; iT < NTRIALS; ++iT)
@@ -284,12 +285,16 @@ int main()
                         N0square_84 += weight_3*weight_3;
                         n84_num ++;
                 }
-                if(passBaselineZinv && passLeptVeto && cntCSVSZinv>=3 && nTopCandSortedCntZinv >= 2 && cleanMetPt > 350)
+                if(passBaselineZinv && passLeptVeto && cntCSVSZinv>=3 && nTopCandSortedCntZinv >= 3 && cleanMetPt > 350)
                 {
                     double weight_4 = triggerEffMC * nJetWgtDYZ * normWgt0b * bTagSF_EventWeightSimple_Central * fs.getWeight();
                         N0_84_top += weight_4;
                         N0square_84_top += weight_4*weight_4;
                         n84t_num ++;
+                }
+                if(passBaselineZinv && passLeptVeto && cntCSVSZinv==2 && nTopCandSortedCntZinv >= 3 && cleanMetPt < 400 )
+                {
+                n80_num++;
                 }
                 N0_divide_83 = N0square_83/N0_83;
                 N0_divide_83_top = N0square_83_top/N0_83_top;
@@ -324,6 +329,7 @@ int main()
     std::cout<<"N0_divide_83_top "<<N0_divide_83_top <<" number "<< n83t_num <<std::endl;
     std::cout<<"N0_divide_84 "<<N0_divide_84 <<" number "<< n84_num <<std::endl;
     std::cout<<"N0_divide_84_top "<<N0_divide_84_top <<" number "<< n84t_num <<std::endl;
+    std::cout<<"Number in bin 80 " << n80_num <<std::endl;
     }
     catch(const std::string e)
     {

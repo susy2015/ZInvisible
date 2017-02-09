@@ -7,12 +7,15 @@
 #include "TopTagger/Tools/TaggerUtility.h"
 #include "TopTagger/Tools/PlotUtility.h"
 #include "ScaleFactors.h"
+#include "ScaleFactorsttBar.h"
 
 #include "TopTagger.h"
 #include "TTModule.h"
 #include "TopTaggerUtilities.h"
 #include "TopTaggerResults.h"
 #include "TopTagger/Tools/PlotUtility.h"
+
+#include "TopTagger/TopTagger/include/TopObject.h"
 
 #include "TH1.h"
 #include "TH2.h"
@@ -65,7 +68,7 @@ namespace plotterFunctions
 
             const int& nJets     =  tr.getVar<int>("nJets");
 	    const double& stored_weight = tr.getVar<double>("stored_weight");
-            //std::cout<<"cutMuVec "<<cutMuVec.size()<<std::endl;
+
             // Calculate PU weight
 
             // Calculate Z-eff weight
@@ -437,15 +440,15 @@ namespace plotterFunctions
 
 	    if(cntCSVSZinv == 0)
 	    {
-		if(njWTTbar_0b)  wTT = njWTTbar_0b->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
+		if(njWTTbar_0b)  wTT = 1.0;//njWTTbar_0b->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
 		if(njWDYZ_0b)    wDY = njWDYZ_0b->GetBinContent(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
 	    }
 	    else
 	    {
-		if(njWTTbar_g1b) wTT = njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+		if(njWTTbar_g1b) wTT = 1.0;//njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
 		if(njWDYZ_g1b)   wDY = njWDYZ_g1b->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
 	    }
-
+            //std::cout<<wDY<<std::endl;
             double nJet1bfakeWgt = 1.0;
             double nJet2bfakeWgt = 1.0;
             double nJet3bfakeWgt = 1.0;
@@ -455,6 +458,7 @@ namespace plotterFunctions
             if(MCfake3b)   nJet3bfakeWgt = MCfake3b->GetBinContent(MCfake3b->FindBin(cntNJetsPt30Eta24Zinv));
 
 	    double normWgt0b = ScaleFactors::sf_norm0b();
+            double normttbar = ScaleFactorsttBar::sf_norm0b(); 
 
             tr.registerDerivedVar("nJetWgtTTbar", wTT);
             tr.registerDerivedVar("nJetWgtDYZ",   wDY);
@@ -464,6 +468,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("nJet3bfakeWgt", nJet3bfakeWgt);
 
             tr.registerDerivedVar("normWgt0b", normWgt0b);
+            tr.registerDerivedVar("normttbar", normttbar);
         }
 
     public:
@@ -496,10 +501,10 @@ namespace plotterFunctions
             f = new TFile("dataMCweights.root");
             if(f)
             {
-                njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
-                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_loose0"));
-                njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
-                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_loose0"));
+                //njWTTbar_0b  = 1;//static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
+                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_loose0_mt2_MET"));//0b_loose0"));
+                //njWTTbar_g1b = 1;//static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
+                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_loose0_mt2_MET"));//g1b_loose0"));
                 f->Close();
                 delete f;
             }
@@ -525,7 +530,7 @@ namespace plotterFunctions
     {
     private:
         TRandom3 *tr3;
-
+        TopTagger *tt, *ttMVA, *ttAllComb;
         void lepInfo(NTupleReader& tr)
         {
             const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
@@ -554,8 +559,11 @@ namespace plotterFunctions
             const std::vector<double>& elesCharge           = tr.getVec<double>("elesCharge");
             const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
 
+            //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+
             bool passMuonVeto = false;
             bool passEleVeto = false;
+
 
             try
             {
@@ -597,6 +605,8 @@ namespace plotterFunctions
             std::vector<TLorentzVector>* cutMuVec = new std::vector<TLorentzVector>();
             std::vector<double>* cutMuCharge = new std::vector<double>();
             std::vector<double>* cutMuActivity = new std::vector<double>();
+
+            //std::vector<TLorentzVector>* Zrecopt = new std::vector<TLorentzVector>();
 
             std::vector<TLorentzVector> cutMuVecRecoOnly;
 
@@ -817,8 +827,10 @@ namespace plotterFunctions
 
             double zMuMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
             TLorentzVector bestRecoMuZ;
+            TLorentzVector Zrecopt;
             for(int i = 0; i < cutMuVec->size(); ++i)
             {
+            Zrecopt =  muonsLVec[0]+muonsLVec[1];//(*cutMuVec)[0] + (*cutMuVec)[1];
                 if((*cutMuVec)[i].Pt() < minMuPt) continue;
                 for(int j = 0; j < i && j < cutMuVec->size(); ++j)
                 {
@@ -832,7 +844,8 @@ namespace plotterFunctions
                     }
                 }
             }
-
+            //std::cout<<Zrecopt.Pt()<<" the fourth one"<<std::endl;
+            //Zrecopt = muonsLVec[0]+muonsLVec[1];//(*cutMuVec)[0] + (*cutMuVec)[1];
             double zElecMassCurrent = 1.0e300;
             TLorentzVector bestRecoElecZ;
             for(int i = 0; i < cutElecVec->size(); ++i)
@@ -905,12 +918,64 @@ namespace plotterFunctions
                 jc++;
                 mindPhiMetJ = std::min(mindPhiMetJ, fabs(ROOT::Math::VectorUtil::DeltaPhi(genZ, jet)));
             }
+            //vTopsNCandNewMVA->push_back(top.getNConstituents());
+/*
+            int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
+            topTagger::type3TopTagger t3tagger;
+            TopTagger *tt, *ttMVA, *ttAllComb;
+            Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
+            TopCat topMatcher_;
+
+            const TopTaggerResults& ttrMVA = ttMVA->getResults();
+            std::vector<TopObject> topMVACands = ttrMVA.getTopCandidates();
+            int monoJet;
+            int diJet;
+            int triJet;
+            for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
+            {
+                auto& top = *ttrMVA.getTops()[iTop];
+            if top.getNConstituents() =1 monoJet++;
+            if top.getNConstituents() =2 diJet++;
+            if top.getNConstituents() =3 triJet++;
+            }
+*/
+            //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+            /*
+            std::shared_ptr<TopTagger> ttPtr;
+            int monoJet;
+            const TopTaggerResults& ttr = ttPtr->getResults();
+            std::vector<TopObject*> Ntop = ttr.getTops();
+            for(int i=1; i<nTopCandSortedCnt; i++){
+            if(Ntop[i]->getNConstituents() == 1) monoJet++;
+            }
+            std::cout<<monoJet<<std::endl;
+            */
+            //tr.getTops();
+            //TopTagger *tt, *ttMVA, *ttAllComb;
+            //ttMVA = new TopTagger();
+            //ttMVA->setCfgFile("TopTagger.cfg");
+            //const TopTaggerResults& ttResults = ttMVA->getResults();
+            //std::vector<TopObject>& topCandidates = ttResults.getTopCandidates();
+            //if(topCandidates.getNConstituents() = 1) monoJet++;
+            //TopTagger *tt, *ttMVA, *ttAllComb;
+            //ttMVA->setCfgFile("TopTagger.cfg");
+            /*
+            const TopTaggerResults& ttrMVA = ttMVA->getResults();
+            for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
+            {
+                auto& top = *ttrMVA.getTops()[iTop];
+             
+             if(top.getNConstituents() == 1) monoJet++;
+             }
+            std::cout<< monoJet << std::endl;
+            */
             //if(genZPt > 600) std::cout << "HELLO THERE!!!!" << std::endl;
             //if(genZPt > 600 && mindPhiMetJ < 0.5) std::cout << "BONJOUR!!! \t" << genZPt << "\t" << mindPhiMetJ << "\t" << run << "\t" << lumi << "\t" << event << std::endl;
             //std::cout<<"cleanMetPt "<<cleanMet.Pt()<<std::endl;
             //std::cout<<" "<<std::endl;
             double bestRecoZPt = bestRecoZ.Pt();
             double cleanMetPt = cleanMet.Pt();
+            double Zrecoptpt = Zrecopt.Pt();
             //double cleanMet2Pt = cleanMet2.Pt();
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
             tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
@@ -973,6 +1038,8 @@ namespace plotterFunctions
             tr.registerDerivedVar("passMuZinvSel", passMuZinvSel);
             tr.registerDerivedVar("passElecZinvSel", passElecZinvSel);
             tr.registerDerivedVar("passElMuZinvSel", passElMuZinvSel);
+
+            tr.registerDerivedVar("Zrecopt",Zrecoptpt);
         }
 
     public:
@@ -1109,7 +1176,18 @@ namespace plotterFunctions
             const double& nJet2bfakeWgt = tr.getVar<double>("nJet2bfakeWgt");
             const double& nJet3bfakeWgt = tr.getVar<double>("nJet3bfakeWgt");
             const double& HT            = tr.getVar<double>("HTZinv");
-
+            //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+            //            //top
+            /*
+            std::shared_ptr<TopTagger> ttPtr;
+            int monoJet;
+           const TopTaggerResults& ttr = ttPtr->getResults();
+               std::vector<TopObject*> Ntop = ttr.getTops();
+              for(int i=1; i<nTopCandSortedCnt; i++){
+               if(Ntop[i]->getNConstituents() == 1) monoJet++;
+                  }
+             std::cout<<monoJet<<std::endl;
+            */
             //int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
             int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);            
 
@@ -1176,20 +1254,20 @@ namespace plotterFunctions
 
 	double GetMuonTriggerEff(const double& muEta) 
 	{
-                if     (-2.6 <= muEta && muEta < -2.2) return 0.016; //+/-0.013/0.008
-                else if(-2.2 <= muEta && muEta < -1.8) return 0.680; //+/-0.017/0.017
-                else if(-1.8 <= muEta && muEta < -1.4) return 0.787; //+/-0.012/0.012
-                else if(-1.4 <= muEta && muEta < -1.0) return 0.866; //+/-0.008/0.009
-                else if(-1.0 <= muEta && muEta < -0.6) return 0.902; //+/-0.006/0.007
-                else if(-0.6 <= muEta && muEta < -0.2) return 0.892; //+/-0.006/0.007
-                else if(-0.2 <= muEta && muEta <  0.2) return 0.927; //+/-0.005/0.006
-                else if( 0.2 <= muEta && muEta <  0.6) return 0.892; //+/-0.006/0.007
-                else if( 0.6 <= muEta && muEta <  1.0) return 0.911; //+/-0.006/0.007
-                else if( 1.0 <= muEta && muEta <  1.4) return 0.864; //+/-0.008/0.009
-                else if( 1.4 <= muEta && muEta <  1.8) return 0.808; //+/-0.011/0.012
-                else if( 1.8 <= muEta && muEta <  2.2) return 0.652; //+/-0.017/0.017
-                else if( 2.2 <= muEta && muEta <  2.6) return 0.026; //+/-0.015/0.01
-                else                                   return 0.000;
+            if (-2.6 <= muEta && muEta < -2.2) return 0.7861842;
+            else if(-2.2 <= muEta && muEta < -1.8) return 0.8233438;
+            else if(-1.8 <= muEta && muEta < -1.4) return 0.8151685;
+            else if(-1.4 <= muEta && muEta < -1.0) return 0.8991723;
+            else if(-1.0 <= muEta && muEta < -0.6) return 0.9125786;
+            else if(-0.6 <= muEta && muEta < -0.2) return 0.8880085;
+            else if(-0.2 <= muEta && muEta <  0.2) return 0.9334851;
+            else if( 0.2 <= muEta && muEta <  0.6) return 0.8857523;
+            else if( 0.6 <= muEta && muEta <  1.0) return 0.9052119;
+            else if( 1.0 <= muEta && muEta <  1.4) return 0.9004312;
+            else if( 1.4 <= muEta && muEta <  1.8) return 0.8384009;
+            else if( 1.8 <= muEta && muEta <  2.2) return 0.8218332;
+            else if( 2.2 <= muEta && muEta <  2.6) return 0.7781818;
+            else                                   return 0.000;
 	}
 
 	double GetTriggerEffWeight(const double& met, const double& ht) 
@@ -1724,6 +1802,9 @@ namespace plotterFunctions
             std::vector<double>* discriminatorsParMatch = new std::vector<double>();
             std::vector<double>* discriminatorsNoMatch = new std::vector<double>();
             std::vector<double>* discriminatorsParNoMatch = new std::vector<double>();
+            //int typeMono;
+            //int typeDi;
+            //int typeTri;
 
             auto sortFunc = [](const TopObject& t1, const TopObject& t2)
             {
@@ -1814,8 +1895,13 @@ namespace plotterFunctions
                 if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 2) discriminatorsMatch2->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 1) discriminatorsMatch1->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 0) discriminatorsMatch0->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
-            }
+                
+                //if(top.getNConstituents() == 1) std::cout<<"Mono jet "<< std::endl; //typeMono++;
+                //if(top.getNConstituents() == 2) typeDi++;
+                //if(top.getNConstituents() == 3) typeTri++;
 
+            }
+            //std::cout<<"Mono jet "<< typeMono<<std::endl;
             //// Calculate number of leptons
             std::string muonsFlagIDLabel = "muonsFlagMedium";
             std::string elesFlagIDLabel = "elesFlagVeto";
@@ -1893,6 +1979,10 @@ namespace plotterFunctions
             tr.registerDerivedVec("discriminatorsMatch0", discriminatorsMatch0);
             tr.registerDerivedVec("discriminatorsNoMatch", discriminatorsNoMatch);
             tr.registerDerivedVec("discriminatorsParNoMatch", discriminatorsParNoMatch);
+   
+            //tr.registerDerivedVar("typeMono",typeMono);
+            //tr.registerDerivedVar("typeDi",typeDi);
+            //tr.registerDerivedVar("typeTri",typeTri);
         }
 
 
@@ -2232,6 +2322,7 @@ namespace plotterFunctions
 
      class Taudiv {
       private:
+          std::shared_ptr<TopTagger> ttPtr_mine;
           void generateTaudiv(NTupleReader& tr) {
             const std::vector<double>& tau1    = tr.getVec<double>("tau1");
             const std::vector<double>& tau2    = tr.getVec<double>("tau2");
@@ -2261,11 +2352,33 @@ namespace plotterFunctions
 
             std::vector<TLorentzVector> *hadWLVec = new std::vector<TLorentzVector>();
 
+             const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+           //std::shared_ptr<TopTagger> ttPtr;
+            //const TopTaggerResults& ttr = ttPtr->getResults();
+            int monoJet;
+            int diJet;
+            int triJet;
+             //TopTagger tt;
+             //tt.setCfgFile("TopTagger.cfg");
+             //const TopTaggerResults& ttr = ttPtr_mine.getResults();
+             const TopTaggerResults& ttr =ttPtr_mine->getResults();
+             std::vector<TopObject*> Ntop = ttr.getTops();
+              for(int i=1; i<nTopCandSortedCnt; i++){
+               if(Ntop[i]->getNConstituents() == 1) monoJet++;
+               if (Ntop[i]->getNConstituents() ==2) diJet++;
+               if(Ntop[i]->getNConstituents() ==3) triJet++;
+               //std::cout<<monoJet<<std::endl;
+                  }
+             //std::cout<<monoJet<<std::endl;
+             
             const int& nJetsAk8 = ak8JetsLVec.size(); 
             const int& nJetsPuppi = puppiJetsLVec.size();
             tr.registerDerivedVar("nJetsAk8", nJetsAk8);
             tr.registerDerivedVar("nJetsPuppi", nJetsPuppi);
-            
+            tr.registerDerivedVar("typeMono",monoJet);
+            tr.registerDerivedVar("typeDi",diJet);
+            tr.registerDerivedVar("typeTri",triJet);
+           /* 
             if(puppitau2.size()!=0 && puppitau1.size()!=0 && puppitau2.size()==puppitau1.size()){
 		for(int iJet = 0; iJet < nJetsPuppi; ++iJet){
 		    puppitau2Dtau1->push_back(puppitau2[iJet]/(puppitau1[iJet]));
@@ -2324,13 +2437,14 @@ namespace plotterFunctions
 	    tr.registerDerivedVec("puppiLVecLoose_w", puppiLVecLoose_w);
 	    tr.registerDerivedVec("puppitau2Dtau1_SDM", puppitau2Dtau1_SDM);
 	    tr.registerDerivedVec("puppitau3Dtau2_SDM", puppitau3Dtau2_SDM);
-
-            (*hadWLVec) = genUtility::GetHadWLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+              */
+            //(*hadWLVec) = genUtility::GetHadWLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
 	  }
 
         public:
-          Taudiv() { 
+          Taudiv(std::shared_ptr<TopTagger> ttPtr) { 
             //std::cout << "OMG! OMG! OMG! What's the STD?" << std::endl;
+           ttPtr_mine = ttPtr;
           }
           ~Taudiv() {}
           void operator()(NTupleReader& tr)
@@ -2374,19 +2488,19 @@ namespace plotterFunctions
 	     {
 		 if(ak8JetsLVec.size() >= 1) ak81dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[0]));
 		 if(ak8JetsLVec.size() >= 2) ak82dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[1]));
-		 if(puppiLVectight_top.size() >= 1) puppi_top_L_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[0]));
-		 if(puppiLVectight_top.size() >= 2) puppi_top_L_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[1]));
-		 if(puppiLVecLoose_top.size() >= 1) puppi_top_T_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[0]));
-		 if(puppiLVecLoose_top.size() >= 2) puppi_top_T_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[1]));
+	//	 if(puppiLVectight_top.size() >= 1) puppi_top_L_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[0]));
+	//	 if(puppiLVectight_top.size() >= 2) puppi_top_L_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[1]));
+	//	 if(puppiLVecLoose_top.size() >= 1) puppi_top_T_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[0]));
+	//	 if(puppiLVecLoose_top.size() >= 2) puppi_top_T_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[1]));
 		 std::sort( ak81dRMin->begin(),ak81dRMin->end() );
 		 std::sort( ak82dRMin->begin(),ak82dRMin->end() );
 	     }
 	     tr.registerDerivedVec("ak81dRMin", ak81dRMin);
 	     tr.registerDerivedVec("ak82dRMin", ak82dRMin);
-	     tr.registerDerivedVec("puppi_top_L_1dRMin", puppi_top_L_1dRMin);
-	     tr.registerDerivedVec("puppi_top_L_2dRMin", puppi_top_L_2dRMin);    
-	     tr.registerDerivedVec("puppi_top_T_1dRMin", puppi_top_T_1dRMin);
-	     tr.registerDerivedVec("puppi_top_T_2dRMin", puppi_top_T_2dRMin);     
+	  //   tr.registerDerivedVec("puppi_top_L_1dRMin", puppi_top_L_1dRMin);
+	   //  tr.registerDerivedVec("puppi_top_L_2dRMin", puppi_top_L_2dRMin);    
+	    // tr.registerDerivedVec("puppi_top_T_1dRMin", puppi_top_T_1dRMin);
+	     //tr.registerDerivedVec("puppi_top_T_2dRMin", puppi_top_T_2dRMin);     
  
 	     for(int iJet1 = 0; iJet1 < ak81dRMin->size(); ++iJet1)
 	     {
@@ -2435,6 +2549,7 @@ namespace plotterFunctions
 	     const std::vector<double>& puppiSubJetsBdisc = tr.getVec<double>("puppiSubJetsBdisc");
 
 	     // For each tagged top/W, find the corresponding subjets
+	     /*
 	     std::vector< std::vector<TLorentzVector> > W_subjets;
 	     std::vector<double>* W_subjets_pt_reldiff = new std::vector<double>();
 	     for( TLorentzVector myW : puppiLVectight_w)
@@ -2477,10 +2592,11 @@ namespace plotterFunctions
 		 }
 	     }
 	     tr.registerDerivedVec("W_subjets_pt_reldiff", W_subjets_pt_reldiff);
-
+             */
 	     // For each tagged top/W, find the corresponding subjets
 	     std::vector< std::vector< TLorentzVector> > top_subjets;
 	     std::vector<double>* top_subjets_pt_reldiff = new std::vector<double>();
+             /*
 	     for( TLorentzVector mytop : puppiLVectight_top)
 	     {
 		 std::vector<TLorentzVector> mytop_subjets;
@@ -2521,7 +2637,7 @@ namespace plotterFunctions
 		 }
 	     }
 	     tr.registerDerivedVec("top_subjets_pt_reldiff", top_subjets_pt_reldiff);
-
+             */
 	     // Figure out gen matching..
 	     const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
 	     const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
@@ -2557,6 +2673,7 @@ namespace plotterFunctions
 		 }
 
 		 // check all tagged tops
+		 /*
 		 for(unsigned int imytop=0; imytop<puppiLVectight_top.size(); ++imytop) 
 		 {
 		     TLorentzVector mytop = puppiLVectight_top[imytop];
@@ -2615,7 +2732,10 @@ namespace plotterFunctions
 			 for (unsigned int j=0; j<jetsLVec.size(); ++j)
 			 {
 			     double DR1 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[0]);
-			     double DR2 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[1]);
+			     double DR2 = DR1;
+                             if(mysubjets.size()>1) {
+                             double DR2 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[1]);
+                             }
 			     //std::cout << "DR1, DR2: " << DR1 << " " << DR2 << std::endl;
 			     // Check if it matches a gen daughter
 			     bool genmatch = false;
@@ -2727,7 +2847,9 @@ namespace plotterFunctions
 		     }
 
 		 }
+             */
 	     }
+             
 	     tr.registerDerivedVec("gentop_match", gentop_match);
 	     tr.registerDerivedVec("dR_top_gentop", dR_top_gentop);
 	     tr.registerDerivedVec("dR_AK4_topsubjet_genmatched", dR_AK4_topsubjet_genmatched);
