@@ -4,7 +4,7 @@ export PATH=${PATH}:/cvmfs/cms.cern.ch/common
 export CMS_PATH=/cvmfs/cms.cern.ch
 
 #get the release setup and in place
-tar -xzf CMSSW_8_0_23_patch1.tar.gz
+tar -xzf $2.tar.gz
 cd $2/
 mkdir -p src
 cd src
