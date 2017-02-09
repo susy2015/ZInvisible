@@ -20,10 +20,9 @@ with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg") as meow
 #here I hack in the tarball for GMP, this needs to be generalized to the other options 
 
 filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots", 
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/bTagEffHists.root", 
-                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/TTbarNoHad_NJetsISR.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
-                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRhistos.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root", 
