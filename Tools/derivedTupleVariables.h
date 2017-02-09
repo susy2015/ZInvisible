@@ -1254,20 +1254,20 @@ namespace plotterFunctions
 
 	double GetMuonTriggerEff(const double& muEta) 
 	{
-                if     (-2.6 <= muEta && muEta < -2.2) return 0.7804878; //+/-0.013/0.008
-                else if(-2.2 <= muEta && muEta < -1.8) return 0.7993958;//0.680; //+/-0.017/0.017
-                else if(-1.8 <= muEta && muEta < -1.4) return 0.8064625; //+/-0.012/0.012
-                else if(-1.4 <= muEta && muEta < -1.0) return 0.8913597;//0.866; //+/-0.008/0.009
-                else if(-1.0 <= muEta && muEta < -0.6) return 0.9080544; //+/-0.006/0.007
-                else if(-0.6 <= muEta && muEta < -0.2) return 0.890334;//0.892; //+/-0.006/0.007
-                else if(-0.2 <= muEta && muEta <  0.2) return 0.9306838;//0.927; //+/-0.005/0.006
-                else if( 0.2 <= muEta && muEta <  0.6) return 0.887492;//0.892; //+/-0.006/0.007
-                else if( 0.6 <= muEta && muEta <  1.0) return 0.9045519;//0.911; //+/-0.006/0.007
-                else if( 1.0 <= muEta && muEta <  1.4) return 0.8910615;//0.864; //+/-0.008/0.009
-                else if( 1.4 <= muEta && muEta <  1.8) return 0.8241979;//0.808; //+/-0.011/0.012
-                else if( 1.8 <= muEta && muEta <  2.2) return 0.8274559;//0.652; //+/-0.017/0.017
-                else if( 2.2 <= muEta && muEta <  2.6) return 0.762419;//0.026; //+/-0.015/0.01
-                else                                   return 0.000;
+            if (-2.6 <= muEta && muEta < -2.2) return 0.7861842;
+            else if(-2.2 <= muEta && muEta < -1.8) return 0.8233438;
+            else if(-1.8 <= muEta && muEta < -1.4) return 0.8151685;
+            else if(-1.4 <= muEta && muEta < -1.0) return 0.8991723;
+            else if(-1.0 <= muEta && muEta < -0.6) return 0.9125786;
+            else if(-0.6 <= muEta && muEta < -0.2) return 0.8880085;
+            else if(-0.2 <= muEta && muEta <  0.2) return 0.9334851;
+            else if( 0.2 <= muEta && muEta <  0.6) return 0.8857523;
+            else if( 0.6 <= muEta && muEta <  1.0) return 0.9052119;
+            else if( 1.0 <= muEta && muEta <  1.4) return 0.9004312;
+            else if( 1.4 <= muEta && muEta <  1.8) return 0.8384009;
+            else if( 1.8 <= muEta && muEta <  2.2) return 0.8218332;
+            else if( 2.2 <= muEta && muEta <  2.6) return 0.7781818;
+            else                                   return 0.000;
 	}
 
 	double GetTriggerEffWeight(const double& met, const double& ht) 
