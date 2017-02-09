@@ -109,24 +109,22 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 
     if(isCondor)
     {
-        bTagCorrector = new BTagCorrector("bTagEffHists.root", "", false);//"bTagEffHists.root", "", false);
+        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
     }
     else
     {
-        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools", false);
-        //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/SusyAnaTools/Tools/", false);
+        //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools", false);
+        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/SusyAnaTools/Tools/data/", false);
     }
-
-    //int bTagSF_EventWeightSimple_Central =1;
 
     ISRcorrector = nullptr;
     if(isCondor)
     {
-       ISRcorrector = new ISRCorrector("ISRhistos.root","","");   
+       ISRcorrector = new ISRCorrector("allINone_ISRJets.root","","");   
     }
     else
     {  
-        ISRcorrector = new ISRCorrector("ISRhistos.root","/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/SusyAnaTools/Tools/ISR_Root_Files/","");
+        ISRcorrector = new ISRCorrector("allINone_ISRJets.root","/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/SusyAnaTools/Tools/ISR_Root_Files/","");
     }
 
 }
