@@ -72,7 +72,8 @@ filestoTransferGTP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeTopPlot
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_AllComb.cfg",
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1",
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName},
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiSoftdropResol.root"]
 
 
 #go make top plots!
@@ -81,7 +82,7 @@ Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeTopPlots.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gmp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz 
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gtp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz 
 Output = logs/makePlots_$(Process).stdout
 Error = logs/makePlots_$(Process).stderr
 Log = logs/makePlots_$(Process).log
@@ -151,14 +152,14 @@ options, args = parser.parse_args()
 submitFile = ""
 exeName = ""
 
-def makeExeAndFriendsTarrball(filestoTransfer):
+def makeExeAndFriendsTarrball(filestoTransfer, fname):
     if not options.dataCollections and not options.dataCollectionslong:
         #WORLDSWORSESOLUTIONTOAPROBLEM
         system("mkdir -p WORLDSWORSESOLUTIONTOAPROBLEM")
         for fn in filestoTransfer:
             system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s"%fn)
         
-        tarallinputs = "tar czf gmp.tar.gz WORLDSWORSESOLUTIONTOAPROBLEM --dereference"
+        tarallinputs = "tar czvf %s.tar.gz WORLDSWORSESOLUTIONTOAPROBLEM --dereference"%fname
         print tarallinputs
         system(tarallinputs)
         system("rm -r WORLDSWORSESOLUTIONTOAPROBLEM")
@@ -180,11 +181,11 @@ elif options.goMakeSigEff:
 elif options.goMakeTopPlots:
     exeName = "makeTopPlots"
     submitFile = submitFileGTP
-    makeExeAndFriendsTarrball(filestoTransferGTP)
+    makeExeAndFriendsTarrball(filestoTransferGTP, "gtp")
 else:
     exeName = "makePlots"
     submitFile = submitFileGMP
-    makeExeAndFriendsTarrball(filestoTransferGMP)
+    makeExeAndFriendsTarrball(filestoTransferGMP, "gmp")
 
 nFilesPerJob = options.numfile
 
