@@ -114,7 +114,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     else
     {
         //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools", false);
-        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/SusyAnaTools/Tools/data/", false);
+        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/ZInvisible/Tools/", false);
     }
 
     ISRcorrector = nullptr;
