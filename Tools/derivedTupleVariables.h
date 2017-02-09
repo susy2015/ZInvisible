@@ -1274,89 +1274,105 @@ namespace plotterFunctions
 	{
 	    if (ht<1000)
 	    {
-		if (met<25) return 0.002;
-		else if (met<50) return 0.003;
-		else if (met<75) return 0.011;
-		else if (met<100) return 0.053;
-		else if (met<125) return 0.211;
-		else if (met<150) return 0.484;
-		else if (met<175) return 0.751;
-		else if (met<200) return 0.897;
-		else if (met<275) return 0.970;
-		else if (met<400) return 0.986; 
-		else return 0.97;
+		if (met<25) return 0.001542561;
+		else if (met<50) return 0.003222389;
+		else if (met<75) return 0.00987073;
+		else if (met<100) return 0.03865682;
+		else if (met<125) return 0.1387231;
+		else if (met<150) return 0.3564816;
+		else if (met<175) return 0.6276442;
+		else if (met<200) return 0.8154821;
+		else if (met<275) return 0.9340538;
+		else if (met<400) return 0.9858562; 
+                else if (met<600) return 0.9931507;
+                else if (met<1000) return 1.00;
+		else return 1.00;
 	    } 
 	    else 
 	    {
-		if (met<25) return 0.014;
-		else if (met<50) return 0.019;
-		else if (met<75) return 0.037;
-		else if (met<100) return 0.089;
-		else if (met<125) return 0.204;
-		else if (met<150) return 0.358;
-		else if (met<175) return 0.568;
-		else if (met<200) return 0.747;
-		else if (met<275) return 0.907;
-		else if (met<400) return 0.988; 
-		else return 0.972;
+		if (met<25) return  0.02067183;
+		else if (met<50) return 0.02504944;
+		else if (met<75) return 0.04486466;
+		else if (met<100) return 0.07434402;
+		else if (met<125) return 0.1518288;
+		else if (met<150) return 0.2802669;
+		else if (met<175) return 0.4642409;
+		else if (met<200) return 0.6596434;
+		else if (met<275) return 0.8510453;
+		else if (met<400) return 0.9563492;
+                else if (met<600) return 0.9874214;
+                else if (met<1000) return 0.9736842; 
+		else return 0.9736842;
 	    }
 	}
 	double GetTriggerEffStatUncHi(const double& met, const double& ht) 
 	{
 	    if (ht<1000)
 	    {
-		if (met<75) return 0.0;
-		else if (met<100) return 0.001;
-		else if (met<125) return 0.004;
-		else if (met<150) return 0.006;
-		else if (met<175) return 0.006;
-		else if (met<200) return 0.005;
-		else if (met<275) return 0.002;
-		else if (met<400) return 0.002; 
-		else return 0.007;
+		if (met<25) return 0.0001251554;
+		else if (met<50) return 0.0001310897;
+		else if (met<75) return 0.0002597269;
+		else if (met<100) return 0.0006525702;
+		else if (met<125) return 0.001545856;
+		else if (met<150) return 0.002821274;
+                else if (met<200) return 0.003691577;
+		else if (met<275) return 0.003877182;
+		else if (met<400) return 0.002294442; 
+                else if (met<600) return 0.002045071;
+                else if (met<1000) return 0.003725375;
+		else return 0.00;
 	    } 
 	    else 
 	    {
-		if (met<25) return 0.002;
-		else if (met<50) return 0.002;
-		else if (met<75) return 0.003;
-		else if (met<100) return 0.005;
-		else if (met<125) return 0.010;
-		else if (met<150) return 0.015;
-		else if (met<175) return 0.020;
-		else if (met<200) return 0.021;
-		else if (met<275) return 0.010;
-		else if (met<400) return 0.005; 
-		else return 0.009;
+		if (met<25) return 0.004283915;
+		else if (met<50) return 0.003169914;
+		else if (met<75) return 0.004349597;
+		else if (met<100) return 0.006241982;
+		else if (met<125) return 0.01001983;
+		else if (met<150) return 0.01455422;
+		else if (met<175) return 0.0183275;
+		else if (met<200) return 0.01960093;
+		else if (met<275) return 0.01062354;
+		else if (met<400) return 0.007445741;
+                else if (met<600) return 0.006010458;
+                else if (met<1000) return 0.01697945; 
+		else return 0.01697945;
 	    }
 	}
 	double GetTriggerEffStatUncLo(const double& met, const double& ht) 
 	{
 	    if (ht<1000)
 	    {
-		if (met<75) return 0.0;
-		else if (met<100) return 0.001;
-		else if (met<125) return 0.004;
-		else if (met<150) return 0.006;
-		else if (met<175) return 0.007;
-		else if (met<200) return 0.006;
-		else if (met<275) return 0.003;
-		else if (met<400) return 0.003; 
-		else return 0.009;
-	    } 
+                if (met<25) return 0.0001160878;
+                else if (met<50) return 0.000126075;
+                else if (met<75) return 0.0002532144;
+                else if (met<100) return 0.000642253;
+                else if (met<125) return 0.001531628;
+                else if (met<150) return 0.002811409;
+                else if (met<175) return 0.003706407;
+                else if (met<200) return 0.003940439;
+                else if (met<275) return 0.00236968;
+                else if (met<400) return 0.002358961;
+                else if (met<600) return 0.006617554;
+                else if (met<1000) return 0.1422293;
+                else return 0.1422293;
+            }
+	   
 	    else 
 	    {
-		if (met<25) return 0.002;
-		else if (met<50) return 0.002;
-		else if (met<75) return 0.002;
-		else if (met<100) return 0.005;
-		else if (met<125) return 0.010;
-		else if (met<150) return 0.015;
-		else if (met<175) return 0.020;
-		else if (met<200) return 0.022;
-		else if (met<275) return 0.011;
-		else if (met<400) return 0.007; 
-		else return 0.012;
+		if (met<25) return 0.003609465;
+		else if (met<50) return 0.002838673;
+		else if (met<75) return 0.003996443;
+		else if (met<100) return 0.005811049;
+		else if (met<125) return 0.009521872;
+		else if (met<150) return 0.01412113;
+		else if (met<175) return 0.01823465;
+		else if (met<200) return 0.02013986;
+		else if (met<275) return 0.01126014;
+		else if (met<400) return 0.008759573;
+                else if (met<600) return 0.009833846;
+                else if (met<1000) return 0.03365661; 
+		else return 0.03365661;
 	    }
 	}
 	double GetTriggerEffSystUncHi(const double& met, const double& ht) 
