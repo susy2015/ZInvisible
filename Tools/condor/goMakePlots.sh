@@ -15,7 +15,7 @@ eval `scramv1 runtime -sh`
 tar -xzf ${_CONDOR_SCRATCH_DIR}/gmp.tar.gz
 cd WORLDSWORSESOLUTIONTOAPROBLEM
 
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$(PWD}
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}
 
 echo "xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') ."
 xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
