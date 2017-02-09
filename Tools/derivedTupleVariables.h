@@ -502,9 +502,9 @@ namespace plotterFunctions
             if(f)
             {
                 //njWTTbar_0b  = 1;//static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
-                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_blnotag"));//0b_loose0"));
+                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_loose0_mt2_MET"));//0b_loose0"));
                 //njWTTbar_g1b = 1;//static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
-                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_blnotag"));//g1b_loose0"));
+                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_loose0_mt2_MET"));//g1b_loose0"));
                 f->Close();
                 delete f;
             }

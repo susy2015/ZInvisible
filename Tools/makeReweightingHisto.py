@@ -141,7 +141,7 @@ def njetWeights(filename):
     # Run over the relevant histograms
     cuts_DY = ["muZinv", "muZinv_0b", "muZinv_g1b"]
     cuts_TT = ["elmuZinv", "elmuZinv_0b", "elmuZinv_g1b"]
-    selection = "blnotag"#"loose0"#"loose0_mt2"#"ht300_dphi"
+    selection = "loose0_mt2_MET"#"blnotag"#"loose0"#"loose0_mt2"#"ht300_dphi"
     # histo names
     hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
     hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
