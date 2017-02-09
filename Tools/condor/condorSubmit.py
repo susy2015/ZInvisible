@@ -16,20 +16,51 @@ with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg") as meow
             mvaFileName = line.split("=")[1].strip().strip("\"")
             break
 
+
+#here I hack in the tarball for GMP, this needs to be generalized to the other options 
+
+filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/bTagEffHists.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TTbarNoHad_NJetsISR.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
+                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so", 
+                      environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/TTbarNoHad_NJetsISR.root",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiSoftdropResol.root"]
+
+system("tar --exclude-caches-all --exclude-vcs -zcf ${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION} --exclude=src --exclude=tmp")
+
+#WORLDSWORSESOLUTIONTOAPROBLEM
+system("mkdir -p WORLDSWORSESOLUTIONTOAPROBLEM")
+for fn in filestoTransferGMP:
+    system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s"%fn)
+
+tarallinputs = "tar czf gmp.tar.gz WORLDSWORSESOLUTIONTOAPROBLEM --dereference"
+print tarallinputs
+system(tarallinputs)
+system("rm -r WORLDSWORSESOLUTIONTOAPROBLEM")
+
+exit()
+
 #go make plots!
 submitFileGMP = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/CMSSW_8_0_23_patch1.tar.gz
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gmp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz
 Output = logs/makePlots_$(Process).stdout
 Error = logs/makePlots_$(Process).stderr
 Log = logs/makePlots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
-"""%{"trainingFile":mvaFileName}
+"""
 ##$ENV(CMSSW_BASE)/src/ZInvisible/Tools/makePlots, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/bTagEffHists.root, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/TTbarNoHad_NJetsISR.root, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/lepEffHists.root,  $ENV(CMSSW_BASE)/src/ZInvisible/Tools/njetWgtHists.root, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/dataMCweights.root, $ENV(CMSSW_BASE)/src/SusyAnaTools/Tools/CSVv2_ichep.csv, $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so, $ENV(CMSSW_BASE)/src/opencv/lib/libopencv_core.so.3.1, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/%(trainingFile)s, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/TopTagger.cfg, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/ISRWeights.root
 #Output = logs/makePlots_$(Process).stdout
 #Error = logs/makePlots_$(Process).stderr
@@ -175,7 +206,7 @@ for ds in datasets:
                 if '.root' in l and not 'failed' in l:
                     count = count + 1
             for startFileNum in xrange(0, count, nFilesPerJob):
-                fileParts.append("Arguments = %s $ENV(CMSSW_BASE) %i %i %f %s\n"%(n, nFilesPerJob, startFileNum, lumi, s))
+                fileParts.append("Arguments = %s $ENV(CMSSW_VERSION) %i %i %f %s\n"%(n, nFilesPerJob, startFileNum, lumi, s))
                 fileParts.append("Output = logs/%s_%s_%i.stdout\n"%(exeName, n, startFileNum))
                 fileParts.append("Error = logs/%s_%s_%i.stderr\n"%(exeName, n, startFileNum))
                 fileParts.append("Log = logs/%s_%s_%i.log\n"%(exeName, n, startFileNum))
