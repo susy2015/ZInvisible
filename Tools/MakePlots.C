@@ -121,9 +121,9 @@ int main(int argc, char* argv[])
     //Select approperiate datasets here
     if(dataSets.compare("TEST") == 0)
     {
-        fileMap["DYJetsToLL"]  = {ss["DYJetsToLL_HT_600toInf"]};
+        fileMap["DYJetsToLL"]  = {ss["DYJetsToLL_HT_600to800"]};
         fileMap["ZJetsToNuNu"] = {ss["ZJetsToNuNu_HT_2500toInf"]};
-        fileMap["DYJetsToLL_HT_600toInf"] = {ss["DYJetsToLL_HT_600toInf"]};
+        fileMap["DYJetsToLL_HT_600to800"] = {ss["DYJetsToLL_HT_600to800"]};
         fileMap["ZJetsToNuNu_HT_2500toInf"] = {ss["ZJetsToNuNu_HT_2500toInf"]};
         fileMap["TTbarDiLep"] = {ss["TTbarDiLep"]};
         fileMap["TTbarNoHad"] = {ss["TTbarDiLep"]};
@@ -131,8 +131,8 @@ int main(int argc, char* argv[])
     }
     else if(dataSets.compare("TEST2") == 0)
     {
-        fileMap["DYJetsToLL"]  = {ss["DYJetsToLL_HT_600toInf"]};
-        fileMap["DYJetsToLL_HT_600toInf"] = {ss["DYJetsToLL_HT_600toInf"]};
+        fileMap["DYJetsToLL"]  = {ss["DYJetsToLL_HT_600to800"]};
+        fileMap["DYJetsToLL_HT_600to800"] = {ss["DYJetsToLL_HT_600to800"]};
         fileMap["IncDY"] = {ss["DYJetsToLL_Inc"]}; 
         fileMap["TTbarDiLep"] = {ss["TTbarDiLep"]};
         fileMap["TTbarNoHad"] = {ss["TTbarDiLep"]};
@@ -283,12 +283,27 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_ll_HT_100to200(  "DY#rightarrow#mu#mu 100 < H_{T} < 200 GeV",    fileMap["DYJetsToLL_HT_100to200"],   "pdgIdZDec=13;passMuZinvSel", "zEffWgt;zAccWgt", znunu_mumu_ratio / zAcc);
     Plotter::DatasetSummary dsDY_ll_HT_200to400(  "DY#rightarrow#mu#mu 200 < H_{T} < 400 GeV",    fileMap["DYJetsToLL_HT_200to400"],   "pdgIdZDec=13;passMuZinvSel", "zEffWgt;zAccWgt", znunu_mumu_ratio / zAcc);
     Plotter::DatasetSummary dsDY_ll_HT_400to600(  "DY#rightarrow#mu#mu 400 < H_{T} < 600 GeV",    fileMap["DYJetsToLL_HT_400to600"],   "pdgIdZDec=13;passMuZinvSel", "zEffWgt;zAccWgt", znunu_mumu_ratio / zAcc);
-    Plotter::DatasetSummary dsDY_ll_HT_600toInf(  "DY#rightarrow#mu#mu H_{T} > 600 GeV",          fileMap["DYJetsToLL_HT_600toInf"],   "pdgIdZDec=13;passMuZinvSel", "zEffWgt;zAccWgt", znunu_mumu_ratio / zAcc);
+    Plotter::DatasetSummary dsDY_ll_HT_600to800(  "DY#rightarrow#mu#mu 600 < H_{T} < 800 GeV",    fileMap["DYJetsToLL_HT_600to800"],   "pdgIdZDec=13;passMuZinvSel", "zEffWgt;zAccWgt", znunu_mumu_ratio / zAcc);
+    Plotter::DatasetSummary dsDY_ll_HT_800to1200(  "DY#rightarrow#mu#mu 800 < H_{T} < 1200 GeV",  fileMap["DYJetsToLL_HT_800to1200"],   "pdgIdZDec=13;passMuZinvSel", "zEffWgt;zAccWgt", znunu_mumu_ratio / zAcc);
+    Plotter::DatasetSummary dsDY_ll_HT_1200to2500(  "DY#rightarrow#mu#mu 1200 < H_{T} < 2500 GeV",  fileMap["DYJetsToLL_HT_1200to2500"],   "pdgIdZDec=13;passMuZinvSel", "zEffWgt;zAccWgt", znunu_mumu_ratio / zAcc);
+    Plotter::DatasetSummary dsDY_ll_HT_2500toInf(  "DY#rightarrow#mu#mu H_{T} > 2500 GeV",          fileMap["DYJetsToLL_HT_2500toInf"],   "pdgIdZDec=13;passMuZinvSel", "zEffWgt;zAccWgt", znunu_mumu_ratio / zAcc);
 
     Plotter::DatasetSummary dsDY_nunu_HT_100to200("DY#rightarrow#nu#nu 100 < H_{T} < 200 GeV",    fileMap["ZJetsToNuNu_HT_100to200"],  "passLeptVeto", "");
     Plotter::DatasetSummary dsDY_nunu_HT_200to400("DY#rightarrow#nu#nu 200 < H_{T} < 400 GeV",    fileMap["ZJetsToNuNu_HT_200to400"],  "passLeptVeto", "");
     Plotter::DatasetSummary dsDY_nunu_HT_400to600("DY#rightarrow#nu#nu 400 < H_{T} < 600 GeV",    fileMap["ZJetsToNuNu_HT_400to600"],  "passLeptVeto", "");
-    Plotter::DatasetSummary dsDY_nunu_HT_600toInf("DY#rightarrow#nu#nu H_{T} > 600 GeV",          fileMap["ZJetsToNuNu_HT_600toInf"],  "passLeptVeto", "");
+    Plotter::DatasetSummary dsDY_nunu_HT_600to800("DY#rightarrow#nu#nu 600 < H_{T} < 800 GeV",          fileMap["ZJetsToNuNu_HT_600to800"],  "passLeptVeto", "");
+    Plotter::DatasetSummary dsDY_nunu_HT_800to1200("DY#rightarrow#nu#nu 800 < H_{T} < 1200 GeV",          fileMap["ZJetsToNuNu_HT_800to1200"],  "passLeptVeto", "");
+    Plotter::DatasetSummary dsDY_nunu_HT_1200to2500("DY#rightarrow#nu#nu 1200 < H_{T} > 2500 GeV",          fileMap["ZJetsToNuNu_HT_1200to2500"],  "passLeptVeto", "");
+    Plotter::DatasetSummary dsDY_nunu_HT_2500toInf("DY#rightarrow#nu#nu H_{T} > 2500 GeV",          fileMap["ZJetsToNuNu_HT_2500toInf"],  "passLeptVeto", "");
+
+    // To check stitching via genHT distribution
+    Plotter::DatasetSummary dsDY_ll_HT_100to200_noweight(  "DY#rightarrow#mu#mu 100 < H_{T} < 200 GeV",    fileMap["DYJetsToLL_HT_100to200"],   "", "");
+    Plotter::DatasetSummary dsDY_ll_HT_200to400_noweight(  "DY#rightarrow#mu#mu 200 < H_{T} < 400 GeV",    fileMap["DYJetsToLL_HT_200to400"],   "", "");
+    Plotter::DatasetSummary dsDY_ll_HT_400to600_noweight(  "DY#rightarrow#mu#mu 400 < H_{T} < 600 GeV",    fileMap["DYJetsToLL_HT_400to600"],   "", "");
+    Plotter::DatasetSummary dsDY_ll_HT_600to800_noweight(  "DY#rightarrow#mu#mu 600 < H_{T} < 800 GeV",    fileMap["DYJetsToLL_HT_600to800"],   "", "");
+    Plotter::DatasetSummary dsDY_ll_HT_800to1200_noweight(  "DY#rightarrow#mu#mu 800 < H_{T} < 1200 GeV",  fileMap["DYJetsToLL_HT_800to1200"],  "", "");
+    Plotter::DatasetSummary dsDY_ll_HT_1200to2500_noweight( "DY#rightarrow#mu#mu 1200 < H_{T} < 2500 GeV", fileMap["DYJetsToLL_HT_1200to2500"], "", "");
+    Plotter::DatasetSummary dsDY_ll_HT_2500toInf_noweight(  "DY#rightarrow#mu#mu H_{T} > 2500 GeV",        fileMap["DYJetsToLL_HT_2500toInf"],  "", "");
 
     Plotter::DatasetSummary dsDY_ll_passMuonVeto(     "passMuonVeto",         fileMap["DYJetsToLL"], "pdgIdZDec=13;passMuonVeto", "");
     Plotter::DatasetSummary dsDY_ll_passEleVeto(      "passEleVeto",          fileMap["DYJetsToLL"], "pdgIdZDec=13;passEleVeto", "");
@@ -509,12 +524,14 @@ int main(int argc, char* argv[])
     PDC trg_nTop(     "single","nTopCandSortedCntZinv",{dsDY_ll_zAcc, dsDY_ll_mu30_mu20, dsDY_ll_mu30_mu30, dsDY_ll_mu40_mu30, dsDY_ll_mu45_mu20, dsDY_ll_singleMu45});
     PDC trg_nBottom(  "single","cntCSVSZinv",          {dsDY_ll_zAcc, dsDY_ll_mu30_mu20, dsDY_ll_mu30_mu30, dsDY_ll_mu40_mu30, dsDY_ll_mu45_mu20, dsDY_ll_singleMu45});
 
-    Plotter::DataCollection scaled_stacked_DYtoll_genht(  "stack", "genHt",    {dsDY_ll_HT_100to200, dsDY_ll_HT_200to400, dsDY_ll_HT_400to600, dsDY_ll_HT_600toInf});
+    Plotter::DataCollection scaled_stacked_DYtoll_genht(  "stack", "genHt",    {dsDY_ll_HT_100to200, dsDY_ll_HT_200to400, dsDY_ll_HT_400to600, dsDY_ll_HT_600to800, dsDY_ll_HT_800to1200, dsDY_ll_HT_1200to2500, dsDY_ll_HT_2500toInf});
 
-    Plotter::DataCollection scaled_stacked_DYtoll_cleanht(  "stack", "HTZinv",     {dsDY_ll_HT_100to200, dsDY_ll_HT_200to400, dsDY_ll_HT_400to600, dsDY_ll_HT_600toInf});
-    Plotter::DataCollection scaled_stacked_DYtoll_ht(       "stack", "ht",         {dsDY_ll_HT_100to200, dsDY_ll_HT_200to400, dsDY_ll_HT_400to600, dsDY_ll_HT_600toInf});
-    Plotter::DataCollection scaled_stacked_DYtoll_cleanmht( "stack", "cleanMHt",   {dsDY_ll_HT_100to200, dsDY_ll_HT_200to400, dsDY_ll_HT_400to600, dsDY_ll_HT_600toInf});
-    Plotter::DataCollection scaled_stacked_DYtoll_cleanMet( "stack", "cleanMetPt", {dsDY_ll_HT_100to200, dsDY_ll_HT_200to400, dsDY_ll_HT_400to600, dsDY_ll_HT_600toInf});
+    Plotter::DataCollection DYtoll_genht_noweight(  "stack", "genHT",    {dsDY_ll_HT_100to200_noweight, dsDY_ll_HT_200to400_noweight, dsDY_ll_HT_400to600_noweight, dsDY_ll_HT_600to800_noweight, dsDY_ll_HT_800to1200_noweight, dsDY_ll_HT_1200to2500_noweight, dsDY_ll_HT_2500toInf_noweight});
+
+    Plotter::DataCollection scaled_stacked_DYtoll_cleanht(  "stack", "HTZinv",     {dsDY_ll_HT_100to200, dsDY_ll_HT_200to400, dsDY_ll_HT_400to600, dsDY_ll_HT_600to800, dsDY_ll_HT_800to1200, dsDY_ll_HT_1200to2500, dsDY_ll_HT_2500toInf});
+    Plotter::DataCollection scaled_stacked_DYtoll_ht(       "stack", "ht",         {dsDY_ll_HT_100to200, dsDY_ll_HT_200to400, dsDY_ll_HT_400to600, dsDY_ll_HT_600to800, dsDY_ll_HT_800to1200, dsDY_ll_HT_1200to2500, dsDY_ll_HT_2500toInf});
+    Plotter::DataCollection scaled_stacked_DYtoll_cleanmht( "stack", "cleanMHt",   {dsDY_ll_HT_100to200, dsDY_ll_HT_200to400, dsDY_ll_HT_400to600, dsDY_ll_HT_600to800, dsDY_ll_HT_800to1200, dsDY_ll_HT_1200to2500, dsDY_ll_HT_2500toInf});
+    Plotter::DataCollection scaled_stacked_DYtoll_cleanMet( "stack", "cleanMetPt", {dsDY_ll_HT_100to200, dsDY_ll_HT_200to400, dsDY_ll_HT_400to600, dsDY_ll_HT_600to800, dsDY_ll_HT_800to1200, dsDY_ll_HT_1200to2500, dsDY_ll_HT_2500toInf});
 
     Plotter::DataCollection cleanht_znunu(     "single", {{"HTZinv",    dsDY_nunu}});
     Plotter::DataCollection ht_znunu(          "single", {{"ht",         dsDY_nunu}});
@@ -523,9 +540,9 @@ int main(int argc, char* argv[])
     Plotter::DataCollection cleanMet_znunu(    "single", {{"cleanMetPt", dsDY_nunu}});
     Plotter::DataCollection met_znunu(         "single", {{"met",        dsDY_nunu}});
 
-    Plotter::DataCollection scaled_stacked_DYtonunu_cleanht(  "stack", "HTZinv",     {dsDY_nunu_HT_100to200, dsDY_nunu_HT_200to400, dsDY_nunu_HT_400to600, dsDY_nunu_HT_600toInf});
-    Plotter::DataCollection scaled_stacked_DYtonunu_cleanmht( "stack", "cleanMHt",   {dsDY_nunu_HT_100to200, dsDY_nunu_HT_200to400, dsDY_nunu_HT_400to600, dsDY_nunu_HT_600toInf});
-    Plotter::DataCollection scaled_stacked_DYtonunu_cleanMet( "stack", "cleanMetPt", {dsDY_nunu_HT_100to200, dsDY_nunu_HT_200to400, dsDY_nunu_HT_400to600, dsDY_nunu_HT_600toInf});
+    Plotter::DataCollection scaled_stacked_DYtonunu_cleanht(  "stack", "HTZinv",     {dsDY_nunu_HT_100to200, dsDY_nunu_HT_200to400, dsDY_nunu_HT_400to600, dsDY_nunu_HT_600to800, dsDY_nunu_HT_800to1200, dsDY_nunu_HT_1200to2500, dsDY_nunu_HT_2500toInf});
+    Plotter::DataCollection scaled_stacked_DYtonunu_cleanmht( "stack", "cleanMHt",   {dsDY_nunu_HT_100to200, dsDY_nunu_HT_200to400, dsDY_nunu_HT_400to600, dsDY_nunu_HT_600to800, dsDY_nunu_HT_800to1200, dsDY_nunu_HT_1200to2500, dsDY_nunu_HT_2500toInf});
+    Plotter::DataCollection scaled_stacked_DYtonunu_cleanMet( "stack", "cleanMetPt", {dsDY_nunu_HT_100to200, dsDY_nunu_HT_200to400, dsDY_nunu_HT_400to600, dsDY_nunu_HT_600to800, dsDY_nunu_HT_800to1200, dsDY_nunu_HT_1200to2500, dsDY_nunu_HT_2500toInf});
 
     vh.push_back(PHS("trigStudy_mu1Pt", {PDC("single", "cutMuPt1",  {dsDY_ll_baseNT, dsDY_ll})}, {2, 1}, "", 100, 0, 1500,  true,  false,  label_mupt, "Events"));
     vh.push_back(PHS("trigStudy_mu2Pt", {PDC("single", "cutMuPt2",  {dsDY_ll_baseNT, dsDY_ll})}, {2, 1}, "", 100, 0, 1500,  true,  false,  label_mupt, "Events"));
@@ -559,6 +576,7 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("trigRatio_singleMu45_nBottom",   {PDC("ratio", "cntCSVSZinv",           {dsDY_ll_singleMu45, dsDY_ll_zAcc})},   {1, 1}, "passBaselineNoTagZinv",  10,  0,   10, false,  false,  label_nb,           "Ratio"));
 
     vh.push_back(PHS("genht_DY_mumu_stack",           {scaled_stacked_DYtoll_genht},    {1, 1}, "",                                    100, 0,     2000, true,  false,  label_ht,    "Events"));
+    vh.push_back(PHS("genht_DY_mumu_stack_noweight",  {DYtoll_genht_noweight},    {1, 1}, "", 200, 0, 4000,  true,  false,  "genHT",    "Events"));
     vh.push_back(PHS("cleanht_DY_mumu_stack_er",      {scaled_stacked_DYtoll_cleanht,  cleanht_znunu },    {1, 1}, "",                 150, 0,     3000, true,  false,  label_ht,    "Events"));
 
     vh.push_back(PHS("cleanht_DY_mumu_stack",           {scaled_stacked_DYtoll_cleanht,  cleanht_znunu },    {1, 1}, "",                                     100, 0,     2000, true,  false,  label_ht,    "Events"));
@@ -1047,6 +1065,7 @@ int main(int argc, char* argv[])
 
     //
     Plotter::DataCollection dcMC_Zrecpt(             "stack",  "Zrecopt", stack_MC);
+    Plotter::DataCollection dcwMC_Zrecpt(            "stack",  "Zrecopt", stackw_MC);
     Plotter::DataCollection dcData_SingleMuon_Zrecpt("data",   "Zrecopt", {dsData_SingleMuon});
 
     // pair of cutlevels
@@ -1120,41 +1139,53 @@ int main(int argc, char* argv[])
         {"muZinv_blnotag_ntop3",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=3"},
         {"muZinv_loose0_mt2_MET_ntop4",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=4"},
         {"muZinv_blnotag_ntop4",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=4"},
-        {"muZinv_loose0_mt2_MET_monoTop",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;vTopsNCandNewMVA=1;nTopCandSortedCntZinv>0"},
+        {"muZinv_loose0_mt2_MET_monoTop",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;vTopsNCandNewMVA=1;nTopCandSortedCntZinv>0"},
         {"muZinv_blnotag_ntop4",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=4"},
-        {"muZinv_loose0_mt2_MET_monoTop",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;typeMono>0;nTopCandSortedCntZinv>0"},
-        {"muZinv_blnotag_monoTop",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv>0;typeMono>0"},
+        {"muZinv_loose0_mt2_MET_monoTop",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;typeMono>0;nTopCandSortedCntZinv>0"},
+        {"muZinv_blnotag_monoTop",          "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv>0;typeMono>0"},
         {"muZinv_loose0_mt2_MET_diTop",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;typeDi>0;nTopCandSortedCntZinv>0"},
         {"muZinv_blnotag_diTop",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv>0;typeDi>0"},
-        {"muZinv_loose0_mt2_MET_triTop",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;typeTri>0;nTopCandSortedCntZinv>0"},
-        {"muZinv_blnotag_triTop",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv>0;typeTri>0"},
-        {"muZinv_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
-        {"muZinv_0b_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv=0"},
-        {"muZinv_g1b_loose0_mt2_MET", "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;passBaselineNoTagZinv"},
+        {"muZinv_loose0_mt2_MET_triTop",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;typeTri>0;nTopCandSortedCntZinv>0"},
+        {"muZinv_blnotag_triTop",           "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv>0;typeTri>0"},
+        {"muZinv_loose0_mt2_MET",           "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+        {"muZinv_0b_loose0_mt2_MET",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv=0"},
+        {"muZinv_g1b_loose0_mt2_MET",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;passBaselineNoTagZinv"},
         {"muZinv_loose0_mt2_MET_ntop1_mono",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeMono>0"},
+        {"muZinv_loose0_mt2_MET_ntop1_di",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeDi>0"},
+        {"muZinv_loose0_mt2_MET_ntop1_tri",      "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeTri>0"},
+        {"muZinv_loose0_mt2_MET_ntop1_mono_g1b", "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeMono>0"},
+        {"muZinv_loose0_mt2_MET_ntop1_di_g1b",   "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeDi>0"},
+        {"muZinv_loose0_mt2_MET_ntop1_tri_g1b",  "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeTri>0"},
         {"muZinv_blnotag_ntop1_mono",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeMono>0"},
-        {"muZinv_loose0_mt2_MET_ntop2_mono",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono>0"},
-        {"muZinv_blnotag_ntop2_mono",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono>0"},
-{"muZinv_loose0_mt2_MET_ntop1_di",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeDi>0"},
-        {"muZinv_blnotag_ntop1_di",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeDi>0"},
-        {"muZinv_loose0_mt2_MET_ntop2_di",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi>0"},
-        {"muZinv_blnotag_ntop2_di",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi>0"},
-{"muZinv_loose0_mt2_MET_ntop1_tri",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeTri>0"},
-        {"muZinv_blnotag_ntop1_tri",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeTri>0"},
-        {"muZinv_loose0_mt2_MET_ntop2_tri",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeTri>0"},
-        {"muZinv_blnotag_ntop2_tri",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeTri>0"},
-{"muZinv_loose0_mt2_MET_ntop1_mono_g1b",     "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeMono>0"},
-        {"muZinv_blnotag_ntop1_mono_g1b",            "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeMono>0"},
-        {"muZinv_loose0_mt2_MET_ntop2_mono_g1b",     "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono>0"},
-        {"muZinv_blnotag_ntop2_mono_g1b",            "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono>0"},
-{"muZinv_loose0_mt2_MET_ntop1_di_g1b",     "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeDi>0"},
-        {"muZinv_blnotag_ntop1_di_g1b",            "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeDi>0"},
-        {"muZinv_loose0_mt2_MET_ntop2_di_g1b",     "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi>0"},
-        {"muZinv_blnotag_ntop2_di_g1b",            "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi>0"},
-{"muZinv_loose0_mt2_MET_ntop1_tri_g1b",     "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeTri>0"},
-        {"muZinv_blnotag_ntop1_tri_g1b",            "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeTri>0"},
-        {"muZinv_loose0_mt2_MET_ntop2_tri_g1b",     "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeTri>0"},
-        {"muZinv_blnotag_ntop2_tri_g1b",            "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeTri>0"}
+        {"muZinv_blnotag_ntop1_di",              "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeDi>0"},
+        {"muZinv_blnotag_ntop1_tri",             "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeTri>0"},
+        {"muZinv_blnotag_ntop1_mono_g1b",        "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeMono>0"},
+        {"muZinv_blnotag_ntop1_di_g1b",          "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeDi>0"},
+        {"muZinv_blnotag_ntop1_tri_g1b",         "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeTri>0"},
+        {"muZinv_loose0_mt2_MET_ntop2_mono_mono",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=2"},
+        {"muZinv_loose0_mt2_MET_ntop2_mono_di",      "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=1;typeDi=1"},
+        {"muZinv_loose0_mt2_MET_ntop2_mono_tri",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=1;typeTri=1"},
+        {"muZinv_loose0_mt2_MET_ntop2_di_di",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi=2"},
+        {"muZinv_loose0_mt2_MET_ntop2_di_tri",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi=1;typeTri=1"},
+        {"muZinv_loose0_mt2_MET_ntop2_tri_tri",      "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeTri=2"},
+        {"muZinv_loose0_mt2_MET_ntop2_mono_mono_g1b", "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=2"},
+        {"muZinv_loose0_mt2_MET_ntop2_mono_di_g1b",   "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=1;typeDi=1"},
+        {"muZinv_loose0_mt2_MET_ntop2_mono_tri_g1b",  "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=1;typeTri=1"},
+        {"muZinv_loose0_mt2_MET_ntop2_di_di_g1b",     "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi=2"},
+        {"muZinv_loose0_mt2_MET_ntop2_di_tri_g1b",    "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi=1;typeTri=1"},
+        {"muZinv_loose0_mt2_MET_ntop2_tri_tri_g1b",   "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeTri=2"},
+        {"muZinv_blnotag_ntop2_mono_mono",           "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=2"},
+        {"muZinv_blnotag_ntop2_mono_di",             "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=1;typeDi=1"},
+        {"muZinv_blnotag_ntop2_mono_tri",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=1;typeTri=1"},
+        {"muZinv_blnotag_ntop2_di_di",               "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi=2"},
+        {"muZinv_blnotag_ntop2_di_tri",              "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi=1;typeTri=1"},
+        {"muZinv_blnotag_ntop2_tri_tri",             "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeTri=2"},
+        {"muZinv_blnotag_ntop2_mono_mono_g1b",       "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=2"},
+        {"muZinv_blnotag_ntop2_mono_di_g1b",         "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=1;typeDi=1"},
+        {"muZinv_blnotag_ntop2_mono_tri_g1b",        "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=1;typeTri=1"},
+        {"muZinv_blnotag_ntop2_di_di_g1b",           "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi=2"},
+        {"muZinv_blnotag_ntop2_di_tri_g1b",          "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi=1;typeTri=1"},
+        {"muZinv_blnotag_ntop2_tri_tri_g1b",         "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeTri=2"}
     };
 
     std::vector<std::pair<std::string,std::string>> cutlevels_muon_syst = {
@@ -1196,7 +1227,8 @@ int main(int argc, char* argv[])
 	{"elZinv_bl",             "passElecZinvSel;passBaselineZinv"},
 	{"elZinv_0b",             "passNoiseEventFilterZinv;passElecZinvSel;cntCSVSZinv=0"},
 	{"elZinv_0b_ht200",       "passNoiseEventFilterZinv;passElecZinvSel;cntCSVSZinv=0;HTZinv>200"},
-	{"s_elZinv_0b_loose0",    "passNoiseEventFilterZinv;passElecZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+	{"elZinv_0b_loose0",      "passNoiseEventFilterZinv;passElecZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+	{"elZinv_loose0_mt2_MET", "passNoiseEventFilterZinv;passElecZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>100;best_had_brJet_MT2Zinv>0"},
 	{"elZinv_0b_blnotagmt2",  "passElecZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv"},
 	{"elZinv_0b_blnotag",     "passElecZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
     };
@@ -1380,9 +1412,9 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcMC_nb0NJwBins}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin",                      "Events"));
         vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_effAcc_" +cut.first,  {dcData_SingleMuon_nb0NJwBins_effAcc, dcMC_nb0NJwBins_effAcc}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin", "Events"));
    
-        vh.push_back(PHS("DataMC_Zrecopt"        +cut.first,  {dcMC_Zrecpt,dcData_SingleMuon_Zrecpt},             {1, 2}, cut.second, 100, 0, 1500,  true, false,  "Z p_{T} [GeV]",                           "Events")); 
+        vh.push_back(PHS("DataMC_SingleMuon_Zrecopt_"        +cut.first,  {dcData_SingleMuon_Zrecpt, dcMC_Zrecpt},             {1, 2}, cut.second, 100, 0, 1500,  true, false,  "Z p_{T} [GeV]",                           "Events")); 
      
-vh.push_back(PHS("Zrecopt",     {PDC("single", "Zrecopt",            {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "Z p_{T} [GeV]",           "Norm Events"));
+        vh.push_back(PHS("Zrecopt",     {PDC("single", "Zrecopt",            {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "Z p_{T} [GeV]",           "Norm Events"));
 
 	// DataMC weights applied
         vector<double> metBins = {0, 50, 100, 150, 200, 275, 300, 350, 400, 450, 2000};
@@ -1422,6 +1454,7 @@ vh.push_back(PHS("Zrecopt",     {PDC("single", "Zrecopt",            {dsTT_mm_le
 	vh.push_back(PHS("DataMCw_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcwMC_nb0Bins},    {1, 2}, cut.second, NSB, 0, NSB, true, false,  "Search Bin",          "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcwMC_nb0BinsNW},  {1, 2}, cut.second, NSB, 0, NSB, true, false,  "Search Bin",          "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwMC_nb0NJwBins}, {1, 2}, cut.second, NSB, 0, NSB, true, false,  "Search Bin",          "Events"));
+        vh.push_back(PHS("DataMCw_SingleMuon_Zrecopt_"    +cut.first,  {dcData_SingleMuon_Zrecpt,     dcwMC_Zrecpt},     {1, 2}, cut.second, 100, 0, 1500, true, false,  "Z p_{T} [GeV]",      "Events")); 
 
 	// Normalization weight applied for ttbar only, only for loose0 selections
 	if(cut.first.rfind("loose0") == (cut.first.size()-6) || cut.first.find("ht200_dphi") != std::string::npos)
