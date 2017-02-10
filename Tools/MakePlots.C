@@ -1412,7 +1412,7 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcMC_nb0NJwBins}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin",                      "Events"));
         vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_effAcc_" +cut.first,  {dcData_SingleMuon_nb0NJwBins_effAcc, dcMC_nb0NJwBins_effAcc}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin", "Events"));
    
-        vh.push_back(PHS("DataMC_SingleMuon_Zrecopt_"        +cut.first,  {dcData_SingleMuon_Zrecpt, dcMC_Zrecpt},             {1, 2}, cut.second, 100, 0, 1500,  true, false,  "Z p_{T} [GeV]",                           "Events")); 
+        vh.push_back(PHS("DataMC_SingleMuon_Zrecopt_"        +cut.first,  {dcData_SingleMuon_Zrecpt, dcMC_Zrecpt},             {1, 2}, cut.second, 60, 0, 1500,  true, false,  "Z p_{T} [GeV]",                           "Events")); 
      
         vh.push_back(PHS("Zrecopt",     {PDC("single", "Zrecopt",            {dsTT_mm_lepSel, dsTT_ee_lepSel, dsTT_em_lepSel})}, {1, 2}, "", 100, 0, 1500,  true,  true,  "Z p_{T} [GeV]",           "Norm Events"));
 
