@@ -141,7 +141,7 @@ def njetWeights(filename):
     # Run over the relevant histograms
     cuts_DY = ["muZinv", "muZinv_0b", "muZinv_g1b"]
     cuts_TT = ["elmuZinv", "elmuZinv_0b", "elmuZinv_g1b"]
-    selection = "loose0_mt2_MET"#"blnotag"#"loose0"#"loose0_mt2"#"ht300_dphi"
+    selection = "loose0_mt2_MET"#"loose0_mt2_MET"#"blnotag"#"loose0"#"loose0_mt2"
     # histo names
     hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
     hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
@@ -338,9 +338,9 @@ def normWeightwithReweight(f, SFs):
         h2s_g1b[0] = reweight(h2s_g1b[0], SFs["DY_muZinv_g1b"])
 
         # apply weights to ttbar
-        h2s_0b[1]  = reweight(h2s_0b[1], SFs["TT_elmuZinv_0b"])
-        h2s_g1b[1] = reweight(h2s_g1b[1], SFs["TT_elmuZinv_0b"])
-
+        h2s_0b[1]=reweight(h2s_0b[1], SFs["TT_elmuZinv_g1b"])#.Scale(0.92)
+        h2s_g1b[1]=reweight(h2s_g1b[1], SFs["TT_elmuZinv_g1b"])#.Scale(0.92)
+        print "why",h2s_0b[0]
         # Combine histograms
         h1 = h1_0b.Clone()
         h1.Add(h1_g1b)

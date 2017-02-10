@@ -2379,11 +2379,11 @@ namespace plotterFunctions
              //const TopTaggerResults& ttr = ttPtr_mine.getResults();
              const TopTaggerResults& ttr =ttPtr_mine->getResults();
              std::vector<TopObject*> Ntop = ttr.getTops();
-              for(int i=1; i<nTopCandSortedCnt; i++){
+              for(int i=0; i<nTopCandSortedCnt; i++){
                if(Ntop[i]->getNConstituents() == 1) monoJet++;
                if (Ntop[i]->getNConstituents() ==2) diJet++;
                if(Ntop[i]->getNConstituents() ==3) triJet++;
-               //std::cout<<monoJet<<std::endl;
+              // std::cout<<"first "<<monoJet<<std::endl;
                   }
              //std::cout<<monoJet<<std::endl;
              
