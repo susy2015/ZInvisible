@@ -2368,25 +2368,28 @@ namespace plotterFunctions
 
             std::vector<TLorentzVector> *hadWLVec = new std::vector<TLorentzVector>();
 
-             const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
-           //std::shared_ptr<TopTagger> ttPtr;
+            const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+            //std::shared_ptr<TopTagger> ttPtr;
             //const TopTaggerResults& ttr = ttPtr->getResults();
-            int monoJet;
-            int diJet;
-            int triJet;
-             //TopTagger tt;
-             //tt.setCfgFile("TopTagger.cfg");
-             //const TopTaggerResults& ttr = ttPtr_mine.getResults();
-             const TopTaggerResults& ttr =ttPtr_mine->getResults();
-             std::vector<TopObject*> Ntop = ttr.getTops();
-              for(int i=0; i<nTopCandSortedCnt; i++){
-               if(Ntop[i]->getNConstituents() == 1) monoJet++;
-               if (Ntop[i]->getNConstituents() ==2) diJet++;
-               if(Ntop[i]->getNConstituents() ==3) triJet++;
-              // std::cout<<"first "<<monoJet<<std::endl;
-                  }
-             //std::cout<<monoJet<<std::endl;
-             
+            int monoJet=0;
+            int diJet=0;
+            int triJet=0;
+            //TopTagger tt;
+            //tt.setCfgFile("TopTagger.cfg");
+            //const TopTaggerResults& ttr = ttPtr_mine.getResults();
+            const TopTaggerResults& ttr =ttPtr_mine->getResults();
+            std::vector<TopObject*> Ntop = ttr.getTops();
+            for(int i=0; i<nTopCandSortedCnt; i++){
+                if(Ntop[i]->getNConstituents() == 1) monoJet++;
+                else if(Ntop[i]->getNConstituents() == 2) diJet++;
+                else if(Ntop[i]->getNConstituents() == 3) triJet++;
+                //std::cout<<monoJet<<std::endl;
+            }
+            //std::cout<<"Ntop: " << nTopCandSortedCnt<<std::endl;
+            //std::cout<<"Monojet: " << monoJet<<std::endl;
+            //std::cout<<"Dijet: " << diJet<<std::endl;
+            //std::cout<<"Trijet: " << triJet<<std::endl;
+            
             const int& nJetsAk8 = ak8JetsLVec.size(); 
             const int& nJetsPuppi = puppiJetsLVec.size();
             tr.registerDerivedVar("nJetsAk8", nJetsAk8);
