@@ -12,7 +12,7 @@ scram b ProjectRename
 eval `scramv1 runtime -sh`
 
 #set up local code
-tar -xzf ${_CONDOR_SCRATCH_DIR}/gmp.tar.gz
+tar -xzf ${_CONDOR_SCRATCH_DIR}/gtp.tar.gz
 cd WORLDSWORSESOLUTIONTOAPROBLEM
 
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}
