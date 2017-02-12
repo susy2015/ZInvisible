@@ -160,15 +160,16 @@ def njetWeights(filename):
     for cut in cuts_TT:
         hname1_TT = hname1 % {"cut":cut, "selection":selection}
         hnames2_TT = [elem % {"cut":cut, "selection":selection} for elem in hnames2]
-    #    # Get all histos
+        # Get all histos
         h1 = f.Get(hname1_TT)
         h2s = [f.Get(hname2_TT) for hname2_TT in hnames2_TT]
         newname = "DataMC_nj_%s_%s"%(cut,selection)
 
-        #data subtraction
+        # data subtraction
         data_subtracted = subtract(h1, [h2s[0]])
         data_subtracted = subtract(data_subtracted, h2s[2:])
 
+        # Make new histogram that is ratio of data/mc with just one bin, so that we get pure normalization weight
         #newname = "DataMC_nb1_%s_%s"%(cut,selection)
         newh = makeRatio(data_subtracted, [h2s[1]], newname=newname, bins=[0,20])
         #newh = makeRatio(h1, h2s, newname=newname)
@@ -207,7 +208,7 @@ def njetWeights(filename):
 
         # apply weights to ttbar
         #h2s[1] = reweight(h2s[1], SFs["TT_elmuZinv"])#"TT_%s"%(cut.replace("mu","elmu"))])#weight applied to Njet for the Rnorm or DY correction
-        h2s[1] = h2s[1].Scale(newh.GetBinContent(1))
+        h2s[1] = h2s[1].Scale( SFs["TT_%s"%(cut.replace("mu","elmu"))].GetBinContent(1) )
 
         # subtract relevant histograms from data
         data_subtracted = subtract(h1, h2s[1:])
