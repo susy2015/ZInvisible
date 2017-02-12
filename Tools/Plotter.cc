@@ -781,6 +781,7 @@ void Plotter::plot()
 
     for(HistSummary& hist : hists_)
     {
+        std::string plotname = plotDir_ + hist.name;
         bool skip = false;
         for(auto& hvec : hist.hists)  for(auto& h : hvec.hcsVec) if(!h->h) skip = true;
         if(skip) continue;
@@ -921,8 +922,7 @@ void Plotter::plot()
                 hvec.h = static_cast<TNamed*>(stack);
 
                 double sow = 0, te = 0;
-                bool firstHIS = true;
-                TH1* thstacksucks;
+                TH1* thstacksucks = nullptr;
                 int iStack = 0;
                 for(auto ih = hvec.hcsVec.begin(); ih != hvec.hcsVec.end(); ++ih)
                 {
@@ -938,20 +938,21 @@ void Plotter::plot()
                     leg->AddEntry((*ih)->h, legEntry, "F");
                     sow += (*ih)->h->GetSumOfWeights();
                     te +=  (*ih)->h->GetEntries();
-                }
-                for(auto ih = hvec.hcsVec.rbegin(); ih != hvec.hcsVec.rend(); ++ih)
-                {
-                    if(firstHIS)
+                    if(thstacksucks == nullptr)
                     {
-                        firstHIS = false;
                         thstacksucks = static_cast<TH1*>((*ih)->h->Clone());
                     }
                     else
                     {
                         thstacksucks->Add((*ih)->h);
                     }
+                }
+                for(auto ih = hvec.hcsVec.rbegin(); ih != hvec.hcsVec.rend(); ++ih)
+                {
+                    (*ih)->h->Scale(1.0/thstacksucks->Integral());
                     stack->Add((*ih)->h);
                 }
+                thstacksucks->Scale(1.0/thstacksucks->Integral());
                 smartMax(thstacksucks, leg, static_cast<TPad*>(gPad), min, max, lmax);
                 minAvgWgt = std::min(minAvgWgt, sow/te);
                 if(thstacksucks) delete thstacksucks;
