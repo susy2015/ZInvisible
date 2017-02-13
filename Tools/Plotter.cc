@@ -949,10 +949,10 @@ void Plotter::plot()
                 }
                 for(auto ih = hvec.hcsVec.rbegin(); ih != hvec.hcsVec.rend(); ++ih)
                 {
-                    (*ih)->h->Scale(1.0/thstacksucks->Integral());
+                    if(hist.isNorm) (*ih)->h->Scale(1.0/thstacksucks->Integral());
                     stack->Add((*ih)->h);
                 }
-                thstacksucks->Scale(1.0/thstacksucks->Integral());
+                if(hist.isNorm) thstacksucks->Scale(1.0/thstacksucks->Integral());
                 smartMax(thstacksucks, leg, static_cast<TPad*>(gPad), min, max, lmax);
                 minAvgWgt = std::min(minAvgWgt, sow/te);
                 if(thstacksucks) delete thstacksucks;

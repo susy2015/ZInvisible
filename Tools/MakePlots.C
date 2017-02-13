@@ -342,6 +342,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection scaled_chargedHadFrac_j2("single", "cleanChargedEMEFrac[1]",  {dsDY_nunu, dsDY_ll_zAcc_scaled});
 
     //Basic Raw compairson plots
+    /* Save time
     vh.push_back(PHS("inc_mht",     {PDC("single", "mht",                   {dsDY_ll_inc, dsDY_ll})}, {1, 2}, "", 100, 0, 2000,  true,  false,  label_mht,          "Events"));
     vh.push_back(PHS("inc_met",     {PDC("single", "met",                   {dsDY_ll_inc, dsDY_ll})}, {1, 2}, "", 100, 0, 2000,  true,  false,  label_met,               "Events"));
     vh.push_back(PHS("inc_ht",      {PDC("single", "ht",                    {dsDY_ll_inc, dsDY_ll})}, {1, 2}, "", 100, 0, 2000,  true,  false,  label_ht,             "Events"));
@@ -464,6 +465,7 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("genMudPhi",             {PDC("single", "genMudPhi",       {dsDY_ll_forEff, dsDY_ll_base})}, {1, 1}, "",           100,  -4,  4,  false,  true,  "gen min dPhi (#mu1,#mu2)", "Norm Events"));
     vh.push_back(PHS("genMudEta",             {PDC("single", "genMudEta",       {dsDY_ll_forEff, dsDY_ll_base})}, {1, 1}, "",           100,  -5,  5,  false,  true,  "gen min dEta (#mu1,#mu2)", "Norm Events"));
 
+    */
     // Here are the interesting plots for the closure test
 
     // DataCollections which are reused multiple times are defined "upfront" to save time
@@ -544,6 +546,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection scaled_stacked_DYtonunu_cleanmht( "stack", "cleanMHt",   {dsDY_nunu_HT_100to200, dsDY_nunu_HT_200to400, dsDY_nunu_HT_400to600, dsDY_nunu_HT_600to800, dsDY_nunu_HT_800to1200, dsDY_nunu_HT_1200to2500, dsDY_nunu_HT_2500toInf});
     Plotter::DataCollection scaled_stacked_DYtonunu_cleanMet( "stack", "cleanMetPt", {dsDY_nunu_HT_100to200, dsDY_nunu_HT_200to400, dsDY_nunu_HT_400to600, dsDY_nunu_HT_600to800, dsDY_nunu_HT_800to1200, dsDY_nunu_HT_1200to2500, dsDY_nunu_HT_2500toInf});
 
+    /* Save time
     vh.push_back(PHS("trigStudy_mu1Pt", {PDC("single", "cutMuPt1",  {dsDY_ll_baseNT, dsDY_ll})}, {2, 1}, "", 100, 0, 1500,  true,  false,  label_mupt, "Events"));
     vh.push_back(PHS("trigStudy_mu2Pt", {PDC("single", "cutMuPt2",  {dsDY_ll_baseNT, dsDY_ll})}, {2, 1}, "", 100, 0, 1500,  true,  false,  label_mupt, "Events"));
 
@@ -574,7 +577,7 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("trigRatio_singleMu45_nTop",      {PDC("ratio", "nTopCandSortedCntZinv", {dsDY_ll_singleMu45, dsDY_ll_zAcc})},   {1, 1}, "passBaselineNoTagZinv",  10,  0,   10, false,  false,  label_nt,           "Ratio"));
     vh.push_back(PHS("trigRatio_singleMu45_cleannJet", {PDC("ratio", "cntNJetsPt30Eta24Zinv", {dsDY_ll_singleMu45, dsDY_ll_zAcc})},   {1, 1}, "passBaselineNoTagZinv",  20,  0,   20, false,  false,  label_nj,         "Ratio"));
     vh.push_back(PHS("trigRatio_singleMu45_nBottom",   {PDC("ratio", "cntCSVSZinv",           {dsDY_ll_singleMu45, dsDY_ll_zAcc})},   {1, 1}, "passBaselineNoTagZinv",  10,  0,   10, false,  false,  label_nb,           "Ratio"));
-
+    */
     vh.push_back(PHS("genht_DY_mumu_stack",           {scaled_stacked_DYtoll_genht},    {1, 1}, "",                                    100, 0,     2000, true,  false,  label_ht,    "Events"));
     vh.push_back(PHS("genht_DY_mumu_stack_noweight",  {DYtoll_genht_noweight},    {1, 1}, "", 200, 0, 4000,  true,  false,  "genHT",    "Events"));
     vh.push_back(PHS("cleanht_DY_mumu_stack_er",      {scaled_stacked_DYtoll_cleanht,  cleanht_znunu },    {1, 1}, "",                 150, 0,     3000, true,  false,  label_ht,    "Events"));
@@ -643,6 +646,7 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("nSearchBin_Con_ee",          {scaled_nSearchBin_Con_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("nSearchBin_Con_ee_log",      {scaled_nSearchBin_Con_ee}, {1, 1}, "passBaselineNoTagZinv;!nTopCandSortedCntZinv=0",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
 
+    /* Save time
     std::vector<std::pair<std::pair<std::string,std::string>, int>> cutlevels_MCCLosure = {
         {{"",                ""                                                                 },  100},
         {{"baseline",        "passBaselineZinv"                                                 },  50},
@@ -695,7 +699,7 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MCClosure_elec_" + cut.first.first + "_cleannJet",   {scaled_elec_nCleanJet},  {2, 1}, cut.first.second,           20, 0,       20, true,  false,  label_nj,         "Events"));
         vh.push_back(PHS("MCClosure_elec_" + cut.first.first + "_nBottom",     {scaled_elec_nBottom},    {2, 1}, cut.first.second,           10, 0,       10, true,  false,  label_nb,           "Events"));
     }
-
+    */
 
     vh.push_back(PHS("fake1b_nTop",               {PDC("single", {{"nTopCandSortedCntZinv", dsDY_nunu_1b},         {"nTopCandSortedCntZinv1b", dsDY_nunu_0b_1fake}})},         {2, 1}, "", 10, 0, 10, true, true, label_nt, "Norm Events"));
     vh.push_back(PHS("fake1b_baselineNoTag_nTop", {PDC("single", {{"nTopCandSortedCntZinv", dsDY_nunu_1b_blNoTag}, {"nTopCandSortedCntZinv1b", dsDY_nunu_0b_1fake_blNoTag}})}, {2, 1}, "", 10, 0, 10, true, true, label_nt, "Norm Events"));
@@ -1073,16 +1077,16 @@ int main(int argc, char* argv[])
 	{"nosel",                     "passNoiseEventFilterZinv"},
 	{"2mu",                       "passNoiseEventFilterZinv;passDiMuSel"},
 	{"muZinv",                    "passNoiseEventFilterZinv;passMuZinvSel"},
-	{"muZinv_ht200",              "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200"},
-	{"muZinv_ht200_dphi",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passdPhisZinv"},
-	{"muZinv_ht50_met50_dphi",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
+//	{"muZinv_ht200",              "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200"},
+//	{"muZinv_ht200_dphi",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passdPhisZinv"},
+//	{"muZinv_ht50_met50_dphi",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
 	{"muZinv_loose0",             "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_loose0_mt2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
-	{"muZinv_loose0_mt21b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv1b>0"},
-	{"muZinv_loose0_mt22b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv2b>0"},
-	{"muZinv_loose0_mt23b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv3b>0"},
+//	{"muZinv_loose0_mt21b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv1b>0"},
+//	{"muZinv_loose0_mt22b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv2b>0"},
+//	{"muZinv_loose0_mt23b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv3b>0"},
 	{"muZinv_loose0_ntop",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>0"},
-	{"muZinv_loose0_nb2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cntCSVSZinv>2"},
+//	{"muZinv_loose0_nb2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cntCSVSZinv>2"},
 	{"muZinv_loose0_ht300",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_loose0_ht400",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>400;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_loose0_ht500",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>500;passnJetsZinv;passdPhisZinv"},
@@ -1090,9 +1094,9 @@ int main(int argc, char* argv[])
 	{"muZinv_blnotag",            "passMuZinvSel;passBaselineNoTagZinv"},
 	{"muZinv_bl",                 "passMuZinvSel;passBaselineZinv"},
 	{"muZinv_0b",                 "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0"},
-	{"muZinv_0b_ht200",           "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200"},
-	{"muZinv_0b_ht200_dphi",      "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passdPhisZinv"},
-	{"muZinv_0b_ht50_met50_dphi", "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
+//	{"muZinv_0b_ht200",           "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200"},
+//	{"muZinv_0b_ht200_dphi",      "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passdPhisZinv"},
+//	{"muZinv_0b_ht50_met50_dphi", "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
 	{"muZinv_0b_loose0",          "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv"},
         {"muZinv_0b_loose0_mt2",   "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
 	{"muZinv_0b_loose0_ht300",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv"},
@@ -1103,7 +1107,7 @@ int main(int argc, char* argv[])
 	{"muZinv_g1b",                "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv"},
 	{"muZinv_g1b_ht200",          "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200"},
 	{"muZinv_g1b_ht200_dphi",     "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passdPhisZinv"},
-	{"muZinv_g1b_ht50_met50_dphi","passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
+//	{"muZinv_g1b_ht50_met50_dphi","passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
 	{"muZinv_g1b_loose0",         "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv"},
         {"muZinv_g1b_loose0_mt2", "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
 	{"muZinv_g1b_loose0_ht300",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>300;passnJetsZinv;passdPhisZinv"},
@@ -1112,85 +1116,97 @@ int main(int argc, char* argv[])
 	{"muZinv_g1b_blnotag",        "passMuZinvSel;passBJetsZinv;passBaselineNoTagZinv"},
 	{"elmu",                      "passNoiseEventFilterZinv;passElMuSel"},
 	{"elmuZinv",                  "passNoiseEventFilterZinv;passElMuZinvSel"},
-	{"elmuZinv_ht200",            "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200"},
-	{"elmuZinv_ht200_dphi",       "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200;passdPhisZinv"},
+//	{"elmuZinv_ht200",            "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200"},
+//	{"elmuZinv_ht200_dphi",       "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200;passdPhisZinv"},
 	{"elmuZinv_loose0",           "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
         {"elmuZinv_loose0_mt2",       "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
 	{"elmuZinv_blnotagmt2",       "passElMuZinvSel;passBaselineNoTagMT2Zinv"},
 	{"elmuZinv_bl",               "passElMuZinvSel;passBaselineZinv"},
 	{"elmuZinv_0b",               "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0"},
-	{"elmuZinv_0b_ht200",         "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>200"},
-	{"elmuZinv_0b_ht200_dphi",    "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passdPhisZinv"},
+//	{"elmuZinv_0b_ht200",         "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>200"},
+//	{"elmuZinv_0b_ht200_dphi",    "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passdPhisZinv"},
 	{"elmuZinv_0b_loose0",        "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv"},
         {"elmuZinv_0b_loose0_mt2",        "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
 	{"elmuZinv_0b_blnotagmt2",    "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv"},
 	{"elmuZinv_0b_blnotag",       "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
 	{"elmuZinv_g1b",              "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv"},
-	{"elmuZinv_g1b_ht200",        "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200"},
-	{"elmuZinv_g1b_ht200_dphi",   "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200;passdPhisZinv"},
+//	{"elmuZinv_g1b_ht200",        "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200"},
+//	{"elmuZinv_g1b_ht200_dphi",   "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200;passdPhisZinv"},
 	{"elmuZinv_g1b_loose0",       "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>300;passnJetsZinv;passdPhisZinv"},
-        {"elmuZinv_g1b_loose0_mt2",       "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
-        {"CR_NEW_MAYBE",              "passElMuZinvSel;passNoiseEventFilterZinv;passHTZinv;cleanMetPt>250;nTopCandSortedCntZinv>0;cntCSVSZinv>0;best_had_brJet_MT2Zinv>200;passnJetsZinv"},
-        {"elmuZinv_g1b_blnotag",       "passElMuZinvSel;passBJetsZinv;passBaselineNoTagZinv"},
-        {"elmuZinv_blnotag",       "passElMuZinvSel;passBaselineNoTagZinv"},
-        {"elmuZinv_loose0_mt2_MET", "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
-        {"elmuZinv_0b_loose0_mt2_MET", "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv=0"},
-        {"elmuZinv_g1b_loose0_mt2_MET", "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;passBaselineNoTagZinv"},
-        {"muZinv_loose0_mt2_MET_ntop1",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1"},
-        {"muZinv_blnotag_ntop1",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1"},
-        {"muZinv_loose0_mt2_MET_ntop2",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2"},
-        {"muZinv_blnotag_ntop2",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2"},
-        {"muZinv_loose0_mt2_MET_ntop3",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=3"},
-        {"muZinv_blnotag_ntop3",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=3"},
-        {"muZinv_loose0_mt2_MET_ntop4",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=4"},
-        {"muZinv_blnotag_ntop4",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=4"},
-        {"muZinv_loose0_mt2_MET_monoTop",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;vTopsNCandNewMVA=1;nTopCandSortedCntZinv>0"},
-        {"muZinv_blnotag_ntop4",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=4"},
-        {"muZinv_loose0_mt2_MET_monoTop",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;typeMono>0;nTopCandSortedCntZinv>0"},
-        {"muZinv_blnotag_monoTop",          "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv>0;typeMono>0"},
-        {"muZinv_loose0_mt2_MET_diTop",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;typeDi>0;nTopCandSortedCntZinv>0"},
-        {"muZinv_blnotag_diTop",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv>0;typeDi>0"},
-        {"muZinv_loose0_mt2_MET_triTop",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;typeTri>0;nTopCandSortedCntZinv>0"},
-        {"muZinv_blnotag_triTop",           "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv>0;typeTri>0"},
+        {"elmuZinv_g1b_loose0_mt2",   "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
+//        {"CR_NEW_MAYBE",              "passElMuZinvSel;passNoiseEventFilterZinv;passHTZinv;cleanMetPt>250;nTopCandSortedCntZinv>0;cntCSVSZinv>0;best_had_brJet_MT2Zinv>200;passnJetsZinv"},
+        {"elmuZinv_g1b_blnotag",      "passElMuZinvSel;passBJetsZinv;passBaselineNoTagZinv"},
+        {"elmuZinv_blnotag",          "passElMuZinvSel;passBaselineNoTagZinv"},
+        {"elmuZinv_loose0_mt2_MET",     "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+        {"elmuZinv_0b_loose0_mt2_MET",  "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv=0"},
+        {"elmuZinv_g1b_loose0_mt2_MET", "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv>0"},
+        {"elmuZinv_loose0_mt2200_MET",     "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100"},
+        {"elmuZinv_0b_loose0_mt2200_MET",  "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv=0"},
+        {"elmuZinv_g1b_loose0_mt2200_MET", "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv>0"},
+        {"elmuZinv_loose0_mt2_MET250",     "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>250"},
+        {"elmuZinv_0b_loose0_mt2_MET250",  "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>250;cntCSVSZinv=0"},
+        {"elmuZinv_g1b_loose0_mt2_MET250", "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>250;cntCSVSZinv>0"},
+//        {"muZinv_loose0_mt2_MET_ntop1",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1"},
+//        {"muZinv_blnotag_ntop1",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1"},
+//        {"muZinv_loose0_mt2_MET_ntop2",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2"},
+//        {"muZinv_blnotag_ntop2",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2"},
+//        {"muZinv_loose0_mt2_MET_ntop3",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=3"},
+//        {"muZinv_blnotag_ntop3",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=3"},
+//        {"muZinv_loose0_mt2_MET_ntop4",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=4"},
+//        {"muZinv_blnotag_ntop4",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=4"},
+//        {"muZinv_loose0_mt2_MET_monoTop",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;vTopsNCandNewMVA=1;nTopCandSortedCntZinv>0"},
+//        {"muZinv_blnotag_ntop4",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=4"},
+//        {"muZinv_loose0_mt2_MET_monoTop",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;typeMono>0;nTopCandSortedCntZinv>0"},
+        // {"muZinv_blnotag_monoTop",          "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv>0;typeMono>0"},
+        // {"muZinv_loose0_mt2_MET_diTop",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;typeDi>0;nTopCandSortedCntZinv>0"},
+        // {"muZinv_blnotag_diTop",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv>0;typeDi>0"},
+        // {"muZinv_loose0_mt2_MET_triTop",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;typeTri>0;nTopCandSortedCntZinv>0"},
+        // {"muZinv_blnotag_triTop",           "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv>0;typeTri>0"},
         {"muZinv_loose0_mt2_MET",           "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
         {"muZinv_0b_loose0_mt2_MET",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv=0"},
-        {"muZinv_g1b_loose0_mt2_MET",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;passBaselineNoTagZinv"},
-        {"muZinv_loose0_mt2_MET_ntop1_mono",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeMono>0"},
-        {"muZinv_loose0_mt2_MET_ntop1_di",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeDi>0"},
-        {"muZinv_loose0_mt2_MET_ntop1_tri",      "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeTri>0"},
-        {"muZinv_loose0_mt2_MET_ntop1_mono_g1b", "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeMono>0"},
-        {"muZinv_loose0_mt2_MET_ntop1_di_g1b",   "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeDi>0"},
-        {"muZinv_loose0_mt2_MET_ntop1_tri_g1b",  "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeTri>0"},
-        {"muZinv_blnotag_ntop1_mono",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeMono>0"},
-        {"muZinv_blnotag_ntop1_di",              "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeDi>0"},
-        {"muZinv_blnotag_ntop1_tri",             "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeTri>0"},
-        {"muZinv_blnotag_ntop1_mono_g1b",        "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeMono>0"},
-        {"muZinv_blnotag_ntop1_di_g1b",          "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeDi>0"},
-        {"muZinv_blnotag_ntop1_tri_g1b",         "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeTri>0"},
-        {"muZinv_loose0_mt2_MET_ntop2_mono_mono",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=2"},
-        {"muZinv_loose0_mt2_MET_ntop2_mono_di",      "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=1;typeDi=1"},
-        {"muZinv_loose0_mt2_MET_ntop2_mono_tri",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=1;typeTri=1"},
-        {"muZinv_loose0_mt2_MET_ntop2_di_di",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi=2"},
-        {"muZinv_loose0_mt2_MET_ntop2_di_tri",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi=1;typeTri=1"},
-        {"muZinv_loose0_mt2_MET_ntop2_tri_tri",      "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeTri=2"},
-        {"muZinv_loose0_mt2_MET_ntop2_mono_mono_g1b", "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=2"},
-        {"muZinv_loose0_mt2_MET_ntop2_mono_di_g1b",   "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=1;typeDi=1"},
-        {"muZinv_loose0_mt2_MET_ntop2_mono_tri_g1b",  "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=1;typeTri=1"},
-        {"muZinv_loose0_mt2_MET_ntop2_di_di_g1b",     "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi=2"},
-        {"muZinv_loose0_mt2_MET_ntop2_di_tri_g1b",    "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi=1;typeTri=1"},
-        {"muZinv_loose0_mt2_MET_ntop2_tri_tri_g1b",   "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeTri=2"},
-        {"muZinv_blnotag_ntop2_mono_mono",           "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=2"},
-        {"muZinv_blnotag_ntop2_mono_di",             "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=1;typeDi=1"},
-        {"muZinv_blnotag_ntop2_mono_tri",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=1;typeTri=1"},
-        {"muZinv_blnotag_ntop2_di_di",               "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi=2"},
-        {"muZinv_blnotag_ntop2_di_tri",              "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi=1;typeTri=1"},
-        {"muZinv_blnotag_ntop2_tri_tri",             "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeTri=2"},
-        {"muZinv_blnotag_ntop2_mono_mono_g1b",       "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=2"},
-        {"muZinv_blnotag_ntop2_mono_di_g1b",         "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=1;typeDi=1"},
-        {"muZinv_blnotag_ntop2_mono_tri_g1b",        "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=1;typeTri=1"},
-        {"muZinv_blnotag_ntop2_di_di_g1b",           "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi=2"},
-        {"muZinv_blnotag_ntop2_di_tri_g1b",          "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi=1;typeTri=1"},
-        {"muZinv_blnotag_ntop2_tri_tri_g1b",         "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeTri=2"}
+        {"muZinv_g1b_loose0_mt2_MET",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv>0"},
+        {"muZinv_loose0_mt2200_MET",           "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100"},
+        {"muZinv_0b_loose0_mt2200_MET",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv=0"},
+        {"muZinv_g1b_loose0_mt2200_MET",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv>0"},
+        {"muZinv_loose0_mt2_MET250",           "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>250"},
+        {"muZinv_0b_loose0_mt2_MET250",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>250;cntCSVSZinv=0"},
+        {"muZinv_g1b_loose0_mt2_MET250",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>250;cntCSVSZinv>0"},
+        // {"muZinv_loose0_mt2_MET_ntop1_mono",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeMono>0"},
+        // {"muZinv_loose0_mt2_MET_ntop1_di",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeDi>0"},
+        // {"muZinv_loose0_mt2_MET_ntop1_tri",      "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeTri>0"},
+        // {"muZinv_loose0_mt2_MET_ntop1_mono_g1b", "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeMono>0"},
+        // {"muZinv_loose0_mt2_MET_ntop1_di_g1b",   "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeDi>0"},
+        // {"muZinv_loose0_mt2_MET_ntop1_tri_g1b",  "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1;typeTri>0"},
+        // {"muZinv_blnotag_ntop1_mono",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeMono>0"},
+        // {"muZinv_blnotag_ntop1_di",              "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeDi>0"},
+        // {"muZinv_blnotag_ntop1_tri",             "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeTri>0"},
+        // {"muZinv_blnotag_ntop1_mono_g1b",        "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeMono>0"},
+        // {"muZinv_blnotag_ntop1_di_g1b",          "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeDi>0"},
+        // {"muZinv_blnotag_ntop1_tri_g1b",         "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1;typeTri>0"},
+        // {"muZinv_loose0_mt2_MET_ntop2_mono_mono",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=2"},
+        // {"muZinv_loose0_mt2_MET_ntop2_mono_di",      "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=1;typeDi=1"},
+        // {"muZinv_loose0_mt2_MET_ntop2_mono_tri",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=1;typeTri=1"},
+        // {"muZinv_loose0_mt2_MET_ntop2_di_di",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi=2"},
+        // {"muZinv_loose0_mt2_MET_ntop2_di_tri",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi=1;typeTri=1"},
+        // {"muZinv_loose0_mt2_MET_ntop2_tri_tri",      "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeTri=2"},
+        // {"muZinv_loose0_mt2_MET_ntop2_mono_mono_g1b", "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=2"},
+        // {"muZinv_loose0_mt2_MET_ntop2_mono_di_g1b",   "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=1;typeDi=1"},
+        // {"muZinv_loose0_mt2_MET_ntop2_mono_tri_g1b",  "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeMono=1;typeTri=1"},
+        // {"muZinv_loose0_mt2_MET_ntop2_di_di_g1b",     "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi=2"},
+        // {"muZinv_loose0_mt2_MET_ntop2_di_tri_g1b",    "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeDi=1;typeTri=1"},
+        // {"muZinv_loose0_mt2_MET_ntop2_tri_tri_g1b",   "passBJetsZinv;passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=2;typeTri=2"},
+        // {"muZinv_blnotag_ntop2_mono_mono",           "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=2"},
+        // {"muZinv_blnotag_ntop2_mono_di",             "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=1;typeDi=1"},
+        // {"muZinv_blnotag_ntop2_mono_tri",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=1;typeTri=1"},
+        // {"muZinv_blnotag_ntop2_di_di",               "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi=2"},
+        // {"muZinv_blnotag_ntop2_di_tri",              "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi=1;typeTri=1"},
+        // {"muZinv_blnotag_ntop2_tri_tri",             "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeTri=2"},
+        // {"muZinv_blnotag_ntop2_mono_mono_g1b",       "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=2"},
+        // {"muZinv_blnotag_ntop2_mono_di_g1b",         "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=1;typeDi=1"},
+        // {"muZinv_blnotag_ntop2_mono_tri_g1b",        "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeMono=1;typeTri=1"},
+        // {"muZinv_blnotag_ntop2_di_di_g1b",           "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi=2"},
+        // {"muZinv_blnotag_ntop2_di_tri_g1b",          "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeDi=1;typeTri=1"},
+        // {"muZinv_blnotag_ntop2_tri_tri_g1b",         "passBJetsZinv;passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=2;typeTri=2"}
     };
 
     std::vector<std::pair<std::string,std::string>> cutlevels_muon_syst = {
@@ -1350,6 +1366,7 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("btagWeights",       {PDC("single", "bTagSF_EventWeightSimple_Central", {dsDY, dstt2l, dsDY_nunu_njetnorm_TriggerCentral})},{1, 1}, "",                 100, 0, 5,  false, false,  "b-tag correction weight",    ""));
     vh.push_back(PHS("btagWeights_bl",    {PDC("single", "bTagSF_EventWeightSimple_Central", {dsDY, dstt2l, dsDY_nunu_njetnorm_TriggerCentral})},{1, 1}, "passBaselineZinv", 100, 0, 5,  false, false,  "b-tag correction weight",    ""));
 
+    /* Save time
     //Baseline cuts are flawed here, fix!
     for(std::pair<std::string,std::string>& cut : cutlevels_MC)
     {
@@ -1378,6 +1395,7 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("ClosureNb_nSearchBin_njW_" + cut.first,   {dcMC_nunu_nSearchBin_njW}, {1, 2}, cut.second,  NSB, 0,   NSB, true,  false,  "Search Bin", "Events"));
     }
     //MC interlude over
+    */
 
     //push the histograms in a loop, save some copy-paste time
     for(std::pair<std::string,std::string>& cut : cutlevels_muon)
