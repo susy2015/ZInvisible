@@ -1480,7 +1480,7 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMCw_SingleMuon_Zrecopt_"    +cut.first,  {dcData_SingleMuon_Zrecpt,     dcwMC_Zrecpt},     {1, 2}, cut.second, 100, 0, 1500, true, false,  "Z p_{T} [GeV]",      "Events")); 
 
 	// Normalization weight applied for ttbar only, only for loose0 selections
-	if(cut.first.rfind("loose0") == (cut.first.size()-6) || cut.first.find("ht200_dphi") != std::string::npos)
+	if(cut.first.rfind("loose0") == (cut.first.size()-6) || cut.first.find("loose0_mt2_MET") != std::string::npos)
 	{
 	    // DataMC weights applied
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwttMC_met},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_met,                                "Events"));
