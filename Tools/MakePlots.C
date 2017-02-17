@@ -1210,33 +1210,33 @@ int main(int argc, char* argv[])
     };
 
     std::vector<std::pair<std::string,std::string>> cutlevels_muon_syst = {
-        {"muZinv_loose0",             "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv"},
+        {"muZinv_loose0_mt2_MET",             "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+	
+        {"muZinv_0b_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cntCSVSZinv=0;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+        {"muZinv_1b_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cntCSVSZinv=1;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+        {"muZinv_2b_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cntCSVSZinv=2;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+        {"muZinv_3b_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cntCSVSZinv>2;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
 
-	{"muZinv_0b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cntCSVSZinv=0"},
-        {"muZinv_1b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cntCSVSZinv=1"},
-        {"muZinv_2b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cntCSVSZinv=2"},
-        {"muZinv_3b_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cntCSVSZinv>2"},
+	{"muZinv_0t_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+        {"muZinv_1t_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=1;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+        {"muZinv_2t_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>1;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
 
-	{"muZinv_0t_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0"},
-        {"muZinv_1t_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=1"},
-        {"muZinv_2t_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>1"},
+	{"muZinv_met_0_100_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>0;cleanMetPt<100;best_had_brJet_MT2Zinv>0"},
+        {"muZinv_met_100_200_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>100;cleanMetPt<200;best_had_brJet_MT2Zinv>0"},
+        {"muZinv_met_200_300_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>200;cleanMetPt<300;best_had_brJet_MT2Zinv>0"},
+        {"muZinv_met_300_400_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>300;cleanMetPt<400;best_had_brJet_MT2Zinv>0"},
+        {"muZinv_met_gt400_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>400;best_had_brJet_MT2Zinv>0;"},
 
-	{"muZinv_met_0_100_loose0",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>0;cleanMetPt<100"},
-        {"muZinv_met_100_200_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>100;cleanMetPt<200"},
-        {"muZinv_met_200_300_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>200;cleanMetPt<300"},
-        {"muZinv_met_300_400_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>300;cleanMetPt<400"},
-        {"muZinv_met_gt400_loose0",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cleanMetPt>400"},
+	{"muZinv_mt2_0_100_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;best_had_brJet_MT2Zinv<100;cleanMetPt>100"},
+        {"muZinv_mt2_100_200_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>100;best_had_brJet_MT2Zinv<200;cleanMetPt>100"},
+        {"muZinv_mt2_200_300_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;best_had_brJet_MT2Zinv<300;cleanMetPt>100"},
+        {"muZinv_mt2_300_400_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>300;best_had_brJet_MT2Zinv<400;cleanMetPt>100"},
+        {"muZinv_mt2_gt400_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>400;cleanMetPt>100"},
 
-	{"muZinv_mt2_0_100_loose0",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;best_had_brJet_MT2Zinv<100"},
-        {"muZinv_mt2_100_200_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>100;best_had_brJet_MT2Zinv<200"},
-        {"muZinv_mt2_200_300_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;best_had_brJet_MT2Zinv<300"},
-        {"muZinv_mt2_300_400_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>300;best_had_brJet_MT2Zinv<400"},
-        {"muZinv_mt2_gt400_loose0",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>400"},
-
-        {"muZinv_ht_200_300_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;HTZinv>200;HTZinv<300"},
-        {"muZinv_ht_300_400_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;HTZinv>300;HTZinv<400"},
-        {"muZinv_ht_400_500_loose0",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;HTZinv>400;HTZinv<500"},
-        {"muZinv_ht_gt500_loose0",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;HTZinv>500"},
+        {"muZinv_ht_200_300_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;HTZinv>200;HTZinv<300;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+        {"muZinv_ht_300_400_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;HTZinv>300;HTZinv<400;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+        {"muZinv_ht_400_500_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;HTZinv>400;HTZinv<500;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+        {"muZinv_ht_gt500_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;HTZinv>500;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
     };
 
     std::vector<std::pair<std::string,std::string>> cutlevels_electron = {

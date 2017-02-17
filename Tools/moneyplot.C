@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 
     // Get the relevant information
     //TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Feb15_NSB37.root");
-    TFile* f1 = TFile::Open("condor/third_running_SF_pro.root");//fifth_njets_loose_weight.root");//condor/histoutput-Jul24_2016_postWgt.root");
+    TFile* f1 = TFile::Open("combine_finale_with_actaully_weights.root");//fifth_njets_loose_weight.root");//condor/histoutput-Jul24_2016_postWgt.root");
     //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Mar10_45Bin_v3.root");
     //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Jul6_Rnorm.root");
     //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Feb11.root");
