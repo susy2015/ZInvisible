@@ -1861,25 +1861,26 @@ namespace plotterFunctions
             for(int iTop = 0; iTop < topMVACands.size(); ++iTop)
             {
                 auto& top = topMVACands[iTop];
-                
+                /*
                 auto MVAinputs = ttUtility::createMVAInputs(top);
                 for(auto& vec : mvaCandVars)
                 {
                     vec.second->push_back(MVAinputs[vec.first]);
                 }
+                */
             }
 
             for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
             {
                 auto& top = *ttrMVA.getTops()[iTop];
                 vTopsNCandNewMVA->push_back(top.getNConstituents());
-
+                 /*
                 auto MVAinputs = ttUtility::createMVAInputs(top);
                 for(auto& vec : mvaVars)
                 {
                     vec.second->push_back(MVAinputs[vec.first]);
                 }
-
+                */
                 vTopsNewMVA->emplace_back(top.p());
                 discriminators->push_back(top.getDiscriminator());
                 //if(genMatchesMVA.second.first[iTop] == 3)
