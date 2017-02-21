@@ -1872,10 +1872,6 @@ namespace plotterFunctions
                 auto& top = topMVACands[iTop];
                 
                 auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
-                for(auto& vec : mvaCandVars)
-                {
-                    vec.second->push_back(MVAinputs[vec.first]);
-                }
             }
 
             for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
@@ -1883,23 +1879,7 @@ namespace plotterFunctions
                 auto& top = *ttrMVA.getTops()[iTop];
                 vTopsNCandNewMVA->push_back(top.getNConstituents());
 
-                //if(top.getNConstituents() == 2)
-                //{
-                //    auto matches = top.getGenTopMatches();
-                //
-                //    std::cout << top.getBestGenTopMatch(0.6) << std::endl;
-                //    for(auto thing : matches)
-                //    {
-                //        std::cout << "\t" << thing.first << "\t" << thing.second.size() << "\t" << thing.first->Pt() << "\t" << top.p().Pt() << "\t" << (thing.first->Pt() - top.p().Pt())/thing.first->Pt() << "\t" << thing.first->M() << "\t" << top.p().M() << "\t" << top.getConstituents()[1]->p().Pt() << "\t" << ROOT::Math::VectorUtil::DeltaR(top.getConstituents()[0]->getSubjets()[0], top.getConstituents()[1]->p()) << "\t" << ROOT::Math::VectorUtil::DeltaR(top.getConstituents()[0]->getSubjets()[1], top.getConstituents()[1]->p()) << "\n";
-                //    }
-                //}
-
                 auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
-                for(auto& vec : mvaVars)
-                {
-                    vec.second->push_back(MVAinputs[vec.first]);
-                }
-
                 vTopsNewMVA->emplace_back(top.p());
                 discriminators->push_back(top.getDiscriminator());
                 //if(genMatchesMVA.second.first[iTop] == 3)
