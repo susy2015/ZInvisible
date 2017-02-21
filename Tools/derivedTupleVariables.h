@@ -1637,6 +1637,11 @@ namespace plotterFunctions
         TopTagger *tt, *ttMVA, *ttAllComb;
         Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
         TopCat topMatcher_;
+        TFile *WMassCorFile;
+        TF1 *puppisd_corrGEN;
+        TF1 *puppisd_corrRECO_cen;
+        TF1 *puppisd_corrRECO_for;
+        
 
         void prepareTopVars(NTupleReader& tr)
         {
@@ -1679,8 +1684,8 @@ namespace plotterFunctions
 
             int cntCSVS = AnaFunctions::countCSVS(jetsLVec_forTagger, recoJetsBtag_forTagger, AnaConsts::cutCSVS, AnaConsts::bTagArr);
 
-            t3tagger.processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec);
-            int nTops = t3tagger.nTopCandSortedCnt;
+            //t3tagger.processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec);
+            int nTops = 0;//t3tagger.nTopCandSortedCnt;
 
             std::vector<TLorentzVector> *vTops = new std::vector<TLorentzVector>();
 
@@ -1688,14 +1693,14 @@ namespace plotterFunctions
             
             for(int it = 0; it < nTops; it++)
             {
-                TLorentzVector topLVec = t3tagger.buildLVec(jetsLVec_forTagger, t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]]);
+                TLorentzVector topLVec;// = t3tagger.buildLVec(jetsLVec_forTagger, t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]]);
                 vTops->push_back(topLVec);
 
                 std::vector<TLorentzVector> tmpVec;
-                for(const int& jetIndex : t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]])
-                {
-                    tmpVec.emplace_back(jetsLVec_forTagger[jetIndex]);
-                }
+                //for(const int& jetIndex : t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]])
+                //{
+                //    tmpVec.emplace_back(jetsLVec_forTagger[jetIndex]);
+                //}
                 vTopConstituents->emplace_back(tmpVec);
             }
 
@@ -1715,6 +1720,8 @@ namespace plotterFunctions
                 ttUtility::ConstAK4Inputs myConstAK4Inputs = ttUtility::ConstAK4Inputs(jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood_forTagger, hadGenTops, hadGenTopDaughters);
                 ttUtility::ConstAK8Inputs myConstAK8Inputs = ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec, hadGenTops, hadGenTopDaughters);
                 
+                myConstAK8Inputs.setWMassCorrHistos(puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for);
+
                 constituents = ttUtility::packageConstituents(myConstAK4Inputs);
 
                 //run custom tagger to get maximum eff info
@@ -1733,6 +1740,8 @@ namespace plotterFunctions
                 //prep input object (constituent) vector
                 ttUtility::ConstAK4Inputs myConstAK4Inputs = ttUtility::ConstAK4Inputs(jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood_forTagger);
                 ttUtility::ConstAK8Inputs myConstAK8Inputs = ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec);
+
+                myConstAK8Inputs.setWMassCorrHistos(puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for);
                 
                 constituents = ttUtility::packageConstituents(myConstAK4Inputs);
 
@@ -1862,7 +1871,7 @@ namespace plotterFunctions
             {
                 auto& top = topMVACands[iTop];
                 
-                auto MVAinputs = ttUtility::createMVAInputs(top);
+                auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
                 for(auto& vec : mvaCandVars)
                 {
                     vec.second->push_back(MVAinputs[vec.first]);
@@ -1874,7 +1883,18 @@ namespace plotterFunctions
                 auto& top = *ttrMVA.getTops()[iTop];
                 vTopsNCandNewMVA->push_back(top.getNConstituents());
 
-                auto MVAinputs = ttUtility::createMVAInputs(top);
+                //if(top.getNConstituents() == 2)
+                //{
+                //    auto matches = top.getGenTopMatches();
+                //
+                //    std::cout << top.getBestGenTopMatch(0.6) << std::endl;
+                //    for(auto thing : matches)
+                //    {
+                //        std::cout << "\t" << thing.first << "\t" << thing.second.size() << "\t" << thing.first->Pt() << "\t" << top.p().Pt() << "\t" << (thing.first->Pt() - top.p().Pt())/thing.first->Pt() << "\t" << thing.first->M() << "\t" << top.p().M() << "\t" << top.getConstituents()[1]->p().Pt() << "\t" << ROOT::Math::VectorUtil::DeltaR(top.getConstituents()[0]->getSubjets()[0], top.getConstituents()[1]->p()) << "\t" << ROOT::Math::VectorUtil::DeltaR(top.getConstituents()[0]->getSubjets()[1], top.getConstituents()[1]->p()) << "\n";
+                //    }
+                //}
+
+                auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
                 for(auto& vec : mvaVars)
                 {
                     vec.second->push_back(MVAinputs[vec.first]);
@@ -2005,8 +2025,8 @@ namespace plotterFunctions
     public:
         PrepareTopVars() : tt(nullptr)
 	{
-            t3tagger.setnJetsSel(1);
-            t3tagger.setCSVS(AnaConsts::cutCSVS);
+            //t3tagger.setnJetsSel(1);
+            //t3tagger.setCSVS(AnaConsts::cutCSVS);
 
             tt = new TopTagger();
             tt->setCfgFile("TopTagger_noMVA.cfg");
@@ -2018,6 +2038,16 @@ namespace plotterFunctions
             ttAllComb->setCfgFile("TopTagger_AllComb.cfg");
 
             indexMuTrigger = indexElecTrigger = indexHTMHTTrigger = indexMuHTTrigger = -1;
+
+            std::string puppiCorr = "puppiCorr.root";
+            WMassCorFile = TFile::Open(puppiCorr.c_str(),"READ");
+            if (!WMassCorFile)
+                std::cout << "W mass correction file not found w mass!!!!!!! " << puppiCorr <<" Will not correct W mass" << std::endl;
+            else{
+                puppisd_corrGEN      = (TF1*)WMassCorFile->Get("puppiJECcorr_gen");
+                puppisd_corrRECO_cen = (TF1*)WMassCorFile->Get("puppiJECcorr_reco_0eta1v3");
+                puppisd_corrRECO_for = (TF1*)WMassCorFile->Get("puppiJECcorr_reco_1v3eta2v5");
+            }
 	}
 
         ~PrepareTopVars()
