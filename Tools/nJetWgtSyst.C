@@ -70,10 +70,10 @@ int main()
     TFile *f = new TFile("dataMCweights.root");
     if(f)
     {
-        njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0")->Clone());//ht200_dphi")->Clone());
-        njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_loose0")->Clone());//ht200_dphi")->Clone());
-        njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0")->Clone());//ht200_dphi")->Clone());
-        njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_loose0")->Clone());//ht200_dphi")->Clone());
+        //njWTTbar_0b  = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0")->Clone());//ht200_dphi")->Clone());
+        njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_loose0_mt2_MET")->Clone());//ht200_dphi")->Clone());
+       // njWTTbar_g1b = static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0")->Clone());//ht200_dphi")->Clone());
+        njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_loose0_mt2_MET")->Clone());//ht200_dphi")->Clone());
         f->Close();
         delete f;
     }

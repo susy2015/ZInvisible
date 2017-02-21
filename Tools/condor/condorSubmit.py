@@ -32,7 +32,7 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg", 
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiSoftdropResol.root"]
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root"]
 
 
 #go make plots!
