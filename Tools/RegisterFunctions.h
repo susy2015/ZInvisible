@@ -11,6 +11,7 @@ class BaselineVessel;
 class PDFUncertainty;
 class BTagCorrector;
 class ISRCorrector;
+class Pileup_Sys; 
 
 namespace plotterFunctions
 {
@@ -45,6 +46,7 @@ public:
     virtual const std::set<std::string> getMiniTupleSetData();
     virtual void remakeBTagCorrector(std::string sampleName) {};
     virtual void remakeISRreweight(std::string sampleName) {};
+    
 };
 
 class RegisterFunctionsNTuple : public RegisterFunctions
@@ -52,9 +54,9 @@ class RegisterFunctionsNTuple : public RegisterFunctions
 private:
     BaselineVessel *myBLV;
     BaselineVessel *blvZinv;
-    BaselineVessel *blvZinv1b;
-    BaselineVessel *blvZinv2b;
-    BaselineVessel *blvZinv3b;
+    //BaselineVessel *blvZinv1b;
+    //BaselineVessel *blvZinv2b;
+    //BaselineVessel *blvZinv3b;
     BaselineVessel *blvZinvJEUUp;
     BaselineVessel *blvZinvJEUDn;
     BaselineVessel *blvZinvMEUUp;
@@ -71,6 +73,7 @@ private:
     PDFUncertainty *myPDFUnc;
     BTagCorrector *bTagCorrector;
     ISRCorrector *ISRcorrector;
+    Pileup_Sys *pileup;
     plotterFunctions::Taudiv *taudiv;
     plotterFunctions::NJetAk8 *nJetAk8;
     plotterFunctions::Ak8DrMatch *ak8DrMatch;
