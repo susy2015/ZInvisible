@@ -63,7 +63,7 @@ void makeplot(TFile* f, std::string hname)
     dummy->GetYaxis()->SetTitle("S_{DY} scale factor");
     dummy->GetYaxis()->SetTitleOffset(.9*1.05 / (fontScale));
     dummy->GetXaxis()->SetTitleOffset(1.05);
-    dummy->GetXaxis()->SetTitle("N_{j}");
+    dummy->GetXaxis()->SetTitle("N_{jets}");
     dummy->GetXaxis()->SetTitleSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetXaxis()->SetLabelSize(0.20 * 2 / 6.5 * fontScale);
     dummy->GetYaxis()->SetTitleSize(0.20 * 2 / 6.5 * fontScale);
@@ -99,7 +99,7 @@ void makeplot(TFile* f, std::string hname)
     //mark.DrawLatex(1 - gPad->GetRightMargin(), 0.95, lumistamp);
     
     char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)",  12900 / 1000.0);
+    sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)",  35867 / 1000.0);
 
     TLatex mark;
     mark.SetNDC(true);

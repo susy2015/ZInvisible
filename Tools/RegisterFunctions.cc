@@ -6,11 +6,12 @@
 #include "PDFUncertainty.h"
 #include "BTagCorrector.h"
 #include "ISRCorrector.h"
+#include "PileupWeights.h"
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
     //if you want to mot fill the minituple return std::set<std::string>({});
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central","isr_Unc_Cent"});
+    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central","isr_Unc_Cent","_PUweightFactor"});
     //return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
 }
 
@@ -72,6 +73,8 @@ void activateBranches(std::set<std::string>& activeBranches)
     activeBranches.insert("nJetsAk8");
     activeBranches.insert("ak82dRMin");
     activeBranches.insert("ak81dRMin");
+    activeBranches.insert("tru_npv");
+    activeBranches.insert("avg_npv");
 }
 
 ////////////////////////////////
@@ -81,9 +84,9 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     //AnaFunctions::prepareTopTagger();
     myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
     blvZinv   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
-    blvZinv1b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv1b");
-    blvZinv2b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv2b");
-    blvZinv3b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv3b");
+    //blvZinv1b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv1b");
+    //blvZinv2b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv2b");
+    //blvZinv3b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv3b");
     blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
     blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
     blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
@@ -126,15 +129,24 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     {  
         ISRcorrector = new ISRCorrector("allINone_ISRJets.root","/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/SusyAnaTools/Tools/ISR_Root_Files/","");
     }
-
+    
+    if(isCondor)
+    {
+        pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
+    }
+    else
+    {
+        pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
+    } 
+    
 }
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {
     if(myBLV) delete myBLV;
     if(blvZinv) delete blvZinv;
-    if(blvZinv1b) delete blvZinv1b;
-    if(blvZinv2b) delete blvZinv2b;
-    if(blvZinv3b) delete blvZinv3b;
+    //if(blvZinv1b) delete blvZinv1b;
+    //if(blvZinv2b) delete blvZinv2b;
+    //if(blvZinv3b) delete blvZinv3b;
     if(blvZinvJEUUp) delete blvZinvJEUUp;
     if(blvZinvJEUDn) delete blvZinvJEUDn;
     if(blvZinvMEUUp) delete blvZinvMEUUp;
@@ -151,6 +163,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(systematicCalc) delete systematicCalc;
     if(bTagCorrector) delete bTagCorrector;
     if(ISRcorrector) delete ISRcorrector;
+    if(pileup)       delete pileup;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -164,9 +177,9 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*blvZinv);
     tr.registerFunction(*njWeight);
     tr.registerFunction(*fakebtagvectors);
-    tr.registerFunction(*blvZinv1b);
-    tr.registerFunction(*blvZinv2b);
-    tr.registerFunction(*blvZinv3b);
+    //tr.registerFunction(*blvZinv1b);
+   // tr.registerFunction(*blvZinv2b);
+    //tr.registerFunction(*blvZinv3b);
     tr.registerFunction(*systematicPrep);
     tr.registerFunction(*blvZinvJEUUp);
     tr.registerFunction(*blvZinvJEUDn);
@@ -183,6 +196,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*taudiv);
     tr.registerFunction(*ak8DrMatch);
     tr.registerFunction(*ISRcorrector);
+    tr.registerFunction(*pileup);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)

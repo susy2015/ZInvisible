@@ -764,14 +764,6 @@ def systHarvest(filename):
     hTrigDn_ratio.Write()
 
     # b-tag uncertanties
-    hBTagNom = f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Centralsingle")
-    hBTagUp =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu btag weight Upsingle")
-    hBTagDn =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu btag weight Downsingle")
-    #
-    hBMistagNom = f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Trigger weight Centralsingle")
-    hBMistagUp =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu bmistag weight Upsingle")
-    hBMistagDn =  f4.Get("nSearchBin/BMistagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu bmistag weight Downsingle")
-
 
     hBTagNom = f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu b tag Centralsingle")
     hBTagUp =  f4.Get("nSearchBin/BTagUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu b tag Upsingle")
@@ -803,6 +795,22 @@ def systHarvest(filename):
     hBTagDn_Ratio.Write()
     hBMistagUp_Ratio.Write()
     hBMistagDn_Ratio.Write()
+    #ISR Uncertainties
+    hISRNom = f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Centralsingle")
+    hBISRUp =  f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Upsingle")
+    hISRDn =  f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Downsingle")
+
+    hISRUp_Ratio = hISRUp.Clone("isr_up")
+    hISRUp_Ratio.Add(hISRNom, -1.0)
+    hBISRUp_Ratio.Divide(hISRNom)
+
+    hISRDn_Ratio = hISRDn.Clone("isr_dn")
+    hISRDn_Ratio.Add(hISRNom, -1.0)
+    hISRDn_Ratio.Divide(hBISRNom)
+
+    fout.cd()
+    hISRUp_Ratio.Write()
+    hISRDn_Ratio.Write()
 
     # calculate stupid pull histo here
     hZnunu = f4.Get("nSearchBin/nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle")
@@ -874,6 +882,8 @@ def systHarvest(filename):
              ("syst_unc_btag_dn",            hBTagDn_Ratio),
              ("syst_unc_bmistag_up",         hBMistagUp_Ratio),
              ("syst_unc_bmistag_dn",         hBMistagDn_Ratio),
+             ("syst_unc_isr_up",            hISRUp_Ratio),
+             ("syst_unc_isr_dn",            hISRDn_Ratio),
              ]
 
     #sc = SampleCollection()
@@ -911,8 +921,8 @@ def systHarvest(filename):
     #print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["36f" % 0.0830140 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
     #print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%36f" % 0.0830140 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
 
-    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.059 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
-    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.059 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
+    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.068 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
+    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.068 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
 
     for (name, h) in hists:
         print "%-25s = %s"%(name, ' '.join(["%8.5f" % (abs(h.GetBinContent(i))) for i in xrange(1, NSB+1)]))
