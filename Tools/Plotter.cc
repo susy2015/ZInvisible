@@ -54,6 +54,11 @@ const int hatches[] = {
 };
 const int NHATCHES = sizeof(hatches) / sizeof(int);
 
+const int lineStyles[] = {
+    kSolid,
+};
+const int LINESTYLES = sizeof(lineStyles) / sizeof(int);
+
 Plotter::Plotter(std::vector<HistSummary>& h, std::set<AnaSamples::FileSummary>& t, const bool readFromTuple, std::string ofname, const int nFile, const int startFile, const int nEvts) : nFile_(nFile), startFile_(startFile), maxEvts_(nEvts)
 {
     TH1::AddDirectory(false);
@@ -877,6 +882,7 @@ void Plotter::plot()
             }
             else if(hvec.type.compare("single") == 0 || hvec.type.compare("fill") == 0)
             {
+                int iStyle = 0;
                 for(auto& h : hvec.hcsVec)
                 {
                     std::string drawOptions = "L";
@@ -888,6 +894,8 @@ void Plotter::plot()
                         drawOptions = "F";
                         iFill++;
                     }
+                    h->h->SetLineStyle(lineStyles[iStyle%LINESTYLES]);
+                    iStyle++;
                     h->h->SetLineWidth(3);
                     iSingle++;
                     double integral = h->h->Integral(0, h->h->GetNbinsX() + 1);
@@ -896,7 +904,7 @@ void Plotter::plot()
                     else                      sprintf(legEntry, "%s (%0.2e)",  h->label.c_str(), integral);
                     leg->AddEntry(h->h, legEntry, drawOptions.c_str());
                     //if(hist.isNorm) h->h->Scale(hist.fhist()->Integral()/h->h->Integral());
-                    if(hist.isNorm) h->h->Scale(1.0/h->h->Integral());
+                    if(hist.isNorm) if(h->h->Integral() > 0.0) h->h->Scale(1.0/h->h->Integral());
                     smartMax(h->h, leg, static_cast<TPad*>(gPad), min, max, lmax);
                     minAvgWgt = std::min(minAvgWgt, h->h->GetSumOfWeights()/h->h->GetEntries());
                 }
