@@ -54,12 +54,14 @@ filestoTransferGTP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeTopPlot
                       environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so",
                       environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/libTopTaggerTopTagger.so",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_noMVA.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/Legacy_TopTagger.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_AllComb.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg-MVAAK8_Tight_v1.2.1_trijetOnly.cfg",
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1",
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName},
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root"]
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root"
+                      ]
 
 
 #go make top plots!

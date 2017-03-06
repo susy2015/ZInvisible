@@ -1445,9 +1445,35 @@ namespace plotterFunctions
                 std::cout << "Could not find trigger in the list of trigger names" << std::endl;
             }
 
+            bool passSearchTrigger = false;
+            for(int it = 0; it < triggerNames.size(); ++it)
+            {
+                if( triggerNames[it].find("HLT_PFMET170_NoiseCleaned_v")             != std::string::npos || 
+                    triggerNames[it].find("HLT_PFMET170_JetIdCleaned_v")             != std::string::npos || 
+                    triggerNames[it].find("HLT_PFMET170_HBHECleaned_v")              != std::string::npos || 
+                    triggerNames[it].find("HLT_PFMET100_PFMHT100_IDTight_v")         != std::string::npos || 
+                    triggerNames[it].find("HLT_PFMET110_PFMHT110_IDTight_v")         != std::string::npos || 
+                    triggerNames[it].find("HLT_PFMET120_PFMHT120_IDTight_v")         != std::string::npos || 
+                    triggerNames[it].find("HLT_PFMET130_PFMHT130_IDTight_v")         != std::string::npos || 
+                    triggerNames[it].find("HLT_PFMET140_PFMHT140_IDTight_v")         != std::string::npos || 
+                    triggerNames[it].find("HLT_PFMET150_PFMHT150_IDTight_v")         != std::string::npos ||
+                    triggerNames[it].find("HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_v") != std::string::npos ||
+                    triggerNames[it].find("HLT_PFMETNoMu110_PFMHTNoMu110_IDTight_v") != std::string::npos ||
+                    triggerNames[it].find("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v") != std::string::npos
+                    )
+                {
+                    if( passTrigger[it] ) 
+                    {
+                        passSearchTrigger = true;
+                        break;
+                    }
+                }
+            }
+
             tr.registerDerivedVar("passMuTrigger",passMuTrigger);
             tr.registerDerivedVar("passElecTrigger",passElecTrigger);
             tr.registerDerivedVar("passMETMHTTrigger",passMETMHTTrigger);
+            tr.registerDerivedVar("passSearchTrigger",passSearchTrigger);
         }
 
         void triggerInfoMC(NTupleReader& tr)
@@ -1634,7 +1660,7 @@ namespace plotterFunctions
 
         int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
         topTagger::type3TopTagger t3tagger;
-        TopTagger *tt, *ttMVA, *ttAllComb;
+        TopTagger *tt, *ttMVA, *ttAllComb, *ttMVATriJetOnly;
         Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
         TopCat topMatcher_;
         TFile *WMassCorFile;
@@ -1729,6 +1755,7 @@ namespace plotterFunctions
 
                 //run new tagger
                 tt->runTagger(constituents);
+                ttMVATriJetOnly->runTagger(constituents);
 
                 //New MVA resolved Tagger starts here
                 constituentsMVA = ttUtility::packageConstituents(myConstAK4Inputs, myConstAK8Inputs);
@@ -1750,7 +1777,8 @@ namespace plotterFunctions
 
                 //run new tagger
                 tt->runTagger(constituents);
-
+                ttMVATriJetOnly->runTagger(constituents);
+                
                 //New MVA resolved Tagger starts here
                 constituentsMVA = ttUtility::packageConstituents(myConstAK4Inputs, myConstAK8Inputs);
                 //run tagger
@@ -1855,18 +1883,82 @@ namespace plotterFunctions
             };
             std::vector<TopObject> topMVACands = ttrMVA.getTopCandidates();
 
-            //get tuple variaables 
+            //get tuple variables 
             auto MVAvars = ttUtility::getMVAVars();
             std::vector<std::pair<std::string, std::vector<double>*>> mvaVars;
             std::vector<std::pair<std::string, std::vector<double>*>> mvaCandVars;
+
+            std::map<std::string, std::vector<double>*> mvaVarsTrain_genMatch;
+            std::map<std::string, std::vector<double>*> mvaVarsTrain_notGenMatch;
+            std::map<std::string, std::vector<double>*> mvaVarsTrain_finalTop;
+            std::map<std::string, std::vector<double>*> mvaVarsTrain_notFinalTop;
+
             for(auto& var : MVAvars)
             {
                 mvaVars.emplace_back(var, new std::vector<double>);
                 mvaCandVars.emplace_back(var, new std::vector<double>);
+
+                mvaVarsTrain_genMatch[var] = new std::vector<double>();
+                mvaVarsTrain_notGenMatch[var] = new std::vector<double>();
+                mvaVarsTrain_finalTop[var] = new std::vector<double>();
+                mvaVarsTrain_notFinalTop[var] = new std::vector<double>();
             }
 
-            int count = 0;
-            std::map<const Constituent*, int> theMap;
+            const TopTaggerResults& ttrTrijet = ttMVATriJetOnly->getResults();
+            for(int iTop = 0; iTop < ttrTrijet.getTopCandidates().size(); ++iTop)
+            {
+                auto& top = ttrTrijet.getTopCandidates()[iTop];
+                
+                auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
+
+                for(const auto mvaInputVar : MVAinputs)
+                {
+                    //reconstructed background
+                    if(top.getDiscriminator() < 0.85)
+                    {
+                        if(mvaVarsTrain_notFinalTop.find(mvaInputVar.first) != mvaVarsTrain_notFinalTop.end())
+                        {
+                            mvaVarsTrain_notFinalTop[mvaInputVar.first]->push_back(mvaInputVar.second);
+                        }
+                    }
+
+                    //gen matched tops
+                    auto possibleGenMatches = top.getGenTopMatches();
+                    const TLorentzVector* bestGenMatch = top.getBestGenTopMatch(0.6);
+                    if(possibleGenMatches[bestGenMatch].size() >= 3)
+                    {
+                        if(mvaVarsTrain_genMatch.find(mvaInputVar.first) != mvaVarsTrain_genMatch.end())
+                        {
+                            mvaVarsTrain_genMatch[mvaInputVar.first]->push_back(mvaInputVar.second);
+                        }
+                    }
+                    else
+                    {
+                        if(mvaVarsTrain_notGenMatch.find(mvaInputVar.first) != mvaVarsTrain_notGenMatch.end())
+                        {
+                            mvaVarsTrain_notGenMatch[mvaInputVar.first]->push_back(mvaInputVar.second);
+                        }
+                    }
+                }                
+            }
+
+            for(int iTop = 0; iTop < ttrTrijet.getTops().size(); ++iTop)
+            {
+                auto& top = *ttrTrijet.getTops()[iTop];
+
+                auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
+
+                for(const auto mvaInputVar : MVAinputs)
+                {
+                    if(mvaVarsTrain_finalTop.find(mvaInputVar.first) != mvaVarsTrain_finalTop.end())
+                    {
+                        mvaVarsTrain_finalTop[mvaInputVar.first]->push_back(mvaInputVar.second);
+                    }
+                }
+            }
+
+
+
             for(int iTop = 0; iTop < topMVACands.size(); ++iTop)
             {
                 auto& top = topMVACands[iTop];
@@ -1934,15 +2026,20 @@ namespace plotterFunctions
             //// Pass lepton veto?
             bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel), passEleVeto = (nElectrons == AnaConsts::nElectronsSel), passIsoTrkVeto = (nIsoTrks == AnaConsts::nIsoTrksSel);
 
-            for(auto& vec : mvaVars)
-            {
-                tr.registerDerivedVec("MVAvartop_" + vec.first, vec.second);
-            }
+            for(auto& vec : mvaVarsTrain_genMatch)     tr.registerDerivedVec("MVAvar_genMatch_" + vec.first, vec.second);
+            for(auto& vec : mvaVarsTrain_notGenMatch)  tr.registerDerivedVec("MVAvar_notGenMatch_" + vec.first, vec.second);
+            for(auto& vec : mvaVarsTrain_finalTop)     tr.registerDerivedVec("MVAvar_finalTop_" + vec.first, vec.second);
+            for(auto& vec : mvaVarsTrain_notFinalTop)  tr.registerDerivedVec("MVAvar_notFinalTop_" + vec.first, vec.second);
 
-            for(auto& vec : mvaCandVars)
-            {
-                tr.registerDerivedVec("MVAvarcand_" + vec.first, vec.second);
-            }
+            //for(auto& vec : mvaVars)
+            //{
+            //    tr.registerDerivedVec("MVAvartop_" + vec.first, vec.second);
+            //}
+            //
+            //for(auto& vec : mvaCandVars)
+            //{
+            //    tr.registerDerivedVec("MVAvarcand_" + vec.first, vec.second);
+            //}
 
             const auto& usedJets = ttrMVA.getUsedConstituents();
             int nBNotInTop = 0;
@@ -2009,13 +2106,16 @@ namespace plotterFunctions
             //t3tagger.setCSVS(AnaConsts::cutCSVS);
 
             tt = new TopTagger();
-            tt->setCfgFile("TopTagger_noMVA.cfg");
+            tt->setCfgFile("Legacy_TopTagger.cfg");
 
             ttMVA = new TopTagger();
             ttMVA->setCfgFile("TopTagger.cfg");
 
             ttAllComb = new TopTagger();
             ttAllComb->setCfgFile("TopTagger_AllComb.cfg");
+
+            ttMVATriJetOnly = new TopTagger();
+            ttMVATriJetOnly->setCfgFile("TopTaggerCfg-MVAAK8_Tight_v1.2.1_trijetOnly.cfg");
 
             indexMuTrigger = indexElecTrigger = indexHTMHTTrigger = indexMuHTTrigger = -1;
 

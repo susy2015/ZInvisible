@@ -214,6 +214,17 @@ int main(int argc, char* argv[])
     auto PDCMaker = [&](std::string var) { return Plotter::DataCollection( "single", var, {ds_T1tttt, ds_T1tttt_2, ds_T2tt, ds_T2tt_2, ds_Znunu, ds_ttbar, ds_ttbar1l}); };
 
     auto PDCMaker_nTops   = [&](Plotter::DatasetSummary& pds) { return Plotter::DataCollection( "single", {{"nTops", pds}, {"nTopsNew", pds}, {"nTopsNewMVA", pds}, {"vTopsMatchNewMVA(size)", pds}}); };
+
+    auto PDCMaker_distributions   = [&](Plotter::DatasetSummary& pds, std::string  var) 
+    { 
+        return Plotter::DataCollection( "single", {
+                {"MVAvar_finalTop_"    + var,  PDSLabelBind(pds, "final top") }, 
+                {"MVAvar_notFinalTop_" + var,  PDSLabelBind(pds, "background top") },
+                {"MVAvar_genMatch_"    + var,  PDSLabelBind(pds, "gen match") }, 
+                {"MVAvar_notGenMatch_" + var,  PDSLabelBind(pds, "not gen match") }, 
+            }); 
+    };
+ 
     auto vPDCMaker_disc    = [&](Plotter::DatasetSummary& pds)
     {
         return std::vector<Plotter::DataCollection>( { Plotter::DataCollection( "single", {{"discriminators", pds}}),
@@ -223,7 +234,7 @@ int main(int argc, char* argv[])
     auto vPDCMaker_disc2    = [&](Plotter::DatasetSummary& pds)
     {
         return std::vector<Plotter::DataCollection>( { Plotter::DataCollection( "single", {{"discriminators", pds}}),
-                                                        Plotter::DataCollection( "fill",  {{"discriminatorsNoMatch", PDSLabelBind(pds, "Not matched")}, {"discriminatorsMatch", PDSLabelBind(pds, "Matched")} }),
+                                                       Plotter::DataCollection( "fill",  {{"discriminatorsNoMatch", PDSLabelBind(pds, "Not matched")}, {"discriminatorsMatch", PDSLabelBind(pds, "Matched")} }),
                     } );
     };
     auto vPDCMaker_disc3    = [&](Plotter::DatasetSummary& pds)
@@ -263,9 +274,9 @@ int main(int argc, char* argv[])
         return std::vector<Plotter::DataCollection>({//Plotter::DataCollection( "ratio", {{"vTopsGenMatchAllComb" + varStr, PDSLabelBind(pds, "Max eff")}, {"genTops" + varStr, PDSLabelBind(pds, "Max eff")} }),
                                                      Plotter::DataCollection( "ratio", {{"vTopsGenMatchNew"     + varStr, PDSLabelBind(pds, "ICHEP 2016 New Code")},  {"genTops" + varStr, PDSLabelBind(pds, "ICHEP 2016 New Code")}  }),
                                                      Plotter::DataCollection( "ratio", {{"vTopsGenMatchNewMVA"  + varStr, PDSLabelBind(pds, "MVA + AK8")},            {"genTops" + varStr, PDSLabelBind(pds, "MVA + AK8")}            }),
-                                                     Plotter::DataCollection( "ratio", {{"vTopsGenMatchTriNewMVA"  + varStr, PDSLabelBind(pds, "MVA + AK8 trijet")},  {"genTops" + varStr, PDSLabelBind(pds, "MVA + AK8")}            }),
-                                                     Plotter::DataCollection( "ratio", {{"vTopsGenMatchDiNewMVA"   + varStr, PDSLabelBind(pds, "MVA + AK8 dijet")},   {"genTops" + varStr, PDSLabelBind(pds, "MVA + AK8")}            }),
-                                                     Plotter::DataCollection( "ratio", {{"vTopsGenMatchMonoNewMVA" + varStr, PDSLabelBind(pds, "MVA + AK8 monojet")}, {"genTops" + varStr, PDSLabelBind(pds, "MVA + AK8")}            })
+                    //                                 Plotter::DataCollection( "ratio", {{"vTopsGenMatchTriNewMVA"  + varStr, PDSLabelBind(pds, "MVA + AK8 trijet")},  {"genTops" + varStr, PDSLabelBind(pds, "MVA + AK8")}            }),
+                    //                                 Plotter::DataCollection( "ratio", {{"vTopsGenMatchDiNewMVA"   + varStr, PDSLabelBind(pds, "MVA + AK8 dijet")},   {"genTops" + varStr, PDSLabelBind(pds, "MVA + AK8")}            }),
+                    //                                 Plotter::DataCollection( "ratio", {{"vTopsGenMatchMonoNewMVA" + varStr, PDSLabelBind(pds, "MVA + AK8 monojet")}, {"genTops" + varStr, PDSLabelBind(pds, "MVA + AK8")}            })
                     });
     };
     auto vPDCMaker_Purity = [&](Plotter::DatasetSummary & pds, std::string var = "pt")
@@ -279,9 +290,9 @@ int main(int argc, char* argv[])
     {
         return std::vector<Plotter::DataCollection>({Plotter::DataCollection( "ratio", {{var, PDSLabelBind(PDSCutBind(ds_Znunu, "nTopsNew>0.5"),    "ICHEP 2016 New Code")}, {var, PDSLabelBind(ds_Znunu, "ICHEP 2016 New Code")}}),
                     Plotter::DataCollection( "ratio", {{var, PDSLabelBind(PDSCutBind(ds_Znunu, "nTopsNewMVA>0.5"), "MVA + AK8")},                                 {var, PDSLabelBind(ds_Znunu, "MVA + AK8")}}),
-                    Plotter::DataCollection( "ratio", {{var, PDSLabelBind(PDSCutBind(ds_Znunu, "nTopsNewMVA>0.5;vTopsNCandNewMVA[0]=3"), "MVA + AK8 trijet")},    {var, PDSLabelBind(ds_Znunu, "MVA + AK8 trijet")}}),
-                    Plotter::DataCollection( "ratio", {{var, PDSLabelBind(PDSCutBind(ds_Znunu, "nTopsNewMVA>0.5;vTopsNCandNewMVA[0]=2"), "MVA + AK8 dijet")},     {var, PDSLabelBind(ds_Znunu, "MVA + AK8 dijet")}}),
-                    Plotter::DataCollection( "ratio", {{var, PDSLabelBind(PDSCutBind(ds_Znunu, "nTopsNewMVA>0.5;vTopsNCandNewMVA[0]=1"), "MVA + AK8 monojet")},   {var, PDSLabelBind(ds_Znunu, "MVA + AK8 monojet")}})
+                    //Plotter::DataCollection( "ratio", {{var, PDSLabelBind(PDSCutBind(ds_Znunu, "nTopsNewMVA>0.5;vTopsNCandNewMVA[0]=3"), "MVA + AK8 trijet")},    {var, PDSLabelBind(ds_Znunu, "MVA + AK8 trijet")}}),
+                    //Plotter::DataCollection( "ratio", {{var, PDSLabelBind(PDSCutBind(ds_Znunu, "nTopsNewMVA>0.5;vTopsNCandNewMVA[0]=2"), "MVA + AK8 dijet")},     {var, PDSLabelBind(ds_Znunu, "MVA + AK8 dijet")}}),
+                    //Plotter::DataCollection( "ratio", {{var, PDSLabelBind(PDSCutBind(ds_Znunu, "nTopsNewMVA>0.5;vTopsNCandNewMVA[0]=1"), "MVA + AK8 monojet")},   {var, PDSLabelBind(ds_Znunu, "MVA + AK8 monojet")}})
                     });
     };
     auto vPDCMaker_DataMC_1l = [&](std::string var)
@@ -464,46 +475,63 @@ int main(int argc, char* argv[])
             //vh.push_back(PHS(cuts.first + "_" + "purity_eta_" + pds.second,  vPDCMaker_Purity(pds.first, "eta"),  {1, 1}, cuts.second + "",  100, -5,    5,     false,  false,  "top eta",          "Purity"));
             vh.push_back(PHS(cuts.first + "_" + "purity_pt_"  + pds.second,  vPDCMaker_Purity(pds.first, "pt"),   {1, 1}, cuts.second + "",   20,  0, 1000,     false,  false,  "top pt [GeV]",     "Purity"));
             //vh.push_back(PHS(cuts.first + "_" + "purity_m_"   + pds.second,  vPDCMaker_Purity(pds.first, "M"),    {1, 1}, cuts.second + "",  100,  0,  500,     false,  false,  "top mass [GeV]",   "Purity"));
+
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_cand_m" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "cand_m")},    {1, 1}, cuts.second + "",  100, 0, 300,   false,  true,  "top mass [GeV]",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_j12_m" + "_"     + pds.second,  {PDCMaker_distributions(pds.first,  "j12_m")},     {1, 1}, cuts.second + "",  100, 0, 200,   false,  true,  "dijet (12) mass [GeV]",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_j23_m" + "_"     + pds.second,  {PDCMaker_distributions(pds.first,  "j23_m")},     {1, 1}, cuts.second + "",  100, 0, 200,   false,  true,  "dijet (23) mass [GeV]",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_j13_m" + "_"     + pds.second,  {PDCMaker_distributions(pds.first,  "j13_m")},     {1, 1}, cuts.second + "",  100, 0, 200,   false,  true,  "dijet (13) mass [GeV]",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_j1_p" + "_"      + pds.second,  {PDCMaker_distributions(pds.first,  "j1_p")},      {1, 1}, cuts.second + "",  100, 0, 400,   false,  true,  "jet 1 momentum [GeV]",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_j2_p" + "_"      + pds.second,  {PDCMaker_distributions(pds.first,  "j2_p")},      {1, 1}, cuts.second + "",  100, 0, 400,   false,  true,  "jet 2 momentum [GeV]",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_j3_p" + "_"      + pds.second,  {PDCMaker_distributions(pds.first,  "j3_p")},      {1, 1}, cuts.second + "",  100, 0, 400,   false,  true,  "jet 3 momentum [GeV]",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_dTheta12" + "_"  + pds.second,  {PDCMaker_distributions(pds.first,  "dTheta12")},  {1, 1}, cuts.second + "",  100, 0, 3.14,  false,  true,  "dTheta12",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_dTheta23" + "_"  + pds.second,  {PDCMaker_distributions(pds.first,  "dTheta23")},  {1, 1}, cuts.second + "",  100, 0, 3.14,  false,  true,  "dTheta23",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_dTheta13" + "_"  + pds.second,  {PDCMaker_distributions(pds.first,  "dTheta13")},  {1, 1}, cuts.second + "",  100, 0, 3.14,  false,  true,  "dTheta13",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_j1_CSV" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "j1_CSV")},    {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j1 CSV",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_j2_CSV" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "j2_CSV")},    {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j2 CSV",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_j3_CSV" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "j3_CSV")},    {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j3 CSV",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_j1_QGL" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "j1_QGL")},    {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j1 QGL",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_j2_QGL" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "j2_QGL")},    {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j2 QGL",   "Events"));
+            vh.push_back(PHS("MVAVar_" + cuts.first + "_j3_QGL" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "j3_QGL")},    {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j3 QGL",   "Events"));
         }
 
-        vh.push_back(PHS(cuts.first + "_MCComp_nTops",    vPDCMaker_All_0l("vTopsNewMVA(size)", "vTopsNew(size)"),    {2, 1}, /*cuts.second + */"",  10,  0,   10,  true,  false,  "N_{T}",     "Events"));
-        vh.push_back(PHS(cuts.first + "_MCComp_nbNIT",    vPDCMaker_All_0l("nBNotInTop", "nBNotInTop"),               {2, 1}, /*cuts.second + */"",  10,  0,   10,  true,  false,  "N_{T}",     "Events"));
-        vh.push_back(PHS(cuts.first + "_MCComp_topPt_0t", vPDCMaker_All_0l("vTopsNewMVA(pt)", "vTopsNew(pt)", 0),     {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "Top p_{T} [GeV]", "Events"));
-        vh.push_back(PHS(cuts.first + "_MCComp_topPt_1t", vPDCMaker_All_0l("vTopsNewMVA(pt)", "vTopsNew(pt)", 1),     {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "Top p_{T} [GeV]", "Events"));
-        vh.push_back(PHS(cuts.first + "_MCComp_topPt_2t", vPDCMaker_All_0l("vTopsNewMVA(pt)", "vTopsNew(pt)", 2),     {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "Top p_{T} [GeV]", "Events"));
-        vh.push_back(PHS(cuts.first + "_MCComp_topPt_3t", vPDCMaker_All_0l("vTopsNewMVA(pt)", "vTopsNew(pt)", 3),     {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "Top p_{T} [GeV]", "Events"));
-        vh.push_back(PHS(cuts.first + "_MCComp_met_0t",   vPDCMaker_All_0l("met", "met", 0),                          {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "MET [GeV]", "Events"));
-        vh.push_back(PHS(cuts.first + "_MCComp_met_1t",   vPDCMaker_All_0l("met", "met", 1),                          {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "MET [GeV]", "Events"));
-        vh.push_back(PHS(cuts.first + "_MCComp_met_2t",   vPDCMaker_All_0l("met", "met", 2),                          {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "MET [GeV]", "Events"));
-        vh.push_back(PHS(cuts.first + "_MCComp_met_3t",   vPDCMaker_All_0l("met", "met", 3),                          {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "MET [GeV]", "Events"));
-        //vh.push_back(PHS(cuts.first + "_MCComp_ht_0t",    vPDCMaker_All_0l("HT", "HT", 0),                            {2, 1}, /*cuts.second + */"",  50,  0, 2000,  true,  false,  "HT [GeV]",  "Events"));
-        //vh.push_back(PHS(cuts.first + "_MCComp_ht_1t",    vPDCMaker_All_0l("HT", "HT", 1),                            {2, 1}, /*cuts.second + */"",  50,  0, 2000,  true,  false,  "HT [GeV]",  "Events"));
-        //vh.push_back(PHS(cuts.first + "_MCComp_ht_2t",    vPDCMaker_All_0l("HT", "HT", 2),                            {2, 1}, /*cuts.second + */"",  50,  0, 2000,  true,  false,  "HT [GeV]",  "Events"));
-        //vh.push_back(PHS(cuts.first + "_MCComp_ht_3t",    vPDCMaker_All_0l("HT", "HT", 3),                            {2, 1}, /*cuts.second + */"",  50,  0, 2000,  true,  false,  "HT [GeV]",  "Events"));
-
-        vh.push_back(PHS(cuts.first + "_" + "fakerate_met",   vPDCMaker_fake("met"),                      {1, 1}, cuts.second + "",   30,  0,  1200,     false,  false,  "met [GeV]",   "Fakerate"));
-        vh.push_back(PHS(cuts.first + "_" + "fakerate_njet",  vPDCMaker_fake("cntNJetsPt50Eta24TopTag"),  {1, 1}, cuts.second + "",   20,  0,    20,     false,  false,  "N Jets",      "Fakerate"));
-        vh.push_back(PHS(cuts.first + "_" + "fakerate_nbjet", vPDCMaker_fake("cntCSVSTopTag"),                   {1, 1}, cuts.second + "",   10,  0,    10,     false,  false,  "N b-jets",    "Fakerate"));
-
-        //vh.push_back(PHS(cuts.first + "_" + "nbNotInTop", {PDCMaker("nBNotInTop")}, {1, 1}, cuts.second,  10, 0, 10,  true,  false,  "N_{b}", "Events"));
-        vh.push_back(PHS(cuts.first + "_" + "nb",         {PDCMaker("cntCSVSTopTag")},     {1, 1}, cuts.second,  10, 0, 10,  true,  false,  "N_{b}", "Events"));
-
-        vh.push_back(PHS(cuts.first + "_" + "topMass1", {PDCMaker("vTops[0](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
-        vh.push_back(PHS(cuts.first + "_" + "topMass2", {PDCMaker("vTops[1](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
-        vh.push_back(PHS(cuts.first + "_" + "topMass3", {PDCMaker("vTops[2](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
-        vh.push_back(PHS(cuts.first + "_" + "topMass4", {PDCMaker("vTops[3](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
-
-        vh.push_back(PHS(cuts.first + "_" + "topMassAllNew", {PDCMaker("vTopsNewMVA(M)")},    {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
-        vh.push_back(PHS(cuts.first + "_" + "topMass1New",   {PDCMaker("vTopsNewMVA[0](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
-        vh.push_back(PHS(cuts.first + "_" + "topMass2New",   {PDCMaker("vTopsNewMVA[1](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
-        vh.push_back(PHS(cuts.first + "_" + "topMass3New",   {PDCMaker("vTopsNewMVA[2](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
-        vh.push_back(PHS(cuts.first + "_" + "topMass4New",   {PDCMaker("vTopsNewMVA[3](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
-
-        vh.push_back(PHS(cuts.first + "_" + "topPtAllNew", {PDCMaker("vTopsNewMVA(pt)")},    {1, 1}, cuts.second,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
-        vh.push_back(PHS(cuts.first + "_" + "topPt1New",   {PDCMaker("vTopsNewMVA[0](pt)")}, {1, 1}, cuts.second,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
-        vh.push_back(PHS(cuts.first + "_" + "topPt2New",   {PDCMaker("vTopsNewMVA[1](pt)")}, {1, 1}, cuts.second,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
-        vh.push_back(PHS(cuts.first + "_" + "topPt3New",   {PDCMaker("vTopsNewMVA[2](pt)")}, {1, 1}, cuts.second,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
-        vh.push_back(PHS(cuts.first + "_" + "topPt4New",   {PDCMaker("vTopsNewMVA[3](pt)")}, {1, 1}, cuts.second,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+        //vh.push_back(PHS(cuts.first + "_MCComp_nTops",    vPDCMaker_All_0l("vTopsNewMVA(size)", "vTopsNew(size)"),    {2, 1}, /*cuts.second + */"",  10,  0,   10,  true,  false,  "N_{T}",     "Events"));
+        //vh.push_back(PHS(cuts.first + "_MCComp_nbNIT",    vPDCMaker_All_0l("nBNotInTop", "nBNotInTop"),               {2, 1}, /*cuts.second + */"",  10,  0,   10,  true,  false,  "N_{T}",     "Events"));
+        //vh.push_back(PHS(cuts.first + "_MCComp_topPt_0t", vPDCMaker_All_0l("vTopsNewMVA(pt)", "vTopsNew(pt)", 0),     {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "Top p_{T} [GeV]", "Events"));
+        //vh.push_back(PHS(cuts.first + "_MCComp_topPt_1t", vPDCMaker_All_0l("vTopsNewMVA(pt)", "vTopsNew(pt)", 1),     {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "Top p_{T} [GeV]", "Events"));
+        //vh.push_back(PHS(cuts.first + "_MCComp_topPt_2t", vPDCMaker_All_0l("vTopsNewMVA(pt)", "vTopsNew(pt)", 2),     {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "Top p_{T} [GeV]", "Events"));
+        //vh.push_back(PHS(cuts.first + "_MCComp_topPt_3t", vPDCMaker_All_0l("vTopsNewMVA(pt)", "vTopsNew(pt)", 3),     {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "Top p_{T} [GeV]", "Events"));
+        //vh.push_back(PHS(cuts.first + "_MCComp_met_0t",   vPDCMaker_All_0l("met", "met", 0),                          {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "MET [GeV]", "Events"));
+        //vh.push_back(PHS(cuts.first + "_MCComp_met_1t",   vPDCMaker_All_0l("met", "met", 1),                          {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "MET [GeV]", "Events"));
+        //vh.push_back(PHS(cuts.first + "_MCComp_met_2t",   vPDCMaker_All_0l("met", "met", 2),                          {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "MET [GeV]", "Events"));
+        //vh.push_back(PHS(cuts.first + "_MCComp_met_3t",   vPDCMaker_All_0l("met", "met", 3),                          {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "MET [GeV]", "Events"));
+        ////vh.push_back(PHS(cuts.first + "_MCComp_ht_0t",    vPDCMaker_All_0l("HT", "HT", 0),                            {2, 1}, /*cuts.second + */"",  50,  0, 2000,  true,  false,  "HT [GeV]",  "Events"));
+        ////vh.push_back(PHS(cuts.first + "_MCComp_ht_1t",    vPDCMaker_All_0l("HT", "HT", 1),                            {2, 1}, /*cuts.second + */"",  50,  0, 2000,  true,  false,  "HT [GeV]",  "Events"));
+        ////vh.push_back(PHS(cuts.first + "_MCComp_ht_2t",    vPDCMaker_All_0l("HT", "HT", 2),                            {2, 1}, /*cuts.second + */"",  50,  0, 2000,  true,  false,  "HT [GeV]",  "Events"));
+        ////vh.push_back(PHS(cuts.first + "_MCComp_ht_3t",    vPDCMaker_All_0l("HT", "HT", 3),                            {2, 1}, /*cuts.second + */"",  50,  0, 2000,  true,  false,  "HT [GeV]",  "Events"));
+        //
+        //vh.push_back(PHS(cuts.first + "_" + "fakerate_met",   vPDCMaker_fake("met"),                      {1, 1}, cuts.second + "",   30,  0,  1200,     false,  false,  "met [GeV]",   "Fakerate"));
+        //vh.push_back(PHS(cuts.first + "_" + "fakerate_njet",  vPDCMaker_fake("cntNJetsPt50Eta24TopTag"),  {1, 1}, cuts.second + "",   20,  0,    20,     false,  false,  "N Jets",      "Fakerate"));
+        //vh.push_back(PHS(cuts.first + "_" + "fakerate_nbjet", vPDCMaker_fake("cntCSVSTopTag"),                   {1, 1}, cuts.second + "",   10,  0,    10,     false,  false,  "N b-jets",    "Fakerate"));
+        //
+        ////vh.push_back(PHS(cuts.first + "_" + "nbNotInTop", {PDCMaker("nBNotInTop")}, {1, 1}, cuts.second,  10, 0, 10,  true,  false,  "N_{b}", "Events"));
+        //vh.push_back(PHS(cuts.first + "_" + "nb",         {PDCMaker("cntCSVSTopTag")},     {1, 1}, cuts.second,  10, 0, 10,  true,  false,  "N_{b}", "Events"));
+        //
+        //vh.push_back(PHS(cuts.first + "_" + "topMass1", {PDCMaker("vTops[0](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+        //vh.push_back(PHS(cuts.first + "_" + "topMass2", {PDCMaker("vTops[1](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+        //vh.push_back(PHS(cuts.first + "_" + "topMass3", {PDCMaker("vTops[2](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+        //vh.push_back(PHS(cuts.first + "_" + "topMass4", {PDCMaker("vTops[3](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+        //
+        //vh.push_back(PHS(cuts.first + "_" + "topMassAllNew", {PDCMaker("vTopsNewMVA(M)")},    {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+        //vh.push_back(PHS(cuts.first + "_" + "topMass1New",   {PDCMaker("vTopsNewMVA[0](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+        //vh.push_back(PHS(cuts.first + "_" + "topMass2New",   {PDCMaker("vTopsNewMVA[1](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+        //vh.push_back(PHS(cuts.first + "_" + "topMass3New",   {PDCMaker("vTopsNewMVA[2](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+        //vh.push_back(PHS(cuts.first + "_" + "topMass4New",   {PDCMaker("vTopsNewMVA[3](M)")}, {1, 1}, cuts.second,  100, 0, 500,  false,  true,  "Top Mass [GeV]", "Norm Events"));
+        //
+        //vh.push_back(PHS(cuts.first + "_" + "topPtAllNew", {PDCMaker("vTopsNewMVA(pt)")},    {1, 1}, cuts.second,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+        //vh.push_back(PHS(cuts.first + "_" + "topPt1New",   {PDCMaker("vTopsNewMVA[0](pt)")}, {1, 1}, cuts.second,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+        //vh.push_back(PHS(cuts.first + "_" + "topPt2New",   {PDCMaker("vTopsNewMVA[1](pt)")}, {1, 1}, cuts.second,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+        //vh.push_back(PHS(cuts.first + "_" + "topPt3New",   {PDCMaker("vTopsNewMVA[2](pt)")}, {1, 1}, cuts.second,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
+        //vh.push_back(PHS(cuts.first + "_" + "topPt4New",   {PDCMaker("vTopsNewMVA[3](pt)")}, {1, 1}, cuts.second,  100, 0, 2000,  true,  true,  "Top p_{T} [GeV]", "Norm Events"));
     }
 
     vh.push_back(PHS("met", {PDCMaker("met")}, {1, 2}, "",  100, 0, 1000,  true,  true,  "MET [GeV]", "Norm Events"));
