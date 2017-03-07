@@ -6,7 +6,7 @@ class ScaleFactorsttBar
 public:
     static double sf_norm0b()
     {
-        return 1.065;
+        return 0.950;
     }
     static double sfunc_norm0b()
     {
