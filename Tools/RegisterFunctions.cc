@@ -338,9 +338,10 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 
 RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
-    myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
+    myBLV          = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
     prepareTopVars = new plotterFunctions::PrepareTopVars();
-    triggerInfo = new plotterFunctions::TriggerInfo(false, true);
+    triggerInfo    = new plotterFunctions::TriggerInfo(false, true);
+    taudiv         = new plotterFunctions::Taudiv(myBLV->GetTopTaggerPtr());
 }
 
 RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
@@ -354,7 +355,7 @@ void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*myBLV);
     tr.registerFunction(*prepareTopVars);
     tr.registerFunction(*triggerInfo);
-//    tr.registerFunction(*taudiv);
+    tr.registerFunction(*taudiv);
 //    tr.registerFunction(*ak8DrMatch);
 }
 

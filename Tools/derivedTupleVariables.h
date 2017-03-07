@@ -532,12 +532,9 @@ namespace plotterFunctions
         TRandom3 *tr3;
         void lepInfo(NTupleReader& tr)
         {
-            const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
-            const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
             const std::vector<TLorentzVector>& muonsLVec    = tr.getVec<TLorentzVector>("muonsLVec");
             const std::vector<double>& muonsRelIso          = tr.getVec<double>("muonsRelIso");
             const std::vector<double>& muonsMiniIso         = tr.getVec<double>("muonsMiniIso");
-            const std::vector<int>& W_emuVec                = tr.getVec<int>("W_emuVec");
             const std::vector<double>& muonsCharge          = tr.getVec<double>("muonsCharge");
             const std::vector<TLorentzVector>& jetsLVec     = tr.getVec<TLorentzVector>("jetsLVec");
             const std::vector<double>& recoJetschargedEmEnergyFraction     = tr.getVec<double>("recoJetschargedEmEnergyFraction");
@@ -563,17 +560,13 @@ namespace plotterFunctions
             bool passMuonVeto = false;
             bool passEleVeto = false;
 
-
-            try
+            if(tr.checkBranch("passMuonVeto"))
             {
-                const bool& passMuonVetoTmp  = tr.getVar<bool>("passMuonVeto");
-                const bool& passEleVetoTmp   = tr.getVar<bool>("passEleVeto");
-                if(&passMuonVetoTmp != nullptr) passMuonVeto = passMuonVetoTmp;
-                if(&passEleVetoTmp != nullptr) passEleVeto = passEleVetoTmp;
+                passMuonVeto = tr.getVar<bool>("passMuonVeto");
             }
-            catch(const std::string e)
+            if(tr.checkBranch("passEleVeto"))
             {
-                //std::cout << "void muInfo(NTupleReader& tr): Caught exception, variable \"" << e << "\" not found" << std::endl;
+                passEleVeto = tr.getVar<bool>("passEleVeto");
             }
 
             std::vector<const TLorentzVector*>* genMatchIsoElecInAcc = new std::vector<const TLorentzVector*>();
@@ -682,8 +675,16 @@ namespace plotterFunctions
             double nuPt1 = -999.9, nuPt2 = -999.9;
 
             //Gen info parsing
-            if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
+            double genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
+            int nZ = 0;
+            TLorentzVector genZ;
+            int pdgIdZDec = 0;
+            if(tr.checkBranch("genDecayPdgIdVec") && tr.checkBranch("genDecayPdgIdVec") && tr.checkBranch("W_emuVec"))
             {
+                const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+                const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+                const std::vector<int>& W_emuVec                = tr.getVec<int>("W_emuVec");
+
                 for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
                 {
                     if((abs(genDecayPdgIdVec[i]) != 0 &&  abs(genDecayPdgIdVec[i]) < 6) || (abs(genDecayPdgIdVec[i]) > 100 && abs(genDecayPdgIdVec[i]) < 10000)) genHt += genDecayLVec[i].Pt();
@@ -784,14 +785,7 @@ namespace plotterFunctions
                         }
                     }
                 }
-            }
 
-            double genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
-            int nZ = 0;
-            TLorentzVector genZ;
-            int pdgIdZDec = 0;
-            if(&genDecayPdgIdVec != nullptr)
-            {
                 for(int j = 0; j <  genDecayPdgIdVec.size(); ++j)
                 {
                     if(abs(genDecayPdgIdVec[j]) == 23)
@@ -806,14 +800,11 @@ namespace plotterFunctions
                 }
                 if(nZ > 1) std::cout << "!!!WARNING MORE THAN 1 Z FOUND!!!" << std::endl;
 
-                if(&W_emuVec != nullptr)
+                if(W_emuVec.size() == 0) pdgIdZDec = 15;
+                else if(W_emuVec.size() == 2)
                 {
-                    if(W_emuVec.size() == 0) pdgIdZDec = 15;
-                    else if(W_emuVec.size() == 2)
-                    {
-                        if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 11) pdgIdZDec = 11;
-                        else if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 13) pdgIdZDec = 13;
-                    }
+                    if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 11) pdgIdZDec = 11;
+                    else if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 13) pdgIdZDec = 13;
                 }
 
             }
@@ -829,13 +820,12 @@ namespace plotterFunctions
             TLorentzVector Zrecopt;
             for(int i = 0; i < cutMuVec->size(); ++i)
             {
-            Zrecopt =  muonsLVec[0]+muonsLVec[1];//(*cutMuVec)[0] + (*cutMuVec)[1];
+                Zrecopt =  muonsLVec[0]+muonsLVec[1];//(*cutMuVec)[0] + (*cutMuVec)[1];
                 if((*cutMuVec)[i].Pt() < minMuPt) continue;
                 for(int j = 0; j < i && j < cutMuVec->size(); ++j)
                 {
                     if((*cutMuVec)[j].Pt() < minMuPt) continue;
                     double zm = ((*cutMuVec)[i] + (*cutMuVec)[j]).M();
-                    //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                     if(fabs(zm - zMass) < fabs(zMuMassCurrent - zMass))
                     {
                         bestRecoMuZ = (*cutMuVec)[i] + (*cutMuVec)[j];
@@ -843,8 +833,7 @@ namespace plotterFunctions
                     }
                 }
             }
-            //std::cout<<Zrecopt.Pt()<<" the fourth one"<<std::endl;
-            //Zrecopt = muonsLVec[0]+muonsLVec[1];//(*cutMuVec)[0] + (*cutMuVec)[1];
+
             double zElecMassCurrent = 1.0e300;
             TLorentzVector bestRecoElecZ;
             for(int i = 0; i < cutElecVec->size(); ++i)
@@ -1659,7 +1648,7 @@ namespace plotterFunctions
 
         int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
         topTagger::type3TopTagger t3tagger;
-        TopTagger *tt, *ttMVA, *ttAllComb, *ttMVATriJetOnly;
+        TopTagger *tt, *ttMVA, *ttAllComb, *ttMVATriJetOnly, *ttMVADiJetOnly;
         Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
         TopCat topMatcher_;
         TFile *WMassCorFile;
@@ -1673,11 +1662,6 @@ namespace plotterFunctions
             const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
             const std::vector<double>& recoJetsBtag      = tr.getVec<double>("recoJetsBtag_0_LepCleaned");
             const std::vector<double>& qgLikelihood      = tr.getVec<double>("prodJetsNoLep_qgLikelihood");
-
-            const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
-            const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
-            const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
-            const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
 
             const double& met    = tr.getVar<double>("met");
             const double& metphi = tr.getVar<double>("metphi");
@@ -1699,8 +1683,13 @@ namespace plotterFunctions
             std::vector<double> recoJetsCharge_forTagger;
 
             std::vector<TLorentzVector> *genTops;
-            if(&genDecayLVec != nullptr)
+            if(tr.checkBranch("genDecayLVec"))
             {
+                const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+                const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+                const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
+                const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
+
                 genTops = new std::vector<TLorentzVector>(genUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
             }
             else genTops = new std::vector<TLorentzVector>();
@@ -1734,8 +1723,13 @@ namespace plotterFunctions
             std::vector<std::vector<const TLorentzVector*>> hadGenTopDaughters;
             std::vector<Constituent> constituents;
             std::vector<Constituent> constituentsMVA;
-            if(&genDecayLVec != nullptr)
+            if(tr.checkBranch("genDecayLVec"))
             {
+                const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+                const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+                const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
+                const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
+
                 //prep input object (constituent) vector
                 hadGenTops = ttUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
                 for(const auto& top : hadGenTops)
@@ -1755,11 +1749,13 @@ namespace plotterFunctions
                 //run new tagger
                 tt->runTagger(constituents);
                 ttMVATriJetOnly->runTagger(constituents);
+                ttMVADiJetOnly->runTagger(constituents);
 
                 //New MVA resolved Tagger starts here
                 constituentsMVA = ttUtility::packageConstituents(myConstAK4Inputs, myConstAK8Inputs);
                 //run tagger
                 ttMVA->runTagger(constituentsMVA);
+                ttMVADiJetOnly->runTagger(constituentsMVA);
             }
             else
             {
@@ -1777,11 +1773,12 @@ namespace plotterFunctions
                 //run new tagger
                 tt->runTagger(constituents);
                 ttMVATriJetOnly->runTagger(constituents);
-                
+                                
                 //New MVA resolved Tagger starts here
                 constituentsMVA = ttUtility::packageConstituents(myConstAK4Inputs, myConstAK8Inputs);
                 //run tagger
                 ttMVA->runTagger(constituentsMVA);
+                ttMVADiJetOnly->runTagger(constituentsMVA);
             }
 
 
@@ -1802,13 +1799,20 @@ namespace plotterFunctions
 
             //get matches
             std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatches;
-            if(&genDecayLVec != nullptr) genMatches = topMatcher_.TopConst(ttr.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+            if(tr.checkBranch("genDecayLVec"))
+            {
+                const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+                const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+                const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
+                const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
+
+                genMatches = topMatcher_.TopConst(ttr.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+            }
 
             std::vector<TLorentzVector> *vTopsNew = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsMatchNew = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsGenMatchNew = new std::vector<TLorentzVector>();
 
-            std::vector<TLorentzVector> *vTopsParMatchNew = new std::vector<TLorentzVector>();
             
             for(int iTop = 0; iTop < ttr.getTops().size(); ++iTop)
             {
@@ -1821,19 +1825,92 @@ namespace plotterFunctions
                     vTopsMatchNew->emplace_back(ttr.getTops()[iTop]->p());
                     vTopsGenMatchNew->emplace_back(*genMatch);
                 }
-                if(genMatches.second.first.size() && genMatches.second.first[iTop] >= 2)
-                {
-                    vTopsParMatchNew->emplace_back(ttr.getTops()[iTop]->p());
-                } 
             }
 
             //retrieve results
+            std::vector<double> *dijetDrMatch = new std::vector<double>();
+            std::vector<double> *dijetDrNoMatch = new std::vector<double>();
+            std::vector<double> *dijetDrFinalTop = new std::vector<double>();
+            std::vector<double> *dijetDrNotFinalTop = new std::vector<double>();
+            std::vector<double> *dijetM2M3Match = new std::vector<double>();
+            std::vector<double> *dijetM2M3NoMatch = new std::vector<double>();
+            std::vector<double> *dijetM2M3FinalTop = new std::vector<double>();
+            std::vector<double> *dijetM2M3NotFinalTop = new std::vector<double>();
+            const TopTaggerResults& ttrDijet = ttMVADiJetOnly->getResults();
+            for(int iTop = 0; iTop < ttrDijet.getTopCandidates().size(); ++iTop)
+            {
+                auto& top = ttrDijet.getTopCandidates()[iTop];
+
+                const std::vector<Constituent const *>& jets = top.getConstituents();
+
+                double m23  = (jets[0]->getType() == AK8JET)?(jets[0]->getSoftDropMass() * jets[0]->getWMassCorr()):(jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
+                double m123 = top.p().M();
+                if(jets[0]->getType() == AK8JET)
+                {
+                    TLorentzVector psudoVec;
+                    psudoVec.SetPtEtaPhiM(jets[0]->p().Pt(), jets[0]->p().Eta(), jets[0]->p().Phi(), jets[0]->getSoftDropMass() * jets[0]->getWMassCorr());
+                    m123 = (psudoVec + jets[1]->p()).M();
+                }
+                else if(jets[1]->getType() == AK8JET)
+                {
+                    TLorentzVector psudoVec;
+                    psudoVec.SetPtEtaPhiM(jets[1]->p().Pt(), jets[1]->p().Eta(), jets[1]->p().Phi(), jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
+                    m123 = (psudoVec + jets[0]->p()).M();
+                }
+
+                dijetDrNotFinalTop->push_back(top.getDRmax());
+                dijetM2M3NotFinalTop->push_back((m23/m123)/0.463314121);
+
+                auto possibleGenMatches = top.getGenTopMatches();
+                const TLorentzVector* bestGenMatch = top.getBestGenTopMatch(0.6);
+                if(possibleGenMatches[bestGenMatch].size() >= 3)
+                {
+                    dijetDrMatch->push_back(top.getDRmax());
+                    dijetM2M3Match->push_back((m23/m123)/0.463314121);
+                }
+                else
+                {
+                    dijetDrNoMatch->push_back(top.getDRmax());
+                    dijetM2M3NoMatch->push_back((m23/m123)/0.463314121);
+                }
+            }
+
+            for(int iTop = 0; iTop < ttrDijet.getTops().size(); ++iTop)
+            {
+                auto& top = *ttrDijet.getTops()[iTop];
+
+                const std::vector<Constituent const *>& jets = top.getConstituents();
+
+                double m23  = (jets[0]->getType() == AK8JET)?(jets[0]->getSoftDropMass() * jets[0]->getWMassCorr()):(jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
+                double m123 = top.p().M();
+                if(jets[0]->getType() == AK8JET)
+                {
+                    TLorentzVector psudoVec;
+                    psudoVec.SetPtEtaPhiM(jets[0]->p().Pt(), jets[0]->p().Eta(), jets[0]->p().Phi(), jets[0]->getSoftDropMass() * jets[0]->getWMassCorr());
+                    m123 = (psudoVec + jets[1]->p()).M();
+                }
+                else if(jets[1]->getType() == AK8JET)
+                {
+                    TLorentzVector psudoVec;
+                    psudoVec.SetPtEtaPhiM(jets[1]->p().Pt(), jets[1]->p().Eta(), jets[1]->p().Phi(), jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
+                    m123 = (psudoVec + jets[0]->p()).M();
+                }
+
+                dijetDrFinalTop->push_back(top.getDRmax());
+                dijetM2M3FinalTop->push_back((m23/m123)/0.463314121);
+            }
+
             const TopTaggerResults& ttrMVA = ttMVA->getResults();
 
             std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVA;
             std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVACand;
-            if(&genDecayLVec != nullptr)
+            if(tr.checkBranch("genDecayLVec"))
             {
+                const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+                const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+                const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
+                const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
+            
                 genMatchesMVA = topMatcher_.TopConst(ttrMVA.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
                 genMatchesMVACand = topMatcher_.TopConst(ttrMVA.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
             }
@@ -1844,42 +1921,11 @@ namespace plotterFunctions
             std::vector<TLorentzVector> *vTopsGenMatchMonoNewMVA = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsGenMatchDiNewMVA = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsGenMatchTriNewMVA = new std::vector<TLorentzVector>();
-            std::vector<TLorentzVector> *vTopsParMatchNewMVA = new std::vector<TLorentzVector>();
             std::vector<int> *vTopsNCandNewMVA = new std::vector<int>();
             std::vector<double>* discriminators = new std::vector<double>();
             std::vector<double>* discriminatorsMatch = new std::vector<double>();
-            std::vector<double>* discriminatorsMatch2 = new std::vector<double>();
-            std::vector<double>* discriminatorsMatch1 = new std::vector<double>();
-            std::vector<double>* discriminatorsMatch0 = new std::vector<double>();
-            std::vector<double>* discriminatorsParMatch = new std::vector<double>();
             std::vector<double>* discriminatorsNoMatch = new std::vector<double>();
-            std::vector<double>* discriminatorsParNoMatch = new std::vector<double>();
-            //int typeMono;
-            //int typeDi;
-            //int typeTri;
 
-            auto sortFunc = [](const TopObject& t1, const TopObject& t2)
-            {
-                int nb1 = t1.getNBConstituents(0.800);
-                int nb2 = t2.getNBConstituents(0.800);
-                if     (nb1 == 1 && nb2 == 0) return true;
-                else if(nb1 == 0 && nb2 == 1) return false;
-                else if(nb1 < nb2)            return true;
-                else if(nb1 > nb2)            return false;
-
-                if(t1.getDiscriminator() > t2.getDiscriminator()) return true;
-
-                return false;
-            };
-            auto sortFunc2 = [](const TopObject& t1, const TopObject& t2)
-            {
-                //if(t1.getGenTopMatch() > t2.getGenTopMatch()) return true;
-                //else if(t1.getGenTopMatch() < t2.getGenTopMatch()) return false;
-                //
-                //if(t1.getGenDaughterMatch() > t2.getGenDaughterMatch()) return true;
-
-                return false;
-            };
             std::vector<TopObject> topMVACands = ttrMVA.getTopCandidates();
 
             //get tuple variables 
@@ -1956,8 +2002,6 @@ namespace plotterFunctions
                 }
             }
 
-
-
             for(int iTop = 0; iTop < topMVACands.size(); ++iTop)
             {
                 auto& top = topMVACands[iTop];
@@ -1973,8 +2017,6 @@ namespace plotterFunctions
                 auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
                 vTopsNewMVA->emplace_back(top.p());
                 discriminators->push_back(top.getDiscriminator());
-                //if(genMatchesMVA.second.first[iTop] == 3)
-                //if(genMatchesMVA.first[iTop])
                 const TLorentzVector* genMatch = top.getBestGenTopMatch(0.6);
                 if(genMatch)
                 {
@@ -1990,25 +2032,8 @@ namespace plotterFunctions
                 {
                     discriminatorsNoMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 }
-                if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] >= 2)
-                {
-                    vTopsParMatchNewMVA->emplace_back(ttrMVA.getTops()[iTop]->p());
-                    discriminatorsParMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
-                }
-                else
-                {
-                    discriminatorsParNoMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
-                }
-                if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 2) discriminatorsMatch2->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
-                if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 1) discriminatorsMatch1->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
-                if(genMatchesMVA.second.first.size() && genMatchesMVA.second.first[iTop] == 0) discriminatorsMatch0->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
-                
-                //if(top.getNConstituents() == 1) std::cout<<"Mono jet "<< std::endl; //typeMono++;
-                //if(top.getNConstituents() == 2) typeDi++;
-                //if(top.getNConstituents() == 3) typeTri++;
-
             }
-            //std::cout<<"Mono jet "<< typeMono<<std::endl;
+
             //// Calculate number of leptons
             std::string muonsFlagIDLabel = "muonsFlagMedium";
             std::string elesFlagIDLabel = "elesFlagVeto";
@@ -2025,20 +2050,13 @@ namespace plotterFunctions
             //// Pass lepton veto?
             bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel), passEleVeto = (nElectrons == AnaConsts::nElectronsSel), passIsoTrkVeto = (nIsoTrks == AnaConsts::nIsoTrksSel);
 
+            double Mmumu = 0.0;
+            if(nMuons_20GeV >= 2) Mmumu = (tr.getVec<TLorentzVector>("muonsLVec")[0] + tr.getVec<TLorentzVector>("muonsLVec")[1]).M();
+
             for(auto& vec : mvaVarsTrain_genMatch)     tr.registerDerivedVec("MVAvar_genMatch_" + vec.first, vec.second);
             for(auto& vec : mvaVarsTrain_notGenMatch)  tr.registerDerivedVec("MVAvar_notGenMatch_" + vec.first, vec.second);
             for(auto& vec : mvaVarsTrain_finalTop)     tr.registerDerivedVec("MVAvar_finalTop_" + vec.first, vec.second);
             for(auto& vec : mvaVarsTrain_notFinalTop)  tr.registerDerivedVec("MVAvar_notFinalTop_" + vec.first, vec.second);
-
-            //for(auto& vec : mvaVars)
-            //{
-            //    tr.registerDerivedVec("MVAvartop_" + vec.first, vec.second);
-            //}
-            //
-            //for(auto& vec : mvaCandVars)
-            //{
-            //    tr.registerDerivedVec("MVAvarcand_" + vec.first, vec.second);
-            //}
 
             const auto& usedJets = ttrMVA.getUsedConstituents();
             int nBNotInTop = 0;
@@ -2047,9 +2065,18 @@ namespace plotterFunctions
                 if(constituent.getType() == AK4JET && constituent.getBTagDisc() > 0.8 && usedJets.count(&constituent) == 0) ++nBNotInTop;
             }
 
+            tr.registerDerivedVec("dijetDrMatch", dijetDrMatch);
+            tr.registerDerivedVec("dijetDrNoMatch", dijetDrNoMatch);
+            tr.registerDerivedVec("dijetM2M3Match", dijetM2M3Match);
+            tr.registerDerivedVec("dijetM2M3NoMatch", dijetM2M3NoMatch);
+            tr.registerDerivedVec("dijetDrFinalTop", dijetDrFinalTop);
+            tr.registerDerivedVec("dijetM2M3FinalTop", dijetM2M3FinalTop);
+            tr.registerDerivedVec("dijetDrNotFinalTop", dijetDrNotFinalTop);
+            tr.registerDerivedVec("dijetM2M3NotFinalTop", dijetM2M3NotFinalTop);
+
             //get one mu of 20 GeV pt
             tr.registerDerivedVar("passSingleLep", nMuons_50GeV == 1);
-            tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2);
+            tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2 && Mmumu > 71 && Mmumu < 111);
 
             tr.registerDerivedVar("passLeptVetoNoMu", passEleVeto && passIsoTrkVeto);
 
@@ -2073,24 +2100,16 @@ namespace plotterFunctions
             tr.registerDerivedVec("vTopsGenMatchMonoNewMVA", vTopsGenMatchMonoNewMVA);
             tr.registerDerivedVec("vTopsGenMatchDiNewMVA", vTopsGenMatchDiNewMVA);
             tr.registerDerivedVec("vTopsGenMatchTriNewMVA", vTopsGenMatchTriNewMVA);
-            tr.registerDerivedVec("vTopsParMatchNew", vTopsParMatchNew);
-            tr.registerDerivedVec("vTopsParMatchNewMVA", vTopsParMatchNewMVA);
             tr.registerDerivedVec("vTopsNCandNewMVA", vTopsNCandNewMVA);
             tr.registerDerivedVec("vTopsAllComb", vTopsAllComb);
             tr.registerDerivedVec("vTopsMatchAllComb", vTopsMatchAllComb);
             tr.registerDerivedVec("vTopsGenMatchAllComb", vTopsGenMatchAllComb);
-            tr.registerDerivedVec("vTopsParMatchAllComb", vTopsParMatchAllComb);
 
             tr.registerDerivedVec("genTops", genTops);
 
             tr.registerDerivedVec("discriminators", discriminators);
             tr.registerDerivedVec("discriminatorsMatch", discriminatorsMatch);
-            tr.registerDerivedVec("discriminatorsParMatch", discriminatorsParMatch);
-            tr.registerDerivedVec("discriminatorsMatch2", discriminatorsMatch2);
-            tr.registerDerivedVec("discriminatorsMatch1", discriminatorsMatch1);
-            tr.registerDerivedVec("discriminatorsMatch0", discriminatorsMatch0);
             tr.registerDerivedVec("discriminatorsNoMatch", discriminatorsNoMatch);
-            tr.registerDerivedVec("discriminatorsParNoMatch", discriminatorsParNoMatch);
    
             //tr.registerDerivedVar("typeMono",typeMono);
             //tr.registerDerivedVar("typeDi",typeDi);
@@ -2115,6 +2134,9 @@ namespace plotterFunctions
 
             ttMVATriJetOnly = new TopTagger();
             ttMVATriJetOnly->setCfgFile("TopTaggerCfg-MVAAK8_Tight_v1.2.1_trijetOnly.cfg");
+
+            ttMVADiJetOnly = new TopTagger();
+            ttMVADiJetOnly->setCfgFile("TopTaggerCfg-MVAAK8_Tight_v1.2.1_dijetOnly.cfg");
 
             indexMuTrigger = indexElecTrigger = indexHTMHTTrigger = indexMuHTTrigger = -1;
 
@@ -2772,11 +2794,6 @@ namespace plotterFunctions
 	     tr.registerDerivedVec("top_subjets_pt_reldiff", top_subjets_pt_reldiff);
              */
 	     // Figure out gen matching..
-	     const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
-	     const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
-	     const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
-	     const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
-
 	     std::vector<bool>* gentop_match = new std::vector<bool>(); // helpful to make plots of matched and unmatched number of tops
 	     std::vector<double>* dR_top_gentop = new std::vector<double>(); 
 	     std::vector<double>* dR_AK4_topsubjet_genmatched = new std::vector<double>(); 
@@ -2793,8 +2810,12 @@ namespace plotterFunctions
 	     std::vector<int>* top_N_AK4_matched_notgenmatchedother = new std::vector<int>(); 
 	     std::vector<int>* top_N_AK4_matched_genmatchedother_0p6 = new std::vector<int>(); 
 	     std::vector<int>* top_N_AK4_matched_notgenmatchedother_0p6 = new std::vector<int>(); 
-	     if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
+	     if(tr.checkBranch("genDecayPdgIdVec"))
 	     {
+                 const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+                 const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
+                 const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
+                 const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
 		 // For each tagged top, find the matching gen particles
 
 		 // These are the hadronically decaying top quarks in the event:

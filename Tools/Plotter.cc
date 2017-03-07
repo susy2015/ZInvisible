@@ -448,7 +448,7 @@ void Plotter::createHistsFromTuple()
             try
             {
                 NTupleReader tr(t, activeBranches);
-                tr.setReThrow(false);
+                //tr.setReThrow(false);
 
                 registerfunc_->registerFunctions(tr);
 
@@ -531,6 +531,10 @@ void Plotter::createHistsFromTuple()
 
                     ++NEvtsTotal;
                 }
+            }
+            catch(const SATException e)
+            {
+                std::cout << e << std::endl;
             }
             catch(const std::string e)
             {
@@ -679,6 +683,8 @@ double Plotter::Cut::translateVar(const NTupleReader& tr) const
         else if(type.find("short")        != std::string::npos) return static_cast<double>(tr.getVar<short>(name.name));
         else if(type.find("long")         != std::string::npos) return static_cast<double>(tr.getVar<long>(name.name));
     }
+
+    THROW_SATEXCEPTION("cut var \"" + name.name + "\" with type \"" + type + "\" not found!!!");
 }
 
 bool Plotter::Cut::boolReturn(const NTupleReader& tr) const
