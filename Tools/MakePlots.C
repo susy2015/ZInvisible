@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
     //Select approperiate datasets here
     if(dataSets.compare("TEST") == 0)
     {
-        fileMap["DYJetsToLL"]  = {ss["DYJetsToLL_HT_600to800"]};
+        fileMap["DYJetsToLL"]  = {ss["DYJetsToLL_HT_1200to2500"]};
         fileMap["ZJetsToNuNu"] = {ss["ZJetsToNuNu_HT_2500toInf"]};
         fileMap["DYJetsToLL_HT_600to800"] = {ss["DYJetsToLL_HT_600to800"]};
         fileMap["ZJetsToNuNu_HT_2500toInf"] = {ss["ZJetsToNuNu_HT_2500toInf"]};
