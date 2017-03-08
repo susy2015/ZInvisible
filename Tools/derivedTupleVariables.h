@@ -904,61 +904,7 @@ namespace plotterFunctions
                 jc++;
                 mindPhiMetJ = std::min(mindPhiMetJ, fabs(ROOT::Math::VectorUtil::DeltaPhi(genZ, jet)));
             }
-            //vTopsNCandNewMVA->push_back(top.getNConstituents());
-/*
-            int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
-            topTagger::type3TopTagger t3tagger;
-            TopTagger *tt, *ttMVA, *ttAllComb;
-            Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
-            TopCat topMatcher_;
 
-            const TopTaggerResults& ttrMVA = ttMVA->getResults();
-            std::vector<TopObject> topMVACands = ttrMVA.getTopCandidates();
-            int monoJet;
-            int diJet;
-            int triJet;
-            for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
-            {
-                auto& top = *ttrMVA.getTops()[iTop];
-            if top.getNConstituents() =1 monoJet++;
-            if top.getNConstituents() =2 diJet++;
-            if top.getNConstituents() =3 triJet++;
-            }
-*/
-            //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
-            /*
-            std::shared_ptr<TopTagger> ttPtr;
-            int monoJet;
-            const TopTaggerResults& ttr = ttPtr->getResults();
-            std::vector<TopObject*> Ntop = ttr.getTops();
-            for(int i=1; i<nTopCandSortedCnt; i++){
-            if(Ntop[i]->getNConstituents() == 1) monoJet++;
-            }
-            std::cout<<monoJet<<std::endl;
-            */
-            //tr.getTops();
-            //TopTagger *tt, *ttMVA, *ttAllComb;
-            //ttMVA = new TopTagger();
-            //ttMVA->setCfgFile("TopTagger.cfg");
-            //const TopTaggerResults& ttResults = ttMVA->getResults();
-            //std::vector<TopObject>& topCandidates = ttResults.getTopCandidates();
-            //if(topCandidates.getNConstituents() = 1) monoJet++;
-            //TopTagger *tt, *ttMVA, *ttAllComb;
-            //ttMVA->setCfgFile("TopTagger.cfg");
-            /*
-            const TopTaggerResults& ttrMVA = ttMVA->getResults();
-            for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
-            {
-                auto& top = *ttrMVA.getTops()[iTop];
-             
-             if(top.getNConstituents() == 1) monoJet++;
-             }
-            std::cout<< monoJet << std::endl;
-            */
-            //if(genZPt > 600) std::cout << "HELLO THERE!!!!" << std::endl;
-            //if(genZPt > 600 && mindPhiMetJ < 0.5) std::cout << "BONJOUR!!! \t" << genZPt << "\t" << mindPhiMetJ << "\t" << run << "\t" << lumi << "\t" << event << std::endl;
-            //std::cout<<"cleanMetPt "<<cleanMet.Pt()<<std::endl;
-            //std::cout<<" "<<std::endl;
             double bestRecoZPt = bestRecoZ.Pt();
             double cleanMetPt = cleanMet.Pt();
 
