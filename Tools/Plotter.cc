@@ -3,6 +3,10 @@
 #include "MiniTupleMaker.h"
 #include "RegisterFunctions.h"
 
+#ifdef TTCODEINCLUDED
+#include "TopTagger/TopTagger/include/TopObject.h"
+#endif
+
 #include "TROOT.h"
 #include "TCanvas.h"
 #include "TTree.h"
@@ -1253,6 +1257,9 @@ void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& t
             else if(type.find("unsigned int")   != std::string::npos) fillHistFromVec<unsigned int>(h, name, tr, weight);
             else if(type.find("int")            != std::string::npos) fillHistFromVec<int>(h, name, tr, weight);
             else if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector>(h, name, tr, weight);
+#ifdef TTCODEINCLUDED            
+            else if(type.find("TopObject")      != std::string::npos) fillHistFromVec<TopObject>(h, name, tr, weight);
+#endif
         }
     }
     else
@@ -1264,6 +1271,10 @@ void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& t
         else if(type.find("char")           != std::string::npos) h->Fill(tr.getVar<char>(name.name), weight);
         else if(type.find("short")          != std::string::npos) h->Fill(tr.getVar<short>(name.name), weight);
         else if(type.find("long")           != std::string::npos) h->Fill(tr.getVar<long>(name.name), weight);
+        else if(type.find("TLorentzVector") != std::string::npos) h->Fill(tlvGetValue(name.var, tr.getVar<TLorentzVector>(name.name)), weight);
+#ifdef TTCODEINCLUDED            
+        else if(type.find("TopObject")      != std::string::npos) h->Fill(topGetValue(name.var, tr.getVar<TopObject>(name.name)), weight);
+#endif
     }
 }
 
@@ -1271,6 +1282,13 @@ template<> inline void Plotter::vectorFill(TH1 * const h, const VarName& name, c
 {
     h->Fill(tlvGetValue(name.var, obj), weight);
 }
+
+#ifdef TTCODEINCLUDED 
+template<> inline void Plotter::vectorFill(TH1 * const h, const VarName& name, const TopObject& obj, const double weight)
+{
+    h->Fill(topGetValue(name.var, obj), weight);
+}
+#endif
 
 template<> inline void Plotter::vectorFill(TH1 * const h, const VarName& name, const std::pair<double, double>& obj, const double weight)
 {

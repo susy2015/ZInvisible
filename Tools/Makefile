@@ -22,7 +22,7 @@ CXXFLAGS += -g #-O3
 ## Include ROOT
 CXXFLAGS  += $(shell root-config --cflags)
 
-CXXDEPFLAGS = -MMD -MP
+CXXDEPFLAGS = -MMD -MP -DTTCODEINCLUDED
 
 LD         = g++
 LDFLAGS    =

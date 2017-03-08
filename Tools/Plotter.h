@@ -252,6 +252,57 @@ private:
         }
     }
 
+    template<typename T> static const double& topGetValue(const std::string& name, const T& top)
+    {
+        if     (name.find("pt")  != std::string::npos)
+        {
+            const auto& retval = top.p().Pt();
+            return retval;
+        }
+        else if(name.find("eta") != std::string::npos)
+        {
+            const auto& retval = top.p().Eta();
+            return retval;
+        }
+        else if(name.find("phi") != std::string::npos)
+        {
+            const auto& retval = top.p().Phi();
+            return retval;
+        }
+        else if(name.find("E")   != std::string::npos)
+        {
+            const auto& retval = top.p().E();
+            return retval;
+        }
+        else if(name.find("M")   != std::string::npos)
+        {
+            const auto& retval = top.p().M();
+            return retval;
+        }
+        else if(name.find("Mt")  != std::string::npos)
+        {
+            const auto& retval = top.p().Mt();
+            return retval;
+        }
+        else if(name.find("dRMax")  != std::string::npos)
+        {
+            const auto& retval = top.getDRmax();
+            return retval;
+        }        
+        else if(name.find("dics")  != std::string::npos)
+        {
+            const auto& retval = top.getDiscriminator();
+            return retval;
+        }        
+        else
+        {
+            printf("Invalid lorentz variable: \"%s\", returning nullptr segfault incoming!!!\n", name.c_str());
+            fflush(stdin);
+            return *static_cast<double*>(nullptr);
+        }
+    }
+
+
     template<typename T> inline const T pointerDeref(T obj) const
     {
         return obj;
