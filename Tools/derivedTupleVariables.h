@@ -817,10 +817,8 @@ namespace plotterFunctions
 
             double zMuMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
             TLorentzVector bestRecoMuZ;
-            TLorentzVector Zrecopt;
             for(int i = 0; i < cutMuVec->size(); ++i)
             {
-                Zrecopt =  muonsLVec[0]+muonsLVec[1];//(*cutMuVec)[0] + (*cutMuVec)[1];
                 if((*cutMuVec)[i].Pt() < minMuPt) continue;
                 for(int j = 0; j < i && j < cutMuVec->size(); ++j)
                 {
@@ -963,8 +961,7 @@ namespace plotterFunctions
             //std::cout<<" "<<std::endl;
             double bestRecoZPt = bestRecoZ.Pt();
             double cleanMetPt = cleanMet.Pt();
-            double Zrecoptpt = Zrecopt.Pt();
-            //double cleanMet2Pt = cleanMet2.Pt();
+
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
             tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
             tr.registerDerivedVar("cleanMetPt", cleanMetPt);
@@ -1027,7 +1024,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("passElecZinvSel", passElecZinvSel);
             tr.registerDerivedVar("passElMuZinvSel", passElMuZinvSel);
 
-            tr.registerDerivedVar("Zrecopt",Zrecoptpt);
+            tr.registerDerivedVar("Zrecopt",bestRecoZPt);
         }
 
     public:
