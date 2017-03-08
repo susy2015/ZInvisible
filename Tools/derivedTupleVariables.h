@@ -1864,6 +1864,8 @@ namespace plotterFunctions
             std::vector<double>* discriminatorsMatch = new std::vector<double>();
             std::vector<double>* discriminatorsNoMatch = new std::vector<double>();
 
+            std::vector<const TopObject*> *topMonojetMVA = new std::vector<const TopObject*>();
+
             std::vector<TopObject> topMVACands = ttrMVA.getTopCandidates();
 
             //get tuple variables 
@@ -1951,6 +1953,8 @@ namespace plotterFunctions
             {
                 auto& top = *ttrMVA.getTops()[iTop];
                 vTopsNCandNewMVA->push_back(top.getNConstituents());
+
+                if(top.getNConstituents() == 1) topMonojetMVA->push_back(&top);
 
                 auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
                 vTopsNewMVA->emplace_back(top.p());
@@ -2043,6 +2047,8 @@ namespace plotterFunctions
             tr.registerDerivedVec("vTopsAllComb", vTopsAllComb);
             tr.registerDerivedVec("vTopsMatchAllComb", vTopsMatchAllComb);
             tr.registerDerivedVec("vTopsGenMatchAllComb", vTopsGenMatchAllComb);
+
+            tr.registerDerivedVec("topMonojetMVA", topMonojetMVA);
 
             tr.registerDerivedVec("genTops", genTops);
 

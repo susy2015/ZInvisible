@@ -383,7 +383,12 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMC_Dijet_finalTop_" + cuts.first + "_" + "pt",     vPDCMaker_DataMC("dijetTopFinal(pt)",   Nl), {1, 2}, cuts.second + "",  50,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
         vh.push_back(PHS("DataMC_Dijet_finalTop_" + cuts.first + "_" + "M",      vPDCMaker_DataMC("dijetTopFinal(M)",    Nl), {1, 2}, cuts.second + "",  50,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
         vh.push_back(PHS("DataMC_Dijet_finalTop_" + cuts.first + "_" + "eta",    vPDCMaker_DataMC("dijetTopFinal(eta)",  Nl), {1, 2}, cuts.second + "",  50,  -3,    3,    false,  false,  "#eta",          "Events"));
-    
+
+        vh.push_back(PHS("DataMC_Monojet_finalTop_" + cuts.first + "_" + "nTops",  vPDCMaker_DataMC("topMonojetMVA(size)", Nl), {1, 2}, cuts.second + "",   8,   0,    8,    false,  false,  "nTops",         "Events"));
+        vh.push_back(PHS("DataMC_Monojet_finalTop_" + cuts.first + "_" + "pt",     vPDCMaker_DataMC("topMonojetMVA(pt)",   Nl), {1, 2}, cuts.second + "",  50,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
+        vh.push_back(PHS("DataMC_Monojet_finalTop_" + cuts.first + "_" + "M",      vPDCMaker_DataMC("topMonojetMVA(M)",    Nl), {1, 2}, cuts.second + "",  50,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
+        vh.push_back(PHS("DataMC_Monojet_finalTop_" + cuts.first + "_" + "eta",    vPDCMaker_DataMC("topMonojetMVA(eta)",  Nl), {1, 2}, cuts.second + "",  50,  -3,    3,    false,  false,  "#eta",          "Events"));
+
         vh.push_back(PHS("DataMC_puppi_Top_T_PT"     + cuts.first + "_" + "pt",               vPDCMaker_DataMC("puppiLVectight_top(pt)",   Nl), {1, 2}, cuts.second,  20, 0, 1200,  true, false,  "top p_{T} [GeV]",         "Events"));
         vh.push_back(PHS("DataMC_puppi_Top_T_Num"    + cuts.first + "_" + "nTops",            vPDCMaker_DataMC("puppiLVectight_top(size)", Nl), {1, 2}, cuts.second,   5, 0,    5, false, false,  "N_{t}",                   "Events"));
         vh.push_back(PHS("DataMC_puppi_Top_L_PT"     + cuts.first + "_" + "pt",               vPDCMaker_DataMC("puppiLVecLoose_top(pt)",   Nl), {1, 2}, cuts.second,  20, 0, 1200,  true, false,  "top p_{T} [GeV]",         "Events"));
