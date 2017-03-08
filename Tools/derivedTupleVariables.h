@@ -679,7 +679,7 @@ namespace plotterFunctions
             int nZ = 0;
             TLorentzVector genZ;
             int pdgIdZDec = 0;
-            if(tr.checkBranch("genDecayPdgIdVec") && tr.checkBranch("genDecayPdgIdVec") && tr.checkBranch("W_emuVec"))
+            if(tr.checkBranch("genDecayLVec") && tr.checkBranch("genDecayPdgIdVec") && tr.checkBranch("genDecayPdgIdVec") && tr.checkBranch("W_emuVec"))
             {
                 const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
                 const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
@@ -2479,11 +2479,6 @@ namespace plotterFunctions
             const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec");
             const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
 
-            const std::vector<TLorentzVector>& genDecayLVec   = tr.getVec<TLorentzVector>("genDecayLVec");
-            const std::vector<int>& genDecayPdgIdVec   = tr.getVec<int>("genDecayPdgIdVec");
-            const std::vector<int>& genDecayIdxVec   = tr.getVec<int>("genDecayIdxVec");
-            const std::vector<int>& genDecayMomIdxVec   = tr.getVec<int>("genDecayMomIdxVec");
-
             std::vector<TLorentzVector> *puppiLVecLoose_top = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *puppiLVectight_top = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *puppiLVecLoose_w = new std::vector<TLorentzVector>();
@@ -2500,7 +2495,7 @@ namespace plotterFunctions
             int triJet=0;
             const TopTaggerResults& ttr =ttPtr_mine->getResults();
             std::vector<TopObject*> Ntop = ttr.getTops();
-            for(int i=0; i<nTopCandSortedCnt; i++){
+            for(int i=0; i<Ntop.size(); i++){
                 if(Ntop[i]->getNConstituents() == 1) monoJet++;
                 else if(Ntop[i]->getNConstituents() == 2) diJet++;
                 else if(Ntop[i]->getNConstituents() == 3) triJet++;
@@ -2729,7 +2724,7 @@ namespace plotterFunctions
 	     std::vector<int>* top_N_AK4_matched_notgenmatchedother = new std::vector<int>(); 
 	     std::vector<int>* top_N_AK4_matched_genmatchedother_0p6 = new std::vector<int>(); 
 	     std::vector<int>* top_N_AK4_matched_notgenmatchedother_0p6 = new std::vector<int>(); 
-	     if(tr.checkBranch("genDecayPdgIdVec"))
+	     if(tr.checkBranch("genDecayLVec") && tr.checkBranch("genDecayPdgIdVec"))
 	     {
                  const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
                  const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
