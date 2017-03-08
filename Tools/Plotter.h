@@ -214,32 +214,32 @@ private:
 
     template<typename T> static const double& tlvGetValue(const std::string& name, const T& v)
     {
-        if     (name.find("pt")  != std::string::npos)
+        if     (name.compare("pt")  == 0)
         {
             const auto& retval = v.Pt();
             return retval;
         }
-        else if(name.find("eta") != std::string::npos)
+        else if(name.compare("eta") == 0)
         {
             const auto& retval = v.Eta();
             return retval;
         }
-        else if(name.find("phi") != std::string::npos)
+        else if(name.compare("phi") == 0)
         {
             const auto& retval = v.Phi();
             return retval;
         }
-        else if(name.find("E")   != std::string::npos)
+        else if(name.compare("E")   == 0)
         {
             const auto& retval = v.E();
             return retval;
         }
-        else if(name.find("M")   != std::string::npos)
+        else if(name.compare("M")   == 0)
         {
             const auto& retval = v.M();
             return retval;
         }
-        else if(name.find("Mt")  != std::string::npos)
+        else if(name.compare("Mt")  == 0)
         {
             const auto& retval = v.Mt();
             return retval;
@@ -254,49 +254,49 @@ private:
 
     template<typename T> static const double& topGetValue(const std::string& name, const T& top)
     {
-        if     (name.find("pt")  != std::string::npos)
+        if     (name.compare("pt")  == 0)
         {
             const auto& retval = top.p().Pt();
             return retval;
         }
-        else if(name.find("eta") != std::string::npos)
+        else if(name.compare("eta") == 0)
         {
             const auto& retval = top.p().Eta();
             return retval;
         }
-        else if(name.find("phi") != std::string::npos)
+        else if(name.compare("phi") == 0)
         {
             const auto& retval = top.p().Phi();
             return retval;
         }
-        else if(name.find("E")   != std::string::npos)
+        else if(name.compare("E")   == 0)
         {
             const auto& retval = top.p().E();
             return retval;
         }
-        else if(name.find("M")   != std::string::npos)
+        else if(name.compare("M")   == 0)
         {
             const auto& retval = top.p().M();
             return retval;
         }
-        else if(name.find("Mt")  != std::string::npos)
+        else if(name.compare("Mt")  == 0)
         {
             const auto& retval = top.p().Mt();
             return retval;
         }
-        else if(name.find("dRMax")  != std::string::npos)
+        else if(name.compare("dRMax")  == 0)
         {
             const auto& retval = top.getDRmax();
             return retval;
         }        
-        else if(name.find("dics")  != std::string::npos)
+        else if(name.compare("dics")  == 0)
         {
             const auto& retval = top.getDiscriminator();
             return retval;
         }        
         else
         {
-            printf("Invalid lorentz variable: \"%s\", returning nullptr segfault incoming!!!\n", name.c_str());
+            printf("Invalid TopObject variable: \"%s\", returning nullptr segfault incoming!!!\n", name.c_str());
             fflush(stdin);
             return *static_cast<double*>(nullptr);
         }
