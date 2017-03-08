@@ -1249,6 +1249,9 @@ void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& t
         if(type.find("*") != std::string::npos)
         {
             if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector*>(h, name, tr, weight);
+#ifdef TTCODEINCLUDED            
+            else if(type.find("TopObject") != std::string::npos) fillHistFromVec<TopObject*>(h, name, tr, weight);
+#endif
         }
         else
         {
