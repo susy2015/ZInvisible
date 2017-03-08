@@ -1090,22 +1090,22 @@ namespace plotterFunctions
         {
             const int& cntCSVS = tr.getVar<int>("cntCSVSZinv");
             const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
-            const int& nTopCandSortedCnt1b = tr.getVar<int>("nTopCandSortedCntZinv1b");
-            const int& nTopCandSortedCnt2b = tr.getVar<int>("nTopCandSortedCntZinv2b");
-            const int& nTopCandSortedCnt3b = tr.getVar<int>("nTopCandSortedCntZinv3b");
+            //const int& nTopCandSortedCnt1b = tr.getVar<int>("nTopCandSortedCntZinv1b");
+            //const int& nTopCandSortedCnt2b = tr.getVar<int>("nTopCandSortedCntZinv2b");
+            //const int& nTopCandSortedCnt3b = tr.getVar<int>("nTopCandSortedCntZinv3b");
             const double& cleanMet = tr.getVar<double>("cleanMetPt");
             const double& cleanMetPhi = tr.getVar<double>("cleanMetPhi");
             const double& MT2 = tr.getVar<double>("best_had_brJet_MT2Zinv");
-            const double& MT2_1b = tr.getVar<double>("best_had_brJet_MT2Zinv1b");
-            const double& MT2_2b = tr.getVar<double>("best_had_brJet_MT2Zinv2b");
-            const double& MT2_3b = tr.getVar<double>("best_had_brJet_MT2Zinv3b");
-            const double& weight1fakeb = tr.getVar<double>("weight1fakeb");
-            const double& weight2fakeb = tr.getVar<double>("weight2fakeb");
-            const double& weight3fakeb = tr.getVar<double>("weight3fakeb");
-
-            const double& nJet1bfakeWgt = tr.getVar<double>("nJet1bfakeWgt");
-            const double& nJet2bfakeWgt = tr.getVar<double>("nJet2bfakeWgt");
-            const double& nJet3bfakeWgt = tr.getVar<double>("nJet3bfakeWgt");
+            //const double& MT2_1b = tr.getVar<double>("best_had_brJet_MT2Zinv1b");
+            //const double& MT2_2b = tr.getVar<double>("best_had_brJet_MT2Zinv2b");
+            //const double& MT2_3b = tr.getVar<double>("best_had_brJet_MT2Zinv3b");
+            //const double& weight1fakeb = tr.getVar<double>("weight1fakeb");
+            //const double& weight2fakeb = tr.getVar<double>("weight2fakeb");
+            //const double& weight3fakeb = tr.getVar<double>("weight3fakeb");
+            //
+            //const double& nJet1bfakeWgt = tr.getVar<double>("nJet1bfakeWgt");
+            //const double& nJet2bfakeWgt = tr.getVar<double>("nJet2bfakeWgt");
+            //const double& nJet3bfakeWgt = tr.getVar<double>("nJet3bfakeWgt");
             const double& HT            = tr.getVar<double>("HTZinv");
             //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
             //            //top
@@ -1122,22 +1122,22 @@ namespace plotterFunctions
             //int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
             int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);            
 
-            std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
-            std::vector<std::pair<double, double> > * nb0NJwBins = new std::vector<std::pair<double, double> >();
-            std::vector<double> * nb0BinsNW = new std::vector<double>();
+            //std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
+            //std::vector<std::pair<double, double> > * nb0NJwBins = new std::vector<std::pair<double, double> >();
+            //std::vector<double> * nb0BinsNW = new std::vector<double>();
 
             //weights based on total N(b) yields vs. N(b) = 0 control region
             //These weights are derived from the rato of events in the N(t) = 1, 2, 3 bins after all baseline cuts except b tag between the
             //N(b) = 0 control region and each N(b) signal region using Z->nunu MC.  They account for both the combinatoric reweighting factor
             //as well as the different event yields between the control region and each signal region.
-            const double wnb01 = 3.820752e-02;//3.478840e-02;//6.26687e-2;
-            const double wnb02 = 2.946461e-03;//2.586369e-03;//5.78052e-3;
-            const double wnb03 = 1.474770e-04;//1.640077e-04;//7.08235e-4;
-
-            // weights to apply when doing b-faking
-            const double w1b = wnb01 * weight1fakeb;
-            const double w2b = wnb02 * weight2fakeb;
-            const double w3b = wnb03 * weight3fakeb;
+            //const double wnb01 = 3.820752e-02;//3.478840e-02;//6.26687e-2;
+            //const double wnb02 = 2.946461e-03;//2.586369e-03;//5.78052e-3;
+            //const double wnb03 = 1.474770e-04;//1.640077e-04;//7.08235e-4;
+            //
+            //// weights to apply when doing b-faking
+            //const double w1b = wnb01 * weight1fakeb;
+            //const double w2b = wnb02 * weight2fakeb;
+            //const double w3b = wnb03 * weight3fakeb;
 
             if(cntCSVS == 0)
             {
@@ -1156,12 +1156,12 @@ namespace plotterFunctions
             }
 
             tr.registerDerivedVar("nSearchBin", nSearchBin);
-            tr.registerDerivedVec("nb0BinsNW", nb0BinsNW);
-            tr.registerDerivedVec("nb0Bins", nb0Bins);
-            tr.registerDerivedVec("nb0NJwBins", nb0NJwBins);
-            tr.registerDerivedVar("weight1fakebComb", w1b);
-            tr.registerDerivedVar("weight2fakebComb", w2b);
-            tr.registerDerivedVar("weight3fakebComb", w3b);
+            //tr.registerDerivedVec("nb0BinsNW", nb0BinsNW);
+            //tr.registerDerivedVec("nb0Bins", nb0Bins);
+            //tr.registerDerivedVec("nb0NJwBins", nb0NJwBins);
+            //tr.registerDerivedVar("weight1fakebComb", w1b);
+            //tr.registerDerivedVar("weight2fakebComb", w2b);
+            //tr.registerDerivedVar("weight3fakebComb", w3b);
         }
 
     public:
@@ -2454,6 +2454,65 @@ namespace plotterFunctions
             tr.registerDerivedVar("typeDi",diJet);
             tr.registerDerivedVar("typeTri",triJet);
             
+            if(puppitau2.size()!=0 && puppitau1.size()!=0 && puppitau2.size()==puppitau1.size()){
+		for(int iJet = 0; iJet < nJetsPuppi; ++iJet){
+		    puppitau2Dtau1->push_back(puppitau2[iJet]/(puppitau1[iJet]));
+		}
+            }
+            else { 
+		puppitau2Dtau1->push_back( -1);
+	    }
+
+            if(puppitau2.size()!=0 && puppitau3.size()!=0 && puppitau2.size()==puppitau3.size()){
+		for(int iJet = 0; iJet < nJetsPuppi; ++iJet){
+		    puppitau3Dtau2->push_back(puppitau3[iJet]/(puppitau2[iJet]));
+		}
+	    }
+            else {
+		puppitau3Dtau2->push_back( -1);
+            }
+	    tr.registerDerivedVec("puppitau2Dtau1", puppitau2Dtau1);
+	    tr.registerDerivedVec("puppitau3Dtau2", puppitau3Dtau2);
+            
+	    ///WTagging
+            for(int tau = 0; tau < (*puppitau2Dtau1).size(); ++tau){
+               if (puppisoftDropMass[tau]>65 && puppisoftDropMass[tau]<100){
+		   // push back tau variables after mass cut
+		   puppitau2Dtau1_SDM->push_back(puppitau2Dtau1->at(tau));
+
+		   if ((*puppitau2Dtau1)[tau] >= 0 && (*puppitau2Dtau1)[tau] < 0.6){ // loose
+		       puppiLVecLoose_w->push_back(puppiJetsLVec[tau]);  
+		       //std::cout <<"PT_puupi"<< (*puppiLVectight_w).size()  << std::endl;    // (*puppiLVectight_w)[0].Pt() 
+
+		       if ((*puppitau2Dtau1)[tau] < 0.45){ // tight
+			   puppiLVectight_w->push_back(puppiJetsLVec[tau]); 
+		       }
+		   }
+               } 
+	    }
+
+            //Top 1%
+	    for(int tau = 0; tau < (*puppitau3Dtau2).size(); ++tau){
+		if (puppisoftDropMass[tau]>105 && puppisoftDropMass[tau]<210){
+		    puppitau3Dtau2_SDM->push_back(puppitau3Dtau2->at(tau));
+		    
+		    if ((*puppitau3Dtau2)[tau] >= 0 && (*puppitau3Dtau2)[tau] < 0.65){
+			puppiLVecLoose_top->push_back(puppiJetsLVec[tau]);
+
+			if ((*puppitau3Dtau2)[tau] < 0.54){ 
+			    puppiLVectight_top->push_back(puppiJetsLVec[tau]);
+			}
+		    }
+		}
+	    }
+	    
+	    tr.registerDerivedVec("puppiLVectight_top", puppiLVectight_top);
+	    tr.registerDerivedVec("puppiLVecLoose_top", puppiLVecLoose_top);
+	    tr.registerDerivedVec("puppiLVectight_w", puppiLVectight_w);
+	    tr.registerDerivedVec("puppiLVecLoose_w", puppiLVecLoose_w);
+	    tr.registerDerivedVec("puppitau2Dtau1_SDM", puppitau2Dtau1_SDM);
+	    tr.registerDerivedVec("puppitau3Dtau2_SDM", puppitau3Dtau2_SDM);
+
 	  }
 
         public:
