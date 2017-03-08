@@ -2533,6 +2533,7 @@ namespace plotterFunctions
 	    tr.registerDerivedVec("puppitau3Dtau2", puppitau3Dtau2);
             
 	    ///WTagging
+	   /* 
             for(int tau = 0; tau < (*puppitau2Dtau1).size(); ++tau){
                if (puppisoftDropMass[tau]>65 && puppisoftDropMass[tau]<100){
 		   // push back tau variables after mass cut
@@ -2548,7 +2549,7 @@ namespace plotterFunctions
 		   }
                } 
 	    }
-
+            */
             //Top 1%
 	    for(int tau = 0; tau < (*puppitau3Dtau2).size(); ++tau){
 		if (puppisoftDropMass[tau]>105 && puppisoftDropMass[tau]<210){
