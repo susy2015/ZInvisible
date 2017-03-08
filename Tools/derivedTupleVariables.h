@@ -1771,14 +1771,16 @@ namespace plotterFunctions
             }
 
             //retrieve results
-            std::vector<double> *dijetDrMatch = new std::vector<double>();
-            std::vector<double> *dijetDrNoMatch = new std::vector<double>();
-            std::vector<double> *dijetDrFinalTop = new std::vector<double>();
-            std::vector<double> *dijetDrNotFinalTop = new std::vector<double>();
+            std::vector<const TopObject*> *dijetTopMatch    = new std::vector<const TopObject*>();
+            std::vector<const TopObject*> *dijetTopNoMatch  = new std::vector<const TopObject*>();
+            std::vector<const TopObject*> *dijetTopFinal    = new std::vector<const TopObject*>();
+            std::vector<const TopObject*> *dijetTopNotFinal = new std::vector<const TopObject*>();
+            
             std::vector<double> *dijetM2M3Match = new std::vector<double>();
             std::vector<double> *dijetM2M3NoMatch = new std::vector<double>();
             std::vector<double> *dijetM2M3FinalTop = new std::vector<double>();
             std::vector<double> *dijetM2M3NotFinalTop = new std::vector<double>();
+
             const TopTaggerResults& ttrDijet = ttMVADiJetOnly->getResults();
             for(int iTop = 0; iTop < ttrDijet.getTopCandidates().size(); ++iTop)
             {
@@ -1801,19 +1803,19 @@ namespace plotterFunctions
                     m123 = (psudoVec + jets[0]->p()).M();
                 }
 
-                dijetDrNotFinalTop->push_back(top.getDRmax());
+                dijetTopNotFinal->push_back(&top);
                 dijetM2M3NotFinalTop->push_back((m23/m123)/0.463314121);
 
                 auto possibleGenMatches = top.getGenTopMatches();
                 const TLorentzVector* bestGenMatch = top.getBestGenTopMatch(0.6);
                 if(possibleGenMatches[bestGenMatch].size() >= 3)
                 {
-                    dijetDrMatch->push_back(top.getDRmax());
+                    dijetTopMatch->push_back(&top);
                     dijetM2M3Match->push_back((m23/m123)/0.463314121);
                 }
                 else
                 {
-                    dijetDrNoMatch->push_back(top.getDRmax());
+                    dijetTopNoMatch->push_back(&top);
                     dijetM2M3NoMatch->push_back((m23/m123)/0.463314121);
                 }
             }
@@ -1839,7 +1841,7 @@ namespace plotterFunctions
                     m123 = (psudoVec + jets[0]->p()).M();
                 }
 
-                dijetDrFinalTop->push_back(top.getDRmax());
+                dijetTopFinal->push_back(&top);
                 dijetM2M3FinalTop->push_back((m23/m123)/0.463314121);
             }
 
@@ -2008,13 +2010,14 @@ namespace plotterFunctions
                 if(constituent.getType() == AK4JET && constituent.getBTagDisc() > 0.8 && usedJets.count(&constituent) == 0) ++nBNotInTop;
             }
 
-            tr.registerDerivedVec("dijetDrMatch", dijetDrMatch);
-            tr.registerDerivedVec("dijetDrNoMatch", dijetDrNoMatch);
+            tr.registerDerivedVec("dijetTopMatch", dijetTopMatch);
+            tr.registerDerivedVec("dijetTopNoMatch", dijetTopNoMatch);
+            tr.registerDerivedVec("dijetTopFinal", dijetTopFinal);
+            tr.registerDerivedVec("dijetTopNotFinal", dijetTopNotFinal);
+
             tr.registerDerivedVec("dijetM2M3Match", dijetM2M3Match);
             tr.registerDerivedVec("dijetM2M3NoMatch", dijetM2M3NoMatch);
-            tr.registerDerivedVec("dijetDrFinalTop", dijetDrFinalTop);
             tr.registerDerivedVec("dijetM2M3FinalTop", dijetM2M3FinalTop);
-            tr.registerDerivedVec("dijetDrNotFinalTop", dijetDrNotFinalTop);
             tr.registerDerivedVec("dijetM2M3NotFinalTop", dijetM2M3NotFinalTop);
 
             //get one mu of 20 GeV pt
