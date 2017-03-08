@@ -74,7 +74,7 @@ void activateBranches(std::set<std::string>& activeBranches)
     activeBranches.insert("ak82dRMin");
     activeBranches.insert("ak81dRMin");
     activeBranches.insert("tru_npv");
-    activeBranches.insert("avg_npv");
+    activeBranches.insert("vtxSize");
 }
 
 ////////////////////////////////
