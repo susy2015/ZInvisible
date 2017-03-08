@@ -1781,11 +1781,8 @@ namespace plotterFunctions
             std::vector<double> *dijetM2M3FinalTop = new std::vector<double>();
             std::vector<double> *dijetM2M3NotFinalTop = new std::vector<double>();
 
-            const TopTaggerResults& ttrDijet = ttMVADiJetOnly->getResults();
-            for(int iTop = 0; iTop < ttrDijet.getTopCandidates().size(); ++iTop)
+            auto massRatioCalc = [](const TopObject& top)
             {
-                auto& top = ttrDijet.getTopCandidates()[iTop];
-
                 const std::vector<Constituent const *>& jets = top.getConstituents();
 
                 double m23  = (jets[0]->getType() == AK8JET)?(jets[0]->getSoftDropMass() * jets[0]->getWMassCorr()):(jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
@@ -1803,20 +1800,31 @@ namespace plotterFunctions
                     m123 = (psudoVec + jets[0]->p()).M();
                 }
 
+                return m23/m123;
+            };
+            const double mWmTopRatop = 0.463314121;
+
+            const TopTaggerResults& ttrDijet = ttMVADiJetOnly->getResults();
+            for(int iTop = 0; iTop < ttrDijet.getTopCandidates().size(); ++iTop)
+            {
+                auto& top = ttrDijet.getTopCandidates()[iTop];
+
+                double m23m123Ratio = massRatioCalc(top);
+
                 dijetTopNotFinal->push_back(&top);
-                dijetM2M3NotFinalTop->push_back((m23/m123)/0.463314121);
+                dijetM2M3NotFinalTop->push_back(m23m123Ratio/mWmTopRatop);
 
                 auto possibleGenMatches = top.getGenTopMatches();
                 const TLorentzVector* bestGenMatch = top.getBestGenTopMatch(0.6);
                 if(possibleGenMatches[bestGenMatch].size() >= 3)
                 {
                     dijetTopMatch->push_back(&top);
-                    dijetM2M3Match->push_back((m23/m123)/0.463314121);
+                    dijetM2M3Match->push_back(m23m123Ratio/mWmTopRatop);
                 }
                 else
                 {
                     dijetTopNoMatch->push_back(&top);
-                    dijetM2M3NoMatch->push_back((m23/m123)/0.463314121);
+                    dijetM2M3NoMatch->push_back(m23m123Ratio/mWmTopRatop);
                 }
             }
 
@@ -1824,25 +1832,10 @@ namespace plotterFunctions
             {
                 auto& top = *ttrDijet.getTops()[iTop];
 
-                const std::vector<Constituent const *>& jets = top.getConstituents();
-
-                double m23  = (jets[0]->getType() == AK8JET)?(jets[0]->getSoftDropMass() * jets[0]->getWMassCorr()):(jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
-                double m123 = top.p().M();
-                if(jets[0]->getType() == AK8JET)
-                {
-                    TLorentzVector psudoVec;
-                    psudoVec.SetPtEtaPhiM(jets[0]->p().Pt(), jets[0]->p().Eta(), jets[0]->p().Phi(), jets[0]->getSoftDropMass() * jets[0]->getWMassCorr());
-                    m123 = (psudoVec + jets[1]->p()).M();
-                }
-                else if(jets[1]->getType() == AK8JET)
-                {
-                    TLorentzVector psudoVec;
-                    psudoVec.SetPtEtaPhiM(jets[1]->p().Pt(), jets[1]->p().Eta(), jets[1]->p().Phi(), jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
-                    m123 = (psudoVec + jets[0]->p()).M();
-                }
+                double m23m123Ratio = massRatioCalc(top);
 
                 dijetTopFinal->push_back(&top);
-                dijetM2M3FinalTop->push_back((m23/m123)/0.463314121);
+                dijetM2M3FinalTop->push_back(m23m123Ratio/mWmTopRatop);
             }
 
             const TopTaggerResults& ttrMVA = ttMVA->getResults();
