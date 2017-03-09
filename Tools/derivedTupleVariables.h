@@ -544,7 +544,7 @@ namespace plotterFunctions
 
             const std::vector<double>& muonspfActivity      = tr.getVec<double>("muonspfActivity");
             const std::vector<double>& elespfActivity       = tr.getVec<double>("elespfActivity");
-            const std::vector<double>& W_emu_pfActivityVec  = tr.getVec<double>("W_emu_pfActivityVec");
+            
 
             //const double& ht                             = tr.getVar<double>("ht");
             const double& met                            = tr.getVar<double>("met");
@@ -684,6 +684,7 @@ namespace plotterFunctions
                 const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
                 const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
                 const std::vector<int>& W_emuVec                = tr.getVec<int>("W_emuVec");
+                const std::vector<double>& W_emu_pfActivityVec  = tr.getVec<double>("W_emu_pfActivityVec");
 
                 for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
                 {
@@ -1410,17 +1411,26 @@ namespace plotterFunctions
         void triggerInfoMC(NTupleReader& tr)
         {
             const double& met                            = tr.getVar<double>("cleanMetPt");
-            const double& ht                             = tr.getVar<double>("HTZinv");
             const std::vector<TLorentzVector>& cutMuVec  = tr.getVec<TLorentzVector>("cutMuVec");
 
-	    // MC trigger efficiencies
-	    double triggerEff = GetTriggerEffWeight(met,ht);
-	    double triggerEffStatUncUp = GetTriggerEffStatUncHi(met,ht);
-	    double triggerEffSystUncUp = GetTriggerEffSystUncHi(met,ht);
-	    double triggerEffUncUp     = TMath::Sqrt(triggerEffStatUncUp*triggerEffStatUncUp + triggerEffSystUncUp*triggerEffSystUncUp);
-	    double triggerEffStatUncDown = GetTriggerEffStatUncLo(met,ht);
-	    double triggerEffSystUncDown = GetTriggerEffSystUncLo(met,ht);
-	    double triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
+
+            if(tr.checkBranch("HTZinv"))
+            {
+                const double& ht                             = tr.getVar<double>("HTZinv");
+
+                // MC trigger efficiencies
+                double triggerEff = GetTriggerEffWeight(met,ht);
+                double triggerEffStatUncUp = GetTriggerEffStatUncHi(met,ht);
+                double triggerEffSystUncUp = GetTriggerEffSystUncHi(met,ht);
+                double triggerEffUncUp     = TMath::Sqrt(triggerEffStatUncUp*triggerEffStatUncUp + triggerEffSystUncUp*triggerEffSystUncUp);
+                double triggerEffStatUncDown = GetTriggerEffStatUncLo(met,ht);
+                double triggerEffSystUncDown = GetTriggerEffSystUncLo(met,ht);
+                double triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
+
+                tr.registerDerivedVar("TriggerEffMC",triggerEff);
+                tr.registerDerivedVar("TriggerEffUpMC",triggerEff+triggerEffUncUp);
+                tr.registerDerivedVar("TriggerEffDownMC",triggerEff-triggerEffUncDown);
+            }
 
             //Calculate muon trigger weights
             double muTrigWgt = 0.0;
@@ -1436,10 +1446,6 @@ namespace plotterFunctions
                 //For events with only 1 muon (emu events in particular or events with a subleading muon below 45 GeV) just use the single muon eff
                 muTrigWgt = GetMuonTriggerEff(cutMuVec[0].Eta());
             }
-
-	    tr.registerDerivedVar("TriggerEffMC",triggerEff);
-	    tr.registerDerivedVar("TriggerEffUpMC",triggerEff+triggerEffUncUp);
-	    tr.registerDerivedVar("TriggerEffDownMC",triggerEff-triggerEffUncDown);
 
             tr.registerDerivedVar("muTrigWgt", muTrigWgt);
         }
@@ -2459,18 +2465,18 @@ namespace plotterFunctions
 		    puppitau2Dtau1->push_back(puppitau2[iJet]/(puppitau1[iJet]));
 		}
             }
-            else { 
-		puppitau2Dtau1->push_back( -1);
-	    }
+            //else { 
+	    //    puppitau2Dtau1->push_back( -1);
+	    //}
 
             if(puppitau2.size()!=0 && puppitau3.size()!=0 && puppitau2.size()==puppitau3.size()){
 		for(int iJet = 0; iJet < nJetsPuppi; ++iJet){
 		    puppitau3Dtau2->push_back(puppitau3[iJet]/(puppitau2[iJet]));
 		}
 	    }
-            else {
-		puppitau3Dtau2->push_back( -1);
-            }
+            //else {
+	    //    puppitau3Dtau2->push_back( -1);
+            //}
 	    tr.registerDerivedVec("puppitau2Dtau1", puppitau2Dtau1);
 	    tr.registerDerivedVec("puppitau3Dtau2", puppitau3Dtau2);
             

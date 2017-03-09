@@ -856,8 +856,8 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;isr_Unc_Cent;_PUweightFactor");
-    Plotter::DatasetSummary dstt2l_noISR(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
-    Plotter::DatasetSummary dstW(             "Single top", fileMap["SingleTopZinv"],              "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dstt2l_noISR(           "t#bar{t}",   fileMap["TTbarNoHad"],"",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dstW(             "Single top", fileMap["SingleTopZinv"],   "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");

@@ -340,23 +340,39 @@ RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
     myBLV          = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
     prepareTopVars = new plotterFunctions::PrepareTopVars();
-    triggerInfo    = new plotterFunctions::TriggerInfo(false, true);
+    triggerInfo    = new plotterFunctions::TriggerInfo;
     taudiv         = new plotterFunctions::Taudiv(myBLV->GetTopTaggerPtr());
+    lepInfo        = new plotterFunctions::LepInfo;
+
+    bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
+    ISRcorrector = new ISRCorrector("allINone_ISRJets.root","","");   
+    pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
 }
 
 RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
 {
-    if(myBLV) delete myBLV;
+    if(myBLV)          delete myBLV;
     if(prepareTopVars) delete prepareTopVars;
+    if(triggerInfo)    delete triggerInfo;
+    if(taudiv)         delete taudiv;
+    if(lepInfo)        delete lepInfo;
+
+    if(bTagCorrector)  delete bTagCorrector;
+    if(ISRcorrector)   delete ISRcorrector;
+    if(pileup)         delete pileup;
 }
 
 void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
 {
     tr.registerFunction(*myBLV);
     tr.registerFunction(*prepareTopVars);
+    tr.registerFunction(*lepInfo);
     tr.registerFunction(*triggerInfo);
     tr.registerFunction(*taudiv);
-//    tr.registerFunction(*ak8DrMatch);
+    
+    tr.registerFunction(*bTagCorrector);
+    tr.registerFunction(*ISRcorrector);
+    tr.registerFunction(*pileup);
 }
 
 /////////////////////////////////

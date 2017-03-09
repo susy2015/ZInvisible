@@ -62,7 +62,12 @@ filestoTransferGTP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeTopPlot
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1",
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName},
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root"
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
                       ]
 
 
