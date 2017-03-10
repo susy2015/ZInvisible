@@ -1014,7 +1014,7 @@ def extrapolationSyst(filename):
     dataName = "%(varName)s/SystPlots_DataMCw_SingleMuon_%(varLabel)s_%(cutStr)s%(varName)s%(varName)sDatadata"
     baseName = "%(varName)s/SystPlots_DataMCw_SingleMuon_%(varLabel)s_%(cutStr)s%(varName)s%(varName)s%(sample)s"
 
-    varDict = {"met":("cleanMetPt", [0, 100, 200, 300, 450, 2000]),#[0, 100, 250, 350, 550, 2000]),
+    varDict = {"met":("cleanMetPt", [0, 100, 250, 300, 450, 2000]),#[0, 100, 250, 350, 550, 2000]),
                "ht":("HTZinv", [0, 150, 300, 450, 600, 2000]),
                "nt":("nTopCandSortedCntZinv", None),
                "mt2":("best_had_brJet_MT2Zinv", [0, 100, 200, 300, 400, 2000]),
@@ -1028,10 +1028,10 @@ def extrapolationSyst(filename):
                       (True,   "muZinv_1b_loose0_mt2_MET"),
                       (True,   "muZinv_2b_loose0_mt2_MET"),
                       (True,   "muZinv_3b_loose0_mt2_MET")],
-                "nt":[(False,  "muZinv_0t_loose0_mt2_MET"),
+                "nt":[#(False,  "muZinv_0t_loose0_mt2_MET"),
                       (True,   "muZinv_1t_loose0_mt2_MET"),
                       (True,   "muZinv_2t_loose0_mt2_MET")],
-                "met":[(False, "muZinv_met_0_100_loose0_mt2_MET"),
+                "met":[#(False, "muZinv_met_0_100_loose0_mt2_MET"),
                        (False, "muZinv_met_100_200_loose0_mt2_MET"),
                        (True,  "muZinv_met_200_300_loose0_mt2_MET"),
                        (True,  "muZinv_met_300_400_loose0_mt2_MET"),
@@ -1041,9 +1041,9 @@ def extrapolationSyst(filename):
                        (True,  "muZinv_mt2_200_300_loose0_mt2_MET"),
                        (True,  "muZinv_mt2_300_400_loose0_mt2_MET"),
                        (True,  "muZinv_mt2_gt400_loose0_mt2_MET")],
-                "ht":[(False,  "muZinv_ht_200_300_loose0_mt2_MET"),
-                      (False,  "muZinv_ht_300_400_loose0_mt2_MET"),
-                      (False,  "muZinv_ht_400_500_loose0_mt2_MET"),
+                "ht":[#(False,  "muZinv_ht_200_300_loose0_mt2_MET"),
+                      (True,  "muZinv_ht_300_400_loose0_mt2_MET"),
+                      (True,  "muZinv_ht_400_500_loose0_mt2_MET"),
                       (True,   "muZinv_ht_gt500_loose0_mt2_MET")]
                 }
 

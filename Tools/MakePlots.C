@@ -207,6 +207,8 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_ee_zWeight_scaled("DY#rightarrowee no e, Z eff",     fileMap["DYJetsToLL"],   "pdgIdZDec=11;passElecZinvSel", "zEffWgtElec",             znunu_ee_ratio / zAcc);
 
     Plotter::DatasetSummary dsDY_ll(        "DY#rightarrow#mu#mu",                   fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel", "");
+    Plotter::DatasetSummary dsDY_ll_lpt_loose(        "DY#rightarrow#mu#mu",                   fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel_lowpt;passNoiseEventFilterZinv;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100", "");
+    Plotter::DatasetSummary dsDY_ll_lpt_MET250(        "DY#rightarrow#mu#mu",                   fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel_lowpt;passNoiseEventFilterZinv;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>250", "");
     Plotter::DatasetSummary dsDY_ll_clean(  "DY#rightarrow#mu#mu #mu cleaned",       fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel", "");
     Plotter::DatasetSummary dsDY_ll_base(   "DY#rightarrow#mu#mu baseline",          fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel;passBaselineZinv", "");
     Plotter::DatasetSummary dsDY_ll_baseNT( "DY#rightarrow#mu#mu baselineNoTag",     fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel;passBaselineNoTagZinv", "");
@@ -342,7 +344,14 @@ int main(int argc, char* argv[])
     Plotter::DataCollection scaled_chargedHadFrac_j2("single", "cleanChargedEMEFrac[1]",  {dsDY_nunu, dsDY_ll_zAcc_scaled});
 
     //Basic Raw compairson plots
-    /* Save time
+    vh.push_back(PHS("DimuonCheck_mupt_loose",            {PDC("single", "cutMuVec(pt)",  {dsDY_ll_lpt_loose})}, {1, 1}, "",  100, 0, 500,  false,  false,  "#MuonP_{T} [GeV]", "Events"));
+    vh.push_back(PHS("DimuonCheck_mu1pt_loose",            {PDC("single", "cutMuVec[0](pt)",  {dsDY_ll_lpt_loose})}, {1, 1}, "",  100, 0, 500,  false,  false,  "#Muon1P_{T} [GeV]", "Events"));
+    vh.push_back(PHS("DimuonCheck_mu2pt_loose",            {PDC("single", "cutMuVec[1](pt)",  {dsDY_ll_lpt_loose})}, {1, 1}, "",  100, 0, 500,  false,  false,  "#Muon2P_{T} [GeV]", "Events"));
+ 
+    vh.push_back(PHS("DimuonCheck_mupt_MET250",            {PDC("single", "cutMuVec(pt)",  {dsDY_ll_lpt_MET250})}, {1, 1}, "",  100, 0, 500,  false,  false,  "#MuonP_{T} [GeV]", "Events"));
+    vh.push_back(PHS("DimuonCheck_mu1pt_MET250",            {PDC("single", "cutMuVec[0](pt)",  {dsDY_ll_lpt_MET250})}, {1, 1}, "",  100, 0, 500,  false,  false,  "#Muon1P_{T} [GeV]", "Events"));
+    vh.push_back(PHS("DimuonCheck_mu2pt_MET250",            {PDC("single", "cutMuVec[1](pt)",  {dsDY_ll_lpt_MET250})}, {1, 1}, "",  100, 0, 500,  false,  false,  "#Muon2P_{T} [GeV]", "Events"));
+   /* Save time
     //vh.push_back(PHS("inc_mht",     {PDC("single", "mht",                   {dsDY_ll_inc, dsDY_ll})}, {1, 2}, "", 100, 0, 2000,  true,  false,  label_mht,          "Events"));
     //vh.push_back(PHS("inc_met",     {PDC("single", "met",                   {dsDY_ll_inc, dsDY_ll})}, {1, 2}, "", 100, 0, 2000,  true,  false,  label_met,               "Events"));
     //vh.push_back(PHS("inc_ht",      {PDC("single", "ht",                    {dsDY_ll_inc, dsDY_ll})}, {1, 2}, "", 100, 0, 2000,  true,  false,  label_ht,             "Events"));
@@ -913,7 +922,15 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dswVV(             "Diboson",    fileMap["Diboson"],         "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
     Plotter::DatasetSummary dswRare(           "Rare",       fileMap["Rare"],            "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare}};
-
+//trigger stupid question
+    Plotter::DatasetSummary dswDY_noT(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;_PUweightFactor");
+    Plotter::DatasetSummary dswDYInc_noT(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;nJetWgtDYZ,;_PUweightFactor");
+    Plotter::DatasetSummary dswtt2l_noT(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",            "bTagSF_EventWeightSimple_Central;nJetWgtTTbar;isr_Unc_Cent;normttbar;_PUweightFactor");
+    Plotter::DatasetSummary dswtW_noT(             "Single top", fileMap["SingleTopZinv"],              "", "bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    Plotter::DatasetSummary dswttZ_noT(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    Plotter::DatasetSummary dswVV_noT(             "Diboson",    fileMap["Diboson"],         "",            "bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    Plotter::DatasetSummary dswRare_noT(           "Rare",       fileMap["Rare"],            "",            "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC_noT = {{dswDY_noT, dswDYInc_noT}, {dswtt2l_noT}, {dswtW_noT}, {dswttZ_noT}, {dswVV_noT}, {dswRare_noT}};
     // Extra MC stack that have njet weight applied for ttbar but not for DY (to make plots for AN)
     std::vector<std::vector<Plotter::DatasetSummary>> stackwtt_MC = {{dsDY, dsDYInc}, {dswtt2l}, {dstW}, {dsttZ}, {dsVV}, {dsRare}};
 
@@ -939,6 +956,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwMC_met(            "stack",  "cleanMetPt", stackw_MC);
     Plotter::DataCollection dcwttMC_met(          "stack",  "cleanMetPt", stackwtt_MC);
     Plotter::DataCollection dcwwMC_met(           "stack",  "cleanMetPt", stackww_MC);
+    Plotter::DataCollection dcwMC_met_noT(            "stack",  "cleanMetPt", stackw_MC_noT);
     // ntops
     Plotter::DataCollection dcData_SingleMuon_nt("data",   "nTopCandSortedCntZinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_nt(  "data",   "nTopCandSortedCntZinv", {dsData_DoubleEG});
@@ -947,6 +965,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwMC_nt(            "stack",  "nTopCandSortedCntZinv", stackw_MC);
     Plotter::DataCollection dcwttMC_nt(          "stack",  "nTopCandSortedCntZinv", stackwtt_MC);
     Plotter::DataCollection dcwwMC_nt(           "stack",  "nTopCandSortedCntZinv", stackww_MC);
+    Plotter::DataCollection dcwMC_nt_noT(            "stack",  "nTopCandSortedCntZinv", stackw_MC_noT);
     // MT2
     Plotter::DataCollection dcData_SingleMuon_mt2("data",   "best_had_brJet_MT2Zinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_mt2(  "data",   "best_had_brJet_MT2Zinv", {dsData_DoubleEG});
@@ -955,6 +974,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwMC_mt2(            "stack",  "best_had_brJet_MT2Zinv", stackw_MC);
     Plotter::DataCollection dcwttMC_mt2(          "stack",  "best_had_brJet_MT2Zinv", stackwtt_MC);
     Plotter::DataCollection dcwwMC_mt2(           "stack",  "best_had_brJet_MT2Zinv", stackww_MC);
+    Plotter::DataCollection dcwMC_mt2_noT(            "stack",  "best_had_brJet_MT2Zinv", stackw_MC_noT);
     // nb
     Plotter::DataCollection dcData_SingleMuon_nb("data",   "cntCSVSZinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_nb(  "data",   "cntCSVSZinv", {dsData_DoubleEG});
@@ -963,6 +983,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwMC_nb(            "stack",  "cntCSVSZinv", stackw_MC);
     Plotter::DataCollection dcwttMC_nb(          "stack",  "cntCSVSZinv", stackwtt_MC);
     Plotter::DataCollection dcwwMC_nb(           "stack",  "cntCSVSZinv", stackww_MC);
+    Plotter::DataCollection dcwMC_nb_noT(            "stack",  "cntCSVSZinv", stackw_MC_noT);
     // nj
     Plotter::DataCollection dcData_SingleMuon_nj("data",   "cntNJetsPt30Eta24Zinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_nj(  "data",   "cntNJetsPt30Eta24Zinv", {dsData_DoubleEG});
@@ -972,6 +993,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwttMC_nj(          "stack",  "cntNJetsPt30Eta24Zinv", stackwtt_MC);
     Plotter::DataCollection dcwwMC_nj(           "stack",  "cntNJetsPt30Eta24Zinv", stackww_MC);
     Plotter::DataCollection dcMC_nj_noTrig(             "stack",  "cntNJetsPt30Eta24Zinv", stack_MC_noT);
+    Plotter::DataCollection dcwMC_nj_noT(            "stack",  "cntNJetsPt30Eta24Zinv", stackw_MC_noT);
     // ht
     Plotter::DataCollection dcData_SingleMuon_ht("data",   "HTZinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_ht(  "data",   "HTZinv", {dsData_DoubleEG});
@@ -980,7 +1002,8 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwMC_ht(            "stack",  "HTZinv", stackw_MC);
     Plotter::DataCollection dcwttMC_ht(          "stack",  "HTZinv", stackwtt_MC);
     Plotter::DataCollection dcwwMC_ht(           "stack",  "HTZinv", stackww_MC);
-    Plotter::DataCollection dcwMC_ht_noT(            "stack",  "HTZinv", stack_MC_noT);
+    Plotter::DataCollection dcMC_ht_noT(            "stack",  "HTZinv", stack_MC_noT);
+    Plotter::DataCollection dcwMC_ht_noT(            "stack",  "HTZinv", stackw_MC_noT);
     // mht
     Plotter::DataCollection dcData_SingleMuon_mht("data",   "cleanMHt", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_mht(  "data",   "cleanMHt", {dsData_DoubleEG});
@@ -989,6 +1012,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwMC_mht(            "stack",  "cleanMHt", stackw_MC);
     Plotter::DataCollection dcwttMC_mht(          "stack",  "cleanMHt", stackwtt_MC);
     Plotter::DataCollection dcwwMC_mht(           "stack",  "cleanMHt", stackww_MC);
+    Plotter::DataCollection dcwMC_mht_noT(            "stack",  "cleanMHt", stackw_MC_noT);
     // jpt
     Plotter::DataCollection dcData_SingleMuon_jpt("data",   "jetsLVecLepCleaned(pt)", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_jpt(  "data",   "jetsLVecLepCleaned(pt)", {dsData_DoubleEG});
@@ -997,11 +1021,13 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwMC_jpt(            "stack",  "jetsLVecLepCleaned(pt)", stackw_MC);
     Plotter::DataCollection dcwttMC_jpt(          "stack",  "jetsLVecLepCleaned(pt)", stackwtt_MC);
     Plotter::DataCollection dcwwMC_jpt(           "stack",  "jetsLVecLepCleaned(pt)", stackww_MC);
+    Plotter::DataCollection dcwMC_jpt_noT(            "stack",  "jetsLVecLepCleaned(pt)", stackw_MC_noT);
     // j1pt
     Plotter::DataCollection dcData_SingleMuon_j1pt("data",   "jetsLVecLepCleaned[0](pt)", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_j1pt(  "data",   "jetsLVecLepCleaned[0](pt)", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_j1pt(             "stack",  "jetsLVecLepCleaned[0](pt)", stack_MC);
     Plotter::DataCollection dcwMC_j1pt(            "stack",  "jetsLVecLepCleaned[0](pt)", stackw_MC);
+    Plotter::DataCollection dcwMC_j1pt_noT(            "stack",  "jetsLVecLepCleaned[0](pt)", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_j1pt(          "stack",  "jetsLVecLepCleaned[0](pt)", stackwtt_MC);
     Plotter::DataCollection dcwwMC_j1pt(           "stack",  "jetsLVecLepCleaned[0](pt)", stackww_MC);
     // j2pt
@@ -1009,6 +1035,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_j2pt(  "data",   "jetsLVecLepCleaned[1](pt)", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_j2pt(             "stack",  "jetsLVecLepCleaned[1](pt)", stack_MC);
     Plotter::DataCollection dcwMC_j2pt(            "stack",  "jetsLVecLepCleaned[1](pt)", stackw_MC);
+    Plotter::DataCollection dcwMC_j2pt_noT(            "stack",  "jetsLVecLepCleaned[1](pt)", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_j2pt(          "stack",  "jetsLVecLepCleaned[1](pt)", stackwtt_MC);
     Plotter::DataCollection dcwwMC_j2pt(           "stack",  "jetsLVecLepCleaned[1](pt)", stackww_MC);
     // j3pt
@@ -1016,6 +1043,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_j3pt(  "data",   "jetsLVecLepCleaned[2](pt)", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_j3pt(             "stack",  "jetsLVecLepCleaned[2](pt)", stack_MC);
     Plotter::DataCollection dcwMC_j3pt(            "stack",  "jetsLVecLepCleaned[2](pt)", stackw_MC);
+    Plotter::DataCollection dcwMC_j3pt_noT(            "stack",  "jetsLVecLepCleaned[2](pt)", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_j3pt(          "stack",  "jetsLVecLepCleaned[2](pt)", stackwtt_MC);
     Plotter::DataCollection dcwwMC_j3pt(           "stack",  "jetsLVecLepCleaned[2](pt)", stackww_MC);
     // mupt
@@ -1023,6 +1051,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_mupt(  "data",   "cutMuVec(pt)", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_mupt(             "stack",  "cutMuVec(pt)", stack_MC);
     Plotter::DataCollection dcwMC_mupt(            "stack",  "cutMuVec(pt)", stackw_MC);
+    Plotter::DataCollection dcwMC_mupt_noT(            "stack",  "cutMuVec(pt)", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_mupt(          "stack",  "cutMuVec(pt)", stackwtt_MC);
     Plotter::DataCollection dcwwMC_mupt(           "stack",  "cutMuVec(pt)", stackww_MC);
     Plotter::DataCollection dcMC_mupt_noT(             "stack",  "cutMuVec(pt)", stack_MC_noT);
@@ -1031,6 +1060,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_mu1pt(  "data",   "cutMuPt1", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_mu1pt(             "stack",  "cutMuPt1", stack_MC);
     Plotter::DataCollection dcwMC_mu1pt(            "stack",  "cutMuPt1", stackw_MC);
+    Plotter::DataCollection dcwMC_mu1pt_noT(            "stack",  "cutMuPt1", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_mu1pt(          "stack",  "cutMuPt1", stackwtt_MC);
     Plotter::DataCollection dcwwMC_mu1pt(           "stack",  "cutMuPt1", stackww_MC);
     Plotter::DataCollection dcMC_mu1pt_noT(           "stack",  "cutMuPt1", stack_MC_noT);
@@ -1039,6 +1069,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_mu2pt(  "data",   "cutMuPt2", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_mu2pt(             "stack",  "cutMuPt2", stack_MC);
     Plotter::DataCollection dcwMC_mu2pt(            "stack",  "cutMuPt2", stackw_MC);
+    Plotter::DataCollection dcwMC_mu2pt_noT(            "stack",  "cutMuPt2", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_mu2pt(          "stack",  "cutMuPt2", stackwtt_MC);
     Plotter::DataCollection dcwwMC_mu2pt(           "stack",  "cutMuPt2", stackww_MC);
     // elpt
@@ -1046,6 +1077,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_elpt(  "data",   "cutElecVec(pt)", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_elpt(             "stack",  "cutElecVec(pt)", stack_MC);
     Plotter::DataCollection dcwMC_elpt(            "stack",  "cutElecVec(pt)", stackw_MC);
+    Plotter::DataCollection dcwMC_elpt_noT(            "stack",  "cutElecVec(pt)", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_elpt(          "stack",  "cutElecVec(pt)", stackwtt_MC);
     Plotter::DataCollection dcwwMC_elpt(           "stack",  "cutElecVec(pt)", stackww_MC);
     // el1pt
@@ -1053,6 +1085,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_el1pt(  "data",   "cutElecPt1", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_el1pt(             "stack",  "cutElecPt1", stack_MC);
     Plotter::DataCollection dcwMC_el1pt(            "stack",  "cutElecPt1", stackw_MC);
+    Plotter::DataCollection dcwMC_el1pt_noT(            "stack",  "cutElecPt1", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_el1pt(          "stack",  "cutElecPt1", stackwtt_MC);
     Plotter::DataCollection dcwwMC_el1pt(           "stack",  "cutElecPt1", stackww_MC);
     // el2pt
@@ -1060,6 +1093,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_el2pt(  "data",   "cutElecPt2", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_el2pt(             "stack",  "cutElecPt2", stack_MC);
     Plotter::DataCollection dcwMC_el2pt(            "stack",  "cutElecPt2", stackw_MC);
+    Plotter::DataCollection dcwMC_el2pt_noT(            "stack",  "cutElecPt2", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_el2pt(          "stack",  "cutElecPt2", stackwtt_MC);
     Plotter::DataCollection dcwwMC_el2pt(           "stack",  "cutElecPt2", stackww_MC);
     // mll
@@ -1067,6 +1101,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_mll(  "data",   "bestRecoZM", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_mll(             "stack",  "bestRecoZM", stack_MC);
     Plotter::DataCollection dcwMC_mll(            "stack",  "bestRecoZM", stackw_MC);
+    Plotter::DataCollection dcwMC_mll_noT(            "stack",  "bestRecoZM", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_mll(          "stack",  "bestRecoZM", stackwtt_MC);
     Plotter::DataCollection dcwwMC_mll(           "stack",  "bestRecoZM", stackww_MC);
     // nsearchbins
@@ -1074,6 +1109,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_nSearchBin(  "data",   "nSearchBin", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_nSearchBin(             "stack",  "nSearchBin", stack_MC);
     Plotter::DataCollection dcwMC_nSearchBin(            "stack",  "nSearchBin", stackw_MC);
+    Plotter::DataCollection dcwMC_nSearchBin_noT(            "stack",  "nSearchBin", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_nSearchBin(          "stack",  "nSearchBin", stackwtt_MC);
     Plotter::DataCollection dcwwMC_nSearchBin(           "stack",  "nSearchBin", stackww_MC);
     // nb0Bins
@@ -1081,6 +1117,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_nb0Bins(  "data",   "nb0Bins", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_nb0Bins(             "stack",  "nb0Bins", stack_MC);
     Plotter::DataCollection dcwMC_nb0Bins(            "stack",  "nb0Bins", stackw_MC);
+    Plotter::DataCollection dcwMC_nb0Bins_noT(            "stack",  "nb0Bins", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_nb0Bins(          "stack",  "nb0Bins", stackwtt_MC);
     Plotter::DataCollection dcwwMC_nb0Bins(           "stack",  "nb0Bins", stackww_MC);
     // nb0BinsNW
@@ -1088,6 +1125,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_nb0BinsNW(  "data",   "nb0BinsNW", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_nb0BinsNW(             "stack",  "nb0BinsNW", stack_MC);
     Plotter::DataCollection dcwMC_nb0BinsNW(            "stack",  "nb0BinsNW", stackw_MC);
+    Plotter::DataCollection dcwMC_nb0BinsNW_noT(            "stack",  "nb0BinsNW", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_nb0BinsNW(          "stack",  "nb0BinsNW", stackwtt_MC);
     Plotter::DataCollection dcwwMC_nb0BinsNW(           "stack",  "nb0BinsNW", stackww_MC);
     // nb0NJwBins
@@ -1095,6 +1133,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcData_DoubleEG_nb0NJwBins(  "data",   "nb0NJwBins", {dsData_DoubleEG});
     Plotter::DataCollection dcMC_nb0NJwBins(             "stack",  "nb0NJwBins", stack_MC);
     Plotter::DataCollection dcwMC_nb0NJwBins(            "stack",  "nb0NJwBins", stackw_MC);
+    Plotter::DataCollection dcwMC_nb0NJwBins_noT(            "stack",  "nb0NJwBins", stackw_MC_noT);
     Plotter::DataCollection dcwttMC_nb0NJwBins(            "stack",  "nb0NJwBins", stackwtt_MC);
     Plotter::DataCollection dcwwMC_nb0NJwBins(           "stack",  "nb0NJwBins", stackww_MC);
     // nb0NJwBins DY->Z
@@ -1282,6 +1321,39 @@ int main(int argc, char* argv[])
      {"muZinv_ht_300_400_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;HTZinv>300;HTZinv<400;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
      {"muZinv_ht_400_500_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;HTZinv>400;HTZinv<500;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
      {"muZinv_ht_gt500_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;HTZinv>500;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+
+    };
+
+//NEW for BAD TRIGGER QUESTION
+    std::vector<std::pair<std::string,std::string>> cutlevels_muon_syst_Trigger = {
+
+     {"muZinv_loose0_mt2_MET",             "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+	
+     {"muZinv_0b_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;cntCSVSZinv=0;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+     {"muZinv_1b_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;cntCSVSZinv=1;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+     {"muZinv_2b_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;cntCSVSZinv=2;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+     {"muZinv_3b_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;cntCSVSZinv>2;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+
+     {"muZinv_0t_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+     {"muZinv_1t_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=1;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+     {"muZinv_2t_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>1;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+
+     {"muZinv_met_0_100_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>0;cleanMetPt<100;best_had_brJet_MT2Zinv>0"},
+     {"muZinv_met_100_250_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>100;cleanMetPt<250;best_had_brJet_MT2Zinv>0"},
+     {"muZinv_met_250_350_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>250;cleanMetPt<350;best_had_brJet_MT2Zinv>0"},
+     {"muZinv_met_350_450_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>350;cleanMetPt<450;best_had_brJet_MT2Zinv>0"},
+     {"muZinv_met_gt450_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>450;best_had_brJet_MT2Zinv>0"},
+
+     {"muZinv_mt2_0_100_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;best_had_brJet_MT2Zinv<100;cleanMetPt>100"},
+     {"muZinv_mt2_100_200_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>100;best_had_brJet_MT2Zinv<200;cleanMetPt>100"},
+     {"muZinv_mt2_200_300_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;best_had_brJet_MT2Zinv<300;cleanMetPt>100"},
+     {"muZinv_mt2_300_400_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>300;best_had_brJet_MT2Zinv<400;cleanMetPt>100"},
+     {"muZinv_mt2_gt400_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>400;cleanMetPt>100"},
+
+     {"muZinv_ht_200_300_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>200;passnJetsZinv;passdPhisZinv;HTZinv>200;HTZinv<300;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+     {"muZinv_ht_300_400_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;HTZinv>300;HTZinv<400;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+     {"muZinv_ht_400_500_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;HTZinv>400;HTZinv<500;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
+     {"muZinv_ht_gt500_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel_lowpt;HTZinv>300;passnJetsZinv;passdPhisZinv;HTZinv>500;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
 
     };
 
@@ -1508,7 +1580,7 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMCw_SingleMuon_met_"        +cut.first,  {dcData_SingleMuon_met,        dcwMC_met},        {1, 2}, cut.second, 25, 0, 1500, true, false,  label_met,             "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_rebin_met_"  +cut.first,  {dcData_SingleMuon_met,        dcwMC_met},        {1, 2}, cut.second, metBins,     true, false,  label_met,             "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_ht_"         +cut.first,  {dcData_SingleMuon_ht,         dcwMC_ht},         {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,              "Events"));
-        vh.push_back(PHS("DataMC_SingleMuon_ht_noT"         +cut.first,  {dcData_SingleMuon_ht,         dcwMC_ht_noT},         {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,              "Events"));
+        vh.push_back(PHS("DataMC_SingleMuon_ht_noT"         +cut.first,  {dcData_SingleMuon_ht,         dcMC_ht_noT},         {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,              "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_mht_"        +cut.first,  {dcData_SingleMuon_mht,        dcwMC_mht},        {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mht,             "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_nt_"         +cut.first,  {dcData_SingleMuon_nt,         dcwMC_nt},         {1, 2}, cut.second, 5,  0, 5,    true, false,  label_nt,              "Events"));
 	//vh.push_back(PHS("DataMCw_SingleMuon_nt1b_"  +cut.first,  {dcData_SingleMuon_nt1b,  dcwMC_nt1b},               {1, 2}, cut.second, 5,  0, 5,    true, false,  "Ntop (1b fake)",      "Events"));
@@ -1630,7 +1702,22 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_mupt_"  +cut.first,  {dcData_SingleMuon_mupt,  dcwMC_mupt},  {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mupt,          ""));
         vh.push_back(PHS("SystPlots_DataMCw_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
     }
-
+//Stupid trigger question
+     for(std::pair<std::string,std::string>& cut : cutlevels_muon_syst_Trigger)
+    {
+        // DataMC weights applied
+        vector<double> metBins = {0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 2000};
+        vector<double> mt2Bins = {0, 50, 100, 150, 200, 250, 300, 350, 400, 2000};
+        vh.push_back(PHS("SystPlots_Trigger_DataMCw_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwMC_met_noT},   {1, 2}, cut.second, metBins,     true, false,  label_met,            ""));
+        vh.push_back(PHS("SystPlots_Trigger_DataMCw_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwMC_ht_noT},    {1, 2}, cut.second, 150, 0, 1500, true, false,  label_ht,             ""));
+        vh.push_back(PHS("SystPlots_Trigger_DataMCw_SingleMuon_nt_"    +cut.first,  {dcData_SingleMuon_nt,    dcwMC_nt_noT},    {1, 2}, cut.second, 5,  0, 5,    true, false,  label_nt,           ""));
+        vh.push_back(PHS("SystPlots_Trigger_DataMCw_SingleMuon_mt2_"   +cut.first,  {dcData_SingleMuon_mt2,   dcwMC_mt2_noT},   {1, 2}, cut.second, mt2Bins,     true, false,  label_mt2,            ""));
+        vh.push_back(PHS("SystPlots_Trigger_DataMCw_SingleMuon_nb_"    +cut.first,  {dcData_SingleMuon_nb,    dcwMC_nb_noT},    {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,             ""));
+        vh.push_back(PHS("SystPlots_Trigger_DataMCw_SingleMuon_nj_"    +cut.first,  {dcData_SingleMuon_nj,    dcwMC_nj_noT},    {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,             ""));
+        vh.push_back(PHS("SystPlots_Trigger_DataMCw_SingleMuon_jpt_"   +cut.first,  {dcData_SingleMuon_jpt,   dcwMC_jpt_noT},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_jpt,         ""));
+        vh.push_back(PHS("SystPlots_Trigger_DataMCw_SingleMuon_mupt_"  +cut.first,  {dcData_SingleMuon_mupt,  dcwMC_mupt_noT},  {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mupt,          ""));
+        vh.push_back(PHS("SystPlots_Trigger_DataMCw_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin_noT}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",            ""));
+    } 
     // Do no look at electron plots for now. Save some time and space
     /*
     for(std::pair<std::string,std::string>& cut : cutlevels_electron)
