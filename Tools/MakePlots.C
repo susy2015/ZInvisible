@@ -886,9 +886,9 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsnoTDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "bTagSF_EventWeightSimple_Central");
     Plotter::DatasetSummary dsnoTtt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "bTagSF_EventWeightSimple_Central;isr_Unc_Cent");
     Plotter::DatasetSummary dsnoTtt2l_noISR(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsnoTtW(             "Single top", fileMap["SingleTopZinv"],              "",                "bTagSF_EventWeightSimple_Central,genWeight");
+    Plotter::DatasetSummary dsnoTtW(             "Single top", fileMap["SingleTopZinv"],              "",                "bTagSF_EventWeightSimple_Central;genWeight");
     Plotter::DatasetSummary dsnoTttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "bTagSF_EventWeightSimple_Central;genWeight");
-    Plotter::DatasetSummary dsnoTVV(             "Diboson",    fileMap["Diboson"],         "",                "bTagSF_EventWeightSimple_Central,genWeight");
+    Plotter::DatasetSummary dsnoTVV(             "Diboson",    fileMap["Diboson"],         "",                "bTagSF_EventWeightSimple_Central;genWeight");
     Plotter::DatasetSummary dsnoTRare(           "Rare",       fileMap["Rare"],            "",                "bTagSF_EventWeightSimple_Central;genWeight");
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_noT = {{dsnoTDY, dsnoTDYInc}, {dsnoTtt2l}, {dsnoTtW}, {dsnoTttZ}, {dsnoTVV}, {dsnoTRare}};
 
