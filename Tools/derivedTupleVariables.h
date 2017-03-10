@@ -2551,6 +2551,7 @@ namespace plotterFunctions
 	    }
             */
             //Top 1%
+            /*
 	    for(int tau = 0; tau < (*puppitau3Dtau2).size(); ++tau){
 		if (puppisoftDropMass[tau]>105 && puppisoftDropMass[tau]<210){
 		    puppitau3Dtau2_SDM->push_back(puppitau3Dtau2->at(tau));
@@ -2564,7 +2565,7 @@ namespace plotterFunctions
 		    }
 		}
 	    }
-	    
+	    */
 	    tr.registerDerivedVec("puppiLVectight_top", puppiLVectight_top);
 	    tr.registerDerivedVec("puppiLVecLoose_top", puppiLVecLoose_top);
 	    tr.registerDerivedVec("puppiLVectight_w", puppiLVectight_w);

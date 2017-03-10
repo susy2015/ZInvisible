@@ -104,7 +104,7 @@ void makeplot(TFile* f, std::string hname, double xlow, double xhigh, double ylo
 
     c->cd(1);
     char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 7600 / 1000.0);
+    sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 35861 / 1000.0);
     TLatex mark;
     mark.SetTextSize(0.042 * fontScale);
     mark.SetTextFont(42);
@@ -207,7 +207,7 @@ void makeplotratio(TFile* f, std::vector<std::string> hnames, std::vector<std::s
 
     c->cd(1);
     char lumistamp[128];
-    sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 7600 / 1000.0);
+    sprintf(lumistamp, "%.1f fb^{-1} at 13 TeV", 35861 / 1000.0);
     TLatex mark;
     mark.SetTextSize(0.042 * fontScale);
     mark.SetTextFont(42);
@@ -284,7 +284,7 @@ int main(int argc, char* argv[])
 
     // f1->Close();
 
-    const int NBIN = 59;
+    const int NBIN = 84;
   
     //TFile* f1 = TFile::Open("/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_all.root");
     TFile* f1 = TFile::Open("syst_all.root");

@@ -10,7 +10,7 @@ public:
     }
     static double sfunc_norm0b()
     {
-	return 0.086;
+	return 0.085;
     }
 };
 

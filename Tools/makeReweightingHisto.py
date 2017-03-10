@@ -143,14 +143,14 @@ def njetWeights(filename):
     cuts_TT = ["elmuZinv", "elmuZinv_0b", "elmuZinv_g1b"]
     selection = "loose0_mt2_MET"#"loose0_mt2_MET"#"blnotag"#"loose0"#"loose0_mt2"
     # histo names
-    hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
-    hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
+    hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
+    hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
                #"cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDY HT<100stack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}stack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvSingle topstack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}Zstack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDibosonstack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvRarestack"
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}stack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvSingle topstack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}Zstack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDibosonstack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvRarestack"
                ]
 
     # dictionary to keep track of all the scale factors
@@ -420,14 +420,14 @@ def shapeSyst(filename):
     fout = TFile.Open("syst_shape.root", "RECREATE")
     # Run over the relevant histograms
     # histo names
-    hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDatadata"
-    hnames2 =  ["%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDYstack",
+    hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)sDatadata"
+    hnames2 =  ["%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)sDYstack",
                 #"%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDY HT<100stack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}stack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sSingle topstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}Zstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDibosonstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sRarestack"]
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)st#bar{t}stack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)sSingle topstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)st#bar{t}Zstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)sDibosonstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)sRarestack"]
 
     varList = [#["met", "cleanMetPt",             [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 1500], "MET" ],
                #["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500],      "M_{T2}" ],
@@ -796,21 +796,21 @@ def systHarvest(filename):
     hBMistagUp_Ratio.Write()
     hBMistagDn_Ratio.Write()
     #ISR Uncertainties
-    hISRNom = f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Centralsingle")
-    hBISRUp =  f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Upsingle")
-    hISRDn =  f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Downsingle")
+    #hISRNom = f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Centralsingle")
+    #hBISRUp =  f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Upsingle")
+    #hISRDn =  f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Downsingle")
 
-    hISRUp_Ratio = hISRUp.Clone("isr_up")
-    hISRUp_Ratio.Add(hISRNom, -1.0)
-    hBISRUp_Ratio.Divide(hISRNom)
+    #hISRUp_Ratio = hISRUp.Clone("isr_up")
+    #hISRUp_Ratio.Add(hISRNom, -1.0)
+    #hBISRUp_Ratio.Divide(hISRNom)
 
-    hISRDn_Ratio = hISRDn.Clone("isr_dn")
-    hISRDn_Ratio.Add(hISRNom, -1.0)
-    hISRDn_Ratio.Divide(hBISRNom)
+    #hISRDn_Ratio = hISRDn.Clone("isr_dn")
+    #hISRDn_Ratio.Add(hISRNom, -1.0)
+    #hISRDn_Ratio.Divide(hBISRNom)
 
-    fout.cd()
-    hISRUp_Ratio.Write()
-    hISRDn_Ratio.Write()
+    #fout.cd()
+    #hISRUp_Ratio.Write()
+    #hISRDn_Ratio.Write()
 
     # calculate stupid pull histo here
     hZnunu = f4.Get("nSearchBin/nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle")
@@ -882,14 +882,14 @@ def systHarvest(filename):
              ("syst_unc_btag_dn",            hBTagDn_Ratio),
              ("syst_unc_bmistag_up",         hBMistagUp_Ratio),
              ("syst_unc_bmistag_dn",         hBMistagDn_Ratio),
-             ("syst_unc_isr_up",            hISRUp_Ratio),
-             ("syst_unc_isr_dn",            hISRDn_Ratio),
+             #("syst_unc_isr_up",            hISRUp_Ratio),
+             #("syst_unc_isr_dn",            hISRDn_Ratio),
              ]
 
     #sc = SampleCollection()
     #lumi = sc.sampleCollectionLumiList()["Data_SingleMuon"]
 
-    print "luminosity = %f"%(36352.970569733)#12905.3378)
+    print "luminosity = %f"%(35861.695285122)#12905.3378)
     print "channels =", NSB
     print "sample = zinv"
     print ""
@@ -921,8 +921,8 @@ def systHarvest(filename):
     #print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["36f" % 0.0830140 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
     #print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%36f" % 0.0830140 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
 
-    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.068 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
-    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.068 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
+    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.086 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
+    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.086 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
 
     for (name, h) in hists:
         print "%-25s = %s"%(name, ' '.join(["%8.5f" % (abs(h.GetBinContent(i))) for i in xrange(1, NSB+1)]))
@@ -1014,7 +1014,7 @@ def extrapolationSyst(filename):
     dataName = "%(varName)s/SystPlots_DataMCw_SingleMuon_%(varLabel)s_%(cutStr)s%(varName)s%(varName)sDatadata"
     baseName = "%(varName)s/SystPlots_DataMCw_SingleMuon_%(varLabel)s_%(cutStr)s%(varName)s%(varName)s%(sample)s"
 
-    varDict = {"met":("cleanMetPt", [0, 100, 200, 300, 450, 2000]),
+    varDict = {"met":("cleanMetPt", [0, 100, 200, 300, 450, 2000]),#[0, 100, 250, 350, 550, 2000]),
                "ht":("HTZinv", [0, 150, 300, 450, 600, 2000]),
                "nt":("nTopCandSortedCntZinv", None),
                "mt2":("best_had_brJet_MT2Zinv", [0, 100, 200, 300, 400, 2000]),
@@ -1024,27 +1024,27 @@ def extrapolationSyst(filename):
                #"mupt":"",
                "nSearchBin":("nSearchBin", None)}
 
-    cutLists = {"nb":[(False,  "muZinv_0b_loose0"),
-                      (True,   "muZinv_1b_loose0"),
-                      (True,   "muZinv_2b_loose0"),
-                      (True,   "muZinv_3b_loose0")],
-                "nt":[(False,  "muZinv_0t_loose0"),
-                      (True,   "muZinv_1t_loose0"),
-                      (True,   "muZinv_2t_loose0")],
-                "met":[(False, "muZinv_met_0_100_loose0"),
-                       (False, "muZinv_met_100_200_loose0"),
-                       (True,  "muZinv_met_200_300_loose0"),
-                       (True,  "muZinv_met_300_400_loose0"),
-                       (True,  "muZinv_met_gt400_loose0")],
-                "mt2":[(False, "muZinv_mt2_0_100_loose0"),
-                       (False, "muZinv_mt2_100_200_loose0"),
-                       (True,  "muZinv_mt2_200_300_loose0"),
-                       (True,  "muZinv_mt2_300_400_loose0"),
-                       (True,  "muZinv_mt2_gt400_loose0")],
-                "ht":[(False,  "muZinv_ht_200_300_loose0"),
-                      (False,  "muZinv_ht_300_400_loose0"),
-                      (False,  "muZinv_ht_400_500_loose0"),
-                      (True,   "muZinv_ht_gt500_loose0")]
+    cutLists = {"nb":[(False,  "muZinv_0b_loose0_mt2_MET"),
+                      (True,   "muZinv_1b_loose0_mt2_MET"),
+                      (True,   "muZinv_2b_loose0_mt2_MET"),
+                      (True,   "muZinv_3b_loose0_mt2_MET")],
+                "nt":[(False,  "muZinv_0t_loose0_mt2_MET"),
+                      (True,   "muZinv_1t_loose0_mt2_MET"),
+                      (True,   "muZinv_2t_loose0_mt2_MET")],
+                "met":[(False, "muZinv_met_0_100_loose0_mt2_MET"),
+                       (False, "muZinv_met_100_200_loose0_mt2_MET"),
+                       (True,  "muZinv_met_200_300_loose0_mt2_MET"),
+                       (True,  "muZinv_met_300_400_loose0_mt2_MET"),
+                       (True,  "muZinv_met_gt400_loose0_mt2_MET")],
+                "mt2":[(False, "muZinv_mt2_0_100_loose0_mt2_MET"),
+                       (False, "muZinv_mt2_100_200_loose0_mt2_MET"),
+                       (True,  "muZinv_mt2_200_300_loose0_mt2_MET"),
+                       (True,  "muZinv_mt2_300_400_loose0_mt2_MET"),
+                       (True,  "muZinv_mt2_gt400_loose0_mt2_MET")],
+                "ht":[(False,  "muZinv_ht_200_300_loose0_mt2_MET"),
+                      (False,  "muZinv_ht_300_400_loose0_mt2_MET"),
+                      (False,  "muZinv_ht_400_500_loose0_mt2_MET"),
+                      (True,   "muZinv_ht_gt500_loose0_mt2_MET")]
                 }
 
     samples = ["DYstack",
