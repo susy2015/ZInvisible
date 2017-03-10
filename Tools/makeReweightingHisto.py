@@ -143,14 +143,14 @@ def njetWeights(filename):
     cuts_TT = ["elmuZinv", "elmuZinv_0b", "elmuZinv_g1b"]
     selection = "loose0_mt2_MET"#"loose0_mt2_MET"#"blnotag"#"loose0"#"loose0_mt2"
     # histo names
-    hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
-    hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
+    hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
+    hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
                #"cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDY HT<100stack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}stack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvSingle topstack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}Zstack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDibosonstack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_noTrig%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvRarestack"
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}stack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvSingle topstack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}Zstack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDibosonstack",
+               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvRarestack"
                ]
 
     # dictionary to keep track of all the scale factors
