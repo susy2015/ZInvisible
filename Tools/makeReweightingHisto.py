@@ -420,14 +420,14 @@ def shapeSyst(filename):
     fout = TFile.Open("syst_shape.root", "RECREATE")
     # Run over the relevant histograms
     # histo names
-    hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDatadata"
-    hnames2 =  ["%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDYstack",
+    hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)sDatadata"
+    hnames2 =  ["%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)sDYstack",
                 #"%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDY HT<100stack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}stack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sSingle topstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)st#bar{t}Zstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDibosonstack",
-                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sRarestack"]
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)st#bar{t}stack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)sSingle topstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)st#bar{t}Zstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)sDibosonstack",
+                "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)sRarestack"]
 
     varList = [#["met", "cleanMetPt",             [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 1500], "MET" ],
                #["mt2", "best_had_brJet_MT2Zinv", [0, 50, 100, 150, 200, 250, 300, 350, 400, 1500],      "M_{T2}" ],
@@ -1014,7 +1014,7 @@ def extrapolationSyst(filename):
     dataName = "%(varName)s/SystPlots_DataMCw_SingleMuon_%(varLabel)s_%(cutStr)s%(varName)s%(varName)sDatadata"
     baseName = "%(varName)s/SystPlots_DataMCw_SingleMuon_%(varLabel)s_%(cutStr)s%(varName)s%(varName)s%(sample)s"
 
-    varDict = {"met":("cleanMetPt", [0, 100, 200, 300, 450, 2000]),
+    varDict = {"met":("cleanMetPt", [0, 100, 200, 300, 450, 2000]),#[0, 100, 250, 350, 550, 2000]),
                "ht":("HTZinv", [0, 150, 300, 450, 600, 2000]),
                "nt":("nTopCandSortedCntZinv", None),
                "mt2":("best_had_brJet_MT2Zinv", [0, 100, 200, 300, 400, 2000]),

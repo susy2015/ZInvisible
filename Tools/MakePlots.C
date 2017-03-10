@@ -876,20 +876,20 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsnpDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "muTrigWgt;bTagSF_EventWeightSimple_Central");
     Plotter::DatasetSummary dsnptt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;isr_Unc_Cent");
     Plotter::DatasetSummary dsnptt2l_noISR(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "muTrigWgt;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsnptW(             "Single top", fileMap["SingleTopZinv"],              "",                "muTrigWgt;bTagSF_EventWeightSimple_Central");
+    Plotter::DatasetSummary dsnptW(             "Single top", fileMap["SingleTopZinv"],              "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight");
     Plotter::DatasetSummary dsnpttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight");
-    Plotter::DatasetSummary dsnpVV(             "Diboson",    fileMap["Diboson"],         "",                "muTrigWgt;bTagSF_EventWeightSimple_Central");
+    Plotter::DatasetSummary dsnpVV(             "Diboson",    fileMap["Diboson"],         "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight");
     Plotter::DatasetSummary dsnpRare(           "Rare",       fileMap["Rare"],            "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight");
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_np = {{dsnpDY, dsnpDYInc}, {dsnptt2l}, {dsnptW}, {dsnpttZ}, {dsnpVV}, {dsnpRare}};
 
-    Plotter::DatasetSummary dsnoTDY(             "DY",         fileMap["DYJetsToLL"],      "",                "bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsnoTDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsnoTtt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "bTagSF_EventWeightSimple_Central;isr_Unc_Cent");
-    Plotter::DatasetSummary dsnoTtt2l_noISR(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsnoTtW(             "Single top", fileMap["SingleTopZinv"],              "",                "bTagSF_EventWeightSimple_Central;genWeight");
-    Plotter::DatasetSummary dsnoTttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "bTagSF_EventWeightSimple_Central;genWeight");
-    Plotter::DatasetSummary dsnoTVV(             "Diboson",    fileMap["Diboson"],         "",                "bTagSF_EventWeightSimple_Central;genWeight");
-    Plotter::DatasetSummary dsnoTRare(           "Rare",       fileMap["Rare"],            "",                "bTagSF_EventWeightSimple_Central;genWeight");
+    Plotter::DatasetSummary dsnoTDY(             "DY",         fileMap["DYJetsToLL"],      "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsnoTDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsnoTtt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "bTagSF_EventWeightSimple_Central;isr_Unc_Cent;_PUweightFactor");
+    Plotter::DatasetSummary dsnoTtt2l_noISR(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsnoTtW(             "Single top", fileMap["SingleTopZinv"],              "",                "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    Plotter::DatasetSummary dsnoTttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    Plotter::DatasetSummary dsnoTVV(             "Diboson",    fileMap["Diboson"],         "",                "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    Plotter::DatasetSummary dsnoTRare(           "Rare",       fileMap["Rare"],            "",                "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_noT = {{dsnoTDY, dsnoTDYInc}, {dsnoTtt2l}, {dsnoTtW}, {dsnoTttZ}, {dsnoTVV}, {dsnoTRare}};
 
     // eff*Acc*B(Z)/B(DY)
@@ -898,9 +898,9 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_effAcc(             "DY",         fileMap["DYJetsToLL"],      "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
     Plotter::DatasetSummary dsDYInc_effAcc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
     Plotter::DatasetSummary dstt2l_effAcc(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
-    Plotter::DatasetSummary dstW_effAcc(             "Single top", fileMap["SingleTopZinv"],              "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dstW_effAcc(             "Single top", fileMap["SingleTopZinv"],              "",     "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight",           znunu_mumu_ratio);
     Plotter::DatasetSummary dsttZ_effAcc(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
-    Plotter::DatasetSummary dsVV_effAcc(             "Diboson",    fileMap["Diboson"],         "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt",           znunu_mumu_ratio);
+    Plotter::DatasetSummary dsVV_effAcc(             "Diboson",    fileMap["Diboson"],         "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight",           znunu_mumu_ratio);
     Plotter::DatasetSummary dsRare_effAcc(           "Rare",       fileMap["Rare"],            "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_effAcc = {{dsDY_effAcc, dsDYInc_effAcc}, {dstt2l_effAcc}, {dstW_effAcc}, {dsttZ_effAcc}, {dsVV_effAcc}, {dsRare_effAcc}};
 
@@ -908,9 +908,9 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dswDY(             "DY",         fileMap["DYJetsToLL"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;nJetWgtDYZ;_PUweightFactor");
     Plotter::DatasetSummary dswDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "muTrigWgt;bTagSF_EventWeightSimple_Central;nJetWgtDYZ,;_PUweightFactor");
     Plotter::DatasetSummary dswtt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;nJetWgtTTbar;isr_Unc_Cent;normttbar;_PUweightFactor");
-    Plotter::DatasetSummary dswtW(             "Single top", fileMap["SingleTopZinv"],              "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dswtW(             "Single top", fileMap["SingleTopZinv"],              "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
     Plotter::DatasetSummary dswttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
-    Plotter::DatasetSummary dswVV(             "Diboson",    fileMap["Diboson"],         "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dswVV(             "Diboson",    fileMap["Diboson"],         "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
     Plotter::DatasetSummary dswRare(           "Rare",       fileMap["Rare"],            "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare}};
 
@@ -1267,10 +1267,10 @@ int main(int argc, char* argv[])
      {"muZinv_2t_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>1;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
 
      {"muZinv_met_0_100_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>0;cleanMetPt<100;best_had_brJet_MT2Zinv>0"},
-     {"muZinv_met_100_200_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>100;cleanMetPt<200;best_had_brJet_MT2Zinv>0"},
-     {"muZinv_met_200_300_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>200;cleanMetPt<300;best_had_brJet_MT2Zinv>0"},
-     {"muZinv_met_300_400_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>300;cleanMetPt<400;best_had_brJet_MT2Zinv>0"},
-     {"muZinv_met_gt400_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>400;best_had_brJet_MT2Zinv>0"},
+     {"muZinv_met_100_250_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>100;cleanMetPt<250;best_had_brJet_MT2Zinv>0"},
+     {"muZinv_met_250_350_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>250;cleanMetPt<350;best_had_brJet_MT2Zinv>0"},
+     {"muZinv_met_350_450_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>350;cleanMetPt<450;best_had_brJet_MT2Zinv>0"},
+     {"muZinv_met_gt450_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;cleanMetPt>450;best_had_brJet_MT2Zinv>0"},
 
      {"muZinv_mt2_0_100_loose0_mt2_MET",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;best_had_brJet_MT2Zinv<100;cleanMetPt>100"},
      {"muZinv_mt2_100_200_loose0_mt2_MET",   "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>100;best_had_brJet_MT2Zinv<200;cleanMetPt>100"},

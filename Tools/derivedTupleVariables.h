@@ -1492,7 +1492,7 @@ namespace plotterFunctions
 
             //Calculate muon trigger weights
             double muTrigWgt = 0.0;
-            if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 25 && cutMuVec[1].Pt() > 50 && cutMuVec[1].Pt() > 50)
+            if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 50 && cutMuVec[1].Pt() > 50)
             {
                 double muEff1 = GetMuonTriggerEff(cutMuVec[0].Eta());
                 double muEff2 = GetMuonTriggerEff(cutMuVec[1].Eta());
