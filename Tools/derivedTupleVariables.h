@@ -1191,7 +1191,8 @@ namespace plotterFunctions
             */
             //int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
             int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);            
-
+            int nSearchBin_1b_bins = sbins.find_Binning_Index(cntCSVS == 1, nTopCandSortedCnt, MT2, cleanMet, HT);
+            
             //std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
             //std::vector<std::pair<double, double> > * nb0NJwBins = new std::vector<std::pair<double, double> >();
             //std::vector<double> * nb0BinsNW = new std::vector<double>();
@@ -1226,6 +1227,7 @@ namespace plotterFunctions
             }
 
             tr.registerDerivedVar("nSearchBin", nSearchBin);
+            tr.registerDerivedVar("nSearchBin_1b_bins", nSearchBin_1b_bins);
             //tr.registerDerivedVec("nb0BinsNW", nb0BinsNW);
             //tr.registerDerivedVec("nb0Bins", nb0Bins);
             //tr.registerDerivedVec("nb0NJwBins", nb0NJwBins);
@@ -1255,6 +1257,8 @@ namespace plotterFunctions
 
 	double GetMuonTriggerEff(const double& muEta) 
 	{
+          
+          
             if (-2.6 <= muEta && muEta < -2.2) return 0.7861842;
             else if(-2.2 <= muEta && muEta < -1.8) return 0.8233438;
             else if(-1.8 <= muEta && muEta < -1.4) return 0.8151685;
@@ -1270,6 +1274,55 @@ namespace plotterFunctions
             else if( 2.2 <= muEta && muEta <  2.6) return 0.7781818;
             else                                   return 0.000;
 	}
+
+        double GetMuonTriggerEff_pt_eta(const double& muEta, const double& muPT)
+        {
+
+
+            if (-2.6 <= muEta && muEta < -2.1 && muPT >=50 && muPT <100) return 0.800;
+            else if(-2.1 <= muEta && muEta < -1.6 && muPT >=50 && muPT <100) return 0.847;
+            else if(-1.6 <= muEta && muEta < -1.2 && muPT >=50 && muPT <100) return 0.92;
+            else if(-1.2 <= muEta && muEta < -0.9 && muPT >=50 && muPT <100) return 0.931;
+            else if(-0.9 <= muEta && muEta < -0.3 && muPT >=50 && muPT <100) return 0.944;
+            else if(-0.3 <= muEta && muEta < -0.2 && muPT >=50 && muPT <100) return 0.827;
+            else if(-0.2 <= muEta && muEta <  0.0 && muPT >=50 && muPT <100) return 0.939;
+            else if( 0.0 <= muEta && muEta <  0.2 && muPT >=50 && muPT <100) return 0.939;
+            else if( 0.2 <= muEta && muEta <  0.3 && muPT >=50 && muPT <100) return 0.827;
+            else if( 0.3 <= muEta && muEta <  0.9 && muPT >=50 && muPT <100) return 0.944;
+            else if( 0.9 <= muEta && muEta <  1.2 && muPT >=50 && muPT <100) return 0.931;
+            else if( 1.2 <= muEta && muEta <  1.6 && muPT >=50 && muPT <100) return 0.922;
+            else if( 1.6 <= muEta && muEta <  2.1 && muPT >=50 && muPT <100) return 0.847;
+            else if( 2.1 <= muEta && muEta <  2.6 && muPT >=50 && muPT <100) return 0.800;
+            else if (-2.6 <= muEta && muEta < -2.1 && muPT >=100 && muPT <200) return 0.771; //second region
+            else if(-2.1 <= muEta && muEta < -1.6 && muPT >=100 && muPT <200) return 0.841;
+            else if(-1.6 <= muEta && muEta < -1.2 && muPT >=100 && muPT <200) return 0.914;
+            else if(-1.2 <= muEta && muEta < -0.9 && muPT >=100 && muPT <200) return 0.921;
+            else if(-0.9 <= muEta && muEta < -0.3 && muPT >=100 && muPT <200) return 0.941;
+            else if(-0.3 <= muEta && muEta < -0.2 && muPT >=100 && muPT <200) return 0.816;
+            else if(-0.2 <= muEta && muEta <  0.0 && muPT >=100 && muPT <200) return 0.94;
+            else if( 0.0 <= muEta && muEta <  0.2 && muPT >=100 && muPT <200) return 0.94;
+            else if( 0.2 <= muEta && muEta <  0.3 && muPT >=100 && muPT <200) return 0.816;
+            else if( 0.3 <= muEta && muEta <  0.9 && muPT >=100 && muPT <200) return 0.941;
+            else if( 0.9 <= muEta && muEta <  1.2 && muPT >=100 && muPT <200) return 0.921;
+            else if( 1.2 <= muEta && muEta <  1.6 && muPT >=100 && muPT <200) return 0.914;
+            else if( 1.6 <= muEta && muEta <  2.1 && muPT >=100 && muPT <200) return 0.841;
+            else if( 2.1 <= muEta && muEta <  2.6 && muPT >=100 && muPT <200) return 0.771;
+            else if (-2.6 <= muEta && muEta < -2.1 && muPT >=200 ) return 0.707; //second region
+            else if(-2.1 <= muEta && muEta < -1.6 && muPT >=200 ) return 0.793;
+            else if(-1.6 <= muEta && muEta < -1.2 && muPT >=200 ) return 0.896;
+            else if(-1.2 <= muEta && muEta < -0.9 && muPT >=200 ) return 0.899;
+            else if(-0.9 <= muEta && muEta < -0.3 && muPT >=200 ) return 0.922;
+            else if(-0.3 <= muEta && muEta < -0.2 && muPT >=200 ) return 0.796;
+            else if(-0.2 <= muEta && muEta <  0.0 && muPT >=200 ) return 0.935;
+            else if( 0.0 <= muEta && muEta <  0.2 && muPT >=200 ) return 0.935;
+            else if( 0.2 <= muEta && muEta <  0.3 && muPT >=200 ) return 0.796;
+            else if( 0.3 <= muEta && muEta <  0.9 && muPT >=200 ) return 0.922;
+            else if( 0.9 <= muEta && muEta <  1.2 && muPT >=200 ) return 0.899;
+            else if( 1.2 <= muEta && muEta <  1.6 && muPT >=200 ) return 0.896;
+            else if( 1.6 <= muEta && muEta <  2.1 && muPT >=200 ) return 0.793;
+            else if( 2.1 <= muEta && muEta <  2.6 && muPT >=200 ) return 0.707;
+            else                                   return 0.000;
+        }
 
 	double GetTriggerEffWeight(const double& met, const double& ht) 
 	{
@@ -1496,15 +1549,15 @@ namespace plotterFunctions
             double muTrigWgt = 0.0;
             if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 50 && cutMuVec[1].Pt() > 50)
             {
-                double muEff1 = GetMuonTriggerEff(cutMuVec[0].Eta());
-                double muEff2 = GetMuonTriggerEff(cutMuVec[1].Eta());
+                double muEff1 = GetMuonTriggerEff_pt_eta(cutMuVec[0].Eta(), cutMuVec[0].Pt()); //GetMuonTriggerEff(cutMuVec[0].Eta());
+                double muEff2 = GetMuonTriggerEff_pt_eta(cutMuVec[1].Eta(), cutMuVec[1].Pt()); //GetMuonTriggerEff(cutMuVec[1].Eta());
 
                 muTrigWgt = 1 - (1 - muEff1)*(1 - muEff2);
             }
             else if(cutMuVec.size() >= 1 && cutMuVec[0].Pt() > 50)
             {
                 //For events with only 1 muon (emu events in particular or events with a subleading muon below 45 GeV) just use the single muon eff
-                muTrigWgt = GetMuonTriggerEff(cutMuVec[0].Eta());
+                muTrigWgt = GetMuonTriggerEff_pt_eta(cutMuVec[0].Eta(), cutMuVec[0].Pt()); //GetMuonTriggerEff(cutMuVec[0].Eta());
             }
 
 	    tr.registerDerivedVar("TriggerEffMC",triggerEff);
@@ -1634,12 +1687,24 @@ namespace plotterFunctions
 
             int nSearchBinMEUUp = sbins.find_Binning_Index(cntCSVSMEUUp, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp, HTMEUUp);
             int nSearchBinMEUDn = sbins.find_Binning_Index(cntCSVSMEUDn, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn, HTMEUDn);
-            
+            //0b 1bin check Znunu           
+            int nSearchBinJEUUp_1b_bins = sbins.find_Binning_Index(cntCSVSJEUUp==1, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet, HTUp);
+            int nSearchBinJEUDn_1b_bins = sbins.find_Binning_Index(cntCSVSJEUDn==1, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet, HTDn);
+
+            int nSearchBinMEUUp_1b_bins = sbins.find_Binning_Index(cntCSVSMEUUp==1, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp, HTMEUUp);
+            int nSearchBinMEUDn_1b_bins = sbins.find_Binning_Index(cntCSVSMEUDn==1, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn, HTMEUDn);
+ 
             tr.registerDerivedVar("nSearchBinJEUUp", nSearchBinJEUUp);
             tr.registerDerivedVar("nSearchBinJEUDn", nSearchBinJEUDn);
 
             tr.registerDerivedVar("nSearchBinMEUUp", nSearchBinMEUUp);
             tr.registerDerivedVar("nSearchBinMEUDn", nSearchBinMEUDn);
+            //ob 1b bin check Znunu
+            tr.registerDerivedVar("nSearchBinJEUUp_1b_bins", nSearchBinJEUUp_1b_bins);
+            tr.registerDerivedVar("nSearchBinJEUDn_1b_bins", nSearchBinJEUDn_1b_bins);
+
+            tr.registerDerivedVar("nSearchBinMEUUp_1b_bins", nSearchBinMEUUp_1b_bins);
+            tr.registerDerivedVar("nSearchBinMEUDn_1b_bins", nSearchBinMEUDn_1b_bins);
         }
 
     public:
