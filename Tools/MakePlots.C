@@ -162,6 +162,7 @@ int main(int argc, char* argv[])
     // Number of searchbins
     SearchBins sb(sbEra);
     int NSB = sb.nSearchBins();//37; // 45
+    int NSB_1b_bins = 32;
 
     // Shortcuts for axis labels
     std::string label_met = "E_{T}^{miss} [GeV]";
@@ -344,13 +345,13 @@ int main(int argc, char* argv[])
     Plotter::DataCollection scaled_chargedHadFrac_j2("single", "cleanChargedEMEFrac[1]",  {dsDY_nunu, dsDY_ll_zAcc_scaled});
 
     //Basic Raw compairson plots
-    vh.push_back(PHS("DimuonCheck_mupt_loose",            {PDC("single", "cutMuVec(pt)",  {dsDY_ll_lpt_loose})}, {1, 1}, "",  100, 0, 500,  false,  false,  "#MuonP_{T} [GeV]", "Events"));
-    vh.push_back(PHS("DimuonCheck_mu1pt_loose",            {PDC("single", "cutMuVec[0](pt)",  {dsDY_ll_lpt_loose})}, {1, 1}, "",  100, 0, 500,  false,  false,  "#Muon1P_{T} [GeV]", "Events"));
-    vh.push_back(PHS("DimuonCheck_mu2pt_loose",            {PDC("single", "cutMuVec[1](pt)",  {dsDY_ll_lpt_loose})}, {1, 1}, "",  100, 0, 500,  false,  false,  "#Muon2P_{T} [GeV]", "Events"));
+    vh.push_back(PHS("DimuonCheck_mupt_loose",            {PDC("single", "cutMuVec(pt)",  {dsDY_ll_lpt_loose})}, {1, 1}, "",  100, 0, 500,  true,  false,  "#MuonP_{T} [GeV]", "Events"));
+    vh.push_back(PHS("DimuonCheck_mu1pt_loose",            {PDC("single", "cutMuVec[0](pt)",  {dsDY_ll_lpt_loose})}, {1, 1}, "",  100, 0, 500,  true,  false,  "#Muon1P_{T} [GeV]", "Events"));
+    vh.push_back(PHS("DimuonCheck_mu2pt_loose",            {PDC("single", "cutMuVec[1](pt)",  {dsDY_ll_lpt_loose})}, {1, 1}, "",  100, 0, 500,  true,  false,  "#Muon2P_{T} [GeV]", "Events"));
  
-    vh.push_back(PHS("DimuonCheck_mupt_MET250",            {PDC("single", "cutMuVec(pt)",  {dsDY_ll_lpt_MET250})}, {1, 1}, "",  100, 0, 500,  false,  false,  "#MuonP_{T} [GeV]", "Events"));
-    vh.push_back(PHS("DimuonCheck_mu1pt_MET250",            {PDC("single", "cutMuVec[0](pt)",  {dsDY_ll_lpt_MET250})}, {1, 1}, "",  100, 0, 500,  false,  false,  "#Muon1P_{T} [GeV]", "Events"));
-    vh.push_back(PHS("DimuonCheck_mu2pt_MET250",            {PDC("single", "cutMuVec[1](pt)",  {dsDY_ll_lpt_MET250})}, {1, 1}, "",  100, 0, 500,  false,  false,  "#Muon2P_{T} [GeV]", "Events"));
+    vh.push_back(PHS("DimuonCheck_mupt_MET250",            {PDC("single", "cutMuVec(pt)",  {dsDY_ll_lpt_MET250})}, {1, 1}, "",  100, 0, 500,  true,  false,  "#MuonP_{T} [GeV]", "Events"));
+    vh.push_back(PHS("DimuonCheck_mu1pt_MET250",            {PDC("single", "cutMuVec[0](pt)",  {dsDY_ll_lpt_MET250})}, {1, 1}, "",  100, 0, 500,  true,  false,  "#Muon1P_{T} [GeV]", "Events"));
+    vh.push_back(PHS("DimuonCheck_mu2pt_MET250",            {PDC("single", "cutMuVec[1](pt)",  {dsDY_ll_lpt_MET250})}, {1, 1}, "",  100, 0, 500,  true,  false,  "#Muon2P_{T} [GeV]", "Events"));
    /* Save time
     //vh.push_back(PHS("inc_mht",     {PDC("single", "mht",                   {dsDY_ll_inc, dsDY_ll})}, {1, 2}, "", 100, 0, 2000,  true,  false,  label_mht,          "Events"));
     //vh.push_back(PHS("inc_met",     {PDC("single", "met",                   {dsDY_ll_inc, dsDY_ll})}, {1, 2}, "", 100, 0, 2000,  true,  false,  label_met,               "Events"));
@@ -1408,6 +1409,13 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerUp(      "Z#rightarrow#nu#nu Trigger weight Up",      fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffUpMC");
     Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerDown(    "Z#rightarrow#nu#nu Trigger weight Down",    fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffDownMC");
 
+//ob 1b bins Znunu
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_bl_1b_bins(             "Z#rightarrow#nu#nu Njet+norm weight",       fileMap["ZJetsToNuNu"], "passLeptVeto;cntCSVSZinv=0;passBaselineNoTagZinv",      "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUUp_1b_bins(          "Z#rightarrow#nu#nu JEC Up",                 fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvJEUUp;cntCSVSZinv=0;passBaselineNoTagZinv", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUDown_1b_bins(        "Z#rightarrow#nu#nu JEC Down",               fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvJEUDn;cntCSVSZinv=0;passBaselineNoTagZinv", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUUp_1b_bins(          "Z#rightarrow#nu#nu MEC Up",                 fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvMEUUp;cntCSVSZinv=0;passBaselineNoTagZinv", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUDown_1b_bins(        "Z#rightarrow#nu#nu MEC Down",               fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineZinvMEUDn;cntCSVSZinv=0;passBaselineNoTagZinv", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+
     Plotter::DatasetSummary dsDY_nunu_njetnorm_btagCentral(    "Z#rightarrow#nu#nu b tag Central",      fileMap["ZJetsToNuNu"], "passLeptVeto",   "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffMC");//"bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffMC");
     Plotter::DatasetSummary dsDY_nunu_njetnorm_btagUp(    "Z#rightarrow#nu#nu b tag Up",      fileMap["ZJetsToNuNu"], "passLeptVeto",   "bTagSF_EventWeightSimple_Up;nJetWgtDYZ;normWgt0b;TriggerEffMC");//"bTagSF_EventWeightSimple_Up;nJetWgtDYZ;normWgt0b;TriggerEffMC");
     Plotter::DatasetSummary dsDY_nunu_njetnorm_btagDn(    "Z#rightarrow#nu#nu b tag Down",    fileMap["ZJetsToNuNu"], "passLeptVeto",   "bTagSF_EventWeightSimple_Down;nJetWgtDYZ;normWgt0b;TriggerEffMC");//"bTagSF_EventWeightSimple_Down;nJetWgtDYZ;normWgt0b;TriggerEffMC");
@@ -1463,10 +1471,24 @@ int main(int argc, char* argv[])
     Plotter::DataCollection JEU_nSearchBin(      "single", {{"nSearchBin",    dsDY_nunu_njetnorm_bl}, {"nSearchBinJEUUp", dsDY_nunu_njetnorm_JEUUp}, {"nSearchBinJEUDn", dsDY_nunu_njetnorm_JEUDown}  });
     Plotter::DataCollection MEU_nSearchBin(      "single", {{"nSearchBin",    dsDY_nunu_njetnorm_bl}, {"nSearchBinMEUUp", dsDY_nunu_njetnorm_MEUUp}, {"nSearchBinMEUDn", dsDY_nunu_njetnorm_MEUDown}  });
     Plotter::DataCollection trigger_nSearchBin( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBin",    dsDY_nunu_njetnorm}  });
+        Plotter::DataCollection trigger_nSearchBin_1b_bins( "single", {{"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm}  });
     Plotter::DataCollection btag_nSearchBin(    "single", {{"nSearchBin", dsDY_nunu_njetnorm_btagCentral}, {"nSearchBin", dsDY_nunu_njetnorm_btagUp}, {"nSearchBin", dsDY_nunu_njetnorm_btagDn}});
     Plotter::DataCollection bmistag_nSearchBin( "single", {{"nSearchBin", dsDY_nunu_njetnorm_btagCentral}, {"nSearchBin", dsDY_nunu_njetnorm_bmistagUp}, {"nSearchBin", dsDY_nunu_njetnorm_bmistagDn}});
     Plotter::DataCollection ISR_nSearchBin(    "single", {{"nSearchBin", dsDY_nunu_njetnorm_ISRCentral}, {"nSearchBin", dsDY_nunu_njetnorm_ISRUp}, {"nSearchBin", dsDY_nunu_njetnorm_ISRDn}});
 
+    //ob 1b bins Znunu cross check
+        Plotter::DataCollection btag_nSearchBin_1b_bins(    "single", {{"nSearchBin_1b_bins", dsDY_nunu_njetnorm_btagCentral}, {"nSearchBin_1b_bins", dsDY_nunu_njetnorm_btagUp}, {"nSearchBin_1b_bins", dsDY_nunu_njetnorm_btagDn}});
+    Plotter::DataCollection bmistag_nSearchBin_1b_bins( "single", {{"nSearchBin_1b_bins", dsDY_nunu_njetnorm_btagCentral}, {"nSearchBin_1b_bins", dsDY_nunu_njetnorm_bmistagUp}, {"nSearchBin_1b_bins", dsDY_nunu_njetnorm_bmistagDn}});
+    Plotter::DataCollection ISR_nSearchBin_1b_bins(    "single", {{"nSearchBin_1b_bins", dsDY_nunu_njetnorm_ISRCentral}, {"nSearchBin_1b_bins", dsDY_nunu_njetnorm_ISRUp}, {"nSearchBin_1b_bins", dsDY_nunu_njetnorm_ISRDn}});
+
+    Plotter::DataCollection pdfw_nSearchBin_1b_bins(     "single", {{"nSearchBin_1b_bins",    dsDY_nunu_njetnorm}, {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_PDFUp},   {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_PDFDown}    });
+
+    Plotter::DataCollection njetw_nSearchBin_1b_bins(    "single", {{"nSearchBin_1b_bins",    dsDY_nunu_njet},     {"nSearchBin_1b_bins",    dsDY_nunu}  });
+    Plotter::DataCollection scalew_nSearchBin_1b_bins(   "single", {{"nSearchBin_1b_bins",    dsDY_nunu_njetnorm}, {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_scaleUp}, {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_scaleDown}  });
+
+    Plotter::DataCollection JEU_nSearchBin_1b_bins(      "single", {{"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_bl_1b_bins}, {"nSearchBinJEUUp_1b_bins", dsDY_nunu_njetnorm_JEUUp_1b_bins}, {"nSearchBinJEUDn_1b_bins", dsDY_nunu_njetnorm_JEUDown_1b_bins}  });
+    Plotter::DataCollection MEU_nSearchBin_1b_bins(      "single", {{"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_bl_1b_bins}, {"nSearchBinMEUUp_1b_bins", dsDY_nunu_njetnorm_MEUUp_1b_bins}, {"nSearchBinMEUDn_1b_bins", dsDY_nunu_njetnorm_MEUDown_1b_bins}  });
+    //////////////////////
     vh.push_back(PHS("NJetWgt_nSearchBin",            {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("NJetWgt_nSearchBin_log",        {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   true,  false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("NJetWgt_nSearchBin_pull",       {njetw_nSearchBin}, {2, 1}, "passBaselineZinv",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", false));
@@ -1479,10 +1501,27 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("syst_JESUncert_nSearchBin",     {JEU_nSearchBin},   {2, 1}, "",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("syst_MESUncert_nSearchBin",     {MEU_nSearchBin},   {2, 1}, "",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("TriggerWgt_nSearchBin",         {trigger_nSearchBin},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    //1b bins with ob
+        vh.push_back(PHS("NJetWgt_nSearchBin_1b_bins",            {njetw_nSearchBin_1b_bins}, {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin_log_1b_bins",        {njetw_nSearchBin_1b_bins}, {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",        NSB_1b_bins,  0,     NSB_1b_bins,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin_pull_1b_bins",       {njetw_nSearchBin_1b_bins}, {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("NJetWgt_nSearchBin_pull_log_1b_bins",   {njetw_nSearchBin_1b_bins}, {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",        NSB_1b_bins,  0,     NSB_1b_bins,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("syst_ScaleWgt_nSearchBin_1b_bins",      {scalew_nSearchBin_1b_bins},{2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",        NSB_1b_bins,  0,     NSB_1b_bins,   false, true,   "Search Bin",     "Events", true));
+    vh.push_back(PHS("syst_PDFWgt_nSearchBin_1b_bins",        {pdfw_nSearchBin_1b_bins},  {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv;NNPDF_From_Median_Up>0;NNPDF_From_Median_Up<2;NNPDF_From_Median_Down>0;NNPDF_From_Median_Down<2",        NSB_1b_bins,  0,     NSB_1b_bins,   false, true,   "Search Bin",     "Events", true));
+
+    vh.push_back(PHS("zinv_PDFWgts_1b_bins",        {pdfw_zinv},  {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",        100,  0,     2,   false, true,   "Weight",     "Events", true));
+
+    vh.push_back(PHS("syst_JESUncert_nSearchBin_1b_bins",     {JEU_nSearchBin_1b_bins},   {2, 1}, "",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("syst_MESUncert_nSearchBin_1b_bins",     {MEU_nSearchBin_1b_bins},   {2, 1}, "",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nSearchBin_1b_bins",         {trigger_nSearchBin_1b_bins},  {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     //b-tagging uncertainty
     vh.push_back(PHS("BTagUncert_nSearchBin",         {btag_nSearchBin},     {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("ISRUncert_nSearchBin",         {ISR_nSearchBin},     {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("BMistagUncert_nSearchBin",      {bmistag_nSearchBin},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    //obuncertainties:
+        vh.push_back(PHS("BTagUncert_nSearchBin_1b_bins",         {btag_nSearchBin_1b_bins},     {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",   NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("ISRUncert_nSearchBin_1b_bins",         {ISR_nSearchBin_1b_bins},     {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",   NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("BMistagUncert_nSearchBin_1b_bins",      {bmistag_nSearchBin_1b_bins},  {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",   NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
     // PDF and scale
     vh.push_back(PHS("DataMCwwscale_SingleMuon_nj_0b_blnotag",  {scalew_nj},    {1, 2}, "cntCSVSZinv=0;passBaselineNoTagZinv", 20, 0, 20,   true, false,  label_nj,    ""));
     vh.push_back(PHS("DataMCwwpdf_SingleMuon_nj_0b_blnotag",    {pdfw_nj},      {1, 2}, "cntCSVSZinv=0;passBaselineNoTagZinv", 20, 0, 20,   true, false,  label_nj,    ""));
