@@ -169,19 +169,33 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dsWjInc(          "Wj HT<100",  fileMap["WJetsToLNuInc"],   "genHT<100",       "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;isr_Unc_Cent");
-    Plotter::DatasetSummary dstW(             "Single top", fileMap["tW"],              "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
-    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
-    Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
-    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    Plotter::DatasetSummary dstW(             "Single top", fileMap["SingleTopZinv"],   "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeightTopTag");
+    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeightTopTag");
+    Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeightTopTag");
+    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeightTopTag");
     Plotter::DatasetSummary dstthad(          "t#bar{t}",   fileMap["TTbarAll"],        "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dsQCD(            "QCD",        fileMap["QCD"],             "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dstthad_dummy(    "AllMC",      fileMap["TTbarAll"],        "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+
+    Plotter::DatasetSummary dsDY_met(             "DY",         fileMap["DYJetsToLL"],      "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsWj_met(             "W+Jets",     fileMap["WJetsToLNu"],      "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsDYInc_met(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "TriggerEffMC;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsWjInc_met(          "Wj HT<100",  fileMap["WJetsToLNuInc"],   "genHT<100",       "TriggerEffMC;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dstt2l_met(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central;_PUweightFactor;isr_Unc_Cent");
+    Plotter::DatasetSummary dstW_met(             "Single top", fileMap["SingleTopZinv"],   "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeightTopTag");
+    Plotter::DatasetSummary dsttZ_met(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeightTopTag");
+    Plotter::DatasetSummary dsVV_met(             "Diboson",    fileMap["Diboson"],         "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeightTopTag");
+    Plotter::DatasetSummary dsRare_met(           "Rare",       fileMap["Rare"],            "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeightTopTag");
+    Plotter::DatasetSummary dstthad_met(          "t#bar{t}",   fileMap["TTbarAll"],        "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsQCD_met(            "QCD",        fileMap["QCD"],             "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dstthad_dummy_met(    "AllMC",      fileMap["TTbarAll"],        "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_2l = {{dsDY, dsDYInc}, {dstt2l}, {dstW}, {dsttZ}, {dsVV}, {dsRare}};
-    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_1l = {{dstt2l}, {dsWj, dsWjInc}, {dsDY, dsDYInc}, {dstW}, {dsttZ}, {dsVV}, {dsRare}};
+    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_1l = {{dstt2l}, {dsWj, dsWjInc}, {dsDY, dsDYInc}, {dstW}, {dsQCD}, {dsttZ}, {dsVV}, {dsRare}};
+    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_1l_met = {{dstt2l_met}, {dsWj_met, dsWjInc_met}, {dsDY_met, dsDYInc_met}, {dstW_met}, {dsQCD_met}, {dsttZ_met}, {dsVV_met}, {dsRare_met}};
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_0l = {{dstthad}, {dsWj, dsWjInc}, {ds_Znunu}, {dsttZ}, {dsQCD}, {dstW}, {dsRare, dstW, dsVV} };
     std::vector<std::vector<Plotter::DatasetSummary>> All_MC_0l   = {{dstthad_dummy, dsWj, dsWjInc, ds_Znunu, dsttZ, dsQCD, dstW, dsVV, dsRare, dstW}};
 
-    //DYJetsToLL,WJetsToLNu,IncDY,WJetsToLNuInc,TTbarNoHad,tW,TTZ,Diboson,Rare,TTbarAll,QCD,TTbarAll
+    //DYJetsToLL,WJetsToLNu,IncDY,WJetsToLNuInc,TTbarNoHad,SingleTopZinv,TTZ,Diboson,Rare,QCD
 
 
     auto PDSCutBind = [](Plotter::DatasetSummary pds, std::string cuts) 
@@ -305,6 +319,13 @@ int main(int argc, char* argv[])
                 Plotter::DataCollection( "stack", var, stack_MC_1l),
             });
     };
+    auto vPDCMaker_DataMC_1l_met = [&](std::string var)
+    {
+        return std::vector<Plotter::DataCollection>({
+                Plotter::DataCollection( "data", var, {dsData_HTMHT}),
+                Plotter::DataCollection( "stack", var, stack_MC_1l_met),
+            });
+    };
     auto vPDCMaker_DataMC_2l = [&](std::string var)
     {
         return std::vector<Plotter::DataCollection>({
@@ -314,8 +335,9 @@ int main(int argc, char* argv[])
     };
     auto vPDCMaker_DataMC = [&](std::string var, int Nl)
     {
-        if(Nl == 1)      return vPDCMaker_DataMC_1l(var);
-        else if(Nl == 2) return vPDCMaker_DataMC_2l(var);
+        if(Nl == 1)       return vPDCMaker_DataMC_1l(var);
+        else if(Nl == 2)  return vPDCMaker_DataMC_2l(var);
+        else if(Nl == -1) return vPDCMaker_DataMC_1l_met(var);
         else             throw "BOB";
     };
 
@@ -339,126 +361,108 @@ int main(int argc, char* argv[])
 
     
     std::vector<std::pair<std::string, std::string>> cutslistData = {
-        {"SingleMu_topSel", "passSingleLep;passLeptVetoNoMu;passnJetsTopTag;passdPhisTopTag;HTTopTag>300;met>20"}, 
-        {"DoubleMu_noTop",  "passDoubleLep;passLeptVetoNoMu;passnJetsTopTag;passdPhisTopTag;HTTopTag>300"}, 
+        {"SingleMu_topSel_SingleMuDataset",       "passSingleLep;passLeptVetoNoMu;passnJetsTopTag;passdPhisTopTag;passBJetsTopTag;HTTopTag>200;met>100"}, 
+        {"SingleMu_topSel_METDataset",            "passSingleLep20;passLeptVetoNoMu;passnJetsTopTag;passdPhisTopTag;passBJetsTopTag;HTTopTag>300;met>250"}, 
+        {"DoubleMu_noTop",                        "passDoubleLep;passLeptVetoNoMu;passnJetsTopTag;passdPhisTopTag;HTTopTag>200"}, 
+        {"SingleMu_topSel_SingleMuDataset_comp",  "passSingleLep;passLeptVetoNoMu;passnJetsTopTag;passdPhisTopTag;passBJetsTopTag;HTTopTag>300;met>250"}, 
+        {"SingleMu_topSel_METDataset_comp",       "passSingleLep;passLeptVetoNoMu;passnJetsTopTag;passdPhisTopTag;passBJetsTopTag;HTTopTag>300;met>250"}, 
     };
 
-    for(auto& cuts : cutslistData)
-    {
-        //dumb hack
-        int Nl = 0;
-        if(cuts.first.find("SingleMu") != std::string::npos) Nl = 1;
-        else if(cuts.first.find("DoubleMu") != std::string::npos) Nl = 2;
-
-        for(std::string catagory : {"MVAvar_finalTop_", "MVAvar_notFinalTop_"})
-        {
-            //"cand_m", "j12_m", "j13_m", "j23_m", "j1_p", "j2_p", "j3_p", "dTheta12", "dTheta23", "dTheta13", "j1_CSV", "j2_CSV", "j3_CSV", "j1_QGL", "j2_QGL", "j3_QGL"
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "mTop",      vPDCMaker_DataMC(catagory + "cand_m",   Nl), {1, 2}, cuts.second + "",  25,   0, 300,    false,  false,  "M_{Top}",         "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "mJ12",      vPDCMaker_DataMC(catagory + "j12_m",    Nl), {1, 2}, cuts.second + "",  25,   0, 300,    false,  false,  "M(j1, j2)",       "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "mJ23",      vPDCMaker_DataMC(catagory + "j23_m",    Nl), {1, 2}, cuts.second + "",  25,   0, 300,    false,  false,  "M(j2, j3)",       "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "mJ13",      vPDCMaker_DataMC(catagory + "j13_m",    Nl), {1, 2}, cuts.second + "",  25,   0, 300,    false,  false,  "M(j1, j3)",       "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "pJ1",       vPDCMaker_DataMC(catagory + "j1_p",     Nl), {1, 2}, cuts.second + "",  25,   0, 200,    false,  false,  "p(j1)",           "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "pJ2",       vPDCMaker_DataMC(catagory + "j2_p",     Nl), {1, 2}, cuts.second + "",  25,   0, 200,    false,  false,  "p(j2)",           "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "pJ3",       vPDCMaker_DataMC(catagory + "j3_p",     Nl), {1, 2}, cuts.second + "",  25,   0, 200,    false,  false,  "p(j3)",           "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "dTheta12",  vPDCMaker_DataMC(catagory + "dTheta12", Nl), {1, 2}, cuts.second + "",  25,   0, 3.14,   false,  false,  "dTheta(J1, J2)",  "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "dTheta23",  vPDCMaker_DataMC(catagory + "dTheta23", Nl), {1, 2}, cuts.second + "",  25,   0, 3.14,   false,  false,  "dTheta(J2, J3)",  "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "dTheta13",  vPDCMaker_DataMC(catagory + "dTheta13", Nl), {1, 2}, cuts.second + "",  25,   0, 3.14,   false,  false,  "dTheta(J1, J3)",  "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "csv1",      vPDCMaker_DataMC(catagory + "j1_CSV",   Nl), {1, 2}, cuts.second + "",  25,   0,   1,    false,  false,  "CSV",             "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "csv2",      vPDCMaker_DataMC(catagory + "j2_CSV",   Nl), {1, 2}, cuts.second + "",  25,   0,   1,    false,  false,  "CSV",             "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "csv3",      vPDCMaker_DataMC(catagory + "j3_CSV",   Nl), {1, 2}, cuts.second + "",  25,   0,   1,    false,  false,  "CSV",             "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "qgl1",      vPDCMaker_DataMC(catagory + "j1_QGL",   Nl), {1, 2}, cuts.second + "",  25,   0,   1,    false,  false,  "QGL",             "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "qgl2",      vPDCMaker_DataMC(catagory + "j2_QGL",   Nl), {1, 2}, cuts.second + "",  25,   0,   1,    false,  false,  "QGL",             "Events"));
-            vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" "qgl3",      vPDCMaker_DataMC(catagory + "j3_QGL",   Nl), {1, 2}, cuts.second + "",  25,   0,   1,    false,  false,  "QGL",             "Events"));
-        }
-    
-        vh.push_back(PHS("DataMC_" + cuts.first + "TopProp_" "nTops",         vPDCMaker_DataMC("vTopsNewMVA(size)", Nl), {1, 2}, cuts.second + "",   8,   0,    8,     true,  false,  "nTops",         "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "TopProp_" "pt",            vPDCMaker_DataMC("vTopsNewMVA(pt)",   Nl), {1, 2}, cuts.second + "",  25,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "TopProp_" "M",             vPDCMaker_DataMC("vTopsNewMVA(M)",    Nl), {1, 2}, cuts.second + "",  25,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "TopProp_" "eta",           vPDCMaker_DataMC("vTopsNewMVA(eta)",  Nl), {1, 2}, cuts.second + "",  25,  -3,    3,    false,  false,  "#eta",          "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "TopProp_" "discriminator", vPDCMaker_DataMC("discriminators",    Nl), {1, 2}, cuts.second + "",  50,   0,    1,    false,  false,  "discriminator", "Events"));
-
-        vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_finalTop_"    "dRMax",     vPDCMaker_DataMC("dijetTopFinal(dRMax)",    Nl), {1, 2}, cuts.second + "",  25, 0, 2.0,   false,  false,  "#DeltaR Max",                    "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_notFinalTop_" "dRMax",     vPDCMaker_DataMC("dijetTopNotFinal(dRMax)", Nl), {1, 2}, cuts.second + "",  25, 0, 2.0,   false,  false,  "#DeltaR Max",                    "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_finalTop_"    "massRatio", vPDCMaker_DataMC("dijetM2M3FinalTop",       Nl), {1, 2}, cuts.second + "",  25, 0, 2.0,   false,  false,  "(M_{23}/M_{123})/(M_{W}/M_{t})", "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_notFinalTop_" "massRatio", vPDCMaker_DataMC("dijetM2M3NotFinalTop",    Nl), {1, 2}, cuts.second + "",  25, 0, 2.0,   false,  false,  "(M_{23}/M_{123})/(M_{W}/M_{t})", "Events"));
-
-        vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_finalTop_" "nTops",  vPDCMaker_DataMC("dijetTopFinal(size)", Nl), {1, 2}, cuts.second + "",   8,   0,    8,     true,  false,  "nTops",         "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_finalTop_" "pt",     vPDCMaker_DataMC("dijetTopFinal(pt)",   Nl), {1, 2}, cuts.second + "",  25,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_finalTop_" "M",      vPDCMaker_DataMC("dijetTopFinal(M)",    Nl), {1, 2}, cuts.second + "",  25,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_finalTop_" "eta",    vPDCMaker_DataMC("dijetTopFinal(eta)",  Nl), {1, 2}, cuts.second + "",  25,  -3,    3,    false,  false,  "#eta",          "Events"));
-
-        vh.push_back(PHS("DataMC_" + cuts.first + "_Monojet_finalTop_" "nTops",  vPDCMaker_DataMC("topMonojetMVA(size)", Nl), {1, 2}, cuts.second + "",   8,   0,    8,     true,  false,  "nTops",         "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_Monojet_finalTop_" "pt",     vPDCMaker_DataMC("topMonojetMVA(pt)",   Nl), {1, 2}, cuts.second + "",  25,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_Monojet_finalTop_" "M",      vPDCMaker_DataMC("topMonojetMVA(M)",    Nl), {1, 2}, cuts.second + "",  25,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_Monojet_finalTop_" "eta",    vPDCMaker_DataMC("topMonojetMVA(eta)",  Nl), {1, 2}, cuts.second + "",  25,  -3,    3,    false,  false,  "#eta",          "Events"));
-
-        vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_Top_T_PT_"     "pt",               vPDCMaker_DataMC("puppiLVectight_top(pt)",   Nl), {1, 2}, cuts.second,  20, 0, 1200,  true, false,  "top p_{T} [GeV]",         "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_Top_T_Num_"    "nTops",            vPDCMaker_DataMC("puppiLVectight_top(size)", Nl), {1, 2}, cuts.second,   5, 0,    5, false, false,  "N_{t}",                   "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_Top_L_PT_"     "pt",               vPDCMaker_DataMC("puppiLVecLoose_top(pt)",   Nl), {1, 2}, cuts.second,  20, 0, 1200,  true, false,  "top p_{T} [GeV]",         "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_Top_L_Num_"    "nTops",            vPDCMaker_DataMC("puppiLVecLoose_top(size)", Nl), {1, 2}, cuts.second,   5, 0,    5, false, false,  "N_{t}",                   "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_w_T_PT_"       "PT",               vPDCMaker_DataMC("puppiLVectight_w(pt)",     Nl), {1, 2}, cuts.second,  50, 0, 1200,  true, false,  "W p_{T} [GeV]",           "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_w_T_Num_"      "nW",               vPDCMaker_DataMC("puppiLVectight_w(size)",   Nl), {1, 2}, cuts.second,   5, 0,    5, false, false,  "N_{W}",                   "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_w_L_Num_"      "nW",               vPDCMaker_DataMC("puppiLVecLoose_w(size)",   Nl), {1, 2}, cuts.second,   5, 0,    5, false, false,  "N_{W}",                   "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_w_L_PT_"       "PT",               vPDCMaker_DataMC("puppiLVecLoose_w(pt)",     Nl), {1, 2}, cuts.second,  50, 0, 1200,  true, false,  "W p_{T} [GeV]",           "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_puppiTau21_"         "tau21_W",          vPDCMaker_DataMC("puppitau2Dtau1",           Nl), {1, 2}, cuts.second, 100, 0,    1, false, false,  "N-subjettines #tau_{21}", "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_puppiTau32_"         "tau32_Top",        vPDCMaker_DataMC("puppitau3Dtau2",           Nl), {1, 2}, cuts.second, 100, 0,    1, false, false,  "N-subjettines #tau_{32}", "Events")); 
-        vh.push_back(PHS("DataMC_" + cuts.first + "_puppitau21_SDM_"     "SoftDropMass_W",   vPDCMaker_DataMC("puppitau2Dtau1_SDM",       Nl), {1, 2}, cuts.second,  10, 0,  200, false, false,  "m [GeV]",                 "Events"));
-        vh.push_back(PHS("DataMC_" + cuts.first + "_puppitau32_SDM_"     "SoftDropMass_Top", vPDCMaker_DataMC("puppitau3Dtau2_SDM",       Nl), {1, 2}, cuts.second,  10, 0,  200, false, false,  "m [GeV]",                 "Events"));
-    }    
-    
-    //std::vector<std::pair<std::string, std::string>> cutslistData_2l = {
-    //
-    //    //{"DoubleMu_lowMet",   "passDoubleLep;passLeptVetoNoMu;passBJetsTopTag;passnJetsTopTag;!passMETTopTag"},
-    //    //{"DoubleMu_nJet",     "passDoubleLep;passLeptVetoNoMu;passnJetsTopTag"},
-    //};
-    //
-    //for(auto& cuts : cutslistData_2l)
+    //for(auto& cuts : cutslistData)
     //{
+    //    //dumb hack
+    //    int Nl = 0;
+    //    if(cuts.first.find("SingleMu") != std::string::npos)
+    //    {
+    //        Nl = 1;
+    //        if(cuts.first.find("METDataset") != std::string::npos) Nl = -1;
+    //    }
+    //    else if(cuts.first.find("DoubleMu") != std::string::npos) Nl = 2;
+    //
     //    for(std::string catagory : {"MVAvar_finalTop_", "MVAvar_notFinalTop_"})
     //    {
     //        //"cand_m", "j12_m", "j13_m", "j23_m", "j1_p", "j2_p", "j3_p", "dTheta12", "dTheta23", "dTheta13", "j1_CSV", "j2_CSV", "j3_CSV", "j1_QGL", "j2_QGL", "j3_QGL"
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "mTop",      vPDCMaker_DataMC_2l(catagory + "cand_m"),    {1, 2}, cuts.second + "",  50,   0, 300,    false,  false,  "M_{Top}",         "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "mJ12",      vPDCMaker_DataMC_2l(catagory + "j12_m"),     {1, 2}, cuts.second + "",  50,   0, 300,    false,  false,  "M(j1, j2)",       "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "mJ23",      vPDCMaker_DataMC_2l(catagory + "j23_m"),     {1, 2}, cuts.second + "",  50,   0, 300,    false,  false,  "M(j2, j3)",       "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "mJ13",      vPDCMaker_DataMC_2l(catagory + "j13_m"),     {1, 2}, cuts.second + "",  50,   0, 300,    false,  false,  "M(j1, j3)",       "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "pJ1",       vPDCMaker_DataMC_2l(catagory + "j1_p"),      {1, 2}, cuts.second + "",  50,   0, 250,    false,  false,  "p(j1)",           "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "pJ2",       vPDCMaker_DataMC_2l(catagory + "j2_p"),      {1, 2}, cuts.second + "",  50,   0, 250,    false,  false,  "p(j2)",           "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "pJ3",       vPDCMaker_DataMC_2l(catagory + "j3_p"),      {1, 2}, cuts.second + "",  50,   0, 250,    false,  false,  "p(j3)",           "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "dTheta12",  vPDCMaker_DataMC_2l(catagory + "dTheta12"),  {1, 2}, cuts.second + "",  25,   0, 3.14,   false,  false,  "dTheta(J1, J2)",  "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "dTheta23",  vPDCMaker_DataMC_2l(catagory + "dTheta23"),  {1, 2}, cuts.second + "",  25,   0, 3.14,   false,  false,  "dTheta(J2, J3)",  "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "dTheta13",  vPDCMaker_DataMC_2l(catagory + "dTheta13"),  {1, 2}, cuts.second + "",  25,   0, 3.14,   false,  false,  "dTheta(J1, J3)",  "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "csv1",      vPDCMaker_DataMC_2l(catagory + "j1_CSV"),    {1, 2}, cuts.second + "",  50,   0,   1,    false,  false,  "CSV",             "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "csv2",      vPDCMaker_DataMC_2l(catagory + "j2_CSV"),    {1, 2}, cuts.second + "",  50,   0,   1,    false,  false,  "CSV",             "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "csv3",      vPDCMaker_DataMC_2l(catagory + "j3_CSV"),    {1, 2}, cuts.second + "",  50,   0,   1,    false,  false,  "CSV",             "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "qgl1",      vPDCMaker_DataMC_2l(catagory + "j1_QGL"),    {1, 2}, cuts.second + "",  50,   0,   1,    false,  false,  "QGL",             "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "qgl2",      vPDCMaker_DataMC_2l(catagory + "j2_QGL"),    {1, 2}, cuts.second + "",  50,   0,   1,    false,  false,  "QGL",             "Events"));
-    //        vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_" + "qgl3",      vPDCMaker_DataMC_2l(catagory + "j3_QGL"),    {1, 2}, cuts.second + "",  50,   0,   1,    false,  false,  "QGL",             "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "mTop",      vPDCMaker_DataMC(catagory + "cand_m",   Nl), {1, 2}, cuts.second + "",  25,   0, 300,    false,  false,  "M_{Top}",         "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "mJ12",      vPDCMaker_DataMC(catagory + "j12_m",    Nl), {1, 2}, cuts.second + "",  25,   0, 300,    false,  false,  "M(j1, j2)",       "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "mJ23",      vPDCMaker_DataMC(catagory + "j23_m",    Nl), {1, 2}, cuts.second + "",  25,   0, 300,    false,  false,  "M(j2, j3)",       "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "mJ13",      vPDCMaker_DataMC(catagory + "j13_m",    Nl), {1, 2}, cuts.second + "",  25,   0, 300,    false,  false,  "M(j1, j3)",       "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "pJ1",       vPDCMaker_DataMC(catagory + "j1_p",     Nl), {1, 2}, cuts.second + "",  25,   0, 200,    false,  false,  "p(j1)",           "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "pJ2",       vPDCMaker_DataMC(catagory + "j2_p",     Nl), {1, 2}, cuts.second + "",  25,   0, 200,    false,  false,  "p(j2)",           "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "pJ3",       vPDCMaker_DataMC(catagory + "j3_p",     Nl), {1, 2}, cuts.second + "",  25,   0, 200,    false,  false,  "p(j3)",           "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "dTheta12",  vPDCMaker_DataMC(catagory + "dTheta12", Nl), {1, 2}, cuts.second + "",  25,   0, 3.14,   false,  false,  "dTheta(J1, J2)",  "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "dTheta23",  vPDCMaker_DataMC(catagory + "dTheta23", Nl), {1, 2}, cuts.second + "",  25,   0, 3.14,   false,  false,  "dTheta(J2, J3)",  "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "dTheta13",  vPDCMaker_DataMC(catagory + "dTheta13", Nl), {1, 2}, cuts.second + "",  25,   0, 3.14,   false,  false,  "dTheta(J1, J3)",  "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "csv1",      vPDCMaker_DataMC(catagory + "j1_CSV",   Nl), {1, 2}, cuts.second + "",  25,   0,   1,    false,  false,  "CSV 1",           "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "csv2",      vPDCMaker_DataMC(catagory + "j2_CSV",   Nl), {1, 2}, cuts.second + "",  25,   0,   1,    false,  false,  "CSV 2",           "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "csv3",      vPDCMaker_DataMC(catagory + "j3_CSV",   Nl), {1, 2}, cuts.second + "",  25,   0,   1,    false,  false,  "CSV 3",           "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "qgl1",      vPDCMaker_DataMC(catagory + "j1_QGL",   Nl), {1, 2}, cuts.second + "",  25,   0,   1,    false,  false,  "QGL 1",           "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "qgl2",      vPDCMaker_DataMC(catagory + "j2_QGL",   Nl), {1, 2}, cuts.second + "",  25,   0,   1,    false,  false,  "QGL 2",           "Events"));
+    //        vh.push_back(PHS("DataMC_" + cuts.first + "_" + catagory + "qgl3",      vPDCMaker_DataMC(catagory + "j3_QGL",   Nl), {1, 2}, cuts.second + "",  25,   0,   1,    false,  false,  "QGL 3",           "Events"));
     //    }
     //
-    //    vh.push_back(PHS("DataMC_TopProp_" + cuts.first + "_" + "nTops",         vPDCMaker_DataMC_2l("vTopsNewMVA(size)"),  {1, 2}, cuts.second + "",   8,   0,    8,    false,  false,  "nTops",         "Events"));
-    //    vh.push_back(PHS("DataMC_TopProp_" + cuts.first + "_" + "pt",            vPDCMaker_DataMC_2l("vTopsNewMVA(pt)"),    {1, 2}, cuts.second + "",  50,   0, 1000,     true,  false,  "pt [GeV]",      "Events"));
-    //    vh.push_back(PHS("DataMC_TopProp_" + cuts.first + "_" + "M",             vPDCMaker_DataMC_2l("vTopsNewMVA(M)"),     {1, 2}, cuts.second + "",  50,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
-    //    vh.push_back(PHS("DataMC_TopProp_" + cuts.first + "_" + "eta",           vPDCMaker_DataMC_2l("vTopsNewMVA(eta)"),   {1, 2}, cuts.second + "",  50,  -3,    3,    false,  false,  "#eta",          "Events"));
-    //    vh.push_back(PHS("DataMC_TopProp_" + cuts.first + "_" + "discriminator", vPDCMaker_DataMC_2l("discriminators"),     {1, 2}, cuts.second + "",  50,   0,    1,    false,  false,  "discriminator", "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "TopProp_" "nTops",         vPDCMaker_DataMC("vTopsNewMVA(size)", Nl), {1, 2}, cuts.second + "",   8,   0,    8,     true,  false,  "nTops",         "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "TopProp_" "pt",            vPDCMaker_DataMC("vTopsNewMVA(pt)",   Nl), {1, 2}, cuts.second + "",  25,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "TopProp_" "M",             vPDCMaker_DataMC("vTopsNewMVA(M)",    Nl), {1, 2}, cuts.second + "",  25,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "TopProp_" "eta",           vPDCMaker_DataMC("vTopsNewMVA(eta)",  Nl), {1, 2}, cuts.second + "",  25,  -3,    3,    false,  false,  "#eta",          "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "TopProp_" "discriminator", vPDCMaker_DataMC("discriminators",    Nl), {1, 2}, cuts.second + "",  50,   0,    1,    false,  false,  "discriminator", "Events"));
     //
-    //    vh.push_back(PHS("DataMC_Dijet_finalTop_"   + cuts.first + "_dRMax",       vPDCMaker_DataMC_2l("dijetDrFinalTop"),      {1, 2}, cuts.second + "",  100, 0, 2.0,   false,  false,  "#DeltaR Max",                    "Events"));
-    //    vh.push_back(PHS("DataMC_Dijet_notFinalTop" + cuts.first + "_dRMax",       vPDCMaker_DataMC_2l("dijetDrNotFinalTop"),   {1, 2}, cuts.second + "",  100, 0, 2.0,   false,  false,  "#DeltaR Max",                    "Events"));
-    //    vh.push_back(PHS("DataMC_Dijet_finalTop"    + cuts.first + "_massRatio",   vPDCMaker_DataMC_2l("dijetM2M3FinalTop"),    {1, 2}, cuts.second + "",  100, 0, 2.0,   false,  false,  "(M_{23}/M_{123})/(M_{W}/M_{t})", "Events"));
-    //    vh.push_back(PHS("DataMC_Dijet_notFinalTop" + cuts.first + "_massRatio",   vPDCMaker_DataMC_2l("dijetM2M3NotFinalTop"), {1, 2}, cuts.second + "",  100, 0, 2.0,   false,  false,  "(M_{23}/M_{123})/(M_{W}/M_{t})", "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_finalTop_"    "dRMax",     vPDCMaker_DataMC("dijetTopFinal(dRMax)",    Nl), {1, 2}, cuts.second + "",  25, 0, 2.0,   false,  false,  "#DeltaR Max",                    "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_notFinalTop_" "dRMax",     vPDCMaker_DataMC("dijetTopNotFinal(dRMax)", Nl), {1, 2}, cuts.second + "",  25, 0, 2.0,   false,  false,  "#DeltaR Max",                    "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_finalTop_"    "massRatio", vPDCMaker_DataMC("dijetM2M3FinalTop",       Nl), {1, 2}, cuts.second + "",  25, 0, 2.0,   false,  false,  "(M_{23}/M_{123})/(M_{W}/M_{t})", "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_notFinalTop_" "massRatio", vPDCMaker_DataMC("dijetM2M3NotFinalTop",    Nl), {1, 2}, cuts.second + "",  25, 0, 2.0,   false,  false,  "(M_{23}/M_{123})/(M_{W}/M_{t})", "Events"));
     //
-    //    vh.push_back(PHS("DataMC_puppi_Top_T_PT_"     + cuts.first + "_" + "pt",               vPDCMaker_DataMC_2l("puppiLVectight_top(pt)"),   {1, 2}, cuts.second, 20, 0, 1200,  true, false,  "top p_{T} [GeV]",         "Events"));
-    //    vh.push_back(PHS("DataMC_puppi_Top_T_Num_"    + cuts.first + "_" + "nTops",            vPDCMaker_DataMC_2l("puppiLVectight_top(size)"), {1, 2}, cuts.second, 5, 0, 5,     false, false,  "N_{t}",                   "Events")); 
-    //    vh.push_back(PHS("DataMC_puppi_Top_L_PT_"     + cuts.first + "_" + "pt",               vPDCMaker_DataMC_2l("puppiLVecLoose_top(pt)"),   {1, 2}, cuts.second, 20, 0, 1200,  true, false,  "top p_{T} [GeV]",         "Events"));
-    //    vh.push_back(PHS("DataMC_puppi_Top_L_Num_"    + cuts.first + "_" + "nTops",            vPDCMaker_DataMC_2l("puppiLVecLoose_top(size)"), {1, 2}, cuts.second, 5, 0, 5,     false, false,  "N_{t}",                   "Events"));
-    //    vh.push_back(PHS("DataMC_puppi_w_T_PT_"       + cuts.first + "_" + "pt",               vPDCMaker_DataMC_2l("puppiLVectight_w(pt)"),     {1, 2}, cuts.second, 50, 0, 1200,  true, false,  "W p_{T} [GeV]",           "Events"));
-    //    vh.push_back(PHS("DataMC_puppi_w_T_Num_"      + cuts.first + "_" + "nW",               vPDCMaker_DataMC_2l("puppiLVectight_w(size)"),   {1, 2}, cuts.second, 5, 0, 5,     false, false,  "N_{W}",                   "Events"));
-    //    vh.push_back(PHS("DataMC_puppi_w_L_Num_"      + cuts.first + "_" + "nW",               vPDCMaker_DataMC_2l("puppiLVecLoose_w(size)"),   {1, 2}, cuts.second, 5, 0, 5,     false, false,  "N_{W}",                   "Events"));
-    //    vh.push_back(PHS("DataMC_puppi_w_L_PT_"       + cuts.first + "_" + "pt",               vPDCMaker_DataMC_2l("puppiLVecLoose_w(pt)"),     {1, 2}, cuts.second, 50, 0, 1200,  true, false,  "W p_{T} [GeV]",           "Events")); 
-    //    vh.push_back(PHS("DataMC_puppiTau21_"         + cuts.first + "_" + "tau21_W",          vPDCMaker_DataMC_2l("puppitau2Dtau1"),           {1, 2}, cuts.second, 100, 0, 1,   false, false,  "N-subjettines \tau_{21}", "Events"));
-    //    vh.push_back(PHS("DataMC_puppiTau32_"         + cuts.first + "_" + "tau32_Top",        vPDCMaker_DataMC_2l("puppitau3Dtau2"),           {1, 2}, cuts.second, 100, 0, 1,   false, false,  "N-subjettines \tau_{32}", "Events"));
-    //    vh.push_back(PHS("DataMC_puppi_SDM_"          + cuts.first + "_" + "SoftDropMass_W",   vPDCMaker_DataMC_2l("puppitau2Dtau1_SDM"),       {1, 2}, cuts.second, 10, 0, 200,  false, false,  "m [GeV]",                 "Events"));
-    //    vh.push_back(PHS("DataMC_puppi_SDM_"          + cuts.first + "_" + "SoftDropMass_Top", vPDCMaker_DataMC_2l("puppitau3Dtau2_SDM"),       {1, 2}, cuts.second, 10, 0, 200,  false, false,  "m [GeV]",                 "Events"));
-    //}
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Trijet_finalTop_" "nTops",  vPDCMaker_DataMC("trijetTopFinal(size)", Nl), {1, 2}, cuts.second + "",   8,   0,    8,     true,  false,  "nTops",         "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Trijet_finalTop_" "pt",     vPDCMaker_DataMC("trijetTopFinal(pt)",   Nl), {1, 2}, cuts.second + "",  25,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Trijet_finalTop_" "M",      vPDCMaker_DataMC("trijetTopFinal(M)",    Nl), {1, 2}, cuts.second + "",  25,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Trijet_finalTop_" "eta",    vPDCMaker_DataMC("trijetTopFinal(eta)",  Nl), {1, 2}, cuts.second + "",  25,  -3,    3,    false,  false,  "#eta",          "Events"));
+    //
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_finalTop_" "nTops",  vPDCMaker_DataMC("dijetTopFinal(size)", Nl), {1, 2}, cuts.second + "",   8,   0,    8,     true,  false,  "nTops",         "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_finalTop_" "pt",     vPDCMaker_DataMC("dijetTopFinal(pt)",   Nl), {1, 2}, cuts.second + "",  25,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_finalTop_" "M",      vPDCMaker_DataMC("dijetTopFinal(M)",    Nl), {1, 2}, cuts.second + "",  25,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Dijet_finalTop_" "eta",    vPDCMaker_DataMC("dijetTopFinal(eta)",  Nl), {1, 2}, cuts.second + "",  25,  -3,    3,    false,  false,  "#eta",          "Events"));
+    //
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Monojet_finalTop_" "nTops",  vPDCMaker_DataMC("topMonojetMVA(size)", Nl), {1, 2}, cuts.second + "",   8,   0,    8,     true,  false,  "nTops",         "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Monojet_finalTop_" "pt",     vPDCMaker_DataMC("topMonojetMVA(pt)",   Nl), {1, 2}, cuts.second + "",  25,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Monojet_finalTop_" "M",      vPDCMaker_DataMC("topMonojetMVA(M)",    Nl), {1, 2}, cuts.second + "",  25,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_Monojet_finalTop_" "eta",    vPDCMaker_DataMC("topMonojetMVA(eta)",  Nl), {1, 2}, cuts.second + "",  25,  -3,    3,    false,  false,  "#eta",          "Events"));
+    //
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_" "pt",     vPDCMaker_DataMC("rsys(pt)",   Nl), {1, 2}, cuts.second + "",  25,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_" "M",      vPDCMaker_DataMC("rsys(M)",    Nl), {1, 2}, cuts.second + "",  25,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_" "eta",    vPDCMaker_DataMC("rsys(eta)",  Nl), {1, 2}, cuts.second + "",  25,  -3,    3,    false,  false,  "#eta",          "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_" "nCand",  vPDCMaker_DataMC("rsysNb",     Nl), {1, 2}, cuts.second + "",   3,   0,    3,    false,  false,  "N_{b}",          "Events"));
+    //
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_1b1j_" "pt",     vPDCMaker_DataMC("rsys(pt)",   Nl), {1, 2}, cuts.second + ";rsysNj=1;rsysNb=1",  25,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_1b1j_" "M",      vPDCMaker_DataMC("rsys(M)",    Nl), {1, 2}, cuts.second + ";rsysNj=1;rsysNb=1",  25,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_1b1j_" "eta",    vPDCMaker_DataMC("rsys(eta)",  Nl), {1, 2}, cuts.second + ";rsysNj=1;rsysNb=1",  25,  -3,    3,    false,  false,  "#eta",          "Events"));
+    //
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_0b1j_" "pt",     vPDCMaker_DataMC("rsys(pt)",   Nl), {1, 2}, cuts.second + ";rsysNj=1;rsysNb=0",  25,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_0b1j_" "M",      vPDCMaker_DataMC("rsys(M)",    Nl), {1, 2}, cuts.second + ";rsysNj=1;rsysNb=0",  25,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_0b1j_" "eta",    vPDCMaker_DataMC("rsys(eta)",  Nl), {1, 2}, cuts.second + ";rsysNj=1;rsysNb=0",  25,  -3,    3,    false,  false,  "#eta",          "Events"));
+    //
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_1b2j_" "pt",     vPDCMaker_DataMC("rsys(pt)",   Nl), {1, 2}, cuts.second + ";rsysNj=2;rsysNb=1",  25,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_1b2j_" "M",      vPDCMaker_DataMC("rsys(M)",    Nl), {1, 2}, cuts.second + ";rsysNj=2;rsysNb=1",  25,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_1b2j_" "eta",    vPDCMaker_DataMC("rsys(eta)",  Nl), {1, 2}, cuts.second + ";rsysNj=2;rsysNb=1",  25,  -3,    3,    false,  false,  "#eta",          "Events"));
+    //
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_0b2j_" "pt",     vPDCMaker_DataMC("rsys(pt)",   Nl), {1, 2}, cuts.second + ";rsysNj=2;rsysNb=0",  25,   0, 1000,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_0b2j_" "M",      vPDCMaker_DataMC("rsys(M)",    Nl), {1, 2}, cuts.second + ";rsysNj=2;rsysNb=0",  25,   0,  300,    false,  false,  "pt [GeV]",      "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_rsys_0b2j_" "eta",    vPDCMaker_DataMC("rsys(eta)",  Nl), {1, 2}, cuts.second + ";rsysNj=2;rsysNb=0",  25,  -3,    3,    false,  false,  "#eta",          "Events"));
+    //
+    //
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_Top_T_PT_"     "pt",               vPDCMaker_DataMC("puppiLVectight_top(pt)",   Nl), {1, 2}, cuts.second,  20, 0, 1200,  true, false,  "top p_{T} [GeV]",         "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_Top_T_Num_"    "nTops",            vPDCMaker_DataMC("puppiLVectight_top(size)", Nl), {1, 2}, cuts.second,   5, 0,    5, false, false,  "N_{t}",                   "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_Top_L_PT_"     "pt",               vPDCMaker_DataMC("puppiLVecLoose_top(pt)",   Nl), {1, 2}, cuts.second,  20, 0, 1200,  true, false,  "top p_{T} [GeV]",         "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_Top_L_Num_"    "nTops",            vPDCMaker_DataMC("puppiLVecLoose_top(size)", Nl), {1, 2}, cuts.second,   5, 0,    5, false, false,  "N_{t}",                   "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_w_T_PT_"       "PT",               vPDCMaker_DataMC("puppiLVectight_w(pt)",     Nl), {1, 2}, cuts.second,  50, 0, 1200,  true, false,  "W p_{T} [GeV]",           "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_w_T_Num_"      "nW",               vPDCMaker_DataMC("puppiLVectight_w(size)",   Nl), {1, 2}, cuts.second,   5, 0,    5, false, false,  "N_{W}",                   "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_w_L_Num_"      "nW",               vPDCMaker_DataMC("puppiLVecLoose_w(size)",   Nl), {1, 2}, cuts.second,   5, 0,    5, false, false,  "N_{W}",                   "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_puppi_w_L_PT_"       "PT",               vPDCMaker_DataMC("puppiLVecLoose_w(pt)",     Nl), {1, 2}, cuts.second,  50, 0, 1200,  true, false,  "W p_{T} [GeV]",           "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_puppiTau21_"         "tau21_W",          vPDCMaker_DataMC("puppitau2Dtau1",           Nl), {1, 2}, cuts.second, 100, 0,    1, false, false,  "N-subjettines #tau_{21}", "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_puppiTau32_"         "tau32_Top",        vPDCMaker_DataMC("puppitau3Dtau2",           Nl), {1, 2}, cuts.second, 100, 0,    1, false, false,  "N-subjettines #tau_{32}", "Events")); 
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_puppitau21_SDM_"     "SoftDropMass_W",   vPDCMaker_DataMC("puppitau2Dtau1_SDM",       Nl), {1, 2}, cuts.second,  10, 0,  200, false, false,  "m [GeV]",                 "Events"));
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_puppitau32_SDM_"     "SoftDropMass_Top", vPDCMaker_DataMC("puppitau3Dtau2_SDM",       Nl), {1, 2}, cuts.second,  10, 0,  200, false, false,  "m [GeV]",                 "Events"));
+    //
+    //    vh.push_back(PHS("DataMC_" + cuts.first + "_mTLep", vPDCMaker_DataMC("mTLep",       Nl), {1, 2}, cuts.second,  50, 0,  500, false, false,  "m [GeV]",                 "Events"));
+    //}    
 
 
     std::vector<std::pair<std::string, std::string>> cutslist = {
@@ -466,12 +470,12 @@ int main(int argc, char* argv[])
         {"lowMet",   "passLeptVetoTopTag;passBJetsTopTag;passnJetsTopTag;!passMETTopTag"}
     };
     std::vector<std::pair<PDS, std::string>> pdsVec = {{ds_T1tttt, "T1tttt_1"}, {ds_T1tttt_2, "T1tttt_2"}, {ds_T2tt, "T2tt"}, {ds_T2tt_2, "T2tt_2"}, {ds_Znunu, "Znunu"}, {ds_ttbar1l, "ttbar1l"}};
-
+    
     for(auto& cuts : cutslist)
     {
         vh.push_back(PHS(cuts.first + "_nTops",    {PDCMaker("nTops")},       {1, 1}, cuts.second,  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
         vh.push_back(PHS(cuts.first + "_nTopsNew", {PDCMaker("nTopsNewMVA")}, {1, 1}, cuts.second,  10, 0, 10,  true,  true,  "N_{T}", "Norm Events"));
-
+    
         for(auto& pds : pdsVec)
         {
             vh.push_back(PHS(cuts.first + "_" + "nTops_"          + pds.second,  {PDCMaker_topProp(pds.first, -1, "size")},  {1, 1}, cuts.second + "",  10,   0, 10,    false,  false,  "N_{T}",             "Events"));
@@ -495,15 +499,15 @@ int main(int argc, char* argv[])
             vh.push_back(PHS(cuts.first + "_" + "tops_pt_"        + pds.second,  {PDCMaker_topMultComp(pds.first,  "pt")},   {1, 1}, cuts.second + "",  100, -5, 2000,  false,  false,  "p_{T} top [GeV]",   "Events"));
             vh.push_back(PHS(cuts.first + "_" + "tops_m_"         + pds.second,  {PDCMaker_topMultComp(pds.first,  "M")},    {1, 1}, cuts.second + "",  100, -5, 500,   false,  false,  "mass top [GeV]",    "Events"));
             vh.push_back(PHS(cuts.first + "_" + "tops_eta_"       + pds.second,  {PDCMaker_topMultComp(pds.first,  "eta")},  {1, 1}, cuts.second + "",  100, -5, 5,     false,  false,  "eta top",           "Events"));
-
+    
             //vh.push_back(PHS(cuts.first + "_" + "eff_eta_" + pds.second,  vPDCMaker_Eff(pds.first, "eta"),  {1, 1}, cuts.second + "",   20, -5,    5,     false,  false,  "top eta",          "Efficiency"));
             vh.push_back(PHS(cuts.first + "_" + "eff_pt_"  + pds.second,  vPDCMaker_Eff(pds.first, "pt"),   {1, 1}, cuts.second + "",   20,  0, 1000,     false,  false,  "top pt [GeV]",     "Efficiency"));
             //vh.push_back(PHS(cuts.first + "_" + "eff_m_"   + pds.second,  vPDCMaker_Eff(pds.first, "M"),    {1, 1}, cuts.second + "",   20,  0,  500,     false,  false,  "top mass [GeV]",   "Efficiency"));
-
+    
             //vh.push_back(PHS(cuts.first + "_" + "purity_eta_" + pds.second,  vPDCMaker_Purity(pds.first, "eta"),  {1, 1}, cuts.second + "",  100, -5,    5,     false,  false,  "top eta",          "Purity"));
             vh.push_back(PHS(cuts.first + "_" + "purity_pt_"  + pds.second,  vPDCMaker_Purity(pds.first, "pt"),   {1, 1}, cuts.second + "",   20,  0, 1000,     false,  false,  "top pt [GeV]",     "Purity"));
             //vh.push_back(PHS(cuts.first + "_" + "purity_m_"   + pds.second,  vPDCMaker_Purity(pds.first, "M"),    {1, 1}, cuts.second + "",  100,  0,  500,     false,  false,  "top mass [GeV]",   "Purity"));
-
+    
             vh.push_back(PHS("MVAVar_" + cuts.first + "_cand_m" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "cand_m")},    {1, 1}, cuts.second + "",  100, 0, 300,   false,  true,  "top mass [GeV]",   "Events"));
             vh.push_back(PHS("MVAVar_" + cuts.first + "_j12_m" + "_"     + pds.second,  {PDCMaker_distributions(pds.first,  "j12_m")},     {1, 1}, cuts.second + "",  100, 0, 200,   false,  true,  "dijet (12) mass [GeV]",   "Events"));
             vh.push_back(PHS("MVAVar_" + cuts.first + "_j23_m" + "_"     + pds.second,  {PDCMaker_distributions(pds.first,  "j23_m")},     {1, 1}, cuts.second + "",  100, 0, 200,   false,  true,  "dijet (23) mass [GeV]",   "Events"));
@@ -520,11 +524,11 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("MVAVar_" + cuts.first + "_j1_QGL" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "j1_QGL")},    {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j1 QGL",   "Events"));
             vh.push_back(PHS("MVAVar_" + cuts.first + "_j2_QGL" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "j2_QGL")},    {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j2 QGL",   "Events"));
             vh.push_back(PHS("MVAVar_" + cuts.first + "_j3_QGL" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "j3_QGL")},    {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j3 QGL",   "Events"));
-
+    
             vh.push_back(PHS("Dijet_" + cuts.first + "_dRMax" + "_"    + pds.second,  {PDC( "single", { {"dijetTopMatch(dRMax)",  PDSLabelBind(pds.first, "Gen Matched") }, {"dijetTopNoMatch(dRMax)",  PDSLabelBind(pds.first, "Not Gen Matched") } })},    {1, 1}, cuts.second + "",  100, 0, 2.0,   false,  true,  "#DeltaR Max",   "Events"));
-            vh.push_back(PHS("Dijet_" + cuts.first + "_massRatio" + "_"    + pds.second,  {PDC( "single", { {"dijetM2M3Match",  PDSLabelBind(pds.first, "Gen Matched") }, {"dijetM2M3NoMatch",  PDSLabelBind(pds.first, "Not Gen Matched") } })},    {1, 1}, cuts.second + "",  100, 0, 2.0,   false,  true,  "M_{23}/M_{123}",   "Events"));
+            vh.push_back(PHS("Dijet_" + cuts.first + "_massRatio" + "_"    + pds.second,  {PDC( "single", { {"dijetM2M3Match",  PDSLabelBind(pds.first, "Gen Matched") }, {"dijetM2M3NoMatch",  PDSLabelBind(pds.first, "Not Gen Matched") } })},    {1, 1}, cuts.second + "",  100, 0, 2.0,   false,  true,  "(M_{23}/M_{123})/(M_{W}/M_{t})",   "Events"));
         }
-
+    
         //vh.push_back(PHS(cuts.first + "_MCComp_nTops",    vPDCMaker_All_0l("vTopsNewMVA(size)", "vTopsNew(size)"),    {2, 1}, /*cuts.second + */"",  10,  0,   10,  true,  false,  "N_{T}",     "Events"));
         //vh.push_back(PHS(cuts.first + "_MCComp_nbNIT",    vPDCMaker_All_0l("nBNotInTop", "nBNotInTop"),               {2, 1}, /*cuts.second + */"",  10,  0,   10,  true,  false,  "N_{T}",     "Events"));
         //vh.push_back(PHS(cuts.first + "_MCComp_topPt_0t", vPDCMaker_All_0l("vTopsNewMVA(pt)", "vTopsNew(pt)", 0),     {2, 1}, /*cuts.second + */"",  50,  0, 1000,  true,  false,  "Top p_{T} [GeV]", "Events"));
@@ -540,9 +544,9 @@ int main(int argc, char* argv[])
         ////vh.push_back(PHS(cuts.first + "_MCComp_ht_2t",    vPDCMaker_All_0l("HT", "HT", 2),                            {2, 1}, /*cuts.second + */"",  50,  0, 2000,  true,  false,  "HT [GeV]",  "Events"));
         ////vh.push_back(PHS(cuts.first + "_MCComp_ht_3t",    vPDCMaker_All_0l("HT", "HT", 3),                            {2, 1}, /*cuts.second + */"",  50,  0, 2000,  true,  false,  "HT [GeV]",  "Events"));
         //
-        //vh.push_back(PHS(cuts.first + "_" + "fakerate_met",   vPDCMaker_fake("met"),                      {1, 1}, cuts.second + "",   30,  0,  1200,     false,  false,  "met [GeV]",   "Fakerate"));
-        //vh.push_back(PHS(cuts.first + "_" + "fakerate_njet",  vPDCMaker_fake("cntNJetsPt50Eta24TopTag"),  {1, 1}, cuts.second + "",   20,  0,    20,     false,  false,  "N Jets",      "Fakerate"));
-        //vh.push_back(PHS(cuts.first + "_" + "fakerate_nbjet", vPDCMaker_fake("cntCSVSTopTag"),                   {1, 1}, cuts.second + "",   10,  0,    10,     false,  false,  "N b-jets",    "Fakerate"));
+        vh.push_back(PHS(cuts.first + "_" + "fakerate_met",   vPDCMaker_fake("met"),                      {1, 1}, cuts.second + "",   30,  0,  1200,     false,  false,  "met [GeV]",   "Fakerate"));
+        vh.push_back(PHS(cuts.first + "_" + "fakerate_njet",  vPDCMaker_fake("cntNJetsPt50Eta24TopTag"),  {1, 1}, cuts.second + "",   20,  0,    20,     false,  false,  "N Jets",      "Fakerate"));
+        vh.push_back(PHS(cuts.first + "_" + "fakerate_nbjet", vPDCMaker_fake("cntCSVSTopTag"),            {1, 1}, cuts.second + "",   10,  0,    10,     false,  false,  "N b-jets",    "Fakerate"));
         //
         ////vh.push_back(PHS(cuts.first + "_" + "nbNotInTop", {PDCMaker("nBNotInTop")}, {1, 1}, cuts.second,  10, 0, 10,  true,  false,  "N_{b}", "Events"));
         //vh.push_back(PHS(cuts.first + "_" + "nb",         {PDCMaker("cntCSVSTopTag")},     {1, 1}, cuts.second,  10, 0, 10,  true,  false,  "N_{b}", "Events"));

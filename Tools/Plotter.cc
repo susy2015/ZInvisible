@@ -60,6 +60,9 @@ const int NHATCHES = sizeof(hatches) / sizeof(int);
 
 const int lineStyles[] = {
     kSolid,
+    kSolid,
+    kDotted,
+    kDotted,
 };
 const int LINESTYLES = sizeof(lineStyles) / sizeof(int);
 

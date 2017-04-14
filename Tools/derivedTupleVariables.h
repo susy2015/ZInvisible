@@ -1180,6 +1180,7 @@ namespace plotterFunctions
     {
     private:
 	int indexMuTrigger;
+	int indexTkMuTrigger;
 	int indexElecTrigger;
         int indexMETMHTTrigger;
         bool miniTuple_, noMC_;
@@ -1336,15 +1337,17 @@ namespace plotterFunctions
             const std::vector<int>& passTrigger          = tr.getVec<int>("PassTrigger");
 
             bool passMuTrigger = false;
+            bool passTkMuTrigger = false;
             bool passElecTrigger = false;
             bool passMETMHTTrigger = false;
 
 	    const std::string muTrigName = "HLT_Mu50_v";//"HLT_Mu45_eta2p1_v";
+            const std::string tkMuTrigName = "HLT_TkMu50_v";
 	    const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
             const std::string metmhtTrigName = "HLT_PFMET110_PFMHT110_IDTight_v";
 
             // Find the index of our triggers if we don't know them already
-            if(indexMuTrigger == -1 || indexElecTrigger == -1 || indexMETMHTTrigger == -1)
+            if(/*indexTkMuTrigger == -1 || */indexMuTrigger == -1 || indexElecTrigger == -1 || indexMETMHTTrigger == -1)
             {
                 for(int i = 0; i < triggerNames.size(); ++i)
                 {
@@ -1352,6 +1355,10 @@ namespace plotterFunctions
                     {
                         indexMuTrigger = i;
                     }
+//                    if(triggerNames[i].find(tkMuTrigName) != std::string::npos)
+//                    {
+//                        indexTkMuTrigger = i;
+//                    }
                     else if(triggerNames[i].find(elecTrigName) != std::string::npos)
                     {
                         indexElecTrigger = i;
@@ -1362,11 +1369,13 @@ namespace plotterFunctions
                     }
                 }
             }
-            if(indexMuTrigger != -1 && indexElecTrigger != -1)
+            if(/*indexTkMuTrigger != -1 && */indexMuTrigger != -1 && indexElecTrigger != -1)
             {
                 // Check if the event passes the trigger, and double check that we are looking at the right trigger
-                if(triggerNames[indexMuTrigger].find(muTrigName) != std::string::npos && passTrigger[indexMuTrigger])
-                    passMuTrigger = true;
+//                if(triggerNames[indexMuTrigger].find(muTrigName) != std::string::npos && passTrigger[indexMuTrigger])
+//                    passMuTrigger = true;
+//                if(triggerNames[indexTkMuTrigger].find(tkMuTrigName) != std::string::npos && passTrigger[indexTkMuTrigger])
+//                    passTkMuTrigger = true;
                 if(triggerNames[indexElecTrigger].find(elecTrigName) != std::string::npos && passTrigger[indexElecTrigger])
                     passElecTrigger = true;
                 if(triggerNames[indexMETMHTTrigger].find(metmhtTrigName) != std::string::npos && passTrigger[indexMETMHTTrigger])
@@ -1400,9 +1409,19 @@ namespace plotterFunctions
                         break;
                     }
                 }
+                if( triggerNames[it].find(muTrigName)             != std::string::npos || 
+                    triggerNames[it].find(tkMuTrigName)           != std::string::npos
+                    )
+                {
+                    if( passTrigger[it] ) 
+                    {
+                        passMuTrigger = true;
+                        break;
+                    }
+                }
             }
 
-            tr.registerDerivedVar("passMuTrigger",passMuTrigger);
+            tr.registerDerivedVar("passMuTrigger",passMuTrigger/* || passTkMuTrigger*/);
             tr.registerDerivedVar("passElecTrigger",passElecTrigger);
             tr.registerDerivedVar("passMETMHTTrigger",passMETMHTTrigger);
             tr.registerDerivedVar("passSearchTrigger",passSearchTrigger);
@@ -1410,13 +1429,28 @@ namespace plotterFunctions
 
         void triggerInfoMC(NTupleReader& tr)
         {
-            const double& met                            = tr.getVar<double>("cleanMetPt");
-            const std::vector<TLorentzVector>& cutMuVec  = tr.getVec<TLorentzVector>("cutMuVec");
-
-
             if(tr.checkBranch("HTZinv"))
             {
                 const double& ht                             = tr.getVar<double>("HTZinv");
+                const double& met                            = tr.getVar<double>("cleanMetPt");
+
+                // MC trigger efficiencies
+                double triggerEff = GetTriggerEffWeight(met,ht);
+                double triggerEffStatUncUp = GetTriggerEffStatUncHi(met,ht);
+                double triggerEffSystUncUp = GetTriggerEffSystUncHi(met,ht);
+                double triggerEffUncUp     = TMath::Sqrt(triggerEffStatUncUp*triggerEffStatUncUp + triggerEffSystUncUp*triggerEffSystUncUp);
+                double triggerEffStatUncDown = GetTriggerEffStatUncLo(met,ht);
+                double triggerEffSystUncDown = GetTriggerEffSystUncLo(met,ht);
+                double triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
+
+                tr.registerDerivedVar("TriggerEffMC",triggerEff);
+                tr.registerDerivedVar("TriggerEffUpMC",triggerEff+triggerEffUncUp);
+                tr.registerDerivedVar("TriggerEffDownMC",triggerEff-triggerEffUncDown);
+            }
+            else if(tr.checkBranch("HTTopTag"))
+            {
+                const double& ht                             = tr.getVar<double>("HTTopTag");
+                const double& met                            = tr.getVar<double>("met");
 
                 // MC trigger efficiencies
                 double triggerEff = GetTriggerEffWeight(met,ht);
@@ -1433,6 +1467,8 @@ namespace plotterFunctions
             }
 
             //Calculate muon trigger weights
+            const std::vector<TLorentzVector>& cutMuVec  = tr.getVec<TLorentzVector>("cutMuVec");
+
             double muTrigWgt = 0.0;
             if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 50 && cutMuVec[1].Pt() > 50)
             {
@@ -1454,6 +1490,7 @@ namespace plotterFunctions
 	TriggerInfo(bool miniTuple = false, bool noMC = false)
 	{
 	    indexMuTrigger = -1;
+	    indexTkMuTrigger = -1;
 	    indexElecTrigger = -1;
             indexMETMHTTrigger = -1;
             miniTuple_ = miniTuple;
@@ -1846,6 +1883,10 @@ namespace plotterFunctions
 
             const TopTaggerResults& ttrMVA = ttMVA->getResults();
 
+            const TopObject& rsys = ttrMVA.getRsys();
+            int rsysNj = rsys.getNConstituents();
+            int rsysNb = rsys.getNBConstituents(0.8484);
+
             std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVA;
             std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVACand;
             if(tr.checkBranch("genDecayLVec"))
@@ -1886,8 +1927,8 @@ namespace plotterFunctions
 
             for(auto& var : MVAvars)
             {
-                mvaVars.emplace_back(var, new std::vector<double>);
-                mvaCandVars.emplace_back(var, new std::vector<double>);
+                //mvaVars.emplace_back(var, new std::vector<double>);
+                //mvaCandVars.emplace_back(var, new std::vector<double>);
 
                 mvaVarsTrain_genMatch[var] = new std::vector<double>();
                 mvaVarsTrain_notGenMatch[var] = new std::vector<double>();
@@ -1895,10 +1936,15 @@ namespace plotterFunctions
                 mvaVarsTrain_notFinalTop[var] = new std::vector<double>();
             }
 
+            std::vector<const TopObject*> *trijetTopFinal    = new std::vector<const TopObject*>();
+            std::vector<const TopObject*> *trijetTopNotFinal = new std::vector<const TopObject*>();
+
             const TopTaggerResults& ttrTrijet = ttMVATriJetOnly->getResults();
             for(int iTop = 0; iTop < ttrTrijet.getTopCandidates().size(); ++iTop)
             {
                 auto& top = ttrTrijet.getTopCandidates()[iTop];
+
+                trijetTopNotFinal->push_back(&top);
                 
                 auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
 
@@ -1936,6 +1982,8 @@ namespace plotterFunctions
             for(int iTop = 0; iTop < ttrTrijet.getTops().size(); ++iTop)
             {
                 auto& top = *ttrTrijet.getTops()[iTop];
+
+                trijetTopFinal->push_back(&top);
 
                 auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
 
@@ -1993,7 +2041,8 @@ namespace plotterFunctions
             const AnaConsts::IsoAccRec muonsMiniIsoArr50GeV = {   -1,       2.4,      50,     -1,       0.2,     -1  };
             int nMuons_50GeV = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, muonsMiniIsoArr50GeV);
             int nElectrons = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesMiniIso"), tr.getVec<double>("elesMtw"), tr.getVec<unsigned int>("elesisEB"), elesFlagIDVec, AnaConsts::elesMiniIsoArr);
-            int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
+            const AnaConsts::ElecIsoAccRec elesMiniIsoArr_20GeV = {   -1,       2.5,      20,     -1,     0.10,     0.10,     -1  };
+            int nElectrons_20GeV = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesMiniIso"), tr.getVec<double>("elesMtw"), tr.getVec<unsigned int>("elesisEB"), elesFlagIDVec, elesMiniIsoArr_20GeV);            int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
             //
             //// Pass lepton veto?
             bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel), passEleVeto = (nElectrons == AnaConsts::nElectronsSel), passIsoTrkVeto = (nIsoTrks == AnaConsts::nIsoTrksSel);
@@ -2013,6 +2062,25 @@ namespace plotterFunctions
                 if(constituent.getType() == AK4JET && constituent.getBTagDisc() > 0.8 && usedJets.count(&constituent) == 0) ++nBNotInTop;
             }
 
+            double mTLep = 0.0;
+            if(nMuons >= 1) 
+            {
+                const TLorentzVector& lep = tr.getVec<TLorentzVector>("muonsLVec")[0];
+                double met = tr.getVar<double>("met");
+                double metPhi = tr.getVar<double>("metphi");
+                TLorentzVector metLV;
+                metLV.SetPtEtaPhiM(met,0.0,metPhi,0.0);
+                mTLep = sqrt(2*lep.Pt()*met*(1-cos(ROOT::Math::VectorUtil::DeltaPhi(lep,metLV))));
+            }
+
+            // Process the generator weight
+            double genWeight = 1.;
+            // Never apply this weight for data! In the old ntuple version <=3 this is "-1", in the newer ones it is "0"
+            if(tr.getVar<double>("stored_weight") < 0)
+                genWeight = -1.;
+
+            tr.registerDerivedVar("genWeightTopTag", genWeight);
+
             tr.registerDerivedVec("dijetTopMatch", dijetTopMatch);
             tr.registerDerivedVec("dijetTopNoMatch", dijetTopNoMatch);
             tr.registerDerivedVec("dijetTopFinal", dijetTopFinal);
@@ -2023,7 +2091,15 @@ namespace plotterFunctions
             tr.registerDerivedVec("dijetM2M3FinalTop", dijetM2M3FinalTop);
             tr.registerDerivedVec("dijetM2M3NotFinalTop", dijetM2M3NotFinalTop);
 
+            tr.registerDerivedVec("trijetTopFinal", trijetTopFinal);
+            tr.registerDerivedVec("trijetTopNotFinal", trijetTopNotFinal);
+
+            tr.registerDerivedVar("rsys", rsys);
+            tr.registerDerivedVar("rsysNj", rsysNj);
+            tr.registerDerivedVar("rsysNb", rsysNb);
+
             //get one mu of 20 GeV pt
+            tr.registerDerivedVar("passSingleLep20", (nMuons_20GeV == 1) != (nElectrons_20GeV == 1));
             tr.registerDerivedVar("passSingleLep", nMuons_50GeV == 1);
             tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2 && Mmumu > 71 && Mmumu < 111);
 
@@ -2053,6 +2129,8 @@ namespace plotterFunctions
             tr.registerDerivedVec("vTopsAllComb", vTopsAllComb);
             tr.registerDerivedVec("vTopsMatchAllComb", vTopsMatchAllComb);
             tr.registerDerivedVec("vTopsGenMatchAllComb", vTopsGenMatchAllComb);
+
+            tr.registerDerivedVar("mTLep", mTLep);
 
             tr.registerDerivedVec("topMonojetMVA", topMonojetMVA);
 
