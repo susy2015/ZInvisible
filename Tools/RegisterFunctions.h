@@ -54,6 +54,7 @@ class RegisterFunctionsNTuple : public RegisterFunctions
 private:
     BaselineVessel *myBLV;
     BaselineVessel *blvZinv;
+    BaselineVessel *blvZinv_agg;
     //BaselineVessel *blvZinv1b;
     //BaselineVessel *blvZinv2b;
     //BaselineVessel *blvZinv3b;
@@ -79,7 +80,7 @@ private:
     plotterFunctions::Ak8DrMatch *ak8DrMatch;
 
 public:
-    RegisterFunctionsNTuple(bool isCondor = false, std::string sbEra = "SB_v1_2017");
+    RegisterFunctionsNTuple(bool isCondor = false, std::string sbEra = "SB_Aggregate_2017");//"SB_v1_2017");
     ~RegisterFunctionsNTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);

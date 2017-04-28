@@ -37,15 +37,47 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
 
 
 #go make plots!
+#Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 submitFileGMP = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
-Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gmp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz
 Output = logs/makePlots_$(Process).stdout
 Error = logs/makePlots_$(Process).stderr
 Log = logs/makePlots_$(Process).log
+notify_user = ${LOGNAME}@FNAL.GOV
+x509userproxy = $ENV(X509_USER_PROXY)
+
+"""
+
+filestoTransferGMDP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeDataMCplots", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
+                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so", 
+                      environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1", 
+                      environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root"]
+
+
+#go make DataMC plots!
+submitFileGMDP = """universe = vanilla
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeDataMCPlots.sh
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeDataMCPlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gmdp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz
+Output = logs/makeDataMCplots_$(Process).stdout
+Error = logs/makeDataMCplots_$(Process).stderr
+Log = logs/makeDataMCplots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
@@ -135,6 +167,7 @@ parser.add_option ('-e',  dest='goMakeEff', action='store_true', default = False
 parser.add_option ('-b',  dest='goMakeBeff', action='store_true', default = False, help="Run beffCalc instead of makePlots.")
 parser.add_option ('-s',  dest='goMakeSigEff', action='store_true', default = False, help="Run makeSignalHistograms instead of makePlots.")
 parser.add_option ('-t',  dest='goMakeTopPlots', action='store_true', default = False, help="Run makeTopPlots instead of makePlots.")
+parser.add_option ('--dataMC',  dest='goMakeDataMCPlots', action='store_true', default = False, help="Run makeDataMCPlots instead of makePlots.")
 
 options, args = parser.parse_args()
 
@@ -145,6 +178,7 @@ def makeExeAndFriendsTarrball(filestoTransfer, fname):
     if not options.dataCollections and not options.dataCollectionslong:
         #WORLDSWORSESOLUTIONTOAPROBLEM
         system("mkdir -p WORLDSWORSESOLUTIONTOAPROBLEM")
+        #system("tar --exclude-caches-all --exclude-vcs -zcf ${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION} --exclude=src --exclude=tmp")
         for fn in filestoTransfer:
             system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s"%fn)
         
@@ -171,6 +205,10 @@ elif options.goMakeTopPlots:
     exeName = "makeTopPlots"
     submitFile = submitFileGTP
     makeExeAndFriendsTarrball(filestoTransferGTP, "gtp")
+elif options.goMakeDataMCPlots:
+    exeName = "makeDataMCplots"
+    submitFile = submitFileGMDP
+    makeExeAndFriendsTarrball(filestoTransferGMDP, "gmdp")
 else:
     exeName = "makePlots"
     submitFile = submitFileGMP

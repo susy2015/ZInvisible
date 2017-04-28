@@ -141,7 +141,7 @@ def njetWeights(filename):
     # Run over the relevant histograms
     cuts_DY = ["muZinv", "muZinv_0b", "muZinv_g1b"]
     cuts_TT = ["elmuZinv", "elmuZinv_0b", "elmuZinv_g1b"]
-    selection = "loose0_mt2_MET"#"loose0_mt2_MET"#"blnotag"#"loose0"#"loose0_mt2"
+    selection = "loose0_mt2_MET"#0topVal_MET100"#"loose0_mt2_MET"#"blnotag"#"loose0"#"loose0_mt2"
     # histo names
     hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
     hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
@@ -302,8 +302,8 @@ extern "C"
 def normWeightwithReweight(f, SFs):
     # Run over the relevant histograms
     cuts_DY = ["muZinv"]
-    selections = ["g1b_blnotag","0b_blnotag"]
-    selection2 = "blnotag"
+    selections = ["bl","0b_blnotag"]#["g1b_0topVal_MET250","0b_0topVal_MET250"]#"bl","0b_blnotag"]
+    selection2 = "blnotag"#"0topVal_MET250"#"blnotag"
     # histo names
     hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
     hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
@@ -377,8 +377,8 @@ def normWeight(filename):
     f = TFile.Open(filename)
     # Run over the relevant histograms
     cuts_DY = ["muZinv"]
-    selections = ["bl","0b_blnotag"]
-    selection2 = "blnotag"
+    selections = ["muZinv_g1b_0topVal_MET350","muZinv_0b_0topVal_MET350"]#"g1b_blnotag","0b_blnotag"]
+    selection2 = "muZinv_0topVal_MET350"#"blnotag"
     # histo names
     hname1 = "cntCSVSZinv/DataMC_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDatadata"
     hnames2 = ["cntCSVSZinv/DataMCw_SingleMuon_nb_%(cut)s_%(selection)scntCSVSZinvcntCSVSZinvDYstack",
@@ -419,7 +419,7 @@ def shapeSyst(filename):
     f = TFile.Open(filename)
     fout = TFile.Open("syst_shape.root", "RECREATE")
     # Run over the relevant histograms
-    # histo names
+    # histo names  #loose0_mt2_MET
     hnameData = "%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)sDatadata"
     hnames2 =  ["%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2_MET%(var)s%(var)sDYstack",
                 #"%(var)s/DataMCw_SingleMuon_%(name)s_muZinv_loose0_mt2%(var)s%(var)sDY HT<100stack",
@@ -796,21 +796,21 @@ def systHarvest(filename):
     hBMistagUp_Ratio.Write()
     hBMistagDn_Ratio.Write()
     #ISR Uncertainties
-    #hISRNom = f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Centralsingle")
-    #hBISRUp =  f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Upsingle")
-    #hISRDn =  f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Downsingle")
+    hISRNom = f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Centralsingle")
+    hISRUp =  f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Upsingle")
+    hISRDn =  f4.Get("nSearchBin/ISRUncert_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu isr Downsingle")
 
-    #hISRUp_Ratio = hISRUp.Clone("isr_up")
-    #hISRUp_Ratio.Add(hISRNom, -1.0)
-    #hBISRUp_Ratio.Divide(hISRNom)
+    hISRUp_Ratio = hISRUp.Clone("isr_up")
+    hISRUp_Ratio.Add(hISRNom, -1.0)
+    hISRUp_Ratio.Divide(hISRNom)
 
-    #hISRDn_Ratio = hISRDn.Clone("isr_dn")
-    #hISRDn_Ratio.Add(hISRNom, -1.0)
-    #hISRDn_Ratio.Divide(hBISRNom)
+    hISRDn_Ratio = hISRDn.Clone("isr_dn")
+    hISRDn_Ratio.Add(hISRNom, -1.0)
+    hISRDn_Ratio.Divide(hISRNom)
 
-    #fout.cd()
-    #hISRUp_Ratio.Write()
-    #hISRDn_Ratio.Write()
+    fout.cd()
+    hISRUp_Ratio.Write()
+    hISRDn_Ratio.Write()
 
     # calculate stupid pull histo here
     hZnunu = f4.Get("nSearchBin/nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle")
@@ -921,8 +921,8 @@ def systHarvest(filename):
     #print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["36f" % 0.0830140 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
     #print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%36f" % 0.0830140 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
 
-    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.086 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
-    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.086 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
+    print "%-25s = %s"%("syst_unc_norm_up", ' '.join(NSB*["%8.5f" % 0.081 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
+    print "%-25s = %s"%("syst_unc_norm_dn", ' '.join(NSB*["%8.5f" % 0.081 ]))#(sf.getRnormErr()/sf.getRnorm()) ]))
 
     for (name, h) in hists:
         print "%-25s = %s"%(name, ' '.join(["%8.5f" % (abs(h.GetBinContent(i))) for i in xrange(1, NSB+1)]))

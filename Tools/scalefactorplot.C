@@ -134,13 +134,13 @@ void makeplot(TFile* f, std::string hname)
 int main(int argc, char* argv[])
 {
     // Get the relevant information
-    TFile* f1 = TFile::Open("/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools/dataMCweights.root");
+    TFile* f1 = TFile::Open("/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools/dataMCweights_validation_final_April19.root");
     std::vector<std::string> hnames = {//"DataMC_nj_elmuZinv_",
 				       //"DataMC_nj_elmuZinv_0b_ht200_dphi",
 				       //"DataMC_nj_elmuZinv_g1b_ht200_dphi",
-				       "DataMC_nj_muZinv_g1b_loose0_mt2_MET",
-				       "DataMC_nj_muZinv_0b_loose0_mt2_MET",
-				       "DataMC_nj_muZinv_loose0_mt2_MET"};
+				       "DataMC_nj_muZinv_0b_0topVal_MET100"};//"DataMC_nj_muZinv_g1b_loose0_mt2_MET",
+				       //"DataMC_nj_muZinv_0b_loose0_mt2_MET",
+				       //"DataMC_nj_muZinv_loose0_mt2_MET"};
     for(std::string const& hname : hnames)
     {
 	makeplot(f1, hname);

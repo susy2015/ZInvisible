@@ -64,6 +64,7 @@ int main()
     TH1* shapeMT2;
     TH1* shapeNT;
     TH1* shapeNB;
+    TH1* shapeHT;
 
     TRandom3 tr3(153474);
 
@@ -89,6 +90,7 @@ int main()
         shapeMT2 = static_cast<TH1*>(f->Get("ShapeRatio_mt2")->Clone());
         shapeNT  = static_cast<TH1*>(f->Get("ShapeRatio_nt")->Clone());
         shapeNB  = static_cast<TH1*>(f->Get("ShapeRatio_nb")->Clone());
+        shapeHT  = static_cast<TH1*>(f->Get("ShapeRatio_ht")->Clone());
         f->Close();
         delete f;
     }
@@ -107,11 +109,11 @@ int main()
     const int NSEARCHBINS = 84;
 
     TH1 *h[5][NSEARCHBINS];
-    std::vector<std::string> hnames = {"njet", "met", "mt2", "nt", "nb"};
+    std::vector<std::string> hnames = {"njet", "met", "mt2", "nt", "nb", "ht"};
 
     float N0[NSEARCHBINS];
     float N0square[NSEARCHBINS];
-    float N[5][NSEARCHBINS][NTRIALS];
+    float N[6][NSEARCHBINS][NTRIALS];
     float N0_83=0.0;
     float N0square_83=0.0;
     float N0_divide_83=0.0; 
@@ -139,6 +141,7 @@ int main()
         for(int i = 0; i <= shapeMT2  ->GetNbinsX() + 1; ++i) if(shapeMT2->GetBinContent(i) > 1e-10)   variations[2][i][iT] = (float)tr3.Gaus(1.0, shapeMT2->GetBinError(i)/shapeMT2->GetBinContent(i));
         for(int i = 0; i <= shapeNT   ->GetNbinsX() + 1; ++i) if(shapeNT->GetBinContent(i) > 1e-10)    variations[3][i][iT] = (float)tr3.Gaus(1.0, shapeNT->GetBinError(i)/shapeNT->GetBinContent(i));
         for(int i = 0; i <= shapeNB   ->GetNbinsX() + 1; ++i) if(shapeNB->GetBinContent(i) > 1e-10)    variations[4][i][iT] = (float)tr3.Gaus(1.0, shapeNB->GetBinError(i)/shapeNB->GetBinContent(i));
+        for(int i = 0; i <= shapeHT   ->GetNbinsX() + 1; ++i) if(shapeHT->GetBinContent(i) > 1e-10)    variations[5][i][iT] = (float)tr3.Gaus(1.0, shapeHT->GetBinError(i)/shapeHT->GetBinContent(i));
     }
 
     for(int ih = 0; ih < 5; ++ih)
@@ -259,6 +262,7 @@ int main()
                 const double& triggerEffMC = tr.getVar<double>("TriggerEffMC");
                 const double& nJetWgtDYZ   = tr.getVar<double>("nJetWgtDYZ");
                 const double& normWgt0b    = tr.getVar<double>("normWgt0b");
+                const double& HTZinv       = tr.getVar<double>("HTZinv");
 
                 if(passBaselineZinv && passLeptVeto && cntCSVSZinv>=1 && nTopCandSortedCntZinv >= 3 && cleanMetPt < 350)
                 {
@@ -319,6 +323,7 @@ int main()
                                 N[2][nSearchBin][iTrial] += variations[2][shapeMT2->FindBin(best_had_brJet_MT2Zinv)][iTrial]  * weight;
                                 N[3][nSearchBin][iTrial] += variations[3][shapeNT->FindBin(nTopCandSortedCntZinv)][iTrial]    * weight;
                                 N[4][nSearchBin][iTrial] += variations[4][shapeNB->FindBin(cntCSVSZinv)][iTrial]              * weight;
+                               // N[5][nSearchBin][iTrial] += variations[4][shapeHT->FindBin(HTZinv)][iTrial]                   * weight;
                             }
                         }
                     }

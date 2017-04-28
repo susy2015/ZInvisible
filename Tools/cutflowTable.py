@@ -54,13 +54,17 @@ if __name__ == "__main__":
     f = rt.TFile.Open(options.filename)
 
     # Get the relevant histograms
-    hnames = ["CutFlows/DYtoMuMu",
-              "CutFlows/DYtoMuMu_Unscaled",
-              "CutFlows/Data_MuMu",
-              "CutFlows/Data_ElMu",
-              "CutFlows/TTBar_ElMu",
-              "CutFlows/ZtoNuNu",
-              ]
+    hnames = ["CutFlows/QCD_noWeight"#t#bar{t}Z_genW",#QCD_Trigg",
+              #"CutFlows/t#bar{t}Z_triggBtag",#QCD_TriggPU",
+              #"CutFlows/t#bar{t}Z"#QCD_all"
+             ]
+#["CutFlows/DYtoMuMu",
+#              "CutFlows/DYtoMuMu_Unscaled",
+#              "CutFlows/Data_MuMu",
+#              "CutFlows/Data_ElMu",
+#              "CutFlows/TTBar_ElMu",
+#              "CutFlows/ZtoNuNu",
+#              ]
 
     samples = ["DY$\\rightarrow\\mu\\mu$",
                "DY$\\rightarrow\\mu\\mu$ Unscaled",
@@ -70,18 +74,30 @@ if __name__ == "__main__":
                "Z$\\rightarrow\\nu\\nu$",
               ] 
 
-    cuts = ["No cuts",
-            "Noise filters",
-            "Dilepton",
-            "Trigger",
-            "Njets",
-            "Dphi",
-            "$\\textrm{HT}>500$",
-            "$\\textrm{MET}>200$",
-            "$\\textrm{Nb}>0$",
-            "$\\textrm{Nt}>0$",
-            "$\\textrm{MT2}>200$",
-            "Baseline"]
+    cuts = ["empty",
+	    "passNoiseEventFilter",
+	    "passMuonVeto",
+	    "passEleVeto",
+	    "passIsoTrkVeto",
+	    "passnJets",
+	    "passdPhis",
+	    "passMET",
+	    "passHT",
+	    "cntCSVS=0",
+ 	    "nTopCandSortedCnt=0",
+	    "passdPhis_extra"]
+            #"No cuts",
+            #"Noise filters",
+            #"Dilepton",
+            #"Trigger",
+            #"Njets",
+            #"Dphi",
+            #"$\\textrm{HT}>500$",
+            #"$\\textrm{MET}>200$",
+            #"$\\textrm{Nb}>0$",
+            #"$\\textrm{Nt}>0$",
+            #"$\\textrm{MT2}>200$",
+            #"Baseline"]
 
 
     hs = [f.Get(hname) for hname in hnames]
@@ -90,6 +106,8 @@ if __name__ == "__main__":
     info = {}
     for i, h in enumerate(hs):
         cutinfo = [h.GetBinContent(bin+1) for bin in xrange(h.GetNbinsX())]
+        cutinfo_err= [h.GetBinError(bin+1) for bin in xrange(h.GetNbinsX())]
+        print cutinfo_err
         info[samples[i]] = cutinfo
 
     # open outputfile

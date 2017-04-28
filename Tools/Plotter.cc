@@ -787,6 +787,7 @@ void Plotter::plot()
     for(HistSummary& hist : hists_)
     {
         std::string plotname = plotDir_ + hist.name;
+        if(hist.name.compare("DataMCw_SingleMuon_nb_muZinv_g1b_loose0_mt2_MET") != 0 && hist.name.compare("DataMCw_SingleMuon_met_muZinv_g1b_loose0_mt2_MET") !=0 ) continue;
         bool skip = false;
         for(auto& hvec : hist.hists)  for(auto& h : hvec.hcsVec) if(!h->h) skip = true;
         if(skip) continue;
@@ -970,7 +971,7 @@ void Plotter::plot()
         gPad->SetLogy(hist.isLog);
         if(hist.isLog)
         {
-            double locMin = std::min(0.2*minAvgWgt, std::max(0.00011, 0.05 * min));
+            double locMin = .05;//std::min(0.2*minAvgWgt, std::max(0.00011, 0.05 * min));
             double legSpan = (log10(3*max) - log10(locMin)) * (leg->GetY1() - gPad->GetBottomMargin()) / ((1 - gPad->GetTopMargin()) - gPad->GetBottomMargin());
             double legMin = legSpan + log10(locMin);
             if(log10(lmax) > legMin)
@@ -985,10 +986,10 @@ void Plotter::plot()
             double locMin = 0.0;
             double legMin = (1.2*max - locMin) * (leg->GetY1() - gPad->GetBottomMargin()) / ((1 - gPad->GetTopMargin()) - gPad->GetBottomMargin());
             if(lmax > legMin) max *= (lmax - locMin)/(legMin - locMin);
-            dummy->GetYaxis()->SetRangeUser(0.0, max*1.2);
+            dummy->GetYaxis()->SetRangeUser(0.0, 4);//0.0, max*1.2);
             if(hist.hists.front().type.compare("ratio") == 0 && max > 5) dummy->GetYaxis()->SetRangeUser(0.0, 5*1.2);
         }
-        dummy->Draw();
+        dummy->Draw("E0");
 
         for(auto& hvec : hist.hists)
         {
@@ -1001,7 +1002,7 @@ void Plotter::plot()
             }
             else
             {
-                if(     hvec.type.compare("ratio") == 0) hvec.h->Draw("hist same");
+                if(     hvec.type.compare("ratio") == 0) hvec.h->Draw("e0");
                 else if(hvec.type.compare("data") != 0)  hvec.h->Draw("hist same");
             }
         }
@@ -1023,7 +1024,7 @@ void Plotter::plot()
 	//     drawSBregionDefCopy(dummy->GetMinimum(),dummy->GetMaximum());
 	// }
 
-        TH1 *dummy2 = nullptr, *h1 = nullptr, *h2 = nullptr;
+        TH1 *dummy2 = nullptr, *h1 = nullptr, *h2 = nullptr, *dummy2_err = nullptr;
         if(showRatio)
         {
             c->cd(2);
@@ -1111,7 +1112,7 @@ void Plotter::plot()
                     //h1->SetLineColor(kBlack);
                     h1->SetMarkerStyle(20);
                     h1->SetMarkerColor(h1->GetLineColor());
-                    double d2ymin = 0.0;
+                    double d2ymin = 0.000000000000000000000001;//0;
                     double d2ymax = 1.5;
                     for(int iBin = 1; iBin <= h1->GetNbinsX(); ++iBin)
                     {
@@ -1121,7 +1122,7 @@ void Plotter::plot()
                         }
                     }
                     dummy2->GetYaxis()->SetRangeUser(d2ymin, 1.5*d2ymax);
-                    //dummy2->GetYaxis()->SetRangeUser(0.3, 1.6);
+                    //dummy2->GetYaxis()->SetRangeUser(0.3, 4);
                 }
                 else // pull distribution
                 {
@@ -1181,13 +1182,18 @@ void Plotter::plot()
                     fline3->SetLineStyle(kDashed);
                 }
 
-                dummy2->Draw();
+                dummy2->Draw("E0");//Draw();
+                //for(int n=0; n<h1.GetNbinsX()+1; n++){
+                //dummy2_err = TGraphErrors(n,h1->GetX(n),h1->GetY(n),h1->GetBinError(h1->GetX(n)),h1->GetBinError(h1->GetY(n)));
+                //}
+                //dummy2_err->Draw("same");
                 fline->SetLineColor(h2->GetLineColor());
                 fline->Draw("same");
                 if(fline2) fline2->Draw("same");
                 if(fline3) fline3->Draw("same");
                 h1->Draw(drawOptions.c_str());
-
+                //dummy2->Draw("E0same");
+                h1->Draw("E0same");
                 fixOverlay();
             }
         }
@@ -1285,7 +1291,7 @@ void Plotter::smartMax(const TH1* const h, const TLegend* const l, const TPad* c
         if(error) bin = h->GetBinContent(i) + h->GetBinError(i);
         else      bin = h->GetBinContent(i);
         if(bin > max) max = bin;
-        else if(bin > 1e-10 && bin < min) min = bin;
+        else if(bin > 1e2 && bin < min) min = bin; //e-10
         if(i >= threshold && bin > pThreshMax) pThreshMax = bin;
     }
 

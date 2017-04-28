@@ -102,9 +102,9 @@ int main(int argc, char* argv[])
   if(runOnCondor)
     {
         char thistFile[128];
-        sprintf(thistFile, "histoutput_%s_%d.root", dataSets.c_str(), startFile);
+        sprintf(thistFile, "histoutput_DataMC_%s_%d.root", dataSets.c_str(), startFile);
         histFile = thistFile;
-        //doSave = true;
+        doSave = true;
         //doPlots = false;
         fromTuple = true;
         sampleloc = "condor";
@@ -188,6 +188,8 @@ int main(int argc, char* argv[])
     std::string label_j3pt = "j_{3} p_{T} [GeV]";
     std::string label_mll  = "m_{ll} [GeV]";
     std::string label_toppt = "top p_{T} [GeV]";
+    std::string label_nPV = "nPV";
+
 
     vector<Plotter::HistSummary> vh;
 
@@ -200,90 +202,126 @@ int main(int argc, char* argv[])
     //                                        legend label  sample connection           cuts               weights
    
     //Andres 10/20/16 
-    Plotter::DatasetSummary photon("GJets",  fileMap["GJets"], "",     "TriggerEffMC");      
+    //Plotter::DatasetSummary photon("GJets",  fileMap["GJets"], "",     "TriggerEffMC");      
 
-    Plotter::DatasetSummary dsData_SingleMuon("Data", fileMap["Data_HTMHT_Run2016G"], "passMuTrigger", "");
+    Plotter::DatasetSummary dsData_HTMHT("Data", fileMap["Data_HTMHT_Run2016G"], "passMuTrigger", "");
     //Plotter::DatasetSummary dsData_SingleMuon("Data",         fileMap["Data_HTMHT"], "passSingleMuTrigger",   "");
-    Plotter::DatasetSummary dsData_SingleMuonNotrig("Data",   fileMap["Data_MET_Run2016G"], "",   "");
-    Plotter::DatasetSummary dsData_HTMHT(  "Data",            fileMap["Data_MET"],   "passHTMHTTrigger", "");
-    Plotter::DatasetSummary dsDY(             "DY",           fileMap["DYJetsToLL"],      "",                "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsT1tttt1500( "T1tttt(1500,100)", fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "", "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsT1tttt1200( "T1tttt(1200,800)", fileMap["Signal_T1tttt_mGluino1200_mLSP800"],      "",  "TriggerEffMC");
-    Plotter::DatasetSummary dsT2tt500(    "T2tt(500,325)",    fileMap["Signal_T2tt_mStop500_mLSP325"],      "",        "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsT2tt800( "T2tt(850,100)",         fileMap["Signal_T2tt_mStop850_mLSP100"],      "",       "TriggerEffMC");
-    //Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "",       "");
-    Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dstW(             "Single top", fileMap["tW"],              "",                "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "genWeight;TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",                "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsVVV(             "Other",    fileMap["Triboson"],         "",                "genWeight;TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "",                "genWeight;TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsQCD(             "QCD",    fileMap["QCD"],         "passQCDHighMETFilter",                "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsZJets(             "Z(#nu#nu)+jets",    fileMap["ZJetsToNuNu"],         "",                "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsWJets(             "W(l#nu)+jets",    fileMap["WJetsToLNu"],         "",                "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsTTW(             "TTW",    fileMap["TTW"],         "",                "genWeight;TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary ds_TTBar(      "ttbar ak8",  fileMap["TTbarAll"], "",     "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary ds_ZINV(      "ZJets",  fileMap["ZJetsToNuNu"],         "",                "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary ds_TTBarHT(   "TTbarHT", fileMap["TTbarHT"],    "",  "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
-    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dstt2l}, {dsWJets}, {dstW}, {dsZJets}, {dsttZ}, {dsQCD}, {dsRare,dsDY,dsVV}};
-    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_hong = {{dstt2l}, {dsWJets}, {dstW}, {dsZJets}, {dsttZ}, {dsQCD}, {dsVVV,dsVV,dsTTW}};
-    std::vector<std::vector<Plotter::DatasetSummary>> singal_points= {{dsT2tt800},{dsT2tt500},{dsT1tttt1200},{dsT1tttt1500}};
-     // Collections for all variables, no cuts applied yet
+    Plotter::DatasetSummary dsData_HTMHTNotrig("Data",   fileMap["Data_MET_Run2016G"], "",   "");
+    Plotter::DatasetSummary dsData_MET(  "Data",            fileMap["Data_MET"],  "passMETMHTTrigger", "");//"passHTMHTTrigger", "");
+    Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "");
+    Plotter::DatasetSummary dsDY_ll(        "DY#rightarrow#mu#mu",                   fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel", "");
+Plotter::DatasetSummary dsDY_nunu(            "Z#rightarrow#nu#nu",                fileMap["ZJetsToNuNu"], "passLeptVeto", "");
+    Plotter::DatasetSummary dsDY_ll_clean(  "DY#rightarrow#mu#mu #mu cleaned",       fileMap["DYJetsToLL"],   "pdgIdZDec=13;passMuZinvSel", "");
+    
+    //With PU weights
+    Plotter::DatasetSummary dsDYpu(             "DY",           fileMap["DYJetsToLL"],      "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central");  
+    Plotter::DatasetSummary dsT1tttt1500pu( "T1tttt(1500,100)", fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "", "TriggerEffMC;bTagSF_EventWeightSimple_Central");          
+    Plotter::DatasetSummary dsT1tttt1200pu( "T1tttt(1200,800)", fileMap["Signal_T1tttt_mGluino1200_mLSP800"],      "",  "TriggerEffMC;bTagSF_EventWeightSimple_Central");
+    Plotter::DatasetSummary dsT2tt500pu(    "T2tt(500,325)",    fileMap["Signal_T2tt_mStop500_mLSP325"],      "",        "TriggerEffMC;bTagSF_EventWeightSimple_Central");    
+    Plotter::DatasetSummary dsT2tt800pu( "T2tt(850,100)",         fileMap["Signal_T2tt_mStop850_mLSP100"],      "",       "TriggerEffMC;bTagSF_EventWeightSimple_Central");
+    Plotter::DatasetSummary dstt2lpu(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central;isr_Unc_Cent");               
+    Plotter::DatasetSummary dstWpu(             "Single top", fileMap["tW"],              "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central");               
+    Plotter::DatasetSummary dsttZpu(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "genWeight;TriggerEffMC;bTagSF_EventWeightSimple_Central");    
+    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                ""); 
+Plotter::DatasetSummary dsttZ_genW(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "genWeight");
+    Plotter::DatasetSummary dsttZ_genTrigBtag(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "genWeight;TriggerEffMC;bTagSF_EventWeightSimple_Central");
+    Plotter::DatasetSummary dsVVpu(             "Diboson",    fileMap["Diboson"],         "",                "genWeight;TriggerEffMC;bTagSF_EventWeightSimple_Central");               
+    Plotter::DatasetSummary dsVVVpu(             "Other",    fileMap["Triboson"],         "",                "genWeight;TriggerEffMC;bTagSF_EventWeightSimple_Central");      
+    Plotter::DatasetSummary dsRarePU(           "Rare",       fileMap["Rare"],            "",                "genWeight;TriggerEffMC;bTagSF_EventWeightSimple_Central");      
+    Plotter::DatasetSummary dsQCDpu(             "QCD",    fileMap["QCD"],         "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central");  //passQCDHighMETFilter 
+    Plotter::DatasetSummary dsQCD_Trigg(             "QCD",    fileMap["QCD"],         "",                "TriggerEffMC");
+Plotter::DatasetSummary dsQCD_TriggPU(             "QCD",    fileMap["QCD"],         "",                "TriggerEffMC");
+//Plotter::DatasetSummary dsQCD1Me(             "QCD",    fileMap["QCD"],         "",                "TriggerEffMC;_PUweightFactor;bTagSF_EventWeightSimple");
+    Plotter::DatasetSummary dsZJetsPU(             "Z(#nu#nu)+jets",    fileMap["ZJetsToNuNu"],         "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central");  
+    Plotter::DatasetSummary dsWJetsPU(             "W(l#nu)+jets",    fileMap["WJetsToLNu"],         "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central");     
+    Plotter::DatasetSummary dsTTWpu(             "TTW",    fileMap["TTW"],         "",                "genWeight;TriggerEffMC;bTagSF_EventWeightSimple_Central");             
+    Plotter::DatasetSummary ds_TTBarPU(      "ttbar ak8",  fileMap["TTbarAll"], "",     "TriggerEffMC;bTagSF_EventWeightSimple_Central");
+    Plotter::DatasetSummary ds_ZINVpu(      "ZJets",  fileMap["ZJetsToNuNu"],         "",                "TriggerEffMC;bTagSF_EventWeightSimple_Central");                    
+    Plotter::DatasetSummary ds_TTBarHTpu(   "TTbarHT", fileMap["TTbarHT"],    "",  "TriggerEffMC;bTagSF_EventWeightSimple_Central"); 
+    Plotter::DatasetSummary dsnoTtW(             "Single top", fileMap["SingleTopZinv"],              "",                "bTagSF_EventWeightSimple_Central;genWeight");
+Plotter::DatasetSummary dsnptW(             "Single top", fileMap["SingleTopZinv"],              "",                "bTagSF_EventWeightSimple_Central;genWeight");
+    Plotter::DatasetSummary dswtt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "genHT<600",            "bTagSF_EventWeightSimple_Central;nJetWgtTTbar;isr_Unc_Cent;normttbar");
+    Plotter::DatasetSummary dsDY_nunu_njet(                    "Z#rightarrow#nu#nu DataMC weight",          fileMap["ZJetsToNuNu"], "",                       "TriggerEffMC;bTagSF_EventWeightSimple_Central;nJetWgtDYZ");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm(                "Z#rightarrow#nu#nu Njet+norm weight",       fileMap["ZJetsToNuNu"], "",                       "TriggerEffMC;bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+
+   //std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dstt2l}, {dsWJets}, {dstW}, {dsZJets}, {dsttZ}, {dsQCD}, {dsRare,dsDY,dsVV}};
+   std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_PU = {{dsnptW},{dstt2lpu}, {dsWJetsPU}, {dstWpu}, {dsZJetsPU}, {dsttZpu}, {dsQCDpu}, {dsRarePU,dsDYpu,dsVVpu}};
+   std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_PU_Zin = {{dstt2lpu},{dsWJetsPU},{dsZJetsPU},{dsDYpu},{dsQCDpu},{dsnoTtW},{dsRarePU},{dsVVpu},{dsttZpu},{ds_TTBarHTpu}};
+   std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_Wei = {{dstt2lpu},{dsWJetsPU},{dsDY_nunu_njet},{dsDYpu},{dsQCDpu},{dsnoTtW},{dsRarePU},{dsVVpu},{dsttZpu},{ds_TTBarHTpu}};
+std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_norm = {{dstt2lpu},{dsWJetsPU},{dsDY_nunu_njetnorm},{dsDYpu},{dsQCDpu},{dsnoTtW},{dsRarePU},{dsVVpu},{dsttZpu},{ds_TTBarHTpu}};
+   //std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_hong = {{dstt2l}, {dsWJets}, {dstW}, {dsZJets}, {dsttZ}, {dsQCD}, {dsVVV,dsVV,dsTTW}};
+   //std::vector<std::vector<Plotter::DatasetSummary>> signal_points= {{dsT2tt800},{dsT2tt500},{dsT1tttt1200},{dsT1tttt1500}};
+   std::vector<std::vector<Plotter::DatasetSummary>> signal_points_PU= {{dsT2tt800pu},{dsT2tt500pu},{dsT1tttt1200pu},{dsT1tttt1500pu}};
+     // Collections for all variables, no cuts applied ye
     // met
 
     auto PDCMaker = [&](std::string var) 
     {
       //                                                   plotType  var  vector of datasetsummary
       return  std::vector<PDC>({ Plotter::DataCollection("data",   var, {dsData_HTMHT}),
-	                         Plotter::DataCollection("stack",  var, stack_MC),             
-	                         Plotter::DataCollection("single",   var, singal_points)  });
+	                         Plotter::DataCollection("stack",  var, stack_MC_PU),             
+	                         Plotter::DataCollection("single",   var, signal_points_PU)  });
     };
 
+    auto PDCMaker_PUweights = [&](std::string var)
+      {
+	//                                                   plotType  var  vector of datasetsummary                                                                                                  
+	return  std::vector<PDC>({ Plotter::DataCollection("data",   var, {dsData_MET}),
+	      Plotter::DataCollection("stack",  var, stack_MC_PU_Zin) });
+	      //Plotter::DataCollection("single",   var, signal_points_PU)  });
+      };
+    auto PDCMaker_PUweights_wei = [&](std::string var)
+      {
+         return  std::vector<PDC>({ Plotter::DataCollection("data",   var, {dsData_MET}),
+                 Plotter::DataCollection("stack",  var, stack_MC_Wei) });
+                                                                              };
+    auto PDCMaker_PUweights_norm = [&](std::string var)
+      {
+         return  std::vector<PDC>({ Plotter::DataCollection("data",   var, {dsData_MET}),
+                 Plotter::DataCollection("stack",  var, stack_MC_norm) });
+                                                                              };
+/*
     auto PDCMaker_noTrig = [&](std::string var)
       {
 
-      return  std::vector<PDC>({ Plotter::DataCollection("data",   var, {dsData_SingleMuonNotrig}),
-	                         Plotter::DataCollection("stack",  var, stack_MC),
-                 	         Plotter::DataCollection("single",   var, singal_points)  });
+      return  std::vector<PDC>({ Plotter::DataCollection("data",   var, {dsData_SingleMuon}),
+	                         Plotter::DataCollection("stack",  var, stack_MC_PU),
+                 	         Plotter::DataCollection("single",   var, signal_points_PU)  });
       };
 
 
     auto PDCMaker1 = [&](std::string var)
     {
         return  std::vector<PDC>({ Plotter::DataCollection("data",   var, {dsData_HTMHT}),
-                                   Plotter::DataCollection("stack",  var, stack_MC), 
-                                   Plotter::DataCollection("single",   var, singal_points)  });
+                                   Plotter::DataCollection("stack",  var, stack_MC_PU), 
+                                   Plotter::DataCollection("single",   var, signal_points_PU)  });
     };
 
     auto PDCMaker_nonesig = [&](std::string var)
     {
          return  std::vector<PDC>({ Plotter::DataCollection("data",   var, {dsData_SingleMuon}),
-                                   Plotter::DataCollection("stack",  var, stack_MC)  });
+                                   Plotter::DataCollection("stack",  var, stack_MC_PU)  });
     };
 
     auto PDCMaker1_nonesig = [&](std::string var)
     {
         return  std::vector<PDC>({ Plotter::DataCollection("data",   var, {dsData_HTMHT}),
-                                   Plotter::DataCollection("stack",  var, stack_MC)  });
+                                   Plotter::DataCollection("stack",  var, stack_MC_PU)  });
     };
 
     auto PDCMaker1_nonesig_notrig = [&](std::string var)
     {
-         return  std::vector<PDC>({ Plotter::DataCollection("data",   var, {dsData_SingleMuonNotrig}),
-                                   Plotter::DataCollection("stack",  var, stack_MC)  });
+         return  std::vector<PDC>({ Plotter::DataCollection("data",   var, {dsData_SingleMuon}),
+                                   Plotter::DataCollection("stack",  var, stack_MC_PU)  });
     };
     auto PDCMaker1_rare = [&](std::string var)
     {
         return  std::vector<PDC>({ Plotter::DataCollection("data",   var, {dsData_HTMHT}),
-                                   Plotter::DataCollection("stack",  var, stack_MC_hong),
-                                   Plotter::DataCollection("single",   var, singal_points)  });
+                                   Plotter::DataCollection("stack",  var, stack_MC_PU),
+                                   Plotter::DataCollection("single",   var, signal_points_PU)  });
     };
-
+*/
     //Andres 10/20/16
-    auto PDCMaker12 = [&](std::string var)                                                                                                                                  
-      {                                                                                                                                                                             
-        return std::vector<PDC>({ Plotter::DataCollection("single",   var, {photon})  });                                                                                      
-      }; 
   
     /*    auto PDCMaker12 = [&](std::string var)
     {
@@ -307,39 +345,32 @@ int main(int argc, char* argv[])
 	//{"muZinv_ht200_dphi",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passdPhisZinv"},
 	//{"muZinv_ht50_met50_dphi",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
 	//{"muZinv_loose0",             "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv"},
-	//{"muZinv_loose0_mt2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
-	//{"muZinv_loose0_mt21b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv1b>0"},
-	//{"muZinv_loose0_mt22b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv2b>0"},
-	//{"muZinv_loose0_mt23b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv3b>0"},
-	//{"muZinv_loose0_ntop",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv>0"},
 	//{"muZinv_loose0_nb2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passnJetsZinv;passdPhisZinv;cntCSVSZinv>=2"},
-	//{"muZinv_loose0_ht300",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
+        {"g1b_0top_MET250",       "passNoiseEventFilterZinv;passnJetsZinv;cntCSVSZinv>1;nTopCandSortedCntZinv=0;passLeptVeto;cleanMetPt>250;passdPhisZinv"},
+        {"1b_0top_MET250",       "passNoiseEventFilterZinv;passnJetsZinv;cntCSVSZinv=1;nTopCandSortedCntZinv=0;passLeptVeto;cleanMetPt>250;passdPhisZinv"},
+	{"0b_0top",       "passNoiseEventFilterZinv;passnJetsZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0;passLeptVeto"},
+        //{"0b_0top_MET250",       "passNoiseEventFilterZinv;passnJetsZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0;cleanMetPt>250;passLeptVeto"},
+        //{"0b_0top_MET250_filt",       "passNoiseEventFilterZinv;passnJetsZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0;cleanMetPt>250;passLeptVeto"},
+        //{"0b_0top_MET250_HT300",       "passNoiseEventFilterZinv;passnJetsZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0;cleanMetPt>250;HTZinv>300;passLeptVeto"},
+        //{"0b_0top_MET250_HT300_dphi_filt",       "passNoiseEventFilterZinv;passnJetsZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0;cleanMetPt>250;HTZinv>300;passdPhisZinv;passLeptVeto"},
+        {"0b_0top_MET250_HT300_dphi",       "passNoiseEventFilterZinv;passnJetsZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0;cleanMetPt>250;HTZinv>300;passdPhisZinv;passLeptVeto"},
+        {"0b_0top_MET250_dphi",       "HTZinv>300;passNoiseEventFilterZinv;passnJetsZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0;cleanMetPt>250;passdPhisZinv;passLeptVeto"},
+        {"muZinv_0topVal_MET250_extraPhi",    "passLeptVeto;cntCSVSZinv=0;HTZinv>300;passNoiseEventFilterZinv;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>250"},
+        {"muZinv_0topVal_MET250_extraPhi_noZinv",    "passLeptVeto;cntCSVS=0;HT>300;passNoiseEventFilter;passnJets;passdPhis_extra;nTopCandSortedCnt=0;cleanMetPt>250"},
+	{"hong_comparison",	"passMuonVeto;passEleVeto;passIsoTrkVeto;passnJets;passdPhis;passMET;passHT;cntCSVS=0;nTopCandSortedCnt=0;passdPhis_extra"},
+        {"hong_comparison_eventFilt",     "passMuonVeto;passEleVeto;passIsoTrkVeto;passnJets;passdPhis;passMET;passHT;cntCSVS==0;nTopCandSortedCnt==0;passdPhis_extra;passNoiseEventFilter"}
+        //{"0b_0top_MET250_dphi_filt",       "passNoiseEventFilterZinv;passnJetsZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0;cleanMetPt>250;passdPhisZinv;passLeptVeto"}
+             //  {"0b_0top_MET500_dphi",       "passNoiseEventFilterZinv;passnJetsZinv;cntCSVSZinv=0;nTopCandSortedCntZinv=0;cleanMetPt>500;passdPhisZinv"} 
 	//{"muZinv_loose0_ht400",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>400;passnJetsZinv;passdPhisZinv"},
 	//{"muZinv_loose0_ht500",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>500;passnJetsZinv;passdPhisZinv"},
 	//{"muZinv_blnotagmt2",         "passMuZinvSel;passBaselineNoTagMT2Zinv"},
-	{"baseline",                  "passBaseline"},
-	{"baseline_Zinv",             "passBaselineZinv;passNoiseEventFilter"},//;passKoushik"},
-	{"baseline_ICHEP",            "cntCSVS>0;passLeptVeto;passnJets;passdPhis;passBJets;passTagger;passMT2;passNoiseEventFilter;passQCDHighMETFilter;passFastsimEventFilter;HT>500;met>200"}, //Andres
-	{"baseline_original",         "cntCSVS>0;passLeptVeto;passnJets;passdPhis;passBJets;passTagger;passMT2;passNoiseEventFilter;passQCDHighMETFilter;passFastsimEventFilter;passHT;passMET"},
-
+	//{"baseline",                  "passBaseline"},
+	//{"baseline_Zinv",             "passBaselineZinv;passNoiseEventFilter"},//;passKoushik"},
+	//{"baseline_ICHEP",            "cntCSVS>0;passLeptVeto;passnJets;passdPhis;passBJets;passTagger;passMT2;passNoiseEventFilter;passQCDHighMETFilter;passFastsimEventFilter;HT>500;met>200"}, //Andres
+	//{"baseline_original",         "cntCSVS>0;passLeptVeto;passnJets;passdPhis;passBJets;passTagger;passMT2;passNoiseEventFilter;passQCDHighMETFilter;passFastsimEventFilter;passHT;passMET"},
+	//{"baseline_0b",               "cntCSVSZinv=0;passBaselineNoTag"},
 	//{"muZinv_0b",                 "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0"},
 /*
-	{"muZinv_0b_ht200",           "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200"},
-	{"muZinv_0b_ht200_dphi",      "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passdPhisZinv"},
-	{"muZinv_0b_ht50_met50_dphi", "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
-	{"muZinv_0b_loose0",          "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_0b_loose0_ht300",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_0b_loose0_ht400",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>400;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_0b_loose0_ht500",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>500;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_0b_blnotagmt2",      "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv"},
-	{"muZinv_0b_blnotag",         "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
-	{"muZinv_g1b",                "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv"},
-	{"muZinv_g1b_ht200",          "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200"},
-	{"muZinv_g1b_ht200_dphi",     "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passdPhisZinv"},
-	{"muZinv_g1b_ht50_met50_dphi","passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
-	{"muZinv_g1b_loose0",         "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_g1b_loose0_ht300",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>300;passnJetsZinv;passdPhisZinv"},
-	{"muZinv_g1b_loose0_ht400",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>400;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_g1b_loose0_ht500",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>500;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_g1b_blnotag",        "passMuZinvSel;passBJetsZinv;passBaselineNoTagZinv"},
 	{"elmu",                      "passNoiseEventFilterZinv;passElMuSel"},
@@ -389,32 +420,171 @@ int main(int argc, char* argv[])
        vh.push_back(PHS("DataMC_SingleMuon_model_MT2Noratio_"  + cut.first,  PDCMaker_noTrig("best_had_brJet_MT2"), {1, 1}, cut.second, 100, 0, 1500, true, true,  label_mt2,   "Events"));
     }
     */
+    vector<double> metBins = {250, 350, 500, 650, 1500};
     for(std::pair<std::string,std::string>& cut : cutlevels_muon)
       {
         // unweighted                                                                                                                                                                                             
         //               histogram name                         vector of PDC           ratio  cutstring    bins ll ul   log   norm    x-axis      y-axis                                                         
+	/*
 	vh.push_back(PHS("DataMC_MET_model_metZinv_" + cut.first,  PDCMaker("cleanMetPt"), {1, 2}, cut.second, 50, 0, 1500, true, false,  label_met,  "Events"));
-	vh.push_back(PHS("DataMC_MET__model_ht_Zinv"  + cut.first,  PDCMaker("HTZinv"), {1, 2}, cut.second, 50, 0, 2000, true, true,  label_ht,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_ht_"  + cut.first,  PDCMaker("HT"),     {1, 2}, cut.second, 50, 0, 2000, true, true,  label_ht,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_met_"  + cut.first,  PDCMaker("met"),     {1, 2}, cut.second, 50, 0, 1500, true, true,  label_met,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_NBJetsZInv_"  + cut.first,  PDCMaker("cntCSVSZinv"),   {1, 2}, cut.second, 6, 0, 6, false, true,  label_nb,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_NBJEts_"  + cut.first,  PDCMaker("cntCSVS"),     {1, 2}, cut.second, 6, 0, 6, false, true,  label_nb,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_NJEtsZInv_" + cut.first, PDCMaker("cntNJetsPt30Eta24Zinv"), {1, 2}, cut.second, 20, 0, 20, false, true,  label_nj, "Events"));
-	vh.push_back(PHS("DataMC_MET_model_NJEts_"  + cut.first,  PDCMaker("cntNJetsPt30Eta24"),{1, 2}, cut.second, 20, 0, 20, false, true,  label_nj,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_NTopsZinv_"  + cut.first,  PDCMaker("nTopCandSortedCntZinv"), {1, 2}, cut.second, 10, 0, 10, false, true,  label_nt,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_NTops_"  + cut.first,  PDCMaker("nTopCandSortedCnt"),     {1, 2}, cut.second, 10, 0, 10, false, true,  label_nt,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_MT2ZInv_"  + cut.first,  PDCMaker("best_had_brJet_MT2Zinv"), {1, 2}, cut.second, 100, 0, 1500, true, true,  label_mt2, "Events"));
-	vh.push_back(PHS("DataMC_MET_model_MT2_"  + cut.first,  PDCMaker("best_had_brJet_MT2"),     {1, 2}, cut.second, 100, 0, 1500, true, true,  label_mt2,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_metNoratio_" + cut.first,  PDCMaker("met"), {1, 1}, cut.second, 50, 0, 1500, true, true,  label_met,  "Events"));
-	vh.push_back(PHS("DataMC_MET_model_htNoratio_"  + cut.first,  PDCMaker("HT"),     {1, 1}, cut.second, 50, 0, 2000, true, true,  label_ht,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_NBJEtsNoratio_"  + cut.first,  PDCMaker("cntCSVS"),     {1, 1}, cut.second, 6, 0, 6, false, true,  label_nb,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_NJEtsNoratio_"  + cut.first,  PDCMaker("cntNJetsPt30Eta24"),{1, 1}, cut.second, 20, 0, 20, false, true,  label_nj,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_NTopsNoratio_"  + cut.first, PDCMaker("nTopCandSortedCnt"), {1, 1}, cut.second, 10, 0, 10, false, true,  label_nt,   "Events"));
-	vh.push_back(PHS("DataMC_MET_model_MT2Noratio_"  + cut.first,  PDCMaker("best_had_brJet_MT2"), {1, 1}, cut.second, 100, 0, 1500, true, true,  label_mt2,   "Events"));
-      }
+	vh.push_back(PHS("DataMC_MET__model_ht_Zinv_"  + cut.first,  PDCMaker("HTZinv"), {1, 2}, cut.second, 50, 0, 2000, true, false,  label_ht,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_ht_"  + cut.first,  PDCMaker("HT"),     {1, 2}, cut.second, 50, 0, 2000, true, false,  label_ht,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_met_"  + cut.first,  PDCMaker("met"),     {1, 2}, cut.second, 50, 0, 1500, true, false,  label_met,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_NBJetsZInv_"  + cut.first,  PDCMaker("cntCSVSZinv"),   {1, 2}, cut.second, 10, 0, 10, false, false,  label_nb,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_NBJEts_"  + cut.first,  PDCMaker("cntCSVS"),     {1, 2}, cut.second, 10, 0, 10, false, false,  label_nb,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_NBJEts_log_"  + cut.first,  PDCMaker("cntCSVS"),     {1, 2}, cut.second, 10, 0, 10, true, false,  label_nb,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_NJEtsZInv_" + cut.first, PDCMaker("cntNJetsPt30Eta24Zinv"), {1, 2}, cut.second, 20, 0, 20, false, false,  label_nj, "Events"));
+	vh.push_back(PHS("DataMC_MET_model_NJEts_"  + cut.first,  PDCMaker("cntNJetsPt30Eta24"),{1, 2}, cut.second, 20, 0, 20, false, false,  label_nj,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_NTopsZinv_"  + cut.first,  PDCMaker("nTopCandSortedCntZinv"), {1, 2}, cut.second, 10, 0, 10, false, false,  label_nt,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_NTops_"  + cut.first,  PDCMaker("nTopCandSortedCnt"),     {1, 2}, cut.second, 10, 0, 10, false, false,  label_nt,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_NTops_log_"  + cut.first,  PDCMaker("nTopCandSortedCnt"),     {1, 2}, cut.second, 10, 0, 10, true, false,  label_nt,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_MT2ZInv_"  + cut.first,  PDCMaker("best_had_brJet_MT2Zinv"), {1, 2}, cut.second, 100, 0, 1500, true, false,  label_mt2, "Events"));
+	vh.push_back(PHS("DataMC_MET_model_MT2_"  + cut.first,  PDCMaker("best_had_brJet_MT2"),     {1, 2}, cut.second, 100, 0, 1500, true, false,  label_mt2,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_metNoratio_" + cut.first,  PDCMaker("met"), {1, 1}, cut.second, 50, 0, 1500, true, false,  label_met,  "Events"));
+	vh.push_back(PHS("DataMC_MET_model_htNoratio_"  + cut.first,  PDCMaker("HT"),     {1, 1}, cut.second, 50, 0, 2000, true, false,  label_ht,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_NBJEtsNoratio_"  + cut.first,  PDCMaker("cntCSVS"),     {1, 1}, cut.second, 10, 0, 10, false, false,  label_nb,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_NJEtsNoratio_"  + cut.first,  PDCMaker("cntNJetsPt30Eta24"),{1, 1}, cut.second, 20, 0, 20, false, false,  label_nj,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_NTopsNoratio_"  + cut.first, PDCMaker("nTopCandSortedCnt"), {1, 1}, cut.second, 10, 0, 10, false, false,  label_nt,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_MT2Noratio_"  + cut.first,  PDCMaker("best_had_brJet_MT2"), {1, 1}, cut.second, 100, 0, 1500, true, false,  label_mt2,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_truNpv_"  + cut.first,  PDCMaker("tru_npv"), {1, 1}, cut.second, 50, 0, 50, false, false,  label_nPV,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_Npv_"  + cut.first,  PDCMaker("npv"), {1, 1}, cut.second, 50, 0, 50, false, false,  label_nPV,   "Events"));
+	vh.push_back(PHS("DataMC_MET_model_vtxSize_"  + cut.first,  PDCMaker("vtxSize"), {1, 1}, cut.second, 50, 0, 50, false, false,  label_nPV,   "Events"));
+	*/
+	//same but with pileup weights
+	vh.push_back(PHS("DataMC_SM_metZinv_PUweights_" + cut.first,  PDCMaker_PUweights("cleanMetPt"), {1, 2}, cut.second, 50, 0, 1500, true, true,  label_met,  "Events"));
+        vh.push_back(PHS("DataMC_SM_metZinv_Binned_" + cut.first,  PDCMaker_PUweights("cleanMetPt"), {1, 2}, cut.second, metBins, true, false,  label_met,  "Events"));
+        vh.push_back(PHS("DataMC_SM_ht_Zinv_PUweights_"  + cut.first,  PDCMaker_PUweights("HTZinv"), {1, 2}, cut.second, 50, 0, 2000, true, true,  label_ht,   "Events"));
+        vh.push_back(PHS("DataMC_SM_ht_PUweights_"  + cut.first,  PDCMaker_PUweights("HT"),     {1, 2}, cut.second, 50, 0, 2000, true, true,  label_ht,   "Events"));
+        vh.push_back(PHS("DataMC_SM_met_PUweights_"  + cut.first,  PDCMaker_PUweights("met"),     {1, 2}, cut.second, 50, 0, 1500, true, true,  label_met,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NBJetsZInv_PUweights_"  + cut.first,  PDCMaker_PUweights("cntCSVSZinv"),   {1, 2}, cut.second, 10, 0, 10, false, true,  label_nb,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NBJEts_PUweights_"  + cut.first,  PDCMaker_PUweights("cntCSVS"),     {1, 2}, cut.second, 10, 0, 10, false, true,  label_nb,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NBJEts_log_PUweights_"  + cut.first,  PDCMaker_PUweights("cntCSVS"),     {1, 2}, cut.second, 10, 0, 10, true, true,  label_nb,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEtsZInv_PUweights_" + cut.first, PDCMaker_PUweights("cntNJetsPt30Eta24Zinv"), {1, 2}, cut.second, 20, 0, 20, false, false,  label_nj, "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEts_PUweights_"  + cut.first,  PDCMaker_PUweights("cntNJetsPt30Eta24"),{1, 2}, cut.second, 20, 0, 20, false, false,  label_nj,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEtsZInv_log_PUweights_" + cut.first, PDCMaker_PUweights("cntNJetsPt30Eta24Zinv"), {1, 2}, cut.second, 20, 0, 20, false, true,  label_nj, "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEts_log_PUweights_"  + cut.first,  PDCMaker_PUweights("cntNJetsPt30Eta24"),{1, 2}, cut.second, 20, 0, 20, false, true,  label_nj,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEtsZInv_norm_PUweights_" + cut.first, PDCMaker_PUweights("cntNJetsPt30Eta24Zinv"), {1, 2}, cut.second, 20, 0, 20, true, true,  label_nj, "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEts_norm_PUweights_"  + cut.first,  PDCMaker_PUweights("cntNJetsPt30Eta24"),{1, 2}, cut.second, 20, 0, 20, true, true,  label_nj,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NTopsZinv_PUweights_"  + cut.first,  PDCMaker_PUweights("nTopCandSortedCntZinv"), {1, 2}, cut.second, 10, 0, 10, false, true,  label_nt,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NTops_PUweights_"  + cut.first,  PDCMaker_PUweights("nTopCandSortedCnt"),     {1, 2}, cut.second, 10, 0, 10, false, true,  label_nt,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NTops_log_PUweights_"  + cut.first,  PDCMaker_PUweights("nTopCandSortedCnt"),     {1, 2}, cut.second, 10, 0, 10, true, true,  label_nt,   "Events"));
+        vh.push_back(PHS("DataMC_MET_model_MT2ZInv_PUweights_"  + cut.first,  PDCMaker_PUweights("best_had_brJet_MT2Zinv"), {1, 2}, cut.second, 100, 0, 1500, true, true,  label_mt2, "Events"));
+        vh.push_back(PHS("DataMC_MET_model_MT2_PUweights_"  + cut.first,  PDCMaker_PUweights("best_had_brJet_MT2"),     {1, 2}, cut.second, 100, 0, 1500, true, true,  label_mt2,   "Events"));
+        vh.push_back(PHS("DataMC_MS_metNoratio_PUweights_" + cut.first,  PDCMaker_PUweights("met"), {1, 1}, cut.second, 50, 0, 1500, true, true,  label_met,  "Events"));
+        vh.push_back(PHS("DataMC_MS_htNoratio_PUweights_"  + cut.first,  PDCMaker_PUweights("HT"),     {1, 1}, cut.second, 50, 0, 2000, true, true,  label_ht,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NBJEtsNoratio_PUweights_"  + cut.first,  PDCMaker_PUweights("cntCSVS"),     {1, 1}, cut.second, 10, 0, 10, false, true,  label_nb,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEtsNoratio_PUweights_"  + cut.first,  PDCMaker_PUweights("cntNJetsPt30Eta24"),{1, 1}, cut.second, 20, 0, 20, false, true,  label_nj,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NTopsNoratio_PUweights_"  + cut.first, PDCMaker_PUweights("nTopCandSortedCnt"), {1, 1}, cut.second, 10, 0, 10, false, true,  label_nt,   "Events"));
+    vh.push_back(PHS("dPhi1_cutF" + cut.first ,       PDCMaker_PUweights("dPhiVecZinv[0]"),  {1, 2}, cut.second,  100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j1)",   "Norm Events"));
+    vh.push_back(PHS("dPhi2_cutF" + cut.first ,       PDCMaker_PUweights("dPhiVecZinv[1]"),  {1, 2}, cut.second,  100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j2)",   "Norm Events"));
+    vh.push_back(PHS("dPhi3_cutF" + cut.first ,       PDCMaker_PUweights("dPhiVecZinv[2]"),  {1, 2}, cut.second,  100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j3)",   "Norm Events"));
+    vh.push_back(PHS("dPhi4_cutF" + cut.first ,       PDCMaker_PUweights("dPhiVecZinv[3]"),  {1, 2}, cut.second,  100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j4)",   "Norm Events"));
+        vh.push_back(PHS("DataMC_MS_JetsPT_PUweights_"  + cut.first, PDCMaker_PUweights("jetsLVecLepCleaned(pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j p_{T} [GeV]",   "Events"));    
+        vh.push_back(PHS("DataMC_MS_JetsPT1_PUweights_"  + cut.first, PDCMaker_PUweights("jetsLVecLepCleaned[0](pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j_{1} p_{T} [GeV]",   "Events"));
+        //vh.push_back(PHS("DataMC_MS_JetsPT2_PUweights_"  + cut.first, PDCMaker_PUweights("jetsLVecLepCleaned[1](pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j_{2} p_{T} [GeV]",   "Events"));
+        //vh.push_back(PHS("DataMC_MS_JetsPT3_PUweights_"  + cut.first, PDCMaker_PUweights("jetsLVecLepCleaned[2](pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j_{3} p_{T} [GeV]",   "Events"));
+        //vh.push_back(PHS("DataMC_MS_JetsPT4_PUweights_"  + cut.first, PDCMaker_PUweights("jetsLVecLepCleaned[3](pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j_{4} p_{T} [GeV]",   "Events"));
+       // vh.push_back(PHS("DataMC_MET_model_MT2Noratio_PUweights_"  + cut.first,  PDCMaker_PUweights("best_had_brJet_MT2"), {1, 1}, cut.second, 100, 0, 1500, true, true,  label_mt2,   "Events"));
+        //vh.push_back(PHS("DataMC_MET_model_truNpv_PUweights_"  + cut.first,  PDCMaker_PUweights("tru_npv"), {1, 1}, cut.second, 50, 0, 50, false, true,  label_nPV,   "Events"));
+        //vh.push_back(PHS("DataMC_MET_model_Npv_PUweights_"  + cut.first,  PDCMaker_PUweights("npv"), {1, 1}, cut.second, 50, 0, 50, false, true,  label_nPV,   "Events"));  
+	//vh.push_back(PHS("DataMC_MET_model_vtxSize_PUweights_"  + cut.first,  PDCMaker_PUweights("vtxSize"), {1, 1}, cut.second, 50, 0, 50, false, true,  label_nPV,   "Events"));
+        vh.push_back(PHS("DataMC_SM_metZinv_PUweights_norm_" + cut.first,  PDCMaker_PUweights_norm("cleanMetPt"), {1, 2}, cut.second, 50, 0, 1500, true, true,  label_met,  "Events"));
+        vh.push_back(PHS("DataMC_SM_metZinv_Binned_norm_" + cut.first,  PDCMaker_PUweights_norm("cleanMetPt"), {1, 2}, cut.second, metBins, true, false,  label_met,  "Events"));
+        vh.push_back(PHS("DataMC_SM_ht_Zinv_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("HTZinv"), {1, 2}, cut.second, 50, 0, 2000, true, true,  label_ht,   "Events"));
+        vh.push_back(PHS("DataMC_SM_ht_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("HT"),     {1, 2}, cut.second, 50, 0, 2000, true, true,  label_ht,   "Events"));
+        vh.push_back(PHS("DataMC_SM_met_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("met"),     {1, 2}, cut.second, 50, 0, 1500, true, true,  label_met,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NBJetsZInv_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("cntCSVSZinv"),   {1, 2}, cut.second, 10, 0, 10, false, true,  label_nb,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NBJEts_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("cntCSVS"),     {1, 2}, cut.second, 10, 0, 10, false, true,  label_nb,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NBJEts_log_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("cntCSVS"),     {1, 2}, cut.second, 10, 0, 10, true, true,  label_nb,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEtsZInv_PUweights_norm_" + cut.first, PDCMaker_PUweights_norm("cntNJetsPt30Eta24Zinv"), {1, 2}, cut.second, 20, 0, 20, false, false,  label_nj, "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEts_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("cntNJetsPt30Eta24"),{1, 2}, cut.second, 20, 0, 20, false, false,  label_nj,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEtsZInv_log_PUweights_norm_" + cut.first, PDCMaker_PUweights("cntNJetsPt30Eta24Zinv"), {1, 2}, cut.second, 20, 0, 20, false, true,  label_nj, "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEts_log_PUweights_norm_"  + cut.first,  PDCMaker_PUweights("cntNJetsPt30Eta24"),{1, 2}, cut.second, 20, 0, 20, false, true,  label_nj,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEtsZInv_norm_PUweights_norm_" + cut.first, PDCMaker_PUweights("cntNJetsPt30Eta24Zinv"), {1, 2}, cut.second, 20, 0, 20, true, true,  label_nj, "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEts_norm_PUweights_norm"  + cut.first,  PDCMaker_PUweights("cntNJetsPt30Eta24"),{1, 2}, cut.second, 20, 0, 20, true, true,  label_nj,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NTopsZinv_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("nTopCandSortedCntZinv"), {1, 2}, cut.second, 10, 0, 10, false, true,  label_nt,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NTops_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("nTopCandSortedCnt"),     {1, 2}, cut.second, 10, 0, 10, false, true,  label_nt,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NTops_log_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("nTopCandSortedCnt"),     {1, 2}, cut.second, 10, 0, 10, true, true,  label_nt,   "Events"));
+        vh.push_back(PHS("DataMC_MET_model_MT2ZInv_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("best_had_brJet_MT2Zinv"), {1, 2}, cut.second, 100, 0, 1500, true, true,  label_mt2, "Events"));
+        vh.push_back(PHS("DataMC_MET_model_MT2_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("best_had_brJet_MT2"),     {1, 2}, cut.second, 100, 0, 1500, true, true,  label_mt2,   "Events"));
+        vh.push_back(PHS("DataMC_MS_metNoratio_PUweights_norm_" + cut.first,  PDCMaker_PUweights_norm("met"), {1, 1}, cut.second, 50, 0, 1500, true, true,  label_met,  "Events"));
+        vh.push_back(PHS("DataMC_MS_htNoratio_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("HT"),     {1, 1}, cut.second, 50, 0, 2000, true, true,  label_ht,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NBJEtsNoratio_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("cntCSVS"),     {1, 1}, cut.second, 10, 0, 10, false, true,  label_nb,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEtsNoratio_PUweights_norm_"  + cut.first,  PDCMaker_PUweights_norm("cntNJetsPt30Eta24"),{1, 1}, cut.second, 20, 0, 20, false, true,  label_nj,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NTopsNoratio_PUweights_norm_"  + cut.first, PDCMaker_PUweights_norm("nTopCandSortedCnt"), {1, 1}, cut.second, 10, 0, 10, false, true,  label_nt,   "Events"));
+    vh.push_back(PHS("dPhi1_cutF_norm" + cut.first ,       PDCMaker_PUweights_norm("dPhiVecZinv[0]"),  {1, 2}, cut.second,  100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j1)",   "Norm Events"));
+    vh.push_back(PHS("dPhi2_cutF_norm" + cut.first ,       PDCMaker_PUweights_norm("dPhiVecZinv[1]"),  {1, 2}, cut.second,  100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j2)",   "Norm Events"));
+    vh.push_back(PHS("dPhi3_cutF_norm" + cut.first ,       PDCMaker_PUweights_norm("dPhiVecZinv[2]"),  {1, 2}, cut.second,  100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j3)",   "Norm Events"));
+    vh.push_back(PHS("dPhi4_cutF_norm" + cut.first ,       PDCMaker_PUweights_norm("dPhiVecZinv[3]"),  {1, 2}, cut.second,  100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j4)",   "Norm Events"));
+        vh.push_back(PHS("DataMC_MS_JetsPT_PUweights__norm"  + cut.first, PDCMaker_PUweights_norm("jetsLVecLepCleaned(pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j p_{T} [GeV]",   "Events"));
+        vh.push_back(PHS("DataMC_MS_JetsPT1_PUweights__norm"  + cut.first, PDCMaker_PUweights_norm("jetsLVecLepCleaned[0](pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j_{1} p_{T} [GeV]",   "Events"));
+        //vh.push_back(PHS("DataMC_MS_JetsPT2_PUweights_norm_"  + cut.first, PDCMaker_PUweights_norm("jetsLVecLepCleaned[1](pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j_{2} p_{T} [GeV]",   "Events"));
+        //vh.push_back(PHS("DataMC_MS_JetsPT3_PUweights_norm_"  + cut.first, PDCMaker_PUweights_norm("jetsLVecLepCleaned[2](pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j_{3} p_{T} [GeV]",   "Events"));
+        //vh.push_back(PHS("DataMC_MS_JetsPT4_PUweights_norm_"  + cut.first, PDCMaker_PUweights_norm("jetsLVecLepCleaned[3](pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j_{4} p_{T} [GeV]",   "Events"));
+//////////////////////////
+        vh.push_back(PHS("DataMC_SM_metZinv_PUweights_wei_" + cut.first,  PDCMaker_PUweights_wei("cleanMetPt"), {1, 2}, cut.second, 50, 0, 1500, true, true,  label_met,  "Events"));
+        vh.push_back(PHS("DataMC_SM_metZinv_Binned_wei_" + cut.first,  PDCMaker_PUweights_wei("cleanMetPt"), {1, 2}, cut.second, metBins, true, false,  label_met,  "Events"));
+        vh.push_back(PHS("DataMC_SM_ht_Zinv_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("HTZinv"), {1, 2}, cut.second, 50, 0, 2000, true, true,  label_ht,   "Events"));
+        vh.push_back(PHS("DataMC_SM_ht_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("HT"),     {1, 2}, cut.second, 50, 0, 2000, true, true,  label_ht,   "Events"));
+        vh.push_back(PHS("DataMC_SM_met_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("met"),     {1, 2}, cut.second, 50, 0, 1500, true, true,  label_met,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NBJetsZInv_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("cntCSVSZinv"),   {1, 2}, cut.second, 10, 0, 10, false, true,  label_nb,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NBJEts_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("cntCSVS"),     {1, 2}, cut.second, 10, 0, 10, false, true,  label_nb,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NBJEts_log_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("cntCSVS"),     {1, 2}, cut.second, 10, 0, 10, true, true,  label_nb,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEtsZInv_PUweights_wei_" + cut.first, PDCMaker_PUweights_wei("cntNJetsPt30Eta24Zinv"), {1, 2}, cut.second, 20, 0, 20, false, false,  label_nj, "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEts_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("cntNJetsPt30Eta24"),{1, 2}, cut.second, 20, 0, 20, false, false,  label_nj,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEtsZInv_log_PUweights_wei_" + cut.first, PDCMaker_PUweights("cntNJetsPt30Eta24Zinv"), {1, 2}, cut.second, 20, 0, 20, false, true,  label_nj, "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEts_log_PUweights_wei_"  + cut.first,  PDCMaker_PUweights("cntNJetsPt30Eta24"),{1, 2}, cut.second, 20, 0, 20, false, true,  label_nj,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEtsZInv_norm_PUweights_wei_" + cut.first, PDCMaker_PUweights("cntNJetsPt30Eta24Zinv"), {1, 2}, cut.second, 20, 0, 20, true, true,  label_nj, "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEts_norm_PUweights_wei_"  + cut.first,  PDCMaker_PUweights("cntNJetsPt30Eta24"),{1, 2}, cut.second, 20, 0, 20, true, true,  label_nj,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NTopsZinv_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("nTopCandSortedCntZinv"), {1, 2}, cut.second, 10, 0, 10, false, true,  label_nt,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NTops_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("nTopCandSortedCnt"),     {1, 2}, cut.second, 10, 0, 10, false, true,  label_nt,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NTops_log_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("nTopCandSortedCnt"),     {1, 2}, cut.second, 10, 0, 10, true, true,  label_nt,   "Events"));
+        vh.push_back(PHS("DataMC_MET_model_MT2ZInv_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("best_had_brJet_MT2Zinv"), {1, 2}, cut.second, 100, 0, 1500, true, true,  label_mt2, "Events"));
+        vh.push_back(PHS("DataMC_MET_model_MT2_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("best_had_brJet_MT2"),     {1, 2}, cut.second, 100, 0, 1500, true, true,  label_mt2,   "Events"));
+        vh.push_back(PHS("DataMC_MS_metNoratio_PUweights_wei_" + cut.first,  PDCMaker_PUweights_wei("met"), {1, 1}, cut.second, 50, 0, 1500, true, true,  label_met,  "Events"));
+        vh.push_back(PHS("DataMC_MS_htNoratio_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("HT"),     {1, 1}, cut.second, 50, 0, 2000, true, true,  label_ht,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NBJEtsNoratio_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("cntCSVS"),     {1, 1}, cut.second, 10, 0, 10, false, true,  label_nb,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NJEtsNoratio_PUweights_wei_"  + cut.first,  PDCMaker_PUweights_wei("cntNJetsPt30Eta24"),{1, 1}, cut.second, 20, 0, 20, false, true,  label_nj,   "Events"));
+        vh.push_back(PHS("DataMC_MS_NTopsNoratio_PUweights_wei_"  + cut.first, PDCMaker_PUweights_wei("nTopCandSortedCnt"), {1, 1}, cut.second, 10, 0, 10, false, true,  label_nt,   "Events"));
 
-    for(std::pair<std::string,std::string>& cut : cutlevels_muon)
-    {
+  vh.push_back(PHS("dPhi1_cutF_wei_" + cut.first ,       PDCMaker_PUweights_wei("dPhiVecZinv[0]"),  {1, 2}, cut.second,  100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j1)",   "Norm Events"));
+    vh.push_back(PHS("dPhi2_cutF_wei_" + cut.first ,       PDCMaker_PUweights_wei("dPhiVecZinv[1]"),  {1, 2}, cut.second,  100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j2)",   "Norm Events"));
+    vh.push_back(PHS("dPhi3_cutF_wei_" + cut.first ,       PDCMaker_PUweights_wei("dPhiVecZinv[2]"),  {1, 2}, cut.second,  100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j3)",   "Norm Events"));
+    vh.push_back(PHS("dPhi4_cutF_wei_" + cut.first ,       PDCMaker_PUweights_wei("dPhiVecZinv[3]"),  {1, 2}, cut.second,  100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j4)",   "Norm Events"));
+        vh.push_back(PHS("DataMC_MS_JetsPT_PUweights_wei_"  + cut.first, PDCMaker_PUweights_wei("jetsLVecLepCleaned(pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j p_{T} [GeV]",   "Events"));
+        vh.push_back(PHS("DataMC_MS_JetsPT1_PUweights_wei_"  + cut.first, PDCMaker_PUweights_wei("jetsLVecLepCleaned[0](pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j_{1} p_{T} [GeV]",   "Events"));
+       // vh.push_back(PHS("DataMC_MS_JetsPT2_PUweights_wei_"  + cut.first, PDCMaker_PUweights_wei("jetsLVecLepCleaned[1](pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j_{2} p_{T} [GeV]",   "Events"));
+        //vh.push_back(PHS("DataMC_MS_JetsPT3_PUweights_wei_"  + cut.first, PDCMaker_PUweights_wei("jetsLVecLepCleaned[2](pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j_{3} p_{T} [GeV]",   "Events"));
+        //vh.push_back(PHS("DataMC_MS_JetsPT4_PUweights_wei_"  + cut.first, PDCMaker_PUweights_wei("jetsLVecLepCleaned[3](pt)"), {1, 1}, cut.second, 50, 0, 1500, false, true,  "j_{4} p_{T} [GeV]",   "Events"));
+ }
+/*
+    vh.push_back(PHS("dPhi1",                   {PDCMaker_PUweights("single", "dPhiVecZinv[0]",      {dsDY_ll, dsDY_nunu})}, {3, 2}, "",                             100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j1)",   "Norm Events"));
+    vh.push_back(PHS("dPhi2",                   {PDCMaker_PUweights("single", "dPhiVecZinv[1]",      {dsDY_ll, dsDY_nunu})}, {3, 2}, "",                             100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j2)",   "Norm Events"));
+    vh.push_back(PHS("dPhi1_ak8",                   {PDCMaker_PUweights("single", "dPhiVec_ak8Zinv[0]",      {dsDY_ll, dsDY_nunu})}, {3, 2}, "",                             100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j1)",   "Norm Events"));
+    vh.push_back(PHS("dPhi2_ak8",                   {PDCMaker_PUweights("single", "dPhiVec_ak8Zinv[1]",      {dsDY_ll, dsDY_nunu})}, {3, 2}, "",                             100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j2)",   "Norm Events"));
+    vh.push_back(PHS("dPhi3",                   {PDCMaker_PUweights("single", "dPhiVecZinv[2]",      {dsDY_ll, dsDY_nunu})}, {3, 2}, "",                             100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j3)",   "Norm Events"));
+    vh.push_back(PHS("dPhi1_comp",              {PDCMaker_PUweights("single", {{"dPhiVecZinv[0]", dsDY_ll_clean}, {"dPhiVec[0]", dsDY_ll}})}, {1, 1}, "",                          100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j1)",   "Norm Events"));
+    vh.push_back(PHS("dPhi2_comp",              {PDCMaker_PUweights("single", {{"dPhiVecZinv[1]", dsDY_ll_clean}, {"dPhiVec[1]", dsDY_ll}})}, {1, 1}, "",                          100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j2)",   "Norm Events"));
+    vh.push_back(PHS("dPhi1_comp_ak8",              {PDCMaker_PUweights("single", {{"dPhiVec_ak8Zinv[0]", dsDY_ll_clean}, {"dPhiVec_ak8[0]", dsDY_ll}})}, {1, 1}, "",                          100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j1)",   "Norm Events"));
+    vh.push_back(PHS("dPhi2_comp_ak8",              {PDCMaker_PUweights("single", {{"dPhiVec_ak8Zinv[1]", dsDY_ll_clean}, {"dPhiVec_ak8[1]", dsDY_ll}})}, {1, 1}, "",                          100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j2)",   "Norm Events"));
+    vh.push_back(PHS("dPhi3_comp",              {PDCMaker_PUweights("single", {{"dPhiVecZinv[2]", dsDY_ll_clean}, {"dPhiVec[2]", dsDY_ll}})}, {1, 1}, "",                          100, 0, 3.1415,  false, true,  "#Delta#phi(p_{T}^{miss},j3)",   "Norm Events"));
+    vh.push_back(PHS("dPhi1_nJet",              {PDCMaker_PUweights("single", "dPhiVecZinv[0]",      {dsDY_ll, dsDY_nunu})}, {1, 2}, "passnJetsZinv",                100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j1)",   "Norm Events"));
+    vh.push_back(PHS("dPhi2_nJet",              {PDCMaker_PUweights("single", "dPhiVecZinv[1]",      {dsDY_ll, dsDY_nunu})}, {1, 2}, "passnJetsZinv",                100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j2)",   "Norm Events"));
+    vh.push_back(PHS("dPhi1_nJet_ak8",              {PDCMaker_PUweights("single", "dPhiVec_ak8Zinv[0]",      {dsDY_ll, dsDY_nunu})}, {1, 2}, "passnJetsZinv",                100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j1)",   "Norm Events"));
+    vh.push_back(PHS("dPhi2_nJet_ak8",              {PDCMaker_PUweights("single", "dPhiVec_ak8Zinv[1]",      {dsDY_ll, dsDY_nunu})}, {1, 2}, "passnJetsZinv",                100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j2)",   "Norm Events"));
+    vh.push_back(PHS("dPhi3_nJet",              {PDCMaker_PUweights("single", "dPhiVecZinv[2]",      {dsDY_ll, dsDY_nunu})}, {1, 2}, "passnJetsZinv",                100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j3)",   "Norm Events"));
+    vh.push_back(PHS("dPhi1_nJetMET",           {PDCMaker_PUweights("single", "dPhiVecZinv[0]",      {dsDY_ll, dsDY_nunu})}, {3, 2}, "passnJetsZinv;passMETZinv",    100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j1)",   "Norm Events"));
+    vh.push_back(PHS("dPhi2_nJetMET",           {PDCMaker_PUweights("single", "dPhiVecZinv[1]",      {dsDY_ll, dsDY_nunu})}, {3, 2}, "passnJetsZinv;passMETZinv",    100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j2)",   "Norm Events"));
+    vh.push_back(PHS("dPhi1_nJetMET_ak8",           {PDCMaker_PUweights("single", "dPhiVec_ak8Zinv[0]",      {dsDY_ll, dsDY_nunu})}, {3, 2}, "passnJetsZinv;passMETZinv",    100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j1)",   "Norm Events"));
+    vh.push_back(PHS("dPhi2_nJetMET_ak8",           {PDCMaker_PUweights("single", "dPhiVec_ak8Zinv[1]",      {dsDY_ll, dsDY_nunu})}, {3, 2}, "passnJetsZinv;passMETZinv",    100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j2)",   "Norm Events"));
+    vh.push_back(PHS("dPhi3_nJetMET",           {PDCMaker_PUweights("single", "dPhiVecZinv[2]",      {dsDY_ll, dsDY_nunu})}, {3, 2}, "passnJetsZinv;passMETZinv",    100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j3)",   "Norm Events"));
+    vh.push_back(PHS("dPhi1_nJet_met_gt_600",   {PDCMaker_PUweights("single", "dPhiVecZinv[0]",      {dsDY_ll, dsDY_nunu})}, {1, 2}, "passnJetsZinv;cleanMetPt>600", 100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j1)",   "Norm Events"));
+    vh.push_back(PHS("dPhi2_nJet_met_gt_600",   {PDCMaker_PUweights("single", "dPhiVecZinv[1]",      {dsDY_ll, dsDY_nunu})}, {1, 2}, "passnJetsZinv;cleanMetPt>600", 100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j2)",   "Norm Events"));
+    vh.push_back(PHS("dPhi3_nJet_met_gt_600",   {PDCMaker_PUweights("single", "dPhiVecZinv[2]",      {dsDY_ll, dsDY_nunu})}, {1, 2}, "passnJetsZinv;cleanMetPt>600", 100, 0, 3.1415,  true,  true,  "#Delta#phi(p_{T}^{miss},j3)",   "Norm Events"));
+    
+*/
+    //for(std::pair<std::string,std::string>& cut : cutlevels_muon)
+    //{
       /*  vh.push_back(PHS("DataMC_HTMHT_model_metZinv_" + cut.first,  PDCMaker12("cleanMetPt"), {1, 2}, cut.second, 26, 200, 1500, true, true,  label_met,  "Events"));
        vh.push_back(PHS("DataMC_HTMTH_model_ht_Zinv"  + cut.first,  PDCMaker12("HTZinv"), {1, 2}, cut.second, 40, 500, 2500, true, true,  label_ht,   "Events"));
        vh.push_back(PHS("_ht_"      + cut.first,  PDCMaker12("ht"),     {1, 2}, cut.second, 40, 500, 2500, true, true,  label_ht,   "Events"));
@@ -469,7 +639,7 @@ int main(int argc, char* argv[])
        vh.push_back(PHS("gammaLVec_Eta"  + cut.first,  PDCMaker12("gammaLVec_200(eta)"),  {1, 1}, cut.second, 100, -3.7, 3.7, true, true,  "eta",   "Events"));
        vh.push_back(PHS("gammaLVec_Phi"  + cut.first,  PDCMaker12("gammaLVec_200(phi)"),  {1, 1}, cut.second, 100, -5, 5, true, true,  "phi",   "Events"));
       */
-    }
+    //}
 /*
     for(std::pair<std::string,std::string>& cut : cutlevels_muon)
     {
@@ -561,7 +731,7 @@ vh.push_back(PHS("DataMC_SingleMuonT_MT2ZInv_"  + cut.first, PDCMaker1_nonesig_n
        vh.push_back(PHS("DataMC_HTMTH_rare_MT2Noratio_"  + cut.first,  PDCMaker1_rare("best_had_brJet_MT2"),{1, 1}, cut.second, 100, 0, 1500, true, true,  label_mt2,   "Events"));
     }
 */
-
+/*
 vector<string> cfsSync = {"",
                               "passNoiseEventFilter",
                               "passNoiseEventFilter;passMuonVeto",
@@ -575,24 +745,45 @@ vector<string> cfsSync = {"",
                               "passNoiseEventFilter;passnJets;passMuonVeto;passEleVeto;passIsoTrkVeto;passdPhis;passBJets;passMET;passHT;passTagger",
                               "passNoiseEventFilter;passnJets;passMuonVeto;passEleVeto;passIsoTrkVeto;passdPhis;passBJets;passMET;passHT;passTagger;passMT2",
                               "passBaseline"};
+*/
+vector<string> cfsSync = {"",
+                            "passNoiseEventFilter",
+                            "passNoiseEventFilter;passMuonVeto",
+                            "passNoiseEventFilter;passMuonVeto;passEleVeto",
+                            "passNoiseEventFilter;passMuonVeto;passEleVeto;passIsoTrkVeto",
+                            "passNoiseEventFilter;passMuonVeto;passEleVeto;passIsoTrkVeto;passnJets",
+                            "passNoiseEventFilter;passMuonVeto;passEleVeto;passIsoTrkVeto;passnJets;passdPhis",
+                            "passNoiseEventFilter;passMuonVeto;passEleVeto;passIsoTrkVeto;passnJets;passdPhis;passMET",
+                            "passNoiseEventFilter;passMuonVeto;passEleVeto;passIsoTrkVeto;passnJets;passdPhis;passMET;passHT",
+                            "passNoiseEventFilter;passMuonVeto;passEleVeto;passIsoTrkVeto;passnJets;passdPhis;passMET;passHT;cntCSVS=0",
+                            "passNoiseEventFilter;passMuonVeto;passEleVeto;passIsoTrkVeto;passnJets;passdPhis;passMET;passHT;cntCSVS=0;nTopCandSortedCnt=0",
+                            "passNoiseEventFilter;passMuonVeto;passEleVeto;passIsoTrkVeto;passnJets;passdPhis;passMET;passHT;cntCSVS=0;nTopCandSortedCnt=0;passdPhis_extra",
+			    "passMuonVeto;passEleVeto;passIsoTrkVeto;passnJets;passdPhis;passMET;passHT;cntCSVS==0;nTopCandSortedCnt==0;passdPhis_extra;passNoiseEventFilter"};
 
 vector<Plotter::CutFlowSummary> cutFlowSummaries;
-
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Data",          PDC("", "" , {dsData_HTMHT}),        cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("MC",            PDC(" ", " ", {stack_MC}),            cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("t#bar{t}",            PDC(" ", " ", {dstt2l}),            cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("W(l#nu)+jets",            PDC(" ", " ", {dsWJets}),            cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Single top",            PDC(" ", " ", {dstW}),            cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Z(#nu#nu)+jets",            PDC(" ", " ", {dsZJets}),            cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("t#bar{t}Z",            PDC(" ", " ", {dsttZ}),            cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("QCD",            PDC(" ", " ", {dsQCD}),            cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Rare",            PDC(" ", " ", {dsRare,dsDY,dsVV}),            cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Signal Points", PDC(" ", " ", {singal_points}),       cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("T1tttt(1500,100)", PDC(" ", " ", {dsT1tttt1500}),       cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("T1tttt(1200,800)", PDC(" ", " ", {dsT1tttt1200}),       cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("T2tt(500,325)", PDC(" ", " ", {dsT2tt500}),       cfsSync));
-cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("T2tt(850,100)", PDC(" ", " ", {dsT2tt800}),       cfsSync));
-
+/*
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Data",          PDC("", "" , {dsData_SingleMuon}),        cfsSync));
+//cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("MC",            PDC(" ", " ", {stack_MC_PU_Zin}),            cfsSync));
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("t#bar{t}",            PDC(" ", " ", {dstt2lpu}),            cfsSync));
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("W(l#nu)+jets",            PDC(" ", " ", {dsWJetsPU}),            cfsSync));
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Single top",            PDC(" ", " ", {dstWpu}),            cfsSync));
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Z(#nu#nu)+jets",            PDC(" ", " ", {dsZJetsPU}),            cfsSync));
+*/
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("t#bar{t}Z",            PDC(" ", " ", {dsttZpu}),            cfsSync));
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("t#bar{t}Z_triggBtag",            PDC(" ", " ", {dsttZ_genTrigBtag}),            cfsSync));
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("t#bar{t}Z_genW",            PDC(" ", " ", {dsttZ_genW}),            cfsSync));
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("t#bar{t}Z_noWeight",            PDC(" ", " ", {dsttZ}),            cfsSync));
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("QCD_all",            PDC(" ", " ", {dsQCDpu}),            cfsSync));
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("QCD_TriggPU",            PDC(" ", " ", {dsQCD_TriggPU}),            cfsSync));
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("QCD_Trigg",            PDC(" ", " ", {dsQCD_Trigg}),            cfsSync));
+/*
+cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Rare",            PDC(" ", " ", {dsRarePU}),            cfsSync));
+//cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("Signal Points", PDC(" ", " ", {signal_points}),       cfsSync));
+//cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("T1tttt(1500,100)", PDC(" ", " ", {dsT1tttt1500}),       cfsSync));
+//cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("T1tttt(1200,800)", PDC(" ", " ", {dsT1tttt1200}),       cfsSync));
+//cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("T2tt(500,325)", PDC(" ", " ", {dsT2tt500}),       cfsSync));
+//cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("T2tt(850,100)", PDC(" ", " ", {dsT2tt800}),       cfsSync));
+*/
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 

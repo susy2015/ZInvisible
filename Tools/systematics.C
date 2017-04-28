@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
     //     }
     // }
 
-    TH1 *shapeMET, *shapeMT2, *shapeNT, *shapeNB;
+    TH1 *shapeMET, *shapeMT2, *shapeNT, *shapeNB, *shapeHT;
     
     TFile *f = new TFile("syst_shape.root");
     if(f)
@@ -107,6 +107,7 @@ int main(int argc, char* argv[])
         shapeMT2 = static_cast<TH1*>(f->Get("ShapeRatio_mt2")->Clone());
         shapeNT  = static_cast<TH1*>(f->Get("ShapeRatio_nt")->Clone());
         shapeNB  = static_cast<TH1*>(f->Get("ShapeRatio_nb")->Clone());
+        shapeHT  = static_cast<TH1*>(f->Get("ShapeRatio_ht")->Clone());
         f->Close();
         delete f;
     }

@@ -68,6 +68,7 @@ namespace plotterFunctions
 
             const int& nJets     =  tr.getVar<int>("nJets");
 	    const double& stored_weight = tr.getVar<double>("stored_weight");
+            const double& evtWeight = tr.getVar<double>("evtWeight");
 
             // Calculate PU weight
 
@@ -332,9 +333,10 @@ namespace plotterFunctions
 	    // Process the generator weight
 	    double genWeight = 1.;
 	    // Never apply this weight for data! In the old ntuple version <=3 this is "-1", in the newer ones it is "0"
-	    if(stored_weight < 0)
+	    if(evtWeight < 0)
 	      genWeight = -1.;
-
+            //std::cout<<genWeight<<" genWeight "<<std::endl;
+            //std::cout<<evtWeight<<" stored_weight "<<stored_weight <<" genWeight "<<genWeight<<std::endl;
             tr.registerDerivedVar("mu1dRMin", mu1dRMin);
             tr.registerDerivedVar("mu2dRMin", mu2dRMin);
             tr.registerDerivedVar("mudR", mudR);
@@ -502,9 +504,9 @@ namespace plotterFunctions
             if(f)
             {
                 //njWTTbar_0b  = 1;//static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
-                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_loose0_mt2_MET"));//0b_loose0"));
+                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_0topVal_MET100"));//loose0_mt2_MET"));//0b_loose0"));
                 //njWTTbar_g1b = 1;//static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
-                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_loose0_mt2_MET"));//g1b_loose0"));
+                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_0topVal_MET100"));//loose0_mt2_MET"));//g1b_loose0"));
                 f->Close();
                 delete f;
             }
@@ -973,10 +975,15 @@ namespace plotterFunctions
             //if(genZPt > 600 && mindPhiMetJ < 0.5) std::cout << "BONJOUR!!! \t" << genZPt << "\t" << mindPhiMetJ << "\t" << run << "\t" << lumi << "\t" << event << std::endl;
             //std::cout<<"cleanMetPt "<<cleanMet.Pt()<<std::endl;
             //std::cout<<" "<<std::endl;
+            std::vector<double> * dPhiVec_extra = new std::vector<double>();
+            (*dPhiVec_extra) = AnaFunctions::calcDPhi(jetsLVec, metphi, 4, AnaConsts::dphiArr);
+            bool passdPhis_extra = (dPhiVec_extra->at(0) >= AnaConsts::dPhi0_CUT && dPhiVec_extra->at(1) >= AnaConsts::dPhi1_CUT && dPhiVec_extra->at(2) >= AnaConsts::dPhi0_CUT && dPhiVec_extra->at(3) >= AnaConsts::dPhi0_CUT);
+            //std::cout<<dPhiVec_extra->at(0)<<" second "<<std::endl;
             double bestRecoZPt = bestRecoZ.Pt();
             double cleanMetPt = cleanMet.Pt();
             double Zrecoptpt = Zrecopt.Pt();
             //double cleanMet2Pt = cleanMet2.Pt();
+            tr.registerDerivedVar("passdPhis_extra", passdPhis_extra);
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
             tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
             tr.registerDerivedVar("cleanMetPt", cleanMetPt);
@@ -1190,8 +1197,9 @@ namespace plotterFunctions
              std::cout<<monoJet<<std::endl;
             */
             //int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
-            int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);            
-            int nSearchBin_1b_bins = sbins.find_Binning_Index(cntCSVS == 1, nTopCandSortedCnt, MT2, cleanMet, HT);
+            int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);          
+            const std::vector<int>& nSearchBin_agg = sbins.find_Binning_Indices(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);  
+            int nSearchBin_1b_bins = sbins.find_Binning_Index(1, nTopCandSortedCnt, MT2, cleanMet, HT);
             
             //std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
             //std::vector<std::pair<double, double> > * nb0NJwBins = new std::vector<std::pair<double, double> >();
@@ -1227,6 +1235,7 @@ namespace plotterFunctions
             }
 
             tr.registerDerivedVar("nSearchBin", nSearchBin);
+            tr.registerDerivedVar("nSearchBin_agg", nSearchBin_agg);
             tr.registerDerivedVar("nSearchBin_1b_bins", nSearchBin_1b_bins);
             //tr.registerDerivedVec("nb0BinsNW", nb0BinsNW);
             //tr.registerDerivedVec("nb0Bins", nb0Bins);
@@ -1328,35 +1337,35 @@ namespace plotterFunctions
 	{
 	    if (ht<1000)
 	    {
-		if (met<25) return 0.001542561;
-		else if (met<50) return 0.003222389;
-		else if (met<75) return 0.00987073;
-		else if (met<100) return 0.03865682;
-		else if (met<125) return 0.1387231;
-		else if (met<150) return 0.3564816;
-		else if (met<175) return 0.6276442;
-		else if (met<200) return 0.8154821;
-		else if (met<275) return 0.9340538;
-		else if (met<400) return 0.9858562; 
-                else if (met<600) return 0.9931507;
+		if (met<25) return 0.001209891;
+		else if (met<50) return 0.002876833;
+		else if (met<75) return 0.008802817;
+		else if (met<100) return 0.03520886;
+		else if (met<125) return 0.1361878;
+		else if (met<150) return 0.3607832;
+		else if (met<175) return 0.6448758;
+		else if (met<200) return 0.826766;
+		else if (met<250) return 0.9329029;
+		else if (met<400) return 0.9862253; 
+                else if (met<600) return 0.9975;
                 else if (met<1000) return 1.00;
 		else return 1.00;
 	    } 
 	    else 
 	    {
-		if (met<25) return  0.02067183;
-		else if (met<50) return 0.02504944;
-		else if (met<75) return 0.04486466;
-		else if (met<100) return 0.07434402;
-		else if (met<125) return 0.1518288;
-		else if (met<150) return 0.2802669;
-		else if (met<175) return 0.4642409;
-		else if (met<200) return 0.6596434;
-		else if (met<275) return 0.8510453;
-		else if (met<400) return 0.9563492;
-                else if (met<600) return 0.9874214;
-                else if (met<1000) return 0.9736842; 
-		else return 0.9736842;
+		if (met<25) return  0.02359347;
+		else if (met<50) return 0.03127875;
+		else if (met<75) return 0.03006012;
+		else if (met<100) return 0.09137709;
+		else if (met<125) return 0.1659919;
+		else if (met<150) return 0.2994924;
+		else if (met<175) return 0.6168582;
+		else if (met<200) return 0.7489177;
+		else if (met<250) return 0.8861538;
+		else if (met<400) return 0.9606299;
+                else if (met<600) return 0.9931034;
+                else if (met<1000) return 1.00; 
+		else return 1.00;
 	    }
 	}
 	double GetTriggerEffStatUncHi(const double& met, const double& ht) 
@@ -1559,7 +1568,7 @@ namespace plotterFunctions
                 //For events with only 1 muon (emu events in particular or events with a subleading muon below 45 GeV) just use the single muon eff
                 muTrigWgt = GetMuonTriggerEff_pt_eta(cutMuVec[0].Eta(), cutMuVec[0].Pt()); //GetMuonTriggerEff(cutMuVec[0].Eta());
             }
-
+            //std::cout<<triggerEff<<" triggerEff & "<< met <<" met "<<std::endl;
 	    tr.registerDerivedVar("TriggerEffMC",triggerEff);
 	    tr.registerDerivedVar("TriggerEffUpMC",triggerEff+triggerEffUncUp);
 	    tr.registerDerivedVar("TriggerEffDownMC",triggerEff-triggerEffUncDown);
@@ -1660,12 +1669,22 @@ namespace plotterFunctions
             const int& cntCSVSJEUUp = tr.getVar<int>("cntCSVSZinvJEUUp");
             const int& nTopCandSortedCntJEUUp = tr.getVar<int>("nTopCandSortedCntZinvJEUUp");
             const double& MT2JEUUp = tr.getVar<double>("best_had_brJet_MT2ZinvJEUUp");
-
+/*
+            const int& cntCSVSJEUUpAggBins = tr.getVar<int>("cntCSVSZinvJEUUpAggBins");
+            const int& nTopCandSortedCntJEUUpAggBins = tr.getVar<int>("nTopCandSortedCntZinvJEUUpAggBins");
+            const double& MT2JEUUpAggBins = tr.getVar<double>("best_had_brJet_MT2ZinvJEUUpAggBins");
+*/
             const int& cntCSVSJEUDn = tr.getVar<int>("cntCSVSZinvJEUDn");
             const int& nTopCandSortedCntJEUDn = tr.getVar<int>("nTopCandSortedCntZinvJEUDn");
             const double& MT2JEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvJEUDn");
-
+/*
+            const int& cntCSVSJEUDnAggBins = tr.getVar<int>("cntCSVSZinvJEUDnAggBins");
+            const int& nTopCandSortedCntJEUDnAggBins = tr.getVar<int>("nTopCandSortedCntZinvJEUDnAggBins");
+            const double& MT2JEUDnAggBins = tr.getVar<double>("best_had_brJet_MT2ZinvJEUDnAggBins");
+*/
             const double& cleanMet = tr.getVar<double>("cleanMetPt");
+
+//	    const double& cleanMetAggBins = tr.getVar<double>("cleanMetPtAggBins");
 
             const int& cntCSVSMEUUp = tr.getVar<int>("cntCSVSZinvMEUUp");
             const int& nTopCandSortedCntMEUUp = tr.getVar<int>("nTopCandSortedCntZinvMEUUp");
@@ -1676,11 +1695,26 @@ namespace plotterFunctions
             const int& nTopCandSortedCntMEUDn = tr.getVar<int>("nTopCandSortedCntZinvMEUDn");
             const double& MT2MEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvMEUDn");
             const double& cleanMetMEUDn = tr.getVar<double>("metMEUDn");
+/*
+            const int& cntCSVSMEUUpAggBins = tr.getVar<int>("cntCSVSZinvMEUUpAggBins");
+            const int& nTopCandSortedCntMEUUpAggBins = tr.getVar<int>("nTopCandSortedCntZinvMEUUpAggBins");
+            const double& MT2MEUUpAggBins = tr.getVar<double>("best_had_brJet_MT2ZinvMEUUpAggBins");
+            const double& cleanMetMEUUpAggBins = tr.getVar<double>("metMEUUpAggBins");
 
+            const int& cntCSVSMEUDnAggBins = tr.getVar<int>("cntCSVSZinvMEUDnAggBins");
+            const int& nTopCandSortedCntMEUDnAggBins = tr.getVar<int>("nTopCandSortedCntZinvMEUDnAggBins");
+            const double& MT2MEUDnAggBins = tr.getVar<double>("best_had_brJet_MT2ZinvMEUDnAggBins");
+            const double& cleanMetMEUDnAggBins = tr.getVar<double>("metMEUDnAggBins");
+*/
             const double& HTUp           = tr.getVar<double>("HTZinvJEUUp");
             const double& HTDn           = tr.getVar<double>("HTZinvJEUDn");
             const double& HTMEUUp           = tr.getVar<double>("HTZinvMEUUp");
             const double& HTMEUDn           = tr.getVar<double>("HTZinvMEUDn");
+/*
+            const double& HTUpAggBins           = tr.getVar<double>("HTZinvJEUUpAggBins");
+            const double& HTDnAggBins           = tr.getVar<double>("HTZinvJEUDnAggBins");
+            const double& HTMEUUpAggBins           = tr.getVar<double>("HTZinvMEUUpAggBins");
+            const double& HTMEUDnAggBins           = tr.getVar<double>("HTZinvMEUDnAggBins");
 
             int nSearchBinJEUUp = sbins.find_Binning_Index(cntCSVSJEUUp, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet, HTUp);
             int nSearchBinJEUDn = sbins.find_Binning_Index(cntCSVSJEUDn, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet, HTDn);
@@ -1688,14 +1722,20 @@ namespace plotterFunctions
             int nSearchBinMEUUp = sbins.find_Binning_Index(cntCSVSMEUUp, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp, HTMEUUp);
             int nSearchBinMEUDn = sbins.find_Binning_Index(cntCSVSMEUDn, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn, HTMEUDn);
             //0b 1bin check Znunu           
-            int nSearchBinJEUUp_1b_bins = sbins.find_Binning_Index(cntCSVSJEUUp==1, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet, HTUp);
-            int nSearchBinJEUDn_1b_bins = sbins.find_Binning_Index(cntCSVSJEUDn==1, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet, HTDn);
+            int nSearchBinJEUUp_1b_bins = sbins.find_Binning_Index(1, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet, HTUp);
+            int nSearchBinJEUDn_1b_bins = sbins.find_Binning_Index(1, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet, HTDn);
 
-            int nSearchBinMEUUp_1b_bins = sbins.find_Binning_Index(cntCSVSMEUUp==1, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp, HTMEUUp);
-            int nSearchBinMEUDn_1b_bins = sbins.find_Binning_Index(cntCSVSMEUDn==1, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn, HTMEUDn);
- 
-            tr.registerDerivedVar("nSearchBinJEUUp", nSearchBinJEUUp);
-            tr.registerDerivedVar("nSearchBinJEUDn", nSearchBinJEUDn);
+            int nSearchBinMEUUp_1b_bins = sbins.find_Binning_Index(1, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp, HTMEUUp);
+            int nSearchBinMEUDn_1b_bins = sbins.find_Binning_Index(1, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn, HTMEUDn);
+*/  /*          //agg
+            const std::vector<int>& nSearchBinJEUUp_agg = sbins.find_Binning_Indices(cntCSVSJEUUpAggBins, nTopCandSortedCntJEUUpAggBins, MT2JEUUpAggBins, cleanMetAggBins, HTUpAggBins);
+            const std::vector<int>& nSearchBinJEUDn_agg = sbins.find_Binning_Indices(cntCSVSJEUDnAggBins, nTopCandSortedCntJEUDnAggBins, MT2JEUDnAggBins, cleanMetAggBins, HTDnAggBins);
+
+            const std::vector<int>& nSearchBinMEUUp_agg = sbins.find_Binning_Indices(cntCSVSMEUUpAggBins, nTopCandSortedCntMEUUpAggBins, MT2MEUUpAggBins, cleanMetMEUUpAggBins, HTMEUUpAggBins);
+            const std::vector<int>& nSearchBinMEUDn_agg = sbins.find_Binning_Indices(cntCSVSMEUDnAggBins, nTopCandSortedCntMEUDnAggBins, MT2MEUDnAggBins, cleanMetMEUDnAggBins, HTMEUDnAggBins); 
+    */        
+         //   tr.registerDerivedVar("nSearchBinJEUUp", nSearchBinJEUUp);
+  /*          tr.registerDerivedVar("nSearchBinJEUDn", nSearchBinJEUDn);
 
             tr.registerDerivedVar("nSearchBinMEUUp", nSearchBinMEUUp);
             tr.registerDerivedVar("nSearchBinMEUDn", nSearchBinMEUDn);
@@ -1705,6 +1745,13 @@ namespace plotterFunctions
 
             tr.registerDerivedVar("nSearchBinMEUUp_1b_bins", nSearchBinMEUUp_1b_bins);
             tr.registerDerivedVar("nSearchBinMEUDn_1b_bins", nSearchBinMEUDn_1b_bins);
+    */  /*      //agg
+            tr.registerDerivedVar("nSearchBinJEUUp_agg", nSearchBinJEUUp_agg);
+            tr.registerDerivedVar("nSearchBinJEUDn_agg", nSearchBinJEUDn_agg);
+
+            tr.registerDerivedVar("nSearchBinMEUUp_agg", nSearchBinMEUUp_agg);
+            tr.registerDerivedVar("nSearchBinMEUDn_agg", nSearchBinMEUDn_agg);
+         */
         }
 
     public:
@@ -2483,6 +2530,7 @@ namespace plotterFunctions
         PrepareMiniTupleVars(bool pack)
         {
             pack_ = pack;
+            //std::string Agg ="AggBins"; 
         }
 
         void operator()(NTupleReader& tr)
