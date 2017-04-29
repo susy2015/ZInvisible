@@ -53,6 +53,7 @@ class RegisterFunctionsNTuple : public RegisterFunctions
 {
 private:
     BaselineVessel *myBLV;
+    BaselineVessel *myBLV_agg;
     BaselineVessel *blvZinv;
     BaselineVessel *blvZinv_agg;
     //BaselineVessel *blvZinv1b;
@@ -62,6 +63,10 @@ private:
     BaselineVessel *blvZinvJEUDn;
     BaselineVessel *blvZinvMEUUp;
     BaselineVessel *blvZinvMEUDn;
+    BaselineVessel *blvZinvJEUUp_agg;
+    BaselineVessel *blvZinvJEUDn_agg;
+    BaselineVessel *blvZinvMEUUp_agg;
+    BaselineVessel *blvZinvMEUDn_agg;
     plotterFunctions::GenerateWeight *weights;
     plotterFunctions::NJetWeight *njWeight;
     plotterFunctions::LepInfo *lepInfo;
@@ -80,7 +85,7 @@ private:
     plotterFunctions::Ak8DrMatch *ak8DrMatch;
 
 public:
-    RegisterFunctionsNTuple(bool isCondor = false, std::string sbEra = "SB_Aggregate_2017");//"SB_v1_2017");
+    RegisterFunctionsNTuple(bool isCondor = false, std::string aggsbEra = "SB_Aggregate_2017", std::string blank = "");//"SB_v1_2017");
     ~RegisterFunctionsNTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);
@@ -107,6 +112,7 @@ class RegisterFunctionsCalcEff : public RegisterFunctions
 {
 private:
     BaselineVessel *myBLV;
+    BaselineVessel *myBLV_agg;
     plotterFunctions::LepInfo *lepInfo;
 
 public:
@@ -145,6 +151,7 @@ class RegisterFunctionsTopStudy : public RegisterFunctions
 {
 private:
     BaselineVessel *myBLV;
+    BaselineVessel *myBLV_agg;
     plotterFunctions::PrepareTopVars *prepareTopVars;
     plotterFunctions::Taudiv *taudiv;
     plotterFunctions::Ak8DrMatch *ak8DrMatch;

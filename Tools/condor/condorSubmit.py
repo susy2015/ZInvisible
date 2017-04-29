@@ -31,7 +31,10 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1", 
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TrainingOutput_dR20_pt30_depth12_500tree_noQGL_binaryCSV_2017_Mar24.model",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Simplified.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/Legacy_TopTagger.cfg",
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root"]
 

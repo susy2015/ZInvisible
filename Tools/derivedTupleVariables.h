@@ -1167,12 +1167,14 @@ namespace plotterFunctions
         {
             const int& cntCSVS = tr.getVar<int>("cntCSVSZinv");
             const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+            const int& nTopCandSortedCntagg = tr.getVar<int>("nTopCandSortedCntZinvAggBins");
             //const int& nTopCandSortedCnt1b = tr.getVar<int>("nTopCandSortedCntZinv1b");
             //const int& nTopCandSortedCnt2b = tr.getVar<int>("nTopCandSortedCntZinv2b");
             //const int& nTopCandSortedCnt3b = tr.getVar<int>("nTopCandSortedCntZinv3b");
             const double& cleanMet = tr.getVar<double>("cleanMetPt");
             const double& cleanMetPhi = tr.getVar<double>("cleanMetPhi");
             const double& MT2 = tr.getVar<double>("best_had_brJet_MT2Zinv");
+            const double& MT2agg = tr.getVar<double>("best_had_brJet_MT2ZinvAggBins");
             //const double& MT2_1b = tr.getVar<double>("best_had_brJet_MT2Zinv1b");
             //const double& MT2_2b = tr.getVar<double>("best_had_brJet_MT2Zinv2b");
             //const double& MT2_3b = tr.getVar<double>("best_had_brJet_MT2Zinv3b");
@@ -1184,6 +1186,7 @@ namespace plotterFunctions
             //const double& nJet2bfakeWgt = tr.getVar<double>("nJet2bfakeWgt");
             //const double& nJet3bfakeWgt = tr.getVar<double>("nJet3bfakeWgt");
             const double& HT            = tr.getVar<double>("HTZinv");
+            const double& HTagg            = tr.getVar<double>("HTZinvAggBins");
             //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
             //            //top
             /*
@@ -1198,8 +1201,13 @@ namespace plotterFunctions
             */
             //int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
             int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);          
-            const std::vector<int>& nSearchBin_agg = sbins.find_Binning_Indices(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);  
-            int nSearchBin_1b_bins = sbins.find_Binning_Index(1, nTopCandSortedCnt, MT2, cleanMet, HT);
+            std::vector<int> *nSearchBin_agg = new std::vector<int>();
+            *nSearchBin_agg = sbins.find_Binning_Indices(cntCSVS, nTopCandSortedCntagg, MT2agg, cleanMet, HTagg);  
+            std::vector<int> *nSearchBin_1b_bins = new std::vector<int>();
+            *nSearchBin_1b_bins = sbins.find_Binning_Indices(cntCSVS, nTopCandSortedCntagg, MT2agg, cleanMet, HTagg);
+
+
+            //bins.find_Binning_Index(1, nTopCandSortedCnt, MT2, cleanMet, HT);
             
             //std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
             //std::vector<std::pair<double, double> > * nb0NJwBins = new std::vector<std::pair<double, double> >();
@@ -1235,7 +1243,7 @@ namespace plotterFunctions
             }
 
             tr.registerDerivedVar("nSearchBin", nSearchBin);
-            tr.registerDerivedVar("nSearchBin_agg", nSearchBin_agg);
+            tr.registerDerivedVec("nSearchBin_agg", nSearchBin_agg);
             tr.registerDerivedVar("nSearchBin_1b_bins", nSearchBin_1b_bins);
             //tr.registerDerivedVec("nb0BinsNW", nb0BinsNW);
             //tr.registerDerivedVec("nb0Bins", nb0Bins);
@@ -1666,25 +1674,26 @@ namespace plotterFunctions
 
         void systematicCalc(NTupleReader& tr)
         {
+
             const int& cntCSVSJEUUp = tr.getVar<int>("cntCSVSZinvJEUUp");
             const int& nTopCandSortedCntJEUUp = tr.getVar<int>("nTopCandSortedCntZinvJEUUp");
             const double& MT2JEUUp = tr.getVar<double>("best_had_brJet_MT2ZinvJEUUp");
-/*
+
             const int& cntCSVSJEUUpAggBins = tr.getVar<int>("cntCSVSZinvJEUUpAggBins");
             const int& nTopCandSortedCntJEUUpAggBins = tr.getVar<int>("nTopCandSortedCntZinvJEUUpAggBins");
             const double& MT2JEUUpAggBins = tr.getVar<double>("best_had_brJet_MT2ZinvJEUUpAggBins");
-*/
+
             const int& cntCSVSJEUDn = tr.getVar<int>("cntCSVSZinvJEUDn");
             const int& nTopCandSortedCntJEUDn = tr.getVar<int>("nTopCandSortedCntZinvJEUDn");
             const double& MT2JEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvJEUDn");
-/*
+
             const int& cntCSVSJEUDnAggBins = tr.getVar<int>("cntCSVSZinvJEUDnAggBins");
             const int& nTopCandSortedCntJEUDnAggBins = tr.getVar<int>("nTopCandSortedCntZinvJEUDnAggBins");
             const double& MT2JEUDnAggBins = tr.getVar<double>("best_had_brJet_MT2ZinvJEUDnAggBins");
-*/
+
             const double& cleanMet = tr.getVar<double>("cleanMetPt");
 
-//	    const double& cleanMetAggBins = tr.getVar<double>("cleanMetPtAggBins");
+	    //const double& cleanMetAggBins = tr.getVar<double>("cleanMetPtAggBins");
 
             const int& cntCSVSMEUUp = tr.getVar<int>("cntCSVSZinvMEUUp");
             const int& nTopCandSortedCntMEUUp = tr.getVar<int>("nTopCandSortedCntZinvMEUUp");
@@ -1692,25 +1701,25 @@ namespace plotterFunctions
             const double& cleanMetMEUUp = tr.getVar<double>("metMEUUp");
 
             const int& cntCSVSMEUDn = tr.getVar<int>("cntCSVSZinvMEUDn");
-            const int& nTopCandSortedCntMEUDn = tr.getVar<int>("nTopCandSortedCntZinvMEUDn");
+            const int& nTopCandSortedCntMEUDn = tr.getVar<int>("nTopCandSortedCntZinv");
             const double& MT2MEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvMEUDn");
             const double& cleanMetMEUDn = tr.getVar<double>("metMEUDn");
-/*
+
             const int& cntCSVSMEUUpAggBins = tr.getVar<int>("cntCSVSZinvMEUUpAggBins");
             const int& nTopCandSortedCntMEUUpAggBins = tr.getVar<int>("nTopCandSortedCntZinvMEUUpAggBins");
             const double& MT2MEUUpAggBins = tr.getVar<double>("best_had_brJet_MT2ZinvMEUUpAggBins");
-            const double& cleanMetMEUUpAggBins = tr.getVar<double>("metMEUUpAggBins");
+            //const double& cleanMetMEUUpAggBins = tr.getVar<double>("metMEUUpAggBins");
 
             const int& cntCSVSMEUDnAggBins = tr.getVar<int>("cntCSVSZinvMEUDnAggBins");
             const int& nTopCandSortedCntMEUDnAggBins = tr.getVar<int>("nTopCandSortedCntZinvMEUDnAggBins");
             const double& MT2MEUDnAggBins = tr.getVar<double>("best_had_brJet_MT2ZinvMEUDnAggBins");
-            const double& cleanMetMEUDnAggBins = tr.getVar<double>("metMEUDnAggBins");
-*/
+            //const double& cleanMetMEUDnAggBins = tr.getVar<double>("metMEUDnAggBins");
+
             const double& HTUp           = tr.getVar<double>("HTZinvJEUUp");
             const double& HTDn           = tr.getVar<double>("HTZinvJEUDn");
             const double& HTMEUUp           = tr.getVar<double>("HTZinvMEUUp");
             const double& HTMEUDn           = tr.getVar<double>("HTZinvMEUDn");
-/*
+
             const double& HTUpAggBins           = tr.getVar<double>("HTZinvJEUUpAggBins");
             const double& HTDnAggBins           = tr.getVar<double>("HTZinvJEUDnAggBins");
             const double& HTMEUUpAggBins           = tr.getVar<double>("HTZinvMEUUpAggBins");
@@ -1727,15 +1736,15 @@ namespace plotterFunctions
 
             int nSearchBinMEUUp_1b_bins = sbins.find_Binning_Index(1, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp, HTMEUUp);
             int nSearchBinMEUDn_1b_bins = sbins.find_Binning_Index(1, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn, HTMEUDn);
-*/  /*          //agg
-            const std::vector<int>& nSearchBinJEUUp_agg = sbins.find_Binning_Indices(cntCSVSJEUUpAggBins, nTopCandSortedCntJEUUpAggBins, MT2JEUUpAggBins, cleanMetAggBins, HTUpAggBins);
-            const std::vector<int>& nSearchBinJEUDn_agg = sbins.find_Binning_Indices(cntCSVSJEUDnAggBins, nTopCandSortedCntJEUDnAggBins, MT2JEUDnAggBins, cleanMetAggBins, HTDnAggBins);
+            //agg
+            const std::vector<int>& nSearchBinJEUUp_agg = sbins.find_Binning_Indices(cntCSVSJEUUpAggBins, nTopCandSortedCntJEUUpAggBins, MT2JEUUpAggBins, cleanMet, HTUpAggBins);
+            const std::vector<int>& nSearchBinJEUDn_agg = sbins.find_Binning_Indices(cntCSVSJEUDnAggBins, nTopCandSortedCntJEUDnAggBins, MT2JEUDnAggBins, cleanMet, HTDnAggBins);
 
-            const std::vector<int>& nSearchBinMEUUp_agg = sbins.find_Binning_Indices(cntCSVSMEUUpAggBins, nTopCandSortedCntMEUUpAggBins, MT2MEUUpAggBins, cleanMetMEUUpAggBins, HTMEUUpAggBins);
-            const std::vector<int>& nSearchBinMEUDn_agg = sbins.find_Binning_Indices(cntCSVSMEUDnAggBins, nTopCandSortedCntMEUDnAggBins, MT2MEUDnAggBins, cleanMetMEUDnAggBins, HTMEUDnAggBins); 
-    */        
-         //   tr.registerDerivedVar("nSearchBinJEUUp", nSearchBinJEUUp);
-  /*          tr.registerDerivedVar("nSearchBinJEUDn", nSearchBinJEUDn);
+            const std::vector<int>& nSearchBinMEUUp_agg = sbins.find_Binning_Indices(cntCSVSMEUUpAggBins, nTopCandSortedCntMEUUpAggBins, MT2MEUUpAggBins, cleanMetMEUUp, HTMEUUpAggBins);
+            const std::vector<int>& nSearchBinMEUDn_agg = sbins.find_Binning_Indices(cntCSVSMEUDnAggBins, nTopCandSortedCntMEUDnAggBins, MT2MEUDnAggBins, cleanMetMEUDn, HTMEUDnAggBins); 
+            
+            tr.registerDerivedVar("nSearchBinJEUUp", nSearchBinJEUUp);
+            tr.registerDerivedVar("nSearchBinJEUDn", nSearchBinJEUDn);
 
             tr.registerDerivedVar("nSearchBinMEUUp", nSearchBinMEUUp);
             tr.registerDerivedVar("nSearchBinMEUDn", nSearchBinMEUDn);
@@ -1745,13 +1754,13 @@ namespace plotterFunctions
 
             tr.registerDerivedVar("nSearchBinMEUUp_1b_bins", nSearchBinMEUUp_1b_bins);
             tr.registerDerivedVar("nSearchBinMEUDn_1b_bins", nSearchBinMEUDn_1b_bins);
-    */  /*      //agg
+            //agg
             tr.registerDerivedVar("nSearchBinJEUUp_agg", nSearchBinJEUUp_agg);
             tr.registerDerivedVar("nSearchBinJEUDn_agg", nSearchBinJEUDn_agg);
 
             tr.registerDerivedVar("nSearchBinMEUUp_agg", nSearchBinMEUUp_agg);
             tr.registerDerivedVar("nSearchBinMEUDn_agg", nSearchBinMEUDn_agg);
-         */
+         
         }
 
     public:
@@ -2408,46 +2417,46 @@ namespace plotterFunctions
         static const int BIT_PASSELMUZINVSEL          = 0x80000000;
 
         bool pack_;
-
+        std::string spec_;
         void pack(NTupleReader& tr)
         {
-            const bool& passLeptVeto =         tr.getVar<bool>("passLeptVeto");
-            const bool& passMuonVeto =         tr.getVar<bool>("passMuonVeto");
-            const bool& passEleVeto =          tr.getVar<bool>("passEleVeto");
-            const bool& passIsoTrkVeto =       tr.getVar<bool>("passIsoTrkVeto");
-            const bool& passnJets =            tr.getVar<bool>("passnJets");
-            const bool& passdPhis =            tr.getVar<bool>("passdPhis");
-            const bool& passBJets =            tr.getVar<bool>("passBJets");
-            const bool& passMET =              tr.getVar<bool>("passMET");
-            const bool& passMT2 =              tr.getVar<bool>("passMT2");
-            const bool& passHT =               tr.getVar<bool>("passHT");
-            const bool& passTagger =           tr.getVar<bool>("passTagger");
-            const bool& passNoiseEventFilter = tr.getVar<bool>("passNoiseEventFilter");
-            const bool& passBaseline =         tr.getVar<bool>("passBaseline");
-            const bool& passBaselineNoTagMT2 = tr.getVar<bool>("passBaselineNoTagMT2");
-            const bool& passBaselineNoTag =    tr.getVar<bool>("passBaselineNoTag");
+            
+            const bool& passLeptVeto =         tr.getVar<bool>("passLeptVeto" + spec_);
+            const bool& passMuonVeto =         tr.getVar<bool>("passMuonVeto" + spec_);
+            const bool& passEleVeto =          tr.getVar<bool>("passEleVeto" + spec_);
+            const bool& passIsoTrkVeto =       tr.getVar<bool>("passIsoTrkVeto" + spec_);
+            const bool& passnJets =            tr.getVar<bool>("passnJets" + spec_);
+            const bool& passdPhis =            tr.getVar<bool>("passdPhis" + spec_);
+            const bool& passBJets =            tr.getVar<bool>("passBJets" + spec_);
+            const bool& passMET =              tr.getVar<bool>("passMET" + spec_);
+            const bool& passMT2 =              tr.getVar<bool>("passMT2" + spec_);
+            const bool& passHT =               tr.getVar<bool>("passHT" + spec_);
+            const bool& passTagger =           tr.getVar<bool>("passTagger" + spec_);
+            const bool& passNoiseEventFilter = tr.getVar<bool>("passNoiseEventFilter" + spec_);
+            const bool& passBaseline =         tr.getVar<bool>("passBaseline" + spec_);
+            const bool& passBaselineNoTagMT2 = tr.getVar<bool>("passBaselineNoTagMT2" + spec_);
+            const bool& passBaselineNoTag =    tr.getVar<bool>("passBaselineNoTag" + spec_);
 
-            const bool& passLeptVetoZinv =         tr.getVar<bool>("passLeptVetoZinv");
-            const bool& passMuonVetoZinv =         tr.getVar<bool>("passMuonVetoZinv");
-            const bool& passEleVetoZinv =          tr.getVar<bool>("passEleVetoZinv");
-            const bool& passIsoTrkVetoZinv =       tr.getVar<bool>("passIsoTrkVetoZinv");
-            const bool& passnJetsZinv =            tr.getVar<bool>("passnJetsZinv");
-            const bool& passdPhisZinv =            tr.getVar<bool>("passdPhisZinv");
-            const bool& passBJetsZinv =            tr.getVar<bool>("passBJetsZinv");
-            const bool& passMETZinv =              tr.getVar<bool>("passMETZinv");
-            const bool& passMT2Zinv =              tr.getVar<bool>("passMT2Zinv");
-            const bool& passHTZinv =               tr.getVar<bool>("passHTZinv");
-            const bool& passTaggerZinv =           tr.getVar<bool>("passTaggerZinv");
-            const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
-            const bool& passBaselineZinv =         tr.getVar<bool>("passBaselineZinv");
-            const bool& passBaselineNoTagMT2Zinv = tr.getVar<bool>("passBaselineNoTagMT2Zinv");
-            const bool& passBaselineNoTagZinv =    tr.getVar<bool>("passBaselineNoTagZinv");
-
+            const bool& passLeptVetoZinv =         tr.getVar<bool>("passLeptVetoZinv" + spec_);
+            const bool& passMuonVetoZinv =         tr.getVar<bool>("passMuonVetoZinv" + spec_);
+            const bool& passEleVetoZinv =          tr.getVar<bool>("passEleVetoZinv" + spec_);
+            const bool& passIsoTrkVetoZinv =       tr.getVar<bool>("passIsoTrkVetoZinv" + spec_);
+            const bool& passnJetsZinv =            tr.getVar<bool>("passnJetsZinv" + spec_);
+            const bool& passdPhisZinv =            tr.getVar<bool>("passdPhisZinv" + spec_);
+            const bool& passBJetsZinv =            tr.getVar<bool>("passBJetsZinv" + spec_);
+            const bool& passMETZinv =              tr.getVar<bool>("passMETZinv" + spec_);
+            const bool& passMT2Zinv =              tr.getVar<bool>("passMT2Zinv" + spec_);
+            const bool& passHTZinv =               tr.getVar<bool>("passHTZinv" + spec_);
+            const bool& passTaggerZinv =           tr.getVar<bool>("passTaggerZinv" + spec_);
+            const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv" + spec_);
+            const bool& passBaselineZinv =         tr.getVar<bool>("passBaselineZinv" + spec_);
+            const bool& passBaselineNoTagMT2Zinv = tr.getVar<bool>("passBaselineNoTagMT2Zinv" + spec_);
+            const bool& passBaselineNoTagZinv =    tr.getVar<bool>("passBaselineNoTagZinv" + spec_);
+            
             const bool& passMuZinvSel =            tr.getVar<bool>("passMuZinvSel");
             const bool& passElMuZinvSel =          tr.getVar<bool>("passElMuZinvSel");
 
             int cuts = 0;
-
             if(passLeptVeto)         cuts |= BIT_PASSLEPTVETO;
             if(passMuonVeto)         cuts |= BIT_PASSMUONVETO;
             if(passEleVeto)          cuts |= BIT_PASSELEVETO;
@@ -2479,64 +2488,65 @@ namespace plotterFunctions
             if(passBaselineZinv)         cuts |= BIT_PASSBASELINEZINV;
             if(passBaselineNoTagMT2Zinv) cuts |= BIT_PASSBASELINENOTAGMT2ZINV;
             if(passBaselineNoTagZinv)    cuts |= BIT_PASSBASELINENOTAGZINV;
-
+            
             if(passMuZinvSel)            cuts |= BIT_PASSMUZINVSEL;
             if(passElMuZinvSel)          cuts |= BIT_PASSELMUZINVSEL;
 
-            tr.registerDerivedVar("cuts", cuts);
+            tr.registerDerivedVar("cuts" + spec_, cuts);
         }
 
         void unpack(NTupleReader& tr)
         {
-            const int& cuts = tr.getVar<int>("cuts");
+            const int& cuts = tr.getVar<int>("cuts" + spec_);
 
-            tr.registerDerivedVar("passLeptVeto",         static_cast<bool>(cuts & BIT_PASSLEPTVETO));
-            tr.registerDerivedVar("passMuonVeto",         static_cast<bool>(cuts & BIT_PASSMUONVETO));
-            tr.registerDerivedVar("passEleVeto",          static_cast<bool>(cuts & BIT_PASSELEVETO));
-            tr.registerDerivedVar("passIsoTrkVeto",       static_cast<bool>(cuts & BIT_PASSISOTRKVETO));
-            tr.registerDerivedVar("passnJets",            static_cast<bool>(cuts & BIT_PASSNJETS));
-            tr.registerDerivedVar("passdPhis",            static_cast<bool>(cuts & BIT_PASSDPHIS));
-            tr.registerDerivedVar("passBJets",            static_cast<bool>(cuts & BIT_PASSBJETS));
-            tr.registerDerivedVar("passMET",              static_cast<bool>(cuts & BIT_PASSMET));
-            tr.registerDerivedVar("passMT2",              static_cast<bool>(cuts & BIT_PASSMT2));
-            tr.registerDerivedVar("passHT",               static_cast<bool>(cuts & BIT_PASSHT));
-            tr.registerDerivedVar("passTagger",           static_cast<bool>(cuts & BIT_PASSTAGGER));
-            tr.registerDerivedVar("passNoiseEventFilter", static_cast<bool>(cuts & BIT_PASSNOISEEVENTFILTER));
-            tr.registerDerivedVar("passBaseline",         static_cast<bool>(cuts & BIT_PASSBASELINE));
-            tr.registerDerivedVar("passBaselineNoTagMT2", static_cast<bool>(cuts & BIT_PASSBASELINENOTAGMT2));
-            tr.registerDerivedVar("passBaselineNoTag",    static_cast<bool>(cuts & BIT_PASSBASELINENOTAG));
+            tr.registerDerivedVar("passLeptVeto" + spec_,         static_cast<bool>(cuts & BIT_PASSLEPTVETO));
+            tr.registerDerivedVar("passMuonVeto" + spec_,         static_cast<bool>(cuts & BIT_PASSMUONVETO));
+            tr.registerDerivedVar("passEleVeto" + spec_,          static_cast<bool>(cuts & BIT_PASSELEVETO));
+            tr.registerDerivedVar("passIsoTrkVeto" + spec_,       static_cast<bool>(cuts & BIT_PASSISOTRKVETO));
+            tr.registerDerivedVar("passnJets" + spec_,            static_cast<bool>(cuts & BIT_PASSNJETS));
+            tr.registerDerivedVar("passdPhis" + spec_,            static_cast<bool>(cuts & BIT_PASSDPHIS));
+            tr.registerDerivedVar("passBJets" + spec_,            static_cast<bool>(cuts & BIT_PASSBJETS));
+            tr.registerDerivedVar("passMET" + spec_,              static_cast<bool>(cuts & BIT_PASSMET));
+            tr.registerDerivedVar("passMT2" + spec_,              static_cast<bool>(cuts & BIT_PASSMT2));
+            tr.registerDerivedVar("passHT" + spec_,               static_cast<bool>(cuts & BIT_PASSHT));
+            tr.registerDerivedVar("passTagger" + spec_,           static_cast<bool>(cuts & BIT_PASSTAGGER));
+            tr.registerDerivedVar("passNoiseEventFilter" + spec_, static_cast<bool>(cuts & BIT_PASSNOISEEVENTFILTER));
+            tr.registerDerivedVar("passBaseline" + spec_,         static_cast<bool>(cuts & BIT_PASSBASELINE));
+            tr.registerDerivedVar("passBaselineNoTagMT2" + spec_, static_cast<bool>(cuts & BIT_PASSBASELINENOTAGMT2));
+            tr.registerDerivedVar("passBaselineNoTag" + spec_,    static_cast<bool>(cuts & BIT_PASSBASELINENOTAG));
 
-            tr.registerDerivedVar("passLeptVetoZinv",         static_cast<bool>(cuts & BIT_PASSLEPTVETOZINV));
-            tr.registerDerivedVar("passMuonVetoZinv",         static_cast<bool>(cuts & BIT_PASSMUONVETOZINV));
-            tr.registerDerivedVar("passEleVetoZinv",          static_cast<bool>(cuts & BIT_PASSELEVETOZINV));
-            tr.registerDerivedVar("passIsoTrkVetoZinv",       static_cast<bool>(cuts & BIT_PASSISOTRKVETOZINV));
-            tr.registerDerivedVar("passnJetsZinv",            static_cast<bool>(cuts & BIT_PASSNJETSZINV));
-            tr.registerDerivedVar("passdPhisZinv",            static_cast<bool>(cuts & BIT_PASSDPHISZINV));
-            tr.registerDerivedVar("passBJetsZinv",            static_cast<bool>(cuts & BIT_PASSBJETSZINV));
-            tr.registerDerivedVar("passMETZinv",              static_cast<bool>(cuts & BIT_PASSMETZINV));
-            tr.registerDerivedVar("passMT2Zinv",              static_cast<bool>(cuts & BIT_PASSMT2ZINV));
-            tr.registerDerivedVar("passHTZinv",               static_cast<bool>(cuts & BIT_PASSHTZINV));
-            tr.registerDerivedVar("passTaggerZinv",           static_cast<bool>(cuts & BIT_PASSTAGGERZINV));
-            tr.registerDerivedVar("passNoiseEventFilterZinv", static_cast<bool>(cuts & BIT_PASSNOISEEVENTFILTERZINV));
-            tr.registerDerivedVar("passBaselineZinv",         static_cast<bool>(cuts & BIT_PASSBASELINEZINV));
-            tr.registerDerivedVar("passBaselineNoTagMT2Zinv", static_cast<bool>(cuts & BIT_PASSBASELINENOTAGMT2ZINV));
-            tr.registerDerivedVar("passBaselineNoTagZinv",    static_cast<bool>(cuts & BIT_PASSBASELINENOTAGZINV));
+            tr.registerDerivedVar("passLeptVetoZinv" + spec_,         static_cast<bool>(cuts & BIT_PASSLEPTVETOZINV));
+            tr.registerDerivedVar("passMuonVetoZinv" + spec_,         static_cast<bool>(cuts & BIT_PASSMUONVETOZINV));
+            tr.registerDerivedVar("passEleVetoZinv" + spec_,          static_cast<bool>(cuts & BIT_PASSELEVETOZINV));
+            tr.registerDerivedVar("passIsoTrkVetoZinv" + spec_,       static_cast<bool>(cuts & BIT_PASSISOTRKVETOZINV));
+            tr.registerDerivedVar("passnJetsZinv" + spec_,            static_cast<bool>(cuts & BIT_PASSNJETSZINV));
+            tr.registerDerivedVar("passdPhisZinv" + spec_,            static_cast<bool>(cuts & BIT_PASSDPHISZINV));
+            tr.registerDerivedVar("passBJetsZinv" + spec_,            static_cast<bool>(cuts & BIT_PASSBJETSZINV));
+            tr.registerDerivedVar("passMETZinv" + spec_,              static_cast<bool>(cuts & BIT_PASSMETZINV));
+            tr.registerDerivedVar("passMT2Zinv" + spec_,              static_cast<bool>(cuts & BIT_PASSMT2ZINV));
+            tr.registerDerivedVar("passHTZinv" + spec_,               static_cast<bool>(cuts & BIT_PASSHTZINV));
+            tr.registerDerivedVar("passTaggerZinv" + spec_,           static_cast<bool>(cuts & BIT_PASSTAGGERZINV));
+            tr.registerDerivedVar("passNoiseEventFilterZinv" + spec_, static_cast<bool>(cuts & BIT_PASSNOISEEVENTFILTERZINV));
+            tr.registerDerivedVar("passBaselineZinv" + spec_,         static_cast<bool>(cuts & BIT_PASSBASELINEZINV));
+            tr.registerDerivedVar("passBaselineNoTagMT2Zinv" + spec_, static_cast<bool>(cuts & BIT_PASSBASELINENOTAGMT2ZINV));
+            tr.registerDerivedVar("passBaselineNoTagZinv" + spec_,    static_cast<bool>(cuts & BIT_PASSBASELINENOTAGZINV));
 
-            tr.registerDerivedVar("passMuZinvSel",   static_cast<bool>(cuts & BIT_PASSMUZINVSEL));
-            tr.registerDerivedVar("passElMuZinvSel", static_cast<bool>(cuts & BIT_PASSELMUZINVSEL));
+            tr.registerDerivedVar("passMuZinvSel" + spec_,   static_cast<bool>(cuts & BIT_PASSMUZINVSEL));
+            tr.registerDerivedVar("passElMuZinvSel" + spec_, static_cast<bool>(cuts & BIT_PASSELMUZINVSEL));
         }
 
     public:
-        PrepareMiniTupleVars(bool pack)
+        PrepareMiniTupleVars(bool pack, std::string spec = "")
         {
             pack_ = pack;
-            //std::string Agg ="AggBins"; 
+            spec_ = spec;
         }
 
         void operator()(NTupleReader& tr)
         {
             if(pack_) pack(tr);
             else      unpack(tr);
+            std::string spec = "";
         }
     };
 

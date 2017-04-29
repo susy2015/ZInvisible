@@ -11,13 +11,13 @@
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
     //if you want to mot fill the minituple return std::set<std::string>({});
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central","isr_Unc_Cent","_PUweightFactor"});
+    return std::set<std::string>({"HTZinv","HTZinvAggBins","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","best_had_brJet_MT2ZinvAggBins","cntCSVSZinv","nTopCandSortedCntZinv","nTopCandSortedCntZinvAggBins","cntNJetsPt30Eta24Zinv","cntNJetsPt30Eta24ZinvAggBins","nSearchBin","nSearchBin_agg","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central","isr_Unc_Cent","_PUweightFactor","cutsAggBins","cuts"});
     //return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
 }
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSetData()
 {
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin_1b_bins","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
+    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin_1b_bins","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cutsAggBins","passMuTrigger",});
 }
 
 void activateBranches(std::set<std::string>& activeBranches)
@@ -79,30 +79,34 @@ void activateBranches(std::set<std::string>& activeBranches)
 
 ////////////////////////////////
 
-RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra) : RegisterFunctions()
+RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string aggsbEra, std::string blank) : RegisterFunctions()
 {            
     //AnaFunctions::prepareTopTagger();
     myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
-    myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "AggregatedBins", "");
+    myBLV_agg     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "AggregatedBins", "");
     blvZinv   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
     blvZinv_agg = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv AggregatedBins");
     //blvZinv1b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv1b");
     //blvZinv2b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv2b");
     //blvZinv3b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv3b");
-    blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp AggregatedBins");
-    blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn AggregatedBins");
-    blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp AggregatedBins");
-    blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn AggregatedBins");
+    blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
+    blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
+    blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
+    blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
+    blvZinvJEUUp_agg = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp AggregatedBins");
+    blvZinvJEUDn_agg = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn AggregatedBins");
+    blvZinvMEUUp_agg = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp AggregatedBins");
+    blvZinvMEUDn_agg = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn AggregatedBins");
 
     weights              = new plotterFunctions::GenerateWeight;
     njWeight             = new plotterFunctions::NJetWeight;
     lepInfo              = new plotterFunctions::LepInfo;
     fakebtagvectors      = new plotterFunctions::Fakebtagvectors;
-    getSearchBin         = new plotterFunctions::GetSearchBin(sbEra);
+    getSearchBin         = new plotterFunctions::GetSearchBin(aggsbEra);
     triggerInfo          = new plotterFunctions::TriggerInfo;
-    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(true);
+    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(true, blank);
     systematicPrep       = new plotterFunctions::SystematicPrep;
-    systematicCalc       = new plotterFunctions::SystematicCalc(sbEra);
+    systematicCalc       = new plotterFunctions::SystematicCalc(aggsbEra);
 
     //taudiv               = new plotterFunctions::Taudiv;
     taudiv               = new plotterFunctions::Taudiv(blvZinv->GetTopTaggerPtr());
@@ -145,6 +149,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {
     if(myBLV) delete myBLV;
+    if(myBLV_agg) delete myBLV_agg;
     if(blvZinv) delete blvZinv;
     if(blvZinv_agg) delete blvZinv_agg;
     //if(blvZinv1b) delete blvZinv1b;
@@ -154,6 +159,10 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(blvZinvJEUDn) delete blvZinvJEUDn;
     if(blvZinvMEUUp) delete blvZinvMEUUp;
     if(blvZinvMEUDn) delete blvZinvMEUDn;
+    if(blvZinvJEUUp_agg) delete blvZinvJEUUp_agg;
+    if(blvZinvJEUDn_agg) delete blvZinvJEUDn_agg;
+    if(blvZinvMEUUp_agg) delete blvZinvMEUUp_agg;
+    if(blvZinvMEUDn_agg) delete blvZinvMEUDn_agg;
     if(weights) delete weights;
     if(njWeight) delete njWeight;
     if(lepInfo) delete lepInfo;
@@ -175,6 +184,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
 
     //register functions with NTupleReader
     tr.registerFunction(*myBLV);
+    tr.registerFunction(*myBLV_agg);
     tr.registerFunction(*lepInfo);
     tr.registerFunction(*weights);
     tr.registerFunction(*blvZinv);
@@ -189,6 +199,10 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*blvZinvJEUDn);
     tr.registerFunction(*blvZinvMEUUp);
     tr.registerFunction(*blvZinvMEUDn);
+    tr.registerFunction(*blvZinvJEUUp_agg);
+    tr.registerFunction(*blvZinvJEUDn_agg);
+    tr.registerFunction(*blvZinvMEUUp_agg);
+    tr.registerFunction(*blvZinvMEUDn_agg);
     tr.registerFunction(*getSearchBin);
     tr.registerFunction(*systematicCalc);
     tr.registerFunction(*triggerInfo);
@@ -231,7 +245,7 @@ RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()
 
     njWeight             = new plotterFunctions::NJetWeight;
     triggerInfo          = new plotterFunctions::TriggerInfo(true);
-    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
+    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false, "");
     metSmear             = new plotterFunctions::MetSmear;
 }
 
@@ -265,12 +279,14 @@ RegisterFunctionsCalcEff::RegisterFunctionsCalcEff() : RegisterFunctions()
     //AnaFunctions::prepareTopTagger();
 
     myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
+    myBLV_agg     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr),"AggregatedBins");
     lepInfo   = new plotterFunctions::LepInfo;
 }
 
 RegisterFunctionsCalcEff::~RegisterFunctionsCalcEff()
 {
     if(myBLV) delete myBLV;
+    if(myBLV_agg) delete myBLV_agg;
     if(lepInfo) delete lepInfo;
 }
 
@@ -280,6 +296,7 @@ void RegisterFunctionsCalcEff::registerFunctions(NTupleReader& tr)
 
     //register functions with NTupleReader
     tr.registerFunction(*myBLV);
+    tr.registerFunction(*myBLV_agg);
     tr.registerFunction(*lepInfo);
 }
 
@@ -298,7 +315,7 @@ void RegisterFunctionsSyst::addFunction(std::function<void(NTupleReader&)> func)
 RegisterFunctionsSyst::RegisterFunctionsSyst() : RegisterFunctions()
 {
     njWeight             = new plotterFunctions::NJetWeight;
-    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
+    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false, "");
     triggerInfo          = new plotterFunctions::TriggerInfo(true);
     systWeights          = new SystWeights;
 }
@@ -325,7 +342,7 @@ void RegisterFunctionsSyst::registerFunctions(NTupleReader& tr)
 
 RegisterFunctions2Dplot::RegisterFunctions2Dplot()
 {
-    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
+    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false, "");
 }
 
 RegisterFunctions2Dplot::~RegisterFunctions2Dplot()

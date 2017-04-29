@@ -25,16 +25,20 @@ int main(int argc, char* argv[])
         {"numEvts",    required_argument, 0, 'E'},
         {"plotDir",    required_argument, 0, 'P'},
 	{"luminosity", required_argument, 0, 'L'},
-	{"sbEra",      required_argument, 0, 'S'}
+	{"sbEra",      required_argument, 0, 'S'},
+        {"aggsbEra",   required_argument, 0, 'A'},
     };
 
     bool doPlots = true, doSave = true, doTuple = true, fromTuple = true, runOnCondor = false;
     string histFile = "", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
     double lumi = AnaSamples::luminosity;
-    std::string sbEra = "SB_v1_2017";//"SB_Aggregate_2017";//"SB_v1_2017";//"SB_v1_2017";
+    std::string sbEra = "SB_v1_2017";//"SB_v1_2017";
+    std::string aggsbEra = "SB_Aggregate_2017";
+    std::string blank = "";
+    std::string AggBins = "AggBins";
 
-    while((opt = getopt_long(argc, argv, "pstfcH:D:N:M:E:P:L:S:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "pstfcH:D:N:M:E:P:L:S:A:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
@@ -91,6 +95,9 @@ int main(int argc, char* argv[])
 
         case 'S':
             sbEra = optarg;
+            break;
+        case 'A':
+            aggsbEra = optarg;
             break;
         }
     }
@@ -161,8 +168,10 @@ int main(int argc, char* argv[])
 
     // Number of searchbins
     SearchBins sb(sbEra);
+    SearchBins asb(aggsbEra);
     int NSB = sb.nSearchBins();//37; // 45
-    int NSB_1b_bins = 32;
+    int aggNSB = asb.nSearchBins();
+    int NSB_1b_bins = asb.nSearchBins();
 
     // Shortcuts for axis labels
     std::string label_met = "E_{T}^{miss} [GeV]";
@@ -1203,14 +1212,15 @@ int main(int argc, char* argv[])
 	{"muZinv_loose0",             "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_loose0_mt2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
 	{"muZinv_loose0_mt21b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv1b>0"},
+        {"muZinv_loose0_mt2AggBins",  "passNoiseEventFilterZinvAggBins;passMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0"},
         {"muZinv_0topVal_MET100",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>100"},
-        {"muZinv_0topVal_MET100_extraPhi",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100"},
+       // {"muZinv_0topVal_MET100_extraPhi",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100"},
         {"muZinv_0topVal_MET250",      "HTZinv>300;cleanMetPt>250;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0"},
-        {"muZinv_0topVal_MET250_350",  "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350"},
-	{"muZinv_0topVal_MET350",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350"},
-        {"muZinv_0topVal_MET500",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500"},
-        {"muZinv_0topVal_MET500_MET650", "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cleanMetPt<650"},
-        {"muZinv_0topVal_MET650",        "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>650"},
+        //{"muZinv_0topVal_MET250_350",  "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350"},
+	//{"muZinv_0topVal_MET350",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350"},
+        //{"muZinv_0topVal_MET500",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500"},
+        //{"muZinv_0topVal_MET500_MET650", "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cleanMetPt<650"},
+        //{"muZinv_0topVal_MET650",        "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>650"},
         //{"muZinv_0topVal_MET350",  "passNoiseEventFilterZinv;passMuZinvSelZinv;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350;HTZinv>300"},
 //	{"muZinv_loose0_mt22b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv2b>0"},
 //	{"muZinv_loose0_mt23b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv3b>0"},
@@ -1221,7 +1231,9 @@ int main(int argc, char* argv[])
 //	{"muZinv_loose0_ht500",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>500;passnJetsZinv;passdPhisZinv"},
 //	{"muZinv_blnotagmt2",         "passMuZinvSel;passBaselineNoTagMT2Zinv"},
 	{"muZinv_blnotag",            "passMuZinvSel;passBaselineNoTagZinv"},
+        {"muZinv_blnotagAggBins",            "passMuZinvSel;passBaselineNoTagZinvAggBins"},
 	{"muZinv_bl",                 "passMuZinvSel;passBaselineZinv"},
+        {"muZinv_blAggBins",                 "passMuZinvSel;passBaselineZinvAggBins"},
 //	{"muZinv_0b",                 "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0"},
 //	{"muZinv_0b_ht200",           "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200"},
 //	{"muZinv_0b_ht200_dphi",      "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passdPhisZinv"},
@@ -1229,53 +1241,59 @@ int main(int argc, char* argv[])
         {"muZinv_0b_0topVal_MET100",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>100;cntCSVSZinv=0"},
         {"muZinv_0b_0topVal_MET100_extraPhi",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100;cntCSVSZinv=0"},
         {"muZinv_0b_0topVal_MET250",      "passdPhisZinv;cleanMetPt>250;HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;nTopCandSortedCntZinv=0;cntCSVSZinv=0"},
-        {"muZinv_0b_0topVal_MET250_350",  "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350;cntCSVSZinv=0"},
-        {"muZinv_0b_0topVal_MET350",	  "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350;cntCSVSZinv=0"},
-        {"muZinv_0b_0topVal_MET500",       "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cntCSVSZinv=0"},
-        {"muZinv_0b_0topVal_MET500_MET650", "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cleanMetPt<650;cntCSVSZinv=0"},
-        {"muZinv_0b_0topVal_MET650",        "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>650;cntCSVSZinv=0"},
+        //{"muZinv_0b_0topVal_MET250_350",  "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350;cntCSVSZinv=0"},
+        //{"muZinv_0b_0topVal_MET350",	  "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350;cntCSVSZinv=0"},
+        //{"muZinv_0b_0topVal_MET500",       "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cntCSVSZinv=0"},
+        //{"muZinv_0b_0topVal_MET500_MET650", "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cleanMetPt<650;cntCSVSZinv=0"},
+        //{"muZinv_0b_0topVal_MET650",        "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>650;cntCSVSZinv=0"},
 	//{"muZinv_0b_0topVal_MET350", "passNoiseEventFilter;passMuZinvSel;passnJets;passdPhis;nTopCandSortedCnt=0;cleanMetPt>350;cntCSVS=0;HT>300"},
 	{"muZinv_0b_loose0",          "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv"},
         {"muZinv_0b_loose0_mt2",   "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
+        {"muZinv_0b_loose0_mt2AggBins",   "passNoiseEventFilterZinvAggBins;passMuZinvSel;cntCSVSZinvAggBins=0;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0"},
 	{"muZinv_0b_loose0_ht300",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv"},
 	//{"muZinv_0b_loose0_ht400",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>400;passnJetsZinv;passdPhisZinv"},
 	//{"muZinv_0b_loose0_ht500",    "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>500;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_0b_blnotagmt2",      "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv"},
 	{"muZinv_0b_blnotag",         "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
 	{"muZinv_g1b",                "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv"},
+        {"muZinv_0b_blnotagAggBins",         "passMuZinvSel;cntCSVSZinvAggBins=0;passBaselineNoTagZinvAggBins"},
+        {"muZinv_g1bAggBins",                "passNoiseEventFilterZinvAggBins;passMuZinvSel;passBJetsZinvAggBins"},
 //	{"muZinv_g1b_ht200",          "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200"},
 //	{"muZinv_g1b_ht200_dphi",     "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passdPhisZinv"},
 //	{"muZinv_g1b_ht50_met50_dphi","passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
 	{"muZinv_g1b_loose0",         "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv"},
         {"muZinv_g1b_loose0_mt2", "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
+        {"muZinv_g1b_loose0_mt2AggBins", "passNoiseEventFilterZinvAggBins;passMuZinvSel;passBJetsZinvAggBins;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0"},
 	{"muZinv_g1b_loose0_ht300",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>300;passnJetsZinv;passdPhisZinv"},
 //	{"muZinv_g1b_loose0_ht400",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>400;passnJetsZinv;passdPhisZinv"},
 //	{"muZinv_g1b_loose0_ht500",   "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>500;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_g1b_blnotag",        "passMuZinvSel;passBJetsZinv;passBaselineNoTagZinv"},
+        {"muZinv_g1b_blnotagAggBins",        "passMuZinvSel;passBJetsZinvAggBins;passBaselineNoTagZinvAggBins"},
         {"muZinv_g1b_0topVal_MET100",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>100;passBJetsZinv"},
-        {"muZinv_g1b_0topVal_MET100_extraPhi",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100;passBJetsZinv"},
+        //{"muZinv_g1b_0topVal_MET100_extraPhi",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100;passBJetsZinv"},
         {"muZinv_g1b_0topVal_MET250",      "passdPhisZinv;cleanMetPt>250;HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;nTopCandSortedCntZinv=0;passBJetsZinv"},
-        {"muZinv_g1b_0topVal_MET250_350",  "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350;passBJetsZinv"},	
-        {"muZinv_g1b_0topVal_MET350",   "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350;cntCSVSZinv>0"},
-        {"muZinv_g1b_0topVal_MET500",   "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cntCSVSZinv>0"},
-        {"muZinv_g1b_0topVal_MET500_MET650", "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cleanMetPt<650;cntCSVSZinv>0"},
-        {"muZinv_g1b_0topVal_MET650",        "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>650;cntCSVSZinv>0"},
+        //{"muZinv_g1b_0topVal_MET250_350",  "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350;passBJetsZinv"},	
+        //{"muZinv_g1b_0topVal_MET350",   "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350;cntCSVSZinv>0"},
+        //{"muZinv_g1b_0topVal_MET500",   "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cntCSVSZinv>0"},
+        //{"muZinv_g1b_0topVal_MET500_MET650", "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cleanMetPt<650;cntCSVSZinv>0"},
+        //{"muZinv_g1b_0topVal_MET650",        "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>650;cntCSVSZinv>0"},
         //{"muZinv_g1b_0topVal_MET350_noZinv",   "passNoiseEventFilter;passMuZinvSel;passnJets;passdPhis;nTopCandSortedCnt=0;cleanMetPt>350;cntCSVS>0;HT>300"},
 	{"elmu",                      "passNoiseEventFilterZinv;passElMuSel"},
 	{"elmuZinv",                  "passNoiseEventFilterZinv;passElMuZinvSel"},
         {"elmuZinv_0topVal_MET100",      "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>100"},
-        {"elmuZinv_0topVal_MET100_extraPhi",      "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100"},
+        //{"elmuZinv_0topVal_MET100_extraPhi",      "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100"},
         {"elmuZinv_0topVal_MET250",      "passdPhisZinv;cleanMetPt>250;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;nTopCandSortedCntZinv=0"},
-        {"elmuZinv_0topVal_MET250_350",  "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350"},
-        {"elmuZinv_0topVal_MET350",     "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350"},
-        {"elmuZinv_0topVal_MET500",       "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500"},
-        {"elmuZinv_0topVal_MET500_MET650", "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cleanMetPt<650"},
-        {"elmuZinv_0topVal_MET650",        "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>650"},
+        //{"elmuZinv_0topVal_MET250_350",  "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350"},
+        //{"elmuZinv_0topVal_MET350",     "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350"},
+        //{"elmuZinv_0topVal_MET500",       "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500"},
+        //{"elmuZinv_0topVal_MET500_MET650", "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cleanMetPt<650"},
+        //{"elmuZinv_0topVal_MET650",        "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>650"},
         //{"elmuZinv_0topVal_MET350_noZinv",   "passNoiseEventFilter;passElMuZinvSel;passnJets;passdPhis;nTopCandSortedCnt=0;cleanMetPt>350;HT>300"},
 //	{"elmuZinv_ht200",            "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200"},
 //	{"elmuZinv_ht200_dphi",       "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>200;passdPhisZinv"},
 	{"elmuZinv_loose0",           "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
         {"elmuZinv_loose0_mt2",       "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
+        {"elmuZinv_loose0_mt2AggBins",       "passNoiseEventFilterZinvAggBins;passElMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0"},
 	{"elmuZinv_blnotagmt2",       "passElMuZinvSel;passBaselineNoTagMT2Zinv"},
 	{"elmuZinv_bl",               "passElMuZinvSel;passBaselineZinv"},
 	{"elmuZinv_0b",               "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0"},
@@ -1283,42 +1301,53 @@ int main(int argc, char* argv[])
 //	{"elmuZinv_0b_ht200_dphi",    "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>200;passdPhisZinv"},
 	{"elmuZinv_0b_loose0",        "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv"},
         {"elmuZinv_0b_loose0_mt2",        "passNoiseEventFilterZinv;passElMuZinvSel;cntCSVSZinv=0;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
+        {"elmuZinv_0b_loose0_mt2AggBins",        "passNoiseEventFilterZinvAggBins;passElMuZinvSel;cntCSVSZinvAggBins=0;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0"},
 	{"elmuZinv_0b_blnotagmt2",    "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagMT2Zinv"},
 	{"elmuZinv_0b_blnotag",       "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
 	{"elmuZinv_g1b",              "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv"},
+        {"elmuZinv_0b_blnotag",       "passElMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
+        {"elmuZinv_g1b",              "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv"},
+        {"elmuZinv_0b_blnotagAggBins",       "passElMuZinvSel;cntCSVSZinvAggBins=0;passBaselineNoTagZinvAggBins"},
+        {"elmuZinv_g1bAggBins",              "passNoiseEventFilterZinvAggBins;passElMuZinvSel;passBJetsZinvAggBins"},
         {"elmuZinv_0b_0topVal_MET100",      "cntCSVSZinv=0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>100"},
-        {"elmuZinv_0b_0topVal_MET100_extraPhi", "cntCSVSZinv=0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100"},
+        //{"elmuZinv_0b_0topVal_MET100_extraPhi", "cntCSVSZinv=0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100"},
         {"elmuZinv_0b_0topVal_MET250",      "cntCSVSZinv=0;passdPhisZinv;cleanMetPt>250;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;nTopCandSortedCntZinv=0"},
-        {"elmuZinv_0b_0topVal_MET250_350",  "cntCSVSZinv=0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350"},
-        {"elmuZinv_0b_0topVal_MET350",    "passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350;cntCSVSZinv=0"},
-        {"elmuZinv_0b_0topVal_MET500",    "passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cntCSVSZinv=0"},
-        {"elmuZinv_0b_0topVal_MET500_MET650", "cntCSVSZinv=0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cleanMetPt<650"},
-        {"elmuZinv_0b_0topVal_MET650",        "cntCSVSZinv=0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>650"},
+        //{"elmuZinv_0b_0topVal_MET250_350",  "cntCSVSZinv=0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350"},
+        //{"elmuZinv_0b_0topVal_MET350",    "passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350;cntCSVSZinv=0"},
+        //{"elmuZinv_0b_0topVal_MET500",    "passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cntCSVSZinv=0"},
+        //{"elmuZinv_0b_0topVal_MET500_MET650", "cntCSVSZinv=0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cleanMetPt<650"},
+        //{"elmuZinv_0b_0topVal_MET650",        "cntCSVSZinv=0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>650"},
         //{"elmuZinv_0b_0topVal_MET350_noZinv","passNoiseEventFilter;passElMuZinvSel;passnJets;passdPhis;nTopCandSortedCnt=0;cleanMetPt>350;cntCSVS=0;HT>300"},
 //	{"elmuZinv_g1b_ht200",        "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200"},
 //	{"elmuZinv_g1b_ht200_dphi",   "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>200;passdPhisZinv"},
 	{"elmuZinv_g1b_loose0",       "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>300;passnJetsZinv;passdPhisZinv"},
         {"elmuZinv_g1b_loose0_mt2",   "passNoiseEventFilterZinv;passElMuZinvSel;passBJetsZinv;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
+        {"elmuZinv_g1b_loose0_mt2AggBins",   "passNoiseEventFilterZinvAggBins;passElMuZinvSel;passBJetsZinvAggBins;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0"},
 //        {"CR_NEW_MAYBE",              "passElMuZinvSel;passNoiseEventFilterZinv;passHTZinv;cleanMetPt>250;nTopCandSortedCntZinv>0;cntCSVSZinv>0;best_had_brJet_MT2Zinv>200;passnJetsZinv"},
         {"elmuZinv_g1b_blnotag",      "passElMuZinvSel;passBJetsZinv;passBaselineNoTagZinv"},
         {"elmuZinv_blnotag",          "passElMuZinvSel;passBaselineNoTagZinv"},
+        {"elmuZinv_g1b_blnotag",      "passElMuZinvSel;passBJetsZinvAggBins;passBaselineNoTagZinvAggBins"},
+        {"elmuZinv_blnotagAggBins",          "passElMuZinvSel;passBaselineNoTagZinvAggBins"},
         {"elmuZinv_loose0_mt2_MET",     "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
         {"elmuZinv_0b_loose0_mt2_MET",  "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv=0"},
         {"elmuZinv_g1b_loose0_mt2_MET", "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv>0"},
-        {"elmuZinv_loose0_mt2200_MET",     "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100"},
-        {"elmuZinv_0b_loose0_mt2200_MET",  "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv=0"},
-        {"elmuZinv_g1b_loose0_mt2200_MET", "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv>0"},
+        {"elmuZinv_loose0_mt2_METAggBins",     "passNoiseEventFilterZinvAggBins;passElMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPtAggBins>100"},
+        {"elmuZinv_0b_loose0_mt2_METAggBins",  "passNoiseEventFilterZinvAggBins;passElMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPtAggBins>100;cntCSVSZinvAggBins=0"},
+        {"elmuZinv_g1b_loose0_mt2_METAggBins", "passNoiseEventFilterZinvAggBins;passElMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPtAggBins>100;cntCSVSZinvAggBins>0"},
+        //{"elmuZinv_loose0_mt2200_MET",     "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100"},
+        //{"elmuZinv_0b_loose0_mt2200_MET",  "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv=0"},
+        //{"elmuZinv_g1b_loose0_mt2200_MET", "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv>0"},
         {"elmuZinv_loose0_mt2_MET250",     "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>250"},
         {"elmuZinv_0b_loose0_mt2_MET250",  "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>250;cntCSVSZinv=0"},
         {"elmuZinv_g1b_loose0_mt2_MET250", "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>250;cntCSVSZinv>0"},
         {"elmuZinv_g1b_0topVal_MET100",      "cntCSVSZinv>0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>100"},
-        {"elmuZinv_g1b_0topVal_MET100_extraPhi", "cntCSVSZinv>0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100"},
+        //{"elmuZinv_g1b_0topVal_MET100_extraPhi", "cntCSVSZinv>0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100"},
         {"elmuZinv_g1b_0topVal_MET250",      "cntCSVSZinv>0;passdPhisZinv;cleanMetPt>250;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;nTopCandSortedCntZinv=0"},
-        {"elmuZinv_g1b_0topVal_MET250_350",  "cntCSVSZinv>0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350"},
-        {"elmuZinv_g1b_0topVal_MET350",    "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350;cntCSVSZinv>0"},
-        {"elmuZinv_g1b_0topVal_MET500",    "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cntCSVSZinv>0"},
-        {"elmuZinv_g1b_0topVal_MET500_MET650", "cntCSVSZinv>0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cleanMetPt<650"},
-        {"elmuZinv_g1b_0topVal_MET650",    "cntCSVSZinv>0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>650"},
+        //{"elmuZinv_g1b_0topVal_MET250_350",  "cntCSVSZinv>0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350"},
+        //{"elmuZinv_g1b_0topVal_MET350",    "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350;cntCSVSZinv>0"},
+        //{"elmuZinv_g1b_0topVal_MET500",    "HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cntCSVSZinv>0"},
+        //{"elmuZinv_g1b_0topVal_MET500_MET650", "cntCSVSZinv>0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>500;cleanMetPt<650"},
+        //{"elmuZinv_g1b_0topVal_MET650",    "cntCSVSZinv>0;HTZinv>300;passNoiseEventFilterZinv;passElMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>650"},
        // {"elmuZinv_g1b_0topVal_MET350_noZinv", "passNoiseEventFilter;passElMuZinvSel;passnJets;passdPhis;nTopCandSortedCnt=0;cleanMetPt>350;cntCSVS>0;HT>300"},
 //        {"muZinv_loose0_mt2_MET_ntop1",     "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;nTopCandSortedCntZinv=1"},
 //        {"muZinv_blnotag_ntop1",            "passMuZinvSel;passBaselineNoTagZinv;nTopCandSortedCntZinv=1"},
@@ -1339,6 +1368,9 @@ int main(int argc, char* argv[])
         {"muZinv_loose0_mt2_MET",           "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
         {"muZinv_0b_loose0_mt2_MET",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv=0"},
         {"muZinv_g1b_loose0_mt2_MET",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv>0"},
+        {"muZinv_loose0_mt2_METAggBins",           "passNoiseEventFilterZinvAggBins;passMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPtAggBins>100"},
+        {"muZinv_0b_loose0_mt2_METAggBins",        "passNoiseEventFilterZinvAggBins;passMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPtAggBins>100;cntCSVSZinvAggBins=0"},
+        {"muZinv_g1b_loose0_mt2_METAggBins",       "passNoiseEventFilterZinvAggBins;passMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPtAggBins>100;cntCSVSZinvAggBins>0"},
         //{"muZinv_loose0_mt2200_MET",           "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100"},
         //{"muZinv_0b_loose0_mt2200_MET",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv=0"},
         //{"muZinv_g1b_loose0_mt2200_MET",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv>0"},
@@ -1500,11 +1532,11 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerDown(    "Z#rightarrow#nu#nu Trigger weight Down",    fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffDownMC");
 
 //ob 1b bins Znunu
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_bl_1b_bins(             "Z#rightarrow#nu#nu Njet+norm weight",       fileMap["ZJetsToNuNu"], "passLeptVeto;cntCSVSZinv=0;passBaselineNoTagZinv",      "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUUp_1b_bins(          "Z#rightarrow#nu#nu JEC Up",                 fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineNoTagZinvJEUUp;cntCSVSZinvJEUUp=0", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUDown_1b_bins(        "Z#rightarrow#nu#nu JEC Down",               fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineNoTagZinvJEUDn;cntCSVSZinvJEUDn=0", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUUp_1b_bins(          "Z#rightarrow#nu#nu MEC Up",                 fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineNoTagZinvMEUUp;cntCSVSZinvMEUUp=0", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUDown_1b_bins(        "Z#rightarrow#nu#nu MEC Down",               fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineNoTagZinvMEUDn;cntCSVSZinvMEUDn=0", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_bl_1b_bins(             "Z#rightarrow#nu#nu Njet+norm weight",       fileMap["ZJetsToNuNu"], "passLeptVeto;cntCSVSZinv=0;passBaselineNoTagZinvAggBins",      "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUUp_1b_bins(          "Z#rightarrow#nu#nu JEC Up",                 fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineNoTagZinvJEUUpAggBins;cntCSVSZinvJEUUp=0", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_JEUDown_1b_bins(        "Z#rightarrow#nu#nu JEC Down",               fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineNoTagZinvJEUDnAggBins;cntCSVSZinvJEUDn=0", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUUp_1b_bins(          "Z#rightarrow#nu#nu MEC Up",                 fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineNoTagZinvMEUUpAggBins;cntCSVSZinvMEUUp=0", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
+    Plotter::DatasetSummary dsDY_nunu_njetnorm_MEUDown_1b_bins(        "Z#rightarrow#nu#nu MEC Down",               fileMap["ZJetsToNuNu"], "passLeptVeto;passBaselineNoTagZinvMEUDnAggBins;cntCSVSZinvMEUDn=0", "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
 
     Plotter::DatasetSummary dsDY_nunu_njetnorm_btagCentral(    "Z#rightarrow#nu#nu b tag Central",      fileMap["ZJetsToNuNu"], "passLeptVeto",   "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffMC");//"bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b;TriggerEffMC");
     Plotter::DatasetSummary dsDY_nunu_njetnorm_btagUp(    "Z#rightarrow#nu#nu b tag Up",      fileMap["ZJetsToNuNu"], "passLeptVeto",   "bTagSF_EventWeightSimple_Up;nJetWgtDYZ;normWgt0b;TriggerEffMC");//"bTagSF_EventWeightSimple_Up;nJetWgtDYZ;normWgt0b;TriggerEffMC");
@@ -1561,6 +1593,11 @@ int main(int argc, char* argv[])
     Plotter::DataCollection JEU_nSearchBin(      "single", {{"nSearchBin",    dsDY_nunu_njetnorm_bl}, {"nSearchBinJEUUp", dsDY_nunu_njetnorm_JEUUp}, {"nSearchBinJEUDn", dsDY_nunu_njetnorm_JEUDown}  });
     Plotter::DataCollection MEU_nSearchBin(      "single", {{"nSearchBin",    dsDY_nunu_njetnorm_bl}, {"nSearchBinMEUUp", dsDY_nunu_njetnorm_MEUUp}, {"nSearchBinMEUDn", dsDY_nunu_njetnorm_MEUDown}  });
     Plotter::DataCollection trigger_nSearchBin( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBin",    dsDY_nunu_njetnorm}  });
+
+    auto dsMaker_trigger_var = [&](std::string var){
+        return Plotter::DataCollection ( "single", {{var,    dsDY_nunu_njetnorm_TriggerCentral} });
+    };
+
         Plotter::DataCollection trigger_nSearchBin_1b_bins( "single", {{"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm}  });
     Plotter::DataCollection btag_nSearchBin(    "single", {{"nSearchBin", dsDY_nunu_njetnorm_btagCentral}, {"nSearchBin", dsDY_nunu_njetnorm_btagUp}, {"nSearchBin", dsDY_nunu_njetnorm_btagDn}});
     Plotter::DataCollection bmistag_nSearchBin( "single", {{"nSearchBin", dsDY_nunu_njetnorm_btagCentral}, {"nSearchBin", dsDY_nunu_njetnorm_bmistagUp}, {"nSearchBin", dsDY_nunu_njetnorm_bmistagDn}});
@@ -1591,27 +1628,54 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("syst_JESUncert_nSearchBin",     {JEU_nSearchBin},   {2, 1}, "",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("syst_MESUncert_nSearchBin",     {MEU_nSearchBin},   {2, 1}, "",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("TriggerWgt_nSearchBin",         {trigger_nSearchBin},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+     ///ZInv Varaibles printed
+    vh.push_back(PHS("TriggerWgt_MET",         {dsMaker_trigger_var("cleanMetPt")},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_HT",         {dsMaker_trigger_var("HTZinv")},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nb",         {dsMaker_trigger_var("cntCSVS")},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nt",         {dsMaker_trigger_var("nTopCandSortedCnt")},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_MT2",         {dsMaker_trigger_var("best_had_brJet_MT2")},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nj",         {dsMaker_trigger_var("cntNJetsPt30Eta24Zinv")},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    ///ZINV aNSB
+    vh.push_back(PHS("TriggerWgt_MET_AggBins",         {dsMaker_trigger_var("cleanMetPt")},  {2, 1}, "passBaselineZinvAggBins",   aggNSB,  0,     aggNSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_HT_AggBins",         {dsMaker_trigger_var("HTZinv")},  {2, 1}, "passBaselineZinvAggBins",   aggNSB,  0,     aggNSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nb_AggBins",         {dsMaker_trigger_var("cntCSVS")},  {2, 1}, "passBaselineZinvAggBins",   aggNSB,  0,     aggNSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nt_AggBins",         {dsMaker_trigger_var("nTopCandSortedCnt")},  {2, 1}, "passBaselineZinvAggBins",   aggNSB,  0,     aggNSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_MT2_AggBins",         {dsMaker_trigger_var("best_had_brJet_MT2")},  {2, 1}, "passBaselineZinvAggBins",   aggNSB,  0,     aggNSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nji_AggBins",         {dsMaker_trigger_var("cntNJetsPt30Eta24Zinv")},  {2, 1}, "passBaselineZinvAggBins",   aggNSB,  0,     aggNSB,   false, false,  "Search Bin",     "Events", true));
     //1b bins with ob
-        vh.push_back(PHS("NJetWgt_nSearchBin_1b_bins",            {njetw_nSearchBin_1b_bins}, {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("NJetWgt_nSearchBin_log_1b_bins",        {njetw_nSearchBin_1b_bins}, {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",        NSB_1b_bins,  0,     NSB_1b_bins,   true,  false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("NJetWgt_nSearchBin_pull_1b_bins",       {njetw_nSearchBin_1b_bins}, {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("NJetWgt_nSearchBin_pull_log_1b_bins",   {njetw_nSearchBin_1b_bins}, {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",        NSB_1b_bins,  0,     NSB_1b_bins,   true,  false,  "Search Bin",     "Events", false));
-    vh.push_back(PHS("syst_ScaleWgt_nSearchBin_1b_bins",      {scalew_nSearchBin_1b_bins},{2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",        NSB_1b_bins,  0,     NSB_1b_bins,   false, true,   "Search Bin",     "Events", true));
-    vh.push_back(PHS("syst_PDFWgt_nSearchBin_1b_bins",        {pdfw_nSearchBin_1b_bins},  {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv;NNPDF_From_Median_Up>0;NNPDF_From_Median_Up<2;NNPDF_From_Median_Down>0;NNPDF_From_Median_Down<2",        NSB_1b_bins,  0,     NSB_1b_bins,   false, true,   "Search Bin",     "Events", true));
+        vh.push_back(PHS("NJetWgt_nSearchBin_1b_bins",            {njetw_nSearchBin_1b_bins}, {2, 1}, "passBaselineNoTagZinvAggBins",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin_log_1b_bins",        {njetw_nSearchBin_1b_bins}, {2, 1}, "passBaselineNoTagZinvAggBins",        NSB_1b_bins,  0,     NSB_1b_bins,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin_pull_1b_bins",       {njetw_nSearchBin_1b_bins}, {2, 1}, "passBaselineNoTagZinvAggBins",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("NJetWgt_nSearchBin_pull_log_1b_bins",   {njetw_nSearchBin_1b_bins}, {2, 1}, "passBaselineNoTagZinvAggBins",        NSB_1b_bins,  0,     NSB_1b_bins,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("syst_ScaleWgt_nSearchBin_1b_bins",      {scalew_nSearchBin_1b_bins},{2, 1}, "passBaselineNoTagZinvAggBins",        NSB_1b_bins,  0,     NSB_1b_bins,   false, true,   "Search Bin",     "Events", true));
+    vh.push_back(PHS("syst_PDFWgt_nSearchBin_1b_bins",        {pdfw_nSearchBin_1b_bins},  {2, 1}, "passBaselineNoTagZinv;NNPDF_From_Median_Up>0;NNPDF_From_Median_Up<2;NNPDF_From_Median_Down>0;NNPDF_From_Median_Down<2",        NSB_1b_bins,  0,     NSB_1b_bins,   false, true,   "Search Bin",     "Events", true));
+
+    vh.push_back(PHS("zinv_PDFWgts_1b_bins",        {pdfw_zinv},  {2, 1}, "passBaselineNoTagZinvAggBins",        100,  0,     2,   false, true,   "Weight",     "Events", true));
+
+    vh.push_back(PHS("syst_JESUncert_nSearchBin_1b_bins",     {JEU_nSearchBin_1b_bins},   {2, 1}, "",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("syst_MESUncert_nSearchBin_1b_bins",     {MEU_nSearchBin_1b_bins},   {2, 1}, "",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nSearchBin_1b_bins",         {trigger_nSearchBin_1b_bins},  {2, 1}, "passBaselineNoTagZinvAggBins",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    ///Agg light top tagger
+        vh.push_back(PHS("NJetWgt_nSearchBin_1b_bins",            {njetw_nSearchBin_1b_bins}, {2, 1}, "passBaselineNoTagZinvAggBins",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin_log_1b_bins",        {njetw_nSearchBin_1b_bins}, {2, 1}, "passBaselineNoTagZinvAggBins",        NSB_1b_bins,  0,     NSB_1b_bins,   true,  false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("NJetWgt_nSearchBin_pull_1b_bins",       {njetw_nSearchBin_1b_bins}, {2, 1}, "passBaselineNoTagZinvAggBins",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("NJetWgt_nSearchBin_pull_log_1b_bins",   {njetw_nSearchBin_1b_bins}, {2, 1}, "passBaselineNoTagZinvAggBins",        NSB_1b_bins,  0,     NSB_1b_bins,   true,  false,  "Search Bin",     "Events", false));
+    vh.push_back(PHS("syst_ScaleWgt_nSearchBin_1b_bins",      {scalew_nSearchBin_1b_bins},{2, 1}, "passBaselineNoTagZinvAggBins",        NSB_1b_bins,  0,     NSB_1b_bins,   false, true,   "Search Bin",     "Events", true));
+    vh.push_back(PHS("syst_PDFWgt_nSearchBin_1b_bins",        {pdfw_nSearchBin_1b_bins},  {2, 1}, "passBaselineNoTagZinvAggBins;NNPDF_From_Median_Up>0;NNPDF_From_Median_Up<2;NNPDF_From_Median_Down>0;NNPDF_From_Median_Down<2",        NSB_1b_bins,  0,     NSB_1b_bins,   false, true,   "Search Bin",     "Events", true));
 
     vh.push_back(PHS("zinv_PDFWgts_1b_bins",        {pdfw_zinv},  {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",        100,  0,     2,   false, true,   "Weight",     "Events", true));
 
     vh.push_back(PHS("syst_JESUncert_nSearchBin_1b_bins",     {JEU_nSearchBin_1b_bins},   {2, 1}, "",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("syst_MESUncert_nSearchBin_1b_bins",     {MEU_nSearchBin_1b_bins},   {2, 1}, "",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("TriggerWgt_nSearchBin_1b_bins",         {trigger_nSearchBin_1b_bins},  {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nSearchBin_1b_bins",         {trigger_nSearchBin_1b_bins},  {2, 1}, "passBaselineNoTagZinvAggBins",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     //b-tagging uncertainty
     vh.push_back(PHS("BTagUncert_nSearchBin",         {btag_nSearchBin},     {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("ISRUncert_nSearchBin",         {ISR_nSearchBin},     {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("BMistagUncert_nSearchBin",      {bmistag_nSearchBin},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     //obuncertainties:
-        vh.push_back(PHS("BTagUncert_nSearchBin_1b_bins",         {btag_nSearchBin_1b_bins},     {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",   NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("ISRUncert_nSearchBin_1b_bins",         {ISR_nSearchBin_1b_bins},     {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",   NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("BMistagUncert_nSearchBin_1b_bins",      {bmistag_nSearchBin_1b_bins},  {2, 1}, "cntCSVSZinv=0;passBaselineNoTagZinv",   NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
+        vh.push_back(PHS("BTagUncert_nSearchBin_1b_bins",         {btag_nSearchBin_1b_bins},     {2, 1}, "passBaselineNoTagZinvAggBins",   NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("ISRUncert_nSearchBin_1b_bins",         {ISR_nSearchBin_1b_bins},     {2, 1}, "passBaselineNoTagZinvAggBins",   NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("BMistagUncert_nSearchBin_1b_bins",      {bmistag_nSearchBin_1b_bins},  {2, 1}, "passBaselineNoTagZinvAggBins",   NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
     // PDF and scale
     vh.push_back(PHS("DataMCwwscale_SingleMuon_nj_0b_blnotag",  {scalew_nj},    {1, 2}, "cntCSVSZinv=0;passBaselineNoTagZinv", 20, 0, 20,   true, false,  label_nj,    ""));
     vh.push_back(PHS("DataMCwwpdf_SingleMuon_nj_0b_blnotag",    {pdfw_nj},      {1, 2}, "cntCSVSZinv=0;passBaselineNoTagZinv", 20, 0, 20,   true, false,  label_nj,    ""));
@@ -1693,6 +1757,7 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMC_SingleMuon_el2pt_"      +cut.first,  {dcData_SingleMuon_el2pt, dcMC_el2pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_el2pt,                         "Events"));
 	vh.push_back(PHS("DataMC_SingleMuon_mll_"        +cut.first,  {dcData_SingleMuon_mll,   dcMC_mll},             {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,                           "Events"));
 	vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin",                      "Events"));
+        vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin_agg, dcMC_nSearchBin_agg}, {1, 2}, cut.second, aggNSB, 0, aggNSB,   true, false,  "Search Bin",                      "Events"));
 	vh.push_back(PHS("DataMC_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcMC_nb0Bins},    {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin",                      "Events"));
 	vh.push_back(PHS("DataMC_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcMC_nb0BinsNW},  {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin",                      "Events"));
 	vh.push_back(PHS("DataMC_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcMC_nb0NJwBins}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin",                      "Events"));
@@ -1752,6 +1817,7 @@ int main(int argc, char* argv[])
 	vh.push_back(PHS("DataMCw_SingleMuon_el2pt_"      +cut.first,  {dcData_SingleMuon_el2pt,      dcwMC_el2pt},      {1, 2}, cut.second, 50, 0, 1000, true, false,  label_el2pt,           "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_mll_"        +cut.first,  {dcData_SingleMuon_mll,        dcwMC_mll},        {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,             "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB, true, false,  "Search Bin",          "Events"));
+        vh.push_back(PHS("DataMCw_SingleMuon_nSearchBin_agg_" +cut.first,  {dcData_SingleMuon_nSearchBin_agg, dcwMC_nSearchBin_agg}, {1, 2}, cut.second, aggNSB, 0, aggNSB, true, false,  "Search Bin",          "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcwMC_nb0Bins},    {1, 2}, cut.second, NSB, 0, NSB, true, false,  "Search Bin",          "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcwMC_nb0BinsNW},  {1, 2}, cut.second, NSB, 0, NSB, true, false,  "Search Bin",          "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwMC_nb0NJwBins}, {1, 2}, cut.second, NSB, 0, NSB, true, false,  "Search Bin",          "Events"));
@@ -1792,6 +1858,7 @@ int main(int argc, char* argv[])
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_el2pt_" +cut.first,  {dcData_SingleMuon_el2pt, dcwttMC_el2pt}, {1, 2}, cut.second, 50, 0, 1000, true, false,  label_el2pt,                              "Events"));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_mll_"   +cut.first,  {dcData_SingleMuon_mll,   dcwttMC_mll},   {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,                                "Events"));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwttMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",             "Events"));
+            vh.push_back(PHS("DataMCwtt_SingleMuon_nSearchBin_agg_" +cut.first,  {dcData_SingleMuon_nSearchBin_agg, dcwttMC_nSearchBin_agg}, {1, 2}, cut.second, aggNSB, 0, aggNSB,  true, false,  "Search Bin",             "Events"));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcwttMC_nb0Bins},    {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",             "Events"));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcwttMC_nb0BinsNW},  {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",             "Events"));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwttMC_nb0NJwBins}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",             "Events"));
@@ -1833,6 +1900,7 @@ int main(int argc, char* argv[])
 	    vh.push_back(PHS("DataMCww_SingleMuon_el2pt_" +cut.first,  {dcData_SingleMuon_el2pt, dcwwMC_el2pt}, {1, 2}, cut.second, 50, 0, 1000, true, false,  label_el2pt,                                "Events"));
 	    vh.push_back(PHS("DataMCww_SingleMuon_mll_"   +cut.first,  {dcData_SingleMuon_mll,   dcwwMC_mll},   {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,                                  "Events"));
 	    vh.push_back(PHS("DataMCww_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwwMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",               "Events"));
+            vh.push_back(PHS("DataMCww_SingleMuon_nSearchBin_agg_" +cut.first,  {dcData_SingleMuon_nSearchBin_agg, dcwwMC_nSearchBin_agg}, {1, 2}, cut.second, aggNSB, 0, aggNSB,  true, false,  "Search Bin",               "Events"));
 	    vh.push_back(PHS("DataMCww_SingleMuon_nb0Bins_"    +cut.first,  {dcData_SingleMuon_nb0Bins,    dcwwMC_nb0Bins},    {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",               "Events"));
 	    vh.push_back(PHS("DataMCww_SingleMuon_nb0BinsNW_"  +cut.first,  {dcData_SingleMuon_nb0BinsNW,  dcwwMC_nb0BinsNW},  {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",               "Events"));
 	    vh.push_back(PHS("DataMCww_SingleMuon_nb0NJwBins_" +cut.first,  {dcData_SingleMuon_nb0NJwBins, dcwwMC_nb0NJwBins}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",               "Events"));
@@ -2053,7 +2121,8 @@ int main(int argc, char* argv[])
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
-    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
+    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra, blank);
+    RegisterFunctions* arf = new RegisterFunctionsNTuple(runOnCondor, aggsbEra, AggBins);
 
     Plotter plotter(vh, vvf, fromTuple, histFile, nFiles, startFile, nEvts);
     plotter.setCutFlows(cutFlowSummaries);
@@ -2062,6 +2131,7 @@ int main(int argc, char* argv[])
     plotter.setDoHists(doSave || doPlots);
     plotter.setDoTuple(doTuple);
     plotter.setRegisterFunction(rf);
+    plotter.setRegisterFunction(arf);
     plotter.read();
     if(doSave && fromTuple)  plotter.saveHists();
     if(doPlots)              plotter.plot();
