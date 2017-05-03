@@ -114,13 +114,19 @@ x509userproxy = $ENV(X509_USER_PROXY)
 
 """
 
+filestoTransferGSE = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeSignalHistograms",
+                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so", 
+                      environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1", 
+                      environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1", 
+                      ]
+
 #go Signal Efficiency
 submitFileGSE = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeSigEff.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/makeSignalHistograms, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeSigEff.sh
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeSigEff.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gmse.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz
 Output = logs/makePlots_$(Process).stdout
 Error = logs/makePlots_$(Process).stderr
 Log = logs/makePlots_$(Process).log
@@ -173,6 +179,7 @@ elif options.goMakeBeff:
 elif options.goMakeSigEff:
     exeName = "makeSignalHistograms"
     submitFile = submitFileGSE
+    makeExeAndFriendsTarrball(filestoTransferGSE, "gmse")
 elif options.goMakeTopPlots:
     exeName = "makeTopPlots"
     submitFile = submitFileGTP
