@@ -74,12 +74,16 @@ public:
             const int& cntCSVS                = tr.getVar<int>("cntCSVSZinv");
             const int& nTopCandSortedCnt      = tr.getVar<int>("nTopCandSortedCntZinv");
             const int& cntNJetsPt30Eta24Zinv  = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+            const double& genmet                 = tr.getVar<double>("genmet");
+            const double& metmet                 = tr.getVar<double>("met");
+            const double& calomet                 = tr.getVar<double>("calomet");
             
             const bool& passBaselineNoTagZinv = tr.getVar<bool>("passBaselineNoTagZinv");
             const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
             const bool& passnJetsZinv = tr.getVar<bool>("passnJetsZinv");
             const bool& passdPhisZinv = tr.getVar<bool>("passdPhisZinv");
             const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
+            const bool& passBaseline = tr.getVar<bool>("passBaseline");
 
             bool passLoose0 = passNoiseEventFilterZinv && passMuZinvSel && (HTZinv > 200) && passnJetsZinv && passdPhisZinv;
             bool passLoose0Nt = passLoose0 && (nTopCandSortedCnt >= 1);
@@ -91,14 +95,20 @@ public:
             hists_["nb"]->Fill(cntCSVS, weight);
             hists_["nj"]->Fill(cntNJetsPt30Eta24Zinv, weight);
 
-            if(passBaselineNob)
+            if(passBaseline)
             {
-                hists_["baselineNob_met"]->Fill(met, weight);
-                hists_["baselineNob_mt2"]->Fill(best_had_brJet_MT2, weight);
-                hists_["baselineNob_nt"]->Fill(nTopCandSortedCnt, weight);
-                hists_["baselineNob_nb"]->Fill(cntCSVS, weight);
-                hists_["baselineNob_nj"]->Fill(cntNJetsPt30Eta24Zinv, weight);
-            }
+/*
+                hists_["baseline_met"]->Fill(met, weight);
+                hists_["baseline_genmet"]->Fill(genmet, weight);
+                hists_["baseline_metmet"]->Fill(metmet, weight);
+                hists_["baseline_calomet"]->Fill(calomet, weight);
+                hists_["baseline_mt2"]->Fill(best_had_brJet_MT2, weight);
+                hists_["baseline_nt"]->Fill(nTopCandSortedCnt, weight);
+                hists_["baseline_nb"]->Fill(cntCSVS, weight);
+*/
+                hists_["baseline_nj"]->Fill(cntNJetsPt30Eta24Zinv, weight);
+  
+          }
 
             if(passLoose0)
             {
