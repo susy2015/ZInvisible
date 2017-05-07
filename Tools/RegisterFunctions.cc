@@ -11,7 +11,7 @@
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
     //if you want to mot fill the minituple return std::set<std::string>({});
-    return std::set<std::string>({"HTZinv","HTZinvAggBins","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","best_had_brJet_MT2ZinvAggBins","cntCSVSZinv","nTopCandSortedCntZinv","nTopCandSortedCntZinvAggBins","cntNJetsPt30Eta24Zinv","cntNJetsPt30Eta24ZinvAggBins","nSearchBin","nSearchBin_agg","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central","isr_Unc_Cent","_PUweightFactor","cutsAggBins","cuts"});
+    return std::set<std::string>({"HTZinv","HTZinvAggBins","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","best_had_brJet_MT2ZinvAggBins","cntCSVSZinv","nTopCandSortedCntZinv","nTopCandSortedCntZinvAggBins","cntNJetsPt30Eta24Zinv","cntNJetsPt30Eta24ZinvAggBins","nSearchBin","nSearchBinagg","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central","isr_Unc_Cent","_PUweightFactor","cutsAggBins","cuts"});
     //return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
 }
 
@@ -79,7 +79,7 @@ void activateBranches(std::set<std::string>& activeBranches)
 
 ////////////////////////////////
 
-RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string aggsbEra, std::string blank) : RegisterFunctions()
+RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string aggsbEra, std::string sbEra) : RegisterFunctions()
 {            
     //AnaFunctions::prepareTopTagger();
     myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
@@ -102,9 +102,11 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string aggs
     njWeight             = new plotterFunctions::NJetWeight;
     lepInfo              = new plotterFunctions::LepInfo;
     fakebtagvectors      = new plotterFunctions::Fakebtagvectors;
-    getSearchBin         = new plotterFunctions::GetSearchBin(aggsbEra);
+    getSearchBin         = new plotterFunctions::GetSearchBin(sbEra);
     triggerInfo          = new plotterFunctions::TriggerInfo;
-    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(true, blank);
+    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(true);
+    prepareMiniTupleVarsAgg = new plotterFunctions::PrepareMiniTupleVars(true, "AggBins");
+    //prepareMiniTupleVarsAgg = new plotterFunctions::PrepareMiniTupleVars(true, AggBins);
     systematicPrep       = new plotterFunctions::SystematicPrep;
     systematicCalc       = new plotterFunctions::SystematicCalc(aggsbEra);
 
@@ -170,6 +172,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(getSearchBin) delete getSearchBin;
     if(triggerInfo) delete triggerInfo;
     if(prepareMiniTupleVars) delete prepareMiniTupleVars;
+    if(prepareMiniTupleVarsAgg) delete prepareMiniTupleVarsAgg;
     if(myPDFUnc) delete myPDFUnc;
     if(systematicPrep) delete systematicPrep;
     if(systematicCalc) delete systematicCalc;
@@ -207,6 +210,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*systematicCalc);
     tr.registerFunction(*triggerInfo);
     tr.registerFunction(*prepareMiniTupleVars);
+    tr.registerFunction(*prepareMiniTupleVarsAgg);
     //tr.registerFunction(&printInterestingEvents);
     tr.registerFunction(*myPDFUnc);
     tr.registerFunction(*bTagCorrector);
@@ -245,7 +249,8 @@ RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()
 
     njWeight             = new plotterFunctions::NJetWeight;
     triggerInfo          = new plotterFunctions::TriggerInfo(true);
-    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false, "");
+    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
+    prepareMiniTupleVarsAgg = new plotterFunctions::PrepareMiniTupleVars(false, "AggBins");
     metSmear             = new plotterFunctions::MetSmear;
 }
 
@@ -253,7 +258,7 @@ RegisterFunctionsMiniTuple::~RegisterFunctionsMiniTuple()
 {
     if(njWeight) delete njWeight;
     if(triggerInfo) delete triggerInfo;
-    if(prepareMiniTupleVars) delete prepareMiniTupleVars;
+    if(prepareMiniTupleVarsAgg) delete prepareMiniTupleVarsAgg;
     if(metSmear) delete metSmear;
 }
         
@@ -265,6 +270,7 @@ void RegisterFunctionsMiniTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*njWeight);
     tr.registerFunction(*triggerInfo);
     tr.registerFunction(*prepareMiniTupleVars);
+    tr.registerFunction(*prepareMiniTupleVarsAgg);
     tr.registerFunction(*metSmear);
 }
 
@@ -315,7 +321,8 @@ void RegisterFunctionsSyst::addFunction(std::function<void(NTupleReader&)> func)
 RegisterFunctionsSyst::RegisterFunctionsSyst() : RegisterFunctions()
 {
     njWeight             = new plotterFunctions::NJetWeight;
-    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false, "");
+    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
+    prepareMiniTupleVarsAgg = new plotterFunctions::PrepareMiniTupleVars(false, "AggBins");
     triggerInfo          = new plotterFunctions::TriggerInfo(true);
     systWeights          = new SystWeights;
 }
@@ -324,6 +331,7 @@ RegisterFunctionsSyst::~RegisterFunctionsSyst()
 {
     if(njWeight) delete njWeight;
     if(prepareMiniTupleVars) delete prepareMiniTupleVars;
+    if(prepareMiniTupleVarsAgg) delete prepareMiniTupleVarsAgg;
     if(triggerInfo) delete triggerInfo;
     if(systWeights) delete systWeights;
 }
@@ -334,6 +342,7 @@ void RegisterFunctionsSyst::registerFunctions(NTupleReader& tr)
 
     tr.registerFunction(*njWeight);
     tr.registerFunction(*prepareMiniTupleVars);
+    tr.registerFunction(*prepareMiniTupleVarsAgg);
     tr.registerFunction(*triggerInfo);
     //tr.registerFunction(*systWeights);
 }

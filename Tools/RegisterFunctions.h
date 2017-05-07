@@ -74,6 +74,7 @@ private:
     plotterFunctions::GetSearchBin *getSearchBin;
     plotterFunctions::TriggerInfo *triggerInfo;
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
+    plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVarsAgg;
     plotterFunctions::SystematicPrep *systematicPrep;
     plotterFunctions::SystematicCalc *systematicCalc;
     PDFUncertainty *myPDFUnc;
@@ -85,7 +86,7 @@ private:
     plotterFunctions::Ak8DrMatch *ak8DrMatch;
 
 public:
-    RegisterFunctionsNTuple(bool isCondor = false, std::string aggsbEra = "SB_Aggregate_2017", std::string blank = "");//"SB_v1_2017");
+    RegisterFunctionsNTuple(bool isCondor = false, std::string aggsbEra = "SB_Aggregate_2017", std::string sbEra = "SB_v1_2017");
     ~RegisterFunctionsNTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);
@@ -99,6 +100,7 @@ private:
     plotterFunctions::NJetWeight *njWeight;
     plotterFunctions::TriggerInfo *triggerInfo;
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
+    plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVarsAgg;
     plotterFunctions::MetSmear *metSmear;
 
 public:
@@ -127,6 +129,7 @@ class RegisterFunctionsSyst : public RegisterFunctions
 private:
     std::vector<std::function<void(NTupleReader&)> > funcs_;
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
+    plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVarsAgg;
     plotterFunctions::NJetWeight *njWeight;
     plotterFunctions::TriggerInfo *triggerInfo;
     SystWeights *systWeights;
@@ -141,6 +144,7 @@ class RegisterFunctions2Dplot : public RegisterFunctions
 {
 private:
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
+    plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVarsAgg;
 public:
     RegisterFunctions2Dplot();
     ~RegisterFunctions2Dplot();

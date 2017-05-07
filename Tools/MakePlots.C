@@ -943,7 +943,7 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dswRare_noT(           "Rare",       fileMap["Rare"],            "",            "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC_noT = {{dswDY_noT, dswDYInc_noT}, {dswtt2l_noT}, {dswtW_noT}, {dswttZ_noT}, {dswVV_noT}, {dswRare_noT, dswVV_noT}};
     // Extra MC stack that have njet weight applied for ttbar but not for DY (to make plots for AN)
-    std::vector<std::vector<Plotter::DatasetSummary>> stackwtt_MC = {{dsDY, dsDYInc}, {dswtt2l}, {dstW}, {dsttZ}, {dsVV}, {dsRare, dsVV}};
+    std::vector<std::vector<Plotter::DatasetSummary>> stackwtt_MC = {{dsDY, dsDYInc}, {dswtt2l}, {dstW}, {dsttZ}, {dsRare, dsVV}};
 
     // Apply data/mc njet weight for DY and ttbar & apply the normalization weight
     Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
@@ -968,11 +968,6 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwttMC_met(          "stack",  "cleanMetPt", stackwtt_MC);
     Plotter::DataCollection dcwwMC_met(           "stack",  "cleanMetPt", stackww_MC);
     Plotter::DataCollection dcwMC_met_noT(            "stack",  "cleanMetPt", stackw_MC_noT);
-    Plotter::DataCollection dcData_SingleMuon_met_agg("data",   "cleanMetPtAggBins", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_met_agg(             "stack",  "cleanMetPtAggBins", stack_MC);
-    Plotter::DataCollection dcwMC_met_agg(            "stack",  "cleanMetPtAggBins", stackw_MC);
-    Plotter::DataCollection dcwttMC_met_agg(          "stack",  "cleanMetPtAggBins", stackwtt_MC);
-    Plotter::DataCollection dcwwMC_met_agg(           "stack",  "cleanMetPtAggBins", stackww_MC);
     // ntops
     Plotter::DataCollection dcData_SingleMuon_nt("data",   "nTopCandSortedCntZinv", {dsData_SingleMuon});
     Plotter::DataCollection dcData_DoubleEG_nt(  "data",   "nTopCandSortedCntZinv", {dsData_DoubleEG});
@@ -1211,7 +1206,7 @@ int main(int argc, char* argv[])
 //	{"muZinv_ht50_met50_dphi",    "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
 	{"muZinv_loose0",             "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
 	{"muZinv_loose0_mt2",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0"},
-	{"muZinv_loose0_mt21b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv1b>0"},
+	//{"muZinv_loose0_mt21b",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv1b>0"},
         {"muZinv_loose0_mt2AggBins",  "passNoiseEventFilterZinvAggBins;passMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0"},
         {"muZinv_0topVal_MET100",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>100"},
        // {"muZinv_0topVal_MET100_extraPhi",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100"},
@@ -1239,7 +1234,7 @@ int main(int argc, char* argv[])
 //	{"muZinv_0b_ht200_dphi",      "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>200;passdPhisZinv"},
 //	{"muZinv_0b_ht50_met50_dphi", "passNoiseEventFilterZinv;passMuZinvSel;cntCSVSZinv=0;HTZinv>50;cleanMetPt>50;passdPhisZinv"},
         {"muZinv_0b_0topVal_MET100",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>100;cntCSVSZinv=0"},
-        {"muZinv_0b_0topVal_MET100_extraPhi",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100;cntCSVSZinv=0"},
+        //{"muZinv_0b_0topVal_MET100_extraPhi",      "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhis_extra;nTopCandSortedCntZinv=0;cleanMetPt>100;cntCSVSZinv=0"},
         {"muZinv_0b_0topVal_MET250",      "passdPhisZinv;cleanMetPt>250;HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;nTopCandSortedCntZinv=0;cntCSVSZinv=0"},
         //{"muZinv_0b_0topVal_MET250_350",  "HTZinv>300;passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>250;cleanMetPt<350;cntCSVSZinv=0"},
         //{"muZinv_0b_0topVal_MET350",	  "passNoiseEventFilterZinv;passMuZinvSel;passnJetsZinv;passdPhisZinv;nTopCandSortedCntZinv=0;cleanMetPt>350;cntCSVSZinv=0"},
@@ -1331,9 +1326,9 @@ int main(int argc, char* argv[])
         {"elmuZinv_loose0_mt2_MET",     "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
         {"elmuZinv_0b_loose0_mt2_MET",  "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv=0"},
         {"elmuZinv_g1b_loose0_mt2_MET", "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv>0"},
-        {"elmuZinv_loose0_mt2_METAggBins",     "passNoiseEventFilterZinvAggBins;passElMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPtAggBins>100"},
-        {"elmuZinv_0b_loose0_mt2_METAggBins",  "passNoiseEventFilterZinvAggBins;passElMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPtAggBins>100;cntCSVSZinvAggBins=0"},
-        {"elmuZinv_g1b_loose0_mt2_METAggBins", "passNoiseEventFilterZinvAggBins;passElMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPtAggBins>100;cntCSVSZinvAggBins>0"},
+        {"elmuZinv_loose0_mt2_METAggBins",     "passNoiseEventFilterZinvAggBins;passElMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPt>100"},
+        {"elmuZinv_0b_loose0_mt2_METAggBins",  "passNoiseEventFilterZinvAggBins;passElMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPt>100;cntCSVSZinvAggBins=0"},
+        {"elmuZinv_g1b_loose0_mt2_METAggBins", "passNoiseEventFilterZinvAggBins;passElMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPt>100;cntCSVSZinvAggBins>0"},
         //{"elmuZinv_loose0_mt2200_MET",     "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100"},
         //{"elmuZinv_0b_loose0_mt2200_MET",  "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv=0"},
         //{"elmuZinv_g1b_loose0_mt2200_MET", "passNoiseEventFilterZinv;passElMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv>0"},
@@ -1368,9 +1363,9 @@ int main(int argc, char* argv[])
         {"muZinv_loose0_mt2_MET",           "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100"},
         {"muZinv_0b_loose0_mt2_MET",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv=0"},
         {"muZinv_g1b_loose0_mt2_MET",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>0;cleanMetPt>100;cntCSVSZinv>0"},
-        {"muZinv_loose0_mt2_METAggBins",           "passNoiseEventFilterZinvAggBins;passMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPtAggBins>100"},
-        {"muZinv_0b_loose0_mt2_METAggBins",        "passNoiseEventFilterZinvAggBins;passMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPtAggBins>100;cntCSVSZinvAggBins=0"},
-        {"muZinv_g1b_loose0_mt2_METAggBins",       "passNoiseEventFilterZinvAggBins;passMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPtAggBins>100;cntCSVSZinvAggBins>0"},
+        {"muZinv_loose0_mt2_METAggBins",           "passNoiseEventFilterZinvAggBins;passMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPt>100"},
+        {"muZinv_0b_loose0_mt2_METAggBins",        "passNoiseEventFilterZinvAggBins;passMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPt>100;cntCSVSZinvAggBins=0"},
+        {"muZinv_g1b_loose0_mt2_METAggBins",       "passNoiseEventFilterZinvAggBins;passMuZinvSel;HTZinvAggBins>300;passnJetsZinvAggBins;passdPhisZinvAggBins;best_had_brJet_MT2ZinvAggBins>0;cleanMetPt>100;cntCSVSZinvAggBins>0"},
         //{"muZinv_loose0_mt2200_MET",           "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100"},
         //{"muZinv_0b_loose0_mt2200_MET",        "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv=0"},
         //{"muZinv_g1b_loose0_mt2200_MET",       "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv;best_had_brJet_MT2Zinv>200;cleanMetPt>100;cntCSVSZinv>0"},
@@ -1599,6 +1594,7 @@ int main(int argc, char* argv[])
     };
 
         Plotter::DataCollection trigger_nSearchBin_1b_bins( "single", {{"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBin_1b_bins",    dsDY_nunu_njetnorm}  });
+        Plotter::DataCollection trigger_nSearchBinagg( "single", {{"nSearchBinagg", dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBinagg",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBinagg",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBinagg",    dsDY_nunu_njetnorm}  });
     Plotter::DataCollection btag_nSearchBin(    "single", {{"nSearchBin", dsDY_nunu_njetnorm_btagCentral}, {"nSearchBin", dsDY_nunu_njetnorm_btagUp}, {"nSearchBin", dsDY_nunu_njetnorm_btagDn}});
     Plotter::DataCollection bmistag_nSearchBin( "single", {{"nSearchBin", dsDY_nunu_njetnorm_btagCentral}, {"nSearchBin", dsDY_nunu_njetnorm_bmistagUp}, {"nSearchBin", dsDY_nunu_njetnorm_bmistagDn}});
     Plotter::DataCollection ISR_nSearchBin(    "single", {{"nSearchBin", dsDY_nunu_njetnorm_ISRCentral}, {"nSearchBin", dsDY_nunu_njetnorm_ISRUp}, {"nSearchBin", dsDY_nunu_njetnorm_ISRDn}});
@@ -1629,6 +1625,8 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("syst_MESUncert_nSearchBin",     {MEU_nSearchBin},   {2, 1}, "",        NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("TriggerWgt_nSearchBin",         {trigger_nSearchBin},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
      ///ZInv Varaibles printed
+    vh.push_back(PHS("TriggerWgt_nSearchBinAggAgg",         {trigger_nSearchBinagg}, {2, 1}, "passBaselineZinvAggBins",   aggNSB,  0,     aggNSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nSearchBinAggone",         {trigger_nSearchBinagg}, {2, 1}, "passBaselineZinv",   aggNSB,  0,     aggNSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("TriggerWgt_MET",         {dsMaker_trigger_var("cleanMetPt")},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("TriggerWgt_HT",         {dsMaker_trigger_var("HTZinv")},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("TriggerWgt_nb",         {dsMaker_trigger_var("cntCSVS")},  {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
@@ -1654,7 +1652,7 @@ int main(int argc, char* argv[])
 
     vh.push_back(PHS("syst_JESUncert_nSearchBin_1b_bins",     {JEU_nSearchBin_1b_bins},   {2, 1}, "",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("syst_MESUncert_nSearchBin_1b_bins",     {MEU_nSearchBin_1b_bins},   {2, 1}, "",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("TriggerWgt_nSearchBin_1b_bins",         {trigger_nSearchBin_1b_bins},  {2, 1}, "passBaselineNoTagZinvAggBins",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nSearchBin_top_tagger_li",         {trigger_nSearchBin},  {2, 1}, "passBaselineNoTagZinvAggBins",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     ///Agg light top tagger
         vh.push_back(PHS("NJetWgt_nSearchBin_1b_bins",            {njetw_nSearchBin_1b_bins}, {2, 1}, "passBaselineNoTagZinvAggBins",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("NJetWgt_nSearchBin_log_1b_bins",        {njetw_nSearchBin_1b_bins}, {2, 1}, "passBaselineNoTagZinvAggBins",        NSB_1b_bins,  0,     NSB_1b_bins,   true,  false,  "Search Bin",     "Events", true));
@@ -1667,7 +1665,7 @@ int main(int argc, char* argv[])
 
     vh.push_back(PHS("syst_JESUncert_nSearchBin_1b_bins",     {JEU_nSearchBin_1b_bins},   {2, 1}, "",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("syst_MESUncert_nSearchBin_1b_bins",     {MEU_nSearchBin_1b_bins},   {2, 1}, "",        NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
-    vh.push_back(PHS("TriggerWgt_nSearchBin_1b_bins",         {trigger_nSearchBin_1b_bins},  {2, 1}, "passBaselineNoTagZinvAggBins",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
+    vh.push_back(PHS("TriggerWgt_nSearchBin_1b_bins",         {trigger_nSearchBin_1b_bins},  {2, 1}, "passBaselineNoTagZinvAggBins",   NSB_1b_bins,  0,     NSB_1b_bins,   false, false,  "Search Bin",     "Events", true));
     //b-tagging uncertainty
     vh.push_back(PHS("BTagUncert_nSearchBin",         {btag_nSearchBin},     {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
     vh.push_back(PHS("ISRUncert_nSearchBin",         {ISR_nSearchBin},     {2, 1}, "passBaselineZinv",   NSB,  0,     NSB,   false, false,  "Search Bin",     "Events", true));
@@ -1719,7 +1717,6 @@ int main(int argc, char* argv[])
     {
 	// unweighted
 	vh.push_back(PHS("DataMC_SingleMuon_met_"        +cut.first,  {dcData_SingleMuon_met,   dcMC_met},             {1, 2}, cut.second, 50, 0, 1500, true, false,  label_met,                           "Events"));
-        vh.push_back(PHS("DataMC_SingleMuon_met_agg_"        +cut.first,  {dcData_SingleMuon_met_agg,   dcMC_met_agg},             {1, 2}, cut.second, 50, 0, 1500, true, false,  label_met,                           "Events"));
 	vh.push_back(PHS("DataMC_SingleMuon_ht_"         +cut.first,  {dcData_SingleMuon_ht,    dcMC_ht},              {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,                            "Events"));
         vh.push_back(PHS("DataMC_SingleMuon_ht_agg_"         +cut.first,  {dcData_SingleMuon_ht_agg,    dcMC_ht_agg},              {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,                            "Events"));
 	vh.push_back(PHS("DataMC_SingleMuon_mht_"        +cut.first,  {dcData_SingleMuon_mht,   dcMC_mht},             {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mht,                           "Events"));
@@ -1778,8 +1775,7 @@ int main(int argc, char* argv[])
 	// DataMC weights applied
         vector<double> metBins = {0, 50, 100, 150, 200, 275, 300, 350, 400, 450, 2000};
         vector<double> mt2Bins = {0, 50, 100, 150, 200, 250, 300, 350, 400, 2000};
-	vh.push_back(PHS("DataMCw_SingleMuon_met_"        +cut.first,  {dcData_SingleMuon_met,        dcwMC_met},        {1, 2}, cut.second, 25, 0, 1500, true, false,  label_met,             "Events"));
-        vh.push_back(PHS("DataMCw_SingleMuon_met_agg_"        +cut.first,  {dcData_SingleMuon_met_agg,        dcwMC_met_agg},        {1, 2}, cut.second, 25, 0, 1500, true, false,  label_met,             "Events"));
+	vh.push_back(PHS("DataMCw_SingleMuon_met_"        +cut.first,  {dcData_SingleMuon_met,        dcwMC_met},        {1, 2}, cut.second, 25, 0, 1500, true, false,  label_met,             "Events / 60 GeV"));
 	vh.push_back(PHS("DataMCw_SingleMuon_rebin_met_"  +cut.first,  {dcData_SingleMuon_met,        dcwMC_met},        {1, 2}, cut.second, metBins,     true, false,  label_met,             "Events"));
 	vh.push_back(PHS("DataMCw_SingleMuon_ht_"         +cut.first,  {dcData_SingleMuon_ht,         dcwMC_ht},         {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,              "Events"));
         vh.push_back(PHS("DataMCw_SingleMuon_ht_agg_"         +cut.first,  {dcData_SingleMuon_ht_agg,         dcwMC_ht_agg},         {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,              "Events"));
@@ -1799,7 +1795,7 @@ int main(int argc, char* argv[])
 	//vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt21b_" +cut.first,  {dcData_SingleMuon_mt21b, dcwMC_mt21b},        {1, 2}, cut.second, mt2Bins,     true, false,  "mt2 (1b fake)",       "Events"));
 	//vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt22b_" +cut.first,  {dcData_SingleMuon_mt22b, dcwMC_mt22b},        {1, 2}, cut.second, mt2Bins,     true, false,  "mt2 (2b fake)",       "Events"));
 	//vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt23b_" +cut.first,  {dcData_SingleMuon_mt23b, dcwMC_mt23b},        {1, 2}, cut.second, mt2Bins,     true, false,  "mt2 (3b fake)",       "Events"));
-	vh.push_back(PHS("DataMCw_SingleMuon_nb_"         +cut.first,  {dcData_SingleMuon_nb,         dcwMC_nb},         {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,              "Events"));
+	vh.push_back(PHS("DataMCw_SingleMuon_nb_"         +cut.first,  {dcData_SingleMuon_nb,         dcwMC_nb},         {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,              "Events / bin"));
 	vh.push_back(PHS("DataMCw_SingleMuon_nj_"         +cut.first,  {dcData_SingleMuon_nj,         dcwMC_nj},         {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,              "Events"));
         vh.push_back(PHS("DataMCw_SingleMuon_nb_agg_"         +cut.first,  {dcData_SingleMuon_nb_agg,         dcwMC_nb_agg},         {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,              "Events"));
         vh.push_back(PHS("DataMCw_SingleMuon_nj_agg_"         +cut.first,  {dcData_SingleMuon_nj_agg,         dcwMC_nj_agg},         {1, 2}, cut.second, 20, 0, 20,   true, false,  label_nj,              "Events"));
@@ -1829,7 +1825,6 @@ int main(int argc, char* argv[])
 	    // DataMC weights applied
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwttMC_met},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_met,                                "Events"));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwttMC_ht},    {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,                                 "Events"));
-            vh.push_back(PHS("DataMCwtt_SingleMuon_met_agg_"   +cut.first,  {dcData_SingleMuon_met_agg,   dcwttMC_met_agg},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_met,                                "Events"));
             vh.push_back(PHS("DataMCwtt_SingleMuon_ht_agg_"    +cut.first,  {dcData_SingleMuon_ht_agg,    dcwttMC_ht_agg},    {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,                                 "Events"));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_mht_"   +cut.first,  {dcData_SingleMuon_mht,   dcwttMC_mht},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mht,                                "Events"));
 	    vh.push_back(PHS("DataMCwtt_SingleMuon_nt_"    +cut.first,  {dcData_SingleMuon_nt,    dcwttMC_nt},    {1, 2}, cut.second, 5,  0, 5,    true, false,  label_nt,                                 "Events"));
@@ -1871,7 +1866,6 @@ int main(int argc, char* argv[])
 	    // DataMC weights applied
 	    vh.push_back(PHS("DataMCww_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwwMC_met},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_met,                                  "Events"));
 	    vh.push_back(PHS("DataMCww_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwwMC_ht},    {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,                                   "Events"));
-            vh.push_back(PHS("DataMCww_SingleMuon_met_agg_"   +cut.first,  {dcData_SingleMuon_met_agg,   dcwwMC_met_agg},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_met,                                  "Events"));
             vh.push_back(PHS("DataMCww_SingleMuon_ht_agg_"    +cut.first,  {dcData_SingleMuon_ht_agg,    dcwwMC_ht_agg},    {1, 2}, cut.second, 50, 0, 1500, true, false,  label_ht,                                   "Events"));
 	    vh.push_back(PHS("DataMCww_SingleMuon_mht_"   +cut.first,  {dcData_SingleMuon_mht,   dcwwMC_mht},   {1, 2}, cut.second, 50, 0, 1500, true, false,  label_mht,                                  "Events"));
 	    vh.push_back(PHS("DataMCww_SingleMuon_nt_"    +cut.first,  {dcData_SingleMuon_nt,    dcwwMC_nt},    {1, 2}, cut.second, 5,  0, 5,    true, false,  label_nt,                                   "Events"));
@@ -2121,8 +2115,8 @@ int main(int argc, char* argv[])
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
-    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra, blank);
-    RegisterFunctions* arf = new RegisterFunctionsNTuple(runOnCondor, aggsbEra, AggBins);
+    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, aggsbEra, sbEra);
+    //RegisterFunctions* arf = new RegisterFunctionsNTuple(runOnCondor, aggsbEra, AggBins);
 
     Plotter plotter(vh, vvf, fromTuple, histFile, nFiles, startFile, nEvts);
     plotter.setCutFlows(cutFlowSummaries);
@@ -2131,7 +2125,7 @@ int main(int argc, char* argv[])
     plotter.setDoHists(doSave || doPlots);
     plotter.setDoTuple(doTuple);
     plotter.setRegisterFunction(rf);
-    plotter.setRegisterFunction(arf);
+    //plotter.setRegisterFunction(arf);
     plotter.read();
     if(doSave && fromTuple)  plotter.saveHists();
     if(doPlots)              plotter.plot();

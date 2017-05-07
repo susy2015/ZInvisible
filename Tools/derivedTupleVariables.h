@@ -70,6 +70,9 @@ namespace plotterFunctions
 	    const double& stored_weight = tr.getVar<double>("stored_weight");
             const double& evtWeight = tr.getVar<double>("evtWeight");
 
+            std::vector<double>* LSPpt = new std::vector<double>();
+            std::vector<const TLorentzVector*>* LSPtl = new std::vector<const TLorentzVector*>();
+
             // Calculate PU weight
 
             // Calculate Z-eff weight
@@ -337,6 +340,31 @@ namespace plotterFunctions
 	      genWeight = -1.;
             //std::cout<<genWeight<<" genWeight "<<std::endl;
             //std::cout<<evtWeight<<" stored_weight "<<stored_weight <<" genWeight "<<genWeight<<std::endl;
+            ///LSP pt
+/*            const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+            const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+            if(tr.checkBranch("genDecayPdgIdVec") )
+            {
+                for(int i = 0; i < genDecayPdgIdVec.size(); ++i)
+                {
+                    //double LSPpt = -999.9;
+                    TLorentzVector LSPtl;
+                    //if(genDecayPdgIdVec[i] ==  13) nuPt1 = genDecayLVec[i].Pt();
+                    //if(abs(genDecayPdgIdVec[i]) == 1000022) LSPpt = genDecayLVec[i].Pt(); //Define with the -9999 outside of loop
+                  
+                    {
+                     LSPtl = genDecayLVec[i];
+                     LSPpt = genDecayLVec[i].Pt();
+                     std::cout<<LSPpt<<std::endl;
+                     }
+                   
+                }    
+            }   
+            std::cout<<LSPpt<<std::endl;
+      */
+            tr.registerDerivedVec("LSPtl",LSPtl);
+            tr.registerDerivedVec("LSPpt",LSPpt);
+
             tr.registerDerivedVar("mu1dRMin", mu1dRMin);
             tr.registerDerivedVar("mu2dRMin", mu2dRMin);
             tr.registerDerivedVar("mudR", mudR);
@@ -428,6 +456,9 @@ namespace plotterFunctions
         TH1* njWTTbar_g1b;
         TH1* njWDYZ_g1b;
 
+        TH1* njWDYZ_0b_agg;
+        TH1* njWDYZ_g1b_agg;
+
         TH1* MCfake1b;
         TH1* MCfake2b;
         TH1* MCfake3b;
@@ -436,19 +467,23 @@ namespace plotterFunctions
         {
             const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
             const int& cntCSVSZinv = tr.getVar<int>("cntCSVSZinv");
+            const int& cntNJetsPt30Eta24ZinvAggBins = tr.getVar<int>("cntNJetsPt30Eta24ZinvAggBins");
 
             double wTT = 1.0;
             double wDY = 1.0;
 
+            double wDY_agg = 1.0;
 	    if(cntCSVSZinv == 0)
 	    {
 		if(njWTTbar_0b)  wTT = 1.0;//njWTTbar_0b->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
 		if(njWDYZ_0b)    wDY = njWDYZ_0b->GetBinContent(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
+                if(njWDYZ_0b_agg) wDY_agg = njWDYZ_0b_agg->GetBinContent(njWDYZ_0b_agg->FindBin(cntNJetsPt30Eta24Zinv));
 	    }
 	    else
 	    {
 		if(njWTTbar_g1b) wTT = 1.0;//njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
 		if(njWDYZ_g1b)   wDY = njWDYZ_g1b->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+                if(njWDYZ_g1b_agg) wDY_agg = njWDYZ_g1b_agg->GetBinContent(njWDYZ_g1b_agg->FindBin(cntNJetsPt30Eta24ZinvAggBins));
 	    }
             //std::cout<<wDY<<std::endl;
             double nJet1bfakeWgt = 1.0;
@@ -463,7 +498,9 @@ namespace plotterFunctions
             double normttbar = ScaleFactorsttBar::sf_norm0b(); 
 
             tr.registerDerivedVar("nJetWgtTTbar", wTT);
-            tr.registerDerivedVar("nJetWgtDYZ",   wDY);
+            tr.registerDerivedVar("nJetWgtDYZ",   wDY_agg);
+
+            tr.registerDerivedVar("nJetWgtDYZ_agg",   wDY);
 
             tr.registerDerivedVar("nJet1bfakeWgt", nJet1bfakeWgt);
             tr.registerDerivedVar("nJet2bfakeWgt", nJet2bfakeWgt);
@@ -482,6 +519,7 @@ namespace plotterFunctions
             njWDYZ_0b    = nullptr;
             njWTTbar_g1b = nullptr;
             njWDYZ_g1b   = nullptr;
+ 
             MCfake1b = nullptr;
             MCfake2b = nullptr;
             MCfake3b = nullptr;
@@ -504,9 +542,9 @@ namespace plotterFunctions
             if(f)
             {
                 //njWTTbar_0b  = 1;//static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
-                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_0topVal_MET100"));//loose0_mt2_MET"));//0b_loose0"));
+                njWDYZ_0b    = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_0b_loose0_mt2_MET"));//0b_0topVal_MET100"));//loose0_mt2_MET"));//0b_loose0"));
                 //njWTTbar_g1b = 1;//static_cast<TH1*>(f->Get("DataMC_nj_elmuZinv_loose0"));
-                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_0topVal_MET100"));//loose0_mt2_MET"));//g1b_loose0"));
+                njWDYZ_g1b   = static_cast<TH1*>(f->Get("DataMC_nj_muZinv_g1b_loose0_mt2_MET"));//_0topVal_MET100"));//loose0_mt2_MET"));//g1b_loose0"));
                 f->Close();
                 delete f;
             }
@@ -514,6 +552,20 @@ namespace plotterFunctions
             {
                 std::cout << "Failed to open: dataMCweights.root" << std::endl;
             }
+
+            TFile *l = new TFile("dataMCweights_Agg.root");
+            if(l)
+            {
+                njWDYZ_0b_agg    = static_cast<TH1*>(l->Get("DataMC_nj_muZinv_0b_loose0_mt2AggBins"));
+                njWDYZ_g1b_agg   = static_cast<TH1*>(l->Get("DataMC_nj_muZinv_g1b_0b_loose0_mt2AggBins"));
+                l->Close();
+                delete l;
+            }
+            else
+            {
+                std::cout << "Failed to open: dataMCweights_Agg.root" << std::endl;
+            }
+
         }
 
         ~NJetWeight()
@@ -983,6 +1035,7 @@ namespace plotterFunctions
             double cleanMetPt = cleanMet.Pt();
             double Zrecoptpt = Zrecopt.Pt();
             //double cleanMet2Pt = cleanMet2.Pt();
+            //
             tr.registerDerivedVar("passdPhis_extra", passdPhis_extra);
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
             tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
@@ -1048,6 +1101,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("passElMuZinvSel", passElMuZinvSel);
 
             tr.registerDerivedVar("Zrecopt",Zrecoptpt);
+
         }
 
     public:
@@ -1162,6 +1216,7 @@ namespace plotterFunctions
     {
     private:
         SearchBins sbins;
+        SearchBins agsbins;
 
         void getSearchBin(NTupleReader& tr)
         {
@@ -1202,9 +1257,9 @@ namespace plotterFunctions
             //int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
             int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);          
             std::vector<int> *nSearchBin_agg = new std::vector<int>();
-            *nSearchBin_agg = sbins.find_Binning_Indices(cntCSVS, nTopCandSortedCntagg, MT2agg, cleanMet, HTagg);  
+            *nSearchBin_agg = agsbins.find_Binning_Indices(cntCSVS, nTopCandSortedCntagg, MT2agg, cleanMet, HTagg);  
             std::vector<int> *nSearchBin_1b_bins = new std::vector<int>();
-            *nSearchBin_1b_bins = sbins.find_Binning_Indices(cntCSVS, nTopCandSortedCntagg, MT2agg, cleanMet, HTagg);
+            *nSearchBin_1b_bins = agsbins.find_Binning_Indices(cntCSVS, nTopCandSortedCntagg, MT2agg, cleanMet, HTagg);
 
 
             //bins.find_Binning_Index(1, nTopCandSortedCnt, MT2, cleanMet, HT);
@@ -1243,8 +1298,8 @@ namespace plotterFunctions
             }
 
             tr.registerDerivedVar("nSearchBin", nSearchBin);
-            tr.registerDerivedVec("nSearchBin_agg", nSearchBin_agg);
-            tr.registerDerivedVar("nSearchBin_1b_bins", nSearchBin_1b_bins);
+            tr.registerDerivedVec("nSearchBinagg", nSearchBin_agg);
+            tr.registerDerivedVec("nSearchBin_1b_bins", nSearchBin_1b_bins);
             //tr.registerDerivedVec("nb0BinsNW", nb0BinsNW);
             //tr.registerDerivedVec("nb0Bins", nb0Bins);
             //tr.registerDerivedVec("nb0NJwBins", nb0NJwBins);
@@ -1255,7 +1310,7 @@ namespace plotterFunctions
 
     public:
 
-        GetSearchBin(std::string sb_era) : sbins(sb_era) {}
+        GetSearchBin(std::string sb_era) : sbins(sb_era), agsbins("SB_Aggregate_2017") {}
 
         void operator()(NTupleReader& tr)
         {
@@ -1671,7 +1726,7 @@ namespace plotterFunctions
     {
     private:
         SearchBins sbins;
-
+        SearchBins agsbins;
         void systematicCalc(NTupleReader& tr)
         {
 
@@ -1730,41 +1785,49 @@ namespace plotterFunctions
 
             int nSearchBinMEUUp = sbins.find_Binning_Index(cntCSVSMEUUp, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp, HTMEUUp);
             int nSearchBinMEUDn = sbins.find_Binning_Index(cntCSVSMEUDn, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn, HTMEUDn);
-            //0b 1bin check Znunu           
-            int nSearchBinJEUUp_1b_bins = sbins.find_Binning_Index(1, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet, HTUp);
-            int nSearchBinJEUDn_1b_bins = sbins.find_Binning_Index(1, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet, HTDn);
+            //0b 1bin check Znunu                  std::vector<int> *nSearchBin_agg = new std::vector<int>();
+            //            *nSearchBin_agg = agsbins.
+            std::vector<int> *nSearchBinJEUUp_1b_bins = new std::vector<int>();
+            *nSearchBinJEUUp_1b_bins = agsbins.find_Binning_Indices(cntCSVSJEUUpAggBins, nTopCandSortedCntJEUUpAggBins, MT2JEUUpAggBins, cleanMet, HTUpAggBins);
+     
+            std::vector<int> *nSearchBinJEUDn_1b_bins = new std::vector<int>();
+            *nSearchBinJEUDn_1b_bins = agsbins.find_Binning_Indices(cntCSVSJEUDnAggBins, nTopCandSortedCntJEUDnAggBins, MT2JEUDnAggBins, cleanMet, HTDnAggBins);
 
-            int nSearchBinMEUUp_1b_bins = sbins.find_Binning_Index(1, nTopCandSortedCntMEUUp, MT2MEUUp, cleanMetMEUUp, HTMEUUp);
-            int nSearchBinMEUDn_1b_bins = sbins.find_Binning_Index(1, nTopCandSortedCntMEUDn, MT2MEUDn, cleanMetMEUDn, HTMEUDn);
+            std::vector<int> *nSearchBinMEUUp_1b_bins = new std::vector<int>();
+            *nSearchBinMEUUp_1b_bins = agsbins.find_Binning_Indices(cntCSVSMEUUpAggBins, nTopCandSortedCntMEUUpAggBins, MT2MEUUpAggBins, cleanMetMEUUp, HTMEUUpAggBins);
+
+            std::vector<int> *nSearchBinMEUDn_1b_bins= new std::vector<int>();
+            *nSearchBinMEUDn_1b_bins= agsbins.find_Binning_Indices(cntCSVSMEUDnAggBins, nTopCandSortedCntMEUDnAggBins, MT2MEUDnAggBins, cleanMetMEUDn, HTMEUDnAggBins);
             //agg
-            const std::vector<int>& nSearchBinJEUUp_agg = sbins.find_Binning_Indices(cntCSVSJEUUpAggBins, nTopCandSortedCntJEUUpAggBins, MT2JEUUpAggBins, cleanMet, HTUpAggBins);
-            const std::vector<int>& nSearchBinJEUDn_agg = sbins.find_Binning_Indices(cntCSVSJEUDnAggBins, nTopCandSortedCntJEUDnAggBins, MT2JEUDnAggBins, cleanMet, HTDnAggBins);
+            /*
+            const std::vector<int>& nSearchBinJEUUp_agg = agsbins.find_Binning_Indices(cntCSVSJEUUpAggBins, nTopCandSortedCntJEUUpAggBins, MT2JEUUpAggBins, cleanMet, HTUpAggBins);
+            const std::vector<int>& nSearchBinJEUDn_agg = agsbins.find_Binning_Indices(cntCSVSJEUDnAggBins, nTopCandSortedCntJEUDnAggBins, MT2JEUDnAggBins, cleanMet, HTDnAggBins);
 
-            const std::vector<int>& nSearchBinMEUUp_agg = sbins.find_Binning_Indices(cntCSVSMEUUpAggBins, nTopCandSortedCntMEUUpAggBins, MT2MEUUpAggBins, cleanMetMEUUp, HTMEUUpAggBins);
-            const std::vector<int>& nSearchBinMEUDn_agg = sbins.find_Binning_Indices(cntCSVSMEUDnAggBins, nTopCandSortedCntMEUDnAggBins, MT2MEUDnAggBins, cleanMetMEUDn, HTMEUDnAggBins); 
-            
+            const std::vector<int>& nSearchBinMEUUp_agg = agsbins.find_Binning_Indices(cntCSVSMEUUpAggBins, nTopCandSortedCntMEUUpAggBins, MT2MEUUpAggBins, cleanMetMEUUp, HTMEUUpAggBins);
+            const std::vector<int>& nSearchBinMEUDn_agg = agsbins.find_Binning_Indices(cntCSVSMEUDnAggBins, nTopCandSortedCntMEUDnAggBins, MT2MEUDnAggBins, cleanMetMEUDn, HTMEUDnAggBins); 
+            */
             tr.registerDerivedVar("nSearchBinJEUUp", nSearchBinJEUUp);
             tr.registerDerivedVar("nSearchBinJEUDn", nSearchBinJEUDn);
 
             tr.registerDerivedVar("nSearchBinMEUUp", nSearchBinMEUUp);
             tr.registerDerivedVar("nSearchBinMEUDn", nSearchBinMEUDn);
             //ob 1b bin check Znunu
-            tr.registerDerivedVar("nSearchBinJEUUp_1b_bins", nSearchBinJEUUp_1b_bins);
-            tr.registerDerivedVar("nSearchBinJEUDn_1b_bins", nSearchBinJEUDn_1b_bins);
+            tr.registerDerivedVec("nSearchBinJEUUp_1b_bins", nSearchBinJEUUp_1b_bins);
+            tr.registerDerivedVec("nSearchBinJEUDn_1b_bins", nSearchBinJEUDn_1b_bins);
 
-            tr.registerDerivedVar("nSearchBinMEUUp_1b_bins", nSearchBinMEUUp_1b_bins);
-            tr.registerDerivedVar("nSearchBinMEUDn_1b_bins", nSearchBinMEUDn_1b_bins);
+            tr.registerDerivedVec("nSearchBinMEUUp_1b_bins", nSearchBinMEUUp_1b_bins);
+            tr.registerDerivedVec("nSearchBinMEUDn_1b_bins", nSearchBinMEUDn_1b_bins);
             //agg
-            tr.registerDerivedVar("nSearchBinJEUUp_agg", nSearchBinJEUUp_agg);
-            tr.registerDerivedVar("nSearchBinJEUDn_agg", nSearchBinJEUDn_agg);
+         /*   tr.registerDerivedVec("nSearchBinJEUUp_agg", nSearchBinJEUUp_agg);
+            tr.registerDerivedVec("nSearchBinJEUDn_agg", nSearchBinJEUDn_agg);
 
-            tr.registerDerivedVar("nSearchBinMEUUp_agg", nSearchBinMEUUp_agg);
-            tr.registerDerivedVar("nSearchBinMEUDn_agg", nSearchBinMEUDn_agg);
-         
+            tr.registerDerivedVec("nSearchBinMEUUp_agg", nSearchBinMEUUp_agg);
+            tr.registerDerivedVec("nSearchBinMEUDn_agg", nSearchBinMEUDn_agg);
+         */
         }
 
     public:
-        SystematicCalc(std::string sb_era) : sbins(sb_era)
+        SystematicCalc(std::string sb_era) : sbins(sb_era), agsbins("SB_Aggregate_2017")
 	{
             
 	}
@@ -2498,7 +2561,7 @@ namespace plotterFunctions
         void unpack(NTupleReader& tr)
         {
             const int& cuts = tr.getVar<int>("cuts" + spec_);
-
+            //std::cout<<"cuts " <<spec_<<std::endl;
             tr.registerDerivedVar("passLeptVeto" + spec_,         static_cast<bool>(cuts & BIT_PASSLEPTVETO));
             tr.registerDerivedVar("passMuonVeto" + spec_,         static_cast<bool>(cuts & BIT_PASSMUONVETO));
             tr.registerDerivedVar("passEleVeto" + spec_,          static_cast<bool>(cuts & BIT_PASSELEVETO));
