@@ -70,8 +70,8 @@ namespace plotterFunctions
 	    const double& stored_weight = tr.getVar<double>("stored_weight");
             const double& evtWeight = tr.getVar<double>("evtWeight");
 
-            std::vector<double>* LSPpt = new std::vector<double>();
-            std::vector<const TLorentzVector*>* LSPtl = new std::vector<const TLorentzVector*>();
+            //std::vector<double>* LSPpt = new std::vector<double>();
+            //std::vector<const TLorentzVector*>* LSPtl = new std::vector<const TLorentzVector*>();
 
             // Calculate PU weight
 
@@ -341,29 +341,63 @@ namespace plotterFunctions
             //std::cout<<genWeight<<" genWeight "<<std::endl;
             //std::cout<<evtWeight<<" stored_weight "<<stored_weight <<" genWeight "<<genWeight<<std::endl;
             ///LSP pt
-/*            const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+            const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
             const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
-            if(tr.checkBranch("genDecayPdgIdVec") )
+            const std::vector<int>& genDecayMomIdxVec   = tr.getVec<int>("genDecayMomIdxVec");
+            const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
+            //std::vector<double>* LSPpt = new std::vector<double>();
+                     double LSPPt = -999.9;
+            int nZ = 0;
+            //int pdgIdZDec = 0;
+        std::vector<TLorentzVector> tLVec;
+            if(&genDecayPdgIdVec != nullptr)
             {
-                for(int i = 0; i < genDecayPdgIdVec.size(); ++i)
+        for(unsigned it=0; it<genDecayLVec.size(); it++)
+        {
+            int pdgId = genDecayPdgIdVec.at(it);
+            if(abs(pdgId)==6)
+            {
+                for(unsigned ig=0; ig<genDecayLVec.size(); ig++)
                 {
-                    //double LSPpt = -999.9;
-                    TLorentzVector LSPtl;
-                    //if(genDecayPdgIdVec[i] ==  13) nuPt1 = genDecayLVec[i].Pt();
-                    //if(abs(genDecayPdgIdVec[i]) == 1000022) LSPpt = genDecayLVec[i].Pt(); //Define with the -9999 outside of loop
-                  
+                    if( genDecayMomIdxVec.at(ig) == genDecayIdxVec.at(it) )
                     {
-                     LSPtl = genDecayLVec[i];
-                     LSPpt = genDecayLVec[i].Pt();
-                     std::cout<<LSPpt<<std::endl;
-                     }
-                   
-                }    
-            }   
-            std::cout<<LSPpt<<std::endl;
-      */
-            tr.registerDerivedVec("LSPtl",LSPtl);
-            tr.registerDerivedVec("LSPpt",LSPpt);
+                        int pdgId = genDecayPdgIdVec.at(ig);
+                        if(abs(pdgId)==24)
+                        {
+                            int flag = 0;
+                            for(unsigned iq=0; iq<genDecayLVec.size(); iq++)
+                            {
+                                if( genDecayMomIdxVec.at(iq) == genDecayIdxVec.at(ig) ) 
+                                {
+                                    int pdgid = genDecayPdgIdVec.at(iq);
+                                    if(abs(pdgid)== 11 || abs(pdgid)== 13 || abs(pdgid)== 15) flag++;
+                                }
+                            }
+                            if(!flag) tLVec.push_back(genDecayLVec.at(it));
+                        }
+                    }
+                }//dau. loop
+            }//top cond
+        }
+       }
+            if(&genDecayPdgIdVec != nullptr)
+            {
+                for(int j = 0; j <  genDecayPdgIdVec.size(); ++j)
+                {
+                 if(tLVec.size()>0) continue;
+                    if(abs(genDecayPdgIdVec[j]) == 1000022)
+                    {
+                        nZ++;
+                       
+                        LSPPt = genDecayLVec[j].Pt();
+
+                    }
+                }
+}   
+            std::cout<<LSPPt<<std::endl;
+            std::cout<<tLVec.size()<<std::endl; 
+            //tr.registerDerivedVec("LSPtl",LSPtl);
+            tr.registerDerivedVar("LSPPt", LSPPt);
 
             tr.registerDerivedVar("mu1dRMin", mu1dRMin);
             tr.registerDerivedVar("mu2dRMin", mu2dRMin);
@@ -1035,7 +1069,33 @@ namespace plotterFunctions
             double cleanMetPt = cleanMet.Pt();
             double Zrecoptpt = Zrecopt.Pt();
             //double cleanMet2Pt = cleanMet2.Pt();
-            //
+            
+
+
+          //LSP
+            //const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+            //const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+            double LSPPt = -999.9;
+            int nZp = 0;
+            if(&genDecayPdgIdVec != nullptr)
+            {
+                for(int j = 0; j <  genDecayPdgIdVec.size(); ++j)
+                {
+                    if(abs(genDecayPdgIdVec[j]) == 1000022)
+                    {
+                        nZp++;
+
+                        LSPPt = genDecayLVec[j].Pt();
+
+                    }
+                  //std::cout<<LSPPt<<std::endl;
+                }
+            }
+            //std::cout<<LSPPt<<std::endl;
+
+            tr.registerDerivedVar("LSPPt", LSPPt);
+
+
             tr.registerDerivedVar("passdPhis_extra", passdPhis_extra);
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
             tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
@@ -1725,7 +1785,7 @@ namespace plotterFunctions
     class SystematicCalc
     {
     private:
-        SearchBins sbins;
+        SearchBins sbins; // SearchBins sbins, sbinsOri;
         SearchBins agsbins;
         void systematicCalc(NTupleReader& tr)
         {

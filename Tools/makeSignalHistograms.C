@@ -40,6 +40,7 @@ private:
         {
             makeHist("met",             150, 0, 3000);
             makeHist("mt2",             150, 0, 3000);
+            makeHist("LSPPt",             150, 0, 3000);
             makeHist("nt",               10, 0,   10);
             makeHist("nb",               10, 0,   10);
             makeHist("nj",               20, 0,   20);
@@ -53,11 +54,15 @@ private:
             makeHist("loose0Nt_nt",      10, 0,   10);
             makeHist("loose0Nt_nb",      10, 0,   10);
             makeHist("loose0Nt_nj",      20, 0,   20);
-            makeHist("baselineNob_met", 150, 0, 3000);
-            makeHist("baselineNob_mt2", 150, 0, 3000);
-            makeHist("baselineNob_nt",   10, 0,   10);
-            makeHist("baselineNob_nb",   10, 0,   10);
-            makeHist("baselineNob_nj",   20, 0,   20);
+            makeHist("baseline_met",     150, 0, 3000);
+            makeHist("baseline_genmet", 150, 0, 3000);
+            makeHist("baseline_metmet", 150, 0, 3000);
+            makeHist("baseline_calomet", 150, 0, 3000);
+            makeHist("baseline_mt2", 150, 0, 3000);
+            makeHist("baseline_LSPPt", 150, 0, 3000);
+            makeHist("baseline_nt",   10, 0,   10);
+            makeHist("baseline_nb",   10, 0,   10);
+            makeHist("baseline_nj",   20, 0,   20);
         }
     
 public:
@@ -74,9 +79,10 @@ public:
             const int& cntCSVS                = tr.getVar<int>("cntCSVSZinv");
             const int& nTopCandSortedCnt      = tr.getVar<int>("nTopCandSortedCntZinv");
             const int& cntNJetsPt30Eta24Zinv  = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
-            const double& genmet                 = tr.getVar<double>("genmet");
-            const double& metmet                 = tr.getVar<double>("met");
-            const double& calomet                 = tr.getVar<double>("calomet");
+            const double& genmet              = tr.getVar<double>("genmet");
+            const double& metmet              = tr.getVar<double>("met");
+            const double& calomet             = tr.getVar<double>("calomet");
+            const double& LSPPt               = tr.getVar<double>("LSPPt");
             
             const bool& passBaselineNoTagZinv = tr.getVar<bool>("passBaselineNoTagZinv");
             const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
@@ -94,22 +100,23 @@ public:
             hists_["nt"]->Fill(nTopCandSortedCnt, weight);
             hists_["nb"]->Fill(cntCSVS, weight);
             hists_["nj"]->Fill(cntNJetsPt30Eta24Zinv, weight);
-
-            if(passBaseline)
+            //hists_["LSPpt"]->Fill(LSPpt, weight);
+         
+           if(passBaseline)
             {
-/*
+
                 hists_["baseline_met"]->Fill(met, weight);
                 hists_["baseline_genmet"]->Fill(genmet, weight);
-                hists_["baseline_metmet"]->Fill(metmet, weight);
-                hists_["baseline_calomet"]->Fill(calomet, weight);
-                hists_["baseline_mt2"]->Fill(best_had_brJet_MT2, weight);
-                hists_["baseline_nt"]->Fill(nTopCandSortedCnt, weight);
-                hists_["baseline_nb"]->Fill(cntCSVS, weight);
-*/
-                hists_["baseline_nj"]->Fill(cntNJetsPt30Eta24Zinv, weight);
+               // hists_["baseline_metmet"]->Fill(metmet, weight);
+               // hists_["baseline_calomet"]->Fill(calomet, weight);
+               // hists_["baseline_mt2"]->Fill(best_had_brJet_MT2, weight);
+               // hists_["baseline_nt"]->Fill(nTopCandSortedCnt, weight);
+               // hists_["baseline_nb"]->Fill(cntCSVS, weight);
+               // hists_["baseline_nj"]->Fill(cntNJetsPt30Eta24Zinv, weight);
+                hists_["baseline_LSPPt"]->Fill(LSPPt, weight);
   
           }
-
+/*
             if(passLoose0)
             {
                 hists_["loose0_met"]->Fill(met, weight);
@@ -127,6 +134,7 @@ public:
                 hists_["loose0Nt_nb"]->Fill(cntCSVS, weight);
                 hists_["loose0Nt_nj"]->Fill(cntNJetsPt30Eta24Zinv, weight);
             }
+*/           
         }
 
     void write()
