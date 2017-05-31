@@ -341,15 +341,19 @@ namespace plotterFunctions
             //std::cout<<genWeight<<" genWeight "<<std::endl;
             //std::cout<<evtWeight<<" stored_weight "<<stored_weight <<" genWeight "<<genWeight<<std::endl;
             ///LSP pt
+            /*
             const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
             const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
             const std::vector<int>& genDecayMomIdxVec   = tr.getVec<int>("genDecayMomIdxVec");
             const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
             //std::vector<double>* LSPpt = new std::vector<double>();
-                     double LSPPt = -999.9;
+            double LSPPt     = -999.9;
+            double LSPPt_1   = -999.9;
+            double LSPPt_2   = -999.9;
+            double LSPPt_all = -999.9;
             int nZ = 0;
             //int pdgIdZDec = 0;
-        std::vector<TLorentzVector> tLVec;
+            std::vector<TLorentzVector> tLVec;
             if(&genDecayPdgIdVec != nullptr)
             {
         for(unsigned it=0; it<genDecayLVec.size(); it++)
@@ -384,12 +388,15 @@ namespace plotterFunctions
             {
                 for(int j = 0; j <  genDecayPdgIdVec.size(); ++j)
                 {
-                 if(tLVec.size()>0) continue;
+                 if(tLVec.size()==2) continue;
                     if(abs(genDecayPdgIdVec[j]) == 1000022)
                     {
                         nZ++;
                        
                         LSPPt = genDecayLVec[j].Pt();
+                        LSPPt_1 = genDecayLVec[0].Pt();
+                        LSPPt_2 = genDecayLVec[1].Pt();
+                        LSPPt_all = LSPPt_2+ LSPPt_1;
 
                     }
                 }
@@ -398,7 +405,10 @@ namespace plotterFunctions
             std::cout<<tLVec.size()<<std::endl; 
             //tr.registerDerivedVec("LSPtl",LSPtl);
             tr.registerDerivedVar("LSPPt", LSPPt);
-
+            tr.registerDerivedVar("LSPPt_1", LSPPt_1);
+            tr.registerDerivedVar("LSPPt_2", LSPPt_2);
+            tr.registerDerivedVar("LSPPt_all", LSPPt_all);
+*/
             tr.registerDerivedVar("mu1dRMin", mu1dRMin);
             tr.registerDerivedVar("mu2dRMin", mu2dRMin);
             tr.registerDerivedVar("mudR", mudR);
@@ -1075,26 +1085,131 @@ namespace plotterFunctions
           //LSP
             //const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
             //const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+            const std::vector<int>& genDecayMomIdxVec   = tr.getVec<int>("genDecayMomIdxVec");
+            const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
+            const double& genmet              = tr.getVar<double>("genmet");
+            const double& metmet              = tr.getVar<double>("met");
+            //const double& metclean                 = tr.getVar<double>("cleanMetPt");
+            //const double& cleanMet = tr.getVar<double>("cleanMetPt");
+            //std::cout<<metclean<<std::endl;;
+            double LSPPt_1   = -999.9;
+            double LSPPt_2   = -999.9;
+            double LSPPt_all = -999.9;
             double LSPPt = -999.9;
+            double LSPPt_1_0   = -999.9;
+            double LSPPt_2_0   = -999.9;
+            double LSPPt_all_0 = -999.9;
+            double LSPPt_0 = -999.9;
+            double LSPPt_1_4   = -999.9;
+            double LSPPt_2_4   = -999.9;
+            double LSPPt_all_4 = -999.9;
+            double LSPPt_4 = -999.9;
             int nZp = 0;
+            double genmet_2 = -999.9;
+            double genmet_0 = -999.9;
+            double genmet_4 = -999.9;
+            double met_2 = -999.9;
+            double met_0 = -999.9;
+            double met_4 = -999.9;
+            std::vector<TLorentzVector> tLVec;
+            std::vector<TLorentzVector> LSPptall4;
+            std::vector<TLorentzVector> LSPptall0;
+            std::vector<TLorentzVector> LSPptall;
             if(&genDecayPdgIdVec != nullptr)
             {
+        for(unsigned it=0; it<genDecayLVec.size(); it++)
+        {
+            int pdgId = genDecayPdgIdVec.at(it);
+            if(abs(pdgId)==6)
+            {
+                for(unsigned ig=0; ig<genDecayLVec.size(); ig++)
+                {
+                    if( genDecayMomIdxVec.at(ig) == genDecayIdxVec.at(it) )
+                    {
+                        int pdgId = genDecayPdgIdVec.at(ig);
+                        if(abs(pdgId)==24)
+                        {
+                            int flag = 0;
+                            for(unsigned iq=0; iq<genDecayLVec.size(); iq++)
+                            {
+                                if( genDecayMomIdxVec.at(iq) == genDecayIdxVec.at(ig) )
+                                {
+                                    int pdgid = genDecayPdgIdVec.at(iq);
+                                    if(abs(pdgid)== 11 || abs(pdgid)== 13 || abs(pdgid)== 15) flag++;
+                                }
+                            }
+                            if(!flag) tLVec.push_back(genDecayLVec.at(it));
+                        }
+                    }
+                }//dau. loop
+            }//top cond
+        }
+       }
+            if(&genDecayPdgIdVec != nullptr)
+            {
+
                 for(int j = 0; j <  genDecayPdgIdVec.size(); ++j)
                 {
                     if(abs(genDecayPdgIdVec[j]) == 1000022)
                     {
-                        nZp++;
-
-                        LSPPt = genDecayLVec[j].Pt();
-
-                    }
+                      if(tLVec.size()==2) {
+                        LSPptall.push_back(genDecayLVec.at(j));
+                           genmet_2 = genmet;
+                           met_2 = cleanMetPt;
+                         if(LSPptall.size()==2){
+                           //std::cout<<"LSPPt leading "<<LSPptall[0].Pt()<<std::endl;
+                           LSPPt_all = (LSPptall[0]+LSPptall[1]).Pt();
+                            }
+                        }
+                    
+                    if(tLVec.size()>0) {
+                        LSPptall0.push_back(genDecayLVec.at(j));
+                           genmet_0 = genmet;
+                           met_0 = cleanMetPt;
+                         if(LSPptall0.size()==2){
+                           LSPPt_all_0 = (LSPptall0[0]+LSPptall0[1]).Pt();
+                           }
+                         }
+                    if(tLVec.size()==4) {
+                          LSPptall4.push_back(genDecayLVec.at(j));
+                             genmet_4 = genmet;
+                             met_4 = cleanMetPt;
+                           if(LSPptall4.size()==2){
+                             LSPPt_all_4 = (LSPptall4[0]+LSPptall4[1]).Pt();
+                           }
+                        }
                   //std::cout<<LSPPt<<std::endl;
-                }
-            }
-            //std::cout<<LSPPt<<std::endl;
-
+                    }//particle 1000022 loop
+               }//genDecayPdgID loop
+            //std::cout<<"LSPPt "<<LSPPt<<std::endl;
+           }//genDecay end of loop
+            //std::cout<<"LSPPt leading "<<met_2<<std::endl;
+            //std::cout<<"LSPPt subleading "<<genmet_2<<std::endl;
+            //std::cout<<"LSPPt All "<<LSPptall.size()<<std::endl;
+            //std::cout<<tLVec.size()<<std::endl;
+          
             tr.registerDerivedVar("LSPPt", LSPPt);
+            tr.registerDerivedVar("LSPPt_1", LSPPt_1);
+            tr.registerDerivedVar("LSPPt_2", LSPPt_2);
+            tr.registerDerivedVar("LSPPt_all", LSPPt_all);
 
+            tr.registerDerivedVar("LSPPt_0", LSPPt_0);
+            tr.registerDerivedVar("LSPPt_1_0", LSPPt_1_0);
+            tr.registerDerivedVar("LSPPt_2_0", LSPPt_2_0);
+            tr.registerDerivedVar("LSPPt_all_0", LSPPt_all_0);
+
+            tr.registerDerivedVar("LSPPt_4", LSPPt_4);
+            tr.registerDerivedVar("LSPPt_1_4", LSPPt_1_4);
+            tr.registerDerivedVar("LSPPt_2_4", LSPPt_2_4);
+            tr.registerDerivedVar("LSPPt_all_4", LSPPt_all_4);
+
+            tr.registerDerivedVar("genmet_2", genmet_2);
+            tr.registerDerivedVar("genmet_0", genmet_0);
+            tr.registerDerivedVar("genmet_4", genmet_4);
+
+            tr.registerDerivedVar("met_2", met_2);
+            tr.registerDerivedVar("met_0", met_0);
+            tr.registerDerivedVar("met_4", met_4);
 
             tr.registerDerivedVar("passdPhis_extra", passdPhis_extra);
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);

@@ -39,8 +39,20 @@ private:
     void bookHists()
         {
             makeHist("met",             150, 0, 3000);
+            makeHist("genmet",             150, 0, 3000);
             makeHist("mt2",             150, 0, 3000);
-            makeHist("LSPPt",             150, 0, 3000);
+            makeHist("genmet_2", 150, 0, 3000);
+            makeHist("genmet_0", 150, 0, 3000);
+            makeHist("genmet_4", 150, 0, 3000);
+            makeHist("met_2", 150, 0, 3000);
+            makeHist("met_0", 150, 0, 3000);
+            makeHist("met_4", 150, 0, 3000);
+            makeHist("LSPPt",           150, 0, 3000);
+            makeHist("LSPPt_1",         150, 0, 3000);
+            makeHist("LSPPt_2",         150, 0, 3000);
+            makeHist("LSPPt_all",       150, 0, 3000);
+            makeHist("LSPPt_all_0", 150, 0, 3000);
+            makeHist("LSPPt_all_4", 150, 0, 3000);            
             makeHist("nt",               10, 0,   10);
             makeHist("nb",               10, 0,   10);
             makeHist("nj",               20, 0,   20);
@@ -59,7 +71,15 @@ private:
             makeHist("baseline_metmet", 150, 0, 3000);
             makeHist("baseline_calomet", 150, 0, 3000);
             makeHist("baseline_mt2", 150, 0, 3000);
-            makeHist("baseline_LSPPt", 150, 0, 3000);
+            makeHist("baseline_LSPPt_all", 150, 0, 3000);
+            makeHist("baseline_LSPPt_all_0", 150, 0, 3000);
+            makeHist("baseline_LSPPt_all_4", 150, 0, 3000);
+            makeHist("baseline_genmet_2", 150, 0, 3000);
+            makeHist("baseline_genmet_0", 150, 0, 3000);
+            makeHist("baseline_genmet_4", 150, 0, 3000);
+            makeHist("baseline_met_2", 150, 0, 3000);
+            makeHist("baseline_met_0", 150, 0, 3000);
+            makeHist("baseline_met_4", 150, 0, 3000);
             makeHist("baseline_nt",   10, 0,   10);
             makeHist("baseline_nb",   10, 0,   10);
             makeHist("baseline_nj",   20, 0,   20);
@@ -81,8 +101,30 @@ public:
             const int& cntNJetsPt30Eta24Zinv  = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
             const double& genmet              = tr.getVar<double>("genmet");
             const double& metmet              = tr.getVar<double>("met");
-            const double& calomet             = tr.getVar<double>("calomet");
+            //const double& calomet             = tr.getVar<double>("calomet");
+
+            const double& met_2            = tr.getVar<double>("met_2");
+            const double& met_0            = tr.getVar<double>("met_0");
+            const double& met_4            = tr.getVar<double>("met_4");
+
             const double& LSPPt               = tr.getVar<double>("LSPPt");
+            const double& LSPPt_1             = tr.getVar<double>("LSPPt_1");
+            const double& LSPPt_2             = tr.getVar<double>("LSPPt_2");
+            const double& LSPPt_all           = tr.getVar<double>("LSPPt_all");
+
+            const double& LSPPt_0               = tr.getVar<double>("LSPPt_0");
+            const double& LSPPt_1_0             = tr.getVar<double>("LSPPt_1_0");
+            const double& LSPPt_2_0             = tr.getVar<double>("LSPPt_2_0");
+            const double& LSPPt_all_0           = tr.getVar<double>("LSPPt_all_0");
+
+            const double& LSPPt_4               = tr.getVar<double>("LSPPt_4");
+            const double& LSPPt_1_4             = tr.getVar<double>("LSPPt_1_4");
+            const double& LSPPt_2_4             = tr.getVar<double>("LSPPt_2_4");
+            const double& LSPPt_all_4           = tr.getVar<double>("LSPPt_all_4");
+
+            const double& genmet_2           = tr.getVar<double>("genmet_2");
+            const double& genmet_0           = tr.getVar<double>("genmet_0");
+            const double& genmet_4           = tr.getVar<double>("genmet_4");
             
             const bool& passBaselineNoTagZinv = tr.getVar<bool>("passBaselineNoTagZinv");
             const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
@@ -95,26 +137,44 @@ public:
             bool passLoose0Nt = passLoose0 && (nTopCandSortedCnt >= 1);
             bool passBaselineNob = passBaselineNoTagZinv && passMuZinvSel && (nTopCandSortedCnt >= 1);
 
-            hists_["met"]->Fill(met, weight);
-            hists_["mt2"]->Fill(best_had_brJet_MT2, weight);
-            hists_["nt"]->Fill(nTopCandSortedCnt, weight);
-            hists_["nb"]->Fill(cntCSVS, weight);
-            hists_["nj"]->Fill(cntNJetsPt30Eta24Zinv, weight);
-            //hists_["LSPpt"]->Fill(LSPpt, weight);
+            //hists_["met"]->Fill(met, weight);
+           // hists_["mt2"]->Fill(best_had_brJet_MT2, weight);
+            //hists_["nt"]->Fill(nTopCandSortedCnt, weight);
+            //hists_["nb"]->Fill(cntCSVS, weight);
+            //hists_["nj"]->Fill(cntNJetsPt30Eta24Zinv, weight);
+                hists_["met"]->Fill(met, weight);
+                hists_["genmet"]->Fill(genmet, weight);
+                hists_["genmet_2"]->Fill(genmet_2, weight);
+                hists_["genmet_0"]->Fill(genmet_0, weight);
+                hists_["genmet_4"]->Fill(genmet_4, weight);
+                hists_["met_2"]->Fill(met_2, weight);
+                hists_["met_0"]->Fill(met_0, weight);
+                hists_["met_4"]->Fill(met_4, weight);
+                hists_["LSPPt_all"]->Fill(LSPPt_all, weight);
+                hists_["LSPPt_all_0"]->Fill(LSPPt_all_0, weight);
+                hists_["LSPPt_all_4"]->Fill(LSPPt_all_4, weight);
+
          
            if(passBaseline)
             {
 
                 hists_["baseline_met"]->Fill(met, weight);
                 hists_["baseline_genmet"]->Fill(genmet, weight);
+                hists_["baseline_genmet_2"]->Fill(genmet_2, weight);
+                hists_["baseline_genmet_0"]->Fill(genmet_0, weight);
+                hists_["baseline_genmet_4"]->Fill(genmet_4, weight);
+                hists_["baseline_met_2"]->Fill(met_2, weight);
+                hists_["baseline_met_0"]->Fill(met_0, weight);
+                hists_["baseline_met_4"]->Fill(met_4, weight);
                // hists_["baseline_metmet"]->Fill(metmet, weight);
                // hists_["baseline_calomet"]->Fill(calomet, weight);
                // hists_["baseline_mt2"]->Fill(best_had_brJet_MT2, weight);
                // hists_["baseline_nt"]->Fill(nTopCandSortedCnt, weight);
                // hists_["baseline_nb"]->Fill(cntCSVS, weight);
                // hists_["baseline_nj"]->Fill(cntNJetsPt30Eta24Zinv, weight);
-                hists_["baseline_LSPPt"]->Fill(LSPPt, weight);
-  
+                hists_["baseline_LSPPt_all"]->Fill(LSPPt_all, weight);
+                hists_["baseline_LSPPt_all_0"]->Fill(LSPPt_all_0, weight);
+                hists_["baseline_LSPPt_all_4"]->Fill(LSPPt_all_4, weight);
           }
 /*
             if(passLoose0)
