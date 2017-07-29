@@ -174,7 +174,7 @@ int main(int argc, char* argv[])
     int NSB_1b_bins = asb.nSearchBins();
 
     // Shortcuts for axis labels
-    std::string label_met = "E_{T}^{miss} [GeV]";
+    std::string label_met = "p_{T}^{miss} [GeV]";
     //std::string label_met = "#slash{E}_{T} [GeV]";
     std::string label_ht  = "H_{T} [GeV]";
     std::string label_mht = "MH_{T} [GeV]";
@@ -888,10 +888,10 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dstW(             "Single t", fileMap["SingleTopZinv"],              "",   "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
     Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
-    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    Plotter::DatasetSummary dsRare(           "Rare ",       fileMap["Rare"],            "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     Plotter::DatasetSummary ds_TTBarHT(   "TTbarHT", fileMap["TTbarHT"],    "",  "TriggerEffMC;_PUweightFactor;bTagSF_EventWeightSimple_Central");
-    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dsDY, dsDYInc}, {dstt2l}, {dstW}, {dsttZ}, {dsRare, dsVV}};
-    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_noISR = {{dsDY, dsDYInc}, {dstt2l_noISR, ds_TTBarHT}, {dstW}, {dsttZ}, {dsRare, dsVV}};
+    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dsDY, dsDYInc}, {dstt2l}, {dstW}, {dsRare, dsVV, dsttZ}};
+    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_noISR = {{dsDY, dsDYInc}, {dstt2l_noISR, ds_TTBarHT}, {dstW}, {dsRare, dsVV, dsttZ}};
     Plotter::DatasetSummary dsnpDY(             "DY",         fileMap["DYJetsToLL"],      "",                "muTrigWgt;bTagSF_EventWeightSimple_Central");
     Plotter::DatasetSummary dsnpDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "muTrigWgt;bTagSF_EventWeightSimple_Central");
     Plotter::DatasetSummary dsnptt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;isr_Unc_Cent");
@@ -899,8 +899,8 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsnptW(             "Single t", fileMap["SingleTopZinv"],              "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight");
     Plotter::DatasetSummary dsnpttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight");
     Plotter::DatasetSummary dsnpVV(             "Diboson",    fileMap["Diboson"],         "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight");
-    Plotter::DatasetSummary dsnpRare(           "Rare",       fileMap["Rare"],            "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight");
-    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_np = {{dsnpDY, dsnpDYInc}, {dsnptt2l}, {dsnptW}, {dsnpttZ}, {dsnpRare, dsnpVV}};
+    Plotter::DatasetSummary dsnpRare(           "Rare ",       fileMap["Rare"],            "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight");
+    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_np = {{dsnpDY, dsnpDYInc}, {dsnptt2l}, {dsnptW},  {dsnpRare, dsnpVV, dsnpttZ}};
 
     Plotter::DatasetSummary dsnoTDY(             "DY",         fileMap["DYJetsToLL"],      "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dsnoTDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "bTagSF_EventWeightSimple_Central;_PUweightFactor");
@@ -909,8 +909,8 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsnoTtW(             "Single t", fileMap["SingleTopZinv"],              "",                "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     Plotter::DatasetSummary dsnoTttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     Plotter::DatasetSummary dsnoTVV(             "Diboson",    fileMap["Diboson"],         "",                "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
-    Plotter::DatasetSummary dsnoTRare(           "Rare",       fileMap["Rare"],            "",                "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
-    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_noT = {{dsnoTDY, dsnoTDYInc}, {dsnoTtt2l}, {dsnoTtW}, {dsnoTttZ}, {dsnoTRare, dsnoTVV}};
+    Plotter::DatasetSummary dsnoTRare(           "Rare ",       fileMap["Rare"],            "",                "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_noT = {{dsnoTDY, dsnoTDYInc}, {dsnoTtt2l}, {dsnoTtW}, {dsnoTRare, dsnoTVV, dsnoTttZ}};
 
     // eff*Acc*B(Z)/B(DY)
     Plotter::DatasetSummary dsData_SingleMuon_effAcc("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "zEffWgt;zAccWgt",           znunu_mumu_ratio);
@@ -921,7 +921,7 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dstW_effAcc(             "Single t", fileMap["SingleTopZinv"],              "",     "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight",           znunu_mumu_ratio);
     Plotter::DatasetSummary dsttZ_effAcc(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
     Plotter::DatasetSummary dsVV_effAcc(             "Diboson",    fileMap["Diboson"],         "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight",           znunu_mumu_ratio);
-    Plotter::DatasetSummary dsRare_effAcc(           "Rare",       fileMap["Rare"],            "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
+    Plotter::DatasetSummary dsRare_effAcc(           "Rare ",       fileMap["Rare"],            "",                "muTrigWgt;bTagSF_EventWeightSimple_Central;zEffWgt;zAccWgt;genWeight", znunu_mumu_ratio);
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_effAcc = {{dsDY_effAcc, dsDYInc_effAcc}, {dstt2l_effAcc}, {dstW_effAcc}, {dsttZ_effAcc}, {dsVV_effAcc}, {dsRare_effAcc}};
 
     // Apply data/mc njet weight for DY and ttbar
@@ -931,8 +931,8 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dswtW(             "Single t", fileMap["SingleTopZinv"],              "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
     Plotter::DatasetSummary dswttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     Plotter::DatasetSummary dswVV(             "Diboson",    fileMap["Diboson"],         "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
-    Plotter::DatasetSummary dswRare(           "Rare",       fileMap["Rare"],            "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
-    std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswRare, dswVV}};
+    Plotter::DatasetSummary dswRare(           "Rare ",       fileMap["Rare"],            "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswRare, dswVV, dswttZ}};
 //trigger stupid question
     Plotter::DatasetSummary dswDY_noT(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;_PUweightFactor");
     Plotter::DatasetSummary dswDYInc_noT(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;nJetWgtDYZ,;_PUweightFactor");
@@ -940,15 +940,15 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dswtW_noT(             "Single t", fileMap["SingleTopZinv"],              "", "bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
     Plotter::DatasetSummary dswttZ_noT(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     Plotter::DatasetSummary dswVV_noT(             "Diboson",    fileMap["Diboson"],         "",            "bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
-    Plotter::DatasetSummary dswRare_noT(           "Rare",       fileMap["Rare"],            "",            "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
-    std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC_noT = {{dswDY_noT, dswDYInc_noT}, {dswtt2l_noT}, {dswtW_noT}, {dswttZ_noT}, {dswVV_noT}, {dswRare_noT, dswVV_noT}};
+    Plotter::DatasetSummary dswRare_noT(           "Rare ",       fileMap["Rare"],            "",            "bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC_noT = {{dswDY_noT, dswDYInc_noT}, {dswtt2l_noT}, {dswtW_noT}, {dswttZ_noT}, {dswVV_noT}, {dswRare_noT, dswVV_noT,dswttZ_noT}};
     // Extra MC stack that have njet weight applied for ttbar but not for DY (to make plots for AN)
-    std::vector<std::vector<Plotter::DatasetSummary>> stackwtt_MC = {{dsDY, dsDYInc}, {dswtt2l}, {dstW}, {dsttZ}, {dsRare, dsVV}};
+    std::vector<std::vector<Plotter::DatasetSummary>> stackwtt_MC = {{dsDY, dsDYInc}, {dswtt2l}, {dstW}, {dsRare, dsVV, dsttZ}};
 
     // Apply data/mc njet weight for DY and ttbar & apply the normalization weight
     Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
     Plotter::DatasetSummary dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;nJetWgtDYZ;normWgt0b");
-    std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV}};
+    std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
 
     // Collections for all variables, no cuts applied yet
 
