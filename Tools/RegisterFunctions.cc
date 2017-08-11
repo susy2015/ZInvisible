@@ -75,6 +75,24 @@ void activateBranches(std::set<std::string>& activeBranches)
     activeBranches.insert("ak81dRMin");
     activeBranches.insert("tru_npv");
     activeBranches.insert("vtxSize");
+    //Photon branches Andres
+    activeBranches.insert("isEB");
+    activeBranches.insert("genMatched");
+    activeBranches.insert("hadTowOverEM");
+    activeBranches.insert("sigmaIetaIeta");
+    activeBranches.insert("pfChargedIso");
+    activeBranches.insert("pfNeutralIso");
+    activeBranches.insert("pfGammaIso");
+    activeBranches.insert("pfChargedIsoRhoCorr");
+    activeBranches.insert("pfNeutralIsoRhoCorr");
+    activeBranches.insert("pfGammaIsoRhoCorr");
+    activeBranches.insert("hasPixelSeed");
+    activeBranches.insert("passElectronVeto");
+    activeBranches.insert("nonPrompt");
+    activeBranches.insert("fullID");
+    activeBranches.insert("photonPt");
+    activeBranches.insert("photonEta");
+    activeBranches.insert("photonPhi");
 }
 
 ////////////////////////////////
@@ -112,12 +130,12 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 
     if(isCondor)
     {
-        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
+      bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
     }
     else
     {
-        //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools", false);
-        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/ZInvisible/Tools/", false);
+        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools", false);
+        //bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/ZInvisible/Tools/", false);
     }
 
     ISRcorrector = nullptr;
@@ -164,6 +182,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(bTagCorrector) delete bTagCorrector;
     if(ISRcorrector) delete ISRcorrector;
     if(pileup)       delete pileup;
+    if(gamma) delete gamma;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -197,6 +216,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*ak8DrMatch);
     tr.registerFunction(*ISRcorrector);
     tr.registerFunction(*pileup);
+    tr.registerFunction(*gamma);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)

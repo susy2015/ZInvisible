@@ -2427,6 +2427,78 @@ namespace plotterFunctions
         }
     };
 
+    //Andres Pt cut                                                                                                                                                                                      
+    class Gamma {
+
+    private:
+
+      void generateGamma(NTupleReader& tr) {
+
+        const std::vector<TLorentzVector>& gammaLVec  = tr.getVec<TLorentzVector>("gammaLVec");
+	const double& met = tr.getVar<double>("met");
+	const std::vector<double>& sigmaIetaIeta = tr.getVec<double>("sigmaIetaIeta");
+	const std::vector<double>& pfChargedIsoRhoCorr = tr.getVec<double>("pfChargedIsoRhoCorr");
+	const std::vector<double>& hadTowOverEM = tr.getVec<double>("hadTowOverEM");
+	const std::vector<double>& pfNeutralIsoRhoCorr = tr.getVec<double>("pfNeutralIsoRhoCorr");
+	const std::vector<bool>& nonPrompt = tr.getVec<bool>("nonPrompt");
+
+	std::vector<TLorentzVector> *gammaLVec_200 = new std::vector<TLorentzVector>();
+	double gmet = -999.0;
+	double gpt = -999.0;
+
+	const int& nPrompt = nonPrompt.size();
+	tr.registerDerivedVar("nPrompt", nPrompt);
+
+	std::cout << "prompt photons: " <<  nPrompt << std::endl;
+	//for (i=0; i<nPrompt; ++i){
+
+        const int& nGamma = gammaLVec.size();
+        tr.registerDerivedVar("nGamma", nGamma);
+
+	const int& inin = sigmaIetaIeta.size();
+        tr.registerDerivedVar("inin", inin);
+
+	std::cout << "nonPrompt: " <<  nonPrompt.size() << std::endl;
+
+        for(int i = 0; i < nGamma; ++i){
+          if(gammaLVec[i].Pt() > 200){
+            gammaLVec_200->push_back(gammaLVec[i]);
+          }
+	  if(gammaLVec[i].Pt() > 200 && abs(gammaLVec[i].Eta()) < 1.4442){
+
+	    for(int j = 0; j < inin; ++j){
+	      if(sigmaIetaIeta[j] < 0.0107 && pfChargedIsoRhoCorr[j] < 2.67 && hadTowOverEM[j] < 0.028 && pfNeutralIsoRhoCorr[j] < 7.23*exp(0.0028*gammaLVec[i].Pt()+0.5408)) {
+		gmet = met;
+		gpt = gammaLVec[i].Pt();
+	      }
+	    }
+	  }
+	}
+
+	//const int& inin = sigmaIetaIeta.size();	tr.registerDerivedVar("inin", inin);
+	/*
+	for(int i = 0; i < inin; ++i){
+	  if(sigmaIetaIeta[i] < 0.0107 && pfChargedIsoRhoCorr[i] < 2.67){
+	    gmet = met;
+	  }
+	  }*/
+        tr.registerDerivedVec("gammaLVec_200",gammaLVec_200);
+	tr.registerDerivedVar("gmet", gmet);
+	tr.registerDerivedVar("gpt", gpt);
+      }
+
+    public:
+
+      Gamma(){}
+
+      ~Gamma(){}
+
+      void operator()(NTupleReader& tr)
+      {
+        generateGamma(tr);
+      }
+    };
+
     class NJetAk8 {
      private:
         void generateNJetAk8(NTupleReader& tr) {

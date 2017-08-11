@@ -19,7 +19,7 @@ with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg") as meow
 
 #here I hack in the tarball for GMP, this needs to be generalized to the other options 
 
-filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots", 
+filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeDataMCplots", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
@@ -43,9 +43,9 @@ Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gmp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz
-Output = logs/makePlots_$(Process).stdout
-Error = logs/makePlots_$(Process).stderr
-Log = logs/makePlots_$(Process).log
+Output = logs/makeDataMCplots_$(Process).stdout
+Error = logs/makeDataMCplots_$(Process).stderr
+Log = logs/makeDataMCplots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
@@ -72,9 +72,9 @@ Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gtp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz 
-Output = logs/makePlots_$(Process).stdout
-Error = logs/makePlots_$(Process).stderr
-Log = logs/makePlots_$(Process).log
+Output = logs/makeDataMCplots_$(Process).stdout
+Error = logs/makeDataMCplots_$(Process).stderr
+Log = logs/makeDataMCplots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
@@ -100,9 +100,9 @@ Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/beffCalc, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeBeff.sh
-Output = logs/makePlots_$(Process).stdout
-Error = logs/makePlots_$(Process).stderr
-Log = logs/makePlots_$(Process).log
+Output = logs/makeDataMCplots_$(Process).stdout
+Error = logs/makeDataMCplots_$(Process).stderr
+Log = logs/makeDataMCplots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
@@ -115,9 +115,9 @@ Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/makeSignalHistograms, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeSigEff.sh
-Output = logs/makePlots_$(Process).stdout
-Error = logs/makePlots_$(Process).stderr
-Log = logs/makePlots_$(Process).log
+Output = logs/makeDataMCplots_$(Process).stdout
+Error = logs/makeDataMCplots_$(Process).stderr
+Log = logs/makeDataMCplots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
@@ -172,7 +172,7 @@ elif options.goMakeTopPlots:
     submitFile = submitFileGTP
     makeExeAndFriendsTarrball(filestoTransferGTP, "gtp")
 else:
-    exeName = "makePlots"
+    exeName = "makeDataMCplots"
     submitFile = submitFileGMP
     makeExeAndFriendsTarrball(filestoTransferGMP, "gmp")
 

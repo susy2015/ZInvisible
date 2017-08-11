@@ -29,6 +29,7 @@ namespace plotterFunctions
     class Taudiv;
     class NJetAk8;
     class Ak8DrMatch; 
+    class Gamma;
 }
 
 class SystWeights;
@@ -70,6 +71,7 @@ private:
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
     plotterFunctions::SystematicPrep *systematicPrep;
     plotterFunctions::SystematicCalc *systematicCalc;
+    plotterFunctions::Gamma *gamma; //Andres
     PDFUncertainty *myPDFUnc;
     BTagCorrector *bTagCorrector;
     ISRCorrector *ISRcorrector;
