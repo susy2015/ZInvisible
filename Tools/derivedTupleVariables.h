@@ -551,7 +551,7 @@ namespace plotterFunctions
 
             //const double& ht                             = tr.getVar<double>("ht");
             const double& met                            = tr.getVar<double>("met");
-            const double& metphi                         = tr.getVar<double>("metphi");
+            //const double& metphi                         = tr.getVar<double>("metphi");
 
             const std::vector<TLorentzVector, std::allocator<TLorentzVector> > elesLVec = tr.getVec<TLorentzVector>("elesLVec");
             const std::vector<double>& elesMiniIso          = tr.getVec<double>("elesMiniIso");
@@ -882,7 +882,7 @@ namespace plotterFunctions
             }
 
             TLorentzVector metV, metZ;
-            metV.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
+            metV.SetPtEtaPhiM(met, 0.0, 0, 0.0); //metphi
 
             TLorentzVector bestRecoZ = (true/*fabs(bestRecoElecZ.M() - zMass) > fabs(bestRecoMuZ.M() - zMass)*/)?(bestRecoMuZ):(bestRecoElecZ);
             //if(fabs(bestRecoZ.M() - zMass) > fabs(bestRecoElMuZ.M() - zMass)) bestRecoZ = bestRecoElMuZ;
@@ -1547,7 +1547,7 @@ namespace plotterFunctions
             const std::vector<double>& metPhiDown = tr.getVec<double>("metPhiDown");
 
             const double& met    = tr.getVar<double>("met");
-            const double& metphi = tr.getVar<double>("metphi");
+            //const double& metphi = tr.getVar<double>("metphi");
 
             std::vector<TLorentzVector> *jetLVecUp = new std::vector<TLorentzVector>;
             std::vector<TLorentzVector> *jetLVecDn = new std::vector<TLorentzVector>;
@@ -1564,8 +1564,8 @@ namespace plotterFunctions
                 
                 dPtMet->push_back((metMagUp[iMet] - met)/met);
                 dPtMet->push_back((metMagDown[iMet] - met)/met);
-                dPhiMet->push_back(TVector2::Phi_mpi_pi(metPhiUp[iMet] - metphi));
-                dPhiMet->push_back(TVector2::Phi_mpi_pi(metPhiDown[iMet] - metphi));
+                dPhiMet->push_back(TVector2::Phi_mpi_pi(metPhiUp[iMet] - 0));//metphi
+                dPhiMet->push_back(TVector2::Phi_mpi_pi(metPhiDown[iMet] - 0));//metphi
             }
 
             for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
@@ -1682,7 +1682,7 @@ namespace plotterFunctions
             const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
 
             const double& met    = tr.getVar<double>("met");
-            const double& metphi = tr.getVar<double>("metphi");
+            //const double& metphi = tr.getVar<double>("metphi");
             
             //AK8 variables 
             const std::vector<double>& puppitau1    = tr.getVec<double>("puppitau1");
@@ -1693,7 +1693,7 @@ namespace plotterFunctions
             const std::vector<TLorentzVector>& puppiSubJetsLVec  = tr.getVec<TLorentzVector>("puppiSubJetsLVec");
 
             TLorentzVector metLVec;
-            metLVec.SetPtEtaPhiM(met, 0, metphi, 0);
+            metLVec.SetPtEtaPhiM(met, 0, 0, 0);//metphi
 
             std::vector<TLorentzVector> jetsLVec_forTagger;
             std::vector<double> recoJetsBtag_forTagger;
@@ -2214,7 +2214,7 @@ namespace plotterFunctions
 
         void mt2Smear(NTupleReader& tr)
         {
-            const double& metphi       = tr.getVar<double>("cleanMetPhi");
+            //const double& metphi       = tr.getVar<double>("cleanMetPhi");
             const double& met_logi_1   = tr.getVar<double>("met_logi_1");
             const double& met_gaus_30  = tr.getVar<double>("met_gaus_30");
             
@@ -2225,13 +2225,13 @@ namespace plotterFunctions
 
             // Form TLorentzVector of MET
             TLorentzVector metLVec_Logi;
-            metLVec_Logi.SetPtEtaPhiM(met_logi_1, 0, metphi, 0);
+            metLVec_Logi.SetPtEtaPhiM(met_logi_1, 0, 0, 0);//metphi
             
             //type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Logi);
             double MT2_Logi = 0.0;//type3Ptr->best_had_brJet_MT2;
 
             TLorentzVector metLVec_Gaus;
-            metLVec_Gaus.SetPtEtaPhiM(met_gaus_30, 0, metphi, 0);
+            metLVec_Gaus.SetPtEtaPhiM(met_gaus_30, 0, 0, 0);//metphi
             
             //type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Gaus); 
             double MT2_Gaus = 0.0;//type3Ptr->best_had_brJet_MT2;
