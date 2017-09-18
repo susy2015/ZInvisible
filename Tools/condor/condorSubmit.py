@@ -2,6 +2,7 @@
 ####!${SRT_CMSSW_RELEASE_BASE_SCRAMRTDEL}/external/${SCRAM_ARCH}/bin/python
 
 import sys
+import os
 from os import system, environ
 sys.path = [environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/condor/",] + sys.path
 
@@ -51,23 +52,29 @@ x509userproxy = $ENV(X509_USER_PROXY)
 
 """
 
+#go make top plots!
 filestoTransferGTP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeTopPlots",
                       environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so",
                       environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/libTopTaggerTopTagger.so",
+                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/libTopTaggerCfgParser.so",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/Legacy_TopTagger.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_AllComb.cfg",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg-MVAAK8_Tight_v1.2.1_trijetOnly.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg_trijetOnly.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg-MVAAK8_Tight_v1.2.1_dijetOnly.cfg",
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1",
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName},
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root"
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"TrainingOutput_dR20_pt30_depth12_500tree_2017_Feb16.model"},
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
+                      "/home/pastika/.cache/bazel/_bazel_pastika/1bf4cb74e37288f8c3b7beef52410551/execroot/tensorflow/bazel-out/local-opt/bin/tensorflow/libtensorflow.so"
                       ]
 
+print filestoTransferGTP
 
-#go make top plots!
-submitFileGTP = """universe = vanilla
+submitFileGTP = """universe = grid
+grid_resource = condor kodiak-ce.baylor.edu kodiak-ce.baylor.edu:9619
++remote_queue = "batch"
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeTopPlots.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
@@ -214,7 +221,14 @@ for ds in datasets:
     print ds
     for s, n in sc.sampleList(ds):
         print "\t%s"%n
-        f = open(s)
+        try:
+            f = open(s)
+        except IOError:
+            fShort = s.split("/")[-1]
+            if(os.path.isfile(fShort)):
+                os.remove(fShort)
+            system("xrdcp root://cmseos.fnal.gov/$(echo %s | sed 's|/eos/uscms||') ."%s)
+            f = open(fShort)
         if not f == None:
             count = 0
             for l in f:

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+_CONDOR_SCRATCH_DIR=${PWD}
+
+printenv
+
 export PATH=${PATH}:/cvmfs/cms.cern.ch/common
 export CMS_PATH=/cvmfs/cms.cern.ch
 
@@ -22,13 +26,14 @@ xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
 
 ls -lhrt
 
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${_CONDOR_SCRATCH_DIR}
+#export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${_CONDOR_SCRATCH_DIR}
 
 ./makeTopPlots -s --condor -D $1 -N $3 -M $4 -L $5
 
 ls -lhrt
 
-mv topStudyOutput_* ${_CONDOR_SCRATCH_DIR}
+#mv topStudyOutput_* ${_CONDOR_SCRATCH_DIR}
+mv topStudyOutput_* /cms/data/pastika/condorOutput
 
 rm $(echo $6 | sed 's|.*/||')
 rm -r ${_CONDOR_SCRATCH_DIR}/$2
