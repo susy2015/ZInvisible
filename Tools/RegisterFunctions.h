@@ -148,9 +148,12 @@ private:
     plotterFunctions::Taudiv *taudiv;
     plotterFunctions::Ak8DrMatch *ak8DrMatch;
     plotterFunctions::TriggerInfo *triggerInfo;
+    BTagCorrector *bTagCorrector;
+    ISRCorrector *ISRcorrector;
+    Pileup_Sys *pileup;
 
 public:
-    RegisterFunctionsTopStudy();
+    RegisterFunctionsTopStudy(bool isCondor);
     ~RegisterFunctionsTopStudy();
     void registerFunctions(NTupleReader& tr);
 };

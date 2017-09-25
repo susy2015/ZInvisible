@@ -49,6 +49,7 @@ Error = logs/makePlots_$(Process).stderr
 Log = logs/makePlots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
++maxWallTime = 2880
 
 """
 
@@ -70,13 +71,12 @@ filestoTransferGTP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeTopPlot
                       "/home/pastika/.cache/bazel/_bazel_pastika/1bf4cb74e37288f8c3b7beef52410551/execroot/tensorflow/bazel-out/local-opt/bin/tensorflow/libtensorflow.so"
                       ]
 
-print filestoTransferGTP
+#print filestoTransferGTP
 
 submitFileGTP = """universe = grid
 grid_resource = condor kodiak-ce.baylor.edu kodiak-ce.baylor.edu:9619
 +remote_queue = "batch"
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeTopPlots.sh
-Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gtp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz 
@@ -85,7 +85,7 @@ Error = logs/makePlots_$(Process).stderr
 Log = logs/makePlots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
-
++maxWallTime = 2880
 
 """
 

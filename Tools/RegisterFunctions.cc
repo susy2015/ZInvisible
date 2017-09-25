@@ -336,25 +336,65 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 
 ////////////////////////////////
 
-RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
+RegisterFunctionsTopStudy::RegisterFunctionsTopStudy(bool isCondor)
 {
     myBLV          = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
     prepareTopVars = new plotterFunctions::PrepareTopVars();
     triggerInfo    = new plotterFunctions::TriggerInfo(false, true);
-    taudiv         = new plotterFunctions::Taudiv(myBLV->GetTopTaggerPtr());
+    //taudiv         = new plotterFunctions::Taudiv(myBLV->GetTopTaggerPtr());
+
+    bTagCorrector = nullptr;
+
+    if(isCondor)
+    {
+        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
+    }
+    else
+    {
+        //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools", false);
+        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/ZInvisible/Tools/", false);
+    }
+
+    ISRcorrector = nullptr;
+    if(isCondor)
+    {
+        ISRcorrector = new ISRCorrector("allINone_ISRJets.root","","");   
+    }
+    else
+    {  
+        ISRcorrector = new ISRCorrector("allINone_ISRJets.root","/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/SusyAnaTools/Tools/ISR_Root_Files/","");
+    }
+    
+    if(isCondor)
+    {
+        pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
+    }
+    else
+    {
+        pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
+    } 
+
 }
 
 RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
 {
     if(myBLV) delete myBLV;
     if(prepareTopVars) delete prepareTopVars;
+    if(triggerInfo) delete triggerInfo;
+    if(bTagCorrector) delete bTagCorrector;
+    if(ISRcorrector) delete ISRcorrector;
+    if(pileup) delete pileup;
 }
 
 void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
 {
     tr.registerFunction(*myBLV);
     tr.registerFunction(*prepareTopVars);
-    //tr.registerFunction(*triggerInfo);
+    triggerInfo->setIsMC(tr.checkBranch("genDecayLVec"));
+    tr.registerFunction(*triggerInfo);
+//    tr.registerFunction(*bTagCorrector);
+//    tr.registerFunction(*ISRcorrector);
+//    tr.registerFunction(*pileup);
     //tr.registerFunction(*taudiv);
 //    tr.registerFunction(*ak8DrMatch);
 }

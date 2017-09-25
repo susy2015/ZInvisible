@@ -18,6 +18,7 @@
 
 #include "TH1.h"
 #include "TH2.h"
+#include "TF1.h"
 #include "TFile.h"
 #include "TMath.h"
 #include "TLorentzVector.h"
@@ -1408,9 +1409,9 @@ namespace plotterFunctions
 
         void triggerInfoMC(NTupleReader& tr)
         {
-            const double& met                            = tr.getVar<double>("cleanMetPt");
-            const double& ht                             = tr.getVar<double>("HTZinv");
-            const std::vector<TLorentzVector>& cutMuVec  = tr.getVec<TLorentzVector>("cutMuVec");
+            const double& met                            = tr.getVar<double>("met");
+            const double& ht                             = tr.getVar<double>("HTTopTag");
+            const std::vector<TLorentzVector>& cutMuVec  = tr.getVec<TLorentzVector>("muonsLVec");
 
 	    // MC trigger efficiencies
 	    double triggerEff = GetTriggerEffWeight(met,ht);
@@ -1453,10 +1454,24 @@ namespace plotterFunctions
             noMC_ = noMC;
 	}
 
+        void setIsMC(bool isMC)
+        {
+            if(isMC)
+            {
+                miniTuple_ = true;
+                noMC_ = false;
+            }
+            else
+            {
+                miniTuple_ = false;
+                noMC_ = true;
+            }
+        }
+
 	void operator()(NTupleReader& tr)
 	{
 	    if(!miniTuple_) triggerInfo(tr);
-            if(!noMC_)       triggerInfoMC(tr);
+            if(!noMC_)      triggerInfoMC(tr);
 	}
 
     };
@@ -1590,13 +1605,13 @@ namespace plotterFunctions
 
         int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
         topTagger::type3TopTagger t3tagger;
-        TopTagger *tt, *ttMVA, *ttAllComb, *ttMVATriJetOnly, *ttMVADiJetOnly;
+        std::shared_ptr<TopTagger> tt, ttMVA, ttAllComb, ttMVATriJetOnly, ttMVADiJetOnly;
         //Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
         TopCat topMatcher_;
-        TFile *WMassCorFile;
-        TF1 *puppisd_corrGEN;
-        TF1 *puppisd_corrRECO_cen;
-        TF1 *puppisd_corrRECO_for;
+        std::shared_ptr<TFile> WMassCorFile;
+        std::shared_ptr<TF1> puppisd_corrGEN;
+        std::shared_ptr<TF1> puppisd_corrRECO_cen;
+        std::shared_ptr<TF1> puppisd_corrRECO_for;
         
 
         void prepareTopVars(NTupleReader& tr)
@@ -1616,8 +1631,8 @@ namespace plotterFunctions
             //const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
             //const std::vector<TLorentzVector>& puppiSubJetsLVec  = tr.getVec<TLorentzVector>("puppiSubJetsLVec");
 
-            TLorentzVector metLVec;
-            metLVec.SetPtEtaPhiM(met, 0, metphi, 0);
+            //TLorentzVector metLVec;
+            //metLVec.SetPtEtaPhiM(met, 0, metphi, 0);
 
             std::vector<TLorentzVector> jetsLVec_forTagger;
             std::vector<double> recoJetsBtag_forTagger;
@@ -1645,20 +1660,20 @@ namespace plotterFunctions
 
             std::vector<TLorentzVector> *vTops = new std::vector<TLorentzVector>();
 
-            std::vector<std::vector<TLorentzVector> >* vTopConstituents = new std::vector<std::vector<TLorentzVector> >();
-            
-            for(int it = 0; it < nTops; it++)
-            {
-                TLorentzVector topLVec;// = t3tagger.buildLVec(jetsLVec_forTagger, t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]]);
-                vTops->push_back(topLVec);
-
-                std::vector<TLorentzVector> tmpVec;
-                //for(const int& jetIndex : t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]])
-                //{
-                //    tmpVec.emplace_back(jetsLVec_forTagger[jetIndex]);
-                //}
-                vTopConstituents->emplace_back(tmpVec);
-            }
+            //std::vector<std::vector<TLorentzVector> >* vTopConstituents = new std::vector<std::vector<TLorentzVector> >();
+            //
+            //for(int it = 0; it < nTops; it++)
+            //{
+            //    TLorentzVector topLVec;// = t3tagger.buildLVec(jetsLVec_forTagger, t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]]);
+            //    vTops->push_back(topLVec);
+            //
+            //    std::vector<TLorentzVector> tmpVec;
+            //    //for(const int& jetIndex : t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]])
+            //    //{
+            //    //    tmpVec.emplace_back(jetsLVec_forTagger[jetIndex]);
+            //    //}
+            //    vTopConstituents->emplace_back(tmpVec);
+            //}
 
 
             //Helper function to turn int vectors into double vectors
@@ -1693,7 +1708,7 @@ namespace plotterFunctions
                 myConstAK4Inputs.addSupplamentalVector("qgPtD"                               , tr.getVec<double>("qgPtD"));
                 myConstAK4Inputs.addSupplamentalVector("qgAxis1"                             , tr.getVec<double>("qgAxis1"));
                 myConstAK4Inputs.addSupplamentalVector("qgAxis2"                             , tr.getVec<double>("qgAxis2"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsFlavor"                      , tr.getVec<double>("recoJetsFlavor"));
+                //myConstAK4Inputs.addSupplamentalVector("recoJetsFlavor"                      , tr.getVec<double>("recoJetsFlavor"));
                 myConstAK4Inputs.addSupplamentalVector("recoJetsJecScaleRawToFull"           , tr.getVec<double>("recoJetsJecScaleRawToFull"));
                 myConstAK4Inputs.addSupplamentalVector("recoJetschargedHadronEnergyFraction" , tr.getVec<double>("recoJetschargedHadronEnergyFraction"));
                 myConstAK4Inputs.addSupplamentalVector("recoJetschargedEmEnergyFraction"     , tr.getVec<double>("recoJetschargedEmEnergyFraction"));
@@ -1783,7 +1798,7 @@ namespace plotterFunctions
                 myConstAK4Inputs.addSupplamentalVector("qgPtD"                               , tr.getVec<double>("qgPtD"));
                 myConstAK4Inputs.addSupplamentalVector("qgAxis1"                             , tr.getVec<double>("qgAxis1"));
                 myConstAK4Inputs.addSupplamentalVector("qgAxis2"                             , tr.getVec<double>("qgAxis2"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsFlavor"                      , tr.getVec<double>("recoJetsFlavor"));
+                //myConstAK4Inputs.addSupplamentalVector("recoJetsFlavor"                      , tr.getVec<double>("recoJetsFlavor"));
                 myConstAK4Inputs.addSupplamentalVector("recoJetsJecScaleRawToFull"           , tr.getVec<double>("recoJetsJecScaleRawToFull"));
                 myConstAK4Inputs.addSupplamentalVector("recoJetschargedHadronEnergyFraction" , tr.getVec<double>("recoJetschargedHadronEnergyFraction"));
                 myConstAK4Inputs.addSupplamentalVector("recoJetschargedEmEnergyFraction"     , tr.getVec<double>("recoJetschargedEmEnergyFraction"));
@@ -1876,7 +1891,7 @@ namespace plotterFunctions
             std::vector<TLorentzVector> *vTopsAllComb = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsMatchAllComb = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsGenMatchAllComb = new std::vector<TLorentzVector>();
-            std::vector<TLorentzVector> *vTopsParMatchAllComb = new std::vector<TLorentzVector>();
+            //std::vector<TLorentzVector> *vTopsParMatchAllComb = new std::vector<TLorentzVector>();
             
             //retrieve results
             const TopTaggerResults& ttr = tt->getResults();
@@ -2011,8 +2026,8 @@ namespace plotterFunctions
 
             //get tuple variables 
             auto MVAvars = ttUtility::getMVAVars();
-            std::vector<std::pair<std::string, std::vector<double>*>> mvaVars;
-            std::vector<std::pair<std::string, std::vector<double>*>> mvaCandVars;
+            //std::vector<std::pair<std::string, std::vector<double>*>> mvaVars;
+            //std::vector<std::pair<std::string, std::vector<double>*>> mvaCandVars;
 
             std::map<std::string, std::vector<double>*> mvaVarsTrain_genMatch;
             std::map<std::string, std::vector<double>*> mvaVarsTrain_notGenMatch;
@@ -2021,8 +2036,8 @@ namespace plotterFunctions
 
             for(auto& var : MVAvars)
             {
-                mvaVars.emplace_back(var, new std::vector<double>);
-                mvaCandVars.emplace_back(var, new std::vector<double>);
+                //mvaVars.emplace_back(var, new std::vector<double>);
+                //mvaCandVars.emplace_back(var, new std::vector<double>);
 
                 mvaVarsTrain_genMatch[var] = new std::vector<double>();
                 mvaVarsTrain_notGenMatch[var] = new std::vector<double>();
@@ -2159,8 +2174,9 @@ namespace plotterFunctions
             tr.registerDerivedVec("dijetM2M3NotFinalTop", dijetM2M3NotFinalTop);
 
             //get one mu of 20 GeV pt
-            tr.registerDerivedVar("passSingleLep", nMuons_50GeV == 1);
-            tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2 && Mmumu > 71 && Mmumu < 111);
+            tr.registerDerivedVar("passSingleLep50", nMuons_50GeV == 1);
+            tr.registerDerivedVar("passSingleLep20", nMuons_20GeV == 1);
+            tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2 && Mmumu > 76 && Mmumu < 106);
 
             tr.registerDerivedVar("passLeptVetoNoMu", passEleVeto && passIsoTrkVeto);
 
@@ -2204,36 +2220,31 @@ namespace plotterFunctions
 
 
     public:
-        PrepareTopVars() : tt(nullptr)
+        PrepareTopVars() : tt(new TopTagger()), ttMVA(new TopTagger()), ttAllComb(new TopTagger()), ttMVATriJetOnly(new TopTagger()), ttMVADiJetOnly(new TopTagger()), WMassCorFile(nullptr), puppisd_corrGEN(nullptr), puppisd_corrRECO_cen(nullptr), puppisd_corrRECO_for(nullptr)
 	{
             //t3tagger.setnJetsSel(1);
             //t3tagger.setCSVS(AnaConsts::cutCSVS);
 
-            tt = new TopTagger();
             tt->setCfgFile("Legacy_TopTagger.cfg");
 
-            ttMVA = new TopTagger();
             ttMVA->setCfgFile("TopTagger.cfg");
 
-            ttAllComb = new TopTagger();
             ttAllComb->setCfgFile("TopTagger_AllComb.cfg");
 
-            ttMVATriJetOnly = new TopTagger();
             ttMVATriJetOnly->setCfgFile("TopTaggerCfg_trijetOnly.cfg");
 
-            ttMVADiJetOnly = new TopTagger();
             ttMVADiJetOnly->setCfgFile("TopTaggerCfg-MVAAK8_Tight_v1.2.1_dijetOnly.cfg");
 
             indexMuTrigger = indexElecTrigger = indexHTMHTTrigger = indexMuHTTrigger = -1;
 
             std::string puppiCorr = "puppiCorr.root";
-            WMassCorFile = TFile::Open(puppiCorr.c_str(),"READ");
+            WMassCorFile.reset(TFile::Open(puppiCorr.c_str(),"READ"));
             if (!WMassCorFile)
                 std::cout << "W mass correction file not found w mass!!!!!!! " << puppiCorr <<" Will not correct W mass" << std::endl;
             else{
-                puppisd_corrGEN      = (TF1*)WMassCorFile->Get("puppiJECcorr_gen");
-                puppisd_corrRECO_cen = (TF1*)WMassCorFile->Get("puppiJECcorr_reco_0eta1v3");
-                puppisd_corrRECO_for = (TF1*)WMassCorFile->Get("puppiJECcorr_reco_1v3eta2v5");
+                puppisd_corrGEN     .reset((TF1*)WMassCorFile->Get("puppiJECcorr_gen"));
+                puppisd_corrRECO_cen.reset((TF1*)WMassCorFile->Get("puppiJECcorr_reco_0eta1v3"));
+                puppisd_corrRECO_for.reset((TF1*)WMassCorFile->Get("puppiJECcorr_reco_1v3eta2v5"));
             }
 	}
 

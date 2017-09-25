@@ -161,7 +161,7 @@ void Plotter::HistSummary::parseName(std::vector<Plotter::DataCollection>& ns)
             Plotter::parseSingleVar(dataset.first, var);
 
            //std::string histname = name + "__" + var.name + "__" + ((var.index >= 0)?(std::to_string(var.index)):("")) + "__" + var.var + "__" + dataset.first + "__" + dataset.second.front().label + "__" + n.type;
-            std::string histname = name +  var.name + ((var.index >= 0)?(std::to_string(var.index)):("")) + var.var + dataset.first + dataset.second.front().label + n.type;
+            std::string histname = name +  var.name + ((var.index >= 0)?(std::to_string(var.index)):("")) + var.var + dataset.first + dataset.second.front().label + dataset.second.front().additionalName + n.type;
 
             tmphtp.push_back(std::shared_ptr<HistCutSummary>(new HistCutSummary(dataset.second.front().label, histname, var, nullptr, dataset.second)));
         }
@@ -228,7 +228,7 @@ Plotter::CutFlowSummary::~CutFlowSummary()
     if(h) delete h;
 }
 
-Plotter::DatasetSummary::DatasetSummary(std::string lab, std::vector<AnaSamples::FileSummary>& f, std::string cuts, std::string weights, double k) : Cuttable(cuts), label(lab), files(f), kfactor(k), weightStr(weights)
+Plotter::DatasetSummary::DatasetSummary(std::string lab, std::vector<AnaSamples::FileSummary>& f, std::string cuts, std::string weights, double k) : Cuttable(cuts), label(lab), files(f), kfactor(k), weightStr(weights), additionalName()
 {
     parseWeights();
 }

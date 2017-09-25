@@ -87,7 +87,7 @@ public:
     class DatasetSummary : public Cuttable
     {
     public:
-        std::string label, weightStr;
+        std::string label, weightStr, additionalName;
         std::vector<AnaSamples::FileSummary> files;
         double kfactor;
 
@@ -97,6 +97,10 @@ public:
 
         double getWeight(const NTupleReader& tr) const;
         double extractWeightNames(std::set<std::string>& ab) const;
+        void addWeight(const std::string& wgtName)
+        {
+            weightVec_.emplace_back(wgtName);
+        }
 
     private:
         std::vector<std::string> weightVec_;
