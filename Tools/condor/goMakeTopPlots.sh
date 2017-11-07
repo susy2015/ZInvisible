@@ -1,16 +1,18 @@
 #!/bin/bash
 
 _PWD=${PWD}
-_CONDOR_SCRATCH_DIR=${TMPDIR}
+_CONDOR_SCRATCH_DIR=${PBS_O_WORKDIR}
 
 printenv
 
 export PATH=${PATH}:/cvmfs/cms.cern.ch/common
 export CMS_PATH=/cvmfs/cms.cern.ch
 
-#move the files from /home to /vat/tmp
-cp ${_PWD}/$2.tar.gz ${_CONDOR_SCRATCH_DIR}
-cp ${_PWD}/gtp.tar.gz ${_CONDOR_SCRATCH_DIR}
+#move the files from /home to /var/tmp
+mv ${_PWD}/$2.tar.gz ${_CONDOR_SCRATCH_DIR}
+mv ${_PWD}/gtp.tar.gz ${_CONDOR_SCRATCH_DIR}
+
+cd ${_CONDOR_SCRATCH_DIR}
 
 #get the release setup and in place
 tar -xzf $2.tar.gz

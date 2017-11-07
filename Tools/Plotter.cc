@@ -1078,6 +1078,11 @@ void Plotter::plot()
                         if(iHist == hist.ratio.first)  h1 = static_cast<TH1*>(hvec.hcsVec.front()->h->Clone());
                         if(iHist == hist.ratio.second) h2 = static_cast<TH1*>(hvec.hcsVec.front()->h->Clone());
                     }
+                    else if(hvec.type.compare("ratio") == 0)
+                    {
+                        if(iHist == hist.ratio.first)  h1 = static_cast<TH1*>(hvec.h->Clone());
+                        if(iHist == hist.ratio.second) h2 = static_cast<TH1*>(hvec.h->Clone());
+                    }
                     else if(hvec.type.compare("stack") == 0)
                     {
                         bool firstHIS = true;

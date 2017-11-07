@@ -168,23 +168,30 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon_2016"], "passMuTrigger",     "");
     Plotter::DatasetSummary dsData_DoubleEG(  "Data",       fileMap["Data_DoubleEG"],        "passElecTrigger",   "");
     Plotter::DatasetSummary dsData_HTMHT(     "Data",       fileMap["Data_MET_2016"],        "passSearchTrigger", "");
-    Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "",                "");
-    Plotter::DatasetSummary dsWj(             "W+Jets",     fileMap["WJetsToLNu"],      "",                "");
-    Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",       "");
-    Plotter::DatasetSummary dsWjInc(          "Wj HT<100",  fileMap["WJetsToLNuInc"],   "genHT<100",       "");
-    Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "");
-    Plotter::DatasetSummary dstW(             "Single top", fileMap["tW"],              "",                "");
-    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "genWeight");
-    Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",                "genWeight");
-    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "",                "genWeight");
-    Plotter::DatasetSummary dstthad(          "t#bar{t}",   fileMap["TTbarAll"],        "",                "");
-    Plotter::DatasetSummary dsQCD(            "QCD",        fileMap["QCD"],             "",                "");
-    Plotter::DatasetSummary dstthad_dummy(    "AllMC",      fileMap["TTbarAll"],        "",                "");
+    Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsWj(             "W+Jets",     fileMap["WJetsToLNu"],      "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsDYInc(          "DY HT<70",   fileMap["IncDY"],           "genHT<70",        "bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsWjInc(          "Wj HT<70",   fileMap["WJetsToLNuInc"],   "genHT<70",        "bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor;isr_Unc_Cent");
+    Plotter::DatasetSummary dstW(             "Single top", fileMap["tW"],              "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    Plotter::DatasetSummary dsRare(           "Rare",       fileMap["Rare"],            "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    Plotter::DatasetSummary dstthad(          "t#bar{t}",   fileMap["TTbarAll"],        "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor;isr_Unc_Cent");
+    Plotter::DatasetSummary dsQCD(            "QCD",        fileMap["QCD"],             "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dstthad_dummy(    "AllMC",      fileMap["TTbarAll"],        "",                "bTagSF_EventWeightSimple_Central;_PUweightFactor;isr_Unc_Cent");
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_2l = {{dsDY, dsDYInc}, {dstt2l}, {dstW}, {dsttZ}, {dsVV}, {dsRare}};
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_1l = {{dstt2l}, {dsWj, dsWjInc}, {dsDY, dsDYInc}, {dstW}, {dsttZ}, {dsVV}, {dsRare}};
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_0l = {{dstthad}, {dsWj, dsWjInc}, {ds_Znunu}, {dsttZ}, {dsQCD}, {dstW}, {dsRare, dstW, dsVV} };
     std::vector<std::vector<Plotter::DatasetSummary>> All_MC_0l   = {{dstthad_dummy, dsWj, dsWjInc, ds_Znunu, dsttZ, dsQCD, dstW, dsVV, dsRare, dstW}};
 
+
+    auto vvPDSFlatten = [](std::vector<std::vector<Plotter::DatasetSummary>> vvpds) 
+    {
+        std::vector<Plotter::DatasetSummary> retvec;
+        for(auto& vpds : vvpds) for(auto& pds : vpds) retvec.push_back(pds);
+        return retvec; 
+    };
 
     auto PDSCutBind = [](Plotter::DatasetSummary pds, std::string cuts) 
     {
@@ -315,6 +322,21 @@ int main(int argc, char* argv[])
                     Plotter::DataCollection( "ratio", {{var, PDSLabelBind(PDSCutBind(ds_Znunu, "nTopsNewMVA>0.5;vTopsNCandNewMVA[0]=1"), "DNN monojet")},   {var, PDSLabelBind(ds_Znunu, "DNN monojet")}})
                     });
     };
+
+    auto vPDCMaker_fake_perCand = [&](std::string var, Plotter::DatasetSummary & pds)
+    {
+        return std::vector<Plotter::DataCollection>({
+                Plotter::DataCollection( "ratio", var, vector<PDS>({PDSCutBind(pds, "randomTopCandNConst>0;randomTopCandNotGenMatch;randomTopCandTopTag"), 
+                                                                    PDSCutBind(pds, "randomTopCandNConst>0;randomTopCandNotGenMatch") }) ),
+                Plotter::DataCollection( "ratio", var, vector<PDS>({PDSCutBind(PDSLabelBind(pds, "DNN trijet"),  "randomTopCandNConst==3;randomTopCandNotGenMatch;randomTopCandTopTag"), 
+                                                                    PDSCutBind(PDSLabelBind(pds, "DNN trijet"),  "randomTopCandNConst==3;randomTopCandNotGenMatch") }) ),
+                Plotter::DataCollection( "ratio", var, vector<PDS>({PDSCutBind(PDSLabelBind(pds, "DNN dijet"),   "randomTopCandNConst==2;randomTopCandNotGenMatch;randomTopCandTopTag"), 
+                                                                    PDSCutBind(PDSLabelBind(pds, "DNN dijet"),   "randomTopCandNConst==2;randomTopCandNotGenMatch") }) ),
+                Plotter::DataCollection( "ratio", var, vector<PDS>({PDSCutBind(PDSLabelBind(pds, "DNN monojet"), "randomTopCandNConst==1;randomTopCandNotGenMatch;randomTopCandTopTag"), 
+                                                                    PDSCutBind(PDSLabelBind(pds, "DNN monojet"), "randomTopCandNConst==1;randomTopCandNotGenMatch") }) ),
+                    } );
+    };
+
     auto vPDCMaker_DataMC_1l = [&](std::string var)
     {
         return std::vector<Plotter::DataCollection>({
@@ -344,6 +366,48 @@ int main(int argc, char* argv[])
         else              throw "BOB";
     };
 
+    auto vPDCMaker_DataMCSF_1l = [&](std::string var)
+    {
+        return std::vector<Plotter::DataCollection>({
+                Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({{PDSCutBind(dsData_SingleMuon, "bestTopMass>0;bestTopMassTopTag")}, 
+                                                                            {PDSCutBind(dsData_SingleMuon, "bestTopMass>0")} })),
+                Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "muTrigWgt"), "bestTopMass>0;bestTopMassTopTag")), 
+                                                                            vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "muTrigWgt"), "bestTopMass>0") )} )),
+                Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "muTrigWgt"), "bestTopMass>0;bestTopMassGenMatch")), 
+                                                                            vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "muTrigWgt"), "bestTopMass>0") )} )),
+            });
+    };
+    auto vPDCMaker_DataMCSF_1l_MET = [&](std::string var)
+    {
+        return std::vector<Plotter::DataCollection>({
+                Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({{PDSCutBind(dsData_HTMHT, "bestTopMass>0;bestTopMassTopTag")}, 
+                                                                            {PDSCutBind(dsData_HTMHT, "bestTopMass>0")} })),
+                    Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "TriggerEffMC"), "bestTopMass>0;bestTopMassTopTag")), 
+                                    vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "TriggerEffMC"), "bestTopMass>0") )} )),
+                    Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "TriggerEffMC"), "bestTopMass>0;bestTopMassGenMatch")), 
+                                    vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "TriggerEffMC"), "bestTopMass>0") )} )),
+            });
+    };
+    auto vPDCMaker_DataMCSF_2l = [&](std::string var)
+    {
+        return std::vector<Plotter::DataCollection>({
+                Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({{PDSCutBind(dsData_SingleMuon, "bestTopMass>0;bestTopMassTopTag")}, 
+                                                                            {PDSCutBind(dsData_SingleMuon, "bestTopMass>0")} })),
+                    Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_2l, "muTrigWgt"), "bestTopMass>0;bestTopMassTopTag")), 
+                                    vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_2l, "muTrigWgt"), "bestTopMass>0") )} )),
+                    Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_2l, "muTrigWgt"), "bestTopMass>0;bestTopMassGenMatch")), 
+                                    vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_2l, "muTrigWgt"), "bestTopMass>0") )} )),
+            });
+    };
+    auto vPDCMaker_DataMCSF = [&](std::string var, int Nl)
+    {
+        if(Nl == 1)       return vPDCMaker_DataMCSF_1l(var);
+        else if(Nl == -1) return vPDCMaker_DataMCSF_1l_MET(var);
+        else if(Nl == 2)  return vPDCMaker_DataMCSF_2l(var);
+        else              throw "BOB";
+    };
+
+
     auto vPDCMaker_All_0l = [&](std::string var1, std::string var2, int ntops = -1)
     {
         if(ntops < 0)
@@ -362,11 +426,11 @@ int main(int argc, char* argv[])
         }
     };
 
-    
+
     std::vector<std::pair<std::string, std::string>> cutslistData = {
-        {"SingleMu_topSel",    "passSingleLep50;passLeptVetoNoMu;passBJetsTopTag;passnJetsTopTag;passdPhisTopTag;HTTopTag>300;met>20"}, 
-        {"SingleMuMet_topSel", "passSingleLep20;passLeptVetoNoMu;passBJetsTopTag;passnJetsTopTag;passdPhisTopTag;HTTopTag>300;met>250"}, 
-        {"DoubleMu_noTop",     "passDoubleLep;passLeptVetoNoMu;passnJetsTopTag;passdPhisTopTag;HTTopTag>200;met<50"}, 
+        {"SingleMu_topSel",    "passNoiseEventFilterTopTag;passSingleLep50;passLeptVetoNoMu;passBJetsTopTag;passnJetsTopTag;passdPhisTopTag;HTTopTag>300;met>20"}, 
+        {"SingleMuMet_topSel", "passNoiseEventFilterTopTag;passSingleLep20;passBJetsTopTag;passnJetsTopTag;passdPhisTopTag;HTTopTag>300;met>250"}, 
+        {"DoubleMu_noTop",     "passNoiseEventFilterTopTag;passDoubleLep;passLeptVetoNoMu;passnJetsTopTag;passdPhisTopTag;HTTopTag>160;met<50"}, 
     };
 
     for(auto& cuts : cutslistData)
@@ -379,6 +443,10 @@ int main(int argc, char* argv[])
 
         //vPDCMaker_DataMC(catagory + "cand_m",   Nl), {1, 2},
 
+        vh.push_back(PHS("DataMCSF_" + cuts.first + "_cand_m",   vPDCMaker_DataMCSF("bestTopMassLV(M)",   Nl),  {1, 2}, cuts.second + "",  20, 0, 300,    false,  false,  "top mass [GeV]",   "Events"));
+        vh.push_back(PHS("DataMCSF_" + cuts.first + "_cand_pt",  vPDCMaker_DataMCSF("bestTopMassLV(pt)",  Nl),  {1, 2}, cuts.second + "",  20, 0, 1000,   false,  false,  "top p_{T} [GeV]",  "Events"));
+        vh.push_back(PHS("DataMCSF_" + cuts.first + "_cand_eta", vPDCMaker_DataMCSF("bestTopMassLV(eta)", Nl),  {1, 2}, cuts.second + "",  20, -5, 5,     false,  false,  "top #eta",         "Events"));
+        
         for(std::string catagory : {"MVAvar_finalTop_", "MVAvar_notFinalTop_"})
         {
             vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_cand_m",   vPDCMaker_DataMC(catagory + "cand_m",   Nl),  {1, 2}, cuts.second + "",  100, 0, 300,   false,  true,  "top mass [GeV]",   "Events"));
@@ -419,40 +487,14 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_DeepCSVl",  vPDCMaker_DataMC(catagory +                            "j" + iJ + "_DeepCSVl",   Nl),                            {1, 2}, cuts.second + "",  20, 0, 1.0,   false,  true,  "j" + iJ + "DeepCSVl",   "Events"));
                 vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_DeepCSVbb",  vPDCMaker_DataMC(catagory +                           "j" + iJ + "_DeepCSVbb",   Nl),                           {1, 2}, cuts.second + "",  20, 0, 1.0,   false,  true,  "j" + iJ + "DeepCSVbb",   "Events"));
                 vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_DeepCSVcc",  vPDCMaker_DataMC(catagory +                           "j" + iJ + "_DeepCSVcc",   Nl),                           {1, 2}, cuts.second + "",  20, 0, 1.0,   false,  true,  "j" + iJ + "DeepCSVcc",   "Events"));
+                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_DeepFlavorb",  vPDCMaker_DataMC(catagory +                         "j" + iJ + "_DeepFlavorb",   Nl),                         {1, 2}, cuts.second + "",  20, 0, 1.0,   false,  true,  "j" + iJ + "DeepFlavorb",   "Events"));
+                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_DeepFlavorbb",  vPDCMaker_DataMC(catagory +                        "j" + iJ + "_DeepFlavorbb",   Nl),                        {1, 2}, cuts.second + "",  20, 0, 1.0,   false,  true,  "j" + iJ + "DeepFlavorbb",   "Events"));
+                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_DeepFlavorlepb",  vPDCMaker_DataMC(catagory +                      "j" + iJ + "_DeepFlavorlepb",   Nl),                      {1, 2}, cuts.second + "",  20, 0, 1.0,   false,  true,  "j" + iJ + "DeepFlavorlepb",   "Events"));
+                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_DeepFlavorc",  vPDCMaker_DataMC(catagory +                         "j" + iJ + "_DeepFlavorc",   Nl),                         {1, 2}, cuts.second + "",  20, 0, 1.0,   false,  true,  "j" + iJ + "DeepFlavorc",   "Events"));
+                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_DeepFlavoruds",  vPDCMaker_DataMC(catagory +                       "j" + iJ + "_DeepFlavoruds",   Nl),                       {1, 2}, cuts.second + "",  20, 0, 1.0,   false,  true,  "j" + iJ + "DeepFlavoruds",   "Events"));
+                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_DeepFlavorg",  vPDCMaker_DataMC(catagory +                         "j" + iJ + "_DeepFlavorg",   Nl),                         {1, 2}, cuts.second + "",  20, 0, 1.0,   false,  true,  "j" + iJ + "DeepFlavorg",   "Events"));
                 vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_JetProba",  vPDCMaker_DataMC(catagory +                            "j" + iJ + "_JetProba",   Nl),                            {1, 2}, cuts.second + "",  20, 0,  12,   false,  true,  "j" + iJ + "JetProba",   "Events"));
                 vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_recoJetsCharge",  vPDCMaker_DataMC(catagory +                      "j" + iJ + "_recoJetsCharge",   Nl),                      {1, 2}, cuts.second + "",  20, -1,  1,   false,  true,  "j" + iJ + "recoJetsCharge",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVTrackJetPt",  vPDCMaker_DataMC(catagory +                       "j" + iJ + "_CSVTrackJetPt",   Nl),                       {1, 2}, cuts.second + "",  20, 0, 1000,  false,  true,  "j" + iJ + "CSVTrackJetPt",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVVertexCategory",  vPDCMaker_DataMC(catagory +                   "j" + iJ + "_CSVVertexCategory",   Nl),                   {1, 2}, cuts.second + "",  20, 0,  10,   false,  true,  "j" + iJ + "CSVVertexCategory",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVJetNSecondaryVertices",  vPDCMaker_DataMC(catagory +            "j" + iJ + "_CSVJetNSecondaryVertices",   Nl),            {1, 2}, cuts.second + "",  10, 0,  10,   false,  true,  "j" + iJ + "CSVJetNSecondaryVertices",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVTrackSumJetEtRatio",  vPDCMaker_DataMC(catagory +               "j" + iJ + "_CSVTrackSumJetEtRatio",   Nl),               {1, 2}, cuts.second + "",  20, 0, 5.0,   false,  true,  "j" + iJ + "CSVTrackSumJetEtRatio",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVTrackSumJetDeltaR",  vPDCMaker_DataMC(catagory +                "j" + iJ + "_CSVTrackSumJetDeltaR",   Nl),                {1, 2}, cuts.second + "",  20, 0, 5.0,   false,  true,  "j" + iJ + "CSVTrackSumJetDeltaR",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVTrackSip2dValAboveCharm",  vPDCMaker_DataMC(catagory +          "j" + iJ + "_CSVTrackSip2dValAboveCharm",   Nl),          {1, 2}, cuts.second + "",  20, -100, 100,false,  true,  "j" + iJ + "CSVTrackSip2dValAboveCharm",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVTrackSip2dSigAboveCharm",  vPDCMaker_DataMC(catagory +          "j" + iJ + "_CSVTrackSip2dSigAboveCharm",   Nl),          {1, 2}, cuts.second + "",  20, -1,  1,   false,  true,  "j" + iJ + "CSVTrackSip2dSigAboveCharm",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVTrackSip3dValAboveCharm",  vPDCMaker_DataMC(catagory +          "j" + iJ + "_CSVTrackSip3dValAboveCharm",   Nl),          {1, 2}, cuts.second + "",  20, -200, 200,false,  true,  "j" + iJ + "CSVTrackSip3dValAboveCharm",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVTrackSip3dSigAboveCharm",  vPDCMaker_DataMC(catagory +          "j" + iJ + "_CSVTrackSip3dSigAboveCharm",   Nl),          {1, 2}, cuts.second + "",  20, -2.0, 2.0,false,  true,  "j" + iJ + "CSVTrackSip3dSigAboveCharm",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVVertexMass",  vPDCMaker_DataMC(catagory +                       "j" + iJ + "_CSVVertexMass",   Nl),                       {1, 2}, cuts.second + "",  20, 0, 200,   false,  true,  "j" + iJ + "CSVVertexMass",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVVertexNTracks",  vPDCMaker_DataMC(catagory +                    "j" + iJ + "_CSVVertexNTracks",   Nl),                    {1, 2}, cuts.second + "",  20, 0,  20,   false,  true,  "j" + iJ + "CSVVertexNTracks",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVVertexEnergyRatio",  vPDCMaker_DataMC(catagory +                "j" + iJ + "_CSVVertexEnergyRatio",   Nl),                {1, 2}, cuts.second + "",  20, 0, 100,   false,  true,  "j" + iJ + "CSVVertexEnergyRatio",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVVertexJetDeltaR",  vPDCMaker_DataMC(catagory +                  "j" + iJ + "_CSVVertexJetDeltaR",   Nl),                  {1, 2}, cuts.second + "",  20, 0, 1.0,   false,  true,  "j" + iJ + "CSVVertexJetDeltaR",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVFlightDistance2dVal",  vPDCMaker_DataMC(catagory +              "j" + iJ + "_CSVFlightDistance2dVal",   Nl),              {1, 2}, cuts.second + "",  20, 0,   4,   false,  true,  "j" + iJ + "CSVFlightDistance2dVal",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVFlightDistance2dSig",  vPDCMaker_DataMC(catagory +              "j" + iJ + "_CSVFlightDistance2dSig",   Nl),              {1, 2}, cuts.second + "",  20, 0, 400,   false,  true,  "j" + iJ + "CSVFlightDistance2dSig",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVFlightDistance3dVal",  vPDCMaker_DataMC(catagory +              "j" + iJ + "_CSVFlightDistance3dVal",   Nl),              {1, 2}, cuts.second + "",  20, 0,  20,   false,  true,  "j" + iJ + "CSVFlightDistance3dVal",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CSVFlightDistance3dSig",  vPDCMaker_DataMC(catagory +              "j" + iJ + "_CSVFlightDistance3dSig",   Nl),              {1, 2}, cuts.second + "",  20, 0, 400,   false,  true,  "j" + iJ + "CSVFlightDistance3dSig",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagVertexCategory",  vPDCMaker_DataMC(catagory +                  "j" + iJ + "_CTagVertexCategory",   Nl),                  {1, 2}, cuts.second + "",  10, 0,  10,   false,  true,  "j" + iJ + "CTagVertexCategory",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagJetNSecondaryVertices",  vPDCMaker_DataMC(catagory +           "j" + iJ + "_CTagJetNSecondaryVertices",   Nl),           {1, 2}, cuts.second + "",  10, 0,  10,   false,  true,  "j" + iJ + "CTagJetNSecondaryVertices",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagTrackSumJetEtRatio",  vPDCMaker_DataMC(catagory +              "j" + iJ + "_CTagTrackSumJetEtRatio",   Nl),              {1, 2}, cuts.second + "",  20, 0,   4,   false,  true,  "j" + iJ + "CTagTrackSumJetEtRatio",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagTrackSumJetDeltaR",  vPDCMaker_DataMC(catagory +               "j" + iJ + "_CTagTrackSumJetDeltaR",   Nl),               {1, 2}, cuts.second + "",  20, 0,   5,   false,  true,  "j" + iJ + "CTagTrackSumJetDeltaR",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagTrackSip2dSigAboveCharm",  vPDCMaker_DataMC(catagory +         "j" + iJ + "_CTagTrackSip2dSigAboveCharm",   Nl),         {1, 2}, cuts.second + "",  20, -100, 100,false,  true,  "j" + iJ + "CTagTrackSip2dSigAboveCharm",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagTrackSip3dSigAboveCharm",  vPDCMaker_DataMC(catagory +         "j" + iJ + "_CTagTrackSip3dSigAboveCharm",   Nl),         {1, 2}, cuts.second + "",  20, -100, 100,false,  true,  "j" + iJ + "CTagTrackSip3dSigAboveCharm",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagVertexMass",  vPDCMaker_DataMC(catagory +                      "j" + iJ + "_CTagVertexMass",   Nl),                      {1, 2}, cuts.second + "",  20, 0, 200,   false,  true,  "j" + iJ + "CTagVertexMass",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagVertexNTracks",  vPDCMaker_DataMC(catagory +                   "j" + iJ + "_CTagVertexNTracks",   Nl),                   {1, 2}, cuts.second + "",  30, 0,  30,   false,  true,  "j" + iJ + "CTagVertexNTracks",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagVertexEnergyRatio",  vPDCMaker_DataMC(catagory +               "j" + iJ + "_CTagVertexEnergyRatio",   Nl),               {1, 2}, cuts.second + "",  20, 0, 100,   false,  true,  "j" + iJ + "CTagVertexEnergyRatio",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagVertexJetDeltaR",  vPDCMaker_DataMC(catagory +                 "j" + iJ + "_CTagVertexJetDeltaR",   Nl),                 {1, 2}, cuts.second + "",  20, 0, 0.3,   false,  true,  "j" + iJ + "CTagVertexJetDeltaR",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagFlightDistance2dSig",  vPDCMaker_DataMC(catagory +             "j" + iJ + "_CTagFlightDistance2dSig",   Nl),             {1, 2}, cuts.second + "",  20, 0, 400,   false,  true,  "j" + iJ + "CTagFlightDistance2dSig",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagFlightDistance3dSig",  vPDCMaker_DataMC(catagory +             "j" + iJ + "_CTagFlightDistance3dSig",   Nl),             {1, 2}, cuts.second + "",  20, 0, 400,   false,  true,  "j" + iJ + "CTagFlightDistance3dSig",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagMassVertexEnergyFraction",  vPDCMaker_DataMC(catagory +        "j" + iJ + "_CTagMassVertexEnergyFraction",   Nl),        {1, 2}, cuts.second + "",  20, 0, 1.0,   false,  true,  "j" + iJ + "CTagMassVertexEnergyFraction",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagVertexBoostOverSqrtJetPt",  vPDCMaker_DataMC(catagory +        "j" + iJ + "_CTagVertexBoostOverSqrtJetPt",   Nl),        {1, 2}, cuts.second + "",  20, 0, 1.0,   false,  true,  "j" + iJ + "CTagVertexBoostOverSqrtJetPt",   "Events"));
-                vh.push_back(PHS("DataMC_" + catagory + cuts.first + "_j" + iJ + "_CTagVertexLeptonCategory",  vPDCMaker_DataMC(catagory +            "j" + iJ + "_CTagVertexLeptonCategory",   Nl),            {1, 2}, cuts.second + "",  10, 0,  10,   false,  true,  "j" + iJ + "CTagVertexLeptonCategory",   "Events"));
             }
         }
     
@@ -589,6 +631,9 @@ int main(int argc, char* argv[])
             vh.push_back(PHS(cuts.first + "_" + "purity_pt_"  + pds.second,  vPDCMaker_Purity(pds.first, "pt"),   {1, 1}, cuts.second + "",   20,  0, 1000,     false,  false,  "top pt [GeV]",     "Purity"));
             //vh.push_back(PHS(cuts.first + "_" + "purity_m_"   + pds.second,  vPDCMaker_Purity(pds.first, "M"),    {1, 1}, cuts.second + "",  100,  0,  500,     false,  false,  "top mass [GeV]",   "Purity"));
 
+            vh.push_back(PHS(cuts.first + "_" + "fakerate_candPt" + "_" + pds.second,   vPDCMaker_fake_perCand("randomTopCand(pt)",  pds.first), {1, 1}, cuts.second + "", 30,  0,  1000, false, false, "cand p_{T} [GeV]",   "Fakerate"));
+            vh.push_back(PHS(cuts.first + "_" + "fakerate_candEta" + "_" + pds.second,  vPDCMaker_fake_perCand("randomTopCand(eta)", pds.first), {1, 1}, cuts.second + "", 30,  -5,  5,   false, false, "cand #eta",          "Fakerate"));
+        
             vh.push_back(PHS("MVAVar_" + cuts.first + "_cand_m" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "cand_m")},    {1, 1}, cuts.second + "",  100, 0, 300,   false,  true,  "top mass [GeV]",   "Events"));
             vh.push_back(PHS("MVAVar_" + cuts.first + "_cand_pt" + "_"   + pds.second,  {PDCMaker_distributions(pds.first,  "cand_pt")},   {1, 1}, cuts.second + "",  100, 0, 1000,  false,  true,  "top p_{T} [GeV]",   "Events"));
             vh.push_back(PHS("MVAVar_" + cuts.first + "_cand_p" + "_"    + pds.second,  {PDCMaker_distributions(pds.first,  "cand_p")},    {1, 1}, cuts.second + "",  100, 0, 1000,  false,  true,  "top p [GeV]",   "Events"));
@@ -627,40 +672,16 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_DeepCSVl" + "_"                            + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_DeepCSVl")},                            {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j" + iJ + "DeepCSVl",   "Events"));
                 vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_DeepCSVbb" + "_"                           + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_DeepCSVbb")},                           {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j" + iJ + "DeepCSVbb",   "Events"));
                 vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_DeepCSVcc" + "_"                           + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_DeepCSVcc")},                           {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j" + iJ + "DeepCSVcc",   "Events"));
+
+                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_DeepFlavorb" + "_"                         + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_DeepFlavorb")},                         {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j" + iJ + "DeepFlavorb",   "Events"));
+                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_DeepFlavorbb" + "_"                        + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_DeepFlavorbb")},                        {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j" + iJ + "DeepFlavorbb",   "Events"));
+                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_DeepFlavorlepb" + "_"                      + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_DeepFlavorlepb")},                      {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j" + iJ + "DeepFlavorlepb",   "Events"));
+                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_DeepFlavorc" + "_"                         + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_DeepFlavorc")},                         {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j" + iJ + "DeepFlavorc",   "Events"));
+                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_DeepFlavoruds" + "_"                       + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_DeepFlavoruds")},                       {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j" + iJ + "DeepFlavoruds",   "Events"));
+                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_DeepFlavorg" + "_"                         + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_DeepFlavorg")},                         {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j" + iJ + "DeepFlavorg",   "Events"));
+
                 vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_JetProba" + "_"                            + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_JetProba")},                            {1, 1}, cuts.second + "",  100, 0,  12,   false,  true,  "j" + iJ + "JetProba",   "Events"));
                 vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_recoJetsCharge" + "_"                      + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_recoJetsCharge")},                      {1, 1}, cuts.second + "",  100, -1,  1,   false,  true,  "j" + iJ + "recoJetsCharge",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVTrackJetPt" + "_"                       + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVTrackJetPt")},                       {1, 1}, cuts.second + "",  100, 0, 1000,  false,  true,  "j" + iJ + "CSVTrackJetPt",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVVertexCategory" + "_"                   + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVVertexCategory")},                   {1, 1}, cuts.second + "",  100, 0,  10,   false,  true,  "j" + iJ + "CSVVertexCategory",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVJetNSecondaryVertices" + "_"            + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVJetNSecondaryVertices")},            {1, 1}, cuts.second + "",   10, 0,  10,   false,  true,  "j" + iJ + "CSVJetNSecondaryVertices",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVTrackSumJetEtRatio" + "_"               + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVTrackSumJetEtRatio")},               {1, 1}, cuts.second + "",  100, 0, 5.0,   false,  true,  "j" + iJ + "CSVTrackSumJetEtRatio",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVTrackSumJetDeltaR" + "_"                + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVTrackSumJetDeltaR")},                {1, 1}, cuts.second + "",  100, 0, 5.0,   false,  true,  "j" + iJ + "CSVTrackSumJetDeltaR",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVTrackSip2dValAboveCharm" + "_"          + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVTrackSip2dValAboveCharm")},          {1, 1}, cuts.second + "",  100, -100, 100,false,  true,  "j" + iJ + "CSVTrackSip2dValAboveCharm",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVTrackSip2dSigAboveCharm" + "_"          + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVTrackSip2dSigAboveCharm")},          {1, 1}, cuts.second + "",  100, -1,  1,   false,  true,  "j" + iJ + "CSVTrackSip2dSigAboveCharm",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVTrackSip3dValAboveCharm" + "_"          + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVTrackSip3dValAboveCharm")},          {1, 1}, cuts.second + "",  100, -200, 200,false,  true,  "j" + iJ + "CSVTrackSip3dValAboveCharm",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVTrackSip3dSigAboveCharm" + "_"          + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVTrackSip3dSigAboveCharm")},          {1, 1}, cuts.second + "",  100, -2.0, 2.0,false,  true,  "j" + iJ + "CSVTrackSip3dSigAboveCharm",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVVertexMass" + "_"                       + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVVertexMass")},                       {1, 1}, cuts.second + "",  100, 0, 200,   false,  true,  "j" + iJ + "CSVVertexMass",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVVertexNTracks" + "_"                    + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVVertexNTracks")},                    {1, 1}, cuts.second + "",   20, 0,  20,   false,  true,  "j" + iJ + "CSVVertexNTracks",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVVertexEnergyRatio" + "_"                + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVVertexEnergyRatio")},                {1, 1}, cuts.second + "",  100, 0, 100,   false,  true,  "j" + iJ + "CSVVertexEnergyRatio",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVVertexJetDeltaR" + "_"                  + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVVertexJetDeltaR")},                  {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j" + iJ + "CSVVertexJetDeltaR",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVFlightDistance2dVal" + "_"              + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVFlightDistance2dVal")},              {1, 1}, cuts.second + "",  100, 0,   4,   false,  true,  "j" + iJ + "CSVFlightDistance2dVal",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVFlightDistance2dSig" + "_"              + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVFlightDistance2dSig")},              {1, 1}, cuts.second + "",  100, 0, 400,   false,  true,  "j" + iJ + "CSVFlightDistance2dSig",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVFlightDistance3dVal" + "_"              + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVFlightDistance3dVal")},              {1, 1}, cuts.second + "",  100, 0,  20,   false,  true,  "j" + iJ + "CSVFlightDistance3dVal",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CSVFlightDistance3dSig" + "_"              + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CSVFlightDistance3dSig")},              {1, 1}, cuts.second + "",  100, 0, 400,   false,  true,  "j" + iJ + "CSVFlightDistance3dSig",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagVertexCategory" + "_"                  + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagVertexCategory")},                  {1, 1}, cuts.second + "",   10, 0,  10,   false,  true,  "j" + iJ + "CTagVertexCategory",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagJetNSecondaryVertices" + "_"           + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagJetNSecondaryVertices")},           {1, 1}, cuts.second + "",   10, 0,  10,   false,  true,  "j" + iJ + "CTagJetNSecondaryVertices",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagTrackSumJetEtRatio" + "_"              + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagTrackSumJetEtRatio")},              {1, 1}, cuts.second + "",  100, 0,   4,   false,  true,  "j" + iJ + "CTagTrackSumJetEtRatio",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagTrackSumJetDeltaR" + "_"               + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagTrackSumJetDeltaR")},               {1, 1}, cuts.second + "",  100, 0,   5,   false,  true,  "j" + iJ + "CTagTrackSumJetDeltaR",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagTrackSip2dSigAboveCharm" + "_"         + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagTrackSip2dSigAboveCharm")},         {1, 1}, cuts.second + "",  100, -100, 100,false,  true,  "j" + iJ + "CTagTrackSip2dSigAboveCharm",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagTrackSip3dSigAboveCharm" + "_"         + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagTrackSip3dSigAboveCharm")},         {1, 1}, cuts.second + "",  100, -100, 100,false,  true,  "j" + iJ + "CTagTrackSip3dSigAboveCharm",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagVertexMass" + "_"                      + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagVertexMass")},                      {1, 1}, cuts.second + "",  100, 0, 200,   false,  true,  "j" + iJ + "CTagVertexMass",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagVertexNTracks" + "_"                   + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagVertexNTracks")},                   {1, 1}, cuts.second + "",   30, 0,  30,   false,  true,  "j" + iJ + "CTagVertexNTracks",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagVertexEnergyRatio" + "_"               + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagVertexEnergyRatio")},               {1, 1}, cuts.second + "",  100, 0, 100,   false,  true,  "j" + iJ + "CTagVertexEnergyRatio",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagVertexJetDeltaR" + "_"                 + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagVertexJetDeltaR")},                 {1, 1}, cuts.second + "",  100, 0, 0.3,   false,  true,  "j" + iJ + "CTagVertexJetDeltaR",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagFlightDistance2dSig" + "_"             + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagFlightDistance2dSig")},             {1, 1}, cuts.second + "",  100, 0, 400,   false,  true,  "j" + iJ + "CTagFlightDistance2dSig",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagFlightDistance3dSig" + "_"             + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagFlightDistance3dSig")},             {1, 1}, cuts.second + "",  100, 0, 400,   false,  true,  "j" + iJ + "CTagFlightDistance3dSig",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagMassVertexEnergyFraction" + "_"        + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagMassVertexEnergyFraction")},        {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j" + iJ + "CTagMassVertexEnergyFraction",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagVertexBoostOverSqrtJetPt" + "_"        + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagVertexBoostOverSqrtJetPt")},        {1, 1}, cuts.second + "",  100, 0, 1.0,   false,  true,  "j" + iJ + "CTagVertexBoostOverSqrtJetPt",   "Events"));
-                vh.push_back(PHS("MVAVar_" + cuts.first + "_j" + iJ + "_CTagVertexLeptonCategory" + "_"            + pds.second,  {PDCMaker_distributions(pds.first,  "j" + iJ + "_CTagVertexLeptonCategory")},            {1, 1}, cuts.second + "",   10, 0,  10,   false,  true,  "j" + iJ + "CTagVertexLeptonCategory",   "Events"));
             }
 
             vh.push_back(PHS("Dijet_" + cuts.first + "_dRMax" + "_"    + pds.second,  {PDC( "single", { {"dijetTopMatch(dRMax)",  PDSLabelBind(pds.first, "Gen Matched") }, {"dijetTopNoMatch(dRMax)",  PDSLabelBind(pds.first, "Not Gen Matched") } })},    {1, 1}, cuts.second + "",  100, 0, 2.0,   false,  true,  "#DeltaR Max",   "Events"));
@@ -684,8 +705,8 @@ int main(int argc, char* argv[])
         //
         vh.push_back(PHS(cuts.first + "_" + "fakerate_met",   vPDCMaker_fake("met"),                      {1, 1}, cuts.second + "",   30,  0,  1200,     false,  false,  "met [GeV]",   "Fakerate"));
         vh.push_back(PHS(cuts.first + "_" + "fakerate_njet",  vPDCMaker_fake("cntNJetsPt50Eta24TopTag"),  {1, 1}, cuts.second + "",   20,  0,    20,     false,  false,  "N Jets",      "Fakerate"));
-        vh.push_back(PHS(cuts.first + "_" + "fakerate_nbjet", vPDCMaker_fake("cntCSVSTopTag"),                   {1, 1}, cuts.second + "",   10,  0,    10,     false,  false,  "N b-jets",    "Fakerate"));
-        
+        vh.push_back(PHS(cuts.first + "_" + "fakerate_nbjet", vPDCMaker_fake("cntCSVSTopTag"),            {1, 1}, cuts.second + "",   10,  0,    10,     false,  false,  "N b-jets",    "Fakerate"));
+
         //vh.push_back(PHS(cuts.first + "_" + "nbNotInTop", {PDCMaker("nBNotInTop")}, {1, 1}, cuts.second,  10, 0, 10,  true,  false,  "N_{b}", "Events"));
         vh.push_back(PHS(cuts.first + "_" + "nb",         {PDCMaker("cntCSVSTopTag")},     {1, 1}, cuts.second,  10, 0, 10,  true,  false,  "N_{b}", "Events"));
         
