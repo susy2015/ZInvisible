@@ -196,12 +196,8 @@ int main(int argc, char* argv[])
     AnaSamples::SampleSet        ss(sampleloc, AnaSamples::luminosity);
     AnaSamples::SampleCollection sc(ss);
 
-    topTagger::type3TopTagger* type3Ptr;
-
     try
     {
-        AnaFunctions::prepareTopTagger(type3Ptr);
-
         std::set<std::string> activatedBranch;
         for(auto& branch : AnaConsts::activatedBranchNames_DataOnly) activatedBranch.insert(branch);
         for(auto& branch : AnaConsts::activatedBranchNames) activatedBranch.insert(branch);

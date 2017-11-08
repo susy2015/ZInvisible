@@ -1605,7 +1605,7 @@ namespace plotterFunctions
     private:
 
         int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
-        topTagger::type3TopTagger t3tagger;
+        //topTagger::type3TopTagger t3tagger;
         std::shared_ptr<TopTagger> tt, ttMVA, ttAllComb, ttMVATriJetOnly, ttMVADiJetOnly;
         //Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
         TopCat topMatcher_;
