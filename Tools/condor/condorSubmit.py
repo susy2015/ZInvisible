@@ -55,32 +55,30 @@ x509userproxy = $ENV(X509_USER_PROXY)
 
 #go make top plots!
 filestoTransferGTP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeTopPlots",
-                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so",
-                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/libTopTaggerTopTagger.so",
-                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/libTopTaggerCfgParser.so",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/Legacy_TopTagger.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_AllComb.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg_trijetOnly.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg-MVAAK8_Tight_v1.2.1_dijetOnly.cfg",
-                      environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1",
-                      environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName},
+                      environ["CMSSW_BASE"] + "/../CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
+                      environ["CMSSW_BASE"] + "/../CMSSW_7_4_8/src/opencv/lib/libopencv_ml.so.3.1",
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName},
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"TrainingOutput_dR20_pt30_depth12_500tree_2017_Feb16.model"},
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"weights-t2tt850-sm-baseline-nodphi-nomtb-hqu-08112016.xml"},
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"sdWTag_ttbarTraining_v0.xml"},
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"tfModel_frozen.pb"},
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
+                      environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
-                      "/home/pastika/.cache/bazel/_bazel_pastika/1bf4cb74e37288f8c3b7beef52410551/execroot/tensorflow/bazel-out/local-opt/bin/tensorflow/libtensorflow.so"
                       ]
 
 #print filestoTransferGTP
 
-submitFileGTP = """universe = grid
-grid_resource = condor kodiak-ce.baylor.edu kodiak-ce.baylor.edu:9619
-+remote_queue = "batch"
+submitFileGTP = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeTopPlots.sh
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
@@ -93,6 +91,22 @@ x509userproxy = $ENV(X509_USER_PROXY)
 +maxWallTime = 2880
 
 """
+
+#submitFileGTP = """universe = grid
+#grid_resource = condor kodiak-ce.baylor.edu kodiak-ce.baylor.edu:9619
+#+remote_queue = "batch"
+#Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeTopPlots.sh
+#Should_Transfer_Files = YES
+#WhenToTransferOutput = ON_EXIT
+#Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gtp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz 
+#Output = logs/makePlots_$(Process).stdout
+#Error = logs/makePlots_$(Process).stderr
+#Log = logs/makePlots_$(Process).log
+#notify_user = ${LOGNAME}@FNAL.GOV
+#x509userproxy = $ENV(X509_USER_PROXY)
+#+maxWallTime = 2880
+#
+#"""
 
 #go make lepton efficiency
 submitFileGME = """universe = vanilla

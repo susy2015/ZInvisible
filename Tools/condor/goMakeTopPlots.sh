@@ -1,7 +1,7 @@
 #!/bin/bash
 
 _PWD=${PWD}
-_CONDOR_SCRATCH_DIR=${PBS_O_WORKDIR}
+#_CONDOR_SCRATCH_DIR=${PBS_O_WORKDIR}
 
 printenv
 
@@ -26,16 +26,16 @@ eval `scramv1 runtime -sh`
 tar -xzf ${_CONDOR_SCRATCH_DIR}/gtp.tar.gz
 cd WORLDSWORSESOLUTIONTOAPROBLEM
 
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}:/cvmfs/sft.cern.ch/lcg/releases/xgboost/0.60-04a4f/x86_64-slc6-gcc62-opt/lib
 
 echo "xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') ."
 xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
 
-if [ ! -f ${6##*/} ]; then
-    echo "File not found! Try xrdcp again"
-    export X509_USER_PROXY=/cms/data/$USER/.x509_user_proxy
-    xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
-fi
+#if [ ! -f ${6##*/} ]; then
+#    echo "File not found! Try xrdcp again"
+#    export X509_USER_PROXY=/cms/data/$USER/.x509_user_proxy
+#    xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
+#fi
 
 pwd
 ls -lhrt
@@ -46,8 +46,8 @@ ls -lhrt
 
 ls -lhrt
 
-#mv topStudyOutput_* ${_CONDOR_SCRATCH_DIR}
-mv topStudyOutput_* /cms/data/pastika/condorOutput
+mv topStudyOutput_* ${_CONDOR_SCRATCH_DIR}
+#mv topStudyOutput_* /cms/data/pastika/condorOutput
 
 rm $(echo $6 | sed 's|.*/||')
 rm -r ${_CONDOR_SCRATCH_DIR}/$2

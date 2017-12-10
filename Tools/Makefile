@@ -10,7 +10,7 @@ TTTDIR     = $(CMSSW_BASE)/src/TopTagger/TopTagger/test
 
 TTSDIR     = $(CMSSW_BASE)/src/TopTagger/Tools/cpp
 
-#OPENCV_DIRECTORY=$(CMSSW_BASE)/src/opencv
+OPENCV_DIRECTORY=$(HOME)/nobackup/zinv/dev/CMSSW_7_4_8/src/opencv/
 
 CXX        = g++
 
@@ -35,7 +35,7 @@ INCLUDES += $(shell $(PYTHONCFG) --includes)
 CXXFLAGS += -DDOTENSORFLOWPYBIND
 
 LIBS       = $(shell root-config --glibs)
-MT2LIB     = -L$(shell $(PYTHONCFG) --prefix)/lib $(shell $(PYTHONCFG) --libs) -L$(TTTDIR) -lTopTagger
+MT2LIB     = -L$(shell $(PYTHONCFG) --prefix)/lib $(shell $(PYTHONCFG) --libs) -L$(TTTDIR) -lTopTagger -L$(OPENCV_DIRECTORY)/lib/ -lopencv_ml -lopencv_core
 LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
