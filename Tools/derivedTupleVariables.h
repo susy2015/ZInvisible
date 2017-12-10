@@ -1635,7 +1635,12 @@ namespace plotterFunctions
             //const std::vector<double>& puppisoftDropMass = tr.getVec<double>("puppisoftDropMass");
             //const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
             //const std::vector<TLorentzVector>& puppiSubJetsLVec  = tr.getVec<TLorentzVector>("puppiSubJetsLVec");
-
+            //const std::vector<double>& puppiSubJetsBdisc = tr.getVec<double>("puppiSubJetsBdisc");
+            //const std::vector<double>& puppiSubJetstotalMult = tr.getVec<double>("puppiSubJetstotalMult");
+            //const std::vector<double>& puppiSubJetsptD = tr.getVec<double>("puppiSubJetsptD");
+            //const std::vector<double>& puppiSubJetsaxis1 = tr.getVec<double>("puppiSubJetsaxis1");
+            //const std::vector<double>& puppiSubJetsaxis2 = tr.getVec<double>("puppiSubJetsaxis2");
+            
             //TLorentzVector metLVec;
             //metLVec.SetPtEtaPhiM(met, 0, metphi, 0);
 
@@ -1748,11 +1753,11 @@ namespace plotterFunctions
                 myConstAK4Inputs.addSupplamentalVector("recoJetsCharge",                       tr.getVec<double>("recoJetsCharge_0"));
                 myConstAK4Inputs.addSupplamentalVector("qgMult",                               *convertToDoubleandRegister(tr, "qgMult"));
 
-                //ttUtility::ConstAK8Inputs myConstAK8Inputs = ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec, hadGenTops, hadGenTopDaughters);
+                //ttUtility::ConstAK8Inputs myConstAK8Inputs = ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec, puppiSubJetsBdisc, puppiSubJetstotalMult, puppiSubJetsptD, puppiSubJetsaxis1, puppiSubJetsaxis2, hadGenTops, hadGenTopDaughters);
                 
                 //myConstAK8Inputs.setWMassCorrHistos(puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for);
 
-                constituents = ttUtility::packageConstituents(myConstAK4Inputs);
+                constituents = ttUtility::packageConstituents(myConstAK4Inputs);//, myConstAK8Inputs);
 
                 //run custom tagger to get maximum eff info
                 //ttAllComb->runTagger(constituents);
@@ -1811,11 +1816,11 @@ namespace plotterFunctions
                 myConstAK4Inputs.addSupplamentalVector("recoJetsCharge",                       tr.getVec<double>("recoJetsCharge_0"));
                 myConstAK4Inputs.addSupplamentalVector("qgMult",                               *convertToDoubleandRegister(tr, "qgMult"));
 
-                //ttUtility::ConstAK8Inputs myConstAK8Inputs = ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec);
+                //ttUtility::ConstAK8Inputs myConstAK8Inputs = ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec, puppiSubJetsBdisc, puppiSubJetstotalMult, puppiSubJetsptD, puppiSubJetsaxis1, puppiSubJetsaxis2);
 
                 //myConstAK8Inputs.setWMassCorrHistos(puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for);
                 
-                constituents = ttUtility::packageConstituents(myConstAK4Inputs);
+                constituents = ttUtility::packageConstituents(myConstAK4Inputs);//, myConstAK8Inputs);
 
                 //run custom tagger to get maximum eff info
                 //ttAllComb->runTagger(constituents);

@@ -382,10 +382,10 @@ int main(int argc, char* argv[])
         return std::vector<Plotter::DataCollection>({
                 Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({{PDSCutBind(dsData_HTMHT, "bestTopMass>0;bestTopMassTopTag")}, 
                                                                             {PDSCutBind(dsData_HTMHT, "bestTopMass>0")} })),
-                    Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "TriggerEffMC"), "bestTopMass>0;bestTopMassTopTag")), 
-                                    vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "TriggerEffMC"), "bestTopMass>0") )} )),
-                    Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "TriggerEffMC"), "bestTopMass>0;bestTopMassGenMatch")), 
-                                    vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "TriggerEffMC"), "bestTopMass>0") )} )),
+                Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "TriggerEffMC"), "bestTopMass>0;bestTopMassTopTag")), 
+                                                                            vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "TriggerEffMC"), "bestTopMass>0") )} )),
+                Plotter::DataCollection( "ratio", var, vector<vector<PDS>>({vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "TriggerEffMC"), "bestTopMass>0;bestTopMassGenMatch")), 
+                                                                            vvPDSFlatten(PDSCutBindVec(PDSWeightBindVec(stack_MC_1l, "TriggerEffMC"), "bestTopMass>0") )} )),
             });
     };
     auto vPDCMaker_DataMCSF_2l = [&](std::string var)
