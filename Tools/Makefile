@@ -10,7 +10,7 @@ TTTDIR     = $(CMSSW_BASE)/src/TopTagger/TopTagger/test
 
 TTSDIR     = $(CMSSW_BASE)/src/TopTagger/Tools/cpp
 
-OPENCV_DIRECTORY=$(HOME)/nobackup/zinv/dev/CMSSW_7_4_8/src/opencv/
+OPENCV_DIRECTORY=/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/
 
 CXX        = g++
 
@@ -40,7 +40,7 @@ LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
 
-PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d scalefactorplot systplot miniMakePlots beffCalc makeSignalHistograms makeTopPlots makeDataMCplots simpleAnalyzer
+PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d scalefactorplot systplot miniMakePlots beffCalc makeSignalHistograms makeTaggerHistograms makeTopPlots makeDataMCplots simpleAnalyzer
 
 all: mkobj PyWraps $(PROGRAMS)
 
@@ -136,7 +136,10 @@ beffCalc: $(ODIR)/bTagEfficiencyCalc.o $(ODIR)/NTupleReader.o $(ODIR)/samples.o 
 makeSignalHistograms: $(ODIR)/makeSignalHistograms.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
-simpleAnalyzer: $(ODIR)/simpleAnalyzer.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o $(ODIR)/PileupWeights.o $(ODIR)/BTagCorrector.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o
+makeTaggerHistograms: $(ODIR)/makeTaggerHistograms.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o $(ODIR)/PileupWeights.o $(ODIR)/BTagCorrector.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o
+	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
+
+simpleAnalyzer: $(ODIR)/simpleAnalyzer.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o $(ODIR)/PileupWeights.o $(ODIR)/BTagCorrector.o $(ODIR)/TTbarCorrector.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
 clean:
