@@ -15,6 +15,7 @@
 #include "TopTaggerResults.h"
 
 #include "TopTagger/TopTagger/include/TopObject.h"
+#include "TopTagger/CfgParser/include/TTException.h"
 
 #include "TH1.h"
 #include "TH2.h"
@@ -1606,7 +1607,7 @@ namespace plotterFunctions
 
         int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
         //topTagger::type3TopTagger t3tagger;
-        std::shared_ptr<TopTagger> tt, ttMVA, ttAllComb, ttMVATriJetOnly, ttMVADiJetOnly;
+        std::shared_ptr<TopTagger> ttMVA;
         //Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
         TopCat topMatcher_;
         std::shared_ptr<TFile> WMassCorFile;
@@ -1661,39 +1662,23 @@ namespace plotterFunctions
             }
             else genTops = new std::vector<TLorentzVector>();
             
-            AnaFunctions::prepareJetsForTagger(jetsLVec, recoJetsBtag, jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood, qgLikelihood_forTagger);
+            //AnaFunctions::prepareJetsForTagger(jetsLVec, recoJetsBtag, jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood, qgLikelihood_forTagger);
 
-            int cntCSVS = AnaFunctions::countCSVS(jetsLVec_forTagger, recoJetsBtag_forTagger, AnaConsts::cutCSVS, AnaConsts::bTagArr);
+            int cntCSVS = AnaFunctions::countCSVS(jetsLVec, recoJetsBtag, AnaConsts::cutCSVS, AnaConsts::bTagArr);
 
             //t3tagger.processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec);
             int nTops = 0;//t3tagger.nTopCandSortedCnt;
 
             std::vector<TLorentzVector> *vTops = new std::vector<TLorentzVector>();
 
-            //std::vector<std::vector<TLorentzVector> >* vTopConstituents = new std::vector<std::vector<TLorentzVector> >();
-            //
-            //for(int it = 0; it < nTops; it++)
-            //{
-            //    TLorentzVector topLVec;// = t3tagger.buildLVec(jetsLVec_forTagger, t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]]);
-            //    vTops->push_back(topLVec);
-            //
-            //    std::vector<TLorentzVector> tmpVec;
-            //    //for(const int& jetIndex : t3tagger.finalCombfatJets[t3tagger.ori_pickedTopCandSortedVec[it]])
-            //    //{
-            //    //    tmpVec.emplace_back(jetsLVec_forTagger[jetIndex]);
-            //    //}
-            //    vTopConstituents->emplace_back(tmpVec);
-            //}
-
-
             //Helper function to turn int vectors into double vectors
             auto convertToDoubleandRegister = [](NTupleReader& tr, const std::string& name)
-                {
-                    const std::vector<int>& intVec = tr.getVec<int>(name);
-                    std::vector<double>* doubleVec = new std::vector<double>(intVec.begin(), intVec.end());
-                    tr.registerDerivedVec(name+"ConvertedToDouble3", doubleVec);
-                    return doubleVec;
-                };
+            {
+                const std::vector<int>& intVec = tr.getVec<int>(name);
+                std::vector<double>* doubleVec = new std::vector<double>(intVec.begin(), intVec.end());
+                tr.registerDerivedVec(name+"ConvertedToDouble3", doubleVec);
+                return doubleVec;
+            };
 
             //New Tagger starts here
             std::vector<TLorentzVector> hadGenTops;
@@ -1713,7 +1698,7 @@ namespace plotterFunctions
                 {
                     hadGenTopDaughters.push_back(ttUtility::GetTopdauLVec(top, genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
                 }
-                ttUtility::ConstAK4Inputs myConstAK4Inputs = ttUtility::ConstAK4Inputs(jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood_forTagger, hadGenTops, hadGenTopDaughters);
+                ttUtility::ConstAK4Inputs myConstAK4Inputs = ttUtility::ConstAK4Inputs(jetsLVec, recoJetsBtag, qgLikelihood, hadGenTops, hadGenTopDaughters);
                 myConstAK4Inputs.addSupplamentalVector("recoJetsJecScaleRawToFull",            tr.getVec<double>("recoJetsJecScaleRawToFull"));
                 myConstAK4Inputs.addSupplamentalVector("qgLikelihood",                         tr.getVec<double>("qgLikelihood"));
                 myConstAK4Inputs.addSupplamentalVector("qgPtD",                                tr.getVec<double>("qgPtD"));
@@ -1757,26 +1742,16 @@ namespace plotterFunctions
                 
                 //myConstAK8Inputs.setWMassCorrHistos(puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for);
 
-                constituents = ttUtility::packageConstituents(myConstAK4Inputs);//, myConstAK8Inputs);
-
-                //run custom tagger to get maximum eff info
-                //ttAllComb->runTagger(constituents);
-
                 //run new tagger
-                tt->runTagger(constituents);
-                ttMVATriJetOnly->runTagger(constituents);
-                ttMVADiJetOnly->runTagger(constituents);
-
                 //New MVA resolved Tagger starts here
                 constituentsMVA = ttUtility::packageConstituents(myConstAK4Inputs);//, myConstAK8Inputs);
                 //run tagger
                 ttMVA->runTagger(constituentsMVA);
-                ttMVADiJetOnly->runTagger(constituentsMVA);
             }
             else
             {
                 //prep input object (constituent) vector
-                ttUtility::ConstAK4Inputs myConstAK4Inputs = ttUtility::ConstAK4Inputs(jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood_forTagger);
+                ttUtility::ConstAK4Inputs myConstAK4Inputs = ttUtility::ConstAK4Inputs(jetsLVec, recoJetsBtag, qgLikelihood);
                 myConstAK4Inputs.addSupplamentalVector("recoJetsJecScaleRawToFull",            tr.getVec<double>("recoJetsJecScaleRawToFull"));
                 myConstAK4Inputs.addSupplamentalVector("qgLikelihood",                         tr.getVec<double>("qgLikelihood"));
                 myConstAK4Inputs.addSupplamentalVector("qgPtD",                                tr.getVec<double>("qgPtD"));
@@ -1820,20 +1795,11 @@ namespace plotterFunctions
 
                 //myConstAK8Inputs.setWMassCorrHistos(puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for);
                 
-                constituents = ttUtility::packageConstituents(myConstAK4Inputs);//, myConstAK8Inputs);
-
-                //run custom tagger to get maximum eff info
-                //ttAllComb->runTagger(constituents);
-
                 //run new tagger
-                tt->runTagger(constituents);
-                ttMVATriJetOnly->runTagger(constituents);
-                                
                 //New MVA resolved Tagger starts here
                 constituentsMVA = ttUtility::packageConstituents(myConstAK4Inputs);//, myConstAK8Inputs);
                 //run tagger
                 ttMVA->runTagger(constituentsMVA);
-                ttMVADiJetOnly->runTagger(constituentsMVA);
             }
 
 
@@ -1841,114 +1807,112 @@ namespace plotterFunctions
             //const TopTaggerResults& ttrAllComb = ttAllComb->getResults();
 
             //get matches
-            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesAllComb;
+            //std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesAllComb;
             //if(&genDecayLVec != nullptr) genMatchesAllComb = topMatcher_.TopConst(ttrAllComb.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
 
-            std::vector<TLorentzVector> *vTopsAllComb = new std::vector<TLorentzVector>();
-            std::vector<TLorentzVector> *vTopsMatchAllComb = new std::vector<TLorentzVector>();
-            std::vector<TLorentzVector> *vTopsGenMatchAllComb = new std::vector<TLorentzVector>();
+            //std::vector<TLorentzVector> *vTopsAllComb = new std::vector<TLorentzVector>();
+            //std::vector<TLorentzVector> *vTopsMatchAllComb = new std::vector<TLorentzVector>();
+            //std::vector<TLorentzVector> *vTopsGenMatchAllComb = new std::vector<TLorentzVector>();
             //std::vector<TLorentzVector> *vTopsParMatchAllComb = new std::vector<TLorentzVector>();
             
-            //retrieve results
-            const TopTaggerResults& ttr = tt->getResults();
 
             //get matches
-            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatches;
-            if(tr.checkBranch("genDecayLVec"))
-            {
-                const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
-                const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
-                const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
-                const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
-
-                genMatches = topMatcher_.TopConst(ttr.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
-            }
-
-            std::vector<TLorentzVector> *vTopsNew = new std::vector<TLorentzVector>();
-            std::vector<TLorentzVector> *vTopsMatchNew = new std::vector<TLorentzVector>();
-            std::vector<TLorentzVector> *vTopsGenMatchNew = new std::vector<TLorentzVector>();
-
-            
-            for(int iTop = 0; iTop < ttr.getTops().size(); ++iTop)
-            {
-                vTopsNew->emplace_back(ttr.getTops()[iTop]->p());
-                //if(genMatches.second.first[iTop] == 3) 
-                //if(genMatches.first[iTop])
-                const auto* genMatch = ttr.getTops()[iTop]->getBestGenTopMatch(0.6);
-                if(genMatch)
-                {
-                    vTopsMatchNew->emplace_back(ttr.getTops()[iTop]->p());
-                    vTopsGenMatchNew->emplace_back(*genMatch);
-                }
-            }
+            //std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatches;
+            //if(tr.checkBranch("genDecayLVec"))
+            //{
+            //    const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+            //    const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+            //    const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
+            //    const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
+            //
+            //    genMatches = topMatcher_.TopConst(ttr.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+            //}
+            //
+            //std::vector<TLorentzVector> *vTopsNew = new std::vector<TLorentzVector>();
+            //std::vector<TLorentzVector> *vTopsMatchNew = new std::vector<TLorentzVector>();
+            //std::vector<TLorentzVector> *vTopsGenMatchNew = new std::vector<TLorentzVector>();
+            //
+            //
+            //for(int iTop = 0; iTop < ttr.getTops().size(); ++iTop)
+            //{
+            //    vTopsNew->emplace_back(ttr.getTops()[iTop]->p());
+            //    //if(genMatches.second.first[iTop] == 3) 
+            //    //if(genMatches.first[iTop])
+            //    const auto* genMatch = ttr.getTops()[iTop]->getBestGenTopMatch(0.6);
+            //    if(genMatch)
+            //    {
+            //        vTopsMatchNew->emplace_back(ttr.getTops()[iTop]->p());
+            //        vTopsGenMatchNew->emplace_back(*genMatch);
+            //    }
+            //}
 
             //retrieve results
-            std::vector<const TopObject*> *dijetTopMatch    = new std::vector<const TopObject*>();
-            std::vector<const TopObject*> *dijetTopNoMatch  = new std::vector<const TopObject*>();
-            std::vector<const TopObject*> *dijetTopFinal    = new std::vector<const TopObject*>();
-            std::vector<const TopObject*> *dijetTopNotFinal = new std::vector<const TopObject*>();
-            
-            std::vector<double> *dijetM2M3Match = new std::vector<double>();
-            std::vector<double> *dijetM2M3NoMatch = new std::vector<double>();
-            std::vector<double> *dijetM2M3FinalTop = new std::vector<double>();
-            std::vector<double> *dijetM2M3NotFinalTop = new std::vector<double>();
-
-            auto massRatioCalc = [](const TopObject& top)
-            {
-                const std::vector<Constituent const *>& jets = top.getConstituents();
-
-                double m23  = (jets[0]->getType() == AK8JET)?(jets[0]->getSoftDropMass() * jets[0]->getWMassCorr()):(jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
-                double m123 = top.p().M();
-                if(jets[0]->getType() == AK8JET)
-                {
-                    TLorentzVector psudoVec;
-                    psudoVec.SetPtEtaPhiM(jets[0]->p().Pt(), jets[0]->p().Eta(), jets[0]->p().Phi(), jets[0]->getSoftDropMass() * jets[0]->getWMassCorr());
-                    m123 = (psudoVec + jets[1]->p()).M();
-                }
-                else if(jets[1]->getType() == AK8JET)
-                {
-                    TLorentzVector psudoVec;
-                    psudoVec.SetPtEtaPhiM(jets[1]->p().Pt(), jets[1]->p().Eta(), jets[1]->p().Phi(), jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
-                    m123 = (psudoVec + jets[0]->p()).M();
-                }
-
-                return m23/m123;
-            };
-            const double mWmTopRatop = 0.463314121;
-
-            const TopTaggerResults& ttrDijet = ttMVADiJetOnly->getResults();
-            for(int iTop = 0; iTop < ttrDijet.getTopCandidates().size(); ++iTop)
-            {
-                auto& top = ttrDijet.getTopCandidates()[iTop];
-
-                double m23m123Ratio = massRatioCalc(top);
-
-                dijetTopNotFinal->push_back(&top);
-                dijetM2M3NotFinalTop->push_back(m23m123Ratio/mWmTopRatop);
-
-                auto possibleGenMatches = top.getGenTopMatches();
-                const TLorentzVector* bestGenMatch = top.getBestGenTopMatch(0.6);
-                if(possibleGenMatches[bestGenMatch].size() >= 3)
-                {
-                    dijetTopMatch->push_back(&top);
-                    dijetM2M3Match->push_back(m23m123Ratio/mWmTopRatop);
-                }
-                else
-                {
-                    dijetTopNoMatch->push_back(&top);
-                    dijetM2M3NoMatch->push_back(m23m123Ratio/mWmTopRatop);
-                }
-            }
-
-            for(int iTop = 0; iTop < ttrDijet.getTops().size(); ++iTop)
-            {
-                auto& top = *ttrDijet.getTops()[iTop];
-
-                double m23m123Ratio = massRatioCalc(top);
-
-                dijetTopFinal->push_back(&top);
-                dijetM2M3FinalTop->push_back(m23m123Ratio/mWmTopRatop);
-            }
+            //std::vector<const TopObject*> *dijetTopMatch    = new std::vector<const TopObject*>();
+            //std::vector<const TopObject*> *dijetTopNoMatch  = new std::vector<const TopObject*>();
+            //std::vector<const TopObject*> *dijetTopFinal    = new std::vector<const TopObject*>();
+            //std::vector<const TopObject*> *dijetTopNotFinal = new std::vector<const TopObject*>();
+            //
+            //std::vector<double> *dijetM2M3Match = new std::vector<double>();
+            //std::vector<double> *dijetM2M3NoMatch = new std::vector<double>();
+            //std::vector<double> *dijetM2M3FinalTop = new std::vector<double>();
+            //std::vector<double> *dijetM2M3NotFinalTop = new std::vector<double>();
+            //
+            //auto massRatioCalc = [](const TopObject& top)
+            //{
+            //    const std::vector<Constituent const *>& jets = top.getConstituents();
+            //
+            //    double m23  = (jets[0]->getType() == AK8JET)?(jets[0]->getSoftDropMass() * jets[0]->getWMassCorr()):(jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
+            //    double m123 = top.p().M();
+            //    if(jets[0]->getType() == AK8JET)
+            //    {
+            //        TLorentzVector psudoVec;
+            //        psudoVec.SetPtEtaPhiM(jets[0]->p().Pt(), jets[0]->p().Eta(), jets[0]->p().Phi(), jets[0]->getSoftDropMass() * jets[0]->getWMassCorr());
+            //        m123 = (psudoVec + jets[1]->p()).M();
+            //    }
+            //    else if(jets[1]->getType() == AK8JET)
+            //    {
+            //        TLorentzVector psudoVec;
+            //        psudoVec.SetPtEtaPhiM(jets[1]->p().Pt(), jets[1]->p().Eta(), jets[1]->p().Phi(), jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
+            //        m123 = (psudoVec + jets[0]->p()).M();
+            //    }
+            //
+            //    return m23/m123;
+            //};
+            //const double mWmTopRatop = 0.463314121;
+            //
+            //const TopTaggerResults& ttrDijet = ttMVADiJetOnly->getResults();
+            //for(int iTop = 0; iTop < ttrDijet.getTopCandidates().size(); ++iTop)
+            //{
+            //    auto& top = ttrDijet.getTopCandidates()[iTop];
+            //
+            //    double m23m123Ratio = massRatioCalc(top);
+            //
+            //    dijetTopNotFinal->push_back(&top);
+            //    dijetM2M3NotFinalTop->push_back(m23m123Ratio/mWmTopRatop);
+            //
+            //    auto possibleGenMatches = top.getGenTopMatches();
+            //    const TLorentzVector* bestGenMatch = top.getBestGenTopMatch(0.6);
+            //    if(possibleGenMatches[bestGenMatch].size() >= 3)
+            //    {
+            //        dijetTopMatch->push_back(&top);
+            //        dijetM2M3Match->push_back(m23m123Ratio/mWmTopRatop);
+            //    }
+            //    else
+            //    {
+            //        dijetTopNoMatch->push_back(&top);
+            //        dijetM2M3NoMatch->push_back(m23m123Ratio/mWmTopRatop);
+            //    }
+            //}
+            //
+            //for(int iTop = 0; iTop < ttrDijet.getTops().size(); ++iTop)
+            //{
+            //    auto& top = *ttrDijet.getTops()[iTop];
+            //
+            //    double m23m123Ratio = massRatioCalc(top);
+            //
+            //    dijetTopFinal->push_back(&top);
+            //    dijetM2M3FinalTop->push_back(m23m123Ratio/mWmTopRatop);
+            //}
 
             const TopTaggerResults& ttrMVA = ttMVA->getResults();
 
@@ -2001,58 +1965,58 @@ namespace plotterFunctions
                 mvaVarsTrain_notFinalTop[var] = new std::vector<double>();
             }
 
-            const TopTaggerResults& ttrTrijet = ttMVATriJetOnly->getResults();
-            for(int iTop = 0; iTop < ttrTrijet.getTopCandidates().size(); ++iTop)
-            {
-                auto& top = ttrTrijet.getTopCandidates()[iTop];
-                
-                auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
-
-                for(const auto mvaInputVar : MVAinputs)
-                {
-                    //reconstructed background
-                    if(top.getDiscriminator() < 0.85)
-                    {
-                        if(mvaVarsTrain_notFinalTop.find(mvaInputVar.first) != mvaVarsTrain_notFinalTop.end())
-                        {
-                            mvaVarsTrain_notFinalTop[mvaInputVar.first]->push_back(mvaInputVar.second);
-                        }
-                    }
-
-                    //gen matched tops
-                    auto possibleGenMatches = top.getGenTopMatches();
-                    const TLorentzVector* bestGenMatch = top.getBestGenTopMatch(0.6);
-                    if(possibleGenMatches[bestGenMatch].size() >= 3)
-                    {
-                        if(mvaVarsTrain_genMatch.find(mvaInputVar.first) != mvaVarsTrain_genMatch.end())
-                        {
-                            mvaVarsTrain_genMatch[mvaInputVar.first]->push_back(mvaInputVar.second);
-                        }
-                    }
-                    else
-                    {
-                        if(mvaVarsTrain_notGenMatch.find(mvaInputVar.first) != mvaVarsTrain_notGenMatch.end())
-                        {
-                            mvaVarsTrain_notGenMatch[mvaInputVar.first]->push_back(mvaInputVar.second);
-                        }
-                    }
-                }                
-            }
-
-            for(int iTop = 0; iTop < ttrTrijet.getTops().size(); ++iTop)
-            {
-                auto& top = *ttrTrijet.getTops()[iTop];
-
-                auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
-
-                for(const auto mvaInputVar : MVAinputs)
-                {
-                    if(mvaVarsTrain_finalTop.find(mvaInputVar.first) != mvaVarsTrain_finalTop.end())
-                    {
-                        mvaVarsTrain_finalTop[mvaInputVar.first]->push_back(mvaInputVar.second);
-                    }
-                }
-            }
+            //const TopTaggerResults& ttrTrijet = ttMVATriJetOnly->getResults();
+            //for(int iTop = 0; iTop < ttrTrijet.getTopCandidates().size(); ++iTop)
+            //{
+            //    auto& top = ttrTrijet.getTopCandidates()[iTop];
+            //    
+            //    auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
+            //
+            //    for(const auto mvaInputVar : MVAinputs)
+            //    {
+            //        //reconstructed background
+            //        if(top.getDiscriminator() < 0.85)
+            //        {
+            //            if(mvaVarsTrain_notFinalTop.find(mvaInputVar.first) != mvaVarsTrain_notFinalTop.end())
+            //            {
+            //                mvaVarsTrain_notFinalTop[mvaInputVar.first]->push_back(mvaInputVar.second);
+            //            }
+            //        }
+            //
+            //        //gen matched tops
+            //        auto possibleGenMatches = top.getGenTopMatches();
+            //        const TLorentzVector* bestGenMatch = top.getBestGenTopMatch(0.6);
+            //        if(possibleGenMatches[bestGenMatch].size() >= 3)
+            //        {
+            //            if(mvaVarsTrain_genMatch.find(mvaInputVar.first) != mvaVarsTrain_genMatch.end())
+            //            {
+            //                mvaVarsTrain_genMatch[mvaInputVar.first]->push_back(mvaInputVar.second);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            if(mvaVarsTrain_notGenMatch.find(mvaInputVar.first) != mvaVarsTrain_notGenMatch.end())
+            //            {
+            //                mvaVarsTrain_notGenMatch[mvaInputVar.first]->push_back(mvaInputVar.second);
+            //            }
+            //        }
+            //    }                
+            //}
+            //
+            //for(int iTop = 0; iTop < ttrTrijet.getTops().size(); ++iTop)
+            //{
+            //    auto& top = *ttrTrijet.getTops()[iTop];
+            //
+            //    auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
+            //
+            //    for(const auto mvaInputVar : MVAinputs)
+            //    {
+            //        if(mvaVarsTrain_finalTop.find(mvaInputVar.first) != mvaVarsTrain_finalTop.end())
+            //        {
+            //            mvaVarsTrain_finalTop[mvaInputVar.first]->push_back(mvaInputVar.second);
+            //        }
+            //    }
+            //}
 
             double bestTopMass = -9999.9;
             const TopObject* bestTopMassLV = nullptr;
@@ -2062,8 +2026,6 @@ namespace plotterFunctions
             {
                 auto& top = topMVACands[iTop];
                 
-                auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
-
                 if(fabs(top.p().M() - 173.5) < fabs(bestTopMass - 173.5))
                 {
                     bestTopMass = top.p().M();
@@ -2167,15 +2129,15 @@ namespace plotterFunctions
             //std::cout << genWeight << std::endl;
 	    tr.registerDerivedVar("genWeight", genWeight);
 
-            tr.registerDerivedVec("dijetTopMatch", dijetTopMatch);
-            tr.registerDerivedVec("dijetTopNoMatch", dijetTopNoMatch);
-            tr.registerDerivedVec("dijetTopFinal", dijetTopFinal);
-            tr.registerDerivedVec("dijetTopNotFinal", dijetTopNotFinal);
-
-            tr.registerDerivedVec("dijetM2M3Match", dijetM2M3Match);
-            tr.registerDerivedVec("dijetM2M3NoMatch", dijetM2M3NoMatch);
-            tr.registerDerivedVec("dijetM2M3FinalTop", dijetM2M3FinalTop);
-            tr.registerDerivedVec("dijetM2M3NotFinalTop", dijetM2M3NotFinalTop);
+            //tr.registerDerivedVec("dijetTopMatch", dijetTopMatch);
+            //tr.registerDerivedVec("dijetTopNoMatch", dijetTopNoMatch);
+            //tr.registerDerivedVec("dijetTopFinal", dijetTopFinal);
+            //tr.registerDerivedVec("dijetTopNotFinal", dijetTopNotFinal);
+            //
+            //tr.registerDerivedVec("dijetM2M3Match", dijetM2M3Match);
+            //tr.registerDerivedVec("dijetM2M3NoMatch", dijetM2M3NoMatch);
+            //tr.registerDerivedVec("dijetM2M3FinalTop", dijetM2M3FinalTop);
+            //tr.registerDerivedVec("dijetM2M3NotFinalTop", dijetM2M3NotFinalTop);
 
             //get one mu of 20 GeV pt
             tr.registerDerivedVar("passSingleLep50", nMuons_50GeV == 1);
@@ -2188,26 +2150,26 @@ namespace plotterFunctions
 
             tr.registerDerivedVar("nBNotInTop", nBNotInTop);
 
-            tr.registerDerivedVar("nTopsNew", int(ttr.getTops().size()));
+            //tr.registerDerivedVar("nTopsNew", int(ttr.getTops().size()));
             tr.registerDerivedVar("nTopsNewMVA", int(ttrMVA.getTops().size()));
 
             tr.registerDerivedVar("cntCSVS", cntCSVS);
 
-            tr.registerDerivedVec("vTops", vTops);
+            //tr.registerDerivedVec("vTops", vTops);
 
-            tr.registerDerivedVec("vTopsNew", vTopsNew);
+            //tr.registerDerivedVec("vTopsNew", vTopsNew);
             tr.registerDerivedVec("vTopsNewMVA", vTopsNewMVA);
-            tr.registerDerivedVec("vTopsMatchNew", vTopsMatchNew);
+            //tr.registerDerivedVec("vTopsMatchNew", vTopsMatchNew);
             tr.registerDerivedVec("vTopsMatchNewMVA", vTopsMatchNewMVA);
-            tr.registerDerivedVec("vTopsGenMatchNew", vTopsGenMatchNew);
+            //tr.registerDerivedVec("vTopsGenMatchNew", vTopsGenMatchNew);
             tr.registerDerivedVec("vTopsGenMatchNewMVA", vTopsGenMatchNewMVA);
             tr.registerDerivedVec("vTopsGenMatchMonoNewMVA", vTopsGenMatchMonoNewMVA);
             tr.registerDerivedVec("vTopsGenMatchDiNewMVA", vTopsGenMatchDiNewMVA);
             tr.registerDerivedVec("vTopsGenMatchTriNewMVA", vTopsGenMatchTriNewMVA);
             tr.registerDerivedVec("vTopsNCandNewMVA", vTopsNCandNewMVA);
-            tr.registerDerivedVec("vTopsAllComb", vTopsAllComb);
-            tr.registerDerivedVec("vTopsMatchAllComb", vTopsMatchAllComb);
-            tr.registerDerivedVec("vTopsGenMatchAllComb", vTopsGenMatchAllComb);
+            //tr.registerDerivedVec("vTopsAllComb", vTopsAllComb);
+            //tr.registerDerivedVec("vTopsMatchAllComb", vTopsMatchAllComb);
+            //tr.registerDerivedVec("vTopsGenMatchAllComb", vTopsGenMatchAllComb);
 
             tr.registerDerivedVec("topMonojetMVA", topMonojetMVA);
 
@@ -2236,20 +2198,9 @@ namespace plotterFunctions
 
 
     public:
-        PrepareTopVars() : tt(new TopTagger()), ttMVA(new TopTagger()), ttAllComb(new TopTagger()), ttMVATriJetOnly(new TopTagger()), ttMVADiJetOnly(new TopTagger()), WMassCorFile(nullptr), puppisd_corrGEN(nullptr), puppisd_corrRECO_cen(nullptr), puppisd_corrRECO_for(nullptr), distribution(1,65000)
+        PrepareTopVars() : ttMVA(new TopTagger()), WMassCorFile(nullptr), puppisd_corrGEN(nullptr), puppisd_corrRECO_cen(nullptr), puppisd_corrRECO_for(nullptr), distribution(1,65000)
 	{
-            //t3tagger.setnJetsSel(1);
-            //t3tagger.setCSVS(AnaConsts::cutCSVS);
-
-            tt->setCfgFile("Legacy_TopTagger.cfg");
-
             ttMVA->setCfgFile("TopTagger.cfg");
-
-            ttAllComb->setCfgFile("TopTagger_AllComb.cfg");
-
-            ttMVATriJetOnly->setCfgFile("TopTaggerCfg_trijetOnly.cfg");
-
-            ttMVADiJetOnly->setCfgFile("TopTaggerCfg-MVAAK8_Tight_v1.2.1_dijetOnly.cfg");
 
             indexMuTrigger = indexElecTrigger = indexHTMHTTrigger = indexMuHTTrigger = -1;
 
