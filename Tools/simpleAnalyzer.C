@@ -1,5 +1,6 @@
 #include "../../SusyAnaTools/Tools/NTupleReader.h"
 #include "../../SusyAnaTools/Tools/samples.h"
+#include "../../SusyAnaTools/Tools/SATException.h"
 #include "derivedTupleVariables.h"
 #include "baselineDef.h"
 #include "BTagCorrector.h"
@@ -38,6 +39,75 @@ double SF_13TeV(double top_pt){
     return exp(0.0615-0.0005*top_pt);
 
 }
+
+bool filterEvents(NTupleReader& tr)
+{
+    const std::vector<TLorentzVector>& jetsLVec = tr.getVec<TLorentzVector>("jetsLVec");
+    const double& met = tr.getVar<double>("met");
+
+    return jetsLVec.size() >= 4 && met > 250;
+}
+
+class HistoContainer
+{
+private:
+    std::vector<TH1*> histos;
+
+    TH1* bookHisto(const std::string& name, int nBins, double min, double max)
+    {
+        TH1* hptr = new TH1D(name.c_str(), name.c_str(),nBins, min, max);
+        histos.push_back(hptr);
+        return hptr;
+    }
+
+public:
+    TH1* hMET;
+    TH1* hNJets;
+    TH1* hNVertices;
+    TH1* hTopMass;
+    TH1* hTopP;
+    TH1* hTopPt;
+    TH1* hDiTopMass;
+    TH1 *bestTopCandPt, *bestTopCandMass, *bestTopCandEta;
+    TH1 *bestTopPt, *bestTopMass, *bestTopEta;
+
+    HistoContainer()
+    {
+        hMET       = bookHisto("MET",100,0, 1000);
+        hNJets     = bookHisto("nJets",21,-0.5, 20.5);
+        hNVertices = bookHisto("nVertices",61,-0.5, 60.5);
+        hTopMass   = bookHisto("TopMass", 100, 0, 300);
+        hTopP      = bookHisto("TopP", 100 , 0, 1000);
+        hTopPt     = bookHisto("TopPt", 100, 0, 1000);
+        hDiTopMass = bookHisto("DiTopMass", 100, 0, 1500);
+
+        bestTopPt   = bookHisto("bestTopPt",   100,  0, 1000);
+        bestTopMass = bookHisto("bestTopMass", 100,  0, 500);
+        bestTopEta  = bookHisto("bestTopEta",  100, -5, 5);
+        bestTopCandPt   = bookHisto("bestTopCandPt",   100,  0, 1000);
+        bestTopCandMass = bookHisto("bestTopCandMass", 100,  0, 500);
+        bestTopCandEta  = bookHisto("bestTopCandEta",  100, -5, 5);
+    }
+
+    void save(const std::string& filename)
+    {
+        TFile *f;
+
+        f = new TFile(filename.c_str(),"RECREATE");
+        if(f->IsZombie()){
+            std::cout << "Cannot create " << filename << std::endl;
+            throw "File is zombie";
+        }
+
+        f->cd();
+
+        for(TH1* hist : histos) hist->Write();
+
+        f->Write();
+
+        f->Close();
+    }
+};
 
 int main(int argc, char* argv[])
 {
@@ -127,28 +197,6 @@ int main(int argc, char* argv[])
         std::cout << "Histogram file will not be saved." << std::endl;
     }
 
-    TFile *f;
-
-    if(savefile){
-        f = new TFile(filename.c_str(),"NEW");
-        if(f->IsZombie()){
-            std::cout << "Cannot create " << filename << std::endl;
-            return 0;
-        }
-
-        f->cd();
-    }
-
-    TH1* hMET = new TH1D("MET","MET",100,0, 1000);
-    TH1* hNJets = new TH1D("nJets","nJets",21,-0.5, 20.5);
-    TH1* hNVertices = new TH1D("nVertices","nVertices",61,-0.5, 60.5);
-    TH1* hTopMass = new TH1D("TopMass","TopMass", 100, 0, 300);
-    TH1* hTopP = new TH1D("TopP","TopP", 100 , 0, 1000);
-    TH1* hTopPt = new TH1D("TopPt","TopPt", 100, 0, 1000);
-    TH1* hDiTopMass = new TH1D("DiTopMass","DiTopMass", 100, 0, 1500);
-
-
-
     std::cout << "Sample location: " << sampleloc << std::endl;
 
     AnaSamples::SampleSet        ss(sampleloc, AnaSamples::luminosity);
@@ -168,6 +216,7 @@ int main(int argc, char* argv[])
 
     int events = 0, pevents = 0;
 
+    HistoContainer hists;
 
     try
     {
@@ -191,6 +240,7 @@ int main(int argc, char* argv[])
             Pileup_Sys pileup("PileupHistograms_0121_69p2mb_pm4p6.root");
 
             NTupleReader tr(t);
+            tr.registerFunction(filterEvents);
             tr.registerFunction(myBLV);
             tr.registerFunction(prepareTopVars);
             tr.registerFunction(triggerInfo);
@@ -209,8 +259,8 @@ int main(int argc, char* argv[])
 //                tr.printTupleMembers();
 //                return 0;
 
-                if(nEvts > 0 && events > nEvts) break;
-                if(events % 100 == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
+                if(nEvts > 0 && tr.getEvtNum() > nEvts) break;
+                if(tr.getEvtNum() % 100 == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
 
                 const double& met    = tr.getVar<double>("met");
 
@@ -222,7 +272,7 @@ int main(int argc, char* argv[])
                 const double& ht                   = tr.getVar<double>("HTTopTag");
                 const int&    vtxSize              = tr.getVar<int>("vtxSize");
 
-                double eWeight = 1;
+                double eWeight = fileWgt;
 
                 if(doWgt){
                     const double& puWF               = tr.getVar<double>("_PUweightFactor");
@@ -233,8 +283,8 @@ int main(int argc, char* argv[])
                     }
                     const double& triggerWF          = tr.getVar<double>("TriggerEffMC");
 
-                    const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");          
-                    const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+                    //const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");          
+                    //const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
 
                     eWeight *= puWF * bTagWF * triggerWF;
 
@@ -260,22 +310,40 @@ int main(int argc, char* argv[])
                     pevents++;
                     //std::cout << "Trigger weight: " << triggerWF << std::endl;
 
-                    hMET->Fill(met, eWeight);
-                    hNJets->Fill(cntNJetsPt30Eta24, eWeight);
-                    hNVertices->Fill(vtxSize,eWeight);
+                    hists.hMET->Fill(met, eWeight);
+                    hists.hNJets->Fill(cntNJetsPt30Eta24, eWeight);
+                    hists.hNVertices->Fill(vtxSize,eWeight);
 
+                    //SF plots
+                    if(tr.getVar<double>("bestTopMass") > 0.0)
+                    {
+                        const TLorentzVector& bestCandLV = tr.getVar<TLorentzVector>("bestTopMassLV");
+                        hists.bestTopPt->Fill(bestCandLV.Pt(), eWeight);
+                        hists.bestTopMass->Fill(bestCandLV.M(), eWeight);
+                        hists.bestTopEta->Fill(bestCandLV.Eta(), eWeight);
+                        
+                        if(tr.getVar<bool>("bestTopMassTopTag"))
+                        {
+                            hists.bestTopCandPt->Fill(bestCandLV.Pt(), eWeight);
+                            hists.bestTopCandMass->Fill(bestCandLV.M(), eWeight);
+                            hists.bestTopCandEta->Fill(bestCandLV.Eta(), eWeight);
+                        }
+                    }
 
-                    if(vTops.size() > 0){
+                    if(vTops.size() > 0)
+                    {
 
-                        for(int tidx = 0; tidx < vTops.size(); tidx++){
-                            hTopMass->Fill(vTops[tidx].M(),eWeight);
-                            hTopP->Fill(vTops[tidx].Rho(),eWeight);
-                            hTopPt->Fill(vTops[tidx].Perp(),eWeight);
+                        for(int tidx = 0; tidx < vTops.size(); tidx++)
+                        {
+                            hists.hTopMass->Fill(vTops[tidx].M(),eWeight);
+                            hists.hTopP->Fill(vTops[tidx].Rho(),eWeight);
+                            hists.hTopPt->Fill(vTops[tidx].Perp(),eWeight);
                         }
 
-                        if(vTops.size() == 2){
+                        if(vTops.size() == 2)
+                        {
                             TLorentzVector diTop = vTops[0] + vTops[1];
-                            hDiTopMass->Fill(diTop.M(),eWeight);
+                            hists.hDiTopMass->Fill(diTop.M(),eWeight);
                         }
                     }
                     //std::cout << "MET: " << met << ", puWF: " << puWF << ", bTagWF: " << bTagWF << ", ttbarWF: " << ttbarWF << std::endl;
@@ -288,25 +356,22 @@ int main(int argc, char* argv[])
         std::cout << e << std::endl;
         return 0;
     }
+    catch(const TTException e)
+    {
+        std::cout << e << std::endl;
+        return 0;
+    }
+    catch(const SATException e)
+    {
+        std::cout << e << std::endl;
+        return 0;
+    }
 
     std::cout << "Processed " << events << " events. " << pevents << " passed selection." << std::endl;
 
-    if(savefile){
+    if(savefile)
+    {
         std::cout << "Saving root file..." << std::endl;
-
-        f->cd();
-
-        hMET->Write();
-        hNJets->Write();
-        hNVertices->Write();
- 
-        hTopMass->Write();
-        hTopP->Write();
-        hTopPt->Write();
-        hDiTopMass->Write();
-
-        f->Write();
-
-        f->Close();
+        hists.save(filename);
     }
 }
