@@ -2019,6 +2019,7 @@ namespace plotterFunctions
             //}
 
             double bestTopMass = -9999.9;
+            double bestTopMVA = -1.;
             const TopObject* bestTopMassLV = nullptr;
             bool bestTopMassGenMatch = false;
             bool bestTopMassTopTag = false;
@@ -2030,6 +2031,7 @@ namespace plotterFunctions
                 {
                     bestTopMass = top.p().M();
                     bestTopMassLV = &top;
+                    bestTopMVA = top.getDiscriminator();
 
                     if(top.getBestGenTopMatch(0.6) != nullptr) bestTopMassGenMatch = true;
                     for(const auto& topPtr : ttrMVA.getTops()) 
@@ -2181,6 +2183,7 @@ namespace plotterFunctions
    
 
             tr.registerDerivedVar("bestTopMass", bestTopMass);
+            tr.registerDerivedVar("bestTopMVA", bestTopMVA);
             tr.registerDerivedVar("bestTopMassLV", bestTopMassLV?(bestTopMassLV->p()):(TLorentzVector()));
             tr.registerDerivedVar("bestTopMassGenMatch", bestTopMassGenMatch);
             tr.registerDerivedVar("bestTopMassTopTag", bestTopMassTopTag);

@@ -68,8 +68,10 @@ public:
     TH1* hTopP;
     TH1* hTopPt;
     TH1* hDiTopMass;
-    TH1 *bestTopCandPt, *bestTopCandMass, *bestTopCandEta;
-    TH1 *bestTopPt, *bestTopMass, *bestTopEta;
+    TH1 *bestTopCandPt, *bestTopCandMass, *bestTopCandEta, *bestTopCandnJets, *bestTopCandnVert, *bestTopCandMVA;
+    TH1 *bestTopPt, *bestTopMass, *bestTopEta, *bestTopnJets, *bestTopnVert, *bestTopMVA;
+    TH1 *bestTightTopCandPt, *bestTightTopCandMass, *bestTightTopCandEta, *bestTightTopCandnJets, *bestTightTopCandnVert, *bestTightTopCandMVA;
+    TH1 *bestTightTopPt, *bestTightTopMass, *bestTightTopEta, *bestTightTopnJets, *bestTightTopnVert, *bestTightTopMVA;
 
     HistoContainer()
     {
@@ -81,12 +83,32 @@ public:
         hTopPt     = bookHisto("TopPt", 100, 0, 1000);
         hDiTopMass = bookHisto("DiTopMass", 100, 0, 1500);
 
-        bestTopPt   = bookHisto("bestTopPt",   100,  0, 1000);
-        bestTopMass = bookHisto("bestTopMass", 100,  0, 500);
-        bestTopEta  = bookHisto("bestTopEta",  100, -5, 5);
+        bestTopPt    = bookHisto("bestTopPt",   100,  0, 1000);
+        bestTopMass  = bookHisto("bestTopMass", 100,  0, 500);
+        bestTopEta   = bookHisto("bestTopEta",  100, -5, 5);
+        bestTopnJets = bookHisto("bestTopnJets",21,-0.5, 20.5);
+        bestTopnVert = bookHisto("bestTopnVert",61,-0.5, 60.5);
+        bestTopMVA   = bookHisto("bestTopMVA",100,0.,1.);
         bestTopCandPt   = bookHisto("bestTopCandPt",   100,  0, 1000);
         bestTopCandMass = bookHisto("bestTopCandMass", 100,  0, 500);
         bestTopCandEta  = bookHisto("bestTopCandEta",  100, -5, 5);
+        bestTopCandnJets = bookHisto("bestTopCandnJets",21,-0.5, 20.5);
+        bestTopCandnVert = bookHisto("bestTopCandnVert",61,-0.5, 60.5);
+        bestTopCandMVA   = bookHisto("bestTopCandMVA",100,0.,1.);
+   
+        bestTightTopPt    = bookHisto("bestTightTopPt",   100,  0, 1000);
+        bestTightTopMass  = bookHisto("bestTightTopMass", 100,  0, 500);
+        bestTightTopEta   = bookHisto("bestTightTopEta",  100, -5, 5);
+        bestTightTopnJets = bookHisto("bestTightTopnJets",21,-0.5, 20.5);
+        bestTightTopnVert = bookHisto("bestTightTopnVert",61,-0.5, 60.5);
+        bestTightTopMVA   = bookHisto("bestTightTopMVA",100,0.,1.);
+        bestTightTopCandPt   = bookHisto("bestTightTopCandPt",   100,  0, 1000);
+        bestTightTopCandMass = bookHisto("bestTightTopCandMass", 100,  0, 500);
+        bestTightTopCandEta  = bookHisto("bestTightTopCandEta",  100, -5, 5);
+        bestTightTopCandnJets = bookHisto("bestTightTopCandnJets",21,-0.5, 20.5);
+        bestTightTopCandnVert = bookHisto("bestTightTopCandnVert",61,-0.5, 60.5);
+        bestTightTopCandMVA   = bookHisto("bestTightTopCandMVA",100,0.,1.);
+   
     }
 
     void save(const std::string& filename)
@@ -317,16 +339,46 @@ int main(int argc, char* argv[])
                     //SF plots
                     if(tr.getVar<double>("bestTopMass") > 0.0)
                     {
+                        bool tight = fabs(tr.getVar<double>("bestTopMass") - 173.5) < 25;
+                        const double& bestTopMVA = tr.getVar<double>("bestTopMVA");
+
                         const TLorentzVector& bestCandLV = tr.getVar<TLorentzVector>("bestTopMassLV");
                         hists.bestTopPt->Fill(bestCandLV.Pt(), eWeight);
                         hists.bestTopMass->Fill(bestCandLV.M(), eWeight);
                         hists.bestTopEta->Fill(bestCandLV.Eta(), eWeight);
+                        hists.bestTopnVert->Fill(vtxSize,eWeight);
+                        hists.bestTopnJets->Fill(cntNJetsPt30Eta24, eWeight);
+                        hists.bestTopMVA->Fill(bestTopMVA,eWeight);
                         
+
+                        if(tight){
+                            hists.bestTightTopPt->Fill(bestCandLV.Pt(), eWeight);
+                            hists.bestTightTopMass->Fill(bestCandLV.M(), eWeight);
+                            hists.bestTightTopEta->Fill(bestCandLV.Eta(), eWeight);
+                            hists.bestTightTopnVert->Fill(vtxSize,eWeight);
+                            hists.bestTightTopnJets->Fill(cntNJetsPt30Eta24, eWeight);
+                            hists.bestTightTopMVA->Fill(bestTopMVA,eWeight);
+                        }
+ 
+
                         if(tr.getVar<bool>("bestTopMassTopTag"))
                         {
                             hists.bestTopCandPt->Fill(bestCandLV.Pt(), eWeight);
                             hists.bestTopCandMass->Fill(bestCandLV.M(), eWeight);
                             hists.bestTopCandEta->Fill(bestCandLV.Eta(), eWeight);
+                            hists.bestTopCandnVert->Fill(vtxSize,eWeight);
+                            hists.bestTopCandnJets->Fill(cntNJetsPt30Eta24, eWeight);
+                            hists.bestTopCandMVA->Fill(bestTopMVA,eWeight);
+
+                            if(tight){
+                                hists.bestTightTopCandPt->Fill(bestCandLV.Pt(), eWeight);
+                                hists.bestTightTopCandMass->Fill(bestCandLV.M(), eWeight);
+                                hists.bestTightTopCandEta->Fill(bestCandLV.Eta(), eWeight);
+                                hists.bestTightTopCandnVert->Fill(vtxSize,eWeight);
+                                hists.bestTightTopCandnJets->Fill(cntNJetsPt30Eta24, eWeight);
+                                hists.bestTightTopCandMVA->Fill(bestTopMVA,eWeight);
+
+                            }
                         }
                     }
 
