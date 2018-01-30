@@ -1931,6 +1931,7 @@ namespace plotterFunctions
 
             std::vector<TLorentzVector> *vTopsNewMVA = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsMatchNewMVA = new std::vector<TLorentzVector>();
+            std::vector<bool> *vTopsMatchNewMVABool = new std::vector<bool>();
             std::vector<TLorentzVector> *vTopsGenMatchNewMVA = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsGenMatchMonoNewMVA = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *vTopsGenMatchDiNewMVA = new std::vector<TLorentzVector>();
@@ -2019,27 +2020,29 @@ namespace plotterFunctions
             //}
 
             double bestTopMass = -9999.9;
+            double bestTopEta = -9999.9;
             const TopObject* bestTopMassLV = nullptr;
             bool bestTopMassGenMatch = false;
             bool bestTopMassTopTag = false;
             for(int iTop = 0; iTop < topMVACands.size(); ++iTop)
             {
                 auto& top = topMVACands[iTop];
-                
-                if(fabs(top.p().M() - 173.5) < fabs(bestTopMass - 173.5))
+
+                if(fabs(top.p().M() - 173.5) < fabs(bestTopMass - 173.5) && top.getNConstituents() == 3)
                 {
                     bestTopMass = top.p().M();
+                    bestTopEta = top.p().Eta();
                     bestTopMassLV = &top;
+                }
+            }
 
-                    if(top.getBestGenTopMatch(0.6) != nullptr) bestTopMassGenMatch = true;
-                    for(const auto& topPtr : ttrMVA.getTops()) 
-                    {
-                        if(topPtr == bestTopMassLV) 
-                        {
-                            bestTopMassTopTag = true;
-                            break;
-                        }
-                    }
+            bestTopMassGenMatch = (bestTopMassLV)?(bestTopMassLV->getBestGenTopMatch(0.6) != nullptr):(false);
+            for(const auto& topPtr : ttrMVA.getTops()) 
+            {
+                if(topPtr == bestTopMassLV) 
+                {
+                    bestTopMassTopTag = true;
+                    break;
                 }
             }
 
@@ -2071,6 +2074,7 @@ namespace plotterFunctions
                 vTopsNewMVA->emplace_back(top.p());
                 discriminators->push_back(top.getDiscriminator());
                 const TLorentzVector* genMatch = top.getBestGenTopMatch(0.6);
+                vTopsMatchNewMVABool->push_back(genMatch != nullptr);
                 if(genMatch)
                 {
                     vTopsMatchNewMVA->emplace_back(top.p());
@@ -2129,6 +2133,8 @@ namespace plotterFunctions
             //std::cout << genWeight << std::endl;
 	    tr.registerDerivedVar("genWeight", genWeight);
 
+            tr.registerDerivedVar("ttrMVA", &ttrMVA);
+
             //tr.registerDerivedVec("dijetTopMatch", dijetTopMatch);
             //tr.registerDerivedVec("dijetTopNoMatch", dijetTopNoMatch);
             //tr.registerDerivedVec("dijetTopFinal", dijetTopFinal);
@@ -2161,6 +2167,7 @@ namespace plotterFunctions
             tr.registerDerivedVec("vTopsNewMVA", vTopsNewMVA);
             //tr.registerDerivedVec("vTopsMatchNew", vTopsMatchNew);
             tr.registerDerivedVec("vTopsMatchNewMVA", vTopsMatchNewMVA);
+            tr.registerDerivedVec("vTopsMatchNewMVABool", vTopsMatchNewMVABool);
             //tr.registerDerivedVec("vTopsGenMatchNew", vTopsGenMatchNew);
             tr.registerDerivedVec("vTopsGenMatchNewMVA", vTopsGenMatchNewMVA);
             tr.registerDerivedVec("vTopsGenMatchMonoNewMVA", vTopsGenMatchMonoNewMVA);
@@ -2181,6 +2188,7 @@ namespace plotterFunctions
    
 
             tr.registerDerivedVar("bestTopMass", bestTopMass);
+            tr.registerDerivedVar("bestTopEta", bestTopEta);
             tr.registerDerivedVar("bestTopMassLV", bestTopMassLV?(bestTopMassLV->p()):(TLorentzVector()));
             tr.registerDerivedVar("bestTopMassGenMatch", bestTopMassGenMatch);
             tr.registerDerivedVar("bestTopMassTopTag", bestTopMassTopTag);
