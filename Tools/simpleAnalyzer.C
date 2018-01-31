@@ -68,8 +68,12 @@ public:
     TH1* hTopP;
     TH1* hTopPt;
     TH1* hDiTopMass;
-    TH1 *bestTopCandPt, *bestTopCandMass, *bestTopCandEta;
-    TH1 *bestTopPt, *bestTopMass, *bestTopEta;
+    TH1* hLepMtw;
+    TH1* hDPhiLepCand;
+    TH1 *bestTopCandPt, *bestTopCandMass, *bestTopCandEta, *bestTopCandnJets, *bestTopCandnVert, *bestTopCandMVA;
+    TH1 *bestTopPt, *bestTopMass, *bestTopEta, *bestTopnJets, *bestTopnVert, *bestTopMVA;
+    TH1 *bestTightTopCandPt, *bestTightTopCandMass, *bestTightTopCandEta, *bestTightTopCandnJets, *bestTightTopCandnVert, *bestTightTopCandMVA;
+    TH1 *bestTightTopPt, *bestTightTopMass, *bestTightTopEta, *bestTightTopnJets, *bestTightTopnVert, *bestTightTopMVA;
 
     HistoContainer()
     {
@@ -81,12 +85,35 @@ public:
         hTopPt     = bookHisto("TopPt", 100, 0, 1000);
         hDiTopMass = bookHisto("DiTopMass", 100, 0, 1500);
 
-        bestTopPt   = bookHisto("bestTopPt",   100,  0, 1000);
-        bestTopMass = bookHisto("bestTopMass", 100,  0, 500);
-        bestTopEta  = bookHisto("bestTopEta",  100, -5, 5);
+        hLepMtw    = bookHisto("hlepMtW",100,0,200);
+        hDPhiLepCand = bookHisto("hDPhiLepCand",50,M_PI/2,M_PI);
+
+        bestTopPt    = bookHisto("bestTopPt",   100,  0, 1000);
+        bestTopMass  = bookHisto("bestTopMass", 100,  0, 500);
+        bestTopEta   = bookHisto("bestTopEta",  100, -5, 5);
+        bestTopnJets = bookHisto("bestTopnJets",21,-0.5, 20.5);
+        bestTopnVert = bookHisto("bestTopnVert",61,-0.5, 60.5);
+        bestTopMVA   = bookHisto("bestTopMVA",100,0.,1.);
         bestTopCandPt   = bookHisto("bestTopCandPt",   100,  0, 1000);
         bestTopCandMass = bookHisto("bestTopCandMass", 100,  0, 500);
         bestTopCandEta  = bookHisto("bestTopCandEta",  100, -5, 5);
+        bestTopCandnJets = bookHisto("bestTopCandnJets",21,-0.5, 20.5);
+        bestTopCandnVert = bookHisto("bestTopCandnVert",61,-0.5, 60.5);
+        bestTopCandMVA   = bookHisto("bestTopCandMVA",100,0.,1.);
+   
+        bestTightTopPt    = bookHisto("bestTightTopPt",   100,  0, 1000);
+        bestTightTopMass  = bookHisto("bestTightTopMass", 100,  0, 500);
+        bestTightTopEta   = bookHisto("bestTightTopEta",  100, -5, 5);
+        bestTightTopnJets = bookHisto("bestTightTopnJets",21,-0.5, 20.5);
+        bestTightTopnVert = bookHisto("bestTightTopnVert",61,-0.5, 60.5);
+        bestTightTopMVA   = bookHisto("bestTightTopMVA",100,0.,1.);
+        bestTightTopCandPt   = bookHisto("bestTightTopCandPt",   100,  0, 1000);
+        bestTightTopCandMass = bookHisto("bestTightTopCandMass", 100,  0, 500);
+        bestTightTopCandEta  = bookHisto("bestTightTopCandEta",  100, -5, 5);
+        bestTightTopCandnJets = bookHisto("bestTightTopCandnJets",21,-0.5, 20.5);
+        bestTightTopCandnVert = bookHisto("bestTightTopCandnVert",61,-0.5, 60.5);
+        bestTightTopCandMVA   = bookHisto("bestTightTopCandMVA",100,0.,1.);
+   
     }
 
     void save(const std::string& filename)
@@ -232,6 +259,7 @@ int main(int argc, char* argv[])
             
             BaselineVessel myBLV(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
             plotterFunctions::PrepareTopVars prepareTopVars;
+            plotterFunctions::LepInfo lepInfo;
             plotterFunctions::TriggerInfo triggerInfo(false, false);
             
             BTagCorrector bTagCorrector("allINone_bTagEff.root", "", false);
@@ -243,6 +271,7 @@ int main(int argc, char* argv[])
             tr.registerFunction(filterEvents);
             tr.registerFunction(myBLV);
             tr.registerFunction(prepareTopVars);
+            tr.registerFunction(lepInfo);
             tr.registerFunction(triggerInfo);
             tr.registerFunction(bTagCorrector);
             tr.registerFunction(ttbarCorrector);
@@ -272,6 +301,18 @@ int main(int argc, char* argv[])
                 const double& ht                   = tr.getVar<double>("HTTopTag");
                 const int&    vtxSize              = tr.getVar<int>("vtxSize");
 
+                const std::vector<double>& velesMtw = tr.getVec<double>("elesMtw");
+                const std::vector<double>& vmuonsMtw = tr.getVec<double>("muonsMtw");
+
+                double lepMtw = 0;
+                for(int i = 0; i < velesMtw.size(); i++){
+                    if(velesMtw[i] > lepMtw) lepMtw = velesMtw[i];
+                }
+                for(int i = 0; i < vmuonsMtw.size(); i++){
+                    if(vmuonsMtw[i] > lepMtw) lepMtw = vmuonsMtw[i];
+                }
+            
+
                 double eWeight = fileWgt;
 
                 if(doWgt){
@@ -287,6 +328,7 @@ int main(int argc, char* argv[])
                     //const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
 
                     eWeight *= puWF * bTagWF * triggerWF;
+//                    eWeight *= bTagWF * triggerWF; //Investigating PU WF
 
                 }
 //                std::cout << "Event Weight: " << eWeight << std::endl;
@@ -294,9 +336,23 @@ int main(int argc, char* argv[])
                 int cntNJetsPt30Eta24 = AnaFunctions::countJets(tr.getVec<TLorentzVector>(jetVecLabel), AnaConsts::pt30Eta24Arr);
 
                 const std::vector<TLorentzVector>& vTops        = tr.getVec<TLorentzVector>("vTopsNewMVA");
+                const std::vector<TLorentzVector>& cutMuVec     = tr.getVec<TLorentzVector>("cutMuVec");
+                const std::vector<TLorentzVector>& cutElecVec   = tr.getVec<TLorentzVector>("cutElecVec");
+
+                TLorentzVector highLep = TLorentzVector(); //Default constructor, 0 energy.
+                for(int i = 0; i < cutMuVec.size(); i++){
+                    if(cutMuVec[i].P() > highLep.P()) highLep = cutMuVec[i];
+                }
+                for(int i = 0; i < cutElecVec.size(); i++){
+                    if(cutElecVec[i].P() > highLep.P()) highLep = cutElecVec[i];
+                }
 
 //                std::cout << "Noise: " << passNoiseEventFilter << ", SingleLep: " << passSingleLep20 << ", bjets: " << passBJets << ", njets: " << passnJets << ", phis: " << passdPhis << ", ht: " << ht << ", met: " << met << std::endl;
 //                continue;
+
+                double bestTopMass = tr.getVar<double>("bestTopMass");
+                const TLorentzVector& bestCandLV = tr.getVar<TLorentzVector>("bestTopMassLV");
+
 
                 if( passNoiseEventFilter 
                  && passSingleLep20
@@ -304,7 +360,9 @@ int main(int argc, char* argv[])
                  && passnJets
                  && passdPhis
                  && (ht >300)
-                 && (met > 250))
+                 && (met > 250)
+                 && (bestTopMass > 0.)
+                 && (fabs(highLep.DeltaPhi(bestCandLV)) > M_PI/2))
                 {
 
                     pevents++;
@@ -313,20 +371,50 @@ int main(int argc, char* argv[])
                     hists.hMET->Fill(met, eWeight);
                     hists.hNJets->Fill(cntNJetsPt30Eta24, eWeight);
                     hists.hNVertices->Fill(vtxSize,eWeight);
+                    hists.hLepMtw->Fill(lepMtw,eWeight);
+                    hists.hDPhiLepCand->Fill(fabs(highLep.DeltaPhi(bestCandLV)),eWeight);
 
                     //SF plots
-                    if(tr.getVar<double>("bestTopMass") > 0.0)
                     {
-                        const TLorentzVector& bestCandLV = tr.getVar<TLorentzVector>("bestTopMassLV");
+                        bool tight = fabs(tr.getVar<double>("bestTopMass") - 173.5) < 25;
+                        const double& bestTopMVA = tr.getVar<double>("bestTopMVA");
+
                         hists.bestTopPt->Fill(bestCandLV.Pt(), eWeight);
                         hists.bestTopMass->Fill(bestCandLV.M(), eWeight);
                         hists.bestTopEta->Fill(bestCandLV.Eta(), eWeight);
+                        hists.bestTopnVert->Fill(vtxSize,eWeight);
+                        hists.bestTopnJets->Fill(cntNJetsPt30Eta24, eWeight);
+                        hists.bestTopMVA->Fill(bestTopMVA,eWeight);
                         
+
+                        if(tight){
+                            hists.bestTightTopPt->Fill(bestCandLV.Pt(), eWeight);
+                            hists.bestTightTopMass->Fill(bestCandLV.M(), eWeight);
+                            hists.bestTightTopEta->Fill(bestCandLV.Eta(), eWeight);
+                            hists.bestTightTopnVert->Fill(vtxSize,eWeight);
+                            hists.bestTightTopnJets->Fill(cntNJetsPt30Eta24, eWeight);
+                            hists.bestTightTopMVA->Fill(bestTopMVA,eWeight);
+                        }
+ 
+
                         if(tr.getVar<bool>("bestTopMassTopTag"))
                         {
                             hists.bestTopCandPt->Fill(bestCandLV.Pt(), eWeight);
                             hists.bestTopCandMass->Fill(bestCandLV.M(), eWeight);
                             hists.bestTopCandEta->Fill(bestCandLV.Eta(), eWeight);
+                            hists.bestTopCandnVert->Fill(vtxSize,eWeight);
+                            hists.bestTopCandnJets->Fill(cntNJetsPt30Eta24, eWeight);
+                            hists.bestTopCandMVA->Fill(bestTopMVA,eWeight);
+
+                            if(tight){
+                                hists.bestTightTopCandPt->Fill(bestCandLV.Pt(), eWeight);
+                                hists.bestTightTopCandMass->Fill(bestCandLV.M(), eWeight);
+                                hists.bestTightTopCandEta->Fill(bestCandLV.Eta(), eWeight);
+                                hists.bestTightTopCandnVert->Fill(vtxSize,eWeight);
+                                hists.bestTightTopCandnJets->Fill(cntNJetsPt30Eta24, eWeight);
+                                hists.bestTightTopCandMVA->Fill(bestTopMVA,eWeight);
+
+                            }
                         }
                     }
 

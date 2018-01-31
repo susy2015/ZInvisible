@@ -2020,6 +2020,7 @@ namespace plotterFunctions
             //}
 
             double bestTopMass = -9999.9;
+            double bestTopMVA = -1.;
             double bestTopEta = -9999.9;
             const TopObject* bestTopMassLV = nullptr;
             bool bestTopMassGenMatch = false;
@@ -2033,6 +2034,7 @@ namespace plotterFunctions
                     bestTopMass = top.p().M();
                     bestTopEta = top.p().Eta();
                     bestTopMassLV = &top;
+                    bestTopMVA = top.getDiscriminator();
                 }
             }
 
@@ -2188,6 +2190,7 @@ namespace plotterFunctions
    
 
             tr.registerDerivedVar("bestTopMass", bestTopMass);
+            tr.registerDerivedVar("bestTopMVA", bestTopMVA);
             tr.registerDerivedVar("bestTopEta", bestTopEta);
             tr.registerDerivedVar("bestTopMassLV", bestTopMassLV?(bestTopMassLV->p()):(TLorentzVector()));
             tr.registerDerivedVar("bestTopMassGenMatch", bestTopMassGenMatch);
