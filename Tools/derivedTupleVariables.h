@@ -2124,6 +2124,38 @@ namespace plotterFunctions
                 if(constituent.getType() == AK4JET && constituent.getBTagDisc() > 0.8 && usedJets.count(&constituent) == 0) ++nBNotInTop;
             }
 
+            const std::vector<TLorentzVector>& muonsLVec    = tr.getVec<TLorentzVector>("muonsLVec");
+            const std::vector<double>& muonsRelIso          = tr.getVec<double>("muonsRelIso");
+            const std::vector<double>& muonsMiniIso         = tr.getVec<double>("muonsMiniIso");
+
+            std::vector<TLorentzVector>* cutMuVec = new std::vector<TLorentzVector>();
+            for(int i = 0; i < muonsLVec.size(); ++i)
+            {
+                if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
+                {
+                    cutMuVec->push_back(muonsLVec[i]);
+                }
+            }
+
+            tr.registerDerivedVec("cutMuVec", cutMuVec);
+
+            const std::vector<TLorentzVector, std::allocator<TLorentzVector> > elesLVec = tr.getVec<TLorentzVector>("elesLVec");
+            const std::vector<double>& elesMiniIso          = tr.getVec<double>("elesMiniIso");
+            const std::vector<double>& elesCharge           = tr.getVec<double>("elesCharge");
+            const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
+
+            //electron selection
+            std::vector<TLorentzVector>* cutElecVec = new std::vector<TLorentzVector>();
+            for(int i = 0; i < elesLVec.size(); ++i)
+            {
+                if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
+                {
+                    cutElecVec->push_back(elesLVec[i]);
+                }
+            }
+
+            tr.registerDerivedVec("cutElecVec", cutElecVec);
+
 	    // Process the generator weight
 	    double genWeight = 1.;
 	    // Never apply this weight for data! In the old ntuple version <=3 this is "-1", in the newer ones it is "0"
