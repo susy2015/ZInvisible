@@ -54,11 +54,12 @@ class HistoContainer
 {
 private:
     std::vector<TH1*> histos;
+    std::string csName_;
 
     template<typename H, typename... Args>
     H* bookHisto(const std::string& name, Args... args)
     {
-        H* hptr = new H(name.c_str(), name.c_str(), args...);
+        H* hptr = new H((csName_ + name).c_str(), (csName_ + name).c_str(), args...);
         hptr->Sumw2();
         histos.push_back(static_cast<TH1*>(hptr));
         return hptr;
@@ -82,7 +83,10 @@ public:
     TH1 *bestTopGenPt, *bestTopGenMass, *bestTopGenEta;
     TH1 *bestTopNotGenPt, *bestTopNotGenMass, *bestTopNotGenEta;
     TH1 *bestTopPt, *bestTopMass, *bestTopEta;
+    TH1 *randomTopCandPt,   *randomTopCandMass,   *randomTopCandEta;
+    TH1 *randomTopPt, *randomTopMass, *randomTopEta;
     TH1 *fakerateMET, *fakerateNj, *fakerateNb;
+    TH1 *fakerateMET2, *fakerateNj2, *fakerateNb2, *fakerateNvert2;
 
     TH1 *massTemplateTop, *massTemplateNotTop;
 
@@ -96,8 +100,10 @@ public:
     TH2 *massTemplateGen2MatchByPt;
     TH2 *massTemplateGen3MatchByPt;
 
-    HistoContainer()
+    HistoContainer(const std::string& csName = "") : csName_(csName)
     {
+        if(csName_.size() > 0) csName_ += "_";
+
         hMET       = bookHisto<TH1D>("MET",100,0, 1000);
         hNJets     = bookHisto<TH1D>("nJets",21,-0.5, 20.5);
         hNBJets    = bookHisto<TH1D>("nBJets",21,-0.5, 20.5);
@@ -137,9 +143,20 @@ public:
         bestTopNotGenMass = bookHisto<TH1D>("bestTopNotGenMass", 100,  0, 500);
         bestTopNotGenEta  = bookHisto<TH1D>("bestTopNotGenEta",  100, -5, 5);
 
+        randomTopPt   = bookHisto<TH1D>("randomTopPt",   100,  0, 1000);
+        randomTopMass = bookHisto<TH1D>("randomTopMass", 100,  0, 500);
+        randomTopEta  = bookHisto<TH1D>("randomTopEta",  100, -5, 5);
+        randomTopCandPt   = bookHisto<TH1D>("randomTopCandPt",   100,  0, 1000);
+        randomTopCandMass = bookHisto<TH1D>("randomTopCandMass", 100,  0, 500);
+        randomTopCandEta  = bookHisto<TH1D>("randomTopCandEta",  100, -5, 5);
+
         fakerateMET = bookHisto<TH1D>("fakerateMET", 100,0, 1000);
         fakerateNj  = bookHisto<TH1D>("fakerateNj", 21,-0.5, 20.5);
         fakerateNb  = bookHisto<TH1D>("fakerateNb", 21,-0.5, 20.5);
+
+        fakerateMET2 = bookHisto<TH1D>("fakerateMET2", 100,0, 1000);
+        fakerateNj2  = bookHisto<TH1D>("fakerateNj2", 21,-0.5, 20.5);
+        fakerateNb2  = bookHisto<TH1D>("fakerateNb2", 21,-0.5, 20.5);
 
         massTemplateTop = bookHisto<TH1D>("massTemplateTop", 100,  0, 500);
         massTemplateNotTop = bookHisto<TH1D>("massTemplateBG", 100,  0, 500);
@@ -161,23 +178,266 @@ public:
 
     }
 
-    void save(const std::string& filename)
+    void fill(const NTupleReader& tr, const double& eWeight, TRandom* trand)
     {
-        TFile *f;
+        const double& met    = tr.getVar<double>("met");
+        const double& metphi = tr.getVar<double>("metphi");
 
-        f = new TFile(filename.c_str(),"RECREATE");
-        if(f->IsZombie()){
-            std::cout << "Cannot create " << filename << std::endl;
-            throw "File is zombie";
+        const double& ht                   = tr.getVar<double>("HTTopTag");
+        const int&    vtxSize              = tr.getVar<int>("vtxSize");
+        const int&    cntCSVS              = tr.getVar<int>("cntCSVSTopTag");
+        const TopTaggerResults* ttr        = tr.getVar<TopTaggerResults*>("ttrMVA");
+
+        const std::vector<TLorentzVector>& cutMuVec = tr.getVec<TLorentzVector>("cutMuVec");
+        const std::vector<TLorentzVector>& cutElecVec = tr.getVec<TLorentzVector>("cutElecVec");
+
+        const int& cntNJetsPt30Eta24 = tr.getVar<int>("cntNJetsPt30Eta24TopTag");
+
+        const std::vector<TLorentzVector>& vTops        = tr.getVec<TLorentzVector>("vTopsNewMVA");
+
+
+        hMET->Fill(met, eWeight);
+        hNJets->Fill(cntNJetsPt30Eta24, eWeight);
+        hNBJets->Fill(cntCSVS, eWeight);
+        hNVertices->Fill(vtxSize,eWeight);
+
+        const std::vector<TLorentzVector>& genTops = tr.getVec<TLorentzVector>("genTops");
+        const std::vector<TLorentzVector>& genTopsRecoMatch = tr.getVec<TLorentzVector>("vTopsGenMatchTriNewMVA");
+
+        //plots for gen efficiency 
+        for(const TLorentzVector& genTop : genTops)
+        {
+            genTopPt->Fill(genTop.Pt(), eWeight);
+            genTopMass->Fill(genTop.M(), eWeight);
+            genTopEta->Fill(genTop.Eta(), eWeight);
         }
 
+        for(const TLorentzVector& genTop : genTopsRecoMatch)
+        {
+            genTopMatchPt->Fill(genTop.Pt(), eWeight);
+            genTopMatchMass->Fill(genTop.M(), eWeight);
+            genTopMatchEta->Fill(genTop.Eta(), eWeight);
+        }
+
+        //fakerate histograms 
+        const auto& vTopsNCandNewMVA = tr.getVec<int>("vTopsNCandNewMVA");
+        const auto& vTopsMatchNewMVA = tr.getVec<int>("vTopsMatchNewMVABool");
+        for(unsigned int i = 0; i < vTopsNCandNewMVA.size(); ++i)
+        {
+            if(vTopsNCandNewMVA[i] == 3 && !vTopsMatchNewMVA[i])
+            {
+                fakerateMET->Fill(met, eWeight);
+                fakerateNj->Fill(cntNJetsPt30Eta24, eWeight);
+                fakerateNb->Fill(cntCSVS, eWeight);
+                break;
+            }
+        }
+
+        //SF plots
+        if(tr.getVar<double>("bestTopMass") > 0.0)
+        {
+            const TLorentzVector& bestCandLV = tr.getVar<TLorentzVector>("bestTopMassLV");
+            bestTopCandPt->Fill(bestCandLV.Pt(), eWeight);
+            bestTopCandMass->Fill(bestCandLV.M(), eWeight);
+            bestTopCandEta->Fill(bestCandLV.Eta(), eWeight);
+                        
+            if(tr.getVar<bool>("bestTopMassTopTag"))
+            {
+                bestTopPt->Fill(bestCandLV.Pt(), eWeight);
+                bestTopMass->Fill(bestCandLV.M(), eWeight);
+                bestTopEta->Fill(bestCandLV.Eta(), eWeight);
+            }
+
+            if(tr.getVar<bool>("bestTopMassGenMatch"))
+            {
+                bestTopGenPt->Fill(bestCandLV.Pt(), eWeight);
+                bestTopGenMass->Fill(bestCandLV.M(), eWeight);
+                bestTopGenEta->Fill(bestCandLV.Eta(), eWeight);
+            }
+            else
+            {
+                bestTopNotGenPt->Fill(bestCandLV.Pt(), eWeight);
+                bestTopNotGenMass->Fill(bestCandLV.M(), eWeight);
+                bestTopNotGenEta->Fill(bestCandLV.Eta(), eWeight);
+            }
+        }
+
+        if(vTops.size() > 0)
+        {
+
+            for(int tidx = 0; tidx < vTops.size(); tidx++)
+            {
+                hTopMass->Fill(vTops[tidx].M(),eWeight);
+                hTopP->Fill(vTops[tidx].Rho(),eWeight);
+                hTopPt->Fill(vTops[tidx].Perp(),eWeight);
+            }
+
+            if(vTops.size() == 2)
+            {
+                TLorentzVector diTop = vTops[0] + vTops[1];
+                hDiTopMass->Fill(diTop.M(),eWeight);
+            }
+        }
+
+        for(auto& top : ttr->getTops())
+        {
+            massTemplateTop->Fill(top->p().M(), eWeight);
+            massTemplateTopByPt->Fill(top->p().M(), top->p().Pt(), eWeight);
+
+            topPt->Fill(top->p().Pt(), eWeight);
+            topMass->Fill(top->p().M(), eWeight);
+            topEta->Fill(top->p().Eta(), eWeight);
+
+        }
+
+        for(auto& top : ttr->getTops())
+        {
+            if(top->getNConstituents() == 3)
+            {
+                fakerateMET2->Fill(met, eWeight);
+                fakerateNj2->Fill(cntNJetsPt30Eta24, eWeight);
+                fakerateNb2->Fill(cntCSVS, eWeight);
+                break;
+            }
+        }
+
+        //Find best candiate
+                    
+        //Find b jets
+        std::vector<const Constituent*> bjets;
+        for(const auto& constituent : ttr->getConstituents())
+        {
+            if(constituent.getBTagDisc() > 0.8484)
+            {
+                bjets.push_back(&constituent);
+            }
+        }
+
+        //Find lepton (here it is assumed there is exactly 1 lepton)
+        TLorentzVector lepton;
+        for(const auto& lep : cutMuVec)
+        {
+            if(lep.Pt() > 20)
+            {
+                lepton = lep;
+                break;
+            }
+        }
+        for(const auto& lep : cutElecVec)
+        {
+            if(lep.Pt() > 20)
+            {
+                lepton = lep;
+                break;
+            }
+        }
+
+        //met TLorentz vector
+        TLorentzVector MET;
+        MET.SetPtEtaPhiM(met, 0.0, metphi, 0);
+
+        double bestSumPtVal = 99999.999;
+        const TopObject* bestCand = nullptr;
+        for(auto& topCand : ttr->getTopCandidates())
+        {
+            switch(topCand.getGenTopMatches().size())
+            {
+            case 0:
+                massTemplateGen0MatchByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
+                break;
+            case 1:
+                massTemplateGen1MatchByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
+                break;
+            case 2:
+                massTemplateGen2MatchByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
+                break;
+            case 3:
+                massTemplateGen3MatchByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
+                break;
+            }
+
+            const auto& constituents = topCand.getConstituents();
+            for(const auto& bjet : bjets)
+            {
+                //Check that the b-jet is not inside the top candidate 
+                if(std::find(constituents.begin(), constituents.end(), bjet) == constituents.end())
+                {
+                    double sumPt = (bjet->p() + MET + topCand.p() + lepton).Pt();
+                    allSumPt->Fill(sumPt, eWeight);
+                    if(topCand.getBestGenTopMatch() != nullptr) genSumPt->Fill(sumPt, eWeight);
+                    if(sumPt < bestSumPtVal)
+                    {
+                        bestSumPtVal = sumPt;
+                        bestCand = &topCand;
+                    }
+                }
+            }
+
+            topCandPt->Fill(topCand.p().Pt(), eWeight);
+            topCandMass->Fill(topCand.p().M(), eWeight);
+            topCandEta->Fill(topCand.p().Eta(), eWeight);
+
+            topCandMassByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
+
+            if(topCand.getDiscriminator() > std::min(0.97, 0.8 + 0.0005*topCand.p().Pt()))
+            {
+                //massTemplateTop->Fill(topCand.p().M(), eWeight);
+                //massTemplateTopByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
+            }
+            else
+            {
+                massTemplateNotTop->Fill(topCand.p().M(), eWeight);
+                massTemplateNotTopByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
+            }
+        }
+
+        if(bestCand)
+        {
+            bestTopCandSumPt->Fill(bestCand->p().Pt(), eWeight);
+            bestTopCandSumMass->Fill(bestCand->p().M(), eWeight);
+            bestTopCandSumEta->Fill(bestCand->p().Eta(), eWeight);
+            bestTopCandSumMassByPt->Fill(bestCand->p().M(), bestCand->p().Pt(), eWeight);
+            bestSumPt->Fill(bestSumPtVal, eWeight);
+
+            for(const auto& topPtr : ttr->getTops()) 
+            {
+                if(topPtr == bestCand) 
+                {
+                    bestTopCandSumMassRecoMatchByPt->Fill(bestCand->p().M(), bestCand->p().Pt(), eWeight);
+                    break;
+                }
+            }
+        }
+
+        if(ttr->getTopCandidates().size() > 0)
+        {
+            int nCand = trand->Integer(ttr->getTopCandidates().size());
+
+            const TopObject& topCand = ttr->getTopCandidates()[nCand];
+
+            randomTopCandPt->Fill(topCand.p().Pt(), eWeight);
+            randomTopCandMass->Fill(topCand.p().M(), eWeight);;
+            randomTopCandEta->Fill(topCand.p().Eta(), eWeight);;
+            
+            for(const auto& topPtr : ttr->getTops()) 
+            {
+                if(topPtr == &topCand) 
+                {
+                    randomTopPt->Fill(topCand.p().Pt(), eWeight);
+                    randomTopMass->Fill(topCand.p().Pt(), eWeight);
+                    randomTopEta->Fill(topCand.p().Pt(), eWeight);
+                    break;
+                }
+            }
+        }
+        
+    }
+
+    void save(TFile *f)
+    {
         f->cd();
 
         for(TH1* hist : histos) hist->Write();
-
-        f->Write();
-
-        f->Close();
     }
 };
 
@@ -288,7 +548,9 @@ int main(int argc, char* argv[])
 
     int events = 0, pevents = 0;
 
-    HistoContainer hists;
+    HistoContainer histsQCD("QCD"), histsTTbar("ttbar");
+
+    TRandom* trand = new TRandom3();
 
     try
     {
@@ -344,16 +606,20 @@ int main(int argc, char* argv[])
 
                 const bool&   passNoiseEventFilter = tr.getVar<bool>("passNoiseEventFilterTopTag");
                 const bool&   passSingleLep20      = tr.getVar<bool>("passSingleLep20");
+                const bool&   passLeptonVeto       = tr.getVar<bool>("passLeptVetoTopTag");
                 const bool&   passBJets            = tr.getVar<bool>("passBJetsTopTag");
                 const bool&   passnJets            = tr.getVar<bool>("passnJetsTopTag");
                 const bool&   passdPhis            = tr.getVar<bool>("passdPhisTopTag");
                 const double& ht                   = tr.getVar<double>("HTTopTag");
-                const int&    vtxSize              = tr.getVar<int>("vtxSize");
-                const int&    cntCSVS              = tr.getVar<int>("cntCSVS");
-                const TopTaggerResults* ttr        = tr.getVar<TopTaggerResults*>("ttrMVA");
 
-                const std::vector<TLorentzVector>& cutMuVec = tr.getVec<TLorentzVector>("cutMuVec");
-                const std::vector<TLorentzVector>& cutElecVec = tr.getVec<TLorentzVector>("cutElecVec");
+                const bool& passMuTrigger     = tr.getVar<bool>("passMuTrigger");
+                const bool& passElecTrigger   = tr.getVar<bool>("passElecTrigger");
+                const bool& passMETMHTTrigger = tr.getVar<bool>("passMETMHTTrigger");
+                const bool& passSearchTrigger = tr.getVar<bool>("passSearchTrigger");
+                const bool& passHighHtTrigger = tr.getVar<bool>("passHighHtTrigger");
+                const bool& passPhotonTrigger = tr.getVar<bool>("passPhotonTrigger");
+
+                const double isData = !tr.checkBranch("genDecayLVec");
 
                 double eWeight = fileWgt;
 
@@ -368,237 +634,37 @@ int main(int argc, char* argv[])
                     }
                     const double& triggerWF          = tr.getVar<double>("TriggerEffMC");
 
-                    //const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");          
-                    //const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
-
                     eWeight *= puWF * bTagWF * triggerWF;
 
                 }
-//                std::cout << "Event Weight: " << eWeight << std::endl;
 
                 int cntNJetsPt30Eta24 = AnaFunctions::countJets(tr.getVec<TLorentzVector>(jetVecLabel), AnaConsts::pt30Eta24Arr);
 
                 const std::vector<TLorentzVector>& vTops        = tr.getVec<TLorentzVector>("vTopsNewMVA");
 
-//                std::cout << "Noise: " << passNoiseEventFilter << ", SingleLep: " << passSingleLep20 << ", bjets: " << passBJets << ", njets: " << passnJets << ", phis: " << passdPhis << ", ht: " << ht << ", met: " << met << std::endl;
-//                continue;
-
-                if( passNoiseEventFilter 
-//                 && passSingleLep20
-                 && passBJets
-                 && passnJets
-//                 && passdPhis
-                    && (ht > 1000)//300)
-//                 && (met > 250)
+                //High HT QCD control sample
+                if( (!isData || passHighHtTrigger)
+                    && passNoiseEventFilter 
+                    && passLeptonVeto
+                    && passnJets
+                    && (ht > 1000)
                     )
                 {
+                    histsQCD.fill(tr, eWeight, trand);
+                }
 
-                    pevents++;
-                    //std::cout << "Trigger weight: " << triggerWF << std::endl;
-
-                    hists.hMET->Fill(met, eWeight);
-                    hists.hNJets->Fill(cntNJetsPt30Eta24, eWeight);
-                    hists.hNBJets->Fill(cntCSVS, eWeight);
-                    hists.hNVertices->Fill(vtxSize,eWeight);
-
-                    const std::vector<TLorentzVector>& genTops = tr.getVec<TLorentzVector>("genTops");
-                    const std::vector<TLorentzVector>& genTopsRecoMatch = tr.getVec<TLorentzVector>("vTopsGenMatchTriNewMVA");
-
-                    //plots for gen efficiency 
-                    for(const TLorentzVector& genTop : genTops)
-                    {
-                        hists.genTopPt->Fill(genTop.Pt(), eWeight);
-                        hists.genTopMass->Fill(genTop.M(), eWeight);
-                        hists.genTopEta->Fill(genTop.Eta(), eWeight);
-                    }
-
-                    for(const TLorentzVector& genTop : genTopsRecoMatch)
-                    {
-                        hists.genTopMatchPt->Fill(genTop.Pt(), eWeight);
-                        hists.genTopMatchMass->Fill(genTop.M(), eWeight);
-                        hists.genTopMatchEta->Fill(genTop.Eta(), eWeight);
-                    }
-
-                    //fakerate histograms 
-                    const auto& vTopsNCandNewMVA = tr.getVec<int>("vTopsNCandNewMVA");
-                    const auto& vTopsMatchNewMVA = tr.getVec<int>("vTopsMatchNewMVABool");
-                    for(unsigned int i = 0; i < vTopsNCandNewMVA.size(); ++i)
-                    {
-                        if(vTopsNCandNewMVA[i] == 3 && !vTopsMatchNewMVA[i])
-                        {
-                            hists.fakerateMET->Fill(met, eWeight);
-                            hists.fakerateNj->Fill(cntNJetsPt30Eta24, eWeight);
-                            hists.fakerateNb->Fill(cntCSVS, eWeight);
-                            break;
-                        }
-                    }
-
-                    //SF plots
-                    if(tr.getVar<double>("bestTopMass") > 0.0)
-                    {
-                        const TLorentzVector& bestCandLV = tr.getVar<TLorentzVector>("bestTopMassLV");
-                        hists.bestTopCandPt->Fill(bestCandLV.Pt(), eWeight);
-                        hists.bestTopCandMass->Fill(bestCandLV.M(), eWeight);
-                        hists.bestTopCandEta->Fill(bestCandLV.Eta(), eWeight);
-                        
-                        if(tr.getVar<bool>("bestTopMassTopTag"))
-                        {
-                            hists.bestTopPt->Fill(bestCandLV.Pt(), eWeight);
-                            hists.bestTopMass->Fill(bestCandLV.M(), eWeight);
-                            hists.bestTopEta->Fill(bestCandLV.Eta(), eWeight);
-                        }
-
-                        if(tr.getVar<bool>("bestTopMassGenMatch"))
-                        {
-                            hists.bestTopGenPt->Fill(bestCandLV.Pt(), eWeight);
-                            hists.bestTopGenMass->Fill(bestCandLV.M(), eWeight);
-                            hists.bestTopGenEta->Fill(bestCandLV.Eta(), eWeight);
-                        }
-                        else
-                        {
-                            hists.bestTopNotGenPt->Fill(bestCandLV.Pt(), eWeight);
-                            hists.bestTopNotGenMass->Fill(bestCandLV.M(), eWeight);
-                            hists.bestTopNotGenEta->Fill(bestCandLV.Eta(), eWeight);
-                        }
-                    }
-
-                    if(vTops.size() > 0)
-                    {
-
-                        for(int tidx = 0; tidx < vTops.size(); tidx++)
-                        {
-                            hists.hTopMass->Fill(vTops[tidx].M(),eWeight);
-                            hists.hTopP->Fill(vTops[tidx].Rho(),eWeight);
-                            hists.hTopPt->Fill(vTops[tidx].Perp(),eWeight);
-                        }
-
-                        if(vTops.size() == 2)
-                        {
-                            TLorentzVector diTop = vTops[0] + vTops[1];
-                            hists.hDiTopMass->Fill(diTop.M(),eWeight);
-                        }
-                    }
-
-                    for(auto& top : ttr->getTops())
-                    {
-                        hists.massTemplateTop->Fill(top->p().M(), eWeight);
-                        hists.massTemplateTopByPt->Fill(top->p().M(), top->p().Pt(), eWeight);
-
-                        hists.topPt->Fill(top->p().Pt(), eWeight);
-                        hists.topMass->Fill(top->p().M(), eWeight);
-                        hists.topEta->Fill(top->p().Eta(), eWeight);
-
-                    }
-
-                    //Find best candiate
-                    
-                    //Find b jets
-                    std::vector<const Constituent*> bjets;
-                    for(const auto& constituent : ttr->getConstituents())
-                    {
-                        if(constituent.getBTagDisc() > 0.8484)
-                        {
-                            bjets.push_back(&constituent);
-                        }
-                    }
-
-                    //Find lepton (here it is assumed there is exactly 1 lepton)
-                    TLorentzVector lepton;
-                    for(const auto& lep : cutMuVec)
-                    {
-                        if(lep.Pt() > 20)
-                        {
-                            lepton = lep;
-                            break;
-                        }
-                    }
-                    for(const auto& lep : cutElecVec)
-                    {
-                        if(lep.Pt() > 20)
-                        {
-                            lepton = lep;
-                            break;
-                        }
-                    }
-
-                    //met TLorentz vector
-                    TLorentzVector MET;
-                    MET.SetPtEtaPhiM(met, 0.0, metphi, 0);
-
-                    double bestSumPt = 99999.999;
-                    const TopObject* bestCand = nullptr;
-                    for(auto& topCand : ttr->getTopCandidates())
-                    {
-                        switch(topCand.getGenTopMatches().size())
-                        {
-                        case 0:
-                            hists.massTemplateGen0MatchByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
-                            break;
-                        case 1:
-                            hists.massTemplateGen1MatchByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
-                            break;
-                        case 2:
-                            hists.massTemplateGen2MatchByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
-                            break;
-                        case 3:
-                            hists.massTemplateGen3MatchByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
-                            break;
-                        }
-
-                        const auto& constituents = topCand.getConstituents();
-                        for(const auto& bjet : bjets)
-                        {
-                            //Check that the b-jet is not inside the top candidate 
-                            if(std::find(constituents.begin(), constituents.end(), bjet) == constituents.end())
-                            {
-                                double sumPt = (bjet->p() + MET + topCand.p() + lepton).Pt();
-                                hists.allSumPt->Fill(sumPt, eWeight);
-                                if(topCand.getBestGenTopMatch() != nullptr) hists.genSumPt->Fill(sumPt, eWeight);
-                                if(sumPt < bestSumPt)
-                                {
-                                    bestSumPt = sumPt;
-                                    bestCand = &topCand;
-                                }
-                            }
-                        }
-
-                        hists.topCandPt->Fill(topCand.p().Pt(), eWeight);
-                        hists.topCandMass->Fill(topCand.p().M(), eWeight);
-                        hists.topCandEta->Fill(topCand.p().Eta(), eWeight);
-
-                        hists.topCandMassByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
-
-                        if(topCand.getDiscriminator() > std::min(0.97, 0.8 + 0.0005*topCand.p().Pt()))
-                        {
-                            //hists.massTemplateTop->Fill(topCand.p().M(), eWeight);
-                            //hists.massTemplateTopByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
-                        }
-                        else
-                        {
-                            hists.massTemplateNotTop->Fill(topCand.p().M(), eWeight);
-                            hists.massTemplateNotTopByPt->Fill(topCand.p().M(), topCand.p().Pt(), eWeight);
-                        }
-                    }
-
-                    if(bestCand)
-                    {
-                        hists.bestTopCandSumPt->Fill(bestCand->p().Pt(), eWeight);
-                        hists.bestTopCandSumMass->Fill(bestCand->p().M(), eWeight);
-                        hists.bestTopCandSumEta->Fill(bestCand->p().Eta(), eWeight);
-                        hists.bestTopCandSumMassByPt->Fill(bestCand->p().M(), bestCand->p().Pt(), eWeight);
-                        hists.bestSumPt->Fill(bestSumPt, eWeight);
-
-                        for(const auto& topPtr : ttr->getTops()) 
-                        {
-                            if(topPtr == bestCand) 
-                            {
-                                hists.bestTopCandSumMassRecoMatchByPt->Fill(bestCand->p().M(), bestCand->p().Pt(), eWeight);
-                                break;
-                            }
-                        }
-                    }
-
-                    //std::cout << "MET: " << met << ", puWF: " << puWF << ", bTagWF: " << bTagWF << ", ttbarWF: " << ttbarWF << std::endl;
+                //semileptonic ttbar enriched control sample
+                if( (!isData || passSearchTrigger)
+                    && passNoiseEventFilter 
+                    && passSingleLep20
+                    && passBJets
+                    && passnJets
+                    && passdPhis
+                    && (ht > 300)
+                    && (met > 250)
+                    )
+                {
+                    histsTTbar.fill(tr, eWeight, trand);
                 }
             }
         }
@@ -624,6 +690,18 @@ int main(int argc, char* argv[])
     if(savefile)
     {
         std::cout << "Saving root file..." << std::endl;
-        hists.save(filename);
+
+        TFile *f = new TFile(filename.c_str(),"RECREATE");
+        if(f->IsZombie())
+        {
+            std::cout << "Cannot create " << filename << std::endl;
+            throw "File is zombie";
+        }
+
+        histsQCD.save(f);
+        histsTTbar.save(f);
+
+        f->Write();
+        f->Close();
     }
 }
