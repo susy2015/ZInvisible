@@ -1378,7 +1378,7 @@ namespace plotterFunctions
                 std::cout << "Could not find trigger in the list of trigger names" << std::endl;
             }
 
-            bool passSearchTrigger = false;
+            bool passSearchTrigger = false, passHighHtTrigger = false, passPhotonTrigger = false;
             for(int it = 0; it < triggerNames.size(); ++it)
             {
                 if( triggerNames[it].find("HLT_PFMET170_NoiseCleaned_v")             != std::string::npos || 
@@ -1398,15 +1398,41 @@ namespace plotterFunctions
                     if( passTrigger[it] ) 
                     {
                         passSearchTrigger = true;
-                        break;
                     }
+                }
+
+                if( triggerNames[it].find("HLT_PFHT750_4JetPt50_v4") != std::string::npos ||
+                    triggerNames[it].find("HLT_PFHT800_v3")          != std::string::npos ||
+                    triggerNames[it].find("HLT_PFHT900_v2")          != std::string::npos ||
+                    triggerNames[it].find("HLT_PFJet450_v5")         != std::string::npos
+                    )
+                {
+                    if( passTrigger[it] ) 
+                    {
+                        passHighHtTrigger = true;
+                    }                    
+                }
+
+                if( triggerNames[it].find("HLT_Photon175_v6")                != std::string::npos ||
+                    triggerNames[it].find("HLT_Photon75_v6")                 != std::string::npos ||
+                    triggerNames[it].find("HLT_Photon90_CaloIdL_PFHT500_v6") != std::string::npos ||
+                    triggerNames[it].find("HLT_Photon90_v6")                 != std::string::npos
+                    )
+                {
+                    if( passTrigger[it] ) 
+                    {
+                        passPhotonTrigger = true;
+                    }                    
+
                 }
             }
 
-            tr.registerDerivedVar("passMuTrigger",passMuTrigger);
-            tr.registerDerivedVar("passElecTrigger",passElecTrigger);
-            tr.registerDerivedVar("passMETMHTTrigger",passMETMHTTrigger);
-            tr.registerDerivedVar("passSearchTrigger",passSearchTrigger);
+            tr.registerDerivedVar("passMuTrigger",     passMuTrigger);
+            tr.registerDerivedVar("passElecTrigger",   passElecTrigger);
+            tr.registerDerivedVar("passMETMHTTrigger", passMETMHTTrigger);
+            tr.registerDerivedVar("passSearchTrigger", passSearchTrigger);
+            tr.registerDerivedVar("passHighHtTrigger", passHighHtTrigger);
+            tr.registerDerivedVar("passPhotonTrigger", passPhotonTrigger);
         }
 
         void triggerInfoMC(NTupleReader& tr)
