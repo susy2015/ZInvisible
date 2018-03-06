@@ -1667,35 +1667,8 @@ namespace plotterFunctions
             //const std::vector<double>& puppiSubJetsptD = tr.getVec<double>("puppiSubJetsptD");
             //const std::vector<double>& puppiSubJetsaxis1 = tr.getVec<double>("puppiSubJetsaxis1");
             //const std::vector<double>& puppiSubJetsaxis2 = tr.getVec<double>("puppiSubJetsaxis2");
-            
-            //TLorentzVector metLVec;
-            //metLVec.SetPtEtaPhiM(met, 0, metphi, 0);
-
-            std::vector<TLorentzVector> jetsLVec_forTagger;
-            std::vector<double> recoJetsBtag_forTagger;
-            std::vector<double> qgLikelihood_forTagger;
-            std::vector<double> recoJetsCharge_forTagger;
-
-            std::vector<TLorentzVector> *genTops;
-            if(tr.checkBranch("genDecayLVec"))
-            {
-                const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
-                const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
-                const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
-                const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
-
-                genTops = new std::vector<TLorentzVector>(genUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
-            }
-            else genTops = new std::vector<TLorentzVector>();
-            
-            //AnaFunctions::prepareJetsForTagger(jetsLVec, recoJetsBtag, jetsLVec_forTagger, recoJetsBtag_forTagger, qgLikelihood, qgLikelihood_forTagger);
-
+                        
             int cntCSVS = AnaFunctions::countCSVS(jetsLVec, recoJetsBtag, AnaConsts::cutCSVS, AnaConsts::bTagArr);
-
-            //t3tagger.processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec);
-            int nTops = 0;//t3tagger.nTopCandSortedCnt;
-
-            std::vector<TLorentzVector> *vTops = new std::vector<TLorentzVector>();
 
             //Helper function to turn int vectors into double vectors
             auto convertToDoubleandRegister = [](NTupleReader& tr, const std::string& name)
@@ -1705,11 +1678,12 @@ namespace plotterFunctions
                 tr.registerDerivedVec(name+"ConvertedToDouble3", doubleVec);
                 return doubleVec;
             };
-
+            
             //New Tagger starts here
-            std::vector<TLorentzVector> hadGenTops;
+            ttUtility::ConstAK4Inputs *myConstAK4Inputs = nullptr;
+            ttUtility::ConstAK8Inputs *myConstAK8Inputs = nullptr;
+            std::vector<TLorentzVector> *genTops;
             std::vector<std::vector<const TLorentzVector*>> hadGenTopDaughters;
-            std::vector<Constituent> constituents;
             std::vector<Constituent> constituentsMVA;
             if(tr.checkBranch("genDecayLVec"))
             {
@@ -1719,340 +1693,90 @@ namespace plotterFunctions
                 const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
 
                 //prep input object (constituent) vector
-                hadGenTops = ttUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
-                for(const auto& top : hadGenTops)
+                genTops = new std::vector<TLorentzVector>(ttUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
+                for(const auto& top : *genTops)
                 {
                     hadGenTopDaughters.push_back(ttUtility::GetTopdauLVec(top, genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
                 }
-                ttUtility::ConstAK4Inputs myConstAK4Inputs = ttUtility::ConstAK4Inputs(jetsLVec, recoJetsBtag, qgLikelihood, hadGenTops, hadGenTopDaughters);
-                myConstAK4Inputs.addSupplamentalVector("recoJetsJecScaleRawToFull",            tr.getVec<double>("recoJetsJecScaleRawToFull"));
-                myConstAK4Inputs.addSupplamentalVector("qgLikelihood",                         tr.getVec<double>("qgLikelihood"));
-                myConstAK4Inputs.addSupplamentalVector("qgPtD",                                tr.getVec<double>("qgPtD"));
-                myConstAK4Inputs.addSupplamentalVector("qgAxis1",                              tr.getVec<double>("qgAxis1"));
-                myConstAK4Inputs.addSupplamentalVector("qgAxis2",                              tr.getVec<double>("qgAxis2"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetschargedHadronEnergyFraction",  tr.getVec<double>("recoJetschargedHadronEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetschargedEmEnergyFraction",      tr.getVec<double>("recoJetschargedEmEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsneutralEmEnergyFraction",      tr.getVec<double>("recoJetsneutralEmEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsmuonEnergyFraction",           tr.getVec<double>("recoJetsmuonEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsHFHadronEnergyFraction",       tr.getVec<double>("recoJetsHFHadronEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsHFEMEnergyFraction",           tr.getVec<double>("recoJetsHFEMEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsneutralEnergyFraction",        tr.getVec<double>("recoJetsneutralEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("PhotonEnergyFraction",                 tr.getVec<double>("PhotonEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("ElectronEnergyFraction",               tr.getVec<double>("ElectronEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("ChargedHadronMultiplicity",            tr.getVec<double>("ChargedHadronMultiplicity"));
-                myConstAK4Inputs.addSupplamentalVector("NeutralHadronMultiplicity",            tr.getVec<double>("NeutralHadronMultiplicity"));
-                myConstAK4Inputs.addSupplamentalVector("PhotonMultiplicity",                   tr.getVec<double>("PhotonMultiplicity"));
-                myConstAK4Inputs.addSupplamentalVector("ElectronMultiplicity",                 tr.getVec<double>("ElectronMultiplicity"));
-                myConstAK4Inputs.addSupplamentalVector("MuonMultiplicity",                     tr.getVec<double>("MuonMultiplicity"));
-                myConstAK4Inputs.addSupplamentalVector("DeepCSVb",                             tr.getVec<double>("DeepCSVb"));
-                myConstAK4Inputs.addSupplamentalVector("DeepCSVc",                             tr.getVec<double>("DeepCSVc"));
-                myConstAK4Inputs.addSupplamentalVector("DeepCSVl",                             tr.getVec<double>("DeepCSVl"));
-                myConstAK4Inputs.addSupplamentalVector("DeepCSVbb",                            tr.getVec<double>("DeepCSVbb"));
-                myConstAK4Inputs.addSupplamentalVector("DeepCSVcc",                            tr.getVec<double>("DeepCSVcc"));
-                myConstAK4Inputs.addSupplamentalVector("DeepFlavorb",                          tr.getVec<double>("DeepFlavorb"));
-                myConstAK4Inputs.addSupplamentalVector("DeepFlavorbb",                         tr.getVec<double>("DeepFlavorbb"));
-                myConstAK4Inputs.addSupplamentalVector("DeepFlavorlepb",                       tr.getVec<double>("DeepFlavorlepb"));
-                myConstAK4Inputs.addSupplamentalVector("DeepFlavorc",                          tr.getVec<double>("DeepFlavorc"));
-                myConstAK4Inputs.addSupplamentalVector("DeepFlavoruds",                        tr.getVec<double>("DeepFlavoruds"));
-                myConstAK4Inputs.addSupplamentalVector("DeepFlavorg",                          tr.getVec<double>("DeepFlavorg"));
-                myConstAK4Inputs.addSupplamentalVector("CvsL",                                 tr.getVec<double>("CvsL"));
-                myConstAK4Inputs.addSupplamentalVector("CvsB",                                 tr.getVec<double>("CvsB"));
-                myConstAK4Inputs.addSupplamentalVector("CombinedSvtx",                         tr.getVec<double>("CombinedSvtx"));
-                myConstAK4Inputs.addSupplamentalVector("JetProba",                             tr.getVec<double>("JetProba_0"));
-                myConstAK4Inputs.addSupplamentalVector("JetBprob",                             tr.getVec<double>("JetBprob"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsBtag",                         tr.getVec<double>("recoJetsBtag_0"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsCharge",                       tr.getVec<double>("recoJetsCharge_0"));
-                myConstAK4Inputs.addSupplamentalVector("qgMult",                               *convertToDoubleandRegister(tr, "qgMult"));
 
-                //ttUtility::ConstAK8Inputs myConstAK8Inputs = ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec, puppiSubJetsBdisc, puppiSubJetstotalMult, puppiSubJetsptD, puppiSubJetsaxis1, puppiSubJetsaxis2, hadGenTops, hadGenTopDaughters);
-                
-                //myConstAK8Inputs.setWMassCorrHistos(puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for);
+                myConstAK4Inputs = new ttUtility::ConstAK4Inputs(jetsLVec, recoJetsBtag, qgLikelihood, *genTops, hadGenTopDaughters);
 
-                //run new tagger
-                //New MVA resolved Tagger starts here
-                constituentsMVA = ttUtility::packageConstituents(myConstAK4Inputs);//, myConstAK8Inputs);
-                //run tagger
-                ttMVA->runTagger(constituentsMVA);
+                //myConstAK8Inputs = new ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec, puppiSubJetsBdisc, puppiSubJetstotalMult, puppiSubJetsptD, puppiSubJetsaxis1, puppiSubJetsaxis2, *genTops, hadGenTopDaughters);
             }
             else
             {
-                //prep input object (constituent) vector
-                ttUtility::ConstAK4Inputs myConstAK4Inputs = ttUtility::ConstAK4Inputs(jetsLVec, recoJetsBtag, qgLikelihood);
-                myConstAK4Inputs.addSupplamentalVector("recoJetsJecScaleRawToFull",            tr.getVec<double>("recoJetsJecScaleRawToFull"));
-                myConstAK4Inputs.addSupplamentalVector("qgLikelihood",                         tr.getVec<double>("qgLikelihood"));
-                myConstAK4Inputs.addSupplamentalVector("qgPtD",                                tr.getVec<double>("qgPtD"));
-                myConstAK4Inputs.addSupplamentalVector("qgAxis1",                              tr.getVec<double>("qgAxis1"));
-                myConstAK4Inputs.addSupplamentalVector("qgAxis2",                              tr.getVec<double>("qgAxis2"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetschargedHadronEnergyFraction",  tr.getVec<double>("recoJetschargedHadronEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetschargedEmEnergyFraction",      tr.getVec<double>("recoJetschargedEmEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsneutralEmEnergyFraction",      tr.getVec<double>("recoJetsneutralEmEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsmuonEnergyFraction",           tr.getVec<double>("recoJetsmuonEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsHFHadronEnergyFraction",       tr.getVec<double>("recoJetsHFHadronEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsHFEMEnergyFraction",           tr.getVec<double>("recoJetsHFEMEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsneutralEnergyFraction",        tr.getVec<double>("recoJetsneutralEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("PhotonEnergyFraction",                 tr.getVec<double>("PhotonEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("ElectronEnergyFraction",               tr.getVec<double>("ElectronEnergyFraction"));
-                myConstAK4Inputs.addSupplamentalVector("ChargedHadronMultiplicity",            tr.getVec<double>("ChargedHadronMultiplicity"));
-                myConstAK4Inputs.addSupplamentalVector("NeutralHadronMultiplicity",            tr.getVec<double>("NeutralHadronMultiplicity"));
-                myConstAK4Inputs.addSupplamentalVector("PhotonMultiplicity",                   tr.getVec<double>("PhotonMultiplicity"));
-                myConstAK4Inputs.addSupplamentalVector("ElectronMultiplicity",                 tr.getVec<double>("ElectronMultiplicity"));
-                myConstAK4Inputs.addSupplamentalVector("MuonMultiplicity",                     tr.getVec<double>("MuonMultiplicity"));
-                myConstAK4Inputs.addSupplamentalVector("DeepCSVb",                             tr.getVec<double>("DeepCSVb"));
-                myConstAK4Inputs.addSupplamentalVector("DeepCSVc",                             tr.getVec<double>("DeepCSVc"));
-                myConstAK4Inputs.addSupplamentalVector("DeepCSVl",                             tr.getVec<double>("DeepCSVl"));
-                myConstAK4Inputs.addSupplamentalVector("DeepCSVbb",                            tr.getVec<double>("DeepCSVbb"));
-                myConstAK4Inputs.addSupplamentalVector("DeepCSVcc",                            tr.getVec<double>("DeepCSVcc"));
-                myConstAK4Inputs.addSupplamentalVector("DeepFlavorb",                          tr.getVec<double>("DeepFlavorb"));
-                myConstAK4Inputs.addSupplamentalVector("DeepFlavorbb",                         tr.getVec<double>("DeepFlavorbb"));
-                myConstAK4Inputs.addSupplamentalVector("DeepFlavorlepb",                       tr.getVec<double>("DeepFlavorlepb"));
-                myConstAK4Inputs.addSupplamentalVector("DeepFlavorc",                          tr.getVec<double>("DeepFlavorc"));
-                myConstAK4Inputs.addSupplamentalVector("DeepFlavoruds",                        tr.getVec<double>("DeepFlavoruds"));
-                myConstAK4Inputs.addSupplamentalVector("DeepFlavorg",                          tr.getVec<double>("DeepFlavorg"));
-                myConstAK4Inputs.addSupplamentalVector("CvsL",                                 tr.getVec<double>("CvsL"));
-                myConstAK4Inputs.addSupplamentalVector("CvsB",                                 tr.getVec<double>("CvsB"));
-                myConstAK4Inputs.addSupplamentalVector("CombinedSvtx",                         tr.getVec<double>("CombinedSvtx"));
-                myConstAK4Inputs.addSupplamentalVector("JetProba",                             tr.getVec<double>("JetProba_0"));
-                myConstAK4Inputs.addSupplamentalVector("JetBprob",                             tr.getVec<double>("JetBprob"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsBtag",                         tr.getVec<double>("recoJetsBtag_0"));
-                myConstAK4Inputs.addSupplamentalVector("recoJetsCharge",                       tr.getVec<double>("recoJetsCharge_0"));
-                myConstAK4Inputs.addSupplamentalVector("qgMult",                               *convertToDoubleandRegister(tr, "qgMult"));
-
-                //ttUtility::ConstAK8Inputs myConstAK8Inputs = ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec, puppiSubJetsBdisc, puppiSubJetstotalMult, puppiSubJetsptD, puppiSubJetsaxis1, puppiSubJetsaxis2);
-
-                //myConstAK8Inputs.setWMassCorrHistos(puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for);
+                //no gen info is avaliable
+                genTops = new std::vector<TLorentzVector>();
                 
-                //run new tagger
-                //New MVA resolved Tagger starts here
-                constituentsMVA = ttUtility::packageConstituents(myConstAK4Inputs);//, myConstAK8Inputs);
-                //run tagger
-                ttMVA->runTagger(constituentsMVA);
+                myConstAK4Inputs = new ttUtility::ConstAK4Inputs(jetsLVec, recoJetsBtag, qgLikelihood);
+                
+                //myConstAK8Inputs = new ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec, puppiSubJetsBdisc, puppiSubJetstotalMult, puppiSubJetsptD, puppiSubJetsaxis1, puppiSubJetsaxis2);
+                
             }
+                
+            myConstAK4Inputs->addSupplamentalVector("qgLikelihood",                         tr.getVec<double>("qgLikelihood"));
+            myConstAK4Inputs->addSupplamentalVector("qgPtD",                                tr.getVec<double>("qgPtD"));
+            myConstAK4Inputs->addSupplamentalVector("qgAxis1",                              tr.getVec<double>("qgAxis1"));
+            myConstAK4Inputs->addSupplamentalVector("qgAxis2",                              tr.getVec<double>("qgAxis2"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetschargedHadronEnergyFraction",  tr.getVec<double>("recoJetschargedHadronEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetschargedEmEnergyFraction",      tr.getVec<double>("recoJetschargedEmEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetsneutralEmEnergyFraction",      tr.getVec<double>("recoJetsneutralEmEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetsmuonEnergyFraction",           tr.getVec<double>("recoJetsmuonEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetsHFHadronEnergyFraction",       tr.getVec<double>("recoJetsHFHadronEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetsHFEMEnergyFraction",           tr.getVec<double>("recoJetsHFEMEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetsneutralEnergyFraction",        tr.getVec<double>("recoJetsneutralEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("PhotonEnergyFraction",                 tr.getVec<double>("PhotonEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("ElectronEnergyFraction",               tr.getVec<double>("ElectronEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("ChargedHadronMultiplicity",            tr.getVec<double>("ChargedHadronMultiplicity"));
+            myConstAK4Inputs->addSupplamentalVector("NeutralHadronMultiplicity",            tr.getVec<double>("NeutralHadronMultiplicity"));
+            myConstAK4Inputs->addSupplamentalVector("PhotonMultiplicity",                   tr.getVec<double>("PhotonMultiplicity"));
+            myConstAK4Inputs->addSupplamentalVector("ElectronMultiplicity",                 tr.getVec<double>("ElectronMultiplicity"));
+            myConstAK4Inputs->addSupplamentalVector("MuonMultiplicity",                     tr.getVec<double>("MuonMultiplicity"));
+            myConstAK4Inputs->addSupplamentalVector("DeepCSVb",                             tr.getVec<double>("DeepCSVb"));
+            myConstAK4Inputs->addSupplamentalVector("DeepCSVc",                             tr.getVec<double>("DeepCSVc"));
+            myConstAK4Inputs->addSupplamentalVector("DeepCSVl",                             tr.getVec<double>("DeepCSVl"));
+            myConstAK4Inputs->addSupplamentalVector("DeepCSVbb",                            tr.getVec<double>("DeepCSVbb"));
+            myConstAK4Inputs->addSupplamentalVector("DeepCSVcc",                            tr.getVec<double>("DeepCSVcc"));
+            myConstAK4Inputs->addSupplamentalVector("DeepFlavorb",                          tr.getVec<double>("DeepFlavorb"));
+            myConstAK4Inputs->addSupplamentalVector("DeepFlavorbb",                         tr.getVec<double>("DeepFlavorbb"));
+            myConstAK4Inputs->addSupplamentalVector("DeepFlavorlepb",                       tr.getVec<double>("DeepFlavorlepb"));
+            myConstAK4Inputs->addSupplamentalVector("DeepFlavorc",                          tr.getVec<double>("DeepFlavorc"));
+            myConstAK4Inputs->addSupplamentalVector("DeepFlavoruds",                        tr.getVec<double>("DeepFlavoruds"));
+            myConstAK4Inputs->addSupplamentalVector("DeepFlavorg",                          tr.getVec<double>("DeepFlavorg"));
+            myConstAK4Inputs->addSupplamentalVector("CvsL",                                 tr.getVec<double>("CvsL"));
+            myConstAK4Inputs->addSupplamentalVector("CvsB",                                 tr.getVec<double>("CvsB"));
+            //myConstAK4Inputs->addSupplamentalVector("CombinedSvtx",                         tr.getVec<double>("CombinedSvtx"));
+            //myConstAK4Inputs->addSupplamentalVector("JetProba",                             tr.getVec<double>("JetProba_0"));
+            //myConstAK4Inputs->addSupplamentalVector("JetBprob",                             tr.getVec<double>("JetBprob"));
+            //myConstAK4Inputs->addSupplamentalVector("recoJetsBtag",                         tr.getVec<double>("recoJetsBtag_0"));
+            //myConstAK4Inputs->addSupplamentalVector("recoJetsCharge",                       tr.getVec<double>("recoJetsCharge_0"));
+            myConstAK4Inputs->addSupplamentalVector("qgMult",                               *convertToDoubleandRegister(tr, "qgMult"));
 
+            //myConstAK8Inputs.setWMassCorrHistos(puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for);
 
-            //retrieve results
-            //const TopTaggerResults& ttrAllComb = ttAllComb->getResults();
+            //run new tagger
+            //New MVA resolved Tagger starts here
+            constituentsMVA = ttUtility::packageConstituents(*myConstAK4Inputs);//, *myConstAK8Inputs);
+            //run tagger
+            ttMVA->runTagger(constituentsMVA);
 
-            //get matches
-            //std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesAllComb;
-            //if(&genDecayLVec != nullptr) genMatchesAllComb = topMatcher_.TopConst(ttrAllComb.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
-
-            //std::vector<TLorentzVector> *vTopsAllComb = new std::vector<TLorentzVector>();
-            //std::vector<TLorentzVector> *vTopsMatchAllComb = new std::vector<TLorentzVector>();
-            //std::vector<TLorentzVector> *vTopsGenMatchAllComb = new std::vector<TLorentzVector>();
-            //std::vector<TLorentzVector> *vTopsParMatchAllComb = new std::vector<TLorentzVector>();
-            
-
-            //get matches
-            //std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatches;
-            //if(tr.checkBranch("genDecayLVec"))
-            //{
-            //    const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
-            //    const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
-            //    const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
-            //    const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
-            //
-            //    genMatches = topMatcher_.TopConst(ttr.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
-            //}
-            //
-            //std::vector<TLorentzVector> *vTopsNew = new std::vector<TLorentzVector>();
-            //std::vector<TLorentzVector> *vTopsMatchNew = new std::vector<TLorentzVector>();
-            //std::vector<TLorentzVector> *vTopsGenMatchNew = new std::vector<TLorentzVector>();
-            //
-            //
-            //for(int iTop = 0; iTop < ttr.getTops().size(); ++iTop)
-            //{
-            //    vTopsNew->emplace_back(ttr.getTops()[iTop]->p());
-            //    //if(genMatches.second.first[iTop] == 3) 
-            //    //if(genMatches.first[iTop])
-            //    const auto* genMatch = ttr.getTops()[iTop]->getBestGenTopMatch(0.6);
-            //    if(genMatch)
-            //    {
-            //        vTopsMatchNew->emplace_back(ttr.getTops()[iTop]->p());
-            //        vTopsGenMatchNew->emplace_back(*genMatch);
-            //    }
-            //}
-
-            //retrieve results
-            //std::vector<const TopObject*> *dijetTopMatch    = new std::vector<const TopObject*>();
-            //std::vector<const TopObject*> *dijetTopNoMatch  = new std::vector<const TopObject*>();
-            //std::vector<const TopObject*> *dijetTopFinal    = new std::vector<const TopObject*>();
-            //std::vector<const TopObject*> *dijetTopNotFinal = new std::vector<const TopObject*>();
-            //
-            //std::vector<double> *dijetM2M3Match = new std::vector<double>();
-            //std::vector<double> *dijetM2M3NoMatch = new std::vector<double>();
-            //std::vector<double> *dijetM2M3FinalTop = new std::vector<double>();
-            //std::vector<double> *dijetM2M3NotFinalTop = new std::vector<double>();
-            //
-            //auto massRatioCalc = [](const TopObject& top)
-            //{
-            //    const std::vector<Constituent const *>& jets = top.getConstituents();
-            //
-            //    double m23  = (jets[0]->getType() == AK8JET)?(jets[0]->getSoftDropMass() * jets[0]->getWMassCorr()):(jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
-            //    double m123 = top.p().M();
-            //    if(jets[0]->getType() == AK8JET)
-            //    {
-            //        TLorentzVector psudoVec;
-            //        psudoVec.SetPtEtaPhiM(jets[0]->p().Pt(), jets[0]->p().Eta(), jets[0]->p().Phi(), jets[0]->getSoftDropMass() * jets[0]->getWMassCorr());
-            //        m123 = (psudoVec + jets[1]->p()).M();
-            //    }
-            //    else if(jets[1]->getType() == AK8JET)
-            //    {
-            //        TLorentzVector psudoVec;
-            //        psudoVec.SetPtEtaPhiM(jets[1]->p().Pt(), jets[1]->p().Eta(), jets[1]->p().Phi(), jets[1]->getSoftDropMass() * jets[1]->getWMassCorr());
-            //        m123 = (psudoVec + jets[0]->p()).M();
-            //    }
-            //
-            //    return m23/m123;
-            //};
-            //const double mWmTopRatop = 0.463314121;
-            //
-            //const TopTaggerResults& ttrDijet = ttMVADiJetOnly->getResults();
-            //for(int iTop = 0; iTop < ttrDijet.getTopCandidates().size(); ++iTop)
-            //{
-            //    auto& top = ttrDijet.getTopCandidates()[iTop];
-            //
-            //    double m23m123Ratio = massRatioCalc(top);
-            //
-            //    dijetTopNotFinal->push_back(&top);
-            //    dijetM2M3NotFinalTop->push_back(m23m123Ratio/mWmTopRatop);
-            //
-            //    auto possibleGenMatches = top.getGenTopMatches();
-            //    const TLorentzVector* bestGenMatch = top.getBestGenTopMatch(0.6);
-            //    if(possibleGenMatches[bestGenMatch].size() >= 3)
-            //    {
-            //        dijetTopMatch->push_back(&top);
-            //        dijetM2M3Match->push_back(m23m123Ratio/mWmTopRatop);
-            //    }
-            //    else
-            //    {
-            //        dijetTopNoMatch->push_back(&top);
-            //        dijetM2M3NoMatch->push_back(m23m123Ratio/mWmTopRatop);
-            //    }
-            //}
-            //
-            //for(int iTop = 0; iTop < ttrDijet.getTops().size(); ++iTop)
-            //{
-            //    auto& top = *ttrDijet.getTops()[iTop];
-            //
-            //    double m23m123Ratio = massRatioCalc(top);
-            //
-            //    dijetTopFinal->push_back(&top);
-            //    dijetM2M3FinalTop->push_back(m23m123Ratio/mWmTopRatop);
-            //}
+            delete myConstAK4Inputs;
+            //delete myConstAK8Inputs;
 
             const TopTaggerResults& ttrMVA = ttMVA->getResults();
 
-            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVA;
-            std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<TLorentzVector>>> genMatchesMVACand;
-            if(tr.checkBranch("genDecayLVec"))
-            {
-                const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
-                const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
-                const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
-                const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
-            
-                genMatchesMVA = topMatcher_.TopConst(ttrMVA.getTops(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
-                genMatchesMVACand = topMatcher_.TopConst(ttrMVA.getTopCandidates(), genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
-            }
+            const auto& candidateTops = ttrMVA.getTopCandidates();
+            const auto& tops = ttrMVA.getTops();
 
-            std::vector<TLorentzVector> *vTopsNewMVA = new std::vector<TLorentzVector>();
-            std::vector<TLorentzVector> *vTopsMatchNewMVA = new std::vector<TLorentzVector>();
-            std::vector<bool> *vTopsMatchNewMVABool = new std::vector<bool>();
-            std::vector<TLorentzVector> *vTopsGenMatchNewMVA = new std::vector<TLorentzVector>();
-            std::vector<TLorentzVector> *vTopsGenMatchMonoNewMVA = new std::vector<TLorentzVector>();
-            std::vector<TLorentzVector> *vTopsGenMatchDiNewMVA = new std::vector<TLorentzVector>();
-            std::vector<TLorentzVector> *vTopsGenMatchTriNewMVA = new std::vector<TLorentzVector>();
-            std::vector<int> *vTopsNCandNewMVA = new std::vector<int>();
-            std::vector<double>* discriminators = new std::vector<double>();
-            std::vector<double>* discriminatorsMatch = new std::vector<double>();
-            std::vector<double>* discriminatorsNoMatch = new std::vector<double>();
-
-            std::vector<const TopObject*> *topMonojetMVA = new std::vector<const TopObject*>();
-
-            const std::vector<TopObject>& topMVACands = ttrMVA.getTopCandidates();
-
-            //get tuple variables 
-            auto MVAvars = ttUtility::getMVAVars();
-            //std::vector<std::pair<std::string, std::vector<double>*>> mvaVars;
-            //std::vector<std::pair<std::string, std::vector<double>*>> mvaCandVars;
-
-            std::map<std::string, std::vector<double>*> mvaVarsTrain_genMatch;
-            std::map<std::string, std::vector<double>*> mvaVarsTrain_notGenMatch;
-            std::map<std::string, std::vector<double>*> mvaVarsTrain_finalTop;
-            std::map<std::string, std::vector<double>*> mvaVarsTrain_notFinalTop;
-
-            for(auto& var : MVAvars)
-            {
-                //mvaVars.emplace_back(var, new std::vector<double>);
-                //mvaCandVars.emplace_back(var, new std::vector<double>);
-
-                mvaVarsTrain_genMatch[var] = new std::vector<double>();
-                mvaVarsTrain_notGenMatch[var] = new std::vector<double>();
-                mvaVarsTrain_finalTop[var] = new std::vector<double>();
-                mvaVarsTrain_notFinalTop[var] = new std::vector<double>();
-            }
-
-            //const TopTaggerResults& ttrTrijet = ttMVATriJetOnly->getResults();
-            //for(int iTop = 0; iTop < ttrTrijet.getTopCandidates().size(); ++iTop)
-            //{
-            //    auto& top = ttrTrijet.getTopCandidates()[iTop];
-            //    
-            //    auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
-            //
-            //    for(const auto mvaInputVar : MVAinputs)
-            //    {
-            //        //reconstructed background
-            //        if(top.getDiscriminator() < 0.85)
-            //        {
-            //            if(mvaVarsTrain_notFinalTop.find(mvaInputVar.first) != mvaVarsTrain_notFinalTop.end())
-            //            {
-            //                mvaVarsTrain_notFinalTop[mvaInputVar.first]->push_back(mvaInputVar.second);
-            //            }
-            //        }
-            //
-            //        //gen matched tops
-            //        auto possibleGenMatches = top.getGenTopMatches();
-            //        const TLorentzVector* bestGenMatch = top.getBestGenTopMatch(0.6);
-            //        if(possibleGenMatches[bestGenMatch].size() >= 3)
-            //        {
-            //            if(mvaVarsTrain_genMatch.find(mvaInputVar.first) != mvaVarsTrain_genMatch.end())
-            //            {
-            //                mvaVarsTrain_genMatch[mvaInputVar.first]->push_back(mvaInputVar.second);
-            //            }
-            //        }
-            //        else
-            //        {
-            //            if(mvaVarsTrain_notGenMatch.find(mvaInputVar.first) != mvaVarsTrain_notGenMatch.end())
-            //            {
-            //                mvaVarsTrain_notGenMatch[mvaInputVar.first]->push_back(mvaInputVar.second);
-            //            }
-            //        }
-            //    }                
-            //}
-            //
-            //for(int iTop = 0; iTop < ttrTrijet.getTops().size(); ++iTop)
-            //{
-            //    auto& top = *ttrTrijet.getTops()[iTop];
-            //
-            //    auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
-            //
-            //    for(const auto mvaInputVar : MVAinputs)
-            //    {
-            //        if(mvaVarsTrain_finalTop.find(mvaInputVar.first) != mvaVarsTrain_finalTop.end())
-            //        {
-            //            mvaVarsTrain_finalTop[mvaInputVar.first]->push_back(mvaInputVar.second);
-            //        }
-            //    }
-            //}
-
+            //get "best" top based upon on trijet mass 
             double bestTopMass = -9999.9;
             double bestTopEta = -9999.9;
             const TopObject* bestTopMassLV = nullptr;
             bool bestTopMassGenMatch = false;
             bool bestTopMassTopTag = false;
-            for(int iTop = 0; iTop < topMVACands.size(); ++iTop)
+            for(int iTop = 0; iTop < candidateTops.size(); ++iTop)
             {
-                auto& top = topMVACands[iTop];
+                auto& top = candidateTops[iTop];
 
                 if(fabs(top.p().M() - 173.5) < fabs(bestTopMass - 173.5) && top.getNConstituents() == 3)
                 {
@@ -2063,7 +1787,7 @@ namespace plotterFunctions
             }
 
             bestTopMassGenMatch = (bestTopMassLV)?(bestTopMassLV->getBestGenTopMatch(0.6) != nullptr):(false);
-            for(const auto& topPtr : ttrMVA.getTops()) 
+            for(const auto& topPtr : tops) 
             {
                 if(topPtr == bestTopMassLV) 
                 {
@@ -2072,48 +1796,21 @@ namespace plotterFunctions
                 }
             }
 
+            //get a random top candidate 
             const TopObject* randomTopCand = nullptr;
             bool randomTopCandTopTag = false;
             bool randomTopCandNotGenMatch = true;
-            if(topMVACands.size())
+            if(candidateTops.size())
             {
-                randomTopCand = &topMVACands[distribution(generator) % topMVACands.size()];
+                randomTopCand = &candidateTops[distribution(generator) % candidateTops.size()];
                 randomTopCandNotGenMatch = (randomTopCand->getBestGenTopMatch(0.6) == nullptr);
-                for(const auto& topPtr : ttrMVA.getTops()) 
+                for(const auto& topPtr : tops) 
                 {
                     if(topPtr == randomTopCand) 
                     {
                         randomTopCandTopTag = true;
                         break;
                     }
-                }
-            }
-
-            for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
-            {
-                auto& top = *ttrMVA.getTops()[iTop];
-                vTopsNCandNewMVA->push_back(top.getNConstituents());
-
-                if(top.getNConstituents() == 1) topMonojetMVA->push_back(&top);
-
-                auto MVAinputs = ttUtility::createMVAInputs(top, AnaConsts::cutCSVS);
-                vTopsNewMVA->emplace_back(top.p());
-                discriminators->push_back(top.getDiscriminator());
-                const TLorentzVector* genMatch = top.getBestGenTopMatch(0.6);
-                vTopsMatchNewMVABool->push_back(genMatch != nullptr);
-                if(genMatch)
-                {
-                    vTopsMatchNewMVA->emplace_back(top.p());
-                    vTopsGenMatchNewMVA->emplace_back(*genMatch);
-                    discriminatorsMatch->push_back(top.getDiscriminator());
-
-                    if(top.getNConstituents() == 1)      vTopsGenMatchMonoNewMVA->emplace_back(*genMatch);
-                    else if(top.getNConstituents() == 2) vTopsGenMatchDiNewMVA->emplace_back(*genMatch);
-                    else if(top.getNConstituents() == 3) vTopsGenMatchTriNewMVA->emplace_back(*genMatch);
-                }
-                else
-                {
-                    discriminatorsNoMatch->push_back(ttrMVA.getTops()[iTop]->getDiscriminator());
                 }
             }
 
@@ -2157,63 +1854,42 @@ namespace plotterFunctions
                     cutElecMTlepVec->push_back(elesMTlep[i]);
                 }
             }
-
+            
             tr.registerDerivedVec("cutElecVec", cutElecVec);
             tr.registerDerivedVec("cutElecMTlepVec", cutElecMTlepVec);
-
+            
             //// Calculate number of leptons
             int nMuons = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
             const AnaConsts::IsoAccRec muonsMiniIsoArr20GeV = {   -1,       2.4,      20,     -1,       0.2,     -1  };
             int nMuons_20GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr20GeV);
             const AnaConsts::IsoAccRec muonsMiniIsoArr30GeV = {   -1,       2.4,      30,     -1,       0.2,     -1  };
-            int nMuons_30GeV = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, muonsMiniIsoArr30GeV);
+            int nMuons_30GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr30GeV);
             const AnaConsts::IsoAccRec muonsMiniIsoArr50GeV = {   -1,       2.4,      50,     -1,       0.2,     -1  };
             int nMuons_50GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr50GeV);
             int nElectrons = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB,  elesFlagIDVec, AnaConsts::elesMiniIsoArr);
             const AnaConsts::ElecIsoAccRec elesMiniIsoArr20 = {   -1,       2.5,      20,     -1,     0.10,     0.10,     -1  };
             int nElectrons20 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr20);
             const AnaConsts::ElecIsoAccRec elesMiniIsoArr30 = {   -1,       2.5,      30,     -1,     0.10,     0.10,     -1  };
-            int nElectrons30 = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesMiniIso"), tr.getVec<double>("elesMtw"), tr.getVec<unsigned int>("elesisEB"), elesFlagIDVec, elesMiniIsoArr30);
+            int nElectrons30 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr30);
             int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
             //
             //// Pass lepton veto?
-            bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel), passEleVeto = (nElectrons == AnaConsts::nElectronsSel), passIsoTrkVeto = (nIsoTrks == AnaConsts::nIsoTrksSel);
+            bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel);
+            bool passEleVeto = (nElectrons == AnaConsts::nElectronsSel);
+            bool passIsoTrkVeto = (nIsoTrks == AnaConsts::nIsoTrksSel);
 
             double Mmumu = 0.0;
             if(nMuons_20GeV >= 2) Mmumu = (tr.getVec<TLorentzVector>("muonsLVec")[0] + tr.getVec<TLorentzVector>("muonsLVec")[1]).M();
 
-            for(auto& vec : mvaVarsTrain_genMatch)     tr.registerDerivedVec("MVAvar_genMatch_" + vec.first, vec.second);
-            for(auto& vec : mvaVarsTrain_notGenMatch)  tr.registerDerivedVec("MVAvar_notGenMatch_" + vec.first, vec.second);
-            for(auto& vec : mvaVarsTrain_finalTop)     tr.registerDerivedVec("MVAvar_finalTop_" + vec.first, vec.second);
-            for(auto& vec : mvaVarsTrain_notFinalTop)  tr.registerDerivedVec("MVAvar_notFinalTop_" + vec.first, vec.second);
-
-            const auto& usedJets = ttrMVA.getUsedConstituents();
-            int nBNotInTop = 0;
-            for(auto& constituent : constituentsMVA)
-            {
-                if(constituent.getType() == AK4JET && constituent.getBTagDisc() > 0.8 && usedJets.count(&constituent) == 0) ++nBNotInTop;
-            }
-
 	    // Process the generator weight
 	    double genWeight = 1.;
 	    // Never apply this weight for data! In the old ntuple version <=3 this is "-1", in the newer ones it is "0"
-	    if(stored_weight < 0)
-	      genWeight = -1.;
+	    if(stored_weight < 0) genWeight = -1.;
 
             //std::cout << genWeight << std::endl;
 	    tr.registerDerivedVar("genWeight", genWeight);
 
             tr.registerDerivedVar("ttrMVA", &ttrMVA);
-
-            //tr.registerDerivedVec("dijetTopMatch", dijetTopMatch);
-            //tr.registerDerivedVec("dijetTopNoMatch", dijetTopNoMatch);
-            //tr.registerDerivedVec("dijetTopFinal", dijetTopFinal);
-            //tr.registerDerivedVec("dijetTopNotFinal", dijetTopNotFinal);
-            //
-            //tr.registerDerivedVec("dijetM2M3Match", dijetM2M3Match);
-            //tr.registerDerivedVec("dijetM2M3NoMatch", dijetM2M3NoMatch);
-            //tr.registerDerivedVec("dijetM2M3FinalTop", dijetM2M3FinalTop);
-            //tr.registerDerivedVec("dijetM2M3NotFinalTop", dijetM2M3NotFinalTop);
 
             //get one mu of 20 GeV pt
             tr.registerDerivedVar("passSingleLep50", nMuons_50GeV == 1);
@@ -2223,40 +1899,11 @@ namespace plotterFunctions
 
             tr.registerDerivedVar("passLeptVetoNoMu", passEleVeto && passIsoTrkVeto);
 
-            tr.registerDerivedVar("nTops", nTops);
-
-            tr.registerDerivedVar("nBNotInTop", nBNotInTop);
-
-            //tr.registerDerivedVar("nTopsNew", int(ttr.getTops().size()));
-            tr.registerDerivedVar("nTopsNewMVA", int(ttrMVA.getTops().size()));
+            tr.registerDerivedVar("nTops", static_cast<int>(tops.size()));
 
             tr.registerDerivedVar("cntCSVS", cntCSVS);
 
-            //tr.registerDerivedVec("vTops", vTops);
-
-            //tr.registerDerivedVec("vTopsNew", vTopsNew);
-            tr.registerDerivedVec("vTopsNewMVA", vTopsNewMVA);
-            //tr.registerDerivedVec("vTopsMatchNew", vTopsMatchNew);
-            tr.registerDerivedVec("vTopsMatchNewMVA", vTopsMatchNewMVA);
-            tr.registerDerivedVec("vTopsMatchNewMVABool", vTopsMatchNewMVABool);
-            //tr.registerDerivedVec("vTopsGenMatchNew", vTopsGenMatchNew);
-            tr.registerDerivedVec("vTopsGenMatchNewMVA", vTopsGenMatchNewMVA);
-            tr.registerDerivedVec("vTopsGenMatchMonoNewMVA", vTopsGenMatchMonoNewMVA);
-            tr.registerDerivedVec("vTopsGenMatchDiNewMVA", vTopsGenMatchDiNewMVA);
-            tr.registerDerivedVec("vTopsGenMatchTriNewMVA", vTopsGenMatchTriNewMVA);
-            tr.registerDerivedVec("vTopsNCandNewMVA", vTopsNCandNewMVA);
-            //tr.registerDerivedVec("vTopsAllComb", vTopsAllComb);
-            //tr.registerDerivedVec("vTopsMatchAllComb", vTopsMatchAllComb);
-            //tr.registerDerivedVec("vTopsGenMatchAllComb", vTopsGenMatchAllComb);
-
-            tr.registerDerivedVec("topMonojetMVA", topMonojetMVA);
-
             tr.registerDerivedVec("genTops", genTops);
-
-            tr.registerDerivedVec("discriminators", discriminators);
-            tr.registerDerivedVec("discriminatorsMatch", discriminatorsMatch);
-            tr.registerDerivedVec("discriminatorsNoMatch", discriminatorsNoMatch);
-   
 
             tr.registerDerivedVar("bestTopMass", bestTopMass);
             tr.registerDerivedVar("bestTopEta", bestTopEta);
@@ -2270,9 +1917,6 @@ namespace plotterFunctions
             tr.registerDerivedVar("randomTopCandTopTag", randomTopCandTopTag);
             tr.registerDerivedVar("randomTopCandNotGenMatch", randomTopCandNotGenMatch);
 
-            //tr.registerDerivedVar("typeMono",typeMono);
-            //tr.registerDerivedVar("typeDi",typeDi);
-            //tr.registerDerivedVar("typeTri",typeTri);
         }
 
 
