@@ -2165,11 +2165,15 @@ namespace plotterFunctions
             int nMuons = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
             const AnaConsts::IsoAccRec muonsMiniIsoArr20GeV = {   -1,       2.4,      20,     -1,       0.2,     -1  };
             int nMuons_20GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr20GeV);
+            const AnaConsts::IsoAccRec muonsMiniIsoArr30GeV = {   -1,       2.4,      30,     -1,       0.2,     -1  };
+            int nMuons_30GeV = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, muonsMiniIsoArr30GeV);
             const AnaConsts::IsoAccRec muonsMiniIsoArr50GeV = {   -1,       2.4,      50,     -1,       0.2,     -1  };
             int nMuons_50GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr50GeV);
             int nElectrons = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB,  elesFlagIDVec, AnaConsts::elesMiniIsoArr);
             const AnaConsts::ElecIsoAccRec elesMiniIsoArr20 = {   -1,       2.5,      20,     -1,     0.10,     0.10,     -1  };
             int nElectrons20 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr20);
+            const AnaConsts::ElecIsoAccRec elesMiniIsoArr30 = {   -1,       2.5,      30,     -1,     0.10,     0.10,     -1  };
+            int nElectrons30 = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesMiniIso"), tr.getVec<double>("elesMtw"), tr.getVec<unsigned int>("elesisEB"), elesFlagIDVec, elesMiniIsoArr30);
             int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
             //
             //// Pass lepton veto?
@@ -2214,6 +2218,7 @@ namespace plotterFunctions
             //get one mu of 20 GeV pt
             tr.registerDerivedVar("passSingleLep50", nMuons_50GeV == 1);
             tr.registerDerivedVar("passSingleLep20", nMuons_20GeV + nElectrons20 == 1);
+            tr.registerDerivedVar("passSingleLep30", nMuons_30GeV + nElectrons30 == 1);
             tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2 && Mmumu > 76 && Mmumu < 106);
 
             tr.registerDerivedVar("passLeptVetoNoMu", passEleVeto && passIsoTrkVeto);
