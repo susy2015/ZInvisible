@@ -2117,19 +2117,59 @@ namespace plotterFunctions
                 }
             }
 
-            //// Calculate number of leptons
+            const std::vector<TLorentzVector>& muonsLVec    = tr.getVec<TLorentzVector>("muonsLVec");
+            //const std::vector<double>& muonsRelIso          = tr.getVec<double>("muonsRelIso");
+            const std::vector<double>& muonsMiniIso         = tr.getVec<double>("muonsMiniIso");
+            const std::vector<double>& muonsMTlep           = tr.getVec<double>("muonsMtw");
             std::string muonsFlagIDLabel = "muonsFlagMedium";
+            const std::vector<int> & muonsFlagIDVec = muonsFlagIDLabel.empty()? std::vector<int>(muonsMiniIso.size(), 1):tr.getVec<int>(muonsFlagIDLabel.c_str());
+
+            std::vector<TLorentzVector>* cutMuVec = new std::vector<TLorentzVector>();
+            std::vector<double> *cutMuMTlepVec = new std::vector<double>();
+            for(int i = 0; i < muonsLVec.size(); ++i)
+            {
+                if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
+                {
+                    cutMuVec->push_back(muonsLVec[i]);
+                    cutMuMTlepVec->push_back(muonsMTlep[i]);
+                }
+            }
+
+            tr.registerDerivedVec("cutMuVec", cutMuVec);
+            tr.registerDerivedVec("cutMuMTlepVec", cutMuMTlepVec);
+
+            const std::vector<TLorentzVector, std::allocator<TLorentzVector> > elesLVec = tr.getVec<TLorentzVector>("elesLVec");
+            const std::vector<double>& elesMiniIso          = tr.getVec<double>("elesMiniIso");
+            const std::vector<double>& elesCharge           = tr.getVec<double>("elesCharge");
+            const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
+            const std::vector<double>&  elesMTlep           = tr.getVec<double>("elesMtw");
             std::string elesFlagIDLabel = "elesFlagVeto";
-            const std::vector<int> & muonsFlagIDVec = muonsFlagIDLabel.empty()? std::vector<int>(tr.getVec<double>("muonsMiniIso").size(), 1):tr.getVec<int>(muonsFlagIDLabel.c_str());
-            const std::vector<int> & elesFlagIDVec = elesFlagIDLabel.empty()? std::vector<int>(tr.getVec<double>("elesMiniIso").size(), 1):tr.getVec<int>(elesFlagIDLabel.c_str());
-            int nMuons = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
+            const std::vector<int> & elesFlagIDVec = elesFlagIDLabel.empty()? std::vector<int>(elesMiniIso.size(), 1):tr.getVec<int>(elesFlagIDLabel.c_str());
+
+            //electron selection
+            std::vector<TLorentzVector>* cutElecVec = new std::vector<TLorentzVector>();
+            std::vector<double> *cutElecMTlepVec = new std::vector<double>();
+            for(int i = 0; i < elesLVec.size(); ++i)
+            {
+                if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
+                {
+                    cutElecVec->push_back(elesLVec[i]);
+                    cutElecMTlepVec->push_back(elesMTlep[i]);
+                }
+            }
+
+            tr.registerDerivedVec("cutElecVec", cutElecVec);
+            tr.registerDerivedVec("cutElecMTlepVec", cutElecMTlepVec);
+
+            //// Calculate number of leptons
+            int nMuons = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
             const AnaConsts::IsoAccRec muonsMiniIsoArr20GeV = {   -1,       2.4,      20,     -1,       0.2,     -1  };
-            int nMuons_20GeV = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, muonsMiniIsoArr20GeV);
+            int nMuons_20GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr20GeV);
             const AnaConsts::IsoAccRec muonsMiniIsoArr50GeV = {   -1,       2.4,      50,     -1,       0.2,     -1  };
-            int nMuons_50GeV = AnaFunctions::countMuons(tr.getVec<TLorentzVector>("muonsLVec"), tr.getVec<double>("muonsMiniIso"), tr.getVec<double>("muonsMtw"), muonsFlagIDVec, muonsMiniIsoArr50GeV);
-            int nElectrons = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesMiniIso"), tr.getVec<double>("elesMtw"), tr.getVec<unsigned int>("elesisEB"), elesFlagIDVec, AnaConsts::elesMiniIsoArr);
+            int nMuons_50GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr50GeV);
+            int nElectrons = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB,  elesFlagIDVec, AnaConsts::elesMiniIsoArr);
             const AnaConsts::ElecIsoAccRec elesMiniIsoArr20 = {   -1,       2.5,      20,     -1,     0.10,     0.10,     -1  };
-            int nElectrons20 = AnaFunctions::countElectrons(tr.getVec<TLorentzVector>("elesLVec"), tr.getVec<double>("elesMiniIso"), tr.getVec<double>("elesMtw"), tr.getVec<unsigned int>("elesisEB"), elesFlagIDVec, elesMiniIsoArr20);
+            int nElectrons20 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr20);
             int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
             //
             //// Pass lepton veto?
@@ -2149,38 +2189,6 @@ namespace plotterFunctions
             {
                 if(constituent.getType() == AK4JET && constituent.getBTagDisc() > 0.8 && usedJets.count(&constituent) == 0) ++nBNotInTop;
             }
-
-            const std::vector<TLorentzVector>& muonsLVec    = tr.getVec<TLorentzVector>("muonsLVec");
-            const std::vector<double>& muonsRelIso          = tr.getVec<double>("muonsRelIso");
-            const std::vector<double>& muonsMiniIso         = tr.getVec<double>("muonsMiniIso");
-
-            std::vector<TLorentzVector>* cutMuVec = new std::vector<TLorentzVector>();
-            for(int i = 0; i < muonsLVec.size(); ++i)
-            {
-                if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
-                {
-                    cutMuVec->push_back(muonsLVec[i]);
-                }
-            }
-
-            tr.registerDerivedVec("cutMuVec", cutMuVec);
-
-            const std::vector<TLorentzVector, std::allocator<TLorentzVector> > elesLVec = tr.getVec<TLorentzVector>("elesLVec");
-            const std::vector<double>& elesMiniIso          = tr.getVec<double>("elesMiniIso");
-            const std::vector<double>& elesCharge           = tr.getVec<double>("elesCharge");
-            const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
-
-            //electron selection
-            std::vector<TLorentzVector>* cutElecVec = new std::vector<TLorentzVector>();
-            for(int i = 0; i < elesLVec.size(); ++i)
-            {
-                if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
-                {
-                    cutElecVec->push_back(elesLVec[i]);
-                }
-            }
-
-            tr.registerDerivedVec("cutElecVec", cutElecVec);
 
 	    // Process the generator weight
 	    double genWeight = 1.;
