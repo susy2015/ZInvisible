@@ -1438,7 +1438,7 @@ namespace plotterFunctions
         void triggerInfoMC(NTupleReader& tr)
         {
             const double& met                            = tr.getVar<double>("met");
-            const double& ht                             = tr.getVar<double>("HTTopTag");
+            const double& ht                             = tr.getVar<double>("HT");
             const std::vector<TLorentzVector>& cutMuVec  = tr.getVec<TLorentzVector>("muonsLVec");
 
 	    // MC trigger efficiencies
@@ -1627,14 +1627,190 @@ namespace plotterFunctions
 
     };
 
+    class PrepareTopCRSelection
+    {
+    private:
+
+        bool passNoiseEventFilterFunc(const NTupleReader* const tr, bool isfastsim = false)
+        {
+            // According to https://twiki.cern.ch/twiki/bin/view/CMS/SUSRecommendationsICHEP16#Filters_to_be_applied,
+            // "Do not apply filters to signal monte carlo (fastsim)"
+            if( isfastsim ) return true;
+
+            try
+            {
+                bool passDataSpec = true;
+                if( tr->getVar<unsigned int>("run") >= 100000 ){ // hack to know if it's data or MC...
+                    int goodVerticesFilter = tr->getVar<int>("goodVerticesFilter");
+                    // new filters
+                    const int & globalTightHalo2016Filter = tr->getVar<int>("globalTightHalo2016Filter");
+                    bool passglobalTightHalo2016Filter = (&globalTightHalo2016Filter) != nullptr? tr->getVar<int>("globalTightHalo2016Filter") !=0 : true;
+
+                    int eeBadScFilter = tr->getVar<int>("eeBadScFilter");
+
+                    passDataSpec = goodVerticesFilter && eeBadScFilter && passglobalTightHalo2016Filter;
+                }
+
+                unsigned int hbheNoiseFilter = isfastsim? 1:tr->getVar<unsigned int>("HBHENoiseFilter");
+                unsigned int hbheIsoNoiseFilter = isfastsim? 1:tr->getVar<unsigned int>("HBHEIsoNoiseFilter");
+                int ecalTPFilter = tr->getVar<int>("EcalDeadCellTriggerPrimitiveFilter");
+
+                int jetIDFilter = isfastsim? 1:tr->getVar<int>("looseJetID");
+                // new filters
+                const unsigned int & BadPFMuonFilter = tr->getVar<unsigned int>("BadPFMuonFilter");
+                bool passBadPFMuonFilter = (&BadPFMuonFilter) != nullptr? tr->getVar<unsigned int>("BadPFMuonFilter") !=0 : true;
+
+                const unsigned int & BadChargedCandidateFilter = tr->getVar<unsigned int>("BadChargedCandidateFilter");
+                bool passBadChargedCandidateFilter = (&BadChargedCandidateFilter) != nullptr? tr->getVar<unsigned int>("BadChargedCandidateFilter") !=0 : true;
+
+                bool passMETratioFilter = tr->getVar<double>("calomet")!=0 ? tr->getVar<double>("met")/tr->getVar<double>("calomet") < 5 : true;
+
+                return passDataSpec && hbheNoiseFilter && hbheIsoNoiseFilter && ecalTPFilter && jetIDFilter && passBadPFMuonFilter && passBadChargedCandidateFilter && passMETratioFilter;
+            }
+            catch (std::string var)
+            {
+                if(tr->isFirstEvent()) 
+                {
+                    printf("NTupleReader::getTupleObj(const std::string var):  Variable not found: \"%s\"!!!\n", var.c_str());
+                    printf("Running with PHYS14 Config\n");
+                }
+            }
+            return true;
+        }
+
+
+        void prepareTopCRSelection(NTupleReader& tr)
+        {
+            const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVec");
+            const std::vector<double>& recoJetsBtag      = tr.getVec<double>("recoJetsBtag_0");
+
+	    const double& stored_weight = tr.getVar<double>("stored_weight");
+
+            int cntCSVS = AnaFunctions::countCSVS(jetsLVec, recoJetsBtag, AnaConsts::cutCSVS, AnaConsts::bTagArr);
+
+            const double& metphi = tr.getVar<double>("metphi");
+
+            const std::vector<TLorentzVector>& muonsLVec    = tr.getVec<TLorentzVector>("muonsLVec");
+            //const std::vector<double>& muonsRelIso          = tr.getVec<double>("muonsRelIso");
+            const std::vector<double>& muonsMiniIso         = tr.getVec<double>("muonsMiniIso");
+            const std::vector<double>& muonsMTlep           = tr.getVec<double>("muonsMtw");
+            std::string muonsFlagIDLabel = "muonsFlagMedium";
+            const std::vector<int> & muonsFlagIDVec = muonsFlagIDLabel.empty()? std::vector<int>(muonsMiniIso.size(), 1):tr.getVec<int>(muonsFlagIDLabel.c_str());
+
+            std::vector<TLorentzVector>* cutMuVec = new std::vector<TLorentzVector>();
+            std::vector<double> *cutMuMTlepVec = new std::vector<double>();
+            for(int i = 0; i < muonsLVec.size(); ++i)
+            {
+                if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
+                {
+                    cutMuVec->push_back(muonsLVec[i]);
+                    cutMuMTlepVec->push_back(muonsMTlep[i]);
+                }
+            }
+
+            tr.registerDerivedVec("cutMuVec", cutMuVec);
+            tr.registerDerivedVec("cutMuMTlepVec", cutMuMTlepVec);
+
+            const std::vector<TLorentzVector, std::allocator<TLorentzVector> > elesLVec = tr.getVec<TLorentzVector>("elesLVec");
+            const std::vector<double>& elesMiniIso          = tr.getVec<double>("elesMiniIso");
+            const std::vector<double>& elesCharge           = tr.getVec<double>("elesCharge");
+            const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
+            const std::vector<double>&  elesMTlep           = tr.getVec<double>("elesMtw");
+            std::string elesFlagIDLabel = "elesFlagVeto";
+            const std::vector<int> & elesFlagIDVec = elesFlagIDLabel.empty()? std::vector<int>(elesMiniIso.size(), 1):tr.getVec<int>(elesFlagIDLabel.c_str());
+
+            //electron selection
+            std::vector<TLorentzVector>* cutElecVec = new std::vector<TLorentzVector>();
+            std::vector<double> *cutElecMTlepVec = new std::vector<double>();
+            for(int i = 0; i < elesLVec.size(); ++i)
+            {
+                if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
+                {
+                    cutElecVec->push_back(elesLVec[i]);
+                    cutElecMTlepVec->push_back(elesMTlep[i]);
+                }
+            }
+            
+            tr.registerDerivedVec("cutElecVec", cutElecVec);
+            tr.registerDerivedVec("cutElecMTlepVec", cutElecMTlepVec);
+            
+            //// Calculate number of leptons
+            int nMuons = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
+            const AnaConsts::IsoAccRec muonsMiniIsoArr20GeV = {   -1,       2.4,      20,     -1,       0.2,     -1  };
+            int nMuons_20GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr20GeV);
+            const AnaConsts::IsoAccRec muonsMiniIsoArr30GeV = {   -1,       2.4,      30,     -1,       0.2,     -1  };
+            int nMuons_30GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr30GeV);
+            const AnaConsts::IsoAccRec muonsMiniIsoArr50GeV = {   -1,       2.4,      50,     -1,       0.2,     -1  };
+            int nMuons_50GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr50GeV);
+            int nElectrons = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB,  elesFlagIDVec, AnaConsts::elesMiniIsoArr);
+            const AnaConsts::ElecIsoAccRec elesMiniIsoArr20 = {   -1,       2.5,      20,     -1,     0.10,     0.10,     -1  };
+            int nElectrons20 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr20);
+            const AnaConsts::ElecIsoAccRec elesMiniIsoArr30 = {   -1,       2.5,      30,     -1,     0.10,     0.10,     -1  };
+            int nElectrons30 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr30);
+            int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
+            //
+            //// Pass lepton veto?
+            bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel);
+            bool passEleVeto = (nElectrons == AnaConsts::nElectronsSel);
+            bool passIsoTrkVeto = (nIsoTrks == AnaConsts::nIsoTrksSel);
+
+            double Mmumu = 0.0;
+            if(nMuons_20GeV >= 2) Mmumu = (tr.getVec<TLorentzVector>("muonsLVec")[0] + tr.getVec<TLorentzVector>("muonsLVec")[1]).M();
+
+
+            // Calculate deltaPhi
+            std::vector<double> * dPhiVec = new std::vector<double>();
+            (*dPhiVec) = AnaFunctions::calcDPhi(jetsLVec, metphi, 3, AnaConsts::dphiArr);
+
+            // Pass deltaPhi?
+            bool passdPhis = (dPhiVec->size() >= 3) && ((*dPhiVec)[0] >= AnaConsts::dPhi0_CUT && (*dPhiVec)[1] >= AnaConsts::dPhi1_CUT && (*dPhiVec)[2] >= AnaConsts::dPhi2_CUT);
+
+            // calculate number of jets 
+            int cntNJetsPt30Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt30Eta24Arr);
+
+            //calculate HT
+            double HT = AnaFunctions::calcHT(jetsLVec, AnaConsts::pt30Eta24Arr);
+
+	    // Process the generator weight
+	    double genWeight = 1.;
+	    // Never apply this weight for data! In the old ntuple version <=3 this is "-1", in the newer ones it is "0"
+	    if(stored_weight < 0) genWeight = -1.;
+
+            //std::cout << genWeight << std::endl;
+	    tr.registerDerivedVar("genWeight", genWeight);
+
+            tr.registerDerivedVar("cntCSVS", cntCSVS);
+
+            tr.registerDerivedVar("passSingleLep50", nMuons_50GeV == 1);
+            tr.registerDerivedVar("passSingleLep20", nMuons_20GeV + nElectrons20 == 1);
+            tr.registerDerivedVar("passSingleLep30", nMuons_30GeV + nElectrons30 == 1);
+            tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2 && Mmumu > 76 && Mmumu < 106);
+
+            tr.registerDerivedVar("passLeptVetoNoMu", passEleVeto && passIsoTrkVeto);
+            tr.registerDerivedVar("passLeptVeto", passMuonVeto && passEleVeto && passIsoTrkVeto);
+
+            tr.registerDerivedVec("dPhiVec", dPhiVec);
+            tr.registerDerivedVar("passdPhis", passdPhis);
+
+            tr.registerDerivedVar("HT", HT);
+            tr.registerDerivedVar("cntNJetsPt30Eta24", cntNJetsPt30Eta24);
+            
+            tr.registerDerivedVar("passNoiseEventFilter", passNoiseEventFilterFunc(&tr));
+        }
+
+    public:
+        void operator()(NTupleReader& tr)
+        {
+            prepareTopCRSelection(tr);
+        }
+    };
+
     class PrepareTopVars
     {
     private:
 
         int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
-        //topTagger::type3TopTagger t3tagger;
         std::shared_ptr<TopTagger> ttMVA;
-        //Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
         TopCat topMatcher_;
         std::shared_ptr<TFile> WMassCorFile;
         std::shared_ptr<TF1> puppisd_corrGEN;
@@ -1649,11 +1825,6 @@ namespace plotterFunctions
             const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVec");
             const std::vector<double>& recoJetsBtag      = tr.getVec<double>("recoJetsBtag_0");
             const std::vector<double>& qgLikelihood      = tr.getVec<double>("qgLikelihood");
-
-            const double& met    = tr.getVar<double>("met");
-            const double& metphi = tr.getVar<double>("metphi");
-
-	    const double& stored_weight = tr.getVar<double>("stored_weight");
             
             //AK8 variables 
             //const std::vector<double>& puppitau1    = tr.getVec<double>("puppitau1");
@@ -1668,7 +1839,6 @@ namespace plotterFunctions
             //const std::vector<double>& puppiSubJetsaxis1 = tr.getVec<double>("puppiSubJetsaxis1");
             //const std::vector<double>& puppiSubJetsaxis2 = tr.getVec<double>("puppiSubJetsaxis2");
                         
-            int cntCSVS = AnaFunctions::countCSVS(jetsLVec, recoJetsBtag, AnaConsts::cutCSVS, AnaConsts::bTagArr);
 
             //Helper function to turn int vectors into double vectors
             auto convertToDoubleandRegister = [](NTupleReader& tr, const std::string& name)
@@ -1814,94 +1984,11 @@ namespace plotterFunctions
                 }
             }
 
-            const std::vector<TLorentzVector>& muonsLVec    = tr.getVec<TLorentzVector>("muonsLVec");
-            //const std::vector<double>& muonsRelIso          = tr.getVec<double>("muonsRelIso");
-            const std::vector<double>& muonsMiniIso         = tr.getVec<double>("muonsMiniIso");
-            const std::vector<double>& muonsMTlep           = tr.getVec<double>("muonsMtw");
-            std::string muonsFlagIDLabel = "muonsFlagMedium";
-            const std::vector<int> & muonsFlagIDVec = muonsFlagIDLabel.empty()? std::vector<int>(muonsMiniIso.size(), 1):tr.getVec<int>(muonsFlagIDLabel.c_str());
-
-            std::vector<TLorentzVector>* cutMuVec = new std::vector<TLorentzVector>();
-            std::vector<double> *cutMuMTlepVec = new std::vector<double>();
-            for(int i = 0; i < muonsLVec.size(); ++i)
-            {
-                if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
-                {
-                    cutMuVec->push_back(muonsLVec[i]);
-                    cutMuMTlepVec->push_back(muonsMTlep[i]);
-                }
-            }
-
-            tr.registerDerivedVec("cutMuVec", cutMuVec);
-            tr.registerDerivedVec("cutMuMTlepVec", cutMuMTlepVec);
-
-            const std::vector<TLorentzVector, std::allocator<TLorentzVector> > elesLVec = tr.getVec<TLorentzVector>("elesLVec");
-            const std::vector<double>& elesMiniIso          = tr.getVec<double>("elesMiniIso");
-            const std::vector<double>& elesCharge           = tr.getVec<double>("elesCharge");
-            const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
-            const std::vector<double>&  elesMTlep           = tr.getVec<double>("elesMtw");
-            std::string elesFlagIDLabel = "elesFlagVeto";
-            const std::vector<int> & elesFlagIDVec = elesFlagIDLabel.empty()? std::vector<int>(elesMiniIso.size(), 1):tr.getVec<int>(elesFlagIDLabel.c_str());
-
-            //electron selection
-            std::vector<TLorentzVector>* cutElecVec = new std::vector<TLorentzVector>();
-            std::vector<double> *cutElecMTlepVec = new std::vector<double>();
-            for(int i = 0; i < elesLVec.size(); ++i)
-            {
-                if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
-                {
-                    cutElecVec->push_back(elesLVec[i]);
-                    cutElecMTlepVec->push_back(elesMTlep[i]);
-                }
-            }
-            
-            tr.registerDerivedVec("cutElecVec", cutElecVec);
-            tr.registerDerivedVec("cutElecMTlepVec", cutElecMTlepVec);
-            
-            //// Calculate number of leptons
-            int nMuons = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
-            const AnaConsts::IsoAccRec muonsMiniIsoArr20GeV = {   -1,       2.4,      20,     -1,       0.2,     -1  };
-            int nMuons_20GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr20GeV);
-            const AnaConsts::IsoAccRec muonsMiniIsoArr30GeV = {   -1,       2.4,      30,     -1,       0.2,     -1  };
-            int nMuons_30GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr30GeV);
-            const AnaConsts::IsoAccRec muonsMiniIsoArr50GeV = {   -1,       2.4,      50,     -1,       0.2,     -1  };
-            int nMuons_50GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr50GeV);
-            int nElectrons = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB,  elesFlagIDVec, AnaConsts::elesMiniIsoArr);
-            const AnaConsts::ElecIsoAccRec elesMiniIsoArr20 = {   -1,       2.5,      20,     -1,     0.10,     0.10,     -1  };
-            int nElectrons20 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr20);
-            const AnaConsts::ElecIsoAccRec elesMiniIsoArr30 = {   -1,       2.5,      30,     -1,     0.10,     0.10,     -1  };
-            int nElectrons30 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr30);
-            int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
-            //
-            //// Pass lepton veto?
-            bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel);
-            bool passEleVeto = (nElectrons == AnaConsts::nElectronsSel);
-            bool passIsoTrkVeto = (nIsoTrks == AnaConsts::nIsoTrksSel);
-
-            double Mmumu = 0.0;
-            if(nMuons_20GeV >= 2) Mmumu = (tr.getVec<TLorentzVector>("muonsLVec")[0] + tr.getVec<TLorentzVector>("muonsLVec")[1]).M();
-
-	    // Process the generator weight
-	    double genWeight = 1.;
-	    // Never apply this weight for data! In the old ntuple version <=3 this is "-1", in the newer ones it is "0"
-	    if(stored_weight < 0) genWeight = -1.;
-
-            //std::cout << genWeight << std::endl;
-	    tr.registerDerivedVar("genWeight", genWeight);
 
             tr.registerDerivedVar("ttrMVA", &ttrMVA);
 
             //get one mu of 20 GeV pt
-            tr.registerDerivedVar("passSingleLep50", nMuons_50GeV == 1);
-            tr.registerDerivedVar("passSingleLep20", nMuons_20GeV + nElectrons20 == 1);
-            tr.registerDerivedVar("passSingleLep30", nMuons_30GeV + nElectrons30 == 1);
-            tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2 && Mmumu > 76 && Mmumu < 106);
-
-            tr.registerDerivedVar("passLeptVetoNoMu", passEleVeto && passIsoTrkVeto);
-
             tr.registerDerivedVar("nTops", static_cast<int>(tops.size()));
-
-            tr.registerDerivedVar("cntCSVS", cntCSVS);
 
             tr.registerDerivedVec("genTops", genTops);
 
@@ -1921,9 +2008,9 @@ namespace plotterFunctions
 
 
     public:
-        PrepareTopVars() : ttMVA(new TopTagger()), WMassCorFile(nullptr), puppisd_corrGEN(nullptr), puppisd_corrRECO_cen(nullptr), puppisd_corrRECO_for(nullptr), distribution(1,65000)
+        PrepareTopVars(std::string taggerCfg = "TopTagger.cfg") : ttMVA(new TopTagger()), WMassCorFile(nullptr), puppisd_corrGEN(nullptr), puppisd_corrRECO_cen(nullptr), puppisd_corrRECO_for(nullptr), distribution(1,65000)
 	{
-            ttMVA->setCfgFile("TopTagger.cfg");
+            ttMVA->setCfgFile(taggerCfg);
 
             indexMuTrigger = indexElecTrigger = indexHTMHTTrigger = indexMuHTTrigger = -1;
 

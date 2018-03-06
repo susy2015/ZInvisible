@@ -51,7 +51,7 @@ bool filterEvents(NTupleReader& tr)
     const std::vector<TLorentzVector>& jetsLVec = tr.getVec<TLorentzVector>("jetsLVec");
     const double& met = tr.getVar<double>("met");
 
-    return jetsLVec.size() >= 4 && met > 250;
+    return jetsLVec.size() >= 4;// && met > 250;
 }
 
 int main(int argc, char* argv[])
@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
 
     int events = 0, pevents = 0;
 
-    HistoContainer<NTupleReader> hists0Lep("Lep0"), hists1Lep("Lep1");
+    HistoContainer<NTupleReader> hists0Lep("Lep0"), hists1Lep("Lep1"), histsTTbar("ttbar"), histsQCD("QCD"), histsPhoton("photon");
 
     TRandom* trand = new TRandom3();
 
@@ -177,7 +177,8 @@ int main(int argc, char* argv[])
             std::cout << "Tree: " << fs.treePath << std::endl;
             //std::cout << "sigma*lumi: " << fs.getWeight() << std::endl;
 
-            BaselineVessel myBLV(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
+            //BaselineVessel myBLV(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
+            plotterFunctions::PrepareTopCRSelection prepTopCR;
             plotterFunctions::PrepareTopVars prepareTopVars;
             plotterFunctions::TriggerInfo triggerInfo(false, false);
 
@@ -188,7 +189,7 @@ int main(int argc, char* argv[])
 
             NTupleReader tr(t);
             tr.registerFunction(filterEvents);
-            tr.registerFunction(myBLV);
+            tr.registerFunction(prepTopCR);
             tr.registerFunction(prepareTopVars);
             tr.registerFunction(triggerInfo);
             tr.registerFunction(bTagCorrector);
@@ -217,14 +218,14 @@ int main(int argc, char* argv[])
                 const double& met    = tr.getVar<double>("met");
                 const double& metphi = tr.getVar<double>("metphi");
 
-                const bool&   passNoiseEventFilter = tr.getVar<bool>("passNoiseEventFilterTopTag");
+                const bool&   passNoiseEventFilter = tr.getVar<bool>("passNoiseEventFilter");
                 const bool&   passSingleLep20      = tr.getVar<bool>("passSingleLep20");
                 const bool&   passSingleLep30      = tr.getVar<bool>("passSingleLep30");
-                const bool&   passLeptonVeto       = tr.getVar<bool>("passLeptVetoTopTag");
-                const bool&   passBJets            = tr.getVar<bool>("passBJetsTopTag");
-                const bool&   passnJets            = tr.getVar<bool>("passnJetsTopTag");
-                const bool&   passdPhis            = tr.getVar<bool>("passdPhisTopTag");
-                const double& ht                   = tr.getVar<double>("HTTopTag");
+                const bool&   passLeptonVeto       = tr.getVar<bool>("passLeptVeto");
+                const bool&   passdPhis            = tr.getVar<bool>("passdPhis");
+                const double& ht                   = tr.getVar<double>("HT");
+
+                const int&    nbCSV                = tr.getVar<int>("cntCSVS");
 
                 const bool& passMuTrigger     = tr.getVar<bool>("passMuTrigger");
                 const bool& passElecTrigger   = tr.getVar<bool>("passElecTrigger");
@@ -285,8 +286,10 @@ int main(int argc, char* argv[])
                 //                                    minAbsEta, maxAbsEta, minPt, maxPt
                 const AnaConsts::AccRec pt45Eta24Arr = {-1,         2.4,      45,   -1  };
 
-                int cntNJetsPt45Eta24 = AnaFunctions::countJets(tr.getVec<TLorentzVector>(jetVecLabel),            pt45Eta24Arr);
-                int cntNJetsPt30Eta24 = AnaFunctions::countJets(tr.getVec<TLorentzVector>(jetVecLabel), AnaConsts::pt30Eta24Arr);
+                int cntNJetsPt45Eta24 = AnaFunctions::countJets(jetsLVec,            pt45Eta24Arr);
+                int cntNJetsPt30Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt30Eta24Arr);
+
+                const double& HT = tr.getVar<double>("HT");
 
                 // calculate passBLep
                 bool passBLep = false;
@@ -306,24 +309,14 @@ int main(int argc, char* argv[])
                     && (ht > 1000)
                     )
                 {
-                    hists0Lep.fill(tr, eWeight, trand);
-                }
-
-                //Event Selection - 0 Lepton
-                if( passNoiseEventFilter 
-                    && passLeptonVeto
-                    && cntNJetsPt45Eta24 >= 6 
-                    && (ht > 500)
-                    && passBJets                //Atleast 1 medium B-Jet
-                    )
-                {
+                    histsQCD.fill(tr, eWeight, trand);
                 }
 
                 //semileptonic ttbar enriched control sample
                 if( (!isData || passSearchTrigger)
                     && passNoiseEventFilter
                     && passSingleLep20
-                    && passBJets
+                    && nbCSV >= 1
                     && cntNJetsPt30Eta24 >= 4
                     && passdPhis
                     && passBLep
@@ -332,16 +325,30 @@ int main(int argc, char* argv[])
                     && (met > 250)
                     )
                 {
-                    hists1Lep.fill(tr, eWeight, trand);
+                    histsTTbar.fill(tr, eWeight, trand);
                 }
 
-                //Event Selection - 1 Lepton
-                if( passNoiseEventFilter 
-                    && passSingleLep30
-                    && cntNJetsPt30Eta24 >= 6
-                    && passBJets               //Atleast 1 medium B-Jet
+                //Stealth Event Selection - 0 Lepton
+                if( !isData  //lets not acidently unblind the stealth SR
+                    &&passNoiseEventFilter 
+                    && passLeptonVeto
+                    && cntNJetsPt45Eta24 >= 6 
+                    && (ht > 500)
+                    && nbCSV >= 1                //Atleast 1 medium B-Jet
                     )
                 {
+                    hists0Lep.fill(tr, eWeight, trand);
+                }
+
+                //Stealth Event Selection - 1 Lepton
+                if( !isData  //lets not acidently unblind the stealth SR
+                    && passNoiseEventFilter 
+                    && passSingleLep30
+                    && cntNJetsPt30Eta24 >= 6
+                    && nbCSV >= 1               //Atleast 1 medium B-Jet
+                    )
+                {
+                    hists1Lep.fill(tr, eWeight, trand);
                 }
 
             }
@@ -378,6 +385,8 @@ int main(int argc, char* argv[])
 
         hists0Lep.save(f);
         hists1Lep.save(f);
+        histsQCD.save(f);
+        histsTTbar.save(f);
 
         f->Write();
         f->Close();
