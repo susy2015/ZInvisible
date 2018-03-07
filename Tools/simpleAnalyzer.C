@@ -51,7 +51,7 @@ bool filterEvents(NTupleReader& tr)
     const std::vector<TLorentzVector>& jetsLVec = tr.getVec<TLorentzVector>("jetsLVec");
     const double& met = tr.getVar<double>("met");
 
-    return jetsLVec.size() >= 4;// && met > 250;
+    return jetsLVec.size() >= 4 && jetsLVec[3].Pt() > 30;// && met > 250;
 }
 
 int main(int argc, char* argv[])
@@ -147,10 +147,10 @@ int main(int argc, char* argv[])
     AnaSamples::SampleSet        ss(sampleloc, AnaSamples::luminosity);
     AnaSamples::SampleCollection sc(ss);
 
-    if(dataSets.find("Data") != std::string::npos){
-       std::cout << "This looks like a data n-tuple. No weighting will be applied." << std::endl;
-       doWgt = false;
-    }
+    //if(dataSets.find("Data") != std::string::npos){
+    //   std::cout << "This looks like a data n-tuple. No weighting will be applied." << std::endl;
+    //   doWgt = false;
+    //}
 
     if(dataSets.find("TT") != std::string::npos){
        std::cout << "This looks like a TTbar sample. Applying TTbar weighting" << std::endl;
@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
 
     int events = 0, pevents = 0;
 
-    HistoContainer<NTupleReader> hists0Lep("Lep0"), hists1Lep("Lep1"), histsTTbar("ttbar"), histsQCD("QCD"), histsPhoton("photon");
+    HistoContainer<NTupleReader> hists0Lep("Lep0"), hists1Lep("Lep1"), histsTTbar("ttbar"), histsTTbarLep("ttbarLep"), histsQCD("QCD"), histsPhoton("photon"), histsDilepton("dilepton");
 
     TRandom* trand = new TRandom3();
 
@@ -217,10 +217,13 @@ int main(int argc, char* argv[])
 
                 const double& met    = tr.getVar<double>("met");
                 const double& metphi = tr.getVar<double>("metphi");
+                TLorentzVector MET;
+                MET.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
 
                 const bool&   passNoiseEventFilter = tr.getVar<bool>("passNoiseEventFilter");
                 const bool&   passSingleLep20      = tr.getVar<bool>("passSingleLep20");
                 const bool&   passSingleLep30      = tr.getVar<bool>("passSingleLep30");
+                const bool&   passSingleMu30       = tr.getVar<bool>("passSingleMu30");
                 const bool&   passLeptonVeto       = tr.getVar<bool>("passLeptVeto");
                 const bool&   passdPhis            = tr.getVar<bool>("passdPhis");
                 const double& ht                   = tr.getVar<double>("HT");
@@ -234,6 +237,8 @@ int main(int argc, char* argv[])
                 const bool& passHighHtTrigger = tr.getVar<bool>("passHighHtTrigger");
                 const bool& passPhotonTrigger = tr.getVar<bool>("passPhotonTrigger");
 
+                const bool& passDoubleLep      = tr.getVar<bool>("passDoubleLep");
+
                 const std::vector<TLorentzVector>& cutMuVec = tr.getVec<TLorentzVector>("cutMuVec");
                 const std::vector<double>& cutMuMTlepVec = tr.getVec<double>("cutMuMTlepVec");
                 const std::vector<TLorentzVector>& cutElecVec = tr.getVec<TLorentzVector>("cutElecVec");
@@ -243,7 +248,7 @@ int main(int argc, char* argv[])
 
                 double eWeight = fileWgt;
 
-                if(doWgt)
+                if(!isData && doWgt)
                 {
                     const double& puWF               = tr.getVar<double>("_PUweightFactor");
                     const double& bTagWF             = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
@@ -256,6 +261,10 @@ int main(int argc, char* argv[])
 
                     eWeight *= puWF * bTagWF;
                 }
+
+                //check on overall event weight
+                if(eWeight > 50.0 || eWeight < 1/50.0) continue;
+                
 
                 const std::vector<TLorentzVector>& jetsLVec = tr.getVec<TLorentzVector>(jetVecLabel);
                 const std::vector<double>& recoJetsBtag     = tr.getVec<double>("recoJetsBtag_0");
@@ -283,6 +292,8 @@ int main(int argc, char* argv[])
                 }
 
                 tr.registerDerivedVar("lepton", lepton);
+                tr.registerDerivedVar("mTLep", mTLep);
+
                 //                                    minAbsEta, maxAbsEta, minPt, maxPt
                 const AnaConsts::AccRec pt45Eta24Arr = {-1,         2.4,      45,   -1  };
 
@@ -291,15 +302,29 @@ int main(int argc, char* argv[])
 
                 const double& HT = tr.getVar<double>("HT");
 
+                const bool& passPhoton200 = tr.getVar<bool>("passPhoton200");
+
                 // calculate passBLep
                 bool passBLep = false;
+                bool passLepTtag = false;
                 for(int i = 0; i < jetsLVec.size(); i++)
                 {
                     //Is this a b-tagged jet (loose wp?)?
                     if(recoJetsBtag[i] < 0.8) continue;
 
-                    passBLep =  passBLep || jetsLVec[i].DeltaR(lepton) < 1;
+                    double lepTopMass = (lepton + jetsLVec[i]).M();
+                    if(lepTopMass > 30 && lepTopMass < 180)
+                    {
+                        passLepTtag = true;
+                    }
+
+                    if(jetsLVec[i].DeltaR(lepton) < 1.5)
+                    {
+                        passBLep = true;
+                    }
                 }
+
+                double deltaPhiLepMET = fabs(lepton.DeltaPhi(MET));
 
                 //High HT QCD control sample
                 if( (!isData || passHighHtTrigger)
@@ -312,7 +337,29 @@ int main(int argc, char* argv[])
                     histsQCD.fill(tr, eWeight, trand);
                 }
 
-                //semileptonic ttbar enriched control sample
+                //photon control sample
+                if( (!isData || passPhotonTrigger)
+                    && passNoiseEventFilter
+                    && passLeptonVeto
+                    && cntNJetsPt30Eta24 >= 4
+                    && passPhoton200
+                    && ht > 400
+                    )
+                {
+                    histsPhoton.fill(tr, eWeight, trand);
+                }
+
+                //dilepton control sample
+                if( (!isData || passMuTrigger)
+                    && passNoiseEventFilter
+                    && cntNJetsPt30Eta24 >= 4
+                    && passDoubleLep                    
+                    )
+                {
+                    histsDilepton.fill(tr, eWeight, trand);
+                }
+
+                //semileptonic ttbar enriched control sample MET triggered
                 if( (!isData || passSearchTrigger)
                     && passNoiseEventFilter
                     && passSingleLep20
@@ -320,7 +367,9 @@ int main(int argc, char* argv[])
                     && cntNJetsPt30Eta24 >= 4
                     && passdPhis
                     && passBLep
-                    //&& mTLep < 100
+                    && passLepTtag
+                    && deltaPhiLepMET < 0.8
+                    && mTLep < 100
                     && (ht > 250)
                     && (met > 250)
                     )
@@ -328,9 +377,27 @@ int main(int argc, char* argv[])
                     histsTTbar.fill(tr, eWeight, trand);
                 }
 
+                //semileptonic ttbar enriched control sample Mu triggered
+                if( (!isData || passSearchTrigger)
+                    && passNoiseEventFilter
+                    && passSingleMu30
+                    && nbCSV >= 1
+                    && cntNJetsPt30Eta24 >= 4
+                    && passdPhis
+                    && passBLep
+                    && passLepTtag
+                    && deltaPhiLepMET < 0.8
+                    && mTLep < 100
+                    && (ht > 200)
+                    && (met > 50)
+                    )
+                {
+                    histsTTbarLep.fill(tr, eWeight, trand);
+                }
+
                 //Stealth Event Selection - 0 Lepton
-                if( !isData  //lets not acidently unblind the stealth SR
-                    &&passNoiseEventFilter 
+                if( !isData  //lets not accidently unblind the stealth SR
+                    && passNoiseEventFilter 
                     && passLeptonVeto
                     && cntNJetsPt45Eta24 >= 6 
                     && (ht > 500)
@@ -341,7 +408,7 @@ int main(int argc, char* argv[])
                 }
 
                 //Stealth Event Selection - 1 Lepton
-                if( !isData  //lets not acidently unblind the stealth SR
+                if( !isData  //lets not accidently unblind the stealth SR
                     && passNoiseEventFilter 
                     && passSingleLep30
                     && cntNJetsPt30Eta24 >= 6
@@ -387,6 +454,9 @@ int main(int argc, char* argv[])
         hists1Lep.save(f);
         histsQCD.save(f);
         histsTTbar.save(f);
+        histsTTbarLep.save(f);
+        histsPhoton.save(f);
+        histsDilepton.save(f);
 
         f->Write();
         f->Close();

@@ -1345,38 +1345,38 @@ namespace plotterFunctions
             const std::string metmhtTrigName = "HLT_PFMET110_PFMHT110_IDTight_v";
 
             // Find the index of our triggers if we don't know them already
-            if(indexMuTrigger == -1 || indexElecTrigger == -1 || indexMETMHTTrigger == -1)
-            {
-                for(int i = 0; i < triggerNames.size(); ++i)
-                {
-                    if(triggerNames[i].find(muTrigName) != std::string::npos)
-                    {
-                        indexMuTrigger = i;
-                    }
-                    else if(triggerNames[i].find(elecTrigName) != std::string::npos)
-                    {
-                        indexElecTrigger = i;
-                    }
-                    else if(triggerNames[i].find(metmhtTrigName) != std::string::npos)
-                    {
-                        indexMETMHTTrigger = i;
-                    }
-                }
-            }
-            if(indexMuTrigger != -1 && indexElecTrigger != -1)
-            {
-                // Check if the event passes the trigger, and double check that we are looking at the right trigger
-                if(triggerNames[indexMuTrigger].find(muTrigName) != std::string::npos && passTrigger[indexMuTrigger])
-                    passMuTrigger = true;
-                if(triggerNames[indexElecTrigger].find(elecTrigName) != std::string::npos && passTrigger[indexElecTrigger])
-                    passElecTrigger = true;
-                if(triggerNames[indexMETMHTTrigger].find(metmhtTrigName) != std::string::npos && passTrigger[indexMETMHTTrigger])
-                    passMETMHTTrigger = true;
-            }
-            else
-            {
-                std::cout << "Could not find trigger in the list of trigger names" << std::endl;
-            }
+            //if(indexMuTrigger == -1 || indexElecTrigger == -1 || indexMETMHTTrigger == -1)
+            //{
+            //    for(int i = 0; i < triggerNames.size(); ++i)
+            //    {
+            //        //if(triggerNames[i].find(muTrigName) != std::string::npos)
+            //        //{
+            //        //    indexMuTrigger = i;
+            //        //}
+            //        if(triggerNames[i].find(elecTrigName) != std::string::npos)
+            //        {
+            //            indexElecTrigger = i;
+            //        }
+            //        else if(triggerNames[i].find(metmhtTrigName) != std::string::npos)
+            //        {
+            //            indexMETMHTTrigger = i;
+            //        }
+            //    }
+            //}
+            //if(indexMuTrigger != -1 && indexElecTrigger != -1)
+            //{
+            //    // Check if the event passes the trigger, and double check that we are looking at the right trigger
+            //    //if(triggerNames[indexMuTrigger].find(muTrigName) != std::string::npos && passTrigger[indexMuTrigger])
+            //    //    passMuTrigger = true;
+            //    if(triggerNames[indexElecTrigger].find(elecTrigName) != std::string::npos && passTrigger[indexElecTrigger])
+            //        passElecTrigger = true;
+            //    if(triggerNames[indexMETMHTTrigger].find(metmhtTrigName) != std::string::npos && passTrigger[indexMETMHTTrigger])
+            //        passMETMHTTrigger = true;
+            //}
+            //else
+            //{
+            //    std::cout << "Could not find trigger in the list of trigger names" << std::endl;
+            //}
 
             bool passSearchTrigger = false, passHighHtTrigger = false, passPhotonTrigger = false;
             for(int it = 0; it < triggerNames.size(); ++it)
@@ -1423,7 +1423,18 @@ namespace plotterFunctions
                     {
                         passPhotonTrigger = true;
                     }                    
+                }
 
+                if( triggerNames[it].find("HLT_IsoMu24_v4")              != std::string::npos ||
+                    triggerNames[it].find("HLT_IsoTkMu24_v4")            != std::string::npos ||
+                    triggerNames[it].find("HLT_Mu50_v5")                 != std::string::npos ||
+                    triggerNames[it].find("HLT_Mu55_v4")                 != std::string::npos
+                    )
+                {
+                    if( passTrigger[it] ) 
+                    {
+                        passMuTrigger = true;
+                    }                    
                 }
             }
 
@@ -1690,6 +1701,21 @@ namespace plotterFunctions
 
             const double& metphi = tr.getVar<double>("metphi");
 
+            const std::vector<TLorentzVector>& gammaLVec = tr.getVec<TLorentzVector>("gammaLVec");
+            const std::vector<int>& tightPhotonID = tr.getVec<int>("tightPhotonID");
+
+            std::vector<TLorentzVector> *tightPhotons = new std::vector<TLorentzVector>();
+            for(int i = 0; i < gammaLVec.size(); ++i)
+            {
+                if(tightPhotonID[i])
+                {
+                    tightPhotons->push_back(gammaLVec[i]);
+                }
+            }
+
+            tr.registerDerivedVec("tightPhotons", tightPhotons);
+            tr.registerDerivedVar("passPhoton200", (tightPhotons->size() > 0) && ((*tightPhotons)[0].Pt() > 200));
+
             const std::vector<TLorentzVector>& muonsLVec    = tr.getVec<TLorentzVector>("muonsLVec");
             //const std::vector<double>& muonsRelIso          = tr.getVec<double>("muonsRelIso");
             const std::vector<double>& muonsMiniIso         = tr.getVec<double>("muonsMiniIso");
@@ -1754,8 +1780,13 @@ namespace plotterFunctions
             bool passEleVeto = (nElectrons == AnaConsts::nElectronsSel);
             bool passIsoTrkVeto = (nIsoTrks == AnaConsts::nIsoTrksSel);
 
-            double Mmumu = 0.0;
-            if(nMuons_20GeV >= 2) Mmumu = (tr.getVec<TLorentzVector>("muonsLVec")[0] + tr.getVec<TLorentzVector>("muonsLVec")[1]).M();
+            double Mmumu = -999.9;
+            bool passDoubleMuon = false;
+            if(cutMuVec->size() >= 2)
+            {
+                Mmumu = ((*cutMuVec)[0] + (*cutMuVec)[1]).M();
+                passDoubleMuon = (*cutMuVec)[0].Pt() > 30 && (*cutMuVec)[1].Pt() > 20 && Mmumu > 81 && Mmumu < 101;
+            }
 
 
             // Calculate deltaPhi
@@ -1783,8 +1814,9 @@ namespace plotterFunctions
 
             tr.registerDerivedVar("passSingleLep50", nMuons_50GeV == 1);
             tr.registerDerivedVar("passSingleLep20", nMuons_20GeV + nElectrons20 == 1);
+            tr.registerDerivedVar("passSingleMu30", nMuons_30GeV == 1);
             tr.registerDerivedVar("passSingleLep30", nMuons_30GeV + nElectrons30 == 1);
-            tr.registerDerivedVar("passDoubleLep", nMuons_50GeV >= 1 && nMuons_20GeV >= 2 && Mmumu > 76 && Mmumu < 106);
+            tr.registerDerivedVar("passDoubleLep", passDoubleMuon);
 
             tr.registerDerivedVar("passLeptVetoNoMu", passEleVeto && passIsoTrkVeto);
             tr.registerDerivedVar("passLeptVeto", passMuonVeto && passEleVeto && passIsoTrkVeto);
