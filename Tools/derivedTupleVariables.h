@@ -1837,6 +1837,95 @@ namespace plotterFunctions
         }
     };
 
+    class AliasStealthVars
+    {
+    private:
+        template<typename I, typename O> void addAliasTypeChange(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const std::vector<I>& inVec = tr.getVec<I>(name);
+            std::vector<O>* outVec      = new std::vector<O>(inVec.size());
+            for(int i = 0; i < inVec.size(); i++)
+            {
+                outVec->push_back( static_cast<O>(inVec[i]) );
+                //outVec[i] = static_cast<O>(inVec[i]);
+            }
+            tr.registerDerivedVec(alias, outVec);
+        }
+
+        void inECALBarrel(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const std::vector<TLorentzVector>& vec = tr.getVec<TLorentzVector>(name);
+            std::vector<unsigned int>* inBarrel    = new std::vector<unsigned int>(vec.size());
+            for(int i = 0; i < vec.size(); i++)
+            {
+                TLorentzVector object = vec[i];
+                double eta = object.Eta();
+                if(fabs(eta < 1.479))
+                {
+                    inBarrel->push_back( static_cast<unsigned int>(1) );
+                    //inBarrel[i] = static_cast<unsigned int>(1);
+                }
+                else
+                {                  
+                    inBarrel->push_back( static_cast<unsigned int>(0) ); 
+                    //inBarrel[i] = static_cast<unsigned int>(0); 
+                }
+            }
+            tr.registerDerivedVec(alias, inBarrel);
+        }
+
+        void aliasVars(NTupleReader& tr)
+        {
+            tr.addAlias("Jets","jetsLVec");
+            tr.addAlias("MET","met");
+            tr.addAlias("Jets_bDiscriminatorCSV","recoJetsBtag_0");
+            tr.addAlias("Weight","stored_weight");
+            tr.addAlias("METPhi","metphi");
+            tr.addAlias("GenParticles","genDecayLVec");
+            tr.addAlias("puWeight","_PUweightFactor");
+            tr.addAlias("Muons","muonsLVec");
+            tr.addAlias("Muons_MiniIso","muonsMiniIso");
+            tr.addAlias("Muons_MTW","muonsMtw");
+            tr.addAlias("Electrons","elesLVec");
+            tr.addAlias("Electrons_MiniIso","elesMiniIso");
+            tr.addAlias("Electrons_charge","elesCharge");
+            tr.addAlias("Electrons_MTW","elesMtw");
+            tr.addAlias("Jets_qgLikelihood","qgLikelihood");
+            tr.addAlias("Jets_ptD","qgPtD");
+            tr.addAlias("Jets_axismajor","qgAxis1");
+            tr.addAlias("Jets_axisminor","qgAxis2");
+            tr.addAlias("Jets_chargedHadronEnergyFraction","recoJetschargedHadronEnergyFraction");
+            tr.addAlias("Jets_chargedEmEnergyFraction","recoJetschargedEmEnergyFraction");
+            tr.addAlias("Jets_neutralEmEnergyFraction","recoJetsneutralEmEnergyFraction");
+            tr.addAlias("Jets_muonEnergyFraction","recoJetsmuonEnergyFraction");
+            tr.addAlias("Jets_hfHadronEnergyFraction","recoJetsHFHadronEnergyFraction");
+            tr.addAlias("Jets_hfEMEnergyFraction","recoJetsHFEMEnergyFraction");
+            tr.addAlias("Jets_photonEnergyFraction","PhotonEnergyFraction");
+            tr.addAlias("Jets_electronEnergyFraction","ElectronEnergyFraction");
+            tr.addAlias("Jets_chargedHadronMultiplicity","ChargedHadronMultiplicity");
+            tr.addAlias("Jets_neutralMultiplicity","NeutralHadronMultiplicity");
+            tr.addAlias("Jets_photonMultiplicity","PhotonMultiplicity");
+            tr.addAlias("Jets_electronEnergyFraction","ElectronMultiplicity");
+            tr.addAlias("Jets_muonMultiplicity","MuonMultiplicity");
+            tr.addAlias("Jets_multiplicity","qgMult");
+            tr.addAlias("Photons","gammaLVec");
+            //tr.addAlias("","");
+            //tr.addAlias("","");
+            //tr.addAlias("","");
+            //tr.addAlias("","");
+            inECALBarrel(tr,"Electrons","elesisEB");
+            addAliasTypeChange<bool,int>(tr,"Muons_tightID","muonsFlagMedium");
+            addAliasTypeChange<bool,int>(tr,"Electrons_tightID","elesFlagVeto");
+            addAliasTypeChange<bool,int>(tr,"Photons_fullID","tightPhotonID");
+        }
+        
+    public:
+        void operator()(NTupleReader& tr)
+        {
+            aliasVars(tr);
+        }
+    };
+
     class PrepareTopVars
     {
     private:
