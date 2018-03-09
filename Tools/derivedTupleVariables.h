@@ -1773,7 +1773,11 @@ namespace plotterFunctions
             int nElectrons20 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr20);
             const AnaConsts::ElecIsoAccRec elesMiniIsoArr30 = {   -1,       2.5,      30,     -1,     0.10,     0.10,     -1  };
             int nElectrons30 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr30);
-            int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
+            ///////////////////////////////////
+            //   Joe I know not what I do ;)
+            ///////////////////////////////////
+            int nIsoTrks = 1;
+            //int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
             //
             //// Pass lepton veto?
             bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel);
@@ -1840,16 +1844,22 @@ namespace plotterFunctions
     class AliasStealthVars
     {
     private:
-        template<typename I, typename O> void addAliasTypeChange(NTupleReader& tr, const std::string& name, const std::string& alias)
+        template<typename I, typename O> void addAliasVecTypeChange(NTupleReader& tr, const std::string& name, const std::string& alias)
         {
             const std::vector<I>& inVec = tr.getVec<I>(name);
             std::vector<O>* outVec      = new std::vector<O>(inVec.size());
             for(int i = 0; i < inVec.size(); i++)
             {
-                outVec->push_back( static_cast<O>(inVec[i]) );
-                //outVec[i] = static_cast<O>(inVec[i]);
+                (*outVec)[i] = static_cast<O>(inVec[i]);
             }
             tr.registerDerivedVec(alias, outVec);
+        }
+
+        template<typename I, typename O> void addAliasTypeChange(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const I& inVar = tr.getVar<I>(name);
+            O outVar = static_cast<O>(inVar);
+            tr.registerDerivedVar(alias, outVar);
         }
 
         void inECALBarrel(NTupleReader& tr, const std::string& name, const std::string& alias)
@@ -1862,13 +1872,11 @@ namespace plotterFunctions
                 double eta = object.Eta();
                 if(fabs(eta < 1.479))
                 {
-                    inBarrel->push_back( static_cast<unsigned int>(1) );
-                    //inBarrel[i] = static_cast<unsigned int>(1);
+                    (*inBarrel)[i] = static_cast<unsigned int>(1);
                 }
                 else
                 {                  
-                    inBarrel->push_back( static_cast<unsigned int>(0) ); 
-                    //inBarrel[i] = static_cast<unsigned int>(0); 
+                    (*inBarrel)[i] = static_cast<unsigned int>(0); 
                 }
             }
             tr.registerDerivedVec(alias, inBarrel);
@@ -1909,14 +1917,17 @@ namespace plotterFunctions
             tr.addAlias("Jets_muonMultiplicity","MuonMultiplicity");
             tr.addAlias("Jets_multiplicity","qgMult");
             tr.addAlias("Photons","gammaLVec");
-            //tr.addAlias("","");
-            //tr.addAlias("","");
+            tr.addAlias("RunNum","run");
+            //tr.addAlias("BadPFMuonFilter","BadPFMuonFilter");
+            //tr.addAlias("BadChargedCandidateFilter","BadChargedCandidateFilter");
+            tr.addAlias("CaloMET","calomet");
             //tr.addAlias("","");
             //tr.addAlias("","");
             inECALBarrel(tr,"Electrons","elesisEB");
-            addAliasTypeChange<bool,int>(tr,"Muons_tightID","muonsFlagMedium");
-            addAliasTypeChange<bool,int>(tr,"Electrons_tightID","elesFlagVeto");
-            addAliasTypeChange<bool,int>(tr,"Photons_fullID","tightPhotonID");
+            addAliasVecTypeChange<bool,int>(tr,"Muons_tightID","muonsFlagMedium");
+            addAliasVecTypeChange<bool,int>(tr,"Electrons_tightID","elesFlagVeto");
+            addAliasVecTypeChange<bool,int>(tr,"Photons_fullID","tightPhotonID");
+            addAliasTypeChange<bool,int>(tr,"JetID","looseJetID");
         }
         
     public:
@@ -2023,19 +2034,22 @@ namespace plotterFunctions
             myConstAK4Inputs->addSupplamentalVector("PhotonMultiplicity",                   tr.getVec<double>("PhotonMultiplicity"));
             myConstAK4Inputs->addSupplamentalVector("ElectronMultiplicity",                 tr.getVec<double>("ElectronMultiplicity"));
             myConstAK4Inputs->addSupplamentalVector("MuonMultiplicity",                     tr.getVec<double>("MuonMultiplicity"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVb",                             tr.getVec<double>("DeepCSVb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVc",                             tr.getVec<double>("DeepCSVc"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVl",                             tr.getVec<double>("DeepCSVl"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVbb",                            tr.getVec<double>("DeepCSVbb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVcc",                            tr.getVec<double>("DeepCSVcc"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorb",                          tr.getVec<double>("DeepFlavorb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorbb",                         tr.getVec<double>("DeepFlavorbb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorlepb",                       tr.getVec<double>("DeepFlavorlepb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorc",                          tr.getVec<double>("DeepFlavorc"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavoruds",                        tr.getVec<double>("DeepFlavoruds"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorg",                          tr.getVec<double>("DeepFlavorg"));
-            myConstAK4Inputs->addSupplamentalVector("CvsL",                                 tr.getVec<double>("CvsL"));
-            myConstAK4Inputs->addSupplamentalVector("CvsB",                                 tr.getVec<double>("CvsB"));
+            if( tr.checkBranch("DeepCSVb") )
+            {
+                myConstAK4Inputs->addSupplamentalVector("DeepCSVb",                             tr.getVec<double>("DeepCSVb"));
+                myConstAK4Inputs->addSupplamentalVector("DeepCSVc",                             tr.getVec<double>("DeepCSVc"));
+                myConstAK4Inputs->addSupplamentalVector("DeepCSVl",                             tr.getVec<double>("DeepCSVl"));
+                myConstAK4Inputs->addSupplamentalVector("DeepCSVbb",                            tr.getVec<double>("DeepCSVbb"));
+                myConstAK4Inputs->addSupplamentalVector("DeepCSVcc",                            tr.getVec<double>("DeepCSVcc"));
+                myConstAK4Inputs->addSupplamentalVector("DeepFlavorb",                          tr.getVec<double>("DeepFlavorb"));
+                myConstAK4Inputs->addSupplamentalVector("DeepFlavorbb",                         tr.getVec<double>("DeepFlavorbb"));
+                myConstAK4Inputs->addSupplamentalVector("DeepFlavorlepb",                       tr.getVec<double>("DeepFlavorlepb"));
+                myConstAK4Inputs->addSupplamentalVector("DeepFlavorc",                          tr.getVec<double>("DeepFlavorc"));
+                myConstAK4Inputs->addSupplamentalVector("DeepFlavoruds",                        tr.getVec<double>("DeepFlavoruds"));
+                myConstAK4Inputs->addSupplamentalVector("DeepFlavorg",                          tr.getVec<double>("DeepFlavorg"));
+                myConstAK4Inputs->addSupplamentalVector("CvsL",                                 tr.getVec<double>("CvsL"));
+                myConstAK4Inputs->addSupplamentalVector("CvsB",                                 tr.getVec<double>("CvsB"));
+            }
             //myConstAK4Inputs->addSupplamentalVector("CombinedSvtx",                         tr.getVec<double>("CombinedSvtx"));
             //myConstAK4Inputs->addSupplamentalVector("JetProba",                             tr.getVec<double>("JetProba_0"));
             //myConstAK4Inputs->addSupplamentalVector("JetBprob",                             tr.getVec<double>("JetBprob"));
