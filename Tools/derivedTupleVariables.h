@@ -1882,16 +1882,22 @@ namespace plotterFunctions
     class AliasStealthVars
     {
     private:
-        template<typename I, typename O> void addAliasTypeChange(NTupleReader& tr, const std::string& name, const std::string& alias)
+        template<typename I, typename O> void addAliasVecTypeChange(NTupleReader& tr, const std::string& name, const std::string& alias)
         {
             const std::vector<I>& inVec = tr.getVec<I>(name);
             std::vector<O>* outVec      = new std::vector<O>(inVec.size());
             for(int i = 0; i < inVec.size(); i++)
             {
-                outVec->push_back( static_cast<O>(inVec[i]) );
-                //outVec[i] = static_cast<O>(inVec[i]);
+                (*outVec)[i] = static_cast<O>(inVec[i]);
             }
             tr.registerDerivedVec(alias, outVec);
+        }
+
+        template<typename I, typename O> void addAliasTypeChange(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const I& inVar = tr.getVar<I>(name);
+            O outVar = static_cast<O>(inVar);
+            tr.registerDerivedVar(alias, outVar);
         }
 
         void inECALBarrel(NTupleReader& tr, const std::string& name, const std::string& alias)
@@ -1904,13 +1910,11 @@ namespace plotterFunctions
                 double eta = object.Eta();
                 if(fabs(eta < 1.479))
                 {
-                    inBarrel->push_back( static_cast<unsigned int>(1) );
-                    //inBarrel[i] = static_cast<unsigned int>(1);
+                    (*inBarrel)[i] = static_cast<unsigned int>(1);
                 }
                 else
                 {                  
-                    inBarrel->push_back( static_cast<unsigned int>(0) ); 
-                    //inBarrel[i] = static_cast<unsigned int>(0); 
+                    (*inBarrel)[i] = static_cast<unsigned int>(0); 
                 }
             }
             tr.registerDerivedVec(alias, inBarrel);
@@ -1951,14 +1955,17 @@ namespace plotterFunctions
             tr.addAlias("Jets_muonMultiplicity","MuonMultiplicity");
             tr.addAlias("Jets_multiplicity","qgMult");
             tr.addAlias("Photons","gammaLVec");
-            //tr.addAlias("","");
-            //tr.addAlias("","");
+            tr.addAlias("RunNum","run");
+            //tr.addAlias("BadPFMuonFilter","BadPFMuonFilter");
+            //tr.addAlias("BadChargedCandidateFilter","BadChargedCandidateFilter");
+            tr.addAlias("CaloMET","calomet");
             //tr.addAlias("","");
             //tr.addAlias("","");
             inECALBarrel(tr,"Electrons","elesisEB");
-            addAliasTypeChange<bool,int>(tr,"Muons_tightID","muonsFlagMedium");
-            addAliasTypeChange<bool,int>(tr,"Electrons_tightID","elesFlagVeto");
-            addAliasTypeChange<bool,int>(tr,"Photons_fullID","tightPhotonID");
+            addAliasVecTypeChange<bool,int>(tr,"Muons_tightID","muonsFlagMedium");
+            addAliasVecTypeChange<bool,int>(tr,"Electrons_tightID","elesFlagVeto");
+            addAliasVecTypeChange<bool,int>(tr,"Photons_fullID","tightPhotonID");
+            addAliasTypeChange<bool,int>(tr,"JetID","looseJetID");
         }
         
     public:
