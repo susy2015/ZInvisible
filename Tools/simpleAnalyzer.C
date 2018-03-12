@@ -75,8 +75,8 @@ int main(int argc, char* argv[])
 
     bool runOnCondor = false, enableTTbar = false, doWgt = true;
     int nFiles = -1, startFile = 0, nEvts = -1;
-    std::string dataSets = "TT", filename = "example.root";
-    //std::string dataSets = "Signal_T2tt_mStop850_mLSP100", filename = "example.root";
+    //std::string dataSets = "TT", filename = "example.root";
+    std::string dataSets = "Signal_T2tt_mStop850_mLSP100", filename = "example.root";
 
     while((opt = getopt_long(argc, argv, "ctdD:N:M:E:O:", long_options, &option_index)) != -1)
     {
@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
             Pileup_Sys pileup("PileupHistograms_0121_69p2mb_pm4p6.root");
 
             NTupleReader tr(t);
-            if(true)
+            if(false)
             {
                 tr.registerFunction(setUpSealth);
             }
@@ -272,7 +272,7 @@ int main(int argc, char* argv[])
                 }
 
                 //check on overall event weight
-                if(eWeight > 50.0 || eWeight < 1/50.0) continue;
+                //if(eWeight > 50.0 || eWeight < 1/50.0) continue;
                 
 
                 const std::vector<TLorentzVector>& jetsLVec = tr.getVec<TLorentzVector>(jetVecLabel);
