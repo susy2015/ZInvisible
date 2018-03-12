@@ -350,6 +350,14 @@ int main(int argc, char* argv[])
             if(useAltBranch){
                 std::cout << "Using prodjetNolep branches" << std::endl;
                 tr.setPrefix("prodJetsNoLep_");
+
+            if(false)
+            {
+                tr.registerFunction(setUpSealth);
+            }
+            else
+            {
+                tr.registerFunction(pileup);
             }
 
             tr.registerFunction(filterEvents);
@@ -361,7 +369,7 @@ int main(int argc, char* argv[])
             //tr.registerFunction(bTagCorrector);
             tr.registerFunction(ttbarCorrector);
             tr.registerFunction(ISRcorrector);
-            tr.registerFunction(pileup);
+            //tr.registerFunction(pileup);
             //std::cout << "Finished registering functions" << std::endl;
             float fileWgt = fs.getWeight();
 
