@@ -263,7 +263,7 @@ int main(int argc, char* argv[])
                 }
 
                 //check on overall event weight
-                if(eWeight > 50.0 || eWeight < 1/50.0) continue;
+                //if(eWeight > 50.0 || eWeight < 1/50.0) continue;
                 
 
                 const std::vector<TLorentzVector>& jetsLVec = tr.getVec<TLorentzVector>(jetVecLabel);
@@ -378,7 +378,7 @@ int main(int argc, char* argv[])
                 }
 
                 //semileptonic ttbar enriched control sample Mu triggered
-                if( (!isData || passSearchTrigger)
+                if( (!isData || passMuTrigger)
                     && passNoiseEventFilter
                     && passSingleMu30
                     && nbCSV >= 1

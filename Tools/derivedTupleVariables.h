@@ -1401,10 +1401,10 @@ namespace plotterFunctions
                     }
                 }
 
-                if( triggerNames[it].find("HLT_PFHT750_4JetPt50_v4") != std::string::npos ||
-                    triggerNames[it].find("HLT_PFHT800_v3")          != std::string::npos ||
-                    triggerNames[it].find("HLT_PFHT900_v2")          != std::string::npos ||
-                    triggerNames[it].find("HLT_PFJet450_v5")         != std::string::npos
+                if( triggerNames[it].find("HLT_PFHT750_4JetPt50_v") != std::string::npos ||
+                    triggerNames[it].find("HLT_PFHT800_v")          != std::string::npos ||
+                    triggerNames[it].find("HLT_PFHT900_v")          != std::string::npos ||
+                    triggerNames[it].find("HLT_PFJet450_v")         != std::string::npos
                     )
                 {
                     if( passTrigger[it] ) 
@@ -1413,10 +1413,10 @@ namespace plotterFunctions
                     }                    
                 }
 
-                if( triggerNames[it].find("HLT_Photon175_v6")                != std::string::npos ||
-                    triggerNames[it].find("HLT_Photon75_v6")                 != std::string::npos ||
-                    triggerNames[it].find("HLT_Photon90_CaloIdL_PFHT500_v6") != std::string::npos ||
-                    triggerNames[it].find("HLT_Photon90_v6")                 != std::string::npos
+                if( triggerNames[it].find("HLT_Photon175_v")                != std::string::npos ||
+                    triggerNames[it].find("HLT_Photon75_v")                 != std::string::npos ||
+                    triggerNames[it].find("HLT_Photon90_CaloIdL_PFHT500_v") != std::string::npos ||
+                    triggerNames[it].find("HLT_Photon90_v")                 != std::string::npos
                     )
                 {
                     if( passTrigger[it] ) 
@@ -1425,10 +1425,10 @@ namespace plotterFunctions
                     }                    
                 }
 
-                if( triggerNames[it].find("HLT_IsoMu24_v4")              != std::string::npos ||
-                    triggerNames[it].find("HLT_IsoTkMu24_v4")            != std::string::npos ||
-                    triggerNames[it].find("HLT_Mu50_v5")                 != std::string::npos ||
-                    triggerNames[it].find("HLT_Mu55_v4")                 != std::string::npos
+                if( triggerNames[it].find("HLT_IsoMu24_v")              != std::string::npos ||
+                    triggerNames[it].find("HLT_IsoTkMu24_v")            != std::string::npos ||
+                    triggerNames[it].find("HLT_Mu50_v")                 != std::string::npos ||
+                    triggerNames[it].find("HLT_Mu55_v")                 != std::string::npos
                     )
                 {
                     if( passTrigger[it] ) 
