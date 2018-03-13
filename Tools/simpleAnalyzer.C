@@ -413,6 +413,7 @@ int main(int argc, char* argv[])
                     && passSingleLep30
                     && cntNJetsPt30Eta24 >= 6
                     && nbCSV >= 1               //Atleast 1 medium B-Jet
+                    && passLepTtag
                     )
                 {
                     hists1Lep.fill(tr, eWeight, trand);
