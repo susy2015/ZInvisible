@@ -75,8 +75,8 @@ int main(int argc, char* argv[])
 
     bool runOnCondor = false, enableTTbar = false, doWgt = true;
     int nFiles = -1, startFile = 0, nEvts = -1;
-    //std::string dataSets = "TT", filename = "example.root";
-    std::string dataSets = "Signal_T2tt_mStop850_mLSP100", filename = "example.root";
+    std::string dataSets = "TT", filename = "example.root";
+    //std::string dataSets = "Signal_T2tt_mStop850_mLSP100", filename = "example.root";
 
     while((opt = getopt_long(argc, argv, "ctdD:N:M:E:O:", long_options, &option_index)) != -1)
     {
@@ -179,7 +179,7 @@ int main(int argc, char* argv[])
             //std::cout << "sigma*lumi: " << fs.getWeight() << std::endl;
 
             //BaselineVessel myBLV(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
-            plotterFunctions::AliasStealthVars setUpSealth;
+            plotterFunctions::AliasStealthVars setUpStealth;
             plotterFunctions::PrepareTopCRSelection prepTopCR;
             plotterFunctions::PrepareTopVars prepareTopVars;
             plotterFunctions::TriggerInfo triggerInfo(false, false);
@@ -189,10 +189,11 @@ int main(int argc, char* argv[])
             ISRCorrector ISRcorrector("allINone_ISRJets.root","","");
             Pileup_Sys pileup("PileupHistograms_0121_69p2mb_pm4p6.root");
 
-            NTupleReader tr(t);
-            if(false)
+            NTupleReader tr(t);            
+            if(true)
             {
-                tr.registerFunction(setUpSealth);
+                setUpStealth.addAllAlias(tr);
+                tr.registerFunction(setUpStealth);
             }
             else
             {

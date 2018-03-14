@@ -1773,7 +1773,11 @@ namespace plotterFunctions
             int nElectrons20 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr20);
             const AnaConsts::ElecIsoAccRec elesMiniIsoArr30 = {   -1,       2.5,      30,     -1,     0.10,     0.10,     -1  };
             int nElectrons30 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr30);
-            int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
+            /////////////////////////////////////////
+            // Forgive me Joe
+            /////////////////////////////////////////
+            int nIsoTrks = 0;
+            //int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
             //
             //// Pass lepton veto?
             bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel);
@@ -1878,7 +1882,47 @@ namespace plotterFunctions
             tr.registerDerivedVec(alias, inBarrel);
         }
 
+        void genIDHack(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const std::vector<int>& vec = tr.getVec<int>(name);
+            std::vector<int>* IdVec = new std::vector<int>(vec.size());
+            for(int i = 0; i < vec.size(); i++)
+            {
+                (*IdVec)[i] = static_cast<int>(i);
+            }
+            tr.registerDerivedVec(alias, IdVec);
+        }
+
+        void add2Vec(NTupleReader& tr, const std::string& name1, const std::string& name2, const std::string& alias)
+        {
+            const std::vector<double>& vec1 = tr.getVec<double>(name1);
+            const std::vector<double>& vec2 = tr.getVec<double>(name2);
+            std::vector<double>* sumVec = new std::vector<double>(vec1.size());
+            for(int i = 0; i < vec1.size(); i++)
+            {
+                (*sumVec)[i] = vec1[i] + vec2[i];
+            }
+            tr.registerDerivedVec(alias, sumVec);
+        }
+
         void aliasVars(NTupleReader& tr)
+        {
+            inECALBarrel(tr,"Electrons","elesisEB");
+            genIDHack(tr,"GenParticles_ParentIdx","genDecayIdxVec");
+            add2Vec(tr,"Jets_neutralEmEnergyFraction","Jets_neutralHadronEnergyFraction","recoJetsneutralEnergyFraction");
+            addAliasVecTypeChange<bool,int>(tr,"Muons_tightID","muonsFlagMedium");
+            addAliasVecTypeChange<bool,int>(tr,"Electrons_tightID","elesFlagVeto");
+            addAliasVecTypeChange<bool,int>(tr,"Photons_fullID","tightPhotonID");
+            addAliasVecTypeChange<int,double>(tr,"Jets_chargedHadronMultiplicity","ChargedHadronMultiplicity");
+            addAliasVecTypeChange<int,double>(tr,"Jets_muonMultiplicity","MuonMultiplicity");
+            addAliasVecTypeChange<int,double>(tr,"Jets_neutralMultiplicity","NeutralHadronMultiplicity");
+            addAliasVecTypeChange<int,double>(tr,"Jets_photonMultiplicity","PhotonMultiplicity");
+            addAliasVecTypeChange<int,double>(tr,"Jets_electronMultiplicity","ElectronMultiplicity");
+            addAliasTypeChange<bool,int>(tr,"JetID","looseJetID");
+        }
+        
+    public:
+        void addAllAlias(NTupleReader& tr)
         {
             tr.addAlias("Jets","jetsLVec");
             tr.addAlias("MET","met");
@@ -1906,27 +1950,19 @@ namespace plotterFunctions
             tr.addAlias("Jets_hfEMEnergyFraction","recoJetsHFEMEnergyFraction");
             tr.addAlias("Jets_photonEnergyFraction","PhotonEnergyFraction");
             tr.addAlias("Jets_electronEnergyFraction","ElectronEnergyFraction");
-            tr.addAlias("Jets_chargedHadronMultiplicity","ChargedHadronMultiplicity");
-            tr.addAlias("Jets_neutralMultiplicity","NeutralHadronMultiplicity");
-            tr.addAlias("Jets_photonMultiplicity","PhotonMultiplicity");
-            tr.addAlias("Jets_electronEnergyFraction","ElectronMultiplicity");
-            tr.addAlias("Jets_muonMultiplicity","MuonMultiplicity");
             tr.addAlias("Jets_multiplicity","qgMult");
             tr.addAlias("Photons","gammaLVec");
             tr.addAlias("RunNum","run");
             //tr.addAlias("BadPFMuonFilter","BadPFMuonFilter");
             //tr.addAlias("BadChargedCandidateFilter","BadChargedCandidateFilter");
             tr.addAlias("CaloMET","calomet");
-            //tr.addAlias("","");
-            //tr.addAlias("","");
-            inECALBarrel(tr,"Electrons","elesisEB");
-            addAliasVecTypeChange<bool,int>(tr,"Muons_tightID","muonsFlagMedium");
-            addAliasVecTypeChange<bool,int>(tr,"Electrons_tightID","elesFlagVeto");
-            addAliasVecTypeChange<bool,int>(tr,"Photons_fullID","tightPhotonID");
-            addAliasTypeChange<bool,int>(tr,"JetID","looseJetID");
+            tr.addAlias("GenParticles_PdgId","genDecayPdgIdVec");
+            tr.addAlias("GenParticles_ParentIdx","genDecayMomIdxVec");
+            tr.addAlias("TriggerPass","PassTrigger");
+            tr.addAlias("Jets_partonFlavor","recoJetsFlavor"); //Could be Jets_hadronFlavor should ask Kevin
+            tr.addAlias("NVtx","vtxSize");
         }
-        
-    public:
+
         void operator()(NTupleReader& tr)
         {
             aliasVars(tr);
