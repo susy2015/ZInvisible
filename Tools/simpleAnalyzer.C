@@ -330,6 +330,7 @@ int main(int argc, char* argv[])
             //plotterFunctions::SystematicPrep sysPrep;
             plotterFunctions::PrepareTopCRSelection prepTopCR(JECSys);
             plotterFunctions::PrepareTopVars prepareTopVars("TopTagger.cfg",JECSys);
+            plotterFunctions::AliasStealthVars setUpStealth;
             plotterFunctions::TriggerInfo triggerInfo(false, false);
 
             //BTagCorrector bTagCorrector("allINone_bTagEff.root", "", false);
@@ -353,7 +354,8 @@ int main(int argc, char* argv[])
 
             if(false)
             {
-                tr.registerFunction(setUpSealth);
+                setUpStealth.addAllAlias(tr);
+                tr.registerFunction(setUpStealth);
             }
             else
             {
