@@ -20,10 +20,10 @@ def frange(a,b,i):
 mvaFileName = ""
 with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg") as meowttcfgFile:
     for line in meowttcfgFile:
+        line = line.split("#")[0]
         if "modelFile" in line:
             mvaFileName = line.split("=")[1].strip().strip("\"")
             break
-
 
 #here I hack in the tarball for GMP, this needs to be generalized to the other options 
 
