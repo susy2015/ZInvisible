@@ -43,7 +43,8 @@ LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
 
-PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d scalefactorplot systplot miniMakePlots beffCalc makeSignalHistograms makeTopPlots makeDataMCplots simpleAnalyzer
+#PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d scalefactorplot systplot miniMakePlots beffCalc makeSignalHistograms makeTopPlots makeDataMCplots simpleAnalyzer
+PROGRAMS = calcEff harvestHists makePlots moneyplot plot2d scalefactorplot systplot beffCalc makeSignalHistograms makeTopPlots makeDataMCplots simpleAnalyzer
 
 all: mkobj PyWraps $(PROGRAMS)
 
