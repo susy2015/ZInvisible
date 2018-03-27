@@ -333,7 +333,7 @@ int main(int argc, char* argv[])
             plotterFunctions::AliasStealthVars setUpStealth;
             plotterFunctions::TriggerInfo triggerInfo(false, false);
 
-            //BTagCorrector bTagCorrector("allINone_bTagEff.root", "", false);
+            BTagCorrector bTagCorrector("allINone_bTagEff.root", "", false, fs.tag);
             TTbarCorrector ttbarCorrector(false, "");
             ISRCorrector ISRcorrector("allINone_ISRJets.root","","");
             Pileup_Sys pileup("PileupHistograms_0121_69p2mb_pm4p6.root");
