@@ -1185,25 +1185,25 @@ namespace plotterFunctions
         int indexMETMHTTrigger;
         bool miniTuple_, noMC_;
 
-	double GetMuonTriggerEff(const double& muEta) 
+	double GetMuonTriggerEff(const double& muEta)
 	{
-            if (-2.6 <= muEta && muEta < -2.2) return 0.7861842;
-            else if(-2.2 <= muEta && muEta < -1.8) return 0.8233438;
-            else if(-1.8 <= muEta && muEta < -1.4) return 0.8151685;
-            else if(-1.4 <= muEta && muEta < -1.0) return 0.8991723;
-            else if(-1.0 <= muEta && muEta < -0.6) return 0.9125786;
-            else if(-0.6 <= muEta && muEta < -0.2) return 0.8880085;
-            else if(-0.2 <= muEta && muEta <  0.2) return 0.9334851;
-            else if( 0.2 <= muEta && muEta <  0.6) return 0.8857523;
-            else if( 0.6 <= muEta && muEta <  1.0) return 0.9052119;
-            else if( 1.0 <= muEta && muEta <  1.4) return 0.9004312;
-            else if( 1.4 <= muEta && muEta <  1.8) return 0.8384009;
-            else if( 1.8 <= muEta && muEta <  2.2) return 0.8218332;
-            else if( 2.2 <= muEta && muEta <  2.6) return 0.7781818;
+            if     (-2.6 <= muEta && muEta < -2.2) return 0.8020833;
+            else if(-2.2 <= muEta && muEta < -1.8) return 0.8113949;
+            else if(-1.8 <= muEta && muEta < -1.4) return 0.8111837;
+            else if(-1.4 <= muEta && muEta < -1.0) return 0.8824405;
+            else if(-1.0 <= muEta && muEta < -0.6) return 0.9024091;
+            else if(-0.6 <= muEta && muEta < -0.2) return 0.8737864;
+            else if(-0.2 <= muEta && muEta <  0.2) return 0.9186085;
+            else if( 0.2 <= muEta && muEta <  0.6) return 0.8759649;
+            else if( 0.6 <= muEta && muEta <  1.0) return 0.8940410;
+            else if( 1.0 <= muEta && muEta <  1.4) return 0.8848286;
+            else if( 1.4 <= muEta && muEta <  1.8) return 0.8293217;
+            else if( 1.8 <= muEta && muEta <  2.2) return 0.8263979;
+            else if( 2.2 <= muEta && muEta <  2.6) return 0.7605634;
             else                                   return 0.000;
 	}
 
-	double GetTriggerEffWeight(const double& met, const double& ht) 
+	double GetTriggerEffWeight(const double& met, const double& ht)
 	{
 	    if (ht<1000)
 	    {
@@ -1463,14 +1463,14 @@ namespace plotterFunctions
 
             //Calculate muon trigger weights
             double muTrigWgt = 0.0;
-            if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 50 && cutMuVec[1].Pt() > 50)
+            if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 40 && cutMuVec[1].Pt() > 40)
             {
                 double muEff1 = GetMuonTriggerEff(cutMuVec[0].Eta());
                 double muEff2 = GetMuonTriggerEff(cutMuVec[1].Eta());
 
                 muTrigWgt = 1 - (1 - muEff1)*(1 - muEff2);
             }
-            else if(cutMuVec.size() >= 1 && cutMuVec[0].Pt() > 50)
+            else if(cutMuVec.size() >= 1 && cutMuVec[0].Pt() > 40)
             {
                 //For events with only 1 muon (emu events in particular or events with a subleading muon below 45 GeV) just use the single muon eff
                 muTrigWgt = GetMuonTriggerEff(cutMuVec[0].Eta());
@@ -1756,16 +1756,18 @@ namespace plotterFunctions
                     cutElecMTlepVec->push_back(elesMTlep[i]);
                 }
             }
-            
+
             tr.registerDerivedVec("cutElecVec", cutElecVec);
             tr.registerDerivedVec("cutElecMTlepVec", cutElecMTlepVec);
-            
+
             //// Calculate number of leptons
             int nMuons = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
             const AnaConsts::IsoAccRec muonsMiniIsoArr20GeV = {   -1,       2.4,      20,     -1,       0.2,     -1  };
             int nMuons_20GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr20GeV);
             const AnaConsts::IsoAccRec muonsMiniIsoArr30GeV = {   -1,       2.4,      30,     -1,       0.2,     -1  };
             int nMuons_30GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr30GeV);
+            const AnaConsts::IsoAccRec muonsMiniIsoArr40GeV = {   -1,       2.4,      40,     -1,       0.2,     -1  };
+            int nMuons_40GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr40GeV);
             const AnaConsts::IsoAccRec muonsMiniIsoArr50GeV = {   -1,       2.4,      50,     -1,       0.2,     -1  };
             int nMuons_50GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr50GeV);
             int nElectrons = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB,  elesFlagIDVec, AnaConsts::elesMiniIsoArr);
@@ -1814,7 +1816,7 @@ namespace plotterFunctions
 
             tr.registerDerivedVar("passSingleLep50", nMuons_50GeV == 1);
             tr.registerDerivedVar("passSingleLep20", nMuons_20GeV + nElectrons20 == 1);
-            tr.registerDerivedVar("passSingleMu30", nMuons_30GeV == 1);
+            tr.registerDerivedVar("passSingleMu40", nMuons_40GeV == 1);
             tr.registerDerivedVar("passSingleLep30", nMuons_30GeV + nElectrons30 == 1);
             tr.registerDerivedVar("passDoubleLep", passDoubleMuon);
 

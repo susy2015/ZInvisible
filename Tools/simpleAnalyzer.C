@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
                 const bool&   passNoiseEventFilter = tr.getVar<bool>("passNoiseEventFilter");
                 const bool&   passSingleLep20      = tr.getVar<bool>("passSingleLep20");
                 const bool&   passSingleLep30      = tr.getVar<bool>("passSingleLep30");
-                const bool&   passSingleMu30       = tr.getVar<bool>("passSingleMu30");
+                const bool&   passSingleMu40       = tr.getVar<bool>("passSingleMu40");
                 const bool&   passLeptonVeto       = tr.getVar<bool>("passLeptVeto");
                 const bool&   passdPhis            = tr.getVar<bool>("passdPhis");
                 const double& ht                   = tr.getVar<double>("HT");
@@ -380,7 +380,7 @@ int main(int argc, char* argv[])
                 //semileptonic ttbar enriched control sample Mu triggered
                 if( (!isData || passMuTrigger)
                     && passNoiseEventFilter
-                    && passSingleMu30
+                    && passSingleMu40
                     && nbCSV >= 1
                     && cntNJetsPt30Eta24 >= 4
                     && passdPhis
@@ -392,7 +392,9 @@ int main(int argc, char* argv[])
                     && (met > 50)
                     )
                 {
-                    histsTTbarLep.fill(tr, eWeight, trand);
+                    //trigger weight really matters for single mu trigger
+                    
+                    histsTTbarLep.fill(tr, eWeight*muTrigEff, trand);
                 }
 
                 //Stealth Event Selection - 0 Lepton
