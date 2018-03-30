@@ -409,7 +409,9 @@ int main(int argc, char* argv[])
                 {
                     //trigger weight really matters for single mu trigger
                     
-                    histsTTbarLep.fill(tr, eWeight*muTrigEff, trand);
+                    //histsTTbarLep.fill(tr, eWeight*muTrigEff, trand);
+                    //Fix me please
+                    histsTTbarLep.fill(tr, eWeight, trand);
                 }
 
                 //Stealth Event Selection - 0 Lepton
