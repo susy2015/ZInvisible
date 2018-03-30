@@ -216,6 +216,11 @@ int main(int argc, char* argv[])
             JECSys = -1;
             break;
 
+//        case 's':
+//            runStealth = true;
+//            std::cout << "Running stealth verison" << std::endl;
+//            break;
+
         case 'D':
             dataSets = optarg;
             std::cout << "Running over the " << dataSets << " data sets." << std::endl;
@@ -353,6 +358,7 @@ int main(int argc, char* argv[])
                 tr.setPrefix("prodJetsNoLep_");
 
             if(false)
+//            if(runStealth)
             {
                 setUpStealth.addAllAlias(tr);
                 tr.registerFunction(setUpStealth);
