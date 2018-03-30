@@ -1773,11 +1773,15 @@ namespace plotterFunctions
             int nElectrons20 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr20);
             const AnaConsts::ElecIsoAccRec elesMiniIsoArr30 = {   -1,       2.5,      30,     -1,     0.10,     0.10,     -1  };
             int nElectrons30 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr30);
-            /////////////////////////////////////////
-            // Forgive me Joe
-            /////////////////////////////////////////
-            int nIsoTrks = 0;
-            //int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
+            int nIsoTrks; 
+            if( tr.checkBranch("loose_isoTrksLVec") )
+            {
+                nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
+            }
+            else
+            {
+                nIsoTrks = 0;
+            }
             //
             //// Pass lepton veto?
             bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel);
