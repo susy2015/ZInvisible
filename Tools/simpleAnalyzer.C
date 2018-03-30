@@ -63,21 +63,23 @@ int main(int argc, char* argv[])
     int option_index = 0;
 
     static struct option long_options[] = {
-        {"condor",             no_argument, 0, 'c'},
-        {"TTbar weight",       no_argument, 0, 't'},
-        {"no event weighting", no_argument, 0, 'd'},
-        {"dataSets",     required_argument, 0, 'D'},
-        {"numFiles",     required_argument, 0, 'N'},
-        {"startFile",    required_argument, 0, 'M'},
-        {"numEvts",      required_argument, 0, 'E'},
-        {"output",       required_argument, 0, 'O'}
+        {"condor",              no_argument, 0, 'c'},
+        {"TTbar weight",        no_argument, 0, 't'},
+        {"no event weighting",  no_argument, 0, 'd'},
+        {"run stealth version", no_argument, 0, 's'},
+        {"dataSets",      required_argument, 0, 'D'},
+        {"numFiles",      required_argument, 0, 'N'},
+        {"startFile",     required_argument, 0, 'M'},
+        {"numEvts",       required_argument, 0, 'E'},
+        {"output",        required_argument, 0, 'O'}
     };
 
-    bool runOnCondor = false, enableTTbar = false, doWgt = true;
+    bool runOnCondor = false, enableTTbar = false, doWgt = true, runStealth = true;
     int nFiles = -1, startFile = 0, nEvts = -1;
-    std::string dataSets = "Signal_T2tt_mStop850_mLSP100", filename = "example.root";
+    std::string dataSets = "TT", filename = "example.root";
+    //std::string dataSets = "Signal_T2tt_mStop850_mLSP100", filename = "example.root";
 
-    while((opt = getopt_long(argc, argv, "ctdD:N:M:E:O:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "ctdsD:N:M:E:O:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
@@ -94,6 +96,11 @@ int main(int argc, char* argv[])
         case 'd':
             doWgt = false;
             std::cout << "No Event weighting." << std::endl;
+            break;
+
+        case 's':
+            runStealth = true;
+            std::cout << "Running stealth verison" << std::endl;
             break;
 
         case 'D':
@@ -178,16 +185,25 @@ int main(int argc, char* argv[])
             //std::cout << "sigma*lumi: " << fs.getWeight() << std::endl;
 
             //BaselineVessel myBLV(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
+            plotterFunctions::AliasStealthVars setUpStealth;
             plotterFunctions::PrepareTopCRSelection prepTopCR;
             plotterFunctions::PrepareTopVars prepareTopVars;
             plotterFunctions::TriggerInfo triggerInfo(false, false);
-
             BTagCorrector bTagCorrector("allINone_bTagEff.root", "", false, fs.tag);
             TTbarCorrector ttbarCorrector(false, "");
             ISRCorrector ISRcorrector("allINone_ISRJets.root","","");
             Pileup_Sys pileup("PileupHistograms_0121_69p2mb_pm4p6.root");
 
-            NTupleReader tr(t);
+            NTupleReader tr(t);            
+            if(runStealth)
+            {
+                setUpStealth.addAllAlias(tr);
+                tr.registerFunction(setUpStealth);
+            }
+            else
+            {
+                tr.registerFunction(pileup);
+            }
             tr.registerFunction(filterEvents);
             tr.registerFunction(prepTopCR);
             tr.registerFunction(prepareTopVars);
@@ -195,7 +211,6 @@ int main(int argc, char* argv[])
             tr.registerFunction(bTagCorrector);
             tr.registerFunction(ttbarCorrector);
             tr.registerFunction(ISRcorrector);
-            tr.registerFunction(pileup);
 
             double fileWgt = fs.getWeight();
 
