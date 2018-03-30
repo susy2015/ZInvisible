@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
         {"output",        required_argument, 0, 'O'}
     };
 
-    bool runOnCondor = false, enableTTbar = false, doWgt = true, runStealth = true;
+    bool runOnCondor = false, enableTTbar = false, doWgt = true, runStealth = false;
     int nFiles = -1, startFile = 0, nEvts = -1;
     std::string dataSets = "TT", filename = "example.root";
     //std::string dataSets = "Signal_T2tt_mStop850_mLSP100", filename = "example.root";
