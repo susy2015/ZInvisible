@@ -1775,7 +1775,15 @@ namespace plotterFunctions
             int nElectrons20 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr20);
             const AnaConsts::ElecIsoAccRec elesMiniIsoArr30 = {   -1,       2.5,      30,     -1,     0.10,     0.10,     -1  };
             int nElectrons30 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr30);
-            int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
+            int nIsoTrks; 
+            if( tr.checkBranch("loose_isoTrksLVec") )
+            {
+                nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
+            }
+            else
+            {
+                nIsoTrks = 0;
+            }
             //
             //// Pass lepton veto?
             bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel);
@@ -1836,6 +1844,134 @@ namespace plotterFunctions
         void operator()(NTupleReader& tr)
         {
             prepareTopCRSelection(tr);
+        }
+    };
+
+    class AliasStealthVars
+    {
+    private:
+        template<typename I, typename O> void addAliasVecTypeChange(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const std::vector<I>& inVec = tr.getVec<I>(name);
+            std::vector<O>* outVec      = new std::vector<O>(inVec.size());
+            for(int i = 0; i < inVec.size(); i++)
+            {
+                (*outVec)[i] = static_cast<O>(inVec[i]);
+            }
+            tr.registerDerivedVec(alias, outVec);
+        }
+
+        template<typename I, typename O> void addAliasTypeChange(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const I& inVar = tr.getVar<I>(name);
+            O outVar = static_cast<O>(inVar);
+            tr.registerDerivedVar(alias, outVar);
+        }
+
+        void inECALBarrel(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const std::vector<TLorentzVector>& vec = tr.getVec<TLorentzVector>(name);
+            std::vector<unsigned int>* inBarrel    = new std::vector<unsigned int>(vec.size());
+            for(int i = 0; i < vec.size(); i++)
+            {
+                TLorentzVector object = vec[i];
+                double eta = object.Eta();
+                if(fabs(eta < 1.479))
+                {
+                    (*inBarrel)[i] = static_cast<unsigned int>(1);
+                }
+                else
+                {                  
+                    (*inBarrel)[i] = static_cast<unsigned int>(0); 
+                }
+            }
+            tr.registerDerivedVec(alias, inBarrel);
+        }
+
+        void genIDHack(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const std::vector<int>& vec = tr.getVec<int>(name);
+            std::vector<int>* IdVec = new std::vector<int>(vec.size());
+            for(int i = 0; i < vec.size(); i++)
+            {
+                (*IdVec)[i] = static_cast<int>(i);
+            }
+            tr.registerDerivedVec(alias, IdVec);
+        }
+
+        void add2Vec(NTupleReader& tr, const std::string& name1, const std::string& name2, const std::string& alias)
+        {
+            const std::vector<double>& vec1 = tr.getVec<double>(name1);
+            const std::vector<double>& vec2 = tr.getVec<double>(name2);
+            std::vector<double>* sumVec = new std::vector<double>(vec1.size());
+            for(int i = 0; i < vec1.size(); i++)
+            {
+                (*sumVec)[i] = vec1[i] + vec2[i];
+            }
+            tr.registerDerivedVec(alias, sumVec);
+        }
+
+        void aliasVars(NTupleReader& tr)
+        {
+            inECALBarrel(tr,"Electrons","elesisEB");
+            genIDHack(tr,"GenParticles_ParentIdx","genDecayIdxVec");
+            add2Vec(tr,"Jets_neutralEmEnergyFraction","Jets_neutralHadronEnergyFraction","recoJetsneutralEnergyFraction");
+            addAliasVecTypeChange<bool,int>(tr,"Muons_tightID","muonsFlagMedium");
+            addAliasVecTypeChange<bool,int>(tr,"Electrons_tightID","elesFlagVeto");
+            addAliasVecTypeChange<bool,int>(tr,"Photons_fullID","tightPhotonID");
+            addAliasVecTypeChange<int,double>(tr,"Jets_chargedHadronMultiplicity","ChargedHadronMultiplicity");
+            addAliasVecTypeChange<int,double>(tr,"Jets_muonMultiplicity","MuonMultiplicity");
+            addAliasVecTypeChange<int,double>(tr,"Jets_neutralMultiplicity","NeutralHadronMultiplicity");
+            addAliasVecTypeChange<int,double>(tr,"Jets_photonMultiplicity","PhotonMultiplicity");
+            addAliasVecTypeChange<int,double>(tr,"Jets_electronMultiplicity","ElectronMultiplicity");
+            addAliasTypeChange<bool,int>(tr,"JetID","looseJetID");
+        }
+        
+    public:
+        void addAllAlias(NTupleReader& tr)
+        {
+            tr.addAlias("Jets","jetsLVec");
+            tr.addAlias("MET","met");
+            tr.addAlias("Jets_bDiscriminatorCSV","recoJetsBtag_0");
+            tr.addAlias("Weight","stored_weight");
+            tr.addAlias("METPhi","metphi");
+            tr.addAlias("GenParticles","genDecayLVec");
+            tr.addAlias("puWeight","_PUweightFactor");
+            tr.addAlias("Muons","muonsLVec");
+            tr.addAlias("Muons_MiniIso","muonsMiniIso");
+            tr.addAlias("Muons_MTW","muonsMtw");
+            tr.addAlias("Electrons","elesLVec");
+            tr.addAlias("Electrons_MiniIso","elesMiniIso");
+            tr.addAlias("Electrons_charge","elesCharge");
+            tr.addAlias("Electrons_MTW","elesMtw");
+            tr.addAlias("Jets_qgLikelihood","qgLikelihood");
+            tr.addAlias("Jets_ptD","qgPtD");
+            tr.addAlias("Jets_axismajor","qgAxis1");
+            tr.addAlias("Jets_axisminor","qgAxis2");
+            tr.addAlias("Jets_chargedHadronEnergyFraction","recoJetschargedHadronEnergyFraction");
+            tr.addAlias("Jets_chargedEmEnergyFraction","recoJetschargedEmEnergyFraction");
+            tr.addAlias("Jets_neutralEmEnergyFraction","recoJetsneutralEmEnergyFraction");
+            tr.addAlias("Jets_muonEnergyFraction","recoJetsmuonEnergyFraction");
+            tr.addAlias("Jets_hfHadronEnergyFraction","recoJetsHFHadronEnergyFraction");
+            tr.addAlias("Jets_hfEMEnergyFraction","recoJetsHFEMEnergyFraction");
+            tr.addAlias("Jets_photonEnergyFraction","PhotonEnergyFraction");
+            tr.addAlias("Jets_electronEnergyFraction","ElectronEnergyFraction");
+            tr.addAlias("Jets_multiplicity","qgMult");
+            tr.addAlias("Photons","gammaLVec");
+            tr.addAlias("RunNum","run");
+            //tr.addAlias("BadPFMuonFilter","BadPFMuonFilter");
+            //tr.addAlias("BadChargedCandidateFilter","BadChargedCandidateFilter");
+            tr.addAlias("CaloMET","calomet");
+            tr.addAlias("GenParticles_PdgId","genDecayPdgIdVec");
+            tr.addAlias("GenParticles_ParentIdx","genDecayMomIdxVec");
+            tr.addAlias("TriggerPass","PassTrigger");
+            tr.addAlias("Jets_partonFlavor","recoJetsFlavor"); //Could be Jets_hadronFlavor should ask Kevin
+            tr.addAlias("NVtx","vtxSize");
+        }
+
+        void operator()(NTupleReader& tr)
+        {
+            aliasVars(tr);
         }
     };
 
@@ -1936,19 +2072,22 @@ namespace plotterFunctions
             myConstAK4Inputs->addSupplamentalVector("PhotonMultiplicity",                   tr.getVec<double>("PhotonMultiplicity"));
             myConstAK4Inputs->addSupplamentalVector("ElectronMultiplicity",                 tr.getVec<double>("ElectronMultiplicity"));
             myConstAK4Inputs->addSupplamentalVector("MuonMultiplicity",                     tr.getVec<double>("MuonMultiplicity"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVb",                             tr.getVec<double>("DeepCSVb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVc",                             tr.getVec<double>("DeepCSVc"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVl",                             tr.getVec<double>("DeepCSVl"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVbb",                            tr.getVec<double>("DeepCSVbb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVcc",                            tr.getVec<double>("DeepCSVcc"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorb",                          tr.getVec<double>("DeepFlavorb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorbb",                         tr.getVec<double>("DeepFlavorbb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorlepb",                       tr.getVec<double>("DeepFlavorlepb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorc",                          tr.getVec<double>("DeepFlavorc"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavoruds",                        tr.getVec<double>("DeepFlavoruds"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorg",                          tr.getVec<double>("DeepFlavorg"));
-            myConstAK4Inputs->addSupplamentalVector("CvsL",                                 tr.getVec<double>("CvsL"));
-            myConstAK4Inputs->addSupplamentalVector("CvsB",                                 tr.getVec<double>("CvsB"));
+            if( tr.checkBranch("DeepCSVb") )
+            {
+                myConstAK4Inputs->addSupplamentalVector("DeepCSVb",                             tr.getVec<double>("DeepCSVb"));
+                myConstAK4Inputs->addSupplamentalVector("DeepCSVc",                             tr.getVec<double>("DeepCSVc"));
+                myConstAK4Inputs->addSupplamentalVector("DeepCSVl",                             tr.getVec<double>("DeepCSVl"));
+                myConstAK4Inputs->addSupplamentalVector("DeepCSVbb",                            tr.getVec<double>("DeepCSVbb"));
+                myConstAK4Inputs->addSupplamentalVector("DeepCSVcc",                            tr.getVec<double>("DeepCSVcc"));
+                myConstAK4Inputs->addSupplamentalVector("DeepFlavorb",                          tr.getVec<double>("DeepFlavorb"));
+                myConstAK4Inputs->addSupplamentalVector("DeepFlavorbb",                         tr.getVec<double>("DeepFlavorbb"));
+                myConstAK4Inputs->addSupplamentalVector("DeepFlavorlepb",                       tr.getVec<double>("DeepFlavorlepb"));
+                myConstAK4Inputs->addSupplamentalVector("DeepFlavorc",                          tr.getVec<double>("DeepFlavorc"));
+                myConstAK4Inputs->addSupplamentalVector("DeepFlavoruds",                        tr.getVec<double>("DeepFlavoruds"));
+                myConstAK4Inputs->addSupplamentalVector("DeepFlavorg",                          tr.getVec<double>("DeepFlavorg"));
+                myConstAK4Inputs->addSupplamentalVector("CvsL",                                 tr.getVec<double>("CvsL"));
+                myConstAK4Inputs->addSupplamentalVector("CvsB",                                 tr.getVec<double>("CvsB"));
+            }
             //myConstAK4Inputs->addSupplamentalVector("CombinedSvtx",                         tr.getVec<double>("CombinedSvtx"));
             //myConstAK4Inputs->addSupplamentalVector("JetProba",                             tr.getVec<double>("JetProba_0"));
             //myConstAK4Inputs->addSupplamentalVector("JetBprob",                             tr.getVec<double>("JetBprob"));
