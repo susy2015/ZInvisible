@@ -292,10 +292,10 @@ int main(int argc, char* argv[])
     AnaSamples::SampleSet        ss("sampleSets.txt", runOnCondor, AnaSamples::luminosity);
     AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
-    //if(dataSets.find("Data") != std::string::npos){
-    //   std::cout << "This looks like a data n-tuple. No weighting will be applied." << std::endl;
-    //   doWgt = false;
-    //}
+    if(dataSets.find("Data") != std::string::npos){
+       std::cout << "This looks like a data n-tuple. No weighting will be applied." << std::endl;
+       doWgt = false;
+    }
 
     if(dataSets.find("TT") != std::string::npos){
        std::cout << "This looks like a TTbar sample. Applying TTbar weighting" << std::endl;
@@ -474,6 +474,8 @@ int main(int argc, char* argv[])
 
                 float muTrigEff = 1.0;
                 const std::vector<TLorentzVector>& jetsLVec = tr.getVec<TLorentzVector>(jetVecLabel);
+
+                double muTrigEff = 1.0;
 
                 if(!isData && doWgt)
                 {
