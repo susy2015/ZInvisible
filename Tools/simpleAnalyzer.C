@@ -147,10 +147,10 @@ int main(int argc, char* argv[])
     AnaSamples::SampleSet        ss(sampleloc, AnaSamples::luminosity);
     AnaSamples::SampleCollection sc(ss);
 
-    //if(dataSets.find("Data") != std::string::npos){
-    //   std::cout << "This looks like a data n-tuple. No weighting will be applied." << std::endl;
-    //   doWgt = false;
-    //}
+    if(dataSets.find("Data") != std::string::npos){
+       std::cout << "This looks like a data n-tuple. No weighting will be applied." << std::endl;
+       doWgt = false;
+    }
 
     if(dataSets.find("TT") != std::string::npos){
        std::cout << "This looks like a TTbar sample. Applying TTbar weighting" << std::endl;
@@ -248,6 +248,8 @@ int main(int argc, char* argv[])
 
                 double eWeight = fileWgt;
 
+                double muTrigEff = 1.0;
+
                 if(!isData && doWgt)
                 {
                     const double& puWF               = tr.getVar<double>("_PUweightFactor");
@@ -258,7 +260,9 @@ int main(int argc, char* argv[])
                         eWeight *= ttbarWF;
                     }
                     const double& triggerWF          = tr.getVar<double>("TriggerEffMC");
-
+                
+                    muTrigEff = tr.getVar<double>("muTrigWgt");
+                
                     eWeight *= puWF * bTagWF;
                 }
 
