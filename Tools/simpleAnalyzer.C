@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
         {"output",        required_argument, 0, 'O'}
     };
 
-    bool runOnCondor = false, enableTTbar = false, doWgt = true, runStealth = false;
+    bool runOnCondor = false, enableTTbar = false, doWgt = true, runStealth = true;
     int nFiles = -1, startFile = 0, nEvts = -1;
     std::string dataSets = "TT", filename = "example.root";
     //std::string dataSets = "Signal_T2tt_mStop850_mLSP100", filename = "example.root";
@@ -409,9 +409,7 @@ int main(int argc, char* argv[])
                 {
                     //trigger weight really matters for single mu trigger
                     
-                    //histsTTbarLep.fill(tr, eWeight*muTrigEff, trand);
-                    //Fix me please
-                    histsTTbarLep.fill(tr, eWeight, trand);
+                    histsTTbarLep.fill(tr, eWeight*muTrigEff, trand);
                 }
 
                 //Stealth Event Selection - 0 Lepton
