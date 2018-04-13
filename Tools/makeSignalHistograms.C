@@ -193,8 +193,8 @@ int main(int argc, char* argv[])
         sampleloc = "condor";
     }
 
-    AnaSamples::SampleSet        ss(sampleloc, AnaSamples::luminosity);
-    AnaSamples::SampleCollection sc(ss);
+    AnaSamples::SampleSet        ss("sampleSets.txt");
+    AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
     try
     {

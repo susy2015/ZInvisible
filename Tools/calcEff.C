@@ -57,7 +57,6 @@ int main(int argc, char* argv[])
     }
 
     string filename = "effhists.root";
-    string sampleloc = AnaSamples::fileDir;
 
     //if running on condor override all optional settings
     if(runOnCondor)
@@ -65,11 +64,10 @@ int main(int argc, char* argv[])
         char thistFile[128];
         sprintf(thistFile, "effhists_%s_%d.root", dataSets.c_str(), startFile);
         filename = thistFile;
-        sampleloc = "condor";
     }
 
-    AnaSamples::SampleSet        ss(sampleloc);
-    AnaSamples::SampleCollection sc(ss);
+    AnaSamples::SampleSet        ss("sampleSets.txt");
+    AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
     TFile *f = new TFile(filename.c_str(),"RECREATE");
     f->cd();
