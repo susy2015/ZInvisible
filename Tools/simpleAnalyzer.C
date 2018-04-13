@@ -144,8 +144,8 @@ int main(int argc, char* argv[])
 
     std::cout << "Sample location: " << sampleloc << std::endl;
 
-    AnaSamples::SampleSet        ss(sampleloc, AnaSamples::luminosity);
-    AnaSamples::SampleCollection sc(ss);
+    AnaSamples::SampleSet        ss("sampleSets.txt");
+    AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
     if(dataSets.find("Data") != std::string::npos){
        std::cout << "This looks like a data n-tuple. No weighting will be applied." << std::endl;

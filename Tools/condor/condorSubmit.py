@@ -250,7 +250,7 @@ else:
 nFilesPerJob = options.numfile
 
 fileParts = [submitFile]
-sc = SampleCollection()
+sc = SampleCollection("../sampleSets.txt", "../sampleCollections.txt")
 datasets = []
 
 if options.dataCollections or options.dataCollectionslong:
