@@ -311,7 +311,7 @@ int main(int argc, char* argv[])
 
     int events = 0, eventsPhoton = 0, eventsQCD = 0, eventsLowHTQCD = 0, eventsTaggedLowHTQCD = 0, events1L = 0, events2L = 0, eventsTTbar1l = 0, eventsTTbar2l = 0, eventsTTbarNol = 0, fevents = 0;
 
-    HistoContainer<NTupleReader> hists0Lep("Lep0"), hists1Lep("Lep1"), histsTTbar("ttbar"), histsTTbarLep("ttbarLep"), histsQCD("QCD"), histsLowHTQCD("lowHTQCD"), histsPhoton("photon"), histsDilepton("dilepton"), histsSimpleSemiLept("simpleSemiLep"), histsTTbar1l("histsTTbar1l"), histsTTbar2l("histsTTbar2l"), histsTTbar1lnoMET("histsTTbar1lnoMET"), histsTTbar2lnoMET("histsTTbar2lnoMET"), histsTTbarNol("histsTTbarNol");
+    HistoContainer<NTupleReader> hists0Lep("Lep0"), hists1Lep("Lep1"), histsTTbar("ttbar"), histsTTbarNob("ttbarNob"), histsTTbarLep("ttbarLep"), histsQCD("QCD"), histsQCDb("QCDb"), histsLowHTQCD("lowHTQCD"), histsPhoton("photon"), histsDilepton("dilepton"), histsSimpleSemiLept("simpleSemiLep"), histsTTbar1l("histsTTbar1l"), histsTTbar2l("histsTTbar2l"), histsTTbar1lnoMET("histsTTbar1lnoMET"), histsTTbar2lnoMET("histsTTbar2lnoMET"), histsTTbarNol("histsTTbarNol");
 
     TRandom* trand = new TRandom3();
 
@@ -618,6 +618,18 @@ int main(int argc, char* argv[])
                     histsSimpleSemiLept.fill(tr, eWeight, trand);
                 }
 
+                //High HT QCD control sample
+                if( (!isData || passHighHtTrigger)
+                    && passNoiseEventFilter
+                    && passLeptonVeto
+                    && nbCSV >= 1
+                    && cntNJetsPt30Eta24 >= 4
+                    && (ht > 1000)
+                    )
+                {
+                    histsQCDb.fill(tr, eWeight, trand);
+                }
+
                 //photon control sample
                 if( (!isData || passPhotonTrigger)
                     && passNoiseEventFilter
@@ -726,6 +738,21 @@ int main(int argc, char* argv[])
                     )
                 {
                     histsTTbar2lnoMET.fill(tr, eWeight, trand);
+                }
+
+                //semileptonic ttbar enriched control sample MET triggered
+                if( (!isData || passSearchTrigger)
+                    && passNoiseEventFilter
+                    && passSingleLep20
+                    && cntNJetsPt30Eta24 >= 4
+                    && passdPhis
+                    && deltaPhiLepMET < 0.8
+                    && mTLep < 100
+                    && (ht > 250)
+                    && (met > 250)
+                    )
+                {
+                    histsTTbarNob.fill(tr, eWeight, trand);
                 }
 
                 //semileptonic ttbar enriched control sample Mu triggered
@@ -838,7 +865,9 @@ int main(int argc, char* argv[])
         histsQCD.save(f);
         histsLowHTQCD.save(f);
         histsSimpleSemiLept.save(f);
+        histsQCDb.save(f);
         histsTTbar.save(f);
+        histsTTbarNob.save(f);
         histsTTbarLep.save(f);
         histsPhoton.save(f);
         histsDilepton.save(f);
