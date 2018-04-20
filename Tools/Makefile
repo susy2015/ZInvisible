@@ -71,7 +71,7 @@ $(ODIR)/ScaleFactorsPyWrap.o: $(SDIR)/ScaleFactors.cc $(SDIR)/ScaleFactors.h
 
 #special rule to make root reflex dictionary
 $(ODIR)/rootdict.cc : $(SDIR)/rootdict.h
-	rootcint -f $@ $^ -inlineInputHeade
+	rootcint -f $@ $^ -inlineInputHeader
 	mv $(ODIR)/rootdict_rdict.pcm $(SDIR)
 
 
