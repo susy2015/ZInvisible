@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
 
     std::cout << "Sample location: " << sampleloc << std::endl;
 
-    AnaSamples::SampleSet        ss("sampleSets.txt");
+    AnaSamples::SampleSet        ss("sampleSets.txt", AnaSamples::lumi, runOnCondor);
     AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
     if(dataSets.find("Data") != std::string::npos){
@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
 
     int events = 0, pevents = 0;
 
-    HistoContainer<NTupleReader> hists0Lep("Lep0"), hists1Lep("Lep1"), histsTTbar("ttbar"), histsTTbarLep("ttbarLep"), histsQCD("QCD"), histsPhoton("photon"), histsDilepton("dilepton");
+    HistoContainer<NTupleReader> hists0Lep("Lep0"), hists1Lep("Lep1"), histsTTbar("ttbar"), histsTTbarNob("ttbarNob"), histsTTbarLep("ttbarLep"), histsQCD("QCD"), histsQCDb("QCDb"), histsPhoton("photon"), histsDilepton("dilepton");
 
     TRandom* trand = new TRandom3();
 
@@ -356,6 +356,18 @@ int main(int argc, char* argv[])
                     histsQCD.fill(tr, eWeight, trand);
                 }
 
+                //High HT QCD control sample
+                if( (!isData || passHighHtTrigger)
+                    && passNoiseEventFilter
+                    && passLeptonVeto
+                    && nbCSV >= 1
+                    && cntNJetsPt30Eta24 >= 4
+                    && (ht > 1000)
+                    )
+                {
+                    histsQCDb.fill(tr, eWeight, trand);
+                }
+
                 //photon control sample
                 if( (!isData || passPhotonTrigger)
                     && passNoiseEventFilter
@@ -375,7 +387,7 @@ int main(int argc, char* argv[])
                     && passDoubleLep                    
                     )
                 {
-                    histsDilepton.fill(tr, eWeight, trand);
+                    histsDilepton.fill(tr, eWeight * muTrigEff, trand);
                 }
 
                 //semileptonic ttbar enriched control sample MET triggered
@@ -394,6 +406,21 @@ int main(int argc, char* argv[])
                     )
                 {
                     histsTTbar.fill(tr, eWeight, trand);
+                }
+
+                //semileptonic ttbar enriched control sample MET triggered
+                if( (!isData || passSearchTrigger)
+                    && passNoiseEventFilter
+                    && passSingleLep20
+                    && cntNJetsPt30Eta24 >= 4
+                    && passdPhis
+                    && deltaPhiLepMET < 0.8
+                    && mTLep < 100
+                    && (ht > 250)
+                    && (met > 250)
+                    )
+                {
+                    histsTTbarNob.fill(tr, eWeight, trand);
                 }
 
                 //semileptonic ttbar enriched control sample Mu triggered
@@ -475,7 +502,9 @@ int main(int argc, char* argv[])
         hists0Lep.save(f);
         hists1Lep.save(f);
         histsQCD.save(f);
+        histsQCDb.save(f);
         histsTTbar.save(f);
+        histsTTbarNob.save(f);
         histsTTbarLep.save(f);
         histsPhoton.save(f);
         histsDilepton.save(f);

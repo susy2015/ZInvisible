@@ -56,6 +56,8 @@ x509userproxy = $ENV(X509_USER_PROXY)
 #Here is the configuration for the Data/MC validation of the TopTagger 
 filestoTransferTT  = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/simpleAnalyzer",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.txt",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.txt",
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/Legacy_TopTagger.cfg",
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_AllComb.cfg",
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg_trijetOnly.cfg",
