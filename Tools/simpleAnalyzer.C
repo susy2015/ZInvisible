@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
 
     std::cout << "Sample location: " << sampleloc << std::endl;
 
-    AnaSamples::SampleSet        ss("sampleSets.txt", AnaSamples::lumi, runOnCondor);
+    AnaSamples::SampleSet        ss("sampleSets.txt", AnaSamples::luminosity, runOnCondor);
     AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
     if(dataSets.find("Data") != std::string::npos){
