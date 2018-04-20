@@ -76,8 +76,7 @@ int main(int argc, char* argv[])
 
     bool runOnCondor = false, enableTTbar = false, doWgt = true, runStealth = false;
     int nFiles = -1, startFile = 0, nEvts = -1;
-    std::string dataSets = "TT", filename = "example.root";
-    //std::string dataSets = "Signal_T2tt_mStop850_mLSP100", filename = "example.root";
+    std::string dataSets = "Signal_T2tt_mStop850_mLSP100", filename = "example.root";
 
     while((opt = getopt_long(argc, argv, "ctdsD:N:M:E:O:", long_options, &option_index)) != -1)
     {
