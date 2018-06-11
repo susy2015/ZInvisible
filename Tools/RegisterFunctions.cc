@@ -11,13 +11,13 @@
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
     //if you want to mot fill the minituple return std::set<std::string>({});
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central","isr_Unc_Cent","_PUweightFactor"});
+  return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central","isr_Unc_Cent","_PUweightFactor"});
     //return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
 }
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSetData()
 {
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
+  return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
 }
 
 void activateBranches(std::set<std::string>& activeBranches)
@@ -75,7 +75,7 @@ void activateBranches(std::set<std::string>& activeBranches)
     activeBranches.insert("ak81dRMin");
     activeBranches.insert("tru_npv");
     activeBranches.insert("vtxSize");
-    //Photon branches Andres
+    //Photon branches Andres                                                                                                              
     activeBranches.insert("isEB");
     activeBranches.insert("genMatched");
     activeBranches.insert("hadTowOverEM");
@@ -93,6 +93,8 @@ void activateBranches(std::set<std::string>& activeBranches)
     activeBranches.insert("photonPt");
     activeBranches.insert("photonEta");
     activeBranches.insert("photonPhi");
+    activeBranches.insert("totalPhotons");
+    activeBranches.insert("gammaLVec");
 }
 
 ////////////////////////////////
@@ -130,12 +132,12 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 
     if(isCondor)
     {
-      bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
+        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
     }
     else
     {
-        bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools", false);
-        //bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/ZInvisible/Tools/", false);
+        //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools", false);
+        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/ZInvisible/Tools/", false);
     }
 
     ISRcorrector = nullptr;
@@ -359,20 +361,20 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
     myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
-    prepareTopVars = new plotterFunctions::PrepareTopVars();
+    //prepareTopVars = new plotterFunctions::PrepareTopVars();
     triggerInfo = new plotterFunctions::TriggerInfo(false, true);
 }
 
 RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
 {
     if(myBLV) delete myBLV;
-    if(prepareTopVars) delete prepareTopVars;
+    //if(prepareTopVars) delete prepareTopVars;
 }
 
 void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
 {
     tr.registerFunction(*myBLV);
-    tr.registerFunction(*prepareTopVars);
+    //tr.registerFunction(*prepareTopVars);
     tr.registerFunction(*triggerInfo);
 //    tr.registerFunction(*taudiv);
 //    tr.registerFunction(*ak8DrMatch);
