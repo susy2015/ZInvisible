@@ -1,6 +1,8 @@
 #ifndef DERIVEDTUPLEVARIABLES_H
 #define DERIVEDTUPLEVARIABLES_H
 
+#include "PhotonTools.h"
+
 #include "SusyAnaTools/Tools/NTupleReader.h"
 #include "SusyAnaTools/Tools/customize.h"
 #include "SusyAnaTools/Tools/searchBins.h"
@@ -426,6 +428,10 @@ namespace plotterFunctions
         TH1* njWTTbar_g1b;
         TH1* njWDYZ_g1b;
 
+	TH1* njWGJets;
+	TH1* njWGJetsNorm;
+	TH1* njWGJets_all;
+
         TH1* MCfake1b;
         TH1* MCfake2b;
         TH1* MCfake3b;
@@ -433,23 +439,35 @@ namespace plotterFunctions
         void generateWeight(NTupleReader& tr)
         {
             const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+	    const int& nJets     =  tr.getVar<int>("nJets");
             const int& cntCSVSZinv = tr.getVar<int>("cntCSVSZinv");
 
             double wTT = 1.0;
             double wDY = 1.0;
+	    double wGJets = 1.0;
+	    double wGJetsNorm = 1.0;
+	    double wGJets_all = 1.0;
 
 	    if(cntCSVSZinv == 0)
-	    {
+	      {
 		if(njWTTbar_0b)  wTT = 1.0;//njWTTbar_0b->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
 		if(njWDYZ_0b)    wDY = njWDYZ_0b->GetBinContent(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
-	    }
+	      }
 	    else
-	    {
+	      {
 		if(njWTTbar_g1b) wTT = 1.0;//njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
 		if(njWDYZ_g1b)   wDY = njWDYZ_g1b->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+	      }
+	    
+	    if(njWGJets) {
+	      wGJets = njWGJets->GetBinContent(njWGJets->FindBin(cntNJetsPt30Eta24Zinv));
+	      wGJetsNorm = njWGJetsNorm->GetBinContent(njWGJetsNorm->FindBin(cntNJetsPt30Eta24Zinv));
 	    }
-            //std::cout<<wDY<<std::endl;
-            double nJet1bfakeWgt = 1.0;
+
+	    if(njWGJets_all) wGJets_all = njWGJets_all->GetBinContent(njWGJets_all->FindBin(nJets));
+	    //wGJets = njWGJets->GetBinContent(njWGJets->FindBin(nJets)); 
+	    //std::cout<<wGJets<<std::endl;
+	    double nJet1bfakeWgt = 1.0;
             double nJet2bfakeWgt = 1.0;
             double nJet3bfakeWgt = 1.0;
 
@@ -460,8 +478,13 @@ namespace plotterFunctions
 	    double normWgt0b = ScaleFactors::sf_norm0b();
             double normttbar = ScaleFactorsttBar::sf_norm0b(); 
 
+
             tr.registerDerivedVar("nJetWgtTTbar", wTT);
             tr.registerDerivedVar("nJetWgtDYZ",   wDY);
+
+	    tr.registerDerivedVar("njWGJets",   wGJets);
+	    tr.registerDerivedVar("njWGJetsNorm",   wGJetsNorm);
+	    tr.registerDerivedVar("njWGJets_all",   wGJets_all);
 
             tr.registerDerivedVar("nJet1bfakeWgt", nJet1bfakeWgt);
             tr.registerDerivedVar("nJet2bfakeWgt", nJet2bfakeWgt);
@@ -480,6 +503,8 @@ namespace plotterFunctions
             njWDYZ_0b    = nullptr;
             njWTTbar_g1b = nullptr;
             njWDYZ_g1b   = nullptr;
+	    njWGJets = nullptr;
+	    njWGJets_all = nullptr;
             MCfake1b = nullptr;
             MCfake2b = nullptr;
             MCfake3b = nullptr;
@@ -512,6 +537,29 @@ namespace plotterFunctions
             {
                 std::cout << "Failed to open: dataMCweights.root" << std::endl;
             }
+	    f = new TFile("dataMCreweight.root");
+	    if(f)
+	      {
+		njWGJets = static_cast<TH1*>(f->Get("nJetReweight"));
+		njWGJetsNorm = static_cast<TH1*>(f->Get("normWeight"));
+		f->Close();
+		delete f;
+	      }
+	    else
+	      {
+		std::cout << "Failed to open: dataMCreweight.root" << std::endl;
+	      }
+	    f = new TFile("dataMCreweight_allJets.root");
+	    if(f)
+	      {
+		njWGJets_all = static_cast<TH1*>(f->Get("dataMC_Photon_nj_LooseLepVetonJetsnJetsDatadata"));
+		f->Close();
+                delete f;
+	      }
+	    else
+              {
+		std::cout << "Failed to open: dataMCreweight_allJets.root" << std::endl;
+              }
         }
 
         ~NJetWeight()
@@ -1251,6 +1299,7 @@ namespace plotterFunctions
 	int indexMuTrigger;
 	int indexElecTrigger;
         int indexMETMHTTrigger;
+	int indexPhotonTrigger;
         bool miniTuple_, noMC_;
 
 	double GetMuonTriggerEff(const double& muEta) 
@@ -1407,31 +1456,38 @@ namespace plotterFunctions
             bool passMuTrigger = false;
             bool passElecTrigger = false;
             bool passMETMHTTrigger = false;
+	    bool passPhotonTrigger = false;
 
 	    const std::string muTrigName = "HLT_Mu50_v";//"HLT_Mu45_eta2p1_v";
 	    const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
             const std::string metmhtTrigName = "HLT_PFMET110_PFMHT110_IDTight_v";
+	    const std::string photonTrigName = "HLT_Photon175_v";
 
             // Find the index of our triggers if we don't know them already
-            if(indexMuTrigger == -1 || indexElecTrigger == -1 || indexMETMHTTrigger == -1)
+            if(indexMuTrigger == -1 || indexElecTrigger == -1 || indexMETMHTTrigger == -1 || indexPhotonTrigger == -1)
             {
                 for(int i = 0; i < triggerNames.size(); ++i)
                 {
-                    if(triggerNames[i].find(muTrigName) != std::string::npos)
+		  if(triggerNames[i].find(muTrigName) != std::string::npos)
                     {
-                        indexMuTrigger = i;
+		      indexMuTrigger = i;
                     }
-                    else if(triggerNames[i].find(elecTrigName) != std::string::npos)
+		  else if(triggerNames[i].find(elecTrigName) != std::string::npos)
                     {
-                        indexElecTrigger = i;
+		      indexElecTrigger = i;
                     }
-                    else if(triggerNames[i].find(metmhtTrigName) != std::string::npos)
+		  else if(triggerNames[i].find(metmhtTrigName) != std::string::npos)
                     {
-                        indexMETMHTTrigger = i;
+		      indexMETMHTTrigger = i;
                     }
+		  else if(triggerNames[i].find(photonTrigName) != std::string::npos)
+		    {
+		      indexPhotonTrigger = i;
+		    }
+
                 }
             }
-            if(indexMuTrigger != -1 && indexElecTrigger != -1)
+            if(indexMuTrigger != -1 && indexElecTrigger != -1 && indexPhotonTrigger != -1)
             {
                 // Check if the event passes the trigger, and double check that we are looking at the right trigger
                 if(triggerNames[indexMuTrigger].find(muTrigName) != std::string::npos && passTrigger[indexMuTrigger])
@@ -1440,6 +1496,8 @@ namespace plotterFunctions
                     passElecTrigger = true;
                 if(triggerNames[indexMETMHTTrigger].find(metmhtTrigName) != std::string::npos && passTrigger[indexMETMHTTrigger])
                     passMETMHTTrigger = true;
+		if(triggerNames[indexPhotonTrigger].find(photonTrigName) != std::string::npos && passTrigger[indexPhotonTrigger])
+		  passPhotonTrigger = true;
             }
             else
             {
@@ -1460,7 +1518,8 @@ namespace plotterFunctions
                     triggerNames[it].find("HLT_PFMET150_PFMHT150_IDTight_v")         != std::string::npos ||
                     triggerNames[it].find("HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_v") != std::string::npos ||
                     triggerNames[it].find("HLT_PFMETNoMu110_PFMHTNoMu110_IDTight_v") != std::string::npos ||
-                    triggerNames[it].find("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v") != std::string::npos
+                    triggerNames[it].find("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v") != std::string::npos ||
+		    triggerNames[it].find("HLT_Photon175_v") != std::string::npos
                     )
                 {
                     if( passTrigger[it] ) 
@@ -1471,6 +1530,7 @@ namespace plotterFunctions
                 }
             }
 
+	    tr.registerDerivedVar("passPhotonTrigger",passPhotonTrigger);
             tr.registerDerivedVar("passMuTrigger",passMuTrigger);
             tr.registerDerivedVar("passElecTrigger",passElecTrigger);
             tr.registerDerivedVar("passMETMHTTrigger",passMETMHTTrigger);
@@ -1654,7 +1714,7 @@ namespace plotterFunctions
 	}
 
     };
-
+    /*
     class PrepareTopVars
     {
     private:
@@ -2142,7 +2202,7 @@ namespace plotterFunctions
 	}
 
     };
-
+    */
 
     class MetSmear
     {
@@ -2427,7 +2487,6 @@ namespace plotterFunctions
         }
     };
 
-    //Andres Pt cut                                                                                                                                                                                      
     class Gamma {
 
     private:
@@ -2435,56 +2494,90 @@ namespace plotterFunctions
       void generateGamma(NTupleReader& tr) {
 
         const std::vector<TLorentzVector>& gammaLVec  = tr.getVec<TLorentzVector>("gammaLVec");
-	const double& met = tr.getVar<double>("met");
-	const std::vector<double>& sigmaIetaIeta = tr.getVec<double>("sigmaIetaIeta");
+        const std::vector<TLorentzVector>& gammaLVecGen  = tr.getVec<TLorentzVector>("gammaLVecGen");
+        const std::vector<TLorentzVector>& genPartonLVec = tr.getVec<TLorentzVector>("genPartonLVec");
+        const std::vector<bool>& looseID = tr.getVec<bool>("loosePhotonID");
+        const std::vector<bool>& mediumID = tr.getVec<bool>("mediumPhotonID");
+        const std::vector<bool>& tightID = tr.getVec<bool>("tightPhotonID");
+        const std::vector<int>& extraLooseID = tr.getVec<int>("extraLooseID");
+        const std::vector<double>& sigmaIetaIeta = tr.getVec<double>("sigmaIetaIeta");
+	const std::vector<double>& pfNeutralIsoRhoCorr = tr.getVec<double>("pfNeutralIsoRhoCorr");
+	const std::vector<double>& pfGammaIsoRhoCorr = tr.getVec<double>("pfGammaIsoRhoCorr");
 	const std::vector<double>& pfChargedIsoRhoCorr = tr.getVec<double>("pfChargedIsoRhoCorr");
 	const std::vector<double>& hadTowOverEM = tr.getVec<double>("hadTowOverEM");
-	const std::vector<double>& pfNeutralIsoRhoCorr = tr.getVec<double>("pfNeutralIsoRhoCorr");
-	const std::vector<bool>& nonPrompt = tr.getVec<bool>("nonPrompt");
+        const double& MT2 = tr.getVar<double>("best_had_brJet_MT2");
+        const double& met = tr.getVar<double>("met");
+        const int& nJets = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+        const double& ht = tr.getVar<double>("HT");
+	const int& nbJets = tr.getVar<int>("cntCSVS");
+	const int& ntops = tr.getVar<int>("nTopCandSortedCnt");
 
-	std::vector<TLorentzVector> *gammaLVec_200 = new std::vector<TLorentzVector>();
-	double gmet = -999.0;
-	double gpt = -999.0;
+	//variables to be used in the analysis code
+	double photonMet = -999.9;
+	std::vector<TLorentzVector> *promptPhotons = new std::vector<TLorentzVector>(); 
+	std::vector<TLorentzVector> *fakePhotons = new std::vector<TLorentzVector>();
+	std::vector<TLorentzVector> *fragmentationQCD = new std::vector<TLorentzVector>();
+	std::vector<TLorentzVector> *loosePhotons = new std::vector<TLorentzVector>();
+	std::vector<TLorentzVector> *mediumPhotons = new std::vector<TLorentzVector>();
+	std::vector<TLorentzVector> *tightPhotons = new std::vector<TLorentzVector>();
+	std::vector<TLorentzVector> *directPhotons = new std::vector<TLorentzVector>();
+	std::vector<TLorentzVector> *totalPhotons = new std::vector<TLorentzVector>();
+	std::vector<TLorentzVector> photonLVec, tempVec;
 
-	const int& nPrompt = nonPrompt.size();
-	tr.registerDerivedVar("nPrompt", nPrompt);
+	//Pass cuts that were not applied in the ntuple
+	//Select photons within the ECAL acceptance region and Pt > 100 GeV 
+	for(int i = 0; i < gammaLVec.size(); ++i) {
+	  if (PhotonFunctions::passPhoton(gammaLVec[i])) photonLVec.push_back(gammaLVec[i]);
+	}
 
-	std::cout << "prompt photons: " <<  nPrompt << std::endl;
-	//for (i=0; i<nPrompt; ++i){
+	photonMet = met;
+	//Get TLorentz vector for Loose, Medium and Tight ID photon selection
+	for(int i = 0; i < photonLVec.size(); i++){
+	  if (photonLVec[i].Pt() > 200){
+	    totalPhotons->push_back(photonLVec[i]);
+	    
+	    if(looseID[i]) loosePhotons->push_back(photonLVec[i]);
+	    if(mediumID[i]) mediumPhotons->push_back(photonLVec[i]);
+	    if(tightID[i]) tightPhotons->push_back(photonLVec[i]);
 
-        const int& nGamma = gammaLVec.size();
-        tr.registerDerivedVar("nGamma", nGamma);
+	    //add loose photon pt to ptmiss
+	    if(looseID[i]) photonMet += photonLVec[i].Pt();
+	  } 
+	}
 
-	const int& inin = sigmaIetaIeta.size();
-        tr.registerDerivedVar("inin", inin);
-
-	std::cout << "nonPrompt: " <<  nonPrompt.size() << std::endl;
-
-        for(int i = 0; i < nGamma; ++i){
-          if(gammaLVec[i].Pt() > 200){
-            gammaLVec_200->push_back(gammaLVec[i]);
-          }
-	  if(gammaLVec[i].Pt() > 200 && abs(gammaLVec[i].Eta()) < 1.4442){
-
-	    for(int j = 0; j < inin; ++j){
-	      if(sigmaIetaIeta[j] < 0.0107 && pfChargedIsoRhoCorr[j] < 2.67 && hadTowOverEM[j] < 0.028 && pfNeutralIsoRhoCorr[j] < 7.23*exp(0.0028*gammaLVec[i].Pt()+0.5408)) {
-		gmet = met;
-		gpt = gammaLVec[i].Pt();
+	//Gen-Matching Photons (Pt > 200 GeV)
+	if(tr.checkBranch("gammaLVecGen") && tr.checkBranch("genPartonLVec") && &genPartonLVec != nullptr && &gammaLVecGen != nullptr){
+	  for(int i = 0; i < photonLVec.size(); i++){
+	    if(photonLVec[i].Pt() > 200 && looseID[i]){
+	      if(PhotonFunctions::isGenMatched(photonLVec[i],gammaLVecGen)){
+		promptPhotons->push_back(photonLVec[i]);
+		if(PhotonFunctions::isDirectPhoton(photonLVec[i],genPartonLVec)) directPhotons->push_back(photonLVec[i]);
+		if(PhotonFunctions::isFragmentationPhoton(photonLVec[i],genPartonLVec)) fragmentationQCD->push_back(photonLVec[i]);
 	      }
+	      else fakePhotons->push_back(photonLVec[i]);
 	    }
 	  }
 	}
 
-	//const int& inin = sigmaIetaIeta.size();	tr.registerDerivedVar("inin", inin);
-	/*
-	for(int i = 0; i < inin; ++i){
-	  if(sigmaIetaIeta[i] < 0.0107 && pfChargedIsoRhoCorr[i] < 2.67){
-	    gmet = met;
-	  }
-	  }*/
-        tr.registerDerivedVec("gammaLVec_200",gammaLVec_200);
-	tr.registerDerivedVar("gmet", gmet);
-	tr.registerDerivedVar("gpt", gpt);
+	tr.registerDerivedVar("photonMet", photonMet);
+	tr.registerDerivedVar("passNphoton",totalPhotons->size() >= 1);
+	tr.registerDerivedVar("passNloose",loosePhotons->size() >= 1);
+	tr.registerDerivedVar("passNmedium",mediumPhotons->size() >= 1);
+	tr.registerDerivedVar("passNtight",tightPhotons->size() >= 1);
+	tr.registerDerivedVar("passFakes", fakePhotons->size() >= 1);
+	tr.registerDerivedVar("passPrompt", promptPhotons->size() >= 1);
+	tr.registerDerivedVar("passDirect", directPhotons->size() >= 1);
+	tr.registerDerivedVar("passFragmentation", fragmentationQCD->size() >= 1);
+	tr.registerDerivedVec("cutPhotons",loosePhotons);
+	tr.registerDerivedVec("totalPhotons",totalPhotons);
+	tr.registerDerivedVec("promptPhotons",promptPhotons);
+	tr.registerDerivedVec("fakePhotons",fakePhotons);
+	tr.registerDerivedVec("fragmentationQCD",fragmentationQCD);
+	tr.registerDerivedVec("directPhotons",directPhotons);
+	tr.registerDerivedVar("nPhotonNoID",totalPhotons->size());
+	tr.registerDerivedVar("nPhoton",loosePhotons->size());
+	tr.registerDerivedVar("nFakes",fakePhotons->size());
+	tr.registerDerivedVar("nPrompt", promptPhotons->size());
       }
 
     public:
@@ -2498,6 +2591,7 @@ namespace plotterFunctions
         generateGamma(tr);
       }
     };
+
 
     class NJetAk8 {
      private:

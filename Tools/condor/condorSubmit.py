@@ -19,13 +19,15 @@ with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg") as meow
 
 #here I hack in the tarball for GMP, this needs to be generalized to the other options 
 
-filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeDataMCplots", 
+filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePhotonPlots", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight.root",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight_allJets.root",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                       environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so", 
                       environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1", 
@@ -35,21 +37,55 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeDataMCp
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root"]
 
-
-#go make plots!
-submitFileGMP = """universe = vanilla
-Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
-Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
-Should_Transfer_Files = YES
-WhenToTransferOutput = ON_EXIT
+#go make plots!                                                                                                                                                                                                   
+submitFileGMP = """universe = vanilla                                                                                                                                               
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh                                                                                                            
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )                                                                                                                                
+Should_Transfer_Files = YES                                                                                                                                                         
+WhenToTransferOutput = ON_EXIT                                                                                                                                                      
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gmp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz
-Output = logs/makeDataMCplots_$(Process).stdout
-Error = logs/makeDataMCplots_$(Process).stderr
-Log = logs/makeDataMCplots_$(Process).log
-notify_user = ${LOGNAME}@FNAL.GOV
-x509userproxy = $ENV(X509_USER_PROXY)
-
+Output = logs/makePhotonPlots_$(Process).stdout                                                                                                                                     
+Error = logs/makePhotonPlots_$(Process).stderr                                                                                                                                      
+Log = logs/makePhotonPlots_$(Process).log                                                                                                                                           
+notify_user = ${LOGNAME}@FNAL.GOV                                                                                                                                                   
+x509userproxy = $ENV(X509_USER_PROXY)                                                                                                                                               
+                             
 """
+
+#go make DY plots
+submitFileGMDYP = """universe = vanilla                                                                                                                                            
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeDYplots.sh                                                                                                         
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )                                                                                                                              
+Should_Transfer_Files = YES                                                                                                                                                      
+WhenToTransferOutput = ON_EXIT                                                                                                                                                  
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeDYplots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gmp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz
+Output = logs/makeDYplots_$(Process).stdout                                                                                                                                        
+Error = logs/makeDYplots_$(Process).stderr                                                                                                                                        
+Log = logs/makeDYplots_$(Process).log                                                                                                                                            
+notify_user = ${LOGNAME}@FNAL.GOV                                                                                                                                               
+x509userproxy = $ENV(X509_USER_PROXY)                                                                                                                                          
+    
+                             
+"""
+
+filestoTransferGMDYP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeDYplots",
+                        environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root",
+                        environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root",
+                        environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root",
+                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root",
+                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root",
+                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root",
+                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight.root",
+                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight_allJets.root",
+                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv",
+                        environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so",
+                        environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1",
+                        environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1",
+                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName},
+                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                        environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root",
+                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root"]
+
 
 filestoTransferGTP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeTopPlots",
                       environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so",
@@ -72,9 +108,9 @@ Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gtp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz 
-Output = logs/makeDataMCplots_$(Process).stdout
-Error = logs/makeDataMCplots_$(Process).stderr
-Log = logs/makeDataMCplots_$(Process).log
+Output = logs/makePhotonPlots_$(Process).stdout
+Error = logs/makePhotonPlots_$(Process).stderr
+Log = logs/makePhotonPlots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
@@ -100,9 +136,9 @@ Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/beffCalc, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeBeff.sh
-Output = logs/makeDataMCplots_$(Process).stdout
-Error = logs/makeDataMCplots_$(Process).stderr
-Log = logs/makeDataMCplots_$(Process).log
+Output = logs/makePlots_$(Process).stdout
+Error = logs/makePlots_$(Process).stderr
+Log = logs/makePlots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
@@ -115,9 +151,9 @@ Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/makeSignalHistograms, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeSigEff.sh
-Output = logs/makeDataMCplots_$(Process).stdout
-Error = logs/makeDataMCplots_$(Process).stderr
-Log = logs/makeDataMCplots_$(Process).log
+Output = logs/makePlots_$(Process).stdout
+Error = logs/makePlots_$(Process).stderr
+Log = logs/makePlots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
@@ -135,6 +171,7 @@ parser.add_option ('-e',  dest='goMakeEff', action='store_true', default = False
 parser.add_option ('-b',  dest='goMakeBeff', action='store_true', default = False, help="Run beffCalc instead of makePlots.")
 parser.add_option ('-s',  dest='goMakeSigEff', action='store_true', default = False, help="Run makeSignalHistograms instead of makePlots.")
 parser.add_option ('-t',  dest='goMakeTopPlots', action='store_true', default = False, help="Run makeTopPlots instead of makePlots.")
+parser.add_option ('-z',  dest='goMakeDYplots', action='store_true', default = False, help="Run makeDYplots instead of makePlots.")
 
 options, args = parser.parse_args()
 
@@ -171,8 +208,12 @@ elif options.goMakeTopPlots:
     exeName = "makeTopPlots"
     submitFile = submitFileGTP
     makeExeAndFriendsTarrball(filestoTransferGTP, "gtp")
+elif options.goMakeDYplots:
+    exeName = "makeDYplots"
+    submitFile = submitFileGMDYP
+    makeExeAndFriendsTarrball(filestoTransferGMDYP, "gmp")
 else:
-    exeName = "makeDataMCplots"
+    exeName = "makePhotonPlots"
     submitFile = submitFileGMP
     makeExeAndFriendsTarrball(filestoTransferGMP, "gmp")
 

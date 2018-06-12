@@ -136,87 +136,52 @@ def njetWeights(filename):
 
     # How to rebin
     bins = [0,1,2,3,4,5,6,7,20]
-    bins_TT = [0,1,2,3,4,5,6,20]
+    #bins_TT = [0,1,2,3,4,5,6,20]
 
     # Run over the relevant histograms
-    cuts_DY = ["muZinv", "muZinv_0b", "muZinv_g1b"]
-    cuts_TT = ["elmuZinv", "elmuZinv_0b", "elmuZinv_g1b"]
-    selection = "loose0_mt2_MET"#"loose0_mt2_MET"#"blnotag"#"loose0"#"loose0_mt2"
+    cuts_GJets = ["LooseLepVeto"] 
+    #cuts_DY = ["muZinv", "muZinv_0b", "muZinv_g1b"]
+    #cuts_TT = ["elmuZinv", "elmuZinv_0b", "elmuZinv_g1b"]
+    #selection = "loose0_mt2_MET"#"loose0_mt2_MET"#"blnotag"#"loose0"#"loose0_mt2"
     # histo names
-    hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
-    hnames2 = ["cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDYstack",
-               #"cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDY HT<100stack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}stack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvSingle topstack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24Zinvt#bar{t}Zstack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDibosonstack",
-               "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvRarestack"
+    #hname1 = "cntNJetsPt30Eta24Zinv/DataMC_SingleMuon_nj_%(cut)s_%(selection)scntNJetsPt30Eta24ZinvcntNJetsPt30Eta24ZinvDatadata"
+    hname1 = "nJets/dataMC_Photon_%(cut)snJetsnJetsDatadata",
+
+    hnames2 = ["nJets/dataMC_Photon_%(cut)snJetsnJetsQCDstack",
+               "nJets/dataMC_Photon_%(cut)snJetsnJetsTTGJets",
+               "nJets/dataMC_Photon_%(cut)snJetsnJetsW(l#nu)+jetsstack",
+               "nJets/dataMC_Photon_%(cut)snJetsnJetst#bar{t}stack",
+               "nJets/dataMC_Photon_%(cut)snJetsnJetsDibosonstack",
+               "nJets/dataMC_Photon_%(cut)snJetsnJetstWstack",
+               "nJets/dataMC_Photon_%(cut)snJetsnJetsRarestack",
+               "nJets/dataMC_Photon_%(cut)snJetsnJetst#bat{t}Zstack",
                ]
 
     # dictionary to keep track of all the scale factors
     SFs = {}
 
-    # First get TTbar reweighting, region is very pure, just take ratio of data/full stack and apply that to ttbar later
-    for cut in cuts_TT:
-        hname1_TT = hname1 % {"cut":cut, "selection":selection}
-        hnames2_TT = [elem % {"cut":cut, "selection":selection} for elem in hnames2]
-        # Get all histos
-        h1 = f.Get(hname1_TT)
-        h2s = [f.Get(hname2_TT) for hname2_TT in hnames2_TT]
-        newname = "DataMC_nj_%s_%s"%(cut,selection)
-
-        # data subtraction
-        data_subtracted = subtract(h1, [h2s[0]])
-        data_subtracted = subtract(data_subtracted, h2s[2:])
-
-        # Make new histogram that is ratio of data/mc with just one bin, so that we get pure normalization weight
-        #newname = "DataMC_nb1_%s_%s"%(cut,selection)
-        newh = makeRatio(data_subtracted, [h2s[1]], newname=newname, bins=[0,20])
-        #newh = makeRatio(h1, h2s, newname=newname)
-
-        print "Data/MC normalization scale factor in region %s_%s: %.3f +- %.3f" % (cut, selection, newh.GetBinContent(1), newh.GetBinError(1))
-
-        includeFile = open("ScaleFactorsttBar.h", "w")
-        includeFile.write(includeBasettBar%(newh.GetBinContent(1), newh.GetBinError(1)))
-        includeFile.close()
-
-        sourceFile = open("ScaleFactorsttBar.cc", "w")
-        sourceFile.write(sourceBasettBar)
-        sourceFile.close()
-
-        # Make the ratio
-    #    newh = makeRatio(data_subtracted, [h2s[1]], bins_TT, newname)
-        #mild hack to remove negative bins in the first few bins
-        #these are not used for search and only provide presentational issues
-    #    for iBin in xrange(1, min(newh.GetNbinsX() + 1, 4)):
-    #        if newh.GetBinContent(iBin) < -0.000001:
-    #            newh.SetBinContent(iBin, 1.0)
-    #            newh.SetBinError(iBin, 1.0)
-        SFs["TT_%s"%(cut)] = newh.Clone()
-    #    newh.Write()
-
-    # Now get DY reweighting:
+    # Now get GJets reweighting:
     # Procedure: 1. Apply TTbar reweighting to TTbar MC
     #            2. Subtract non-DY MC from data
     #            3. Make ratio of subtracted data and DY
-    for cut in cuts_DY:
-        hname1_DY = hname1 % {"cut":cut, "selection":selection}
-        hnames2_DY = [elem % {"cut":cut, "selection":selection} for elem in hnames2]
+    for cut in cuts_GJets:
+        hname1_GJets = hname1 % {"cut":cut}
+        hnames2_GJets = [elem % {"cut":cut} for elem in hnames2]
         # Get all histos
-        h1 = f.Get(hname1_DY)
-        h2s = [f.Get(hname2_DY) for hname2_DY in hnames2_DY]
+        h1 = f.Get(hname1_GJets)
+        h2s = [f.Get(hname2_GJets) for hname2_GJets in hnames2_GJets]
 
         # apply weights to ttbar
         #h2s[1] = reweight(h2s[1], SFs["TT_elmuZinv"])#"TT_%s"%(cut.replace("mu","elmu"))])#weight applied to Njet for the Rnorm or DY correction
-        h2s[1].Scale( SFs["TT_%s"%(cut.replace("mu","elmu"))].GetBinContent(1) )
+        #h2s[1].Scale( SFs["TT_%s"%(cut.replace("mu","elmu"))].GetBinContent(1) )
 
         # subtract relevant histograms from data
         data_subtracted = subtract(h1, h2s[1:])
 
-        newname = "DataMC_nj_%s_%s"%(cut,selection)
+        newname = "DataMC_nj_%s"%(cut)
         newh = makeRatio(data_subtracted, [h2s[0]], bins, newname)
 
-        SFs["DY_%s"%(cut)] = newh.Clone()
+        SFs["GJets_%s"%(cut)] = newh.Clone()
         newh.Write()
 
     #calculate Rnorm

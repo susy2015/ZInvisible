@@ -225,6 +225,7 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary ds_TTBar(      "ttbar ak8",  fileMap["TTbarAll"], "",     "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
     Plotter::DatasetSummary ds_ZINV(      "ZJets",  fileMap["ZJetsToNuNu"],         "",                "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
     Plotter::DatasetSummary ds_TTBarHT(   "TTbarHT", fileMap["TTbarHT"],    "",  "TriggerEffMC");//;bTagSF_EventWeightSimple_Central");
+
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dstt2l}, {dsWJets}, {dstW}, {dsZJets}, {dsttZ}, {dsQCD}, {dsRare,dsDY,dsVV}};
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC_hong = {{dstt2l}, {dsWJets}, {dstW}, {dsZJets}, {dsttZ}, {dsQCD}, {dsVVV,dsVV,dsTTW}};
     std::vector<std::vector<Plotter::DatasetSummary>> singal_points= {{dsT2tt800},{dsT2tt500},{dsT1tttt1200},{dsT1tttt1500}};
@@ -284,7 +285,13 @@ int main(int argc, char* argv[])
       {                                                                                                                                                                             
         return std::vector<PDC>({ Plotter::DataCollection("single",   var, {photon})  });                                                                                      
       }; 
-  
+    /*  
+    auto PDCMakerMu = [&](std::string var)
+      {
+	return  std::vector<PDC>({ Plotter::DataCollection dcData_SingleMuon_met("data",   "cleanMetPt", {dsData_SingleMuon}),
+	                           Plotter::DataCollection dcMC_met(             "stack",  "cleanMetPt", stack_MC)   });
+      };
+    */
     /*    auto PDCMaker12 = [&](std::string var)
     {
         return std::vector<PDC>({Plotter::DataCollection("single",   var, {ds_ZINV}),
@@ -301,7 +308,9 @@ int main(int argc, char* argv[])
     std::vector<std::pair<std::string,std::string>> cutlevels_muon = {
         //cut name                    cut string
 	//{"Koushik",                     "passnJets;passdPhis;passMET;passBJets;passTagger;passHT;passMT2;passNoiseEventFilter"},//;passKoushik"},
-	{"Empty",                       ""},
+	//{"Empty",                      ""},
+	//{"photonZInv",                 "ht>300;passnJets;passdPhis;passNoiseEventFilterZinv"},
+	{"muZinv2017",                 "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
 	//{"muZinv",                    "passNoiseEventFilterZinv;passMuZinvSel"},
 	//{"muZinv_ht200",              "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200"},
 	//{"muZinv_ht200_dphi",         "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>200;passdPhisZinv"},
@@ -451,7 +460,7 @@ int main(int argc, char* argv[])
        vh.push_back(PHS("isEB" + cut.first,  PDCMaker12("isEB"), {1, 1}, cut.second, 100, 0, 1.1, true, true,  "isEB",  "Events"));
        vh.push_back(PHS("genMatched" + cut.first,  PDCMaker12("genMatched"), {1, 1}, cut.second, 100, 0, 1.1, true, true, "genMatched",  "Events"));
        vh.push_back(PHS("hadTowOverEM" + cut.first,  PDCMaker12("hadTowOverEM"), {1, 1}, cut.second, 10, 0, 0.1, true, true,  "hadTowOverEM",  "Events"));
-       vh.push_back(PHS("sigmaIetaIeta" + cut.first,  PDCMaker12("sigmaIetaIeta"), {1, 1}, cut.second, 40, 0, 0.15, true, true,  "sigmaIetaIeta",  "Events"));
+       vh.push_back(PHS("sigmaIetaIeta" + cut.first,  PDCMaker12("sigmaIetaIeta"), {1, 1}, cut.second, 40, -0.01, 0.08, true, true,  "sigmaIetaIeta",  "Events"));
        vh.push_back(PHS("pfChargedIso" + cut.first,  PDCMaker12("pfChargedIso"), {1, 1}, cut.second, 46, 0, 460, true, true,  "pfChargedIso",  "Events"));
        vh.push_back(PHS("pfNeutralIso" + cut.first,  PDCMaker12("pfNeutralIso"), {1, 1}, cut.second, 12, 0, 12.25, true, true,  "pfNeutralIso",  "Events"));
        vh.push_back(PHS("pfGammaIso" + cut.first,  PDCMaker12("pfGammaIso"), {1, 1}, cut.second, 100, 0, 7, true, true,  "pfGammaIso",  "Events"));
@@ -460,18 +469,32 @@ int main(int argc, char* argv[])
        vh.push_back(PHS("pfGammaIsoRhoCorr" + cut.first,  PDCMaker12("pfGammaIsoRhoCorr"), {1, 1}, cut.second, 100, 0, 7, true, true,  "pfGammaIsoRhoCorr",  "Events"));
        vh.push_back(PHS("hasPixelSeed" + cut.first,  PDCMaker12("hasPixelSeed"), {1, 1}, cut.second, 100, 0, 1.1, true, true,  "hasPixelSeed",  "Events"));
        vh.push_back(PHS("passElectronVeto" + cut.first,  PDCMaker12("passElectronVeto"), {1, 1}, cut.second, 100, 0, 2.2, true, true,  "passElectronVeto",  "Events"));
-       vh.push_back(PHS("hadronization" + cut.first,  PDCMaker12("hadronization"), {1, 1}, cut.second, 26, 200, 1500, true, true,  "hadronization",  "Events"));
+       //vh.push_back(PHS("hadronization" + cut.first,  PDCMaker12("hadronization"), {1, 1}, cut.second, 26, 200, 1500, true, true,  "hadronization",  "Events"));
        vh.push_back(PHS("nonPrompt" + cut.first,  PDCMaker12("nonPrompt"), {1, 1}, cut.second, 2, 0, 2, true, true,  "nonPrompt",  "Events"));
-       vh.push_back(PHS("fullID" + cut.first,  PDCMaker12("fullID"), {1, 1}, cut.second, 2, 0, 2, true, true,  "fullID",  "Events"));
+       //vh.push_back(PHS("fullID" + cut.first,  PDCMaker12("fullID"), {1, 1}, cut.second, 2, 0, 2, true, true,  "fullID",  "Events"));
        vh.push_back(PHS("Photon_pt" + cut.first,  PDCMaker12("photonPt"), {1, 1}, cut.second, 15, 0, 3000, true, true,  "Photon_pt",  "Events"));
        vh.push_back(PHS("Photon_eta" + cut.first,  PDCMaker12("photonEta"), {1, 1}, cut.second, 20, -4.0, 4.0, true, true,  "Photon_eta",  "Events"));
        vh.push_back(PHS("Photon_phi" + cut.first,  PDCMaker12("photonPhi"), {1, 1}, cut.second, 20, -5.0, 5.0, true, true,  "Photon_phi",  "Events"));
-       vh.push_back(PHS("gammaLVec_Pt"  + cut.first,  PDCMaker12("gammaLVec_200(pt)"),  {1, 1}, cut.second, 30, 0, 3000, true, true,  "pt",   "Events"));//Andres pt cut
-       vh.push_back(PHS("gammaLVec_Eta"  + cut.first,  PDCMaker12("gammaLVec_200(eta)"),  {1, 1}, cut.second, 100, -3.7, 3.7, true, true,  "eta",   "Events"));
-       vh.push_back(PHS("gammaLVec_Phi"  + cut.first,  PDCMaker12("gammaLVec_200(phi)"),  {1, 1}, cut.second, 100, -5, 5, true, true,  "phi",   "Events"));
-       vh.push_back(PHS("gmet" + cut.first,  PDCMaker12("gmet"), {1, 1}, cut.second, 15, 0, 1500, true, false, "met",  "Events"));
-       vh.push_back(PHS("MET" + cut.first,  PDCMaker12("met"), {1, 1}, cut.second, 15, 0, 1500, true, false, "met",  "Events"));
-       vh.push_back(PHS("gpt" + cut.first,  PDCMaker12("gpt"), {1, 1}, cut.second, 65, 150, 800, true, false, "pt",  "Events"));
+       //       vh.push_back(PHS("MET" + cut.first,  PDCMaker12("met"), {1, 1}, cut.second, 15, 0, 1500, true, false, "met",  "Events"));
+       vh.push_back(PHS("loosePhotonPt" + cut.first,  PDCMaker12("loosePhoPt"), {1, 1}, cut.second, 15, 0, 3000, true, true, "Pt",  "Events"));
+       vh.push_back(PHS("mediumPhotonPt" + cut.first,  PDCMaker12("mediumPhoPt"), {1, 1}, cut.second, 15, 0, 3000, true, true, "Pt",  "Events"));
+       vh.push_back(PHS("tightPhotonPt" + cut.first,  PDCMaker12("tightPhoPt"), {1, 1}, cut.second, 15, 0, 3000, true, true, "Pt",  "Events"));
+       //vh.push_back(PHS("passPhoton" + cut.first,  PDCMaker12("passPhoton"), {1, 1}, cut.second, 5, -0.5, 1.5, true, true,  "passPhoton", "Events"));
+       vh.push_back(PHS("NJets" + cut.first,  PDCMaker12("NJets"), {1, 1}, cut.second, 15, 0, 15, true, false,  "NJets", "Events"));
+       vh.push_back(PHS("MET" + cut.first,  PDCMaker12("Met"), {1, 1}, cut.second, 20, 0, 1000, true, true,  "MET", "Events"));
+       vh.push_back(PHS("photonMET" + cut.first,  PDCMaker12("photonMet"), {1, 1}, cut.second, 20, 0, 3000, true, true,  "photonMET", "Events"));
+       vh.push_back(PHS("MT2" + cut.first,  PDCMaker12("Mt2"), {1, 1}, cut.second, 20, 0, 600, true, true,  "MT2", "Events"));
+       vh.push_back(PHS("HT" + cut.first,  PDCMaker12("HTpho"), {1, 1}, cut.second, 20, 0, 5000, true, true,  "HT", "Events"));
+       vh.push_back(PHS("photonPtWcuts" + cut.first,  PDCMaker12("photonPtWcuts"), {1, 1}, cut.second, 15, 0, 3000, true, true, "Pt",  "Events"));
+       vh.push_back(PHS("photonEtaWcuts" + cut.first,  PDCMaker12("photonEtaWcuts"), {1, 1}, cut.second, 20, -4.0, 4.0, true, true,  "Eta",  "Events"));
+       //vh.push_back(PHS("gammaLVec_Pt"  + cut.first,  PDCMaker12("gammaLVec_200(pt)"),  {1, 1}, cut.second, 30, 0, 3000, true, true,  "pt",   "Events"));//Andres pt cut
+       //vh.push_back(PHS("gammaLVec_Eta"  + cut.first,  PDCMaker12("gammaLVec_200(eta)"),  {1, 1}, cut.second, 100, -3.7, 3.7, true, true,  "eta",   "Events"));
+       //vh.push_back(PHS("gammaLVec_Phi"  + cut.first,  PDCMaker12("gammaLVec_200(phi)"),  {1, 1}, cut.second, 100, -5, 5, true, true,  "phi",   "Events"));
+       //vh.push_back(PHS("gmet" + cut.first,  PDCMaker12("gammaMet"), {1, 1}, cut.second, 15, 0, 1500, true, false, "met",  "Events"));
+       //vh.push_back(PHS("MET" + cut.first,  PDCMaker12("met"), {1, 1}, cut.second, 15, 0, 1500, true, false, "met",  "Events"));
+       //vh.push_back(PHS("gpt" + cut.first,  PDCMaker12("gpt"), {1, 1}, cut.second, 65, 150, 800, true, false, "pt",  "Events"));
+
+       //vh.push_back(PHS("DataMC_SingleMuon_met_" + cut.first, {dcData_SingleMuon_met, dcMC_met}, {1, 2}, cut.second, 50, 0, 1500, true, false,  label_met, "Events"));
     }
 /*
     for(std::pair<std::string,std::string>& cut : cutlevels_muon)
