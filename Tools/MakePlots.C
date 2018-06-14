@@ -107,8 +107,12 @@ int main(int argc, char* argv[])
       sampleloc = "condor";
     }
 
-  AnaSamples::SampleSet        ss(sampleloc, lumi);
-  AnaSamples::SampleCollection sc(ss);
+  // the old version
+  //AnaSamples::SampleSet        ss(sampleloc, lumi);
+  //AnaSamples::SampleCollection sc(ss);
+  // the new version
+  AnaSamples::SampleSet        ss("sampleSets.txt");
+  AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
   const double zAcc = 1.0;
   //    const double zAcc = 0.5954;
@@ -211,9 +215,9 @@ int main(int argc, char* argv[])
   Plotter::DatasetSummary dswRare(           "Rare ",       fileMap["Rare"],           "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
   std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswRare, dswVV, dswttZ}};
 
-    Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
-    Plotter::DatasetSummary dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
-    std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
+  Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
+  Plotter::DatasetSummary dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
+  std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
   
   // nj                                                                                                                                                                            
   Plotter::DataCollection dcData_SingleMuon_nj("data",   "cntNJetsPt30Eta24Zinv", {dsData_SingleMuon});

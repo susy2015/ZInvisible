@@ -110,8 +110,12 @@ int main(int argc, char* argv[])
         sampleloc = "condor";
     }
 
-    AnaSamples::SampleSet        ss(sampleloc, lumi);
-    AnaSamples::SampleCollection sc(ss);
+    // the old version
+    //AnaSamples::SampleSet        ss(sampleloc, lumi);
+    //AnaSamples::SampleCollection sc(ss);
+    // the new version
+    AnaSamples::SampleSet        ss("sampleSets.txt");
+    AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
     const double zAcc = 1.0;
 //    const double zAcc = 0.5954;

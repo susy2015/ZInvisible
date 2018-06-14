@@ -193,14 +193,18 @@ int main(int argc, char* argv[])
         sampleloc = "condor";
     }
 
-    AnaSamples::SampleSet        ss(sampleloc, AnaSamples::luminosity);
-    AnaSamples::SampleCollection sc(ss);
+    // the old version
+    //AnaSamples::SampleSet        ss(sampleloc, lumi);
+    //AnaSamples::SampleCollection sc(ss);
+    // the new version
+    AnaSamples::SampleSet        ss("sampleSets.txt");
+    AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
-    topTagger::type3TopTagger* type3Ptr;
+    //topTagger::type3TopTagger* type3Ptr;
 
     try
     {
-        AnaFunctions::prepareTopTagger(type3Ptr);
+        //AnaFunctions::prepareTopTagger(type3Ptr);
 
         std::set<std::string> activatedBranch;
         for(auto& branch : AnaConsts::activatedBranchNames_DataOnly) activatedBranch.insert(branch);
