@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
     }
 
     AnaSamples::SampleSet        ss(sampleloc);
-    AnaSamples::SampleCollection sc(ss);
+    //AnaSamples::SampleCollection sc(ss);
 
     TFile *f = new TFile(filename.c_str(),"RECREATE");
     f->cd();
