@@ -4,8 +4,8 @@
 #include "SusyAnaTools/Tools/NTupleReader.h"
 #include "SusyAnaTools/Tools/customize.h"
 #include "SusyAnaTools/Tools/searchBins.h"
-#include "TopTagger/Tools/TaggerUtility.h"
-#include "TopTagger/Tools/PlotUtility.h"
+#include "TopTagger/Tools/cpp/TaggerUtility.h"
+#include "TopTagger/Tools/cpp/PlotUtility.h"
 #include "ScaleFactors.h"
 #include "ScaleFactorsttBar.h"
 
@@ -13,7 +13,7 @@
 #include "TTModule.h"
 #include "TopTaggerUtilities.h"
 #include "TopTaggerResults.h"
-#include "TopTagger/Tools/PlotUtility.h"
+#include "TopTagger/Tools/cpp/PlotUtility.h"
 
 #include "TopTagger/TopTagger/include/TopObject.h"
 
@@ -1660,9 +1660,9 @@ namespace plotterFunctions
     private:
 
         int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
-        topTagger::type3TopTagger t3tagger;
+        //topTagger::type3TopTagger t3tagger;
         TopTagger *tt, *ttMVA, *ttAllComb, *ttMVATriJetOnly;
-        Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
+        //Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
         TopCat topMatcher_;
         TFile *WMassCorFile;
         TF1 *puppisd_corrGEN;
