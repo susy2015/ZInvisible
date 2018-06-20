@@ -69,7 +69,7 @@ namespace plotterFunctions
             const double& genZPt      = tr.getVar<double>("genZPt");
 
             const int& nJets     =  tr.getVar<int>("nJets");
-	    const double& stored_weight = tr.getVar<double>("stored_weight");
+            const double& stored_weight = tr.getVar<double>("stored_weight");
 
             // Calculate PU weight
 
@@ -331,11 +331,11 @@ namespace plotterFunctions
                 zEffElec = 1.0e101;
             }
 
-	    // Process the generator weight
-	    double genWeight = 1.;
-	    // Never apply this weight for data! In the old ntuple version <=3 this is "-1", in the newer ones it is "0"
-	    if(stored_weight < 0)
-	      genWeight = -1.;
+            // Process the generator weight
+            double genWeight = 1.;
+            // Never apply this weight for data! In the old ntuple version <=3 this is "-1", in the newer ones it is "0"
+            if(stored_weight < 0)
+              genWeight = -1.;
 
             tr.registerDerivedVar("mu1dRMin", mu1dRMin);
             tr.registerDerivedVar("mu2dRMin", mu2dRMin);
@@ -357,7 +357,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("cleanMHt", MHT.Pt());
             tr.registerDerivedVar("cleanMHtPhi", MHT.Phi());
 
-	    tr.registerDerivedVar("genWeight", genWeight);
+            tr.registerDerivedVar("genWeight", genWeight);
         }
 
     public:
@@ -428,9 +428,9 @@ namespace plotterFunctions
         TH1* njWTTbar_g1b;
         TH1* njWDYZ_g1b;
 
-	TH1* njWGJets;
-	TH1* njWGJetsNorm;
-	TH1* njWGJets_all;
+        TH1* njWGJets;
+        TH1* njWGJetsNorm;
+        TH1* njWGJets_all;
 
         TH1* MCfake1b;
         TH1* MCfake2b;
@@ -439,35 +439,35 @@ namespace plotterFunctions
         void generateWeight(NTupleReader& tr)
         {
             const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
-	    const int& nJets     =  tr.getVar<int>("nJets");
+            const int& nJets     =  tr.getVar<int>("nJets");
             const int& cntCSVSZinv = tr.getVar<int>("cntCSVSZinv");
 
             double wTT = 1.0;
             double wDY = 1.0;
-	    double wGJets = 1.0;
-	    double wGJetsNorm = 1.0;
-	    double wGJets_all = 1.0;
+            double wGJets = 1.0;
+            double wGJetsNorm = 1.0;
+            double wGJets_all = 1.0;
 
-	    if(cntCSVSZinv == 0)
-	      {
-		if(njWTTbar_0b)  wTT = 1.0;//njWTTbar_0b->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
-		if(njWDYZ_0b)    wDY = njWDYZ_0b->GetBinContent(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
-	      }
-	    else
-	      {
-		if(njWTTbar_g1b) wTT = 1.0;//njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
-		if(njWDYZ_g1b)   wDY = njWDYZ_g1b->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
-	      }
-	    
-	    if(njWGJets) {
-	      wGJets = njWGJets->GetBinContent(njWGJets->FindBin(cntNJetsPt30Eta24Zinv));
-	      wGJetsNorm = njWGJetsNorm->GetBinContent(njWGJetsNorm->FindBin(cntNJetsPt30Eta24Zinv));
-	    }
+            if(cntCSVSZinv == 0)
+              {
+                if(njWTTbar_0b)  wTT = 1.0;//njWTTbar_0b->GetBinContent(njWTTbar_0b->FindBin(cntNJetsPt30Eta24Zinv));
+                if(njWDYZ_0b)    wDY = njWDYZ_0b->GetBinContent(njWDYZ_0b->FindBin(cntNJetsPt30Eta24Zinv));
+              }
+            else
+              {
+                if(njWTTbar_g1b) wTT = 1.0;//njWTTbar_g1b->GetBinContent(njWTTbar_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+                if(njWDYZ_g1b)   wDY = njWDYZ_g1b->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
+              }
+            
+            if(njWGJets) {
+              wGJets = njWGJets->GetBinContent(njWGJets->FindBin(cntNJetsPt30Eta24Zinv));
+              wGJetsNorm = njWGJetsNorm->GetBinContent(njWGJetsNorm->FindBin(cntNJetsPt30Eta24Zinv));
+            }
 
-	    if(njWGJets_all) wGJets_all = njWGJets_all->GetBinContent(njWGJets_all->FindBin(nJets));
-	    //wGJets = njWGJets->GetBinContent(njWGJets->FindBin(nJets)); 
-	    //std::cout<<wGJets<<std::endl;
-	    double nJet1bfakeWgt = 1.0;
+            if(njWGJets_all) wGJets_all = njWGJets_all->GetBinContent(njWGJets_all->FindBin(nJets));
+            //wGJets = njWGJets->GetBinContent(njWGJets->FindBin(nJets)); 
+            //std::cout<<wGJets<<std::endl;
+            double nJet1bfakeWgt = 1.0;
             double nJet2bfakeWgt = 1.0;
             double nJet3bfakeWgt = 1.0;
 
@@ -475,16 +475,16 @@ namespace plotterFunctions
             if(MCfake2b)   nJet2bfakeWgt = MCfake2b->GetBinContent(MCfake2b->FindBin(cntNJetsPt30Eta24Zinv));
             if(MCfake3b)   nJet3bfakeWgt = MCfake3b->GetBinContent(MCfake3b->FindBin(cntNJetsPt30Eta24Zinv));
 
-	    double normWgt0b = ScaleFactors::sf_norm0b();
+            double normWgt0b = ScaleFactors::sf_norm0b();
             double normttbar = ScaleFactorsttBar::sf_norm0b(); 
 
 
             tr.registerDerivedVar("nJetWgtTTbar", wTT);
             tr.registerDerivedVar("nJetWgtDYZ",   wDY);
 
-	    tr.registerDerivedVar("njWGJets",   wGJets);
-	    tr.registerDerivedVar("njWGJetsNorm",   wGJetsNorm);
-	    tr.registerDerivedVar("njWGJets_all",   wGJets_all);
+            tr.registerDerivedVar("njWGJets",   wGJets);
+            tr.registerDerivedVar("njWGJetsNorm",   wGJetsNorm);
+            tr.registerDerivedVar("njWGJets_all",   wGJets_all);
 
             tr.registerDerivedVar("nJet1bfakeWgt", nJet1bfakeWgt);
             tr.registerDerivedVar("nJet2bfakeWgt", nJet2bfakeWgt);
@@ -503,8 +503,8 @@ namespace plotterFunctions
             njWDYZ_0b    = nullptr;
             njWTTbar_g1b = nullptr;
             njWDYZ_g1b   = nullptr;
-	    njWGJets = nullptr;
-	    njWGJets_all = nullptr;
+            njWGJets = nullptr;
+            njWGJets_all = nullptr;
             MCfake1b = nullptr;
             MCfake2b = nullptr;
             MCfake3b = nullptr;
@@ -537,28 +537,28 @@ namespace plotterFunctions
             {
                 std::cout << "Failed to open: dataMCweights.root" << std::endl;
             }
-	    f = new TFile("dataMCreweight.root");
-	    if(f)
-	      {
-		njWGJets = static_cast<TH1*>(f->Get("nJetReweight"));
-		njWGJetsNorm = static_cast<TH1*>(f->Get("normWeight"));
-		f->Close();
-		delete f;
-	      }
-	    else
-	      {
-		std::cout << "Failed to open: dataMCreweight.root" << std::endl;
-	      }
-	    f = new TFile("dataMCreweight_allJets.root");
-	    if(f)
-	      {
-		njWGJets_all = static_cast<TH1*>(f->Get("dataMC_Photon_nj_LooseLepVetonJetsnJetsDatadata"));
-		f->Close();
-                delete f;
-	      }
-	    else
+            f = new TFile("dataMCreweight.root");
+            if(f)
               {
-		std::cout << "Failed to open: dataMCreweight_allJets.root" << std::endl;
+                njWGJets = static_cast<TH1*>(f->Get("nJetReweight"));
+                njWGJetsNorm = static_cast<TH1*>(f->Get("normWeight"));
+                f->Close();
+                delete f;
+              }
+            else
+              {
+                std::cout << "Failed to open: dataMCreweight.root" << std::endl;
+              }
+            f = new TFile("dataMCreweight_allJets.root");
+            if(f)
+              {
+                njWGJets_all = static_cast<TH1*>(f->Get("dataMC_Photon_nj_LooseLepVetonJetsnJetsDatadata"));
+                f->Close();
+                delete f;
+              }
+            else
+              {
+                std::cout << "Failed to open: dataMCreweight_allJets.root" << std::endl;
               }
         }
 
@@ -1081,7 +1081,7 @@ namespace plotterFunctions
 
             tr.registerDerivedVar("passDiMuSel", passDiMuSel);
             tr.registerDerivedVar("passDiElecSel", passDiElecSel);
-	    tr.registerDerivedVar("passElMuSel", passElMuSel);
+            tr.registerDerivedVar("passElMuSel", passElMuSel);
 
             tr.registerDerivedVar("passMuZinvSel", passMuZinvSel);
             tr.registerDerivedVar("passMuZinvSel_lowpt", passMuZinvSel_lowpt);
@@ -1296,14 +1296,14 @@ namespace plotterFunctions
     class TriggerInfo
     {
     private:
-	int indexMuTrigger;
-	int indexElecTrigger;
+        int indexMuTrigger;
+        int indexElecTrigger;
         int indexMETMHTTrigger;
-	int indexPhotonTrigger;
+        int indexPhotonTrigger;
         bool miniTuple_, noMC_;
 
-	double GetMuonTriggerEff(const double& muEta) 
-	{
+        double GetMuonTriggerEff(const double& muEta) 
+        {
             if (-2.6 <= muEta && muEta < -2.2) return 0.7861842;
             else if(-2.2 <= muEta && muEta < -1.8) return 0.8233438;
             else if(-1.8 <= muEta && muEta < -1.4) return 0.8151685;
@@ -1318,81 +1318,81 @@ namespace plotterFunctions
             else if( 1.8 <= muEta && muEta <  2.2) return 0.8218332;
             else if( 2.2 <= muEta && muEta <  2.6) return 0.7781818;
             else                                   return 0.000;
-	}
+        }
 
-	double GetTriggerEffWeight(const double& met, const double& ht) 
-	{
-	    if (ht<1000)
-	    {
-		if (met<25) return 0.001542561;
-		else if (met<50) return 0.003222389;
-		else if (met<75) return 0.00987073;
-		else if (met<100) return 0.03865682;
-		else if (met<125) return 0.1387231;
-		else if (met<150) return 0.3564816;
-		else if (met<175) return 0.6276442;
-		else if (met<200) return 0.8154821;
-		else if (met<275) return 0.9340538;
-		else if (met<400) return 0.9858562; 
+        double GetTriggerEffWeight(const double& met, const double& ht) 
+        {
+            if (ht<1000)
+            {
+                if (met<25) return 0.001542561;
+                else if (met<50) return 0.003222389;
+                else if (met<75) return 0.00987073;
+                else if (met<100) return 0.03865682;
+                else if (met<125) return 0.1387231;
+                else if (met<150) return 0.3564816;
+                else if (met<175) return 0.6276442;
+                else if (met<200) return 0.8154821;
+                else if (met<275) return 0.9340538;
+                else if (met<400) return 0.9858562; 
                 else if (met<600) return 0.9931507;
                 else if (met<1000) return 1.00;
-		else return 1.00;
-	    } 
-	    else 
-	    {
-		if (met<25) return  0.02067183;
-		else if (met<50) return 0.02504944;
-		else if (met<75) return 0.04486466;
-		else if (met<100) return 0.07434402;
-		else if (met<125) return 0.1518288;
-		else if (met<150) return 0.2802669;
-		else if (met<175) return 0.4642409;
-		else if (met<200) return 0.6596434;
-		else if (met<275) return 0.8510453;
-		else if (met<400) return 0.9563492;
+                else return 1.00;
+            } 
+            else 
+            {
+                if (met<25) return  0.02067183;
+                else if (met<50) return 0.02504944;
+                else if (met<75) return 0.04486466;
+                else if (met<100) return 0.07434402;
+                else if (met<125) return 0.1518288;
+                else if (met<150) return 0.2802669;
+                else if (met<175) return 0.4642409;
+                else if (met<200) return 0.6596434;
+                else if (met<275) return 0.8510453;
+                else if (met<400) return 0.9563492;
                 else if (met<600) return 0.9874214;
                 else if (met<1000) return 0.9736842; 
-		else return 0.9736842;
-	    }
-	}
-	double GetTriggerEffStatUncHi(const double& met, const double& ht) 
-	{
-	    if (ht<1000)
-	    {
-		if (met<25) return 0.0001251554;
-		else if (met<50) return 0.0001310897;
-		else if (met<75) return 0.0002597269;
-		else if (met<100) return 0.0006525702;
-		else if (met<125) return 0.001545856;
-		else if (met<150) return 0.002821274;
+                else return 0.9736842;
+            }
+        }
+        double GetTriggerEffStatUncHi(const double& met, const double& ht) 
+        {
+            if (ht<1000)
+            {
+                if (met<25) return 0.0001251554;
+                else if (met<50) return 0.0001310897;
+                else if (met<75) return 0.0002597269;
+                else if (met<100) return 0.0006525702;
+                else if (met<125) return 0.001545856;
+                else if (met<150) return 0.002821274;
                 else if (met<200) return 0.003691577;
-		else if (met<275) return 0.003877182;
-		else if (met<400) return 0.002294442; 
+                else if (met<275) return 0.003877182;
+                else if (met<400) return 0.002294442; 
                 else if (met<600) return 0.002045071;
                 else if (met<1000) return 0.003725375;
-		else return 0.00;
-	    } 
-	    else 
-	    {
-		if (met<25) return 0.004283915;
-		else if (met<50) return 0.003169914;
-		else if (met<75) return 0.004349597;
-		else if (met<100) return 0.006241982;
-		else if (met<125) return 0.01001983;
-		else if (met<150) return 0.01455422;
-		else if (met<175) return 0.0183275;
-		else if (met<200) return 0.01960093;
-		else if (met<275) return 0.01062354;
-		else if (met<400) return 0.007445741;
+                else return 0.00;
+            } 
+            else 
+            {
+                if (met<25) return 0.004283915;
+                else if (met<50) return 0.003169914;
+                else if (met<75) return 0.004349597;
+                else if (met<100) return 0.006241982;
+                else if (met<125) return 0.01001983;
+                else if (met<150) return 0.01455422;
+                else if (met<175) return 0.0183275;
+                else if (met<200) return 0.01960093;
+                else if (met<275) return 0.01062354;
+                else if (met<400) return 0.007445741;
                 else if (met<600) return 0.006010458;
                 else if (met<1000) return 0.01697945; 
-		else return 0.01697945;
-	    }
-	}
-	double GetTriggerEffStatUncLo(const double& met, const double& ht) 
-	{
-	    if (ht<1000)
-	    {
+                else return 0.01697945;
+            }
+        }
+        double GetTriggerEffStatUncLo(const double& met, const double& ht) 
+        {
+            if (ht<1000)
+            {
                 if (met<25) return 0.0001160878;
                 else if (met<50) return 0.000126075;
                 else if (met<75) return 0.0002532144;
@@ -1407,46 +1407,46 @@ namespace plotterFunctions
                 else if (met<1000) return 0.1422293;
                 else return 0.1422293;
             }
-	   
-	    else 
-	    {
-		if (met<25) return 0.003609465;
-		else if (met<50) return 0.002838673;
-		else if (met<75) return 0.003996443;
-		else if (met<100) return 0.005811049;
-		else if (met<125) return 0.009521872;
-		else if (met<150) return 0.01412113;
-		else if (met<175) return 0.01823465;
-		else if (met<200) return 0.02013986;
-		else if (met<275) return 0.01126014;
-		else if (met<400) return 0.008759573;
+           
+            else 
+            {
+                if (met<25) return 0.003609465;
+                else if (met<50) return 0.002838673;
+                else if (met<75) return 0.003996443;
+                else if (met<100) return 0.005811049;
+                else if (met<125) return 0.009521872;
+                else if (met<150) return 0.01412113;
+                else if (met<175) return 0.01823465;
+                else if (met<200) return 0.02013986;
+                else if (met<275) return 0.01126014;
+                else if (met<400) return 0.008759573;
                 else if (met<600) return 0.009833846;
                 else if (met<1000) return 0.03365661; 
-		else return 0.03365661;
-	    }
-	}
-	double GetTriggerEffSystUncHi(const double& met, const double& ht) 
-	{
-	    return 0.0;
-	    /* if (met<100) return 0.0272; */
-	    /* else if (met<150) return 0.0872; */
-	    /* else if (met<175) return 0.1505; */
-	    /* else if (met<200) return 0.0423; */
-	    /* else if (met<275) return 0.0112; */
-	    /* else if (met<400) return 0.0001;  */
-	    /* else return 0.0; */
-	}
-	double GetTriggerEffSystUncLo(const double& met, const double& ht) 
-	{
-	    return 0.0;
-	    /* if (met<100) return 0.0120; */
-	    /* else if (met<150) return 0.0872; */
-	    /* else if (met<175) return 0.1505; */
-	    /* else if (met<200) return 0.0792; */
-	    /* else if (met<275) return 0.0112; */
-	    /* else if (met<400) return 0.0001;  */
-	    /* else return 0.0018; */
-	}
+                else return 0.03365661;
+            }
+        }
+        double GetTriggerEffSystUncHi(const double& met, const double& ht) 
+        {
+            return 0.0;
+            /* if (met<100) return 0.0272; */
+            /* else if (met<150) return 0.0872; */
+            /* else if (met<175) return 0.1505; */
+            /* else if (met<200) return 0.0423; */
+            /* else if (met<275) return 0.0112; */
+            /* else if (met<400) return 0.0001;  */
+            /* else return 0.0; */
+        }
+        double GetTriggerEffSystUncLo(const double& met, const double& ht) 
+        {
+            return 0.0;
+            /* if (met<100) return 0.0120; */
+            /* else if (met<150) return 0.0872; */
+            /* else if (met<175) return 0.1505; */
+            /* else if (met<200) return 0.0792; */
+            /* else if (met<275) return 0.0112; */
+            /* else if (met<400) return 0.0001;  */
+            /* else return 0.0018; */
+        }
 
         void triggerInfo(NTupleReader& tr)
         {
@@ -1456,34 +1456,34 @@ namespace plotterFunctions
             bool passMuTrigger = false;
             bool passElecTrigger = false;
             bool passMETMHTTrigger = false;
-	    bool passPhotonTrigger = false;
+            bool passPhotonTrigger = false;
 
-	    const std::string muTrigName = "HLT_Mu50_v";//"HLT_Mu45_eta2p1_v";
-	    const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
+            const std::string muTrigName = "HLT_Mu50_v";//"HLT_Mu45_eta2p1_v";
+            const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
             const std::string metmhtTrigName = "HLT_PFMET110_PFMHT110_IDTight_v";
-	    const std::string photonTrigName = "HLT_Photon175_v";
+            const std::string photonTrigName = "HLT_Photon175_v";
 
             // Find the index of our triggers if we don't know them already
             if(indexMuTrigger == -1 || indexElecTrigger == -1 || indexMETMHTTrigger == -1 || indexPhotonTrigger == -1)
             {
                 for(int i = 0; i < triggerNames.size(); ++i)
                 {
-		  if(triggerNames[i].find(muTrigName) != std::string::npos)
+                  if(triggerNames[i].find(muTrigName) != std::string::npos)
                     {
-		      indexMuTrigger = i;
+                      indexMuTrigger = i;
                     }
-		  else if(triggerNames[i].find(elecTrigName) != std::string::npos)
+                  else if(triggerNames[i].find(elecTrigName) != std::string::npos)
                     {
-		      indexElecTrigger = i;
+                      indexElecTrigger = i;
                     }
-		  else if(triggerNames[i].find(metmhtTrigName) != std::string::npos)
+                  else if(triggerNames[i].find(metmhtTrigName) != std::string::npos)
                     {
-		      indexMETMHTTrigger = i;
+                      indexMETMHTTrigger = i;
                     }
-		  else if(triggerNames[i].find(photonTrigName) != std::string::npos)
-		    {
-		      indexPhotonTrigger = i;
-		    }
+                  else if(triggerNames[i].find(photonTrigName) != std::string::npos)
+                    {
+                      indexPhotonTrigger = i;
+                    }
 
                 }
             }
@@ -1496,8 +1496,8 @@ namespace plotterFunctions
                     passElecTrigger = true;
                 if(triggerNames[indexMETMHTTrigger].find(metmhtTrigName) != std::string::npos && passTrigger[indexMETMHTTrigger])
                     passMETMHTTrigger = true;
-		if(triggerNames[indexPhotonTrigger].find(photonTrigName) != std::string::npos && passTrigger[indexPhotonTrigger])
-		  passPhotonTrigger = true;
+                if(triggerNames[indexPhotonTrigger].find(photonTrigName) != std::string::npos && passTrigger[indexPhotonTrigger])
+                  passPhotonTrigger = true;
             }
             else
             {
@@ -1519,7 +1519,7 @@ namespace plotterFunctions
                     triggerNames[it].find("HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_v") != std::string::npos ||
                     triggerNames[it].find("HLT_PFMETNoMu110_PFMHTNoMu110_IDTight_v") != std::string::npos ||
                     triggerNames[it].find("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v") != std::string::npos ||
-		    triggerNames[it].find("HLT_Photon175_v") != std::string::npos
+                    triggerNames[it].find("HLT_Photon175_v") != std::string::npos
                     )
                 {
                     if( passTrigger[it] ) 
@@ -1530,7 +1530,7 @@ namespace plotterFunctions
                 }
             }
 
-	    tr.registerDerivedVar("passPhotonTrigger",passPhotonTrigger);
+            tr.registerDerivedVar("passPhotonTrigger",passPhotonTrigger);
             tr.registerDerivedVar("passMuTrigger",passMuTrigger);
             tr.registerDerivedVar("passElecTrigger",passElecTrigger);
             tr.registerDerivedVar("passMETMHTTrigger",passMETMHTTrigger);
@@ -1543,14 +1543,14 @@ namespace plotterFunctions
             const double& ht                             = tr.getVar<double>("HTZinv");
             const std::vector<TLorentzVector>& cutMuVec  = tr.getVec<TLorentzVector>("cutMuVec");
 
-	    // MC trigger efficiencies
-	    double triggerEff = GetTriggerEffWeight(met,ht);
-	    double triggerEffStatUncUp = GetTriggerEffStatUncHi(met,ht);
-	    double triggerEffSystUncUp = GetTriggerEffSystUncHi(met,ht);
-	    double triggerEffUncUp     = TMath::Sqrt(triggerEffStatUncUp*triggerEffStatUncUp + triggerEffSystUncUp*triggerEffSystUncUp);
-	    double triggerEffStatUncDown = GetTriggerEffStatUncLo(met,ht);
-	    double triggerEffSystUncDown = GetTriggerEffSystUncLo(met,ht);
-	    double triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
+            // MC trigger efficiencies
+            double triggerEff = GetTriggerEffWeight(met,ht);
+            double triggerEffStatUncUp = GetTriggerEffStatUncHi(met,ht);
+            double triggerEffSystUncUp = GetTriggerEffSystUncHi(met,ht);
+            double triggerEffUncUp     = TMath::Sqrt(triggerEffStatUncUp*triggerEffStatUncUp + triggerEffSystUncUp*triggerEffSystUncUp);
+            double triggerEffStatUncDown = GetTriggerEffStatUncLo(met,ht);
+            double triggerEffSystUncDown = GetTriggerEffSystUncLo(met,ht);
+            double triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
 
             //Calculate muon trigger weights
             double muTrigWgt = 0.0;
@@ -1567,28 +1567,28 @@ namespace plotterFunctions
                 muTrigWgt = GetMuonTriggerEff(cutMuVec[0].Eta());
             }
 
-	    tr.registerDerivedVar("TriggerEffMC",triggerEff);
-	    tr.registerDerivedVar("TriggerEffUpMC",triggerEff+triggerEffUncUp);
-	    tr.registerDerivedVar("TriggerEffDownMC",triggerEff-triggerEffUncDown);
+            tr.registerDerivedVar("TriggerEffMC",triggerEff);
+            tr.registerDerivedVar("TriggerEffUpMC",triggerEff+triggerEffUncUp);
+            tr.registerDerivedVar("TriggerEffDownMC",triggerEff-triggerEffUncDown);
 
             tr.registerDerivedVar("muTrigWgt", muTrigWgt);
         }
 
     public:
-	TriggerInfo(bool miniTuple = false, bool noMC = false)
-	{
-	    indexMuTrigger = -1;
-	    indexElecTrigger = -1;
+        TriggerInfo(bool miniTuple = false, bool noMC = false)
+        {
+            indexMuTrigger = -1;
+            indexElecTrigger = -1;
             indexMETMHTTrigger = -1;
             miniTuple_ = miniTuple;
             noMC_ = noMC;
-	}
+        }
 
-	void operator()(NTupleReader& tr)
-	{
-	    if(!miniTuple_) triggerInfo(tr);
+        void operator()(NTupleReader& tr)
+        {
+            if(!miniTuple_) triggerInfo(tr);
             if(!noMC_)       triggerInfoMC(tr);
-	}
+        }
 
     };
 
@@ -1645,15 +1645,15 @@ namespace plotterFunctions
         }
 
     public:
-	SystematicPrep()
-	{
+        SystematicPrep()
+        {
 
-	}
+        }
 
-	void operator()(NTupleReader& tr)
-	{
-	    systematicPrep(tr);
-	}
+        void operator()(NTupleReader& tr)
+        {
+            systematicPrep(tr);
+        }
 
     };
 
@@ -1704,14 +1704,14 @@ namespace plotterFunctions
 
     public:
         SystematicCalc(std::string sb_era) : sbins(sb_era)
-	{
+        {
             
-	}
+        }
 
-	void operator()(NTupleReader& tr)
-	{
-	    systematicCalc(tr);
-	}
+        void operator()(NTupleReader& tr)
+        {
+            systematicCalc(tr);
+        }
 
     };
     /*
@@ -2162,7 +2162,7 @@ namespace plotterFunctions
 
     public:
         PrepareTopVars() : tt(nullptr)
-	{
+        {
             //t3tagger.setnJetsSel(1);
             //t3tagger.setCSVS(AnaConsts::cutCSVS);
 
@@ -2189,17 +2189,17 @@ namespace plotterFunctions
                 puppisd_corrRECO_cen = (TF1*)WMassCorFile->Get("puppiJECcorr_reco_0eta1v3");
                 puppisd_corrRECO_for = (TF1*)WMassCorFile->Get("puppiJECcorr_reco_1v3eta2v5");
             }
-	}
+        }
 
         ~PrepareTopVars()
         {
             //if(tt) delete tt;
         }
 
-	void operator()(NTupleReader& tr)
-	{
+        void operator()(NTupleReader& tr)
+        {
             prepareTopVars(tr);
-	}
+        }
 
     };
     */
@@ -2501,83 +2501,83 @@ namespace plotterFunctions
         const std::vector<bool>& tightID = tr.getVec<bool>("tightPhotonID");
         const std::vector<int>& extraLooseID = tr.getVec<int>("extraLooseID");
         const std::vector<double>& sigmaIetaIeta = tr.getVec<double>("sigmaIetaIeta");
-	const std::vector<double>& pfNeutralIsoRhoCorr = tr.getVec<double>("pfNeutralIsoRhoCorr");
-	const std::vector<double>& pfGammaIsoRhoCorr = tr.getVec<double>("pfGammaIsoRhoCorr");
-	const std::vector<double>& pfChargedIsoRhoCorr = tr.getVec<double>("pfChargedIsoRhoCorr");
-	const std::vector<double>& hadTowOverEM = tr.getVec<double>("hadTowOverEM");
+        const std::vector<double>& pfNeutralIsoRhoCorr = tr.getVec<double>("pfNeutralIsoRhoCorr");
+        const std::vector<double>& pfGammaIsoRhoCorr = tr.getVec<double>("pfGammaIsoRhoCorr");
+        const std::vector<double>& pfChargedIsoRhoCorr = tr.getVec<double>("pfChargedIsoRhoCorr");
+        const std::vector<double>& hadTowOverEM = tr.getVec<double>("hadTowOverEM");
         const double& MT2 = tr.getVar<double>("best_had_brJet_MT2");
         const double& met = tr.getVar<double>("met");
         const int& nJets = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
         const double& ht = tr.getVar<double>("HT");
-	const int& nbJets = tr.getVar<int>("cntCSVS");
-	const int& ntops = tr.getVar<int>("nTopCandSortedCnt");
+        const int& nbJets = tr.getVar<int>("cntCSVS");
+        const int& ntops = tr.getVar<int>("nTopCandSortedCnt");
 
-	//variables to be used in the analysis code
-	double photonMet = -999.9;
-	std::vector<TLorentzVector> *promptPhotons = new std::vector<TLorentzVector>(); 
-	std::vector<TLorentzVector> *fakePhotons = new std::vector<TLorentzVector>();
-	std::vector<TLorentzVector> *fragmentationQCD = new std::vector<TLorentzVector>();
-	std::vector<TLorentzVector> *loosePhotons = new std::vector<TLorentzVector>();
-	std::vector<TLorentzVector> *mediumPhotons = new std::vector<TLorentzVector>();
-	std::vector<TLorentzVector> *tightPhotons = new std::vector<TLorentzVector>();
-	std::vector<TLorentzVector> *directPhotons = new std::vector<TLorentzVector>();
-	std::vector<TLorentzVector> *totalPhotons = new std::vector<TLorentzVector>();
-	std::vector<TLorentzVector> photonLVec, tempVec;
+        //variables to be used in the analysis code
+        double photonMet = -999.9;
+        std::vector<TLorentzVector> *promptPhotons = new std::vector<TLorentzVector>(); 
+        std::vector<TLorentzVector> *fakePhotons = new std::vector<TLorentzVector>();
+        std::vector<TLorentzVector> *fragmentationQCD = new std::vector<TLorentzVector>();
+        std::vector<TLorentzVector> *loosePhotons = new std::vector<TLorentzVector>();
+        std::vector<TLorentzVector> *mediumPhotons = new std::vector<TLorentzVector>();
+        std::vector<TLorentzVector> *tightPhotons = new std::vector<TLorentzVector>();
+        std::vector<TLorentzVector> *directPhotons = new std::vector<TLorentzVector>();
+        std::vector<TLorentzVector> *totalPhotons = new std::vector<TLorentzVector>();
+        std::vector<TLorentzVector> photonLVec, tempVec;
 
-	//Pass cuts that were not applied in the ntuple
-	//Select photons within the ECAL acceptance region and Pt > 100 GeV 
-	for(int i = 0; i < gammaLVec.size(); ++i) {
-	  if (PhotonFunctions::passPhoton(gammaLVec[i])) photonLVec.push_back(gammaLVec[i]);
-	}
+        //Pass cuts that were not applied in the ntuple
+        //Select photons within the ECAL acceptance region and Pt > 100 GeV 
+        for(int i = 0; i < gammaLVec.size(); ++i) {
+          if (PhotonFunctions::passPhoton(gammaLVec[i])) photonLVec.push_back(gammaLVec[i]);
+        }
 
-	photonMet = met;
-	//Get TLorentz vector for Loose, Medium and Tight ID photon selection
-	for(int i = 0; i < photonLVec.size(); i++){
-	  if (photonLVec[i].Pt() > 200){
-	    totalPhotons->push_back(photonLVec[i]);
-	    
-	    if(looseID[i]) loosePhotons->push_back(photonLVec[i]);
-	    if(mediumID[i]) mediumPhotons->push_back(photonLVec[i]);
-	    if(tightID[i]) tightPhotons->push_back(photonLVec[i]);
+        photonMet = met;
+        //Get TLorentz vector for Loose, Medium and Tight ID photon selection
+        for(int i = 0; i < photonLVec.size(); i++){
+          if (photonLVec[i].Pt() > 200){
+            totalPhotons->push_back(photonLVec[i]);
+            
+            if(looseID[i]) loosePhotons->push_back(photonLVec[i]);
+            if(mediumID[i]) mediumPhotons->push_back(photonLVec[i]);
+            if(tightID[i]) tightPhotons->push_back(photonLVec[i]);
 
-	    //add loose photon pt to ptmiss
-	    if(looseID[i]) photonMet += photonLVec[i].Pt();
-	  } 
-	}
+            //add loose photon pt to ptmiss
+            if(looseID[i]) photonMet += photonLVec[i].Pt();
+          } 
+        }
 
-	//Gen-Matching Photons (Pt > 200 GeV)
-	if(tr.checkBranch("gammaLVecGen") && tr.checkBranch("genPartonLVec") && &genPartonLVec != nullptr && &gammaLVecGen != nullptr){
-	  for(int i = 0; i < photonLVec.size(); i++){
-	    if(photonLVec[i].Pt() > 200 && looseID[i]){
-	      if(PhotonFunctions::isGenMatched(photonLVec[i],gammaLVecGen)){
-		promptPhotons->push_back(photonLVec[i]);
-		if(PhotonFunctions::isDirectPhoton(photonLVec[i],genPartonLVec)) directPhotons->push_back(photonLVec[i]);
-		if(PhotonFunctions::isFragmentationPhoton(photonLVec[i],genPartonLVec)) fragmentationQCD->push_back(photonLVec[i]);
-	      }
-	      else fakePhotons->push_back(photonLVec[i]);
-	    }
-	  }
-	}
+        //Gen-Matching Photons (Pt > 200 GeV)
+        if(tr.checkBranch("gammaLVecGen") && tr.checkBranch("genPartonLVec") && &genPartonLVec != nullptr && &gammaLVecGen != nullptr){
+          for(int i = 0; i < photonLVec.size(); i++){
+            if(photonLVec[i].Pt() > 200 && looseID[i]){
+              if(PhotonFunctions::isGenMatched(photonLVec[i],gammaLVecGen)){
+                promptPhotons->push_back(photonLVec[i]);
+                if(PhotonFunctions::isDirectPhoton(photonLVec[i],genPartonLVec)) directPhotons->push_back(photonLVec[i]);
+                if(PhotonFunctions::isFragmentationPhoton(photonLVec[i],genPartonLVec)) fragmentationQCD->push_back(photonLVec[i]);
+              }
+              else fakePhotons->push_back(photonLVec[i]);
+            }
+          }
+        }
 
-	tr.registerDerivedVar("photonMet", photonMet);
-	tr.registerDerivedVar("passNphoton",totalPhotons->size() >= 1);
-	tr.registerDerivedVar("passNloose",loosePhotons->size() >= 1);
-	tr.registerDerivedVar("passNmedium",mediumPhotons->size() >= 1);
-	tr.registerDerivedVar("passNtight",tightPhotons->size() >= 1);
-	tr.registerDerivedVar("passFakes", fakePhotons->size() >= 1);
-	tr.registerDerivedVar("passPrompt", promptPhotons->size() >= 1);
-	tr.registerDerivedVar("passDirect", directPhotons->size() >= 1);
-	tr.registerDerivedVar("passFragmentation", fragmentationQCD->size() >= 1);
-	tr.registerDerivedVec("cutPhotons",loosePhotons);
-	tr.registerDerivedVec("totalPhotons",totalPhotons);
-	tr.registerDerivedVec("promptPhotons",promptPhotons);
-	tr.registerDerivedVec("fakePhotons",fakePhotons);
-	tr.registerDerivedVec("fragmentationQCD",fragmentationQCD);
-	tr.registerDerivedVec("directPhotons",directPhotons);
-	tr.registerDerivedVar("nPhotonNoID",totalPhotons->size());
-	tr.registerDerivedVar("nPhoton",loosePhotons->size());
-	tr.registerDerivedVar("nFakes",fakePhotons->size());
-	tr.registerDerivedVar("nPrompt", promptPhotons->size());
+        tr.registerDerivedVar("photonMet", photonMet);
+        tr.registerDerivedVar("passNphoton",totalPhotons->size() >= 1);
+        tr.registerDerivedVar("passNloose",loosePhotons->size() >= 1);
+        tr.registerDerivedVar("passNmedium",mediumPhotons->size() >= 1);
+        tr.registerDerivedVar("passNtight",tightPhotons->size() >= 1);
+        tr.registerDerivedVar("passFakes", fakePhotons->size() >= 1);
+        tr.registerDerivedVar("passPrompt", promptPhotons->size() >= 1);
+        tr.registerDerivedVar("passDirect", directPhotons->size() >= 1);
+        tr.registerDerivedVar("passFragmentation", fragmentationQCD->size() >= 1);
+        tr.registerDerivedVec("cutPhotons",loosePhotons);
+        tr.registerDerivedVec("totalPhotons",totalPhotons);
+        tr.registerDerivedVec("promptPhotons",promptPhotons);
+        tr.registerDerivedVec("fakePhotons",fakePhotons);
+        tr.registerDerivedVec("fragmentationQCD",fragmentationQCD);
+        tr.registerDerivedVec("directPhotons",directPhotons);
+        tr.registerDerivedVar("nPhotonNoID",totalPhotons->size());
+        tr.registerDerivedVar("nPhoton",loosePhotons->size());
+        tr.registerDerivedVar("nFakes",fakePhotons->size());
+        tr.registerDerivedVar("nPrompt", promptPhotons->size());
       }
 
     public:
@@ -2681,68 +2681,68 @@ namespace plotterFunctions
             //}
              
             if(puppitau2.size()!=0 && puppitau1.size()!=0 && puppitau2.size()==puppitau1.size()){
-		for(int iJet = 0; iJet < nJetsPuppi; ++iJet){
-		    puppitau2Dtau1->push_back(puppitau2[iJet]/(puppitau1[iJet]));
-		}
+                for(int iJet = 0; iJet < nJetsPuppi; ++iJet){
+                    puppitau2Dtau1->push_back(puppitau2[iJet]/(puppitau1[iJet]));
+                }
             }
             else { 
-		puppitau2Dtau1->push_back( -1);
-	    }
+                puppitau2Dtau1->push_back( -1);
+            }
 
             if(puppitau2.size()!=0 && puppitau3.size()!=0 && puppitau2.size()==puppitau3.size()){
-		for(int iJet = 0; iJet < nJetsPuppi; ++iJet){
-		    puppitau3Dtau2->push_back(puppitau3[iJet]/(puppitau2[iJet]));
-		}
-	    }
-            else {
-		puppitau3Dtau2->push_back( -1);
+                for(int iJet = 0; iJet < nJetsPuppi; ++iJet){
+                    puppitau3Dtau2->push_back(puppitau3[iJet]/(puppitau2[iJet]));
+                }
             }
-	    tr.registerDerivedVec("puppitau2Dtau1", puppitau2Dtau1);
-	    tr.registerDerivedVec("puppitau3Dtau2", puppitau3Dtau2);
+            else {
+                puppitau3Dtau2->push_back( -1);
+            }
+            tr.registerDerivedVec("puppitau2Dtau1", puppitau2Dtau1);
+            tr.registerDerivedVec("puppitau3Dtau2", puppitau3Dtau2);
             
-	    ///WTagging
-	   /* 
+            ///WTagging
+           /* 
             for(int tau = 0; tau < (*puppitau2Dtau1).size(); ++tau){
                if (puppisoftDropMass[tau]>65 && puppisoftDropMass[tau]<100){
-		   // push back tau variables after mass cut
-		   puppitau2Dtau1_SDM->push_back(puppitau2Dtau1->at(tau));
+                   // push back tau variables after mass cut
+                   puppitau2Dtau1_SDM->push_back(puppitau2Dtau1->at(tau));
 
-		   if ((*puppitau2Dtau1)[tau] >= 0 && (*puppitau2Dtau1)[tau] < 0.6){ // loose
-		       puppiLVecLoose_w->push_back(puppiJetsLVec[tau]);  
-		       //std::cout <<"PT_puupi"<< (*puppiLVectight_w).size()  << std::endl;    // (*puppiLVectight_w)[0].Pt() 
+                   if ((*puppitau2Dtau1)[tau] >= 0 && (*puppitau2Dtau1)[tau] < 0.6){ // loose
+                       puppiLVecLoose_w->push_back(puppiJetsLVec[tau]);  
+                       //std::cout <<"PT_puupi"<< (*puppiLVectight_w).size()  << std::endl;    // (*puppiLVectight_w)[0].Pt() 
 
-		       if ((*puppitau2Dtau1)[tau] < 0.45){ // tight
-			   puppiLVectight_w->push_back(puppiJetsLVec[tau]); 
-		       }
-		   }
+                       if ((*puppitau2Dtau1)[tau] < 0.45){ // tight
+                           puppiLVectight_w->push_back(puppiJetsLVec[tau]); 
+                       }
+                   }
                } 
-	    }
+            }
             */
             //Top 1%
             /*
-	    for(int tau = 0; tau < (*puppitau3Dtau2).size(); ++tau){
-		if (puppisoftDropMass[tau]>105 && puppisoftDropMass[tau]<210){
-		    puppitau3Dtau2_SDM->push_back(puppitau3Dtau2->at(tau));
-		    
-		    if ((*puppitau3Dtau2)[tau] >= 0 && (*puppitau3Dtau2)[tau] < 0.65){
-			puppiLVecLoose_top->push_back(puppiJetsLVec[tau]);
+            for(int tau = 0; tau < (*puppitau3Dtau2).size(); ++tau){
+                if (puppisoftDropMass[tau]>105 && puppisoftDropMass[tau]<210){
+                    puppitau3Dtau2_SDM->push_back(puppitau3Dtau2->at(tau));
+                    
+                    if ((*puppitau3Dtau2)[tau] >= 0 && (*puppitau3Dtau2)[tau] < 0.65){
+                        puppiLVecLoose_top->push_back(puppiJetsLVec[tau]);
 
-			if ((*puppitau3Dtau2)[tau] < 0.54){ 
-			    puppiLVectight_top->push_back(puppiJetsLVec[tau]);
-			}
-		    }
-		}
-	    }
-	    */
-	    tr.registerDerivedVec("puppiLVectight_top", puppiLVectight_top);
-	    tr.registerDerivedVec("puppiLVecLoose_top", puppiLVecLoose_top);
-	    tr.registerDerivedVec("puppiLVectight_w", puppiLVectight_w);
-	    tr.registerDerivedVec("puppiLVecLoose_w", puppiLVecLoose_w);
-	    tr.registerDerivedVec("puppitau2Dtau1_SDM", puppitau2Dtau1_SDM);
-	    tr.registerDerivedVec("puppitau3Dtau2_SDM", puppitau3Dtau2_SDM);
+                        if ((*puppitau3Dtau2)[tau] < 0.54){ 
+                            puppiLVectight_top->push_back(puppiJetsLVec[tau]);
+                        }
+                    }
+                }
+            }
+            */
+            tr.registerDerivedVec("puppiLVectight_top", puppiLVectight_top);
+            tr.registerDerivedVec("puppiLVecLoose_top", puppiLVecLoose_top);
+            tr.registerDerivedVec("puppiLVectight_w", puppiLVectight_w);
+            tr.registerDerivedVec("puppiLVecLoose_w", puppiLVecLoose_w);
+            tr.registerDerivedVec("puppitau2Dtau1_SDM", puppitau2Dtau1_SDM);
+            tr.registerDerivedVec("puppitau3Dtau2_SDM", puppitau3Dtau2_SDM);
 
             //(*hadWLVec) = genUtility::GetHadWLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
-	  }
+          }
 
         public:
           Taudiv(std::shared_ptr<TopTagger> ttPtr) { 
@@ -2759,428 +2759,428 @@ namespace plotterFunctions
 
      class Ak8DrMatch {
      private:
-	 void generateAk8DrMatch(NTupleReader& tr) {
-	     const std::vector<TLorentzVector>& jetsLVec     = tr.getVec<TLorentzVector>("jetsLVec");
-	     const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec");
-	     const std::vector<TLorentzVector>& puppiLVectight_top = tr.getVec<TLorentzVector>("puppiLVectight_top");
-	     const std::vector<TLorentzVector>& puppiLVecLoose_top = tr.getVec<TLorentzVector>("puppiLVecLoose_top");
-	     const std::vector<TLorentzVector>& puppiLVectight_w = tr.getVec<TLorentzVector>("puppiLVectight_w");
-	     const std::vector<TLorentzVector>& puppiLVecLoose_w = tr.getVec<TLorentzVector>("puppiLVecLoose_w");  
-	     const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
+         void generateAk8DrMatch(NTupleReader& tr) {
+             const std::vector<TLorentzVector>& jetsLVec     = tr.getVec<TLorentzVector>("jetsLVec");
+             const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec");
+             const std::vector<TLorentzVector>& puppiLVectight_top = tr.getVec<TLorentzVector>("puppiLVectight_top");
+             const std::vector<TLorentzVector>& puppiLVecLoose_top = tr.getVec<TLorentzVector>("puppiLVecLoose_top");
+             const std::vector<TLorentzVector>& puppiLVectight_w = tr.getVec<TLorentzVector>("puppiLVectight_w");
+             const std::vector<TLorentzVector>& puppiLVecLoose_w = tr.getVec<TLorentzVector>("puppiLVecLoose_w");  
+             const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
 
-	     int nJetsAK41_min = 0;
-	     int nJetsAK41_med = 0; 
-	     int nJetsAK41_lar = 0;
-	     int nJetsPuppi_T1_min = 0;
-	     int nJetsPuppi_T1_med = 0;
-	     int nJetsPuppi_T1_lar = 0;
-	     int nJetsPuppi_L1_min = 0;
-	     int nJetsPuppi_L1_med = 0;
-	     int nJetsPuppi_L1_lar = 0;
-	     int nJetsAK42_min = 0;
-	     int nJetsAK42_med = 0;
-	     int nJetsAK42_lar = 0;
+             int nJetsAK41_min = 0;
+             int nJetsAK41_med = 0; 
+             int nJetsAK41_lar = 0;
+             int nJetsPuppi_T1_min = 0;
+             int nJetsPuppi_T1_med = 0;
+             int nJetsPuppi_T1_lar = 0;
+             int nJetsPuppi_L1_min = 0;
+             int nJetsPuppi_L1_med = 0;
+             int nJetsPuppi_L1_lar = 0;
+             int nJetsAK42_min = 0;
+             int nJetsAK42_med = 0;
+             int nJetsAK42_lar = 0;
  
-	     std::vector<double>* ak81dRMin = new std::vector<double>();
-	     std::vector<double>* ak82dRMin = new std::vector<double>(); 
-	     std::vector<double>* puppi_top_L_1dRMin = new std::vector<double>();
-	     std::vector<double>* puppi_top_L_2dRMin = new std::vector<double>();
-	     std::vector<double>* puppi_top_T_1dRMin = new std::vector<double>();
-	     std::vector<double>* puppi_top_T_2dRMin = new std::vector<double>(); 
-	     for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
-	     {
-		 if(ak8JetsLVec.size() >= 1) ak81dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[0]));
-		 if(ak8JetsLVec.size() >= 2) ak82dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[1]));
-	//	 if(puppiLVectight_top.size() >= 1) puppi_top_L_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[0]));
-	//	 if(puppiLVectight_top.size() >= 2) puppi_top_L_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[1]));
-	//	 if(puppiLVecLoose_top.size() >= 1) puppi_top_T_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[0]));
-	//	 if(puppiLVecLoose_top.size() >= 2) puppi_top_T_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[1]));
-		 std::sort( ak81dRMin->begin(),ak81dRMin->end() );
-		 std::sort( ak82dRMin->begin(),ak82dRMin->end() );
-	     }
-	     tr.registerDerivedVec("ak81dRMin", ak81dRMin);
-	     tr.registerDerivedVec("ak82dRMin", ak82dRMin);
-	  //   tr.registerDerivedVec("puppi_top_L_1dRMin", puppi_top_L_1dRMin);
-	   //  tr.registerDerivedVec("puppi_top_L_2dRMin", puppi_top_L_2dRMin);    
-	    // tr.registerDerivedVec("puppi_top_T_1dRMin", puppi_top_T_1dRMin);
-	     //tr.registerDerivedVec("puppi_top_T_2dRMin", puppi_top_T_2dRMin);     
+             std::vector<double>* ak81dRMin = new std::vector<double>();
+             std::vector<double>* ak82dRMin = new std::vector<double>(); 
+             std::vector<double>* puppi_top_L_1dRMin = new std::vector<double>();
+             std::vector<double>* puppi_top_L_2dRMin = new std::vector<double>();
+             std::vector<double>* puppi_top_T_1dRMin = new std::vector<double>();
+             std::vector<double>* puppi_top_T_2dRMin = new std::vector<double>(); 
+             for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
+             {
+                 if(ak8JetsLVec.size() >= 1) ak81dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[0]));
+                 if(ak8JetsLVec.size() >= 2) ak82dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[1]));
+        //       if(puppiLVectight_top.size() >= 1) puppi_top_L_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[0]));
+        //       if(puppiLVectight_top.size() >= 2) puppi_top_L_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[1]));
+        //       if(puppiLVecLoose_top.size() >= 1) puppi_top_T_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[0]));
+        //       if(puppiLVecLoose_top.size() >= 2) puppi_top_T_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[1]));
+                 std::sort( ak81dRMin->begin(),ak81dRMin->end() );
+                 std::sort( ak82dRMin->begin(),ak82dRMin->end() );
+             }
+             tr.registerDerivedVec("ak81dRMin", ak81dRMin);
+             tr.registerDerivedVec("ak82dRMin", ak82dRMin);
+          //   tr.registerDerivedVec("puppi_top_L_1dRMin", puppi_top_L_1dRMin);
+           //  tr.registerDerivedVec("puppi_top_L_2dRMin", puppi_top_L_2dRMin);    
+            // tr.registerDerivedVec("puppi_top_T_1dRMin", puppi_top_T_1dRMin);
+             //tr.registerDerivedVec("puppi_top_T_2dRMin", puppi_top_T_2dRMin);     
  
-	     for(int iJet1 = 0; iJet1 < ak81dRMin->size(); ++iJet1)
-	     {
-		 if(ak81dRMin->at(iJet1) <=0.2) nJetsAK41_min++;
-		 if(ak81dRMin->at(iJet1) <=0.4 && ak81dRMin->at(iJet1) > 0.2) nJetsAK41_med++;
-		 if(ak81dRMin->at(iJet1) <=0.8 && ak81dRMin->at(iJet1) > 0.4) nJetsAK41_lar++;
+             for(int iJet1 = 0; iJet1 < ak81dRMin->size(); ++iJet1)
+             {
+                 if(ak81dRMin->at(iJet1) <=0.2) nJetsAK41_min++;
+                 if(ak81dRMin->at(iJet1) <=0.4 && ak81dRMin->at(iJet1) > 0.2) nJetsAK41_med++;
+                 if(ak81dRMin->at(iJet1) <=0.8 && ak81dRMin->at(iJet1) > 0.4) nJetsAK41_lar++;
             
              } 
-	     for(int iJet1 = 0; iJet1 < puppi_top_L_1dRMin->size(); ++iJet1)
-	     {
-		 if(puppi_top_L_1dRMin->at(iJet1) <=0.2) nJetsPuppi_L1_min++;
-		 if(puppi_top_L_1dRMin->at(iJet1) <=0.4 && puppi_top_L_1dRMin->at(iJet1) > 0.2) nJetsPuppi_L1_med++;
-		 if(puppi_top_L_1dRMin->at(iJet1) <=0.8 && puppi_top_L_1dRMin->at(iJet1) > 0.4) nJetsPuppi_L1_lar++;
+             for(int iJet1 = 0; iJet1 < puppi_top_L_1dRMin->size(); ++iJet1)
+             {
+                 if(puppi_top_L_1dRMin->at(iJet1) <=0.2) nJetsPuppi_L1_min++;
+                 if(puppi_top_L_1dRMin->at(iJet1) <=0.4 && puppi_top_L_1dRMin->at(iJet1) > 0.2) nJetsPuppi_L1_med++;
+                 if(puppi_top_L_1dRMin->at(iJet1) <=0.8 && puppi_top_L_1dRMin->at(iJet1) > 0.4) nJetsPuppi_L1_lar++;
 
              }
-	     for(int iJet1 = 0; iJet1 < puppi_top_T_1dRMin->size(); ++iJet1)
-	     {
-		 if(puppi_top_T_1dRMin->at(iJet1) <=0.2) nJetsPuppi_T1_min++;
-		 if(puppi_top_T_1dRMin->at(iJet1) <=0.4 && puppi_top_T_1dRMin->at(iJet1) > 0.2) nJetsPuppi_T1_med++;
-		 if(puppi_top_T_1dRMin->at(iJet1) <=0.8 && puppi_top_T_1dRMin->at(iJet1) > 0.4) nJetsPuppi_T1_lar++;
+             for(int iJet1 = 0; iJet1 < puppi_top_T_1dRMin->size(); ++iJet1)
+             {
+                 if(puppi_top_T_1dRMin->at(iJet1) <=0.2) nJetsPuppi_T1_min++;
+                 if(puppi_top_T_1dRMin->at(iJet1) <=0.4 && puppi_top_T_1dRMin->at(iJet1) > 0.2) nJetsPuppi_T1_med++;
+                 if(puppi_top_T_1dRMin->at(iJet1) <=0.8 && puppi_top_T_1dRMin->at(iJet1) > 0.4) nJetsPuppi_T1_lar++;
 
              }
-	     for(int iJet2 = 0; iJet2 < ak82dRMin->size(); ++iJet2)
-	     {
-		 if(ak82dRMin->at(iJet2) <=0.2) nJetsAK42_min++;
-		 if(ak82dRMin->at(iJet2) <=0.4 && ak82dRMin->at(iJet2) > 0.2) nJetsAK42_med++;                         
-		 if(ak82dRMin->at(iJet2) <=0.8 && ak82dRMin->at(iJet2) > 0.4) nJetsAK42_lar++;
+             for(int iJet2 = 0; iJet2 < ak82dRMin->size(); ++iJet2)
+             {
+                 if(ak82dRMin->at(iJet2) <=0.2) nJetsAK42_min++;
+                 if(ak82dRMin->at(iJet2) <=0.4 && ak82dRMin->at(iJet2) > 0.2) nJetsAK42_med++;                         
+                 if(ak82dRMin->at(iJet2) <=0.8 && ak82dRMin->at(iJet2) > 0.4) nJetsAK42_lar++;
    
-	     }          
-	     tr.registerDerivedVar("nJetsAK41_min",nJetsAK41_min);
-	     tr.registerDerivedVar("nJetsAK41_med",nJetsAK41_med);
-	     tr.registerDerivedVar("nJetsAK41_lar",nJetsAK41_lar);
-	     tr.registerDerivedVar("nJetsPuppi_L1_min",nJetsPuppi_L1_min);
-	     tr.registerDerivedVar("nJetsPuppi_L1_med",nJetsPuppi_L1_med);
-	     tr.registerDerivedVar("nJetsPuppi_L1_lar",nJetsPuppi_L1_lar);
-	     tr.registerDerivedVar("nJetsPuppi_T1_min",nJetsPuppi_T1_min);
-	     tr.registerDerivedVar("nJetsPuppi_T1_med",nJetsPuppi_T1_med);
-	     tr.registerDerivedVar("nJetsPuppi_T1_lar",nJetsPuppi_T1_lar);
-	     tr.registerDerivedVar("nJetsAK42_min",nJetsAK42_min);
-	     tr.registerDerivedVar("nJetsAK42_med",nJetsAK42_med);
-	     tr.registerDerivedVar("nJetsAK42_lar",nJetsAK42_lar);
+             }          
+             tr.registerDerivedVar("nJetsAK41_min",nJetsAK41_min);
+             tr.registerDerivedVar("nJetsAK41_med",nJetsAK41_med);
+             tr.registerDerivedVar("nJetsAK41_lar",nJetsAK41_lar);
+             tr.registerDerivedVar("nJetsPuppi_L1_min",nJetsPuppi_L1_min);
+             tr.registerDerivedVar("nJetsPuppi_L1_med",nJetsPuppi_L1_med);
+             tr.registerDerivedVar("nJetsPuppi_L1_lar",nJetsPuppi_L1_lar);
+             tr.registerDerivedVar("nJetsPuppi_T1_min",nJetsPuppi_T1_min);
+             tr.registerDerivedVar("nJetsPuppi_T1_med",nJetsPuppi_T1_med);
+             tr.registerDerivedVar("nJetsPuppi_T1_lar",nJetsPuppi_T1_lar);
+             tr.registerDerivedVar("nJetsAK42_min",nJetsAK42_min);
+             tr.registerDerivedVar("nJetsAK42_med",nJetsAK42_med);
+             tr.registerDerivedVar("nJetsAK42_lar",nJetsAK42_lar);
 
 
-	     // Also start looking at subjet information
-	     const std::vector<TLorentzVector>& puppiSubJetsLVec  = tr.getVec<TLorentzVector>("puppiSubJetsLVec");
-	     const std::vector<double>& puppiSubJetsBdisc = tr.getVec<double>("puppiSubJetsBdisc");
+             // Also start looking at subjet information
+             const std::vector<TLorentzVector>& puppiSubJetsLVec  = tr.getVec<TLorentzVector>("puppiSubJetsLVec");
+             const std::vector<double>& puppiSubJetsBdisc = tr.getVec<double>("puppiSubJetsBdisc");
 
-	     // For each tagged top/W, find the corresponding subjets
-	     /*
-	     std::vector< std::vector<TLorentzVector> > W_subjets;
-	     std::vector<double>* W_subjets_pt_reldiff = new std::vector<double>();
-	     for( TLorentzVector myW : puppiLVectight_w)
-	     {
-		 std::vector<TLorentzVector> myW_subjets;
-		 int i = 0;
-		 for(TLorentzVector puppiSubJet : puppiSubJetsLVec)
-		 {
-		     double myDR = ROOT::Math::VectorUtil::DeltaR(myW, puppiSubJet);
-		     if (myDR < 0.8)
-		     {
-			 myW_subjets.push_back(puppiSubJet);
-		     }
-		     ++i;
-		 }
-		 // If more than 2 matches, find the best combination of two subjets by checking diff in 4-vector
-		 if (myW_subjets.size() > 2) {
-		     double min_diff = 999999.;
-		     int min_j=0, min_k=1;
-		     for (int j=0 ; j<myW_subjets.size(); ++j)
-		     {
-			 for (int k=j+1; k<myW_subjets.size(); ++k)
-			 {
-			     TLorentzVector diff_LV = myW - myW_subjets[j] - myW_subjets[k];
-			     double diff = abs(diff_LV.M());
-			     if(diff < min_diff)
-			     {
-				 min_diff = diff;
-				 min_j = j;
-				 min_k = k;
-			     }
-			 }
-		     }
-		     std::vector<TLorentzVector> mynewW_subjets = {myW_subjets[min_j], myW_subjets[min_k]};
-		     W_subjets.push_back(mynewW_subjets);
-		     W_subjets_pt_reldiff->push_back( ((myW_subjets[min_j]+myW_subjets[min_k]).Pt()-myW.Pt())/myW.Pt());
-		 } else {
-		     W_subjets.push_back(myW_subjets);
-		     W_subjets_pt_reldiff->push_back( ((myW_subjets[0]+myW_subjets[1]).Pt()-myW.Pt())/myW.Pt());
-		 }
-	     }
-	     tr.registerDerivedVec("W_subjets_pt_reldiff", W_subjets_pt_reldiff);
-             */
-	     // For each tagged top/W, find the corresponding subjets
-	     std::vector< std::vector< TLorentzVector> > top_subjets;
-	     std::vector<double>* top_subjets_pt_reldiff = new std::vector<double>();
+             // For each tagged top/W, find the corresponding subjets
              /*
-	     for( TLorentzVector mytop : puppiLVectight_top)
-	     {
-		 std::vector<TLorentzVector> mytop_subjets;
-		 int i = 0;
-		 for(TLorentzVector puppiSubJet : puppiSubJetsLVec)
-		 {
-		     double myDR = ROOT::Math::VectorUtil::DeltaR(mytop, puppiSubJet);
-		     if (myDR < 0.8)
-		     {
-			 mytop_subjets.push_back(puppiSubJet);
-		     }
-		     ++i;
-		 }
-		 // If more than 2 matches, find the best combination of two subjets
-		 if (mytop_subjets.size() > 2) {
-		     double min_diff = 999999.;
-		     int min_j=0, min_k=1;
-		     for (int j=0 ; j<mytop_subjets.size(); ++j)
-		     {
-			 for (int k=j+1; k<mytop_subjets.size(); ++k)
-			 {
-			     TLorentzVector diff_LV = mytop - mytop_subjets[j] - mytop_subjets[k];
-			     double diff = abs(diff_LV.M());
-			     if(diff < min_diff)
-			     {
-				 min_diff = diff;
-				 min_j = j;
-				 min_k = k;
-			     }
-			 }
-		     }
-		     std::vector<TLorentzVector> mynewtop_subjets = {mytop_subjets[min_j], mytop_subjets[min_k]};
-		     top_subjets.push_back(mynewtop_subjets);
-		     top_subjets_pt_reldiff->push_back( ((mytop_subjets[min_j]+mytop_subjets[min_k]).Pt()-mytop.Pt())/mytop.Pt());
-		 } else {
-		     top_subjets.push_back(mytop_subjets);
-		     top_subjets_pt_reldiff->push_back( ((mytop_subjets[0]+mytop_subjets[1]).Pt()-mytop.Pt())/mytop.Pt());
-		 }
-	     }
-	     tr.registerDerivedVec("top_subjets_pt_reldiff", top_subjets_pt_reldiff);
+             std::vector< std::vector<TLorentzVector> > W_subjets;
+             std::vector<double>* W_subjets_pt_reldiff = new std::vector<double>();
+             for( TLorentzVector myW : puppiLVectight_w)
+             {
+                 std::vector<TLorentzVector> myW_subjets;
+                 int i = 0;
+                 for(TLorentzVector puppiSubJet : puppiSubJetsLVec)
+                 {
+                     double myDR = ROOT::Math::VectorUtil::DeltaR(myW, puppiSubJet);
+                     if (myDR < 0.8)
+                     {
+                         myW_subjets.push_back(puppiSubJet);
+                     }
+                     ++i;
+                 }
+                 // If more than 2 matches, find the best combination of two subjets by checking diff in 4-vector
+                 if (myW_subjets.size() > 2) {
+                     double min_diff = 999999.;
+                     int min_j=0, min_k=1;
+                     for (int j=0 ; j<myW_subjets.size(); ++j)
+                     {
+                         for (int k=j+1; k<myW_subjets.size(); ++k)
+                         {
+                             TLorentzVector diff_LV = myW - myW_subjets[j] - myW_subjets[k];
+                             double diff = abs(diff_LV.M());
+                             if(diff < min_diff)
+                             {
+                                 min_diff = diff;
+                                 min_j = j;
+                                 min_k = k;
+                             }
+                         }
+                     }
+                     std::vector<TLorentzVector> mynewW_subjets = {myW_subjets[min_j], myW_subjets[min_k]};
+                     W_subjets.push_back(mynewW_subjets);
+                     W_subjets_pt_reldiff->push_back( ((myW_subjets[min_j]+myW_subjets[min_k]).Pt()-myW.Pt())/myW.Pt());
+                 } else {
+                     W_subjets.push_back(myW_subjets);
+                     W_subjets_pt_reldiff->push_back( ((myW_subjets[0]+myW_subjets[1]).Pt()-myW.Pt())/myW.Pt());
+                 }
+             }
+             tr.registerDerivedVec("W_subjets_pt_reldiff", W_subjets_pt_reldiff);
              */
-	     // Figure out gen matching..
-	     const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
-	     const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
-	     const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
-	     const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
+             // For each tagged top/W, find the corresponding subjets
+             std::vector< std::vector< TLorentzVector> > top_subjets;
+             std::vector<double>* top_subjets_pt_reldiff = new std::vector<double>();
+             /*
+             for( TLorentzVector mytop : puppiLVectight_top)
+             {
+                 std::vector<TLorentzVector> mytop_subjets;
+                 int i = 0;
+                 for(TLorentzVector puppiSubJet : puppiSubJetsLVec)
+                 {
+                     double myDR = ROOT::Math::VectorUtil::DeltaR(mytop, puppiSubJet);
+                     if (myDR < 0.8)
+                     {
+                         mytop_subjets.push_back(puppiSubJet);
+                     }
+                     ++i;
+                 }
+                 // If more than 2 matches, find the best combination of two subjets
+                 if (mytop_subjets.size() > 2) {
+                     double min_diff = 999999.;
+                     int min_j=0, min_k=1;
+                     for (int j=0 ; j<mytop_subjets.size(); ++j)
+                     {
+                         for (int k=j+1; k<mytop_subjets.size(); ++k)
+                         {
+                             TLorentzVector diff_LV = mytop - mytop_subjets[j] - mytop_subjets[k];
+                             double diff = abs(diff_LV.M());
+                             if(diff < min_diff)
+                             {
+                                 min_diff = diff;
+                                 min_j = j;
+                                 min_k = k;
+                             }
+                         }
+                     }
+                     std::vector<TLorentzVector> mynewtop_subjets = {mytop_subjets[min_j], mytop_subjets[min_k]};
+                     top_subjets.push_back(mynewtop_subjets);
+                     top_subjets_pt_reldiff->push_back( ((mytop_subjets[min_j]+mytop_subjets[min_k]).Pt()-mytop.Pt())/mytop.Pt());
+                 } else {
+                     top_subjets.push_back(mytop_subjets);
+                     top_subjets_pt_reldiff->push_back( ((mytop_subjets[0]+mytop_subjets[1]).Pt()-mytop.Pt())/mytop.Pt());
+                 }
+             }
+             tr.registerDerivedVec("top_subjets_pt_reldiff", top_subjets_pt_reldiff);
+             */
+             // Figure out gen matching..
+             const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+             const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
+             const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
+             const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
 
-	     std::vector<bool>* gentop_match = new std::vector<bool>(); // helpful to make plots of matched and unmatched number of tops
-	     std::vector<double>* dR_top_gentop = new std::vector<double>(); 
-	     std::vector<double>* dR_AK4_topsubjet_genmatched = new std::vector<double>(); 
-	     std::vector<double>* dR_AK4_top_genmatched = new std::vector<double>(); 
-	     std::vector<int>* top_N_AK4_matched_genmatched = new std::vector<int>(); 
-	     std::vector<int>* top_N_AK4_matched_notgenmatched = new std::vector<int>(); 
-	     std::vector<int>* top_N_AK4_notmatched_genmatched = new std::vector<int>(); 
-	     std::vector<int>* top_N_AK4_notmatched_notgenmatched = new std::vector<int>(); 
-	     std::vector<int>* top_N_AK4_matched_genmatched_0p6 = new std::vector<int>(); 
-	     std::vector<int>* top_N_AK4_matched_notgenmatched_0p6 = new std::vector<int>(); 
-	     std::vector<int>* top_N_AK4_notmatched_genmatched_0p6 = new std::vector<int>(); 
-	     std::vector<int>* top_N_AK4_notmatched_notgenmatched_0p6 = new std::vector<int>(); 
-	     std::vector<int>* top_N_AK4_matched_genmatchedother = new std::vector<int>(); 
-	     std::vector<int>* top_N_AK4_matched_notgenmatchedother = new std::vector<int>(); 
-	     std::vector<int>* top_N_AK4_matched_genmatchedother_0p6 = new std::vector<int>(); 
-	     std::vector<int>* top_N_AK4_matched_notgenmatchedother_0p6 = new std::vector<int>(); 
-	     if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
-	     {
-		 // For each tagged top, find the matching gen particles
+             std::vector<bool>* gentop_match = new std::vector<bool>(); // helpful to make plots of matched and unmatched number of tops
+             std::vector<double>* dR_top_gentop = new std::vector<double>(); 
+             std::vector<double>* dR_AK4_topsubjet_genmatched = new std::vector<double>(); 
+             std::vector<double>* dR_AK4_top_genmatched = new std::vector<double>(); 
+             std::vector<int>* top_N_AK4_matched_genmatched = new std::vector<int>(); 
+             std::vector<int>* top_N_AK4_matched_notgenmatched = new std::vector<int>(); 
+             std::vector<int>* top_N_AK4_notmatched_genmatched = new std::vector<int>(); 
+             std::vector<int>* top_N_AK4_notmatched_notgenmatched = new std::vector<int>(); 
+             std::vector<int>* top_N_AK4_matched_genmatched_0p6 = new std::vector<int>(); 
+             std::vector<int>* top_N_AK4_matched_notgenmatched_0p6 = new std::vector<int>(); 
+             std::vector<int>* top_N_AK4_notmatched_genmatched_0p6 = new std::vector<int>(); 
+             std::vector<int>* top_N_AK4_notmatched_notgenmatched_0p6 = new std::vector<int>(); 
+             std::vector<int>* top_N_AK4_matched_genmatchedother = new std::vector<int>(); 
+             std::vector<int>* top_N_AK4_matched_notgenmatchedother = new std::vector<int>(); 
+             std::vector<int>* top_N_AK4_matched_genmatchedother_0p6 = new std::vector<int>(); 
+             std::vector<int>* top_N_AK4_matched_notgenmatchedother_0p6 = new std::vector<int>(); 
+             if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
+             {
+                 // For each tagged top, find the matching gen particles
 
-		 // These are the hadronically decaying top quarks in the event:
-		 std::vector<TLorentzVector> hadtopLVec = genUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
-		 std::vector< std::vector<TLorentzVector> > hadtopdauLVec;
-		 for(TLorentzVector hadtop : hadtopLVec)
-		 {
-		     hadtopdauLVec.push_back(genUtility::GetTopdauLVec(hadtop, genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
-		 }
+                 // These are the hadronically decaying top quarks in the event:
+                 std::vector<TLorentzVector> hadtopLVec = genUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec);
+                 std::vector< std::vector<TLorentzVector> > hadtopdauLVec;
+                 for(TLorentzVector hadtop : hadtopLVec)
+                 {
+                     hadtopdauLVec.push_back(genUtility::GetTopdauLVec(hadtop, genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
+                 }
 
-		 // check all tagged tops
-		 /*
-		 for(unsigned int imytop=0; imytop<puppiLVectight_top.size(); ++imytop) 
-		 {
-		     TLorentzVector mytop = puppiLVectight_top[imytop];
-		     //std::cout << "Mytop info: " << mytop.Pt() << " " << mytop.Eta() << " " << mytop.Phi() << std::endl;
-		     // For now find the closest hadtop in deltaR
-		     TLorentzVector temp_gentop_match_LV;
-		     double min_DR = 99.;
-		     int matched_hadtop_index = -1;
-		     for(unsigned int myhadtop_i=0; myhadtop_i<hadtopLVec.size(); ++myhadtop_i)
-		     {
-			 TLorentzVector myhadtop = hadtopLVec[myhadtop_i];
-			 double DR_top = ROOT::Math::VectorUtil::DeltaR(mytop, myhadtop);
-			 if (DR_top < min_DR) 
-			 {
-			     temp_gentop_match_LV = myhadtop;
-			     min_DR = DR_top;
-			     matched_hadtop_index = myhadtop_i;
-			 }
-		     }
-		     dR_top_gentop->push_back(min_DR);
-		     // DR should be small for it to actually be a match
-		     if(min_DR < 0.4)
-		     {
-			 //std::cout << "Mytop info: " << mytop.Pt() << " " << mytop.Eta() << " " << mytop.Phi() << std::endl;
-			 gentop_match->push_back(true);
-			 // Now find the gen daughters for this gentop
-			 std::vector<TLorentzVector> gentopdauLVec = hadtopdauLVec[matched_hadtop_index];
+                 // check all tagged tops
+                 /*
+                 for(unsigned int imytop=0; imytop<puppiLVectight_top.size(); ++imytop) 
+                 {
+                     TLorentzVector mytop = puppiLVectight_top[imytop];
+                     //std::cout << "Mytop info: " << mytop.Pt() << " " << mytop.Eta() << " " << mytop.Phi() << std::endl;
+                     // For now find the closest hadtop in deltaR
+                     TLorentzVector temp_gentop_match_LV;
+                     double min_DR = 99.;
+                     int matched_hadtop_index = -1;
+                     for(unsigned int myhadtop_i=0; myhadtop_i<hadtopLVec.size(); ++myhadtop_i)
+                     {
+                         TLorentzVector myhadtop = hadtopLVec[myhadtop_i];
+                         double DR_top = ROOT::Math::VectorUtil::DeltaR(mytop, myhadtop);
+                         if (DR_top < min_DR) 
+                         {
+                             temp_gentop_match_LV = myhadtop;
+                             min_DR = DR_top;
+                             matched_hadtop_index = myhadtop_i;
+                         }
+                     }
+                     dR_top_gentop->push_back(min_DR);
+                     // DR should be small for it to actually be a match
+                     if(min_DR < 0.4)
+                     {
+                         //std::cout << "Mytop info: " << mytop.Pt() << " " << mytop.Eta() << " " << mytop.Phi() << std::endl;
+                         gentop_match->push_back(true);
+                         // Now find the gen daughters for this gentop
+                         std::vector<TLorentzVector> gentopdauLVec = hadtopdauLVec[matched_hadtop_index];
 
-			 // Now we have the tagged top (mytop), the gen had top (temp_gentop_match_LV), and the gen daughters (gentopdauLVec)
-			 // ready for some matching FUN!
+                         // Now we have the tagged top (mytop), the gen had top (temp_gentop_match_LV), and the gen daughters (gentopdauLVec)
+                         // ready for some matching FUN!
 
-			 // Removing AK4 jets based on DR matching with subjets of tagged top
-			 std::vector<TLorentzVector> mysubjets = top_subjets[imytop];
-			 std::vector<int> ak4_removed;
-			 if(mysubjets.size() != 2)
-			     std::cout << "Attention: found " << mysubjets.size() << " subjets instead of 2" << std::endl;
-			 //std::cout << "Subjet 0: " << mysubjets[0].Pt() << " " << mysubjets[0].Eta() << " " << mysubjets[0].Phi() << std::endl;
-			 //std::cout << "Subjet 0: " << mysubjets[1].Pt() << " " << mysubjets[1].Eta() << " " << mysubjets[1].Phi() << std::endl;
-			 
-			 // some counters
-			 int N_AK4_matched_genmatched = 0;
-			 int N_AK4_matched_notgenmatched = 0;
-			 int N_AK4_notmatched_genmatched = 0;
-			 int N_AK4_notmatched_notgenmatched = 0;
-			 // some counters
-			 int N_AK4_matched_genmatched_0p6 = 0;
-			 int N_AK4_matched_notgenmatched_0p6 = 0;
-			 int N_AK4_notmatched_genmatched_0p6 = 0;
-			 int N_AK4_notmatched_notgenmatched_0p6 = 0;
-			 // matched to another gentop
-			 int N_AK4_matched_genmatchedother = 0;
-			 int N_AK4_matched_notgenmatchedother = 0;
-			 int N_AK4_matched_genmatchedother_0p6 = 0;
-			 int N_AK4_matched_notgenmatchedother_0p6 = 0;
+                         // Removing AK4 jets based on DR matching with subjets of tagged top
+                         std::vector<TLorentzVector> mysubjets = top_subjets[imytop];
+                         std::vector<int> ak4_removed;
+                         if(mysubjets.size() != 2)
+                             std::cout << "Attention: found " << mysubjets.size() << " subjets instead of 2" << std::endl;
+                         //std::cout << "Subjet 0: " << mysubjets[0].Pt() << " " << mysubjets[0].Eta() << " " << mysubjets[0].Phi() << std::endl;
+                         //std::cout << "Subjet 0: " << mysubjets[1].Pt() << " " << mysubjets[1].Eta() << " " << mysubjets[1].Phi() << std::endl;
+                         
+                         // some counters
+                         int N_AK4_matched_genmatched = 0;
+                         int N_AK4_matched_notgenmatched = 0;
+                         int N_AK4_notmatched_genmatched = 0;
+                         int N_AK4_notmatched_notgenmatched = 0;
+                         // some counters
+                         int N_AK4_matched_genmatched_0p6 = 0;
+                         int N_AK4_matched_notgenmatched_0p6 = 0;
+                         int N_AK4_notmatched_genmatched_0p6 = 0;
+                         int N_AK4_notmatched_notgenmatched_0p6 = 0;
+                         // matched to another gentop
+                         int N_AK4_matched_genmatchedother = 0;
+                         int N_AK4_matched_notgenmatchedother = 0;
+                         int N_AK4_matched_genmatchedother_0p6 = 0;
+                         int N_AK4_matched_notgenmatchedother_0p6 = 0;
 
-			 for (unsigned int j=0; j<jetsLVec.size(); ++j)
-			 {
-			     double DR1 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[0]);
-			     double DR2 = DR1;
+                         for (unsigned int j=0; j<jetsLVec.size(); ++j)
+                         {
+                             double DR1 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[0]);
+                             double DR2 = DR1;
                              if(mysubjets.size()>1) {
                              double DR2 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[1]);
                              }
-			     //std::cout << "DR1, DR2: " << DR1 << " " << DR2 << std::endl;
-			     // Check if it matches a gen daughter
-			     bool genmatch = false;
-			     for (TLorentzVector gendau : gentopdauLVec)
-			     {
-				 double DR_AK4_gen = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], gendau);
-				 //std::cout << "gen DR " << DR_AK4_gen << std::endl;
-				 if (DR_AK4_gen < 0.4)
-				 {
-				     // matches gendaughter
-				     genmatch = true;
-				     break;
-				 }
-			     }
-			     if(genmatch){
-				 dR_AK4_topsubjet_genmatched->push_back(std::min(DR1,DR2));
-				 dR_AK4_top_genmatched->push_back(ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mytop));
-			     }
-			     // should merge this with 'genmatch' finding...
-			     bool genmatch_other = false;
-			     for (unsigned int other=0; other<hadtopdauLVec.size() && !genmatch_other; ++other)
-			     {
-				 if(other == matched_hadtop_index)
-				     continue;
-				 for (TLorentzVector gendau : hadtopdauLVec[other])
-				 {
-				     double DR_AK4_gen = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], gendau);
-				     //std::cout << "gen DR " << DR_AK4_gen << std::endl;
-				     if (DR_AK4_gen < 0.4)
-				     {
-					 // matches gendaughter
-					 genmatch_other = true;
-					 break;
-				     }
-				 }
-			     }
+                             //std::cout << "DR1, DR2: " << DR1 << " " << DR2 << std::endl;
+                             // Check if it matches a gen daughter
+                             bool genmatch = false;
+                             for (TLorentzVector gendau : gentopdauLVec)
+                             {
+                                 double DR_AK4_gen = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], gendau);
+                                 //std::cout << "gen DR " << DR_AK4_gen << std::endl;
+                                 if (DR_AK4_gen < 0.4)
+                                 {
+                                     // matches gendaughter
+                                     genmatch = true;
+                                     break;
+                                 }
+                             }
+                             if(genmatch){
+                                 dR_AK4_topsubjet_genmatched->push_back(std::min(DR1,DR2));
+                                 dR_AK4_top_genmatched->push_back(ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mytop));
+                             }
+                             // should merge this with 'genmatch' finding...
+                             bool genmatch_other = false;
+                             for (unsigned int other=0; other<hadtopdauLVec.size() && !genmatch_other; ++other)
+                             {
+                                 if(other == matched_hadtop_index)
+                                     continue;
+                                 for (TLorentzVector gendau : hadtopdauLVec[other])
+                                 {
+                                     double DR_AK4_gen = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], gendau);
+                                     //std::cout << "gen DR " << DR_AK4_gen << std::endl;
+                                     if (DR_AK4_gen < 0.4)
+                                     {
+                                         // matches gendaughter
+                                         genmatch_other = true;
+                                         break;
+                                     }
+                                 }
+                             }
 
-			     bool subjetmatch = false;
-			     bool subjetmatch_0p6 = false;
-			     if (DR1 < 0.4 || DR2 < 0.4)
-			     {
-				 //std::cout << "Found AK4 jet matching a subjet" << std::endl;
-				 // found a match
-				 subjetmatch = true;
-				 ak4_removed.push_back(j);
-			     }
-			     if (DR1 < 0.6 || DR2 < 0.6)
-			     {
-				 //std::cout << "Found AK4 jet matching a subjet" << std::endl;
-				 // found a match
-				 subjetmatch_0p6 = true;
-			     }
-
-
-			     if(genmatch){
-				 if(subjetmatch)
-				     N_AK4_matched_genmatched++;
-				 else
-				     N_AK4_notmatched_genmatched++;
-				 if(subjetmatch_0p6)
-				     N_AK4_matched_genmatched_0p6++;
-				 else
-				     N_AK4_notmatched_genmatched_0p6++;
-			     } else { // Not genmatched to any of the correct top daughters
-				 if(subjetmatch)
-				     N_AK4_matched_notgenmatched++;
-				 else
-				     N_AK4_notmatched_notgenmatched++;
-				 if(subjetmatch_0p6)
-				     N_AK4_matched_notgenmatched_0p6++;
-				 else
-				     N_AK4_notmatched_notgenmatched_0p6++;
-
-				 if(genmatch_other){
-				     if(subjetmatch)
-					 N_AK4_matched_genmatchedother++;
-				     if(subjetmatch_0p6)
-					 N_AK4_matched_genmatchedother_0p6++;
-				 } else {
-				     if(subjetmatch)
-					 N_AK4_matched_notgenmatchedother++;
-				     if(subjetmatch_0p6)
-					 N_AK4_matched_notgenmatchedother_0p6++;
-				 }
-
-			     }
+                             bool subjetmatch = false;
+                             bool subjetmatch_0p6 = false;
+                             if (DR1 < 0.4 || DR2 < 0.4)
+                             {
+                                 //std::cout << "Found AK4 jet matching a subjet" << std::endl;
+                                 // found a match
+                                 subjetmatch = true;
+                                 ak4_removed.push_back(j);
+                             }
+                             if (DR1 < 0.6 || DR2 < 0.6)
+                             {
+                                 //std::cout << "Found AK4 jet matching a subjet" << std::endl;
+                                 // found a match
+                                 subjetmatch_0p6 = true;
+                             }
 
 
+                             if(genmatch){
+                                 if(subjetmatch)
+                                     N_AK4_matched_genmatched++;
+                                 else
+                                     N_AK4_notmatched_genmatched++;
+                                 if(subjetmatch_0p6)
+                                     N_AK4_matched_genmatched_0p6++;
+                                 else
+                                     N_AK4_notmatched_genmatched_0p6++;
+                             } else { // Not genmatched to any of the correct top daughters
+                                 if(subjetmatch)
+                                     N_AK4_matched_notgenmatched++;
+                                 else
+                                     N_AK4_notmatched_notgenmatched++;
+                                 if(subjetmatch_0p6)
+                                     N_AK4_matched_notgenmatched_0p6++;
+                                 else
+                                     N_AK4_notmatched_notgenmatched_0p6++;
+
+                                 if(genmatch_other){
+                                     if(subjetmatch)
+                                         N_AK4_matched_genmatchedother++;
+                                     if(subjetmatch_0p6)
+                                         N_AK4_matched_genmatchedother_0p6++;
+                                 } else {
+                                     if(subjetmatch)
+                                         N_AK4_matched_notgenmatchedother++;
+                                     if(subjetmatch_0p6)
+                                         N_AK4_matched_notgenmatchedother_0p6++;
+                                 }
+
+                             }
 
 
-			 }
-			 top_N_AK4_matched_genmatched->push_back(N_AK4_matched_genmatched);
-			 top_N_AK4_matched_notgenmatched->push_back(N_AK4_matched_notgenmatched);
-			 top_N_AK4_notmatched_genmatched->push_back(N_AK4_notmatched_genmatched);
-			 top_N_AK4_notmatched_notgenmatched->push_back(N_AK4_notmatched_notgenmatched);
-			 top_N_AK4_matched_genmatched_0p6->push_back(N_AK4_matched_genmatched_0p6);
-			 top_N_AK4_matched_notgenmatched_0p6->push_back(N_AK4_matched_notgenmatched_0p6);
-			 top_N_AK4_notmatched_genmatched_0p6->push_back(N_AK4_notmatched_genmatched_0p6);
-			 top_N_AK4_notmatched_notgenmatched_0p6->push_back(N_AK4_notmatched_notgenmatched_0p6);
 
-			 top_N_AK4_matched_genmatchedother->push_back(N_AK4_matched_genmatchedother);
-			 top_N_AK4_matched_notgenmatchedother->push_back(N_AK4_matched_notgenmatchedother);
-			 top_N_AK4_matched_genmatchedother_0p6->push_back(N_AK4_matched_genmatchedother_0p6);
-			 top_N_AK4_matched_notgenmatchedother_0p6->push_back(N_AK4_matched_notgenmatchedother_0p6);
-			 
-		     } else // No match
-		     { 
-			 gentop_match->push_back(false);
-		     }
 
-		 }
+                         }
+                         top_N_AK4_matched_genmatched->push_back(N_AK4_matched_genmatched);
+                         top_N_AK4_matched_notgenmatched->push_back(N_AK4_matched_notgenmatched);
+                         top_N_AK4_notmatched_genmatched->push_back(N_AK4_notmatched_genmatched);
+                         top_N_AK4_notmatched_notgenmatched->push_back(N_AK4_notmatched_notgenmatched);
+                         top_N_AK4_matched_genmatched_0p6->push_back(N_AK4_matched_genmatched_0p6);
+                         top_N_AK4_matched_notgenmatched_0p6->push_back(N_AK4_matched_notgenmatched_0p6);
+                         top_N_AK4_notmatched_genmatched_0p6->push_back(N_AK4_notmatched_genmatched_0p6);
+                         top_N_AK4_notmatched_notgenmatched_0p6->push_back(N_AK4_notmatched_notgenmatched_0p6);
+
+                         top_N_AK4_matched_genmatchedother->push_back(N_AK4_matched_genmatchedother);
+                         top_N_AK4_matched_notgenmatchedother->push_back(N_AK4_matched_notgenmatchedother);
+                         top_N_AK4_matched_genmatchedother_0p6->push_back(N_AK4_matched_genmatchedother_0p6);
+                         top_N_AK4_matched_notgenmatchedother_0p6->push_back(N_AK4_matched_notgenmatchedother_0p6);
+                         
+                     } else // No match
+                     { 
+                         gentop_match->push_back(false);
+                     }
+
+                 }
              */
-	     }
+             }
              
-	     tr.registerDerivedVec("gentop_match", gentop_match);
-	     tr.registerDerivedVec("dR_top_gentop", dR_top_gentop);
-	     tr.registerDerivedVec("dR_AK4_topsubjet_genmatched", dR_AK4_topsubjet_genmatched);
-	     tr.registerDerivedVec("dR_AK4_top_genmatched", dR_AK4_top_genmatched);
-	     tr.registerDerivedVec("top_N_AK4_matched_genmatched", top_N_AK4_matched_genmatched);
-	     tr.registerDerivedVec("top_N_AK4_matched_notgenmatched", top_N_AK4_matched_notgenmatched);
-	     tr.registerDerivedVec("top_N_AK4_notmatched_genmatched", top_N_AK4_notmatched_genmatched);
-	     tr.registerDerivedVec("top_N_AK4_notmatched_notgenmatched", top_N_AK4_notmatched_notgenmatched);
-	     tr.registerDerivedVec("top_N_AK4_matched_genmatched_0p6", top_N_AK4_matched_genmatched_0p6);
-	     tr.registerDerivedVec("top_N_AK4_matched_notgenmatched_0p6", top_N_AK4_matched_notgenmatched_0p6);
-	     tr.registerDerivedVec("top_N_AK4_notmatched_genmatched_0p6", top_N_AK4_notmatched_genmatched_0p6);
-	     tr.registerDerivedVec("top_N_AK4_notmatched_notgenmatched_0p6", top_N_AK4_notmatched_notgenmatched_0p6);
+             tr.registerDerivedVec("gentop_match", gentop_match);
+             tr.registerDerivedVec("dR_top_gentop", dR_top_gentop);
+             tr.registerDerivedVec("dR_AK4_topsubjet_genmatched", dR_AK4_topsubjet_genmatched);
+             tr.registerDerivedVec("dR_AK4_top_genmatched", dR_AK4_top_genmatched);
+             tr.registerDerivedVec("top_N_AK4_matched_genmatched", top_N_AK4_matched_genmatched);
+             tr.registerDerivedVec("top_N_AK4_matched_notgenmatched", top_N_AK4_matched_notgenmatched);
+             tr.registerDerivedVec("top_N_AK4_notmatched_genmatched", top_N_AK4_notmatched_genmatched);
+             tr.registerDerivedVec("top_N_AK4_notmatched_notgenmatched", top_N_AK4_notmatched_notgenmatched);
+             tr.registerDerivedVec("top_N_AK4_matched_genmatched_0p6", top_N_AK4_matched_genmatched_0p6);
+             tr.registerDerivedVec("top_N_AK4_matched_notgenmatched_0p6", top_N_AK4_matched_notgenmatched_0p6);
+             tr.registerDerivedVec("top_N_AK4_notmatched_genmatched_0p6", top_N_AK4_notmatched_genmatched_0p6);
+             tr.registerDerivedVec("top_N_AK4_notmatched_notgenmatched_0p6", top_N_AK4_notmatched_notgenmatched_0p6);
 
-	     tr.registerDerivedVec("top_N_AK4_matched_genmatchedother", top_N_AK4_matched_genmatchedother);
-	     tr.registerDerivedVec("top_N_AK4_matched_notgenmatchedother", top_N_AK4_matched_notgenmatchedother);
-	     tr.registerDerivedVec("top_N_AK4_matched_genmatchedother_0p6", top_N_AK4_matched_genmatchedother_0p6);
-	     tr.registerDerivedVec("top_N_AK4_matched_notgenmatchedother_0p6", top_N_AK4_matched_notgenmatchedother_0p6);
+             tr.registerDerivedVec("top_N_AK4_matched_genmatchedother", top_N_AK4_matched_genmatchedother);
+             tr.registerDerivedVec("top_N_AK4_matched_notgenmatchedother", top_N_AK4_matched_notgenmatchedother);
+             tr.registerDerivedVec("top_N_AK4_matched_genmatchedother_0p6", top_N_AK4_matched_genmatchedother_0p6);
+             tr.registerDerivedVec("top_N_AK4_matched_notgenmatchedother_0p6", top_N_AK4_matched_notgenmatchedother_0p6);
 
-	 }
+         }
 
      public:
-	 Ak8DrMatch() {
-	 }
-	 ~Ak8DrMatch() {}
-	 void operator()(NTupleReader& tr)
-	 {
-	     generateAk8DrMatch(tr);
-	 }
+         Ak8DrMatch() {
+         }
+         ~Ak8DrMatch() {}
+         void operator()(NTupleReader& tr)
+         {
+             generateAk8DrMatch(tr);
+         }
      };
 
 //void ak8DrMatch(NTupleReader& tr)
