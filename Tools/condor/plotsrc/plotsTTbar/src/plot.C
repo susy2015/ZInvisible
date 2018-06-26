@@ -53,7 +53,23 @@ public:
     std::string legEntry, histFile, histName, drawOptions;
     int color, rebin;
     std::shared_ptr<TH1> h;
+    std::shared_ptr<TH1> b; //We will save background histogram here, and automatically subtract it.
     double yield = 0;
+
+    //Subtract a histogram (This is useful if we are using background subtraction)
+    void subtract(TH1* bkg){
+
+        b.reset(static_cast<TH1*>(bkg->Clone()));
+        if(b){ std::cout << "Subtracting histogram has yield " << b->Integral() << std::endl; }
+        //If h has already been retrieved, let's go ahead and do the subtraction
+        if(b&&h){
+            std::cout << "Performing background subtraction." << std::endl;
+            TH1D *btemp = (TH1D*)b->Clone();
+            h->Add(btemp,-1);
+            std::cout << "New Yield: " << h->Integral() << std::endl;
+        }
+
+    }
 
     //Formay legEntry w/ yield
     std::string getlegEntry(){
@@ -90,6 +106,8 @@ public:
             return;
         }
 
+
+
         //Let's make the name nicer.
         std::string hName = (histName.find("/") != std::string::npos ? histName.substr(histName.find("/")+1) : histName);
         h->SetNameTitle(hName.c_str(),hName.c_str());
@@ -101,13 +119,21 @@ public:
         h->SetMarkerColor(color);
         h->SetMarkerStyle(20);
 
-        // rebin the histogram if desired
-        if(rebin >0) h->Rebin(rebin);
-
         //Get yield for legend
         yield = h->Integral();
 
         std::cout << yield << std::endl;
+
+        // rebin the histogram if desired
+        if(rebin >0) h->Rebin(rebin);
+
+        //Now let's do a background subtraction if it has been specified
+        if(h&&b){
+            std::cout << "Performing background subtraction" << std::endl;
+            TH1D *btemp = (TH1D*)b->Clone();
+            h->Add(btemp,-1);
+            std::cout << "New Yield is " << h->Integral() << std:: endl;
+        }
 
     }
 
@@ -183,6 +209,13 @@ public:
 
     void plot(const std::string& histName, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double lumi = 36100)
     {
+
+        bool bkgSub = sigEntries_.size() > 0;
+
+        if(bkgSub){ 
+            std::cout << "Background Subtraction is enabled." << std::endl;  
+        }
+
         //This is a magic incantation to disassociate opened histograms from their files so the files can be closed
         TH1::AddDirectory(false);
 
@@ -218,6 +251,8 @@ public:
         THStack *bgStack = new THStack();
         //Make seperate histogram from sum of BG histograms because I don't know how to make a THStack give me this 
         TH1* hbgSum = nullptr;
+        TH1* hsgSum = nullptr;
+
         for(int iBG = bgEntries_.size() - 1; iBG >= 0; --iBG)
         {
             //Get new histogram
@@ -225,9 +260,23 @@ public:
             bgEntries_[iBG].rebin = rebin;
             bgEntries_[iBG].retrieveHistogram();
 
-            bgStack->Add(bgEntries_[iBG].h.get(), bgEntries_[iBG].drawOptions.c_str());
+            //We are really making this code a frakenstein's monster, only fill this here if we aren't doing background subtraction
+            if(!bkgSub) bgStack->Add(bgEntries_[iBG].h.get(), bgEntries_[iBG].drawOptions.c_str());
+
             if(!hbgSum) hbgSum = static_cast<TH1*>(bgEntries_[iBG].h->Clone());
             else        hbgSum->Add(bgEntries_[iBG].h.get());
+        }
+
+        //If we are doing background substration, setup the bgStack here:
+        if(bkgSub){
+            for(int iSG = 0; iSG < sigEntries_.size(); iSG++){
+                sigEntries_[iSG].histName = histName;
+                sigEntries_[iSG].rebin = rebin;
+                sigEntries_[iSG].retrieveHistogram();
+                bgStack->Add(sigEntries_[iSG].h.get(), sigEntries_[iSG].drawOptions.c_str());
+                if(!hsgSum) hsgSum = static_cast<TH1*>(sigEntries_[iSG].h->Clone());
+                else        hsgSum->Add(sigEntries_[iSG].h.get());
+            } 
         }
 
         //data
@@ -235,33 +284,34 @@ public:
         data_.histName = histName;
         data_.rebin = rebin;
         data_.retrieveHistogram();
+        if(bkgSub) data_.subtract(hbgSum);
         leg->AddEntry(data_.h.get(), data_.getlegEntry().c_str(), data_.drawOptions.c_str());
-        smartMax(hbgSum, leg, static_cast<TPad*>(gPad), min, max, lmax, true);
+
+        if(!bkgSub) {smartMax(hbgSum, leg, static_cast<TPad*>(gPad), min, max, lmax, true);}
+        else {smartMax(hsgSum, leg, static_cast<TPad*>(gPad), min, max, lmax, true);}
 
         //background
-        for(auto& entry : bgEntries_)
-        {
-            //set fill color so BG will have solid fill
-            entry.setFillColor();
+        if(!bkgSub){
+            for(auto& entry : bgEntries_)
+            {
+                //set fill color so BG will have solid fill
+                entry.setFillColor();
 
-            //add histograms to TLegend
-            leg->AddEntry(entry.h.get(), entry.getlegEntry().c_str(), "F");
+                //add histograms to TLegend
+                leg->AddEntry(entry.h.get(), entry.getlegEntry().c_str(), "F");
+            }
+            smartMax(hbgSum, leg, static_cast<TPad*>(gPad), min, max, lmax, false);
+        }else{
+            for(auto& entry : sigEntries_)
+            {
+                //get new histogram
+                entry.setFillColor();;
+
+                //add histograms to TLegend
+                leg->AddEntry(entry.h.get(), entry.getlegEntry().c_str(), "F");
+            }
+            smartMax(hsgSum, leg, static_cast<TPad*>(gPad), min, max, lmax, false);
         }
-        smartMax(hbgSum, leg, static_cast<TPad*>(gPad), min, max, lmax, false);
-
-        //signal 
-        for(auto& entry : sigEntries_)
-        {
-            //get new histogram
-            entry.histName = histName;
-            entry.rebin = rebin;
-            entry.retrieveHistogram();
-
-            //add histograms to TLegend
-            leg->AddEntry(entry.h.get(), entry.getlegEntry().c_str(), "L");
-            smartMax(entry.h.get(), leg, static_cast<TPad*>(gPad), min, max, lmax, false);
-        }
-
         //Set Canvas margin (gPad is root magic to access the current pad, in this case canvas "c")
         gPad->SetLeftMargin(0.12);
         gPad->SetRightMargin(0.06);
@@ -306,14 +356,8 @@ public:
         //Tick marks on both sides
         gPad->SetTicky();
 
-        //plot background stack
+        //Here is the frakenstein monster, this is either all the MC, or it is just the wanted
         bgStack->Draw("same");
-
-        //plot signal histograms
-        for(const auto& entry : sigEntries_)
-        {
-            entry.draw();
-        }
 
         //plot data histogram
         data_.draw();
@@ -347,13 +391,25 @@ public:
 
         //Now we work on the ratio plot
         TH1* ratio_hist;
-        
+        TH1* ratio_denom;        
+
         ratio_hist = static_cast<TH1*>(data_.h->Clone());
-
+        if(!bkgSub){ratio_denom = (TH1D*)hbgSum->Clone();}
+        else{ratio_denom = (TH1D*)hsgSum->Clone();}
+        
         ratio_hist->Sumw2();
-        hbgSum->Sumw2();
+        ratio_denom->Sumw2();
 
-        ratio_hist->Divide(hbgSum); // data/bkg
+        std::cout << "ratio_hist ";
+        ratio_hist->Print();
+
+        std::cout << "ratio_denom ";
+        ratio_denom->Print();
+
+        ratio_hist->Divide(ratio_denom); // data/bkg
+
+        std::cout << "Ratio ";
+        ratio_hist->Print();
 
         c->cd(2); // Let's move to the bottom pad
         pad2->cd();
@@ -371,27 +427,37 @@ public:
 
         //Draw a dummy
         //create a dummy histogram to act as the axes
+        std::cout << "Setting up dummy ratio histogram" << std::endl;
         histInfo dummyR(new TH1D("dummyR", "dummyR", 1000, data_.h->GetBinLowEdge(1), data_.h->GetBinLowEdge(data_.h->GetNbinsX()) + data_.h->GetBinWidth(data_.h->GetNbinsX())));
         dummyR.setupAxesR(.4);
-        dummyR.h->GetYaxis()->SetTitle("Ratio (data/bkg)");
+        if(bkgSub){dummyR.h->GetYaxis()->SetTitle("Ratio (data/bkg)");}
+        else{dummyR.h->GetYaxis()->SetTitle("Ratio (data/MC)");}
         dummyR.h->GetXaxis()->SetTitle(xAxisLabel.c_str());
 
         //draw dummy axes
+        std::cout << "Drawing ratio axes" << std::endl;
         dummyR.draw();
 
         //draw the ratio plot
+        std::cout << "Now drawing ratio histogram" << std::endl;
         ratio_hist->Draw("same");
+        std::cout << "Ratio histogram was drawn" << std::endl;
 
         std::string hName = (histName.find("/") != std::string::npos ? histName.substr(histName.find("/")+1) : histName);
 
         //save new plot to file
-        c->Print((hName + ".png").c_str());
+        std::cout << "Saving plot." << std::endl;
+        if(!bkgSub){c->Print((hName + ".png").c_str());}
+        else{c->Print(("bkgSub_" + hName + ".png").c_str());}
 
         //clean up dynamic memory
         delete c;
         delete leg;
         delete bgStack;
         delete hbgSum;
+        delete hsgSum;
+        delete ratio_denom;
+        delete ratio_hist;
     }
 
 
@@ -1243,17 +1309,34 @@ int main()
     histInfo data = {"Data",    "Data_MET-combined.root", "PEX0",       kBlack};
 
     //vector summarizing background histograms to include in the plot
+    //vector summarizing background histograms to include in the plot
     std::vector<histInfo> bgEntries = {
-//        {"GJets",         "GJets-combined.root",      "hist", kViolet},
+//        {"GJets",         "GJets-combined.root",      "hist", kViolet},   
         {"QCD",           "QCD-combined.root",        "hist", kBlue+2},
         {"Rare",          "Rare-combined.root",       "hist", kAzure},
         {"TTbar",         "TTbar-combined.root",      "hist", kOrange},
         {"WJets",         "WJets-combined.root",      "hist", kTeal},
 //        {"DYJets",        "DYJets-combined.root",     "hist", kCyan},
         {"Diboson",       "Diboson-combined.root",    "hist", kPink},
-        {"tW",            "tW-combined.root",         "hist", kSpring},
+        {"tW",            "tW-combined.root",         "hist", kSpring}, 
         {"ZJets",         "ZJets-combined.root",      "hist", kMagenta+3},
-        {"TTZ",           "TTZ-combined.root",        "hist", kMagenta},
+        {"TTZ",           "TTZ-combined.root",        "hist", kMagenta}
+    };
+
+    //These are the background that we want to subtract from the data
+    std::vector<histInfo> unwantedEntries = {
+        {"QCD",           "QCD-combined.root",        "hist", kBlue+2},
+        {"Rare",          "Rare-combined.root",       "hist", kAzure},
+        {"WJets",         "WJets-combined.root",      "hist", kTeal},
+        {"Diboson",       "Diboson-combined.root",    "hist", kPink},
+        {"tW",            "tW-combined.root",         "hist", kSpring}, 
+        {"ZJets",         "ZJets-combined.root",      "hist", kMagenta+3}
+    };
+
+    //These are the entires that have the objects we want (hadronically decaying tops)
+    std::vector<histInfo> wantedEntries = {
+        {"TTbar",         "TTbar-combined.root",      "hist", kOrange},
+        {"TTZ",           "TTZ-combined.root",        "hist", kMagenta}
     };
 
     //vector summarizing signal histograms to include in the plot
@@ -1264,8 +1347,13 @@ int main()
     //make plotter object with the required sources for histograms specified
 //    Plotter plt(std::move(data), std::move(bgEntries), std::move(sigEntries));
     Plotter plt(std::move(data), std::move(bgEntries));
+    Plotter pltSub(std::move(data), std::move(unwantedEntries), std::move(wantedEntries)); //Plotter to make background subtracted plots
 
     plt.plot("ttbar/MET", "p_{T}^{miss} [GeV]", "Events", true, -1, -1, 5);
+    pltSub.plot("ttbar/MET", "p_{T}^{miss} [GeV]", "Events", true, -1, -1, 5);
+
+    return 0;
+
     plt.plot("ttbar/HT", "H_{T} [GeV]", "Events", true, -1, -1, 5);
     plt.plot("ttbar/nJets", "Jets/Event", "Events", true);
     plt.plot("ttbar/nVertices", "primary vertices/event", "Events", true);
