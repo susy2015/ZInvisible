@@ -223,22 +223,26 @@ int main(int argc, char* argv[])
   Plotter::DataCollection dcData_SingleMuon_nj("data",   "cntNJetsPt30Eta24Zinv", {dsData_SingleMuon});
   Plotter::DataCollection dcMC_nj(             "stack",  "cntNJetsPt30Eta24Zinv", stack_MC);
   Plotter::DataCollection dcwMC_nj(            "stack",  "cntNJetsPt30Eta24Zinv", stackw_MC);
-    Plotter::DataCollection dcwwMC_nj(           "stack",  "cntNJetsPt30Eta24Zinv", stackww_MC);
+  Plotter::DataCollection dcwwMC_nj(           "stack",  "cntNJetsPt30Eta24Zinv", stackww_MC);
  
-    // pt
-    Plotter::DataCollection dcData_DY_Pt("data",   "DY_Pt", {dswDY});
-    Plotter::DataCollection dcMC_DY_Pt("stack",   "DY_Pt", stack_MC);
+  // pt
+  Plotter::DataCollection dcData_DY_pt("data",  "genZPt", {dsDY});
+  Plotter::DataCollection dcMC_DY_pt("stack",   "genZPt", stack_MC);
 
- // met                                                                                                                                                                           
+  // eta
+
+  // invariant mass
+
+  // met                                                                                                                                                                           
   Plotter::DataCollection dcData_SingleMuon_met("data",   "cleanMetPt", {dsData_SingleMuon});
   Plotter::DataCollection dcMC_met(             "stack",  "cleanMetPt", stack_MC);
   Plotter::DataCollection dcwMC_met(            "stack",  "cleanMetPt", stackw_MC);
-    Plotter::DataCollection dcwwMC_met(           "stack",  "cleanMetPt", stackww_MC);
+  Plotter::DataCollection dcwwMC_met(           "stack",  "cleanMetPt", stackww_MC);
   // ntops                                                                                                                                                                         
   Plotter::DataCollection dcData_SingleMuon_nt("data",   "nTopCandSortedCntZinv", {dsData_SingleMuon});
   Plotter::DataCollection dcMC_nt(             "stack",  "nTopCandSortedCntZinv", stack_MC);
   Plotter::DataCollection dcwMC_nt(            "stack",  "nTopCandSortedCntZinv", stackw_MC);
-    Plotter::DataCollection dcwwMC_nt(           "stack",  "nTopCandSortedCntZinv", stackww_MC);
+  Plotter::DataCollection dcwwMC_nt(           "stack",  "nTopCandSortedCntZinv", stackww_MC);
   // MT2                                                                                                                                                                           
   Plotter::DataCollection dcData_SingleMuon_mt2("data",   "best_had_brJet_MT2Zinv", {dsData_SingleMuon});
   Plotter::DataCollection dcMC_mt2(             "stack",  "best_had_brJet_MT2Zinv", stack_MC);
@@ -253,7 +257,7 @@ int main(int argc, char* argv[])
   Plotter::DataCollection dcData_SingleMuon_ht("data",   "HTZinv", {dsData_SingleMuon});
   Plotter::DataCollection dcMC_ht(             "stack",  "HTZinv", stack_MC);
   Plotter::DataCollection dcwMC_ht(            "stack",  "HTZinv", stackw_MC);
-    Plotter::DataCollection dcwwMC_ht(           "stack",  "HTZinv", stackww_MC);
+  Plotter::DataCollection dcwwMC_ht(           "stack",  "HTZinv", stackww_MC);
   // mu1pt                                                                                                                                                                         
   Plotter::DataCollection dcData_SingleMuon_mu1pt("data",   "cutMuPt1", {dsData_SingleMuon});
   Plotter::DataCollection dcMC_mu1pt(             "stack",  "cutMuPt1", stack_MC);
@@ -270,11 +274,11 @@ int main(int argc, char* argv[])
   Plotter::DataCollection dcData_SingleMuon_nSearchBin("data",   "nSearchBin", {dsData_SingleMuon});
   Plotter::DataCollection dcMC_nSearchBin(             "stack",  "nSearchBin", stack_MC);
   Plotter::DataCollection dcwMC_nSearchBin(            "stack",  "nSearchBin", stackw_MC);
-    Plotter::DataCollection dcwwMC_nSearchBin(           "stack",  "nSearchBin", stackww_MC);
+  Plotter::DataCollection dcwwMC_nSearchBin(           "stack",  "nSearchBin", stackww_MC);
 
   Plotter::DataCollection dcData_SingleMuon_mht("data",   "cleanMHt", {dsData_SingleMuon});
-    Plotter::DataCollection dcwwMC_mht(           "stack",  "cleanMHt", stackww_MC);
-Plotter::DataCollection dcwMC_mht(            "stack",  "cleanMHt", stackw_MC);
+  Plotter::DataCollection dcwwMC_mht(           "stack",  "cleanMHt", stackww_MC);
+  Plotter::DataCollection dcwMC_mht(            "stack",  "cleanMHt", stackw_MC);
 
   std::vector<std::pair<std::string,std::string>> cutlevels_muon = {
     {"nosel",                     "passNoiseEventFilterZinv"},
@@ -292,16 +296,17 @@ Plotter::DataCollection dcwMC_mht(            "stack",  "cleanMHt", stackw_MC);
   for(std::pair<std::string,std::string>& cut : cutlevels_muon)
     {
       //no weights
-      vh.push_back(PHS("DataMC_SingleMuon_met_"        +cut.first,  {dcData_SingleMuon_met,   dcMC_met},             {1, 2}, cut.second, 60, 0, 1500, true, false,  label_met,  "Events"));
-      vh.push_back(PHS("DataMC_SingleMuon_ht_"         +cut.first,  {dcData_SingleMuon_ht,    dcMC_ht},              {1, 2}, cut.second, 60, 0, 1500, true, false,  label_ht,   "Events"));
-      vh.push_back(PHS("DataMC_SingleMuon_nt_"         +cut.first,  {dcData_SingleMuon_nt,    dcMC_nt},              {1, 2}, cut.second, 5,  0, 5,    false, false,  label_nt,  "Events"));
-      vh.push_back(PHS("DataMC_SingleMuon_mt2_"        +cut.first,  {dcData_SingleMuon_mt2,   dcMC_mt2},             {1, 2}, cut.second, 60, 0, 1500, true, false,  label_mt2,  "Events"));
-      vh.push_back(PHS("DataMC_SingleMuon_nb_"         +cut.first,  {dcData_SingleMuon_nb,    dcMC_nb},              {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,   "Events"));
-      vh.push_back(PHS("DataMC_SingleMuon_nj_"         +cut.first,  {dcData_SingleMuon_nj,    dcMC_nj},              {1, 2}, cut.second, 30, 0, 30,   true, false,  label_nj,   "Events"));
-      vh.push_back(PHS("DataMC_SingleMuon_mu1pt"      +cut.first,  {dcData_SingleMuon_mu1pt, dcMC_mu1pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mu1pt, "Events"));
+      vh.push_back(PHS("DataMC_SingleMuon_met_"        +cut.first,  {dcData_SingleMuon_met,   dcMC_met},             {1, 2}, cut.second, 60, 0, 1500, true, false,  label_met,   "Events"));
+      vh.push_back(PHS("DataMC_SingleMuon_ht_"         +cut.first,  {dcData_SingleMuon_ht,    dcMC_ht},              {1, 2}, cut.second, 60, 0, 1500, true, false,  label_ht,    "Events"));
+      vh.push_back(PHS("DataMC_SingleMuon_nt_"         +cut.first,  {dcData_SingleMuon_nt,    dcMC_nt},              {1, 2}, cut.second, 5,  0, 5,    false, false,  label_nt,   "Events"));
+      vh.push_back(PHS("DataMC_SingleMuon_mt2_"        +cut.first,  {dcData_SingleMuon_mt2,   dcMC_mt2},             {1, 2}, cut.second, 60, 0, 1500, true, false,  label_mt2,   "Events"));
+      vh.push_back(PHS("DataMC_SingleMuon_nb_"         +cut.first,  {dcData_SingleMuon_nb,    dcMC_nb},              {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,    "Events"));
+      vh.push_back(PHS("DataMC_SingleMuon_nj_"         +cut.first,  {dcData_SingleMuon_nj,    dcMC_nj},              {1, 2}, cut.second, 30, 0, 30,   true, false,  label_nj,    "Events"));
+      vh.push_back(PHS("DataMC_SingleMuon_mu1pt"       +cut.first,  {dcData_SingleMuon_mu1pt, dcMC_mu1pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mu1pt, "Events"));
       vh.push_back(PHS("DataMC_SingleMuon_mu2pt_"      +cut.first,  {dcData_SingleMuon_mu2pt, dcMC_mu2pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mu2pt, "Events"));
-      vh.push_back(PHS("DataMC_SingleMuon_mll_"        +cut.first,  {dcData_SingleMuon_mll,   dcMC_mll},             {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,  "Events"));
-      vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {ds_Pt, dcMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin", "Events"));
+      vh.push_back(PHS("DataMC_SingleMuon_mll_"        +cut.first,  {dcData_SingleMuon_mll,   dcMC_mll},             {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,   "Events"));
+      vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB, true, false,  "Search Bin","Events"));
+      vh.push_back(PHS("DataMC_DY_pt_"                 +cut.first,  {dcData_DY_pt, dcMC_DY_pt},                      {1, 2}, cut.second, 60, 0, 1000, true, false,  "gen Z Pt", "Events"));
       //Shape correction weights
       vh.push_back(PHS("DataMC_SingleMuon_met_Wgt_"        +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},             {1, 2}, cut.second, 60, 0, 1500, true, false,  label_met,  "Events"));
       vh.push_back(PHS("DataMC_SingleMuon_ht_Wgt_"         +cut.first,  {dcData_SingleMuon_ht,    dcwMC_ht},              {1, 2}, cut.second, 60, 0, 1500, true, false,  label_ht,   "Events"));
@@ -312,8 +317,7 @@ Plotter::DataCollection dcwMC_mht(            "stack",  "cleanMHt", stackw_MC);
       vh.push_back(PHS("DataMC_SingleMuon_mu1pt_Wgt_"      +cut.first,  {dcData_SingleMuon_mu1pt, dcwMC_mu1pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mu1pt, "Events"));
       vh.push_back(PHS("DataMC_SingleMuon_mu2pt_Wgt_"      +cut.first,  {dcData_SingleMuon_mu2pt, dcwMC_mu2pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mu2pt, "Events"));
       vh.push_back(PHS("DataMC_SingleMuon_mll_Wgt_"        +cut.first,  {dcData_SingleMuon_mll,   dcwMC_mll},             {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,  "Events"));
-      vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_Wgt_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin", "Events"));
-      vh.push_back(PHS("Muons_pt_" +cut.first,  {dcData_DY_Pt}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin", "Events"));
+      vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_Wgt_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB, true, false,  "Search Bin", "Events"));
     }
     for(std::pair<std::string,std::string>& cut : cutlevels_muon)
     {
