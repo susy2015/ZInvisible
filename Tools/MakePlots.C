@@ -39,59 +39,59 @@ int main(int argc, char* argv[])
       switch(opt)
         {
         case 'p':
-	  if(doPlots) doSave  = doTuple = false;
-	  else        doPlots = true;
-	  break;
+          if(doPlots) doSave  = doTuple = false;
+          else        doPlots = true;
+          break;
 
         case 's':
-	  if(doSave) doPlots = doTuple = false;
-	  else       doSave  = true;
-	  break;
+          if(doSave) doPlots = doTuple = false;
+          else       doSave  = true;
+          break;
 
         case 't':
-	  if(doTuple) doPlots = doSave = false;
-	  else        doTuple  = true;
-	  break;
+          if(doTuple) doPlots = doSave = false;
+          else        doTuple  = true;
+          break;
 
         case 'f':
-	  fromTuple = false;
-	  break;
+          fromTuple = false;
+          break;
 
         case 'c':
-	  runOnCondor = true;
-	  break;
+          runOnCondor = true;
+          break;
 
         case 'H':
-	  histFile = optarg;
-	  break;
+          histFile = optarg;
+          break;
 
         case 'D':
-	  dataSets = optarg;
-	  break;
+          dataSets = optarg;
+          break;
 
         case 'N':
-	  nFiles = int(atoi(optarg));
-	  break;
+          nFiles = int(atoi(optarg));
+          break;
 
         case 'M':
-	  startFile = int(atoi(optarg));
-	  break;
+          startFile = int(atoi(optarg));
+          break;
 
         case 'E':
-	  nEvts = int(atoi(optarg));
-	  break;
+          nEvts = int(atoi(optarg));
+          break;
 
         case 'P':
-	  plotDir = optarg;
-	  break;
+          plotDir = optarg;
+          break;
 
-	case 'L':
-	  lumi = atof(optarg);
-	  break;
+        case 'L':
+          lumi = atof(optarg);
+          break;
 
         case 'S':
-	  sbEra = optarg;
-	  break;
+          sbEra = optarg;
+          break;
         }
     }
 
@@ -146,19 +146,19 @@ int main(int argc, char* argv[])
     {
       if(ss[dataSets] != ss.null())
         {
-	  fileMap[dataSets] = {ss[dataSets]};
-	  for(const auto& colls : ss[dataSets].getCollections())
+          fileMap[dataSets] = {ss[dataSets]};
+          for(const auto& colls : ss[dataSets].getCollections())
             {
-	      fileMap[colls] = {ss[dataSets]};
+              fileMap[colls] = {ss[dataSets]};
             }
         }
       else if(sc[dataSets] != sc.null())
         {
-	  fileMap[dataSets] = {sc[dataSets]};
-	  int i = 0;
-	  for(const auto& fs : sc[dataSets])
+          fileMap[dataSets] = {sc[dataSets]};
+          int i = 0;
+          for(const auto& fs : sc[dataSets])
             {
-	      fileMap[sc.getSampleLabels(dataSets)[i++]].push_back(fs);
+              fileMap[sc.getSampleLabels(dataSets)[i++]].push_back(fs);
             }
         }
     }
@@ -225,6 +225,10 @@ int main(int argc, char* argv[])
   Plotter::DataCollection dcwMC_nj(            "stack",  "cntNJetsPt30Eta24Zinv", stackw_MC);
     Plotter::DataCollection dcwwMC_nj(           "stack",  "cntNJetsPt30Eta24Zinv", stackww_MC);
  
+    // pt
+    Plotter::DataCollection dcData_DY_Pt("data",   "DY_Pt", {dswDY});
+    Plotter::DataCollection dcMC_DY_Pt("stack",   "DY_Pt", stack_MC);
+
  // met                                                                                                                                                                           
   Plotter::DataCollection dcData_SingleMuon_met("data",   "cleanMetPt", {dsData_SingleMuon});
   Plotter::DataCollection dcMC_met(             "stack",  "cleanMetPt", stack_MC);
@@ -297,7 +301,7 @@ Plotter::DataCollection dcwMC_mht(            "stack",  "cleanMHt", stackw_MC);
       vh.push_back(PHS("DataMC_SingleMuon_mu1pt"      +cut.first,  {dcData_SingleMuon_mu1pt, dcMC_mu1pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mu1pt, "Events"));
       vh.push_back(PHS("DataMC_SingleMuon_mu2pt_"      +cut.first,  {dcData_SingleMuon_mu2pt, dcMC_mu2pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mu2pt, "Events"));
       vh.push_back(PHS("DataMC_SingleMuon_mll_"        +cut.first,  {dcData_SingleMuon_mll,   dcMC_mll},             {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,  "Events"));
-      vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin", "Events"));
+      vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {ds_Pt, dcMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin", "Events"));
       //Shape correction weights
       vh.push_back(PHS("DataMC_SingleMuon_met_Wgt_"        +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},             {1, 2}, cut.second, 60, 0, 1500, true, false,  label_met,  "Events"));
       vh.push_back(PHS("DataMC_SingleMuon_ht_Wgt_"         +cut.first,  {dcData_SingleMuon_ht,    dcwMC_ht},              {1, 2}, cut.second, 60, 0, 1500, true, false,  label_ht,   "Events"));
@@ -309,6 +313,7 @@ Plotter::DataCollection dcwMC_mht(            "stack",  "cleanMHt", stackw_MC);
       vh.push_back(PHS("DataMC_SingleMuon_mu2pt_Wgt_"      +cut.first,  {dcData_SingleMuon_mu2pt, dcwMC_mu2pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mu2pt, "Events"));
       vh.push_back(PHS("DataMC_SingleMuon_mll_Wgt_"        +cut.first,  {dcData_SingleMuon_mll,   dcwMC_mll},             {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,  "Events"));
       vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_Wgt_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin", "Events"));
+      vh.push_back(PHS("Muons_pt_" +cut.first,  {dcData_DY_Pt}, {1, 2}, cut.second, NSB, 0, NSB,   true, false,  "Search Bin", "Events"));
     }
     for(std::pair<std::string,std::string>& cut : cutlevels_muon)
     {
@@ -349,17 +354,17 @@ Plotter::DataCollection dcwMC_mht(            "stack",  "cleanMHt", stackw_MC);
 
   //Generate cutflows 
   vector<string> cfsZ = {"",
-			 "passNoiseEventFilterZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto",
-			 "passNoiseEventFilterZinv;passLeptVeto",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv;passMETZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passTaggerZinv;passMETZinv;passBJetsZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
-			 "passLeptVeto;passBaselineZinv"};
+                         "passNoiseEventFilterZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto",
+                         "passNoiseEventFilterZinv;passLeptVeto",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv;passMETZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passTaggerZinv;passMETZinv;passBJetsZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
+                         "passLeptVeto;passBaselineZinv"};
   vector<Plotter::CutFlowSummary> cutFlowSummaries;
 
   cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("ZtoNuNu",           PDC("", "", {dsDY_nunu}),           cfsZ));
