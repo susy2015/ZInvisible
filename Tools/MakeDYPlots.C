@@ -39,59 +39,59 @@ int main(int argc, char* argv[])
       switch(opt)
         {
         case 'p':
-	  if(doPlots) doSave  = doTuple = false;
-	  else        doPlots = true;
-	  break;
+          if(doPlots) doSave  = doTuple = false;
+          else        doPlots = true;
+          break;
 
         case 's':
-	  if(doSave) doPlots = doTuple = false;
-	  else       doSave  = true;
-	  break;
+          if(doSave) doPlots = doTuple = false;
+          else       doSave  = true;
+          break;
 
         case 't':
-	  if(doTuple) doPlots = doSave = false;
-	  else        doTuple  = true;
-	  break;
+          if(doTuple) doPlots = doSave = false;
+          else        doTuple  = true;
+          break;
 
         case 'f':
-	  fromTuple = false;
-	  break;
+          fromTuple = false;
+          break;
 
         case 'c':
-	  runOnCondor = true;
-	  break;
+          runOnCondor = true;
+          break;
 
         case 'H':
-	  histFile = optarg;
-	  break;
+          histFile = optarg;
+          break;
 
         case 'D':
-	  dataSets = optarg;
-	  break;
+          dataSets = optarg;
+          break;
 
         case 'N':
-	  nFiles = int(atoi(optarg));
-	  break;
+          nFiles = int(atoi(optarg));
+          break;
 
         case 'M':
-	  startFile = int(atoi(optarg));
-	  break;
+          startFile = int(atoi(optarg));
+          break;
 
         case 'E':
-	  nEvts = int(atoi(optarg));
-	  break;
+          nEvts = int(atoi(optarg));
+          break;
 
         case 'P':
-	  plotDir = optarg;
-	  break;
+          plotDir = optarg;
+          break;
 
-	case 'L':
-	  lumi = atof(optarg);
-	  break;
+        case 'L':
+          lumi = atof(optarg);
+          break;
 
         case 'S':
-	  sbEra = optarg;
-	  break;
+          sbEra = optarg;
+          break;
         }
     }
 
@@ -146,19 +146,19 @@ int main(int argc, char* argv[])
     {
       if(ss[dataSets] != ss.null())
         {
-	  fileMap[dataSets] = {ss[dataSets]};
-	  for(const auto& colls : ss[dataSets].getCollections())
+          fileMap[dataSets] = {ss[dataSets]};
+          for(const auto& colls : ss[dataSets].getCollections())
             {
-	      fileMap[colls] = {ss[dataSets]};
+              fileMap[colls] = {ss[dataSets]};
             }
         }
       else if(sc[dataSets] != sc.null())
         {
-	  fileMap[dataSets] = {sc[dataSets]};
-	  int i = 0;
-	  for(const auto& fs : sc[dataSets])
+          fileMap[dataSets] = {sc[dataSets]};
+          int i = 0;
+          for(const auto& fs : sc[dataSets])
             {
-	      fileMap[sc.getSampleLabels(dataSets)[i++]].push_back(fs);
+              fileMap[sc.getSampleLabels(dataSets)[i++]].push_back(fs);
             }
         }
     }
@@ -374,10 +374,10 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMCw_SingleMuon_25b_met_"        +cut.first,  {dcData_SingleMuon_met,        dcwMC_met},        {1, 2}, cut.second, 25, 0, 1500, true, false,  label_met, "Events / 60 GeV"));
         vh.push_back(PHS("DataMCw_SingleMuon_rebin_met_"  +cut.first,  {dcData_SingleMuon_met,        dcwMC_met},        {1, 2}, cut.second, metBins,     true, false,  label_met,             "Events"));
         vh.push_back(PHS("DataMCw_SingleMuon_rebin_mt2_"  +cut.first,  {dcData_SingleMuon_mt2,        dcwMC_mt2},        {1, 2}, cut.second, mt2Bins,     true, false,  label_mt2,             "Events"));
-	/*
+        /*
         //// Normalization weight applied, only for blnotag selections
-	if(cut.first.rfind("blnotag") == (cut.first.size()-7) || cut.first.rfind("loose0") == (cut.first.size()-7))
-	  {
+        if(cut.first.rfind("blnotag") == (cut.first.size()-7) || cut.first.rfind("loose0") == (cut.first.size()-7))
+          {
             // DataMC weights applied
             vh.push_back(PHS("DataMCww_SingleMuon_met_"   +cut.first,  {dcData_SingleMuon_met,   dcwwMC_met},   {1, 2}, cut.second, 60, 0, 1500, true, false,  label_met,                                  "Events"));
             vh.push_back(PHS("DataMCww_SingleMuon_ht_"    +cut.first,  {dcData_SingleMuon_ht,    dcwwMC_ht},    {1, 2}, cut.second, 60, 0, 1500, true, false,  label_ht,                                   "Events"));
@@ -387,7 +387,7 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMCww_SingleMuon_nb_"    +cut.first,  {dcData_SingleMuon_nb,    dcwwMC_nb},    {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,                                   "Events"));
             vh.push_back(PHS("DataMCww_SingleMuon_nj_"    +cut.first,  {dcData_SingleMuon_nj,    dcwwMC_nj},    {1, 2}, cut.second, 30, 0, 30,   true, false,  label_nj,                                   "Events"));
             vh.push_back(PHS("DataMCww_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcwwMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB,  true, false,  "Search Bin",               "Events"));
-	    }*/
+            }*/
 }
     Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerCentral( "Z#rightarrow#nu#nu Trigger weight Central", fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b;TriggerEffMC");
     Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerUp(      "Z#rightarrow#nu#nu Trigger weight Up",      fileMap["ZJetsToNuNu"], "passLeptVeto",                       "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b;TriggerEffUpMC");
@@ -399,17 +399,17 @@ int main(int argc, char* argv[])
 
   //Generate cutflows 
   vector<string> cfsZ = {"",
-			 "passNoiseEventFilterZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto",
-			 "passNoiseEventFilterZinv;passLeptVeto",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv;passMETZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passTaggerZinv;passMETZinv;passBJetsZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
-			 "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
-			 "passLeptVeto;passBaselineZinv"};
+                         "passNoiseEventFilterZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto",
+                         "passNoiseEventFilterZinv;passLeptVeto",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv;passMETZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passTaggerZinv;passMETZinv;passBJetsZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                         "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
+                         "passLeptVeto;passBaselineZinv"};
   vector<Plotter::CutFlowSummary> cutFlowSummaries;
 
   cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("ZtoNuNu",           PDC("", "", {dsDY_nunu}),           cfsZ));

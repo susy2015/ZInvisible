@@ -39,59 +39,59 @@ int main(int argc, char* argv[])
       switch(opt)
         {
         case 'p':
-	  if(doPlots) doSave  = doTuple = false;
-	  else        doPlots = true;
-	  break;
+          if(doPlots) doSave  = doTuple = false;
+          else        doPlots = true;
+          break;
 
         case 's':
-	  if(doSave) doPlots = doTuple = false;
-	  else       doSave  = true;
-	  break;
+          if(doSave) doPlots = doTuple = false;
+          else       doSave  = true;
+          break;
 
         case 't':
-	  if(doTuple) doPlots = doSave = false;
-	  else        doTuple  = true;
-	  break;
+          if(doTuple) doPlots = doSave = false;
+          else        doTuple  = true;
+          break;
 
         case 'f':
-	  fromTuple = false;
-	  break;
+          fromTuple = false;
+          break;
 
         case 'c':
-	  runOnCondor = true;
-	  break;
+          runOnCondor = true;
+          break;
 
         case 'H':
-	  histFile = optarg;
-	  break;
+          histFile = optarg;
+          break;
 
         case 'D':
-	  dataSets = optarg;
-	  break;
+          dataSets = optarg;
+          break;
 
         case 'N':
-	  nFiles = int(atoi(optarg));
-	  break;
+          nFiles = int(atoi(optarg));
+          break;
 
         case 'M':
-	  startFile = int(atoi(optarg));
-	  break;
+          startFile = int(atoi(optarg));
+          break;
 
         case 'E':
-	  nEvts = int(atoi(optarg));
-	  break;
+          nEvts = int(atoi(optarg));
+          break;
 
         case 'P':
-	  plotDir = optarg;
-	  break;
+          plotDir = optarg;
+          break;
 
-	case 'L':
-	  lumi = atof(optarg);
-	  break;
+        case 'L':
+          lumi = atof(optarg);
+          break;
 
         case 'S':
-	  sbEra = optarg;
-	  break;
+          sbEra = optarg;
+          break;
         }
     }
 
@@ -146,19 +146,19 @@ int main(int argc, char* argv[])
     {
       if(ss[dataSets] != ss.null())
         {
-	  fileMap[dataSets] = {ss[dataSets]};
-	  for(const auto& colls : ss[dataSets].getCollections())
+          fileMap[dataSets] = {ss[dataSets]};
+          for(const auto& colls : ss[dataSets].getCollections())
             {
-	      fileMap[colls] = {ss[dataSets]};
+              fileMap[colls] = {ss[dataSets]};
             }
         }
       else if(sc[dataSets] != sc.null())
         {
-	  fileMap[dataSets] = {sc[dataSets]};
-	  int i = 0;
-	  for(const auto& fs : sc[dataSets])
+          fileMap[dataSets] = {sc[dataSets]};
+          int i = 0;
+          for(const auto& fs : sc[dataSets])
             {
-	      fileMap[sc.getSampleLabels(dataSets)[i++]].push_back(fs);
+              fileMap[sc.getSampleLabels(dataSets)[i++]].push_back(fs);
             }
         }
     }
@@ -354,7 +354,7 @@ int main(int argc, char* argv[])
   Plotter::DataCollection dcWNPhotonNbMC("stack", "cntCSVS", {stackwn_gammaMC});
   //Photon count                                                                                                                           
   Plotter::DataCollection dcWNCutPhotonCntMC("stack", "nPhoton", {stackwn_gammaMC});
-					       
+                                               
   //Photon extra variables                   
   //Photon count
   Plotter::DataCollection dcPhotonCnt("single", "nPhotonNoID", {dsPhoton});
@@ -544,11 +544,11 @@ int main(int argc, char* argv[])
 
   //Generate cutflows 
   vector<string> cfsGamma = {"",
-			     "passNoiseEventFilter",
-			     "passNoiseEventFilter;passnJets",
-			     "passNoiseEventFilter;passnJets;passdPhis",
-			     "passNoiseEventFilter;passnJets;passdPhis",
-			     "passNoiseEventFilter;passnJets;passdPhis;HT>300",
+                             "passNoiseEventFilter",
+                             "passNoiseEventFilter;passnJets",
+                             "passNoiseEventFilter;passnJets;passdPhis",
+                             "passNoiseEventFilter;passnJets;passdPhis",
+                             "passNoiseEventFilter;passnJets;passdPhis;HT>300",
   };  
   vector<Plotter::CutFlowSummary> cutFlowSummaries;
 
