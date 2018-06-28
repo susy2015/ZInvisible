@@ -466,6 +466,12 @@ public:
 
         std::cout << "Called plotEff " << histNameNum << " " << histNameDen << std::endl;
 
+        bool bkgSub = sigEntries_.size() > 0;
+
+        if(bkgSub){ 
+            std::cout << "Background Subtraction is enabled." << std::endl;  
+        }
+
         if(data){
             std::cout << "Will plot from data histogram" << std::endl;
         } else {
@@ -511,27 +517,33 @@ public:
             std::cout << "Loading background histograms" << std::endl;
             TH1D* hbgSumNum = nullptr;
             TH1D* hbgSumDen = nullptr;
-            for(int iBG = bgEntries_.size() - 1; iBG >= 0; --iBG)
+
+            std::vector<histInfo> MCEntries_;
+
+            if(bkgSub){ MCEntries_ = sigEntries_; }
+            else{ MCEntries_ = bgEntries_; }
+
+            for(int iBG = MCEntries_.size() - 1; iBG >= 0; --iBG)
             {
                 //Get numerator histogram
-                bgEntries_[iBG].histName = histNameNum;
-                bgEntries_[iBG].rebin = rebin;
-                bgEntries_[iBG].retrieveHistogram();
+                MCEntries_[iBG].histName = histNameNum;
+                MCEntries_[iBG].rebin = rebin;
+                MCEntries_[iBG].retrieveHistogram();
 
                 if(!hbgSumNum){
-                    hbgSumNum = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                    hbgSumNum = static_cast<TH1D*>(MCEntries_[iBG].h->Clone());
                     hbgSumNum->SetDirectory(0);
-                }else        hbgSumNum->Add(bgEntries_[iBG].h.get());
+                }else        hbgSumNum->Add(MCEntries_[iBG].h.get());
 
                 //Get denominator histogram
-                bgEntries_[iBG].histName = histNameDen;
-                bgEntries_[iBG].rebin = rebin;
-                bgEntries_[iBG].retrieveHistogram();
+                MCEntries_[iBG].histName = histNameDen;
+                MCEntries_[iBG].rebin = rebin;
+                MCEntries_[iBG].retrieveHistogram();
 
                 if(!hbgSumDen){
-                    hbgSumDen = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                    hbgSumDen = static_cast<TH1D*>(MCEntries_[iBG].h->Clone());
                     hbgSumDen->SetDirectory(0);
-                } else        hbgSumDen->Add(bgEntries_[iBG].h.get());
+                } else        hbgSumDen->Add(MCEntries_[iBG].h.get());
             }
 
             hNum = hbgSumNum;
@@ -543,10 +555,43 @@ public:
 
             std::cout << "loading data histograms" << std::endl;
 
+            //We implemented subtraction in the HistInfo class, so we need to
+            //Calculate the background to be subtracted before extracting
+            //the histogram from histInfo.
+            TH1D* hbgSumNum = nullptr; //Putting these here for scope reasons
+            TH1D* hbgSumDen = nullptr;
+
+            if(bkgSub){ //We need to subtract out the MC backgrounds
+                std::cout << "Loading background histograms" << std::endl;
+                for(int iBG = bgEntries_.size() - 1; iBG >= 0; --iBG)
+                {
+                    //Get numerator histogram
+                    bgEntries_[iBG].histName = histNameNum;
+                    bgEntries_[iBG].rebin = rebin;
+                    bgEntries_[iBG].retrieveHistogram();
+
+                    if(!hbgSumNum){
+                        hbgSumNum = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                        hbgSumNum->SetDirectory(0);
+                    }else        hbgSumNum->Add(bgEntries_[iBG].h.get());
+
+                    //Get denominator histogram
+                    bgEntries_[iBG].histName = histNameDen;
+                    bgEntries_[iBG].rebin = rebin;
+                    bgEntries_[iBG].retrieveHistogram();
+
+                    if(!hbgSumDen){
+                        hbgSumDen = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                        hbgSumDen->SetDirectory(0);
+                    } else        hbgSumDen->Add(bgEntries_[iBG].h.get());
+                }
+            }
+
             //data
             //get numerator histogram from file
             data_.histName = histNameNum;
             data_.rebin = rebin;
+            if(bkgSub) data_.subtract(hbgSumNum);
             data_.retrieveHistogram();
             hNum = (static_cast<TH1D*>(data_.h.get()->Clone()));
             hNum->SetDirectory(0);
@@ -557,6 +602,7 @@ public:
             //get denominator histogram from file
             data_.histName = histNameDen;
             data_.rebin = rebin;
+            if(bkgSub) data_.subtract(hbgSumDen);
             data_.retrieveHistogram();
             hDen = static_cast<TH1D*>(data_.h.get()->Clone());
             hDen->SetDirectory(0);
@@ -590,10 +636,10 @@ public:
         std::cout << "Cloning of hNum complete" << std::endl;
 
 
-        leg->AddEntry(hNum, "Passes Top Tagger", "PEX0");
+        leg->AddEntry(hNum, ("Passes Top Tagger ("+to_string_with_precision<double>(hNum->Integral(),3)+")").c_str(), "PEX0");
         smartMax(hNum, leg, static_cast<TPad*>(gPad), min, max, lmax, true);
 
-        leg->AddEntry(hDen, "All", "F");
+        leg->AddEntry(hDen, ("All (" + to_string_with_precision<double>(hDen->Integral(),3)+")").c_str(), "F");
         smartMax(hDen, leg, static_cast<TPad*>(gPad), min, max, lmax, true);
 
         //background
@@ -731,7 +777,8 @@ public:
 
         //save new plot to file
         std::string hNameDen = (histNameDen.find("/") != std::string::npos ? histNameDen.substr(histNameDen.find("/")+1) : histNameDen);
-        c->Print((hNameDen + "TaggingRate"+(data ? "Data" : "MC")+".png").c_str());
+        if(bkgSub){c->Print(("bkgSub_"+hNameDen + "TaggingRate"+(data ? "Data" : "MC")+".png").c_str());}
+        else{c->Print((hNameDen + "TaggingRate"+(data ? "Data" : "MC")+".png").c_str());}
 
         //clean up dynamic memory
         delete c;
@@ -743,6 +790,11 @@ public:
 
         std::cout << "Called plotSF " << histNameNum << " " << histNameDen << std::endl;
 
+        bool bkgSub = sigEntries_.size() > 0;
+
+        if(bkgSub){ 
+            std::cout << "Background Subtraction is enabled." << std::endl;  
+        }
 
         //This is a magic incantation to disassociate opened histograms from their files so the files can be closed
         TH1::AddDirectory(false);
@@ -781,32 +833,66 @@ public:
         TH1D* hNumMC;
         TH1D* hDenMC;
 
+        TH1D* hNumSub = nullptr;
+        TH1D* hDenSub = nullptr;
+
+
         //Get histograms from background if not plotting data
 
         std::cout << "Loading background histograms" << std::endl;
         TH1D* hbgSumNum = nullptr;
         TH1D* hbgSumDen = nullptr;
-        for(int iBG = bgEntries_.size() - 1; iBG >= 0; --iBG)
+        std::vector<histInfo> MCEntries_;
+
+        if(bkgSub){ MCEntries_ = sigEntries_; }
+        else { MCEntries_ = bgEntries_; }
+
+        for(int iBG = MCEntries_.size() - 1; iBG >= 0; --iBG)
         {
             //Get numerator histogram
-            bgEntries_[iBG].histName = histNameNum;
-            bgEntries_[iBG].rebin = rebin;
-            bgEntries_[iBG].retrieveHistogram();
+            MCEntries_[iBG].histName = histNameNum;
+            MCEntries_[iBG].rebin = rebin;
+            MCEntries_[iBG].retrieveHistogram();
 
             if(!hbgSumNum){
-                hbgSumNum = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                hbgSumNum = static_cast<TH1D*>(MCEntries_[iBG].h->Clone());
                 hbgSumNum->SetDirectory(0);
-            }else        hbgSumNum->Add(bgEntries_[iBG].h.get());
+            }else        hbgSumNum->Add(MCEntries_[iBG].h.get());
 
             //Get denominator histogram
-            bgEntries_[iBG].histName = histNameDen;
-            bgEntries_[iBG].rebin = rebin;
-            bgEntries_[iBG].retrieveHistogram();
+            MCEntries_[iBG].histName = histNameDen;
+            MCEntries_[iBG].rebin = rebin;
+            MCEntries_[iBG].retrieveHistogram();
 
             if(!hbgSumDen){
-                hbgSumDen = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                hbgSumDen = static_cast<TH1D*>(MCEntries_[iBG].h->Clone());
                 hbgSumDen->SetDirectory(0);
-            } else        hbgSumDen->Add(bgEntries_[iBG].h.get());
+            } else        hbgSumDen->Add(MCEntries_[iBG].h.get());
+        }
+
+        if(bkgSub){
+            for(int iBG = bgEntries_.size() - 1; iBG >= 0; --iBG)
+            {
+                //Get numerator histogram
+                bgEntries_[iBG].histName = histNameNum;
+                bgEntries_[iBG].rebin = rebin;
+                bgEntries_[iBG].retrieveHistogram();
+
+                if(!hNumSub){
+                    hNumSub = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                    hNumSub->SetDirectory(0);
+                }else        hNumSub->Add(bgEntries_[iBG].h.get());
+ 
+                //Get denominator histogram
+                bgEntries_[iBG].histName = histNameDen;
+                bgEntries_[iBG].rebin = rebin;
+                bgEntries_[iBG].retrieveHistogram();
+
+                if(!hDenSub){
+                    hDenSub = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                    hDenSub->SetDirectory(0);
+                } else        hDenSub->Add(bgEntries_[iBG].h.get());
+            }
         }
 
         hNumMC = hbgSumNum;
@@ -824,6 +910,7 @@ public:
         //get numerator histogram from file
         data_.histName = histNameNum;
         data_.rebin = rebin;
+        if(bkgSub)data_.subtract(hNumSub);
         data_.retrieveHistogram();
         hNumData = (static_cast<TH1D*>(data_.h.get()->Clone()));
         hNumData->Sumw2();
@@ -835,6 +922,7 @@ public:
         //get denominator histogram from file
         data_.histName = histNameDen;
         data_.rebin = rebin;
+        if(bkgSub) data_.subtract(hDenSub);
         data_.retrieveHistogram();
         hDenData = static_cast<TH1D*>(data_.h.get()->Clone());
         hDenData->Sumw2();
@@ -1025,7 +1113,8 @@ public:
 
         //save new plot to file
         std::string hNameDen = (histNameDen.find("/") != std::string::npos ? histNameDen.substr(histNameDen.find("/")+1) : histNameDen);
-        c->Print((hNameDen + "SF.png").c_str());
+        if(bkgSub){c->Print(("bkgSub_" + hNameDen + "SF.png").c_str());}
+        else{c->Print((hNameDen + "SF.png").c_str());}
 
         //clean up dynamic memory
         delete c;
@@ -1036,6 +1125,12 @@ public:
     {
 
         std::cout << "Called plotOnlySF " << histNameNum << " " << histNameDen << std::endl;
+
+        bool bkgSub = sigEntries_.size() > 0;
+
+        if(bkgSub){ 
+            std::cout << "Background Subtraction is enabled." << std::endl;  
+        }
 
 
         //This is a magic incantation to disassociate opened histograms from their files so the files can be closed
@@ -1065,33 +1160,68 @@ public:
         TH1D* hNumMC;
         TH1D* hDenMC;
 
-        //Get histograms from background if not plotting data
+        TH1D* hNumSub = nullptr;
+        TH1D* hDenSub = nullptr;
+
 
         std::cout << "Loading background histograms" << std::endl;
         TH1D* hbgSumNum = nullptr;
         TH1D* hbgSumDen = nullptr;
-        for(int iBG = bgEntries_.size() - 1; iBG >= 0; --iBG)
+
+        std::vector<histInfo> MCEntries_;
+
+        if(bkgSub){ MCEntries_ = sigEntries_; }
+        else{ MCEntries_ = bgEntries_; }
+
+
+        for(int iBG = MCEntries_.size() - 1; iBG >= 0; --iBG)
         {
             //Get numerator histogram
-            bgEntries_[iBG].histName = histNameNum;
-            bgEntries_[iBG].rebin = rebin;
-            bgEntries_[iBG].retrieveHistogram();
+            MCEntries_[iBG].histName = histNameNum;
+            MCEntries_[iBG].rebin = rebin;
+            MCEntries_[iBG].retrieveHistogram();
 
             if(!hbgSumNum){
-                hbgSumNum = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                hbgSumNum = static_cast<TH1D*>(MCEntries_[iBG].h->Clone());
                 hbgSumNum->SetDirectory(0);
-            }else        hbgSumNum->Add(bgEntries_[iBG].h.get());
+            }else        hbgSumNum->Add(MCEntries_[iBG].h.get());
 
             //Get denominator histogram
-            bgEntries_[iBG].histName = histNameDen;
-            bgEntries_[iBG].rebin = rebin;
-            bgEntries_[iBG].retrieveHistogram();
+            MCEntries_[iBG].histName = histNameDen;
+            MCEntries_[iBG].rebin = rebin;
+            MCEntries_[iBG].retrieveHistogram();
 
             if(!hbgSumDen){
-                hbgSumDen = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                hbgSumDen = static_cast<TH1D*>(MCEntries_[iBG].h->Clone());
                 hbgSumDen->SetDirectory(0);
-            } else        hbgSumDen->Add(bgEntries_[iBG].h.get());
+            } else        hbgSumDen->Add(MCEntries_[iBG].h.get());
         }
+
+        if(bkgSub){
+            for(int iBG = bgEntries_.size() - 1; iBG >= 0; --iBG)
+            {
+                //Get numerator histogram
+                bgEntries_[iBG].histName = histNameNum;
+                bgEntries_[iBG].rebin = rebin;
+                bgEntries_[iBG].retrieveHistogram();
+
+                if(!hNumSub){
+                    hNumSub = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                    hNumSub->SetDirectory(0);
+                }else        hNumSub->Add(bgEntries_[iBG].h.get());
+
+                //Get denominator histogram
+                bgEntries_[iBG].histName = histNameDen;
+                bgEntries_[iBG].rebin = rebin;
+                bgEntries_[iBG].retrieveHistogram();
+
+                if(!hDenSub){
+                    hDenSub = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                    hDenSub->SetDirectory(0);
+                } else        hDenSub->Add(bgEntries_[iBG].h.get());
+            }
+        }
+
 
         hNumMC = hbgSumNum;
         hDenMC = hbgSumDen;
@@ -1108,6 +1238,7 @@ public:
         //get numerator histogram from file
         data_.histName = histNameNum;
         data_.rebin = rebin;
+        if(bkgSub) data_.subtract(hNumSub);
         data_.retrieveHistogram();
         hNumData = (static_cast<TH1D*>(data_.h.get()->Clone()));
         hNumData->Sumw2();
@@ -1119,6 +1250,7 @@ public:
         //get denominator histogram from file
         data_.histName = histNameDen;
         data_.rebin = rebin;
+        if(bkgSub) data_.subtract(hDenSub);
         data_.retrieveHistogram();
         hDenData = static_cast<TH1D*>(data_.h.get()->Clone());
         hDenData->Sumw2();
@@ -1265,7 +1397,8 @@ public:
 
         //save new plot to file
         std::string hNameDen = (histNameDen.find("/") != std::string::npos ? histNameDen.substr(histNameDen.find("/")+1) : histNameDen);
-        c->Print((hNameDen + "OnlySF.png").c_str());
+        if(bkgSub){c->Print(("bkgSub_" + hNameDen + "OnlySF.png").c_str());}
+        else{c->Print((hNameDen + "OnlySF.png").c_str());}
 
         //plot legend
         //leg->Draw("same");
@@ -1352,8 +1485,6 @@ int main()
     plt.plot("ttbar/MET", "p_{T}^{miss} [GeV]", "Events", true, -1, -1, 5);
     pltSub.plot("ttbar/MET", "p_{T}^{miss} [GeV]", "Events", true, -1, -1, 5);
 
-    return 0;
-
     plt.plot("ttbar/HT", "H_{T} [GeV]", "Events", true, -1, -1, 5);
     plt.plot("ttbar/nJets", "Jets/Event", "Events", true);
     plt.plot("ttbar/nVertices", "primary vertices/event", "Events", true);
@@ -1361,13 +1492,30 @@ int main()
     plt.plot("ttbar/topMass", "m_{top} [GeV]", "Events", true, -1, -1, 5);
     plt.plot("ttbar/topP", "p_{top} [GeV]", "Events", true, -1, -1, 5);
     plt.plot("ttbar/topPt", "p_{top}^{T} [GeV]", "Events", true, -1, -1, 5);
+
+    pltSub.plot("ttbar/HT", "H_{T} [GeV]", "Events", true, -1, -1, 5);
+    pltSub.plot("ttbar/nJets", "Jets/Event", "Events", true);
+    pltSub.plot("ttbar/nVertices", "primary vertices/event", "Events", true);
+    pltSub.plot("ttbar/photon", "Photon p_{T} [GeV]", "Events", true);
+    pltSub.plot("ttbar/topMass", "m_{top} [GeV]", "Events", true, -1, -1, 5);
+    pltSub.plot("ttbar/topP", "p_{top} [GeV]", "Events", true, -1, -1, 5);
+    pltSub.plot("ttbar/topPt", "p_{top}^{T} [GeV]", "Events", true, -1, -1, 5);
 //    plt.plot("ttbar/DiTopMass", "Invariant mass of ditop events [GeV]", "Events", true, -1, -1, 5);
+
     plt.plot("ttbar/bestTopPt", "p_{top,best}^{T} [GeV]", "Events", true, -1, -1, 5);
     plt.plot("ttbar/bestTopMass", "m_{top,best} [GeV]", "Events", true, -1, -1, 5);
     plt.plot("ttbar/bestTopEta", "#eta_{top,best}", "Events", true, -1, -1, 5);
     plt.plot("ttbar/bestTopCandPt", "p_{top,best}^{T} [GeV] (passes top tagger)", "Events", true, -1, -1, 5);
     plt.plot("ttbar/bestTopCandMass", "m_{top,best} [GeV] (passes top tagger)", "Events", true, -1, -1, 5);
     plt.plot("ttbar/bestTopCandEta", "#eta_{top,best} (passes top tagger)", "Events", true, -1, -1, 5);
+
+    pltSub.plot("ttbar/bestTopPt", "p_{top,best}^{T} [GeV]", "Events", true, -1, -1, 5);
+    pltSub.plot("ttbar/bestTopMass", "m_{top,best} [GeV]", "Events", true, -1, -1, 5);
+    pltSub.plot("ttbar/bestTopEta", "#eta_{top,best}", "Events", true, -1, -1, 5);
+    pltSub.plot("ttbar/bestTopCandPt", "p_{top,best}^{T} [GeV] (passes top tagger)", "Events", true, -1, -1, 5);
+    pltSub.plot("ttbar/bestTopCandMass", "m_{top,best} [GeV] (passes top tagger)", "Events", true, -1, -1, 5);
+    pltSub.plot("ttbar/bestTopCandEta", "#eta_{top,best} (passes top tagger)", "Events", true, -1, -1, 5);
+
     plt.plotEff(true, "ttbar/bestTopPt", "ttbar/bestTopCandPt", "p_{top,best}^{T} [GeV]", "Events", true, -1, -1, 5);
     plt.plotEff(true, "ttbar/bestTopMass", "ttbar/bestTopCandMass", "m_{top,best} [GeV]", "Events", true, -1, -1, 5);
     plt.plotEff(true, "ttbar/bestTopEta", "ttbar/bestTopCandEta", "#eta_{top,best}", "Events", true, -1, -1, 5);
@@ -1375,13 +1523,28 @@ int main()
     plt.plotEff(false, "ttbar/bestTopMass", "ttbar/bestTopCandMass", "m_{top,best} [GeV]", "Events", true, -1, -1, 5);
     plt.plotEff(false, "ttbar/bestTopEta", "ttbar/bestTopCandEta", "#eta_{top,best}", "Events", true, -1, -1, 5);
 
+    pltSub.plotEff(true, "ttbar/bestTopPt", "ttbar/bestTopCandPt", "p_{top,best}^{T} [GeV]", "Events", true, -1, -1, 5);
+    pltSub.plotEff(true, "ttbar/bestTopMass", "ttbar/bestTopCandMass", "m_{top,best} [GeV]", "Events", true, -1, -1, 5);
+    pltSub.plotEff(true, "ttbar/bestTopEta", "ttbar/bestTopCandEta", "#eta_{top,best}", "Events", true, -1, -1, 5);
+    pltSub.plotEff(false, "ttbar/bestTopPt", "ttbar/bestTopCandPt", "p_{top,best}^{T} [GeV]", "Events", true, -1, -1, 5);
+    pltSub.plotEff(false, "ttbar/bestTopMass", "ttbar/bestTopCandMass", "m_{top,best} [GeV]", "Events", true, -1, -1, 5);
+    pltSub.plotEff(false, "ttbar/bestTopEta", "ttbar/bestTopCandEta", "#eta_{top,best}", "Events", true, -1, -1, 5);
+
     plt.plotSF("ttbar/bestTopPt", "ttbar/bestTopCandPt", "p_{top,best}^{T} [GeV]", "Tagging Rate", false, -1, -1, 5);
     plt.plotSF("ttbar/bestTopMass", "ttbar/bestTopCandMass", "m_{top,best} [GeV]", "Tagging Rate", false, -1, -1, 5);
     plt.plotSF("ttbar/bestTopEta", "ttbar/bestTopCandEta", "#eta_{top,best}", "Tagging Rate", false, -1, -1, 5);
 
+    pltSub.plotSF("ttbar/bestTopPt", "ttbar/bestTopCandPt", "p_{top,best}^{T} [GeV]", "Tagging Rate", false, -1, -1, 5);
+    pltSub.plotSF("ttbar/bestTopMass", "ttbar/bestTopCandMass", "m_{top,best} [GeV]", "Tagging Rate", false, -1, -1, 5);
+    pltSub.plotSF("ttbar/bestTopEta", "ttbar/bestTopCandEta", "#eta_{top,best}", "Tagging Rate", false, -1, -1, 5);
+
     plt.plotOnlySF("ttbar/bestTopPt", "ttbar/bestTopCandPt", "p_{top,best}^{T} [GeV]", "Scale Factor", false, -1, -1, 5);
     plt.plotOnlySF("ttbar/bestTopMass", "ttbar/bestTopCandMass", "m_{top,best} [GeV]", "Scale Factor", false, -1, -1, 5);
     plt.plotOnlySF("ttbar/bestTopEta", "ttbar/bestTopCandEta", "#eta_{top,best}", "Scale Factor", false, -1, -1, 5);
+
+    pltSub.plotOnlySF("ttbar/bestTopPt", "ttbar/bestTopCandPt", "p_{top,best}^{T} [GeV]", "Scale Factor", false, -1, -1, 5);
+    pltSub.plotOnlySF("ttbar/bestTopMass", "ttbar/bestTopCandMass", "m_{top,best} [GeV]", "Scale Factor", false, -1, -1, 5);
+    pltSub.plotOnlySF("ttbar/bestTopEta", "ttbar/bestTopCandEta", "#eta_{top,best}", "Scale Factor", false, -1, -1, 5);
 
     plt.plotEff(true, "ttbar/METTagged",        "ttbar/MET",       "p_{miss}^{T} [GeV]",      "Events", true, -1, -1, 5);
     plt.plotEff(true, "ttbar/HTTagged",         "ttbar/HT",        "H^{T} [GeV]",             "Events", true, -1, -1, 5);
@@ -1395,16 +1558,40 @@ int main()
     plt.plotEff(false, "ttbar/nVerticesTagged",  "ttbar/nVertices", "# of Vertices per Event", "Events", true, -1, -1, 5);
     plt.plotEff(false, "ttbar/photonTagged",     "ttbar/photon",    "Photon p_{T} [GeV]", "Events", true, -1, -1, 5);
     
+    pltSub.plotEff(true, "ttbar/METTagged",        "ttbar/MET",       "p_{miss}^{T} [GeV]",      "Events", true, -1, -1, 5);
+    pltSub.plotEff(true, "ttbar/HTTagged",         "ttbar/HT",        "H^{T} [GeV]",             "Events", true, -1, -1, 5);
+    pltSub.plotEff(true, "ttbar/nJetsTagged",      "ttbar/nJets",     "# of Jets per Event",     "Events", true, -1, -1, 5);
+    pltSub.plotEff(true, "ttbar/nVerticesTagged",  "ttbar/nVertices", "# of Vertices per Event", "Events", true, -1, -1, 5);
+    pltSub.plotEff(true, "ttbar/photonTagged",     "ttbar/photon",    "Photon p_{T} [GeV]", "Events", true, -1, -1, 5);
+    
+    pltSub.plotEff(false, "ttbar/METTagged",        "ttbar/MET",       "p_{miss}^{T} [GeV]",      "Events", true, -1, -1, 5);
+    pltSub.plotEff(false, "ttbar/HTTagged",         "ttbar/HT",        "H^{T} [GeV]",             "Events", true, -1, -1, 5);
+    pltSub.plotEff(false, "ttbar/nJetsTagged",      "ttbar/nJets",     "# of Jets per Event",     "Events", true, -1, -1, -1);
+    pltSub.plotEff(false, "ttbar/nVerticesTagged",  "ttbar/nVertices", "# of Vertices per Event", "Events", true, -1, -1, 5);
+    pltSub.plotEff(false, "ttbar/photonTagged",     "ttbar/photon",    "Photon p_{T} [GeV]", "Events", true, -1, -1, 5);
+    
     plt.plotSF("ttbar/METTagged",       "ttbar/MET",       "p_{miss}^{T} (GeV)",      "Tagging Rate", false, -1, -1, 5);
     plt.plotSF("ttbar/HTTagged",        "ttbar/HT",        "H^{T} (GeV)",             "Tagging Rate", false, -1, -1, 5);
     plt.plotSF("ttbar/nJetsTagged",     "ttbar/nJets",     "# of Jets per Event",     "Tagging Rate", false, -1, -1, -1);
     plt.plotSF("ttbar/nVerticesTagged", "ttbar/nVertices", "# of Vertices per Event", "Tagging Rate", false, -1, -1, 5);
     plt.plotSF("ttbar/photonTagged",     "ttbar/photon",    "Photon p_{T} [GeV]", "Tagging Rate", false, -1, 1, 5);
 
+    pltSub.plotSF("ttbar/METTagged",       "ttbar/MET",       "p_{miss}^{T} (GeV)",      "Tagging Rate", false, -1, -1, 5);
+    pltSub.plotSF("ttbar/HTTagged",        "ttbar/HT",        "H^{T} (GeV)",             "Tagging Rate", false, -1, -1, 5);
+    pltSub.plotSF("ttbar/nJetsTagged",     "ttbar/nJets",     "# of Jets per Event",     "Tagging Rate", false, -1, -1, -1);
+    pltSub.plotSF("ttbar/nVerticesTagged", "ttbar/nVertices", "# of Vertices per Event", "Tagging Rate", false, -1, -1, 5);
+    pltSub.plotSF("ttbar/photonTagged",     "ttbar/photon",    "Photon p_{T} [GeV]", "Tagging Rate", false, -1, 1, 5);
+
     plt.plotOnlySF("ttbar/METTagged",       "ttbar/MET",       "p_{miss}^{T} (GeV)",      "Scale Factor", false, -1, -1, 5);
     plt.plotOnlySF("ttbar/HTTagged",        "ttbar/HT",        "H^{T} (GeV)",             "Scale Factor", false, -1, -1, 5);
     plt.plotOnlySF("ttbar/nJetsTagged",     "ttbar/nJets",     "# of Jets per Event",     "Scale Factor", false, -1, -1, -1);
     plt.plotOnlySF("ttbar/nVerticesTagged", "ttbar/nVertices", "# of Vertices per Event", "Scale Factor", false, -1, -1, 5);
     plt.plotOnlySF("ttbar/photonTagged",     "ttbar/photon",    "Photon p_{T} [GeV]", "Scale Factor", false, -1, 1, 5);
+
+    pltSub.plotOnlySF("ttbar/METTagged",       "ttbar/MET",       "p_{miss}^{T} (GeV)",      "Scale Factor", false, -1, -1, 5);
+    pltSub.plotOnlySF("ttbar/HTTagged",        "ttbar/HT",        "H^{T} (GeV)",             "Scale Factor", false, -1, -1, 5);
+    pltSub.plotOnlySF("ttbar/nJetsTagged",     "ttbar/nJets",     "# of Jets per Event",     "Scale Factor", false, -1, -1, -1);
+    pltSub.plotOnlySF("ttbar/nVerticesTagged", "ttbar/nVertices", "# of Vertices per Event", "Scale Factor", false, -1, -1, 5);
+    pltSub.plotOnlySF("ttbar/photonTagged",     "ttbar/photon",    "Photon p_{T} [GeV]", "Scale Factor", false, -1, 1, 5);
 
 }
