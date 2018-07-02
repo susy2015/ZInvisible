@@ -226,19 +226,23 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwwMC_nj(           "stack",  "cntNJetsPt30Eta24Zinv", stackww_MC);
  
     // gen Z pt: genZPt
-    Plotter::DataCollection dcData_DY_gen_pt("data",  "genZPt", {dsDY});
+    Plotter::DataCollection dcData_DY_gen_pt("data",  "genZPt", {dsData_SingleMuon});
     Plotter::DataCollection dcMC_DY_gen_pt("stack",   "genZPt", stack_MC);
   
     // reco Z pt: bestRecoZPt
-    Plotter::DataCollection dcData_DY_reco_pt("data",  "bestRecoZPt", {dsDY});
+    Plotter::DataCollection dcData_DY_reco_pt("data",  "bestRecoZPt", {dsData_SingleMuon});
     Plotter::DataCollection dcMC_DY_reco_pt("stack",   "bestRecoZPt", stack_MC);
 
     // eta
-    Plotter::DataCollection dcData_DY_eta("data",  "genZEta", {dsDY});
+    Plotter::DataCollection dcData_DY_eta("data",  "genZEta", {dsData_SingleMuon});
     Plotter::DataCollection dcMC_DY_eta("stack",   "genZEta", stack_MC);
 
+    // phi
+    Plotter::DataCollection dcData_DY_phi("data",  "genZPhi", {dsData_SingleMuon});
+    Plotter::DataCollection dcMC_DY_phi("stack",   "genZPhi", stack_MC);
+
     // invariant mass
-    Plotter::DataCollection dcData_DY_mass("data",  "genZmass", {dsDY});
+    Plotter::DataCollection dcData_DY_mass("data",  "genZmass", {dsData_SingleMuon});
     Plotter::DataCollection dcMC_DY_mass("stack",   "genZmass", stack_MC);
 
     // met                                                                                                                                                                           
@@ -317,6 +321,7 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMC_DY_gen_pt_"             +cut.first,  {dcData_DY_gen_pt, dcMC_DY_gen_pt},              {1, 2}, cut.second, 60, 0, 1500, true, false,   "gen Z Pt", "Events"));
         vh.push_back(PHS("DataMC_DY_reco_pt_"            +cut.first,  {dcData_DY_reco_pt, dcMC_DY_reco_pt},            {1, 2}, cut.second, 60, 0, 1500, true, false,   "reco Z Pt", "Events"));
         vh.push_back(PHS("DataMC_DY_eta_"                +cut.first,  {dcData_DY_eta, dcMC_DY_eta},                    {1, 2}, cut.second, 60, -10, 10, true, false,   "gen Z Eta", "Events"));
+        vh.push_back(PHS("DataMC_DY_phi_"                +cut.first,  {dcData_DY_phi, dcMC_DY_phi},                    {1, 2}, cut.second, 60, -10, 10, true, false,   "gen Z Phi", "Events"));
         vh.push_back(PHS("DataMC_DY_mass_"               +cut.first,  {dcData_DY_mass, dcMC_DY_mass},                  {1, 2}, cut.second, 60, 0, 200, true, false,    "gen Z Mass", "Events"));
         //Shape correction weights
         vh.push_back(PHS("DataMC_SingleMuon_met_Wgt_"        +cut.first,  {dcData_SingleMuon_met,   dcwMC_met},             {1, 2}, cut.second, 60, 0, 1500, true, false,  label_met,  "Events"));

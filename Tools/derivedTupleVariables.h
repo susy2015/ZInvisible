@@ -1074,6 +1074,7 @@ namespace plotterFunctions
 
             tr.registerDerivedVar("genZPt", genZPt);
             tr.registerDerivedVar("genZEta", genZEta);
+            tr.registerDerivedVar("genZPhi", genZPhi);
             tr.registerDerivedVar("genZmass", genZmass);
             tr.registerDerivedVar("pdgIdZDec", pdgIdZDec);
             tr.registerDerivedVar("passDiMuIsoTrig", passDiMuTrig);
