@@ -51,7 +51,7 @@ bool filterEvents(NTupleReader& tr)
     const std::vector<TLorentzVector>& jetsLVec = tr.getVec<TLorentzVector>("jetsLVec");
     const double& met = tr.getVar<double>("met");
 
-    return jetsLVec.size() >= 4 && jetsLVec[3].Pt() > 30;// && met > 250;
+    return true; //Let's do a little more work for a better count. jetsLVec.size() >= 4 && jetsLVec[3].Pt() > 30;// && met > 250;
 }
 
 int main(int argc, char* argv[])
@@ -119,6 +119,7 @@ int main(int argc, char* argv[])
         case 'O':
             filename = optarg;
             std::cout << "Filename: " << filename << std::endl;
+
         }
     }
 
@@ -159,9 +160,9 @@ int main(int argc, char* argv[])
 
     std::cout << "Dataset: " << dataSets << std::endl;
 
-    int events = 0, pevents = 0;
+    int events = 0, eventsPhoton = 0, eventsQCD = 0, eventsLowHTQCD = 0, eventsTaggedLowHTQCD = 0, events1L = 0, events2L = 0;
 
-    HistoContainer<NTupleReader> hists0Lep("Lep0"), hists1Lep("Lep1"), histsTTbar("ttbar"), histsTTbarLep("ttbarLep"), histsQCD("QCD"), histsPhoton("photon"), histsDilepton("dilepton");
+    HistoContainer<NTupleReader> hists0Lep("Lep0"), hists1Lep("Lep1"), histsTTbar("ttbar"), histsTTbarLep("ttbarLep"), histsQCD("QCD"), histsLowHTQCD("lowHTQCD"), histsPhoton("photon"), histsDilepton("dilepton"), histsSimpleSemiLept("simpleSemiLep");
 
     TRandom* trand = new TRandom3();
 
@@ -243,6 +244,8 @@ int main(int argc, char* argv[])
                 const std::vector<double>& cutMuMTlepVec = tr.getVec<double>("cutMuMTlepVec");
                 const std::vector<TLorentzVector>& cutElecVec = tr.getVec<TLorentzVector>("cutElecVec");
                 const std::vector<double>& cutElecMTlepVec = tr.getVec<double>("cutElecMTlepVec");
+
+                const TopTaggerResults *ttr_                 =  tr.getVar<TopTaggerResults*>("ttrMVA");
 
                 const double isData = !tr.checkBranch("genDecayLVec");
 
@@ -335,6 +338,30 @@ int main(int argc, char* argv[])
                     )
                 {
                     histsQCD.fill(tr, eWeight, trand);
+                    eventsQCD++;
+                }
+
+                //Low HT QCD control sample (For Fake study)
+                if( (!isData || passHighHtTrigger)
+                    && passNoiseEventFilter
+                    && passLeptonVeto
+                    && cntNJetsPt30Eta24 >= 4
+                    && (ht > 250)
+                    )
+                {
+                    histsLowHTQCD.fill(tr, eWeight, trand);
+                    eventsLowHTQCD++;
+                    if(ttr_->getTops().size() > 0) eventsTaggedLowHTQCD++;
+                }
+
+                //Simple SemiLeptonic criteria (just MC)
+                if( (!isData)
+                    && passNoiseEventFilter
+                    && cntNJetsPt30Eta24 >= 4
+                    && (ht > 250)
+                    )
+                {
+                    histsSimpleSemiLept.fill(tr, eWeight, trand);
                 }
 
                 //photon control sample
@@ -347,6 +374,7 @@ int main(int argc, char* argv[])
                     )
                 {
                     histsPhoton.fill(tr, eWeight, trand);
+                    eventsPhoton++;
                 }
 
                 //dilepton control sample
@@ -357,6 +385,7 @@ int main(int argc, char* argv[])
                     )
                 {
                     histsDilepton.fill(tr, eWeight, trand);
+                    events2L++;
                 }
 
                 //semileptonic ttbar enriched control sample MET triggered
@@ -375,6 +404,7 @@ int main(int argc, char* argv[])
                     )
                 {
                     histsTTbar.fill(tr, eWeight, trand);
+                    events1L++;
                 }
 
                 //semileptonic ttbar enriched control sample Mu triggered
@@ -438,7 +468,14 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    std::cout << "Processed " << events << " events. " << pevents << " passed selection." << std::endl;
+    std::cout << "Processed " << events << " events. " << std::endl;
+    std::cout << eventsQCD << " events passed highHT QCD selection." << std::endl;
+    std::cout << eventsLowHTQCD << " events passed lowHT QCD selection." << std::endl;
+    std::cout << eventsPhoton << " events passed single Photon selection." << std::endl;
+    std::cout << events1L << " events passed semileptonic TTbar selection." << std::endl;
+    std::cout << events2L << " events passed di-mu selection." << std::endl;
+
+    std::cout << eventsTaggedLowHTQCD << " tagged events passed lowHT QCD selection." << std::endl;
 
     if(savefile)
     {
@@ -454,6 +491,8 @@ int main(int argc, char* argv[])
         hists0Lep.save(f);
         hists1Lep.save(f);
         histsQCD.save(f);
+        histsLowHTQCD.save(f);
+        histsSimpleSemiLept.save(f);
         histsTTbar.save(f);
         histsTTbarLep.save(f);
         histsPhoton.save(f);

@@ -10,6 +10,13 @@ from samples import SampleCollection
 import optparse 
 import subprocess
 
+def frange(a,b,i):
+    p = 10**i
+    sr = a*p
+    er = (b*p) + 1
+    p = float(p)
+    return map(lambda x: x/p, xrange(int(sr),int(er)))
+
 mvaFileName = ""
 with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg") as meowttcfgFile:
     for line in meowttcfgFile:
@@ -60,13 +67,14 @@ filestoTransferTT  = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/simpleAnaly
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_AllComb.cfg",
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg_trijetOnly.cfg",
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg-MVAAK8_Tight_v1.2.1_dijetOnly.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TrainingOutput_dR20_pt30_depth12_500tree_noQGL_binaryCSV_2017_Mar24.model",
                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_ml.so.3.1",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName},
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"TrainingOutput_dR20_pt30_depth12_500tree_2017_Feb16.model"},
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"weights-t2tt850-sm-baseline-nodphi-nomtb-hqu-08112016.xml"},
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"sdWTag_ttbarTraining_v0.xml"},
-                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"tfModel_frozen.pb"},
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/tfModel_frozen.pb",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
                       environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
