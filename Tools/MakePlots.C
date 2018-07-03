@@ -6,6 +6,15 @@
 #include <getopt.h>
 #include <iostream>
 
+void stripRoot(std::string &path)
+{
+    int dot = path.rfind(".root");
+    if (dot != std::string::npos)
+    {
+        path.resize(dot);
+    }
+}
+
 int main(int argc, char* argv[])
 {
     using namespace std;
@@ -18,7 +27,7 @@ int main(int argc, char* argv[])
         {"savetuple",        no_argument, 0, 't'},
         {"fromFile",         no_argument, 0, 'f'},
         {"condor",           no_argument, 0, 'c'},
-        {"histFile",   required_argument, 0, 'H'},
+        {"filename",   required_argument, 0, 'H'},
         {"dataSets",   required_argument, 0, 'D'},
         {"numFiles",   required_argument, 0, 'N'},
         {"startFile",  required_argument, 0, 'M'},
@@ -29,7 +38,7 @@ int main(int argc, char* argv[])
     };
 
     bool doPlots = true, doSave = true, doTuple = true, fromTuple = true, runOnCondor = false;
-    string histFile = "", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
+    string filename = "", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
     double lumi = AnaSamples::luminosity;
     std::string sbEra = "SB_v1_2017";//"SB_v1_2017";
@@ -62,7 +71,7 @@ int main(int argc, char* argv[])
             break;
 
         case 'H':
-            histFile = optarg;
+            filename = optarg;
             break;
 
         case 'D':
@@ -99,19 +108,24 @@ int main(int argc, char* argv[])
     if(runOnCondor)
     {
         char thistFile[128];
-        sprintf(thistFile, "histoutput_%s_%d.root", dataSets.c_str(), startFile);
-        histFile = thistFile;
+        stripRoot(filename);
+        sprintf(thistFile, "%s_%s_%d.root", filename.c_str(), dataSets.c_str(), startFile);
+        filename = thistFile;
+        //filename = thistFile;
         //doSave = true;
         //doPlots = false;
+        std::cout << "Filename modified for use with condor: " << filename << std::endl;
         fromTuple = true;
         sampleloc = "condor";
     }
+
+    std::cout << "Sample location: " << sampleloc << std::endl;
 
     // the old version
     //AnaSamples::SampleSet        ss(sampleloc, lumi);
     //AnaSamples::SampleCollection sc(ss);
     // the new version
-    AnaSamples::SampleSet        ss("sampleSets.txt");
+    AnaSamples::SampleSet        ss("sampleSets.txt", AnaSamples::luminosity, runOnCondor);
     AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
     const double zAcc = 1.0;
@@ -394,7 +408,7 @@ int main(int argc, char* argv[])
 
     RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
 
-    Plotter plotter(vh, vvf, fromTuple, histFile, nFiles, startFile, nEvts);
+    Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);
     plotter.setCutFlows(cutFlowSummaries);
     plotter.setLumi(lumi);
     plotter.setPlotDir(plotDir);
