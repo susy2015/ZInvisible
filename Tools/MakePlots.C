@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
     //AnaSamples::SampleSet        ss(sampleloc, lumi);
     //AnaSamples::SampleCollection sc(ss);
     // the new version
-    AnaSamples::SampleSet        ss("sampleSets.txt", AnaSamples::luminosity, runOnCondor);
+    AnaSamples::SampleSet        ss("sampleSets.txt", runOnCondor, AnaSamples::luminosity);
     AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
     const double zAcc = 1.0;
