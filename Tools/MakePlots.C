@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
         {"savetuple",        no_argument, 0, 't'},
         {"fromFile",         no_argument, 0, 'f'},
         {"condor",           no_argument, 0, 'c'},
-        {"filename",   required_argument, 0, 'H'},
+        {"filename",   required_argument, 0, 'O'},
         {"dataSets",   required_argument, 0, 'D'},
         {"numFiles",   required_argument, 0, 'N'},
         {"startFile",  required_argument, 0, 'M'},
@@ -38,12 +38,12 @@ int main(int argc, char* argv[])
     };
 
     bool doPlots = true, doSave = true, doTuple = true, fromTuple = true, runOnCondor = false;
-    string filename = "", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
+    string filename = "histoutput.root", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
     double lumi = AnaSamples::luminosity;
     std::string sbEra = "SB_v1_2017";//"SB_v1_2017";
 
-    while((opt = getopt_long(argc, argv, "pstfcH:D:N:M:E:P:L:S:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "pstfcO:D:N:M:E:P:L:S:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
             runOnCondor = true;
             break;
 
-        case 'H':
+        case 'O':
             filename = optarg;
             break;
 
@@ -119,6 +119,7 @@ int main(int argc, char* argv[])
         sampleloc = "condor";
     }
 
+    std::cout << "filename: " << filename << std::endl;
     std::cout << "Sample location: " << sampleloc << std::endl;
 
     // the old version
@@ -408,6 +409,7 @@ int main(int argc, char* argv[])
 
     RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
 
+    std::cout << "Creating Plotter to make... well... you know... plots." << std::endl;
     Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);
     plotter.setCutFlows(cutFlowSummaries);
     plotter.setLumi(lumi);
