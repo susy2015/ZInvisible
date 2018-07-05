@@ -119,14 +119,15 @@ int main(int argc, char* argv[])
         sampleloc = "condor";
     }
 
-    std::cout << "filename: " << filename << std::endl;
+    std::cout << "output filename: " << filename << std::endl;
     std::cout << "Sample location: " << sampleloc << std::endl;
 
-    // the old version
-    //AnaSamples::SampleSet        ss(sampleloc, lumi);
-    //AnaSamples::SampleCollection sc(ss);
-    // the new version
+    // follow this syntax; order matters for your arguments
+    
+    //SampleSet::SampleSet(std::string file, bool isCondor, double lumi)
     AnaSamples::SampleSet        ss("sampleSets.txt", runOnCondor, AnaSamples::luminosity);
+    
+    //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples) : ss_(samples)
     AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
     const double zAcc = 1.0;
