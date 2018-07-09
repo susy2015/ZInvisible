@@ -57,13 +57,19 @@ int main(int argc, char* argv[])
     // central value histogram
     // try making this without the weights
     // unweighted
-    TH1D* h1 = (TH1D*)f1->Get("nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+normsingle");
+    TH1D* h1 = (TH1D*)f1->Get("nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single");
     // weighted
     //TH1D* h1 = (TH1D*)f1->Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle");
 
     // Scale the prediction by the normalization factor by hand for now
     //h1->Scale(ScaleFactors::sf_norm0b());
 
+    std::cout << "h1: " << h1 << std::endl;
+    if (h1 == 0)
+    {
+        std::cout << "ERROR: h1 did not load from the root file; h1 = " << h1 << std::endl; 
+        exit(1);
+    }
     //TFile* f2 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_nJetWgt.root");
     TFile* f2 = TFile::Open("syst_all.root");
     //TFile* f2 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/syst_all.root");
