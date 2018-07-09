@@ -43,12 +43,16 @@ int main(int argc, char* argv[])
     // It would be nice to add "try/catch" statements with error messages to help the user find mistakes.
 
     // Get the relevant information
+    std::string inputFile = "histoutput.root";
+    std::string inputHist = "nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single";
+
+
     //TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Feb15_NSB37.root");
     
     // original
     //TFile* f1 = TFile::Open("ALL_approval_2Zjets.root");//fifth_njets_loose_weight.root");//condor/histoutput-Jul24_2016_postWgt.root");
     // default
-    TFile* f1 = TFile::Open("histoutput.root");
+    TFile* f1 = TFile::Open(inputFile.c_str());
     
     //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Mar10_45Bin_v3.root");
     //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Jul6_Rnorm.root");
@@ -57,7 +61,7 @@ int main(int argc, char* argv[])
     // central value histogram
     // try making this without the weights
     // unweighted
-    TH1D* h1 = (TH1D*)f1->Get("nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single");
+    TH1D* h1 = (TH1D*)f1->Get(inputHist.c_str());
     // weighted
     //TH1D* h1 = (TH1D*)f1->Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle");
 
