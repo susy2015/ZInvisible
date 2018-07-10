@@ -43,7 +43,8 @@ int main(int argc, char* argv[])
     // It would be nice to add "try/catch" statements with error messages to help the user find mistakes.
 
     // Get the relevant information
-    std::string inputFile = "histoutput.root";
+    //std::string inputFile = "histoutput.root";
+    std::string inputFile = "histoutput_ZJetsToNuNu_HT_200to400_all.root";
     std::string inputHist = "nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single";
 
 
