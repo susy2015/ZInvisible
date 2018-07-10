@@ -36,26 +36,29 @@ void smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, d
 }
 
 
-int main(int argc, char* argv[])
+//int main(int argc, char* argv[])
+void run(std::string inputFile, std::string inputHist, std::string outputFile)
 {
     // Be careful. Accessing root files and/or histograms that don't exist will cause seg faults.
     // Make sure the file and histogram names are correct.
     // It would be nice to add "try/catch" statements with error messages to help the user find mistakes.
 
     // Get the relevant information
-    std::string inputFile = "result.root";
+    //std::string inputFile = "result.root";
+    //std::string inputFile = "histoutput.root";
     //std::string inputFile = "histoutput_ZJetsToNuNu_HT_200to400_all.root";
-    // no factors: nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single
-    // b jet scale: nSearchBin/TriggerScl_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single
-    // all facotrs (b jet scale, normalization, and shape): nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single
     
-    //std::string inputHist = "nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single";
-    //std::string inputHist = "nSearchBin/TriggerScl_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single";
-    std::string inputHist = "nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single";
+    // no factors: nSearchBin/Trigger_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single
+    // b jet scale: nSearchBin/TriggerScl_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single
+    // all facotrs (b jet scale, normalization, and shape): nSearchBin/TriggerWgt_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single
+    
+    //std::string inputHist = "nSearchBin/Trigger_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single";
+    //std::string inputHist = "nSearchBin/TriggerScl_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single";
+    //std::string inputHist = "nSearchBin/TriggerWgt_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single";
 
     //std::string outputFile = "moneyplot_noFactors";
     //std::string outputFile = "moneyplot_bjetScaled";
-    std::string outputFile = "moneyplot_allFactors";
+    //std::string outputFile = "moneyplot_allFactors";
 
     //TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Feb15_NSB37.root");
     
@@ -366,5 +369,16 @@ int main(int argc, char* argv[])
 
     f1->Close();
     
+    //return 0;
+}
+
+
+int main(int argc, char* argv[])
+{
+    // void run(std::string inputFile, std::string inputHist, std::string outputFile)
+    run("histoutput.root", "nSearchBin/TriggerWgt_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_allFactors");
     return 0;
 }
+
+
+
