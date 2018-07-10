@@ -43,10 +43,19 @@ int main(int argc, char* argv[])
     // It would be nice to add "try/catch" statements with error messages to help the user find mistakes.
 
     // Get the relevant information
-    //std::string inputFile = "histoutput.root";
-    std::string inputFile = "histoutput_ZJetsToNuNu_HT_200to400_all.root";
-    std::string inputHist = "nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single";
+    std::string inputFile = "result.root";
+    //std::string inputFile = "histoutput_ZJetsToNuNu_HT_200to400_all.root";
+    // no factors: nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single
+    // b jet scale: nSearchBin/TriggerScl_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single
+    // all facotrs (b jet scale, normalization, and shape): nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single
+    
+    //std::string inputHist = "nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single";
+    //std::string inputHist = "nSearchBin/TriggerScl_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single";
+    std::string inputHist = "nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single";
 
+    //std::string outputFile = "moneyplot_noFactors";
+    //std::string outputFile = "moneyplot_bjetScaled";
+    std::string outputFile = "moneyplot_allFactors";
 
     //TFile* f1 = TFile::Open("/uscms_data/d3/nstrobbe/HadronicStop/DataTest/CMSSW_7_4_8/src/ZInvisible/Tools/condor/dataplots_muon_Feb15_NSB37.root");
     
@@ -306,8 +315,10 @@ int main(int argc, char* argv[])
     //Below line is the overall for the binng
     //SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
     // make money plot png/pdf
-    c->Print("moneyplot.png");
-    c->Print("moneyplot.pdf");
+    std::string pngStr = ".png";
+    std::string pdfStr = ".pdf";
+    c->Print((outputFile + pngStr).c_str());
+    c->Print((outputFile + pdfStr).c_str());
 
 
     // Now also make a table containing the information
