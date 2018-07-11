@@ -39,9 +39,18 @@ void smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, d
 //int main(int argc, char* argv[])
 void run(std::string inputFile, std::string inputHist, std::string outputFile)
 {
+    // open file to write info tables
+    std::string txtStr = ".txt";
+    freopen((outputFile + txtStr).c_str(), "w", stdout);
+    
     // Be careful. Accessing root files and/or histograms that don't exist will cause seg faults.
     // Make sure the file and histogram names are correct.
-    // It would be nice to add "try/catch" statements with error messages to help the user find mistakes.
+    
+    // open input file
+    TFile* f1 = TFile::Open(inputFile.c_str());
+    
+    // load histogram from file
+    TH1D* h1 = (TH1D*)f1->Get(inputHist.c_str());
 
     // Get the relevant information
     //std::string inputFile = "result.root";
@@ -64,8 +73,6 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     
     // original
     //TFile* f1 = TFile::Open("ALL_approval_2Zjets.root");//fifth_njets_loose_weight.root");//condor/histoutput-Jul24_2016_postWgt.root");
-    // default
-    TFile* f1 = TFile::Open(inputFile.c_str());
     
     //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Mar10_45Bin_v3.root");
     //TFile* f1 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/condor/histoutput-Jul6_Rnorm.root");
@@ -73,14 +80,14 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     //TH1D* h1 = (TH1D*)f1->Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle");
     // central value histogram
     // try making this without the weights
-    // unweighted
-    TH1D* h1 = (TH1D*)f1->Get(inputHist.c_str());
     // weighted
     //TH1D* h1 = (TH1D*)f1->Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle");
 
     // Scale the prediction by the normalization factor by hand for now
     //h1->Scale(ScaleFactors::sf_norm0b());
 
+    // Check that histogram is loaded successfully... if h1 = 0 then the histogram was not loaded (probably not found).
+    // Check the histogram name and spelling if you get this error.
     std::cout << "h1: " << h1 << std::endl;
     if (h1 == 0)
     {
@@ -368,15 +375,17 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     std::cout << "end second info table" << std::endl;
 
     f1->Close();
-    
-    //return 0;
+    fclose(stdout);
+    delete c;
 }
 
 
 int main(int argc, char* argv[])
 {
     // void run(std::string inputFile, std::string inputHist, std::string outputFile)
-    run("histoutput.root", "nSearchBin/TriggerWgt_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_allFactors");
+    run("result.root", "nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single",           "moneyplot_noFactors");
+    run("result.root", "nSearchBin/TriggerScl_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single",  "moneyplot_bjetScaled");
+    run("result.root", "nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_allFactors");
     return 0;
 }
 
