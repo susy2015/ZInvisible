@@ -78,20 +78,52 @@ lrwxrwxrwx 1 caleb us_cms 119 Jun 21 18:52 TopTagger.cfg -> /uscms/home/caleb/no
 
 Now compile.
 ```
-cd ../Zinvisible/Tools
+cd $CMSSW_BASE/src/Zinvisible/Tools
 mkdir obj
 make -j8
 ```
 
 Copy some files from Caleb.
-
+```
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/sampleSets.txt .
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/sampleCollections.txt .
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/ALL_approval_2Zjets.root .
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/syst_all.root .
+```
 
 Now try running makePlots.
 ```
-./makePlots -D ZJetsToNuNu -E 1000
+./makePlots -s -D ZJetsToNuNu -E 1000
+```
+The `-s` option is for only saving the root file and not making pdf/png files. You can remove the `-s` option to generate myriad pdf/png files. The `-D` option is for the dataset (ZJetsToNuNu). The `-E` option is for number of events to process (1000).
+
+If `makePlots` succeeds it will create a file named `histoutput.root`. You can open this file with a TBrowser either on cmslpc or by copying it to your machine.
+
+Here is the command structure for using rsync to copy file to your machine. Replace USERNAME with your cmslpc username. Replace WORKINGAREA with the contects of $PWD, which you can get with `pwd`.
+```
+rsync -avz USERNAME@cmslpc-sl6.fnal.gov:WORKINGAREA/histoutput.root .
+```
+Here is an example of this command.
+```
+rsync -avz caleb@cmslpc-sl6.fnal.gov:/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/histoutput.root .
 ```
 
+Open the root file in TBrowser and click on the directories to view histograms.
+```
+root histooutput.root
+TBrowser b
+```
 
-Now you are ready to go!
+You can also replace ZJetsToNuNu with DYJetsToLL, TTbarDiLep, TEST, and other datasets.
+```
+./makePlots -s -D DYJetsToLL -E 1000
+```
 
+You can also try running the moneyplot script.
+```
+./moneyplot
+```
+The moneyplot script should create some text, pdf, and png files that contain moneyplot in the name. The plots show the the central value of the ZInsibile background estimation for each of the 84 search bins and the accosiated uncertainties. The text files show the contents of each bin and the associated unertainties.
+
+If everything has worked up to this point, you have arrived at the end. You will go far, my friend. Otherwise, don't worry. Keep trying and contact an expert if you cannot resolve the issues.
 
