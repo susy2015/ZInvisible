@@ -83,7 +83,7 @@ mkdir obj
 make -j8
 ```
 
-Copy some files from Caleb.
+Copy some files from Caleb. The text files are used by makePlots, and the root files are used by moneyplot.
 ```
 cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/sampleSets.txt .
 cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/sampleCollections.txt .
