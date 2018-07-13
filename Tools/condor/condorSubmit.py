@@ -2,6 +2,7 @@
 ####!${SRT_CMSSW_RELEASE_BASE_SCRAMRTDEL}/external/${SCRAM_ARCH}/bin/python
 
 import sys
+import os
 from os import system, environ
 sys.path = [environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/condor/",] + sys.path
 
@@ -12,28 +13,34 @@ import subprocess
 mvaFileName = ""
 with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg") as meowttcfgFile:
     for line in meowttcfgFile:
+        line = line.split("#")[0]
         if "modelFile" in line:
             mvaFileName = line.split("=")[1].strip().strip("\"")
             break
 
-
 #here I hack in the tarball for GMP, this needs to be generalized to the other options 
 
 filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots", 
-                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
-                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
-                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight_allJets.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
-                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so", 
-                      environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1", 
-                      environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
-                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root"]
+                      environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so", 
+                      "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
+                      "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_ml.so.3.1",
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.txt",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.txt"
+                      ]
 
 
 #go make plots!
@@ -48,27 +55,78 @@ Error = logs/makePlots_$(Process).stderr
 Log = logs/makePlots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
++maxWallTime = 2880
 
 """
 
+#Here is the configuration for the Data/MC validation of the TopTagger 
+filestoTransferTT  = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/simpleAnalyzer",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.txt",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.txt",
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/Legacy_TopTagger.cfg",
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_AllComb.cfg",
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg_trijetOnly.cfg",
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg-MVAAK8_Tight_v1.2.1_dijetOnly.cfg",
+                      "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
+                      "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_ml.so.3.1",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName},
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"TrainingOutput_dR20_pt30_depth12_500tree_2017_Feb16.model"},
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"weights-t2tt850-sm-baseline-nodphi-nomtb-hqu-08112016.xml"},
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"sdWTag_ttbarTraining_v0.xml"},
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"tfModel_frozen.pb"},
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
+                      environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
+                      ]
+
+#go make TTopTagger plots!
+submitFileTT = """universe = vanilla
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goTTplots.sh
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goTTplots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/TT.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz
+Output = logs/TT_$(Process).stdout
+Error = logs/TT_$(Process).stderr
+Log = logs/TT_$(Process).log
+notify_user = ${LOGNAME}@FNAL.GOV
+x509userproxy = $ENV(X509_USER_PROXY)
++maxWallTime = 2880
+
+"""
+
+#go make top plots!
 filestoTransferGTP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeTopPlots",
-                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so",
-                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/libTopTaggerTopTagger.so",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/Legacy_TopTagger.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_AllComb.cfg",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg-MVAAK8_Tight_v1.2.1_trijetOnly.cfg",
-                      environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_core.so.3.1",
-                      environ["CMSSW_BASE"] + "/src/opencv/lib/libopencv_ml.so.3.1",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg_trijetOnly.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg-MVAAK8_Tight_v1.2.1_dijetOnly.cfg",
+                      "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
+                      "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_ml.so.3.1",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName},
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root"
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"TrainingOutput_dR20_pt30_depth12_500tree_2017_Feb16.model"},
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"weights-t2tt850-sm-baseline-nodphi-nomtb-hqu-08112016.xml"},
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"sdWTag_ttbarTraining_v0.xml"},
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"tfModel_frozen.pb"},
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
+                      environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
+                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
                       ]
 
+#print filestoTransferGTP
 
-#go make top plots!
 submitFileGTP = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeTopPlots.sh
-Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gtp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz 
@@ -77,9 +135,25 @@ Error = logs/makePlots_$(Process).stderr
 Log = logs/makePlots_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
-
++maxWallTime = 2880
 
 """
+
+#submitFileGTP = """universe = grid
+#grid_resource = condor kodiak-ce.baylor.edu kodiak-ce.baylor.edu:9619
+#+remote_queue = "batch"
+#Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeTopPlots.sh
+#Should_Transfer_Files = YES
+#WhenToTransferOutput = ON_EXIT
+#Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gtp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz 
+#Output = logs/makePlots_$(Process).stdout
+#Error = logs/makePlots_$(Process).stderr
+#Log = logs/makePlots_$(Process).log
+#notify_user = ${LOGNAME}@FNAL.GOV
+#x509userproxy = $ENV(X509_USER_PROXY)
+#+maxWallTime = 2880
+#
+#"""
 
 #go make lepton efficiency
 submitFileGME = """universe = vanilla
@@ -135,6 +209,7 @@ parser.add_option ('-e',  dest='goMakeEff', action='store_true', default = False
 parser.add_option ('-b',  dest='goMakeBeff', action='store_true', default = False, help="Run beffCalc instead of makePlots.")
 parser.add_option ('-s',  dest='goMakeSigEff', action='store_true', default = False, help="Run makeSignalHistograms instead of makePlots.")
 parser.add_option ('-t',  dest='goMakeTopPlots', action='store_true', default = False, help="Run makeTopPlots instead of makePlots.")
+parser.add_option ('-m',  dest='goTTPlots', action='store_true', default = False, help="Run TTPlots instead of makePlots.")
 
 options, args = parser.parse_args()
 
@@ -171,6 +246,10 @@ elif options.goMakeTopPlots:
     exeName = "makeTopPlots"
     submitFile = submitFileGTP
     makeExeAndFriendsTarrball(filestoTransferGTP, "gtp")
+elif options.goTTPlots:
+    exeName = "simpleAnalyzer"
+    submitFile = submitFileTT
+    makeExeAndFriendsTarrball(filestoTransferTT, "TT")
 else:
     exeName = "makePlots"
     submitFile = submitFileGMP
@@ -179,7 +258,7 @@ else:
 nFilesPerJob = options.numfile
 
 fileParts = [submitFile]
-sc = SampleCollection()
+sc = SampleCollection("../sampleSets.txt", "../sampleCollections.txt")
 datasets = []
 
 if options.dataCollections or options.dataCollectionslong:
@@ -213,7 +292,15 @@ for ds in datasets:
     print ds
     for s, n in sc.sampleList(ds):
         print "\t%s"%n
-        f = open(s)
+        try:
+            f = open(s)
+        except IOError:
+            fShort = s.split("/")[-1]
+            if(os.path.isfile(fShort)):
+                os.remove(fShort)
+            system("xrdcp root://cmseos.fnal.gov/$(echo %s | sed 's|/eos/uscms||') ."%s)
+            print "fShort = {0}".format(fShort)
+            f = open(fShort)
         if not f == None:
             count = 0
             for l in f:

@@ -10,14 +10,14 @@
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSet()
 {
-    //if you want to mot fill the minituple return std::set<std::string>({});
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central","isr_Unc_Cent","_PUweightFactor"});
+    //if you want to not fill the minituple return std::set<std::string>({});
+  return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central","isr_Unc_Cent","_PUweightFactor"});
     //return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
 }
 
 const std::set<std::string> RegisterFunctions::getMiniTupleSetData()
 {
-    return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
+  return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
 }
 
 void activateBranches(std::set<std::string>& activeBranches)
@@ -75,6 +75,26 @@ void activateBranches(std::set<std::string>& activeBranches)
     activeBranches.insert("ak81dRMin");
     activeBranches.insert("tru_npv");
     activeBranches.insert("vtxSize");
+    //Photon branches Andres                                                                                                              
+    activeBranches.insert("isEB");
+    activeBranches.insert("genMatched");
+    activeBranches.insert("hadTowOverEM");
+    activeBranches.insert("sigmaIetaIeta");
+    activeBranches.insert("pfChargedIso");
+    activeBranches.insert("pfNeutralIso");
+    activeBranches.insert("pfGammaIso");
+    activeBranches.insert("pfChargedIsoRhoCorr");
+    activeBranches.insert("pfNeutralIsoRhoCorr");
+    activeBranches.insert("pfGammaIsoRhoCorr");
+    activeBranches.insert("hasPixelSeed");
+    activeBranches.insert("passElectronVeto");
+    activeBranches.insert("nonPrompt");
+    activeBranches.insert("fullID");
+    activeBranches.insert("photonPt");
+    activeBranches.insert("photonEta");
+    activeBranches.insert("photonPhi");
+    activeBranches.insert("totalPhotons");
+    activeBranches.insert("gammaLVec");
 }
 
 ////////////////////////////////
@@ -164,6 +184,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(bTagCorrector) delete bTagCorrector;
     if(ISRcorrector) delete ISRcorrector;
     if(pileup)       delete pileup;
+    if(gamma) delete gamma;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -197,6 +218,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*ak8DrMatch);
     tr.registerFunction(*ISRcorrector);
     tr.registerFunction(*pileup);
+    tr.registerFunction(*gamma);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
@@ -339,20 +361,20 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
     myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
-    prepareTopVars = new plotterFunctions::PrepareTopVars();
+    //prepareTopVars = new plotterFunctions::PrepareTopVars();
     triggerInfo = new plotterFunctions::TriggerInfo(false, true);
 }
 
 RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
 {
     if(myBLV) delete myBLV;
-    if(prepareTopVars) delete prepareTopVars;
+    //if(prepareTopVars) delete prepareTopVars;
 }
 
 void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
 {
     tr.registerFunction(*myBLV);
-    tr.registerFunction(*prepareTopVars);
+    //tr.registerFunction(*prepareTopVars);
     tr.registerFunction(*triggerInfo);
 //    tr.registerFunction(*taudiv);
 //    tr.registerFunction(*ak8DrMatch);

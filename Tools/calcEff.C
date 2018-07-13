@@ -68,8 +68,14 @@ int main(int argc, char* argv[])
         sampleloc = "condor";
     }
 
-    AnaSamples::SampleSet        ss(sampleloc);
-    AnaSamples::SampleCollection sc(ss);
+  
+    // the old version
+    //AnaSamples::SampleSet        ss(sampleloc, lumi);
+    //AnaSamples::SampleCollection sc(ss);
+    // the new version
+    AnaSamples::SampleSet        ss("sampleSets.txt");
+    AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
+
 
     TFile *f = new TFile(filename.c_str(),"RECREATE");
     f->cd();
