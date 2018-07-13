@@ -29,19 +29,31 @@ git clone git@github.com:susy2015/SusyAnaTools.git
 git clone git@github.com:susy2015/TopTagger.git
 ```
 
-For the Zinvible estimation, we are currently using the calebGJets branch of the ZInvisible repository. We are using the master branch of the SusyAnaTools repository (though the recent change of double to float is not supported yet). We are using the master branch of the TopTagger repository.
+For the Zinvible estimation, we are currently using
 
+* the master branch of the ZInvisible repository
+* the CastTopTaggerInputsAsDoubles branch of the SusyAnaTools repository
+* the master branch of the TopTagger repository
+* ntuples with values stored as doubles
 
-
+The ntuples used in our analysis are being changed from doubles to floats. At the moment double ntuples are available. When float ntuples become available, we will switch to the master branch of SusyAnaTools.
 
 ## Setup
 
+
+### SusyAnaTools
+Checkout the branch CastTopTaggerInputsAsDoubles.
+```
+cd $CMSSW_BASE/src/SusyAnaTools/Tools
+git fetch origin
+git checkout CastTopTaggerInputsAsDoubles
+```
 
 ### TopTagger
 
 Follow the TopTagger instructions for Standalone (edm free) install instructions within CMSSW [here](https://github.com/susy2015/TopTagger/tree/master/TopTagger#standalone-edm-free-install-instructions-within-cmssw), but exclude the commands you have already done (don't repeat CMSSW setup and cloning TopTagger repository).
 ```
-cd $CMSSW_BASE/srcTopTagger/TopTagger/test
+cd $CMSSW_BASE/src/TopTagger/TopTagger/test
 ./configure
 make -j8
 ```
@@ -50,7 +62,7 @@ make -j8
 
 Checkout the branch calebGJets.
 ```
-cd $CMSSW_BASE/src/Zinvible/Tools
+cd $CMSSW_BASE/src/ZInvisible/Tools
 git fetch origin
 git checkout calebGJets
 ```
