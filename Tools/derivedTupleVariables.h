@@ -663,7 +663,7 @@ namespace plotterFunctions
 
             for(int i = 0; i < muonsLVec.size(); ++i)
             {
-                if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements.
+                if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
                 {
                     cutMuVecRecoOnly.push_back(muonsLVec[i]);
                 }
@@ -687,7 +687,7 @@ namespace plotterFunctions
             int sumElecCharge = 0;
             for(int i = 0; i < elesLVec.size(); ++i)
             {
-                if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr)) // emulates muons with pt but no iso requirements.
+                if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr)) // emulates electrons with pt but no iso requirements.
                 {
                     cutElecVecRecoOnly.push_back(elesLVec[i]);
                 }
