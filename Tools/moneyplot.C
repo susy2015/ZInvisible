@@ -365,7 +365,8 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     std::cout << "begin second info table" << std::endl;
     const int k = h1->GetNbinsX();
     std::cout << "n bins = " << k << std::endl;
-    sbins.print_searchBins_headerstr("& Norm & Data/MC \\\\ shape & Njet/shape \\\\ stat. & MC Stats & Other \\\\ \n");
+    //sbins.print_searchBins_headerstr("& Norm & Data/MC \\\\ shape & Njet/shape \\\\ stat. & MC Stats & Other \\\\ \n");
+    sbins.print_searchBins_headerstr("& Norm & Data/MC & shape & Njet/shape & stat. \\\\");
     for(int i=0; i<k; ++i)
     {
         char formatStr[256];
@@ -383,9 +384,13 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
 int main(int argc, char* argv[])
 {
     // void run(std::string inputFile, std::string inputHist, std::string outputFile)
-    run("result.root", "nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single",           "moneyplot_noFactors");
-    run("result.root", "nSearchBin/TriggerScl_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single",  "moneyplot_bjetScaled");
-    run("result.root", "nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_allFactors");
+    // we have changed from nSearchBinnSearchBinnSearchBin to nSearchBinnSearchBin in MakePlots.C
+    run("result.root", "nSearchBin/Trigger_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single",           "moneyplot_passBaseline_noFactors");
+    run("result.root", "nSearchBin/TriggerScl_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single",  "moneyplot_passBaseline_bjetScaled");
+    run("result.root", "nSearchBin/TriggerWgt_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_passBaseline_allFactors");
+    run("result.root", "nSearchBin/Trigger_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single",           "moneyplot_passBaselineZinv_noFactors");
+    run("result.root", "nSearchBin/TriggerScl_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single",  "moneyplot_passBaselineZinv_bjetScaled");
+    run("result.root", "nSearchBin/TriggerWgt_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_passBaselineZinv_allFactors");
     return 0;
 }
 
