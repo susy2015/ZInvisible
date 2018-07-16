@@ -734,10 +734,11 @@ namespace plotterFunctions
             {
                 for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
                 {
+                    // genHt
                     if((abs(genDecayPdgIdVec[i]) != 0 &&  abs(genDecayPdgIdVec[i]) < 6) || (abs(genDecayPdgIdVec[i]) > 100 && abs(genDecayPdgIdVec[i]) < 10000)) genHt += genDecayLVec[i].Pt();
 
-                    if(genDecayPdgIdVec[i] ==  13) nuPt1 = genDecayLVec[i].Pt();
-                    if(genDecayPdgIdVec[i] == -13) nuPt2 = genDecayLVec[i].Pt();
+                    if(genDecayPdgIdVec[i] ==  13) nuPt1 = genDecayLVec[i].Pt(); // mu+
+                    if(genDecayPdgIdVec[i] == -13) nuPt2 = genDecayLVec[i].Pt(); // mu-
                 }
 
                 for(int index = 0; index < W_emuVec.size(); ++index)
@@ -757,6 +758,7 @@ namespace plotterFunctions
                             double matchPt = -999.9;
                             for(int j = 0; j < cutMuVecRecoOnly.size(); ++j)
                             {
+                                // difference in angle between gen and reco muons 
                                 double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVecRecoOnly[j]);
                                 if(dR < dRMin)
                                 {
@@ -774,6 +776,7 @@ namespace plotterFunctions
                             dRMin = 999.9;
                             for(int j = 0; j < cutMuVec->size(); ++j)
                             {
+                                // difference in angle between gen and cut muons 
                                 double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutMuVec)[j]);
                                 if(dR < dRMin)
                                 {
@@ -801,6 +804,7 @@ namespace plotterFunctions
                             double matchPt = -999.9;
                             for(int j = 0; j < cutElecVecRecoOnly.size(); ++j)
                             {
+                                // difference in angle between gen and reco electrons
                                 double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVecRecoOnly[j]);
                                 if(dR < dRMin)
                                 {
@@ -818,6 +822,7 @@ namespace plotterFunctions
                             dRMin = 999.9;
                             for(int j = 0; j < cutElecVec->size(); ++j)
                             {
+                                // difference in angle between gen and cut electrons
                                 double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutElecVec)[j]);
                                 if(dR < dRMin)
                                 {
