@@ -953,10 +953,20 @@ namespace plotterFunctions
             bool passElMuZinvSel = (cutMuVec->size() == 1 && cutElecVec->size() == 1 && sumElecCharge == -sumMuCharge && (*cutMuVec)[0].Pt() > highMuPt && (*cutElecVec)[0].Pt() > minMuPt) && (bestRecoElMuZ.M() > zMassMin) && (bestRecoElMuZ.M() < zMassMax);
             bool passMuZinvSel_lowpt   =  passEleVeto && (cutMuVec->size() == 2   && sumMuCharge == 0   && (*cutMuVec)[0].Pt() > minMuPt     && (*cutMuVec)[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
 
-            double cutMuPt1 = -999.9;
-            double cutMuPt2 = -999.9;
-            if(cutMuVec->size() >= 1) cutMuPt1 = cutMuVec->at(0).Pt();
-            if(cutMuVec->size() >= 2) cutMuPt2 = cutMuVec->at(1).Pt();
+            double cutMuPt1  = -999.9;
+            double cutMuPt2  = -999.9;
+            double cutMuEta1 = -999.9;
+            double cutMuEta2 = -999.9;
+            if(cutMuVec->size() >= 1) 
+            {
+                cutMuPt1  = cutMuVec->at(0).Pt();
+                cutMuEta1 = cutMuVec->at(0).Eta();
+            }
+            if(cutMuVec->size() >= 2) 
+            {
+                cutMuPt2  = cutMuVec->at(1).Pt();
+                cutMuEta2 = cutMuVec->at(1).Eta();
+            }
 
             double cutElecPt1 = -999.9;
             double cutElecPt2 = -999.9;
@@ -1038,6 +1048,8 @@ namespace plotterFunctions
             tr.registerDerivedVar("genHt", genHt);
             tr.registerDerivedVar("cutMuPt1", cutMuPt1);
             tr.registerDerivedVar("cutMuPt2", cutMuPt2);
+            tr.registerDerivedVar("cutMuEta1", cutMuEta1);
+            tr.registerDerivedVar("cutMuEta2", cutMuEta2);
             tr.registerDerivedVar("cutElecPt1", cutElecPt1);
             tr.registerDerivedVar("cutElecPt2", cutElecPt2);
             tr.registerDerivedVar("mindPhiMetJ", mindPhiMetJ);
