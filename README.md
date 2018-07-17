@@ -29,7 +29,7 @@ git clone git@github.com:susy2015/SusyAnaTools.git
 git clone git@github.com:susy2015/TopTagger.git
 ```
 
-For the Zinvible estimation, we are currently using
+For the ZInvisible estimation, we are currently using
 
 * the master branch of the ZInvisible repository
 * the CastTopTaggerInputsAsDoubles branch of the SusyAnaTools repository
@@ -58,7 +58,7 @@ cd $CMSSW_BASE/src/TopTagger/TopTagger/test
 make -j8
 ```
 
-### Zinvible
+### ZInvisible
 
 Checkout the branch calebGJets.
 ```
@@ -90,7 +90,7 @@ lrwxrwxrwx 1 caleb us_cms 119 Jun 21 18:52 TopTagger.cfg -> /uscms/home/caleb/no
 
 Now compile.
 ```
-cd $CMSSW_BASE/src/Zinvisible/Tools
+cd $CMSSW_BASE/src/ZInvisible/Tools
 mkdir obj
 make -j8
 ```
@@ -138,5 +138,46 @@ You can also try running the moneyplot script.
 ```
 The moneyplot script should create some text, pdf, and png files that contain moneyplot in the name. The plots show the the central value of the ZInsibile background estimation for each of the 84 search bins and the accosiated uncertainties. The text files show the contents of each bin and the associated unertainties.
 
-If everything has worked up to this point, you have arrived at the end. You will go far, my friend. Otherwise, don't worry. Keep trying and contact an expert if you cannot resolve the issues.
+### Condor
+
+If you have reached this point, you probably want to try running on condor. You can use mutliple MC and Data sets on condor, and you can run many jobs to run over a lot of data. Condor will return multiple root files. These can been added together and then plotted.
+
+First you need to setup your CMS voms proxy. Here is the command for setting up a one week long proxy (168 hours).
+```
+voms-proxy-init --valid 168:00 -voms cms
+```
+
+Here is an example of submitting a condor job.
+```
+cd $CMSSW_BASE/src/ZInvisible/Tools/condor
+
+python condorSubmit.py -l
+python condorSubmit.py -d DYJetsToLL,TTbar,Data_SingleMuon
+```
+You can check your condor job with this command.
+```
+condor_q
+```
+You can remove all your condor jobs with this command (replace USERNAME with your username).
+```
+condor_rm USERNAME
+```
+You can check your condor priority with this command (assuming you have a job running).
+```
+condor_userprio
+```
+Users with lower priority have their jobs done first. It is better to have a lower priority.
+
+Your condor jobs should produce log, stdout, and stderr files for each job in the logs directory. You can check these for errors.
+
+If your jobs complete successfully, the jobs will output root files to the condor directory. You can add them together using hadd.
+```
+mkdir myhistos
+mv *.root myhistos
+hadd result.root myhistos/*.root
+```
+
+### La Fin
+If everything has worked up to this point, you have arrived at The End. You will go far, my friend. Otherwise, don't worry. Keep trying and contact an expert if you cannot resolve the issues. Feel free to post issues on the issues page. Also, you are welcome to help solve the current issues if you have time.
+
 
