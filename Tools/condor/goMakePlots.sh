@@ -27,8 +27,23 @@ ls -lhrt
 
 ls -lhrt
 
-mv histoutput_* ${_CONDOR_SCRATCH_DIR}
-mv minituple_histoutput_* ${_CONDOR_SCRATCH_DIR}
+# declare array of patterns
+declare -a patterns=("histoutput_" "minituple_histoutput_")
+
+# for each pattern, check that files beginning with pattern exist and move them if they do
+for pattern in "${patterns[@]}"
+do
+    if ls $pattern* &> /dev/null
+    then
+        mv $pattern* ${_CONDOR_SCRATCH_DIR}
+    else
+        echo "There were no files found beginning with $pattern"
+    fi
+done
+
+#mv histoutput_* ${_CONDOR_SCRATCH_DIR}
+#mv minituple_histoutput_* ${_CONDOR_SCRATCH_DIR}
 
 rm $(echo $6 | sed 's|.*/||')
 rm -r ${_CONDOR_SCRATCH_DIR}/$2
+
