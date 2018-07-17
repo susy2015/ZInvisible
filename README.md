@@ -146,11 +146,14 @@ First you need to setup your CMS voms proxy. Here is the command for setting up 
 ```
 voms-proxy-init --valid 168:00 -voms cms
 ```
+Here is the command for checking your current proxy and remaining time.
+```
+voms-proxy-info
+```
 
 Here is an example of submitting a condor job.
 ```
 cd $CMSSW_BASE/src/ZInvisible/Tools/condor
-
 python condorSubmit.py -l
 python condorSubmit.py -d DYJetsToLL,TTbar,Data_SingleMuon
 ```
@@ -176,6 +179,16 @@ mkdir myhistos
 mv *.root myhistos
 hadd result.root myhistos/*.root
 ```
+
+Now you can copy this file to the Tools directory and run makePlots.
+```
+cp result.root $CMSSW_BASE/src/ZInvisible/Tools
+cd $CMSSW_BASE/src/ZInvisible/Tools
+make -j8
+./makePlots -f -O result.root
+```
+This should generate some pdf and png files, which you may rsync and view as desired.
+
 
 ### La Fin
 If everything has worked up to this point, you have arrived at The End. You will go far, my friend. Otherwise, don't worry. Keep trying and contact an expert if you cannot resolve the issues. Feel free to post issues on the issues page. Also, you are welcome to help solve the current issues if you have time.
