@@ -205,7 +205,8 @@ int main(int argc, char* argv[])
     std::string label_j2pt = "j_{2} p_{T} [GeV]";
     std::string label_j3pt = "j_{3} p_{T} [GeV]";
     std::string label_mll  = "m_{ll} [GeV]";
-    std::string label_toppt = "top p_{T} [GeV]";
+    std::string label_topPt = "top p_{T} [GeV]";
+    std::string label_genTopPt = "gen top p_{T} [GeV]";
     std::string label_phopt = "p_{T}^{#gamma} [GeV]";
     std::string label_metg = "p_{T}^{#gamma (miss)} [GeV]";
 
@@ -218,10 +219,13 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;isr_Unc_Cent;_PUweightFactor");
-    Plotter::DatasetSummary dstW(             "Single t", fileMap["SingleTopZinv"],     "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    Plotter::DatasetSummary dstW(             "Single t",   fileMap["SingleTopZinv"],     "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
     Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    Plotter::DatasetSummary dsT1tttt_gluino1200_lsp800("T1tttt_gluino1200_lsp800",     fileMap["Signal_T1tttt_mGluino1200_mLSP800"], "",  "");
+    Plotter::DatasetSummary dsT1tttt_gluino1500_lsp100("T1tttt_gluino1500_lsp100",     fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "",  "");
+    Plotter::DatasetSummary dsT1tttt_gluino2000_lsp100("T1tttt_gluino2000_lsp100",     fileMap["Signal_T1tttt_mGluino2000_mLSP100"], "",  "");
     Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
-    Plotter::DatasetSummary dsRare(           "Rare ",       fileMap["Rare"],           "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    Plotter::DatasetSummary dsRare(           "Rare ",      fileMap["Rare"],           "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dsDY, dsDYInc}, {dstt2l}, {dstW}, {dsRare, dsVV, dsttZ}};
 
     // Apply data/mc njet weight for DY and ttbar                                                                                                                                    
@@ -242,6 +246,8 @@ int main(int argc, char* argv[])
 
     // efficiency
 
+    // tops
+    Plotter::DataCollection dcMC_T1tttt("single",  "genTops(pt)", {dsT1tttt_gluino1200_lsp800, dsT1tttt_gluino1500_lsp100, dsT1tttt_gluino2000_lsp100});
 
     // nj                                                                                                                                                                            
     Plotter::DataCollection dcData_SingleMuon_nj("data",   "cntNJetsPt30Eta24Zinv", {dsData_SingleMuon});
@@ -330,6 +336,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwwMC_mht(           "stack",  "cleanMHt", stackww_MC);
     Plotter::DataCollection dcwMC_mht(            "stack",  "cleanMHt", stackw_MC);
 
+    // commented some cut leves to make less plots
     std::vector<std::pair<std::string,std::string>> cutlevels_muon = {
         {"nosel",                     "passNoiseEventFilterZinv"},
         {"muZinv",                    "passNoiseEventFilterZinv;passMuZinvSel"},
@@ -362,6 +369,8 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMC_SingleMuon_nSearchBin_" +cut.first,  {dcData_SingleMuon_nSearchBin, dcMC_nSearchBin}, {1, 2}, cut.second, NSB, 0, NSB, true, false,  "Search Bin",   "Events"));
         //acceptance 
         //efficiency 
+        //tops
+        vh.push_back(PHS("DataMC_T1tttt"                 +cut.first,  {dcMC_T1tttt},                                   {1, 1}, cut.second, 60, 0, 1500, true, false, label_genTopPt,   "Events"));
         //Z things (DY)
         vh.push_back(PHS("DataMC_DY_gen_pt_"             +cut.first,  {dcData_DY_gen_pt, dcMC_DY_gen_pt},              {1, 2}, cut.second, 60, 0, 1500, true, false,   "gen Z Pt",   "Events"));
         vh.push_back(PHS("DataMC_DY_reco_pt_"            +cut.first,  {dcData_DY_reco_pt, dcMC_DY_reco_pt},            {1, 2}, cut.second, 60, 0, 1500, true, false,   "reco Z Pt",  "Events"));

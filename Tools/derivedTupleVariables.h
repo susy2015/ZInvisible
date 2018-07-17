@@ -581,6 +581,8 @@ namespace plotterFunctions
         void lepInfo(NTupleReader& tr)
         {
             const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
+            const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
+            const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
             const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
             const std::vector<TLorentzVector>& muonsLVec    = tr.getVec<TLorentzVector>("muonsLVec");
             const std::vector<double>& muonsRelIso          = tr.getVec<double>("muonsRelIso");
@@ -729,9 +731,14 @@ namespace plotterFunctions
             const double minElecPt = 33.0, highElecPt = 33.0;
             double nuPt1 = -999.9, nuPt2 = -999.9;
 
+            // gen tops
+            std::vector<TLorentzVector>* genTops = nullptr;
             //Gen info parsing
             if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
             {
+                // gen tops
+                genTops = new std::vector<TLorentzVector>(ttUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
+
                 for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
                 {
                     // genHt
@@ -837,6 +844,11 @@ namespace plotterFunctions
                         }
                     }
                 }
+            }
+            // create empty vector if it is nullptr
+            if (genTops == nullptr)
+            {
+                genTops = new std::vector<TLorentzVector>();
             }
 
             double genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
@@ -961,7 +973,7 @@ namespace plotterFunctions
             double cutMuEta2 = -999.9;
 
             // print number of muons
-            printf("num gen mu: %d num mu: %d num cut mu: %d num cut mu reco only: %d\n", genMu->size(), muonsLVec.size(), cutMuVec->size(), cutMuVecRecoOnly.size());
+            //printf("num gen mu: %d num mu: %d num cut mu: %d num cut mu reco only: %d\n", genMu->size(), muonsLVec.size(), cutMuVec->size(), cutMuVecRecoOnly.size());
             
             if(genMu->size() >= 1)
             {
@@ -1119,6 +1131,9 @@ namespace plotterFunctions
             tr.registerDerivedVar("passElMuZinvSel", passElMuZinvSel);
 
             tr.registerDerivedVar("Zrecopt",Zrecoptpt);
+            // gen tops
+            tr.registerDerivedVec("genTops", genTops);
+
         }
 
     public:
