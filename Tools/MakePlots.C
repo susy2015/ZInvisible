@@ -198,6 +198,7 @@ int main(int argc, char* argv[])
     std::string label_mt2 = "M_{T2} [GeV]";
     std::string label_eta = "#eta";
     std::string label_mupt = "#mu p_{T} [GeV]";
+    std::string label_mueta = "#mu #eta";
     std::string label_genmupt  = "gen #mu p_{T} [GeV]";
     std::string label_genmueta = "gen #mu #eta";
     std::string label_mu1pt = "#mu_{1} p_{T} [GeV]";
@@ -254,21 +255,27 @@ int main(int argc, char* argv[])
   
     // acceptance
     // muons
-    Plotter::DataCollection dcMC_ngenMu(            "single", "ngenMu",                  {dsDY_mu, dsDYInc_mu});
-    Plotter::DataCollection dcMC_ngenMatchMu(       "single", "ngenMatchMu",             {dsDY_mu, dsDYInc_mu});
-    Plotter::DataCollection dcMC_ngenMuInAcc(       "single", "ngenMuInAcc",             {dsDY_mu, dsDYInc_mu});
-    Plotter::DataCollection dcMC_ngenMatchMuInAcc(  "single", "ngenMatchMuInAcc",        {dsDY_mu, dsDYInc_mu});
-    Plotter::DataCollection dcMC_genMuPt(           "single", "genMu(pt)",               {dsDY_mu, dsDYInc_mu});
-    Plotter::DataCollection dcMC_genMuInAccPt(      "single", "genMuInAcc(pt)",          {dsDY_mu, dsDYInc_mu});
-    Plotter::DataCollection dcMC_genMatchMuInAccPt( "single", "genMatchMuInAcc(pt)",     {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_ngenMu(            "single", "ngenMu",                     {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_ngenMatchMu(       "single", "ngenMatchMu",                {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_ngenMuInAcc(       "single", "ngenMuInAcc",                {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_ngenMatchMuInAcc(  "single", "ngenMatchMuInAcc",           {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_genMuPt(           "single", "genMu(pt)",                  {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_genMuInAccPt(      "single", "genMuInAcc(pt)",             {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_genMatchMuInAccPt( "single", "genMatchMuInAcc(pt)",        {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_genMuEta(          "single", "genMu(eta)",                 {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_genMuInAccEta(     "single", "genMuInAcc(eta)",            {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_genMatchMuInAccEta("single", "genMatchMuInAcc(eta)",       {dsDY_mu, dsDYInc_mu});
     // electrons
-    Plotter::DataCollection dcMC_ngenElec(            "single", "ngenElec",              {dsDY_elec, dsDYInc_elec});
-    Plotter::DataCollection dcMC_ngenMatchElec(       "single", "ngenMatchElec",         {dsDY_elec, dsDYInc_elec});
-    Plotter::DataCollection dcMC_ngenElecInAcc(       "single", "ngenElecInAcc",         {dsDY_elec, dsDYInc_elec});
-    Plotter::DataCollection dcMC_ngenMatchElecInAcc(  "single", "ngenMatchElecInAcc",    {dsDY_elec, dsDYInc_elec});
-    Plotter::DataCollection dcMC_genElecPt(           "single", "genElec(pt)",           {dsDY_elec, dsDYInc_elec});
-    Plotter::DataCollection dcMC_genElecInAccPt(      "single", "genElecInAcc(pt)",      {dsDY_elec, dsDYInc_elec});
-    Plotter::DataCollection dcMC_genMatchElecInAccPt( "single", "genMatchElecInAcc(pt)", {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_ngenElec(            "single", "ngenElec",                 {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_ngenMatchElec(       "single", "ngenMatchElec",            {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_ngenElecInAcc(       "single", "ngenElecInAcc",            {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_ngenMatchElecInAcc(  "single", "ngenMatchElecInAcc",       {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_genElecPt(           "single", "genElec(pt)",              {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_genElecInAccPt(      "single", "genElecInAcc(pt)",         {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_genMatchElecInAccPt( "single", "genMatchElecInAcc(pt)",    {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_genElecEta(          "single", "genElec(eta)",             {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_genElecInAccEta(     "single", "genElecInAcc(eta)",        {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_genMatchElecInAccEta("single", "genMatchElecInAcc(eta)",   {dsDY_elec, dsDYInc_elec});
 
     // tops
     Plotter::DataCollection dcMC_T1tttt("single",  "genTops(pt)", {dsT1tttt_gluino1200_lsp800, dsT1tttt_gluino1500_lsp100, dsT1tttt_gluino2000_lsp100});
@@ -392,9 +399,13 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MC_genElecPt_"                       +cut.first,  {dcMC_genElecPt},                                  {1, 1}, cut.second, 60, 0, 1500, true, false, label_elpt,  "Events"));
         vh.push_back(PHS("MC_genElecInAccPt_"                  +cut.first,  {dcMC_genElecInAccPt},                             {1, 1}, cut.second, 60, 0, 1500, true, false, label_elpt,  "Events"));
         vh.push_back(PHS("MC_genMatchElecInAccPt_"             +cut.first,  {dcMC_genMatchElecInAccPt},                        {1, 1}, cut.second, 60, 0, 1500, true, false, label_elpt,  "Events"));
+        vh.push_back(PHS("MC_genElecEta_"                      +cut.first,  {dcMC_genElecEta},                                 {1, 1}, cut.second, 40, -5, 5, true, false, label_eleta, "Events"));
+        vh.push_back(PHS("MC_genElecInAccEta_"                 +cut.first,  {dcMC_genElecInAccEta},                            {1, 1}, cut.second, 40, -5, 5, true, false, label_eleta, "Events"));
+        vh.push_back(PHS("MC_genMatchElecInAccEta_"            +cut.first,  {dcMC_genMatchElecInAccEta},                       {1, 1}, cut.second, 40, -5, 5, true, false, label_eleta, "Events"));
         //efficiency: gen matched / gen
         vh.push_back(PHS("MC_ngenElecEff_"                     +cut.first,  {dcMC_ngenMatchElecInAcc, dcMC_ngenElecInAcc},     {1, 2}, cut.second, 20, 0, 20, true, false,  "number of electrons",  "Events"));
         vh.push_back(PHS("MC_genElecPtEff_"                    +cut.first,  {dcMC_genMatchElecInAccPt, dcMC_genElecInAccPt},   {1, 2}, cut.second, 60, 0, 1500, true, false, label_elpt,  "Events"));
+        vh.push_back(PHS("MC_genElecEtaEff_"                   +cut.first,  {dcMC_genMatchElecInAccEta, dcMC_genElecInAccEta}, {1, 2}, cut.second, 40, -5, 5, true, false, label_eleta, "Events"));
     }
 
     // loop over muon cut levels
@@ -407,9 +418,13 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MC_genMuPt_"                       +cut.first,  {dcMC_genMuPt},                                  {1, 1}, cut.second, 60, 0, 1500, true, false, label_mupt,  "Events"));
         vh.push_back(PHS("MC_genMuInAccPt_"                  +cut.first,  {dcMC_genMuInAccPt},                             {1, 1}, cut.second, 60, 0, 1500, true, false, label_mupt,  "Events"));
         vh.push_back(PHS("MC_genMatchMuInAccPt_"             +cut.first,  {dcMC_genMatchMuInAccPt},                        {1, 1}, cut.second, 60, 0, 1500, true, false, label_mupt,  "Events"));
+        vh.push_back(PHS("MC_genMuEta_"                      +cut.first,  {dcMC_genMuEta},                                 {1, 1}, cut.second, 40, -5, 5, true, false, label_mueta, "Events"));
+        vh.push_back(PHS("MC_genMuInAccEta_"                 +cut.first,  {dcMC_genMuInAccEta},                            {1, 1}, cut.second, 40, -5, 5, true, false, label_mueta, "Events"));
+        vh.push_back(PHS("MC_genMatchMuInAccEta_"            +cut.first,  {dcMC_genMatchMuInAccEta},                       {1, 1}, cut.second, 40, -5, 5, true, false, label_mueta, "Events"));
         //efficiency: gen matched / gen
         vh.push_back(PHS("MC_ngenMuEff_"                     +cut.first,  {dcMC_ngenMatchMuInAcc, dcMC_ngenMuInAcc},       {1, 2}, cut.second, 20, 0, 20, true, false,  "number of muons",  "Events"));
         vh.push_back(PHS("MC_genMuPtEff_"                    +cut.first,  {dcMC_genMatchMuInAccPt, dcMC_genMuInAccPt},     {1, 2}, cut.second, 60, 0, 1500, true, false, label_mupt,  "Events"));
+        vh.push_back(PHS("MC_genMuEtaEff_"                   +cut.first,  {dcMC_genMatchMuInAccEta, dcMC_genMuInAccEta},   {1, 2}, cut.second, 40, -5, 5, true, false, label_mueta, "Events"));
         //Z things (DY)
         vh.push_back(PHS("DataMC_DY_gen_pt_"                 +cut.first,  {dcData_DY_gen_pt, dcMC_DY_gen_pt},              {1, 2}, cut.second, 60, 0, 1500, true, false,   "gen Z Pt",   "Events"));
         vh.push_back(PHS("DataMC_DY_reco_pt_"                +cut.first,  {dcData_DY_reco_pt, dcMC_DY_reco_pt},            {1, 2}, cut.second, 60, 0, 1500, true, false,   "reco Z Pt",  "Events"));
