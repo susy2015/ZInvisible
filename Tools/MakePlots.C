@@ -196,15 +196,16 @@ int main(int argc, char* argv[])
     std::string label_nb  = "N_{b}";
     std::string label_nt  = "N_{t}";
     std::string label_mt2 = "M_{T2} [GeV]";
-    std::string label_pt = "p_{T} [GeV]";
     std::string label_eta = "#eta";
-    std::string label_genMuPt  = "gen #mu p_{T} [GeV]";
+    std::string label_mupt = "#mu p_{T} [GeV]";
+    std::string label_genmupt  = "gen #mu p_{T} [GeV]";
+    std::string label_genmueta = "gen #mu #eta";
     std::string label_mu1pt = "#mu_{1} p_{T} [GeV]";
     std::string label_mu2pt = "#mu_{2} p_{T} [GeV]";
-    std::string label_genMuEta = "gen #mu #eta";
     std::string label_mu1eta = "#mu_{1} #eta";
     std::string label_mu2eta = "#mu_{2} #eta";
-    std::string label_elpt  = "e p_{T} [GeV]";
+    std::string label_elpt = "e p_{T} [GeV]";
+    std::string label_eleta = "e #eta";
     std::string label_el1pt = "e_{1} p_{T} [GeV]";
     std::string label_el2pt = "e_{2} p_{T} [GeV]";
     std::string label_jpt  = "j p_{T} [GeV]";
@@ -223,26 +224,28 @@ int main(int argc, char* argv[])
     // Datasetsummaries we are using                                                                                                        
     // no weight (genWeight deals with negative weights); also add btag weights here                                                        
     Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "");
-    Plotter::DatasetSummary dsDY(             "DY",         fileMap["DYJetsToLL"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
-    Plotter::DatasetSummary dsDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsDY_mu(          "DY",         fileMap["DYJetsToLL"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsDYInc_mu(       "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    Plotter::DatasetSummary dsDY_elec(        "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;_PUweightFactor"); // do not use muTrigWgt for electrons (it is 0.0)
+    Plotter::DatasetSummary dsDYInc_elec(     "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;_PUweightFactor"); // do not use muTrigWgt for electrons (it is 0.0)
     Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;isr_Unc_Cent;_PUweightFactor");
-    Plotter::DatasetSummary dstW(             "Single t",   fileMap["SingleTopZinv"],     "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    Plotter::DatasetSummary dstW(             "Single t",   fileMap["SingleTopZinv"],   "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
     Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     Plotter::DatasetSummary dsT1tttt_gluino1200_lsp800("T1tttt_gluino1200_lsp800",     fileMap["Signal_T1tttt_mGluino1200_mLSP800"], "",  "");
     Plotter::DatasetSummary dsT1tttt_gluino1500_lsp100("T1tttt_gluino1500_lsp100",     fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "",  "");
     Plotter::DatasetSummary dsT1tttt_gluino2000_lsp100("T1tttt_gluino2000_lsp100",     fileMap["Signal_T1tttt_mGluino2000_mLSP100"], "",  "");
-    Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],         "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    Plotter::DatasetSummary dsVV(             "Diboson",    fileMap["Diboson"],        "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
     Plotter::DatasetSummary dsRare(           "Rare ",      fileMap["Rare"],           "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
-    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dsDY, dsDYInc}, {dstt2l}, {dstW}, {dsRare, dsVV, dsttZ}};
+    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dsDY_mu, dsDYInc_mu}, {dstt2l}, {dstW}, {dsRare, dsVV, dsttZ}};
 
     // Apply data/mc njet weight for DY and ttbar                                                                                                                                    
     Plotter::DatasetSummary dswDY(             "DY",         fileMap["DYJetsToLL"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;njWGJets;_PUweightFactor");
     Plotter::DatasetSummary dswDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "muTrigWgt;bTagSF_EventWeightSimple_Central;njWGJets;_PUweightFactor");
     Plotter::DatasetSummary dswtt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;nJetWgtTTbar;isr_Unc_Cent;_PUweightFactor");
-    Plotter::DatasetSummary dswtW(             "Single t", fileMap["SingleTopZinv"],     "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    Plotter::DatasetSummary dswtW(             "Single t",   fileMap["SingleTopZinv"],   "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
     Plotter::DatasetSummary dswttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     Plotter::DatasetSummary dswVV(             "Diboson",    fileMap["Diboson"],         "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
-    Plotter::DatasetSummary dswRare(           "Rare ",       fileMap["Rare"],           "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    Plotter::DatasetSummary dswRare(           "Rare ",      fileMap["Rare"],            "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswRare, dswVV, dswttZ}};
 
     Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
@@ -250,10 +253,22 @@ int main(int argc, char* argv[])
     std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
   
     // acceptance
-    Plotter::DataCollection dcMC_ngenMuInAcc(       "single", "ngenMuInAcc",         {dsDY, dsDYInc});
-    Plotter::DataCollection dcMC_ngenMatchMuInAcc(  "single", "ngenMatchMuInAcc",    {dsDY, dsDYInc});
-    Plotter::DataCollection dcMC_genMuInAccPt(      "single", "genMuInAcc(pt)",      {dsDY, dsDYInc});
-    Plotter::DataCollection dcMC_genMatchMuInAccPt( "single", "genMatchMuInAcc(pt)", {dsDY, dsDYInc});
+    // muons
+    Plotter::DataCollection dcMC_ngenMu(            "single", "ngenMu",                  {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_ngenMatchMu(       "single", "ngenMatchMu",             {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_ngenMuInAcc(       "single", "ngenMuInAcc",             {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_ngenMatchMuInAcc(  "single", "ngenMatchMuInAcc",        {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_genMuPt(           "single", "genMu(pt)",               {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_genMuInAccPt(      "single", "genMuInAcc(pt)",          {dsDY_mu, dsDYInc_mu});
+    Plotter::DataCollection dcMC_genMatchMuInAccPt( "single", "genMatchMuInAcc(pt)",     {dsDY_mu, dsDYInc_mu});
+    // electrons
+    Plotter::DataCollection dcMC_ngenElec(            "single", "ngenElec",              {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_ngenMatchElec(       "single", "ngenMatchElec",         {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_ngenElecInAcc(       "single", "ngenElecInAcc",         {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_ngenMatchElecInAcc(  "single", "ngenMatchElecInAcc",    {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_genElecPt(           "single", "genElec(pt)",           {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_genElecInAccPt(      "single", "genElecInAcc(pt)",      {dsDY_elec, dsDYInc_elec});
+    Plotter::DataCollection dcMC_genMatchElecInAccPt( "single", "genMatchElecInAcc(pt)", {dsDY_elec, dsDYInc_elec});
 
     // tops
     Plotter::DataCollection dcMC_T1tttt("single",  "genTops(pt)", {dsT1tttt_gluino1200_lsp800, dsT1tttt_gluino1500_lsp100, dsT1tttt_gluino2000_lsp100});
@@ -310,11 +325,11 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwMC_ht(            "stack",  "HTZinv", stackw_MC);
     Plotter::DataCollection dcwwMC_ht(           "stack",  "HTZinv", stackww_MC);
     // gen mu pt
-    Plotter::DataCollection dcData_SingleMuon_genMuPt("data",  "genMuPt", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_genMuPt("stack",   "genMuPt", stack_MC);
+    //Plotter::DataCollection dcData_SingleMuon_genMuPt("data",  "genMuPt", {dsData_SingleMuon});
+    //Plotter::DataCollection dcMC_genMuPt("stack",   "genMuPt", stack_MC);
     // gen mu eta
-    Plotter::DataCollection dcData_SingleMuon_genMuEta("data",  "genMuEta", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_genMuEta("stack",   "genMuEta", stack_MC);
+    //Plotter::DataCollection dcData_SingleMuon_genMuEta("data",  "genMuEta", {dsData_SingleMuon});
+    //Plotter::DataCollection dcMC_genMuEta("stack",   "genMuEta", stack_MC);
     // mu1pt                                                                                                                                                                         
     Plotter::DataCollection dcData_SingleMuon_mu1pt("data",   "cutMuPt1", {dsData_SingleMuon});
     Plotter::DataCollection dcMC_mu1pt(             "stack",  "cutMuPt1", stack_MC);
@@ -345,8 +360,16 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwwMC_mht(           "stack",  "cleanMHt", stackww_MC);
     Plotter::DataCollection dcwMC_mht(            "stack",  "cleanMHt", stackw_MC);
 
-    // commented some cut leves to make less plots
+    // electron cut levels
+    std::vector<std::pair<std::string,std::string>> cutlevels_electrons = {
+        {"nothing",                   ""},
+        {"nosel",                     "passNoiseEventFilterZinv"},
+        {"elecZinv",                  "passNoiseEventFilterZinv;passElecZinvSel"},
+    };
+
+    // muon cut levels; commented some cut leves to make less plots
     std::vector<std::pair<std::string,std::string>> cutlevels_muon = {
+        {"nothing",                   ""},
         {"nosel",                     "passNoiseEventFilterZinv"},
         {"muZinv",                    "passNoiseEventFilterZinv;passMuZinvSel"},
         //{"muZinv_blnotag",            "passMuZinvSel;passBaselineNoTagZinv"},
@@ -359,16 +382,34 @@ int main(int argc, char* argv[])
         //{"muZinv_loose0",             "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
     };
 
+    // loop over electron cut levels
+    for(std::pair<std::string,std::string>& cut : cutlevels_electrons)
+    {
+        //acceptance 
+        vh.push_back(PHS("MC_ngenElec_"                        +cut.first,  {dcMC_ngenElec},                                   {1, 1}, cut.second, 20, 0, 20,   true, false, "number of electrons",  "Events"));
+        vh.push_back(PHS("MC_ngenElecInAcc_"                   +cut.first,  {dcMC_ngenElecInAcc},                              {1, 1}, cut.second, 20, 0, 20,   true, false, "number of electrons",  "Events"));
+        vh.push_back(PHS("MC_ngenMatchElecInAcc_"              +cut.first,  {dcMC_ngenMatchElecInAcc},                         {1, 1}, cut.second, 20, 0, 20,   true, false, "number of electrons",  "Events"));
+        vh.push_back(PHS("MC_genElecPt_"                       +cut.first,  {dcMC_genElecPt},                                  {1, 1}, cut.second, 60, 0, 1500, true, false, label_elpt,  "Events"));
+        vh.push_back(PHS("MC_genElecInAccPt_"                  +cut.first,  {dcMC_genElecInAccPt},                             {1, 1}, cut.second, 60, 0, 1500, true, false, label_elpt,  "Events"));
+        vh.push_back(PHS("MC_genMatchElecInAccPt_"             +cut.first,  {dcMC_genMatchElecInAccPt},                        {1, 1}, cut.second, 60, 0, 1500, true, false, label_elpt,  "Events"));
+        //efficiency: gen matched / gen
+        vh.push_back(PHS("MC_ngenElecEff_"                     +cut.first,  {dcMC_ngenMatchElecInAcc, dcMC_ngenElecInAcc},     {1, 2}, cut.second, 20, 0, 20, true, false,  "number of electrons",  "Events"));
+        vh.push_back(PHS("MC_genElecPtEff_"                    +cut.first,  {dcMC_genMatchElecInAccPt, dcMC_genElecInAccPt},   {1, 2}, cut.second, 60, 0, 1500, true, false, label_elpt,  "Events"));
+    }
+
+    // loop over muon cut levels
     for(std::pair<std::string,std::string>& cut : cutlevels_muon)
     {
         //acceptance 
+        vh.push_back(PHS("MC_ngenMu_"                        +cut.first,  {dcMC_ngenMu},                                   {1, 1}, cut.second, 20, 0, 20,   true, false, "number of muons",  "Events"));
         vh.push_back(PHS("MC_ngenMuInAcc_"                   +cut.first,  {dcMC_ngenMuInAcc},                              {1, 1}, cut.second, 20, 0, 20,   true, false, "number of muons",  "Events"));
         vh.push_back(PHS("MC_ngenMatchMuInAcc_"              +cut.first,  {dcMC_ngenMatchMuInAcc},                         {1, 1}, cut.second, 20, 0, 20,   true, false, "number of muons",  "Events"));
-        vh.push_back(PHS("MC_genMuInAccPt_"                  +cut.first,  {dcMC_genMuInAccPt},                             {1, 1}, cut.second, 60, 0, 1500, true, false, label_pt,  "Events"));
-        vh.push_back(PHS("MC_genMatchMuInAccPt_"             +cut.first,  {dcMC_genMatchMuInAccPt},                        {1, 1}, cut.second, 60, 0, 1500, true, false, label_pt,  "Events"));
-        //efficiency 
+        vh.push_back(PHS("MC_genMuPt_"                       +cut.first,  {dcMC_genMuPt},                                  {1, 1}, cut.second, 60, 0, 1500, true, false, label_mupt,  "Events"));
+        vh.push_back(PHS("MC_genMuInAccPt_"                  +cut.first,  {dcMC_genMuInAccPt},                             {1, 1}, cut.second, 60, 0, 1500, true, false, label_mupt,  "Events"));
+        vh.push_back(PHS("MC_genMatchMuInAccPt_"             +cut.first,  {dcMC_genMatchMuInAccPt},                        {1, 1}, cut.second, 60, 0, 1500, true, false, label_mupt,  "Events"));
+        //efficiency: gen matched / gen
         vh.push_back(PHS("MC_ngenMuEff_"                     +cut.first,  {dcMC_ngenMatchMuInAcc, dcMC_ngenMuInAcc},       {1, 2}, cut.second, 20, 0, 20, true, false,  "number of muons",  "Events"));
-        vh.push_back(PHS("MC_genMuPtEff_"                    +cut.first,  {dcMC_genMatchMuInAccPt, dcMC_genMuInAccPt},     {1, 2}, cut.second, 60, 0, 1500, true, false, label_pt,  "Events"));
+        vh.push_back(PHS("MC_genMuPtEff_"                    +cut.first,  {dcMC_genMatchMuInAccPt, dcMC_genMuInAccPt},     {1, 2}, cut.second, 60, 0, 1500, true, false, label_mupt,  "Events"));
         //Z things (DY)
         vh.push_back(PHS("DataMC_DY_gen_pt_"                 +cut.first,  {dcData_DY_gen_pt, dcMC_DY_gen_pt},              {1, 2}, cut.second, 60, 0, 1500, true, false,   "gen Z Pt",   "Events"));
         vh.push_back(PHS("DataMC_DY_reco_pt_"                +cut.first,  {dcData_DY_reco_pt, dcMC_DY_reco_pt},            {1, 2}, cut.second, 60, 0, 1500, true, false,   "reco Z Pt",  "Events"));
@@ -384,10 +425,10 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_SingleMuon_mt2_"            +cut.first,  {dcData_SingleMuon_mt2,   dcMC_mt2},             {1, 2}, cut.second, 60, 0, 1500, true, false,  label_mt2,      "Events"));
             vh.push_back(PHS("DataMC_SingleMuon_nb_"             +cut.first,  {dcData_SingleMuon_nb,    dcMC_nb},              {1, 2}, cut.second, 10, 0, 10,   true, false,  label_nb,       "Events"));
             vh.push_back(PHS("DataMC_SingleMuon_nj_"             +cut.first,  {dcData_SingleMuon_nj,    dcMC_nj},              {1, 2}, cut.second, 30, 0, 30,   true, false,  label_nj,       "Events"));
-            vh.push_back(PHS("DataMC_SingleMuon_genMuPt_"        +cut.first,  {dcData_SingleMuon_genMuPt, dcMC_genMuPt},       {1, 2}, cut.second, 50, 0, 1000, true, false,  label_genMuPt,  "Events"));
+            //vh.push_back(PHS("DataMC_SingleMuon_genMuPt_"        +cut.first,  {dcData_SingleMuon_genMuPt, dcMC_genMuPt},       {1, 2}, cut.second, 50, 0, 1000, true, false,  label_genmupt,  "Events"));
             vh.push_back(PHS("DataMC_SingleMuon_mu1pt_"          +cut.first,  {dcData_SingleMuon_mu1pt, dcMC_mu1pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mu1pt,    "Events"));
             vh.push_back(PHS("DataMC_SingleMuon_mu2pt_"          +cut.first,  {dcData_SingleMuon_mu2pt, dcMC_mu2pt},           {1, 2}, cut.second, 50, 0, 1000, true, false,  label_mu2pt,    "Events"));
-            vh.push_back(PHS("DataMC_SingleMuon_genMuEta_"       +cut.first,  {dcData_SingleMuon_genMuEta, dcMC_genMuEta},     {1, 2}, cut.second, 40, -10, 10, true, false,  label_genMuEta, "Events"));
+            ///vh.push_back(PHS("DataMC_SingleMuon_genMuEta_"       +cut.first,  {dcData_SingleMuon_genMuEta, dcMC_genMuEta},     {1, 2}, cut.second, 40, -10, 10, true, false,  label_genmueta, "Events"));
             vh.push_back(PHS("DataMC_SingleMuon_mu1eta_"         +cut.first,  {dcData_SingleMuon_mu1eta, dcMC_mu1eta},         {1, 2}, cut.second, 40, -10, 10, true, false,  label_mu1eta,   "Events"));
             vh.push_back(PHS("DataMC_SingleMuon_mu2eta_"         +cut.first,  {dcData_SingleMuon_mu2eta, dcMC_mu2eta},         {1, 2}, cut.second, 40, -10, 10, true, false,  label_mu2eta,   "Events"));
             vh.push_back(PHS("DataMC_SingleMuon_mll_"            +cut.first,  {dcData_SingleMuon_mll,   dcMC_mll},             {1, 2}, cut.second, 40, 0, 200,  true, false,  label_mll,      "Events"));

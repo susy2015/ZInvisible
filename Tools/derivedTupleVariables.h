@@ -728,7 +728,7 @@ namespace plotterFunctions
             double genHt = 0.0;
 
             const double   minMuPt = 20.0,   highMuPt = 50.0;
-            const double minElecPt = 33.0, highElecPt = 33.0;
+            const double minElecPt = 20.0, highElecPt = 50.0;
             double nuPt1 = -999.9, nuPt2 = -999.9;
 
             // gen tops
@@ -803,10 +803,11 @@ namespace plotterFunctions
                     {
                         genElec->push_back(&genDecayLVec[i]);
                         genElecAct->push_back(W_emu_pfActivityVec[index]);
-                        if(AnaFunctions::passElectronAccOnly(genDecayLVec[i], AnaConsts::elesMiniIsoArr) && genDecayLVec[i].Pt() > 20)
+                        if(AnaFunctions::passElectronAccOnly(genDecayLVec[i], AnaConsts::elesMiniIsoArr) && genDecayLVec[i].Pt() > minElecPt)
                         {
                             genElecInAcc->push_back(&genDecayLVec[i]);
                             genElecInAccAct->push_back(genElecAct->back());
+                            //printf("genElecInAcc p_t = %f\n", genDecayLVec[i].Pt());
                             double dRMin = 999.9;
                             double matchPt = -999.9;
                             for(int j = 0; j < cutElecVecRecoOnly.size(); ++j)
@@ -1060,6 +1061,9 @@ namespace plotterFunctions
             //if(genZPt > 600 && mindPhiMetJ < 0.5) std::cout << "BONJOUR!!! \t" << genZPt << "\t" << mindPhiMetJ << "\t" << run << "\t" << lumi << "\t" << event << std::endl;
             //std::cout<<"cleanMetPt "<<cleanMet.Pt()<<std::endl;
             //std::cout<<" "<<std::endl;
+
+            //printf("ngenElec = %d; ngenElecInAcc = %d; ngenMatchElecInAcc = %d\n", genElec->size(), genElecInAcc->size(), genMatchElecInAcc->size());
+
             double bestRecoZPt = bestRecoZ.Pt();
             double cleanMetPt = cleanMet.Pt();
             double Zrecoptpt = Zrecopt.Pt();
