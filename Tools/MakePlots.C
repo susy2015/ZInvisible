@@ -209,6 +209,8 @@ int main(int argc, char* argv[])
     std::string label_eleta = "e #eta";
     std::string label_el1pt = "e_{1} p_{T} [GeV]";
     std::string label_el2pt = "e_{2} p_{T} [GeV]";
+    std::string label_photonpt = "#gamma p_{T} [GeV]";
+    std::string label_photoneta = "#gamma #eta";
     std::string label_jpt  = "j p_{T} [GeV]";
     std::string label_j1pt = "j_{1} p_{T} [GeV]";
     std::string label_j2pt = "j_{2} p_{T} [GeV]";
@@ -229,6 +231,7 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsDYInc_mu(       "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dsDY_elec(        "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;_PUweightFactor"); // do not use muTrigWgt for electrons (it is 0.0)
     Plotter::DatasetSummary dsDYInc_elec(     "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;_PUweightFactor"); // do not use muTrigWgt for electrons (it is 0.0)
+    Plotter::DatasetSummary dsPhoton(         "#gamma+ jets", fileMap["GJets"],         "",            "bTagSF_EventWeightSimple_Central;_PUweightFactor");
     Plotter::DatasetSummary dstt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;isr_Unc_Cent;_PUweightFactor");
     Plotter::DatasetSummary dstW(             "Single t",   fileMap["SingleTopZinv"],   "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
     Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
@@ -276,6 +279,12 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_genElecEta(          "single", "genElec(eta)",             {dsDY_elec});
     Plotter::DataCollection dcMC_genElecInAccEta(     "single", "genElecInAcc(eta)",        {dsDY_elec});
     Plotter::DataCollection dcMC_genMatchElecInAccEta("single", "genMatchElecInAcc(eta)",   {dsDY_elec});
+
+    // photons
+    Plotter::DataCollection dcMC_genPhotonPt(     "single", "gammaLVecGen(pt)",         {dsPhoton});
+    Plotter::DataCollection dcMC_genPhotonEta(    "single", "gammaLVecGen(eta)",        {dsPhoton});
+    Plotter::DataCollection dcMC_matchedPhotonPt( "single", "promptPhotons(pt)",        {dsPhoton});
+    Plotter::DataCollection dcMC_matchedPhotonEta("single", "promptPhotons(eta)",       {dsPhoton});
 
     // tops
     Plotter::DataCollection dcMC_T1tttt("single",  "genTops(pt)", {dsT1tttt_gluino1200_lsp800, dsT1tttt_gluino1500_lsp100, dsT1tttt_gluino2000_lsp100});
@@ -518,6 +527,12 @@ int main(int argc, char* argv[])
     Plotter::DataCollection trigger_nSearchBin( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBin",    dsDY_nunu_njetnorm}  });
     Plotter::DataCollection trigger_nSearchBin_scaled( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_scaled}  });
     Plotter::DataCollection trigger_nSearchBin_weighted( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_weighted}  });
+
+    // photons: promptPhotons
+    //vh.push_back(PHS("MC_ngenPhotonEff_"                     +cut.first,  {},       {1, 2}, cut.second, 20, 0, 20, true, false,  "number of photon",  "Events"));
+    vh.push_back(PHS("MC_genPhotonPtEff",   {dcMC_matchedPhotonPt, dcMC_genPhotonPt},     {1, 2}, "", 60, 0, 1500, true, false, label_photonpt,  "Events"));
+    vh.push_back(PHS("MC_genPhotonEtaEff",  {dcMC_matchedPhotonEta, dcMC_genPhotonEta},   {1, 2}, "", 40, -5, 5,   true, false, label_photoneta, "Events"));
+
 
     vh.push_back(PHS("Trigger",         {trigger_nSearchBin},           {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
     vh.push_back(PHS("TriggerScl",      {trigger_nSearchBin_scaled},    {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));

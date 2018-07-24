@@ -2562,6 +2562,7 @@ namespace plotterFunctions
         const int& ntops = tr.getVar<int>("nTopCandSortedCnt");
 
         //variables to be used in the analysis code
+        double photonPtCut = 100.0;
         double photonMet = -999.9;
         std::vector<TLorentzVector> *promptPhotons = new std::vector<TLorentzVector>(); 
         std::vector<TLorentzVector> *fakePhotons = new std::vector<TLorentzVector>();
@@ -2582,7 +2583,7 @@ namespace plotterFunctions
         photonMet = met;
         //Get TLorentz vector for Loose, Medium and Tight ID photon selection
         for(int i = 0; i < photonLVec.size(); i++){
-          if (photonLVec[i].Pt() > 200){
+          if (photonLVec[i].Pt() > photonPtCut){
             totalPhotons->push_back(photonLVec[i]);
             
             if(looseID[i]) loosePhotons->push_back(photonLVec[i]);
@@ -2594,11 +2595,11 @@ namespace plotterFunctions
           } 
         }
 
-        //Gen-Matching Photons (Pt > 200 GeV)
+        //Gen-Matching Photons (Pt > photonPtCut in GeV)
         if(tr.checkBranch("gammaLVecGen") && tr.checkBranch("genPartonLVec") && &genPartonLVec != nullptr && &gammaLVecGen != nullptr){
           for(int i = 0; i < photonLVec.size(); i++){
-            if(photonLVec[i].Pt() > 200 && looseID[i]){
-              if(PhotonFunctions::isGenMatched(photonLVec[i],gammaLVecGen)){
+            if(photonLVec[i].Pt() > photonPtCut && looseID[i]){
+              if(PhotonFunctions::isGenMatched_Method2(photonLVec[i],gammaLVecGen)){
                 promptPhotons->push_back(photonLVec[i]);
                 if(PhotonFunctions::isDirectPhoton(photonLVec[i],genPartonLVec)) directPhotons->push_back(photonLVec[i]);
                 if(PhotonFunctions::isFragmentationPhoton(photonLVec[i],genPartonLVec)) fragmentationQCD->push_back(photonLVec[i]);
