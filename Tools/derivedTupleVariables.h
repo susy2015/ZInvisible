@@ -2596,15 +2596,29 @@ namespace plotterFunctions
         }
 
         //Gen-Matching Photons (Pt > photonPtCut in GeV)
+        // edited for testing efficiency
+        int nGammaGen = int(gammaLVecGen.size());
+        int nGammaReco = int(photonLVec.size());
+        printf("gammaLVecGen.size() = %d;   photonLVec.size() = %d\n", nGammaGen, nGammaReco);
         if(tr.checkBranch("gammaLVecGen") && tr.checkBranch("genPartonLVec") && &genPartonLVec != nullptr && &gammaLVecGen != nullptr){
-          for(int i = 0; i < photonLVec.size(); i++){
-            if(photonLVec[i].Pt() > photonPtCut && looseID[i]){
-              if(PhotonFunctions::isGenMatched_Method2(photonLVec[i],gammaLVecGen)){
-                promptPhotons->push_back(photonLVec[i]);
-                if(PhotonFunctions::isDirectPhoton(photonLVec[i],genPartonLVec)) directPhotons->push_back(photonLVec[i]);
-                if(PhotonFunctions::isFragmentationPhoton(photonLVec[i],genPartonLVec)) fragmentationQCD->push_back(photonLVec[i]);
+          //for(int i = 0; i < photonLVec.size(); i++){
+          if (nGammaReco == nGammaGen)
+          {
+            for(int i = 0; i < gammaLVecGen.size(); i++){
+              if(photonLVec[i].Pt() > photonPtCut && looseID[i]){
+              //if(true){
+                //if(PhotonFunctions::isGenMatched_Method2(photonLVec[i],gammaLVecGen)){
+                if(true){
+                  //promptPhotons->push_back(photonLVec[i]);
+                  //if(PhotonFunctions::isDirectPhoton(photonLVec[i],genPartonLVec)) directPhotons->push_back(photonLVec[i]);
+                  //if(PhotonFunctions::isFragmentationPhoton(photonLVec[i],genPartonLVec)) fragmentationQCD->push_back(photonLVec[i]);
+                  promptPhotons->push_back(gammaLVecGen[i]);
+                  if(PhotonFunctions::isDirectPhoton(gammaLVecGen[i],genPartonLVec)) directPhotons->push_back(gammaLVecGen[i]);
+                  if(PhotonFunctions::isFragmentationPhoton(gammaLVecGen[i],genPartonLVec)) fragmentationQCD->push_back(gammaLVecGen[i]);
+                }
+                //else fakePhotons->push_back(photonLVec[i]);
+                else fakePhotons->push_back(gammaLVecGen[i]);
               }
-              else fakePhotons->push_back(photonLVec[i]);
             }
           }
         }

@@ -119,7 +119,7 @@ namespace PhotonFunctions
       {
         dRMin = dR;
       }
-      if (dRMin < 0.02)
+      if (dRMin < 100.0)
       {
         match = true;
       }
