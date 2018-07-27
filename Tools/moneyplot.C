@@ -91,7 +91,7 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     std::cout << "h1: " << h1 << std::endl;
     if (h1 == 0)
     {
-        std::cout << "ERROR: h1 did not load from the root file; h1 = " << h1 << std::endl; 
+        std::cout << "ERROR: h1 did not load from the root file; " << inputHist << std::endl; 
         exit(1);
     }
     //TFile* f2 = TFile::Open("/uscms/home/pastika/nobackup/zinv/dev/CMSSW_7_4_8/src/ZInvisible/Tools/syst_nJetWgt.root");
@@ -385,12 +385,30 @@ int main(int argc, char* argv[])
 {
     // void run(std::string inputFile, std::string inputHist, std::string outputFile)
     // we have changed from nSearchBinnSearchBinnSearchBin to nSearchBinnSearchBin in MakePlots.C
-    run("result.root", "nSearchBin/Trigger_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single",           "moneyplot_passBaseline_noFactors");
-    run("result.root", "nSearchBin/TriggerScl_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single",  "moneyplot_passBaseline_bjetScaled");
-    run("result.root", "nSearchBin/TriggerWgt_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_passBaseline_allFactors");
-    run("result.root", "nSearchBin/Trigger_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single",           "moneyplot_passBaselineZinv_noFactors");
-    run("result.root", "nSearchBin/TriggerScl_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single",  "moneyplot_passBaselineZinv_bjetScaled");
-    run("result.root", "nSearchBin/TriggerWgt_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_passBaselineZinv_allFactors");
+    // original input file from Scarlet: ALL_approval_2Zjets.root
+
+    //std::string inputFile = "result.root";
+    //run(inputFile, "nSearchBin/Trigger_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single",           "moneyplot_passBaseline_noFactors");
+    //run(inputFile, "nSearchBin/TriggerScl_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single",  "moneyplot_passBaseline_bjetScaled");
+    //run(inputFile, "nSearchBin/TriggerWgt_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_passBaseline_allFactors");
+    //run(inputFile, "nSearchBin/Trigger_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single",           "moneyplot_passBaselineZinv_noFactors");
+    //run(inputFile, "nSearchBin/TriggerScl_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single",  "moneyplot_passBaselineZinv_bjetScaled");
+    //run(inputFile, "nSearchBin/TriggerWgt_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_passBaselineZinv_allFactors");
+
+    // original
+    //TFile* f1 = TFile::Open("ALL_approval_2Zjets.root");//fifth_njets_loose_weight.root");//condor/histoutput-Jul24_2016_postWgt.root");
+    //TH1D* h1 = (TH1D*)f1->Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle");
+    //TH1D* h1 = (TH1D*)f1->Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle");
+    std::string inputFile = "ALL_approval_2Zjets.root";
+    //run(inputFile, "nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+normsingle",           "moneyplot_passBaseline_noFactors");
+    //run(inputFile, "nSearchBin/TriggerScl_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scalesingle",  "moneyplot_passBaseline_bjetScaled");
+    //run(inputFile, "nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle", "moneyplot_passBaseline_allFactors");
+    // nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle
+    run(inputFile, "nSearchBin/nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle",           "moneyplot_passBaselineZinv_noFactors");
+    //run(inputFile, "nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle",           "moneyplot_passBaselineZinv_noFactors");
+    //run(inputFile, "nSearchBin/TriggerScl_Zinv_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scalesingle",  "moneyplot_passBaselineZinv_bjetScaled");
+    //run(inputFile, "nSearchBin/TriggerWgt_Zinv_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle", "moneyplot_passBaselineZinv_allFactors");
+
     return 0;
 }
 
