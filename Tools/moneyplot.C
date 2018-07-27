@@ -386,30 +386,38 @@ int main(int argc, char* argv[])
     // void run(std::string inputFile, std::string inputHist, std::string outputFile)
     // we have changed from nSearchBinnSearchBinnSearchBin to nSearchBinnSearchBin in MakePlots.C
     // original input file from Scarlet: ALL_approval_2Zjets.root
-
-    std::string inputFile = "result.root";
-    run(inputFile, "nSearchBin/Trigger_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single",           "moneyplot_passBaseline_noFactors");
-    run(inputFile, "nSearchBin/TriggerScl_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single",  "moneyplot_passBaseline_bjetScaled");
-    run(inputFile, "nSearchBin/TriggerWgt_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_passBaseline_allFactors");
-    run(inputFile, "nSearchBin/Trigger_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single",           "moneyplot_passBaselineZinv_noFactors");
-    run(inputFile, "nSearchBin/TriggerScl_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single",  "moneyplot_passBaselineZinv_bjetScaled");
-    run(inputFile, "nSearchBin/TriggerWgt_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_passBaselineZinv_allFactors");
-
+    
     // original
     //TFile* f1 = TFile::Open("ALL_approval_2Zjets.root");//fifth_njets_loose_weight.root");//condor/histoutput-Jul24_2016_postWgt.root");
     //TH1D* h1 = (TH1D*)f1->Get("nSearchBin/NJetWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle");
     //TH1D* h1 = (TH1D*)f1->Get("nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle");
+
+    // for using result.root
+    //std::string inputFile = "result.root";
+    //run(inputFile, "nSearchBin/Trigger_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single",           "moneyplot_passBaseline_noFactors");
+    //run(inputFile, "nSearchBin/TriggerScl_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single",  "moneyplot_passBaseline_bjetScaled");
+    //run(inputFile, "nSearchBin/TriggerWgt_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_passBaseline_allFactors");
+    //run(inputFile, "nSearchBin/Trigger_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single",           "moneyplot_passBaselineZinv_noFactors");
+    //run(inputFile, "nSearchBin/TriggerScl_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scale single",  "moneyplot_passBaselineZinv_bjetScaled");
+    //run(inputFile, "nSearchBin/TriggerWgt_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weight single", "moneyplot_passBaselineZinv_allFactors");
     
-    inputFile = "ALL_approval_2Zjets.root";
-    run(inputFile, "nSearchBin/nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle",           "moneyplot_passBaselineZinv_noFactors");
-    
+    // for using ALL_approval_2Zjets.root
+    // example: nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle
+    //inputFile = "ALL_approval_2Zjets.root";
     //run(inputFile, "nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+normsingle",           "moneyplot_passBaseline_noFactors");
     //run(inputFile, "nSearchBin/TriggerScl_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scalesingle",  "moneyplot_passBaseline_bjetScaled");
     //run(inputFile, "nSearchBin/TriggerWgt_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle", "moneyplot_passBaseline_allFactors");
-    // nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle
     //run(inputFile, "nSearchBin/Trigger_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle",           "moneyplot_passBaselineZinv_noFactors");
     //run(inputFile, "nSearchBin/TriggerScl_Zinv_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm scalesingle",  "moneyplot_passBaselineZinv_bjetScaled");
     //run(inputFile, "nSearchBin/TriggerWgt_Zinv_nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm weightsingle", "moneyplot_passBaselineZinv_allFactors");
+    
+    // compare result.root and ALL_approval_2Zjets.root
+    // note that different naming conventions are used for each (number of nSearchBin, Njet+norm, space before single)
+    std::string inputFile = "result.root";
+    run(inputFile, "nSearchBin/Trigger_Zinv_nSearchBinnSearchBinZ#rightarrow#nu#nu Njet+norm single", "moneyplot_passBaselineZinv_noFactors_result");
+
+    inputFile = "ALL_approval_2Zjets.root";
+    run(inputFile, "nSearchBin/nSearchBinnSearchBinnSearchBinZ#rightarrow#nu#nusingle",               "moneyplot_passBaselineZinv_noFactors_ALL_approval_2Zjets");
 
     return 0;
 }

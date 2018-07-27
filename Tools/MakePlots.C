@@ -519,12 +519,12 @@ int main(int argc, char* argv[])
     Plotter::DataCollection trigger_nSearchBin_scaled( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_scaled}  });
     Plotter::DataCollection trigger_nSearchBin_weighted( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_weighted}  });
 
-    vh.push_back(PHS("Trigger",         {trigger_nSearchBin},           {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-    vh.push_back(PHS("TriggerScl",      {trigger_nSearchBin_scaled},    {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-    vh.push_back(PHS("TriggerWgt",      {trigger_nSearchBin_weighted},  {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-    vh.push_back(PHS("Trigger_Zinv",    {trigger_nSearchBin},           {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-    vh.push_back(PHS("TriggerScl_Zinv", {trigger_nSearchBin_scaled},    {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-    vh.push_back(PHS("TriggerWgt_Zinv", {trigger_nSearchBin_weighted},  {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
+    vh.push_back(PHS("Trigger_",         {trigger_nSearchBin},           {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
+    vh.push_back(PHS("TriggerScl_",      {trigger_nSearchBin_scaled},    {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
+    vh.push_back(PHS("TriggerWgt_",      {trigger_nSearchBin_weighted},  {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
+    vh.push_back(PHS("Trigger_Zinv_",    {trigger_nSearchBin},           {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
+    vh.push_back(PHS("TriggerScl_Zinv_", {trigger_nSearchBin_scaled},    {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
+    vh.push_back(PHS("TriggerWgt_Zinv_", {trigger_nSearchBin_weighted},  {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
 
     //Generate cutflows 
     vector<string> cfsZ = {"",
