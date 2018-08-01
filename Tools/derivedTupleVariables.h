@@ -2599,7 +2599,7 @@ namespace plotterFunctions
         // edited for testing efficiency
         int nGammaGen = int(gammaLVecGen.size());
         int nGammaReco = int(photonLVec.size());
-        printf("gammaLVecGen.size() = %d;   photonLVec.size() = %d\n", nGammaGen, nGammaReco);
+        //printf("gammaLVecGen.size() = %d;   photonLVec.size() = %d\n", nGammaGen, nGammaReco);
         if(tr.checkBranch("gammaLVecGen") && tr.checkBranch("genPartonLVec") && &genPartonLVec != nullptr && &gammaLVecGen != nullptr){
           //for(int i = 0; i < photonLVec.size(); i++){
           if (nGammaReco == nGammaGen)

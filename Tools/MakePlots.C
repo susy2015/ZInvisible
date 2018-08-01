@@ -279,6 +279,9 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_genElecEta(          "single", "genElec(eta)",             {dsDY_elec});
     Plotter::DataCollection dcMC_genElecInAccEta(     "single", "genElecInAcc(eta)",        {dsDY_elec});
     Plotter::DataCollection dcMC_genMatchElecInAccEta("single", "genMatchElecInAcc(eta)",   {dsDY_elec});
+    // magic lambda functions... give it pt, eta, etc
+    auto makePDCElecRecoEff = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchElecInAcc("+var+")",dsDY_elec}, {"genElecInAcc("+var+")",dsDY_elec}}); };
+    auto makePDCMuRecoEff   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchMuInAcc("+var+")",  dsDY_mu},   {"genMuInAcc("+var+")",  dsDY_mu}});   };
 
     // photons
     Plotter::DataCollection dcMC_genPhotonPt(     "single", "gammaLVecGen(pt)",         {dsPhoton});
@@ -379,15 +382,15 @@ int main(int argc, char* argv[])
     // electron cut levels
     std::vector<std::pair<std::string,std::string>> cutlevels_electrons = {
         {"nothing",                   ""},
-        {"nosel",                     "passNoiseEventFilterZinv"},
-        {"elecZinv",                  "passNoiseEventFilterZinv;passElecZinvSel"},
+        //{"nosel",                     "passNoiseEventFilterZinv"},
+        //{"elecZinv",                  "passNoiseEventFilterZinv;passElecZinvSel"},
     };
 
     // muon cut levels; commented some cut leves to make less plots
     std::vector<std::pair<std::string,std::string>> cutlevels_muon = {
         {"nothing",                   ""},
-        {"nosel",                     "passNoiseEventFilterZinv"},
-        {"muZinv",                    "passNoiseEventFilterZinv;passMuZinvSel"},
+        //{"nosel",                     "passNoiseEventFilterZinv"},
+        //{"muZinv",                    "passNoiseEventFilterZinv;passMuZinvSel"},
         //{"muZinv_blnotag",            "passMuZinvSel;passBaselineNoTagZinv"},
         //{"muZinv_bl",                 "passMuZinvSel;passBaselineZinv"},
         //{"muZinv_0b_blnotag",         "passMuZinvSel;cntCSVSZinv=0;passBaselineNoTagZinv"},
@@ -397,6 +400,7 @@ int main(int argc, char* argv[])
         //{"muZinv_g1b_loose0",         "passNoiseEventFilterZinv;passMuZinvSel;passBJetsZinv;HTZinv>200;passnJetsZinv;passdPhisZinv"},
         //{"muZinv_loose0",             "passNoiseEventFilterZinv;passMuZinvSel;HTZinv>300;passnJetsZinv;passdPhisZinv"},
     };
+
 
     // loop over electron cut levels
     for(std::pair<std::string,std::string>& cut : cutlevels_electrons)
@@ -412,9 +416,13 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MC_genElecInAccEta_"                 +cut.first,  {dcMC_genElecInAccEta},                            {1, 1}, cut.second, 40, -5, 5, true, false, label_eleta, "Events"));
         vh.push_back(PHS("MC_genMatchElecInAccEta_"            +cut.first,  {dcMC_genMatchElecInAccEta},                       {1, 1}, cut.second, 40, -5, 5, true, false, label_eleta, "Events"));
         //efficiency: gen matched / gen
-        vh.push_back(PHS("MC_ngenElecEff_"                     +cut.first,  {dcMC_ngenMatchElecInAcc, dcMC_ngenElecInAcc},     {1, 2}, cut.second, 20, 0, 20, true, false,  "number of electrons",  "Events"));
-        vh.push_back(PHS("MC_genElecPtEff_"                    +cut.first,  {dcMC_genMatchElecInAccPt, dcMC_genElecInAccPt},   {1, 2}, cut.second, 60, 0, 1500, true, false, label_elpt,  "Events"));
-        vh.push_back(PHS("MC_genElecEtaEff_"                   +cut.first,  {dcMC_genMatchElecInAccEta, dcMC_genElecInAccEta}, {1, 2}, cut.second, 40, -5, 5, true, false, label_eleta, "Events"));
+        vh.push_back(PHS("MC_ngenElecEff_original_"                   +cut.first,  {dcMC_ngenMatchElecInAcc, dcMC_ngenElecInAcc},     {1, 2}, cut.second, 20, 0, 20, true, false,  "number of electrons",  "Events"));
+        vh.push_back(PHS("MC_genElecPtEff_original_"                  +cut.first,  {dcMC_genMatchElecInAccPt, dcMC_genElecInAccPt},   {1, 2}, cut.second, 60, 0, 1500, true, false, label_elpt,  "Events"));
+        vh.push_back(PHS("MC_genElecEtaEff_original_"                 +cut.first,  {dcMC_genMatchElecInAccEta, dcMC_genElecInAccEta}, {1, 2}, cut.second, 40, -5, 5, true, false, label_eleta, "Events"));
+        vh.push_back(PHS("MC_genElecPtEff_ratio_"                     +cut.first,  {makePDCElecRecoEff("pt","ratio")},    {1, 1}, cut.second, 60, 0, 1500, false, false, label_elpt,  "Events"));
+        vh.push_back(PHS("MC_genElecEtaEff_ratio_"                    +cut.first,  {makePDCElecRecoEff("eta","ratio")},   {1, 1}, cut.second, 40, -5, 5, false, false, label_eleta, "Events"));
+        vh.push_back(PHS("MC_genElecPtEff_single_"                    +cut.first,  {makePDCElecRecoEff("pt","single")},   {1, 1}, cut.second, 60, 0, 1500, false, false, label_elpt,  "Events"));
+        vh.push_back(PHS("MC_genElecEtaEff_single_"                   +cut.first,  {makePDCElecRecoEff("eta","single")},  {1, 1}, cut.second, 40, -5, 5, false, false, label_eleta, "Events"));
     }
 
     // loop over muon cut levels
@@ -431,9 +439,13 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MC_genMuInAccEta_"                 +cut.first,  {dcMC_genMuInAccEta},                            {1, 1}, cut.second, 40, -5, 5, true, false, label_mueta, "Events"));
         vh.push_back(PHS("MC_genMatchMuInAccEta_"            +cut.first,  {dcMC_genMatchMuInAccEta},                       {1, 1}, cut.second, 40, -5, 5, true, false, label_mueta, "Events"));
         //efficiency: gen matched / gen
-        vh.push_back(PHS("MC_ngenMuEff_"                     +cut.first,  {dcMC_ngenMatchMuInAcc, dcMC_ngenMuInAcc},       {1, 2}, cut.second, 20, 0, 20, true, false,  "number of muons",  "Events"));
-        vh.push_back(PHS("MC_genMuPtEff_"                    +cut.first,  {dcMC_genMatchMuInAccPt, dcMC_genMuInAccPt},     {1, 2}, cut.second, 60, 0, 1500, true, false, label_mupt,  "Events"));
-        vh.push_back(PHS("MC_genMuEtaEff_"                   +cut.first,  {dcMC_genMatchMuInAccEta, dcMC_genMuInAccEta},   {1, 2}, cut.second, 40, -5, 5, true, false, label_mueta, "Events"));
+        vh.push_back(PHS("MC_ngenMuEff_original_"                   +cut.first,  {dcMC_ngenMatchMuInAcc, dcMC_ngenMuInAcc},       {1, 2}, cut.second, 20, 0, 20, true, false,  "number of muons",  "Events"));
+        vh.push_back(PHS("MC_genMuPtEff_origianl_"                  +cut.first,  {dcMC_genMatchMuInAccPt, dcMC_genMuInAccPt},     {1, 2}, cut.second, 60, 0, 1500, true, false, label_mupt,  "Events"));
+        vh.push_back(PHS("MC_genMuEtaEff_original_"                 +cut.first,  {dcMC_genMatchMuInAccEta, dcMC_genMuInAccEta},   {1, 2}, cut.second, 40, -5, 5, true, false, label_mueta, "Events"));
+        vh.push_back(PHS("MC_genMuPtEff_ratio_"                     +cut.first,  {makePDCMuRecoEff("pt","ratio")},    {1, 1}, cut.second, 60, 0, 1500, false, false, label_mupt,  "Events"));
+        vh.push_back(PHS("MC_genMuEtaEff_ratio_"                    +cut.first,  {makePDCMuRecoEff("eta","ratio")},   {1, 1}, cut.second, 40, -5, 5, false, false, label_mueta, "Events"));
+        vh.push_back(PHS("MC_genMuPtEff_single_"                    +cut.first,  {makePDCMuRecoEff("pt","single")},    {1, 1}, cut.second, 60, 0, 1500, false, false, label_mupt,  "Events"));
+        vh.push_back(PHS("MC_genMuEtaEff_single_"                   +cut.first,  {makePDCMuRecoEff("eta","single")},   {1, 1}, cut.second, 40, -5, 5, false, false, label_mueta, "Events"));
         //Z things (DY)
         vh.push_back(PHS("DataMC_DY_gen_pt_"                 +cut.first,  {dcData_DY_gen_pt, dcMC_DY_gen_pt},              {1, 2}, cut.second, 60, 0, 1500, true, false,   "gen Z Pt",   "Events"));
         vh.push_back(PHS("DataMC_DY_reco_pt_"                +cut.first,  {dcData_DY_reco_pt, dcMC_DY_reco_pt},            {1, 2}, cut.second, 60, 0, 1500, true, false,   "reco Z Pt",  "Events"));
