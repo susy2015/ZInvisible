@@ -421,7 +421,7 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MC_genElecEtaEff_original_"                 +cut.first,  {dcMC_genMatchElecInAccEta, dcMC_genElecInAccEta}, {1, 2}, cut.second, 40, -5, 5, true, false, label_eleta, "Events"));
         vh.push_back(PHS("MC_genElecPtEff_ratio_"                     +cut.first,  {makePDCElecRecoEff("pt","ratio")},    {1, 1}, cut.second, 60, 0, 1500, false, false, label_elpt,  "Events"));
         vh.push_back(PHS("MC_genElecEtaEff_ratio_"                    +cut.first,  {makePDCElecRecoEff("eta","ratio")},   {1, 1}, cut.second, 40, -5, 5, false, false, label_eleta, "Events"));
-        vh.push_back(PHS("MC_genElecPtEff_single_"                    +cut.first,  {makePDCElecRecoEff("pt","single")},   {1, 1}, cut.second, 60, 0, 1500, false, false, label_elpt,  "Events"));
+        vh.push_back(PHS("MC_genElecPtEff_single_"                    +cut.first,  {makePDCElecRecoEff("pt","single")},   {1, 1}, cut.second, 60, 0, 1500, true, false, label_elpt,  "Events"));
         vh.push_back(PHS("MC_genElecEtaEff_single_"                   +cut.first,  {makePDCElecRecoEff("eta","single")},  {1, 1}, cut.second, 40, -5, 5, false, false, label_eleta, "Events"));
     }
 
@@ -444,7 +444,7 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MC_genMuEtaEff_original_"                 +cut.first,  {dcMC_genMatchMuInAccEta, dcMC_genMuInAccEta},   {1, 2}, cut.second, 40, -5, 5, true, false, label_mueta, "Events"));
         vh.push_back(PHS("MC_genMuPtEff_ratio_"                     +cut.first,  {makePDCMuRecoEff("pt","ratio")},    {1, 1}, cut.second, 60, 0, 1500, false, false, label_mupt,  "Events"));
         vh.push_back(PHS("MC_genMuEtaEff_ratio_"                    +cut.first,  {makePDCMuRecoEff("eta","ratio")},   {1, 1}, cut.second, 40, -5, 5, false, false, label_mueta, "Events"));
-        vh.push_back(PHS("MC_genMuPtEff_single_"                    +cut.first,  {makePDCMuRecoEff("pt","single")},    {1, 1}, cut.second, 60, 0, 1500, false, false, label_mupt,  "Events"));
+        vh.push_back(PHS("MC_genMuPtEff_single_"                    +cut.first,  {makePDCMuRecoEff("pt","single")},    {1, 1}, cut.second, 60, 0, 1500, true, false, label_mupt,  "Events"));
         vh.push_back(PHS("MC_genMuEtaEff_single_"                   +cut.first,  {makePDCMuRecoEff("eta","single")},   {1, 1}, cut.second, 40, -5, 5, false, false, label_mueta, "Events"));
         //Z things (DY)
         vh.push_back(PHS("DataMC_DY_gen_pt_"                 +cut.first,  {dcData_DY_gen_pt, dcMC_DY_gen_pt},              {1, 2}, cut.second, 60, 0, 1500, true, false,   "gen Z Pt",   "Events"));
