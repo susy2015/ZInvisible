@@ -443,7 +443,7 @@ int main(int argc, char* argv[])
         // Iso Efficiency
         vh.push_back(PHS("MC_ElecIsoEffPt_ratio_"         +cut.first,  {makePDCElecIsoEff("pt","ratio")},                {1, 1}, cut.second, 60, 0, 1500, false, false, label_elpt, "Events"));
         vh.push_back(PHS("MC_ElecIsoEffEta_ratio_"        +cut.first,  {makePDCElecIsoEff("eta","ratio")},               {1, 1}, cut.second, 40, -5, 5, false, false, label_eleta, "Events"));
-        vh.push_back(PHS("MC_ElecIsoEffPt_single_"        +cut.first,  {makePDCElecIsoEff("pt","single")},               {1, 1}, cut.second, 60, 0, 1500, false, false, label_elpt, "Events"));
+        vh.push_back(PHS("MC_ElecIsoEffPt_single_"        +cut.first,  {makePDCElecIsoEff("pt","single")},               {1, 1}, cut.second, 60, 0, 1500, true, false, label_elpt, "Events"));
         vh.push_back(PHS("MC_ElecIsoEffEta_single_"       +cut.first,  {makePDCElecIsoEff("eta","single")},              {1, 1}, cut.second, 40, -5, 5, false, false, label_eleta, "Events"));
     }
 
@@ -487,7 +487,7 @@ int main(int argc, char* argv[])
         // Iso Efficiency
         vh.push_back(PHS("MC_MuIsoEffPt_ratio_"         +cut.first,  {makePDCMuIsoEff("pt","ratio")},                {1, 1}, cut.second, 60, 0, 1500, false, false, label_mupt, "Events"));
         vh.push_back(PHS("MC_MuIsoEffEta_ratio_"        +cut.first,  {makePDCMuIsoEff("eta","ratio")},               {1, 1}, cut.second, 40, -5, 5, false, false, label_eleta, "Events"));
-        vh.push_back(PHS("MC_MuIsoEffPt_single_"        +cut.first,  {makePDCMuIsoEff("pt","single")},               {1, 1}, cut.second, 60, 0, 1500, false, false, label_mupt, "Events"));
+        vh.push_back(PHS("MC_MuIsoEffPt_single_"        +cut.first,  {makePDCMuIsoEff("pt","single")},               {1, 1}, cut.second, 60, 0, 1500, true, false, label_mupt, "Events"));
         vh.push_back(PHS("MC_MuIsoEffEta_single_"       +cut.first,  {makePDCMuIsoEff("eta","single")},              {1, 1}, cut.second, 40, -5, 5, false, false, label_eleta, "Events"));
         
         //Z things (DY)
