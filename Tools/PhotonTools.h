@@ -65,8 +65,8 @@ namespace PhotonFunctions
     double perPhotonPt = photon.Pt(), perPhotonEta = photon.Eta();
     return (minPt == -1 || perPhotonPt > minPt)
       && ((barrelMax == -1 || fabs(perPhotonEta) < barrelMax)
-	  || ((endcapMin == -1 || fabs(perPhotonEta) > endcapMin)
-	      && (endcapMax == -1 || fabs(perPhotonEta) < endcapMax)));
+          || ((endcapMin == -1 || fabs(perPhotonEta) > endcapMin)
+              && (endcapMax == -1 || fabs(perPhotonEta) < endcapMax)));
   }
 
   bool isBarrelECAL(const TLorentzVector& photon){
@@ -82,7 +82,7 @@ namespace PhotonFunctions
       || (endcapMax == -1 || fabs(perPhotonEta) <= endcapMax);
   }
 
-  bool isGenMatched(const TLorentzVector& photon, std::vector<TLorentzVector> genPhoton){
+  bool isGenMatched_Method1(const TLorentzVector& photon, std::vector<TLorentzVector> genPhoton){
     double RecoPt = photon.Pt();
     bool match = false;
     
@@ -99,14 +99,32 @@ namespace PhotonFunctions
       std::cout << "deltaR: " << deltaR << std::endl;
       */
       if (temp_ratio > 0.5 && temp_ratio < 2.0 && deltaR < 0.1){
-	match = true;
-	break;
+        match = true;
+        break;
       }
     }
     //if (match) std::cout << "pass"<< std::endl << std::endl;
     //else std::cout << "fake"<< std::endl << std::endl;
       return match;
     
+  }
+  bool isGenMatched_Method2(const TLorentzVector& photon, std::vector<TLorentzVector> genPhoton){
+    bool match = false;
+    double dRMin = 999.9;
+    for (int i = 0; i < genPhoton.size(); i++)
+    {
+      double dR = ROOT::Math::VectorUtil::DeltaR(genPhoton[i],photon);
+      double GenPt = genPhoton[i].Pt();
+      if(dR < dRMin)
+      {
+        dRMin = dR;
+      }
+      if (dRMin < 100.0)
+      {
+        match = true;
+      }
+    }
+    return match;
   }
 
   bool isDirectPhoton(const TLorentzVector& photon, std::vector<TLorentzVector> genParton){
@@ -518,13 +536,13 @@ namespace PhotonFunctions
     if(isBarrelECAL(photon)){
       passIDbarrel = (HoE < barrelParams.HoE && sieie < barrelParams.sieie);
       passIsoBarrel = (pfCHadIso < barrelParams.pfCHadIso && pfNhadIso < pfNhadronIsoCalc(photon, barrelParams) 
-		       && pfPhoIso < pfGammaIsoCalc(photon, barrelParams));
+                       && pfPhoIso < pfGammaIsoCalc(photon, barrelParams));
     }
 
       else if(isEndcapECAL(photon)){
-	passIDendcap = (HoE < endcapParams.HoE && sieie < endcapParams.sieie);
-	passIsoBarrel = (pfCHadIso < endcapParams.pfCHadIso && pfNhadIso < pfNhadronIsoCalc(photon, endcapParams)
-			 && pfPhoIso < pfGammaIsoCalc(photon, endcapParams));
+        passIDendcap = (HoE < endcapParams.HoE && sieie < endcapParams.sieie);
+        passIsoBarrel = (pfCHadIso < endcapParams.pfCHadIso && pfNhadIso < pfNhadronIsoCalc(photon, endcapParams)
+                         && pfPhoIso < pfGammaIsoCalc(photon, endcapParams));
       }
 
     return ((passIDbarrel && passIsoBarrel) || (passIDendcap && passIsoEndcap));
