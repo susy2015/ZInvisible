@@ -2562,6 +2562,7 @@ namespace plotterFunctions
         const int& ntops = tr.getVar<int>("nTopCandSortedCnt");
 
         //variables to be used in the analysis code
+        double photonPtCut = 100.0;
         double photonMet = -999.9;
         std::vector<TLorentzVector> *promptPhotons = new std::vector<TLorentzVector>(); 
         std::vector<TLorentzVector> *fakePhotons = new std::vector<TLorentzVector>();
@@ -2582,7 +2583,7 @@ namespace plotterFunctions
         photonMet = met;
         //Get TLorentz vector for Loose, Medium and Tight ID photon selection
         for(int i = 0; i < photonLVec.size(); i++){
-          if (photonLVec[i].Pt() > 200){
+          if (photonLVec[i].Pt() > photonPtCut){
             totalPhotons->push_back(photonLVec[i]);
             
             if(looseID[i]) loosePhotons->push_back(photonLVec[i]);
@@ -2594,16 +2595,30 @@ namespace plotterFunctions
           } 
         }
 
-        //Gen-Matching Photons (Pt > 200 GeV)
+        //Gen-Matching Photons (Pt > photonPtCut in GeV)
+        // edited for testing efficiency
+        int nGammaGen = int(gammaLVecGen.size());
+        int nGammaReco = int(photonLVec.size());
+        //printf("gammaLVecGen.size() = %d;   photonLVec.size() = %d\n", nGammaGen, nGammaReco);
         if(tr.checkBranch("gammaLVecGen") && tr.checkBranch("genPartonLVec") && &genPartonLVec != nullptr && &gammaLVecGen != nullptr){
-          for(int i = 0; i < photonLVec.size(); i++){
-            if(photonLVec[i].Pt() > 200 && looseID[i]){
-              if(PhotonFunctions::isGenMatched(photonLVec[i],gammaLVecGen)){
-                promptPhotons->push_back(photonLVec[i]);
-                if(PhotonFunctions::isDirectPhoton(photonLVec[i],genPartonLVec)) directPhotons->push_back(photonLVec[i]);
-                if(PhotonFunctions::isFragmentationPhoton(photonLVec[i],genPartonLVec)) fragmentationQCD->push_back(photonLVec[i]);
+          //for(int i = 0; i < photonLVec.size(); i++){
+          if (nGammaReco == nGammaGen)
+          {
+            for(int i = 0; i < gammaLVecGen.size(); i++){
+              if(photonLVec[i].Pt() > photonPtCut && looseID[i]){
+              //if(true){
+                //if(PhotonFunctions::isGenMatched_Method2(photonLVec[i],gammaLVecGen)){
+                if(true){
+                  //promptPhotons->push_back(photonLVec[i]);
+                  //if(PhotonFunctions::isDirectPhoton(photonLVec[i],genPartonLVec)) directPhotons->push_back(photonLVec[i]);
+                  //if(PhotonFunctions::isFragmentationPhoton(photonLVec[i],genPartonLVec)) fragmentationQCD->push_back(photonLVec[i]);
+                  promptPhotons->push_back(gammaLVecGen[i]);
+                  if(PhotonFunctions::isDirectPhoton(gammaLVecGen[i],genPartonLVec)) directPhotons->push_back(gammaLVecGen[i]);
+                  if(PhotonFunctions::isFragmentationPhoton(gammaLVecGen[i],genPartonLVec)) fragmentationQCD->push_back(gammaLVecGen[i]);
+                }
+                //else fakePhotons->push_back(photonLVec[i]);
+                else fakePhotons->push_back(gammaLVecGen[i]);
               }
-              else fakePhotons->push_back(photonLVec[i]);
             }
           }
         }
