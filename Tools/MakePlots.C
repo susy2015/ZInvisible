@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
         {"savetuple",        no_argument, 0, 't'},
         {"fromFile",         no_argument, 0, 'f'},
         {"condor",           no_argument, 0, 'c'},
-        {"filename",   required_argument, 0, 'O'},
+        {"filename",   required_argument, 0, 'I'},
         {"dataSets",   required_argument, 0, 'D'},
         {"numFiles",   required_argument, 0, 'N'},
         {"startFile",  required_argument, 0, 'M'},
@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
     double lumi = AnaSamples::luminosity;
     std::string sbEra = "SB_v1_2017";//"SB_v1_2017";
 
-    while((opt = getopt_long(argc, argv, "pstfcO:D:N:M:E:P:L:S:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "pstfcI:D:N:M:E:P:L:S:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
             runOnCondor = true;
             break;
 
-        case 'O':
+        case 'I':
             filename = optarg;
             break;
 
