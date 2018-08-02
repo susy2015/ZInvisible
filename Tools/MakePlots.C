@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
         sampleloc = "condor";
     }
 
-    std::cout << "output filename: " << filename << std::endl;
+    std::cout << "input filename: " << filename << std::endl;
     std::cout << "Sample location: " << sampleloc << std::endl;
 
     // follow this syntax; order matters for your arguments
