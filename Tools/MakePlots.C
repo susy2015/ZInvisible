@@ -263,7 +263,6 @@ int main(int argc, char* argv[])
  
     //lambda is your friend
     //for electrons do not use muTrigWgt (it is 0.0 for electrons)
-    //auto makePDS = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genElecInAcc("+var+")",dsDY_elec}, {"genElec("+var+")",dsDY_elec}}); };
     auto makePDSMu   = [&](const std::string& label) {return Plotter::DatasetSummary("DY "+label, fileMap["DYJetsToLL"], "", "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
     auto makePDSElec = [&](const std::string& label) {return Plotter::DatasetSummary("DY "+label, fileMap["DYJetsToLL"], "", "bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
     
