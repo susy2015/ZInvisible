@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 
     bool runOnCondor = false;
     bool doWeights = false;
-    bool doPhotons = false;
+    bool doPhotons = true;
     bool doSearchBins = false;
     bool doPlots = true;
     bool doSave = true;
