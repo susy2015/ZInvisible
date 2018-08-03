@@ -1,0 +1,60 @@
+#ifndef NJETAK8_H
+#define NJETAK8_H
+
+#include "PhotonTools.h"
+
+#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "SusyAnaTools/Tools/customize.h"
+#include "SusyAnaTools/Tools/searchBins.h"
+#include "TopTagger/Tools/cpp/TaggerUtility.h"
+#include "TopTagger/Tools/cpp/PlotUtility.h"
+#include "ScaleFactors.h"
+#include "ScaleFactorsttBar.h"
+
+#include "TopTagger.h"
+#include "TTModule.h"
+#include "TopTaggerUtilities.h"
+#include "TopTaggerResults.h"
+#include "TopTagger/Tools/cpp/PlotUtility.h"
+
+#include "TopTagger/TopTagger/include/TopObject.h"
+
+#include "TH1.h"
+#include "TH2.h"
+#include "TFile.h"
+#include "TMath.h"
+#include "TLorentzVector.h"
+#include "Math/VectorUtil.h"
+#include "TRandom3.h"
+#include "TVector2.h"
+
+#include <vector>
+#include <iostream>
+#include <string>
+#include <set>
+
+namespace plotterFunctions
+{
+    class NJetAk8
+    {
+    private:
+        void generateNJetAk8(NTupleReader& tr)
+        {
+            const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec"); 
+            const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
+            // const int& nJetsAk8 = ak8JetsLVec.size();
+            // const int& nJetsPuppi = puppiJetsLVec.size();
+            //tr.registerDerivedVar("nJetsAk8", nJetsAk8);
+            //tr.registerDerivedVar("nJetsPuppi", nJetsPuppi);
+        }
+    public:
+        NJetAk8(){}
+        ~NJetAk8(){}
+        void operator()(NTupleReader& tr)
+        {
+            generateNJetAk8(tr);
+        }
+    };   
+}
+
+#endif

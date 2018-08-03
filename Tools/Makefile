@@ -13,6 +13,12 @@ TTSDIR     = $(CMSSW_BASE)/src/TopTagger/Tools/cpp
 TTTSDIR    = $(CMSSW_BASE)/src/TopTaggerTools/Tools/src
 TTTIDIR    = $(CMSSW_BASE)/src/TopTaggerTools/Tools/include
 
+ZINVISIBLE = $(CMSSW_BASE)/src/ZInvisible
+
+# TODO for the brave: use Makefile.in, configure.ac, and configure script to create Makefile from Makefile.in
+# Then you can use sytax like this:
+# ZINVISIBLE = @ZINVISIBLE@ 
+
 OPENCV_DIRECTORY=/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/
 
 CXX        = g++
@@ -34,6 +40,9 @@ LD         = g++
 LDFLAGS    =
 
 INCLUDES += $(shell $(PYTHONCFG) --includes)
+
+# include "include" directory
+INCLUDES += -I$(ZINVISIBLE)/Tools/include
 
 CXXFLAGS += -DDOTENSORFLOWPYBIND
 

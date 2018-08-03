@@ -560,12 +560,12 @@ void Plotter::createHistsFromFile()
         {
             for(auto& hist : histvec.hcsVec)
             {
-		std::string& dirname = hist->variable.name;
+                std::string& dirname = hist->variable.name;
                 std::string histName = hist->name;
 
                 if(fout_) hist->h = static_cast<TH1*>(fout_->Get( (dirname+"/"+histName).c_str() ) );
-		else std::cout << "Input file \"" << fout_ << "\" not found!!!!" << std::endl;
-		if(!hist->h) std::cout << "Histogram not found: \"" << hist->name << "\"!!!!!!" << "dirname/histname " << dirname+"/"+hist->name << std::endl;
+                else std::cout << "Input file \"" << fout_ << "\" not found!!!!" << std::endl;
+                if(!hist->h) std::cout << "Histogram not found: \"" << hist->name << "\"!!!!!!" << "dirname/histname " << dirname+"/"+hist->name << std::endl;
             }
         }
     }
@@ -716,13 +716,13 @@ void Plotter::saveHists()
             {
                 for(auto& h : hvec.hcsVec)
                 {
-		    std::string dirname = h->variable.name;
-		    TDirectory* mydir = fout_->GetDirectory(dirname.c_str());
-		    if(mydir == 0)
-		    {
-			mydir = fout_->mkdir(dirname.c_str(),dirname.c_str());
-		    }
-		    mydir->cd();
+                    std::string dirname = h->variable.name;
+                    TDirectory* mydir = fout_->GetDirectory(dirname.c_str());
+                    if(mydir == 0)
+                    {
+                        mydir = fout_->mkdir(dirname.c_str(),dirname.c_str());
+                    }
+                    mydir->cd();
                     h->h->Write();
                 }
             }
@@ -1005,7 +1005,7 @@ void Plotter::plot()
                 else if(hvec.type.compare("data") != 0)  hvec.h->Draw("hist same");
             }
         }
-	// Make sure to always draw data on top
+        // Make sure to always draw data on top
         for(auto& hvec : hist.hists)
         {
             if(hvec.h)
@@ -1017,11 +1017,11 @@ void Plotter::plot()
 
         fixOverlay();
 
-	// Add the search bin boundaries for the search bin plots
-	// if(hist.name.find("nSearchBin") != std::string::npos)
-	// {
-	//     drawSBregionDefCopy(dummy->GetMinimum(),dummy->GetMaximum());
-	// }
+        // Add the search bin boundaries for the search bin plots
+        // if(hist.name.find("nSearchBin") != std::string::npos)
+        // {
+        //     drawSBregionDefCopy(dummy->GetMinimum(),dummy->GetMaximum());
+        // }
 
         TH1 *dummy2 = nullptr, *h1 = nullptr, *h2 = nullptr;
         if(showRatio)
