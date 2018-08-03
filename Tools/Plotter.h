@@ -9,6 +9,8 @@
 #include "TProfile.h"
 #include "TLegend.h"
 #include "TPad.h"
+#include "TStyle.h"
+#include "TPaveText.h"
 
 #include <vector>
 #include <utility>
