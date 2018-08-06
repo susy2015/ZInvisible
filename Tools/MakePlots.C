@@ -263,8 +263,9 @@ int main(int argc, char* argv[])
  
     //lambda is your friend
     //for electrons do not use muTrigWgt (it is 0.0 for electrons)
-    auto makePDSMu   = [&](const std::string& label) {return Plotter::DatasetSummary("DY "+label, fileMap["DYJetsToLL"], "", "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
-    auto makePDSElec = [&](const std::string& label) {return Plotter::DatasetSummary("DY "+label, fileMap["DYJetsToLL"], "", "bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
+    auto makePDSMu     = [&](const std::string& label) {return Plotter::DatasetSummary("DY "+label, fileMap["DYJetsToLL"], "", "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
+    auto makePDSElec   = [&](const std::string& label) {return Plotter::DatasetSummary("DY "+label, fileMap["DYJetsToLL"], "", "bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
+    auto makePDSPhoton = [&](const std::string& label) {return Plotter::DatasetSummary("#gamma + jets "+label, fileMap["GJets"], "", "bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
     
     // acceptance
     // muons
@@ -290,6 +291,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_genElecInAccEta(     "single", "genElecInAcc(eta)",        {dsDY_elec});
     Plotter::DataCollection dcMC_genMatchElecInAccEta("single", "genMatchElecInAcc(eta)",   {dsDY_elec});
     // magic lambda functions... give it pt, eta, etc
+    // leptons
     // acceptance = genInAcc / gen (acceptance / MC)
     auto makePDCElecAcc = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genElecInAcc("+var+")", makePDSElec("e acc")}, {"genElec("+var+")", makePDSElec("e gen")}}); };
     auto makePDCMuAcc   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMuInAcc("+var+")",   makePDSMu("#mu acc")}, {"genMu("+var+")",   makePDSMu("#mu gen")}}); };
@@ -299,6 +301,10 @@ int main(int argc, char* argv[])
     // iso efficiency = genMatchIsoInAcc / genMatchInAcc (iso / reco)
     auto makePDCElecIsoEff = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso")}, {"genMatchElecInAcc("+var+")", makePDSElec("e reco")}}); };
     auto makePDCMuIsoEff   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco")}}); };
+    // photons
+    // acceptance = genInAcc / gen (acceptance / MC)
+    // efficiency = genMatchInAcc / genInAcc (reco / acceptance)
+    auto makePDCPhotonRecoEff = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"promptPhotons("+var+")", makePDSPhoton("reco")}, {"gammaLVecGenAcc("+var+")", makePDSPhoton("acc")}}); };
 
     // photons
     Plotter::DataCollection dcMC_genPhotonPt(     "single", "gammaLVecGenAcc(pt)",      {dsPhoton});
@@ -596,8 +602,12 @@ int main(int argc, char* argv[])
     {
         // photons: promptPhotons
         //vh.push_back(PHS("MC_ngenPhotonEff_"                     +cut.first,  {},       {1, 2}, cut.second, 20, 0, 20, true, false,  "number of photon",  "Events"));
-        vh.push_back(PHS("MC_genPhotonPtEff",   {dcMC_matchedPhotonPt, dcMC_genPhotonPt},     {1, 2}, "", 60, 0, 1500, true, false, label_photonpt,  "Events"));
-        vh.push_back(PHS("MC_genPhotonEtaEff",  {dcMC_matchedPhotonEta, dcMC_genPhotonEta},   {1, 2}, "", 40, -5, 5,   true, false, label_photoneta, "Events"));
+        //vh.push_back(PHS("MC_genPhotonPtEff",   {dcMC_matchedPhotonPt, dcMC_genPhotonPt},     {1, 2}, "", 60, 0, 1500, true, false, label_photonpt,  "Events"));
+        //vh.push_back(PHS("MC_genPhotonEtaEff",  {dcMC_matchedPhotonEta, dcMC_genPhotonEta},   {1, 2}, "", 40, -5, 5,   true, false, label_photoneta, "Events"));
+        vh.push_back(PHS("MC_genPhotonPtRecoEff_ratio",    {makePDCPhotonRecoEff("pt","ratio")},     {1, 1}, "", 60, 0, 1500, false, false, label_photonpt,  label_reco));
+        vh.push_back(PHS("MC_genPhotonEtaRecoEff_ratio",   {makePDCPhotonRecoEff("eta","ratio")},    {1, 1}, "", 40, -5, 5,   false, false, label_photoneta, label_reco));
+        vh.push_back(PHS("MC_genPhotonPtRecoEff_single",   {makePDCPhotonRecoEff("pt","single")},    {1, 1}, "", 60, 0, 1500, true,  false, label_photonpt,  "Events"));
+        vh.push_back(PHS("MC_genPhotonEtaRecoEff_single",  {makePDCPhotonRecoEff("eta","single")},   {1, 1}, "", 40, -5, 5,   false, false, label_photoneta, "Events"));
     }
 
     if (doSearchBins)
