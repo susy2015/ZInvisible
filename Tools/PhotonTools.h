@@ -63,10 +63,14 @@ namespace PhotonFunctions
   bool passPhoton(const TLorentzVector& photon){
     const double minPt = 100, barrelMax = 1.4442, endcapMin = 1.566, endcapMax = 2.5;
     double perPhotonPt = photon.Pt(), perPhotonEta = photon.Eta();
-    return (minPt == -1 || perPhotonPt > minPt)
-      && ((barrelMax == -1 || fabs(perPhotonEta) < barrelMax)
-      || ((endcapMin == -1 || fabs(perPhotonEta) > endcapMin)
-      && (endcapMax == -1 || fabs(perPhotonEta) < endcapMax)));
+    return (minPt == -1 || perPhotonPt > minPt) // pt cut
+           && (
+                (barrelMax == -1 || fabs(perPhotonEta) < barrelMax) // within barrel
+                || (  
+                      (endcapMin == -1 || fabs(perPhotonEta) > endcapMin) // within endcap
+                   && (endcapMax == -1 || fabs(perPhotonEta) < endcapMax) // within endcap
+                   )
+              );
   }
 
   bool isBarrelECAL(const TLorentzVector& photon){

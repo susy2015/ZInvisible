@@ -293,17 +293,18 @@ int main(int argc, char* argv[])
     // magic lambda functions... give it pt, eta, etc
     // leptons
     // acceptance = genInAcc / gen (acceptance / MC)
-    auto makePDCElecAcc = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genElecInAcc("+var+")", makePDSElec("e acc")}, {"genElec("+var+")", makePDSElec("e gen")}}); };
-    auto makePDCMuAcc   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMuInAcc("+var+")",   makePDSMu("#mu acc")}, {"genMu("+var+")",   makePDSMu("#mu gen")}}); };
+    auto makePDCElecAcc     = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genElecInAcc("+var+")", makePDSElec("e acc")}, {"genElec("+var+")", makePDSElec("e gen")}}); };
+    auto makePDCMuAcc       = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMuInAcc("+var+")",   makePDSMu("#mu acc")}, {"genMu("+var+")",   makePDSMu("#mu gen")}}); };
     // efficiency = genMatchInAcc / genInAcc (reco / acceptance)
     auto makePDCElecRecoEff = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchElecInAcc("+var+")", makePDSElec("e reco")}, {"genElecInAcc("+var+")", makePDSElec("e acc")}}); };
     auto makePDCMuRecoEff   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco")}, {"genMuInAcc("+var+")",   makePDSMu("#mu acc")}}); };
     // iso efficiency = genMatchIsoInAcc / genMatchInAcc (iso / reco)
-    auto makePDCElecIsoEff = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso")}, {"genMatchElecInAcc("+var+")", makePDSElec("e reco")}}); };
-    auto makePDCMuIsoEff   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco")}}); };
+    auto makePDCElecIsoEff  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso")}, {"genMatchElecInAcc("+var+")", makePDSElec("e reco")}}); };
+    auto makePDCMuIsoEff    = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco")}}); };
     // photons
-    // acceptance = genInAcc / gen (acceptance / MC)
-    // efficiency = genMatchInAcc / genInAcc (reco / acceptance)
+    // acceptance = gammaLVecGenAcc / gen (acceptance / MC)
+    auto makePDCPhotonAcc     = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("acc")}, {"gammaLVecGen("+var+")", makePDSPhoton("gen")}}); };
+    // efficiency = promptPhotons / gammaLVecGenAcc (reco / acceptance)
     auto makePDCPhotonRecoEff = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"promptPhotons("+var+")", makePDSPhoton("reco")}, {"gammaLVecGenAcc("+var+")", makePDSPhoton("acc")}}); };
 
     // photons
@@ -575,6 +576,24 @@ int main(int argc, char* argv[])
         }
     }
 
+    // photons
+    if (doPhotons)
+    {
+        // photons: promptPhotons
+        //vh.push_back(PHS("MC_ngenPhotonEff_"                     +cut.first,  {},       {1, 2}, cut.second, 20, 0, 20, true, false,  "number of photon",  "Events"));
+        //vh.push_back(PHS("MC_genPhotonPtEff",   {dcMC_matchedPhotonPt, dcMC_genPhotonPt},     {1, 2}, "", 60, 0, 1500, true, false, label_photonpt,  "Events"));
+        //vh.push_back(PHS("MC_genPhotonEtaEff",  {dcMC_matchedPhotonEta, dcMC_genPhotonEta},   {1, 2}, "", 40, -5, 5,   true, false, label_photoneta, "Events"));
+        // Acceptance: use makePDCPhotonAcc
+        vh.push_back(PHS("MC_genPhotonPtAcc_ratio",    {makePDCPhotonAcc("pt","ratio")},     {1, 1}, "", 60, 0, 1500, false, false, label_photonpt,  label_reco));
+        vh.push_back(PHS("MC_genPhotonEtaAcc_ratio",   {makePDCPhotonAcc("eta","ratio")},    {1, 1}, "", 40, -5, 5,   false, false, label_photoneta, label_reco));
+        vh.push_back(PHS("MC_genPhotonPtAcc_single",   {makePDCPhotonAcc("pt","single")},    {1, 1}, "", 60, 0, 1500, true,  false, label_photonpt,  "Events"));
+        vh.push_back(PHS("MC_genPhotonEtaAcc_single",  {makePDCPhotonAcc("eta","single")},   {1, 1}, "", 40, -5, 5,   false, false, label_photoneta, "Events"));
+        // Reco Efficiency
+        vh.push_back(PHS("MC_genPhotonPtRecoEff_ratio",    {makePDCPhotonRecoEff("pt","ratio")},     {1, 1}, "", 60, 0, 1500, false, false, label_photonpt,  label_reco));
+        vh.push_back(PHS("MC_genPhotonEtaRecoEff_ratio",   {makePDCPhotonRecoEff("eta","ratio")},    {1, 1}, "", 40, -5, 5,   false, false, label_photoneta, label_reco));
+        vh.push_back(PHS("MC_genPhotonPtRecoEff_single",   {makePDCPhotonRecoEff("pt","single")},    {1, 1}, "", 60, 0, 1500, true,  false, label_photonpt,  "Events"));
+        vh.push_back(PHS("MC_genPhotonEtaRecoEff_single",  {makePDCPhotonRecoEff("eta","single")},   {1, 1}, "", 40, -5, 5,   false, false, label_photoneta, "Events"));
+    }
 
     //tops
     vh.push_back(PHS("DataMC_T1tttt", {dcMC_T1tttt}, {1, 1}, "passNoiseEventFilterZinv", 60, 0, 1500, true, false, label_genTopPt, "Events"));
@@ -598,17 +617,6 @@ int main(int argc, char* argv[])
     Plotter::DataCollection trigger_nSearchBin_scaled( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_scaled}  });
     Plotter::DataCollection trigger_nSearchBin_weighted( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_weighted}  });
 
-    if (doPhotons)
-    {
-        // photons: promptPhotons
-        //vh.push_back(PHS("MC_ngenPhotonEff_"                     +cut.first,  {},       {1, 2}, cut.second, 20, 0, 20, true, false,  "number of photon",  "Events"));
-        //vh.push_back(PHS("MC_genPhotonPtEff",   {dcMC_matchedPhotonPt, dcMC_genPhotonPt},     {1, 2}, "", 60, 0, 1500, true, false, label_photonpt,  "Events"));
-        //vh.push_back(PHS("MC_genPhotonEtaEff",  {dcMC_matchedPhotonEta, dcMC_genPhotonEta},   {1, 2}, "", 40, -5, 5,   true, false, label_photoneta, "Events"));
-        vh.push_back(PHS("MC_genPhotonPtRecoEff_ratio",    {makePDCPhotonRecoEff("pt","ratio")},     {1, 1}, "", 60, 0, 1500, false, false, label_photonpt,  label_reco));
-        vh.push_back(PHS("MC_genPhotonEtaRecoEff_ratio",   {makePDCPhotonRecoEff("eta","ratio")},    {1, 1}, "", 40, -5, 5,   false, false, label_photoneta, label_reco));
-        vh.push_back(PHS("MC_genPhotonPtRecoEff_single",   {makePDCPhotonRecoEff("pt","single")},    {1, 1}, "", 60, 0, 1500, true,  false, label_photonpt,  "Events"));
-        vh.push_back(PHS("MC_genPhotonEtaRecoEff_single",  {makePDCPhotonRecoEff("eta","single")},   {1, 1}, "", 40, -5, 5,   false, false, label_photoneta, "Events"));
-    }
 
     if (doSearchBins)
     {

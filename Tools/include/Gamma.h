@@ -41,24 +41,24 @@ namespace plotterFunctions
 
       void generateGamma(NTupleReader& tr) {
 
-        const std::vector<TLorentzVector>& gammaLVec  = tr.getVec<TLorentzVector>("gammaLVec");        // reco
-        const std::vector<TLorentzVector>& gammaLVecGen  = tr.getVec<TLorentzVector>("gammaLVecGen");  // gen
-        const std::vector<TLorentzVector>& genPartonLVec = tr.getVec<TLorentzVector>("genPartonLVec"); // gen parton 
-        const std::vector<bool>& looseID = tr.getVec<bool>("loosePhotonID");
-        const std::vector<bool>& mediumID = tr.getVec<bool>("mediumPhotonID");
-        const std::vector<bool>& tightID = tr.getVec<bool>("tightPhotonID");
-        const std::vector<int>& extraLooseID = tr.getVec<int>("extraLooseID");
-        const std::vector<double>& sigmaIetaIeta = tr.getVec<double>("sigmaIetaIeta");
-        const std::vector<double>& pfNeutralIsoRhoCorr = tr.getVec<double>("pfNeutralIsoRhoCorr");
-        const std::vector<double>& pfGammaIsoRhoCorr = tr.getVec<double>("pfGammaIsoRhoCorr");
-        const std::vector<double>& pfChargedIsoRhoCorr = tr.getVec<double>("pfChargedIsoRhoCorr");
-        const std::vector<double>& hadTowOverEM = tr.getVec<double>("hadTowOverEM");
-        const double& MT2 = tr.getVar<double>("best_had_brJet_MT2");
-        const double& met = tr.getVar<double>("met");
-        const int& nJets = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
-        const double& ht = tr.getVar<double>("HT");
-        const int& nbJets = tr.getVar<int>("cntCSVS");
-        const int& ntops = tr.getVar<int>("nTopCandSortedCnt");
+        const std::vector<TLorentzVector>& gammaLVec            = tr.getVec<TLorentzVector>("gammaLVec");     // reco
+        const std::vector<TLorentzVector>& gammaLVecGen         = tr.getVec<TLorentzVector>("gammaLVecGen");  // gen
+        const std::vector<TLorentzVector>& genPartonLVec        = tr.getVec<TLorentzVector>("genPartonLVec"); // gen parton 
+        const std::vector<bool>& looseID                        = tr.getVec<bool>("loosePhotonID");
+        const std::vector<bool>& mediumID                       = tr.getVec<bool>("mediumPhotonID");
+        const std::vector<bool>& tightID                        = tr.getVec<bool>("tightPhotonID");
+        const std::vector<int>& extraLooseID                    = tr.getVec<int>("extraLooseID");
+        const std::vector<double>& sigmaIetaIeta                = tr.getVec<double>("sigmaIetaIeta");
+        const std::vector<double>& pfNeutralIsoRhoCorr          = tr.getVec<double>("pfNeutralIsoRhoCorr");
+        const std::vector<double>& pfGammaIsoRhoCorr            = tr.getVec<double>("pfGammaIsoRhoCorr");
+        const std::vector<double>& pfChargedIsoRhoCorr          = tr.getVec<double>("pfChargedIsoRhoCorr");
+        const std::vector<double>& hadTowOverEM                 = tr.getVec<double>("hadTowOverEM");
+        const double& MT2                                       = tr.getVar<double>("best_had_brJet_MT2");
+        const double& met                                       = tr.getVar<double>("met");
+        const int& nJets                                        = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+        const double& ht                                        = tr.getVar<double>("HT");
+        const int& nbJets                                       = tr.getVar<int>("cntCSVS");
+        const int& ntops                                        = tr.getVar<int>("nTopCandSortedCnt");
 
         //variables to be used in the analysis code
         double photonPtCut = 100.0;
