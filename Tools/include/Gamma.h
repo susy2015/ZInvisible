@@ -78,14 +78,14 @@ namespace plotterFunctions
 
         //Pass cuts that were not applied in the ntuple
         
-        //Select gen photons within the ECAL acceptance region and Pt > 100 GeV 
+        //Select gen photons with P_T and Eta cuts
         for(int i = 0; i < gammaLVecGen.size(); ++i) {
-          if (PhotonFunctions::passPhoton(gammaLVecGen[i])) gammaLVecGenAcc->push_back(gammaLVecGen[i]);
+          if (PhotonFunctions::passPhoton_PtEta(gammaLVecGen[i])) gammaLVecGenAcc->push_back(gammaLVecGen[i]);
         }
 
         //Select reco photons within the ECAL acceptance region and Pt > 100 GeV 
         for(int i = 0; i < gammaLVec.size(); ++i) {
-          if (PhotonFunctions::passPhoton(gammaLVec[i])) gammaLVecRecoAcc.push_back(gammaLVec[i]);
+          if (PhotonFunctions::passPhoton_ECAL(gammaLVec[i])) gammaLVecRecoAcc.push_back(gammaLVec[i]);
         }
 
         photonMet = met;
