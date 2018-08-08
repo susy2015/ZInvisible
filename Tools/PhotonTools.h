@@ -74,7 +74,7 @@ namespace PhotonFunctions
   }
   
   bool passPhoton_PtEta(const TLorentzVector& photon){
-    const double minPt = 100.0;
+    const double minPt = 200.0;
     const double maxEta = 2.5;
     double perPhotonPt = photon.Pt(), perPhotonEta = photon.Eta();
     return (

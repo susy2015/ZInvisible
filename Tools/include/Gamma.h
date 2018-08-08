@@ -61,7 +61,7 @@ namespace plotterFunctions
         const int& ntops                                        = tr.getVar<int>("nTopCandSortedCnt");
 
         //variables to be used in the analysis code
-        double photonPtCut = 100.0;
+        double photonPtCut = 200.0;
         double photonMet = -999.9;
         std::vector<TLorentzVector> *gammaLVecGenAcc    = new std::vector<TLorentzVector>(); 
         std::vector<TLorentzVector> *promptPhotons      = new std::vector<TLorentzVector>(); 

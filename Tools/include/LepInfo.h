@@ -188,8 +188,8 @@ namespace plotterFunctions
 
             double genHt = 0.0;
 
-            const double   minMuPt = 20.0,   highMuPt = 50.0;
-            const double minElecPt = 20.0, highElecPt = 50.0;
+            const double   minMuPt = 50.0,   highMuPt = 50.0;
+            const double minElecPt = 35.0, highElecPt = 50.0;
             double nuPt1 = -999.9, nuPt2 = -999.9;
 
             // gen tops
