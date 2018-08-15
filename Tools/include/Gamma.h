@@ -65,6 +65,7 @@ namespace plotterFunctions
         double photonMet = -999.9;
         std::vector<TLorentzVector> *gammaLVecGenAcc    = new std::vector<TLorentzVector>(); 
         std::vector<TLorentzVector> *promptPhotons      = new std::vector<TLorentzVector>(); 
+        std::vector<TLorentzVector> *gammaLVecGenAccIso = new std::vector<TLorentzVector>(); 
         std::vector<TLorentzVector> *fakePhotons        = new std::vector<TLorentzVector>();
         std::vector<TLorentzVector> *fragmentationQCD   = new std::vector<TLorentzVector>();
         std::vector<TLorentzVector> *loosePhotons       = new std::vector<TLorentzVector>();
@@ -104,11 +105,17 @@ namespace plotterFunctions
         }
 
         //Gen-Matching Photons (Pt > photonPtCut in GeV)
-        if(tr.checkBranch("gammaLVecGen") && tr.checkBranch("genPartonLVec") && &gammaLVecGen != nullptr && &genPartonLVec != nullptr){
-          for(int i = 0; i < gammaLVecRecoAcc.size(); i++){
-            if(gammaLVecRecoAcc[i].Pt() > photonPtCut && looseID[i]){
-              if(PhotonFunctions::isGenMatched_Method2(gammaLVecRecoAcc[i],gammaLVecGen)){
+        if(   tr.checkBranch("gammaLVecGen")  && &gammaLVecGen != nullptr
+           && tr.checkBranch("genPartonLVec") && &genPartonLVec != nullptr)
+        {
+          for(int i = 0; i < gammaLVecRecoAcc.size(); i++)
+          {
+            if(gammaLVecRecoAcc[i].Pt() > photonPtCut && looseID[i])
+            {
+              if(PhotonFunctions::isGenMatched_Method2(gammaLVecRecoAcc[i],gammaLVecGen))
+              {
                 promptPhotons->push_back(gammaLVecRecoAcc[i]);
+                if(pfGammaIsoRhoCorr[i] < 0.2) gammaLVecGenAccIso->push_back(gammaLVecRecoAcc[i]);
                 if(PhotonFunctions::isDirectPhoton(gammaLVecRecoAcc[i],genPartonLVec)) directPhotons->push_back(gammaLVecRecoAcc[i]);
                 if(PhotonFunctions::isFragmentationPhoton(gammaLVecRecoAcc[i],genPartonLVec)) fragmentationQCD->push_back(gammaLVecRecoAcc[i]);
               }
@@ -127,6 +134,7 @@ namespace plotterFunctions
         tr.registerDerivedVar("passDirect", directPhotons->size() >= 1);
         tr.registerDerivedVar("passFragmentation", fragmentationQCD->size() >= 1);
         tr.registerDerivedVec("gammaLVecGenAcc",gammaLVecGenAcc);
+        tr.registerDerivedVec("gammaLVecGenAccIso",gammaLVecGenAccIso);
         tr.registerDerivedVec("cutPhotons",loosePhotons);
         tr.registerDerivedVec("totalPhotons",totalPhotons);
         tr.registerDerivedVec("promptPhotons",promptPhotons);
