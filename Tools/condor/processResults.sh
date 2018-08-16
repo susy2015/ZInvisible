@@ -1,9 +1,11 @@
 #!/bin/bash
 # processResults.sh
-# - process root files returned by condor job
-# - place files into directory with date
-# - add histograms together
-# - make plots
+# process root files returned by condor job
+# - place files into directory named with data set and date
+# - add histograms to produce summed result
+# - if there are errors adding histograms, move bad file to another directory 
+#   and attampt to add histograms again 
+# - make plots using summed result
 # Author: Caleb Smith
 # Date: 15-Aug-2018
 
