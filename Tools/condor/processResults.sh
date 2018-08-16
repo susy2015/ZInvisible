@@ -1,13 +1,15 @@
 #!/bin/bash
+
 # processResults.sh
+# Author: Caleb Smith
+# Date: 15-Aug-2018
+
 # process root files returned by condor job
 # - place files into directory named with data set and date
 # - add histograms to produce summed result
 # - if there are errors adding histograms, move bad file to another directory 
 #   and attampt to add histograms again 
 # - make plots using summed result
-# Author: Caleb Smith
-# Date: 15-Aug-2018
 
 
 dataSet=$1
@@ -37,7 +39,7 @@ resultFile="result.root"
 # go to condor directory
 cd $condorDir
 
-# checkt if data directory exists
+# check if data directory exists
 while [[ -d $dataDir ]]
 do
     echo "Found directory $dataDir"
