@@ -2,6 +2,7 @@
 #include "RegisterFunctions.h"
 #include "SusyAnaTools/Tools/searchBins.h"
 #include "SusyAnaTools/Tools/samples.h"
+#include "TMath.h"
 
 #include <getopt.h>
 #include <iostream>
@@ -189,10 +190,21 @@ int main(int argc, char* argv[])
     // Number of searchbins
     SearchBins sb(sbEra);
     int NSB = sb.nSearchBins();//37; // 45
+
+    // min and max values for histos
+    // p_t in GeV
     double minPt = 0.0;
-    double maxPt = 1000.0;
+    double maxPt = 2000.0;
+    // Energy in GeV
+    double minEnergy = 0.0;
+    double maxEnergy = 2000.0;
+    // mass in GeV
+    double minMass = 0.0;
+    double maxMass = TMath::Power(10.0, -3);
     double minEta = -5.0;
     double maxEta = 5.0;
+    double minPhi = -1.0 * TMath::Pi();
+    double maxPhi = TMath::Pi();
 
     // Shortcuts for axis labels
     std::string label_met = "p_{T}^{miss} [GeV]";
@@ -204,7 +216,10 @@ int main(int argc, char* argv[])
     std::string label_mt2 = "M_{T2} [GeV]";
     std::string label_eta = "#eta";
     std::string label_mupt = "#mu p_{T} [GeV]";
+    std::string label_muenergy = "E_{#mu} [GeV]";
+    std::string label_mumass = "m_{#mu} [GeV]";
     std::string label_mueta = "#mu #eta";
+    std::string label_muphi = "#mu #phi";
     std::string label_genmupt  = "gen #mu p_{T} [GeV]";
     std::string label_genmueta = "gen #mu #eta";
     std::string label_mu1pt = "#mu_{1} p_{T} [GeV]";
@@ -212,7 +227,10 @@ int main(int argc, char* argv[])
     std::string label_mu1eta = "#mu_{1} #eta";
     std::string label_mu2eta = "#mu_{2} #eta";
     std::string label_elpt = "e p_{T} [GeV]";
+    std::string label_elenergy = "E_{e} [GeV]";
+    std::string label_elmass = "m_{e} [GeV]";
     std::string label_eleta = "e #eta";
+    std::string label_elphi = "e #phi";
     std::string label_el1pt = "e_{1} p_{T} [GeV]";
     std::string label_el2pt = "e_{2} p_{T} [GeV]";
     std::string label_photonpt = "#gamma p_{T} [GeV]";
@@ -449,13 +467,19 @@ int main(int argc, char* argv[])
         //vh.push_back(PHS("MC_genElecInAccEta_"                 +cut.first,  {dcMC_genElecInAccEta},                            {1, 1}, cut.second, 40, minEta, maxEta, true, false, label_eleta, "Events"));
         //vh.push_back(PHS("MC_genMatchElecInAccEta_"            +cut.first,  {dcMC_genMatchElecInAccEta},                       {1, 1}, cut.second, 40, minEta, maxEta, true, false, label_eleta, "Events"));
 
-        //ratios
+        //ratios 
         
         // Acceptance
         vh.push_back(PHS("MC_ElecAccPt_ratio_"            +cut.first,  {makePDCElecAcc("pt","ratio")},                {1, 1}, cut.second, 60, minPt, maxPt, false, false, label_elpt, label_acc));
+        vh.push_back(PHS("MC_ElecAccEnergy_ratio_"        +cut.first,  {makePDCElecAcc("E","ratio")},                 {1, 1}, cut.second, 60, minEnergy, maxEnergy, false, false, label_elenergy, label_acc));
+        vh.push_back(PHS("MC_ElecAccMass_ratio_"          +cut.first,  {makePDCElecAcc("M","ratio")},                 {1, 1}, cut.second, 60, minMass, maxMass, false, false, label_elmass, label_acc));
         vh.push_back(PHS("MC_ElecAccEta_ratio_"           +cut.first,  {makePDCElecAcc("eta","ratio")},               {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_eleta, label_acc));
+        vh.push_back(PHS("MC_ElecAccPhi_ratio_"           +cut.first,  {makePDCElecAcc("phi","ratio")},               {1, 1}, cut.second, 40, minPhi, maxPhi, false, false, label_elphi, label_acc));
         vh.push_back(PHS("MC_ElecAccPt_single_"           +cut.first,  {makePDCElecAcc("pt","single")},               {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_elpt, "Events"));
+        vh.push_back(PHS("MC_ElecAccEnergy_single_"       +cut.first,  {makePDCElecAcc("E","single")},                {1, 1}, cut.second, 60, minEnergy, maxEnergy, true, false, label_elenergy, "Events"));
+        vh.push_back(PHS("MC_ElecAccMass_single_"         +cut.first,  {makePDCElecAcc("M","single")},                {1, 1}, cut.second, 60, minMass, maxMass, false, false, label_elmass, "Events"));
         vh.push_back(PHS("MC_ElecAccEta_single_"          +cut.first,  {makePDCElecAcc("eta","single")},              {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_eleta, "Events"));
+        vh.push_back(PHS("MC_ElecAccPhi_single_"          +cut.first,  {makePDCElecAcc("phi","single")},              {1, 1}, cut.second, 40, minPhi, maxPhi, false, false, label_elphi, "Events"));
         // Reco Efficiency
         vh.push_back(PHS("MC_ngenElecEff_original_"       +cut.first,  {dcMC_ngenMatchElecInAcc, dcMC_ngenElecInAcc},     {1, 2}, cut.second, 20, 0, 20, true, false, "number of electrons", "Events"));
         vh.push_back(PHS("MC_genElecPtEff_original_"      +cut.first,  {dcMC_genMatchElecInAccPt, dcMC_genElecInAccPt},   {1, 2}, cut.second, 60, minPt, maxPt, true, false, label_elpt, "Events"));
