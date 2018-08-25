@@ -7,6 +7,7 @@ parser.add_option ('-d', dest='directory', type='string', default = "/store/user
 parser.add_option ('-f', dest='file',      type='string', default = "", help="File name to transfer")
 parser.add_option ('-l', dest='list', action="store_true", default = False, help="Create file lists")
 parser.add_option ('-c', dest='copy', action="store_true", default = False, help="Copy a file to eos")
+parser.add_option ('-a', dest='all',  action="store_true", default = False, help="Copy all files to eos")
 
 options, args = parser.parse_args()
 
@@ -40,12 +41,17 @@ startPath = options.directory
 
 if options.list:
     for l in eosls(startPath, "-l"):
+        # directory if ls -l gives "d" at the beginning; e.g. drwxr-sr-+
         if l.startswith("d"):
             endpath = l.split()[-1]
-            print "".join([endpath, ".txt"])
-            f = open("".join([endpath, ".txt"]), "w")
+            #print "endpath: {0}".format(endpath)
+            filename = "".join([endpath, ".txt"])
+            print filename
+            f = open(filename, "w")
             recSearch("/".join([startPath, endpath]), f)
             f.close()
+            if options.all:
+                eoscp(filename, startPath)
 
 elif options.copy:
     if options.file is "":
