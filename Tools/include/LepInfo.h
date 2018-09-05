@@ -87,38 +87,38 @@ namespace plotterFunctions
                 //std::cout << "void muInfo(NTupleReader& tr): Caught exception, variable \"" << e << "\" not found" << std::endl;
             }
 
-            std::vector<const TLorentzVector*>* genMatchIsoElecInAcc = new std::vector<const TLorentzVector*>();
-            std::vector<const TLorentzVector*>* genMatchElecInAcc = new std::vector<const TLorentzVector*>();
-            std::vector<double>* genMatchElecInAccRes = new std::vector<double>();
-            std::vector<const TLorentzVector*>* genElecInAcc = new std::vector<const TLorentzVector*>();
-            std::vector<const TLorentzVector*>* genElec = new std::vector<const TLorentzVector*>();
-            std::vector<double>* genMatchIsoElecInAccAct = new std::vector<double>();
-            std::vector<double>* genMatchElecInAccAct = new std::vector<double>();
-            std::vector<double>* genElecInAccAct = new std::vector<double>();
-            std::vector<double>* genElecAct = new std::vector<double>();
+            std::vector<const TLorentzVector*>* genMatchIsoElecInAcc    = new std::vector<const TLorentzVector*>();
+            std::vector<const TLorentzVector*>* genMatchElecInAcc       = new std::vector<const TLorentzVector*>();
+            std::vector<double>* genMatchElecInAccRes                   = new std::vector<double>();
+            std::vector<const TLorentzVector*>* genElecInAcc            = new std::vector<const TLorentzVector*>();
+            std::vector<const TLorentzVector*>* genElec                 = new std::vector<const TLorentzVector*>();
+            std::vector<double>* genMatchIsoElecInAccAct                = new std::vector<double>();
+            std::vector<double>* genMatchElecInAccAct                   = new std::vector<double>();
+            std::vector<double>* genElecInAccAct                        = new std::vector<double>();
+            std::vector<double>* genElecAct                             = new std::vector<double>();
 
-            std::vector<TLorentzVector>* cutElecVec = new std::vector<TLorentzVector>();
-            std::vector<double>* cutElecCharge = new std::vector<double>();
-            std::vector<double>* cutElecActivity = new std::vector<double>();
-
-            std::vector<TLorentzVector> cutElecVecRecoOnly;
-
-            std::vector<const TLorentzVector*>* genMatchIsoMuInAcc = new std::vector<const TLorentzVector*>();
-            std::vector<const TLorentzVector*>* genMatchMuInAcc = new std::vector<const TLorentzVector*>();
-            std::vector<double>* genMatchMuInAccRes = new std::vector<double>();
-            std::vector<const TLorentzVector*>* genMuInAcc = new std::vector<const TLorentzVector*>();
-            std::vector<const TLorentzVector*>* genMu = new std::vector<const TLorentzVector*>();
-            std::vector<double>* genMatchIsoMuInAccAct = new std::vector<double>();
-            std::vector<double>* genMatchMuInAccAct = new std::vector<double>();
-            std::vector<double>* genMuInAccAct = new std::vector<double>();
-            std::vector<double>* genMuAct = new std::vector<double>();
-            std::vector<TLorentzVector>* cutMuVec = new std::vector<TLorentzVector>();
-            std::vector<double>* cutMuCharge = new std::vector<double>();
-            std::vector<double>* cutMuActivity = new std::vector<double>();
-
-            //std::vector<TLorentzVector>* Zrecopt = new std::vector<TLorentzVector>();
+            std::vector<const TLorentzVector*>* genMatchIsoMuInAcc      = new std::vector<const TLorentzVector*>();
+            std::vector<const TLorentzVector*>* genMatchMuInAcc         = new std::vector<const TLorentzVector*>();
+            std::vector<double>* genMatchMuInAccRes                     = new std::vector<double>();
+            std::vector<const TLorentzVector*>* genMuInAcc              = new std::vector<const TLorentzVector*>();
+            std::vector<const TLorentzVector*>* genMu                   = new std::vector<const TLorentzVector*>();
+            std::vector<double>* genMatchIsoMuInAccAct                  = new std::vector<double>();
+            std::vector<double>* genMatchMuInAccAct                     = new std::vector<double>();
+            std::vector<double>* genMuInAccAct                          = new std::vector<double>();
+            std::vector<double>* genMuAct                               = new std::vector<double>();
+            
+            std::vector<TLorentzVector>* cutMuVec                       = new std::vector<TLorentzVector>();
+            std::vector<double>* cutMuCharge                            = new std::vector<double>();
+            std::vector<double>* cutMuActivity                          = new std::vector<double>();
+            
+            std::vector<TLorentzVector>* cutElecVec     = new std::vector<TLorentzVector>();
+            std::vector<double>* cutElecCharge          = new std::vector<double>();
+            std::vector<double>* cutElecActivity        = new std::vector<double>();
 
             std::vector<TLorentzVector> cutMuVecRecoOnly;
+            std::vector<TLorentzVector> cutElecVecRecoOnly;
+            
+            //std::vector<TLorentzVector>* Zrecopt = new std::vector<TLorentzVector>();
 
             //muon selections
             int sumMuCharge = 0;

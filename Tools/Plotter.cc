@@ -781,8 +781,9 @@ double Plotter::getLumi()
 
 void Plotter::plot()
 {
-    //gROOT->SetStyle("Plain");
+    // setTDRStyle() is defined in SusyAnaTools/Tools/tdrstyle.h
     setTDRStyle();
+    //gROOT->SetStyle("Plain");
 
     for(HistSummary& hist : hists_)
     {
@@ -824,6 +825,8 @@ void Plotter::plot()
         TH1 *dummy = new TH1F("dummy", "dummy", 1000, hist.fhist()->GetBinLowEdge(1), hist.fhist()->GetBinLowEdge(hist.fhist()->GetNbinsX()) + hist.fhist()->GetBinWidth(hist.fhist()->GetNbinsX()));
         dummy->SetStats(0);
         dummy->SetTitle(0);
+        // remove (x 10^N), simply write zeros
+        //dummy->GetYaxis()->SetNoExponent(kTRUE);
         dummy->GetYaxis()->SetTitle(hist.yAxisLabel.c_str());
         dummy->GetYaxis()->SetTitleOffset(1.1*1.05 / (fontScale));
         dummy->GetXaxis()->SetTitleOffset(1.05);
@@ -1200,15 +1203,18 @@ void Plotter::plot()
         mark.SetNDC(true);
 
         //Draw CMS mark
+        double x_offset = 0.1;
         mark.SetTextAlign(11);
         mark.SetTextSize(0.042 * fontScale * 1.25);
         //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * 1.25 * fontScale);
         mark.SetTextFont(61);
-        mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
+        //mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
+        mark.DrawLatex(gPad->GetLeftMargin() + x_offset, 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
         mark.SetTextSize(0.042 * fontScale);
         //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
         mark.SetTextFont(52);
-        mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+        //mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+        mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
         //mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
 
         //Draw lumistamp
