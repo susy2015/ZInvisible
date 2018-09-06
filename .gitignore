@@ -20,6 +20,9 @@
 # peanut butter
 **.pb
 
+# model
+**.model
+
 #Network File System
 .nfs*
 
