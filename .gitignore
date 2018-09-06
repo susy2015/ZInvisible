@@ -1,21 +1,21 @@
 #Binary and Image
-*.exe
-*.png
-*.jpg
-*.gif
-*.bmp
-*.pdf
-*.ps
-*.jpeg
-*.eps
+**.exe
+**.png
+**.jpg
+**.gif
+**.bmp
+**.pdf
+**.ps
+**.jpeg
+**.eps
 
 #condor log files
-*.log
-*.stderr
-*.stdout
+**.log
+**.stderr
+**.stdout
 
 #Root
-*.root
+**.root
 
 #Network File System
 .nfs*
