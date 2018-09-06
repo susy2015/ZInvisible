@@ -17,6 +17,9 @@
 #Root
 **.root
 
+# peanut butter
+**.pb
+
 #Network File System
 .nfs*
 
