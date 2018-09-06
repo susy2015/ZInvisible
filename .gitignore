@@ -14,6 +14,10 @@
 **.stderr
 **.stdout
 
+#text and config files (can still be tracked individually as needed)
+**.txt
+**.cfg
+
 #Root
 **.root
 
