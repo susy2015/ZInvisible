@@ -1,6 +1,7 @@
 #ifndef TRIGGERINFO_H 
 #define TRIGGERINFO_H 
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -281,8 +282,8 @@ namespace plotterFunctions
 
         void triggerInfoMC(NTupleReader& tr)
         {
-            const double& met                            = tr.getVar<double>("cleanMetPt");
-            const double& ht                             = tr.getVar<double>("HTZinv");
+            const data_t& met                            = tr.getVar<data_t>("cleanMetPt");
+            const data_t& ht                             = tr.getVar<data_t>("HTZinv");
             const std::vector<TLorentzVector>& cutMuVec  = tr.getVec<TLorentzVector>("cutMuVec");
 
             // MC trigger efficiencies

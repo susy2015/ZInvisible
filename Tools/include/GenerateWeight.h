@@ -1,5 +1,7 @@
 #ifndef GENERATEWEIGHT_H
 #define GENERATEWEIGHT_H
+
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -52,24 +54,26 @@ namespace plotterFunctions
 
         void generateWeight(NTupleReader& tr)
         {
+            //const auto& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
             const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
             const std::vector<TLorentzVector>& cutMuVec         = tr.getVec<TLorentzVector>("cutMuVec");
             const std::vector<TLorentzVector>& cutElecVec       = tr.getVec<TLorentzVector>("cutElecVec");
-            const std::vector<double>& cutMuActivity            = tr.getVec<double>("cutMuActivity");
-            const std::vector<double>& cutElecActivity          = tr.getVec<double>("cutElecActivity");
+            const std::vector<data_t>& cutMuActivity            = tr.getVec<data_t>("cutMuActivity");
+            const std::vector<data_t>& cutElecActivity          = tr.getVec<data_t>("cutElecActivity");
             const std::vector<TLorentzVector*>& genMu           = tr.getVec<TLorentzVector*>("genMu");
             const std::vector<TLorentzVector*>& genMuInAcc      = tr.getVec<TLorentzVector*>("genMuInAcc");
+            //const auto& genMatchMuInAcc = tr.getVec<TLorentzVector*>("genMatchMuInAcc");
             const std::vector<TLorentzVector*>& genMatchMuInAcc = tr.getVec<TLorentzVector*>("genMatchMuInAcc");
 
             const int& pdgIdZDec      = tr.getVar<int>("pdgIdZDec");
             const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
             const bool& passElecZinvSel = tr.getVar<bool>("passElecZinvSel");
-            const double& ht          = tr.getVar<double>("ht");
-            const double& bestRecoZPt = tr.getVar<double>("bestRecoZPt");
-            const double& genZPt      = tr.getVar<double>("genZPt");
+            const data_t& ht          = tr.getVar<data_t>("ht");
+            const data_t& bestRecoZPt = tr.getVar<data_t>("bestRecoZPt");
+            const data_t& genZPt      = tr.getVar<data_t>("genZPt");
 
             const int& nJets     =  tr.getVar<int>("nJets");
-            const double& stored_weight = tr.getVar<double>("stored_weight");
+            const data_t& stored_weight = tr.getVar<data_t>("stored_weight");
 
             // Calculate PU weight
 
@@ -92,8 +96,8 @@ namespace plotterFunctions
                         zMassCurrent = zm;
                         double mu1pt = cutMuVec[i].Pt();
                         double mu2pt = cutMuVec[j].Pt();
-                        double mu1Act = cutMuActivity[i];
-                        double mu2Act = cutMuActivity[j];
+                        data_t mu1Act = cutMuActivity[i];
+                        data_t mu2Act = cutMuActivity[j];
 
                         //set to not overflow histograms
                         if(mu1pt >= 2000.0) mu1pt = 1999.9;
@@ -174,8 +178,8 @@ namespace plotterFunctions
                         double elec1pt = cutElecVec[i].Pt();
                         double elec2pt = cutElecVec[j].Pt();
 
-                        double elec1Act = cutElecActivity[i];
-                        double elec2Act = cutElecActivity[j];
+                        data_t elec1Act = cutElecActivity[i];
+                        data_t elec2Act = cutElecActivity[j];
 
                         //set to not overflow histograms
                         if(elec1pt >= 2000.0) elec1pt = 1999.9;
@@ -260,6 +264,7 @@ namespace plotterFunctions
                 genMudR = ROOT::Math::VectorUtil::DeltaR(*(genMu[0]), *(genMu[1]));
                 genMudPhi = ROOT::Math::VectorUtil::DeltaPhi(*(genMu[0]), *(genMu[1]));
                 genMudEta = genMu[0]->Eta() - genMu[1]->Eta();
+                //genMudEta = (*(genMu[0])).Eta() - (*(genMu[1])).Eta();
             }
             //std::cout<<"cutMuVec at size of two "<<cutMuVec.size()<<std::endl;
             // muon Z pt acceptance corrections

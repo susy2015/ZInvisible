@@ -1,6 +1,7 @@
 #ifndef SYSTEMATICCALC_H
 #define SYSTEMATICCALC_H
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -44,28 +45,28 @@ namespace plotterFunctions
         {
             const int& cntCSVSJEUUp = tr.getVar<int>("cntCSVSZinvJEUUp");
             const int& nTopCandSortedCntJEUUp = tr.getVar<int>("nTopCandSortedCntZinvJEUUp");
-            const double& MT2JEUUp = tr.getVar<double>("best_had_brJet_MT2ZinvJEUUp");
+            const data_t& MT2JEUUp = tr.getVar<data_t>("best_had_brJet_MT2ZinvJEUUp");
 
             const int& cntCSVSJEUDn = tr.getVar<int>("cntCSVSZinvJEUDn");
             const int& nTopCandSortedCntJEUDn = tr.getVar<int>("nTopCandSortedCntZinvJEUDn");
-            const double& MT2JEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvJEUDn");
+            const data_t& MT2JEUDn = tr.getVar<data_t>("best_had_brJet_MT2ZinvJEUDn");
 
-            const double& cleanMet = tr.getVar<double>("cleanMetPt");
+            const data_t& cleanMet = tr.getVar<data_t>("cleanMetPt");
 
             const int& cntCSVSMEUUp = tr.getVar<int>("cntCSVSZinvMEUUp");
             const int& nTopCandSortedCntMEUUp = tr.getVar<int>("nTopCandSortedCntZinvMEUUp");
-            const double& MT2MEUUp = tr.getVar<double>("best_had_brJet_MT2ZinvMEUUp");
-            const double& cleanMetMEUUp = tr.getVar<double>("metMEUUp");
+            const data_t& MT2MEUUp = tr.getVar<data_t>("best_had_brJet_MT2ZinvMEUUp");
+            const data_t& cleanMetMEUUp = tr.getVar<data_t>("metMEUUp");
 
             const int& cntCSVSMEUDn = tr.getVar<int>("cntCSVSZinvMEUDn");
             const int& nTopCandSortedCntMEUDn = tr.getVar<int>("nTopCandSortedCntZinvMEUDn");
-            const double& MT2MEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvMEUDn");
-            const double& cleanMetMEUDn = tr.getVar<double>("metMEUDn");
+            const data_t& MT2MEUDn = tr.getVar<data_t>("best_had_brJet_MT2ZinvMEUDn");
+            const data_t& cleanMetMEUDn = tr.getVar<data_t>("metMEUDn");
 
-            const double& HTUp           = tr.getVar<double>("HTZinvJEUUp");
-            const double& HTDn           = tr.getVar<double>("HTZinvJEUDn");
-            const double& HTMEUUp           = tr.getVar<double>("HTZinvMEUUp");
-            const double& HTMEUDn           = tr.getVar<double>("HTZinvMEUDn");
+            const data_t& HTUp           = tr.getVar<data_t>("HTZinvJEUUp");
+            const data_t& HTDn           = tr.getVar<data_t>("HTZinvJEUDn");
+            const data_t& HTMEUUp        = tr.getVar<data_t>("HTZinvMEUUp");
+            const data_t& HTMEUDn        = tr.getVar<data_t>("HTZinvMEUDn");
 
             int nSearchBinJEUUp = sbins.find_Binning_Index(cntCSVSJEUUp, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet, HTUp);
             int nSearchBinJEUDn = sbins.find_Binning_Index(cntCSVSJEUDn, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet, HTDn);

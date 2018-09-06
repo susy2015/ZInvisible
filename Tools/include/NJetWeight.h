@@ -1,6 +1,7 @@
 #ifndef NJETWEIGHT
 #define NJETWEIGHT
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"

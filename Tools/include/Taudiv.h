@@ -1,6 +1,7 @@
 #ifndef TAUDIV_H
 #define TAUDIV_H
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -39,14 +40,14 @@ namespace plotterFunctions
     private:
         std::shared_ptr<TopTagger> ttPtr_mine;
         void generateTaudiv(NTupleReader& tr) {
-          const std::vector<double>& tau1    = tr.getVec<double>("tau1");
-          const std::vector<double>& tau2    = tr.getVec<double>("tau2");
-          const std::vector<double>& tau3    = tr.getVec<double>("tau3");
-          const std::vector<double>& puppitau1    = tr.getVec<double>("puppitau1");
-          const std::vector<double>& puppitau2    = tr.getVec<double>("puppitau2");
-          const std::vector<double>& puppitau3    = tr.getVec<double>("puppitau3");
-          const std::vector<double>& softDropMass = tr.getVec<double>("softDropMass");
-          const std::vector<double>& puppisoftDropMass = tr.getVec<double>("puppisoftDropMass");
+          const std::vector<data_t>& tau1    = tr.getVec<data_t>("tau1");
+          const std::vector<data_t>& tau2    = tr.getVec<data_t>("tau2");
+          const std::vector<data_t>& tau3    = tr.getVec<data_t>("tau3");
+          const std::vector<data_t>& puppitau1    = tr.getVec<data_t>("puppitau1");
+          const std::vector<data_t>& puppitau2    = tr.getVec<data_t>("puppitau2");
+          const std::vector<data_t>& puppitau3    = tr.getVec<data_t>("puppitau3");
+          const std::vector<data_t>& softDropMass = tr.getVec<data_t>("softDropMass");
+          const std::vector<data_t>& puppisoftDropMass = tr.getVec<data_t>("puppisoftDropMass");
           const std::vector<TLorentzVector>& jetsLVec     = tr.getVec<TLorentzVector>("jetsLVec");
           const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec");
           const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
@@ -60,10 +61,10 @@ namespace plotterFunctions
           std::vector<TLorentzVector> *puppiLVectight_top = new std::vector<TLorentzVector>();
           std::vector<TLorentzVector> *puppiLVecLoose_w = new std::vector<TLorentzVector>();
           std::vector<TLorentzVector> *puppiLVectight_w = new std::vector<TLorentzVector>();
-          std::vector<double>* puppitau2Dtau1 = new std::vector<double>();
-          std::vector<double>* puppitau3Dtau2 = new std::vector<double>();
-          std::vector<double>* puppitau2Dtau1_SDM = new std::vector<double>();
-          std::vector<double>* puppitau3Dtau2_SDM = new std::vector<double>();
+          std::vector<data_t>* puppitau2Dtau1 = new std::vector<data_t>();
+          std::vector<data_t>* puppitau3Dtau2 = new std::vector<data_t>();
+          std::vector<data_t>* puppitau2Dtau1_SDM = new std::vector<data_t>();
+          std::vector<data_t>* puppitau3Dtau2_SDM = new std::vector<data_t>();
 
           std::vector<TLorentzVector> *hadWLVec = new std::vector<TLorentzVector>();
 

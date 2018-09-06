@@ -42,21 +42,21 @@ namespace plotterFunctions
         void systematicPrep(NTupleReader& tr)
         {
             const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const std::vector<double>& recoJetsJecUnc    = tr.getVec<double>("recoJetsJecUncLepCleaned");
+            const std::vector<data_t>& recoJetsJecUnc    = tr.getVec<data_t>("recoJetsJecUncLepCleaned");
 
-            const std::vector<double>& metMagUp   = tr.getVec<double>("metMagUp");
-            const std::vector<double>& metMagDown = tr.getVec<double>("metMagDown");
-            const std::vector<double>& metPhiUp   = tr.getVec<double>("metPhiUp");
-            const std::vector<double>& metPhiDown = tr.getVec<double>("metPhiDown");
+            const std::vector<data_t>& metMagUp   = tr.getVec<data_t>("metMagUp");
+            const std::vector<data_t>& metMagDown = tr.getVec<data_t>("metMagDown");
+            const std::vector<data_t>& metPhiUp   = tr.getVec<data_t>("metPhiUp");
+            const std::vector<data_t>& metPhiDown = tr.getVec<data_t>("metPhiDown");
 
-            const double& met    = tr.getVar<double>("met");
-            const double& metphi = tr.getVar<double>("metphi");
+            const data_t& met    = tr.getVar<data_t>("met");
+            const data_t& metphi = tr.getVar<data_t>("metphi");
 
             std::vector<TLorentzVector> *jetLVecUp = new std::vector<TLorentzVector>;
             std::vector<TLorentzVector> *jetLVecDn = new std::vector<TLorentzVector>;
 
-            std::vector<double> *dPtMet = new std::vector<double>;
-            std::vector<double> *dPhiMet = new std::vector<double>;
+            std::vector<data_t> *dPtMet = new std::vector<data_t>;
+            std::vector<data_t> *dPhiMet = new std::vector<data_t>;
 
             double metUp = 0.0, metDn = 99990.0;
 

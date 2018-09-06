@@ -1,6 +1,7 @@
 #ifndef AK8DRMATCH_H
 #define AK8DRMATCH_H
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -59,12 +60,12 @@ namespace plotterFunctions
              int nJetsAK42_med = 0;
              int nJetsAK42_lar = 0;
  
-             std::vector<double>* ak81dRMin = new std::vector<double>();
-             std::vector<double>* ak82dRMin = new std::vector<double>(); 
-             std::vector<double>* puppi_top_L_1dRMin = new std::vector<double>();
-             std::vector<double>* puppi_top_L_2dRMin = new std::vector<double>();
-             std::vector<double>* puppi_top_T_1dRMin = new std::vector<double>();
-             std::vector<double>* puppi_top_T_2dRMin = new std::vector<double>(); 
+             std::vector<data_t>* ak81dRMin = new std::vector<data_t>();
+             std::vector<data_t>* ak82dRMin = new std::vector<data_t>(); 
+             std::vector<data_t>* puppi_top_L_1dRMin = new std::vector<data_t>();
+             std::vector<data_t>* puppi_top_L_2dRMin = new std::vector<data_t>();
+             std::vector<data_t>* puppi_top_T_1dRMin = new std::vector<data_t>();
+             std::vector<data_t>* puppi_top_T_2dRMin = new std::vector<data_t>(); 
              for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
              {
                  if(ak8JetsLVec.size() >= 1) ak81dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[0]));
@@ -127,19 +128,19 @@ namespace plotterFunctions
 
              // Also start looking at subjet information
              const std::vector<TLorentzVector>& puppiSubJetsLVec  = tr.getVec<TLorentzVector>("puppiSubJetsLVec");
-             const std::vector<double>& puppiSubJetsBdisc = tr.getVec<double>("puppiSubJetsBdisc");
+             const std::vector<data_t>& puppiSubJetsBdisc = tr.getVec<data_t>("puppiSubJetsBdisc");
 
              // For each tagged top/W, find the corresponding subjets
              /*
              std::vector< std::vector<TLorentzVector> > W_subjets;
-             std::vector<double>* W_subjets_pt_reldiff = new std::vector<double>();
+             std::vector<data_t>* W_subjets_pt_reldiff = new std::vector<data_t>();
              for( TLorentzVector myW : puppiLVectight_w)
              {
                  std::vector<TLorentzVector> myW_subjets;
                  int i = 0;
                  for(TLorentzVector puppiSubJet : puppiSubJetsLVec)
                  {
-                     double myDR = ROOT::Math::VectorUtil::DeltaR(myW, puppiSubJet);
+                     data_t myDR = ROOT::Math::VectorUtil::DeltaR(myW, puppiSubJet);
                      if (myDR < 0.8)
                      {
                          myW_subjets.push_back(puppiSubJet);
@@ -148,14 +149,14 @@ namespace plotterFunctions
                  }
                  // If more than 2 matches, find the best combination of two subjets by checking diff in 4-vector
                  if (myW_subjets.size() > 2) {
-                     double min_diff = 999999.;
+                     data_t min_diff = 999999.;
                      int min_j=0, min_k=1;
                      for (int j=0 ; j<myW_subjets.size(); ++j)
                      {
                          for (int k=j+1; k<myW_subjets.size(); ++k)
                          {
                              TLorentzVector diff_LV = myW - myW_subjets[j] - myW_subjets[k];
-                             double diff = abs(diff_LV.M());
+                             data_t diff = abs(diff_LV.M());
                              if(diff < min_diff)
                              {
                                  min_diff = diff;
@@ -176,7 +177,7 @@ namespace plotterFunctions
              */
              // For each tagged top/W, find the corresponding subjets
              std::vector< std::vector< TLorentzVector> > top_subjets;
-             std::vector<double>* top_subjets_pt_reldiff = new std::vector<double>();
+             std::vector<data_t>* top_subjets_pt_reldiff = new std::vector<data_t>();
              /*
              for( TLorentzVector mytop : puppiLVectight_top)
              {
@@ -184,7 +185,7 @@ namespace plotterFunctions
                  int i = 0;
                  for(TLorentzVector puppiSubJet : puppiSubJetsLVec)
                  {
-                     double myDR = ROOT::Math::VectorUtil::DeltaR(mytop, puppiSubJet);
+                     data_t myDR = ROOT::Math::VectorUtil::DeltaR(mytop, puppiSubJet);
                      if (myDR < 0.8)
                      {
                          mytop_subjets.push_back(puppiSubJet);
@@ -193,14 +194,14 @@ namespace plotterFunctions
                  }
                  // If more than 2 matches, find the best combination of two subjets
                  if (mytop_subjets.size() > 2) {
-                     double min_diff = 999999.;
+                     data_t min_diff = 999999.;
                      int min_j=0, min_k=1;
                      for (int j=0 ; j<mytop_subjets.size(); ++j)
                      {
                          for (int k=j+1; k<mytop_subjets.size(); ++k)
                          {
                              TLorentzVector diff_LV = mytop - mytop_subjets[j] - mytop_subjets[k];
-                             double diff = abs(diff_LV.M());
+                             data_t diff = abs(diff_LV.M());
                              if(diff < min_diff)
                              {
                                  min_diff = diff;
@@ -226,9 +227,9 @@ namespace plotterFunctions
              const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
 
              std::vector<bool>* gentop_match = new std::vector<bool>(); // helpful to make plots of matched and unmatched number of tops
-             std::vector<double>* dR_top_gentop = new std::vector<double>(); 
-             std::vector<double>* dR_AK4_topsubjet_genmatched = new std::vector<double>(); 
-             std::vector<double>* dR_AK4_top_genmatched = new std::vector<double>(); 
+             std::vector<data_t>* dR_top_gentop = new std::vector<data_t>(); 
+             std::vector<data_t>* dR_AK4_topsubjet_genmatched = new std::vector<data_t>(); 
+             std::vector<data_t>* dR_AK4_top_genmatched = new std::vector<data_t>(); 
              std::vector<int>* top_N_AK4_matched_genmatched = new std::vector<int>(); 
              std::vector<int>* top_N_AK4_matched_notgenmatched = new std::vector<int>(); 
              std::vector<int>* top_N_AK4_notmatched_genmatched = new std::vector<int>(); 

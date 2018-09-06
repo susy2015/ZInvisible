@@ -1,6 +1,7 @@
 #ifndef METSMEAR 
 #define METSMEAR 
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -105,12 +106,12 @@ namespace plotterFunctions
 
         void mt2Smear(NTupleReader& tr)
         {
-            const double& metphi       = tr.getVar<double>("cleanMetPhi");
-            const double& met_logi_1   = tr.getVar<double>("met_logi_1");
-            const double& met_gaus_30  = tr.getVar<double>("met_gaus_30");
+            const data_t& metphi       = tr.getVar<data_t>("cleanMetPhi");
+            const data_t& met_logi_1   = tr.getVar<data_t>("met_logi_1");
+            const data_t& met_gaus_30  = tr.getVar<data_t>("met_gaus_30");
             
             const std::vector<TLorentzVector>& jetsLVec_forTagger  = tr.getVec<TLorentzVector>("jetsLVec_forTaggerZinv");
-            const std::vector<double>&     recoJetsBtag_forTagger  = tr.getVec<double>("recoJetsBtag_forTaggerZinv");
+            const std::vector<data_t>&     recoJetsBtag_forTagger  = tr.getVec<data_t>("recoJetsBtag_forTaggerZinv");
 
             //We choose 30 GeV gaussian smearing and logi_1 for the study
 

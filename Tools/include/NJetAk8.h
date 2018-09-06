@@ -1,6 +1,7 @@
 #ifndef NJETAK8_H
 #define NJETAK8_H
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
