@@ -1,6 +1,7 @@
 #ifndef GAMMA_H
 #define GAMMA_H
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -48,15 +49,15 @@ namespace plotterFunctions
         const std::vector<bool>& mediumID                       = tr.getVec<bool>("mediumPhotonID");
         const std::vector<bool>& tightID                        = tr.getVec<bool>("tightPhotonID");
         const std::vector<int>& extraLooseID                    = tr.getVec<int>("extraLooseID");
-        const std::vector<double>& sigmaIetaIeta                = tr.getVec<double>("sigmaIetaIeta");
-        const std::vector<double>& pfNeutralIsoRhoCorr          = tr.getVec<double>("pfNeutralIsoRhoCorr");
-        const std::vector<double>& pfGammaIsoRhoCorr            = tr.getVec<double>("pfGammaIsoRhoCorr");
-        const std::vector<double>& pfChargedIsoRhoCorr          = tr.getVec<double>("pfChargedIsoRhoCorr");
-        const std::vector<double>& hadTowOverEM                 = tr.getVec<double>("hadTowOverEM");
-        const double& MT2                                       = tr.getVar<double>("best_had_brJet_MT2");
-        const double& met                                       = tr.getVar<double>("met");
+        const std::vector<data_t>& sigmaIetaIeta                = tr.getVec<data_t>("sigmaIetaIeta");
+        const std::vector<data_t>& pfNeutralIsoRhoCorr          = tr.getVec<data_t>("pfNeutralIsoRhoCorr");
+        const std::vector<data_t>& pfGammaIsoRhoCorr            = tr.getVec<data_t>("pfGammaIsoRhoCorr");
+        const std::vector<data_t>& pfChargedIsoRhoCorr          = tr.getVec<data_t>("pfChargedIsoRhoCorr");
+        const std::vector<data_t>& hadTowOverEM                 = tr.getVec<data_t>("hadTowOverEM");
+        const data_t& MT2                                       = tr.getVar<data_t>("best_had_brJet_MT2");
+        const data_t& met                                       = tr.getVar<data_t>("met");
         const int& nJets                                        = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
-        const double& ht                                        = tr.getVar<double>("HT");
+        const data_t& ht                                        = tr.getVar<data_t>("HT");
         const int& nbJets                                       = tr.getVar<int>("cntCSVS");
         const int& ntops                                        = tr.getVar<int>("nTopCandSortedCnt");
 
