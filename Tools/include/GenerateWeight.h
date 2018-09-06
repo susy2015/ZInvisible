@@ -54,26 +54,24 @@ namespace plotterFunctions
 
         void generateWeight(NTupleReader& tr)
         {
-            //const auto& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const std::vector<TLorentzVector>& cutMuVec         = tr.getVec<TLorentzVector>("cutMuVec");
-            const std::vector<TLorentzVector>& cutElecVec       = tr.getVec<TLorentzVector>("cutElecVec");
-            const std::vector<data_t>& cutMuActivity            = tr.getVec<data_t>("cutMuActivity");
-            const std::vector<data_t>& cutElecActivity          = tr.getVec<data_t>("cutElecActivity");
-            const std::vector<TLorentzVector*>& genMu           = tr.getVec<TLorentzVector*>("genMu");
-            const std::vector<TLorentzVector*>& genMuInAcc      = tr.getVec<TLorentzVector*>("genMuInAcc");
-            //const auto& genMatchMuInAcc = tr.getVec<TLorentzVector*>("genMatchMuInAcc");
-            const std::vector<TLorentzVector*>& genMatchMuInAcc = tr.getVec<TLorentzVector*>("genMatchMuInAcc");
+            const auto& jetsLVec        = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
+            const auto& cutMuVec        = tr.getVec<TLorentzVector>("cutMuVec");
+            const auto& cutElecVec      = tr.getVec<TLorentzVector>("cutElecVec");
+            const auto& cutMuActivity   = tr.getVec<data_t>("cutMuActivity");
+            const auto& cutElecActivity = tr.getVec<data_t>("cutElecActivity");
+            const auto& genMu           = tr.getVec<TLorentzVector*>("genMu");
+            const auto& genMuInAcc      = tr.getVec<TLorentzVector*>("genMuInAcc");
+            const auto& genMatchMuInAcc = tr.getVec<TLorentzVector*>("genMatchMuInAcc");
 
-            const int& pdgIdZDec      = tr.getVar<int>("pdgIdZDec");
-            const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
-            const bool& passElecZinvSel = tr.getVar<bool>("passElecZinvSel");
-            const data_t& ht          = tr.getVar<data_t>("ht");
-            const data_t& bestRecoZPt = tr.getVar<data_t>("bestRecoZPt");
-            const data_t& genZPt      = tr.getVar<data_t>("genZPt");
+            const auto& pdgIdZDec       = tr.getVar<int>("pdgIdZDec");
+            const auto& passMuZinvSel   = tr.getVar<bool>("passMuZinvSel");
+            const auto& passElecZinvSel = tr.getVar<bool>("passElecZinvSel");
+            const auto& ht              = tr.getVar<data_t>("ht");
+            const auto& bestRecoZPt     = tr.getVar<data_t>("bestRecoZPt");
+            const auto& genZPt          = tr.getVar<data_t>("genZPt");
 
-            const int& nJets     =  tr.getVar<int>("nJets");
-            const data_t& stored_weight = tr.getVar<data_t>("stored_weight");
+            const auto& nJets           =  tr.getVar<int>("nJets");
+            const auto& stored_weight   = tr.getVar<data_t>("stored_weight");
 
             // Calculate PU weight
 
@@ -116,7 +114,7 @@ namespace plotterFunctions
                             //const double p2 = -5.68907e-08; // +/- 7.85913e-07
                             //Sprint15
                             //const double fitStart = 200.0; // extended to 1400 GeV
-                            //const double p0 =  9.83467e-01; // +/- 1.54469e+00
+                            //const douBLE p0 =  9.83467e-01; // +/- 1.54469e+00
                             //const double p1 = -7.81897e-06; // +/- 4.16487e-03
                             //const double p2 = -1.22092e-08; // +/- 2.18556e-06
                             //Spring15 low stats

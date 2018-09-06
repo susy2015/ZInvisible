@@ -42,38 +42,38 @@ namespace plotterFunctions
 
       void generateGamma(NTupleReader& tr) {
 
-        const std::vector<TLorentzVector>& gammaLVec            = tr.getVec<TLorentzVector>("gammaLVec");     // reco
-        const std::vector<TLorentzVector>& gammaLVecGen         = tr.getVec<TLorentzVector>("gammaLVecGen");  // gen
-        const std::vector<TLorentzVector>& genPartonLVec        = tr.getVec<TLorentzVector>("genPartonLVec"); // gen parton 
-        const std::vector<bool>& looseID                        = tr.getVec<bool>("loosePhotonID");
-        const std::vector<bool>& mediumID                       = tr.getVec<bool>("mediumPhotonID");
-        const std::vector<bool>& tightID                        = tr.getVec<bool>("tightPhotonID");
-        const std::vector<int>& extraLooseID                    = tr.getVec<int>("extraLooseID");
-        const std::vector<data_t>& sigmaIetaIeta                = tr.getVec<data_t>("sigmaIetaIeta");
-        const std::vector<data_t>& pfNeutralIsoRhoCorr          = tr.getVec<data_t>("pfNeutralIsoRhoCorr");
-        const std::vector<data_t>& pfGammaIsoRhoCorr            = tr.getVec<data_t>("pfGammaIsoRhoCorr");
-        const std::vector<data_t>& pfChargedIsoRhoCorr          = tr.getVec<data_t>("pfChargedIsoRhoCorr");
-        const std::vector<data_t>& hadTowOverEM                 = tr.getVec<data_t>("hadTowOverEM");
-        const data_t& MT2                                       = tr.getVar<data_t>("best_had_brJet_MT2");
-        const data_t& met                                       = tr.getVar<data_t>("met");
-        const int& nJets                                        = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
-        const data_t& ht                                        = tr.getVar<data_t>("HT");
-        const int& nbJets                                       = tr.getVar<int>("cntCSVS");
-        const int& ntops                                        = tr.getVar<int>("nTopCandSortedCnt");
+        const auto& gammaLVec            = tr.getVec<TLorentzVector>("gammaLVec");     // reco
+        const auto& gammaLVecGen         = tr.getVec<TLorentzVector>("gammaLVecGen");  // gen
+        const auto& genPartonLVec        = tr.getVec<TLorentzVector>("genPartonLVec"); // gen parton 
+        const auto& looseID              = tr.getVec<bool>("loosePhotonID");
+        const auto& mediumID             = tr.getVec<bool>("mediumPhotonID");
+        const auto& tightID              = tr.getVec<bool>("tightPhotonID");
+        const auto& extraLooseID         = tr.getVec<int>("extraLooseID");
+        const auto& sigmaIetaIeta        = tr.getVec<data_t>("sigmaIetaIeta");
+        const auto& pfNeutralIsoRhoCorr  = tr.getVec<data_t>("pfNeutralIsoRhoCorr");
+        const auto& pfGammaIsoRhoCorr    = tr.getVec<data_t>("pfGammaIsoRhoCorr");
+        const auto& pfChargedIsoRhoCorr  = tr.getVec<data_t>("pfChargedIsoRhoCorr");
+        const auto& hadTowOverEM         = tr.getVec<data_t>("hadTowOverEM");
+        const auto& MT2                  = tr.getVar<data_t>("best_had_brJet_MT2");
+        const auto& met                  = tr.getVar<data_t>("met");
+        const auto& nJets                = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+        const auto& ht                   = tr.getVar<data_t>("HT");
+        const auto& nbJets               = tr.getVar<int>("cntCSVS");
+        const auto& ntops                = tr.getVar<int>("nTopCandSortedCnt");
 
         //variables to be used in the analysis code
         double photonPtCut = 200.0;
         double photonMet = -999.9;
-        std::vector<TLorentzVector> *gammaLVecGenAcc    = new std::vector<TLorentzVector>(); 
-        std::vector<TLorentzVector> *promptPhotons      = new std::vector<TLorentzVector>(); 
-        std::vector<TLorentzVector> *gammaLVecGenAccIso = new std::vector<TLorentzVector>(); 
-        std::vector<TLorentzVector> *fakePhotons        = new std::vector<TLorentzVector>();
-        std::vector<TLorentzVector> *fragmentationQCD   = new std::vector<TLorentzVector>();
-        std::vector<TLorentzVector> *loosePhotons       = new std::vector<TLorentzVector>();
-        std::vector<TLorentzVector> *mediumPhotons      = new std::vector<TLorentzVector>();
-        std::vector<TLorentzVector> *tightPhotons       = new std::vector<TLorentzVector>();
-        std::vector<TLorentzVector> *directPhotons      = new std::vector<TLorentzVector>();
-        std::vector<TLorentzVector> *totalPhotons       = new std::vector<TLorentzVector>();
+        auto* gammaLVecGenAcc    = new std::vector<TLorentzVector>(); 
+        auto* promptPhotons      = new std::vector<TLorentzVector>(); 
+        auto* gammaLVecGenAccIso = new std::vector<TLorentzVector>(); 
+        auto* fakePhotons        = new std::vector<TLorentzVector>();
+        auto* fragmentationQCD   = new std::vector<TLorentzVector>();
+        auto* loosePhotons       = new std::vector<TLorentzVector>();
+        auto* mediumPhotons      = new std::vector<TLorentzVector>();
+        auto* tightPhotons       = new std::vector<TLorentzVector>();
+        auto* directPhotons      = new std::vector<TLorentzVector>();
+        auto* totalPhotons       = new std::vector<TLorentzVector>();
         std::vector<TLorentzVector> gammaLVecRecoAcc;
         //std::vector<TLorentzVector> *tempVec            = new std::vector<TLorentzVector>();
         //std::vector<TLorentzVector> gammaLVecRecoAcc, tempVec;

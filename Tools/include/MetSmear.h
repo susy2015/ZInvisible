@@ -42,50 +42,50 @@ namespace plotterFunctions
 
         TRandom3 *trand;
 
-        double calcB(double x1, double x2, double e1, double e2)
+        data_t calcB(data_t x1, data_t x2, data_t e1, data_t e2)
         {
             return (x2*x2*(e1-1) - x1*x1*(e2-1)) / (x1*x2*(x2-x1));
         }
 
-        double calcC(double x1, double x2, double e1, double e2)
+        data_t calcC(data_t x1, data_t x2, data_t e1, data_t e2)
         {
             return (x2*(e1-1) - x1*(e2-1)) / (x1*x2*(x1-x2));
         }
 
-        double calcQuad(double x, double x1, double x2, double e1, double e2)
+        data_t calcQuad(data_t x, data_t x1, data_t x2, data_t e1, data_t e2)
         {
             return 1 + x*calcB(x1, x2, e1, e2) + x*x*calcC(x1, x2, e1, e2);
         }
 
-        double logistical(double met, double A, double B, double C)
+        data_t logistical(data_t met, data_t A, data_t B, data_t C)
         {
             return 1 - A/(1 + exp(-(B*(met - C))));
         }
         
         void metSmear(NTupleReader& tr)
         {
-            const double& met     = tr.getVar<double>("cleanMetPt");
+            const auto& met   = tr.getVar<data_t>("cleanMetPt");
             
             // Logistical smearing 
-            double met_logi_1 = met * logistical(met, 0.15, 0.01, 300);
-            double met_logi_2 = met * logistical(met, 0.20, 0.01, 400);
-            double met_logi_3 = met * logistical(met, 0.25, 0.01, 500);
-            double met_logi_4 = met * logistical(met, 0.20, 0.01, 400);
-            double met_logi_5 = met * logistical(met, 0.20, 0.02, 400);
-            double met_logi_6 = met * logistical(met, 0.20, 0.03, 400);
-            double met_logi_7 = met * logistical(met, 0.20, 0.02, 300);
-            double met_logi_8 = met * logistical(met, 0.20, 0.02, 400);
-            double met_logi_9 = met * logistical(met, 0.20, 0.02, 500);
+            data_t met_logi_1 = met * logistical(met, 0.15, 0.01, 300);
+            data_t met_logi_2 = met * logistical(met, 0.20, 0.01, 400);
+            data_t met_logi_3 = met * logistical(met, 0.25, 0.01, 500);
+            data_t met_logi_4 = met * logistical(met, 0.20, 0.01, 400);
+            data_t met_logi_5 = met * logistical(met, 0.20, 0.02, 400);
+            data_t met_logi_6 = met * logistical(met, 0.20, 0.03, 400);
+            data_t met_logi_7 = met * logistical(met, 0.20, 0.02, 300);
+            data_t met_logi_8 = met * logistical(met, 0.20, 0.02, 400);
+            data_t met_logi_9 = met * logistical(met, 0.20, 0.02, 500);
 
             // gaussian smearing 
-            //double met_gaus_5  = trand->Gaus(met, 5);
-            //double met_gaus_10 = trand->Gaus(met, 10);
-            //double met_gaus_15 = trand->Gaus(met, 15);
-            double met_gaus_20 = trand->Gaus(met, 20);
-            //double met_gaus_25 = trand->Gaus(met, 25);
-            double met_gaus_30 = trand->Gaus(met, 30);
-            double met_gaus_40 = trand->Gaus(met, 40);
-            double met_gaus_50 = trand->Gaus(met, 50);
+            //data_t met_gaus_5  = trand->Gaus(met, 5);
+            //data_t met_gaus_10 = trand->Gaus(met, 10);
+            //data_t met_gaus_15 = trand->Gaus(met, 15);
+            data_t met_gaus_20 = trand->Gaus(met, 20);
+            //data_t met_gaus_25 = trand->Gaus(met, 25);
+            data_t met_gaus_30 = trand->Gaus(met, 30);
+            data_t met_gaus_40 = trand->Gaus(met, 40);
+            data_t met_gaus_50 = trand->Gaus(met, 50);
 
             tr.registerDerivedVar("met_gaus_20", met_gaus_20);
             //tr.registerDerivedVar("met_gaus_25", met_gaus_25);
@@ -120,13 +120,13 @@ namespace plotterFunctions
             metLVec_Logi.SetPtEtaPhiM(met_logi_1, 0, metphi, 0);
             
             //type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Logi);
-            double MT2_Logi = 0.0;//type3Ptr->best_had_brJet_MT2;
+            data_t MT2_Logi = 0.0;//type3Ptr->best_had_brJet_MT2;
 
             TLorentzVector metLVec_Gaus;
             metLVec_Gaus.SetPtEtaPhiM(met_gaus_30, 0, metphi, 0);
             
             //type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Gaus); 
-            double MT2_Gaus = 0.0;//type3Ptr->best_had_brJet_MT2;
+            data_t MT2_Gaus = 0.0;//type3Ptr->best_had_brJet_MT2;
 
             tr.registerDerivedVar("mt2_logi_1",  MT2_Logi);
             tr.registerDerivedVar("mt2_gaus_30", MT2_Gaus);

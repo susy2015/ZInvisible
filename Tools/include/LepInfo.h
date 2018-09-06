@@ -42,33 +42,33 @@ namespace plotterFunctions
         TRandom3 *tr3;
         void lepInfo(NTupleReader& tr)
         {
-            const std::vector<int>& genDecayPdgIdVec        = tr.getVec<int>("genDecayPdgIdVec");
-            const std::vector<int>& genDecayIdxVec          = tr.getVec<int>("genDecayIdxVec");
-            const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
-            const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
-            const std::vector<TLorentzVector>& muonsLVec    = tr.getVec<TLorentzVector>("muonsLVec");
-            const std::vector<data_t>& muonsRelIso          = tr.getVec<data_t>("muonsRelIso");
-            const std::vector<data_t>& muonsMiniIso         = tr.getVec<data_t>("muonsMiniIso");
-            const std::vector<int>& W_emuVec                = tr.getVec<int>("W_emuVec");
-            const std::vector<data_t>& muonsCharge          = tr.getVec<data_t>("muonsCharge");
-            const std::vector<TLorentzVector>& jetsLVec     = tr.getVec<TLorentzVector>("jetsLVec");
-            const std::vector<data_t>& recoJetschargedEmEnergyFraction     = tr.getVec<data_t>("recoJetschargedEmEnergyFraction");
-            const std::vector<data_t>& recoJetschargedHadronEnergyFraction = tr.getVec<data_t>("recoJetschargedHadronEnergyFraction");
-            const std::vector<int> & muonsFlagIDVec = tr.getVec<int>("muonsFlagMedium");
-            const std::vector<int>&  elesFlagIDVec  = tr.getVec<int>("elesFlagVeto");
+            const auto& genDecayPdgIdVec                    = tr.getVec<int>("genDecayPdgIdVec");
+            const auto& genDecayIdxVec                      = tr.getVec<int>("genDecayIdxVec");
+            const auto& genDecayMomIdxVec                   = tr.getVec<int>("genDecayMomIdxVec");
+            const auto& genDecayLVec                        = tr.getVec<TLorentzVector>("genDecayLVec");
+            const auto& muonsLVec                           = tr.getVec<TLorentzVector>("muonsLVec");
+            const auto& muonsRelIso                         = tr.getVec<data_t>("muonsRelIso");
+            const auto& muonsMiniIso                        = tr.getVec<data_t>("muonsMiniIso");
+            const auto& W_emuVec                            = tr.getVec<int>("W_emuVec");
+            const auto& muonsCharge                         = tr.getVec<data_t>("muonsCharge");
+            const auto& jetsLVec                            = tr.getVec<TLorentzVector>("jetsLVec");
+            const auto& recoJetschargedEmEnergyFraction     = tr.getVec<data_t>("recoJetschargedEmEnergyFraction");
+            const auto& recoJetschargedHadronEnergyFraction = tr.getVec<data_t>("recoJetschargedHadronEnergyFraction");
+            const auto& muonsFlagIDVec                      = tr.getVec<int>("muonsFlagMedium");
+            const auto& elesFlagIDVec                       = tr.getVec<int>("elesFlagVeto");
 
             const std::vector<data_t>& muonspfActivity      = tr.getVec<data_t>("muonspfActivity");
             const std::vector<data_t>& elespfActivity       = tr.getVec<data_t>("elespfActivity");
             const std::vector<data_t>& W_emu_pfActivityVec  = tr.getVec<data_t>("W_emu_pfActivityVec");
 
-            //const data_t& ht                             = tr.getVar<data_t>("ht");
-            const data_t& met                            = tr.getVar<data_t>("met");
-            const data_t& metphi                         = tr.getVar<data_t>("metphi");
+            //const data_t& ht                              = tr.getVar<data_t>("ht");
+            const auto& met                                 = tr.getVar<data_t>("met");
+            const auto& metphi                              = tr.getVar<data_t>("metphi");
 
             const std::vector<TLorentzVector, std::allocator<TLorentzVector> > elesLVec = tr.getVec<TLorentzVector>("elesLVec");
-            const std::vector<data_t>& elesMiniIso          = tr.getVec<data_t>("elesMiniIso");
-            const std::vector<data_t>& elesCharge           = tr.getVec<data_t>("elesCharge");
-            const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
+            const auto& elesMiniIso    = tr.getVec<data_t>("elesMiniIso");
+            const auto& elesCharge     = tr.getVec<data_t>("elesCharge");
+            const auto& elesisEB       = tr.getVec<unsigned int>("elesisEB");
 
             //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
 
@@ -78,8 +78,8 @@ namespace plotterFunctions
 
             try
             {
-                const bool& passMuonVetoTmp  = tr.getVar<bool>("passMuonVeto");
-                const bool& passEleVetoTmp   = tr.getVar<bool>("passEleVeto");
+                const auto& passMuonVetoTmp  = tr.getVar<bool>("passMuonVeto");
+                const auto& passEleVetoTmp   = tr.getVar<bool>("passEleVeto");
                 if(&passMuonVetoTmp != nullptr) passMuonVeto = passMuonVetoTmp;
                 if(&passEleVetoTmp != nullptr) passEleVeto = passEleVetoTmp;
             }
@@ -88,33 +88,33 @@ namespace plotterFunctions
                 //std::cout << "void muInfo(NTupleReader& tr): Caught exception, variable \"" << e << "\" not found" << std::endl;
             }
 
-            std::vector<const TLorentzVector*>* genMatchIsoElecInAcc    = new std::vector<const TLorentzVector*>();
-            std::vector<const TLorentzVector*>* genMatchElecInAcc       = new std::vector<const TLorentzVector*>();
-            std::vector<data_t>* genMatchElecInAccRes                   = new std::vector<data_t>();
-            std::vector<const TLorentzVector*>* genElecInAcc            = new std::vector<const TLorentzVector*>();
-            std::vector<const TLorentzVector*>* genElec                 = new std::vector<const TLorentzVector*>();
-            std::vector<data_t>* genMatchIsoElecInAccAct                = new std::vector<data_t>();
-            std::vector<data_t>* genMatchElecInAccAct                   = new std::vector<data_t>();
-            std::vector<data_t>* genElecInAccAct                        = new std::vector<data_t>();
-            std::vector<data_t>* genElecAct                             = new std::vector<data_t>();
+            auto* genMatchIsoElecInAcc      = new std::vector<const TLorentzVector*>();
+            auto* genMatchElecInAcc         = new std::vector<const TLorentzVector*>();
+            auto* genMatchElecInAccRes      = new std::vector<data_t>();
+            auto* genElecInAcc              = new std::vector<const TLorentzVector*>();
+            auto* genElec                   = new std::vector<const TLorentzVector*>();
+            auto* genMatchIsoElecInAccAct   = new std::vector<data_t>();
+            auto* genMatchElecInAccAct      = new std::vector<data_t>();
+            auto* genElecInAccAct           = new std::vector<data_t>();
+            auto* genElecAct                = new std::vector<data_t>();
 
-            std::vector<const TLorentzVector*>* genMatchIsoMuInAcc      = new std::vector<const TLorentzVector*>();
-            std::vector<const TLorentzVector*>* genMatchMuInAcc         = new std::vector<const TLorentzVector*>();
-            std::vector<data_t>* genMatchMuInAccRes                     = new std::vector<data_t>();
-            std::vector<const TLorentzVector*>* genMuInAcc              = new std::vector<const TLorentzVector*>();
-            std::vector<const TLorentzVector*>* genMu                   = new std::vector<const TLorentzVector*>();
-            std::vector<data_t>* genMatchIsoMuInAccAct                  = new std::vector<data_t>();
-            std::vector<data_t>* genMatchMuInAccAct                     = new std::vector<data_t>();
-            std::vector<data_t>* genMuInAccAct                          = new std::vector<data_t>();
-            std::vector<data_t>* genMuAct                               = new std::vector<data_t>();
+            auto* genMatchIsoMuInAcc        = new std::vector<const TLorentzVector*>();
+            auto* genMatchMuInAcc           = new std::vector<const TLorentzVector*>();
+            auto* genMatchMuInAccRes        = new std::vector<data_t>();
+            auto* genMuInAcc                = new std::vector<const TLorentzVector*>();
+            auto* genMu                     = new std::vector<const TLorentzVector*>();
+            auto* genMatchIsoMuInAccAct     = new std::vector<data_t>();
+            auto* genMatchMuInAccAct        = new std::vector<data_t>();
+            auto* genMuInAccAct             = new std::vector<data_t>();
+            auto* genMuAct                  = new std::vector<data_t>();
             
-            std::vector<TLorentzVector>* cutMuVec                       = new std::vector<TLorentzVector>();
-            std::vector<data_t>* cutMuCharge                            = new std::vector<data_t>();
-            std::vector<data_t>* cutMuActivity                          = new std::vector<data_t>();
+            auto* cutMuVec                  = new std::vector<TLorentzVector>();
+            auto* cutMuCharge               = new std::vector<data_t>();
+            auto* cutMuActivity             = new std::vector<data_t>();
             
-            std::vector<TLorentzVector>* cutElecVec     = new std::vector<TLorentzVector>();
-            std::vector<data_t>* cutElecCharge          = new std::vector<data_t>();
-            std::vector<data_t>* cutElecActivity        = new std::vector<data_t>();
+            auto* cutElecVec                = new std::vector<TLorentzVector>();
+            auto* cutElecCharge             = new std::vector<data_t>();
+            auto* cutElecActivity           = new std::vector<data_t>();
 
             std::vector<TLorentzVector> cutMuVecRecoOnly;
             std::vector<TLorentzVector> cutElecVecRecoOnly;

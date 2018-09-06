@@ -39,13 +39,13 @@ namespace plotterFunctions
      class Ak8DrMatch {
      private:
          void generateAk8DrMatch(NTupleReader& tr) {
-             const std::vector<TLorentzVector>& jetsLVec     = tr.getVec<TLorentzVector>("jetsLVec");
-             const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec");
-             const std::vector<TLorentzVector>& puppiLVectight_top = tr.getVec<TLorentzVector>("puppiLVectight_top");
-             const std::vector<TLorentzVector>& puppiLVecLoose_top = tr.getVec<TLorentzVector>("puppiLVecLoose_top");
-             const std::vector<TLorentzVector>& puppiLVectight_w = tr.getVec<TLorentzVector>("puppiLVectight_w");
-             const std::vector<TLorentzVector>& puppiLVecLoose_w = tr.getVec<TLorentzVector>("puppiLVecLoose_w");  
-             const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
+             const auto& jetsLVec           = tr.getVec<TLorentzVector>("jetsLVec");
+             const auto& ak8JetsLVec        = tr.getVec<TLorentzVector>("ak8JetsLVec");
+             const auto& puppiLVectight_top = tr.getVec<TLorentzVector>("puppiLVectight_top");
+             const auto& puppiLVecLoose_top = tr.getVec<TLorentzVector>("puppiLVecLoose_top");
+             const auto& puppiLVectight_w   = tr.getVec<TLorentzVector>("puppiLVectight_w");
+             const auto& puppiLVecLoose_w   = tr.getVec<TLorentzVector>("puppiLVecLoose_w");  
+             const auto& puppiJetsLVec      = tr.getVec<TLorentzVector>("puppiJetsLVec");
 
              int nJetsAK41_min = 0;
              int nJetsAK41_med = 0; 
@@ -60,12 +60,12 @@ namespace plotterFunctions
              int nJetsAK42_med = 0;
              int nJetsAK42_lar = 0;
  
-             std::vector<data_t>* ak81dRMin = new std::vector<data_t>();
-             std::vector<data_t>* ak82dRMin = new std::vector<data_t>(); 
-             std::vector<data_t>* puppi_top_L_1dRMin = new std::vector<data_t>();
-             std::vector<data_t>* puppi_top_L_2dRMin = new std::vector<data_t>();
-             std::vector<data_t>* puppi_top_T_1dRMin = new std::vector<data_t>();
-             std::vector<data_t>* puppi_top_T_2dRMin = new std::vector<data_t>(); 
+             auto* ak81dRMin = new std::vector<data_t>();
+             auto* ak82dRMin = new std::vector<data_t>(); 
+             auto* puppi_top_L_1dRMin = new std::vector<data_t>();
+             auto* puppi_top_L_2dRMin = new std::vector<data_t>();
+             auto* puppi_top_T_1dRMin = new std::vector<data_t>();
+             auto* puppi_top_T_2dRMin = new std::vector<data_t>(); 
              for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
              {
                  if(ak8JetsLVec.size() >= 1) ak81dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[0]));
@@ -226,22 +226,22 @@ namespace plotterFunctions
              const std::vector<int>& genDecayMomIdxVec       = tr.getVec<int>("genDecayMomIdxVec");
              const std::vector<TLorentzVector>& genDecayLVec = tr.getVec<TLorentzVector>("genDecayLVec");
 
-             std::vector<bool>* gentop_match = new std::vector<bool>(); // helpful to make plots of matched and unmatched number of tops
-             std::vector<data_t>* dR_top_gentop = new std::vector<data_t>(); 
-             std::vector<data_t>* dR_AK4_topsubjet_genmatched = new std::vector<data_t>(); 
-             std::vector<data_t>* dR_AK4_top_genmatched = new std::vector<data_t>(); 
-             std::vector<int>* top_N_AK4_matched_genmatched = new std::vector<int>(); 
-             std::vector<int>* top_N_AK4_matched_notgenmatched = new std::vector<int>(); 
-             std::vector<int>* top_N_AK4_notmatched_genmatched = new std::vector<int>(); 
-             std::vector<int>* top_N_AK4_notmatched_notgenmatched = new std::vector<int>(); 
-             std::vector<int>* top_N_AK4_matched_genmatched_0p6 = new std::vector<int>(); 
-             std::vector<int>* top_N_AK4_matched_notgenmatched_0p6 = new std::vector<int>(); 
-             std::vector<int>* top_N_AK4_notmatched_genmatched_0p6 = new std::vector<int>(); 
-             std::vector<int>* top_N_AK4_notmatched_notgenmatched_0p6 = new std::vector<int>(); 
-             std::vector<int>* top_N_AK4_matched_genmatchedother = new std::vector<int>(); 
-             std::vector<int>* top_N_AK4_matched_notgenmatchedother = new std::vector<int>(); 
-             std::vector<int>* top_N_AK4_matched_genmatchedother_0p6 = new std::vector<int>(); 
-             std::vector<int>* top_N_AK4_matched_notgenmatchedother_0p6 = new std::vector<int>(); 
+             auto* gentop_match                                 = new std::vector<bool>(); // helpful to make plots of matched and unmatched number of tops
+             auto* dR_top_gentop                                = new std::vector<data_t>(); 
+             auto* dR_AK4_topsubjet_genmatched                  = new std::vector<data_t>(); 
+             auto* dR_AK4_top_genmatched                        = new std::vector<data_t>(); 
+             auto* top_N_AK4_matched_genmatched                 = new std::vector<int>(); 
+             auto* top_N_AK4_matched_notgenmatched              = new std::vector<int>(); 
+             auto* top_N_AK4_notmatched_genmatched              = new std::vector<int>(); 
+             auto* top_N_AK4_notmatched_notgenmatched           = new std::vector<int>(); 
+             auto* top_N_AK4_matched_genmatched_0p6             = new std::vector<int>(); 
+             auto* top_N_AK4_matched_notgenmatched_0p6          = new std::vector<int>(); 
+             auto* top_N_AK4_notmatched_genmatched_0p6          = new std::vector<int>(); 
+             auto* top_N_AK4_notmatched_notgenmatched_0p6       = new std::vector<int>(); 
+             auto* top_N_AK4_matched_genmatchedother            = new std::vector<int>(); 
+             auto* top_N_AK4_matched_notgenmatchedother         = new std::vector<int>(); 
+             auto* top_N_AK4_matched_genmatchedother_0p6        = new std::vector<int>(); 
+             auto* top_N_AK4_matched_notgenmatchedother_0p6     = new std::vector<int>(); 
              if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
              {
                  // For each tagged top, find the matching gen particles

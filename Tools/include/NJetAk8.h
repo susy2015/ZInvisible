@@ -41,8 +41,8 @@ namespace plotterFunctions
     private:
         void generateNJetAk8(NTupleReader& tr)
         {
-            const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec"); 
-            const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
+            const auto& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec"); 
+            const auto& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
             // const int& nJetsAk8 = ak8JetsLVec.size();
             // const int& nJetsPuppi = puppiJetsLVec.size();
             //tr.registerDerivedVar("nJetsAk8", nJetsAk8);

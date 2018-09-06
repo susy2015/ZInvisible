@@ -41,8 +41,8 @@ namespace plotterFunctions
     private:
         void fakebtagvectors(NTupleReader& tr)
         {
-            const std::vector<TLorentzVector>& jetsLVecLepCleaned = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const std::vector<data_t>& cleanJetpt30ArrBTag = tr.getVec<data_t>("recoJetsBtag_0_LepCleaned");
+            const auto& jetsLVecLepCleaned = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
+            const auto& cleanJetpt30ArrBTag = tr.getVec<data_t>("recoJetsBtag_0_LepCleaned");
 
             double maxCSV = 0.0;
             double secCSV = 0.0;
@@ -87,10 +87,10 @@ namespace plotterFunctions
                 }
             }
 
-            std::vector<data_t>* cleanJetpt30ArrBTag1fake = new std::vector<data_t>(cleanJetpt30ArrBTag);
-            std::vector<data_t>* cleanJetpt30ArrBTag2fake = new std::vector<data_t>(cleanJetpt30ArrBTag);
-            std::vector<data_t>* cleanJetpt30ArrBTag3fake = new std::vector<data_t>(cleanJetpt30ArrBTag);
-            std::vector<data_t>* fakedCSVValues = new std::vector<data_t>();
+            auto* cleanJetpt30ArrBTag1fake = new std::vector<data_t>(cleanJetpt30ArrBTag);
+            auto* cleanJetpt30ArrBTag2fake = new std::vector<data_t>(cleanJetpt30ArrBTag);
+            auto* cleanJetpt30ArrBTag3fake = new std::vector<data_t>(cleanJetpt30ArrBTag);
+            auto* fakedCSVValues = new std::vector<data_t>();
 
             if(iMaxCSV >= 0) (*cleanJetpt30ArrBTag1fake)[iMaxCSV] = 0.99;
 

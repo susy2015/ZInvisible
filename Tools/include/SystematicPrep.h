@@ -41,22 +41,19 @@ namespace plotterFunctions
 
         void systematicPrep(NTupleReader& tr)
         {
-            const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const std::vector<data_t>& recoJetsJecUnc    = tr.getVec<data_t>("recoJetsJecUncLepCleaned");
+            const auto& jetsLVec            = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
+            const auto& recoJetsJecUnc      = tr.getVec<data_t>("recoJetsJecUncLepCleaned");
+            const auto& metMagUp            = tr.getVec<data_t>("metMagUp");
+            const auto& metMagDown          = tr.getVec<data_t>("metMagDown");
+            const auto& metPhiUp            = tr.getVec<data_t>("metPhiUp");
+            const auto& metPhiDown          = tr.getVec<data_t>("metPhiDown");
+            const auto& met                 = tr.getVar<data_t>("met");
+            const auto& metphi              = tr.getVar<data_t>("metphi");
 
-            const std::vector<data_t>& metMagUp   = tr.getVec<data_t>("metMagUp");
-            const std::vector<data_t>& metMagDown = tr.getVec<data_t>("metMagDown");
-            const std::vector<data_t>& metPhiUp   = tr.getVec<data_t>("metPhiUp");
-            const std::vector<data_t>& metPhiDown = tr.getVec<data_t>("metPhiDown");
-
-            const data_t& met    = tr.getVar<data_t>("met");
-            const data_t& metphi = tr.getVar<data_t>("metphi");
-
-            std::vector<TLorentzVector> *jetLVecUp = new std::vector<TLorentzVector>;
-            std::vector<TLorentzVector> *jetLVecDn = new std::vector<TLorentzVector>;
-
-            std::vector<data_t> *dPtMet = new std::vector<data_t>;
-            std::vector<data_t> *dPhiMet = new std::vector<data_t>;
+            auto* jetLVecUp                 = new std::vector<TLorentzVector>;
+            auto* jetLVecDn                 = new std::vector<TLorentzVector>;
+            auto* dPtMet                    = new std::vector<data_t>;
+            auto* dPhiMet                   = new std::vector<data_t>;
 
             double metUp = 0.0, metDn = 99990.0;
 

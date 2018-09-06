@@ -40,35 +40,33 @@ namespace plotterFunctions
     private:
         std::shared_ptr<TopTagger> ttPtr_mine;
         void generateTaudiv(NTupleReader& tr) {
-          const std::vector<data_t>& tau1    = tr.getVec<data_t>("tau1");
-          const std::vector<data_t>& tau2    = tr.getVec<data_t>("tau2");
-          const std::vector<data_t>& tau3    = tr.getVec<data_t>("tau3");
-          const std::vector<data_t>& puppitau1    = tr.getVec<data_t>("puppitau1");
-          const std::vector<data_t>& puppitau2    = tr.getVec<data_t>("puppitau2");
-          const std::vector<data_t>& puppitau3    = tr.getVec<data_t>("puppitau3");
-          const std::vector<data_t>& softDropMass = tr.getVec<data_t>("softDropMass");
-          const std::vector<data_t>& puppisoftDropMass = tr.getVec<data_t>("puppisoftDropMass");
-          const std::vector<TLorentzVector>& jetsLVec     = tr.getVec<TLorentzVector>("jetsLVec");
-          const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec");
-          const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
+          const auto& tau1                  = tr.getVec<data_t>("tau1");
+          const auto& tau2                  = tr.getVec<data_t>("tau2");
+          const auto& tau3                  = tr.getVec<data_t>("tau3");
+          const auto& puppitau1             = tr.getVec<data_t>("puppitau1");
+          const auto& puppitau2             = tr.getVec<data_t>("puppitau2");
+          const auto& puppitau3             = tr.getVec<data_t>("puppitau3");
+          const auto& softDropMass          = tr.getVec<data_t>("softDropMass");
+          const auto& puppisoftDropMass     = tr.getVec<data_t>("puppisoftDropMass");
+          const auto& jetsLVec              = tr.getVec<TLorentzVector>("jetsLVec");
+          const auto& ak8JetsLVec           = tr.getVec<TLorentzVector>("ak8JetsLVec");
+          const auto& puppiJetsLVec         = tr.getVec<TLorentzVector>("puppiJetsLVec");
+          const auto& genDecayLVec          = tr.getVec<TLorentzVector>("genDecayLVec");
+          const auto& genDecayPdgIdVec      = tr.getVec<int>("genDecayPdgIdVec");
+          const auto& genDecayIdxVec        = tr.getVec<int>("genDecayIdxVec");
+          const auto& genDecayMomIdxVec     = tr.getVec<int>("genDecayMomIdxVec");
+          const auto& nTopCandSortedCnt     = tr.getVar<int>("nTopCandSortedCntZinv");
 
-          const std::vector<TLorentzVector>& genDecayLVec   = tr.getVec<TLorentzVector>("genDecayLVec");
-          const std::vector<int>& genDecayPdgIdVec   = tr.getVec<int>("genDecayPdgIdVec");
-          const std::vector<int>& genDecayIdxVec   = tr.getVec<int>("genDecayIdxVec");
-          const std::vector<int>& genDecayMomIdxVec   = tr.getVec<int>("genDecayMomIdxVec");
+          auto* puppiLVecLoose_top          = new std::vector<TLorentzVector>();
+          auto* puppiLVectight_top          = new std::vector<TLorentzVector>();
+          auto* puppiLVecLoose_w            = new std::vector<TLorentzVector>();
+          auto* puppiLVectight_w            = new std::vector<TLorentzVector>();
+          auto* puppitau2Dtau1              = new std::vector<data_t>();
+          auto* puppitau3Dtau2              = new std::vector<data_t>();
+          auto* puppitau2Dtau1_SDM          = new std::vector<data_t>();
+          auto* puppitau3Dtau2_SDM          = new std::vector<data_t>();
+          auto* hadWLVec                    = new std::vector<TLorentzVector>();
 
-          std::vector<TLorentzVector> *puppiLVecLoose_top = new std::vector<TLorentzVector>();
-          std::vector<TLorentzVector> *puppiLVectight_top = new std::vector<TLorentzVector>();
-          std::vector<TLorentzVector> *puppiLVecLoose_w = new std::vector<TLorentzVector>();
-          std::vector<TLorentzVector> *puppiLVectight_w = new std::vector<TLorentzVector>();
-          std::vector<data_t>* puppitau2Dtau1 = new std::vector<data_t>();
-          std::vector<data_t>* puppitau3Dtau2 = new std::vector<data_t>();
-          std::vector<data_t>* puppitau2Dtau1_SDM = new std::vector<data_t>();
-          std::vector<data_t>* puppitau3Dtau2_SDM = new std::vector<data_t>();
-
-          std::vector<TLorentzVector> *hadWLVec = new std::vector<TLorentzVector>();
-
-          const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
           //std::shared_ptr<TopTagger> ttPtr;
           //const TopTaggerResults& ttr = ttPtr->getResults();
           int monoJet=0;

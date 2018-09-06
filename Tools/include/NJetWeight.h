@@ -54,15 +54,15 @@ namespace plotterFunctions
 
         void generateWeight(NTupleReader& tr)
         {
-            const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
-            const int& nJets     =  tr.getVar<int>("nJets");
-            const int& cntCSVSZinv = tr.getVar<int>("cntCSVSZinv");
+            const auto& cntNJetsPt30Eta24Zinv   = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+            const auto& nJets                   =  tr.getVar<int>("nJets");
+            const auto& cntCSVSZinv             = tr.getVar<int>("cntCSVSZinv");
 
-            double wTT = 1.0;
-            double wDY = 1.0;
-            double wGJets = 1.0;
-            double wGJetsNorm = 1.0;
-            double wGJets_all = 1.0;
+            data_t wTT = 1.0;
+            data_t wDY = 1.0;
+            data_t wGJets = 1.0;
+            data_t wGJetsNorm = 1.0;
+            data_t wGJets_all = 1.0;
 
             if(cntCSVSZinv == 0)
               {
@@ -83,16 +83,16 @@ namespace plotterFunctions
             if(njWGJets_all) wGJets_all = njWGJets_all->GetBinContent(njWGJets_all->FindBin(nJets));
             //wGJets = njWGJets->GetBinContent(njWGJets->FindBin(nJets)); 
             //std::cout<<wGJets<<std::endl;
-            double nJet1bfakeWgt = 1.0;
-            double nJet2bfakeWgt = 1.0;
-            double nJet3bfakeWgt = 1.0;
+            data_t nJet1bfakeWgt = 1.0;
+            data_t nJet2bfakeWgt = 1.0;
+            data_t nJet3bfakeWgt = 1.0;
 
             if(MCfake1b)   nJet1bfakeWgt = MCfake1b->GetBinContent(MCfake1b->FindBin(cntNJetsPt30Eta24Zinv));
             if(MCfake2b)   nJet2bfakeWgt = MCfake2b->GetBinContent(MCfake2b->FindBin(cntNJetsPt30Eta24Zinv));
             if(MCfake3b)   nJet3bfakeWgt = MCfake3b->GetBinContent(MCfake3b->FindBin(cntNJetsPt30Eta24Zinv));
 
-            double normWgt0b = ScaleFactors::sf_norm0b();
-            double normttbar = ScaleFactorsttBar::sf_norm0b(); 
+            data_t normWgt0b = ScaleFactors::sf_norm0b();
+            data_t normttbar = ScaleFactorsttBar::sf_norm0b(); 
 
 
             tr.registerDerivedVar("nJetWgtTTbar", wTT);
