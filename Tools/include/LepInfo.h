@@ -314,7 +314,7 @@ namespace plotterFunctions
                 genTops = new std::vector<TLorentzVector>();
             }
 
-            double genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
+            data_t genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
             int nZ = 0;
             TLorentzVector genZ;
             int pdgIdZDec = 0;

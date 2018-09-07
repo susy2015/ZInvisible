@@ -54,7 +54,7 @@ namespace plotterFunctions
 
         void generateWeight(NTupleReader& tr)
         {
-            const auto& jetsLVec        = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
+            const auto& jetsLVec        = tr.getVec<TLorentzVector>("prodJetsNoLep_jetsLVec");
             const auto& cutMuVec        = tr.getVec<TLorentzVector>("cutMuVec");
             const auto& cutElecVec      = tr.getVec<TLorentzVector>("cutElecVec");
             const auto& cutMuActivity   = tr.getVec<data_t>("cutMuActivity");
