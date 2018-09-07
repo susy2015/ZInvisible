@@ -1,6 +1,7 @@
 #ifndef FAKEBTAGVECTORS_H 
 #define FAKEBTAGVECTORS_H 
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -40,8 +41,8 @@ namespace plotterFunctions
     private:
         void fakebtagvectors(NTupleReader& tr)
         {
-            const std::vector<TLorentzVector>& jetsLVecLepCleaned = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const std::vector<double>& cleanJetpt30ArrBTag = tr.getVec<double>("recoJetsBtag_0_LepCleaned");
+            const auto& jetsLVecLepCleaned = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
+            const auto& cleanJetpt30ArrBTag = tr.getVec<data_t>("recoJetsBtag_0_LepCleaned");
 
             double maxCSV = 0.0;
             double secCSV = 0.0;
@@ -86,10 +87,10 @@ namespace plotterFunctions
                 }
             }
 
-            std::vector<double>* cleanJetpt30ArrBTag1fake = new std::vector<double>(cleanJetpt30ArrBTag);
-            std::vector<double>* cleanJetpt30ArrBTag2fake = new std::vector<double>(cleanJetpt30ArrBTag);
-            std::vector<double>* cleanJetpt30ArrBTag3fake = new std::vector<double>(cleanJetpt30ArrBTag);
-            std::vector<double>* fakedCSVValues = new std::vector<double>();
+            auto* cleanJetpt30ArrBTag1fake = new std::vector<data_t>(cleanJetpt30ArrBTag);
+            auto* cleanJetpt30ArrBTag2fake = new std::vector<data_t>(cleanJetpt30ArrBTag);
+            auto* cleanJetpt30ArrBTag3fake = new std::vector<data_t>(cleanJetpt30ArrBTag);
+            auto* fakedCSVValues = new std::vector<data_t>();
 
             if(iMaxCSV >= 0) (*cleanJetpt30ArrBTag1fake)[iMaxCSV] = 0.99;
 
@@ -105,9 +106,9 @@ namespace plotterFunctions
             if(iTenCSV >= 0) fakedCSVValues->push_back(tenCSV);
 
             //Calculate the combinatoric weights for b-jet faking
-            double weight1fakeb = TMath::Binomial(njet, 1);
-            double weight2fakeb = TMath::Binomial(njet, 2);
-            double weight3fakeb = TMath::Binomial(njet, 3);
+            data_t weight1fakeb = TMath::Binomial(njet, 1);
+            data_t weight2fakeb = TMath::Binomial(njet, 2);
+            data_t weight3fakeb = TMath::Binomial(njet, 3);
             //check for nans
             if(weight1fakeb != weight1fakeb) weight1fakeb = 0.0;
             if(weight2fakeb != weight2fakeb) weight2fakeb = 0.0;

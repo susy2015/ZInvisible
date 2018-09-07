@@ -1,6 +1,7 @@
 #ifndef GETSEARCHBIN_H
 #define GETSEARCHBIN_H
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -42,26 +43,26 @@ namespace plotterFunctions
 
         void getSearchBin(NTupleReader& tr)
         {
-            const int& cntCSVS = tr.getVar<int>("cntCSVSZinv");
-            const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
-            //const int& nTopCandSortedCnt1b = tr.getVar<int>("nTopCandSortedCntZinv1b");
-            //const int& nTopCandSortedCnt2b = tr.getVar<int>("nTopCandSortedCntZinv2b");
-            //const int& nTopCandSortedCnt3b = tr.getVar<int>("nTopCandSortedCntZinv3b");
-            const double& cleanMet = tr.getVar<double>("cleanMetPt");
-            const double& cleanMetPhi = tr.getVar<double>("cleanMetPhi");
-            const double& MT2 = tr.getVar<double>("best_had_brJet_MT2Zinv");
-            //const double& MT2_1b = tr.getVar<double>("best_had_brJet_MT2Zinv1b");
-            //const double& MT2_2b = tr.getVar<double>("best_had_brJet_MT2Zinv2b");
-            //const double& MT2_3b = tr.getVar<double>("best_had_brJet_MT2Zinv3b");
-            //const double& weight1fakeb = tr.getVar<double>("weight1fakeb");
-            //const double& weight2fakeb = tr.getVar<double>("weight2fakeb");
-            //const double& weight3fakeb = tr.getVar<double>("weight3fakeb");
+            const auto& cntCSVS = tr.getVar<int>("cntCSVSZinv");
+            const auto& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+            //const auto& nTopCandSortedCnt1b = tr.getVar<int>("nTopCandSortedCntZinv1b");
+            //const auto& nTopCandSortedCnt2b = tr.getVar<int>("nTopCandSortedCntZinv2b");
+            //const auto& nTopCandSortedCnt3b = tr.getVar<int>("nTopCandSortedCntZinv3b");
+            const auto& cleanMet = tr.getVar<data_t>("cleanMetPt");
+            const auto& cleanMetPhi = tr.getVar<data_t>("cleanMetPhi");
+            const auto& MT2 = tr.getVar<data_t>("best_had_brJet_MT2Zinv");
+            //const auto& MT2_1b = tr.getVar<data_t>("best_had_brJet_MT2Zinv1b");
+            //const auto& MT2_2b = tr.getVar<data_t>("best_had_brJet_MT2Zinv2b");
+            //const auto& MT2_3b = tr.getVar<data_t>("best_had_brJet_MT2Zinv3b");
+            //const auto& weight1fakeb = tr.getVar<data_t>("weight1fakeb");
+            //const auto& weight2fakeb = tr.getVar<data_t>("weight2fakeb");
+            //const auto& weight3fakeb = tr.getVar<data_t>("weight3fakeb");
             //
-            //const double& nJet1bfakeWgt = tr.getVar<double>("nJet1bfakeWgt");
-            //const double& nJet2bfakeWgt = tr.getVar<double>("nJet2bfakeWgt");
-            //const double& nJet3bfakeWgt = tr.getVar<double>("nJet3bfakeWgt");
-            const double& HT            = tr.getVar<double>("HTZinv");
-            //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+            //const auto& nJet1bfakeWgt = tr.getVar<data_t>("nJet1bfakeWgt");
+            //const auto& nJet2bfakeWgt = tr.getVar<data_t>("nJet2bfakeWgt");
+            //const auto& nJet3bfakeWgt = tr.getVar<data_t>("nJet3bfakeWgt");
+            const auto& HT            = tr.getVar<data_t>("HTZinv");
+            //const auto& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
             //            //top
             /*
             std::shared_ptr<TopTagger> ttPtr;

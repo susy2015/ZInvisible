@@ -1,21 +1,31 @@
 #Binary and Image
-*.exe
-*.png
-*.jpg
-*.gif
-*.bmp
-*.pdf
-*.ps
-*.jpeg
-*.eps
+**.exe
+**.png
+**.jpg
+**.gif
+**.bmp
+**.pdf
+**.ps
+**.jpeg
+**.eps
 
 #condor log files
-*.log
-*.stderr
-*.stdout
+**.log
+**.stderr
+**.stdout
+
+#text and config files (can still be tracked individually as needed)
+**.txt
+**.cfg
 
 #Root
-*.root
+**.root
+
+# peanut butter
+**.pb
+
+# model
+**.model
 
 #Network File System
 .nfs*
@@ -68,33 +78,33 @@ Icon
 ##Github Archives Ignore
 # It's better to unpack these files and commit the raw source because
 # git has its own built in compression methods.
-*.7z
-*.jar
-*.rar
-*.zip
-*.gz
-*.bzip
-*.bz2
-*.xz
-*.lzma
+**.7z
+**.jar
+**.rar
+**.zip
+**.gz
+**.bzip
+**.bz2
+**.xz
+**.lzma
 
 #packing-only formats
-*.iso
-*.tar
+**.iso
+**.tar
 
 #package management formats
-*.dmg
-*.xpi
-*.gem
-*.egg
-*.deb
-*.rpm
+**.dmg
+**.xpi
+**.gem
+**.egg
+**.deb
+**.rpm
 
 ##Github Python Ignore
 *.py[cod]
 
 # C extensions
-*.so
+**.so
 
 # Packages
 *.egg
@@ -130,55 +140,55 @@ nosetests.xml
 
 ##Github C++ ignore
 # Compiled Object files
-*.slo
-*.lo
-*.o
+**.slo
+**.lo
+**.o
 
 # Dependency Files
-*.d
+**.d
 
 # Compiled Dynamic libraries
-*.so
-*.dylib
+**.so
+**.dylib
 
 # Compiled Static libraries
-*.lai
-*.la
-*.a
+**.lai
+**.la
+**.a
 
 ##Github LaTeX Ignore
-*.acn
-*.acr
-*.alg
-*.aux
-*.bbl
-*.blg
-*.dvi
-*.fdb_latexmk
-*.glg
-*.glo
-*.gls
-*.idx
-*.ilg
-*.ind
-*.ist
-*.lof
-*.log
-*.lot
-*.maf
-*.mtc
-*.mtc0
-*.nav
-*.nlo
-*.out
-*.pdfsync
-*.ps
-*.snm
-*.synctex.gz
-*.toc
-*.vrb
-*.xdy
-*.tdo
+**.acn
+**.acr
+**.alg
+**.aux
+**.bbl
+**.blg
+**.dvi
+**.fdb_latexmk
+**.glg
+**.glo
+**.gls
+**.idx
+**.ilg
+**.ind
+**.ist
+**.lof
+**.log
+**.lot
+**.maf
+**.mtc
+**.mtc0
+**.nav
+**.nlo
+**.out
+**.pdfsync
+**.ps
+**.snm
+**.synctex.gz
+**.toc
+**.vrb
+**.xdy
+**.tdo
 
 ##Github Perl Ignore
 blib/

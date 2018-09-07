@@ -1,6 +1,7 @@
 #ifndef PREPAREMINITUPLEVARS
 #define PREPAREMINITUPLEVARS
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -76,43 +77,45 @@ namespace plotterFunctions
 
         void pack(NTupleReader& tr)
         {
-            const bool& passLeptVeto =         tr.getVar<bool>("passLeptVeto");
-            const bool& passMuonVeto =         tr.getVar<bool>("passMuonVeto");
-            const bool& passEleVeto =          tr.getVar<bool>("passEleVeto");
-            const bool& passIsoTrkVeto =       tr.getVar<bool>("passIsoTrkVeto");
-            const bool& passnJets =            tr.getVar<bool>("passnJets");
-            const bool& passdPhis =            tr.getVar<bool>("passdPhis");
-            const bool& passBJets =            tr.getVar<bool>("passBJets");
-            const bool& passMET =              tr.getVar<bool>("passMET");
-            const bool& passMT2 =              tr.getVar<bool>("passMT2");
-            const bool& passHT =               tr.getVar<bool>("passHT");
-            const bool& passTagger =           tr.getVar<bool>("passTagger");
-            const bool& passNoiseEventFilter = tr.getVar<bool>("passNoiseEventFilter");
-            const bool& passBaseline =         tr.getVar<bool>("passBaseline");
-            const bool& passBaselineNoTagMT2 = tr.getVar<bool>("passBaselineNoTagMT2");
-            const bool& passBaselineNoTag =    tr.getVar<bool>("passBaselineNoTag");
-
-            const bool& passLeptVetoZinv =         tr.getVar<bool>("passLeptVetoZinv");
-            const bool& passMuonVetoZinv =         tr.getVar<bool>("passMuonVetoZinv");
-            const bool& passEleVetoZinv =          tr.getVar<bool>("passEleVetoZinv");
-            const bool& passIsoTrkVetoZinv =       tr.getVar<bool>("passIsoTrkVetoZinv");
-            const bool& passnJetsZinv =            tr.getVar<bool>("passnJetsZinv");
-            const bool& passdPhisZinv =            tr.getVar<bool>("passdPhisZinv");
-            const bool& passBJetsZinv =            tr.getVar<bool>("passBJetsZinv");
-            const bool& passMETZinv =              tr.getVar<bool>("passMETZinv");
-            const bool& passMT2Zinv =              tr.getVar<bool>("passMT2Zinv");
-            const bool& passHTZinv =               tr.getVar<bool>("passHTZinv");
-            const bool& passTaggerZinv =           tr.getVar<bool>("passTaggerZinv");
-            const bool& passNoiseEventFilterZinv = tr.getVar<bool>("passNoiseEventFilterZinv");
-            const bool& passBaselineZinv =         tr.getVar<bool>("passBaselineZinv");
-            const bool& passBaselineNoTagMT2Zinv = tr.getVar<bool>("passBaselineNoTagMT2Zinv");
-            const bool& passBaselineNoTagZinv =    tr.getVar<bool>("passBaselineNoTagZinv");
-
-            const bool& passMuZinvSel =            tr.getVar<bool>("passMuZinvSel");
-            const bool& passElMuZinvSel =          tr.getVar<bool>("passElMuZinvSel");
+            // standard
+            const auto& passLeptVeto =              tr.getVar<bool>("passLeptVeto");
+            const auto& passMuonVeto =              tr.getVar<bool>("passMuonVeto");
+            const auto& passEleVeto =               tr.getVar<bool>("passEleVeto");
+            const auto& passIsoTrkVeto =            tr.getVar<bool>("passIsoTrkVeto");
+            const auto& passnJets =                 tr.getVar<bool>("passnJets");
+            const auto& passdPhis =                 tr.getVar<bool>("passdPhis");
+            const auto& passBJets =                 tr.getVar<bool>("passBJets");
+            const auto& passMET =                   tr.getVar<bool>("passMET");
+            const auto& passMT2 =                   tr.getVar<bool>("passMT2");
+            const auto& passHT =                    tr.getVar<bool>("passHT");
+            const auto& passTagger =                tr.getVar<bool>("passTagger");
+            const auto& passNoiseEventFilter =      tr.getVar<bool>("passNoiseEventFilter");
+            const auto& passBaseline =              tr.getVar<bool>("passBaseline");
+            const auto& passBaselineNoTagMT2 =      tr.getVar<bool>("passBaselineNoTagMT2");
+            const auto& passBaselineNoTag =         tr.getVar<bool>("passBaselineNoTag");
+            // Zinv
+            const auto& passLeptVetoZinv =          tr.getVar<bool>("passLeptVetoZinv");
+            const auto& passMuonVetoZinv =          tr.getVar<bool>("passMuonVetoZinv");
+            const auto& passEleVetoZinv =           tr.getVar<bool>("passEleVetoZinv");
+            const auto& passIsoTrkVetoZinv =        tr.getVar<bool>("passIsoTrkVetoZinv");
+            const auto& passnJetsZinv =             tr.getVar<bool>("passnJetsZinv");
+            const auto& passdPhisZinv =             tr.getVar<bool>("passdPhisZinv");
+            const auto& passBJetsZinv =             tr.getVar<bool>("passBJetsZinv");
+            const auto& passMETZinv =               tr.getVar<bool>("passMETZinv");
+            const auto& passMT2Zinv =               tr.getVar<bool>("passMT2Zinv");
+            const auto& passHTZinv =                tr.getVar<bool>("passHTZinv");
+            const auto& passTaggerZinv =            tr.getVar<bool>("passTaggerZinv");
+            const auto& passNoiseEventFilterZinv =  tr.getVar<bool>("passNoiseEventFilterZinv");
+            const auto& passBaselineZinv =          tr.getVar<bool>("passBaselineZinv");
+            const auto& passBaselineNoTagMT2Zinv =  tr.getVar<bool>("passBaselineNoTagMT2Zinv");
+            const auto& passBaselineNoTagZinv =     tr.getVar<bool>("passBaselineNoTagZinv");
+            // ZinvSel
+            const auto& passMuZinvSel =             tr.getVar<bool>("passMuZinvSel");
+            const auto& passElMuZinvSel =           tr.getVar<bool>("passElMuZinvSel");
 
             int cuts = 0;
 
+            // standard
             if(passLeptVeto)         cuts |= BIT_PASSLEPTVETO;
             if(passMuonVeto)         cuts |= BIT_PASSMUONVETO;
             if(passEleVeto)          cuts |= BIT_PASSELEVETO;
@@ -128,7 +131,7 @@ namespace plotterFunctions
             if(passBaseline)         cuts |= BIT_PASSBASELINE;
             if(passBaselineNoTagMT2) cuts |= BIT_PASSBASELINENOTAGMT2;
             if(passBaselineNoTag)    cuts |= BIT_PASSBASELINENOTAG;
-
+            // Zinv
             if(passLeptVetoZinv)         cuts |= BIT_PASSLEPTVETOZINV;
             if(passMuonVetoZinv)         cuts |= BIT_PASSMUONVETOZINV;
             if(passEleVetoZinv)          cuts |= BIT_PASSELEVETOZINV;
@@ -144,7 +147,7 @@ namespace plotterFunctions
             if(passBaselineZinv)         cuts |= BIT_PASSBASELINEZINV;
             if(passBaselineNoTagMT2Zinv) cuts |= BIT_PASSBASELINENOTAGMT2ZINV;
             if(passBaselineNoTagZinv)    cuts |= BIT_PASSBASELINENOTAGZINV;
-
+            // ZinvSel
             if(passMuZinvSel)            cuts |= BIT_PASSMUZINVSEL;
             if(passElMuZinvSel)          cuts |= BIT_PASSELMUZINVSEL;
 
@@ -154,41 +157,41 @@ namespace plotterFunctions
         void unpack(NTupleReader& tr)
         {
             const int& cuts = tr.getVar<int>("cuts");
-
-            tr.registerDerivedVar("passLeptVeto",         static_cast<bool>(cuts & BIT_PASSLEPTVETO));
-            tr.registerDerivedVar("passMuonVeto",         static_cast<bool>(cuts & BIT_PASSMUONVETO));
-            tr.registerDerivedVar("passEleVeto",          static_cast<bool>(cuts & BIT_PASSELEVETO));
-            tr.registerDerivedVar("passIsoTrkVeto",       static_cast<bool>(cuts & BIT_PASSISOTRKVETO));
-            tr.registerDerivedVar("passnJets",            static_cast<bool>(cuts & BIT_PASSNJETS));
-            tr.registerDerivedVar("passdPhis",            static_cast<bool>(cuts & BIT_PASSDPHIS));
-            tr.registerDerivedVar("passBJets",            static_cast<bool>(cuts & BIT_PASSBJETS));
-            tr.registerDerivedVar("passMET",              static_cast<bool>(cuts & BIT_PASSMET));
-            tr.registerDerivedVar("passMT2",              static_cast<bool>(cuts & BIT_PASSMT2));
-            tr.registerDerivedVar("passHT",               static_cast<bool>(cuts & BIT_PASSHT));
-            tr.registerDerivedVar("passTagger",           static_cast<bool>(cuts & BIT_PASSTAGGER));
-            tr.registerDerivedVar("passNoiseEventFilter", static_cast<bool>(cuts & BIT_PASSNOISEEVENTFILTER));
-            tr.registerDerivedVar("passBaseline",         static_cast<bool>(cuts & BIT_PASSBASELINE));
-            tr.registerDerivedVar("passBaselineNoTagMT2", static_cast<bool>(cuts & BIT_PASSBASELINENOTAGMT2));
-            tr.registerDerivedVar("passBaselineNoTag",    static_cast<bool>(cuts & BIT_PASSBASELINENOTAG));
-
-            tr.registerDerivedVar("passLeptVetoZinv",         static_cast<bool>(cuts & BIT_PASSLEPTVETOZINV));
-            tr.registerDerivedVar("passMuonVetoZinv",         static_cast<bool>(cuts & BIT_PASSMUONVETOZINV));
-            tr.registerDerivedVar("passEleVetoZinv",          static_cast<bool>(cuts & BIT_PASSELEVETOZINV));
-            tr.registerDerivedVar("passIsoTrkVetoZinv",       static_cast<bool>(cuts & BIT_PASSISOTRKVETOZINV));
-            tr.registerDerivedVar("passnJetsZinv",            static_cast<bool>(cuts & BIT_PASSNJETSZINV));
-            tr.registerDerivedVar("passdPhisZinv",            static_cast<bool>(cuts & BIT_PASSDPHISZINV));
-            tr.registerDerivedVar("passBJetsZinv",            static_cast<bool>(cuts & BIT_PASSBJETSZINV));
-            tr.registerDerivedVar("passMETZinv",              static_cast<bool>(cuts & BIT_PASSMETZINV));
-            tr.registerDerivedVar("passMT2Zinv",              static_cast<bool>(cuts & BIT_PASSMT2ZINV));
-            tr.registerDerivedVar("passHTZinv",               static_cast<bool>(cuts & BIT_PASSHTZINV));
-            tr.registerDerivedVar("passTaggerZinv",           static_cast<bool>(cuts & BIT_PASSTAGGERZINV));
-            tr.registerDerivedVar("passNoiseEventFilterZinv", static_cast<bool>(cuts & BIT_PASSNOISEEVENTFILTERZINV));
-            tr.registerDerivedVar("passBaselineZinv",         static_cast<bool>(cuts & BIT_PASSBASELINEZINV));
-            tr.registerDerivedVar("passBaselineNoTagMT2Zinv", static_cast<bool>(cuts & BIT_PASSBASELINENOTAGMT2ZINV));
-            tr.registerDerivedVar("passBaselineNoTagZinv",    static_cast<bool>(cuts & BIT_PASSBASELINENOTAGZINV));
-
-            tr.registerDerivedVar("passMuZinvSel",   static_cast<bool>(cuts & BIT_PASSMUZINVSEL));
-            tr.registerDerivedVar("passElMuZinvSel", static_cast<bool>(cuts & BIT_PASSELMUZINVSEL));
+            // standard
+            tr.registerDerivedVar("passLeptVeto",               static_cast<bool>(cuts & BIT_PASSLEPTVETO));
+            tr.registerDerivedVar("passMuonVeto",               static_cast<bool>(cuts & BIT_PASSMUONVETO));
+            tr.registerDerivedVar("passEleVeto",                static_cast<bool>(cuts & BIT_PASSELEVETO));
+            tr.registerDerivedVar("passIsoTrkVeto",             static_cast<bool>(cuts & BIT_PASSISOTRKVETO));
+            tr.registerDerivedVar("passnJets",                  static_cast<bool>(cuts & BIT_PASSNJETS));
+            tr.registerDerivedVar("passdPhis",                  static_cast<bool>(cuts & BIT_PASSDPHIS));
+            tr.registerDerivedVar("passBJets",                  static_cast<bool>(cuts & BIT_PASSBJETS));
+            tr.registerDerivedVar("passMET",                    static_cast<bool>(cuts & BIT_PASSMET));
+            tr.registerDerivedVar("passMT2",                    static_cast<bool>(cuts & BIT_PASSMT2));
+            tr.registerDerivedVar("passHT",                     static_cast<bool>(cuts & BIT_PASSHT));
+            tr.registerDerivedVar("passTagger",                 static_cast<bool>(cuts & BIT_PASSTAGGER));
+            tr.registerDerivedVar("passNoiseEventFilter",       static_cast<bool>(cuts & BIT_PASSNOISEEVENTFILTER));
+            tr.registerDerivedVar("passBaseline",               static_cast<bool>(cuts & BIT_PASSBASELINE));
+            tr.registerDerivedVar("passBaselineNoTagMT2",       static_cast<bool>(cuts & BIT_PASSBASELINENOTAGMT2));
+            tr.registerDerivedVar("passBaselineNoTag",          static_cast<bool>(cuts & BIT_PASSBASELINENOTAG));
+            // Zinv
+            tr.registerDerivedVar("passLeptVetoZinv",           static_cast<bool>(cuts & BIT_PASSLEPTVETOZINV));
+            tr.registerDerivedVar("passMuonVetoZinv",           static_cast<bool>(cuts & BIT_PASSMUONVETOZINV));
+            tr.registerDerivedVar("passEleVetoZinv",            static_cast<bool>(cuts & BIT_PASSELEVETOZINV));
+            tr.registerDerivedVar("passIsoTrkVetoZinv",         static_cast<bool>(cuts & BIT_PASSISOTRKVETOZINV));
+            tr.registerDerivedVar("passnJetsZinv",              static_cast<bool>(cuts & BIT_PASSNJETSZINV));
+            tr.registerDerivedVar("passdPhisZinv",              static_cast<bool>(cuts & BIT_PASSDPHISZINV));
+            tr.registerDerivedVar("passBJetsZinv",              static_cast<bool>(cuts & BIT_PASSBJETSZINV));
+            tr.registerDerivedVar("passMETZinv",                static_cast<bool>(cuts & BIT_PASSMETZINV));
+            tr.registerDerivedVar("passMT2Zinv",                static_cast<bool>(cuts & BIT_PASSMT2ZINV));
+            tr.registerDerivedVar("passHTZinv",                 static_cast<bool>(cuts & BIT_PASSHTZINV));
+            tr.registerDerivedVar("passTaggerZinv",             static_cast<bool>(cuts & BIT_PASSTAGGERZINV));
+            tr.registerDerivedVar("passNoiseEventFilterZinv",   static_cast<bool>(cuts & BIT_PASSNOISEEVENTFILTERZINV));
+            tr.registerDerivedVar("passBaselineZinv",           static_cast<bool>(cuts & BIT_PASSBASELINEZINV));
+            tr.registerDerivedVar("passBaselineNoTagMT2Zinv",   static_cast<bool>(cuts & BIT_PASSBASELINENOTAGMT2ZINV));
+            tr.registerDerivedVar("passBaselineNoTagZinv",      static_cast<bool>(cuts & BIT_PASSBASELINENOTAGZINV));
+            // ZinvSel
+            tr.registerDerivedVar("passMuZinvSel",              static_cast<bool>(cuts & BIT_PASSMUZINVSEL));
+            tr.registerDerivedVar("passElMuZinvSel",            static_cast<bool>(cuts & BIT_PASSELMUZINVSEL));
         }
 
     public:

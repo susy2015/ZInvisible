@@ -1,6 +1,7 @@
 #ifndef TRIGGERINFO_H 
 #define TRIGGERINFO_H 
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -44,7 +45,7 @@ namespace plotterFunctions
         int indexPhotonTrigger;
         bool miniTuple_, noMC_;
 
-        double GetMuonTriggerEff(const double& muEta) 
+        data_t GetMuonTriggerEff(const data_t& muEta) 
         {
             if (-2.6 <= muEta && muEta < -2.2) return 0.7861842;
             else if(-2.2 <= muEta && muEta < -1.8) return 0.8233438;
@@ -62,7 +63,7 @@ namespace plotterFunctions
             else                                   return 0.000;
         }
 
-        double GetTriggerEffWeight(const double& met, const double& ht) 
+        data_t GetTriggerEffWeight(const data_t& met, const data_t& ht) 
         {
             if (ht<1000)
             {
@@ -97,7 +98,7 @@ namespace plotterFunctions
                 else return 0.9736842;
             }
         }
-        double GetTriggerEffStatUncHi(const double& met, const double& ht) 
+        data_t GetTriggerEffStatUncHi(const data_t& met, const data_t& ht) 
         {
             if (ht<1000)
             {
@@ -131,7 +132,7 @@ namespace plotterFunctions
                 else return 0.01697945;
             }
         }
-        double GetTriggerEffStatUncLo(const double& met, const double& ht) 
+        data_t GetTriggerEffStatUncLo(const data_t& met, const data_t& ht) 
         {
             if (ht<1000)
             {
@@ -167,7 +168,7 @@ namespace plotterFunctions
                 else return 0.03365661;
             }
         }
-        double GetTriggerEffSystUncHi(const double& met, const double& ht) 
+        data_t GetTriggerEffSystUncHi(const data_t& met, const data_t& ht) 
         {
             return 0.0;
             /* if (met<100) return 0.0272; */
@@ -178,7 +179,7 @@ namespace plotterFunctions
             /* else if (met<400) return 0.0001;  */
             /* else return 0.0; */
         }
-        double GetTriggerEffSystUncLo(const double& met, const double& ht) 
+        data_t GetTriggerEffSystUncLo(const data_t& met, const data_t& ht) 
         {
             return 0.0;
             /* if (met<100) return 0.0120; */
@@ -281,25 +282,25 @@ namespace plotterFunctions
 
         void triggerInfoMC(NTupleReader& tr)
         {
-            const double& met                            = tr.getVar<double>("cleanMetPt");
-            const double& ht                             = tr.getVar<double>("HTZinv");
+            const data_t& met                            = tr.getVar<data_t>("cleanMetPt");
+            const data_t& ht                             = tr.getVar<data_t>("HTZinv");
             const std::vector<TLorentzVector>& cutMuVec  = tr.getVec<TLorentzVector>("cutMuVec");
 
             // MC trigger efficiencies
-            double triggerEff = GetTriggerEffWeight(met,ht);
-            double triggerEffStatUncUp = GetTriggerEffStatUncHi(met,ht);
-            double triggerEffSystUncUp = GetTriggerEffSystUncHi(met,ht);
-            double triggerEffUncUp     = TMath::Sqrt(triggerEffStatUncUp*triggerEffStatUncUp + triggerEffSystUncUp*triggerEffSystUncUp);
-            double triggerEffStatUncDown = GetTriggerEffStatUncLo(met,ht);
-            double triggerEffSystUncDown = GetTriggerEffSystUncLo(met,ht);
-            double triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
+            data_t triggerEff = GetTriggerEffWeight(met,ht);
+            data_t triggerEffStatUncUp = GetTriggerEffStatUncHi(met,ht);
+            data_t triggerEffSystUncUp = GetTriggerEffSystUncHi(met,ht);
+            data_t triggerEffUncUp     = TMath::Sqrt(triggerEffStatUncUp*triggerEffStatUncUp + triggerEffSystUncUp*triggerEffSystUncUp);
+            data_t triggerEffStatUncDown = GetTriggerEffStatUncLo(met,ht);
+            data_t triggerEffSystUncDown = GetTriggerEffSystUncLo(met,ht);
+            data_t triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
 
             //Calculate muon trigger weights
-            double muTrigWgt = 0.0;
+            data_t muTrigWgt = 0.0;
             if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 50 && cutMuVec[1].Pt() > 50)
             {
-                double muEff1 = GetMuonTriggerEff(cutMuVec[0].Eta());
-                double muEff2 = GetMuonTriggerEff(cutMuVec[1].Eta());
+                data_t muEff1 = GetMuonTriggerEff(cutMuVec[0].Eta());
+                data_t muEff2 = GetMuonTriggerEff(cutMuVec[1].Eta());
 
                 muTrigWgt = 1 - (1 - muEff1)*(1 - muEff2);
             }
