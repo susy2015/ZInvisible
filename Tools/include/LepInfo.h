@@ -101,7 +101,7 @@ namespace plotterFunctions
             auto* genMatchIsoMuInAcc        = new std::vector<TLorentzVector>();
             auto* genMatchMuInAcc           = new std::vector<const TLorentzVector*>();
             auto* genMatchMuInAccRes        = new std::vector<data_t>();
-            auto* genMuInAcc                = new std::vector<const TLorentzVector*>();
+            auto* genMuInAcc                = new std::vector<TLorentzVector>();
             auto* genMu                     = new std::vector<const TLorentzVector*>();
             auto* genMatchIsoMuInAccAct     = new std::vector<data_t>();
             auto* genMatchMuInAccAct        = new std::vector<data_t>();
@@ -221,7 +221,7 @@ namespace plotterFunctions
                         genMuAct->push_back(W_emu_pfActivityVec[index]);
                         if(AnaFunctions::passMuonAccOnly(genDecayLVec[i], AnaConsts::muonsMiniIsoArr) && genDecayLVec[i].Pt() > minMuPt)
                         {
-                            genMuInAcc->push_back(&genDecayLVec[i]);
+                            genMuInAcc->push_back(genDecayLVec[i]);
                             genMuInAccAct->push_back(genMuAct->back());
                             double dRMin = 999.9;
                             double matchPt = -999.9;
