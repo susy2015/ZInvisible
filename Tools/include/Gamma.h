@@ -45,10 +45,10 @@ namespace plotterFunctions
         const auto& gammaLVec            = tr.getVec<TLorentzVector>("gammaLVec");     // reco
         const auto& gammaLVecGen         = tr.getVec<TLorentzVector>("gammaLVecGen");  // gen
         const auto& genPartonLVec        = tr.getVec<TLorentzVector>("genPartonLVec"); // gen parton 
-        const auto& looseID              = tr.getVec<bool>("loosePhotonID");
-        const auto& mediumID             = tr.getVec<bool>("mediumPhotonID");
-        const auto& tightID              = tr.getVec<bool>("tightPhotonID");
-        const auto& extraLooseID         = tr.getVec<int>("extraLooseID");
+        const auto& looseID              = tr.getVec<unsigned int>("loosePhotonID");
+        const auto& mediumID             = tr.getVec<unsigned int>("mediumPhotonID");
+        const auto& tightID              = tr.getVec<unsigned int>("tightPhotonID");
+        const auto& extraLooseID         = tr.getVec<unsigned int>("extraLooseID");
         const auto& sigmaIetaIeta        = tr.getVec<data_t>("sigmaIetaIeta");
         const auto& pfNeutralIsoRhoCorr  = tr.getVec<data_t>("pfNeutralIsoRhoCorr");
         const auto& pfGammaIsoRhoCorr    = tr.getVec<data_t>("pfGammaIsoRhoCorr");

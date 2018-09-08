@@ -41,9 +41,9 @@ namespace plotterFunctions
     private:
         void generateNJetAk8(NTupleReader& tr)
         {
-            const auto& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec"); 
+            const auto& deepAK8LVec  = tr.getVec<TLorentzVector>("deepAK8LVec"); 
             const auto& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
-            // const int& nJetsAk8 = ak8JetsLVec.size();
+            // const int& nJetsAk8 = deepAK8LVec.size();
             // const int& nJetsPuppi = puppiJetsLVec.size();
             //tr.registerDerivedVar("nJetsAk8", nJetsAk8);
             //tr.registerDerivedVar("nJetsPuppi", nJetsPuppi);

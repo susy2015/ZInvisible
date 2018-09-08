@@ -40,7 +40,7 @@ namespace plotterFunctions
      private:
          void generateAk8DrMatch(NTupleReader& tr) {
              const auto& jetsLVec           = tr.getVec<TLorentzVector>("jetsLVec");
-             const auto& ak8JetsLVec        = tr.getVec<TLorentzVector>("ak8JetsLVec");
+             const auto& deepAK8LVec        = tr.getVec<TLorentzVector>("deepAK8LVec");
              const auto& puppiLVectight_top = tr.getVec<TLorentzVector>("puppiLVectight_top");
              const auto& puppiLVecLoose_top = tr.getVec<TLorentzVector>("puppiLVecLoose_top");
              const auto& puppiLVectight_w   = tr.getVec<TLorentzVector>("puppiLVectight_w");
@@ -68,8 +68,8 @@ namespace plotterFunctions
              auto* puppi_top_T_2dRMin = new std::vector<data_t>(); 
              for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
              {
-                 if(ak8JetsLVec.size() >= 1) ak81dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[0]));
-                 if(ak8JetsLVec.size() >= 2) ak82dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[1]));
+                 if(deepAK8LVec.size() >= 1) ak81dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], deepAK8LVec[0]));
+                 if(deepAK8LVec.size() >= 2) ak82dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], deepAK8LVec[1]));
                  //if(puppiLVectight_top.size() >= 1) puppi_top_L_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[0]));
                  //if(puppiLVectight_top.size() >= 2) puppi_top_L_2dRMin ->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVectight_top[1]));
                  //if(puppiLVecLoose_top.size() >= 1) puppi_top_T_1dRMin-> push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], puppiLVecLoose_top[0]));
