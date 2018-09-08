@@ -527,13 +527,14 @@ namespace plotterFunctions
             //printf("ngenElec = %d; ngenElecInAcc = %d; ngenMatchElecInAcc = %d\n", genElec->size(), genElecInAcc->size(), genMatchElecInAcc->size());
 
             data_t bestRecoZPt = bestRecoZ.Pt();
-            data_t cleanMetPt = cleanMet.Pt();
+            data_t cleanMetPt  = cleanMet.Pt();
+            data_t cleanMetPhi = cleanMet.Phi();
             data_t Zrecoptpt = Zrecopt.Pt();
             //data_t cleanMet2Pt = static_cast<data_t>(cleanMet2.Pt());
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
             tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
             tr.registerDerivedVar("cleanMetPt", cleanMetPt);
-            tr.registerDerivedVar("cleanMetPhi", cleanMet.Phi());
+            tr.registerDerivedVar("cleanMetPhi", cleanMetPhi);
             //tr.registerDerivedVar("cleanMet2Pt", cleanMet2Pt);
             tr.registerDerivedVar("genHt", genHt);
             tr.registerDerivedVar("cutMuPt1", cutMuPt1);

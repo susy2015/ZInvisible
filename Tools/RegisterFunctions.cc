@@ -43,7 +43,7 @@ void activateBranches(std::set<std::string>& activeBranches)
     activeBranches.insert("jetsLVec");
     activeBranches.insert("elesLVec");
     activeBranches.insert("elesRelIso");
-    activeBranches.insert("recoJetsBtag_0");
+    activeBranches.insert("recoJetsCSVv2");
     activeBranches.insert("loose_isoTrks_mtw");
     activeBranches.insert("elesMtw");
     activeBranches.insert("loose_isoTrks_iso");

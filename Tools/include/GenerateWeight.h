@@ -59,9 +59,9 @@ namespace plotterFunctions
             const auto& cutElecVec      = tr.getVec<TLorentzVector>("cutElecVec");
             const auto& cutMuActivity   = tr.getVec<data_t>("cutMuActivity");
             const auto& cutElecActivity = tr.getVec<data_t>("cutElecActivity");
-            const auto& genMu           = tr.getVec<TLorentzVector*>("genMu");
-            const auto& genMuInAcc      = tr.getVec<TLorentzVector*>("genMuInAcc");
-            const auto& genMatchMuInAcc = tr.getVec<TLorentzVector*>("genMatchMuInAcc");
+            const auto& genMu           = tr.getVec<const TLorentzVector*>("genMu");
+            const auto& genMuInAcc      = tr.getVec<const TLorentzVector*>("genMuInAcc");
+            const auto& genMatchMuInAcc = tr.getVec<const TLorentzVector*>("genMatchMuInAcc");
 
             const auto& pdgIdZDec       = tr.getVar<int>("pdgIdZDec");
             const auto& passMuZinvSel   = tr.getVar<bool>("passMuZinvSel");
@@ -70,7 +70,8 @@ namespace plotterFunctions
             const auto& bestRecoZPt     = tr.getVar<data_t>("bestRecoZPt");
             const auto& genZPt          = tr.getVar<data_t>("genZPt");
 
-            const auto& nJets           =  tr.getVar<int>("nJets");
+            //const auto& nJets           =  tr.getVar<int>("nJets"); // variable not produced in CMSSW8028_2016 ntuples
+            const auto& nJets           =  tr.getVar<int>("nJets_CUT");
             const auto& stored_weight   = tr.getVar<data_t>("stored_weight");
 
             // Calculate PU weight

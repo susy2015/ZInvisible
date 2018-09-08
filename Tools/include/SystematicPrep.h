@@ -43,7 +43,7 @@ namespace plotterFunctions
         void systematicPrep(NTupleReader& tr)
         {
             const auto& jetsLVec            = tr.getVec<TLorentzVector>("prodJetsNoLep_jetsLVec");
-            const auto& recoJetsJecUnc      = tr.getVec<data_t>("recoJetsJecUncLepCleaned");
+            const auto& recoJetsJecUnc      = tr.getVec<data_t>("prodJetsNoLep_recoJetsJecUnc");
             const auto& metMagUp            = tr.getVec<data_t>("metMagUp");
             const auto& metMagDown          = tr.getVec<data_t>("metMagDown");
             const auto& metPhiUp            = tr.getVec<data_t>("metPhiUp");
