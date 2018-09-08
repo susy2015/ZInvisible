@@ -88,17 +88,17 @@ namespace plotterFunctions
                 //std::cout << "void muInfo(NTupleReader& tr): Caught exception, variable \"" << e << "\" not found" << std::endl;
             }
 
-            auto* genMatchIsoElecInAcc      = new std::vector<const TLorentzVector*>();
-            auto* genMatchElecInAcc         = new std::vector<const TLorentzVector*>();
+            auto* genMatchIsoElecInAcc      = new std::vector<TLorentzVector>();
+            auto* genMatchElecInAcc         = new std::vector<TLorentzVector>();
             auto* genMatchElecInAccRes      = new std::vector<data_t>();
-            auto* genElecInAcc              = new std::vector<const TLorentzVector*>();
-            auto* genElec                   = new std::vector<const TLorentzVector*>();
+            auto* genElecInAcc              = new std::vector<TLorentzVector>();
+            auto* genElec                   = new std::vector<TLorentzVector>();
             auto* genMatchIsoElecInAccAct   = new std::vector<data_t>();
             auto* genMatchElecInAccAct      = new std::vector<data_t>();
             auto* genElecInAccAct           = new std::vector<data_t>();
             auto* genElecAct                = new std::vector<data_t>();
 
-            auto* genMatchIsoMuInAcc        = new std::vector<const TLorentzVector*>();
+            auto* genMatchIsoMuInAcc        = new std::vector<TLorentzVector>();
             auto* genMatchMuInAcc           = new std::vector<const TLorentzVector*>();
             auto* genMatchMuInAccRes        = new std::vector<data_t>();
             auto* genMuInAcc                = new std::vector<const TLorentzVector*>();
@@ -254,7 +254,7 @@ namespace plotterFunctions
                             }
                             if(dRMin < 0.02)
                             {
-                                genMatchIsoMuInAcc->push_back(&genDecayLVec[i]);
+                                genMatchIsoMuInAcc->push_back(genDecayLVec[i]);
                                 genMatchIsoMuInAccAct->push_back(genMuAct->back());
                             }
                         }
@@ -263,11 +263,11 @@ namespace plotterFunctions
                     //Elec efficiency and acceptance
                     if(abs(genDecayPdgIdVec[i]) == 11)
                     {
-                        genElec->push_back(&genDecayLVec[i]);
+                        genElec->push_back(genDecayLVec[i]);
                         genElecAct->push_back(W_emu_pfActivityVec[index]);
                         if(AnaFunctions::passElectronAccOnly(genDecayLVec[i], AnaConsts::elesMiniIsoArr) && genDecayLVec[i].Pt() > minElecPt)
                         {
-                            genElecInAcc->push_back(&genDecayLVec[i]);
+                            genElecInAcc->push_back(genDecayLVec[i]);
                             genElecInAccAct->push_back(genElecAct->back());
                             //printf("genElecInAcc p_t = %f\n", genDecayLVec[i].Pt());
                             double dRMin = 999.9;
@@ -284,7 +284,7 @@ namespace plotterFunctions
                             }
                             if(dRMin < 0.02)
                             {
-                                genMatchElecInAcc->push_back(&genDecayLVec[i]);
+                                genMatchElecInAcc->push_back(genDecayLVec[i]);
                                 genMatchElecInAccAct->push_back(genElecAct->back());
                                 genMatchElecInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
                             }
@@ -301,7 +301,7 @@ namespace plotterFunctions
                             }
                             if(dRMin < 0.02)
                             {
-                                genMatchIsoElecInAcc->push_back(&genDecayLVec[i]);
+                                genMatchIsoElecInAcc->push_back(genDecayLVec[i]);
                                 genMatchIsoElecInAccAct->push_back(genElecAct->back());
                             }
                         }

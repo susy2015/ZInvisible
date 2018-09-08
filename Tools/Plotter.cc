@@ -3,6 +3,7 @@
 #include "MiniTupleMaker.h"
 #include "RegisterFunctions.h"
 
+#include "TypeDefinitions.h"
 #include "TROOT.h"
 #include "TCanvas.h"
 #include "TTree.h"
@@ -247,7 +248,7 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
     double retval = 1.0;
     for(auto& weightName : weightVec_)
     {
-        const double& weight = tr.getVar<double>(weightName);
+        const double& weight = static_cast<double>(tr.getVar<data_t>(weightName));
         //std::cout<<weightName<<std::endl;
         if(weight == weight)
         {
@@ -259,7 +260,7 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
         }
         else
         {
-            std::cout << weightName << "is NAN!!!" << std::endl;
+            std::cout << weightName << " is NAN!!!" << std::endl;
         }
     }
     return retval;
