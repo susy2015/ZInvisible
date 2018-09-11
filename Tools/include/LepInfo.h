@@ -101,6 +101,7 @@ namespace plotterFunctions
             auto* genMatchIsoMuInAcc        = new std::vector<TLorentzVector>();
             auto* genMatchMuInAcc           = new std::vector<const TLorentzVector*>();
             auto* genMatchMuInAccRes        = new std::vector<data_t>();
+            //auto* genMuInAcc                = new std::vector<const TLorentzVector*>();
             auto* genMuInAcc                = new std::vector<TLorentzVector>();
             auto* genMu                     = new std::vector<const TLorentzVector*>();
             auto* genMatchIsoMuInAccAct     = new std::vector<data_t>();
@@ -555,6 +556,7 @@ namespace plotterFunctions
             tr.registerDerivedVec("cutMuActivity", cutMuActivity);
             tr.registerDerivedVec("cutElecActivity", cutElecActivity);
             tr.registerDerivedVec("genMu", genMu);
+            const auto& genMu_test = tr.getVec<const TLorentzVector*>("genMu");
             tr.registerDerivedVar("ngenMu", static_cast<data_t>(genMu->size()));
             tr.registerDerivedVec("genMuInAcc", genMuInAcc);
             tr.registerDerivedVec("genMuAct", genMuAct);

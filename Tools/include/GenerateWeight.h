@@ -60,7 +60,8 @@ namespace plotterFunctions
             const auto& cutMuActivity   = tr.getVec<data_t>("cutMuActivity");
             const auto& cutElecActivity = tr.getVec<data_t>("cutElecActivity");
             const auto& genMu           = tr.getVec<const TLorentzVector*>("genMu");
-            const auto& genMuInAcc      = tr.getVec<const TLorentzVector*>("genMuInAcc");
+            //const auto& genMuInAcc      = tr.getVec<const TLorentzVector*>("genMuInAcc");
+            const auto& genMuInAcc      = tr.getVec<TLorentzVector>("genMuInAcc");
             const auto& genMatchMuInAcc = tr.getVec<const TLorentzVector*>("genMatchMuInAcc");
 
             const auto& pdgIdZDec       = tr.getVar<int>("pdgIdZDec");
@@ -238,7 +239,7 @@ namespace plotterFunctions
             }
 
             double genCleanHt = ht;
-            for(auto& tlvp : genMuInAcc) if(tlvp->Pt() > 50) genCleanHt -= tlvp->Pt();
+            for(auto& tlvp : genMuInAcc) if(tlvp.Pt() > 50) genCleanHt -= tlvp.Pt();
 
             const double MHT_jetPtMin = 30.0;
             TLorentzVector MHT;

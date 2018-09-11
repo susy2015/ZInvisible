@@ -40,9 +40,9 @@ namespace plotterFunctions
     private:
         std::shared_ptr<TopTagger> ttPtr_mine;
         void generateTaudiv(NTupleReader& tr) {
-          const auto& tau1                  = tr.getVec<data_t>("tau1");
-          const auto& tau2                  = tr.getVec<data_t>("tau2");
-          const auto& tau3                  = tr.getVec<data_t>("tau3");
+          //const auto& tau1                  = tr.getVec<data_t>("tau1"); // do not exist in CMSSW8028_2016 ntuples  
+          //const auto& tau2                  = tr.getVec<data_t>("tau2"); // do not exist in CMSSW8028_2016 ntuples
+          //const auto& tau3                  = tr.getVec<data_t>("tau3"); // do not exist in CMSSW8028_2016 ntuples
           const auto& puppitau1             = tr.getVec<data_t>("puppitau1");
           const auto& puppitau2             = tr.getVec<data_t>("puppitau2");
           const auto& puppitau3             = tr.getVec<data_t>("puppitau3");
