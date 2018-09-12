@@ -124,7 +124,7 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     double eyh_2[n];
     double rel_unc_2 = ScaleFactors::sfunc_norm0b()/ScaleFactors::sf_norm0b();
     double e2_temp;
-    std::vector<double> v_uncertainty;
+    std::vector<float> v_uncertainty;
     // loop over bins
     for(int i = 1; i < n+1; ++i)
     {
@@ -333,7 +333,7 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
 
     // Now also make a table containing the information
     std::cout << "begin first info table" << std::endl;
-    std::vector<double> prediction;
+    std::vector<float> prediction;
     const int m = h1->GetNbinsX();
     std::cout << "n bins = " << m << std::endl;
     for(int i=0; i<m; ++i)

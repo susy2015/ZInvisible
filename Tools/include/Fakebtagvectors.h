@@ -41,8 +41,8 @@ namespace plotterFunctions
     private:
         void fakebtagvectors(NTupleReader& tr)
         {
-            const auto& jetsLVecLepCleaned = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const auto& cleanJetpt30ArrBTag = tr.getVec<data_t>("recoJetsBtag_0_LepCleaned");
+            const auto& prodJetsNoLep_jetsLVec = tr.getVec<TLorentzVector>("prodJetsNoLep_jetsLVec");
+            const auto& cleanJetpt30ArrBTag = tr.getVec<data_t>("prodJetsNoLep_recoJetsCSVv2");
 
             double maxCSV = 0.0;
             double secCSV = 0.0;
@@ -51,7 +51,7 @@ namespace plotterFunctions
             int iSecCSV = -1;
             int iTenCSV = -1;
 
-            if(jetsLVecLepCleaned.size() != cleanJetpt30ArrBTag.size()) std::cout << "fakebtagvectors(...): Vector size missmatch!!!!" << std::endl;
+            if(prodJetsNoLep_jetsLVec.size() != cleanJetpt30ArrBTag.size()) std::cout << "fakebtagvectors(...): Vector size missmatch!!!!" << std::endl;
 
             int njet = 0;
 
@@ -59,7 +59,7 @@ namespace plotterFunctions
             for(int i = 0; i < cleanJetpt30ArrBTag.size(); ++i)
             {
                 //Skip jets which cannot pass bTag Acceptance requirements
-                if(!AnaFunctions::jetPassCuts(jetsLVecLepCleaned[i], AnaConsts::bTagArr)) continue;
+                if(!AnaFunctions::jetPassCuts(prodJetsNoLep_jetsLVec[i], AnaConsts::bTagArr)) continue;
 
                 //count possible fake b-jets
                 njet++;

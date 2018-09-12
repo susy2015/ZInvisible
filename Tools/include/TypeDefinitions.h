@@ -4,6 +4,7 @@
 
 // typedef and using both create type aliases
 // typedef has template limitations, but using does not
-using data_t = double;
+//using data_t = double;
+using data_t = float;
 
 #endif

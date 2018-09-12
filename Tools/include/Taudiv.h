@@ -40,16 +40,16 @@ namespace plotterFunctions
     private:
         std::shared_ptr<TopTagger> ttPtr_mine;
         void generateTaudiv(NTupleReader& tr) {
-          const auto& tau1                  = tr.getVec<data_t>("tau1");
-          const auto& tau2                  = tr.getVec<data_t>("tau2");
-          const auto& tau3                  = tr.getVec<data_t>("tau3");
+          //const auto& tau1                  = tr.getVec<data_t>("tau1"); // do not exist in CMSSW8028_2016 ntuples  
+          //const auto& tau2                  = tr.getVec<data_t>("tau2"); // do not exist in CMSSW8028_2016 ntuples
+          //const auto& tau3                  = tr.getVec<data_t>("tau3"); // do not exist in CMSSW8028_2016 ntuples
           const auto& puppitau1             = tr.getVec<data_t>("puppitau1");
           const auto& puppitau2             = tr.getVec<data_t>("puppitau2");
           const auto& puppitau3             = tr.getVec<data_t>("puppitau3");
-          const auto& softDropMass          = tr.getVec<data_t>("softDropMass");
+          //const auto& softDropMass          = tr.getVec<data_t>("softDropMass"); // variable not produced in CMSSW8028_2016 ntuples
           const auto& puppisoftDropMass     = tr.getVec<data_t>("puppisoftDropMass");
           const auto& jetsLVec              = tr.getVec<TLorentzVector>("jetsLVec");
-          const auto& ak8JetsLVec           = tr.getVec<TLorentzVector>("ak8JetsLVec");
+          const auto& deepAK8LVec           = tr.getVec<TLorentzVector>("deepAK8LVec");
           const auto& puppiJetsLVec         = tr.getVec<TLorentzVector>("puppiJetsLVec");
           const auto& genDecayLVec          = tr.getVec<TLorentzVector>("genDecayLVec");
           const auto& genDecayPdgIdVec      = tr.getVec<int>("genDecayPdgIdVec");
@@ -88,7 +88,7 @@ namespace plotterFunctions
           //std::cout<<"Dijet: " << diJet<<std::endl;
           //std::cout<<"Trijet: " << triJet<<std::endl;
           
-          const int& nJetsAk8 = ak8JetsLVec.size(); 
+          const int& nJetsAk8 = deepAK8LVec.size(); 
           const int& nJetsPuppi = puppiJetsLVec.size();
           tr.registerDerivedVar("nJetsAk8", nJetsAk8);
           tr.registerDerivedVar("nJetsPuppi", nJetsPuppi);
@@ -96,9 +96,9 @@ namespace plotterFunctions
           tr.registerDerivedVar("typeDi",diJet);
           tr.registerDerivedVar("typeTri",triJet);
           
-          //for(unsigned int i=1; i< ak8JetsLVec.size(); i++){
+          //for(unsigned int i=1; i< deepAK8LVec.size(); i++){
           //std::cout<<"AK8 size "<<njetsAk8 << std::endl;
-          //std::cout<<"AK8 pt "<<ak8JetsLVec[i].Pt() << std::endl;
+          //std::cout<<"AK8 pt "<<deepAK8LVec[i].Pt() << std::endl;
           //}
            
           if(puppitau2.size()!=0 && puppitau1.size()!=0 && puppitau2.size()==puppitau1.size()){

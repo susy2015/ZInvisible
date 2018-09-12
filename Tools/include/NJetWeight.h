@@ -55,7 +55,8 @@ namespace plotterFunctions
         void generateWeight(NTupleReader& tr)
         {
             const auto& cntNJetsPt30Eta24Zinv   = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
-            const auto& nJets                   =  tr.getVar<int>("nJets");
+            //const auto& nJets                 =  tr.getVar<int>("nJets"); // variable not produced in CMSSW8028_2016 ntuples
+            const auto& nJets                   =  tr.getVar<int>("nJets_CUT");
             const auto& cntCSVSZinv             = tr.getVar<int>("cntCSVSZinv");
 
             data_t wTT = 1.0;

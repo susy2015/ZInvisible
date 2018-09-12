@@ -1,6 +1,7 @@
 #ifndef SYSTEMATICPREP_H
 #define SYSTEMATICPREP_H
 
+#include "TypeDefinitions.h"
 #include "PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -41,8 +42,8 @@ namespace plotterFunctions
 
         void systematicPrep(NTupleReader& tr)
         {
-            const auto& jetsLVec            = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const auto& recoJetsJecUnc      = tr.getVec<data_t>("recoJetsJecUncLepCleaned");
+            const auto& jetsLVec            = tr.getVec<TLorentzVector>("prodJetsNoLep_jetsLVec");
+            const auto& recoJetsJecUnc      = tr.getVec<data_t>("prodJetsNoLep_recoJetsJecUnc");
             const auto& metMagUp            = tr.getVec<data_t>("metMagUp");
             const auto& metMagDown          = tr.getVec<data_t>("metMagDown");
             const auto& metPhiUp            = tr.getVec<data_t>("metPhiUp");
@@ -55,7 +56,7 @@ namespace plotterFunctions
             auto* dPtMet                    = new std::vector<data_t>;
             auto* dPhiMet                   = new std::vector<data_t>;
 
-            double metUp = 0.0, metDn = 99990.0;
+            data_t metUp = 0.0, metDn = 99990.0;
 
             for(int iMet = 0; iMet < metMagUp.size(); ++iMet)
             {

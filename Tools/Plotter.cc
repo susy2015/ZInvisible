@@ -3,6 +3,7 @@
 #include "MiniTupleMaker.h"
 #include "RegisterFunctions.h"
 
+#include "TypeDefinitions.h"
 #include "TROOT.h"
 #include "TCanvas.h"
 #include "TTree.h"
@@ -247,7 +248,7 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
     double retval = 1.0;
     for(auto& weightName : weightVec_)
     {
-        const double& weight = tr.getVar<double>(weightName);
+        const double& weight = static_cast<double>(tr.getVar<data_t>(weightName));
         //std::cout<<weightName<<std::endl;
         if(weight == weight)
         {
@@ -259,7 +260,7 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
         }
         else
         {
-            std::cout << weightName << "is NAN!!!" << std::endl;
+            std::cout << weightName << " is NAN!!!" << std::endl;
         }
     }
     return retval;
@@ -1203,7 +1204,7 @@ void Plotter::plot()
         mark.SetNDC(true);
 
         //Draw CMS mark
-        double x_offset = 0.1;
+        double x_offset = 0.0;
         mark.SetTextAlign(11);
         mark.SetTextSize(0.042 * fontScale * 1.25);
         //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * 1.25 * fontScale);
@@ -1242,17 +1243,40 @@ void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& t
 
     if(type.find("vector") != std::string::npos)
     {
-        if(type.find("*") != std::string::npos)
+        if(type.find("const") != std::string::npos)
         {
-            if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector*>(h, name, tr, weight);
+
+            if(type.find("*") != std::string::npos)
+            {
+                // debug statement
+                //printf("name: %s type: %s\n", name.name.c_str(), type.c_str());
+                if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<const TLorentzVector*>(h, name, tr, weight);
+            }
+            else
+            {
+                if     (type.find("pair")           != std::string::npos) fillHistFromVec<std::pair<double, double>>(h, name, tr, weight);
+                else if(type.find("double")         != std::string::npos) fillHistFromVec<double>(h, name, tr, weight);
+                else if(type.find("unsigned int")   != std::string::npos) fillHistFromVec<unsigned int>(h, name, tr, weight);
+                else if(type.find("int")            != std::string::npos) fillHistFromVec<int>(h, name, tr, weight);
+                else if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector>(h, name, tr, weight);
+            }
         }
         else
         {
-            if     (type.find("pair")           != std::string::npos) fillHistFromVec<std::pair<double, double>>(h, name, tr, weight);
-            else if(type.find("double")         != std::string::npos) fillHistFromVec<double>(h, name, tr, weight);
-            else if(type.find("unsigned int")   != std::string::npos) fillHistFromVec<unsigned int>(h, name, tr, weight);
-            else if(type.find("int")            != std::string::npos) fillHistFromVec<int>(h, name, tr, weight);
-            else if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector>(h, name, tr, weight);
+            if(type.find("*") != std::string::npos)
+            {
+                // debug statement
+                //printf("name: %s type: %s\n", name.name.c_str(), type.c_str());
+                if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector*>(h, name, tr, weight);
+            }
+            else
+            {
+                if     (type.find("pair")           != std::string::npos) fillHistFromVec<std::pair<double, double>>(h, name, tr, weight);
+                else if(type.find("double")         != std::string::npos) fillHistFromVec<double>(h, name, tr, weight);
+                else if(type.find("unsigned int")   != std::string::npos) fillHistFromVec<unsigned int>(h, name, tr, weight);
+                else if(type.find("int")            != std::string::npos) fillHistFromVec<int>(h, name, tr, weight);
+                else if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector>(h, name, tr, weight);
+            }
         }
     }
     else
