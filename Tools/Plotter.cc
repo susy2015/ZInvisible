@@ -1248,7 +1248,8 @@ void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& t
 
             if(type.find("*") != std::string::npos)
             {
-                printf("name: %s type: %s\n", name.name.c_str(), type.c_str());
+                // debug statement
+                //printf("name: %s type: %s\n", name.name.c_str(), type.c_str());
                 if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<const TLorentzVector*>(h, name, tr, weight);
             }
             else
@@ -1264,7 +1265,8 @@ void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& t
         {
             if(type.find("*") != std::string::npos)
             {
-                printf("name: %s type: %s\n", name.name.c_str(), type.c_str());
+                // debug statement
+                //printf("name: %s type: %s\n", name.name.c_str(), type.c_str());
                 if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector*>(h, name, tr, weight);
             }
             else
