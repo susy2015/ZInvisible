@@ -1204,7 +1204,7 @@ void Plotter::plot()
         mark.SetNDC(true);
 
         //Draw CMS mark
-        double x_offset = 0.1;
+        double x_offset = 0.0;
         mark.SetTextAlign(11);
         mark.SetTextSize(0.042 * fontScale * 1.25);
         //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * 1.25 * fontScale);
