@@ -61,7 +61,7 @@ namespace PhotonFunctions
 {
   
   bool passPhoton_ECAL(const TLorentzVector& photon){
-    const double minPt = 100, barrelMax = 1.4442, endcapMin = 1.566, endcapMax = 2.5;
+    const double minPt = 200.0, barrelMax = 1.4442, endcapMin = 1.566, endcapMax = 2.5;
     double perPhotonPt = photon.Pt(), perPhotonEta = photon.Eta();
     return (
              (minPt == -1 || perPhotonPt > minPt) // pt cut

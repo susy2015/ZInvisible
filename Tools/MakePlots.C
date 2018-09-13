@@ -350,9 +350,9 @@ int main(int argc, char* argv[])
     // acceptance = gammaLVecGenAcc / gen (acceptance / MC)
     auto makePDCPhotonAcc     = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("acc")}, {"gammaLVecGen("+var+")", makePDSPhoton("gen")}}); };
     // reco efficiency = promptPhotons / gammaLVecGenAcc (reco / acceptance)
-    auto makePDCPhotonReco = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"promptPhotons("+var+")", makePDSPhoton("reco")}, {"gammaLVecGenAcc("+var+")", makePDSPhoton("acc")}}); };
+    auto makePDCPhotonReco = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoAcc("+var+")", makePDSPhoton("reco")}, {"gammaLVecGenAcc("+var+")", makePDSPhoton("acc")}}); };
     // iso efficiency = gammaLVecGenAccIso / promptPhotons (iso / reco)
-    auto makePDCPhotonIso = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAccIso("+var+")", makePDSPhoton("iso")}, {"promptPhotons("+var+")", makePDSPhoton("reco")}}); };
+    auto makePDCPhotonIso = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecIsoAcc("+var+")", makePDSPhoton("iso")}, {"gammaLVecRecoAcc("+var+")", makePDSPhoton("reco")}}); };
     
 
     // photons gen: gammaLVecGen
