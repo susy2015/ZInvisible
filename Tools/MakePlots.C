@@ -653,7 +653,10 @@ int main(int argc, char* argv[])
             //ratios 
             for (plotStruct& p : plotParamsElec)
             {
-                vh.push_back(PHS("MC_"+p.particle+p.measurement+p.variable+"_"+p.style+"_"+cut.first, {p.dataCollection}, {1, 1}, cut.second, p.nbins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel, p.ratioBool));
+                if (p.style.compare("single") == 0)
+                    vh.push_back(PHS("MC_"+p.particle+p.measurement+p.variable+"_"+p.style+"_"+cut.first, {p.dataCollection}, {1, 2}, cut.second, p.nbins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel, p.ratioBool));
+                else if (p.style.compare("ratio") == 0)
+                    vh.push_back(PHS("MC_"+p.particle+p.measurement+p.variable+"_"+p.style+"_"+cut.first, {p.dataCollection}, {1, 1}, cut.second, p.nbins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel, p.ratioBool));
             }
             
             // // Acceptance
@@ -700,7 +703,10 @@ int main(int argc, char* argv[])
             //ratios 
             for (plotStruct& p : plotParamsMu)
             {
-                vh.push_back(PHS("MC_"+p.particle+p.measurement+p.variable+"_"+p.style+"_"+cut.first, {p.dataCollection}, {1, 1}, cut.second, p.nbins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel, p.ratioBool));
+                if (p.style.compare("single") == 0)
+                    vh.push_back(PHS("MC_"+p.particle+p.measurement+p.variable+"_"+p.style+"_"+cut.first, {p.dataCollection}, {1, 2}, cut.second, p.nbins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel, p.ratioBool));
+                else if (p.style.compare("ratio") == 0)
+                    vh.push_back(PHS("MC_"+p.particle+p.measurement+p.variable+"_"+p.style+"_"+cut.first, {p.dataCollection}, {1, 1}, cut.second, p.nbins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel, p.ratioBool));
             }
             
             //vh.push_back(PHS("MC_ngenMuEff_original_"                   +cut.first,  {dcMC_ngenMatchMuInAcc, dcMC_ngenMuInAcc},       {1, 2}, cut.second, 20, 0, 20, true, false,  "number of muons",  "Events"));
@@ -809,7 +815,10 @@ int main(int argc, char* argv[])
     {
         for (plotStruct& p : plotParamsPhoton)
         {
-            vh.push_back(PHS("MC_"+p.particle+p.measurement+p.variable+"_"+p.style, {p.dataCollection}, {1, 1}, "", p.nbins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel, p.ratioBool));
+            if (p.style.compare("single") == 0)
+                vh.push_back(PHS("MC_"+p.particle+p.measurement+p.variable+"_"+p.style, {p.dataCollection}, {1, 2}, "", p.nbins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel, p.ratioBool));
+            else if (p.style.compare("ratio") == 0)
+                vh.push_back(PHS("MC_"+p.particle+p.measurement+p.variable+"_"+p.style, {p.dataCollection}, {1, 1}, "", p.nbins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel, p.ratioBool));
         }
         
             
