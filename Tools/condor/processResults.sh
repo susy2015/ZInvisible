@@ -107,7 +107,7 @@ echo "- Compiling MakePlots"
 make -j8
 
 echo "- Running MakePlots"
-./makePlots -f -I $resultFile
+./makePlots -flg -I $resultFile
 
 if [[ $? == 0 ]]; then
     echo "  MakePlots was successful"

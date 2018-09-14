@@ -123,7 +123,7 @@ rsync -avz caleb@cmslpc-sl6.fnal.gov:/uscms/home/caleb/nobackup/SusyAnalysis/CMS
 
 Open the root file in TBrowser and click on the directories to view histograms.
 ```
-root histooutput.root
+root histoutput.root
 TBrowser b
 ```
 

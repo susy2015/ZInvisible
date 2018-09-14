@@ -38,8 +38,8 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.txt",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.txt"
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.cfg"
                       ]
 
 
@@ -62,8 +62,8 @@ x509userproxy = $ENV(X509_USER_PROXY)
 #Here is the configuration for the Data/MC validation of the TopTagger 
 filestoTransferTT  = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/simpleAnalyzer",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.txt",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.txt",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.cfg",
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/Legacy_TopTagger.cfg",
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_AllComb.cfg",
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg_trijetOnly.cfg",
@@ -258,7 +258,7 @@ else:
 nFilesPerJob = options.numfile
 
 fileParts = [submitFile]
-sc = SampleCollection("../sampleSets.txt", "../sampleCollections.txt")
+sc = SampleCollection("../sampleSets.cfg", "../sampleCollections.cfg")
 datasets = []
 
 if options.dataCollections or options.dataCollectionslong:
