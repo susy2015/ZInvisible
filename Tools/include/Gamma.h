@@ -64,7 +64,7 @@ namespace plotterFunctions
         const auto& looseID              = tr.getVec<unsigned int>("loosePhotonID");
         const auto& mediumID             = tr.getVec<unsigned int>("mediumPhotonID");
         const auto& tightID              = tr.getVec<unsigned int>("tightPhotonID");
-        const auto& fullID               = tr.getVec<unsigned int>("fullPhotonID");
+        //const auto& fullID               = tr.getVec<unsigned int>("fullID"); // not in CMSSW8028_2016 right now
         const auto& extraLooseID         = tr.getVec<unsigned int>("extraLooseID");
         const auto& genMatched           = tr.getVec<data_t>("genMatched");
         const auto& sigmaIetaIeta        = tr.getVec<data_t>("sigmaIetaIeta");
@@ -159,6 +159,7 @@ namespace plotterFunctions
         tr.registerDerivedVar("passDirect", directPhotons->size() >= 1);
         tr.registerDerivedVar("passFragmentation", fragmentationQCD->size() >= 1);
         tr.registerDerivedVec("gammaLVecGenAcc",gammaLVecGenAcc);
+        tr.registerDerivedVec("gammaLVecRecoAcc",gammaLVecRecoAcc);
         tr.registerDerivedVec("gammaLVecIsoAcc",gammaLVecIsoAcc);
         tr.registerDerivedVec("cutPhotons",loosePhotons);
         tr.registerDerivedVec("totalPhotons",totalPhotons);
