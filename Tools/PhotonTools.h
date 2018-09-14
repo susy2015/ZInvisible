@@ -65,7 +65,7 @@ namespace PhotonFunctions
     double perPhotonPt = photon.Pt(), perPhotonEta = photon.Eta();
     return (
              (minPt == -1 || perPhotonPt > minPt) // pt cut
-             && (barrelMax == -1 || fabs(perPhotonEta) < barrelMax) // within barrel
+             && (barrelMax == -1 || fabs(perPhotonEta) < barrelMax)    // within barrel
              || (  
                    (endcapMin == -1 || fabs(perPhotonEta) > endcapMin) // within endcap
                 && (endcapMax == -1 || fabs(perPhotonEta) < endcapMax) // within endcap

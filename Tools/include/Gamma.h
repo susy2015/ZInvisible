@@ -103,7 +103,11 @@ namespace plotterFunctions
 
         //Select reco photons within the ECAL acceptance region and Pt > 200 GeV 
         for(int i = 0; i < gammaLVec.size(); ++i) {
-          if (PhotonFunctions::passPhoton_ECAL(gammaLVec[i]) && bool(genMatched[i])) 
+          if (   
+                 PhotonFunctions::passPhoton_PtEta(gammaLVec[i])
+              && PhotonFunctions::passPhoton_ECAL(gammaLVec[i])
+              && bool(genMatched[i])
+              ) 
           {
             gammaLVecRecoAcc->push_back(gammaLVec[i]);
             //Select iso photons passing passAcc, passIDLoose and passIsoLoose
