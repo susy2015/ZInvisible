@@ -169,6 +169,10 @@ You can check your condor priority with this command (assuming you have a job ru
 ```
 condor_userprio
 ```
+You can watch your condor job with this command.
+```
+watch "condor_q | tail"
+```
 Users with lower priority have their jobs done first. It is better to have a lower priority.
 
 Your condor jobs should produce log, stdout, and stderr files for each job in the logs directory. You can check these for errors.
