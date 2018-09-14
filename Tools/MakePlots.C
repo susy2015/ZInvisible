@@ -218,8 +218,8 @@ int main(int argc, char* argv[])
     double maxMassElec = TMath::Power(10.0, -3);
     double minMassMu = 0.0;
     double maxMassMu = 0.2;
-    double minMassPhoton = -1.0 * TMath::Power(10.0, -6);
-    double maxMassPhoton = TMath::Power(10.0, -6);
+    double minMassPhoton = -1.0 * TMath::Power(10.0, -3);
+    double maxMassPhoton = TMath::Power(10.0, -3);
     double minEta = -5.0;
     double maxEta = 5.0;
     double minPhi = -1.0 * TMath::Pi();
