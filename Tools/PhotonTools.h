@@ -106,6 +106,23 @@ namespace PhotonFunctions
    //        );
   }
   
+  bool isRecoMatched(const TLorentzVector& photon, std::vector<TLorentzVector> recoPhotons)
+  {
+    bool recoMatched = false;
+    double genPt = photon.Pt();
+    for(int i = 0; i < recoPhotons.size(); i++)
+    {
+      double deltaR = ROOT::Math::VectorUtil::DeltaR(photon, recoPhotons[i]);
+      double recoPt = recoPhotons[i].Pt();
+      double ptRatio = genPt / recoPt; 
+      if (ptRatio > 0.5 && ptRatio < 2.0 && deltaR < 0.1)
+      {
+        recoMatched = true;
+        break;
+      }
+    }
+    return recoMatched;
+  }
 
   bool isGenMatched_Method1(const TLorentzVector& photon, std::vector<TLorentzVector> genPhoton){
     double RecoPt = photon.Pt();
@@ -131,8 +148,8 @@ namespace PhotonFunctions
     //if (match) std::cout << "pass"<< std::endl << std::endl;
     //else std::cout << "fake"<< std::endl << std::endl;
       return match;
-    
   }
+
   bool isGenMatched_Method2(const TLorentzVector& photon, std::vector<TLorentzVector> genPhoton){
     bool match = false;
     double dRMin = 999.9;
