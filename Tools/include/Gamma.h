@@ -82,6 +82,7 @@ namespace plotterFunctions
         //variables to be used in the analysis code
         double photonPtCut = 200.0;
         double photonMet = -999.9;
+        auto* gammaLVecGenPtCut  = new std::vector<TLorentzVector>(); 
         auto* gammaLVecGenAcc    = new std::vector<TLorentzVector>(); 
         auto* gammaLVecRecoAcc   = new std::vector<TLorentzVector>();
         auto* gammaLVecIsoAcc    = new std::vector<TLorentzVector>(); 
@@ -94,10 +95,11 @@ namespace plotterFunctions
         auto* directPhotons      = new std::vector<TLorentzVector>();
         auto* totalPhotons       = new std::vector<TLorentzVector>();
 
-        //Pass cuts that were not applied in the ntuple
+        //Pass cuts; use some variables from ntuples
         
         //Select gen photons passing pt and eta cuts 
         for(int i = 0; i < gammaLVecGen.size(); ++i) {
+          if (PhotonFunctions::passPhoton_Pt(gammaLVecGen[i]))    gammaLVecGenPtCut->push_back(gammaLVecGen[i]);
           if (PhotonFunctions::passPhoton_PtEta(gammaLVecGen[i])) gammaLVecGenAcc->push_back(gammaLVecGen[i]);
         }
 

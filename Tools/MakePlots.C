@@ -268,9 +268,11 @@ int main(int argc, char* argv[])
     std::string label_genTopPt = "gen top p_{T} [GeV]";
     std::string label_phopt = "p_{T}^{#gamma} [GeV]";
     std::string label_metg = "p_{T}^{#gamma (miss)} [GeV]";
+    std::string label_ptcut_single = "ptcut & gen";
     std::string label_acc_single = "acc & gen";
     std::string label_reco_single = "reco & acc";
     std::string label_iso_single = "iso & reco";
+    std::string label_ptcut_ratio = "ptcut/gen";
     std::string label_acc_ratio = "acc/gen";
     std::string label_reco_ratio = "reco/acc";
     std::string label_iso_ratio = "iso/reco";
@@ -357,6 +359,9 @@ int main(int argc, char* argv[])
     auto makePDCElecIso_ratio  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso over reco")}, {"genMatchElecInAcc("+var+")", makePDSElec("e iso over reco")}}); };
     auto makePDCMuIso_ratio    = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}}); };
     // photons
+    // only passing pt cut: ratio = gammaLVecGenPtCut / gammaLVecGen
+    auto makePDCPhotonPtCut_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenPtCut("+var+")", makePDSPhoton("acc")},           {"gammaLVecGen("+var+")", makePDSPhoton("gen")}}); };
+    auto makePDCPhotonPtCut_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenPtCut("+var+")", makePDSPhoton("acc over gen")},  {"gammaLVecGen("+var+")", makePDSPhoton("acc over gen")}}); };
     // acceptance = gammaLVecGenAcc / gammaLVecGen (acc / gen)
     auto makePDCPhotonAcc_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("acc")},           {"gammaLVecGen("+var+")", makePDSPhoton("gen")}}); };
     auto makePDCPhotonAcc_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("acc over gen")},  {"gammaLVecGen("+var+")", makePDSPhoton("acc over gen")}}); };
@@ -601,6 +606,17 @@ int main(int argc, char* argv[])
     
     std::vector<plotStruct> plotParamsPhoton;
     
+    // pt cut
+    plotParamsPhoton.push_back({"Photon", "PtCut", "Pt",     makePDCPhotonPtCut_single("pt","single"),  "single", nBins, minPt, maxPt, true, false, label_PhotonPt, label_ptcut_single, true});
+    plotParamsPhoton.push_back({"Photon", "PtCut", "Energy", makePDCPhotonPtCut_single("E","single"),   "single", nBins, minEnergy, maxEnergy, true, false, label_PhotonEnergy, label_ptcut_single, true});
+    plotParamsPhoton.push_back({"Photon", "PtCut", "Mass",   makePDCPhotonPtCut_single("M","single"),   "single", nBins, minMassPhoton, maxMassPhoton, false, false, label_PhotonMass, label_ptcut_single, true});
+    plotParamsPhoton.push_back({"Photon", "PtCut", "Eta",    makePDCPhotonPtCut_single("eta","single"), "single", nBins, minEta, maxEta, false, false, label_PhotonEta, label_ptcut_single, true});
+    plotParamsPhoton.push_back({"Photon", "PtCut", "Phi",    makePDCPhotonPtCut_single("phi","single"), "single", nBins, minPhi, maxPhi, false, false, label_PhotonPhi, label_ptcut_single, true});
+    plotParamsPhoton.push_back({"Photon", "PtCut", "Pt",     makePDCPhotonPtCut_ratio("pt","ratio"),    "ratio",  nBins, minPt, maxPt, false, false, label_PhotonPt, label_ptcut_ratio, true});
+    plotParamsPhoton.push_back({"Photon", "PtCut", "Energy", makePDCPhotonPtCut_ratio("E","ratio"),     "ratio",  nBins, minEnergy, maxEnergy, false, false, label_PhotonEnergy, label_ptcut_ratio, true});
+    plotParamsPhoton.push_back({"Photon", "PtCut", "Mass",   makePDCPhotonPtCut_ratio("M","ratio"),     "ratio",  nBins, minMassPhoton, maxMassPhoton, false, false, label_PhotonMass, label_ptcut_ratio, true});
+    plotParamsPhoton.push_back({"Photon", "PtCut", "Eta",    makePDCPhotonPtCut_ratio("eta","ratio"),   "ratio",  nBins, minEta, maxEta, false, false, label_PhotonEta, label_ptcut_ratio, true});
+    plotParamsPhoton.push_back({"Photon", "PtCut", "Phi",    makePDCPhotonPtCut_ratio("phi","ratio"),   "ratio",  nBins, minPhi, maxPhi, false, false, label_PhotonPhi, label_ptcut_ratio, true});
     // Acc
     plotParamsPhoton.push_back({"Photon", "Acc", "Pt",     makePDCPhotonAcc_single("pt","single"),  "single", nBins, minPt, maxPt, true, false, label_PhotonPt, label_acc_single, true});
     plotParamsPhoton.push_back({"Photon", "Acc", "Energy", makePDCPhotonAcc_single("E","single"),   "single", nBins, minEnergy, maxEnergy, true, false, label_PhotonEnergy, label_acc_single, true});
