@@ -49,7 +49,6 @@ namespace plotterFunctions
           //const auto& softDropMass          = tr.getVec<data_t>("softDropMass"); // variable not produced in CMSSW8028_2016 ntuples
           const auto& puppisoftDropMass     = tr.getVec<data_t>("puppisoftDropMass");
           const auto& jetsLVec              = tr.getVec<TLorentzVector>("jetsLVec");
-          const auto& deepAK8LVec           = tr.getVec<TLorentzVector>("deepAK8LVec");
           const auto& puppiJetsLVec         = tr.getVec<TLorentzVector>("puppiJetsLVec");
           const auto& genDecayLVec          = tr.getVec<TLorentzVector>("genDecayLVec");
           const auto& genDecayPdgIdVec      = tr.getVec<int>("genDecayPdgIdVec");
@@ -88,7 +87,7 @@ namespace plotterFunctions
           //std::cout<<"Dijet: " << diJet<<std::endl;
           //std::cout<<"Trijet: " << triJet<<std::endl;
           
-          const int& nJetsAk8 = deepAK8LVec.size(); 
+          const int& nJetsAk8 = puppiJetsLVec.size(); 
           const int& nJetsPuppi = puppiJetsLVec.size();
           tr.registerDerivedVar("nJetsAk8", nJetsAk8);
           tr.registerDerivedVar("nJetsPuppi", nJetsPuppi);
@@ -96,9 +95,9 @@ namespace plotterFunctions
           tr.registerDerivedVar("typeDi",diJet);
           tr.registerDerivedVar("typeTri",triJet);
           
-          //for(unsigned int i=1; i< deepAK8LVec.size(); i++){
+          //for(unsigned int i=1; i< puppiJetsLVec.size(); i++){
           //std::cout<<"AK8 size "<<njetsAk8 << std::endl;
-          //std::cout<<"AK8 pt "<<deepAK8LVec[i].Pt() << std::endl;
+          //std::cout<<"AK8 pt "<<puppiJetsLVec[i].Pt() << std::endl;
           //}
            
           if(puppitau2.size()!=0 && puppitau1.size()!=0 && puppitau2.size()==puppitau1.size()){
