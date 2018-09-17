@@ -99,15 +99,15 @@ namespace plotterFunctions
         
         //Select gen photons passing pt and eta cuts 
         for(int i = 0; i < gammaLVecGen.size(); ++i) {
-          if (PhotonFunctions::passPhoton_Pt(gammaLVecGen[i]))    gammaLVecGenPtCut->push_back(gammaLVecGen[i]);
-          if (PhotonFunctions::passPhoton_PtEta(gammaLVecGen[i])) gammaLVecGenAcc->push_back(gammaLVecGen[i]);
+          if (PhotonFunctions::passPhotonPt(gammaLVecGen[i]))    gammaLVecGenPtCut->push_back(gammaLVecGen[i]);
+          if (PhotonFunctions::passPhotonPtEta(gammaLVecGen[i])) gammaLVecGenAcc->push_back(gammaLVecGen[i]);
         }
 
         //Select reco photons within the ECAL acceptance region and Pt > 200 GeV 
         for(int i = 0; i < gammaLVec.size(); ++i) {
           if (   
-                 PhotonFunctions::passPhoton_PtEta(gammaLVec[i])
-              && PhotonFunctions::passPhoton_ECAL(gammaLVec[i])
+                 PhotonFunctions::passPhotonPtEta(gammaLVec[i])
+              && PhotonFunctions::passPhotonECAL(gammaLVec[i])
               && bool(genMatched[i])
               ) 
           {

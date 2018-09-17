@@ -60,33 +60,20 @@ namespace PhotonConsts
 namespace PhotonFunctions
 {
   
-  bool passPhoton_ECAL(const TLorentzVector& photon){
-    const double minPt = 200.0, barrelMax = 1.4442, endcapMin = 1.566, endcapMax = 2.5;
-    double perPhotonPt = photon.Pt(), perPhotonEta = photon.Eta();
-    return (
-             (minPt == -1 || perPhotonPt > minPt) // pt cut
-             && (barrelMax == -1 || fabs(perPhotonEta) < barrelMax)    // within barrel
-             || (  
-                   (endcapMin == -1 || fabs(perPhotonEta) > endcapMin) // within endcap
-                && (endcapMax == -1 || fabs(perPhotonEta) < endcapMax) // within endcap
-                )
-           );
-  }
-  
-  bool passPhoton_Pt(const TLorentzVector& photon){
+  bool passPhotonPt(const TLorentzVector& photon){
     const double minPt = 200.0;
     double perPhotonPt = photon.Pt();
-    return (perPhotonPt > minPt); // pt cut
+    return ( perPhotonPt > minPt ); // pt cut
   }
 
-  bool passPhoton_PtEta(const TLorentzVector& photon){
-    const double minPt = 200.0;
+  bool passPhotonEta(const TLorentzVector& photon){
     const double maxEta = 2.5;
-    double perPhotonPt = photon.Pt(), perPhotonEta = photon.Eta();
-    return (
-                (perPhotonPt > minPt)         // pt cut
-             && (fabs(perPhotonEta) < maxEta) // eta cut
-           );
+    double perPhotonEta = photon.Eta();
+    return ( fabs(perPhotonEta) < maxEta ); // eta cut
+  }
+
+  bool passPhotonPtEta(const TLorentzVector& photon){
+    return (passPhotonPt(photon) && passPhotonEta(photon));
   }
 
   bool isBarrelECAL(const TLorentzVector& photon){
@@ -101,6 +88,24 @@ namespace PhotonFunctions
     return (endcapMin == -1 || fabs(perPhotonEta) >= endcapMin)
       || (endcapMax == -1 || fabs(perPhotonEta) <= endcapMax);
   }
+  
+  bool passPhotonECAL(const TLorentzVector& photon){
+    return (
+                passPhotonPtEta(photon)
+             && (isBarrelECAL(photon) || isEndcapECAL(photon))
+        );
+   // const double minPt = 200.0, barrelMax = 1.4442, endcapMin = 1.566, endcapMax = 2.5;
+   // double perPhotonPt = photon.Pt(), perPhotonEta = photon.Eta();
+   // return (
+   //          (minPt == -1 || perPhotonPt > minPt) // pt cut
+   //          && (barrelMax == -1 || fabs(perPhotonEta) < barrelMax)    // within barrel
+   //          || (  
+   //                (endcapMin == -1 || fabs(perPhotonEta) > endcapMin) // within endcap
+   //             && (endcapMax == -1 || fabs(perPhotonEta) < endcapMax) // within endcap
+   //             )
+   //        );
+  }
+  
 
   bool isGenMatched_Method1(const TLorentzVector& photon, std::vector<TLorentzVector> genPhoton){
     double RecoPt = photon.Pt();
