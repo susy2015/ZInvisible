@@ -344,28 +344,28 @@ int main(int argc, char* argv[])
     // acceptance = genInAcc / gen (acceptance / MC)
     auto makePDCElecAcc_single = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genElecInAcc("+var+")", makePDSElec("e acc")}, {"genElec("+var+")", makePDSElec("e gen")}}); };
     auto makePDCMuAcc_single   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMuInAcc("+var+")",   makePDSMu("#mu acc")}, {"genMu("+var+")",   makePDSMu("#mu gen")}}); };
-    auto makePDCElecAcc_ratio = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genElecInAcc("+var+")", makePDSElec("e acc/gen")}, {"genElec("+var+")", makePDSElec("e acc/gen")}}); };
-    auto makePDCMuAcc_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMuInAcc("+var+")",   makePDSMu("#mu acc/gen")}, {"genMu("+var+")",   makePDSMu("#mu acc/gen")}}); };
+    auto makePDCElecAcc_ratio = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genElecInAcc("+var+")", makePDSElec("e acc over gen")}, {"genElec("+var+")", makePDSElec("e acc over gen")}}); };
+    auto makePDCMuAcc_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMuInAcc("+var+")",   makePDSMu("#mu acc over gen")}, {"genMu("+var+")",   makePDSMu("#mu acc over gen")}}); };
     // reco efficiency = genMatchInAcc / genInAcc (reco / acceptance)
     auto makePDCElecReco_single = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchElecInAcc("+var+")", makePDSElec("e reco")}, {"genElecInAcc("+var+")", makePDSElec("e acc")}}); };
     auto makePDCMuReco_single   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco")}, {"genMuInAcc("+var+")",   makePDSMu("#mu acc")}}); };
-    auto makePDCElecReco_ratio = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchElecInAcc("+var+")", makePDSElec("e reco/acc")}, {"genElecInAcc("+var+")", makePDSElec("e reco/acc")}}); };
-    auto makePDCMuReco_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco/acc")}, {"genMuInAcc("+var+")",   makePDSMu("#mu reco/acc")}}); };
+    auto makePDCElecReco_ratio = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchElecInAcc("+var+")", makePDSElec("e reco over acc")}, {"genElecInAcc("+var+")", makePDSElec("e reco over acc")}}); };
+    auto makePDCMuReco_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco over acc")}, {"genMuInAcc("+var+")",   makePDSMu("#mu reco over acc")}}); };
     // iso efficiency = genMatchIsoInAcc / genMatchInAcc (iso / reco)
     auto makePDCElecIso_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso")}, {"genMatchElecInAcc("+var+")", makePDSElec("e reco")}}); };
     auto makePDCMuIso_single    = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco")}}); };
-    auto makePDCElecIso_ratio  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso/reco")}, {"genMatchElecInAcc("+var+")", makePDSElec("e iso/reco")}}); };
-    auto makePDCMuIso_ratio    = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso/reco")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu iso/reco")}}); };
+    auto makePDCElecIso_ratio  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso over reco")}, {"genMatchElecInAcc("+var+")", makePDSElec("e iso over reco")}}); };
+    auto makePDCMuIso_ratio    = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}}); };
     // photons
     // acceptance = gammaLVecGenAcc / gen (acceptance / MC)
     auto makePDCPhotonAcc_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("acc")}, {"gammaLVecGen("+var+")", makePDSPhoton("gen")}}); };
-    auto makePDCPhotonAcc_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("acc/gen")}, {"gammaLVecGen("+var+")", makePDSPhoton("acc/gen")}}); };
+    auto makePDCPhotonAcc_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("acc over gen")}, {"gammaLVecGen("+var+")", makePDSPhoton("acc over gen")}}); };
     // reco efficiency = promptPhotons / gammaLVecGenAcc (reco / acceptance)
     auto makePDCPhotonReco_single = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoAcc("+var+")", makePDSPhoton("reco")}, {"gammaLVecGenAcc("+var+")", makePDSPhoton("acc")}}); };
-    auto makePDCPhotonReco_ratio  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoAcc("+var+")", makePDSPhoton("reco/acc")}, {"gammaLVecGenAcc("+var+")", makePDSPhoton("reco/acc")}}); };
+    auto makePDCPhotonReco_ratio  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoAcc("+var+")", makePDSPhoton("reco over acc")}, {"gammaLVecGenAcc("+var+")", makePDSPhoton("reco over acc")}}); };
     // iso efficiency = gammaLVecGenAccIso / promptPhotons (iso / reco)
     auto makePDCPhotonIso_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecIsoAcc("+var+")", makePDSPhoton("iso")}, {"gammaLVecRecoAcc("+var+")", makePDSPhoton("reco")}}); };
-    auto makePDCPhotonIso_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecIsoAcc("+var+")", makePDSPhoton("iso/reco")}, {"gammaLVecRecoAcc("+var+")", makePDSPhoton("iso/reco")}}); };
+    auto makePDCPhotonIso_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecIsoAcc("+var+")", makePDSPhoton("iso over reco")}, {"gammaLVecRecoAcc("+var+")", makePDSPhoton("iso over reco")}}); };
     
 
     // photons gen: gammaLVecGen
