@@ -360,8 +360,8 @@ int main(int argc, char* argv[])
     auto makePDCMuIso_ratio    = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}}); };
     // photons
     // only passing pt cut: ratio = gammaLVecGenPtCut / gammaLVecGen
-    auto makePDCPhotonPtCut_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenPtCut("+var+")", makePDSPhoton("acc")},           {"gammaLVecGen("+var+")", makePDSPhoton("gen")}}); };
-    auto makePDCPhotonPtCut_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenPtCut("+var+")", makePDSPhoton("acc over gen")},  {"gammaLVecGen("+var+")", makePDSPhoton("acc over gen")}}); };
+    auto makePDCPhotonPtCut_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("acc")},                {"gammaLVecGenPtCut("+var+")", makePDSPhoton("genPtCut")}}); };
+    auto makePDCPhotonPtCut_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("acc over genPtCut")},  {"gammaLVecGenPtCut("+var+")", makePDSPhoton("acc over genPtCut")}}); };
     // acceptance = gammaLVecGenAcc / gammaLVecGen (acc / gen)
     auto makePDCPhotonAcc_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("acc")},           {"gammaLVecGen("+var+")", makePDSPhoton("gen")}}); };
     auto makePDCPhotonAcc_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("acc over gen")},  {"gammaLVecGen("+var+")", makePDSPhoton("acc over gen")}}); };
