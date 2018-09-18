@@ -79,6 +79,9 @@ namespace plotterFunctions
         const auto& nbJets               = tr.getVar<int>("cntCSVS");
         const auto& ntops                = tr.getVar<int>("nTopCandSortedCnt");
 
+        // toggle debugging print statements
+        bool debug = false;
+
         //variables to be used in the analysis code
         double photonPtCut = 200.0;
         double photonMet = -999.9;
@@ -142,6 +145,8 @@ namespace plotterFunctions
           if (PhotonFunctions::passPhotonEta(gammaLVec[i]))
           {
             // passing ECAL barrel/endcap eta cuts and reco match
+            // this needs to be done prior to any other cuts (pt, gen matched, etc)
+            // this cut should match passAcc which is done in StopTupleMaker/SkimsAUX/plugins/PhotonIDisoProducer.cc
             if (PhotonFunctions::passPhotonECAL(gammaLVec[i])) 
             {
               gammaLVecRecoAcc->push_back(gammaLVec[i]);
@@ -161,9 +166,10 @@ namespace plotterFunctions
         if (gammaLVecRecoAcc->size() != loosePhotonID.size())   passed = false;
         if (gammaLVecRecoAcc->size() != mediumPhotonID.size())  passed = false;
         if (gammaLVecRecoAcc->size() != tightPhotonID.size())   passed = false;
-        printf("gen reco genMatched extraLooseID loosePhotonID mediumPhotonID tightPhotonID: %d %d --- %d %d %d %d %d --- %s\n", \
-          int(gammaLVecGen.size()), int(gammaLVecRecoAcc->size()), int(genMatched.size()), int(extraLooseID.size()),      \
-          int(loosePhotonID.size()), int(mediumPhotonID.size()), int(tightPhotonID.size()), passed ? "pass" : "fail");
+        if (debug) // print debugging statements
+          printf("gen reco genMatched extraLooseID loosePhotonID mediumPhotonID tightPhotonID: %d %d --- %d %d %d %d %d --- %s\n", \
+            int(gammaLVecGen.size()), int(gammaLVecRecoAcc->size()), int(genMatched.size()), int(extraLooseID.size()),      \
+            int(loosePhotonID.size()), int(mediumPhotonID.size()), int(tightPhotonID.size()), passed ? "pass" : "fail");
 
         //Select reco photons within the ECAL acceptance region and Pt > 200 GeV 
         for(int i = 0; i < gammaLVec.size(); ++i) {
