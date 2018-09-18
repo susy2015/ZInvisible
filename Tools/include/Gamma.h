@@ -98,12 +98,11 @@ namespace plotterFunctions
         auto* totalPhotons              = new std::vector<TLorentzVector>();
 
         // check vector lengths
-        std::string message = "";
-        if (gammaLVec.size() == extraLooseID.size())
-          message = "pass";
-        else
-          message = "fail";
-        printf("sizes: %d %d %d --- %s\n", int(gammaLVecGen.size()), int(gammaLVec.size()), int(extraLooseID.size()), message.c_str());
+        bool passed = false;
+        if (gammaLVec.size() == genMatched.size() && gammaLVec.size() == extraLooseID.size())
+          passed = true;
+        printf("gen reco genMatched extraLooseID: %d %d %d %d --- %s\n", int(gammaLVecGen.size()), int(gammaLVec.size()), \
+                                                                         int(genMatched.size()), int(extraLooseID.size()), passed ? "pass" : "fail");
         //Pass cuts; use some variables from ntuples
         
         //Select gen photons
