@@ -61,10 +61,10 @@ namespace plotterFunctions
         const auto& gammaLVec            = tr.getVec<TLorentzVector>("gammaLVec");     // reco photon
         const auto& gammaLVecGen         = tr.getVec<TLorentzVector>("gammaLVecGen");  // gen photon
         const auto& genPartonLVec        = tr.getVec<TLorentzVector>("genPartonLVec"); // gen parton 
-        const auto& looseID              = tr.getVec<unsigned int>("loosePhotonID");
-        const auto& mediumID             = tr.getVec<unsigned int>("mediumPhotonID");
-        const auto& tightID              = tr.getVec<unsigned int>("tightPhotonID");
-        //const auto& fullID               = tr.getVec<unsigned int>("fullID"); // not in CMSSW8028_2016 right now
+        const auto& loosePhotonID        = tr.getVec<unsigned int>("loosePhotonID");
+        const auto& mediumPhotonID       = tr.getVec<unsigned int>("mediumPhotonID");
+        const auto& tightPhotonID        = tr.getVec<unsigned int>("tightPhotonID");
+        //const auto& fullID              = tr.getVec<unsigned int>("fullID"); // not in CMSSW8028_2016 right now
         const auto& extraLooseID         = tr.getVec<unsigned int>("extraLooseID");
         const auto& genMatched           = tr.getVec<data_t>("genMatched");
         const auto& sigmaIetaIeta        = tr.getVec<data_t>("sigmaIetaIeta");
@@ -97,12 +97,17 @@ namespace plotterFunctions
         auto* directPhotons             = new std::vector<TLorentzVector>();
         auto* totalPhotons              = new std::vector<TLorentzVector>();
 
-        // check vector lengths
-        bool passed = false;
-        if (gammaLVec.size() == genMatched.size() && gammaLVec.size() == extraLooseID.size())
-          passed = true;
-        printf("gen reco genMatched extraLooseID: %d %d %d %d --- %s\n", int(gammaLVecGen.size()), int(gammaLVec.size()), \
-                                                                         int(genMatched.size()), int(extraLooseID.size()), passed ? "pass" : "fail");
+        // // check vector lengths
+        // bool passed = true;
+        // if (gammaLVec.size() != genMatched.size())      passed = false;
+        // if (gammaLVec.size() != extraLooseID.size())    passed = false;
+        // if (gammaLVec.size() != loosePhotonID.size())   passed = false;
+        // if (gammaLVec.size() != mediumPhotonID.size())  passed = false;
+        // if (gammaLVec.size() != tightPhotonID.size())   passed = false;
+        // printf("gen reco genMatched extraLooseID loosePhotonID mediumPhotonID tightPhotonID: %d %d --- %d %d %d %d %d --- %s\n", \
+        //   int(gammaLVecGen.size()), int(gammaLVec.size()), int(genMatched.size()), int(extraLooseID.size()),        \
+        //   int(loosePhotonID.size()), int(mediumPhotonID.size()), int(tightPhotonID.size()), passed ? "pass" : "fail");
+
         //Pass cuts; use some variables from ntuples
         
         //Select gen photons
@@ -131,6 +136,35 @@ namespace plotterFunctions
           }
         }
 
+        //Select reco photons; no pt cuts at the moment
+        for(int i = 0; i < gammaLVec.size(); ++i) {
+          // passing pt and eta cuts
+          if (PhotonFunctions::passPhotonEta(gammaLVec[i]))
+          {
+            // passing ECAL barrel/endcap eta cuts and reco match
+            if (PhotonFunctions::passPhotonECAL(gammaLVec[i])) 
+            {
+              gammaLVecRecoAcc->push_back(gammaLVec[i]);
+              //Select iso photons passing passAcc, passIDLoose and passIsoLoose
+              if(bool(extraLooseID[i]))
+              {
+                gammaLVecRecoIso->push_back(gammaLVec[i]);
+              }
+            }
+          }
+        }
+        
+        // check vector lengths
+        bool passed = true;
+        if (gammaLVecRecoAcc->size() != genMatched.size())      passed = false;
+        if (gammaLVecRecoAcc->size() != extraLooseID.size())    passed = false;
+        if (gammaLVecRecoAcc->size() != loosePhotonID.size())   passed = false;
+        if (gammaLVecRecoAcc->size() != mediumPhotonID.size())  passed = false;
+        if (gammaLVecRecoAcc->size() != tightPhotonID.size())   passed = false;
+        printf("gen reco genMatched extraLooseID loosePhotonID mediumPhotonID tightPhotonID: %d %d --- %d %d %d %d %d --- %s\n", \
+          int(gammaLVecGen.size()), int(gammaLVecRecoAcc->size()), int(genMatched.size()), int(extraLooseID.size()),      \
+          int(loosePhotonID.size()), int(mediumPhotonID.size()), int(tightPhotonID.size()), passed ? "pass" : "fail");
+
         //Select reco photons within the ECAL acceptance region and Pt > 200 GeV 
         for(int i = 0; i < gammaLVec.size(); ++i) {
           if (   
@@ -155,12 +189,12 @@ namespace plotterFunctions
           if ((*gammaLVecRecoAcc)[i].Pt() > photonPtCut){
             totalPhotons->push_back((*gammaLVecRecoAcc)[i]);
             
-            if(looseID[i]) loosePhotons->push_back((*gammaLVecRecoAcc)[i]);
-            if(mediumID[i]) mediumPhotons->push_back((*gammaLVecRecoAcc)[i]);
-            if(tightID[i]) tightPhotons->push_back((*gammaLVecRecoAcc)[i]);
+            if(loosePhotonID[i]) loosePhotons->push_back((*gammaLVecRecoAcc)[i]);
+            if(mediumPhotonID[i]) mediumPhotons->push_back((*gammaLVecRecoAcc)[i]);
+            if(tightPhotonID[i]) tightPhotons->push_back((*gammaLVecRecoAcc)[i]);
 
             //add loose photon pt to ptmiss
-            if(looseID[i]) photonMet += (*gammaLVecRecoAcc)[i].Pt();
+            if(loosePhotonID[i]) photonMet += (*gammaLVecRecoAcc)[i].Pt();
           } 
         }
 
@@ -170,7 +204,7 @@ namespace plotterFunctions
         {
           for(int i = 0; i < gammaLVecRecoAcc->size(); i++)
           {
-            if((*gammaLVecRecoAcc)[i].Pt() > photonPtCut && looseID[i])
+            if((*gammaLVecRecoAcc)[i].Pt() > photonPtCut && loosePhotonID[i])
             {
               if(PhotonFunctions::isGenMatched_Method2((*gammaLVecRecoAcc)[i],gammaLVecGen))
               {

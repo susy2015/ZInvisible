@@ -62,14 +62,14 @@ namespace PhotonFunctions
   
   bool passPhotonPt(const TLorentzVector& photon){
     const double minPt = 200.0;
-    double perPhotonPt = photon.Pt();
-    return ( perPhotonPt > minPt ); // pt cut
+    const double perPhotonPt = photon.Pt();
+    return (perPhotonPt > minPt); // pt cut
   }
 
   bool passPhotonEta(const TLorentzVector& photon){
     const double maxEta = 2.5;
-    double perPhotonEta = photon.Eta();
-    return ( fabs(perPhotonEta) < maxEta ); // eta cut
+    const double perPhotonEta = photon.Eta();
+    return (fabs(perPhotonEta) < maxEta); // eta cut
   }
 
   bool passPhotonPtEta(const TLorentzVector& photon){
@@ -78,22 +78,19 @@ namespace PhotonFunctions
 
   bool isBarrelECAL(const TLorentzVector& photon){
     const double barrelMax = 1.4442;
-    double perPhotonEta = photon.Eta();
-    return (barrelMax == -1 || fabs(perPhotonEta) <= barrelMax);
+    const double perPhotonEta = photon.Eta();
+    return (fabs(perPhotonEta) < barrelMax);
   }
   
   bool isEndcapECAL(const TLorentzVector& photon){
     const double endcapMin = 1.566, endcapMax = 2.5;
-    double perPhotonEta = photon.Eta();
-    return (endcapMin == -1 || fabs(perPhotonEta) >= endcapMin)
-      || (endcapMax == -1 || fabs(perPhotonEta) <= endcapMax);
+    const double perPhotonEta = photon.Eta();
+    return (fabs(perPhotonEta) > endcapMin && fabs(perPhotonEta) < endcapMax);
   }
   
   bool passPhotonECAL(const TLorentzVector& photon){
-    return (
-                passPhotonPtEta(photon)
-             && (isBarrelECAL(photon) || isEndcapECAL(photon))
-        );
+    return (isBarrelECAL(photon) || isEndcapECAL(photon));
+
    // const double minPt = 200.0, barrelMax = 1.4442, endcapMin = 1.566, endcapMax = 2.5;
    // double perPhotonPt = photon.Pt(), perPhotonEta = photon.Eta();
    // return (
