@@ -80,7 +80,7 @@ namespace plotterFunctions
         const auto& ntops                = tr.getVar<int>("nTopCandSortedCnt");
 
         // toggle debugging print statements
-        bool debug = false;
+        bool debug = true;
 
         //variables to be used in the analysis code
         double photonPtCut = 200.0;
@@ -139,23 +139,14 @@ namespace plotterFunctions
           }
         }
 
-        //Select reco photons; no pt cuts at the moment
+        //Select reco photons; only eta cuts for now
         for(int i = 0; i < gammaLVec.size(); ++i) {
-          // passing pt and eta cuts
-          if (PhotonFunctions::passPhotonEta(gammaLVec[i]))
+          // passing ECAL barrel/endcap eta cuts
+          // this needs to be done prior to any other cuts (pt, gen matched, etc)
+          // this cut should match passAcc which is done in StopTupleMaker/SkimsAUX/plugins/PhotonIDisoProducer.cc
+          if (PhotonFunctions::passPhotonECAL(gammaLVec[i])) 
           {
-            // passing ECAL barrel/endcap eta cuts and reco match
-            // this needs to be done prior to any other cuts (pt, gen matched, etc)
-            // this cut should match passAcc which is done in StopTupleMaker/SkimsAUX/plugins/PhotonIDisoProducer.cc
-            if (PhotonFunctions::passPhotonECAL(gammaLVec[i])) 
-            {
-              gammaLVecRecoAcc->push_back(gammaLVec[i]);
-              //Select iso photons passing passAcc, passIDLoose and passIsoLoose
-              if(bool(extraLooseID[i]))
-              {
-                gammaLVecRecoIso->push_back(gammaLVec[i]);
-              }
-            }
+            gammaLVecRecoAcc->push_back(gammaLVec[i]);
           }
         }
         
