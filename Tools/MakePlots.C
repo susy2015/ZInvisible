@@ -268,14 +268,14 @@ int main(int argc, char* argv[])
     std::string label_genTopPt = "gen top p_{T} [GeV]";
     std::string label_phopt = "p_{T}^{#gamma} [GeV]";
     std::string label_metg = "p_{T}^{#gamma (miss)} [GeV]";
-    std::string label_ptcut_single = "ptcut & gen";
-    std::string label_acc_single = "acc & all";
-    std::string label_matched_single = "matched & acc";
-    std::string label_iso_single = "iso & matched";
-    std::string label_ptcut_ratio = "ptcut/gen";
-    std::string label_acc_ratio = "acc/all";
-    std::string label_matched_ratio = "matched/acc";
-    std::string label_iso_ratio = "iso/matched";
+    std::string label_ptcut_single = "genEtaPt & genPt";
+    std::string label_acc_single = "recoEta & reco";
+    std::string label_matched_single = "recoEtaPtMatched & recoEtaPt";
+    std::string label_iso_single = "recoIso & recoEtaPtMatched";
+    std::string label_ptcut_ratio = "genEtaPt/genPt";
+    std::string label_acc_ratio = "recoEta/reco";
+    std::string label_matched_ratio = "recoEtaPtMatched/recoEtaPt";
+    std::string label_iso_ratio = "recoIso/recoEtaPtMatched";
 
     vector<Plotter::HistSummary> vh;
 
@@ -359,26 +359,26 @@ int main(int argc, char* argv[])
     auto makePDCElecIso_ratio  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso over reco")}, {"genMatchElecInAcc("+var+")", makePDSElec("e iso over reco")}}); };
     auto makePDCMuIso_ratio    = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}}); };
     // photons
-    // only passing pt cut: ratio = gammaLVecGenPtCut / gammaLVecGen
-    auto makePDCPhotonPtCut_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("genAcc")},                {"gammaLVecGenPtCut("+var+")", makePDSPhoton("genPtCut")}}); };
-    auto makePDCPhotonPtCut_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenAcc("+var+")", makePDSPhoton("genAcc over genPtCut")},  {"gammaLVecGenPtCut("+var+")", makePDSPhoton("genAcc over genPtCut")}}); };
-    // acceptance = gammaLVecGenAcc / gammaLVecGen (acc / gen)
+    // only passing pt cut: ratio = gammaLVecGenPt / gammaLVecGen
+    auto makePDCPhotonPtCut_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenEtaPt("+var+")", makePDSPhoton("genEtaPt")},                {"gammaLVecGenPt("+var+")", makePDSPhoton("genPt")}}); };
+    auto makePDCPhotonPtCut_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenEtaPt("+var+")", makePDSPhoton("genEtaPt over genPt")},  {"gammaLVecGenPt("+var+")", makePDSPhoton("genEtaPt over genPt")}}); };
+    // acceptance = gammaLVecGenEtaPt / gammaLVecGen (acc / gen)
     auto makePDCPhotonAcc_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoEta("+var+")", makePDSPhoton("recoEta")},           {"gammaLVec("+var+")", makePDSPhoton("reco")}}); };
     auto makePDCPhotonAcc_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoEta("+var+")", makePDSPhoton("recoEta over reco")}, {"gammaLVec("+var+")", makePDSPhoton("recoEta over reco")}}); };
-    // reco efficiency = gammaLVecGenRecoMatched / gammaLVecGenAcc (reco / acc)
-    auto makePDCPhotonReco_single = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoEtaPtMatched("+var+")", makePDSPhoton("reco")},             {"gammaLVecRecoEtaPt("+var+")", makePDSPhoton("acc")}}); };
-    auto makePDCPhotonReco_ratio  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoEtaPtMatched("+var+")", makePDSPhoton("reco over acc")},    {"gammaLVecRecoEtaPt("+var+")", makePDSPhoton("reco over acc")}}); };
+    // reco efficiency = gammaLVecGenRecoMatched / gammaLVecGenEtaPt (reco / acc)
+    auto makePDCPhotonReco_single = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoEtaPtMatched("+var+")", makePDSPhoton("recoEtaPtMatched")},                {"gammaLVecRecoEtaPt("+var+")", makePDSPhoton("recoEtaPt")}}); };
+    auto makePDCPhotonReco_ratio  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoEtaPtMatched("+var+")", makePDSPhoton("recoEtaPtMatched over recoEtaPt")}, {"gammaLVecRecoEtaPt("+var+")", makePDSPhoton("recoEtaPtMatched over recoEtaPt")}}); };
     // iso efficiency = gammaLVecGenIso / gammaLVecGenRecoMatched (iso / reco)
-    auto makePDCPhotonIso_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoIso("+var+")", makePDSPhoton("iso")},           {"gammaLVecRecoEtaPtMatched("+var+")", makePDSPhoton("reco")}}); };
-    auto makePDCPhotonIso_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoIso("+var+")", makePDSPhoton("iso over reco")}, {"gammaLVecRecoEtaPtMatched("+var+")", makePDSPhoton("iso over reco")}}); };
+    auto makePDCPhotonIso_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoIso("+var+")", makePDSPhoton("recoIso")},                       {"gammaLVecRecoEtaPtMatched("+var+")", makePDSPhoton("recoEtaPtMatched")}}); };
+    auto makePDCPhotonIso_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecRecoIso("+var+")", makePDSPhoton("recoIso over recoEtaPtMatched")}, {"gammaLVecRecoEtaPtMatched("+var+")", makePDSPhoton("recoIso over recoEtaPtMatched")}}); };
     
 
     // photons gen: gammaLVecGen
-    // photons acc: gammaLVecGenAcc
+    // photons acc: gammaLVecGenEtaPt
     // photons reco: gammaLVecGenRecoMatched
     // photons iso: gammaLVecGenIso
-    Plotter::DataCollection dcMC_genPhotonPt(     "single", "gammaLVecGenAcc(pt)",      {dsPhoton});
-    Plotter::DataCollection dcMC_genPhotonEta(    "single", "gammaLVecGenAcc(eta)",     {dsPhoton});
+    Plotter::DataCollection dcMC_genPhotonPt(     "single", "gammaLVecGenEtaPt(pt)",      {dsPhoton});
+    Plotter::DataCollection dcMC_genPhotonEta(    "single", "gammaLVecGenEtaPt(eta)",     {dsPhoton});
     Plotter::DataCollection dcMC_matchedPhotonPt( "single", "promptPhotons(pt)",        {dsPhoton});
     Plotter::DataCollection dcMC_matchedPhotonEta("single", "promptPhotons(eta)",       {dsPhoton});
 
