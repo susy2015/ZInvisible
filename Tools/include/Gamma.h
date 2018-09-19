@@ -177,7 +177,8 @@ namespace plotterFunctions
           if (PhotonFunctions::passPhotonPtEta((*gammaLVecRecoEta)[i])) 
           {
             gammaLVecRecoEtaPt->push_back((*gammaLVecRecoEta)[i]);
-            if (bool(genMatched[i]))
+            //if (bool(genMatched[i]))
+            if (PhotonFunctions::isGenMatched_Method1((*gammaLVecRecoEta)[i], gammaLVecGen))
             {
               gammaLVecRecoEtaPtMatched->push_back((*gammaLVecRecoEta)[i]);
               //Select iso photons passing passAcc, passIDLoose and passIsoLoose
