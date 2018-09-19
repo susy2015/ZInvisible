@@ -60,20 +60,22 @@ namespace PhotonConsts
 namespace PhotonFunctions
 {
   
-  bool passPhotonPt(const TLorentzVector& photon){
-    const double minPt = 200.0;
-    const double perPhotonPt = photon.Pt();
-    return (perPhotonPt > minPt); // pt cut
-  }
-
+  // eta cut
   bool passPhotonEta(const TLorentzVector& photon){
     const double maxEta = 2.5;
     const double perPhotonEta = photon.Eta();
-    return (fabs(perPhotonEta) < maxEta); // eta cut
+    return (fabs(perPhotonEta) < maxEta);
   }
 
-  bool passPhotonPtEta(const TLorentzVector& photon){
-    return (passPhotonPt(photon) && passPhotonEta(photon));
+  // pt cut
+  bool passPhotonPt(const TLorentzVector& photon){
+    const double minPt = 200.0;
+    const double perPhotonPt = photon.Pt();
+    return (perPhotonPt > minPt);
+  }
+
+  bool passPhotonEtaPt(const TLorentzVector& photon){
+    return (passPhotonEta(photon) && passPhotonPt(photon));
   }
 
   bool isBarrelECAL(const TLorentzVector& photon){

@@ -85,10 +85,11 @@ namespace plotterFunctions
         //variables to be used in the analysis code
         double photonPtCut = 200.0;
         double photonMet = -999.9;
-        auto* gammaLVecGenPt            = new std::vector<TLorentzVector>(); 
+        auto* gammaLVecGenEta           = new std::vector<TLorentzVector>(); 
         auto* gammaLVecGenEtaPt         = new std::vector<TLorentzVector>(); 
-        auto* gammaLVecGenRecoMatched   = new std::vector<TLorentzVector>(); 
+        auto* gammaLVecGenEtaPtMatched  = new std::vector<TLorentzVector>(); 
         auto* gammaLVecGenIso           = new std::vector<TLorentzVector>(); 
+        auto* gammaLVecReco             = new std::vector<TLorentzVector>();
         auto* gammaLVecRecoEta          = new std::vector<TLorentzVector>();
         auto* gammaLVecRecoEtaPt        = new std::vector<TLorentzVector>();
         auto* gammaLVecRecoEtaPtMatched = new std::vector<TLorentzVector>();
@@ -117,25 +118,23 @@ namespace plotterFunctions
         
         //Select gen photons
         for(int i = 0; i < gammaLVecGen.size(); ++i) {
-          // passing pt cut
-          if (PhotonFunctions::passPhotonPt(gammaLVecGen[i]))
+          // ECAL eta cuts
+          if (PhotonFunctions::passPhotonECAL(gammaLVecGen[i]))
           {
-            gammaLVecGenPt->push_back(gammaLVecGen[i]);
+            gammaLVecGenEta->push_back(gammaLVecGen[i]);
           }
           // passing pt and eta cuts
-          if (PhotonFunctions::passPhotonPtEta(gammaLVecGen[i]))
+          if (PhotonFunctions::passPhotonEtaPt(gammaLVecGen[i]))
           {
             gammaLVecGenEtaPt->push_back(gammaLVecGen[i]);
             // passing ECAL barrel/endcap eta cuts and reco match
-            if (  PhotonFunctions::passPhotonECAL(gammaLVecGen[i])
-               && bool(PhotonFunctions::isRecoMatched(gammaLVecGen[i], gammaLVec))
-               ) 
+            if (PhotonFunctions::isRecoMatched(gammaLVecGen[i], gammaLVec)) 
             {
-              gammaLVecGenRecoMatched->push_back(gammaLVec[i]);
+              gammaLVecGenEtaPtMatched->push_back(gammaLVecGen[i]);
               //Select iso photons passing passAcc, passIDLoose and passIsoLoose
               if(bool(extraLooseID[i]))
               {
-                gammaLVecGenIso->push_back(gammaLVec[i]);
+                gammaLVecGenIso->push_back(gammaLVecGen[i]);
               }
             }
           }
@@ -143,6 +142,7 @@ namespace plotterFunctions
 
         //Select reco photons; only eta cuts for now
         for(int i = 0; i < gammaLVec.size(); ++i) {
+            gammaLVecReco->push_back(gammaLVec[i]);
           // passing ECAL barrel/endcap eta cuts
           // this needs to be done prior to any other cuts (pt, gen matched, etc)
           // this cut should match passAcc which is done in StopTupleMaker/SkimsAUX/plugins/PhotonIDisoProducer.cc
@@ -174,9 +174,11 @@ namespace plotterFunctions
         //Select reco photons within the ECAL acceptance region and Pt > 200 GeV 
         for(int i = 0; i < gammaLVecRecoEta->size(); ++i)
         {
-          if (PhotonFunctions::passPhotonPtEta((*gammaLVecRecoEta)[i])) 
+          // pt and eta cuts
+          if (PhotonFunctions::passPhotonEtaPt((*gammaLVecRecoEta)[i])) 
           {
             gammaLVecRecoEtaPt->push_back((*gammaLVecRecoEta)[i]);
+            // gen match
             //if (bool(genMatched[i]))
             if (PhotonFunctions::isGenMatched_Method1((*gammaLVecRecoEta)[i], gammaLVecGen))
             {
@@ -234,10 +236,11 @@ namespace plotterFunctions
         tr.registerDerivedVar("passPrompt", promptPhotons->size() >= 1);
         tr.registerDerivedVar("passDirect", directPhotons->size() >= 1);
         tr.registerDerivedVar("passFragmentation", fragmentationQCD->size() >= 1);
-        tr.registerDerivedVec("gammaLVecGenPt", gammaLVecGenPt);
+        tr.registerDerivedVec("gammaLVecGenEta", gammaLVecGenEta);
         tr.registerDerivedVec("gammaLVecGenEtaPt", gammaLVecGenEtaPt);
-        tr.registerDerivedVec("gammaLVecGenRecoMatched", gammaLVecGenRecoMatched);
+        tr.registerDerivedVec("gammaLVecGenEtaPtMatched", gammaLVecGenEtaPtMatched);
         tr.registerDerivedVec("gammaLVecGenIso", gammaLVecGenIso);
+        tr.registerDerivedVec("gammaLVecReco", gammaLVecReco);
         tr.registerDerivedVec("gammaLVecRecoEta", gammaLVecRecoEta);
         tr.registerDerivedVec("gammaLVecRecoEtaPt", gammaLVecRecoEtaPt);
         tr.registerDerivedVec("gammaLVecRecoEtaPtMatched", gammaLVecRecoEtaPtMatched);
