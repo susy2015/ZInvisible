@@ -73,8 +73,8 @@ int main(int argc, char* argv[])
     //AnaSamples::SampleSet        ss(sampleloc, lumi);
     //AnaSamples::SampleCollection sc(ss);
     // the new version
-    AnaSamples::SampleSet        ss("sampleSets.txt");
-    AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
+    AnaSamples::SampleSet        ss("sampleSets.cfg");
+    AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
 
 
     TFile *f = new TFile(filename.c_str(),"RECREATE");
