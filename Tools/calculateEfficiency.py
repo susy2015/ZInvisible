@@ -42,15 +42,18 @@ def calcEff(variables):
         total_efficiency *= ratio
         names = "{0}/{1}".format(b_name, a_name)
         values = "{0:.3E}/{1:.3E}".format(Decimal(b_value), Decimal(a_value))
-        print("{0:30} = {1:20} = {2:10.4f}: {3:10.2f} %".format(names, values, ratio, ratio_percent))
+        print("{0:50} = {1:20} = {2:10.4f}: {3:10.2f} %".format(names, values, ratio, ratio_percent))
         i += 1
     total_efficiency_percent = 100.0 * total_efficiency
     print "Total Efficiency = {0:.4f}: {1:.2f} %".format(total_efficiency, total_efficiency_percent)
 
 if __name__ == "__main__":
     histogramMap = []
-    histogramMap += [{"gammaLVecGen"    : "MC_PhotonGenAccPt_singlegammaLVecGenptgammaLVecGen(pt)GJets #gamma Gensingle"}]
-    histogramMap += [{"gammaLVecGenEta" : "MC_PhotonGenAccPt_singlegammaLVecGenEtaptgammaLVecGenEta(pt)GJets #gamma GenEtasingle"}]
+    histogramMap += [{"gammaLVecGen"                : "MC_PhotonGenAccPt_singlegammaLVecGenptgammaLVecGen(pt)GJets #gamma Gensingle"}]
+    histogramMap += [{"gammaLVecGenEta"             : "MC_PhotonGenAccPt_singlegammaLVecGenEtaptgammaLVecGenEta(pt)GJets #gamma GenEtasingle"}]
+    histogramMap += [{"gammaLVecGenEtaPt"           : "MC_PhotonGenMatchPt_singlegammaLVecGenEtaPtptgammaLVecGenEtaPt(pt)GJets #gamma GenEtaPtsingle"}]
+    histogramMap += [{"gammaLVecGenEtaPtMatched"    : "MC_PhotonGenMatchPt_singlegammaLVecGenEtaPtMatchedptgammaLVecGenEtaPtMatched(pt)GJets #gamma GenEtaPtMatchedsingle"}]
+    histogramMap += [{"gammaLVecGenIso"             : "MC_PhotonGenIsoPt_singlegammaLVecGenIsoptgammaLVecGenIso(pt)GJets #gamma GenIsosingle"}]
     getResults("result.root", histogramMap)
     #calcEff([ 
     #        {"reco":            1 * 10 ** 6}, 
@@ -59,3 +62,6 @@ if __name__ == "__main__":
     #        {"gen_matched":     1 * 10 ** 3},
     #        {"loose_isolation": 1 * 10 ** 2}
     #       ])
+
+
+
