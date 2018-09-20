@@ -106,8 +106,8 @@ rm plots/*
 echo "- Compiling MakePlots"
 make -j8
 
-echo "- Running MakePlots"
-./makePlots -flg -I $resultFile
+echo "- Running MakePlots with -g for photons"
+./makePlots -f -g -I $resultFile
 
 if [[ $? == 0 ]]; then
     echo "  MakePlots was successful"

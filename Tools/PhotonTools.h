@@ -60,91 +60,112 @@ namespace PhotonConsts
 namespace PhotonFunctions
 {
   
-  bool passPhoton_ECAL(const TLorentzVector& photon){
-    const double minPt = 200.0, barrelMax = 1.4442, endcapMin = 1.566, endcapMax = 2.5;
-    double perPhotonPt = photon.Pt(), perPhotonEta = photon.Eta();
-    return (
-             (minPt == -1 || perPhotonPt > minPt) // pt cut
-             && (barrelMax == -1 || fabs(perPhotonEta) < barrelMax)    // within barrel
-             || (  
-                   (endcapMin == -1 || fabs(perPhotonEta) > endcapMin) // within endcap
-                && (endcapMax == -1 || fabs(perPhotonEta) < endcapMax) // within endcap
-                )
-           );
-  }
-  
-  bool passPhoton_Pt(const TLorentzVector& photon){
-    const double minPt = 200.0;
-    double perPhotonPt = photon.Pt();
-    return (perPhotonPt > minPt); // pt cut
+  // eta cut
+  bool passPhotonEta(const TLorentzVector& photon){
+    const double maxEta = 2.5;
+    const double perPhotonEta = photon.Eta();
+    return (fabs(perPhotonEta) < maxEta);
   }
 
-  bool passPhoton_PtEta(const TLorentzVector& photon){
+  // pt cut
+  bool passPhotonPt(const TLorentzVector& photon){
     const double minPt = 200.0;
-    const double maxEta = 2.5;
-    double perPhotonPt = photon.Pt(), perPhotonEta = photon.Eta();
-    return (
-                (perPhotonPt > minPt)         // pt cut
-             && (fabs(perPhotonEta) < maxEta) // eta cut
-           );
+    const double perPhotonPt = photon.Pt();
+    return (perPhotonPt > minPt);
+  }
+
+  bool passPhotonEtaPt(const TLorentzVector& photon){
+    return (passPhotonEta(photon) && passPhotonPt(photon));
   }
 
   bool isBarrelECAL(const TLorentzVector& photon){
     const double barrelMax = 1.4442;
-    double perPhotonEta = photon.Eta();
-    return (barrelMax == -1 || fabs(perPhotonEta) <= barrelMax);
+    const double perPhotonEta = photon.Eta();
+    return (fabs(perPhotonEta) < barrelMax);
   }
   
   bool isEndcapECAL(const TLorentzVector& photon){
     const double endcapMin = 1.566, endcapMax = 2.5;
-    double perPhotonEta = photon.Eta();
-    return (endcapMin == -1 || fabs(perPhotonEta) >= endcapMin)
-      || (endcapMax == -1 || fabs(perPhotonEta) <= endcapMax);
+    const double perPhotonEta = photon.Eta();
+    return (fabs(perPhotonEta) > endcapMin && fabs(perPhotonEta) < endcapMax);
+  }
+  
+  bool passPhotonECAL(const TLorentzVector& photon){
+    return (isBarrelECAL(photon) || isEndcapECAL(photon));
+
+   // const double minPt = 200.0, barrelMax = 1.4442, endcapMin = 1.566, endcapMax = 2.5;
+   // double perPhotonPt = photon.Pt(), perPhotonEta = photon.Eta();
+   // return (
+   //          (minPt == -1 || perPhotonPt > minPt) // pt cut
+   //          && (barrelMax == -1 || fabs(perPhotonEta) < barrelMax)    // within barrel
+   //          || (  
+   //                (endcapMin == -1 || fabs(perPhotonEta) > endcapMin) // within endcap
+   //             && (endcapMax == -1 || fabs(perPhotonEta) < endcapMax) // within endcap
+   //             )
+   //        );
+  }
+  
+  bool isRecoMatched(const TLorentzVector& photon, std::vector<TLorentzVector> recoPhotons)
+  {
+    bool recoMatched = false;
+    double genPt = photon.Pt();
+    for(int i = 0; i < recoPhotons.size(); i++)
+    {
+      double deltaR = ROOT::Math::VectorUtil::DeltaR(photon, recoPhotons[i]);
+      double recoPt = recoPhotons[i].Pt();
+      double ptRatio = genPt / recoPt; 
+      if (ptRatio > 0.5 && ptRatio < 2.0 && deltaR < 0.1)
+      {
+        recoMatched = true;
+        break;
+      }
+    }
+    return recoMatched;
   }
 
-  bool isGenMatched_Method1(const TLorentzVector& photon, std::vector<TLorentzVector> genPhoton){
+  bool isGenMatched_Method1(const TLorentzVector& photon, std::vector<TLorentzVector> genPhotons){
     double RecoPt = photon.Pt();
-    bool match = false;
+    bool genMatched = false;
     
-    //std::cout << "genPhotons: " << genPhoton.size() << std::endl;
-    for(int i = 0; i < genPhoton.size(); i++){
-      double deltaR = ROOT::Math::VectorUtil::DeltaR(genPhoton[i],photon);
-      double GenPt = genPhoton[i].Pt();
+    //std::cout << "genPhotons: " << genPhotons.size() << std::endl;
+    for(int i = 0; i < genPhotons.size(); i++){
+      double deltaR = ROOT::Math::VectorUtil::DeltaR(genPhotons[i],photon);
+      double GenPt = genPhotons[i].Pt();
       double temp_ratio = GenPt/RecoPt;
       /*
-      std::cout << "igenPhoton: " << i+1 << std::endl;
+      std::cout << "igenPhotons: " << i+1 << std::endl;
       std::cout << "Reco Photon Pt: " << RecoPt << std::endl;
       std::cout<< "Gen Photon Pt: " << GenPt<< std::endl;
       std::cout<< "GenPt/RecoPt: " << temp_ratio << std::endl;
       std::cout << "deltaR: " << deltaR << std::endl;
       */
       if (temp_ratio > 0.5 && temp_ratio < 2.0 && deltaR < 0.1){
-        match = true;
+        genMatched = true;
         break;
       }
     }
-    //if (match) std::cout << "pass"<< std::endl << std::endl;
+    //if (genMatched) std::cout << "pass"<< std::endl << std::endl;
     //else std::cout << "fake"<< std::endl << std::endl;
-      return match;
-    
+    return genMatched;
   }
-  bool isGenMatched_Method2(const TLorentzVector& photon, std::vector<TLorentzVector> genPhoton){
-    bool match = false;
+
+  bool isGenMatched_Method2(const TLorentzVector& photon, std::vector<TLorentzVector> genPhotons){
+    bool genMatched = false;
     double dRMin = 999.9;
-    for (int i = 0; i < genPhoton.size(); i++)
+    for (int i = 0; i < genPhotons.size(); i++)
     {
-      double dR = ROOT::Math::VectorUtil::DeltaR(genPhoton[i],photon);
-      double GenPt = genPhoton[i].Pt();
+      double dR = ROOT::Math::VectorUtil::DeltaR(genPhotons[i],photon);
       if(dR < dRMin)
       {
         dRMin = dR;
       }
       if (dRMin < 0.2)
       {
-        match = true;
+        genMatched = true;
+        break;
       }
     }
-    return match;
+    return genMatched;
   }
 
   bool isDirectPhoton(const TLorentzVector& photon, std::vector<TLorentzVector> genParton){
