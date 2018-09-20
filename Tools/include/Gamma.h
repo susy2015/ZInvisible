@@ -88,7 +88,6 @@ namespace plotterFunctions
         auto* gammaLVecGenEta           = new std::vector<TLorentzVector>(); 
         auto* gammaLVecGenEtaPt         = new std::vector<TLorentzVector>(); 
         auto* gammaLVecGenEtaPtMatched  = new std::vector<TLorentzVector>(); 
-        auto* gammaLVecGenIso           = new std::vector<TLorentzVector>(); 
         auto* gammaLVecReco             = new std::vector<TLorentzVector>();
         auto* gammaLVecRecoEta          = new std::vector<TLorentzVector>();
         auto* gammaLVecRecoEtaPt        = new std::vector<TLorentzVector>();
@@ -117,6 +116,7 @@ namespace plotterFunctions
         //Pass cuts; use some variables from ntuples
         
         //Select gen photons
+        //extraLooseID (photon id and iso) are only for reco photons
         for(int i = 0; i < gammaLVecGen.size(); ++i) {
           // ECAL eta cuts
           if (PhotonFunctions::passPhotonECAL(gammaLVecGen[i]))
@@ -131,12 +131,6 @@ namespace plotterFunctions
             if (PhotonFunctions::isRecoMatched(gammaLVecGen[i], gammaLVec)) 
             {
               gammaLVecGenEtaPtMatched->push_back(gammaLVecGen[i]);
-              //Select iso photons passing passAcc, passIDLoose and passIsoLoose
-              //extraLooseID is only for reco photons
-              if(bool(extraLooseID[i]))
-              {
-                gammaLVecGenIso->push_back(gammaLVecGen[i]);
-              }
             }
           }
         }
@@ -179,15 +173,15 @@ namespace plotterFunctions
           if (PhotonFunctions::passPhotonEtaPt((*gammaLVecRecoEta)[i])) 
           {
             gammaLVecRecoEtaPt->push_back((*gammaLVecRecoEta)[i]);
-            // gen match
-            //if (bool(genMatched[i]))
-            if (PhotonFunctions::isGenMatched_Method1((*gammaLVecRecoEta)[i], gammaLVecGen))
+            //Select iso photons passing passAcc, passIDLoose and passIsoLoose
+            if(bool(extraLooseID[i]))
             {
-              gammaLVecRecoEtaPtMatched->push_back((*gammaLVecRecoEta)[i]);
-              //Select iso photons passing passAcc, passIDLoose and passIsoLoose
-              if(bool(extraLooseID[i]))
+              gammaLVecRecoIso->push_back((*gammaLVecRecoEta)[i]);
+              // gen match
+              //if (PhotonFunctions::isGenMatched_Method1((*gammaLVecRecoEta)[i], gammaLVecGen))
+              if (bool(genMatched[i]))
               {
-                gammaLVecRecoIso->push_back((*gammaLVecRecoEta)[i]);
+                gammaLVecRecoEtaPtMatched->push_back((*gammaLVecRecoEta)[i]);
               }
             }
           }
@@ -240,7 +234,6 @@ namespace plotterFunctions
         tr.registerDerivedVec("gammaLVecGenEta", gammaLVecGenEta);
         tr.registerDerivedVec("gammaLVecGenEtaPt", gammaLVecGenEtaPt);
         tr.registerDerivedVec("gammaLVecGenEtaPtMatched", gammaLVecGenEtaPtMatched);
-        tr.registerDerivedVec("gammaLVecGenIso", gammaLVecGenIso);
         tr.registerDerivedVec("gammaLVecReco", gammaLVecReco);
         tr.registerDerivedVec("gammaLVecRecoEta", gammaLVecRecoEta);
         tr.registerDerivedVec("gammaLVecRecoEtaPt", gammaLVecRecoEtaPt);

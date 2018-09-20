@@ -662,16 +662,20 @@ int main(int argc, char* argv[])
       plotParamsPhoton.push_back({"Photon", tag+"Match", "Eta",    makePDCPhotonMatch_ratio(tag, "eta","ratio"),   "ratio",  nBins, minEta, maxEta,               false, false, label_PhotonEta,    label_map[tag+"Match_ratio"], true});
       plotParamsPhoton.push_back({"Photon", tag+"Match", "Phi",    makePDCPhotonMatch_ratio(tag, "phi","ratio"),   "ratio",  nBins, minPhi, maxPhi,               false, false, label_PhotonPhi,    label_map[tag+"Match_ratio"], true});
       // Iso
-      plotParamsPhoton.push_back({"Photon", tag+"Iso", "Pt",     makePDCPhotonIso_single(tag, "pt","single"),  "single", nBins, minPt, maxPt,                     true, false,  label_PhotonPt,     label_map[tag+"Iso_single"], true});
-      plotParamsPhoton.push_back({"Photon", tag+"Iso", "Energy", makePDCPhotonIso_single(tag, "E","single"),   "single", nBins, minEnergy, maxEnergy,             true, false,  label_PhotonEnergy, label_map[tag+"Iso_single"], true});
-      plotParamsPhoton.push_back({"Photon", tag+"Iso", "Mass",   makePDCPhotonIso_single(tag, "M","single"),   "single", nBins, minMassPhoton, maxMassPhoton,     false, false, label_PhotonMass,   label_map[tag+"Iso_single"], true});
-      plotParamsPhoton.push_back({"Photon", tag+"Iso", "Eta",    makePDCPhotonIso_single(tag, "eta","single"), "single", nBins, minEta, maxEta,                   false, false, label_PhotonEta,    label_map[tag+"Iso_single"], true});
-      plotParamsPhoton.push_back({"Photon", tag+"Iso", "Phi",    makePDCPhotonIso_single(tag, "phi","single"), "single", nBins, minPhi, maxPhi,                   false, false, label_PhotonPhi,    label_map[tag+"Iso_single"], true});
-      plotParamsPhoton.push_back({"Photon", tag+"Iso", "Pt",     makePDCPhotonIso_ratio(tag, "pt","ratio"),    "ratio",  nBins, minPt, maxPt,                     false, false, label_PhotonPt,     label_map[tag+"Iso_ratio"], true});
-      plotParamsPhoton.push_back({"Photon", tag+"Iso", "Energy", makePDCPhotonIso_ratio(tag, "E","ratio"),     "ratio",  nBins, minEnergy, maxEnergy,             false, false, label_PhotonEnergy, label_map[tag+"Iso_ratio"], true});
-      plotParamsPhoton.push_back({"Photon", tag+"Iso", "Mass",   makePDCPhotonIso_ratio(tag, "M","ratio"),     "ratio",  nBins, minMassPhoton, maxMassPhoton,     false, false, label_PhotonMass,   label_map[tag+"Iso_ratio"], true});
-      plotParamsPhoton.push_back({"Photon", tag+"Iso", "Eta",    makePDCPhotonIso_ratio(tag, "eta","ratio"),   "ratio",  nBins, minEta, maxEta,                   false, false, label_PhotonEta,    label_map[tag+"Iso_ratio"], true});
-      plotParamsPhoton.push_back({"Photon", tag+"Iso", "Phi",    makePDCPhotonIso_ratio(tag, "phi","ratio"),   "ratio",  nBins, minPhi, maxPhi,                   false, false, label_PhotonPhi,    label_map[tag+"Iso_ratio"], true});
+      // only iso for reco
+      if (tag.compare("Reco") == 0)
+      {
+        plotParamsPhoton.push_back({"Photon", tag+"Iso", "Pt",     makePDCPhotonIso_single(tag, "pt","single"),  "single", nBins, minPt, maxPt,                     true, false,  label_PhotonPt,     label_map[tag+"Iso_single"], true});
+        plotParamsPhoton.push_back({"Photon", tag+"Iso", "Energy", makePDCPhotonIso_single(tag, "E","single"),   "single", nBins, minEnergy, maxEnergy,             true, false,  label_PhotonEnergy, label_map[tag+"Iso_single"], true});
+        plotParamsPhoton.push_back({"Photon", tag+"Iso", "Mass",   makePDCPhotonIso_single(tag, "M","single"),   "single", nBins, minMassPhoton, maxMassPhoton,     false, false, label_PhotonMass,   label_map[tag+"Iso_single"], true});
+        plotParamsPhoton.push_back({"Photon", tag+"Iso", "Eta",    makePDCPhotonIso_single(tag, "eta","single"), "single", nBins, minEta, maxEta,                   false, false, label_PhotonEta,    label_map[tag+"Iso_single"], true});
+        plotParamsPhoton.push_back({"Photon", tag+"Iso", "Phi",    makePDCPhotonIso_single(tag, "phi","single"), "single", nBins, minPhi, maxPhi,                   false, false, label_PhotonPhi,    label_map[tag+"Iso_single"], true});
+        plotParamsPhoton.push_back({"Photon", tag+"Iso", "Pt",     makePDCPhotonIso_ratio(tag, "pt","ratio"),    "ratio",  nBins, minPt, maxPt,                     false, false, label_PhotonPt,     label_map[tag+"Iso_ratio"], true});
+        plotParamsPhoton.push_back({"Photon", tag+"Iso", "Energy", makePDCPhotonIso_ratio(tag, "E","ratio"),     "ratio",  nBins, minEnergy, maxEnergy,             false, false, label_PhotonEnergy, label_map[tag+"Iso_ratio"], true});
+        plotParamsPhoton.push_back({"Photon", tag+"Iso", "Mass",   makePDCPhotonIso_ratio(tag, "M","ratio"),     "ratio",  nBins, minMassPhoton, maxMassPhoton,     false, false, label_PhotonMass,   label_map[tag+"Iso_ratio"], true});
+        plotParamsPhoton.push_back({"Photon", tag+"Iso", "Eta",    makePDCPhotonIso_ratio(tag, "eta","ratio"),   "ratio",  nBins, minEta, maxEta,                   false, false, label_PhotonEta,    label_map[tag+"Iso_ratio"], true});
+        plotParamsPhoton.push_back({"Photon", tag+"Iso", "Phi",    makePDCPhotonIso_ratio(tag, "phi","ratio"),   "ratio",  nBins, minPhi, maxPhi,                   false, false, label_PhotonPhi,    label_map[tag+"Iso_ratio"], true});
+      }
     }
     
     if (doLeptons)

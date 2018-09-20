@@ -48,13 +48,19 @@ def calcEff(variables):
     print "Total Efficiency = {0:.4f}: {1:.2f} %".format(total_efficiency, total_efficiency_percent)
 
 if __name__ == "__main__":
-    histogramMap = []
-    histogramMap += [{"gammaLVecGen"                : "MC_PhotonGenAccPt_singlegammaLVecGenptgammaLVecGen(pt)GJets #gamma Gensingle"}]
-    histogramMap += [{"gammaLVecGenEta"             : "MC_PhotonGenAccPt_singlegammaLVecGenEtaptgammaLVecGenEta(pt)GJets #gamma GenEtasingle"}]
-    histogramMap += [{"gammaLVecGenEtaPt"           : "MC_PhotonGenMatchPt_singlegammaLVecGenEtaPtptgammaLVecGenEtaPt(pt)GJets #gamma GenEtaPtsingle"}]
-    histogramMap += [{"gammaLVecGenEtaPtMatched"    : "MC_PhotonGenMatchPt_singlegammaLVecGenEtaPtMatchedptgammaLVecGenEtaPtMatched(pt)GJets #gamma GenEtaPtMatchedsingle"}]
-    histogramMap += [{"gammaLVecGenIso"             : "MC_PhotonGenIsoPt_singlegammaLVecGenIsoptgammaLVecGenIso(pt)GJets #gamma GenIsosingle"}]
-    getResults("result.root", histogramMap)
+    histogramMapGen = []
+    histogramMapGen += [{"gammaLVecGen"                : "MC_PhotonGenAccPt_singlegammaLVecGenptgammaLVecGen(pt)GJets #gamma Gensingle"}]
+    histogramMapGen += [{"gammaLVecGenEta"             : "MC_PhotonGenAccPt_singlegammaLVecGenEtaptgammaLVecGenEta(pt)GJets #gamma GenEtasingle"}]
+    histogramMapGen += [{"gammaLVecGenEtaPt"           : "MC_PhotonGenMatchPt_singlegammaLVecGenEtaPtptgammaLVecGenEtaPt(pt)GJets #gamma GenEtaPtsingle"}]
+    histogramMapGen += [{"gammaLVecGenEtaPtMatched"    : "MC_PhotonGenMatchPt_singlegammaLVecGenEtaPtMatchedptgammaLVecGenEtaPtMatched(pt)GJets #gamma GenEtaPtMatchedsingle"}]
+    histogramMapReco = []
+    histogramMapReco += [{"gammaLVecReco"                : "MC_PhotonRecoAccPt_singlegammaLVecRecoptgammaLVecReco(pt)GJets #gamma Recosingle"}]
+    histogramMapReco += [{"gammaLVecRecoEta"             : "MC_PhotonRecoAccPt_singlegammaLVecRecoEtaptgammaLVecRecoEta(pt)GJets #gamma RecoEtasingle"}]
+    histogramMapReco += [{"gammaLVecRecoEtaPt"           : "MC_PhotonRecoMatchPt_singlegammaLVecRecoEtaPtptgammaLVecRecoEtaPt(pt)GJets #gamma RecoEtaPtsingle"}]
+    histogramMapReco += [{"gammaLVecRecoIso"             : "MC_PhotonRecoIsoPt_singlegammaLVecRecoIsoptgammaLVecRecoIso(pt)GJets #gamma RecoIsosingle"}]
+    histogramMapReco += [{"gammaLVecRecoEtaPtMatched"    : "MC_PhotonRecoMatchPt_singlegammaLVecRecoEtaPtMatchedptgammaLVecRecoEtaPtMatched(pt)GJets #gamma RecoEtaPtMatchedsingle"}]
+    getResults("result.root", histogramMapGen)
+    getResults("result.root", histogramMapReco)
     #calcEff([ 
     #        {"reco":            1 * 10 ** 6}, 
     #        {"eta_cut":         1 * 10 ** 5},
