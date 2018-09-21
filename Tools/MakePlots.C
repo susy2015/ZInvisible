@@ -277,20 +277,19 @@ int main(int argc, char* argv[])
     std::string label_iso_single = "RecoIso & RecoEtaPtMatched";
     std::string label_iso_ratio  = "RecoIso / RecoEtaPtMatched";
     // make a map of labels
+    // there is no Gen Iso
     //std::vector<std::pair<std::string,std::string>> cutlevels_electrons
     std::map<std::string, std::string> label_map = {
         {"GenAcc_single",     "GenEta & Gen"},
         {"GenAcc_ratio",      "GenEta / Gen"},
         {"GenMatch_single",   "GenEtaPtMatched & GenEtaPt"},
         {"GenMatch_ratio",    "GenEtaPtMatched / GenEtaPt"},
-        {"GenIso_single",     "GenIso & GenEtaPtMatched"},
-        {"GenIso_ratio",      "GenIso / GenEtaPtMatched"},
         {"RecoAcc_single",    "RecoEta & Reco"},
         {"RecoAcc_ratio",     "RecoEta / Reco"},
-        {"RecoMatch_single",  "RecoEtaPtMatched & RecoEtaPt"},
-        {"RecoMatch_ratio",   "RecoEtaPtMatched / RecoEtaPt"},
-        {"RecoIso_single",    "RecoIso & RecoEtaPtMatched"},
-        {"RecoIso_ratio",     "RecoIso / RecoEtaPtMatched"},
+        {"RecoIso_single",    "RecoIso & RecoEtaPt"},
+        {"RecoIso_ratio",     "RecoIso / RecoEtaPt"},
+        {"RecoMatch_single",  "RecoEtaPtMatched & RecoIso"},
+        {"RecoMatch_ratio",   "RecoEtaPtMatched / RecoIso"},
     };
 
     vector<Plotter::HistSummary> vh;
