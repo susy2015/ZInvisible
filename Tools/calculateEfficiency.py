@@ -13,7 +13,7 @@ def getResults(tag, inputFile, histograms):
     f = ROOT.TFile(inputFile)
     if not f:
         print "ERROR: The file {0} did not load".format(inputFile)
-        return
+        exit(1)
     nEventsPerHist = []
     for histogramMap in histograms:
         #print histogramMap
@@ -22,7 +22,7 @@ def getResults(tag, inputFile, histograms):
         #print "directory: {0} ; h: {1}".format(d_name, h)
         if not h:
             print "ERROR: The histogram {0} from directory {1} did not load".format(h_name, d_name)
-            return
+            exit(1)
         #nEventsPerHist.append({d_name : h.GetEntries()})
         nEventsPerHist.append({d_name : h.Integral()})
     #print nEventsPerHist
