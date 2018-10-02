@@ -36,13 +36,22 @@ void plot(TTree* tree, DrawOptions p)
 void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
 {
     // get htemp
-    TH1F *htemp = (TH1F*)gPad->GetPrimitive("htemp");
     std::string plotDir = "plots/";
     TCanvas* c1 = new TCanvas("c","c", 600.0, 600.0);
+    TH1F* htemp = nullptr;
+    htemp = (TH1F*)gPad->GetPrimitive("htemp");
     for (const auto & p : vp)
     {
         // draw
-        tree->GetXaxis()->SetRangeUser(-5.0, 5.0);
+        if (htemp)
+        {
+            htemp->GetXaxis()->SetRangeUser(-5.0, 5.0);
+        }
+        else
+        {
+            printf("ERROR: htemp is nullptr\n");
+            exit(1);
+        }
         tree->SetLineColor(p.color);
         tree->Draw(p.varexp.c_str(), p.selection.c_str(), "same E");
     }
