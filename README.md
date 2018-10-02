@@ -106,7 +106,7 @@ cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/resu
 
 Now try running makePlots.
 ```
-./makePlots -s -D ZJetsToNuNu -E 1000
+./makePlots -D ZJetsToNuNu -E 1000
 ```
 The `-s` option is for only saving the root file and not making pdf/png files. You can remove the `-s` option to generate myriad pdf/png files. The `-D` option is for the dataset (ZJetsToNuNu). The `-E` option is for number of events to process (1000).
 
@@ -128,8 +128,10 @@ TBrowser b
 ```
 
 You can also replace ZJetsToNuNu with DYJetsToLL, TTbarDiLep, TEST, and other datasets.
+The "-l" option will make lepton plots, and the "-g" option will make photon plots.
 ```
-./makePlots -s -D DYJetsToLL -E 1000
+./makePlots -D DYJetsToLL -E 1000 -l
+./makePlots -D GJets -E 1000 -g
 ```
 
 You can also try running the moneyplot script.
