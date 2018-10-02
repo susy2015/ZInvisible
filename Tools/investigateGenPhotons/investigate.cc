@@ -12,6 +12,7 @@
 #include "TChain.h"
 #include "TCanvas.h"
 #include "TTreeReader.h"
+#include "TLegend.h"
 
 // simple class
 class DrawOptions
@@ -59,7 +60,8 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
     printf("Creating multiplot %s\n", plotName.c_str());
     std::string plotDir = "plots/";
     TCanvas* c1 = new TCanvas("c","c", 600.0, 600.0);
-    TH1F* htemp = nullptr;
+    TLegend* legend = new TLegend(0.68, 0.55, 0.98, 0.75); // x1, y1, x2, y2
+    legend->SetHeader("prunedGenParticles","C"); // option "C" allows to center the header
     int i = 0;
     for (const auto & p : vp)
     {
@@ -73,14 +75,23 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
         {
             tree->Draw(p.varexp.c_str(), p.selection.c_str(), "same E");
         }
-        // use htemp to set x-axis range
-        // tree->Draw() creates htemp
         // this must be done after tree->Draw()
-        htemp = (TH1F*)gPad->GetPrimitive("htemp");
+        // use htemp to set x-axis range and to put in legend with correct color
+        // tree->Draw() creates a new htemp every time
+        // every time we do tree->Draw(), we get another htemp
+        // use GetListOfPrimitives and index to get the correct htemp
+        
+        // print what's available
+        printf("plotName: %s, i: %d, color: %d\n", p.plotName.c_str(), i, p.color);
+        gPad->GetListOfPrimitives()->Print();
+        
+        TH1F* htemp = nullptr;
+        htemp = (TH1F*)gPad->GetListOfPrimitives()->At(i);
         if (htemp)
         {
-            htemp->GetXaxis()->SetRangeUser(-5.0, 5.0);
+            legend->AddEntry(htemp, p.plotName.c_str());
             htemp->SetTitle(plotName.c_str());
+            htemp->GetXaxis()->SetRangeUser(-5.0, 5.0);
         }
         else
         {
@@ -89,6 +100,8 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
         }
         i++;
     }
+
+    legend->Draw("E");
     c1->Update();
     c1->SaveAs((plotDir + plotName + ".png").c_str());
     c1->SaveAs((plotDir + plotName + ".pdf").c_str());
