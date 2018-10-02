@@ -25,9 +25,29 @@ class DrawOptions
 
 void plot(TTree* tree, DrawOptions p)
 {
+    printf("Creating plot %s\n", p.plotName.c_str());
     std::string plotDir = "plots/";
     TCanvas* c1 = new TCanvas("c","c", 600.0, 600.0);
+    TH1F* htemp = nullptr;
+    
+    // draw
+    tree->SetLineColor(p.color);
     tree->Draw(p.varexp.c_str(), p.selection.c_str(), "E");
+    // use htemp to set x-axis range
+    // tree->Draw() creates htemp
+    // this must be done after tree->Draw()
+    htemp = (TH1F*)gPad->GetPrimitive("htemp");
+    if (htemp)
+    {
+        htemp->GetXaxis()->SetRangeUser(-5.0, 5.0);
+    }
+    else
+    {
+        printf("ERROR: htemp is nullptr\n");
+        exit(1);
+    }
+    
+    c1->Update();
     c1->SaveAs((plotDir + p.plotName + ".png").c_str());
     c1->SaveAs((plotDir + p.plotName + ".pdf").c_str());
     delete c1;
@@ -35,15 +55,26 @@ void plot(TTree* tree, DrawOptions p)
 
 void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
 {
+    printf("Creating multiplot %s\n", plotName.c_str());
     std::string plotDir = "plots/";
     TCanvas* c1 = new TCanvas("c","c", 600.0, 600.0);
     TH1F* htemp = nullptr;
+    int i = 0;
     for (const auto & p : vp)
     {
         // draw
         tree->SetLineColor(p.color);
-        tree->Draw(p.varexp.c_str(), p.selection.c_str(), "same E");
-        // use htemp to x-axis range
+        if (i == 0)
+        {
+            tree->Draw(p.varexp.c_str(), p.selection.c_str(), "E");
+        }
+        else
+        {
+            tree->Draw(p.varexp.c_str(), p.selection.c_str(), "same E");
+        }
+        // use htemp to set x-axis range
+        // tree->Draw() creates htemp
+        // this must be done after tree->Draw()
         htemp = (TH1F*)gPad->GetPrimitive("htemp");
         if (htemp)
         {
@@ -54,7 +85,9 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
             printf("ERROR: htemp is nullptr\n");
             exit(1);
         }
+        i++;
     }
+    c1->Update();
     c1->SaveAs((plotDir + plotName + ".png").c_str());
     c1->SaveAs((plotDir + plotName + ".pdf").c_str());
     delete c1;
