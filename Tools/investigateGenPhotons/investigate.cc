@@ -11,22 +11,24 @@
 #include "TTree.h"
 #include "TChain.h"
 #include "TCanvas.h"
+#include "TTreeReader.h"
 
 void investigate(const char* inputFileName);
 void plot(TTree* tree, std::string plotName, const char * varexp, const char * selection);
 
 void plot(TTree* tree, std::string plotName, const char * varexp, const char * selection)
 {
+    std::string plotDir = "plots/";
     TCanvas* c1 = new TCanvas("c","c", 600.0, 600.0);
     tree->Draw(varexp, selection);
-    c1->SaveAs((plotName+".png").c_str());
-    c1->SaveAs((plotName+".pdf").c_str());
+    c1->SaveAs((plotDir + plotName + ".png").c_str());
+    c1->SaveAs((plotDir + plotName + ".pdf").c_str());
     delete c1;
 }
 
 void investigate(const char* inputFileName)
 {
-    // open file 
+    // open that file please 
     TFile* file = NULL;
     file = TFile::Open(inputFileName);
     if (!file)
@@ -47,17 +49,28 @@ void investigate(const char* inputFileName)
     std::string plotName = "";
     const char * varexp = "";
     const char * selection = "";
-    plotName = "genStatus";
+    
+    plotName = "genStatus_pdgId=22_pt>10";
     varexp = "recoGenParticles_prunedGenParticles__PAT.obj.status()";
-    selection = "recoGenParticles_prunedGenParticles__PAT.obj.pdgId()==22 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.";
+    selection = "recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0";
     plot(tree, plotName, varexp, selection);
-    // TCanvas* c1 = new TCanvas("c","c", 600.0, 600.0);
-    // tree->Draw("recoGenParticles_prunedGenParticles__PAT.obj.status()","");
-    // //tree->Draw("recoGenParticles_prunedGenParticles__PAT.obj.status()","recoGenParticles_prunedGenParticles__PAT.obj.pdgId()==22 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.");
-    // c1->SaveAs("gen_plot.png");
-    // c1->SaveAs("gen_plot.pdf");
-    // delete c1;
-    // close file 
+    
+    plotName = "genEta_eta<5";
+    varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
+    selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0";
+    plot(tree, plotName, varexp, selection);
+    
+    plotName = "genEta_eta<5_pt>10";
+    varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
+    selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0";
+    plot(tree, plotName, varexp, selection);
+    
+    plotName = "genEta_eta<5_pt>10_pdgId=22";
+    varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
+    selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0 && recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22";
+    plot(tree, plotName, varexp, selection);
+    
+    // close that file please
     file->Close();
 }
 
@@ -66,5 +79,7 @@ int main()
     const char* inputFileName = "FC894077-2DCA-E611-8008-002590DE6E3C.root"; 
     investigate(inputFileName);
 }
+
+
 
 
