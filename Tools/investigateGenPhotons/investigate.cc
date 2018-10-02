@@ -12,16 +12,26 @@
 #include "TChain.h"
 #include "TCanvas.h"
 
-void investigate(const char* fileName);
+void investigate(const char* inputFileName);
+void plot(TTree* tree, std::string plotName, const char * varexp, const char * selection);
 
-void investigate(const char* fileName)
+void plot(TTree* tree, std::string plotName, const char * varexp, const char * selection)
+{
+    TCanvas* c1 = new TCanvas("c","c", 600.0, 600.0);
+    tree->Draw(varexp, selection);
+    c1->SaveAs((plotName+".png").c_str());
+    c1->SaveAs((plotName+".pdf").c_str());
+    delete c1;
+}
+
+void investigate(const char* inputFileName)
 {
     // open file 
     TFile* file = NULL;
-    file = TFile::Open(fileName);
+    file = TFile::Open(inputFileName);
     if (!file)
     {
-        printf("ERROR: Did not open file %s\n", fileName);
+        printf("ERROR: Did not open file %s\n", inputFileName);
         exit(1);
     }
     // get tree
@@ -34,17 +44,27 @@ void investigate(const char* fileName)
         exit(1);
     }
     // make plots
-    TCanvas* c1 = new TCanvas("c","c", 600.0, 600.0);
-
-    delete c1;
+    std::string plotName = "";
+    const char * varexp = "";
+    const char * selection = "";
+    plotName = "genStatus";
+    varexp = "recoGenParticles_prunedGenParticles__PAT.obj.status()";
+    selection = "recoGenParticles_prunedGenParticles__PAT.obj.pdgId()==22 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.";
+    plot(tree, plotName, varexp, selection);
+    // TCanvas* c1 = new TCanvas("c","c", 600.0, 600.0);
+    // tree->Draw("recoGenParticles_prunedGenParticles__PAT.obj.status()","");
+    // //tree->Draw("recoGenParticles_prunedGenParticles__PAT.obj.status()","recoGenParticles_prunedGenParticles__PAT.obj.pdgId()==22 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.");
+    // c1->SaveAs("gen_plot.png");
+    // c1->SaveAs("gen_plot.pdf");
+    // delete c1;
     // close file 
     file->Close();
 }
 
 int main()
 {
-    const char* fileName = "FC894077-2DCA-E611-8008-002590DE6E3C.root"; 
-    investigate(fileName);
+    const char* inputFileName = "FC894077-2DCA-E611-8008-002590DE6E3C.root"; 
+    investigate(inputFileName);
 }
 
 
