@@ -40,6 +40,7 @@ void plot(TTree* tree, DrawOptions p)
     if (htemp)
     {
         htemp->GetXaxis()->SetRangeUser(-5.0, 5.0);
+        htemp->SetTitle(p.plotName.c_str());
     }
     else
     {
@@ -79,6 +80,7 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
         if (htemp)
         {
             htemp->GetXaxis()->SetRangeUser(-5.0, 5.0);
+            htemp->SetTitle(plotName.c_str());
         }
         else
         {
@@ -150,7 +152,7 @@ void investigate(const char* inputFileName)
     }
     
     // multiplot
-    multiplot(tree, plotOptions, "all_the_gen");
+    multiplot(tree, plotOptions, "gen_with_cuts");
 
     // close that file please
     file->Close();
