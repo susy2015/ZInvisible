@@ -1,4 +1,4 @@
-// investigate.cc
+// investigateGenPhotons.cc
 // investigate gen photons
 // Caleb J. Smith
 // October 1, 2018
@@ -157,9 +157,20 @@ void investigate(const char* inputFileName)
     
     plotName = "genEta_eta<5_pt>10_pdgId=22";
     varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
-    selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0 && recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22";
+    selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0 && \
+                 recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22";
     DrawOptions p3 = {plotName, varexp, selection, kGreen-2};
     plotOptions.push_back(p3);
+    
+    plotName = "genEta_eta<5_pt>10_pdgId=22_status=(1||2||20--29)";
+    varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
+    selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22 && \
+                    (recoGenParticles_prunedGenParticles__PAT.obj.status() == 1 || \
+                     recoGenParticles_prunedGenParticles__PAT.obj.status() == 2 || \
+                    (recoGenParticles_prunedGenParticles__PAT.obj.status())/10 == 2)";
+    DrawOptions p4 = {plotName, varexp, selection, kMagenta+1};
+    plotOptions.push_back(p4);
     
     // loop over plots
     for (const auto& p : plotOptions)
