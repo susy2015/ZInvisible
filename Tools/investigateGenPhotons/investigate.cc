@@ -14,6 +14,9 @@
 #include "TTreeReader.h"
 #include "TLegend.h"
 
+// use this command to copy the required root file before running this script
+// xrdcp root://xrootd.unl.edu//store/mc/RunIISummer16MiniAODv2/GJets_DR-0p4_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_qcut19_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/90000/FC894077-2DCA-E611-8008-002590DE6E3C.root .
+
 // simple class
 class DrawOptions
 {
