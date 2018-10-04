@@ -724,7 +724,14 @@ void Plotter::saveHists()
                         mydir = fout_->mkdir(dirname.c_str(),dirname.c_str());
                     }
                     mydir->cd();
-                    h->h->Write();
+                    if (h->h)
+                    {
+                        h->h->Write();
+                    }
+                    else
+                    {
+                        printf("Histogram for %s does not exist (nullptr)\n", dirname.c_str());
+                    }
                 }
             }
         }

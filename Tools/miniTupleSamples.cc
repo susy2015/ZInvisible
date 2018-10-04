@@ -21,7 +21,7 @@ namespace AnaSamples
             }
             fclose(f);
         }
-        else std::cout << "Filelist file \"" << filePath << "\" not found!!!!!!!" << std::endl;
+        else std::cout << "ERROR: Filelist file \"" << filePath << "\" not found" << std::endl;
     }
 
     void FileSummary::addCollection(std::string colName)

@@ -162,6 +162,7 @@ namespace plotterFunctions
         }
         if (!passed)
         {
+          // we should probably throw an exception here
           printf(" - ERROR in include/Gamma.h: TLorentzVector gammaLVecRecoEta for reco photons does not have the same length as one or more photon ntuple vectors.\n");
           printf(" - Set debug=true in include/Gamma.h for more information.\n");
         }

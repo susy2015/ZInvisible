@@ -952,7 +952,14 @@ int main(int argc, char* argv[])
 
     RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
 
-    std::cout << "Creating Plotter to make... well... you know... plots." << std::endl;
+    std::cout << "Creating Plotter: Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);" << std::endl;
+   
+    printf("    fromTuple: %s\n", fromTuple ? "true" : "false"); fflush(stdout);
+    printf("    filename: %s\n", filename.c_str());              fflush(stdout);
+    printf("    nFiles: %d\n", nFiles);                          fflush(stdout);
+    printf("    startFile: %d\n", startFile);                    fflush(stdout);
+    printf("    nEvts: %d\n", nEvts);                            fflush(stdout);
+  
     Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);
     plotter.setCutFlows(cutFlowSummaries);
     plotter.setLumi(lumi);
