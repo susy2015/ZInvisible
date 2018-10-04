@@ -6,9 +6,10 @@
 
 # process root files returned by condor job
 # - place files into directory named with data set and date
-# - add histograms to produce summed result
-# - if there are errors adding histograms, move bad file to another directory 
-#   and attampt to add histograms again 
+# - add histograms using hadd to produce summed result
+# - if there are errors adding histograms due to a specific file, 
+#   we move the bad file to another directory and attempt to add histograms again 
+# - repeat this process until hadd succeeds
 # - make plots using summed result
 
 
@@ -71,7 +72,7 @@ error=1
 # while there are errors, attempt hadd
 while [[ $error != 0 ]]
 do
-    echo "- Executing hadd to add histograms; see hadd.log for output"
+    echo "- Executing hadd to add histograms to create $resultFile; see hadd.log for stdout and stderr"
     hadd $resultFile *.root &> hadd.log
     error=$?
     if [[ $error != 0 ]]; then
@@ -82,12 +83,14 @@ do
         substring="hadd exiting due to error in"
         message=$(grep "$substring" hadd.log)
         file=$(expr match "$message" "$substring \(.*\)")
-        echo "  message: $message"
-        echo "  file: $file"
+        echo "    message: $message"
+        echo "    file: $file"
+        echo "- Moving broken file $file to $brokenDir"
         mv $file $brokenDir
+        echo "- Removing $resultFile"
         rm $resultFile
     else
-        echo "  hadd command succeeded"
+        echo "  hadd command succeeded; $resultFile should be ready to use"
     fi
 done
 
@@ -99,9 +102,16 @@ else
     exit 1
 fi
 
-echo "- Removing old plots"
+# go to zinv area
 cd $zinvDir
-rm plots/*
+
+# remove old plots if they exist 
+if [ -z "$(ls -A plots)" ]; then
+    echo "- There are no old plots to remove"
+else
+    echo "- Removing old plots"
+    rm plots/*
+fi
 
 echo "- Compiling MakePlots"
 make -j8
