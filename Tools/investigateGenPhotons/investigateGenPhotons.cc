@@ -36,7 +36,7 @@ void plot(TTree* tree, DrawOptions p)
     
     // draw
     tree->SetLineColor(p.color);
-    tree->Draw(p.varexp.c_str(), p.selection.c_str(), "E");
+    tree->Draw(p.varexp.c_str(), p.selection.c_str(), "hist E");
     // use htemp to set x-axis range
     // tree->Draw() creates htemp
     // this must be done after tree->Draw()
@@ -72,11 +72,11 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
         tree->SetLineColor(p.color);
         if (i == 0)
         {
-            tree->Draw(p.varexp.c_str(), p.selection.c_str(), "E");
+            tree->Draw(p.varexp.c_str(), p.selection.c_str(), "hist E");
         }
         else
         {
-            tree->Draw(p.varexp.c_str(), p.selection.c_str(), "same E");
+            tree->Draw(p.varexp.c_str(), p.selection.c_str(), "same hist E");
         }
         // this must be done after tree->Draw()
         // use htemp to set x-axis range and to put in legend with correct color
@@ -104,7 +104,7 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
         i++;
     }
 
-    legend->Draw("E");
+    legend->Draw("hist E");
     c1->Update();
     c1->SaveAs((plotDir + plotName + ".png").c_str());
     c1->SaveAs((plotDir + plotName + ".pdf").c_str());
