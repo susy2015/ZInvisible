@@ -58,7 +58,7 @@ void plot(TTree* tree, DrawOptions p)
     delete c1;
 }
 
-void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
+void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName, bool normalize=false)
 {
     printf("Creating multiplot %s\n", plotName.c_str());
     std::string plotDir = "plots/";
@@ -66,6 +66,9 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
     TLegend* legend = new TLegend(0.68, 0.55, 0.98, 0.75); // x1, y1, x2, y2
     legend->SetHeader("prunedGenParticles","C"); // option "C" allows to center the header
     int i = 0;
+    double h_max = -999.0;
+    double h_integral = -999.0;
+    TH1F* hfirst = nullptr;
     for (const auto & p : vp)
     {
         // draw
@@ -92,9 +95,18 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
         htemp = (TH1F*)gPad->GetListOfPrimitives()->At(i);
         if (htemp)
         {
+            // save first histogram to set ranges
+            if (i == 0) hfirst = htemp;
             legend->AddEntry(htemp, p.plotName.c_str());
             htemp->SetTitle(plotName.c_str());
-            htemp->GetXaxis()->SetRangeUser(-5.0, 5.0);
+            // get max of all histos
+            // do this before applying normalization
+            h_max = std::max(h_max, htemp->GetMaximum());
+            h_integral = std::max(h_integral, htemp->Integral());
+            if (normalize)
+            {
+                htemp->Scale(1.0/htemp->Integral());
+            }
         }
         else
         {
@@ -103,6 +115,16 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName)
         }
         i++;
     }
+
+    printf("h_max = %f\n", h_max);
+    printf("h_integral = %f\n", h_integral);
+    if (normalize)
+    {
+        h_max = h_max / h_integral;
+        printf("normalized h_max = %f\n", h_max);
+    }
+    hfirst->GetXaxis()->SetRangeUser(-5.0, 5.0);
+    hfirst->GetYaxis()->SetRangeUser(0.0, 1.5*h_max);
 
     legend->Draw("hist E");
     c1->Update();
@@ -178,8 +200,10 @@ void investigate(const char* inputFileName)
         plot(tree, p);
     }
     
-    // multiplot
-    multiplot(tree, plotOptions, "gen_with_cuts");
+    // multiplot (original)
+    multiplot(tree, plotOptions, "gen_with_cuts_original");
+    // multiplot (normalized)
+    multiplot(tree, plotOptions, "gen_with_cuts_normalized", true);
 
     // close that file please
     file->Close();
