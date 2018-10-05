@@ -168,7 +168,7 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName, b
 
 void investigate(const char* inputFileName)
 {
-    TChain* chain = chainFiles(inputFileName, 5); 
+    TChain* chain = chainFiles(inputFileName, 10); 
     if (!chain)
     {
         printf("ERROR: Did not create chain from %s\n", inputFileName);
