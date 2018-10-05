@@ -3,6 +3,7 @@
 // Caleb J. Smith
 // October 1, 2018
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include "stdio.h"
@@ -16,6 +17,40 @@
 
 // use this command to copy the required root file before running this script
 // xrdcp root://xrootd.unl.edu//store/mc/RunIISummer16MiniAODv2/GJets_DR-0p4_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_qcut19_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/90000/FC894077-2DCA-E611-8008-002590DE6E3C.root .
+
+TChain* chainFiles(const char *infile, int n_lines)
+{ 
+    std::ifstream in;
+    in.open(infile);
+    if(!in.is_open()){
+        std::cout << "Cannot open list file: " << infile << std::endl;
+        return nullptr;  
+    }
+
+    TChain *chain = new TChain("Events");
+      
+    std::string line;
+    int i = 0;
+    while(in.good()){
+        if (i >= n_lines) break;                // only read n_lines
+        if( ! std::getline(in,line) ) break;    // read a line from the file
+        if( chain->Add( line.c_str() ) )        // add to the chain 
+        {
+            std::cout << "Added file " << i <<  ": " << line << std::endl;
+        }
+        else
+        {
+            std::cout << "Problem loading tree from " << line << std::endl;
+        }
+        // increase line index
+        i++; 
+    }
+      
+    in.close();
+
+    //chain->Merge(outfile);
+    return chain;
+}
 
 // simple class
 class DrawOptions
@@ -133,18 +168,27 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName, b
 
 void investigate(const char* inputFileName)
 {
-    // open that file please 
-    TFile* file = nullptr;
-    file = TFile::Open(inputFileName);
-    if (!file)
+    TChain* chain = chainFiles(inputFileName, 5); 
+    if (!chain)
     {
-        printf("ERROR: Did not open file %s\n", inputFileName);
+        printf("ERROR: Did not create chain from %s\n", inputFileName);
         exit(1);
     }
+    // // open that file please 
+    // TFile* file = nullptr;
+    // file = TFile::Open(inputFileName);
+    // if (!file)
+    // {
+    //     printf("ERROR: Did not open file %s\n", inputFileName);
+    //     exit(1);
+    // }
     // get tree
     std::string treeName = "Events";
     TTree* tree = nullptr;
-    tree = (TTree*)file->Get(treeName.c_str());
+    std::cout << "Number of trees: " << chain->GetNtrees() << std::endl;
+    std::cout << "Find branch: " << chain->FindBranch(treeName.c_str()) << std::endl;
+    tree = (TTree*)chain->GetTree();
+    //tree = (TTree*)file->Get(treeName.c_str());
     if (!tree)
     {
         printf("ERROR: Did not open tree %s\n", treeName.c_str());
@@ -204,14 +248,16 @@ void investigate(const char* inputFileName)
     multiplot(tree, plotOptions, "gen_with_cuts_normalized", true);
 
     // close that file please
-    file->Close();
+    //file->Close();
     // delete file
-    delete file;
+    //delete file;
+    delete chain;
 }
 
 int main()
 {
-    const char* inputFileName = "FC894077-2DCA-E611-8008-002590DE6E3C.root"; 
+    //const char* inputFileName = "FC894077-2DCA-E611-8008-002590DE6E3C.root"; 
+    const char* inputFileName = "RunIISummer16MiniAODv2/GJets_DR-0p4_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.txt"; 
     investigate(inputFileName);
 }
 
