@@ -29,7 +29,7 @@ class DrawOptions
 
 void plot(TTree* tree, DrawOptions p)
 {
-    printf("Creating plot %s\n", p.plotName.c_str());
+    printf("- Creating plot %s\n", p.plotName.c_str());
     std::string plotDir = "plots/";
     TCanvas* c1 = new TCanvas("c","c", 600.0, 600.0);
     TH1F* htemp = nullptr;
@@ -60,7 +60,7 @@ void plot(TTree* tree, DrawOptions p)
 
 void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName, bool normalize=false)
 {
-    printf("Creating multiplot %s\n", plotName.c_str());
+    printf("- Creating multiplot %s\n", plotName.c_str());
     std::string plotDir = "plots/";
     TCanvas* c1 = new TCanvas("c","c", 600.0, 600.0);
     TLegend* legend = new TLegend(0.68, 0.55, 0.98, 0.75); // x1, y1, x2, y2
@@ -99,14 +99,17 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName, b
             if (i == 0) hfirst = htemp;
             legend->AddEntry(htemp, p.plotName.c_str());
             htemp->SetTitle(plotName.c_str());
-            // get max of all histos
+            // get max integral
             // do this before applying normalization
-            h_max = std::max(h_max, htemp->GetMaximum());
             h_integral = std::max(h_integral, htemp->Integral());
             if (normalize)
             {
                 htemp->Scale(1.0/htemp->Integral());
             }
+            // do this after applying normalization
+            // note that htemp->GetMaximum() only give unscale max
+            // this method gives the max after scaling
+            h_max = std::max(h_max, htemp->GetBinContent(htemp->GetMaximumBin()));
         }
         else
         {
@@ -118,13 +121,8 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName, b
 
     printf("h_max = %f\n", h_max);
     printf("h_integral = %f\n", h_integral);
-    if (normalize)
-    {
-        h_max = h_max / h_integral;
-        printf("normalized h_max = %f\n", h_max);
-    }
     hfirst->GetXaxis()->SetRangeUser(-5.0, 5.0);
-    hfirst->GetYaxis()->SetRangeUser(0.0, 1.5*h_max);
+    hfirst->GetYaxis()->SetRangeUser(0.0, 1.25*h_max);
 
     legend->Draw("hist E");
     c1->Update();
