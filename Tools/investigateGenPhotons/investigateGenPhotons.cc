@@ -18,7 +18,8 @@
 // use this command to copy the required root file before running this script
 // xrdcp root://xrootd.unl.edu//store/mc/RunIISummer16MiniAODv2/GJets_DR-0p4_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_qcut19_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/90000/FC894077-2DCA-E611-8008-002590DE6E3C.root .
 
-TChain* chainFiles(const char *infile, int n_lines)
+TChain* combineTrees(const char *infile, int n_lines)
+//void combineTrees(const char * infile, const char * outfile, int n_lines)
 { 
     std::ifstream in;
     in.open(infile);
@@ -36,11 +37,11 @@ TChain* chainFiles(const char *infile, int n_lines)
         if( ! std::getline(in,line) ) break;    // read a line from the file
         if( chain->Add( line.c_str() ) )        // add to the chain 
         {
-            std::cout << "Added file " << i <<  ": " << line << std::endl;
+            std::cout << "Loaded tree " << i <<  ": " << line << std::endl;
         }
         else
         {
-            std::cout << "Problem loading tree from " << line << std::endl;
+            std::cout << "Problem loading tree " << i <<  ": " << line << std::endl;
         }
         // increase line index
         i++; 
@@ -48,7 +49,10 @@ TChain* chainFiles(const char *infile, int n_lines)
       
     in.close();
 
+    //TFile * file = TFile::Open(outfile, "RECREATE");
+    //printf("Begin merging chain\n");
     //chain->Merge(outfile);
+    //printf("Finished merging chain\n");
     return chain;
 }
 
@@ -62,7 +66,7 @@ class DrawOptions
         int color;
 };
 
-void plot(TTree* tree, DrawOptions p)
+void plot(TChain* chain, DrawOptions p)
 {
     printf("- Creating plot %s\n", p.plotName.c_str());
     std::string plotDir = "plots/";
@@ -70,11 +74,11 @@ void plot(TTree* tree, DrawOptions p)
     TH1F* htemp = nullptr;
     
     // draw
-    tree->SetLineColor(p.color);
-    tree->Draw(p.varexp.c_str(), p.selection.c_str(), "hist E");
+    chain->SetLineColor(p.color);
+    chain->Draw(p.varexp.c_str(), p.selection.c_str(), "hist E");
     // use htemp to set x-axis range
-    // tree->Draw() creates htemp
-    // this must be done after tree->Draw()
+    // chain->Draw() creates htemp
+    // this must be done after chain->Draw()
     htemp = (TH1F*)gPad->GetPrimitive("htemp");
     if (htemp)
     {
@@ -93,7 +97,7 @@ void plot(TTree* tree, DrawOptions p)
     delete c1;
 }
 
-void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName, bool normalize=false)
+void multiplot(TChain* chain, std::vector<DrawOptions> vp, std::string plotName, bool normalize=false)
 {
     printf("- Creating multiplot %s\n", plotName.c_str());
     std::string plotDir = "plots/";
@@ -107,19 +111,19 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName, b
     for (const auto & p : vp)
     {
         // draw
-        tree->SetLineColor(p.color);
+        chain->SetLineColor(p.color);
         if (i == 0)
         {
-            tree->Draw(p.varexp.c_str(), p.selection.c_str(), "hist E");
+            chain->Draw(p.varexp.c_str(), p.selection.c_str(), "hist E");
         }
         else
         {
-            tree->Draw(p.varexp.c_str(), p.selection.c_str(), "same hist E");
+            chain->Draw(p.varexp.c_str(), p.selection.c_str(), "same hist E");
         }
-        // this must be done after tree->Draw()
+        // this must be done after chain->Draw()
         // use htemp to set x-axis range and to put in legend with correct color
-        // tree->Draw() creates a new htemp every time
-        // every time we do tree->Draw(), we get another htemp
+        // chain->Draw() creates a new htemp every time
+        // every time we do chain->Draw(), we get another htemp
         // use GetListOfPrimitives and index to get the correct htemp
         
         // print what's available
@@ -168,32 +172,38 @@ void multiplot(TTree* tree, std::vector<DrawOptions> vp, std::string plotName, b
 
 void investigate(const char* inputFileName)
 {
-    TChain* chain = chainFiles(inputFileName, 10); 
+    //const char * outputFileName = "Combined_GJets_DR-0p4_HT-600ToInf.root";
+    //combineTrees(inputFileName, 2); 
+    TChain* chain = combineTrees(inputFileName, 2); 
     if (!chain)
     {
         printf("ERROR: Did not create chain from %s\n", inputFileName);
         exit(1);
     }
-    // // open that file please 
-    // TFile* file = nullptr;
-    // file = TFile::Open(inputFileName);
-    // if (!file)
-    // {
-    //     printf("ERROR: Did not open file %s\n", inputFileName);
-    //     exit(1);
-    // }
+    
+    // open that file please 
+    //printf("Opening file: %s\n", outputFileName);
+    //TFile* file = nullptr;
+    //file = TFile::Open(outputFileName);
+    //if (!file)
+    //{
+    //    printf("ERROR: Did not open file %s\n", outputFileName);
+    //    exit(1);
+    //}
+    
     // get tree
-    std::string treeName = "Events";
-    TTree* tree = nullptr;
-    std::cout << "Number of trees: " << chain->GetNtrees() << std::endl;
-    std::cout << "Find branch: " << chain->FindBranch(treeName.c_str()) << std::endl;
-    tree = (TTree*)chain->GetTree();
+    //std::string treeName = "Events";
+    //TTree* tree = nullptr;
+    //std::cout << "Number of trees: " << chain->GetNtrees() << std::endl;
+    //std::cout << "Find branch: " << chain->FindBranch(treeName.c_str()) << std::endl;
+    //tree = (TTree*)chain->GetTree();
+    
     //tree = (TTree*)file->Get(treeName.c_str());
-    if (!tree)
-    {
-        printf("ERROR: Did not open tree %s\n", treeName.c_str());
-        exit(1);
-    }
+    //if (!tree)
+    //{
+    //    printf("ERROR: Did not open tree %s\n", treeName.c_str());
+    //    exit(1);
+    //}
     // make plots
     std::vector<DrawOptions> plotOptions;
     std::string plotName = "";
@@ -239,13 +249,13 @@ void investigate(const char* inputFileName)
     // loop over plots
     for (const auto& p : plotOptions)
     {
-        plot(tree, p);
+        plot(chain, p);
     }
     
     // multiplot (original)
-    multiplot(tree, plotOptions, "gen_with_cuts_original");
+    multiplot(chain, plotOptions, "gen_with_cuts_original");
     // multiplot (normalized)
-    multiplot(tree, plotOptions, "gen_with_cuts_normalized", true);
+    multiplot(chain, plotOptions, "gen_with_cuts_normalized", true);
 
     // close that file please
     //file->Close();
