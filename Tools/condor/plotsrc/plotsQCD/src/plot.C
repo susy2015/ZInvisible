@@ -39,7 +39,7 @@ int main()
     };
 
     makeplots("QCD",data,bgEntries,wantedEntries,unwantedEntries);
-    return;
+    return 0;
     //vector summarizing signal histograms to include in the plot
 //    std::vector<histInfo> sigEntries = {
 //        {"T2tt (1000, 1)", "myhistos/Signal_fastsim_T2tt_mStop-1000.root", "hist", kGreen + 2},

@@ -32,7 +32,7 @@
 #include <string>
 #include <set>
 #include <random>
-
+ 
 namespace plotterFunctions
 {
     class GenerateWeight
@@ -55,8 +55,8 @@ namespace plotterFunctions
             const std::vector<TLorentzVector>& jetsLVec         = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
             const std::vector<TLorentzVector>& cutMuVec         = tr.getVec<TLorentzVector>("cutMuVec");
             const std::vector<TLorentzVector>& cutElecVec       = tr.getVec<TLorentzVector>("cutElecVec");
-            const std::vector<double>& cutMuActivity            = tr.getVec<double>("cutMuActivity");
-            const std::vector<double>& cutElecActivity          = tr.getVec<double>("cutElecActivity");
+            const std::vector<float>& cutMuActivity            = tr.getVec<float>("cutMuActivity");
+            const std::vector<float>& cutElecActivity          = tr.getVec<float>("cutElecActivity");
             const std::vector<TLorentzVector*>& genMu           = tr.getVec<TLorentzVector*>("genMu");
             const std::vector<TLorentzVector*>& genMuInAcc      = tr.getVec<TLorentzVector*>("genMuInAcc");
             const std::vector<TLorentzVector*>& genMatchMuInAcc = tr.getVec<TLorentzVector*>("genMatchMuInAcc");
@@ -64,69 +64,69 @@ namespace plotterFunctions
             const int& pdgIdZDec      = tr.getVar<int>("pdgIdZDec");
             const bool& passMuZinvSel = tr.getVar<bool>("passMuZinvSel");
             const bool& passElecZinvSel = tr.getVar<bool>("passElecZinvSel");
-            const double& ht          = tr.getVar<double>("ht");
-            const double& bestRecoZPt = tr.getVar<double>("bestRecoZPt");
-            const double& genZPt      = tr.getVar<double>("genZPt");
+            const float& ht          = tr.getVar<float>("ht");
+            const float& bestRecoZPt = tr.getVar<float>("bestRecoZPt");
+            const float& genZPt      = tr.getVar<float>("genZPt");
 
             const int& nJets     =  tr.getVar<int>("nJets");
-	    const double& stored_weight = tr.getVar<double>("stored_weight");
+	    const float& stored_weight = tr.getVar<float>("stored_weight");
 
             // Calculate PU weight
 
             // Calculate Z-eff weight
 
-            const double zMassMin = 71.0;
-            const double zMass    = 91.0;
-            const double zMassMax = 111.0;
+            const float zMassMin = 71.0;
+            const float zMass    = 91.0;
+            const float zMassMax = 111.0;
 
-            double zMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
+            float zMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
             for(int i = 0; i < cutMuVec.size(); ++i)
             {
                 if(cutMuVec[i].Pt() < 10) continue;
                 for(int j = 0; j < i && j < cutMuVec.size(); ++j)
                 {
                     if(cutMuVec[j].Pt() < 10) continue;
-                    double zm = (cutMuVec[i] + cutMuVec[j]).M();
+                    float zm = (cutMuVec[i] + cutMuVec[j]).M();
                     if(fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                     {
                         zMassCurrent = zm;
-                        double mu1pt = cutMuVec[i].Pt();
-                        double mu2pt = cutMuVec[j].Pt();
-                        double mu1Act = cutMuActivity[i];
-                        double mu2Act = cutMuActivity[j];
+                        float mu1pt = cutMuVec[i].Pt();
+                        float mu2pt = cutMuVec[j].Pt();
+                        float mu1Act = cutMuActivity[i];
+                        float mu2Act = cutMuActivity[j];
 
                         //set to not overflow histograms
                         if(mu1pt >= 2000.0) mu1pt = 1999.9;
                         if(mu2pt >= 2000.0) mu2pt = 1999.9;
 
                         //Get mu efficiencies
-                        double muEff1 = 0.0, muEff2 = 0.0;
+                        float muEff1 = 0.0, muEff2 = 0.0;
 
                         if(muEff && muEffReco && muEffIso)
                         {
                             //Fit to reco eff (eff = p0 + p1*pt + p2*pt^2
                             //PHYS14
-                            //const double fitStart = 200.0; // extended to 1400 GeV
-                            //const double p0 =     0.955847; // +/- 0.461944
-                            //const double p1 = -2.24431e-05; // +/- 0.00128305
-                            //const double p2 = -5.68907e-08; // +/- 7.85913e-07
+                            //const float fitStart = 200.0; // extended to 1400 GeV
+                            //const float p0 =     0.955847; // +/- 0.461944
+                            //const float p1 = -2.24431e-05; // +/- 0.00128305
+                            //const float p2 = -5.68907e-08; // +/- 7.85913e-07
                             //Sprint15
-                            //const double fitStart = 200.0; // extended to 1400 GeV
-                            //const double p0 =  9.83467e-01; // +/- 1.54469e+00
-                            //const double p1 = -7.81897e-06; // +/- 4.16487e-03
-                            //const double p2 = -1.22092e-08; // +/- 2.18556e-06
+                            //const float fitStart = 200.0; // extended to 1400 GeV
+                            //const float p0 =  9.83467e-01; // +/- 1.54469e+00
+                            //const float p1 = -7.81897e-06; // +/- 4.16487e-03
+                            //const float p2 = -1.22092e-08; // +/- 2.18556e-06
                             //Spring15 low stats
-                            //const double fitStart = 200.0;  // extended to 2000 GeV
-                            //const double p0 =     0.979238; //   +/-   1.17313
-                            //const double p1 = -6.47338e-06; //   +/-   0.00342715
-                            //const double p2 = -1.16258e-08; //   +/-   1.87837e-06
+                            //const float fitStart = 200.0;  // extended to 2000 GeV
+                            //const float p0 =     0.979238; //   +/-   1.17313
+                            //const float p1 = -6.47338e-06; //   +/-   0.00342715
+                            //const float p2 = -1.16258e-08; //   +/-   1.87837e-06
                             //Spring15 extended samples
-                            const double fitStart = 200.0;  // extended to 2000 GeV
-                            const double p0 =      0.97431; //   +/-   1.17119     
-                            const double p1 =  2.87484e-05; //   +/-   0.00341371  
-                            const double p2 = -5.37058e-08; //   +/-   1.86309e-06 
+                            const float fitStart = 200.0;  // extended to 2000 GeV
+                            const float p0 =      0.97431; //   +/-   1.17119     
+                            const float p1 =  2.87484e-05; //   +/-   0.00341371  
+                            const float p2 = -5.37058e-08; //   +/-   1.86309e-06 
 
-                            double muRecoEff = 0.0;
+                            float muRecoEff = 0.0;
 
                             int recoPtBin = muEffReco->GetXaxis()->FindBin(mu1pt);
                             if(mu1pt > fitStart) muRecoEff = p0 + p1*mu1pt + p2*mu1pt*mu1pt;
@@ -160,38 +160,38 @@ namespace plotterFunctions
             }
 
             zMassCurrent = 1.0e300;
-            double zEffElec = 1.0e100, zAccElec = 1.0e100;
+            float zEffElec = 1.0e100, zAccElec = 1.0e100;
             for(int i = 0; i < cutElecVec.size(); ++i)
             {
                 if(cutElecVec[i].Pt() < 10) continue;
                 for(int j = 0; j < i && j < cutElecVec.size(); ++j)
                 {
                     if(cutElecVec[j].Pt() < 10) continue;
-                    double zm = (cutElecVec[i] + cutElecVec[j]).M();
+                    float zm = (cutElecVec[i] + cutElecVec[j]).M();
                     if(fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                     {
                         zMassCurrent = zm;
-                        double elec1pt = cutElecVec[i].Pt();
-                        double elec2pt = cutElecVec[j].Pt();
+                        float elec1pt = cutElecVec[i].Pt();
+                        float elec2pt = cutElecVec[j].Pt();
 
-                        double elec1Act = cutElecActivity[i];
-                        double elec2Act = cutElecActivity[j];
+                        float elec1Act = cutElecActivity[i];
+                        float elec2Act = cutElecActivity[j];
 
                         //set to not overflow histograms
                         if(elec1pt >= 2000.0) elec1pt = 1999.9;
                         if(elec2pt >= 2000.0) elec2pt = 1999.9;
 
                         //Get elec efficiencies
-                        double elecEff1 = 0.0, elecEff2 = 0.0;
+                        float elecEff1 = 0.0, elecEff2 = 0.0;
                         if(elecEffReco && elecEffIso)
                         {
                             //Fit to iso eff (eff = p0 + p1*pt + p2*pt^2
-                            const double fitStart =200.0;  // extended to 2000 GeV
-                            const double p0 =     0.989411; //   +/-   1.18467
-                            const double p1 =  3.66321e-06; //   +/-   0.00346729
-                            const double p2 = -5.68292e-09; //   +/-   1.90334e-06
+                            const float fitStart =200.0;  // extended to 2000 GeV
+                            const float p0 =     0.989411; //   +/-   1.18467
+                            const float p1 =  3.66321e-06; //   +/-   0.00346729
+                            const float p2 = -5.68292e-09; //   +/-   1.90334e-06
 
-                            double elecIsoEff = 0.0;
+                            float elecIsoEff = 0.0;
 
                             //int isoPtBin = elecEffIso->GetXaxis()->FindBin(elec1pt);
                             //if(elec1pt > fitStart) elecIsoEff = p0 + p1*elec1pt + p2*elec1pt*elec1pt;
@@ -234,15 +234,15 @@ namespace plotterFunctions
                 }
             }
 
-            double genCleanHt = ht;
+            float genCleanHt = ht;
             for(auto& tlvp : genMuInAcc) if(tlvp->Pt() > 50) genCleanHt -= tlvp->Pt();
 
-            const double MHT_jetPtMin = 30.0;
+            const float MHT_jetPtMin = 30.0;
             TLorentzVector MHT;
-            double mu1dRMin = 99.9, mu2dRMin = 99.9;
+            float mu1dRMin = 99.9, mu2dRMin = 99.9;
             for(auto& jet : jetsLVec)
             {
-                double mu1dR = 999.9, mu2dR = 999.9;
+                float mu1dR = 999.9, mu2dR = 999.9;
                 if(cutMuVec.size() >= 1) mu1dR = ROOT::Math::VectorUtil::DeltaR(jet, cutMuVec[0]);
                 if(cutMuVec.size() >= 2) mu2dR = ROOT::Math::VectorUtil::DeltaR(jet, cutMuVec[1]);
                 mu1dRMin = std::min(mu1dRMin, mu1dR);
@@ -251,7 +251,7 @@ namespace plotterFunctions
                 if(jet.Pt() > MHT_jetPtMin) MHT += jet;
             }
 
-            double mudR = 99.9, genMudR = 99.9, genMudPhi = 99.9, genMudEta = 99.9;
+            float mudR = 99.9, genMudR = 99.9, genMudPhi = 99.9, genMudEta = 99.9;
 
             if(cutMuVec.size() >= 2) mudR    = ROOT::Math::VectorUtil::DeltaR(cutMuVec[0], cutMuVec[1]);
             if(genMu.size() > 2) std::cout << "MORE THAN 2 GEN MUONS: " << genMu.size() << std::endl;
@@ -265,17 +265,17 @@ namespace plotterFunctions
             // muon Z pt acceptance corrections
             //functional form [2] - exp([0] + [1]*x)
             //PHYS14
-            //double acc_p0 = -2.91374e-01;
-            //double acc_p1 = -4.42884e-03;
-            //double acc_p2 =  9.51190e-01;
+            //float acc_p0 = -2.91374e-01;
+            //float acc_p1 = -4.42884e-03;
+            //float acc_p2 =  9.51190e-01;
             //Spring15 low stats
-            //double acc_p0 = -2.64921e-01;
-            //double acc_p1 = -4.65305e-03;
-            //double acc_p2 =  9.50493e-01;
+            //float acc_p0 = -2.64921e-01;
+            //float acc_p1 = -4.65305e-03;
+            //float acc_p2 =  9.50493e-01;
             //Spring15 extended sample
-            const double acc_p0 = -2.60663e-01;
-            const double acc_p1 = -4.60623e-03;
-            const double acc_p2 = 9.49434e-01;
+            const float acc_p0 = -2.60663e-01;
+            const float acc_p1 = -4.60623e-03;
+            const float acc_p2 = 9.49434e-01;
 
             if(hZAcc && hZAccLepPt)
             {
@@ -302,12 +302,12 @@ namespace plotterFunctions
             // electron Z pt acceptance corrections
             //functional form [2] - exp([0] + [1]*x)
             //Spring15
-            //double elecAcc_p0 = -3.18955e-02;
-            //double elecAcc_p1 = -5.16522e-03;
-            //double elecAcc_p2 = 8.92280e-01;
-            double elecAcc_p0 = -2.50679e-01;
-            double elecAcc_p1 = -5.34976e-03;
-            double elecAcc_p2 = 9.33562e-01;
+            //float elecAcc_p0 = -3.18955e-02;
+            //float elecAcc_p1 = -5.16522e-03;
+            //float elecAcc_p2 = 8.92280e-01;
+            float elecAcc_p0 = -2.50679e-01;
+            float elecAcc_p1 = -5.34976e-03;
+            float elecAcc_p2 = 9.33562e-01;
 
             if(hZAccElec && hZAccLepPtElec)
             {
@@ -332,7 +332,7 @@ namespace plotterFunctions
             }
 
 	    // Process the generator weight
-	    double genWeight = 1.;
+	    float genWeight = 1.;
 	    // Never apply this weight for data! In the old ntuple version <=3 this is "-1", in the newer ones it is "0"
 	    if(stored_weight < 0)
 	      genWeight = -1.;
@@ -437,8 +437,8 @@ namespace plotterFunctions
             const int& cntNJetsPt30Eta24Zinv = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
             const int& cntCSVSZinv = tr.getVar<int>("cntCSVSZinv");
 
-            double wTT = 1.0;
-            double wDY = 1.0;
+            float wTT = 1.0;
+            float wDY = 1.0;
 
 	    if(cntCSVSZinv == 0)
 	    {
@@ -451,16 +451,16 @@ namespace plotterFunctions
 		if(njWDYZ_g1b)   wDY = njWDYZ_g1b->GetBinContent(njWDYZ_g1b->FindBin(cntNJetsPt30Eta24Zinv));
 	    }
             //std::cout<<wDY<<std::endl;
-            double nJet1bfakeWgt = 1.0;
-            double nJet2bfakeWgt = 1.0;
-            double nJet3bfakeWgt = 1.0;
+            float nJet1bfakeWgt = 1.0;
+            float nJet2bfakeWgt = 1.0;
+            float nJet3bfakeWgt = 1.0;
 
             if(MCfake1b)   nJet1bfakeWgt = MCfake1b->GetBinContent(MCfake1b->FindBin(cntNJetsPt30Eta24Zinv));
             if(MCfake2b)   nJet2bfakeWgt = MCfake2b->GetBinContent(MCfake2b->FindBin(cntNJetsPt30Eta24Zinv));
             if(MCfake3b)   nJet3bfakeWgt = MCfake3b->GetBinContent(MCfake3b->FindBin(cntNJetsPt30Eta24Zinv));
 
-	    double normWgt0b = ScaleFactors::sf_norm0b();
-            double normttbar = ScaleFactorsttBar::sf_norm0b(); 
+	    float normWgt0b = ScaleFactors::sf_norm0b();
+            float normttbar = ScaleFactorsttBar::sf_norm0b(); 
 
             tr.registerDerivedVar("nJetWgtTTbar", wTT);
             tr.registerDerivedVar("nJetWgtDYZ",   wDY);
@@ -535,27 +535,27 @@ namespace plotterFunctions
         void lepInfo(NTupleReader& tr)
         {
             const std::vector<TLorentzVector>& muonsLVec    = tr.getVec<TLorentzVector>("muonsLVec");
-            const std::vector<double>& muonsRelIso          = tr.getVec<double>("muonsRelIso");
-            const std::vector<double>& muonsMiniIso         = tr.getVec<double>("muonsMiniIso");
-            const std::vector<double>& muonsCharge          = tr.getVec<double>("muonsCharge");
+            const std::vector<float>& muonsRelIso          = tr.getVec<float>("muonsRelIso");
+            const std::vector<float>& muonsMiniIso         = tr.getVec<float>("muonsMiniIso");
+            const std::vector<float>& muonsCharge          = tr.getVec<float>("muonsCharge");
             const std::vector<TLorentzVector>& jetsLVec     = tr.getVec<TLorentzVector>("jetsLVec");
-            const std::vector<double>& recoJetschargedEmEnergyFraction     = tr.getVec<double>("recoJetschargedEmEnergyFraction");
-            const std::vector<double>& recoJetschargedHadronEnergyFraction = tr.getVec<double>("recoJetschargedHadronEnergyFraction");
+            const std::vector<float>& recoJetschargedEmEnergyFraction     = tr.getVec<float>("recoJetschargedEmEnergyFraction");
+            const std::vector<float>& recoJetschargedHadronEnergyFraction = tr.getVec<float>("recoJetschargedHadronEnergyFraction");
             const std::vector<int> & muonsFlagIDVec = tr.getVec<int>("muonsFlagMedium");
             const std::vector<int>&  elesFlagIDVec  = tr.getVec<int>("elesFlagVeto");
 
-            const std::vector<double>& muonspfActivity      = tr.getVec<double>("muonspfActivity");
-            const std::vector<double>& elespfActivity       = tr.getVec<double>("elespfActivity");
-            const std::vector<double>& W_emu_pfActivityVec  = tr.getVec<double>("W_emu_pfActivityVec");
+            const std::vector<float>& muonspfActivity      = tr.getVec<float>("muonspfActivity");
+            const std::vector<float>& elespfActivity       = tr.getVec<float>("elespfActivity");
+            const std::vector<float>& W_emu_pfActivityVec  = tr.getVec<float>("W_emu_pfActivityVec");
 
-            //const double& ht                             = tr.getVar<double>("ht");
-            const double& met                            = tr.getVar<double>("met");
-            const double& metphi                         = tr.getVar<double>("metphi");
+            //const float& ht                             = tr.getVar<float>("ht");
+            const float& met                            = tr.getVar<float>("met");
+            const float& metphi                         = tr.getVar<float>("metphi");
 
             const std::vector<TLorentzVector, std::allocator<TLorentzVector> > elesLVec = tr.getVec<TLorentzVector>("elesLVec");
-            const std::vector<double>& elesMiniIso          = tr.getVec<double>("elesMiniIso");
-            const std::vector<double>& elesCharge           = tr.getVec<double>("elesCharge");
-            const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
+            const std::vector<float>& elesMiniIso          = tr.getVec<float>("elesMiniIso");
+            const std::vector<float>& elesCharge           = tr.getVec<float>("elesCharge");
+            const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB",true);
 
             //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
 
@@ -573,32 +573,32 @@ namespace plotterFunctions
 
             std::vector<const TLorentzVector*>* genMatchIsoElecInAcc = new std::vector<const TLorentzVector*>();
             std::vector<const TLorentzVector*>* genMatchElecInAcc = new std::vector<const TLorentzVector*>();
-            std::vector<double>* genMatchElecInAccRes = new std::vector<double>();
+            std::vector<float>* genMatchElecInAccRes = new std::vector<float>();
             std::vector<const TLorentzVector*>* genElecInAcc = new std::vector<const TLorentzVector*>();
             std::vector<const TLorentzVector*>* genElec = new std::vector<const TLorentzVector*>();
-            std::vector<double>* genMatchIsoElecInAccAct = new std::vector<double>();
-            std::vector<double>* genMatchElecInAccAct = new std::vector<double>();
-            std::vector<double>* genElecInAccAct = new std::vector<double>();
-            std::vector<double>* genElecAct = new std::vector<double>();
+            std::vector<float>* genMatchIsoElecInAccAct = new std::vector<float>();
+            std::vector<float>* genMatchElecInAccAct = new std::vector<float>();
+            std::vector<float>* genElecInAccAct = new std::vector<float>();
+            std::vector<float>* genElecAct = new std::vector<float>();
 
             std::vector<TLorentzVector>* cutElecVec = new std::vector<TLorentzVector>();
-            std::vector<double>* cutElecCharge = new std::vector<double>();
-            std::vector<double>* cutElecActivity = new std::vector<double>();
+            std::vector<float>* cutElecCharge = new std::vector<float>();
+            std::vector<float>* cutElecActivity = new std::vector<float>();
 
             std::vector<TLorentzVector> cutElecVecRecoOnly;
 
             std::vector<const TLorentzVector*>* genMatchIsoMuInAcc = new std::vector<const TLorentzVector*>();
             std::vector<const TLorentzVector*>* genMatchMuInAcc = new std::vector<const TLorentzVector*>();
-            std::vector<double>* genMatchMuInAccRes = new std::vector<double>();
+            std::vector<float>* genMatchMuInAccRes = new std::vector<float>();
             std::vector<const TLorentzVector*>* genMuInAcc = new std::vector<const TLorentzVector*>();
             std::vector<const TLorentzVector*>* genMu = new std::vector<const TLorentzVector*>();
-            std::vector<double>* genMatchIsoMuInAccAct = new std::vector<double>();
-            std::vector<double>* genMatchMuInAccAct = new std::vector<double>();
-            std::vector<double>* genMuInAccAct = new std::vector<double>();
-            std::vector<double>* genMuAct = new std::vector<double>();
+            std::vector<float>* genMatchIsoMuInAccAct = new std::vector<float>();
+            std::vector<float>* genMatchMuInAccAct = new std::vector<float>();
+            std::vector<float>* genMuInAccAct = new std::vector<float>();
+            std::vector<float>* genMuAct = new std::vector<float>();
             std::vector<TLorentzVector>* cutMuVec = new std::vector<TLorentzVector>();
-            std::vector<double>* cutMuCharge = new std::vector<double>();
-            std::vector<double>* cutMuActivity = new std::vector<double>();
+            std::vector<float>* cutMuCharge = new std::vector<float>();
+            std::vector<float>* cutMuActivity = new std::vector<float>();
 
             //std::vector<TLorentzVector>* Zrecopt = new std::vector<TLorentzVector>();
 
@@ -651,14 +651,14 @@ namespace plotterFunctions
 
 
             //mu45 non-iso trigger emulation
-            const double effsnom2012ABC[] = {0.928,0.8302,0.8018};
-            const double upedge2012ABC[] = { 0.9, 1.2, 2.1};
+            const float effsnom2012ABC[] = {0.928,0.8302,0.8018};
+            const float upedge2012ABC[] = { 0.9, 1.2, 2.1};
             bool muTrigMu45 = false;
             for(TLorentzVector& mu : *cutMuVec)
             {
                 if(mu.Pt() > 50)
                 {
-                    for(int iBin = 0; iBin < sizeof(effsnom2012ABC)/sizeof(double); ++iBin)
+                    for(int iBin = 0; iBin < sizeof(effsnom2012ABC)/sizeof(float); ++iBin)
                     {
                         if(mu.Eta() < upedge2012ABC[iBin] && tr3 && tr3->Uniform() < effsnom2012ABC[iBin])
                         {
@@ -670,14 +670,14 @@ namespace plotterFunctions
                 }
             }
 
-            double genHt = 0.0;
+            float genHt = 0.0;
 
-            const double   minMuPt = 20.0,   highMuPt = 50.0;
-            const double minElecPt = 33.0, highElecPt = 33.0;
-            double nuPt1 = -999.9, nuPt2 = -999.9;
+            const float   minMuPt = 20.0,   highMuPt = 50.0;
+            const float minElecPt = 33.0, highElecPt = 33.0;
+            float nuPt1 = -999.9, nuPt2 = -999.9;
 
             //Gen info parsing
-            double genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
+            float genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
             int nZ = 0;
             TLorentzVector genZ;
             int pdgIdZDec = 0;
@@ -708,11 +708,11 @@ namespace plotterFunctions
                         {
                             genMuInAcc->push_back(&genDecayLVec[i]);
                             genMuInAccAct->push_back(genMuAct->back());
-                            double dRMin = 999.9;
-                            double matchPt = -999.9;
+                            float dRMin = 999.9;
+                            float matchPt = -999.9;
                             for(int j = 0; j < cutMuVecRecoOnly.size(); ++j)
                             {
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVecRecoOnly[j]);
+                                float dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVecRecoOnly[j]);
                                 if(dR < dRMin)
                                 {
                                     dRMin = dR;
@@ -729,7 +729,7 @@ namespace plotterFunctions
                             dRMin = 999.9;
                             for(int j = 0; j < cutMuVec->size(); ++j)
                             {
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutMuVec)[j]);
+                                float dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutMuVec)[j]);
                                 if(dR < dRMin)
                                 {
                                     dRMin = dR;
@@ -752,11 +752,11 @@ namespace plotterFunctions
                         {
                             genElecInAcc->push_back(&genDecayLVec[i]);
                             genElecInAccAct->push_back(genElecAct->back());
-                            double dRMin = 999.9;
-                            double matchPt = -999.9;
+                            float dRMin = 999.9;
+                            float matchPt = -999.9;
                             for(int j = 0; j < cutElecVecRecoOnly.size(); ++j)
                             {
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVecRecoOnly[j]);
+                                float dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVecRecoOnly[j]);
                                 if(dR < dRMin)
                                 {
                                     dRMin = dR;
@@ -773,7 +773,7 @@ namespace plotterFunctions
                             dRMin = 999.9;
                             for(int j = 0; j < cutElecVec->size(); ++j)
                             {
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutElecVec)[j]);
+                                float dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutElecVec)[j]);
                                 if(dR < dRMin)
                                 {
                                     dRMin = dR;
@@ -813,11 +813,11 @@ namespace plotterFunctions
 
             bool passDiMuTrig  = nTriggerMuons >= 2;
 
-            const double zMassMin = 81.0;
-            const double zMass    = 91.0;
-            const double zMassMax = 101.0;
+            const float zMassMin = 81.0;
+            const float zMass    = 91.0;
+            const float zMassMax = 101.0;
 
-            double zMuMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
+            float zMuMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
             TLorentzVector bestRecoMuZ;
             for(int i = 0; i < cutMuVec->size(); ++i)
             {
@@ -825,7 +825,7 @@ namespace plotterFunctions
                 for(int j = 0; j < i && j < cutMuVec->size(); ++j)
                 {
                     if((*cutMuVec)[j].Pt() < minMuPt) continue;
-                    double zm = ((*cutMuVec)[i] + (*cutMuVec)[j]).M();
+                    float zm = ((*cutMuVec)[i] + (*cutMuVec)[j]).M();
                     if(fabs(zm - zMass) < fabs(zMuMassCurrent - zMass))
                     {
                         bestRecoMuZ = (*cutMuVec)[i] + (*cutMuVec)[j];
@@ -834,7 +834,7 @@ namespace plotterFunctions
                 }
             }
 
-            double zElecMassCurrent = 1.0e300;
+            float zElecMassCurrent = 1.0e300;
             TLorentzVector bestRecoElecZ;
             for(int i = 0; i < cutElecVec->size(); ++i)
             {
@@ -842,7 +842,7 @@ namespace plotterFunctions
                 for(int j = 0; j < i && j < cutElecVec->size(); ++j)
                 {
                     if((*cutElecVec)[j].Pt() < minElecPt) continue;
-                    double zm = ((*cutElecVec)[i] + (*cutElecVec)[j]).M();
+                    float zm = ((*cutElecVec)[i] + (*cutElecVec)[j]).M();
                     //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                     if(fabs(zm - zMass) < fabs(zElecMassCurrent - zMass))
                     {
@@ -852,7 +852,7 @@ namespace plotterFunctions
                 }
             }
 
-            double zElMuMassCurrent = 1.0e300;
+            float zElMuMassCurrent = 1.0e300;
             TLorentzVector bestRecoElMuZ;
             for(int i = 0; i < cutMuVec->size(); ++i)
             {
@@ -860,7 +860,7 @@ namespace plotterFunctions
                 for(int j = 0; j < cutElecVec->size(); ++j)
                 {
                     if((*cutElecVec)[j].Pt() < minMuPt) continue;
-                    double zm = ((*cutMuVec)[i] + (*cutElecVec)[j]).M();
+                    float zm = ((*cutMuVec)[i] + (*cutElecVec)[j]).M();
                     //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                     if(fabs(zm - zMass) < fabs(zElMuMassCurrent - zMass))
                     {
@@ -888,27 +888,27 @@ namespace plotterFunctions
             bool passElecZinvSel = passMuonVeto && (cutElecVec->size() == 2 && sumElecCharge == 0 && (*cutElecVec)[0].Pt() > highElecPt && (*cutElecVec)[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
             bool passElMuZinvSel = (cutMuVec->size() == 1 && cutElecVec->size() == 1 && sumElecCharge == -sumMuCharge && (*cutMuVec)[0].Pt() > highMuPt && (*cutElecVec)[0].Pt() > minMuPt) && (bestRecoElMuZ.M() > zMassMin) && (bestRecoElMuZ.M() < zMassMax);
 
-            double cutMuPt1 = -999.9;
-            double cutMuPt2 = -999.9;
+            float cutMuPt1 = -999.9;
+            float cutMuPt2 = -999.9;
             if(cutMuVec->size() >= 1) cutMuPt1 = cutMuVec->at(0).Pt();
             if(cutMuVec->size() >= 2) cutMuPt2 = cutMuVec->at(1).Pt();
 
-            double cutElecPt1 = -999.9;
-            double cutElecPt2 = -999.9;
+            float cutElecPt1 = -999.9;
+            float cutElecPt2 = -999.9;
             if(cutElecVec->size() >= 1) cutElecPt1 = cutElecVec->at(0).Pt();
             if(cutElecVec->size() >= 2) cutElecPt2 = cutElecVec->at(1).Pt();
 
-            double mindPhiMetJ = 999.9;
+            float mindPhiMetJ = 999.9;
             int jc = 0;
             for(const TLorentzVector& jet : jetsLVec)
             {
                 if(jc >= 3) break;
                 jc++;
-                mindPhiMetJ = std::min(mindPhiMetJ, fabs(ROOT::Math::VectorUtil::DeltaPhi(genZ, jet)));
+                mindPhiMetJ = std::min(mindPhiMetJ, (float)fabs(ROOT::Math::VectorUtil::DeltaPhi(genZ, jet)));
             }
 
-            double bestRecoZPt = bestRecoZ.Pt();
-            double cleanMetPt = cleanMet.Pt();
+            float bestRecoZPt = bestRecoZ.Pt();
+            float cleanMetPt = cleanMet.Pt();
 
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
             tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
@@ -932,28 +932,28 @@ namespace plotterFunctions
             tr.registerDerivedVec("cutMuActivity", cutMuActivity);
             tr.registerDerivedVec("cutElecActivity", cutElecActivity);
             tr.registerDerivedVec("genMu", genMu);
-            tr.registerDerivedVar("ngenMu", static_cast<double>(genMu->size()));
+            tr.registerDerivedVar("ngenMu", static_cast<float>(genMu->size()));
             tr.registerDerivedVec("genMuInAcc", genMuInAcc);
             tr.registerDerivedVec("genMuAct", genMuAct);
-            tr.registerDerivedVar("ngenMuInAcc", static_cast<double>(genMuInAcc->size()));
+            tr.registerDerivedVar("ngenMuInAcc", static_cast<float>(genMuInAcc->size()));
             tr.registerDerivedVec("genMuInAccAct", genMuInAccAct);
             tr.registerDerivedVec("genMatchMuInAcc", genMatchMuInAcc);
             tr.registerDerivedVec("genMatchMuInAccRes", genMatchMuInAccRes);
             tr.registerDerivedVec("genMatchIsoMuInAcc", genMatchIsoMuInAcc);
-            tr.registerDerivedVar("ngenMatchMuInAcc", static_cast<double>(genMatchMuInAcc->size()));
+            tr.registerDerivedVar("ngenMatchMuInAcc", static_cast<float>(genMatchMuInAcc->size()));
             tr.registerDerivedVec("genMatchMuInAccAct", genMatchMuInAccAct);
             tr.registerDerivedVec("genMatchIsoMuInAccAct", genMatchIsoMuInAccAct);
 
             tr.registerDerivedVec("genElec", genElec);
-            tr.registerDerivedVar("ngenElec", static_cast<double>(genElec->size()));
+            tr.registerDerivedVar("ngenElec", static_cast<float>(genElec->size()));
             tr.registerDerivedVec("genElecInAcc", genElecInAcc);
             tr.registerDerivedVec("genElecAct", genElecAct);
-            tr.registerDerivedVar("ngenElecInAcc", static_cast<double>(genElecInAcc->size()));
+            tr.registerDerivedVar("ngenElecInAcc", static_cast<float>(genElecInAcc->size()));
             tr.registerDerivedVec("genElecInAccAct", genElecInAccAct);
             tr.registerDerivedVec("genMatchElecInAcc", genMatchElecInAcc);
             tr.registerDerivedVec("genMatchElecInAccRes", genMatchElecInAccRes);
             tr.registerDerivedVec("genMatchIsoElecInAcc", genMatchIsoElecInAcc);
-            tr.registerDerivedVar("ngenMatchElecInAcc", static_cast<double>(genMatchElecInAcc->size()));
+            tr.registerDerivedVar("ngenMatchElecInAcc", static_cast<float>(genMatchElecInAcc->size()));
             tr.registerDerivedVec("genMatchElecInAccAct", genMatchElecInAccAct);
             tr.registerDerivedVec("genMatchIsoElecInAccAct", genMatchIsoElecInAccAct);
 
@@ -993,11 +993,13 @@ namespace plotterFunctions
         void fakebtagvectors(NTupleReader& tr)
         {
             const std::vector<TLorentzVector>& jetsLVecLepCleaned = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const std::vector<double>& cleanJetpt30ArrBTag = tr.getVec<double>("recoJetsBtag_0_LepCleaned");
+            //New code
+            const std::vector<float>& cleanJetpt30ArrBTag = tr.getVec<float>("recoJetsBtag_0_LepCleaned");
+//            const std::vector<float>& cleanJetpt30ArrBTag = tr.getVec<float>("recoJetsBtag_0_LepCleaned");
 
-            double maxCSV = 0.0;
-            double secCSV = 0.0;
-            double tenCSV = 0.0;
+            float maxCSV = 0.0;
+            float secCSV = 0.0;
+            float tenCSV = 0.0;
             int iMaxCSV = -1;
             int iSecCSV = -1;
             int iTenCSV = -1;
@@ -1038,10 +1040,10 @@ namespace plotterFunctions
                 }
             }
 
-            std::vector<double>* cleanJetpt30ArrBTag1fake = new std::vector<double>(cleanJetpt30ArrBTag);
-            std::vector<double>* cleanJetpt30ArrBTag2fake = new std::vector<double>(cleanJetpt30ArrBTag);
-            std::vector<double>* cleanJetpt30ArrBTag3fake = new std::vector<double>(cleanJetpt30ArrBTag);
-            std::vector<double>* fakedCSVValues = new std::vector<double>();
+            std::vector<float>* cleanJetpt30ArrBTag1fake = new std::vector<float>(cleanJetpt30ArrBTag);
+            std::vector<float>* cleanJetpt30ArrBTag2fake = new std::vector<float>(cleanJetpt30ArrBTag);
+            std::vector<float>* cleanJetpt30ArrBTag3fake = new std::vector<float>(cleanJetpt30ArrBTag);
+            std::vector<float>* fakedCSVValues = new std::vector<float>();
 
             if(iMaxCSV >= 0) (*cleanJetpt30ArrBTag1fake)[iMaxCSV] = 0.99;
 
@@ -1057,9 +1059,9 @@ namespace plotterFunctions
             if(iTenCSV >= 0) fakedCSVValues->push_back(tenCSV);
 
             //Calculate the combinatoric weights for b-jet faking
-            double weight1fakeb = TMath::Binomial(njet, 1);
-            double weight2fakeb = TMath::Binomial(njet, 2);
-            double weight3fakeb = TMath::Binomial(njet, 3);
+            float weight1fakeb = TMath::Binomial(njet, 1);
+            float weight2fakeb = TMath::Binomial(njet, 2);
+            float weight3fakeb = TMath::Binomial(njet, 3);
             //check for nans
             if(weight1fakeb != weight1fakeb) weight1fakeb = 0.0;
             if(weight2fakeb != weight2fakeb) weight2fakeb = 0.0;
@@ -1095,20 +1097,20 @@ namespace plotterFunctions
             //const int& nTopCandSortedCnt1b = tr.getVar<int>("nTopCandSortedCntZinv1b");
             //const int& nTopCandSortedCnt2b = tr.getVar<int>("nTopCandSortedCntZinv2b");
             //const int& nTopCandSortedCnt3b = tr.getVar<int>("nTopCandSortedCntZinv3b");
-            const double& cleanMet = tr.getVar<double>("cleanMetPt");
-            const double& cleanMetPhi = tr.getVar<double>("cleanMetPhi");
-            const double& MT2 = tr.getVar<double>("best_had_brJet_MT2Zinv");
-            //const double& MT2_1b = tr.getVar<double>("best_had_brJet_MT2Zinv1b");
-            //const double& MT2_2b = tr.getVar<double>("best_had_brJet_MT2Zinv2b");
-            //const double& MT2_3b = tr.getVar<double>("best_had_brJet_MT2Zinv3b");
-            //const double& weight1fakeb = tr.getVar<double>("weight1fakeb");
-            //const double& weight2fakeb = tr.getVar<double>("weight2fakeb");
-            //const double& weight3fakeb = tr.getVar<double>("weight3fakeb");
+            const float& cleanMet = tr.getVar<float>("cleanMetPt");
+            const float& cleanMetPhi = tr.getVar<float>("cleanMetPhi");
+            const float& MT2 = tr.getVar<float>("best_had_brJet_MT2Zinv");
+            //const float& MT2_1b = tr.getVar<float>("best_had_brJet_MT2Zinv1b");
+            //const float& MT2_2b = tr.getVar<float>("best_had_brJet_MT2Zinv2b");
+            //const float& MT2_3b = tr.getVar<float>("best_had_brJet_MT2Zinv3b");
+            //const float& weight1fakeb = tr.getVar<float>("weight1fakeb");
+            //const float& weight2fakeb = tr.getVar<float>("weight2fakeb");
+            //const float& weight3fakeb = tr.getVar<float>("weight3fakeb");
             //
-            //const double& nJet1bfakeWgt = tr.getVar<double>("nJet1bfakeWgt");
-            //const double& nJet2bfakeWgt = tr.getVar<double>("nJet2bfakeWgt");
-            //const double& nJet3bfakeWgt = tr.getVar<double>("nJet3bfakeWgt");
-            const double& HT            = tr.getVar<double>("HTZinv");
+            //const float& nJet1bfakeWgt = tr.getVar<float>("nJet1bfakeWgt");
+            //const float& nJet2bfakeWgt = tr.getVar<float>("nJet2bfakeWgt");
+            //const float& nJet3bfakeWgt = tr.getVar<float>("nJet3bfakeWgt");
+            const float& HT            = tr.getVar<float>("HTZinv");
             //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
             //            //top
             /*
@@ -1124,33 +1126,33 @@ namespace plotterFunctions
             //int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
             int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);            
 
-            //std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
-            //std::vector<std::pair<double, double> > * nb0NJwBins = new std::vector<std::pair<double, double> >();
-            //std::vector<double> * nb0BinsNW = new std::vector<double>();
+            //std::vector<std::pair<float, float> > * nb0Bins = new std::vector<std::pair<float, float> >();
+            //std::vector<std::pair<float, float> > * nb0NJwBins = new std::vector<std::pair<float, float> >();
+            //std::vector<float> * nb0BinsNW = new std::vector<float>();
 
             //weights based on total N(b) yields vs. N(b) = 0 control region
             //These weights are derived from the rato of events in the N(t) = 1, 2, 3 bins after all baseline cuts except b tag between the
             //N(b) = 0 control region and each N(b) signal region using Z->nunu MC.  They account for both the combinatoric reweighting factor
             //as well as the different event yields between the control region and each signal region.
-            //const double wnb01 = 3.820752e-02;//3.478840e-02;//6.26687e-2;
-            //const double wnb02 = 2.946461e-03;//2.586369e-03;//5.78052e-3;
-            //const double wnb03 = 1.474770e-04;//1.640077e-04;//7.08235e-4;
+            //const float wnb01 = 3.820752e-02;//3.478840e-02;//6.26687e-2;
+            //const float wnb02 = 2.946461e-03;//2.586369e-03;//5.78052e-3;
+            //const float wnb03 = 1.474770e-04;//1.640077e-04;//7.08235e-4;
             //
             //// weights to apply when doing b-faking
-            //const double w1b = wnb01 * weight1fakeb;
-            //const double w2b = wnb02 * weight2fakeb;
-            //const double w3b = wnb03 * weight3fakeb;
+            //const float w1b = wnb01 * weight1fakeb;
+            //const float w2b = wnb02 * weight2fakeb;
+            //const float w3b = wnb03 * weight3fakeb;
 
             if(cntCSVS == 0)
             {
                 //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
-                //nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT), wnb01 * weight1fakeb));
-                //nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT), wnb02 * weight2fakeb));
-                //nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT), wnb03 * weight3fakeb));
+                //nb0Bins->emplace_back(std::pair<float, float>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT), wnb01 * weight1fakeb));
+                //nb0Bins->emplace_back(std::pair<float, float>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT), wnb02 * weight2fakeb));
+                //nb0Bins->emplace_back(std::pair<float, float>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT), wnb03 * weight3fakeb));
 
-                //nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT), nJet1bfakeWgt));
-                //nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT), nJet2bfakeWgt));
-                //nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT), nJet3bfakeWgt));
+                //nb0NJwBins->emplace_back(std::pair<float, float>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT), nJet1bfakeWgt));
+                //nb0NJwBins->emplace_back(std::pair<float, float>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT), nJet2bfakeWgt));
+                //nb0NJwBins->emplace_back(std::pair<float, float>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT), nJet3bfakeWgt));
 
                 //nb0BinsNW->emplace_back(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT));
                 //nb0BinsNW->emplace_back(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT));
@@ -1185,7 +1187,7 @@ namespace plotterFunctions
         int indexMETMHTTrigger;
         bool miniTuple_, noMC_;
 
-	double GetMuonTriggerEff(const double& muEta) 
+	float GetMuonTriggerEff(const float& muEta) 
 	{
             if (-2.6 <= muEta && muEta < -2.2) return 0.7861842;
             else if(-2.2 <= muEta && muEta < -1.8) return 0.8233438;
@@ -1203,7 +1205,7 @@ namespace plotterFunctions
             else                                   return 0.000;
 	}
 
-	double GetTriggerEffWeight(const double& met, const double& ht) 
+	float GetTriggerEffWeight(const float& met, const float& ht) 
 	{
 	    if (ht<1000)
 	    {
@@ -1238,7 +1240,7 @@ namespace plotterFunctions
 		else return 0.9736842;
 	    }
 	}
-	double GetTriggerEffStatUncHi(const double& met, const double& ht) 
+	float GetTriggerEffStatUncHi(const float& met, const float& ht) 
 	{
 	    if (ht<1000)
 	    {
@@ -1272,7 +1274,7 @@ namespace plotterFunctions
 		else return 0.01697945;
 	    }
 	}
-	double GetTriggerEffStatUncLo(const double& met, const double& ht) 
+	float GetTriggerEffStatUncLo(const float& met, const float& ht) 
 	{
 	    if (ht<1000)
 	    {
@@ -1308,7 +1310,7 @@ namespace plotterFunctions
 		else return 0.03365661;
 	    }
 	}
-	double GetTriggerEffSystUncHi(const double& met, const double& ht) 
+	float GetTriggerEffSystUncHi(const float& met, const float& ht) 
 	{
 	    return 0.0;
 	    /* if (met<100) return 0.0272; */
@@ -1319,7 +1321,7 @@ namespace plotterFunctions
 	    /* else if (met<400) return 0.0001;  */
 	    /* else return 0.0; */
 	}
-	double GetTriggerEffSystUncLo(const double& met, const double& ht) 
+	float GetTriggerEffSystUncLo(const float& met, const float& ht) 
 	{
 	    return 0.0;
 	    /* if (met<100) return 0.0120; */
@@ -1341,7 +1343,7 @@ namespace plotterFunctions
             bool passMETMHTTrigger = false;
 
 	    const std::string muTrigName = "HLT_Mu50_v";//"HLT_Mu45_eta2p1_v";
-	    const std::string elecTrigName = "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v";
+	    const std::string elecTrigName = "HLT_floatEle33_CaloIdL_GsfTrkIdVL_MW_v";
             const std::string metmhtTrigName = "HLT_PFMET110_PFMHT110_IDTight_v";
 
             // Find the index of our triggers if we don't know them already
@@ -1365,7 +1367,7 @@ namespace plotterFunctions
             //}
             //if(indexMuTrigger != -1 && indexElecTrigger != -1)
             //{
-            //    // Check if the event passes the trigger, and double check that we are looking at the right trigger
+            //    // Check if the event passes the trigger, and float check that we are looking at the right trigger
             //    //if(triggerNames[indexMuTrigger].find(muTrigName) != std::string::npos && passTrigger[indexMuTrigger])
             //    //    passMuTrigger = true;
             //    if(triggerNames[indexElecTrigger].find(elecTrigName) != std::string::npos && passTrigger[indexElecTrigger])
@@ -1448,25 +1450,25 @@ namespace plotterFunctions
 
         void triggerInfoMC(NTupleReader& tr)
         {
-            const double& met                            = tr.getVar<double>("met");
-            const double& ht                             = tr.getVar<double>("HT");
+            const float& met                            = tr.getVar<float>("met");
+            const float& ht                             = tr.getVar<float>("HT");
             const std::vector<TLorentzVector>& cutMuVec  = tr.getVec<TLorentzVector>("muonsLVec");
 
 	    // MC trigger efficiencies
-	    double triggerEff = GetTriggerEffWeight(met,ht);
-	    double triggerEffStatUncUp = GetTriggerEffStatUncHi(met,ht);
-	    double triggerEffSystUncUp = GetTriggerEffSystUncHi(met,ht);
-	    double triggerEffUncUp     = TMath::Sqrt(triggerEffStatUncUp*triggerEffStatUncUp + triggerEffSystUncUp*triggerEffSystUncUp);
-	    double triggerEffStatUncDown = GetTriggerEffStatUncLo(met,ht);
-	    double triggerEffSystUncDown = GetTriggerEffSystUncLo(met,ht);
-	    double triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
+	    float triggerEff = GetTriggerEffWeight(met,ht);
+	    float triggerEffStatUncUp = GetTriggerEffStatUncHi(met,ht);
+	    float triggerEffSystUncUp = GetTriggerEffSystUncHi(met,ht);
+	    float triggerEffUncUp     = TMath::Sqrt(triggerEffStatUncUp*triggerEffStatUncUp + triggerEffSystUncUp*triggerEffSystUncUp);
+	    float triggerEffStatUncDown = GetTriggerEffStatUncLo(met,ht);
+	    float triggerEffSystUncDown = GetTriggerEffSystUncLo(met,ht);
+	    float triggerEffUncDown     = TMath::Sqrt(triggerEffStatUncDown*triggerEffStatUncDown + triggerEffSystUncDown*triggerEffSystUncDown);
 
             //Calculate muon trigger weights
-            double muTrigWgt = 0.0;
+            float muTrigWgt = 0.0;
             if(cutMuVec.size() >= 2 && cutMuVec[0].Pt() > 50 && cutMuVec[1].Pt() > 50)
             {
-                double muEff1 = GetMuonTriggerEff(cutMuVec[0].Eta());
-                double muEff2 = GetMuonTriggerEff(cutMuVec[1].Eta());
+                float muEff1 = GetMuonTriggerEff(cutMuVec[0].Eta());
+                float muEff2 = GetMuonTriggerEff(cutMuVec[1].Eta());
 
                 muTrigWgt = 1 - (1 - muEff1)*(1 - muEff2);
             }
@@ -1521,24 +1523,24 @@ namespace plotterFunctions
 
         void systematicPrep(NTupleReader& tr)
         {
-            const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVecLepCleaned");
-            const std::vector<double>& recoJetsJecUnc    = tr.getVec<double>("recoJetsJecUncLepCleaned");
+            const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVec");
+            const std::vector<float>& recoJetsJecUnc    = tr.getVec<float>("recoJetsJecUnc");
 
-            const std::vector<double>& metMagUp   = tr.getVec<double>("metMagUp");
-            const std::vector<double>& metMagDown = tr.getVec<double>("metMagDown");
-            const std::vector<double>& metPhiUp   = tr.getVec<double>("metPhiUp");
-            const std::vector<double>& metPhiDown = tr.getVec<double>("metPhiDown");
+            const std::vector<float>& metMagUp   = tr.getVec<float>("metMagUp");
+            const std::vector<float>& metMagDown = tr.getVec<float>("metMagDown");
+            const std::vector<float>& metPhiUp   = tr.getVec<float>("metPhiUp");
+            const std::vector<float>& metPhiDown = tr.getVec<float>("metPhiDown");
 
-            const double& met    = tr.getVar<double>("met");
-            const double& metphi = tr.getVar<double>("metphi");
+            const float& met    = tr.getVar<float>("met");
+            const float& metphi = tr.getVar<float>("metphi");
 
             std::vector<TLorentzVector> *jetLVecUp = new std::vector<TLorentzVector>;
             std::vector<TLorentzVector> *jetLVecDn = new std::vector<TLorentzVector>;
 
-            std::vector<double> *dPtMet = new std::vector<double>;
-            std::vector<double> *dPhiMet = new std::vector<double>;
+            std::vector<float> *dPtMet = new std::vector<float>;
+            std::vector<float> *dPhiMet = new std::vector<float>;
 
-            double metUp = 0.0, metDn = 99990.0;
+            float metUp = 0.0, metDn = 99990.0;
 
             for(int iMet = 0; iMet < metMagUp.size(); ++iMet)
             {
@@ -1589,28 +1591,28 @@ namespace plotterFunctions
         {
             const int& cntCSVSJEUUp = tr.getVar<int>("cntCSVSZinvJEUUp");
             const int& nTopCandSortedCntJEUUp = tr.getVar<int>("nTopCandSortedCntZinvJEUUp");
-            const double& MT2JEUUp = tr.getVar<double>("best_had_brJet_MT2ZinvJEUUp");
+            const float& MT2JEUUp = tr.getVar<float>("best_had_brJet_MT2ZinvJEUUp");
 
             const int& cntCSVSJEUDn = tr.getVar<int>("cntCSVSZinvJEUDn");
             const int& nTopCandSortedCntJEUDn = tr.getVar<int>("nTopCandSortedCntZinvJEUDn");
-            const double& MT2JEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvJEUDn");
+            const float& MT2JEUDn = tr.getVar<float>("best_had_brJet_MT2ZinvJEUDn");
 
-            const double& cleanMet = tr.getVar<double>("cleanMetPt");
+            const float& cleanMet = tr.getVar<float>("cleanMetPt");
 
             const int& cntCSVSMEUUp = tr.getVar<int>("cntCSVSZinvMEUUp");
             const int& nTopCandSortedCntMEUUp = tr.getVar<int>("nTopCandSortedCntZinvMEUUp");
-            const double& MT2MEUUp = tr.getVar<double>("best_had_brJet_MT2ZinvMEUUp");
-            const double& cleanMetMEUUp = tr.getVar<double>("metMEUUp");
+            const float& MT2MEUUp = tr.getVar<float>("best_had_brJet_MT2ZinvMEUUp");
+            const float& cleanMetMEUUp = tr.getVar<float>("metMEUUp");
 
             const int& cntCSVSMEUDn = tr.getVar<int>("cntCSVSZinvMEUDn");
             const int& nTopCandSortedCntMEUDn = tr.getVar<int>("nTopCandSortedCntZinvMEUDn");
-            const double& MT2MEUDn = tr.getVar<double>("best_had_brJet_MT2ZinvMEUDn");
-            const double& cleanMetMEUDn = tr.getVar<double>("metMEUDn");
+            const float& MT2MEUDn = tr.getVar<float>("best_had_brJet_MT2ZinvMEUDn");
+            const float& cleanMetMEUDn = tr.getVar<float>("metMEUDn");
 
-            const double& HTUp           = tr.getVar<double>("HTZinvJEUUp");
-            const double& HTDn           = tr.getVar<double>("HTZinvJEUDn");
-            const double& HTMEUUp           = tr.getVar<double>("HTZinvMEUUp");
-            const double& HTMEUDn           = tr.getVar<double>("HTZinvMEUDn");
+            const float& HTUp           = tr.getVar<float>("HTZinvJEUUp");
+            const float& HTDn           = tr.getVar<float>("HTZinvJEUDn");
+            const float& HTMEUUp           = tr.getVar<float>("HTZinvMEUUp");
+            const float& HTMEUDn           = tr.getVar<float>("HTZinvMEUDn");
 
             int nSearchBinJEUUp = sbins.find_Binning_Index(cntCSVSJEUUp, nTopCandSortedCntJEUUp, MT2JEUUp, cleanMet, HTUp);
             int nSearchBinJEUDn = sbins.find_Binning_Index(cntCSVSJEUDn, nTopCandSortedCntJEUDn, MT2JEUDn, cleanMet, HTDn);
@@ -1642,6 +1644,9 @@ namespace plotterFunctions
     {
     private:
 
+        int JECSys = 0;
+
+
         bool passNoiseEventFilterFunc(const NTupleReader* const tr, bool isfastsim = false)
         {
             // According to https://twiki.cern.ch/twiki/bin/view/CMS/SUSRecommendationsICHEP16#Filters_to_be_applied,
@@ -1667,6 +1672,7 @@ namespace plotterFunctions
                 int ecalTPFilter = tr->getVar<int>("EcalDeadCellTriggerPrimitiveFilter");
 
                 int jetIDFilter = isfastsim? 1:tr->getVar<int>("looseJetID");
+//                int jetIDFilter = isfastsim? 1:tr->getVar<int>("AK4looseJetID");
                 // new filters
                 const unsigned int & BadPFMuonFilter = tr->getVar<unsigned int>("BadPFMuonFilter");
                 bool passBadPFMuonFilter = (&BadPFMuonFilter) != nullptr? tr->getVar<unsigned int>("BadPFMuonFilter") !=0 : true;
@@ -1674,7 +1680,11 @@ namespace plotterFunctions
                 const unsigned int & BadChargedCandidateFilter = tr->getVar<unsigned int>("BadChargedCandidateFilter");
                 bool passBadChargedCandidateFilter = (&BadChargedCandidateFilter) != nullptr? tr->getVar<unsigned int>("BadChargedCandidateFilter") !=0 : true;
 
-                bool passMETratioFilter = tr->getVar<double>("calomet")!=0 ? tr->getVar<double>("met")/tr->getVar<double>("calomet") < 5 : true;
+                bool passMETratioFilter = tr->getVar<float>("calomet")!=0 ? tr->getVar<float>("met")/tr->getVar<float>("calomet") < 5 : true;
+
+                //std::cout << (passDataSpec ? " TRUE" : "FALSE") << " " << (hbheNoiseFilter ? " TRUE" : "FALSE") << " " << (hbheIsoNoiseFilter ? " TRUE" : "FALSE") << " "
+                //          << (ecalTPFilter ? " TRUE" : "FALSE") << " " << (jetIDFilter ? " TRUE" : "FALSE") << " " << (passBadPFMuonFilter ? " TRUE" : "FALSE") << " "
+                //          << (passBadChargedCandidateFilter ? " TRUE" : "FALSE") << " " << (passMETratioFilter ? " TRUE" : "FALSE") <<std::endl;
 
                 return passDataSpec && hbheNoiseFilter && hbheIsoNoiseFilter && ecalTPFilter && jetIDFilter && passBadPFMuonFilter && passBadChargedCandidateFilter && passMETratioFilter;
             }
@@ -1692,20 +1702,42 @@ namespace plotterFunctions
 
         void prepareTopCRSelection(NTupleReader& tr)
         {
-            const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVec");
-            const std::vector<double>& recoJetsBtag      = tr.getVec<double>("recoJetsBtag_0");
+            //We need to to handle JEC systematics here.
 
-	    const double& stored_weight = tr.getVar<double>("stored_weight");
+            bool handleSys = true;
+
+            const std::vector<TLorentzVector>& jetsLVecTemp = tr.getVec<TLorentzVector>("jetsLVec");
+            const std::vector<float>& recoJetsJecUnc = tr.getVec<float>("recoJetsJecUnc");
+
+            if(jetsLVecTemp.size() != recoJetsJecUnc.size()) handleSys = false; //If this is data, we can't do anything
+
+            std::vector<TLorentzVector> jetsLVec;
+            for(int ijet=0; ijet<jetsLVecTemp.size(); ++ijet)
+            {
+                if(handleSys){jetsLVec.push_back( jetsLVecTemp[ijet] * (1 + (JECSys * recoJetsJecUnc[ijet])));}
+                else {jetsLVec.push_back( jetsLVecTemp[ijet] );}
+            }            
+
+//            const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVec");
+            const std::vector<float>& recoJetsBtag      = tr.getVec<float>("recoJetsBtag_0");
+//            const std::vector<float>& recoJetsBtag      = tr.getVec<float>("recoJetsCSVv2");
+
+	    const float& stored_weight = tr.getVar<float>("stored_weight");
 
             int cntCSVS = AnaFunctions::countCSVS(jetsLVec, recoJetsBtag, AnaConsts::cutCSVS, AnaConsts::bTagArr);
 
-            const double& metphi = tr.getVar<double>("metphi");
+            const float& metphi = tr.getVar<float>("metphi");
 
             const std::vector<TLorentzVector>& gammaLVec = tr.getVec<TLorentzVector>("gammaLVec");
             const std::vector<int>& tightPhotonID = tr.getVec<int>("tightPhotonID");
 
             std::vector<TLorentzVector> *tightPhotons = new std::vector<TLorentzVector>();
-            for(int i = 0; i < gammaLVec.size(); ++i)
+
+            //std::cout << "Comparing the length of the tightPhotonID and gammaLVec vectors: " << tightPhotonID.size() << " " << gammaLVec.size() << std::endl;
+
+            int sizeP = (tightPhotonID.size() < gammaLVec.size() ? tightPhotonID.size() : gammaLVec.size());
+
+            for(int i = 0; i < sizeP; ++i)
             {
                 if(tightPhotonID[i])
                 {
@@ -1717,14 +1749,14 @@ namespace plotterFunctions
             tr.registerDerivedVar("passPhoton200", (tightPhotons->size() > 0) && ((*tightPhotons)[0].Pt() > 200));
 
             const std::vector<TLorentzVector>& muonsLVec    = tr.getVec<TLorentzVector>("muonsLVec");
-            //const std::vector<double>& muonsRelIso          = tr.getVec<double>("muonsRelIso");
-            const std::vector<double>& muonsMiniIso         = tr.getVec<double>("muonsMiniIso");
-            const std::vector<double>& muonsMTlep           = tr.getVec<double>("muonsMtw");
+            //const std::vector<float>& muonsRelIso          = tr.getVec<float>("muonsRelIso");
+            const std::vector<float>& muonsMiniIso         = tr.getVec<float>("muonsMiniIso");
+            const std::vector<float>& muonsMTlep           = tr.getVec<float>("muonsMtw");
             std::string muonsFlagIDLabel = "muonsFlagMedium";
             const std::vector<int> & muonsFlagIDVec = muonsFlagIDLabel.empty()? std::vector<int>(muonsMiniIso.size(), 1):tr.getVec<int>(muonsFlagIDLabel.c_str());
 
             std::vector<TLorentzVector>* cutMuVec = new std::vector<TLorentzVector>();
-            std::vector<double> *cutMuMTlepVec = new std::vector<double>();
+            std::vector<float> *cutMuMTlepVec = new std::vector<float>();
             for(int i = 0; i < muonsLVec.size(); ++i)
             {
                 if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
@@ -1738,16 +1770,16 @@ namespace plotterFunctions
             tr.registerDerivedVec("cutMuMTlepVec", cutMuMTlepVec);
 
             const std::vector<TLorentzVector, std::allocator<TLorentzVector> > elesLVec = tr.getVec<TLorentzVector>("elesLVec");
-            const std::vector<double>& elesMiniIso          = tr.getVec<double>("elesMiniIso");
-            const std::vector<double>& elesCharge           = tr.getVec<double>("elesCharge");
-            const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB");
-            const std::vector<double>&  elesMTlep           = tr.getVec<double>("elesMtw");
+            const std::vector<float>& elesMiniIso          = tr.getVec<float>("elesMiniIso");
+            const std::vector<float>& elesCharge           = tr.getVec<float>("elesCharge");
+            const std::vector<unsigned int>& elesisEB       = tr.getVec<unsigned int>("elesisEB",true);
+            const std::vector<float>&  elesMTlep           = tr.getVec<float>("elesMtw");
             std::string elesFlagIDLabel = "elesFlagVeto";
             const std::vector<int> & elesFlagIDVec = elesFlagIDLabel.empty()? std::vector<int>(elesMiniIso.size(), 1):tr.getVec<int>(elesFlagIDLabel.c_str());
 
             //electron selection
             std::vector<TLorentzVector>* cutElecVec = new std::vector<TLorentzVector>();
-            std::vector<double> *cutElecMTlepVec = new std::vector<double>();
+            std::vector<float> *cutElecMTlepVec = new std::vector<float>();
             for(int i = 0; i < elesLVec.size(); ++i)
             {
                 if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
@@ -1773,24 +1805,25 @@ namespace plotterFunctions
             int nElectrons20 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr20);
             const AnaConsts::ElecIsoAccRec elesMiniIsoArr30 = {   -1,       2.5,      30,     -1,     0.10,     0.10,     -1  };
             int nElectrons30 = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB, elesFlagIDVec, elesMiniIsoArr30);
-            int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<double>("loose_isoTrks_iso"), tr.getVec<double>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
+            int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("loose_isoTrksLVec"), tr.getVec<float>("loose_isoTrks_iso"), tr.getVec<float>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
+//            int nIsoTrks = AnaFunctions::countIsoTrks(tr.getVec<TLorentzVector>("Tauloose_isoTrksLVec"), tr.getVec<float>("loose_isoTrks_iso"), tr.getVec<float>("loose_isoTrks_mtw"), tr.getVec<int>("loose_isoTrks_pdgId"));
             //
             //// Pass lepton veto?
             bool passMuonVeto = (nMuons == AnaConsts::nMuonsSel);
             bool passEleVeto = (nElectrons == AnaConsts::nElectronsSel);
             bool passIsoTrkVeto = (nIsoTrks == AnaConsts::nIsoTrksSel);
 
-            double Mmumu = -999.9;
-            bool passDoubleMuon = false;
+            float Mmumu = -999.9;
+            bool passfloatMuon = false;
             if(cutMuVec->size() >= 2)
             {
                 Mmumu = ((*cutMuVec)[0] + (*cutMuVec)[1]).M();
-                passDoubleMuon = (*cutMuVec)[0].Pt() > 30 && (*cutMuVec)[1].Pt() > 20 && Mmumu > 81 && Mmumu < 101;
+                passfloatMuon = (*cutMuVec)[0].Pt() > 30 && (*cutMuVec)[1].Pt() > 20 && Mmumu > 81 && Mmumu < 101;
             }
 
 
             // Calculate deltaPhi
-            std::vector<double> * dPhiVec = new std::vector<double>();
+            std::vector<float> * dPhiVec = new std::vector<float>();
             (*dPhiVec) = AnaFunctions::calcDPhi(jetsLVec, metphi, 3, AnaConsts::dphiArr);
 
             // Pass deltaPhi?
@@ -1800,10 +1833,10 @@ namespace plotterFunctions
             int cntNJetsPt30Eta24 = AnaFunctions::countJets(jetsLVec, AnaConsts::pt30Eta24Arr);
 
             //calculate HT
-            double HT = AnaFunctions::calcHT(jetsLVec, AnaConsts::pt30Eta24Arr);
+            float HT = AnaFunctions::calcHT(jetsLVec, AnaConsts::pt30Eta24Arr);
 
 	    // Process the generator weight
-	    double genWeight = 1.;
+	    float genWeight = 1.;
 	    // Never apply this weight for data! In the old ntuple version <=3 this is "-1", in the newer ones it is "0"
 	    if(stored_weight < 0) genWeight = -1.;
 
@@ -1814,9 +1847,10 @@ namespace plotterFunctions
 
             tr.registerDerivedVar("passSingleLep50", nMuons_50GeV == 1);
             tr.registerDerivedVar("passSingleLep20", nMuons_20GeV + nElectrons20 == 1);
+            tr.registerDerivedVar("passLep20", nMuons_20GeV + nElectrons20 >= 1);
             tr.registerDerivedVar("passSingleMu30", nMuons_30GeV == 1);
             tr.registerDerivedVar("passSingleLep30", nMuons_30GeV + nElectrons30 == 1);
-            tr.registerDerivedVar("passDoubleLep", passDoubleMuon);
+            tr.registerDerivedVar("passfloatLep", passfloatMuon);
 
             tr.registerDerivedVar("passLeptVetoNoMu", passEleVeto && passIsoTrkVeto);
             tr.registerDerivedVar("passLeptVeto", passMuonVeto && passEleVeto && passIsoTrkVeto);
@@ -1835,6 +1869,14 @@ namespace plotterFunctions
         {
             prepareTopCRSelection(tr);
         }
+
+        PrepareTopCRSelection(int JECcorr = 0){
+            //Let's get ready for JEC systematics, we will set a variable here, and the Jet collection is loaded we will look to see what to do.
+            if(JECcorr == -1){ JECSys = -1; }
+            else if(JECcorr == 1){ JECSys = 1;}
+            else{ JECSys = 0; } // If an invalid JECcorr value is pass, we will default to the regular behavior.
+        }
+
     };
 
     class PrepareTopVars
@@ -1842,6 +1884,7 @@ namespace plotterFunctions
     private:
 
         int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
+        int JECSys = 0;
         std::shared_ptr<TopTagger> ttMVA;
         TopCat topMatcher_;
         std::shared_ptr<TFile> WMassCorFile;
@@ -1854,36 +1897,61 @@ namespace plotterFunctions
 
         void prepareTopVars(NTupleReader& tr)
         {
-            const std::vector<TLorentzVector>& jetsLVec  = tr.getVec<TLorentzVector>("jetsLVec");
-            const std::vector<double>& recoJetsBtag      = tr.getVec<double>("recoJetsBtag_0");
-            const std::vector<double>& qgLikelihood      = tr.getVec<double>("qgLikelihood");
+            //We need to to handle JEC systematics here.
+
+            bool handleSys = true;
+
+            const std::vector<TLorentzVector>& jetsLVecTemp = tr.getVec<TLorentzVector>("jetsLVec");
+            const std::vector<float>& recoJetsJecUnc = tr.getVec<float>("recoJetsJecUnc");
+
+            if(jetsLVecTemp.size() != recoJetsJecUnc.size()) handleSys = false; //If this is data, we can't do anything
+
+            //std::cout << "handleSys is " << handleSys << std::endl;
+            //std::cout << "JECSys is " << JECSys << std::endl;
+
+            std::vector<TLorentzVector> jetsLVec;
+            for(int ijet=0; ijet<jetsLVecTemp.size(); ++ijet)
+            {
+                if(handleSys){
+                    jetsLVec.push_back( jetsLVecTemp[ijet] * (1 + (JECSys * recoJetsJecUnc[ijet])));
+                    //std::cout << "Reco Jets uncertainty " << recoJetsJecUnc[ijet] << std::endl;
+                }else{jetsLVec.push_back( jetsLVecTemp[ijet] );}
+            }            
+
+            for(int i = 0; i < jetsLVecTemp.size(); i++){
+                //std::cout << "Jet pT before JEC unc: " << jetsLVecTemp[i].Pt() << ", Jet pT after JEC unc: " << jetsLVec[i].Pt() << std::endl;
+            }
+
+            const std::vector<float>& recoJetsBtag      = tr.getVec<float>("recoJetsBtag_0");
+//            const std::vector<float>& recoJetsBtag      = tr.getVec<float>("recoJetsCSVv2");
+            const std::vector<float>& qgLikelihood      = tr.getVec<float>("qgLikelihood");
             
             //AK8 variables 
-            //const std::vector<double>& puppitau1    = tr.getVec<double>("puppitau1");
-            //const std::vector<double>& puppitau2    = tr.getVec<double>("puppitau2");
-            //const std::vector<double>& puppitau3    = tr.getVec<double>("puppitau3");
-            //const std::vector<double>& puppisoftDropMass = tr.getVec<double>("puppisoftDropMass");
+            //const std::vector<float>& puppitau1    = tr.getVec<float>("puppitau1");
+            //const std::vector<float>& puppitau2    = tr.getVec<float>("puppitau2");
+            //const std::vector<float>& puppitau3    = tr.getVec<float>("puppitau3");
+            //const std::vector<float>& puppisoftDropMass = tr.getVec<float>("puppisoftDropMass");
             //const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
             //const std::vector<TLorentzVector>& puppiSubJetsLVec  = tr.getVec<TLorentzVector>("puppiSubJetsLVec");
-            //const std::vector<double>& puppiSubJetsBdisc = tr.getVec<double>("puppiSubJetsBdisc");
-            //const std::vector<double>& puppiSubJetstotalMult = tr.getVec<double>("puppiSubJetstotalMult");
-            //const std::vector<double>& puppiSubJetsptD = tr.getVec<double>("puppiSubJetsptD");
-            //const std::vector<double>& puppiSubJetsaxis1 = tr.getVec<double>("puppiSubJetsaxis1");
-            //const std::vector<double>& puppiSubJetsaxis2 = tr.getVec<double>("puppiSubJetsaxis2");
+            //const std::vector<float>& puppiSubJetsBdisc = tr.getVec<float>("puppiSubJetsBdisc");
+            //const std::vector<float>& puppiSubJetstotalMult = tr.getVec<float>("puppiSubJetstotalMult");
+            //const std::vector<float>& puppiSubJetsptD = tr.getVec<float>("puppiSubJetsptD");
+            //const std::vector<float>& puppiSubJetsaxis1 = tr.getVec<float>("puppiSubJetsaxis1");
+            //const std::vector<float>& puppiSubJetsaxis2 = tr.getVec<float>("puppiSubJetsaxis2");
                         
 
-            //Helper function to turn int vectors into double vectors
-            auto convertToDoubleandRegister = [](NTupleReader& tr, const std::string& name)
+            //Helper function to turn int vectors into float vectors
+            auto convertTofloatandRegister = [](NTupleReader& tr, const std::string& name)
             {
                 const std::vector<int>& intVec = tr.getVec<int>(name);
-                std::vector<double>* doubleVec = new std::vector<double>(intVec.begin(), intVec.end());
-                tr.registerDerivedVec(name+"ConvertedToDouble3", doubleVec);
-                return doubleVec;
+                std::vector<float>* floatVec = new std::vector<float>(intVec.begin(), intVec.end());
+                tr.registerDerivedVec(name+"ConvertedTofloat3", floatVec);
+                return floatVec;
             };
             
             //New Tagger starts here
-            ttUtility::ConstAK4Inputs *myConstAK4Inputs = nullptr;
-            ttUtility::ConstAK8Inputs *myConstAK8Inputs = nullptr;
+            ttUtility::ConstAK4Inputs<float> *myConstAK4Inputs = nullptr;
+            //ttUtility::ConstAK8Inputs<float> *myConstAK8Inputs = nullptr;
             std::vector<TLorentzVector> *genTops;
             std::vector<std::vector<const TLorentzVector*>> hadGenTopDaughters;
             std::vector<Constituent> constituentsMVA;
@@ -1901,7 +1969,7 @@ namespace plotterFunctions
                     hadGenTopDaughters.push_back(ttUtility::GetTopdauLVec(top, genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
                 }
 
-                myConstAK4Inputs = new ttUtility::ConstAK4Inputs(jetsLVec, recoJetsBtag, qgLikelihood, *genTops, hadGenTopDaughters);
+                myConstAK4Inputs = new ttUtility::ConstAK4Inputs<float>(jetsLVec, recoJetsBtag, qgLikelihood, *genTops, hadGenTopDaughters);
 
                 //myConstAK8Inputs = new ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec, puppiSubJetsBdisc, puppiSubJetstotalMult, puppiSubJetsptD, puppiSubJetsaxis1, puppiSubJetsaxis2, *genTops, hadGenTopDaughters);
             }
@@ -1910,54 +1978,63 @@ namespace plotterFunctions
                 //no gen info is avaliable
                 genTops = new std::vector<TLorentzVector>();
                 
-                myConstAK4Inputs = new ttUtility::ConstAK4Inputs(jetsLVec, recoJetsBtag, qgLikelihood);
+                myConstAK4Inputs = new ttUtility::ConstAK4Inputs<float>(jetsLVec, recoJetsBtag, qgLikelihood);
                 
                 //myConstAK8Inputs = new ttUtility::ConstAK8Inputs(puppiJetsLVec, puppitau1, puppitau2, puppitau3, puppisoftDropMass, puppiSubJetsLVec, puppiSubJetsBdisc, puppiSubJetstotalMult, puppiSubJetsptD, puppiSubJetsaxis1, puppiSubJetsaxis2);
                 
             }
                 
-            myConstAK4Inputs->addSupplamentalVector("qgLikelihood",                         tr.getVec<double>("qgLikelihood"));
-            myConstAK4Inputs->addSupplamentalVector("qgPtD",                                tr.getVec<double>("qgPtD"));
-            myConstAK4Inputs->addSupplamentalVector("qgAxis1",                              tr.getVec<double>("qgAxis1"));
-            myConstAK4Inputs->addSupplamentalVector("qgAxis2",                              tr.getVec<double>("qgAxis2"));
-            myConstAK4Inputs->addSupplamentalVector("recoJetschargedHadronEnergyFraction",  tr.getVec<double>("recoJetschargedHadronEnergyFraction"));
-            myConstAK4Inputs->addSupplamentalVector("recoJetschargedEmEnergyFraction",      tr.getVec<double>("recoJetschargedEmEnergyFraction"));
-            myConstAK4Inputs->addSupplamentalVector("recoJetsneutralEmEnergyFraction",      tr.getVec<double>("recoJetsneutralEmEnergyFraction"));
-            myConstAK4Inputs->addSupplamentalVector("recoJetsmuonEnergyFraction",           tr.getVec<double>("recoJetsmuonEnergyFraction"));
-            myConstAK4Inputs->addSupplamentalVector("recoJetsHFHadronEnergyFraction",       tr.getVec<double>("recoJetsHFHadronEnergyFraction"));
-            myConstAK4Inputs->addSupplamentalVector("recoJetsHFEMEnergyFraction",           tr.getVec<double>("recoJetsHFEMEnergyFraction"));
-            myConstAK4Inputs->addSupplamentalVector("recoJetsneutralEnergyFraction",        tr.getVec<double>("recoJetsneutralEnergyFraction"));
-            myConstAK4Inputs->addSupplamentalVector("PhotonEnergyFraction",                 tr.getVec<double>("PhotonEnergyFraction"));
-            myConstAK4Inputs->addSupplamentalVector("ElectronEnergyFraction",               tr.getVec<double>("ElectronEnergyFraction"));
-            myConstAK4Inputs->addSupplamentalVector("ChargedHadronMultiplicity",            tr.getVec<double>("ChargedHadronMultiplicity"));
-            myConstAK4Inputs->addSupplamentalVector("NeutralHadronMultiplicity",            tr.getVec<double>("NeutralHadronMultiplicity"));
-            myConstAK4Inputs->addSupplamentalVector("PhotonMultiplicity",                   tr.getVec<double>("PhotonMultiplicity"));
-            myConstAK4Inputs->addSupplamentalVector("ElectronMultiplicity",                 tr.getVec<double>("ElectronMultiplicity"));
-            myConstAK4Inputs->addSupplamentalVector("MuonMultiplicity",                     tr.getVec<double>("MuonMultiplicity"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVb",                             tr.getVec<double>("DeepCSVb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVc",                             tr.getVec<double>("DeepCSVc"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVl",                             tr.getVec<double>("DeepCSVl"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVbb",                            tr.getVec<double>("DeepCSVbb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepCSVcc",                            tr.getVec<double>("DeepCSVcc"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorb",                          tr.getVec<double>("DeepFlavorb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorbb",                         tr.getVec<double>("DeepFlavorbb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorlepb",                       tr.getVec<double>("DeepFlavorlepb"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorc",                          tr.getVec<double>("DeepFlavorc"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavoruds",                        tr.getVec<double>("DeepFlavoruds"));
-            myConstAK4Inputs->addSupplamentalVector("DeepFlavorg",                          tr.getVec<double>("DeepFlavorg"));
-            myConstAK4Inputs->addSupplamentalVector("CvsL",                                 tr.getVec<double>("CvsL"));
-            myConstAK4Inputs->addSupplamentalVector("CvsB",                                 tr.getVec<double>("CvsB"));
-            //myConstAK4Inputs->addSupplamentalVector("CombinedSvtx",                         tr.getVec<double>("CombinedSvtx"));
-            //myConstAK4Inputs->addSupplamentalVector("JetProba",                             tr.getVec<double>("JetProba_0"));
-            //myConstAK4Inputs->addSupplamentalVector("JetBprob",                             tr.getVec<double>("JetBprob"));
-            //myConstAK4Inputs->addSupplamentalVector("recoJetsBtag",                         tr.getVec<double>("recoJetsBtag_0"));
-            //myConstAK4Inputs->addSupplamentalVector("recoJetsCharge",                       tr.getVec<double>("recoJetsCharge_0"));
-            myConstAK4Inputs->addSupplamentalVector("qgMult",                               *convertToDoubleandRegister(tr, "qgMult"));
+            myConstAK4Inputs->addSupplamentalVector("qgLikelihood",                         tr.getVec<float>("qgLikelihood"));
+            myConstAK4Inputs->addSupplamentalVector("qgPtD",                                tr.getVec<float>("qgPtD"));
+            myConstAK4Inputs->addSupplamentalVector("qgAxis1",                              tr.getVec<float>("qgAxis1"));
+            myConstAK4Inputs->addSupplamentalVector("qgAxis2",                              tr.getVec<float>("qgAxis2"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetschargedHadronEnergyFraction",  tr.getVec<float>("recoJetschargedHadronEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetschargedEmEnergyFraction",      tr.getVec<float>("recoJetschargedEmEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetsneutralEmEnergyFraction",      tr.getVec<float>("recoJetsneutralEmEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetsmuonEnergyFraction",           tr.getVec<float>("recoJetsmuonEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetsHFHadronEnergyFraction",       tr.getVec<float>("recoJetsHFHadronEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetsHFEMEnergyFraction",           tr.getVec<float>("recoJetsHFEMEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("recoJetsneutralEnergyFraction",        tr.getVec<float>("recoJetsneutralEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("PhotonEnergyFraction",                 tr.getVec<float>("PhotonEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("ElectronEnergyFraction",               tr.getVec<float>("ElectronEnergyFraction"));
+            myConstAK4Inputs->addSupplamentalVector("ChargedHadronMultiplicity",            tr.getVec<float>("ChargedHadronMultiplicity"));
+            myConstAK4Inputs->addSupplamentalVector("NeutralHadronMultiplicity",            tr.getVec<float>("NeutralHadronMultiplicity"));
+            myConstAK4Inputs->addSupplamentalVector("PhotonMultiplicity",                   tr.getVec<float>("PhotonMultiplicity"));
+            myConstAK4Inputs->addSupplamentalVector("ElectronMultiplicity",                 tr.getVec<float>("ElectronMultiplicity"));
+            myConstAK4Inputs->addSupplamentalVector("MuonMultiplicity",                     tr.getVec<float>("MuonMultiplicity"));
+            myConstAK4Inputs->addSupplamentalVector("DeepCSVb",                             tr.getVec<float>("DeepCSVb"));
+            myConstAK4Inputs->addSupplamentalVector("DeepCSVc",                             tr.getVec<float>("DeepCSVc"));
+            myConstAK4Inputs->addSupplamentalVector("DeepCSVl",                             tr.getVec<float>("DeepCSVl"));
+            myConstAK4Inputs->addSupplamentalVector("DeepCSVbb",                            tr.getVec<float>("DeepCSVbb"));
+            myConstAK4Inputs->addSupplamentalVector("DeepCSVcc",                            tr.getVec<float>("DeepCSVcc"));
+//            myConstAK4Inputs->addSupplamentalVector("DeepFlavorb",                          tr.getVec<float>("DeepFlavorb"));
+//            myConstAK4Inputs->addSupplamentalVector("DeepFlavorbb",                         tr.getVec<float>("DeepFlavorbb"));
+//            myConstAK4Inputs->addSupplamentalVector("DeepFlavorlepb",                       tr.getVec<float>("DeepFlavorlepb"));
+//            myConstAK4Inputs->addSupplamentalVector("DeepFlavorc",                          tr.getVec<float>("DeepFlavorc"));
+//            myConstAK4Inputs->addSupplamentalVector("DeepFlavoruds",                        tr.getVec<float>("DeepFlavoruds"));
+//            myConstAK4Inputs->addSupplamentalVector("DeepFlavorg",                          tr.getVec<float>("DeepFlavorg"));
+//            myConstAK4Inputs->addSupplamentalVector("CvsL",                                 tr.getVec<float>("CvsL"));
+//            myConstAK4Inputs->addSupplamentalVector("CvsB",                                 tr.getVec<float>("CvsB"));
+            //myConstAK4Inputs->addSupplamentalVector("CombinedSvtx",                         tr.getVec<float>("CombinedSvtx"));
+            //myConstAK4Inputs->addSupplamentalVector("JetProba",                             tr.getVec<float>("JetProba_0"));
+            //myConstAK4Inputs->addSupplamentalVector("JetBprob",                             tr.getVec<float>("JetBprob"));
+            //myConstAK4Inputs->addSupplamentalVector("recoJetsBtag",                         tr.getVec<float>("recoJetsBtag_0"));
+            //myConstAK4Inputs->addSupplamentalVector("recoJetsCharge",                       tr.getVec<float>("recoJetsCharge_0"));
+            myConstAK4Inputs->addSupplamentalVector("qgMult",                               *convertTofloatandRegister(tr, "qgMult"));
+//            myConstAK4Inputs->addSupplamentalVector("qgMult",                               tr.getVec<float>("qgMult"));
 
             //myConstAK8Inputs.setWMassCorrHistos(puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for);
 
             //run new tagger
             //New MVA resolved Tagger starts here
+
+            //int run = tr.getVar<int>("run");
+            //int lumi = tr.getVar<int>("lumi");
+            //long event = tr.getVar<long>("event");
+ 
+            //std::cout << run << ":::" << lumi << ":::" << event << std::endl;
+
+
             constituentsMVA = ttUtility::packageConstituents(*myConstAK4Inputs);//, *myConstAK8Inputs);
             //run tagger
             ttMVA->runTagger(constituentsMVA);
@@ -1971,14 +2048,19 @@ namespace plotterFunctions
             const auto& tops = ttrMVA.getTops();
 
             //get "best" top based upon on trijet mass 
-            double bestTopMass = -9999.9;
-            double bestTopEta = -9999.9;
+            float bestTopMass = -9999.9;
+            float bestTopEta = -9999.9;
             const TopObject* bestTopMassLV = nullptr;
             bool bestTopMassGenMatch = false;
             bool bestTopMassTopTag = false;
+            
+            float highestDisc = -9999.9;
+
             for(int iTop = 0; iTop < candidateTops.size(); ++iTop)
             {
                 auto& top = candidateTops[iTop];
+
+                highestDisc = (top.getDiscriminator() > highestDisc ? top.getDiscriminator() : highestDisc);
 
                 if(fabs(top.p().M() - 173.5) < fabs(bestTopMass - 173.5) && top.getNConstituents() == 3)
                 {
@@ -2024,6 +2106,8 @@ namespace plotterFunctions
 
             tr.registerDerivedVec("genTops", genTops);
 
+            tr.registerDerivedVar("highestDisc", highestDisc);
+
             tr.registerDerivedVar("bestTopMass", bestTopMass);
             tr.registerDerivedVar("bestTopEta", bestTopEta);
             tr.registerDerivedVar("bestTopMassLV", bestTopMassLV?(bestTopMassLV->p()):(TLorentzVector()));
@@ -2036,12 +2120,19 @@ namespace plotterFunctions
             tr.registerDerivedVar("randomTopCandTopTag", randomTopCandTopTag);
             tr.registerDerivedVar("randomTopCandNotGenMatch", randomTopCandNotGenMatch);
 
+            //std::cout << "Finished prepareTopVar" << std::endl;
+
         }
 
 
     public:
-        PrepareTopVars(std::string taggerCfg = "TopTagger.cfg") : ttMVA(new TopTagger()), WMassCorFile(nullptr), puppisd_corrGEN(nullptr), puppisd_corrRECO_cen(nullptr), puppisd_corrRECO_for(nullptr), distribution(1,65000)
+        PrepareTopVars(std::string taggerCfg = "TopTagger.cfg", int JECcorr = 0) : ttMVA(new TopTagger()), WMassCorFile(nullptr), puppisd_corrGEN(nullptr), puppisd_corrRECO_cen(nullptr), puppisd_corrRECO_for(nullptr), distribution(1,65000)
 	{
+            //Let's get ready for JEC systematics, we will set a variable here, and the Jet collection is loaded we will look to see what to do.
+            if(JECcorr == -1){ JECSys = -1; }
+            else if(JECcorr == 1){ JECSys = 1;}
+            else{ JECSys = 0; } // If an invalid JECcorr value is pass, we will default to the regular behavior.
+
             ttMVA->setCfgFile(taggerCfg);
 
             indexMuTrigger = indexElecTrigger = indexHTMHTTrigger = indexMuHTTrigger = -1;
@@ -2077,50 +2168,50 @@ namespace plotterFunctions
 
         TRandom3 *trand;
 
-        double calcB(double x1, double x2, double e1, double e2)
+        float calcB(float x1, float x2, float e1, float e2)
         {
             return (x2*x2*(e1-1) - x1*x1*(e2-1)) / (x1*x2*(x2-x1));
         }
 
-        double calcC(double x1, double x2, double e1, double e2)
+        float calcC(float x1, float x2, float e1, float e2)
         {
             return (x2*(e1-1) - x1*(e2-1)) / (x1*x2*(x1-x2));
         }
 
-        double calcQuad(double x, double x1, double x2, double e1, double e2)
+        float calcQuad(float x, float x1, float x2, float e1, float e2)
         {
             return 1 + x*calcB(x1, x2, e1, e2) + x*x*calcC(x1, x2, e1, e2);
         }
 
-        double logistical(double met, double A, double B, double C)
+        float logistical(float met, float A, float B, float C)
         {
             return 1 - A/(1 + exp(-(B*(met - C))));
         }
         
         void metSmear(NTupleReader& tr)
         {
-            const double& met     = tr.getVar<double>("cleanMetPt");
+            const float& met     = tr.getVar<float>("cleanMetPt");
             
             // Logistical smearing 
-            double met_logi_1 = met * logistical(met, 0.15, 0.01, 300);
-            double met_logi_2 = met * logistical(met, 0.20, 0.01, 400);
-            double met_logi_3 = met * logistical(met, 0.25, 0.01, 500);
-            double met_logi_4 = met * logistical(met, 0.20, 0.01, 400);
-            double met_logi_5 = met * logistical(met, 0.20, 0.02, 400);
-            double met_logi_6 = met * logistical(met, 0.20, 0.03, 400);
-            double met_logi_7 = met * logistical(met, 0.20, 0.02, 300);
-            double met_logi_8 = met * logistical(met, 0.20, 0.02, 400);
-            double met_logi_9 = met * logistical(met, 0.20, 0.02, 500);
+            float met_logi_1 = met * logistical(met, 0.15, 0.01, 300);
+            float met_logi_2 = met * logistical(met, 0.20, 0.01, 400);
+            float met_logi_3 = met * logistical(met, 0.25, 0.01, 500);
+            float met_logi_4 = met * logistical(met, 0.20, 0.01, 400);
+            float met_logi_5 = met * logistical(met, 0.20, 0.02, 400);
+            float met_logi_6 = met * logistical(met, 0.20, 0.03, 400);
+            float met_logi_7 = met * logistical(met, 0.20, 0.02, 300);
+            float met_logi_8 = met * logistical(met, 0.20, 0.02, 400);
+            float met_logi_9 = met * logistical(met, 0.20, 0.02, 500);
 
             // gaussian smearing 
-            //double met_gaus_5  = trand->Gaus(met, 5);
-            //double met_gaus_10 = trand->Gaus(met, 10);
-            //double met_gaus_15 = trand->Gaus(met, 15);
-            double met_gaus_20 = trand->Gaus(met, 20);
-            //double met_gaus_25 = trand->Gaus(met, 25);
-            double met_gaus_30 = trand->Gaus(met, 30);
-            double met_gaus_40 = trand->Gaus(met, 40);
-            double met_gaus_50 = trand->Gaus(met, 50);
+            //float met_gaus_5  = trand->Gaus(met, 5);
+            //float met_gaus_10 = trand->Gaus(met, 10);
+            //float met_gaus_15 = trand->Gaus(met, 15);
+            float met_gaus_20 = trand->Gaus(met, 20);
+            //float met_gaus_25 = trand->Gaus(met, 25);
+            float met_gaus_30 = trand->Gaus(met, 30);
+            float met_gaus_40 = trand->Gaus(met, 40);
+            float met_gaus_50 = trand->Gaus(met, 50);
 
             tr.registerDerivedVar("met_gaus_20", met_gaus_20);
             //tr.registerDerivedVar("met_gaus_25", met_gaus_25);
@@ -2141,12 +2232,12 @@ namespace plotterFunctions
 
         void mt2Smear(NTupleReader& tr)
         {
-            const double& metphi       = tr.getVar<double>("cleanMetPhi");
-            const double& met_logi_1   = tr.getVar<double>("met_logi_1");
-            const double& met_gaus_30  = tr.getVar<double>("met_gaus_30");
+            const float& metphi       = tr.getVar<float>("cleanMetPhi");
+            const float& met_logi_1   = tr.getVar<float>("met_logi_1");
+            const float& met_gaus_30  = tr.getVar<float>("met_gaus_30");
             
             const std::vector<TLorentzVector>& jetsLVec_forTagger  = tr.getVec<TLorentzVector>("jetsLVec_forTaggerZinv");
-            const std::vector<double>&     recoJetsBtag_forTagger  = tr.getVec<double>("recoJetsBtag_forTaggerZinv");
+            const std::vector<float>&     recoJetsBtag_forTagger  = tr.getVec<float>("recoJetsBtag_forTaggerZinv");
 
             //We choose 30 GeV gaussian smearing and logi_1 for the study
 
@@ -2155,13 +2246,13 @@ namespace plotterFunctions
             metLVec_Logi.SetPtEtaPhiM(met_logi_1, 0, metphi, 0);
             
             //type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Logi);
-            double MT2_Logi = 0.0;//type3Ptr->best_had_brJet_MT2;
+            float MT2_Logi = 0.0;//type3Ptr->best_had_brJet_MT2;
 
             TLorentzVector metLVec_Gaus;
             metLVec_Gaus.SetPtEtaPhiM(met_gaus_30, 0, metphi, 0);
             
             //type3Ptr->processEvent(jetsLVec_forTagger, recoJetsBtag_forTagger, metLVec_Gaus); 
-            double MT2_Gaus = 0.0;//type3Ptr->best_had_brJet_MT2;
+            float MT2_Gaus = 0.0;//type3Ptr->best_had_brJet_MT2;
 
             tr.registerDerivedVar("mt2_logi_1",  MT2_Logi);
             tr.registerDerivedVar("mt2_gaus_30", MT2_Gaus);
@@ -2374,14 +2465,14 @@ namespace plotterFunctions
       private:
           std::shared_ptr<TopTagger> ttPtr_mine;
           void generateTaudiv(NTupleReader& tr) {
-            const std::vector<double>& tau1    = tr.getVec<double>("tau1");
-            const std::vector<double>& tau2    = tr.getVec<double>("tau2");
-            const std::vector<double>& tau3    = tr.getVec<double>("tau3");
-            const std::vector<double>& puppitau1    = tr.getVec<double>("puppitau1");
-            const std::vector<double>& puppitau2    = tr.getVec<double>("puppitau2");
-            const std::vector<double>& puppitau3    = tr.getVec<double>("puppitau3");
-            const std::vector<double>& softDropMass = tr.getVec<double>("softDropMass");
-            const std::vector<double>& puppisoftDropMass = tr.getVec<double>("puppisoftDropMass");
+            const std::vector<float>& tau1    = tr.getVec<float>("tau1");
+            const std::vector<float>& tau2    = tr.getVec<float>("tau2");
+            const std::vector<float>& tau3    = tr.getVec<float>("tau3");
+            const std::vector<float>& puppitau1    = tr.getVec<float>("puppitau1");
+            const std::vector<float>& puppitau2    = tr.getVec<float>("puppitau2");
+            const std::vector<float>& puppitau3    = tr.getVec<float>("puppitau3");
+            const std::vector<float>& softDropMass = tr.getVec<float>("softDropMass");
+            const std::vector<float>& puppisoftDropMass = tr.getVec<float>("puppisoftDropMass");
             const std::vector<TLorentzVector>& jetsLVec     = tr.getVec<TLorentzVector>("jetsLVec");
             const std::vector<TLorentzVector>& ak8JetsLVec  = tr.getVec<TLorentzVector>("ak8JetsLVec");
             const std::vector<TLorentzVector>& puppiJetsLVec  = tr.getVec<TLorentzVector>("puppiJetsLVec");
@@ -2390,10 +2481,10 @@ namespace plotterFunctions
             std::vector<TLorentzVector> *puppiLVectight_top = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *puppiLVecLoose_w = new std::vector<TLorentzVector>();
             std::vector<TLorentzVector> *puppiLVectight_w = new std::vector<TLorentzVector>();
-            std::vector<double>* puppitau2Dtau1 = new std::vector<double>();
-            std::vector<double>* puppitau3Dtau2 = new std::vector<double>();
-            std::vector<double>* puppitau2Dtau1_SDM = new std::vector<double>();
-            std::vector<double>* puppitau3Dtau2_SDM = new std::vector<double>();
+            std::vector<float>* puppitau2Dtau1 = new std::vector<float>();
+            std::vector<float>* puppitau3Dtau2 = new std::vector<float>();
+            std::vector<float>* puppitau2Dtau1_SDM = new std::vector<float>();
+            std::vector<float>* puppitau3Dtau2_SDM = new std::vector<float>();
 
             std::vector<TLorentzVector> *hadWLVec = new std::vector<TLorentzVector>();
 
@@ -2513,12 +2604,12 @@ namespace plotterFunctions
 	     int nJetsAK42_med = 0;
 	     int nJetsAK42_lar = 0;
  
-	     std::vector<double>* ak81dRMin = new std::vector<double>();
-	     std::vector<double>* ak82dRMin = new std::vector<double>(); 
-	     std::vector<double>* puppi_top_L_1dRMin = new std::vector<double>();
-	     std::vector<double>* puppi_top_L_2dRMin = new std::vector<double>();
-	     std::vector<double>* puppi_top_T_1dRMin = new std::vector<double>();
-	     std::vector<double>* puppi_top_T_2dRMin = new std::vector<double>(); 
+	     std::vector<float>* ak81dRMin = new std::vector<float>();
+	     std::vector<float>* ak82dRMin = new std::vector<float>(); 
+	     std::vector<float>* puppi_top_L_1dRMin = new std::vector<float>();
+	     std::vector<float>* puppi_top_L_2dRMin = new std::vector<float>();
+	     std::vector<float>* puppi_top_T_1dRMin = new std::vector<float>();
+	     std::vector<float>* puppi_top_T_2dRMin = new std::vector<float>(); 
 	     for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
 	     {
 		 if(ak8JetsLVec.size() >= 1) ak81dRMin->push_back( ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[0]));
@@ -2581,19 +2672,19 @@ namespace plotterFunctions
 
 	     // Also start looking at subjet information
 	     const std::vector<TLorentzVector>& puppiSubJetsLVec  = tr.getVec<TLorentzVector>("puppiSubJetsLVec");
-	     const std::vector<double>& puppiSubJetsBdisc = tr.getVec<double>("puppiSubJetsBdisc");
+	     const std::vector<float>& puppiSubJetsBdisc = tr.getVec<float>("puppiSubJetsBdisc");
 
 	     // For each tagged top/W, find the corresponding subjets
 	     /*
 	     std::vector< std::vector<TLorentzVector> > W_subjets;
-	     std::vector<double>* W_subjets_pt_reldiff = new std::vector<double>();
+	     std::vector<float>* W_subjets_pt_reldiff = new std::vector<float>();
 	     for( TLorentzVector myW : puppiLVectight_w)
 	     {
 		 std::vector<TLorentzVector> myW_subjets;
 		 int i = 0;
 		 for(TLorentzVector puppiSubJet : puppiSubJetsLVec)
 		 {
-		     double myDR = ROOT::Math::VectorUtil::DeltaR(myW, puppiSubJet);
+		     float myDR = ROOT::Math::VectorUtil::DeltaR(myW, puppiSubJet);
 		     if (myDR < 0.8)
 		     {
 			 myW_subjets.push_back(puppiSubJet);
@@ -2602,14 +2693,14 @@ namespace plotterFunctions
 		 }
 		 // If more than 2 matches, find the best combination of two subjets by checking diff in 4-vector
 		 if (myW_subjets.size() > 2) {
-		     double min_diff = 999999.;
+		     float min_diff = 999999.;
 		     int min_j=0, min_k=1;
 		     for (int j=0 ; j<myW_subjets.size(); ++j)
 		     {
 			 for (int k=j+1; k<myW_subjets.size(); ++k)
 			 {
 			     TLorentzVector diff_LV = myW - myW_subjets[j] - myW_subjets[k];
-			     double diff = abs(diff_LV.M());
+			     float diff = abs(diff_LV.M());
 			     if(diff < min_diff)
 			     {
 				 min_diff = diff;
@@ -2630,7 +2721,7 @@ namespace plotterFunctions
              */
 	     // For each tagged top/W, find the corresponding subjets
 	     std::vector< std::vector< TLorentzVector> > top_subjets;
-	     std::vector<double>* top_subjets_pt_reldiff = new std::vector<double>();
+	     std::vector<float>* top_subjets_pt_reldiff = new std::vector<float>();
              /*
 	     for( TLorentzVector mytop : puppiLVectight_top)
 	     {
@@ -2638,7 +2729,7 @@ namespace plotterFunctions
 		 int i = 0;
 		 for(TLorentzVector puppiSubJet : puppiSubJetsLVec)
 		 {
-		     double myDR = ROOT::Math::VectorUtil::DeltaR(mytop, puppiSubJet);
+		     float myDR = ROOT::Math::VectorUtil::DeltaR(mytop, puppiSubJet);
 		     if (myDR < 0.8)
 		     {
 			 mytop_subjets.push_back(puppiSubJet);
@@ -2647,14 +2738,14 @@ namespace plotterFunctions
 		 }
 		 // If more than 2 matches, find the best combination of two subjets
 		 if (mytop_subjets.size() > 2) {
-		     double min_diff = 999999.;
+		     float min_diff = 999999.;
 		     int min_j=0, min_k=1;
 		     for (int j=0 ; j<mytop_subjets.size(); ++j)
 		     {
 			 for (int k=j+1; k<mytop_subjets.size(); ++k)
 			 {
 			     TLorentzVector diff_LV = mytop - mytop_subjets[j] - mytop_subjets[k];
-			     double diff = abs(diff_LV.M());
+			     float diff = abs(diff_LV.M());
 			     if(diff < min_diff)
 			     {
 				 min_diff = diff;
@@ -2675,9 +2766,9 @@ namespace plotterFunctions
              */
 	     // Figure out gen matching..
 	     std::vector<bool>* gentop_match = new std::vector<bool>(); // helpful to make plots of matched and unmatched number of tops
-	     std::vector<double>* dR_top_gentop = new std::vector<double>(); 
-	     std::vector<double>* dR_AK4_topsubjet_genmatched = new std::vector<double>(); 
-	     std::vector<double>* dR_AK4_top_genmatched = new std::vector<double>(); 
+	     std::vector<float>* dR_top_gentop = new std::vector<float>(); 
+	     std::vector<float>* dR_AK4_topsubjet_genmatched = new std::vector<float>(); 
+	     std::vector<float>* dR_AK4_top_genmatched = new std::vector<float>(); 
 	     std::vector<int>* top_N_AK4_matched_genmatched = new std::vector<int>(); 
 	     std::vector<int>* top_N_AK4_matched_notgenmatched = new std::vector<int>(); 
 	     std::vector<int>* top_N_AK4_notmatched_genmatched = new std::vector<int>(); 
@@ -2714,12 +2805,12 @@ namespace plotterFunctions
 		     //std::cout << "Mytop info: " << mytop.Pt() << " " << mytop.Eta() << " " << mytop.Phi() << std::endl;
 		     // For now find the closest hadtop in deltaR
 		     TLorentzVector temp_gentop_match_LV;
-		     double min_DR = 99.;
+		     float min_DR = 99.;
 		     int matched_hadtop_index = -1;
 		     for(unsigned int myhadtop_i=0; myhadtop_i<hadtopLVec.size(); ++myhadtop_i)
 		     {
 			 TLorentzVector myhadtop = hadtopLVec[myhadtop_i];
-			 double DR_top = ROOT::Math::VectorUtil::DeltaR(mytop, myhadtop);
+			 float DR_top = ROOT::Math::VectorUtil::DeltaR(mytop, myhadtop);
 			 if (DR_top < min_DR) 
 			 {
 			     temp_gentop_match_LV = myhadtop;
@@ -2765,17 +2856,17 @@ namespace plotterFunctions
 
 			 for (unsigned int j=0; j<jetsLVec.size(); ++j)
 			 {
-			     double DR1 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[0]);
-			     double DR2 = DR1;
+			     float DR1 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[0]);
+			     float DR2 = DR1;
                              if(mysubjets.size()>1) {
-                             double DR2 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[1]);
+                             float DR2 = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], mysubjets[1]);
                              }
 			     //std::cout << "DR1, DR2: " << DR1 << " " << DR2 << std::endl;
 			     // Check if it matches a gen daughter
 			     bool genmatch = false;
 			     for (TLorentzVector gendau : gentopdauLVec)
 			     {
-				 double DR_AK4_gen = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], gendau);
+				 float DR_AK4_gen = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], gendau);
 				 //std::cout << "gen DR " << DR_AK4_gen << std::endl;
 				 if (DR_AK4_gen < 0.4)
 				 {
@@ -2796,7 +2887,7 @@ namespace plotterFunctions
 				     continue;
 				 for (TLorentzVector gendau : hadtopdauLVec[other])
 				 {
-				     double DR_AK4_gen = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], gendau);
+				     float DR_AK4_gen = ROOT::Math::VectorUtil::DeltaR(jetsLVec[j], gendau);
 				     //std::cout << "gen DR " << DR_AK4_gen << std::endl;
 				     if (DR_AK4_gen < 0.4)
 				     {
@@ -2916,17 +3007,17 @@ namespace plotterFunctions
 
 //void ak8DrMatch(NTupleReader& tr)
 //{
-   //int jetdRMatch(const std::vector<TLorentzVector>& ak8JetsLVec, const std::vector<TLorentzVector>& jetsLVec, const double jak8dRMax)
+   //int jetdRMatch(const std::vector<TLorentzVector>& ak8JetsLVec, const std::vector<TLorentzVector>& jetsLVec, const float jak8dRMax)
   // {
   /*
-       double dRmin = 999.0;
+       float dRmin = 999.0;
        int minJMatch = -1;
 
        const int nJetsak8 = ak8JetsLVec.size();
 
        for(int iJet = 0; iJet < jetsLVec.size(); ++iJet)
        {
-           double dR = ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[iJet]);
+           float dR = ROOT::Math::VectorUtil::DeltaR(jetsLVec[iJet], ak8JetsLVec[iJet]);
            if(dR < dRmin)
            {
                dRmin = dR;
@@ -2943,8 +3034,8 @@ namespace plotterFunctions
     //    const unsigned int& run   = tr.getVar<unsigned int>("run");
     //    const unsigned int& event = tr.getVar<unsigned int>("event");
     //
-    //    const double& met                            = tr.getVar<double>("met");
-    //    const double& metphi                         = tr.getVar<double>("metphi");
+    //    const float& met                            = tr.getVar<float>("met");
+    //    const float& metphi                         = tr.getVar<float>("metphi");
     //
     //    const int& nMuons_CUT        = tr.getVar<int>("nMuons_CUT");
     //    const int& nElectrons_CUT    = tr.getVar<int>("nElectrons_CUT");
@@ -2952,9 +3043,9 @@ namespace plotterFunctions
     //    const int& cntNJetsPt30Eta24 = tr.getVar<int>("cntNJetsPt30Eta24");
     //    const int& cntNJetsPt30      = tr.getVar<int>("cntNJetsPt30");
     //
-    //    const double& mht    = tr.getVar<double>("mht");
-    //    const double& mhtphi = tr.getVar<double>("mhtphi");
-    //    const double& ht     = tr.getVar<double>("ht");
+    //    const float& mht    = tr.getVar<float>("mht");
+    //    const float& mhtphi = tr.getVar<float>("mhtphi");
+    //    const float& ht     = tr.getVar<float>("ht");
     //
     //    //if(met > 1000) std::cout << "run: " << run << "\tevent: " << event << "\tmet: " << met << "\tmetphi: " << metphi << "\tnMuons_CUT: " << nMuons_CUT << "\t nElectrons_CUT: " << nElectrons_CUT << "\tcntNJetsPt30: " << cntNJetsPt30 << "\tcntNJetsPt30Eta24: " << cntNJetsPt30Eta24 << "\tcntNJetsPt50Eta24: " << cntNJetsPt50Eta24 << "\tmht: " << mht << "\tmhtphi: " << mhtphi << "\tht: " << ht << std::endl;
     //}

@@ -43,7 +43,7 @@ LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
 
-PROGRAMS = simpleAnalyzer
+PROGRAMS = simpleAnalyzer topTaggerTest
 #PROGRAMS = calcEff harvestHists plot makePlots systematics nJetWgtSyst moneyplot plot2d scalefactorplot systplot miniMakePlots beffCalc makeSignalHistograms makeTopPlots makeDataMCplots simpleAnalyzer
 
 all: mkobj PyWraps $(PROGRAMS)
@@ -156,6 +156,9 @@ makeTaggerHistograms: $(ODIR)/makeTaggerHistograms.o $(ODIR)/NTupleReader.o $(OD
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
 simpleAnalyzer: $(ODIR)/simpleAnalyzer.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o $(ODIR)/PileupWeights.o $(ODIR)/BTagCorrector.o $(ODIR)/TTbarCorrector.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o
+	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
+
+topTaggerTest: $(ODIR)/topTaggerTest.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o $(ODIR)/PileupWeights.o $(ODIR)/BTagCorrector.o $(ODIR)/TTbarCorrector.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
 clean:

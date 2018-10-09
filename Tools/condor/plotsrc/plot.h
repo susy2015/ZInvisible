@@ -52,6 +52,7 @@ class histInfo
 public:
     std::string legEntry, histFile, histName, drawOptions;
     int color, rebin;
+    double merge; //This provides a value, any bin that includes this value or is greater, will be merged into a single bin
     std::shared_ptr<TH1> h;
     std::shared_ptr<TH1> b; //We will save background histogram here, and automatically subtract it.
     double yield = 0;
@@ -134,6 +135,29 @@ public:
             std::cout << "After rebinning, " << hName << " has " << h->GetNbinsX() << "bins." << std::endl;
         }
 
+        //merge last bin if necessary
+        if(merge > -999){ //i'm not using -1 for the null case :)
+            std::cout << "Merging bins for values greater than " << merge << std::endl;
+            int nbins = h->GetNbinsX();
+            int firstbin = h->GetXaxis()->FindBin(merge);
+            int newbins = firstbin; //the bin number of this last bin is the number of bins the reshaped histogram will have
+            double xbins[newbins+1]; //With 'newbins' number of bins, we need to specify 'newbins+1' number of edges.
+            std::cout << h->GetName() << " has " << nbins << " bins. After merging it will have " << newbins << " bins." << std::endl;
+
+            if(firstbin > -1){
+                for(int i = 1; i <= newbins; i++){ //the first bin is '1'
+                    xbins[i-1] = h->GetXaxis()->GetBinLowEdge(i);
+                }
+                xbins[newbins] = h->GetXaxis()->GetBinUpEdge(nbins); // Get the upper edge of the last bin in the original
+                std::string hName = std::string("rebinned_")+h->GetName();
+                h = (std::shared_ptr<TH1>)h->Rebin(newbins, hName.c_str(), xbins);
+            }else{
+               std::cout << "Merging bin was requested, but no action taken since there are no bins above " << merge << std::endl;
+            }
+
+            std::cout << "After merging " << h->GetName() << " has " << h->GetNbinsX() << " bins." << std::endl;
+        }
+
         //Now let's do a background subtraction if it has been specified
         if(h&&b){
             std::cout << "Performing background subtraction on " << hName << std::endl;
@@ -188,11 +212,11 @@ public:
         else              h->SetFillColor(color);
     }
 
-    histInfo(const std::string& legEntry, const std::string& histFile, const std::string& drawOptions, const int color) : legEntry(legEntry), histFile(histFile), histName(""), drawOptions(drawOptions), color(color), rebin(-1), h(nullptr)
+    histInfo(const std::string& legEntry, const std::string& histFile, const std::string& drawOptions, const int color) : legEntry(legEntry), histFile(histFile), histName(""), drawOptions(drawOptions), color(color), rebin(-1), h(nullptr), merge(-1000)
     {
     }
 
-    histInfo(TH1* h) : legEntry(h->GetName()), histFile(""), histName(h->GetName()), drawOptions(""), color(0), rebin(0), h(h)
+    histInfo(TH1* h) : legEntry(h->GetName()), histFile(""), histName(h->GetName()), drawOptions(""), color(0), rebin(0), h(h), merge(-1000)
     {
     }
 
@@ -210,13 +234,23 @@ private:
     std::vector<histInfo> bgEntries_;
     //vector summarizing signal histograms to include in the plot
     std::vector<histInfo> sigEntries_;
+
+    //Identifying information, especially useful when we do multiplots
+    std::string prefix = "";
+    std::string label  = "";
     
 public:
+    void editPrefix(std::string pre){prefix = pre;}
+    std::string getPrefix(){return prefix;}
+
+    void editLabel(std::string labl){label = labl;}
+    std::string getLabel(){return label;}
+
     Plotter(histInfo&& data, std::vector<histInfo>&& bgEntries, std::vector<histInfo>&& sigEntries) : data_(data), bgEntries_(bgEntries), sigEntries_(sigEntries) {}
 
     Plotter(histInfo&& data, std::vector<histInfo>&& bgEntries) : data_(data), bgEntries_(bgEntries) {}
 
-    void plot(const std::string& histName, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double lumi = 36100)
+    void plot(const std::string& histName, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double merge = -1000, double lumi = 36100)
     {
 
         bool bkgSub = sigEntries_.size() > 0;
@@ -267,6 +301,7 @@ public:
             //Get new histogram
             bgEntries_[iBG].histName = histName;
             bgEntries_[iBG].rebin = rebin;
+            bgEntries_[iBG].merge = merge;
             bgEntries_[iBG].retrieveHistogram();
 
             //We are really making this code a frakenstein's monster, only fill this here if we aren't doing background subtraction
@@ -281,6 +316,7 @@ public:
             for(int iSG = 0; iSG < sigEntries_.size(); iSG++){
                 sigEntries_[iSG].histName = histName;
                 sigEntries_[iSG].rebin = rebin;
+                sigEntries_[iSG].merge = merge;
                 sigEntries_[iSG].retrieveHistogram();
                 bgStack->Add(sigEntries_[iSG].h.get(), sigEntries_[iSG].drawOptions.c_str());
                 if(!hsgSum) hsgSum = static_cast<TH1*>(sigEntries_[iSG].h->Clone());
@@ -292,6 +328,7 @@ public:
         //get new histogram from file
         data_.histName = histName;
         data_.rebin = rebin;
+        data_.merge = merge;
         data_.retrieveHistogram();
         if(bkgSub) data_.subtract(hbgSum);
         leg->AddEntry(data_.h.get(), data_.getlegEntry().c_str(), data_.drawOptions.c_str());
@@ -409,16 +446,16 @@ public:
         ratio_hist->Sumw2();
         ratio_denom->Sumw2();
 
-        std::cout << "ratio_hist ";
-        ratio_hist->Print();
+        //std::cout << "ratio_hist ";
+        //ratio_hist->Print();
 
-        std::cout << "ratio_denom ";
-        ratio_denom->Print();
+        //std::cout << "ratio_denom ";
+        //ratio_denom->Print();
 
         ratio_hist->Divide(ratio_denom); // data/bkg
 
-        std::cout << "Ratio ";
-        ratio_hist->Print();
+        //std::cout << "Ratio ";
+        //ratio_hist->Print();
 
         c->cd(2); // Let's move to the bottom pad
         pad2->cd();
@@ -456,8 +493,15 @@ public:
 
         //save new plot to file
         std::cout << "Saving plot." << std::endl;
-        if(!bkgSub){c->Print((hName + ".png").c_str());}
-        else{c->Print(("bkgSub_" + hName + ".png").c_str());}
+        std::string fName = hName + ".png";
+        if(bkgSub) fName = "bkgSub_"+fName;
+        
+        c->Print(fName.c_str());
+
+        std::string fNamePDF = hName + ".pdf";
+        if(bkgSub) fNamePDF = "bkgSub_"+fNamePDF;
+        
+        c->Print(fNamePDF.c_str());
 
         //clean up dynamic memory
         delete c;
@@ -470,7 +514,7 @@ public:
     }
 
 
-    void plotEff(bool data, const std::string& histNameNum, const std::string& histNameDen, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double lumi = 36100)
+    void plotEff(bool data, const std::string& histNameNum, const std::string& histNameDen, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double merge = -1000, double lumi = 36100)
     {
 
         std::cout << "Called plotEff " << histNameNum << " " << histNameDen << std::endl;
@@ -537,6 +581,7 @@ public:
                 //Get numerator histogram
                 MCEntries_[iBG].histName = histNameNum;
                 MCEntries_[iBG].rebin = rebin;
+                MCEntries_[iBG].merge = merge;
                 MCEntries_[iBG].retrieveHistogram();
 
                 if(!hbgSumNum){
@@ -547,6 +592,7 @@ public:
                 //Get denominator histogram
                 MCEntries_[iBG].histName = histNameDen;
                 MCEntries_[iBG].rebin = rebin;
+                MCEntries_[iBG].merge = merge;
                 MCEntries_[iBG].retrieveHistogram();
 
                 if(!hbgSumDen){
@@ -577,6 +623,7 @@ public:
                     //Get numerator histogram
                     bgEntries_[iBG].histName = histNameNum;
                     bgEntries_[iBG].rebin = rebin;
+                    bgEntries_[iBG].merge = merge;
                     bgEntries_[iBG].retrieveHistogram();
 
                     if(!hbgSumNum){
@@ -587,6 +634,7 @@ public:
                     //Get denominator histogram
                     bgEntries_[iBG].histName = histNameDen;
                     bgEntries_[iBG].rebin = rebin;
+                    bgEntries_[iBG].merge = merge;
                     bgEntries_[iBG].retrieveHistogram();
 
                     if(!hbgSumDen){
@@ -600,25 +648,27 @@ public:
             //get numerator histogram from file
             data_.histName = histNameNum;
             data_.rebin = rebin;
+            data_.merge = merge;
             if(bkgSub) data_.subtract(hbgSumNum);
             data_.retrieveHistogram();
             hNum = (static_cast<TH1D*>(data_.h.get()->Clone()));
             hNum->SetDirectory(0);
-            std::cout << "hNum info" << std::endl;
-            hNum->Print();
+            //std::cout << "hNum info" << std::endl;
+            //hNum->Print();
 
             //data
             //get denominator histogram from file
             data_.histName = histNameDen;
             data_.rebin = rebin;
+            data_.merge = merge;
             if(bkgSub) data_.subtract(hbgSumDen);
             data_.retrieveHistogram();
             hDen = static_cast<TH1D*>(data_.h.get()->Clone());
             hDen->SetDirectory(0);
-            std::cout << "hDen info" << std::endl;
-            hDen->Print();
+            //std::cout << "hDen info" << std::endl;
+            //hDen->Print();
 
-            std::cout << "Loaded data histograms" << std::endl;
+            //std::cout << "Loaded data histograms" << std::endl;
 
         }
 
@@ -636,10 +686,10 @@ public:
 
         TH1D* ratio_hist;
         
-        std::cout << "Preparing ratio histogram" << std::endl;
+        //std::cout << "Preparing ratio histogram" << std::endl;
         //hNum->ResetBit(kCanDelete);
         hNum->SetDirectory(0);
-        hNum->Print();
+        //hNum->Print();
         ratio_hist = (TH1D*)(hNum->Clone("ratio_hist"));
 
         std::cout << "Cloning of hNum complete" << std::endl;
@@ -747,25 +797,25 @@ public:
         //Now we work on the ratio plot
 
         ratio_hist->Sumw2();
-        std::cout << "ratio_hist has " << ratio_hist->GetNbinsX() << " bins." << std::endl;
+        //std::cout << "ratio_hist has " << ratio_hist->GetNbinsX() << " bins." << std::endl;
         hDen->Sumw2();
-        std::cout << "hDen has " << hDen->GetNbinsX() << " bins." << std::endl;
+        //std::cout << "hDen has " << hDen->GetNbinsX() << " bins." << std::endl;
         hNum->Sumw2();
-        std::cout << "hNum has " << hNum->GetNbinsX() << " bins." << std::endl;
+        //std::cout << "hNum has " << hNum->GetNbinsX() << " bins." << std::endl;
 
-        std::cout << "Printing numerator histogram" << std::endl;
+        //std::cout << "Printing numerator histogram" << std::endl;
         ratio_hist->Print();
-        std::cout << "Printing denominator histogram" << std::endl;
-        hDen->Print();
+        //std::cout << "Printing denominator histogram" << std::endl;
+        //hDen->Print();
 
         ratio_hist->Divide(hDen); // data/bkg
 
-        std::cout << "Successfully completed ratio division." << std::endl;
+        //std::cout << "Successfully completed ratio division." << std::endl;
 
         c->cd(2); // Let's move to the bottom pad
         pad2->cd();
 
-        std::cout << "Working with bottom pad." << std::endl;
+        //std::cout << "Working with bottom pad." << std::endl;
 
         //Set Canvas margin (gPad is root magic to access the current pad, in this case canvas "c")
         gPad->SetLeftMargin(0.12);
@@ -808,16 +858,23 @@ public:
 
         //save new plot to file
         std::string hNameDen = (histNameDen.find("/") != std::string::npos ? histNameDen.substr(histNameDen.find("/")+1) : histNameDen);
-        std::cout << "Trying to save tagging rate plot." << std::endl;
-        if(bkgSub){c->Print(("bkgSub_"+hNameDen + "TaggingRate"+(data ? "Data" : "MC")+".png").c_str());}
-        else{c->Print((hNameDen + "TaggingRate"+(data ? "Data" : "MC")+".png").c_str());}
+        //std::cout << "Trying to save tagging rate plot." << std::endl;
+        std::string fName = "TaggingRate"+hNameDen;
+        if(data){fName = fName+"Data.png";}else{fName = fName+"MC.png";}
+        if(bkgSub) fName = "bkgSub_" + fName;
+        c->Print(fName.c_str());
+
+        std::string fNamePDF = "TaggingRate+hNameDen";
+        if(data){fNamePDF = fNamePDF+"Data.pdf";}else{fNamePDF = fNamePDF+"MC.pdf";}
+        if(bkgSub) fNamePDF = "bkgSub_" + fNamePDF;
+        c->Print(fNamePDF.c_str());
 
         //clean up dynamic memory
         delete c;
         delete leg;
     }
 
-    void plotSF(const std::string& histNameNum, const std::string& histNameDen, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double combineLast = -1, double lumi = 36100)
+    void plotSF(const std::string& histNameNum, const std::string& histNameDen, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double merge = -1000, double combineLast = -1, double lumi = 36100)
     {
 
         std::cout << "Called plotSF " << histNameNum << " " << histNameDen << std::endl;
@@ -886,6 +943,7 @@ public:
             //Get numerator histogram
             MCEntries_[iBG].histName = histNameNum;
             MCEntries_[iBG].rebin = rebin;
+            MCEntries_[iBG].merge = merge;
             MCEntries_[iBG].retrieveHistogram();
 
             if(!hbgSumNum){
@@ -896,6 +954,7 @@ public:
             //Get denominator histogram
             MCEntries_[iBG].histName = histNameDen;
             MCEntries_[iBG].rebin = rebin;
+            MCEntries_[iBG].merge = merge;
             MCEntries_[iBG].retrieveHistogram();
 
             if(!hbgSumDen){
@@ -910,6 +969,7 @@ public:
                 //Get numerator histogram
                 bgEntries_[iBG].histName = histNameNum;
                 bgEntries_[iBG].rebin = rebin;
+                bgEntries_[iBG].merge = merge;
                 bgEntries_[iBG].retrieveHistogram();
 
                 if(!hNumSub){
@@ -920,6 +980,7 @@ public:
                 //Get denominator histogram
                 bgEntries_[iBG].histName = histNameDen;
                 bgEntries_[iBG].rebin = rebin;
+                bgEntries_[iBG].merge = merge;
                 bgEntries_[iBG].retrieveHistogram();
 
                 if(!hDenSub){
@@ -944,25 +1005,27 @@ public:
         //get numerator histogram from file
         data_.histName = histNameNum;
         data_.rebin = rebin;
+        data_.merge = merge;
         if(bkgSub)data_.subtract(hNumSub);
         data_.retrieveHistogram();
         hNumData = (static_cast<TH1D*>(data_.h.get()->Clone()));
         hNumData->Sumw2();
         hNumData->SetDirectory(0);
-        std::cout << "hNum info" << std::endl;
-        hNumData->Print();
+        //std::cout << "hNum info" << std::endl;
+        //hNumData->Print();
 
         //data
         //get denominator histogram from file
         data_.histName = histNameDen;
         data_.rebin = rebin;
+        data_.merge = merge;
         if(bkgSub) data_.subtract(hDenSub);
         data_.retrieveHistogram();
         hDenData = static_cast<TH1D*>(data_.h.get()->Clone());
         hDenData->Sumw2();
         hDenData->SetDirectory(0);
-        std::cout << "hDen info" << std::endl;
-        hDenData->Print();
+        //std::cout << "hDen info" << std::endl;
+        //hDenData->Print();
 
         std::cout << "Loaded data histograms" << std::endl;
 
@@ -991,10 +1054,10 @@ public:
 
         TH1D* ratio_hist;
         
-        std::cout << "Preparing ratio histogram" << std::endl;
+        //std::cout << "Preparing ratio histogram" << std::endl;
         //hMC->ResetBit(kCanDelete);
         hMC->SetDirectory(0);
-        hMC->Print();
+        //hMC->Print();
         ratio_hist = (TH1D*)(hData->Clone("ratio_hist"));
         ratio_hist->Sumw2();
 
@@ -1105,10 +1168,10 @@ public:
         ratio_hist->Sumw2();
         hData->Sumw2();
 
-        std::cout << "Printing numerator histogram" << std::endl;
-        ratio_hist->Print();
-        std::cout << "Printing denominator histogram" << std::endl;
-        hData->Print();
+        //std::cout << "Printing numerator histogram" << std::endl;
+        //ratio_hist->Print();
+        //std::cout << "Printing denominator histogram" << std::endl;
+        //hData->Print();
 
         ratio_hist->Divide(hMC); // data/MC
         ratio_hist->Sumw2();
@@ -1151,15 +1214,20 @@ public:
 
         //save new plot to file
         std::string hNameDen = (histNameDen.find("/") != std::string::npos ? histNameDen.substr(histNameDen.find("/")+1) : histNameDen);
-        if(bkgSub){c->Print(("bkgSub_" + hNameDen + "SF.png").c_str());}
-        else{c->Print((hNameDen + "SF.png").c_str());}
+        std::string fName = hNameDen + "SF.png";
+        if(bkgSub) fName = "bkgSub_" + fName;
+        c->Print(fName.c_str());
+
+        std::string fNamePDF = hNameDen + "SF.pdf";
+        if(bkgSub) fNamePDF = "bkgSub_" + fNamePDF;
+        c->Print(fNamePDF.c_str());
 
         //clean up dynamic memory
         delete c;
         delete leg;
     }
 
-    void plotOnlySF(const std::string& histNameNum, const std::string& histNameDen, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double lumi = 36100)
+    TH1D* plotOnlySF(const std::string& histNameNum, const std::string& histNameDen, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double merge = -1000, double lumi = 36100)
     {
 
         std::cout << "Called plotOnlySF " << histNameNum << " " << histNameDen << std::endl;
@@ -1217,6 +1285,7 @@ public:
             //Get numerator histogram
             MCEntries_[iBG].histName = histNameNum;
             MCEntries_[iBG].rebin = rebin;
+            MCEntries_[iBG].merge = merge;
             MCEntries_[iBG].retrieveHistogram();
 
             if(!hbgSumNum){
@@ -1227,6 +1296,7 @@ public:
             //Get denominator histogram
             MCEntries_[iBG].histName = histNameDen;
             MCEntries_[iBG].rebin = rebin;
+            MCEntries_[iBG].merge = merge;
             MCEntries_[iBG].retrieveHistogram();
 
             if(!hbgSumDen){
@@ -1241,6 +1311,7 @@ public:
                 //Get numerator histogram
                 bgEntries_[iBG].histName = histNameNum;
                 bgEntries_[iBG].rebin = rebin;
+                bgEntries_[iBG].merge = merge;
                 bgEntries_[iBG].retrieveHistogram();
 
                 if(!hNumSub){
@@ -1251,6 +1322,7 @@ public:
                 //Get denominator histogram
                 bgEntries_[iBG].histName = histNameDen;
                 bgEntries_[iBG].rebin = rebin;
+                bgEntries_[iBG].merge = merge;
                 bgEntries_[iBG].retrieveHistogram();
 
                 if(!hDenSub){
@@ -1276,27 +1348,29 @@ public:
         //get numerator histogram from file
         data_.histName = histNameNum;
         data_.rebin = rebin;
+        data_.merge = merge;
         if(bkgSub) data_.subtract(hNumSub);
         data_.retrieveHistogram();
         hNumData = (static_cast<TH1D*>(data_.h.get()->Clone()));
         hNumData->Sumw2();
         hNumData->SetDirectory(0);
-        std::cout << "hNum info" << std::endl;
-        hNumData->Print();
+        //std::cout << "hNum info" << std::endl;
+        //hNumData->Print();
 
         //data
         //get denominator histogram from file
         data_.histName = histNameDen;
         data_.rebin = rebin;
+        data_.merge = merge;
         if(bkgSub) data_.subtract(hDenSub);
         data_.retrieveHistogram();
         hDenData = static_cast<TH1D*>(data_.h.get()->Clone());
         hDenData->Sumw2();
         hDenData->SetDirectory(0);
-        std::cout << "hDen info" << std::endl;
-        hDenData->Print();
+        //std::cout << "hDen info" << std::endl;
+        //hDenData->Print();
 
-        std::cout << "Loaded data histograms" << std::endl;
+        //std::cout << "Loaded data histograms" << std::endl;
 
 
         TH1D *hMC = (TH1D*)hNumMC->Clone();
@@ -1323,18 +1397,18 @@ public:
 
         TH1D* ratio_hist;
         
-        std::cout << "Preparing ratio histogram" << std::endl;
+        //std::cout << "Preparing ratio histogram" << std::endl;
         //hMC->ResetBit(kCanDelete);
         hMC->SetDirectory(0);
-        hMC->Print();
+        //hMC->Print();
         ratio_hist = (TH1D*)(hData->Clone("ratio_hist"));
         ratio_hist->Sumw2();
         hData->Sumw2();
 
-        std::cout << "Printing numerator histogram" << std::endl;
-        ratio_hist->Print();
-        std::cout << "Printing denominator histogram" << std::endl;
-        hData->Print();
+        //std::cout << "Printing numerator histogram" << std::endl;
+        //ratio_hist->Print();
+        //std::cout << "Printing denominator histogram" << std::endl;
+        //hData->Print();
 
         ratio_hist->Divide(hMC); // data/MC
         ratio_hist->Sumw2();
@@ -1434,13 +1508,8 @@ public:
         //draw the ratio plot
         ratio_hist->Draw("same");
 
-        //save new plot to file
-        std::string hNameDen = (histNameDen.find("/") != std::string::npos ? histNameDen.substr(histNameDen.find("/")+1) : histNameDen);
-        if(bkgSub){c->Print(("bkgSub_" + hNameDen + "OnlySF.png").c_str());}
-        else{c->Print((hNameDen + "OnlySF.png").c_str());}
-
         //plot legend
-        //leg->Draw("same");
+        leg->Draw("same");
 
         //Draw dummy hist again to get axes on top of histograms
         dummy.draw("AXIS");
@@ -1466,6 +1535,588 @@ public:
         mark.SetTextAlign(31);
         mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
 
+        //save new plot to file
+        std::string hNameDen = (histNameDen.find("/") != std::string::npos ? histNameDen.substr(histNameDen.find("/")+1) : histNameDen);
+        std::string fName = hNameDen + "OnlySF.png";
+        if(bkgSub) fName = "bkgSub_"+fName;
+        if(prefix.length() > 0) fName = prefix + "_" + fName;
+        c->Print(fName.c_str());
+
+        std::string fNamePDF = hNameDen + "OnlySF.pdf";
+        if(bkgSub) fNamePDF = "bkgSub_"+fNamePDF;
+        if(prefix.length() > 0) fNamePDF = prefix + "_" + fNamePDF;
+        c->Print(fNamePDF.c_str());
+
+        //clean up dynamic memory
+        delete c;
+        delete leg;
+
+        return ratio_hist;
+    }
+
+    TH1D* plotOnlyEff(bool data, const std::string& histNameNum, const std::string& histNameDen, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double merge = -1000, double lumi = 36100)
+    {
+
+        std::cout << "Called plotOnlyEff " << histNameNum << " " << histNameDen << std::endl;
+
+        bool bkgSub = sigEntries_.size() > 0;
+
+        if(bkgSub){ 
+            std::cout << "Background Subtraction is enabled." << std::endl;  
+        }
+
+        if(data){
+            std::cout << "Will plot from data histogram" << std::endl;
+        } else {
+            std::cout << "Will plot from background histogram" << std::endl;
+        }
+
+
+        //This is a magic incantation to disassociate opened histograms from their files so the files can be closed
+        TH1::AddDirectory(false);
+
+        //create the canvas for the plot
+        TCanvas *c = new TCanvas("c1", "c1", 800, 800);
+
+        float percent = 0.2;
+
+        //Create TLegend
+        TLegend *leg = new TLegend(0.50, 0.56, 0.89, 0.88);
+        leg->SetFillStyle(0);
+        leg->SetBorderSize(0);
+        leg->SetLineWidth(1);
+        leg->SetNColumns(1);
+        leg->SetTextFont(42);
+
+        //get maximum from histos and fill TLegend
+        double min = 0.0;
+        double max = 0.0;
+        double lmax = 0.0;
+
+        TH1D* hNum;
+        TH1D* hDen;
+
+        //Get histograms from background if not plotting data
+        if(!data){
+            std::cout << "Loading background histograms" << std::endl;
+            TH1D* hbgSumNum = nullptr;
+            TH1D* hbgSumDen = nullptr;
+
+            std::vector<histInfo> MCEntries_;
+
+            if(bkgSub){ MCEntries_ = sigEntries_; }
+            else{ MCEntries_ = bgEntries_; }
+
+            for(int iBG = MCEntries_.size() - 1; iBG >= 0; --iBG)
+            {
+                //Get numerator histogram
+                MCEntries_[iBG].histName = histNameNum;
+                MCEntries_[iBG].rebin = rebin;
+                MCEntries_[iBG].merge = merge;
+                MCEntries_[iBG].retrieveHistogram();
+
+                if(!hbgSumNum){
+                    hbgSumNum = static_cast<TH1D*>(MCEntries_[iBG].h->Clone());
+                    hbgSumNum->SetDirectory(0);
+                }else        hbgSumNum->Add(MCEntries_[iBG].h.get());
+
+                //Get denominator histogram
+                MCEntries_[iBG].histName = histNameDen;
+                MCEntries_[iBG].rebin = rebin;
+                MCEntries_[iBG].merge = merge;
+                MCEntries_[iBG].retrieveHistogram();
+
+                if(!hbgSumDen){
+                    hbgSumDen = static_cast<TH1D*>(MCEntries_[iBG].h->Clone());
+                    hbgSumDen->SetDirectory(0);
+                } else        hbgSumDen->Add(MCEntries_[iBG].h.get());
+            }
+
+            hNum = hbgSumNum;
+            hDen = hbgSumDen;
+
+            std::cout << "Finished background sum" << std::endl;
+
+        } else { //We want to draw from the data histograms.
+
+            std::cout << "loading data histograms" << std::endl;
+
+            //We implemented subtraction in the HistInfo class, so we need to
+            //Calculate the background to be subtracted before extracting
+            //the histogram from histInfo.
+            TH1D* hbgSumNum = nullptr; //Putting these here for scope reasons
+            TH1D* hbgSumDen = nullptr;
+
+            if(bkgSub){ //We need to subtract out the MC backgrounds
+                std::cout << "Loading background histograms" << std::endl;
+                for(int iBG = bgEntries_.size() - 1; iBG >= 0; --iBG)
+                {
+                    //Get numerator histogram
+                    bgEntries_[iBG].histName = histNameNum;
+                    bgEntries_[iBG].rebin = rebin;
+                    bgEntries_[iBG].merge = merge;
+                    bgEntries_[iBG].retrieveHistogram();
+
+                    if(!hbgSumNum){
+                        hbgSumNum = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                        hbgSumNum->SetDirectory(0);
+                    }else        hbgSumNum->Add(bgEntries_[iBG].h.get());
+
+                    //Get denominator histogram
+                    bgEntries_[iBG].histName = histNameDen;
+                    bgEntries_[iBG].rebin = rebin;
+                    bgEntries_[iBG].merge = merge;
+                    bgEntries_[iBG].retrieveHistogram();
+
+                    if(!hbgSumDen){
+                        hbgSumDen = static_cast<TH1D*>(bgEntries_[iBG].h->Clone());
+                        hbgSumDen->SetDirectory(0);
+                    } else        hbgSumDen->Add(bgEntries_[iBG].h.get());
+                }
+            }
+
+            //data
+            //get numerator histogram from file
+            data_.histName = histNameNum;
+            data_.rebin = rebin;
+            data_.merge = merge;
+            if(bkgSub) data_.subtract(hbgSumNum);
+            data_.retrieveHistogram();
+            hNum = (static_cast<TH1D*>(data_.h.get()->Clone()));
+            hNum->SetDirectory(0);
+            //std::cout << "hNum info" << std::endl;
+            //hNum->Print();
+
+            //data
+            //get denominator histogram from file
+            data_.histName = histNameDen;
+            data_.rebin = rebin;
+            data_.merge = merge;
+            if(bkgSub) data_.subtract(hbgSumDen);
+            data_.retrieveHistogram();
+            hDen = static_cast<TH1D*>(data_.h.get()->Clone());
+            hDen->SetDirectory(0);
+            //std::cout << "hDen info" << std::endl;
+            //hDen->Print();
+
+            //std::cout << "Loaded data histograms" << std::endl;
+
+        }
+
+        TH1D* ratio_hist;
+        
+        //std::cout << "Preparing ratio histogram" << std::endl;
+        //hMC->ResetBit(kCanDelete);
+        hDen->SetDirectory(0);
+        //hMC->Print();
+        ratio_hist = (TH1D*)(hNum->Clone("ratio_hist"));
+        ratio_hist->Sumw2();
+        hNum->Sumw2();
+
+        //std::cout << "Printing numerator histogram" << std::endl;
+        //ratio_hist->Print();
+        //std::cout << "Printing denominator histogram" << std::endl;
+        //hData->Print();
+
+        ratio_hist->Divide(hDen); // data/MC
+        ratio_hist->Sumw2();
+
+        ratio_hist->SetLineColor(kBlack);
+        ratio_hist->SetLineWidth(3);
+        ratio_hist->SetMarkerColor(kBlack);
+        ratio_hist->SetMarkerStyle(20);
+
+
+        leg->AddEntry(ratio_hist, (data ? "Data Tagging Rate" : "MC Tagging Rate"), "PEX0");
+        smartMax(ratio_hist, leg, static_cast<TPad*>(gPad), min, max, lmax, true);
+
+        //Set Canvas margin (gPad is root magic to access the current pad, in this case canvas "c")
+        std::cout << "Setting up pad" << std::endl;
+
+        gPad->SetLeftMargin(0.12);
+        gPad->SetRightMargin(0.06);
+        gPad->SetTopMargin(0.08);
+        gPad->SetBottomMargin(0.12);
+        //gPad->SetBottomMargin(0);
+
+
+
+        //create a dummy histogram to act as the axes
+        std::cout << "Creating Dummy histogram" << std::endl;
+        histInfo dummy(new TH1D("dummy", "dummy", 1000, hNum->GetBinLowEdge(1), hNum->GetBinLowEdge(hNum->GetNbinsX()) + hNum->GetBinWidth(hNum->GetNbinsX())));
+        std::cout << "Configuring dummy histogram" << std::endl;
+        dummy.setupAxes(1);
+        dummy.h->GetYaxis()->SetTitle(yAxisLabel.c_str());
+        dummy.h->GetYaxis()->SetRangeUser(0.,2.0);
+        dummy.h->GetXaxis()->SetTitle(xAxisLabel.c_str());
+        std::cout << "Configured dummy histogram" << std::endl;
+        
+        double ymax = ratio_hist->GetBinContent(ratio_hist->GetMaximumBin()) * 1.5;
+        ymax = (ymax < 1.5 ? ymax : 2);
+        if(ymax < 1.9) std::cout << "The yaxis is allowed to be less than 2 in an efficiency plot." << std::endl;
+        dummy.h->GetYaxis()->SetRangeUser(0.0, ymax);
+
+
+        //set x-axis range
+        if(xmin < xmax) dummy.h->GetXaxis()->SetRangeUser(xmin, xmax);
+
+        //draw dummy axes
+        dummy.draw();
+
+        //Switch to logY if desired
+        //gPad->SetLogy(isLogY);
+
+        //Tick marks on both sides
+        gPad->SetTicky();
+
+        //Set Canvas margin (gPad is root magic to access the current pad, in this case canvas "c")
+        //gPad->SetLeftMargin(0.12);
+        //gPad->SetRightMargin(0.06);
+        //gPad->SetTopMargin(0.08);
+        //gPad->SetTopMargin(0);
+        //gPad->SetBottomMargin(0.25);
+
+        //Tick marks on both sides
+        gPad->SetTicky();
+        gPad->SetGridy();
+
+        //draw the ratio plot
+        ratio_hist->Draw("same");
+        std::cout << "Drew Efficiency Only." << std::endl;
+        ratio_hist->Print();
+        std::cout << "Did the ratio_hist info print?" << std::endl;
+
+        //plot legend
+        leg->Draw("same");
+
+        //Draw dummy hist again to get axes on top of histograms
+        dummy.draw("AXIS");
+
+        //Draw CMS and lumi lables
+        char lumistamp[128];
+        sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", lumi / 1000.0);
+
+        TLatex mark;
+        mark.SetNDC(true);
+
+        //Draw CMS mark
+        mark.SetTextAlign(11);
+        mark.SetTextSize(0.050);
+        mark.SetTextFont(61);
+        mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
+        mark.SetTextSize(0.040);
+        mark.SetTextFont(52);
+        mark.DrawLatex(gPad->GetLeftMargin() + 0.11, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+
+        //Draw lumistamp
+        mark.SetTextFont(42);
+        mark.SetTextAlign(31);
+        mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
+
+        //save new plot to file
+        std::string hNameDen = (histNameDen.find("/") != std::string::npos ? histNameDen.substr(histNameDen.find("/")+1) : histNameDen);
+        std::string fName = hNameDen + "OnlyEff";
+        if(data){ fName = fName + "Data.png"; }else{ fName = fName + "MC.png"; }
+        if(bkgSub) fName = "bkgSub_"+fName;
+        if(prefix.length() > 0) fName = prefix + "_" + fName;
+        c->Print(fName.c_str());
+
+        std::string fNamePDF = hNameDen + "OnlyEff";
+        if(data){ fNamePDF = fNamePDF + "Data.pdf"; }else{ fNamePDF = fNamePDF + "MC.pdf"; }
+        if(bkgSub) fNamePDF = "bkgSub_"+fNamePDF;
+        if(prefix.length() > 0) fNamePDF = prefix + "_" + fNamePDF;
+        c->Print(fNamePDF.c_str());
+
+        //clean up dynamic memory
+        delete c;
+        delete leg;
+
+        return ratio_hist;
+    }
+};
+
+int colorList[13] = { kRed+1, kBlack, kBlue+1, kSpring, kBlue+2, kOrange, kTeal, kCyan, kAzure, kPink, kViolet, kMagenta+3, kMagenta };
+
+class MultiPlotter{
+private:
+    std::vector<Plotter*> plots;
+
+public:
+    void addPlot(Plotter* plot){
+        plots.push_back(plot);
+    }
+
+    MultiPlotter(std::vector<Plotter*> tmpPlots){
+        plots = tmpPlots;
+    }
+
+    //Loop over the Plotter objects and plot them in a single plot
+    void plotOnlySF(const std::string& histNameNum, const std::string& histNameDen, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double merge = -1000, double lumi = 36100)
+    {
+
+        std::cout << "Called plotOnlySF (MultiPlotter)" << histNameNum << " " << histNameDen << std::endl;
+        std::vector<TH1D*> sfHistos;
+        TH1D *sfHisto;
+
+        for(int i = 0; i < plots.size(); i++){
+            sfHisto = plots[i]->plotOnlySF(histNameNum,histNameDen,xAxisLabel,yAxisLabel,isLogY,xmin,xmax,rebin,merge,lumi);
+
+            sfHisto->SetLineColor(colorList[i]);
+            sfHisto->SetLineWidth(3);
+            sfHisto->SetMarkerColor(colorList[i]);
+            sfHisto->SetMarkerStyle(20);
+
+            sfHistos.push_back(sfHisto);
+
+            std::cout << "Loaded histogram for " << plots[i]->getLabel() << std::endl;
+        }
+
+
+        TCanvas *c = new TCanvas("c1", "c1", 800, 800);
+
+        float percent = 0.2;
+
+        //Create TLegend
+        TLegend *leg = new TLegend(0.50, 0.56, 0.89, 0.88);
+        leg->SetFillStyle(0);
+        leg->SetBorderSize(0);
+        leg->SetLineWidth(1);
+        leg->SetNColumns(1);
+        leg->SetTextFont(42);
+
+        //get maximum from histos and fill TLegend
+        double min = 0.0;
+        double max = 0.0;
+        double lmax = 0.0;
+
+        for(int i = 0; i < sfHistos.size(); i++){
+            leg->AddEntry(sfHistos[i], (plots[i]->getLabel()).c_str(), "PEX0");
+            smartMax(sfHistos[i], leg, static_cast<TPad*>(gPad), min, max, lmax, true);
+        }
+
+        //Set Canvas margin (gPad is root magic to access the current pad, in this case canvas "c")
+        std::cout << "Setting up pad" << std::endl;
+
+        gPad->SetLeftMargin(0.12);
+        gPad->SetRightMargin(0.06);
+        gPad->SetTopMargin(0.08);
+        gPad->SetBottomMargin(0.12);
+
+
+        //create a dummy histogram to act as the axes
+        std::cout << "Creating Dummy histogram" << std::endl;
+        histInfo dummy(new TH1D("dummy", "dummy", 1000, sfHistos[0]->GetBinLowEdge(1), sfHistos[0]->GetBinLowEdge(sfHistos[0]->GetNbinsX()) + sfHistos[0]->GetBinWidth(sfHistos[0]->GetNbinsX())));
+        std::cout << "Configuring dummy histogram" << std::endl;
+        dummy.setupAxes(1);
+        dummy.h->GetYaxis()->SetTitle(yAxisLabel.c_str());
+        dummy.h->GetYaxis()->SetRangeUser(0.,2.0);
+        dummy.h->GetXaxis()->SetTitle(xAxisLabel.c_str());
+        std::cout << "Configured dummy histogram" << std::endl;
+        //Set the y-range of the histogram
+        //double ymax = ratio_hist->GetBinContent(ratio_hist->GetMaximumBin()) * 1.5;
+        //ymax = (ymax < 1.5 ? ymax : 2);
+        dummy.h->GetYaxis()->SetRangeUser(0.0, 2.0);
+
+        //set x-axis range
+        if(xmin < xmax) dummy.h->GetXaxis()->SetRangeUser(xmin, xmax);
+
+        //draw dummy axes
+        dummy.draw();
+
+        //Switch to logY if desired
+        gPad->SetLogy(isLogY);
+
+        //Tick marks on both sides
+        gPad->SetTicky();
+
+        //Tick marks on both sides
+        gPad->SetTicky();
+        gPad->SetGridy();
+
+        //draw the histograms
+        for(int i = 0; i < sfHistos.size(); i++){sfHistos[i]->Draw("same");}
+
+        //plot legend
+        leg->Draw("same");
+
+        //Draw dummy hist again to get axes on top of histograms
+        dummy.draw("AXIS");
+
+        //Draw CMS and lumi lables
+        char lumistamp[128];
+        sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", lumi / 1000.0);
+
+        TLatex mark;
+        mark.SetNDC(true);
+
+        //Draw CMS mark
+        mark.SetTextAlign(11);
+        mark.SetTextSize(0.050);
+        mark.SetTextFont(61);
+        mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
+        mark.SetTextSize(0.040);
+        mark.SetTextFont(52);
+        mark.DrawLatex(gPad->GetLeftMargin() + 0.11, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+
+        //Draw lumistamp
+        mark.SetTextFont(42);
+        mark.SetTextAlign(31);
+        mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
+
+        //save new plot to file
+        std::string hNameDen = (histNameDen.find("/") != std::string::npos ? histNameDen.substr(histNameDen.find("/")+1) : histNameDen);
+        std::string fName = hNameDen + "OnlySF.png";
+        for(int i = 0; i < sfHistos.size(); i++){ fName = plots[i]->getPrefix()+"_"+fName; }
+        fName = "Multi_" + fName;
+
+        c->Print(fName.c_str());
+
+        std::string fNamePDF = hNameDen + "OnlySF.pdf";
+        for(int i = 0; i < sfHistos.size(); i++){ fNamePDF = plots[i]->getPrefix()+"_"+fNamePDF; }
+        fNamePDF = "Multi_" + fNamePDF;
+
+        c->Print(fNamePDF.c_str());
+
+        //clean up dynamic memory
+        delete c;
+        delete leg;
+    }
+
+    //Loop over the Plotter objects and plot them in a single plot
+    void plotOnlyEff(bool data, const std::string& histNameNum, const std::string& histNameDen, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double merge = -1000, double lumi = 36100)
+    {
+
+        std::cout << "Called plotOnlyEff (MultiPlotter)" << histNameNum << " " << histNameDen << std::endl;
+        std::vector<TH1D*> sfHistos;
+        TH1D *sfHisto;
+
+        for(int i = 0; i < plots.size(); i++){
+            sfHisto = plots[i]->plotOnlyEff(data,histNameNum,histNameDen,xAxisLabel,yAxisLabel,isLogY,xmin,xmax,rebin,merge,lumi);
+
+            sfHisto->SetLineColor(colorList[i]);
+            sfHisto->SetLineWidth(3);
+            sfHisto->SetMarkerColor(colorList[i]);
+            sfHisto->SetMarkerStyle(20);
+
+            sfHistos.push_back(sfHisto);
+
+            std::cout << "Loaded histogram for " << plots[i]->getLabel() << std::endl;
+        }
+
+
+        TCanvas *c = new TCanvas("c1", "c1", 800, 800);
+
+        float percent = 0.2;
+
+        //Create TLegend
+        TLegend *leg = new TLegend(0.50, 0.56, 0.89, 0.88);
+        leg->SetFillStyle(0);
+        leg->SetBorderSize(0);
+        leg->SetLineWidth(1);
+        leg->SetNColumns(1);
+        leg->SetTextFont(42);
+
+        //get maximum from histos and fill TLegend
+        double min = 0.0;
+        double max = 0.0;
+        double lmax = 0.0;
+
+        for(int i = 0; i < sfHistos.size(); i++){
+            leg->AddEntry(sfHistos[i], (plots[i]->getLabel()).c_str(), "PEX0");
+            smartMax(sfHistos[i], leg, static_cast<TPad*>(gPad), min, max, lmax, true);
+        }
+
+        //Set Canvas margin (gPad is root magic to access the current pad, in this case canvas "c")
+        std::cout << "Setting up pad" << std::endl;
+
+        gPad->SetLeftMargin(0.12);
+        gPad->SetRightMargin(0.06);
+        gPad->SetTopMargin(0.08);
+        gPad->SetBottomMargin(0.12);
+
+
+        //create a dummy histogram to act as the axes
+        std::cout << "Creating Dummy histogram" << std::endl;
+        histInfo dummy(new TH1D("dummy", "dummy", 1000, sfHistos[0]->GetBinLowEdge(1), sfHistos[0]->GetBinLowEdge(sfHistos[0]->GetNbinsX()) + sfHistos[0]->GetBinWidth(sfHistos[0]->GetNbinsX())));
+        std::cout << "Configuring dummy histogram" << std::endl;
+        dummy.setupAxes(1);
+        dummy.h->GetYaxis()->SetTitle(yAxisLabel.c_str());
+        dummy.h->GetYaxis()->SetRangeUser(0.,2.0);
+        dummy.h->GetXaxis()->SetTitle(xAxisLabel.c_str());
+        std::cout << "Configured dummy histogram" << std::endl;
+        //Set the y-range of the histogram
+        double ymax = 0;
+        for(int i = 0; i < sfHistos.size(); i++){
+            double ytest = sfHistos[i]->GetBinContent(sfHistos[i]->GetMaximumBin()) * 1.5;
+            std::cout << plots[i]->getPrefix() << "suggests ymax of " << ytest << "." << std::endl;
+            ymax = (ymax < ytest ? ytest : ymax);
+        }
+        ymax = (ymax < 1.5 ? ymax : 2);
+        if(ymax < 1.9) std::cout << "For efficiency plots, we allow the y-axis to float" << std::endl;
+        dummy.h->GetYaxis()->SetRangeUser(0.0, ymax);
+
+        //set x-axis range
+        if(xmin < xmax) dummy.h->GetXaxis()->SetRangeUser(xmin, xmax);
+
+        //draw dummy axes
+        dummy.draw();
+
+        //Switch to logY if desired
+        //gPad->SetLogy(isLogY);
+
+        //Tick marks on both sides
+        gPad->SetTicky();
+
+        //Tick marks on both sides
+        gPad->SetTicky();
+        gPad->SetGridy();
+
+        //draw the histograms
+        std::cout << "Drawing the histograms" << std::endl;
+        for(int i = 0; i < sfHistos.size(); i++){sfHistos[i]->Draw("same"); sfHistos[i]->Print(); std::cout << "Do we have to do this?" << std::endl;}
+
+        //plot legend
+        leg->Draw("same");
+
+        //Draw dummy hist again to get axes on top of histograms
+        dummy.draw("AXIS");
+
+        //Draw CMS and lumi lables
+        char lumistamp[128];
+        sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", lumi / 1000.0);
+
+        TLatex mark;
+        mark.SetNDC(true);
+
+        //Draw CMS mark
+        mark.SetTextAlign(11);
+        mark.SetTextSize(0.050);
+        mark.SetTextFont(61);
+        mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
+        mark.SetTextSize(0.040);
+        mark.SetTextFont(52);
+        mark.DrawLatex(gPad->GetLeftMargin() + 0.11, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+
+        //Draw lumistamp
+        mark.SetTextFont(42);
+        mark.SetTextAlign(31);
+        mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
+
+        //save new plot to file
+        std::string hNameDen = (histNameDen.find("/") != std::string::npos ? histNameDen.substr(histNameDen.find("/")+1) : histNameDen);
+        std::string fName = hNameDen + "OnlyEff";
+        if(data){ fName = fName + "Data.png";}else{ fName = fName + "MC.png"; }
+        for(int i = 0; i < sfHistos.size(); i++){ fName = plots[i]->getPrefix()+"_"+fName; }
+        fName = "Multi_" + fName;
+
+        c->Print(fName.c_str());
+
+        std::string fNamePDF = hNameDen + "OnlyEff";
+        if(data){ fNamePDF = fNamePDF + "Data.pdf";}else{ fNamePDF = fNamePDF + "MC.pdf"; }
+        for(int i = 0; i < sfHistos.size(); i++){ fNamePDF = plots[i]->getPrefix()+"_"+fNamePDF; }
+        fNamePDF = "Multi_" + fNamePDF;
+
+        c->Print(fNamePDF.c_str());
 
         //clean up dynamic memory
         delete c;
@@ -1473,7 +2124,7 @@ public:
     }
 };
 
-void makeplots(std::string CR, histInfo data&, std::vector<histInfo> bgEntries&, std::vector<histInfo> wantedEntries&, std::vector<histInfo> unwantedEntries&){
+void makeplots(std::string CR, histInfo& data, std::vector<histInfo>& bgEntries, std::vector<histInfo>& wantedEntries, std::vector<histInfo>& unwantedEntries){
     //make plotter object with the required sources for histograms specified
 //    Plotter plt(std::move(data), std::move(bgEntries), std::move(sigEntries));
     Plotter plt(std::move(data), std::move(bgEntries));
@@ -1487,7 +2138,7 @@ void makeplots(std::string CR, histInfo data&, std::vector<histInfo> bgEntries&,
     plt.plot(CR+"/topMass", "m_{top} [GeV]", "Events", true, -1, -1, 5);
     plt.plot(CR+"/topP", "p_{top} [GeV]", "Events", true, -1, -1, 5);
     plt.plot(CR+"/topPt", "p_{top}^{T} [GeV]", "Events", true, -1, -1, 5);
-    plt.plot(CR+"/DiTopMass", "Invariant mass of ditop events [GeV]", "Events", true, -1, -1, 5);
+//    plt.plot(CR+"/DiTopMass", "Invariant mass of ditop events [GeV]", "Events", true, -1, -1, 5);
     plt.plot(CR+"/bestTopPt", "p_{top,best}^{T} [GeV]", "Events", true, -1, -1, 5);
     plt.plot(CR+"/bestTopMass", "m_{top,best} [GeV]", "Events", true, -1, -1, 5);
     plt.plot(CR+"/bestTopEta", "#eta_{top,best}", "Events", true, -1, -1, 5);
