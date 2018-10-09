@@ -34,10 +34,14 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so", 
                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_ml.so.3.1",
-                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
-                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
-                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
-                      environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root",
+                      #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
+                      #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
+                      #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
+                      #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_bTagEff.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/ISRWeights.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_ISRJets.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.cfg"
                       ]
@@ -199,17 +203,17 @@ x509userproxy = $ENV(X509_USER_PROXY)
 
 parser = optparse.OptionParser("usage: %prog [options]\n")
 
-parser.add_option ('-n',  dest='numfile', type='int', default = 5, help="number of files per job")
-parser.add_option ('-d',  dest='datasets', type='string', default = '', help="List of datasets 'ZJetsToNuNu,DYJetsToLL'")
-parser.add_option ('-l',  dest='dataCollections', action='store_true', default = False, help="List all datacollections")
-parser.add_option ('-L',  dest='dataCollectionslong', action='store_true', default = False, help="List all datacollections and sub collections")
-parser.add_option ('-r',  dest='refLumi', type='string', default = None, help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
-parser.add_option ('-c',  dest='noSubmit', action='store_true', default = False, help="Do not submit jobs.  Only create condor_submit.txt.")
-parser.add_option ('-e',  dest='goMakeEff', action='store_true', default = False, help="Run calcEff instead of makePlots.")
-parser.add_option ('-b',  dest='goMakeBeff', action='store_true', default = False, help="Run beffCalc instead of makePlots.")
-parser.add_option ('-s',  dest='goMakeSigEff', action='store_true', default = False, help="Run makeSignalHistograms instead of makePlots.")
-parser.add_option ('-t',  dest='goMakeTopPlots', action='store_true', default = False, help="Run makeTopPlots instead of makePlots.")
-parser.add_option ('-m',  dest='goTTPlots', action='store_true', default = False, help="Run TTPlots instead of makePlots.")
+parser.add_option ('-n',  dest='numfile',               type='int',          default = 5,     help="number of files per job")
+parser.add_option ('-d',  dest='datasets',              type='string',       default = '',    help="List of datasets 'ZJetsToNuNu,DYJetsToLL'")
+parser.add_option ('-l',  dest='dataCollections',       action='store_true', default = False, help="List all datacollections")
+parser.add_option ('-L',  dest='dataCollectionslong',   action='store_true', default = False, help="List all datacollections and sub collections")
+parser.add_option ('-r',  dest='refLumi',               type='string',       default = None,  help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
+parser.add_option ('-c',  dest='noSubmit',              action='store_true', default = False, help="Do not submit jobs.  Only create condor_submit.txt.")
+parser.add_option ('-e',  dest='goMakeEff',             action='store_true', default = False, help="Run calcEff instead of makePlots.")
+parser.add_option ('-b',  dest='goMakeBeff',            action='store_true', default = False, help="Run beffCalc instead of makePlots.")
+parser.add_option ('-s',  dest='goMakeSigEff',          action='store_true', default = False, help="Run makeSignalHistograms instead of makePlots.")
+parser.add_option ('-t',  dest='goMakeTopPlots',        action='store_true', default = False, help="Run makeTopPlots instead of makePlots.")
+parser.add_option ('-m',  dest='goTTPlots',             action='store_true', default = False, help="Run TTPlots instead of makePlots.")
 
 options, args = parser.parse_args()
 
