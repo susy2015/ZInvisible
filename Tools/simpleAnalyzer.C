@@ -290,7 +290,6 @@ int main(int argc, char* argv[])
     std::cout << "Sample location: " << sampleloc << std::endl;
 
     AnaSamples::SampleSet        ss("sampleSets.txt", runOnCondor, AnaSamples::luminosity);
-    AnaSamples::SampleSet        ss("sampleSets.txt", AnaSamples::luminosity, runOnCondor);
     AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
 
     if(dataSets.find("Data") != std::string::npos){
@@ -320,8 +319,8 @@ int main(int argc, char* argv[])
     int tcN = 0, tcNL = 0, tcNLB = 0, tcNLBJ = 0, tcNLBJM = 0;
     int lcN = 0, lcNL = 0, lcNLJ = 0, lcNLJH = 0;
 
-    try
-    {
+//    try
+//    {
         //for(auto& fs : sc[dataSets])
         auto& fs = ss[dataSets];
         {
@@ -475,8 +474,6 @@ int main(int argc, char* argv[])
 
                 float muTrigEff = 1.0;
                 const std::vector<TLorentzVector>& jetsLVec = tr.getVec<TLorentzVector>(jetVecLabel);
-
-                double muTrigEff = 1.0;
 
                 if(!isData && doWgt)
                 {
@@ -801,6 +798,7 @@ int main(int argc, char* argv[])
             }
         }
     }
+/*
     catch(const std::string e)
     {
         std::cout << e << std::endl;
@@ -816,7 +814,7 @@ int main(int argc, char* argv[])
         std::cout << e << std::endl;
         return 0;
     }
-
+*/
     std::cout << "Processed " << fevents<< " out of " << events << " events. " << std::endl;
     std::cout << eventsQCD << " events passed highHT QCD selection." << std::endl;
     std::cout << eventsLowHTQCD << " events passed lowHT QCD selection." << std::endl;
