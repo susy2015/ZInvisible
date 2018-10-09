@@ -42,8 +42,7 @@ ls -lhrt
 
 #export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${_CONDOR_SCRATCH_DIR}
 
-./simpleAnalyzer -c -D $1 -N $3 -M $4 -O TT  
-
+./simpleAnalyzer -c -D $1 -N $3 -M $4 -O TT
 ls -lhrt
 
 mv TT*.root ${_CONDOR_SCRATCH_DIR}
