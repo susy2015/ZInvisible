@@ -1189,19 +1189,19 @@ namespace plotterFunctions
 
 	float GetMuonTriggerEff(const float& muEta) 
 	{
-            if (-2.6 <= muEta && muEta < -2.2) return 0.7861842;
-            else if(-2.2 <= muEta && muEta < -1.8) return 0.8233438;
-            else if(-1.8 <= muEta && muEta < -1.4) return 0.8151685;
-            else if(-1.4 <= muEta && muEta < -1.0) return 0.8991723;
-            else if(-1.0 <= muEta && muEta < -0.6) return 0.9125786;
-            else if(-0.6 <= muEta && muEta < -0.2) return 0.8880085;
-            else if(-0.2 <= muEta && muEta <  0.2) return 0.9334851;
-            else if( 0.2 <= muEta && muEta <  0.6) return 0.8857523;
-            else if( 0.6 <= muEta && muEta <  1.0) return 0.9052119;
-            else if( 1.0 <= muEta && muEta <  1.4) return 0.9004312;
-            else if( 1.4 <= muEta && muEta <  1.8) return 0.8384009;
-            else if( 1.8 <= muEta && muEta <  2.2) return 0.8218332;
-            else if( 2.2 <= muEta && muEta <  2.6) return 0.7781818;
+            if     (-2.6 <= muEta && muEta < -2.2) return 0.8020833;
+            else if(-2.2 <= muEta && muEta < -1.8) return 0.8113949;
+            else if(-1.8 <= muEta && muEta < -1.4) return 0.8111837;
+            else if(-1.4 <= muEta && muEta < -1.0) return 0.8824405;
+            else if(-1.0 <= muEta && muEta < -0.6) return 0.9024091;
+            else if(-0.6 <= muEta && muEta < -0.2) return 0.8737864;
+            else if(-0.2 <= muEta && muEta <  0.2) return 0.9186085;
+            else if( 0.2 <= muEta && muEta <  0.6) return 0.8759649;
+            else if( 0.6 <= muEta && muEta <  1.0) return 0.8940410;
+            else if( 1.0 <= muEta && muEta <  1.4) return 0.8848286;
+            else if( 1.4 <= muEta && muEta <  1.8) return 0.8293217;
+            else if( 1.8 <= muEta && muEta <  2.2) return 0.8263979;
+            else if( 2.2 <= muEta && muEta <  2.6) return 0.7605634;
             else                                   return 0.000;
 	}
 
@@ -1472,7 +1472,7 @@ namespace plotterFunctions
 
                 muTrigWgt = 1 - (1 - muEff1)*(1 - muEff2);
             }
-            else if(cutMuVec.size() >= 1 && cutMuVec[0].Pt() > 50)
+            else if(cutMuVec.size() >= 1 && cutMuVec[0].Pt() > 40)
             {
                 //For events with only 1 muon (emu events in particular or events with a subleading muon below 45 GeV) just use the single muon eff
                 muTrigWgt = GetMuonTriggerEff(cutMuVec[0].Eta());
@@ -1788,16 +1788,18 @@ namespace plotterFunctions
                     cutElecMTlepVec->push_back(elesMTlep[i]);
                 }
             }
-            
+
             tr.registerDerivedVec("cutElecVec", cutElecVec);
             tr.registerDerivedVec("cutElecMTlepVec", cutElecMTlepVec);
-            
+
             //// Calculate number of leptons
             int nMuons = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, AnaConsts::muonsMiniIsoArr);
             const AnaConsts::IsoAccRec muonsMiniIsoArr20GeV = {   -1,       2.4,      20,     -1,       0.2,     -1  };
             int nMuons_20GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr20GeV);
             const AnaConsts::IsoAccRec muonsMiniIsoArr30GeV = {   -1,       2.4,      30,     -1,       0.2,     -1  };
             int nMuons_30GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr30GeV);
+            const AnaConsts::IsoAccRec muonsMiniIsoArr40GeV = {   -1,       2.4,      40,     -1,       0.2,     -1  };
+            int nMuons_40GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr40GeV);
             const AnaConsts::IsoAccRec muonsMiniIsoArr50GeV = {   -1,       2.4,      50,     -1,       0.2,     -1  };
             int nMuons_50GeV = AnaFunctions::countMuons(muonsLVec, muonsMiniIso, muonsMTlep, muonsFlagIDVec, muonsMiniIsoArr50GeV);
             int nElectrons = AnaFunctions::countElectrons(elesLVec, elesMiniIso, elesMTlep, elesisEB,  elesFlagIDVec, AnaConsts::elesMiniIsoArr);
@@ -1856,6 +1858,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("passSingleLep20", nMuons_20GeV + nElectrons20 == 1);
             tr.registerDerivedVar("passLep20", nMuons_20GeV + nElectrons20 >= 1);
             tr.registerDerivedVar("passSingleMu30", nMuons_30GeV == 1);
+            tr.registerDerivedVar("passSingleMu40", nMuons_40GeV == 1);
             tr.registerDerivedVar("passSingleLep30", nMuons_30GeV + nElectrons30 == 1);
             tr.registerDerivedVar("passfloatLep", passfloatMuon);
 
@@ -1884,6 +1887,134 @@ namespace plotterFunctions
             else{ JECSys = 0; } // If an invalid JECcorr value is pass, we will default to the regular behavior.
         }
 
+    };
+
+    class AliasStealthVars
+    {
+    private:
+        template<typename I, typename O> void addAliasVecTypeChange(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const std::vector<I>& inVec = tr.getVec<I>(name);
+            std::vector<O>* outVec      = new std::vector<O>(inVec.size());
+            for(int i = 0; i < inVec.size(); i++)
+            {
+                (*outVec)[i] = static_cast<O>(inVec[i]);
+            }
+            tr.registerDerivedVec(alias, outVec);
+        }
+
+        template<typename I, typename O> void addAliasTypeChange(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const I& inVar = tr.getVar<I>(name);
+            O outVar = static_cast<O>(inVar);
+            tr.registerDerivedVar(alias, outVar);
+        }
+
+        void inECALBarrel(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const std::vector<TLorentzVector>& vec = tr.getVec<TLorentzVector>(name);
+            std::vector<unsigned int>* inBarrel    = new std::vector<unsigned int>(vec.size());
+            for(int i = 0; i < vec.size(); i++)
+            {
+                TLorentzVector object = vec[i];
+                double eta = object.Eta();
+                if(fabs(eta < 1.479))
+                {
+                    (*inBarrel)[i] = static_cast<unsigned int>(1);
+                }
+                else
+                {                  
+                    (*inBarrel)[i] = static_cast<unsigned int>(0); 
+                }
+            }
+            tr.registerDerivedVec(alias, inBarrel);
+        }
+
+        void genIDHack(NTupleReader& tr, const std::string& name, const std::string& alias)
+        {
+            const std::vector<int>& vec = tr.getVec<int>(name);
+            std::vector<int>* IdVec = new std::vector<int>(vec.size());
+            for(int i = 0; i < vec.size(); i++)
+            {
+                (*IdVec)[i] = static_cast<int>(i);
+            }
+            tr.registerDerivedVec(alias, IdVec);
+        }
+
+        void add2Vec(NTupleReader& tr, const std::string& name1, const std::string& name2, const std::string& alias)
+        {
+            const std::vector<double>& vec1 = tr.getVec<double>(name1);
+            const std::vector<double>& vec2 = tr.getVec<double>(name2);
+            std::vector<double>* sumVec = new std::vector<double>(vec1.size());
+            for(int i = 0; i < vec1.size(); i++)
+            {
+                (*sumVec)[i] = vec1[i] + vec2[i];
+            }
+            tr.registerDerivedVec(alias, sumVec);
+        }
+
+        void aliasVars(NTupleReader& tr)
+        {
+            inECALBarrel(tr,"Electrons","elesisEB");
+            genIDHack(tr,"GenParticles_ParentIdx","genDecayIdxVec");
+            add2Vec(tr,"Jets_neutralEmEnergyFraction","Jets_neutralHadronEnergyFraction","recoJetsneutralEnergyFraction");
+            addAliasVecTypeChange<bool,int>(tr,"Muons_tightID","muonsFlagMedium");
+            addAliasVecTypeChange<bool,int>(tr,"Electrons_tightID","elesFlagVeto");
+            addAliasVecTypeChange<bool,int>(tr,"Photons_fullID","tightPhotonID");
+            addAliasVecTypeChange<int,double>(tr,"Jets_chargedHadronMultiplicity","ChargedHadronMultiplicity");
+            addAliasVecTypeChange<int,double>(tr,"Jets_muonMultiplicity","MuonMultiplicity");
+            addAliasVecTypeChange<int,double>(tr,"Jets_neutralMultiplicity","NeutralHadronMultiplicity");
+            addAliasVecTypeChange<int,double>(tr,"Jets_photonMultiplicity","PhotonMultiplicity");
+            addAliasVecTypeChange<int,double>(tr,"Jets_electronMultiplicity","ElectronMultiplicity");
+            addAliasTypeChange<bool,int>(tr,"JetID","looseJetID");
+        }
+        
+    public:
+        void addAllAlias(NTupleReader& tr)
+        {
+            tr.addAlias("Jets","jetsLVec");
+            tr.addAlias("MET","met");
+            tr.addAlias("Jets_bDiscriminatorCSV","recoJetsBtag_0");
+            tr.addAlias("Weight","stored_weight");
+            tr.addAlias("METPhi","metphi");
+            tr.addAlias("GenParticles","genDecayLVec");
+            tr.addAlias("puWeight","_PUweightFactor");
+            tr.addAlias("Muons","muonsLVec");
+            tr.addAlias("Muons_MiniIso","muonsMiniIso");
+            tr.addAlias("Muons_MTW","muonsMtw");
+            tr.addAlias("Electrons","elesLVec");
+            tr.addAlias("Electrons_MiniIso","elesMiniIso");
+            tr.addAlias("Electrons_charge","elesCharge");
+            tr.addAlias("Electrons_MTW","elesMtw");
+            tr.addAlias("Jets_qgLikelihood","qgLikelihood");
+            tr.addAlias("Jets_ptD","qgPtD");
+            tr.addAlias("Jets_axismajor","qgAxis1");
+            tr.addAlias("Jets_axisminor","qgAxis2");
+            tr.addAlias("Jets_chargedHadronEnergyFraction","recoJetschargedHadronEnergyFraction");
+            tr.addAlias("Jets_chargedEmEnergyFraction","recoJetschargedEmEnergyFraction");
+            tr.addAlias("Jets_neutralEmEnergyFraction","recoJetsneutralEmEnergyFraction");
+            tr.addAlias("Jets_muonEnergyFraction","recoJetsmuonEnergyFraction");
+            tr.addAlias("Jets_hfHadronEnergyFraction","recoJetsHFHadronEnergyFraction");
+            tr.addAlias("Jets_hfEMEnergyFraction","recoJetsHFEMEnergyFraction");
+            tr.addAlias("Jets_photonEnergyFraction","PhotonEnergyFraction");
+            tr.addAlias("Jets_electronEnergyFraction","ElectronEnergyFraction");
+            tr.addAlias("Jets_multiplicity","qgMult");
+            tr.addAlias("Photons","gammaLVec");
+            tr.addAlias("RunNum","run");
+            //tr.addAlias("BadPFMuonFilter","BadPFMuonFilter");
+            //tr.addAlias("BadChargedCandidateFilter","BadChargedCandidateFilter");
+            tr.addAlias("CaloMET","calomet");
+            tr.addAlias("GenParticles_PdgId","genDecayPdgIdVec");
+            tr.addAlias("GenParticles_ParentIdx","genDecayMomIdxVec");
+            tr.addAlias("TriggerPass","PassTrigger");
+            tr.addAlias("Jets_partonFlavor","recoJetsFlavor"); //Could be Jets_hadronFlavor should ask Kevin
+            tr.addAlias("NVtx","vtxSize");
+        }
+
+        void operator()(NTupleReader& tr)
+        {
+            aliasVars(tr);
+        }
     };
 
     class AliasStealthVars

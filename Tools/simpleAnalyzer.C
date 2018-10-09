@@ -367,7 +367,6 @@ int main(int argc, char* argv[])
             {
                 tr.registerFunction(pileup);
             }
-
             tr.registerFunction(filterEvents);
             tr.registerFunction(prepTopCR);
             //tr.registerFunction(sysPrep);
@@ -445,7 +444,7 @@ int main(int argc, char* argv[])
                 const bool&   passSingleLep20      = tr.getVar<bool>("passSingleLep20");
                 const bool&   passLep20            = tr.getVar<bool>("passLep20");
                 const bool&   passSingleLep30      = tr.getVar<bool>("passSingleLep30");
-                const bool&   passSingleMu30       = tr.getVar<bool>("passSingleMu30");
+                const bool&   passSingleMu40       = tr.getVar<bool>("passSingleMu40");
                 const bool&   passLeptonVeto       = tr.getVar<bool>("passLeptVeto");
                 const bool&   passdPhis            = tr.getVar<bool>("passdPhis");
                 const float& ht                   = tr.getVar<float>("HT");
@@ -474,6 +473,8 @@ int main(int argc, char* argv[])
 
                 float muTrigEff = 1.0;
                 const std::vector<TLorentzVector>& jetsLVec = tr.getVec<TLorentzVector>(jetVecLabel);
+
+                double muTrigEff = 1.0;
 
                 if(!isData && doWgt)
                 {
@@ -628,6 +629,18 @@ int main(int argc, char* argv[])
                     histsQCDb.fill(tr, eWeight, trand);
                 }
 
+                //High HT QCD control sample
+                if( (!isData || passHighHtTrigger)
+                    && passNoiseEventFilter
+                    && passLeptonVeto
+                    && nbCSV >= 1
+                    && cntNJetsPt30Eta24 >= 4
+                    && (ht > 1000)
+                    )
+                {
+                    histsQCDb.fill(tr, eWeight, trand);
+                }
+
                 //photon control sample
                 if( (!isData || passPhotonTrigger)
                     && passNoiseEventFilter
@@ -753,10 +766,25 @@ int main(int argc, char* argv[])
                     histsTTbarNob.fill(tr, eWeight, trand);
                 }
 
+                //semileptonic ttbar enriched control sample MET triggered
+                if( (!isData || passSearchTrigger)
+                    && passNoiseEventFilter
+                    && passSingleLep20
+                    && cntNJetsPt30Eta24 >= 4
+                    && passdPhis
+                    && deltaPhiLepMET < 0.8
+                    && mTLep < 100
+                    && (ht > 250)
+                    && (met > 250)
+                    )
+                {
+                    histsTTbarNob.fill(tr, eWeight, trand);
+                }
+
                 //semileptonic ttbar enriched control sample Mu triggered
                 if( (!isData || passMuTrigger)
                     && passNoiseEventFilter
-                    && passSingleMu30
+                    && passSingleMu40
                     && nbCSV >= 1
                     && cntNJetsPt30Eta24 >= 4
                     && passdPhis
