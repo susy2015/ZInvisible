@@ -227,6 +227,7 @@ int main(int argc, char* argv[])
     double maxPhi = TMath::Pi();
 
     // Shortcuts for axis labels
+    std::string label_Events = "Events";
     std::string label_met = "p_{T}^{miss} [GeV]";
     std::string label_ht  = "H_{T} [GeV]";
     std::string label_mht = "MH_{T} [GeV]";
@@ -294,7 +295,6 @@ int main(int argc, char* argv[])
 
     vector<Plotter::HistSummary> vh;
 
-    Plotter::DatasetSummary dsDY_nunu(            "Z#rightarrow#nu#nu",                fileMap["ZJetsToNuNu"], "passLeptVeto", "");
     // Datasetsummaries we are using                                                                                                        
     // no weight (genWeight deals with negative weights); also add btag weights here                                                        
     Plotter::DatasetSummary dsData_SingleMuon("Data",       fileMap["Data_SingleMuon"], "passMuTrigger",   "");
@@ -901,6 +901,8 @@ int main(int argc, char* argv[])
     //tops
     //vh.push_back(PHS("DataMC_T1tttt", {dcMC_T1tttt}, {1, 1}, "passNoiseEventFilterZinv", 60, minPt, maxPt, true, false, label_genTopPt, "Events"));
 
+    // Znunu
+    Plotter::DatasetSummary dsDY_nunu("Z#rightarrow#nu#nu", fileMap["ZJetsToNuNu"], "passLeptVeto", "");
     // nothing
     Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerCentral(          "Z#rightarrow#nu#nu Trigger Central ",        fileMap["ZJetsToNuNu"], "passLeptVeto",    "");
     Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerUp(               "Z#rightarrow#nu#nu Trigger Up ",             fileMap["ZJetsToNuNu"], "passLeptVeto",    "");
@@ -919,7 +921,19 @@ int main(int argc, char* argv[])
     Plotter::DataCollection trigger_nSearchBin( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBin",    dsDY_nunu_njetnorm}  });
     Plotter::DataCollection trigger_nSearchBin_scaled( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_scaled}  });
     Plotter::DataCollection trigger_nSearchBin_weighted( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_weighted}  });
-
+    
+    Plotter::DataCollection dcMC_Znunu_met("single", "met",                    {dsDY_nunu}); // MET
+    Plotter::DataCollection dcMC_Znunu_ht("single",  "HTZinv",                 {dsDY_nunu}); // HT
+    Plotter::DataCollection dcMC_Znunu_nj("single",  "cntNJetsPt20Eta24Zinv",  {dsDY_nunu}); // Njets
+    Plotter::DataCollection dcMC_Znunu_nb("single",  "cntCSVSZinv",            {dsDY_nunu}); // Nbottoms 
+    Plotter::DataCollection dcMC_Znunu_nt("single",  "nTopCandSortedCntZinv",  {dsDY_nunu}); // Ntops
+    
+    // Znunu
+    vh.push_back(PHS("Z#rightarrow#nu#nu_met", {dcMC_Znunu_met}, {1, 1}, "", 100, 0.0,  1000.0, false, false, label_met, label_Events));
+    vh.push_back(PHS("Z#rightarrow#nu#nu_ht",  {dcMC_Znunu_ht},  {1, 1}, "", 100, 0.0,  1000.0, false, false, label_ht,  label_Events));
+    vh.push_back(PHS("Z#rightarrow#nu#nu_nj",  {dcMC_Znunu_nj},  {1, 1}, "", 10, 0, 10, false, false, label_nj,  label_Events));
+    vh.push_back(PHS("Z#rightarrow#nu#nu_nb",  {dcMC_Znunu_nb},  {1, 1}, "", 10, 0, 10, false, false, label_nb,  label_Events));
+    vh.push_back(PHS("Z#rightarrow#nu#nu_nt",  {dcMC_Znunu_nt},  {1, 1}, "", 10, 0, 10, false, false, label_nt,  label_Events));
 
     if (doSearchBins)
     {
