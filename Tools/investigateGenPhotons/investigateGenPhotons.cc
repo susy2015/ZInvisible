@@ -18,41 +18,45 @@
 // use this command to copy the required root file before running this script
 // xrdcp root://xrootd.unl.edu//store/mc/RunIISummer16MiniAODv2/GJets_DR-0p4_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_qcut19_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/90000/FC894077-2DCA-E611-8008-002590DE6E3C.root .
 
-TChain* combineTrees(const char *infile, int n_lines)
-//void combineTrees(const char * infile, const char * outfile, int n_lines)
+TChain* combineTrees(std::vector<std::string> inputFiles, int n_lines)
 { 
-    std::ifstream in;
-    in.open(infile);
-    if(!in.is_open()){
-        std::cout << "Cannot open list file: " << infile << std::endl;
-        return nullptr;  
-    }
-
+    // create new TChain
     TChain *chain = new TChain("Events");
-      
-    std::string line;
-    int i = 0;
-    while(in.good()){
-        if (i >= n_lines) break;                // only read n_lines
-        if( ! std::getline(in,line) ) break;    // read a line from the file
-        if( chain->Add( line.c_str() ) )        // add to the chain 
-        {
-            std::cout << "Loaded tree " << i <<  ": " << line << std::endl;
+
+    for (const auto & infile : inputFiles)
+    {
+        std::ifstream in;
+        in.open(infile.c_str());
+        if(in.is_open()){
+            std::cout << "- Successfully opened file: " << infile << std::endl;
         }
         else
         {
-            std::cout << "Problem loading tree " << i <<  ": " << line << std::endl;
+            std::cout << "- ERROR: Cannot open file: " << infile << std::endl;
+            return nullptr;  
         }
-        // increase line index
-        i++; 
+          
+        std::string line;
+        int i = 0;
+        while(in.good()){
+            if (i >= n_lines) break;                // only read n_lines
+            if( ! std::getline(in,line) ) break;    // read a line from the file
+            if( chain->Add( line.c_str() ) )        // add to the chain 
+            {
+                std::cout << "- Loaded tree " << i <<  ": " << line << std::endl;
+            }
+            else
+            {
+                std::cout << "- Problem loading tree " << i <<  ": " << line << std::endl;
+            }
+            // increase line index
+            i++; 
+        }
+          
+        in.close();
     }
-      
-    in.close();
 
-    //TFile * file = TFile::Open(outfile, "RECREATE");
-    //printf("Begin merging chain\n");
-    //chain->Merge(outfile);
-    //printf("Finished merging chain\n");
+    // return TChain
     return chain;
 }
 
@@ -170,52 +174,21 @@ void multiplot(TChain* chain, std::vector<DrawOptions> vp, std::string plotName,
     delete c1;
 }
 
-void investigate(const char* inputFileName)
+void investigate(std::vector<std::string> inputFiles)
 {
-    //const char * outputFileName = "Combined_GJets_DR-0p4_HT-600ToInf.root";
-    //combineTrees(inputFileName, 2); 
-    TChain* chain = combineTrees(inputFileName, 2); 
+    TChain* chain = combineTrees(inputFiles, 2); 
     if (!chain)
     {
-        printf("ERROR: Did not create chain from %s\n", inputFileName);
+        printf("ERROR: Did not create chain from input files\n");
         exit(1);
     }
     
-    // open that file please 
-    //printf("Opening file: %s\n", outputFileName);
-    //TFile* file = nullptr;
-    //file = TFile::Open(outputFileName);
-    //if (!file)
-    //{
-    //    printf("ERROR: Did not open file %s\n", outputFileName);
-    //    exit(1);
-    //}
-    
-    // get tree
-    //std::string treeName = "Events";
-    //TTree* tree = nullptr;
-    //std::cout << "Number of trees: " << chain->GetNtrees() << std::endl;
-    //std::cout << "Find branch: " << chain->FindBranch(treeName.c_str()) << std::endl;
-    //tree = (TTree*)chain->GetTree();
-    
-    //tree = (TTree*)file->Get(treeName.c_str());
-    //if (!tree)
-    //{
-    //    printf("ERROR: Did not open tree %s\n", treeName.c_str());
-    //    exit(1);
-    //}
     // make plots
+    
     std::vector<DrawOptions> plotOptions;
     std::string plotName = "";
     std::string varexp = "";
     std::string selection = "";
-    
-    // from Dr. Ken
-    // plotName = "genStatus_pdgId=22_pt>10";
-    // varexp = "recoGenParticles_prunedGenParticles__PAT.obj.status()";
-    // selection = "recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0";
-    // DrawOptions p1 = {plotName, varexp, selection};
-    // plotOptions.push_back(p1);
     
     plotName = "genEta_eta<5";
     varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
@@ -257,18 +230,18 @@ void investigate(const char* inputFileName)
     // multiplot (normalized)
     multiplot(chain, plotOptions, "gen_with_cuts_normalized", true);
 
-    // close that file please
-    //file->Close();
-    // delete file
-    //delete file;
     delete chain;
 }
 
 int main()
 {
-    //const char* inputFileName = "FC894077-2DCA-E611-8008-002590DE6E3C.root"; 
-    const char* inputFileName = "RunIISummer16MiniAODv2/GJets_DR-0p4_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.txt"; 
-    investigate(inputFileName);
+    std::vector<std::string> inputFiles;
+    inputFiles.push_back("RunIISummer16MiniAODv2/GJets_DR-0p4_HT-40To100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.txt");
+    inputFiles.push_back("RunIISummer16MiniAODv2/GJets_DR-0p4_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.txt");
+    inputFiles.push_back("RunIISummer16MiniAODv2/GJets_DR-0p4_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.txt");
+    inputFiles.push_back("RunIISummer16MiniAODv2/GJets_DR-0p4_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.txt");
+    inputFiles.push_back("RunIISummer16MiniAODv2/GJets_DR-0p4_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.txt");
+    investigate(inputFiles);
 }
 
 
