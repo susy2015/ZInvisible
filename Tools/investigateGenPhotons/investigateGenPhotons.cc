@@ -92,7 +92,7 @@ void plot(TChain* chain, DrawOptions p)
     else
     {
         printf("ERROR: htemp is nullptr\n");
-        exit(1);
+        //exit(1);
     }
     
     c1->Update();
@@ -153,13 +153,14 @@ void multiplot(TChain* chain, std::vector<DrawOptions> vp, std::string plotName,
             // note that htemp->GetMaximum() only give unscale max
             // this method gives the max after scaling
             h_max = std::max(h_max, htemp->GetBinContent(htemp->GetMaximumBin()));
+            // only increase index if htemp exists
+            i++;
         }
         else
         {
             printf("ERROR: htemp is nullptr\n");
-            exit(1);
+            //exit(1);
         }
-        i++;
     }
 
     printf("h_max = %f\n", h_max);
@@ -174,9 +175,9 @@ void multiplot(TChain* chain, std::vector<DrawOptions> vp, std::string plotName,
     delete c1;
 }
 
-void investigate(std::vector<std::string> inputFiles)
+void investigate(std::vector<std::string> inputFiles, int n_lines)
 {
-    TChain* chain = combineTrees(inputFiles, 2); 
+    TChain* chain = combineTrees(inputFiles, n_lines);
     if (!chain)
     {
         printf("ERROR: Did not create chain from input files\n");
@@ -184,30 +185,78 @@ void investigate(std::vector<std::string> inputFiles)
     }
     
     // make plots
-    
-    std::vector<DrawOptions> plotOptions;
     std::string plotName = "";
     std::string varexp = "";
     std::string selection = "";
+    DrawOptions d; 
+    std::vector<DrawOptions> plotOptions;
     
     plotName = "genEta_eta<5";
     varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
     selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0";
-    DrawOptions p1 = {plotName, varexp, selection, kRed};
-    plotOptions.push_back(p1);
+    d = {plotName, varexp, selection, kRed};
+    plotOptions.push_back(d);
     
     plotName = "genEta_eta<5_pt>10";
     varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
     selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0";
-    DrawOptions p2 = {plotName, varexp, selection, kBlue};
-    plotOptions.push_back(p2);
+    d = {plotName, varexp, selection, kBlue};
+    plotOptions.push_back(d);
     
     plotName = "genEta_eta<5_pt>10_pdgId=22";
     varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
     selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0 && \
                  recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22";
-    DrawOptions p3 = {plotName, varexp, selection, kGreen-2};
-    plotOptions.push_back(p3);
+    d = {plotName, varexp, selection, kGreen-2};
+    plotOptions.push_back(d);
+    
+    plotName = "genEta_eta<5_pt>10_pdgId=22_status=1";
+    varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
+    selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.status() == 1";
+    d = {plotName, varexp, selection, kMagenta+1};
+    plotOptions.push_back(d);
+    
+    plotName = "genEta_eta<5_pt>10_pdgId=22_status=2";
+    varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
+    selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.status() == 2";
+    d = {plotName, varexp, selection, kCyan+2};
+    plotOptions.push_back(d);
+    
+    plotName = "genEta_eta<5_pt>10_pdgId=22_status=21";
+    varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
+    selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.status() == 21";
+    d = {plotName, varexp, selection, kViolet+10};
+    plotOptions.push_back(d);
+    
+    plotName = "genEta_eta<5_pt>10_pdgId=22_status=22";
+    varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
+    selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.status() == 22";
+    d = {plotName, varexp, selection, kYellow-2};
+    plotOptions.push_back(d);
+    
+    plotName = "genEta_eta<5_pt>10_pdgId=22_status=23";
+    varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
+    selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.status() == 23";
+    d = {plotName, varexp, selection, kOrange+8};
+    plotOptions.push_back(d);
+    
+    plotName = "genEta_eta<5_pt>10_pdgId=22_status=24";
+    varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
+    selection = "abs(recoGenParticles_prunedGenParticles__PAT.obj.eta()) < 5.0 && recoGenParticles_prunedGenParticles__PAT.obj.pt() > 10.0 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.pdgId() == 22 && \
+                     recoGenParticles_prunedGenParticles__PAT.obj.status() == 24";
+    d = {plotName, varexp, selection, kBlue-3};
+    plotOptions.push_back(d);
     
     plotName = "genEta_eta<5_pt>10_pdgId=22_status=(1||2||20--29)";
     varexp = "recoGenParticles_prunedGenParticles__PAT.obj.eta()";
@@ -216,8 +265,9 @@ void investigate(std::vector<std::string> inputFiles)
                     (recoGenParticles_prunedGenParticles__PAT.obj.status() == 1 || \
                      recoGenParticles_prunedGenParticles__PAT.obj.status() == 2 || \
                     (recoGenParticles_prunedGenParticles__PAT.obj.status())/10 == 2)";
-    DrawOptions p4 = {plotName, varexp, selection, kMagenta+1};
-    plotOptions.push_back(p4);
+    d = {plotName, varexp, selection, kViolet-6};
+    plotOptions.push_back(d);
+    
     
     // loop over plots
     for (const auto& p : plotOptions)
@@ -241,7 +291,7 @@ int main()
     inputFiles.push_back("RunIISummer16MiniAODv2/GJets_DR-0p4_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.txt");
     inputFiles.push_back("RunIISummer16MiniAODv2/GJets_DR-0p4_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.txt");
     inputFiles.push_back("RunIISummer16MiniAODv2/GJets_DR-0p4_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.txt");
-    investigate(inputFiles);
+    investigate(inputFiles, 1);
 }
 
 
