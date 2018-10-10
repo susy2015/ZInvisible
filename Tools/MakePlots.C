@@ -922,6 +922,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection trigger_nSearchBin_scaled( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_scaled}  });
     Plotter::DataCollection trigger_nSearchBin_weighted( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_weighted}  });
     
+    // Znunu
     Plotter::DataCollection dcMC_Znunu_met("single", "met",                    {dsDY_nunu}); // MET
     Plotter::DataCollection dcMC_Znunu_ht("single",  "HTZinv",                 {dsDY_nunu}); // HT
     Plotter::DataCollection dcMC_Znunu_nj("single",  "cntNJetsPt20Eta24Zinv",  {dsDY_nunu}); // Njets
@@ -929,11 +930,23 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_Znunu_nt("single",  "nTopCandSortedCntZinv",  {dsDY_nunu}); // Ntops
     
     // Znunu
-    vh.push_back(PHS("Z#rightarrow#nu#nu_met", {dcMC_Znunu_met}, {1, 1}, "", 100, 0.0,  1000.0, true, false, label_met, label_Events));
-    vh.push_back(PHS("Z#rightarrow#nu#nu_ht",  {dcMC_Znunu_ht},  {1, 1}, "", 100, 0.0,  1000.0, true, false, label_ht,  label_Events));
-    vh.push_back(PHS("Z#rightarrow#nu#nu_nj",  {dcMC_Znunu_nj},  {1, 1}, "", 10, 0, 10, false, false, label_nj,  label_Events));
-    vh.push_back(PHS("Z#rightarrow#nu#nu_nb",  {dcMC_Znunu_nb},  {1, 1}, "", 10, 0, 10, false, false, label_nb,  label_Events));
-    vh.push_back(PHS("Z#rightarrow#nu#nu_nt",  {dcMC_Znunu_nt},  {1, 1}, "", 10, 0, 10, false, false, label_nt,  label_Events));
+    auto makePDSZnunu       = [&](const std::string& label) {return Plotter::DatasetSummary("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu"], "passLeptVeto", ""); };
+    auto makePDCZnunuGJets  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{var, makePDSZnunu("MC")}, {var, makePDSPhoton("MC")}}); };
+    
+    std::vector<std::string> styles = {"single", "ratio"};
+    // Z#rightarrow#nu#nu
+    for (const auto & style : styles)
+    {
+        // denominator index (1 for single, 2 for ratio)
+        int d = 0;
+        if (style.compare("single") == 0) d = 1;
+        if (style.compare("ratio") == 0)  d = 2;
+        vh.push_back(PHS("MC_ZJetsToNuNu_GJets_met_" + style, {makePDCZnunuGJets("met",                   style)}, {1, d}, "", 100, 0.0,  2000.0, true, false, label_met, label_Events));
+        vh.push_back(PHS("MC_ZJetsToNuNu_GJets_ht_"  + style, {makePDCZnunuGJets("HTZinv",                style)}, {1, d}, "", 100, 0.0,  2000.0, true, false, label_ht,  label_Events));
+        vh.push_back(PHS("MC_ZJetsToNuNu_GJets_nj_"  + style, {makePDCZnunuGJets("cntNJetsPt20Eta24Zinv", style)}, {1, d}, "", 10, 0, 10, false, false, label_nj,  label_Events));
+        vh.push_back(PHS("MC_ZJetsToNuNu_GJets_nb_"  + style, {makePDCZnunuGJets("cntCSVSZinv",           style)}, {1, d}, "", 10, 0, 10, false, false, label_nb,  label_Events));
+        vh.push_back(PHS("MC_ZJetsToNuNu_GJets_nt_"  + style, {makePDCZnunuGJets("nTopCandSortedCntZinv", style)}, {1, d}, "", 10, 0, 10, false, false, label_nt,  label_Events));
+    }
 
     if (doSearchBins)
     {
