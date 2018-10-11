@@ -939,8 +939,8 @@ int main(int argc, char* argv[])
     {
         // denominator index (1 for single, 2 for ratio)
         int d = 0;
-        if (style.compare("single") == 0) d = 1;
-        if (style.compare("ratio") == 0)  d = 2;
+        if (style.compare("single") == 0) d = 2;
+        if (style.compare("ratio") == 0)  d = 1;
         vh.push_back(PHS("MC_ZJetsToNuNu_GJets_met_" + style, {makePDCZnunuGJets("met",                   style)}, {1, d}, "", 100, 0.0,  2000.0, true, false, label_met, label_Events));
         vh.push_back(PHS("MC_ZJetsToNuNu_GJets_ht_"  + style, {makePDCZnunuGJets("HTZinv",                style)}, {1, d}, "", 100, 0.0,  2000.0, true, false, label_ht,  label_Events));
         vh.push_back(PHS("MC_ZJetsToNuNu_GJets_nj_"  + style, {makePDCZnunuGJets("cntNJetsPt20Eta24Zinv", style)}, {1, d}, "", 10, 0, 10, false, false, label_nj,  label_Events));
