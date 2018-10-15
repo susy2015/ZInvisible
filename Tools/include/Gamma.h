@@ -146,19 +146,20 @@ namespace plotterFunctions
         }
         
         // check vector lengths: gammaLVecRecoEta should have the same length as photon ntuple values for which passAcc=true
-        bool passed = true;
-        if (gammaLVecRecoEta->size()  != gammaLVecReco->size())  passed = false;
-        if (gammaLVecReco->size()     != genMatched.size())      passed = false;
-        if (gammaLVecReco->size()     != loosePhotonID.size())   passed = false;
-        if (gammaLVecReco->size()     != mediumPhotonID.size())  passed = false;
-        if (gammaLVecReco->size()     != tightPhotonID.size())   passed = false;
+        bool passTest1 = true;
+        bool passTest2 = true;
+        if (gammaLVecReco->size()    != gammaLVecRecoEta->size()) passTest1 = false;
+        if (gammaLVecRecoEta->size() != genMatched.size())        passTest2 = false;
+        if (gammaLVecRecoEta->size() != loosePhotonID.size())     passTest2 = false;
+        if (gammaLVecRecoEta->size() != mediumPhotonID.size())    passTest2 = false;
+        if (gammaLVecRecoEta->size() != tightPhotonID.size())     passTest2 = false;
         if (debug) // print debugging statements
         {
-          printf("gammaLVecGen gammaLVecRecoEta gammaLVecReco genMatched loosePhotonID mediumPhotonID tightPhotonID: %d | %d == %d == %d %d %d %d --- %s\n", \
-            int(gammaLVecGen.size()), int(gammaLVecRecoEta->size()), int(gammaLVecReco->size()), int(genMatched.size()),  \
-            int(loosePhotonID.size()), int(mediumPhotonID.size()), int(tightPhotonID.size()), passed ? "pass" : "fail");
+          printf("gammaLVecGen gammaLVecReco gammaLVecRecoEta genMatched loosePhotonID mediumPhotonID tightPhotonID: %d | %d == %d == %d %d %d %d --- %s, %s\n", \
+            int(gammaLVecGen.size()), int(gammaLVecReco->size()), int(gammaLVecRecoEta->size()), int(genMatched.size()), \
+            int(loosePhotonID.size()), int(mediumPhotonID.size()), int(tightPhotonID.size()), passTest1 ? "passTest1" : "failTest1", passTest2 ? "passTest2" : "failTest2");
         }
-        if (!passed)
+        if (!passTest1 || !passTest2)
         {
           // we should probably throw an exception here
           printf(" - ERROR in include/Gamma.h: TLorentzVector gammaLVecRecoEta for reco photons does not have the same length as one or more photon ntuple vectors.\n");
