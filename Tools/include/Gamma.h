@@ -64,8 +64,6 @@ namespace plotterFunctions
         const auto& loosePhotonID        = tr.getVec<unsigned int>("loosePhotonID");
         const auto& mediumPhotonID       = tr.getVec<unsigned int>("mediumPhotonID");
         const auto& tightPhotonID        = tr.getVec<unsigned int>("tightPhotonID");
-        //const auto& fullID              = tr.getVec<unsigned int>("fullID"); // not in CMSSW8028_2016 right now
-        const auto& extraLooseID         = tr.getVec<unsigned int>("extraLooseID");
         const auto& genMatched           = tr.getVec<data_t>("genMatched");
         const auto& sigmaIetaIeta        = tr.getVec<data_t>("sigmaIetaIeta");
         const auto& pfNeutralIsoRhoCorr  = tr.getVec<data_t>("pfNeutralIsoRhoCorr");
@@ -80,7 +78,7 @@ namespace plotterFunctions
         const auto& ntops                = tr.getVar<int>("nTopCandSortedCnt");
 
         // toggle debugging print statements
-        bool debug = false;
+        bool debug = true;
 
         //variables to be used in the analysis code
         double photonPtCut = 200.0;
@@ -149,15 +147,15 @@ namespace plotterFunctions
         
         // check vector lengths: gammaLVecRecoEta should have the same length as photon ntuple values for which passAcc=true
         bool passed = true;
-        if (gammaLVecRecoEta->size() != genMatched.size())      passed = false;
-        if (gammaLVecRecoEta->size() != extraLooseID.size())    passed = false;
-        if (gammaLVecRecoEta->size() != loosePhotonID.size())   passed = false;
-        if (gammaLVecRecoEta->size() != mediumPhotonID.size())  passed = false;
-        if (gammaLVecRecoEta->size() != tightPhotonID.size())   passed = false;
+        if (gammaLVecRecoEta->size()  != gammaLVecReco->size())  passed = false;
+        if (gammaLVecReco->size()     != genMatched.size())      passed = false;
+        if (gammaLVecReco->size()     != loosePhotonID.size())   passed = false;
+        if (gammaLVecReco->size()     != mediumPhotonID.size())  passed = false;
+        if (gammaLVecReco->size()     != tightPhotonID.size())   passed = false;
         if (debug) // print debugging statements
         {
-          printf("gen reco genMatched extraLooseID loosePhotonID mediumPhotonID tightPhotonID: %d %d --- %d %d %d %d %d --- %s\n", \
-            int(gammaLVecGen.size()), int(gammaLVecRecoEta->size()), int(genMatched.size()), int(extraLooseID.size()),      \
+          printf("gammaLVecGen gammaLVecRecoEta gammaLVecReco genMatched loosePhotonID mediumPhotonID tightPhotonID: %d | %d == %d == %d %d %d %d --- %s\n", \
+            int(gammaLVecGen.size()), int(gammaLVecRecoEta->size()), int(gammaLVecReco->size()), int(genMatched.size()),  \
             int(loosePhotonID.size()), int(mediumPhotonID.size()), int(tightPhotonID.size()), passed ? "pass" : "fail");
         }
         if (!passed)
@@ -165,6 +163,15 @@ namespace plotterFunctions
           // we should probably throw an exception here
           printf(" - ERROR in include/Gamma.h: TLorentzVector gammaLVecRecoEta for reco photons does not have the same length as one or more photon ntuple vectors.\n");
           printf(" - Set debug=true in include/Gamma.h for more information.\n");
+          // throw exception
+          try
+          {
+            throw 20;
+          }
+          catch (int e)
+          {
+            std::cout << "Exception: TLorentzVector photonLVecRecoEta for reco photons does not have the same length as one or more photon ntuple vectors." << std::endl;
+          }
         }
 
         //Select reco photons within the ECAL acceptance region and Pt > 200 GeV 
