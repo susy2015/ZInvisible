@@ -18,6 +18,12 @@
 echo " - Compile MakePlots"
 make -j8
 
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    echo "ERROR: There was an error when compiling MakePlots"
+    exit $retVal;
+fi
+
 # Remove existing plots
 
 echo " - Remove existing plots"
@@ -26,7 +32,7 @@ rm plots/*
 # Save root files for different MC
 
 echo " - Save root files for different MC"
-n_events=10000
+n_events=1000
 sample1=GJets_HT-200To400
 sample2=ZJetsToNuNu_HT_200to400
 output1=""$sample1".root"
