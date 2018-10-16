@@ -70,19 +70,23 @@ namespace plotterFunctions
         const auto& pfGammaIsoRhoCorr    = tr.getVec<data_t>("pfGammaIsoRhoCorr");
         const auto& pfChargedIsoRhoCorr  = tr.getVec<data_t>("pfChargedIsoRhoCorr");
         const auto& hadTowOverEM         = tr.getVec<data_t>("hadTowOverEM");
-        const auto& MT2                  = tr.getVar<data_t>("best_had_brJet_MT2");
+        const auto& mt2                  = tr.getVar<data_t>("best_had_brJet_MT2");
         const auto& met                  = tr.getVar<data_t>("met");
-        const auto& nJets                = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+        const auto& metphi               = tr.getVar<data_t>("metphi");
+        const auto& nj                   = tr.getVar<int>("cntNJetsPt20Eta24");
         const auto& ht                   = tr.getVar<data_t>("HT");
-        const auto& nbJets               = tr.getVar<int>("cntCSVS");
-        const auto& ntops                = tr.getVar<int>("nTopCandSortedCnt");
+        const auto& nb                   = tr.getVar<int>("cntCSVS");
+        const auto& nt                   = tr.getVar<int>("nTopCandSortedCnt");
 
         // toggle debugging print statements
         bool debug = true;
 
         //variables to be used in the analysis code
         double photonPtCut = 200.0;
-        double photonMet = -999.9;
+        //double photonMet = -999.9;
+        double metWithPhoton = -999.9;
+        bool passPhotonSelection = false;
+        
         auto* gammaLVecGenEta           = new std::vector<TLorentzVector>(); 
         auto* gammaLVecGenEtaPt         = new std::vector<TLorentzVector>(); 
         auto* gammaLVecGenEtaPtMatched  = new std::vector<TLorentzVector>(); 
@@ -99,6 +103,8 @@ namespace plotterFunctions
         auto* tightPhotons              = new std::vector<TLorentzVector>();
         auto* directPhotons             = new std::vector<TLorentzVector>();
         auto* totalPhotons              = new std::vector<TLorentzVector>();
+        auto* metLVec                   = new TLorentzVector();
+        auto* metWithPhotonLVec         = new TLorentzVector();
 
         // // check vector lengths
         // bool passed = true;
@@ -195,9 +201,23 @@ namespace plotterFunctions
             }
           }
         }
+
+        // set met LVec
+        // Pt, Eta, Phi, E
+        metLVec->SetPtEtaPhiE(met, 0.0, metphi, met);
+        metWithPhotonLVec = metLVec;
+        metWithPhoton = metLVec->Pt();
+        // pass photon selection and add to MET
+        if (gammaLVecRecoEtaPtMatched->size() == 1)
+        {
+            // Add LVecs of MET and Photon
+            *metWithPhotonLVec += (*gammaLVecRecoEtaPtMatched)[0];
+            metWithPhoton = metWithPhotonLVec->Pt();
+            passPhotonSelection = true;
+        }
         
 
-        photonMet = met;
+        //photonMet = met;
         //Get TLorentz vector for Loose, Medium and Tight ID photon selection
         for(int i = 0; i < gammaLVecRecoEta->size(); i++){
           if ((*gammaLVecRecoEta)[i].Pt() > photonPtCut){
@@ -208,7 +228,7 @@ namespace plotterFunctions
             if(tightPhotonID[i]) tightPhotons->push_back((*gammaLVecRecoEta)[i]);
 
             //add loose photon pt to ptmiss
-            if(loosePhotonID[i]) photonMet += (*gammaLVecRecoEta)[i].Pt();
+            //if(loosePhotonID[i]) photonMet += (*gammaLVecRecoEta)[i].Pt();
           } 
         }
 
@@ -231,7 +251,9 @@ namespace plotterFunctions
           }
         }
 
-        tr.registerDerivedVar("photonMet", photonMet);
+        //tr.registerDerivedVar("photonMet", photonMet);
+        tr.registerDerivedVar("metWithPhoton", metWithPhoton);
+        tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
         tr.registerDerivedVar("passNphoton", totalPhotons->size() >= 1);
         tr.registerDerivedVar("passNloose", loosePhotons->size() >= 1);
         tr.registerDerivedVar("passNmedium", mediumPhotons->size() >= 1);

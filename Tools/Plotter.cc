@@ -994,7 +994,7 @@ void Plotter::plot()
         else
         {
             double locMin = 0.0;
-            double ratioMin = 0.5;
+            double ratioMin = 0.0;
             double legMin = (1.2*max - locMin) * (leg->GetY1() - gPad->GetBottomMargin()) / ((1 - gPad->GetTopMargin()) - gPad->GetBottomMargin());
             if(lmax > legMin)
             {

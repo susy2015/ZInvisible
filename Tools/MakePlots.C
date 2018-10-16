@@ -331,7 +331,7 @@ int main(int argc, char* argv[])
     //for electrons do not use muTrigWgt (it is 0.0 for electrons)
     auto makePDSMu     = [&](const std::string& label) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
     auto makePDSElec   = [&](const std::string& label) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
-    auto makePDSPhoton = [&](const std::string& label) {return Plotter::DatasetSummary("GJets "+label, fileMap["GJets"], "passLeptVeto;HT>200", ""); };
+    auto makePDSPhoton = [&](const std::string& label) {return Plotter::DatasetSummary("GJets "+label, fileMap["GJets"], "passPhotonSelection;passLeptVeto;HT>200", ""); };
     
     // acceptance
     // muons
@@ -947,7 +947,8 @@ int main(int argc, char* argv[])
             y_axis_label = "GJets / ZJetsToNuNu";
             legend_label = "over ZJetsToNuNu";
         }
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_met_" + style, {makePDCGJetsZnunu("met",               style, legend_label)}, {1, d}, "", 100, 0.0,  2000.0, true, false, label_met, y_axis_label));
+        // use metWithPhoton instead of met (it had the photon pt added to it)
+        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_met_" + style, {makePDCGJetsZnunu("metWithPhoton",     style, legend_label)}, {1, d}, "", 100, 0.0,  2000.0, true, false, label_met, y_axis_label));
         vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht_"  + style, {makePDCGJetsZnunu("HT",                style, legend_label)}, {1, d}, "", 100, 0.0,  2000.0, true, false, label_ht,  y_axis_label));
         vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nj_"  + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24", style, legend_label)}, {1, d}, "", 10, 0, 10,         true, false, label_nj,  y_axis_label));
         vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nb_"  + style, {makePDCGJetsZnunu("cntCSVS",           style, legend_label)}, {1, d}, "", 10, 0, 10,         true, false, label_nb,  y_axis_label));
