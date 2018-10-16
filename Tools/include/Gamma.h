@@ -106,16 +106,6 @@ namespace plotterFunctions
         auto* metLVec                   = new TLorentzVector();
         auto* metWithPhotonLVec         = new TLorentzVector();
 
-        // // check vector lengths
-        // bool passed = true;
-        // if (gammaLVec.size() != genMatched.size())      passed = false;
-        // if (gammaLVec.size() != extraLooseID.size())    passed = false;
-        // if (gammaLVec.size() != loosePhotonID.size())   passed = false;
-        // if (gammaLVec.size() != mediumPhotonID.size())  passed = false;
-        // if (gammaLVec.size() != tightPhotonID.size())   passed = false;
-        // printf("gen reco genMatched extraLooseID loosePhotonID mediumPhotonID tightPhotonID: %d %d --- %d %d %d %d %d --- %s\n", \
-        //   int(gammaLVecGen.size()), int(gammaLVec.size()), int(genMatched.size()), int(extraLooseID.size()),        \
-        //   int(loosePhotonID.size()), int(mediumPhotonID.size()), int(tightPhotonID.size()), passed ? "pass" : "fail");
 
         //Pass cuts; use some variables from ntuples
         
