@@ -109,6 +109,10 @@ Now try running makePlots.
 ./makePlots -D ZJetsToNuNu -E 1000
 ```
 The `-s` option is for only saving the root file and not making pdf/png files. You can remove the `-s` option to generate myriad pdf/png files. The `-D` option is for the dataset (ZJetsToNuNu). The `-E` option is for number of events to process (1000).
+You can also run over a specific HT sample range.
+```
+./makePlots -D ZJetsToNuNu_HT_100to200 -E 1000
+```
 
 If `makePlots` succeeds it will create a file named `histoutput.root`. You can open this file with a TBrowser either on cmslpc or by copying it to your machine.
 
