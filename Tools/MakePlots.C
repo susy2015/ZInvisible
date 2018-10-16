@@ -923,13 +923,6 @@ int main(int argc, char* argv[])
     Plotter::DataCollection trigger_nSearchBin_weighted( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_weighted}  });
     
     // Znunu
-    Plotter::DataCollection dcMC_Znunu_met("single", "met",                    {dsDY_nunu}); // MET
-    Plotter::DataCollection dcMC_Znunu_ht("single",  "HTZinv",                 {dsDY_nunu}); // HT
-    Plotter::DataCollection dcMC_Znunu_nj("single",  "cntNJetsPt20Eta24Zinv",  {dsDY_nunu}); // Njets
-    Plotter::DataCollection dcMC_Znunu_nb("single",  "cntCSVSZinv",            {dsDY_nunu}); // Nbottoms 
-    Plotter::DataCollection dcMC_Znunu_nt("single",  "nTopCandSortedCntZinv",  {dsDY_nunu}); // Ntops
-    
-    // Znunu
     auto makePDSZnunu       = [&](const std::string& label) {return Plotter::DatasetSummary("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu"], "passLeptVeto;HT>200", ""); };
     auto makePDCGJetsZnunu  = [&](const std::string& var, const std::string& style, const std::string& label) {return Plotter::DataCollection(style, {{var, makePDSPhoton(label)}, {var, makePDSZnunu(label)}}); };
     
