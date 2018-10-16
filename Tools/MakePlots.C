@@ -229,6 +229,7 @@ int main(int argc, char* argv[])
     // Shortcuts for axis labels
     std::string label_Events = "Events";
     std::string label_met = "p_{T}^{miss} [GeV]";
+    std::string label_phi = "#phi_{MET}";
     std::string label_ht  = "H_{T} [GeV]";
     std::string label_mht = "MH_{T} [GeV]";
     std::string label_nj  = "N_{jets}";
@@ -948,11 +949,12 @@ int main(int argc, char* argv[])
             legend_label = "over ZJetsToNuNu";
         }
         // use metWithPhoton instead of met (it had the photon pt added to it)
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_met_" + style, {makePDCGJetsZnunu("metWithPhoton",     style, legend_label)}, {1, d}, "", 100, 0.0,  2000.0, true, false, label_met, y_axis_label));
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht_"  + style, {makePDCGJetsZnunu("HT",                style, legend_label)}, {1, d}, "", 100, 0.0,  2000.0, true, false, label_ht,  y_axis_label));
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nj_"  + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24", style, legend_label)}, {1, d}, "", 10, 0, 10,         true, false, label_nj,  y_axis_label));
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nb_"  + style, {makePDCGJetsZnunu("cntCSVS",           style, legend_label)}, {1, d}, "", 10, 0, 10,         true, false, label_nb,  y_axis_label));
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nt_"  + style, {makePDCGJetsZnunu("nTopCandSortedCnt", style, legend_label)}, {1, d}, "", 10, 0, 10,         true, false, label_nt,  y_axis_label));
+        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_met_"    + style, {makePDCGJetsZnunu("metWithPhoton",     style, legend_label)}, {1, d}, "", 100, minPt,  maxPt,  true, false, label_met, y_axis_label));
+        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_metphi_" + style, {makePDCGJetsZnunu("metphiWithPhoton",  style, legend_label)}, {1, d}, "", 100, minPhi, maxPhi, true, false, label_phi, y_axis_label));
+        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht_"     + style, {makePDCGJetsZnunu("HT",                style, legend_label)}, {1, d}, "", 100, 0.0,  2000.0,   true, false, label_ht,  y_axis_label));
+        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nj_"     + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24", style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nj,  y_axis_label));
+        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nb_"     + style, {makePDCGJetsZnunu("cntCSVS",           style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nb,  y_axis_label));
+        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nt_"     + style, {makePDCGJetsZnunu("nTopCandSortedCnt", style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nt,  y_axis_label));
     }
 
     if (doSearchBins)

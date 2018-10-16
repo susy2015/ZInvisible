@@ -85,6 +85,7 @@ namespace plotterFunctions
         double photonPtCut = 200.0;
         //double photonMet = -999.9;
         double metWithPhoton = -999.9;
+        double metphiWithPhoton = -999.9;
         bool passPhotonSelection = false;
         
         auto* gammaLVecGenEta           = new std::vector<TLorentzVector>(); 
@@ -194,16 +195,23 @@ namespace plotterFunctions
 
         // set met LVec
         // Pt, Eta, Phi, E
-        metLVec->SetPtEtaPhiE(met, 0.0, metphi, met);
+        //metLVec->SetPtEtaPhiE(met, 0.0, metphi, met);
+        // Pt, Eta, Phi, M
+        metLVec->SetPtEtaPhiM(met, 0.0, metphi, 0.0);
         metWithPhotonLVec = metLVec;
-        metWithPhoton = metLVec->Pt();
+        metWithPhoton    = metLVec->Pt();
+        metphiWithPhoton = metLVec->Phi();
         // pass photon selection and add to MET
-        if (gammaLVecRecoEtaPtMatched->size() == 1)
+        if (gammaLVecRecoEtaPtMatched->size() > 0)
         {
-            // Add LVecs of MET and Photon
-            *metWithPhotonLVec += (*gammaLVecRecoEtaPtMatched)[0];
-            metWithPhoton = metWithPhotonLVec->Pt();
-            passPhotonSelection = true;
+            for(int i = 0; i < gammaLVecRecoEtaPtMatched->size(); i++)
+            {
+                // Add LVecs of MET and Photon
+                *metWithPhotonLVec += (*gammaLVecRecoEtaPtMatched)[i];
+                metWithPhoton    = metWithPhotonLVec->Pt();
+                metphiWithPhoton = metWithPhotonLVec->Phi();
+                passPhotonSelection = true;
+            }
         }
         
 
@@ -243,6 +251,7 @@ namespace plotterFunctions
 
         //tr.registerDerivedVar("photonMet", photonMet);
         tr.registerDerivedVar("metWithPhoton", metWithPhoton);
+        tr.registerDerivedVar("metphiWithPhoton", metphiWithPhoton);
         tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
         tr.registerDerivedVar("passNphoton", totalPhotons->size() >= 1);
         tr.registerDerivedVar("passNloose", loosePhotons->size() >= 1);
