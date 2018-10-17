@@ -152,13 +152,13 @@ namespace plotterFunctions
         if (gammaLVecRecoEta->size() != loosePhotonID.size())     passTest2 = false;
         if (gammaLVecRecoEta->size() != mediumPhotonID.size())    passTest2 = false;
         if (gammaLVecRecoEta->size() != tightPhotonID.size())     passTest2 = false;
-        if (debug || !passTest1 || !passTest2) // print debugging statements
+        if (debug || !passTest2) // print debugging statements
         {
           printf("gammaLVecGen gammaLVecReco gammaLVecRecoEta genMatched loosePhotonID mediumPhotonID tightPhotonID: %d | %d == %d == %d %d %d %d --- %s, %s\n", \
             int(gammaLVecGen.size()), int(gammaLVecReco->size()), int(gammaLVecRecoEta->size()), int(genMatched.size()), \
             int(loosePhotonID.size()), int(mediumPhotonID.size()), int(tightPhotonID.size()), passTest1 ? "passTest1" : "failTest1", passTest2 ? "passTest2" : "failTest2");
         }
-        if (!passTest1 || !passTest2)
+        if (!passTest2)
         {
           // we should probably throw an exception here
           printf(" - ERROR in include/Gamma.h: TLorentzVector gammaLVecRecoEta for reco photons does not have the same length as one or more photon ntuple vectors.\n");

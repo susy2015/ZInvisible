@@ -10,12 +10,22 @@ from samples import SampleCollection
 import optparse 
 import subprocess
 
+# TopTagger.cfg
 mvaFileName = ""
 with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg") as meowttcfgFile:
     for line in meowttcfgFile:
         line = line.split("#")[0]
         if "modelFile" in line:
             mvaFileName = line.split("=")[1].strip().strip("\"")
+            break
+
+# TopTagger_Deep.cfg
+mvaFileName_Deep = ""
+with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg") as meowttcfgFile:
+    for line in meowttcfgFile:
+        line = line.split("#")[0]
+        if "modelFile" in line:
+            mvaFileName_Deep = line.split("=")[1].strip().strip("\"")
             break
 
 #here I hack in the tarball for GMP, this needs to be generalized to the other options 
@@ -29,7 +39,9 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}, 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg",
                       environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                       environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so", 
                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
