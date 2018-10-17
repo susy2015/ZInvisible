@@ -79,7 +79,7 @@ namespace plotterFunctions
         const auto& nt                   = tr.getVar<int>("nTopCandSortedCnt");
 
         // toggle debugging print statements
-        bool debug = true;
+        bool debug = false;
 
         //variables to be used in the analysis code
         double photonPtCut = 200.0;
@@ -112,7 +112,8 @@ namespace plotterFunctions
         
         //Select gen photons
         //extraLooseID (photon id and iso) are only for reco photons
-        for(int i = 0; i < gammaLVecGen.size(); ++i) {
+        for(int i = 0; i < gammaLVecGen.size(); ++i)
+        {
           // ECAL eta cuts
           if (PhotonFunctions::passPhotonECAL(gammaLVecGen[i]))
           {
@@ -131,7 +132,8 @@ namespace plotterFunctions
         }
 
         //Select reco photons; only eta cuts for now
-        for(int i = 0; i < gammaLVec.size(); ++i) {
+        for(int i = 0; i < gammaLVec.size(); ++i)
+        {
             gammaLVecReco->push_back(gammaLVec[i]);
           // passing ECAL barrel/endcap eta cuts
           // this needs to be done prior to any other cuts (pt, gen matched, etc)
@@ -150,7 +152,7 @@ namespace plotterFunctions
         if (gammaLVecRecoEta->size() != loosePhotonID.size())     passTest2 = false;
         if (gammaLVecRecoEta->size() != mediumPhotonID.size())    passTest2 = false;
         if (gammaLVecRecoEta->size() != tightPhotonID.size())     passTest2 = false;
-        if (debug) // print debugging statements
+        if (debug || !passTest1 || !passTest2) // print debugging statements
         {
           printf("gammaLVecGen gammaLVecReco gammaLVecRecoEta genMatched loosePhotonID mediumPhotonID tightPhotonID: %d | %d == %d == %d %d %d %d --- %s, %s\n", \
             int(gammaLVecGen.size()), int(gammaLVecReco->size()), int(gammaLVecRecoEta->size()), int(genMatched.size()), \
