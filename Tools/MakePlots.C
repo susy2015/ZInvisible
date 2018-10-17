@@ -332,7 +332,7 @@ int main(int argc, char* argv[])
     //for electrons do not use muTrigWgt (it is 0.0 for electrons)
     auto makePDSMu     = [&](const std::string& label) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
     auto makePDSElec   = [&](const std::string& label) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
-    auto makePDSPhoton = [&](const std::string& label, const std::string& cuts="") {return Plotter::DatasetSummary("GJets "+label, fileMap["GJets"], cuts, ""); };
+    auto makePDSPhoton = [&](const std::string& label, const std::string& sample="GJets") {return Plotter::DatasetSummary("GJets "+label, fileMap[sample], "passPhotonSelection;passLeptVeto;HT>200", ""); };
     
     // acceptance
     // muons
@@ -925,15 +925,18 @@ int main(int argc, char* argv[])
     
     // Znunu
     auto makePDSZnunu       = [&](const std::string& label) {return Plotter::DatasetSummary("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu"], "passLeptVeto;HT>200", ""); };
-    auto makePDCGJetsZnunu  = [&](const std::string& var, const std::string& style, const std::string& label) {return Plotter::DataCollection(style, {{var, makePDSPhoton(label, "passPhotonSelection;passLeptVeto;HT>200")}, {var, makePDSZnunu(label)}}); };
-
-    std::vector<std::vector<Plotter::DatasetSummary>> Photon_HT_stack = {
-                                                                          {makePDSPhoton("200 < HT < 400",  "passPhotonSelection;passLeptVeto;HT>200;HT<400")}, 
-                                                                          {makePDSPhoton("400 < HT < 600",  "passPhotonSelection;passLeptVeto;HT>400;HT<600")},
-                                                                          {makePDSPhoton("600 > HT",        "passPhotonSelection;passLeptVeto;HT>600")}
-                                                                        };
+    auto makePDCGJetsZnunu  = [&](const std::string& var, const std::string& style, const std::string& label) {return Plotter::DataCollection(style, {{var, makePDSPhoton(label)}, {var, makePDSZnunu(label)}}); };
 
     // Stack HT Plot
+    // GJets_HT-200To400
+    // GJets_HT-400To600
+    // GJets_HT-600ToInf
+    std::vector<std::vector<Plotter::DatasetSummary>> Photon_HT_stack = {
+                                                                          {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400")}, 
+                                                                          {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600")},
+                                                                          {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf")}
+                                                                        };
+
     std::string style_stack = "stack";
     Plotter::DataCollection dc_GJets_ht("stack", "HT",  Photon_HT_stack);
     Plotter::DataCollection dc_Znunu_ht("data",  "HT",  {makePDSZnunu("HT > 200")});
