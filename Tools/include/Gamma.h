@@ -202,16 +202,13 @@ namespace plotterFunctions
         metWithPhoton     = metLVec->Pt();
         metphiWithPhoton  = metLVec->Phi();
         // pass photon selection and add to MET
-        if (gammaLVecRecoEtaPtMatched->size() > 0)
+        if (gammaLVecRecoIso->size() == 1)
         {
-            for(int i = 0; i < gammaLVecRecoEtaPtMatched->size(); i++)
-            {
-                // Add LVecs of MET and Photon
-                *metWithPhotonLVec += (*gammaLVecRecoEtaPtMatched)[i];
-                metWithPhoton       = metWithPhotonLVec->Pt();
-                metphiWithPhoton    = metWithPhotonLVec->Phi();
-                passPhotonSelection = true;
-            }
+            // Add LVecs of MET and Photon
+            *metWithPhotonLVec += (*gammaLVecRecoIso)[0];
+            metWithPhoton       = metWithPhotonLVec->Pt();
+            metphiWithPhoton    = metWithPhotonLVec->Phi();
+            passPhotonSelection = true;
         }
         
 
