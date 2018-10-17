@@ -932,10 +932,12 @@ int main(int argc, char* argv[])
                                                                           {makePDSPhoton("400 < HT < 600",  "passPhotonSelection;passLeptVeto;HT>400;HT<600")},
                                                                           {makePDSPhoton("600 > HT",        "passPhotonSelection;passLeptVeto;HT>600")}
                                                                         };
-    std::string style_stack = "stack";
-    Plotter::DataCollection dc_photon_ht("stack", "HT",  Photon_HT_stack);
-    vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht_" + style_stack, {dc_photon_ht}, {1, 1}, "", 100, 0.0, 2000.0, true, false, label_ht, "GJets"));
 
+    // Stack HT Plot
+    std::string style_stack = "stack";
+    Plotter::DataCollection dc_GJets_ht("stack", "HT",  Photon_HT_stack);
+    Plotter::DataCollection dc_Znunu_ht("data",  "HT",  {makePDSZnunu("HT > 200")});
+    vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht_" + style_stack, {dc_GJets_ht, dc_Znunu_ht}, {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
     
     std::vector<std::string> styles = {"single", "ratio"};
     // Z#rightarrow#nu#nu
