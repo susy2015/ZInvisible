@@ -70,19 +70,24 @@ namespace plotterFunctions
         const auto& pfGammaIsoRhoCorr    = tr.getVec<data_t>("pfGammaIsoRhoCorr");
         const auto& pfChargedIsoRhoCorr  = tr.getVec<data_t>("pfChargedIsoRhoCorr");
         const auto& hadTowOverEM         = tr.getVec<data_t>("hadTowOverEM");
-        const auto& MT2                  = tr.getVar<data_t>("best_had_brJet_MT2");
+        const auto& mt2                  = tr.getVar<data_t>("best_had_brJet_MT2");
         const auto& met                  = tr.getVar<data_t>("met");
-        const auto& nJets                = tr.getVar<int>("cntNJetsPt30Eta24Zinv");
+        const auto& metphi               = tr.getVar<data_t>("metphi");
+        const auto& nj                   = tr.getVar<int>("cntNJetsPt20Eta24");
         const auto& ht                   = tr.getVar<data_t>("HT");
-        const auto& nbJets               = tr.getVar<int>("cntCSVS");
-        const auto& ntops                = tr.getVar<int>("nTopCandSortedCnt");
+        const auto& nb                   = tr.getVar<int>("cntCSVS");
+        const auto& nt                   = tr.getVar<int>("nTopCandSortedCnt");
 
         // toggle debugging print statements
-        bool debug = true;
+        bool debug = false;
 
         //variables to be used in the analysis code
         double photonPtCut = 200.0;
-        double photonMet = -999.9;
+        //double photonMet = -999.9;
+        double metWithPhoton = -999.9;
+        double metphiWithPhoton = -999.9;
+        bool passPhotonSelection = false;
+        
         auto* gammaLVecGenEta           = new std::vector<TLorentzVector>(); 
         auto* gammaLVecGenEtaPt         = new std::vector<TLorentzVector>(); 
         auto* gammaLVecGenEtaPtMatched  = new std::vector<TLorentzVector>(); 
@@ -99,23 +104,16 @@ namespace plotterFunctions
         auto* tightPhotons              = new std::vector<TLorentzVector>();
         auto* directPhotons             = new std::vector<TLorentzVector>();
         auto* totalPhotons              = new std::vector<TLorentzVector>();
+        auto* metLVec                   = new TLorentzVector();
+        auto* metWithPhotonLVec         = new TLorentzVector();
 
-        // // check vector lengths
-        // bool passed = true;
-        // if (gammaLVec.size() != genMatched.size())      passed = false;
-        // if (gammaLVec.size() != extraLooseID.size())    passed = false;
-        // if (gammaLVec.size() != loosePhotonID.size())   passed = false;
-        // if (gammaLVec.size() != mediumPhotonID.size())  passed = false;
-        // if (gammaLVec.size() != tightPhotonID.size())   passed = false;
-        // printf("gen reco genMatched extraLooseID loosePhotonID mediumPhotonID tightPhotonID: %d %d --- %d %d %d %d %d --- %s\n", \
-        //   int(gammaLVecGen.size()), int(gammaLVec.size()), int(genMatched.size()), int(extraLooseID.size()),        \
-        //   int(loosePhotonID.size()), int(mediumPhotonID.size()), int(tightPhotonID.size()), passed ? "pass" : "fail");
 
         //Pass cuts; use some variables from ntuples
         
         //Select gen photons
         //extraLooseID (photon id and iso) are only for reco photons
-        for(int i = 0; i < gammaLVecGen.size(); ++i) {
+        for(int i = 0; i < gammaLVecGen.size(); ++i)
+        {
           // ECAL eta cuts
           if (PhotonFunctions::passPhotonECAL(gammaLVecGen[i]))
           {
@@ -134,7 +132,8 @@ namespace plotterFunctions
         }
 
         //Select reco photons; only eta cuts for now
-        for(int i = 0; i < gammaLVec.size(); ++i) {
+        for(int i = 0; i < gammaLVec.size(); ++i)
+        {
             gammaLVecReco->push_back(gammaLVec[i]);
           // passing ECAL barrel/endcap eta cuts
           // this needs to be done prior to any other cuts (pt, gen matched, etc)
@@ -153,13 +152,13 @@ namespace plotterFunctions
         if (gammaLVecRecoEta->size() != loosePhotonID.size())     passTest2 = false;
         if (gammaLVecRecoEta->size() != mediumPhotonID.size())    passTest2 = false;
         if (gammaLVecRecoEta->size() != tightPhotonID.size())     passTest2 = false;
-        if (debug) // print debugging statements
+        if (debug || !passTest2) // print debugging statements
         {
           printf("gammaLVecGen gammaLVecReco gammaLVecRecoEta genMatched loosePhotonID mediumPhotonID tightPhotonID: %d | %d == %d == %d %d %d %d --- %s, %s\n", \
             int(gammaLVecGen.size()), int(gammaLVecReco->size()), int(gammaLVecRecoEta->size()), int(genMatched.size()), \
             int(loosePhotonID.size()), int(mediumPhotonID.size()), int(tightPhotonID.size()), passTest1 ? "passTest1" : "failTest1", passTest2 ? "passTest2" : "failTest2");
         }
-        if (!passTest1 || !passTest2)
+        if (!passTest2)
         {
           // we should probably throw an exception here
           printf(" - ERROR in include/Gamma.h: TLorentzVector gammaLVecRecoEta for reco photons does not have the same length as one or more photon ntuple vectors.\n");
@@ -195,9 +194,27 @@ namespace plotterFunctions
             }
           }
         }
+
+        // set met LVec
+        // Pt, Eta, Phi, E
+        //metLVec->SetPtEtaPhiE(met, 0.0, metphi, met);
+        // Pt, Eta, Phi, M
+        metLVec->SetPtEtaPhiM(met, 0.0, metphi, 0.0);
+        metWithPhotonLVec = metLVec;
+        metWithPhoton     = metLVec->Pt();
+        metphiWithPhoton  = metLVec->Phi();
+        // pass photon selection and add to MET
+        if (gammaLVecRecoIso->size() == 1)
+        {
+            // Add LVecs of MET and Photon
+            *metWithPhotonLVec += (*gammaLVecRecoIso)[0];
+            metWithPhoton       = metWithPhotonLVec->Pt();
+            metphiWithPhoton    = metWithPhotonLVec->Phi();
+            passPhotonSelection = true;
+        }
         
 
-        photonMet = met;
+        //photonMet = met;
         //Get TLorentz vector for Loose, Medium and Tight ID photon selection
         for(int i = 0; i < gammaLVecRecoEta->size(); i++){
           if ((*gammaLVecRecoEta)[i].Pt() > photonPtCut){
@@ -208,7 +225,7 @@ namespace plotterFunctions
             if(tightPhotonID[i]) tightPhotons->push_back((*gammaLVecRecoEta)[i]);
 
             //add loose photon pt to ptmiss
-            if(loosePhotonID[i]) photonMet += (*gammaLVecRecoEta)[i].Pt();
+            //if(loosePhotonID[i]) photonMet += (*gammaLVecRecoEta)[i].Pt();
           } 
         }
 
@@ -231,7 +248,10 @@ namespace plotterFunctions
           }
         }
 
-        tr.registerDerivedVar("photonMet", photonMet);
+        //tr.registerDerivedVar("photonMet", photonMet);
+        tr.registerDerivedVar("metWithPhoton", metWithPhoton);
+        tr.registerDerivedVar("metphiWithPhoton", metphiWithPhoton);
+        tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
         tr.registerDerivedVar("passNphoton", totalPhotons->size() >= 1);
         tr.registerDerivedVar("passNloose", loosePhotons->size() >= 1);
         tr.registerDerivedVar("passNmedium", mediumPhotons->size() >= 1);

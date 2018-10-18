@@ -10,12 +10,22 @@ from samples import SampleCollection
 import optparse 
 import subprocess
 
+# TopTagger.cfg
 mvaFileName = ""
 with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg") as meowttcfgFile:
     for line in meowttcfgFile:
         line = line.split("#")[0]
         if "modelFile" in line:
             mvaFileName = line.split("=")[1].strip().strip("\"")
+            break
+
+# TopTagger_Deep.cfg
+mvaFileName_Deep = ""
+with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg") as meowttcfgFile:
+    for line in meowttcfgFile:
+        line = line.split("#")[0]
+        if "modelFile" in line:
+            mvaFileName_Deep = line.split("=")[1].strip().strip("\"")
             break
 
 #here I hack in the tarball for GMP, this needs to be generalized to the other options 
@@ -29,7 +39,9 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}, 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg",
                       environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                       environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so", 
                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
@@ -204,7 +216,7 @@ x509userproxy = $ENV(X509_USER_PROXY)
 parser = optparse.OptionParser("usage: %prog [options]\n")
 
 parser.add_option ('-n',  dest='numfile',               type='int',          default = 5,     help="number of files per job")
-parser.add_option ('-d',  dest='datasets',              type='string',       default = '',    help="List of datasets 'ZJetsToNuNu,DYJetsToLL'")
+parser.add_option ('-d',  dest='datasets',              type='string',       default = '',    help="List of datasets 'ZJetsToNuNu,GJets,DYJetsToLL'")
 parser.add_option ('-l',  dest='dataCollections',       action='store_true', default = False, help="List all datacollections")
 parser.add_option ('-L',  dest='dataCollectionslong',   action='store_true', default = False, help="List all datacollections and sub collections")
 parser.add_option ('-r',  dest='refLumi',               type='string',       default = None,  help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")

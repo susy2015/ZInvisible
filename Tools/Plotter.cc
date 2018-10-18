@@ -28,21 +28,21 @@ const int colors[] = {
 const int NCOLORS = sizeof(colors)/sizeof(int);
 
 const int stackColors[] = {
-    kAzure+2,
-    kOrange+2,
-    kSpring-5,
-    kMagenta-2,
-    kAzure-4,
-    kTeal-7,
-    kRed-7,
-    kAzure,
-    kGreen + 2,
+    kAzure   + 2,
+    kOrange  - 3,
+    kSpring  - 5,
+    kMagenta - 2,
+    kAzure   - 4,
+    kTeal    - 7,
+    kRed     - 7,
+    kAzure   + 0,
+    kGreen   + 2,
     kMagenta - 1,
-    kYellow + 4,
-    kRed + 1,
-    kAzure - 4,
-    kCyan + 2,
-    kOrange + 7
+    kYellow  + 4,
+    kRed     + 1,
+    kAzure   - 4,
+    kCyan    + 2,
+    kOrange  + 7
 };
 const int NSTACKCOLORS = sizeof(stackColors) / sizeof(int);
 
@@ -994,7 +994,7 @@ void Plotter::plot()
         else
         {
             double locMin = 0.0;
-            double ratioMin = 0.5;
+            double ratioMin = 0.0;
             double legMin = (1.2*max - locMin) * (leg->GetY1() - gPad->GetBottomMargin()) / ((1 - gPad->GetTopMargin()) - gPad->GetBottomMargin());
             if(lmax > legMin)
             {
