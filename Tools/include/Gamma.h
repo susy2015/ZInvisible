@@ -111,7 +111,6 @@ namespace plotterFunctions
         //Pass cuts; use some variables from ntuples
         
         //Select gen photons
-        //extraLooseID (photon id and iso) are only for reco photons
         for(int i = 0; i < gammaLVecGen.size(); ++i)
         {
           // ECAL eta cuts
@@ -212,7 +211,8 @@ namespace plotterFunctions
             metphiWithPhoton    = metWithPhotonLVec->Phi();
             passPhotonSelection = true;
         }
-        
+
+// Beginning of section not used (as of October 19, 2018)        
 
         //photonMet = met;
         //Get TLorentz vector for Loose, Medium and Tight ID photon selection
@@ -247,6 +247,8 @@ namespace plotterFunctions
             }
           }
         }
+
+// End of section not used (as of October 19, 2018)        
 
         //tr.registerDerivedVar("photonMet", photonMet);
         tr.registerDerivedVar("metWithPhoton", metWithPhoton);
