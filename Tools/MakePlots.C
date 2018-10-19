@@ -151,8 +151,8 @@ int main(int argc, char* argv[])
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
 
     const double zAcc = 1.0;
-    //    const double zAcc = 0.5954;
-    //    const double zAcc = 0.855;
+    // const double zAcc = 0.5954;
+    // const double zAcc = 0.855;
     const double znunu_mumu_ratio = 5.942;
     const double znunu_ee_ratio   = 5.942;
 
@@ -375,9 +375,6 @@ int main(int argc, char* argv[])
     auto makePDCElecIso_ratio  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso over reco")}, {"genMatchElecInAcc("+var+")", makePDSElec("e iso over reco")}}); };
     auto makePDCMuIso_ratio    = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}}); };
     // photons
-    // only passing pt cut: ratio = gammaLVecGenPt / gammaLVecGen
-    //auto makePDCPhotonPtCut_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenEtaPt("+var+")", makePDSPhoton("genEtaPt")},                {"gammaLVecGenPt("+var+")", makePDSPhoton("genPt")}}); };
-    //auto makePDCPhotonPtCut_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVecGenEtaPt("+var+")", makePDSPhoton("genEtaPt over genPt")},  {"gammaLVecGenPt("+var+")", makePDSPhoton("genEtaPt over genPt")}}); };
     // Tag must be Gen or Reco
     // acceptance = gammaLVecTagEtaPt / gammaLVecTag (acc / tag)
     auto makePDCPhotonAcc_single   = [&](const std::string& tag, const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVec"+tag+"Eta("+var+")", makePDSPhoton(tag+"Eta")},           {"gammaLVec"+tag+"("+var+")", makePDSPhoton(tag)}}); };
@@ -466,11 +463,7 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcwMC_ht(            "stack",  "HTZinv", stackw_MC);
     Plotter::DataCollection dcwwMC_ht(           "stack",  "HTZinv", stackww_MC);
     // gen mu pt
-    //Plotter::DataCollection dcData_SingleMuon_genMuPt("data",  "genMuPt", {dsData_SingleMuon});
-    //Plotter::DataCollection dcMC_genMuPt("stack",   "genMuPt", stack_MC);
     // gen mu eta
-    //Plotter::DataCollection dcData_SingleMuon_genMuEta("data",  "genMuEta", {dsData_SingleMuon});
-    //Plotter::DataCollection dcMC_genMuEta("stack",   "genMuEta", stack_MC);
     // mu1pt                                                                                                                                                                         
     Plotter::DataCollection dcData_SingleMuon_mu1pt("data",   "cutMuPt1", {dsData_SingleMuon});
     Plotter::DataCollection dcMC_mu1pt(             "stack",  "cutMuPt1", stack_MC);
@@ -635,18 +628,6 @@ int main(int argc, char* argv[])
     
     std::vector<plotStruct> plotParamsPhoton;
     
-    // pt cut
-    //plotParamsPhoton.push_back({"Photon", "PtCut", "Pt",     makePDCPhotonPtCut_single("pt","single"),  "single", nBins, minPt, maxPt, true, false, label_PhotonPt, label_ptcut_single, true});
-    //plotParamsPhoton.push_back({"Photon", "PtCut", "Energy", makePDCPhotonPtCut_single("E","single"),   "single", nBins, minEnergy, maxEnergy, true, false, label_PhotonEnergy, label_ptcut_single, true});
-    //plotParamsPhoton.push_back({"Photon", "PtCut", "Mass",   makePDCPhotonPtCut_single("M","single"),   "single", nBins, minMassPhoton, maxMassPhoton, false, false, label_PhotonMass, label_ptcut_single, true});
-    //plotParamsPhoton.push_back({"Photon", "PtCut", "Eta",    makePDCPhotonPtCut_single("eta","single"), "single", nBins, minEta, maxEta, false, false, label_PhotonEta, label_ptcut_single, true});
-    //plotParamsPhoton.push_back({"Photon", "PtCut", "Phi",    makePDCPhotonPtCut_single("phi","single"), "single", nBins, minPhi, maxPhi, false, false, label_PhotonPhi, label_ptcut_single, true});
-    //plotParamsPhoton.push_back({"Photon", "PtCut", "Pt",     makePDCPhotonPtCut_ratio("pt","ratio"),    "ratio",  nBins, minPt, maxPt, false, false, label_PhotonPt, label_ptcut_ratio, true});
-    //plotParamsPhoton.push_back({"Photon", "PtCut", "Energy", makePDCPhotonPtCut_ratio("E","ratio"),     "ratio",  nBins, minEnergy, maxEnergy, false, false, label_PhotonEnergy, label_ptcut_ratio, true});
-    //plotParamsPhoton.push_back({"Photon", "PtCut", "Mass",   makePDCPhotonPtCut_ratio("M","ratio"),     "ratio",  nBins, minMassPhoton, maxMassPhoton, false, false, label_PhotonMass, label_ptcut_ratio, true});
-    //plotParamsPhoton.push_back({"Photon", "PtCut", "Eta",    makePDCPhotonPtCut_ratio("eta","ratio"),   "ratio",  nBins, minEta, maxEta, false, false, label_PhotonEta, label_ptcut_ratio, true});
-    //plotParamsPhoton.push_back({"Photon", "PtCut", "Phi",    makePDCPhotonPtCut_ratio("phi","ratio"),   "ratio",  nBins, minPhi, maxPhi, false, false, label_PhotonPhi, label_ptcut_ratio, true});
-
     // Tag must be Gen or Reco
     std::vector<std::string> tags = {"Gen", "Reco"};
     for (std::string tag : tags)
@@ -695,17 +676,6 @@ int main(int argc, char* argv[])
         // loop over electron cut levels
         for(std::pair<std::string,std::string>& cut : cutlevels_electrons)
         {
-            //individual plots
-            //vh.push_back(PHS("MC_ngenElec_"                        +cut.first,  {dcMC_ngenElec},                                   {1, 1}, cut.second, 20, 0, 20,   true, false, "number of electrons",  "Events"));
-            //vh.push_back(PHS("MC_ngenElecInAcc_"                   +cut.first,  {dcMC_ngenElecInAcc},                              {1, 1}, cut.second, 20, 0, 20,   true, false, "number of electrons",  "Events"));
-            //vh.push_back(PHS("MC_ngenMatchElecInAcc_"              +cut.first,  {dcMC_ngenMatchElecInAcc},                         {1, 1}, cut.second, 20, 0, 20,   true, false, "number of electrons",  "Events"));
-            //vh.push_back(PHS("MC_genElecPt_"                       +cut.first,  {dcMC_genElecPt},                                  {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_Elecpt,  "Events"));
-            //vh.push_back(PHS("MC_genElecInAccPt_"                  +cut.first,  {dcMC_genElecInAccPt},                             {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_Elecpt,  "Events"));
-            //vh.push_back(PHS("MC_genMatchElecInAccPt_"             +cut.first,  {dcMC_genMatchElecInAccPt},                        {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_Elecpt,  "Events"));
-            //vh.push_back(PHS("MC_genElecEta_"                      +cut.first,  {dcMC_genElecEta},                                 {1, 1}, cut.second, 40, minEta, maxEta, true, false, label_Eleceta, "Events"));
-            //vh.push_back(PHS("MC_genElecInAccEta_"                 +cut.first,  {dcMC_genElecInAccEta},                            {1, 1}, cut.second, 40, minEta, maxEta, true, false, label_Eleceta, "Events"));
-            //vh.push_back(PHS("MC_genMatchElecInAccEta_"            +cut.first,  {dcMC_genMatchElecInAccEta},                       {1, 1}, cut.second, 40, minEta, maxEta, true, false, label_Eleceta, "Events"));
-
             //ratios 
             for (plotStruct& p : plotParamsElec)
             {
@@ -715,46 +685,11 @@ int main(int argc, char* argv[])
                     vh.push_back(PHS("MC_"+p.particle+p.measurement+p.variable+"_"+p.style+"_"+cut.first, {p.dataCollection}, {1, 1}, cut.second, p.nbins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel, p.ratioBool));
             }
             
-            // // Acceptance
-            // // loop over structs
-            // vh.push_back(PHS("MC_ElecAccPt_ratio_"            +cut.first,  {makePDCElecAcc("pt","ratio")},                {1, 1}, cut.second, 60, minPt, maxPt, false, false, label_Elecpt, label_Acc));
-            // vh.push_back(PHS("MC_ElecAccEnergy_ratio_"        +cut.first,  {makePDCElecAcc("E","ratio")},                 {1, 1}, cut.second, 60, minEnergy, maxEnergy, false, false, label_Elecenergy, label_Acc));
-            // vh.push_back(PHS("MC_ElecAccMass_ratio_"          +cut.first,  {makePDCElecAcc("M","ratio")},                 {1, 1}, cut.second, 60, minMass, maxMass, false, false, label_Elecmass, label_Acc));
-            // vh.push_back(PHS("MC_ElecAccEta_ratio_"           +cut.first,  {makePDCElecAcc("eta","ratio")},               {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Eleceta, label_Acc));
-            // vh.push_back(PHS("MC_ElecAccPhi_ratio_"           +cut.first,  {makePDCElecAcc("phi","ratio")},               {1, 1}, cut.second, 40, minPhi, maxPhi, false, false, label_Elecphi, label_Acc));
-            // vh.push_back(PHS("MC_ElecAccPt_single_"           +cut.first,  {makePDCElecAcc("pt","single")},               {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_Elecpt, "Events"));
-            // vh.push_back(PHS("MC_ElecAccEnergy_single_"       +cut.first,  {makePDCElecAcc("E","single")},                {1, 1}, cut.second, 60, minEnergy, maxEnergy, true, false, label_Elecenergy, "Events"));
-            // vh.push_back(PHS("MC_ElecAccMass_single_"         +cut.first,  {makePDCElecAcc("M","single")},                {1, 1}, cut.second, 60, minMass, maxMass, false, false, label_Elecmass, "Events"));
-            // vh.push_back(PHS("MC_ElecAccEta_single_"          +cut.first,  {makePDCElecAcc("eta","single")},              {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Eleceta, "Events"));
-            // vh.push_back(PHS("MC_ElecAccPhi_single_"          +cut.first,  {makePDCElecAcc("phi","single")},              {1, 1}, cut.second, 40, minPhi, maxPhi, false, false, label_Elecphi, "Events"));
-            // // Reco Efficiency
-            // vh.push_back(PHS("MC_ngenElecEff_original_"       +cut.first,  {dcMC_ngenMatchElecInAcc, dcMC_ngenElecInAcc},     {1, 2}, cut.second, 20, 0, 20, true, false, "number of electrons", "Events"));
-            // vh.push_back(PHS("MC_genElecPtEff_original_"      +cut.first,  {dcMC_genMatchElecInAccPt, dcMC_genElecInAccPt},   {1, 2}, cut.second, 60, minPt, maxPt, true, false, label_Elecpt, "Events"));
-            // vh.push_back(PHS("MC_genElecEtaEff_original_"     +cut.first,  {dcMC_genMatchElecInAccEta, dcMC_genElecInAccEta}, {1, 2}, cut.second, 40, minEta, maxEta, true, false, label_Eleceta, "Events"));
-            // vh.push_back(PHS("MC_ElecRecoEffPt_ratio_"        +cut.first,  {makePDCElecReco("pt","ratio")},                {1, 1}, cut.second, 60, minPt, maxPt, false, false, label_Elecpt, label_Reco));
-            // vh.push_back(PHS("MC_ElecRecoEffEta_ratio_"       +cut.first,  {makePDCElecReco("eta","ratio")},               {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Eleceta, label_Reco));
-            // vh.push_back(PHS("MC_ElecRecoEffPt_single_"       +cut.first,  {makePDCElecReco("pt","single")},               {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_Elecpt, "Events"));
-            // vh.push_back(PHS("MC_ElecRecoEffEta_single_"      +cut.first,  {makePDCElecReco("eta","single")},              {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Eleceta, "Events"));
-            // // Iso Efficiency
-            // vh.push_back(PHS("MC_ElecIsoEffPt_ratio_"         +cut.first,  {makePDCElecIso("pt","ratio")},                {1, 1}, cut.second, 60, minPt, maxPt, false, false, label_Elecpt, label_Iso));
-            // vh.push_back(PHS("MC_ElecIsoEffEta_ratio_"        +cut.first,  {makePDCElecIso("eta","ratio")},               {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Eleceta, label_Iso));
-            // vh.push_back(PHS("MC_ElecIsoEffPt_single_"        +cut.first,  {makePDCElecIso("pt","single")},               {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_Elecpt, "Events"));
-            // vh.push_back(PHS("MC_ElecIsoEffEta_single_"       +cut.first,  {makePDCElecIso("eta","single")},              {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Eleceta, "Events"));
         }
 
         // loop over muon cut levels
         for(std::pair<std::string,std::string>& cut : cutlevels_muon)
         {
-            //individual plots 
-            //vh.push_back(PHS("MC_ngenMu_"                        +cut.first,  {dcMC_ngenMu},                                   {1, 1}, cut.second, 20, 0, 20,   true, false, "number of muons",  "Events"));
-            //vh.push_back(PHS("MC_ngenMuInAcc_"                   +cut.first,  {dcMC_ngenMuInAcc},                              {1, 1}, cut.second, 20, 0, 20,   true, false, "number of muons",  "Events"));
-            //vh.push_back(PHS("MC_ngenMatchMuInAcc_"              +cut.first,  {dcMC_ngenMatchMuInAcc},                         {1, 1}, cut.second, 20, 0, 20,   true, false, "number of muons",  "Events"));
-            //vh.push_back(PHS("MC_genMuPt_"                       +cut.first,  {dcMC_genMuPt},                                  {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_Mupt,  "Events"));
-            //vh.push_back(PHS("MC_genMuInAccPt_"                  +cut.first,  {dcMC_genMuInAccPt},                             {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_Mupt,  "Events"));
-            //vh.push_back(PHS("MC_genMatchMuInAccPt_"             +cut.first,  {dcMC_genMatchMuInAccPt},                        {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_Mupt,  "Events"));
-            //vh.push_back(PHS("MC_genMuEta_"                      +cut.first,  {dcMC_genMuEta},                                 {1, 1}, cut.second, 40, minEta, maxEta, true, false, label_Mueta, "Events"));
-            //vh.push_back(PHS("MC_genMuInAccEta_"                 +cut.first,  {dcMC_genMuInAccEta},                            {1, 1}, cut.second, 40, minEta, maxEta, true, false, label_Mueta, "Events"));
-            //vh.push_back(PHS("MC_genMatchMuInAccEta_"            +cut.first,  {dcMC_genMatchMuInAccEta},                       {1, 1}, cut.second, 40, minEta, maxEta, true, false, label_Mueta, "Events"));
             
             //ratios 
             for (plotStruct& p : plotParamsMu)
@@ -764,33 +699,6 @@ int main(int argc, char* argv[])
                 else if (p.style.compare("ratio") == 0)
                     vh.push_back(PHS("MC_"+p.particle+p.measurement+p.variable+"_"+p.style+"_"+cut.first, {p.dataCollection}, {1, 1}, cut.second, p.nbins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel, p.ratioBool));
             }
-            
-            //vh.push_back(PHS("MC_ngenMuEff_original_"                   +cut.first,  {dcMC_ngenMatchMuInAcc, dcMC_ngenMuInAcc},       {1, 2}, cut.second, 20, 0, 20, true, false,  "number of muons",  "Events"));
-            //vh.push_back(PHS("MC_genMuPtEff_origianl_"                  +cut.first,  {dcMC_genMatchMuInAccPt, dcMC_genMuInAccPt},     {1, 2}, cut.second, 60, minPt, maxPt, true, false, label_Mupt,  "Events"));
-            //vh.push_back(PHS("MC_genMuEtaEff_original_"                 +cut.first,  {dcMC_genMatchMuInAccEta, dcMC_genMuInAccEta},   {1, 2}, cut.second, 40, minEta, maxEta, true, false, label_Mueta, "Events"));
-            //vh.push_back(PHS("MC_genMuPtEff_ratio_"                     +cut.first,  {makePDCMuReco("pt","ratio")},    {1, 1}, cut.second, 60, minPt, maxPt, false, false, label_Mupt,  "Events"));
-            //vh.push_back(PHS("MC_genMuEtaEff_ratio_"                    +cut.first,  {makePDCMuReco("eta","ratio")},   {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Mueta, "Events"));
-            //vh.push_back(PHS("MC_genMuPtEff_single_"                    +cut.first,  {makePDCMuReco("pt","single")},    {1, 1}, cut.second, 60, minPt, maxPt, false, false, label_Mupt,  "Events"));
-            //vh.push_back(PHS("MC_genMuEtaEff_single_"                   +cut.first,  {makePDCMuReco("eta","single")},   {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Mueta, "Events"));
-            
-            // // Acceptance
-            // vh.push_back(PHS("MC_MuAccPt_ratio_"            +cut.first,  {makePDCMuAcc("pt","ratio")},                {1, 1}, cut.second, 60, minPt, maxPt, false, false, label_Mupt, label_Acc));
-            // vh.push_back(PHS("MC_MuAccEta_ratio_"           +cut.first,  {makePDCMuAcc("eta","ratio")},               {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Mueta, label_Acc));
-            // vh.push_back(PHS("MC_MuAccPt_single_"           +cut.first,  {makePDCMuAcc("pt","single")},               {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_Mupt, "Events"));
-            // vh.push_back(PHS("MC_MuAccEta_single_"          +cut.first,  {makePDCMuAcc("eta","single")},              {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Mueta, "Events"));
-            // // Reco Efficiency
-            // vh.push_back(PHS("MC_ngenMuEff_original_"       +cut.first,  {dcMC_ngenMatchMuInAcc, dcMC_ngenMuInAcc},     {1, 2}, cut.second, 20, 0, 20, true, false,  "number of muons", "Events"));
-            // vh.push_back(PHS("MC_genMuPtEff_original_"      +cut.first,  {dcMC_genMatchMuInAccPt, dcMC_genMuInAccPt},   {1, 2}, cut.second, 60, minPt, maxPt, true, false, label_Mupt, "Events"));
-            // vh.push_back(PHS("MC_genMuEtaEff_original_"     +cut.first,  {dcMC_genMatchMuInAccEta, dcMC_genMuInAccEta}, {1, 2}, cut.second, 40, minEta, maxEta, true, false, label_Mueta, "Events"));
-            // vh.push_back(PHS("MC_MuRecoEffPt_ratio_"        +cut.first,  {makePDCMuReco("pt","ratio")},                {1, 1}, cut.second, 60, minPt, maxPt, false, false, label_Mupt, label_Reco));
-            // vh.push_back(PHS("MC_MuRecoEffEta_ratio_"       +cut.first,  {makePDCMuReco("eta","ratio")},               {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Mueta, label_Reco));
-            // vh.push_back(PHS("MC_MuRecoEffPt_single_"       +cut.first,  {makePDCMuReco("pt","single")},               {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_Mupt, "Events"));
-            // vh.push_back(PHS("MC_MuRecoEffEta_single_"      +cut.first,  {makePDCMuReco("eta","single")},              {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Mueta, "Events"));
-            // // Iso Efficiency
-            // vh.push_back(PHS("MC_MuIsoEffPt_ratio_"         +cut.first,  {makePDCMuIso("pt","ratio")},                {1, 1}, cut.second, 60, minPt, maxPt, false, false, label_Mupt, label_Iso));
-            // vh.push_back(PHS("MC_MuIsoEffEta_ratio_"        +cut.first,  {makePDCMuIso("eta","ratio")},               {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Mueta, label_Iso));
-            // vh.push_back(PHS("MC_MuIsoEffPt_single_"        +cut.first,  {makePDCMuIso("pt","single")},               {1, 1}, cut.second, 60, minPt, maxPt, true, false, label_Mupt, "Events"));
-            // vh.push_back(PHS("MC_MuIsoEffEta_single_"       +cut.first,  {makePDCMuIso("eta","single")},              {1, 1}, cut.second, 40, minEta, maxEta, false, false, label_Mueta, "Events"));
             
             //Z things (DY)
             // vh.push_back(PHS("DataMC_DY_gen_pt_"                 +cut.first,  {dcData_DY_gen_pt, dcMC_DY_gen_pt},              {1, 2}, cut.second, 60, minPt, maxPt, true, false,   "gen Z Pt",   "Events"));
@@ -878,25 +786,6 @@ int main(int argc, char* argv[])
         }
         
             
-        // // photons: promptPhotons
-        // //vh.push_back(PHS("MC_ngenPhotonEff_"                     +cut.first,  {},       {1, 2}, cut.second, 20, 0, 20, true, false,  "number of photon",  "Events"));
-        // //vh.push_back(PHS("MC_genPhotonPtEff",   {dcMC_matchedPhotonPt, dcMC_genPhotonPt},     {1, 2}, "", 60, minPt, maxPt, true, false, label_PhotonPt,  "Events"));
-        // //vh.push_back(PHS("MC_genPhotonEtaEff",  {dcMC_matchedPhotonEta, dcMC_genPhotonEta},   {1, 2}, "", 40, minEta, maxEta,   true, false, label_PhotonEta, "Events"));
-        // // Acceptance: use makePDCPhotonAcc
-        // vh.push_back(PHS("MC_genPhotonPtAcc_ratio",    {makePDCPhotonAcc("pt","ratio")},     {1, 1}, "", 60, minPt,  maxPt,  false, false, label_PhotonPt,  label_Reco));
-        // vh.push_back(PHS("MC_genPhotonEtaAcc_ratio",   {makePDCPhotonAcc("eta","ratio")},    {1, 1}, "", 40, minEta, maxEta, false, false, label_PhotonEta, label_Reco));
-        // vh.push_back(PHS("MC_genPhotonPtAcc_single",   {makePDCPhotonAcc("pt","single")},    {1, 1}, "", 60, minPt,  maxPt,  true,  false, label_PhotonPt,  "Events"));
-        // vh.push_back(PHS("MC_genPhotonEtaAcc_single",  {makePDCPhotonAcc("eta","single")},   {1, 1}, "", 40, minEta, maxEta, true,  false, label_PhotonEta, "Events"));
-        // // Reco Efficiency
-        // vh.push_back(PHS("MC_genPhotonPtRecoEff_ratio",    {makePDCPhotonReco("pt","ratio")},     {1, 1}, "", 60, minPt, maxPt, false, false, label_PhotonPt,  label_Reco));
-        // vh.push_back(PHS("MC_genPhotonEtaRecoEff_ratio",   {makePDCPhotonReco("eta","ratio")},    {1, 1}, "", 40, minEta, maxEta, false, false, label_PhotonEta, label_Reco));
-        // vh.push_back(PHS("MC_genPhotonPtRecoEff_single",   {makePDCPhotonReco("pt","single")},    {1, 1}, "", 60, minPt, maxPt, true, false, label_PhotonPt, "Events"));
-        // vh.push_back(PHS("MC_genPhotonEtaRecoEff_single",  {makePDCPhotonReco("eta","single")},   {1, 1}, "", 40, minEta, maxEta, false, false, label_PhotonEta, "Events"));
-        // // Iso Efficiency
-        // vh.push_back(PHS("MC_genPhotonPtIsoEff_ratio",    {makePDCPhotonIso("pt","ratio")},     {1, 1}, "", 60, minPt, maxPt, false, false, label_PhotonPt,  label_Iso));
-        // vh.push_back(PHS("MC_genPhotonEtaIsoEff_ratio",   {makePDCPhotonIso("eta","ratio")},    {1, 1}, "", 40, minEta, maxEta, false, false, label_PhotonEta, label_Iso));
-        // vh.push_back(PHS("MC_genPhotonPtIsoEff_single",   {makePDCPhotonIso("pt","single")},    {1, 1}, "", 60, minPt, maxPt, true, false, label_PhotonPt, "Events"));
-        // vh.push_back(PHS("MC_genPhotonEtaIsoEff_single",  {makePDCPhotonIso("eta","single")},   {1, 1}, "", 40, minEta, maxEta, false, false, label_PhotonEta, "Events"));
     }
 
     //tops
