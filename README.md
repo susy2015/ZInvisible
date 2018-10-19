@@ -42,16 +42,15 @@ The ntuples used in our analysis are being changed from doubles to floats. At th
 
 
 ### SusyAnaTools
-Checkout the branch CastTopTaggerInputsAsDoubles.
+Checkout the master branch.
 ```
 cd $CMSSW_BASE/src/SusyAnaTools/Tools
-git fetch origin
-git checkout CastTopTaggerInputsAsDoubles
+git branch -v
 ```
 
 ### TopTagger
 
-Follow the TopTagger instructions for Standalone (edm free) install instructions within CMSSW [here](https://github.com/susy2015/TopTagger/tree/master/TopTagger#standalone-edm-free-install-instructions-within-cmssw), but exclude the commands you have already done (don't repeat CMSSW setup and cloning TopTagger repository).
+Checkout the master branch of the TopTagger. Follow the TopTagger instructions for Standalone (edm free) install instructions within CMSSW [here](https://github.com/susy2015/TopTagger/tree/master/TopTagger#standalone-edm-free-install-instructions-within-cmssw), but exclude the commands you have already done (don't repeat CMSSW setup and cloning TopTagger repository).
 ```
 cd $CMSSW_BASE/src/TopTagger/TopTagger/test
 ./configure
