@@ -112,6 +112,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
     blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
 
+
     weights              = new plotterFunctions::GenerateWeight;
     njWeight             = new plotterFunctions::NJetWeight;
     lepInfo              = new plotterFunctions::LepInfo;
@@ -162,29 +163,30 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 }
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {
-    if(myBLV) delete myBLV;
-    if(blvZinv) delete blvZinv;
+    if(myBLV)           delete myBLV;
+    if(blvZinv)         delete blvZinv;
     //if(blvZinv1b) delete blvZinv1b;
     //if(blvZinv2b) delete blvZinv2b;
     //if(blvZinv3b) delete blvZinv3b;
-    if(blvZinvJEUUp) delete blvZinvJEUUp;
-    if(blvZinvJEUDn) delete blvZinvJEUDn;
-    if(blvZinvMEUUp) delete blvZinvMEUUp;
-    if(blvZinvMEUDn) delete blvZinvMEUDn;
-    if(weights) delete weights;
-    if(njWeight) delete njWeight;
-    if(lepInfo) delete lepInfo;
+    if(blvZinvJEUUp)    delete blvZinvJEUUp;
+    if(blvZinvJEUDn)    delete blvZinvJEUDn;
+    if(blvZinvMEUUp)    delete blvZinvMEUUp;
+    if(blvZinvMEUDn)    delete blvZinvMEUDn;
+    if(weights)         delete weights;
+    if(njWeight)        delete njWeight;
+    if(lepInfo)         delete lepInfo;
     if(fakebtagvectors) delete fakebtagvectors;
-    if(getSearchBin) delete getSearchBin;
-    if(triggerInfo) delete triggerInfo;
+    if(getSearchBin)    delete getSearchBin;
+    if(triggerInfo)     delete triggerInfo;
     if(prepareMiniTupleVars) delete prepareMiniTupleVars;
-    if(myPDFUnc) delete myPDFUnc;
-    if(systematicPrep) delete systematicPrep;
-    if(systematicCalc) delete systematicCalc;
-    if(bTagCorrector) delete bTagCorrector;
-    if(ISRcorrector) delete ISRcorrector;
-    if(pileup)       delete pileup;
-    if(gamma) delete gamma;
+    if(myPDFUnc)        delete myPDFUnc;
+    if(systematicPrep)  delete systematicPrep;
+    if(systematicCalc)  delete systematicCalc;
+    if(bTagCorrector)   delete bTagCorrector;
+    if(ISRcorrector)    delete ISRcorrector;
+    if(pileup)          delete pileup;
+    if(gamma)           delete gamma;
+    if(cleanedJets)     delete cleanedJets;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -219,6 +221,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*ISRcorrector);
     tr.registerFunction(*pileup);
     tr.registerFunction(*gamma);
+    tr.registerFunction(*cleanedJets);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)

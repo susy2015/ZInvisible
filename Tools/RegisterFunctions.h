@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include "SusyAnaTools/Tools/CleanedJets.h"
 
 class NTupleReader;
 class BaselineVessel;
@@ -71,6 +72,7 @@ private:
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
     plotterFunctions::SystematicPrep *systematicPrep;
     plotterFunctions::SystematicCalc *systematicCalc;
+    CleanedJets *cleanedJets;
     plotterFunctions::Gamma *gamma; //Andres
     PDFUncertainty *myPDFUnc;
     BTagCorrector *bTagCorrector;
