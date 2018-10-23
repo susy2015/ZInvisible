@@ -162,6 +162,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 }
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {
+    if(cleanedJets)     delete cleanedJets;
     if(myBLV)           delete myBLV;
     if(blvZinv)         delete blvZinv;
     //if(blvZinv1b) delete blvZinv1b;
@@ -185,11 +186,14 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(ISRcorrector)    delete ISRcorrector;
     if(pileup)          delete pileup;
     if(gamma)           delete gamma;
-    if(cleanedJets)     delete cleanedJets;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
 {
+    
+    // order matters
+    // do this first
+    tr.registerFunction(*cleanedJets);
     //Make some global "constants" here
 
     //register functions with NTupleReader
@@ -220,7 +224,6 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*ISRcorrector);
     tr.registerFunction(*pileup);
     tr.registerFunction(*gamma);
-    tr.registerFunction(*cleanedJets);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
