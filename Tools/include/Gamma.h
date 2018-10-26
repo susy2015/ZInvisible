@@ -251,9 +251,9 @@ namespace plotterFunctions
 // End of section not used (as of October 19, 2018)        
 
         //tr.registerDerivedVar("photonMet", photonMet);
-        tr.registerDerivedVar("metWithPhoton", metWithPhoton);
-        tr.registerDerivedVar("metphiWithPhoton", metphiWithPhoton);
-        tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
+        //tr.registerDerivedVar("metWithPhoton", metWithPhoton);
+        //tr.registerDerivedVar("metphiWithPhoton", metphiWithPhoton);
+        //tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
         tr.registerDerivedVar("passNphoton", totalPhotons->size() >= 1);
         tr.registerDerivedVar("passNloose", loosePhotons->size() >= 1);
         tr.registerDerivedVar("passNmedium", mediumPhotons->size() >= 1);
