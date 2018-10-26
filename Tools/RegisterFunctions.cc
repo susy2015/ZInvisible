@@ -193,6 +193,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     
     // order matters
     // do this first
+    tr.registerFunction(*gamma);
     tr.registerFunction(*cleanedJets);
     //Make some global "constants" here
 
@@ -223,7 +224,6 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*ak8DrMatch);
     tr.registerFunction(*ISRcorrector);
     tr.registerFunction(*pileup);
-    tr.registerFunction(*gamma);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
