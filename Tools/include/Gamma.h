@@ -57,6 +57,7 @@ namespace plotterFunctions
     private:
 
       void generateGamma(NTupleReader& tr) {
+        //std::cout << "Running Gamma.h" << std::endl;
 
         const auto& gammaLVec            = tr.getVec<TLorentzVector>("gammaLVec");     // reco photon
         const auto& gammaLVecGen         = tr.getVec<TLorentzVector>("gammaLVecGen");  // gen photon

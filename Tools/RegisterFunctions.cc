@@ -101,6 +101,8 @@ void activateBranches(std::set<std::string>& activeBranches)
 
 RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra) : RegisterFunctions()
 {            
+    // Important: create objects!!
+    
     //AnaFunctions::prepareTopTagger();
     myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
     blvZinv   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
@@ -113,6 +115,8 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
 
 
+    cleanedJets          = new CleanedJets;
+    gamma                = new plotterFunctions::Gamma;
     weights              = new plotterFunctions::GenerateWeight;
     njWeight             = new plotterFunctions::NJetWeight;
     lepInfo              = new plotterFunctions::LepInfo;
