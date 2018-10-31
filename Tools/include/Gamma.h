@@ -74,12 +74,6 @@ namespace plotterFunctions
         const auto& met                  = tr.getVar<data_t>("met");
         const auto& metphi               = tr.getVar<data_t>("metphi");
 
-        // these are calculated in baseline
-        //const auto& mt2                  = tr.getVar<data_t>("best_had_brJet_MT2");
-        //const auto& nj                   = tr.getVar<int>("cntNJetsPt20Eta24");
-        //const auto& ht                   = tr.getVar<data_t>("HT");
-        //const auto& nb                   = tr.getVar<int>("cntCSVS");
-        //const auto& nt                   = tr.getVar<int>("nTopCandSortedCnt");
 
         // toggle debugging print statements
         bool debug = false;
