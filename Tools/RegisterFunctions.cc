@@ -109,10 +109,10 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     //blvZinv1b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv1b");
     //blvZinv2b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv2b");
     //blvZinv3b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv3b");
-    blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
-    blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
-    blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
-    blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
+    //blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
+    //blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
+    //blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
+    //blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
 
 
     cleanedJets          = new CleanedJets;
@@ -172,10 +172,10 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     //if(blvZinv1b) delete blvZinv1b;
     //if(blvZinv2b) delete blvZinv2b;
     //if(blvZinv3b) delete blvZinv3b;
-    if(blvZinvJEUUp)    delete blvZinvJEUUp;
-    if(blvZinvJEUDn)    delete blvZinvJEUDn;
-    if(blvZinvMEUUp)    delete blvZinvMEUUp;
-    if(blvZinvMEUDn)    delete blvZinvMEUDn;
+    //if(blvZinvJEUUp)    delete blvZinvJEUUp;
+    //if(blvZinvJEUDn)    delete blvZinvJEUDn;
+    //if(blvZinvMEUUp)    delete blvZinvMEUUp;
+    //if(blvZinvMEUDn)    delete blvZinvMEUDn;
     if(weights)         delete weights;
     if(njWeight)        delete njWeight;
     if(lepInfo)         delete lepInfo;
@@ -209,25 +209,25 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*njWeight);
     tr.registerFunction(*fakebtagvectors);
     //tr.registerFunction(*blvZinv1b);
-   // tr.registerFunction(*blvZinv2b);
+    //tr.registerFunction(*blvZinv2b);
     //tr.registerFunction(*blvZinv3b);
-    tr.registerFunction(*systematicPrep);
-    tr.registerFunction(*blvZinvJEUUp);
-    tr.registerFunction(*blvZinvJEUDn);
-    tr.registerFunction(*blvZinvMEUUp);
-    tr.registerFunction(*blvZinvMEUDn);
-    tr.registerFunction(*getSearchBin);
-    tr.registerFunction(*systematicCalc);
-    tr.registerFunction(*triggerInfo);
-    tr.registerFunction(*prepareMiniTupleVars);
+    //tr.registerFunction(*systematicPrep);
+    //tr.registerFunction(*blvZinvJEUUp);
+    //tr.registerFunction(*blvZinvJEUDn);
+    //tr.registerFunction(*blvZinvMEUUp);
+    //tr.registerFunction(*blvZinvMEUDn);
+    //tr.registerFunction(*getSearchBin);
+    //tr.registerFunction(*systematicCalc);
+    //tr.registerFunction(*triggerInfo);
+    //tr.registerFunction(*prepareMiniTupleVars);
     //tr.registerFunction(&printInterestingEvents);
-    tr.registerFunction(*myPDFUnc);
-    tr.registerFunction(*bTagCorrector);
-    tr.registerFunction(*nJetAk8);
-    tr.registerFunction(*taudiv);
-    tr.registerFunction(*ak8DrMatch);
-    tr.registerFunction(*ISRcorrector);
-    tr.registerFunction(*pileup);
+    //tr.registerFunction(*myPDFUnc);
+    //tr.registerFunction(*bTagCorrector);
+    //tr.registerFunction(*nJetAk8);
+    //tr.registerFunction(*taudiv);
+    //tr.registerFunction(*ak8DrMatch);
+    //tr.registerFunction(*ISRcorrector);
+    //tr.registerFunction(*pileup);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
