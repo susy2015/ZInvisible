@@ -666,6 +666,7 @@ double Plotter::Cut::translateVar(const NTupleReader& tr) const
     {
         if     (type.find("pair")           != std::string::npos) return Plotter::getVarFromVec<std::pair<double, double>>(name, tr).first;
         else if(type.find("double")         != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<double>(name, tr));
+        else if(type.find("float")         != std::string::npos) return static_cast<float>(Plotter::getVarFromVec<float>(name, tr));
         else if(type.find("unsigned int")   != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<unsigned int>(name, tr));
         else if(type.find("int")            != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<int>(name, tr));
         else if(type.find("TLorentzVector") != std::string::npos) return Plotter::getVarFromVec<TLorentzVector, double>(name, tr);
@@ -673,9 +674,9 @@ double Plotter::Cut::translateVar(const NTupleReader& tr) const
     else
     {
         if     (type.find("double")       != std::string::npos) return tr.getVar<double>(name.name);
+        else if(type.find("float")        != std::string::npos) return static_cast<float>(tr.getVar<float>(name.name));
         else if(type.find("unsigned int") != std::string::npos) return static_cast<double>(tr.getVar<unsigned int>(name.name));
         else if(type.find("int")          != std::string::npos) return static_cast<double>(tr.getVar<int>(name.name));
-        else if(type.find("float")        != std::string::npos) return static_cast<double>(tr.getVar<float>(name.name));
         else if(type.find("char")         != std::string::npos) return static_cast<double>(tr.getVar<char>(name.name));
         else if(type.find("short")        != std::string::npos) return static_cast<double>(tr.getVar<short>(name.name));
         else if(type.find("long")         != std::string::npos) return static_cast<double>(tr.getVar<long>(name.name));
@@ -1262,45 +1263,31 @@ void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& t
 
     if(type.find("vector") != std::string::npos)
     {
-        if(type.find("const") != std::string::npos)
-        {
 
-            if(type.find("*") != std::string::npos)
+        if(type.find("*") != std::string::npos)
+        {
+            // debug statement
+            //printf("name: %s type: %s\n", name.name.c_str(), type.c_str());
+            if(type.find("TLorentzVector") != std::string::npos) 
             {
-                // debug statement
-                //printf("name: %s type: %s\n", name.name.c_str(), type.c_str());
-                if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<const TLorentzVector*>(h, name, tr, weight);
-            }
-            else
-            {
-                if     (type.find("pair")           != std::string::npos) fillHistFromVec<std::pair<double, double>>(h, name, tr, weight);
-                else if(type.find("double")         != std::string::npos) fillHistFromVec<double>(h, name, tr, weight);
-                else if(type.find("unsigned int")   != std::string::npos) fillHistFromVec<unsigned int>(h, name, tr, weight);
-                else if(type.find("int")            != std::string::npos) fillHistFromVec<int>(h, name, tr, weight);
-                else if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector>(h, name, tr, weight);
+              if(type.find("const") != std::string::npos) fillHistFromVec<const TLorentzVector*>(h, name, tr, weight);
+              else                                        fillHistFromVec<TLorentzVector*>(h, name, tr, weight);
             }
         }
         else
         {
-            if(type.find("*") != std::string::npos)
-            {
-                // debug statement
-                //printf("name: %s type: %s\n", name.name.c_str(), type.c_str());
-                if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector*>(h, name, tr, weight);
-            }
-            else
-            {
-                if     (type.find("pair")           != std::string::npos) fillHistFromVec<std::pair<double, double>>(h, name, tr, weight);
-                else if(type.find("double")         != std::string::npos) fillHistFromVec<double>(h, name, tr, weight);
-                else if(type.find("unsigned int")   != std::string::npos) fillHistFromVec<unsigned int>(h, name, tr, weight);
-                else if(type.find("int")            != std::string::npos) fillHistFromVec<int>(h, name, tr, weight);
-                else if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector>(h, name, tr, weight);
-            }
+            if     (type.find("pair")           != std::string::npos) fillHistFromVec<std::pair<double, double>>(h, name, tr, weight);
+            else if(type.find("double")         != std::string::npos) fillHistFromVec<double>(h, name, tr, weight);
+            else if(type.find("float")          != std::string::npos) fillHistFromVec<float>(h, name, tr, weight);
+            else if(type.find("unsigned int")   != std::string::npos) fillHistFromVec<unsigned int>(h, name, tr, weight);
+            else if(type.find("int")            != std::string::npos) fillHistFromVec<int>(h, name, tr, weight);
+            else if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector>(h, name, tr, weight);
         }
     }
     else
     {
         if     (type.find("double")         != std::string::npos) h->Fill(tr.getVar<double>(name.name), weight);
+        else if(type.find("float")          != std::string::npos) h->Fill(tr.getVar<float>(name.name), weight);
         else if(type.find("unsigned int")   != std::string::npos) h->Fill(tr.getVar<unsigned int>(name.name), weight);
         else if(type.find("int")            != std::string::npos) h->Fill(tr.getVar<int>(name.name), weight);
         else if(type.find("float")          != std::string::npos) h->Fill(tr.getVar<float>(name.name), weight);
