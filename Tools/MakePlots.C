@@ -235,6 +235,7 @@ int main(int argc, char* argv[])
     std::string label_nj  = "N_{jets}";
     std::string label_nb  = "N_{b}";
     std::string label_nt  = "N_{t}";
+    std::string label_dr  = "#DeltaR";
     std::string label_mt2 = "M_{T2} [GeV]";
     std::string label_eta = "#eta";
     std::string label_MuPt = "p_{T}^{#mu} [GeV]";
@@ -859,6 +860,7 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nj_"     + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv", style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nj,  y_axis_label));
         vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nb_"     + style, {makePDCGJetsZnunu("cntCSVSZinv",           style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nb,  y_axis_label));
         vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nt_"     + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv", style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nt,  y_axis_label));
+        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_dr_"     + style, {makePDCGJetsZnunu("dRjetsAndPhoton", style, legend_label)},       {1, d}, "", 100, 0, 5.0,         true, false, label_dr,  y_axis_label));
     }
 
     if (doSearchBins)
