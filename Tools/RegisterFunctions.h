@@ -56,6 +56,9 @@ class RegisterFunctionsNTuple : public RegisterFunctions
 private:
     BaselineVessel *myBLV;
     BaselineVessel *blvZinv;
+    BaselineVessel *blvNoVeto;
+    BaselineVessel *blvNoLepton;
+    BaselineVessel *blvNoPhoton;
     //BaselineVessel *blvZinv1b;
     //BaselineVessel *blvZinv2b;
     //BaselineVessel *blvZinv3b;

@@ -104,8 +104,11 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     // Important: create objects!!
     
     //AnaFunctions::prepareTopTagger();
-    myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
-    blvZinv   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    myBLV       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
+    blvZinv     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    blvNoVeto   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoVeto");
+    blvNoLepton = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoLepton");
+    blvNoPhoton = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoPhoton");
     //blvZinv1b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv1b");
     //blvZinv2b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv2b");
     //blvZinv3b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv3b");
@@ -169,9 +172,12 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(cleanedJets)     delete cleanedJets;
     if(myBLV)           delete myBLV;
     if(blvZinv)         delete blvZinv;
-    //if(blvZinv1b) delete blvZinv1b;
-    //if(blvZinv2b) delete blvZinv2b;
-    //if(blvZinv3b) delete blvZinv3b;
+    if(blvNoVeto)       delete blvNoVeto;
+    if(blvNoLepton)     delete blvNoLepton;
+    if(blvNoPhoton)     delete blvNoPhoton;
+    //if(blvZinv1b)       delete blvZinv1b;
+    //if(blvZinv2b)       delete blvZinv2b;
+    //if(blvZinv3b)       delete blvZinv3b;
     //if(blvZinvJEUUp)    delete blvZinvJEUUp;
     //if(blvZinvJEUDn)    delete blvZinvJEUDn;
     //if(blvZinvMEUUp)    delete blvZinvMEUUp;
@@ -206,6 +212,9 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*lepInfo);
     tr.registerFunction(*weights);
     tr.registerFunction(*blvZinv);
+    tr.registerFunction(*blvNoVeto);
+    tr.registerFunction(*blvNoLepton);
+    tr.registerFunction(*blvNoPhoton);
     tr.registerFunction(*njWeight);
     tr.registerFunction(*fakebtagvectors);
     //tr.registerFunction(*blvZinv1b);
