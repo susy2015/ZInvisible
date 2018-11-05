@@ -817,20 +817,30 @@ int main(int argc, char* argv[])
     
     // study jet collections and jet cleaning
     // photon jet cleaning
+    //std::string met_cut = "";
+    std::string met_cut = "met>250";
+    std::string photon_cut = "passPhotonSelection"; 
+    std::string lepton_cut = "passLeptVeto"; 
+    // use met cut if it is not an empty string
+    if (! met_cut.empty() )
+    {
+      photon_cut += ";" + met_cut;
+      lepton_cut += ";" + met_cut;
+    }
     auto makePDSGJets = [&](const std::string& label, const std::string& cuts) {return Plotter::DatasetSummary("GJets "+label, fileMap["GJets"], cuts, ""); };
-    Plotter::DataCollection dc_GJets_nj_all                ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSGJets("all jets", "")}                                     );
-    Plotter::DataCollection dc_GJets_nj_all_onephoton      ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSGJets("all jets one photon", "passPhotonSelection")}       );
-    Plotter::DataCollection dc_GJets_nj_phoclean           ("single", "cntNJetsPt20Eta24NoPhoton", {makePDSGJets("photon cleaned", "")}                               );
-    Plotter::DataCollection dc_GJets_nj_phoclean_onephoton ("single", "cntNJetsPt20Eta24NoPhoton", {makePDSGJets("photon cleaned one photon", "passPhotonSelection")} );
+    Plotter::DataCollection dc_GJets_nj_all                ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSGJets("all jets", met_cut)}                     );
+    Plotter::DataCollection dc_GJets_nj_all_onephoton      ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSGJets("all jets one photon", photon_cut)}       );
+    Plotter::DataCollection dc_GJets_nj_phoclean           ("single", "cntNJetsPt20Eta24NoPhoton", {makePDSGJets("photon cleaned", met_cut)}               );
+    Plotter::DataCollection dc_GJets_nj_phoclean_onephoton ("single", "cntNJetsPt20Eta24NoPhoton", {makePDSGJets("photon cleaned one photon", photon_cut)} );
     
     vh.push_back(PHS("MC_GJets_nj", {dc_GJets_nj_all, dc_GJets_nj_all_onephoton, dc_GJets_nj_phoclean, dc_GJets_nj_phoclean_onephoton}, {1, 1}, "", 10, 0, 10, true, false, label_nj, label_Events));
     
     // lepton jet cleaning
     auto makePDSDY = [&](const std::string& label, const std::string& cuts) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], cuts, ""); };
-    Plotter::DataCollection dc_DY_nj_all              ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSDY("all jets", "")}                               );
-    Plotter::DataCollection dc_DY_nj_all_lepveto      ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSDY("all jets lepton veto", "passLeptVeto")}       );
-    Plotter::DataCollection dc_DY_nj_lepclean         ("single", "cntNJetsPt20Eta24NoLepton", {makePDSDY("lepton cleaned", "")}                         );
-    Plotter::DataCollection dc_DY_nj_lepclean_lepveto ("single", "cntNJetsPt20Eta24NoLepton", {makePDSDY("lepton cleaned lepton veto", "passLeptVeto")} );
+    Plotter::DataCollection dc_DY_nj_all              ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSDY("all jets", met_cut)}                      );
+    Plotter::DataCollection dc_DY_nj_all_lepveto      ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSDY("all jets lepton veto", lepton_cut)}       );
+    Plotter::DataCollection dc_DY_nj_lepclean         ("single", "cntNJetsPt20Eta24NoLepton", {makePDSDY("lepton cleaned", met_cut)}                );
+    Plotter::DataCollection dc_DY_nj_lepclean_lepveto ("single", "cntNJetsPt20Eta24NoLepton", {makePDSDY("lepton cleaned lepton veto", lepton_cut)} );
     
     vh.push_back(PHS("MC_DY_nj", {dc_DY_nj_all, dc_DY_nj_all_lepveto, dc_DY_nj_lepclean, dc_DY_nj_lepclean_lepveto}, {1, 1}, "", 10, 0, 10, true, false, label_nj, label_Events));
     
@@ -883,7 +893,7 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nj_"     + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv", style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nj,  y_axis_label));
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nb_"     + style, {makePDCGJetsZnunu("cntCSVSZinv",           style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nb,  y_axis_label));
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nt_"     + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv", style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nt,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_dr_"     + style, {makePDCGJetsZnunu("dRjetsAndPhoton", style, legend_label)},       {1, d}, "", 100, 0, 2.0,         true, false, label_dr,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_dr_"     + style, {makePDCGJetsZnunu("dRjetsAndPhoton",       style, legend_label)}, {1, d}, "", 100, 0, 2.0,         true, false, label_dr,  y_axis_label));
         }
     }
 
