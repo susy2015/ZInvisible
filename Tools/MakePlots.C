@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
     bool doWeights = false;
     bool doLeptons = false;
     bool doPhotons = false;
-    bool doZnunu = false;
+    bool doZnunu = true;
     bool doSearchBins = false;
     bool doPlots = true;
     bool doSave = true;
@@ -817,8 +817,8 @@ int main(int argc, char* argv[])
     
     // study jet collections and jet cleaning
     // photon jet cleaning
-    //std::string met_cut = "";
-    std::string met_cut = "met>250";
+    std::string met_cut = "";
+    //std::string met_cut = "met>250";
     std::string photon_cut = "passPhotonSelection"; 
     std::string lepton_cut = "passLeptVeto"; 
     // use met cut if it is not an empty string
@@ -872,28 +872,31 @@ int main(int argc, char* argv[])
         {
             // denominator index (2 for single, 1 for ratio)
             int d = 0;
+            bool log_scale = false;
             std::string y_axis_label;
             std::string legend_label;
             if (style.compare("single") == 0)
             {
                 d = 2;
+                log_scale = true;
                 y_axis_label = label_Events;
                 legend_label = "MC";
             }
-            if (style.compare("ratio") == 0)
+            else if (style.compare("ratio") == 0)
             {
                 d = 1;
+                log_scale = false;
                 y_axis_label = "GJets / ZJetsToNuNu";
                 legend_label = "over ZJetsToNuNu";
             }
             // use metWithPhoton instead of met (it had the photon pt added to it)
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_met_"    + style, {makePDCGJetsZnunu("metWithPhoton",         style, legend_label)}, {1, d}, "", 100, minPt,  maxPt,  true, false, label_met, y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_metphi_" + style, {makePDCGJetsZnunu("metphiWithPhoton",      style, legend_label)}, {1, d}, "", 100, minPhi, maxPhi, true, false, label_phi, y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht_"     + style, {makePDCGJetsZnunu("HTZinv",                style, legend_label)}, {1, d}, "", 100, 0.0,  2000.0,   true, false, label_ht,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nj_"     + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv", style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nj,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nb_"     + style, {makePDCGJetsZnunu("cntCSVSZinv",           style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nb,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nt_"     + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv", style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nt,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_dr_"     + style, {makePDCGJetsZnunu("dRjetsAndPhoton",       style, legend_label)}, {1, d}, "", 100, 0, 2.0,         true, false, label_dr,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_met_"    + style, {makePDCGJetsZnunu("metWithPhoton",         style, legend_label)}, {1, d}, "", 100, minPt,  maxPt,  log_scale, false, label_met, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_metphi_" + style, {makePDCGJetsZnunu("metphiWithPhoton",      style, legend_label)}, {1, d}, "", 100, minPhi, maxPhi, log_scale, false, label_phi, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht_"     + style, {makePDCGJetsZnunu("HTZinv",                style, legend_label)}, {1, d}, "", 100, 0.0, 2000.0,    log_scale, false, label_ht,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nj_"     + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv", style, legend_label)}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nj,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nb_"     + style, {makePDCGJetsZnunu("cntCSVSZinv",           style, legend_label)}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nb,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nt_"     + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv", style, legend_label)}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nt,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_dr_"     + style, {makePDCGJetsZnunu("dRjetsAndPhoton",       style, legend_label)}, {1, d}, "", 100, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
         }
     }
 
