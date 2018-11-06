@@ -39,9 +39,9 @@ output1=""$sample1".root"
 output2=""$sample2".root"
 
 echo " - Running makePlots to create $output1"
-./makePlots -D $sample1 -E $n_events -I $output1
+./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF
 echo " - Running makePlots to create $output2"
-./makePlots -D $sample2 -E $n_events -I $output2
+./makePlots -D $sample2 -E $n_events -I $output2 | grep -v LHAPDF
 
 # hadd the results
 
@@ -55,6 +55,6 @@ hadd -f $result $output1 $output2
 # Make plots of results (containing both MC)
 
 echo " - Make plots of results (containing both MC)"
-./makePlots -f -I $result
+./makePlots -f -I $result | grep -v LHAPDF
 
 
