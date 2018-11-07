@@ -335,7 +335,7 @@ int main(int argc, char* argv[])
     //for electrons do not use muTrigWgt (it is 0.0 for electrons)
     auto makePDSMu     = [&](const std::string& label) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
     auto makePDSElec   = [&](const std::string& label) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
-    auto makePDSPhoton = [&](const std::string& label, const std::string& sample="GJets") {return Plotter::DatasetSummary("GJets "+label, fileMap[sample], "passPhotonSelection;passLeptVeto;HTZinv>200", ""); };
+    auto makePDSPhoton = [&](const std::string& label, const std::string& sample="GJets", const std::string& cuts="passPhotonSelection;HTZinv>200") {return Plotter::DatasetSummary("GJets "+label, fileMap[sample], cuts, ""); };
     
     // acceptance
     // muons
@@ -845,8 +845,10 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("MC_DY_nj", {dc_DY_nj_all, dc_DY_nj_all_lepveto, dc_DY_nj_lepclean, dc_DY_nj_lepclean_lepveto}, {1, 1}, "", 10, 0, 10, true, false, label_nj, label_Events));
     
     // Znunu
-    auto makePDSZnunu       = [&](const std::string& label) {return Plotter::DatasetSummary("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu"], "passLeptVeto;HTZinv>200", ""); };
-    auto makePDCGJetsZnunu  = [&](const std::string& var, const std::string& style, const std::string& label) {return Plotter::DataCollection(style, {{var, makePDSPhoton(label)}, {var, makePDSZnunu(label)}}); };
+    auto makePDSZnunu       = [&](const std::string& label, const std::string& cuts="HTZinv>200") {return Plotter::DatasetSummary("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu"], cuts, ""); };
+    auto makePDCGJetsZnunu  = [&](const std::string& var, const std::string& style, const std::string& label, const std::string& cuts) {return Plotter::DataCollection(style, {{var, makePDSPhoton(label, "GJets", "passPhotonSelection;" + cuts)}, {var, makePDSZnunu(label, cuts)}}); };
+    
+    // photon cuts: passPhotonSelection;passLeptVeto;HTZinv>200
 
     if (doZnunu)
     {
@@ -854,16 +856,25 @@ int main(int argc, char* argv[])
         // GJets_HT-200To400
         // GJets_HT-400To600
         // GJets_HT-600ToInf
-        std::vector<std::vector<Plotter::DatasetSummary>> Photon_HT_stack = {
-                                                                              {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400")}, 
-                                                                              {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600")},
-                                                                              {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf")}
-                                                                            };
-  
+        
         std::string style_stack = "stack";
-        Plotter::DataCollection dc_GJets_ht("stack", "HTZinv",  Photon_HT_stack);
-        Plotter::DataCollection dc_Znunu_ht("data",  "HTZinv",  {makePDSZnunu("HT > 200")});
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht_" + style_stack, {dc_GJets_ht, dc_Znunu_ht}, {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
+        std::vector<std::vector<Plotter::DatasetSummary>> Photon_HT_stack_cuts = {
+                                                                                   {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400", "HTZinv>200;metWithPhoton>250")}, 
+                                                                                   {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600", "HTZinv>200;metWithPhoton>250")},
+                                                                                   {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf", "HTZinv>200;metWithPhoton>250")}
+                                                                                 };
+        std::vector<std::vector<Plotter::DatasetSummary>> Photon_HT_stack_baseline = {
+                                                                                       {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400", "passBaselineZinv")}, 
+                                                                                       {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600", "passBaselineZinv")},
+                                                                                       {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf", "passBaselineZinv")}
+                                                                                     };
+  
+        Plotter::DataCollection dc_GJets_ht_cuts(     "stack", "HTZinv",  Photon_HT_stack_cuts);
+        Plotter::DataCollection dc_GJets_ht_baseline( "stack", "HTZinv",  Photon_HT_stack_baseline);
+        Plotter::DataCollection dc_Znunu_ht_cuts(     "data",  "HTZinv",  {makePDSZnunu("HT > 200", "HTZinv>200;metWithPhoton>250")});
+        Plotter::DataCollection dc_Znunu_ht_baseline( "data",  "HTZinv",  {makePDSZnunu("HT > 200", "passBaselineZinv")});
+        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_ht_" + style_stack, {dc_GJets_ht_cuts, dc_Znunu_ht_cuts},         {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
+        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_ht_"     + style_stack, {dc_GJets_ht_baseline, dc_Znunu_ht_baseline}, {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
         
         std::vector<std::string> styles = {"single", "ratio"};
         // Z#rightarrow#nu#nu
@@ -890,13 +901,20 @@ int main(int argc, char* argv[])
                 legend_label = "over ZJetsToNuNu";
             }
             // use metWithPhoton instead of met (it had the photon pt added to it)
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_met_"    + style, {makePDCGJetsZnunu("metWithPhoton",         style, legend_label)}, {1, d}, "", 100, minPt,  maxPt,  log_scale, false, label_met, y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_metphi_" + style, {makePDCGJetsZnunu("metphiWithPhoton",      style, legend_label)}, {1, d}, "", 100, minPhi, maxPhi, log_scale, false, label_phi, y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht_"     + style, {makePDCGJetsZnunu("HTZinv",                style, legend_label)}, {1, d}, "", 100, 0.0, 2000.0,    log_scale, false, label_ht,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nj_"     + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv", style, legend_label)}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nj,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nb_"     + style, {makePDCGJetsZnunu("cntCSVSZinv",           style, legend_label)}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nb,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nt_"     + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv", style, legend_label)}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nt,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_dr_"     + style, {makePDCGJetsZnunu("dRjetsAndPhoton",       style, legend_label)}, {1, d}, "", 100, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_met_"    + style, {makePDCGJetsZnunu("metWithPhoton",         style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 100, minPt,  maxPt,  log_scale, false, label_met, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_metphi_" + style, {makePDCGJetsZnunu("metphiWithPhoton",      style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 100, minPhi, maxPhi, log_scale, false, label_phi, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_ht_"     + style, {makePDCGJetsZnunu("HTZinv",                style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 100, 0.0, 2000.0,    log_scale, false, label_ht,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_nj_"     + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv", style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nj,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_nb_"     + style, {makePDCGJetsZnunu("cntCSVSZinv",           style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nb,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_nt_"     + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv", style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nt,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_dr_"     + style, {makePDCGJetsZnunu("dRjetsAndPhoton",       style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 100, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_met_"        + style, {makePDCGJetsZnunu("metWithPhoton",         style, legend_label, "passBaselineZinv")},             {1, d}, "", 100, minPt,  maxPt,  log_scale, false, label_met, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_metphi_"     + style, {makePDCGJetsZnunu("metphiWithPhoton",      style, legend_label, "passBaselineZinv")},             {1, d}, "", 100, minPhi, maxPhi, log_scale, false, label_phi, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_ht_"         + style, {makePDCGJetsZnunu("HTZinv",                style, legend_label, "passBaselineZinv")},             {1, d}, "", 100, 0.0, 2000.0,    log_scale, false, label_ht,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_nj_"         + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv", style, legend_label, "passBaselineZinv")},             {1, d}, "", 10, 0, 10,           log_scale, false, label_nj,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_nb_"         + style, {makePDCGJetsZnunu("cntCSVSZinv",           style, legend_label, "passBaselineZinv")},             {1, d}, "", 10, 0, 10,           log_scale, false, label_nb,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_nt_"         + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv", style, legend_label, "passBaselineZinv")},             {1, d}, "", 10, 0, 10,           log_scale, false, label_nt,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_dr_"         + style, {makePDCGJetsZnunu("dRjetsAndPhoton",       style, legend_label, "passBaselineZinv")},             {1, d}, "", 100, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
         }
     }
 

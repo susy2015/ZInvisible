@@ -79,10 +79,10 @@ namespace plotterFunctions
         bool debug = false;
 
         //variables to be used in the analysis code
-        double photonPtCut = 200.0;
-        //double photonMet = -999.9;
-        double metWithPhoton = -999.9;
-        double metphiWithPhoton = -999.9;
+        //float photonMet = -999.9;
+        //float photonPtCut = 200.0;
+        float metWithPhoton = -999.9;
+        float metphiWithPhoton = -999.9;
         bool passPhotonSelection = false;
         
         auto* gammaLVecGenEta           = new std::vector<TLorentzVector>(); 
