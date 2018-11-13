@@ -54,7 +54,7 @@ LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 #PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d scalefactorplot systplot miniMakePlots beffCalc makeSignalHistograms makeTopPlots makeDataMCplots simpleAnalyzer
 #PROGRAMS = calcEff harvestHists makePlots moneyplot plot2d scalefactorplot systplot beffCalc makeSignalHistograms makeTopPlots makeDataMCplots simpleAnalyzer
-PROGRAMS = calcEff harvestHists makePlots moneyplot scalefactorplot systplot beffCalc makeSignalHistograms makeTopPlots makeDataMCplots makeDYPlots makePhotonPlots
+PROGRAMS = calcEff calcEffPhoton harvestHists makePlots moneyplot scalefactorplot systplot beffCalc makeSignalHistograms makeTopPlots makeDataMCplots makeDYPlots makePhotonPlots
 
 all: mkobj PyWraps $(PROGRAMS)
 
@@ -123,6 +123,9 @@ $(ODIR)/%.o : $(TTTSDIR)/%.cpp
 
 
 calcEff: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/calcEff.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/Plotter.o $(ODIR)/MiniTupleMaker.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o  $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
+	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
+
+calcEffPhoton: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/calcEffPhoton.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/Plotter.o $(ODIR)/MiniTupleMaker.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o  $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
 harvestHists: $(ODIR)/harvestHists.o
