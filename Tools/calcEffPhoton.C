@@ -198,18 +198,26 @@ int main(int argc, char* argv[])
     //setFS.insert({ss[dataSets]});
     
     std::cout << "Running over files..." << std::endl;
-    for(const AnaSamples::FileSummary& fs : setFS)
+    int printInterval = 1000;
+    for(const AnaSamples::FileSummary& file : setFS)
     {
-        
-        fs.readFileList(); //get file list
-        for(const std::string& fname : fs.filelist_)
+        int fileCount = 0, startCount = 0;
+        int NEvtsTotal = 0;
+        file.readFileList(); //get file list
+        for(const std::string& fname : file.filelist_)
         {
-            TFile *f = TFile::Open(fname.c_str());
+            if(startCount++ < startFile) continue;
+            if(nFiles > 0 && fileCount++ >= nFiles) break;
+            if(nFiles > 0) NEvtsTotal = 0;
+            else if(nEvts >= 0 && NEvtsTotal > nEvts) break;
+            TFile *currentFile = TFile::Open(fname.c_str());
             
-            TTree *t = (TTree*)f->Get(fs.treePath.c_str());
+            TTree *t = (TTree*)currentFile->Get(file.treePath.c_str());
             if (!t) 
             {
-                std::cout << "ERROR: TTree " << fs.treePath << " not found in file " << filename << std::endl;
+                std::cout << "ERROR: TTree " << file.treePath << " not found in file " << filename << std::endl;
+                currentFile->Close();
+                delete currentFile;
                 f->Close();
                 delete f;
                 return 0;
@@ -219,6 +227,22 @@ int main(int argc, char* argv[])
                 NTupleReader tr(t, activeBranches);
                 tr.setReThrow(false);
                 rt.registerFunctions(tr);
+                while(tr.getNextEvent())
+                {
+                    if(nEvts > 0 && NEvtsTotal > nEvts) break;
+                    if(tr.getEvtNum() % printInterval == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
+                    const auto& gammaLVecRecoEtaPt   = tr.getVec<TLorentzVector>("gammaLVecRecoEtaPt");
+                    const auto& gammaLVecPassLooseID = tr.getVec<TLorentzVector>("gammaLVecPassLooseID");
+                    for(auto& tlv : gammaLVecRecoEtaPt)
+                    {
+                        hPhotonEffPt_den->Fill(tlv.Pt(), file.getWeight());
+                    }
+                    for(auto& tlv : gammaLVecPassLooseID)
+                    {
+                        hPhotonEffPt_num->Fill(tlv.Pt(), file.getWeight());
+                    }
+                    ++NEvtsTotal;
+                }
             }
             catch(const std::string e)
             {
@@ -227,17 +251,22 @@ int main(int argc, char* argv[])
     
             t->Reset();
             delete t;
-            f->Close();
-            delete f;
+            currentFile->Close();
+            delete currentFile;
         }
     }
 
     
+    f->cd();
+    hPhotonEffPt_den->Write();
+    hPhotonEffPt_num->Write();
+    f->Close();
     std::cout << "Quitting early..." << std::endl;
     return 0;
     
     // --- done testing ---
     
+    /*
     
     //for(auto& file : sc["DYJetsToLL"]) 
     auto& file = ss[dataSets];
@@ -555,4 +584,7 @@ int main(int argc, char* argv[])
     //hZEff_jActR2_den->Write();
 
     f->Close();
+
+    */
+
 }
