@@ -73,7 +73,15 @@ int main(int argc, char* argv[])
     //AnaSamples::SampleSet        ss(sampleloc, lumi);
     //AnaSamples::SampleCollection sc(ss);
     // the new version
-    AnaSamples::SampleSet        ss("sampleSets.cfg");
+    //AnaSamples::SampleSet        ss("sampleSets.cfg");
+    //AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
+    
+    // follow this syntax; order matters for your arguments
+    
+    //SampleSet::SampleSet(std::string file, bool isCondor, double lumi)
+    AnaSamples::SampleSet        ss("sampleSets.cfg", runOnCondor, AnaSamples::luminosity);
+    
+    //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples) : ss_(samples)
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
 
 
@@ -161,11 +169,58 @@ int main(int argc, char* argv[])
     TH1* hZRes = (TH1*)fZRes->Get("zRes");
     double hZRes_int = hZRes->Integral(hZRes->FindBin(-0.3), hZRes->FindBin(0.3));
 
+    
+    // --- new method: testing ---
+    map<string, vector<AnaSamples::FileSummary>> fileMap;
+    
+    std::cout << "dataSets = " << dataSets << std::endl;
+    
+    if(ss[dataSets] != ss.null())
+    {
+        fileMap[dataSets] = {ss[dataSets]};
+        for(const auto& colls : ss[dataSets].getCollections())
+        {
+            fileMap[colls] = {ss[dataSets]};
+        }
+    }
+    else if(sc[dataSets] != sc.null())
+    {
+        fileMap[dataSets] = {sc[dataSets]};
+        int i = 0;
+        for(const auto& fs : sc[dataSets])
+        {
+            fileMap[sc.getSampleLabels(dataSets)[i++]].push_back(fs);
+        }
+    }
+    
+    set<AnaSamples::FileSummary> setFS;
+    for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) setFS.insert(fs);
+    
+    //setFS.insert({ss[dataSets]});
+    
+    std::cout << "Running over files..." << std::endl;
+    for(const AnaSamples::FileSummary& fs : setFS)
+    {
+        std::set<std::string> activeBranches;
+        //get file list 
+        fs.readFileList();
+    }
+
+    
+    std::cout << "Quitting early..." << std::endl;
+    f->Close();
+    return 0;
+    
+    // --- done testing ---
+    
+    
     //for(auto& file : sc["DYJetsToLL"]) 
     auto& file = ss[dataSets];
     {
         TChain *t = new TChain(file.treePath.c_str());
 
+        std::cout << "startFile = " << startFile << std::endl; 
+        std::cout << "nFiles = " << nFiles << std::endl; 
         //for(const auto& fn : file.getFilelist()) t->Add(fn.c_str());
         file.addFilesToChain(t, startFile, nFiles);
         //t->Add("root://cmsxrootd-site.fnal.gov//store/user/lpcsusyhad/PHYS14_720_Mar14_2014_v2/pastika/DYJetsToLL_M-50_HT-600toInf_Tune4C_13TeV-madgraph-tauola/PHYS14_PU20bx25_PHYS14_25_V1-FLAT/150328_003328/0000/stopFlatNtuples_15.root");
