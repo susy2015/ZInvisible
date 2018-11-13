@@ -113,6 +113,7 @@ class RegisterFunctionsCalcEff : public RegisterFunctions
 {
 private:
     BaselineVessel *myBLV;
+    plotterFunctions::Gamma *gamma; //Caleb :-)
     plotterFunctions::LepInfo *lepInfo;
 
 public:

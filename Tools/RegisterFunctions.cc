@@ -301,12 +301,14 @@ RegisterFunctionsCalcEff::RegisterFunctionsCalcEff() : RegisterFunctions()
     //AnaFunctions::prepareTopTagger();
 
     myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
+    gamma     = new plotterFunctions::Gamma;
     lepInfo   = new plotterFunctions::LepInfo;
 }
 
 RegisterFunctionsCalcEff::~RegisterFunctionsCalcEff()
 {
     if(myBLV) delete myBLV;
+    if(gamma) delete gamma;
     if(lepInfo) delete lepInfo;
 }
 
@@ -315,6 +317,8 @@ void RegisterFunctionsCalcEff::registerFunctions(NTupleReader& tr)
     //Make some global "constants" here
 
     //register functions with NTupleReader
+    // gamma, then myBLV, then lepInfo
+    tr.registerFunction(*gamma);
     tr.registerFunction(*myBLV);
     tr.registerFunction(*lepInfo);
 }
