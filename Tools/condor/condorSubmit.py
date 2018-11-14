@@ -56,9 +56,31 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.cfg"
-                      ]
+                     ]
 
 filestoTransferGMEP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/calcEffPhoton", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight.root", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight_allJets.root", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}, 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg",
+                       environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
+                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_ml.so.3.1",
+                       #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
+                       #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
+                       #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
+                       #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root",
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_bTagEff.root", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/ISRWeights.root", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_ISRJets.root", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.cfg",
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.cfg"
                       ]
@@ -193,7 +215,7 @@ Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEffPhoton.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/calcEffPhoton, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEff.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/zRes.root, $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/calcEffPhoton, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEff.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/zRes.root
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
