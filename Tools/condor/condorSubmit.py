@@ -183,6 +183,18 @@ x509userproxy = $ENV(X509_USER_PROXY)
 
 """
 
+#go make photon efficiency
+submitFileGMEP = """universe = vanilla
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEffPhoton.sh
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/calcEffPhoton, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEff.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/zRes.root, $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so
+notify_user = ${LOGNAME}@FNAL.GOV
+x509userproxy = $ENV(X509_USER_PROXY)
+
+"""
+
 #go B Efficiency calc
 submitFileGBE = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeBeff.sh
@@ -222,6 +234,7 @@ parser.add_option ('-L',  dest='dataCollectionslong',   action='store_true', def
 parser.add_option ('-r',  dest='refLumi',               type='string',       default = None,  help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
 parser.add_option ('-c',  dest='noSubmit',              action='store_true', default = False, help="Do not submit jobs.  Only create condor_submit.txt.")
 parser.add_option ('-e',  dest='goMakeEff',             action='store_true', default = False, help="Run calcEff instead of makePlots.")
+parser.add_option ('-p',  dest='goMakeEffPhoton',       action='store_true', default = False, help="Run calcEffPhoton instead of makePlots.")
 parser.add_option ('-b',  dest='goMakeBeff',            action='store_true', default = False, help="Run beffCalc instead of makePlots.")
 parser.add_option ('-s',  dest='goMakeSigEff',          action='store_true', default = False, help="Run makeSignalHistograms instead of makePlots.")
 parser.add_option ('-t',  dest='goMakeTopPlots',        action='store_true', default = False, help="Run makeTopPlots instead of makePlots.")
@@ -252,6 +265,9 @@ if not options.dataCollections and not options.dataCollectionslong:
 if options.goMakeEff:
     exeName = "calcEff"
     submitFile = submitFileGME
+if options.goMakeEffPhoton:
+    exeName = "calcEffPhoton"
+    submitFile = submitFileGMEP
 elif options.goMakeBeff:
     exeName = "beffCalc"
     submitFile = submitFileGBE
