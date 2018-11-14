@@ -58,6 +58,10 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.cfg"
                       ]
 
+filestoTransferGMEP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/calcEffPhoton", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.cfg",
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.cfg"
+                      ]
 
 #go make plots!
 submitFileGMP = """universe = vanilla
@@ -250,9 +254,9 @@ def makeExeAndFriendsTarrball(filestoTransfer, fname):
         #WORLDSWORSESOLUTIONTOAPROBLEM
         system("mkdir -p WORLDSWORSESOLUTIONTOAPROBLEM")
         for fn in filestoTransfer:
-            system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s"%fn)
+            system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s" % fn)
         
-        tarallinputs = "tar czvf %s.tar.gz WORLDSWORSESOLUTIONTOAPROBLEM --dereference"%fname
+        tarallinputs = "tar czvf %s.tar.gz WORLDSWORSESOLUTIONTOAPROBLEM --dereference" % fname
         print tarallinputs
         system(tarallinputs)
         system("rm -r WORLDSWORSESOLUTIONTOAPROBLEM")
@@ -261,6 +265,7 @@ def makeExeAndFriendsTarrball(filestoTransfer, fname):
 if not options.dataCollections and not options.dataCollectionslong:
     system("tar --exclude-caches-all --exclude-vcs -zcf ${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION} --exclude=src --exclude=tmp")
 
+# makeExeAndFriendsTarrball() is necessary now to apply WORLDSWORSESOLUTIONTOAPROBLEM 
 
 if options.goMakeEff:
     exeName = "calcEff"
@@ -268,6 +273,7 @@ if options.goMakeEff:
 if options.goMakeEffPhoton:
     exeName = "calcEffPhoton"
     submitFile = submitFileGMEP
+    makeExeAndFriendsTarrball(filestoTransferGMEP, "gmep")
 elif options.goMakeBeff:
     exeName = "beffCalc"
     submitFile = submitFileGBE

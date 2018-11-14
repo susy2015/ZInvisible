@@ -22,7 +22,6 @@ xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
 
 ls -lhrt
 
-#./makeDataMCplots -st --condor -D $1 -N $3 -M $4 -L $5 -S SB_v1_2017
 ./makePlots -st --condor -D $1 -N $3 -M $4 -L $5 -S SB_v1_2017 | grep -v LHAPDF
 
 ls -lhrt
@@ -40,9 +39,6 @@ do
         echo "There were no files found beginning with $pattern"
     fi
 done
-
-#mv histoutput_* ${_CONDOR_SCRATCH_DIR}
-#mv minituple_histoutput_* ${_CONDOR_SCRATCH_DIR}
 
 rm $(echo $6 | sed 's|.*/||')
 rm -r ${_CONDOR_SCRATCH_DIR}/$2
