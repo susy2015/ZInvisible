@@ -82,6 +82,8 @@ int main(int argc, char* argv[])
     f->cd();
 
     // photons
+    TH1 *hPhotonAccPt_num = new TH1D("hPhotonAccPt_num", "hPhotonAccPt_num", 200, 0, 2000);
+    TH1 *hPhotonAccPt_den = new TH1D("hPhotonAccPt_den", "hPhotonAccPt_den", 200, 0, 2000);
     TH1 *hPhotonEffPt_num = new TH1D("hPhotonEffPt_num", "hPhotonEffPt_num", 200, 0, 2000);
     TH1 *hPhotonEffPt_den = new TH1D("hPhotonEffPt_den", "hPhotonEffPt_den", 200, 0, 2000);
     
@@ -231,10 +233,16 @@ int main(int argc, char* argv[])
                 {
                     if(nEvts > 0 && NEvtsTotal > nEvts) break;
                     if(tr.getEvtNum() % printInterval == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
+                    const auto& gammaLVecReco        = tr.getVec<TLorentzVector>("gammaLVecReco");
                     const auto& gammaLVecRecoEtaPt   = tr.getVec<TLorentzVector>("gammaLVecRecoEtaPt");
                     const auto& gammaLVecPassLooseID = tr.getVec<TLorentzVector>("gammaLVecPassLooseID");
+                    for(auto& tlv : gammaLVecReco)
+                    {
+                        hPhotonAccPt_den->Fill(tlv.Pt(), file.getWeight());
+                    }
                     for(auto& tlv : gammaLVecRecoEtaPt)
                     {
+                        hPhotonAccPt_num->Fill(tlv.Pt(), file.getWeight());
                         hPhotonEffPt_den->Fill(tlv.Pt(), file.getWeight());
                     }
                     for(auto& tlv : gammaLVecPassLooseID)
@@ -258,10 +266,14 @@ int main(int argc, char* argv[])
 
     
     f->cd();
-    hPhotonEffPt_den->Write();
+    
+    hPhotonAccPt_num->Write();
+    hPhotonAccPt_den->Write();
     hPhotonEffPt_num->Write();
+    hPhotonEffPt_den->Write();
+    
+    std::cout << "Quitting..." << std::endl;
     f->Close();
-    std::cout << "Quitting early..." << std::endl;
     return 0;
     
     // --- done testing ---
