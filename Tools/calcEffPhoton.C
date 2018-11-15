@@ -92,12 +92,6 @@ int main(int argc, char* argv[])
     std::set<std::string> activeBranches;
     rt.activateBranches(activeBranches);
 
-    TRandom3 *trg = new TRandom3(12321);
-    TFile * fZRes = new TFile("zRes.root");
-    TH1* hZRes = (TH1*)fZRes->Get("zRes");
-    double hZRes_int = hZRes->Integral(hZRes->FindBin(-0.3), hZRes->FindBin(0.3));
-
-    
     // --- new method: testing ---
     map<string, vector<AnaSamples::FileSummary>> fileMap;
     
