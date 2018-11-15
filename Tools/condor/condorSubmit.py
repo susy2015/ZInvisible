@@ -58,11 +58,6 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                      ]
 
 filestoTransferGMEP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/calcEffPhoton", 
-                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root", 
-                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root", 
-                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root", 
-                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight.root", 
-                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight_allJets.root", 
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
