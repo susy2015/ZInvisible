@@ -208,15 +208,31 @@ x509userproxy = $ENV(X509_USER_PROXY)
 
 """
 
+# #go make photon efficiency (broken)
+# submitFileGMEP = """universe = vanilla
+# Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEffPhoton.sh
+# Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+# Should_Transfer_Files = YES
+# WhenToTransferOutput = ON_EXIT
+# Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/calcEffPhoton, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEffPhoton.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/zRes.root
+# notify_user = ${LOGNAME}@FNAL.GOV
+# x509userproxy = $ENV(X509_USER_PROXY)
+# 
+# """
+
 #go make photon efficiency
 submitFileGMEP = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEffPhoton.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/calcEffPhoton, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEff.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/zRes.root
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEffPhoton.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gmep.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz
+Output = logs/calcEffPhoton_$(Process).stdout
+Error = logs/calcEffPhoton_$(Process).stderr
+Log = logs/calcEffPhoton_$(Process).log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
++maxWallTime = 2880
 
 """
 
@@ -277,6 +293,7 @@ def makeExeAndFriendsTarrball(filestoTransfer, fname):
         for fn in filestoTransfer:
             system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s" % fn)
         
+        print "Create tarball {0}.tag.gz".format(fname)
         tarallinputs = "tar czvf %s.tar.gz WORLDSWORSESOLUTIONTOAPROBLEM --dereference" % fname
         print tarallinputs
         system(tarallinputs)
@@ -284,6 +301,7 @@ def makeExeAndFriendsTarrball(filestoTransfer, fname):
 
 
 if not options.dataCollections and not options.dataCollectionslong:
+    print "Create tarball ${CMSSW_VERSION}.tar.gz"
     system("tar --exclude-caches-all --exclude-vcs -zcf ${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION} --exclude=src --exclude=tmp")
 
 # makeExeAndFriendsTarrball() is necessary now to apply WORLDSWORSESOLUTIONTOAPROBLEM 
@@ -291,7 +309,7 @@ if not options.dataCollections and not options.dataCollectionslong:
 if options.goMakeEff:
     exeName = "calcEff"
     submitFile = submitFileGME
-if options.goMakeEffPhoton:
+elif options.goMakeEffPhoton:
     exeName = "calcEffPhoton"
     submitFile = submitFileGMEP
     makeExeAndFriendsTarrball(filestoTransferGMEP, "gmep")
