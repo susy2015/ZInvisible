@@ -13,8 +13,16 @@
 # - make plots using summed result
 
 
-
+# options
 dataSet=$1
+executableOption=$2
+
+exacutable=
+resultFile=
+dirName=
+
+zinvDir=$CMSSW_BASE/src/ZInvisible/Tools
+condorDir=$zinvDir/condor
 
 if [ -z "$dataSet" ]; then
     echo "- ERROR: Please provide a data set for the directory name."
@@ -22,24 +30,25 @@ if [ -z "$dataSet" ]; then
     exit 1
 fi
 
+if [ "$executableOption" = "-c" ]; then
+    resultFile="effhists_"$dataSet".root"
+    exacutable="echo nothing to do"
+    dirName="effhists"
+else
+    resultFile="result.root"
+    exacutable="./makePlots -f -I $resultFile"
+    dirName="histos"
+fi
+
 echo "- Running processResults.sh for the data set $dataSet"
-
-# ZInvisible directory
-zinvDir=$CMSSW_BASE/src/ZInvisible/Tools
-
-# condor directory
-condorDir=$zinvDir/condor
 
 # data directory
 today=$(date '+%d_%b_%Y')
 i=1
-dataDir="histos_"$dataSet"_"$today"_"$i""
+dataDir=""$dirName"_"$dataSet"_"$today"_"$i""
 
 # directory for broken files
 brokenDir="broken_files"
-
-# result file
-resultFile="result.root"
 
 # go to condor directory
 cd $condorDir
@@ -55,7 +64,7 @@ while [[ -d $dataDir ]]
 do
     echo "- Found directory $dataDir"
     i=$[$i+1]
-    dataDir="histos_"$1"_"$today"_"$i""
+    dataDir=""$dirName"_"$1"_"$today"_"$i""
 done
 
 # create unique data directory
@@ -113,18 +122,19 @@ else
     rm plots/*
 fi
 
-echo "- Compiling MakePlots"
+echo "- Compiling Exacutable"
 make -j8
 
-echo "- Running MakePlots"
-./makePlots -f -I $resultFile
-
-#echo "- Running MakePlots with -g for photons"
+#echo "- Running Exacutable with -g for photons"
 #./makePlots -f -g -I $resultFile
 
+echo "- Running Exacutable"
+#./makePlots -f -I $resultFile
+$exacutable
+
 if [[ $? == 0 ]]; then
-    echo "  MakePlots was successful"
+    echo "  Exacutable was successful"
 else
-    echo "  ERROR: MakePlots failed"
+    echo "  ERROR: Exacutable failed"
 fi
 
