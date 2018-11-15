@@ -3,8 +3,12 @@
 export PATH=${PATH}:/cvmfs/cms.cern.ch/common
 export CMS_PATH=/cvmfs/cms.cern.ch
 
+echo "----- 1st ls -----"
+ls -lhrt
+echo "------------------"
+
 #get the release setup and in place
-CMSSW_TARBALL="$2.tag.gz"
+CMSSW_TARBALL="$2.tar.gz"
 if [ -f $CMSSW_TARBALL ]; then
     tar -xzf $CMSSW_TARBALL
 else
@@ -34,11 +38,15 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}
 echo "xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') ."
 xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
 
+echo "----- 2nd ls -----"
 ls -lhrt
+echo "------------------"
 
 ./calcEffPhoton --condor -D $1 -N $3 -M $4 
 
+echo "----- 3rd ls -----"
 ls -lhrt
+echo "------------------"
 
 # declare array of patterns
 declare -a patterns=("effhists_")
