@@ -32,6 +32,7 @@ with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg") as
 
 filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/effhists_GJets.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight.root", 
