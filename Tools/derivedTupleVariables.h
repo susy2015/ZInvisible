@@ -5,6 +5,7 @@
 #include "Fakebtagvectors.h"
 #include "Gamma.h"
 #include "GenerateWeight.h"
+#include "GeneratePhotonEfficiency.h"
 #include "GetSearchBin.h"
 #include "LepInfo.h"
 #include "MetSmear.h"

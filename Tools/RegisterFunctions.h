@@ -17,6 +17,7 @@ class Pileup_Sys;
 namespace plotterFunctions
 {
     class GenerateWeight;
+    class GeneratePhotonEfficiency;
     class LepInfo;
     class Fakebtagvectors;
     class GetSearchBin;
@@ -67,6 +68,7 @@ private:
     BaselineVessel *blvZinvMEUUp;
     BaselineVessel *blvZinvMEUDn;
     plotterFunctions::GenerateWeight *weights;
+    plotterFunctions::GeneratePhotonEfficiency *generatePhotonEfficiency;
     plotterFunctions::NJetWeight *njWeight;
     plotterFunctions::LepInfo *lepInfo;
     plotterFunctions::Fakebtagvectors *fakebtagvectors;
