@@ -48,7 +48,7 @@ namespace plotterFunctions
         {
             const auto& gammaLVecPassLooseID = tr.getVec<TLorentzVector>("gammaLVecPassLooseID"); // loose photon
             const auto& passPhotonSelection  = tr.getVar<bool>("passPhotonSelection");            // photon selection
-            data_t photonEfficienyPt = -1.0;
+            data_t photonEfficiencyPt = -1.0;
             data_t photonPt = -1.0;
             if (passPhotonSelection)
             {
@@ -67,14 +67,17 @@ namespace plotterFunctions
                 TH1F* hPhotonEffPt_ratio = (TH1F*)hPhotonEffPt_num->Clone();
                 hPhotonEffPt_ratio->Divide(hPhotonEffPt_den);
                 int bin_n = hPhotonEffPt_ratio->GetXaxis()->FindBin(photonPt);
-                photonEfficienyPt = hPhotonEffPt_ratio->GetBinContent(bin_n); 
+                photonEfficiencyPt = hPhotonEffPt_ratio->GetBinContent(bin_n); 
             }
             else
             {
                 // no photons passing selection
-                photonEfficienyPt = 1.0;
+                photonEfficiencyPt = 1.0;
             }
-            tr.registerDerivedVar("photonEfficiencyPt", photonEfficienyPt);
+            data_t photonEfficiencyInvPt = 1.0 / photonEfficiencyPt;
+            //std::cout << "photonEfficiencyPt = " << photonEfficiencyPt << " photonEfficiencyInvPt = " << photonEfficiencyInvPt << std::endl;
+            tr.registerDerivedVar("photonEfficiencyPt", photonEfficiencyPt);
+            tr.registerDerivedVar("photonEfficiencyInvPt", photonEfficiencyInvPt);
         }
     
     public:
