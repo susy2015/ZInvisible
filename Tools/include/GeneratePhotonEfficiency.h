@@ -48,6 +48,7 @@ namespace plotterFunctions
         {
             const auto& gammaLVecPassLooseID = tr.getVec<TLorentzVector>("gammaLVecPassLooseID"); // loose photon
             const auto& passPhotonSelection  = tr.getVar<bool>("passPhotonSelection");            // photon selection
+            data_t photonAcceptance = -1.0;
             data_t photonEfficiencyPt = -1.0;
             data_t photonPt = -1.0;
             if (passPhotonSelection)
@@ -63,6 +64,8 @@ namespace plotterFunctions
             }
             if (photonPt > 0)
             {
+                // get photon acceptance
+                photonAcceptance = hPhotonAccPt_num->Integral() / hPhotonAccPt_den->Integral();
                 // get photon efficiency
                 TH1F* hPhotonEffPt_ratio = (TH1F*)hPhotonEffPt_num->Clone();
                 hPhotonEffPt_ratio->Divide(hPhotonEffPt_den);
@@ -72,12 +75,17 @@ namespace plotterFunctions
             else
             {
                 // no photons passing selection
+                photonAcceptance = 1.0;
                 photonEfficiencyPt = 1.0;
             }
-            data_t photonEfficiencyInvPt = 1.0 / photonEfficiencyPt;
-            //std::cout << "photonEfficiencyPt = " << photonEfficiencyPt << " photonEfficiencyInvPt = " << photonEfficiencyInvPt << std::endl;
-            tr.registerDerivedVar("photonEfficiencyPt", photonEfficiencyPt);
-            tr.registerDerivedVar("photonEfficiencyInvPt", photonEfficiencyInvPt);
+            data_t photonAcceptanceWeight   = 1.0 / photonAcceptance;
+            data_t photonEfficiencyPtWeight = 1.0 / photonEfficiencyPt;
+            //std::cout << "photonAcceptance = "   << photonAcceptance   << " photonAcceptanceWeight = "   << photonAcceptanceWeight << std::endl;
+            //std::cout << "photonEfficiencyPt = " << photonEfficiencyPt << " photonEfficiencyPtWeight = " << photonEfficiencyPtWeight << std::endl;
+            tr.registerDerivedVar("photonAcceptance",         photonAcceptance);
+            tr.registerDerivedVar("photonAcceptanceWeight",   photonAcceptanceWeight);
+            tr.registerDerivedVar("photonEfficiencyPt",       photonEfficiencyPt);
+            tr.registerDerivedVar("photonEfficiencyPtWeight", photonEfficiencyPtWeight);
         }
     
     public:
