@@ -1,4 +1,5 @@
 #include "Plotter.h"
+#include "samples.h"
 #include "RegisterFunctions.h"
 #include "SusyAnaTools/Tools/searchBins.h"
 #include "SusyAnaTools/Tools/samples.h"
@@ -199,6 +200,16 @@ int main(int argc, char* argv[])
             }
         }
     }
+
+    // modify weights to compare GJets to ZJetsToNuNu
+    //AnaSamples::FileSummary fsg = ss["GJets_HT-200To400"];
+    //printf("%s: xsec = %f kfactor = %f weight = %f\n", fsg.tag.c_str(), fsg.xsec, fsg.kfactor, fsg.getWeight());
+    // Definition in SusyAnaTools/Tools/samples.cc
+    // void SampleSet::modifyWeights(const std::vector<std::string>& sampleTags1, const std::vector<std::string>& sampleTags2, std::vector<bool>& matchingTags1)
+    std::vector<std::string> sampleTags1 = {"GJets_HT-200To400", "GJets_HT-400To600", "GJets_HT-600ToInf"};
+    std::vector<std::string> sampleTags2 = {"ZJetsToNuNu_HT_200to400", "ZJetsToNuNu_HT_400to600"};
+    std::vector<bool> matchingTags1 = {true, true, false}; 
+    ss.modifyWeights(sampleTags1, sampleTags2, matchingTags1);
 
     // Number of searchbins
     SearchBins sb(sbEra);
