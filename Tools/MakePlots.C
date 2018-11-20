@@ -151,6 +151,28 @@ int main(int argc, char* argv[])
     
     //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples) : ss_(samples)
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
+    
+    // modify weights to compare GJets to ZJetsToNuNu
+    // do this before creating fileMap
+
+    //AnaSamples::FileSummary fsg = ss["GJets_HT-200To400"];
+    //printf("%s: xsec = %f kfactor = %f weight = %f\n", fsg.tag.c_str(), fsg.xsec, fsg.kfactor, fsg.getWeight());
+    
+    // Definition in SusyAnaTools/Tools/samples.cc
+    // void SampleSet::modifyWeights(const std::vector<std::string>& sampleTags1, const std::vector<std::string>& sampleTags2, std::vector<bool>& matchingTags1)
+    std::vector<std::string> sampleTags1 = {"GJets_HT-200To400", "GJets_HT-400To600", "GJets_HT-600ToInf"};
+    std::vector<std::string> sampleTags2 = {"ZJetsToNuNu_HT_200to400", "ZJetsToNuNu_HT_400to600", "ZJetsToNuNu_HT_600to800", "ZJetsToNuNu_HT_800to1200", "ZJetsToNuNu_HT_1200to2500", "ZJetsToNuNu_HT_2500toInf"};
+
+    printf("--- Original Weights ---\n");
+    for (const auto& tag : sampleTags1) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+    for (const auto& tag : sampleTags2) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+
+    ss.modifyWeights(sampleTags1, sampleTags2);
+
+    printf("--- Modified Weights ---\n");
+    for (const auto& tag : sampleTags1) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+    for (const auto& tag : sampleTags2) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+
 
     const double zAcc = 1.0;
     // const double zAcc = 0.5954;
@@ -184,6 +206,7 @@ int main(int argc, char* argv[])
     {
         if(ss[dataSets] != ss.null())
         {
+            std::cout << "--- Using ss ---" << std::endl;
             fileMap[dataSets] = {ss[dataSets]};
             for(const auto& colls : ss[dataSets].getCollections())
             {
@@ -192,6 +215,7 @@ int main(int argc, char* argv[])
         }
         else if(sc[dataSets] != sc.null())
         {
+            std::cout << "--- Using sc ---" << std::endl;
             fileMap[dataSets] = {sc[dataSets]};
             int i = 0;
             for(const auto& fs : sc[dataSets])
@@ -201,14 +225,6 @@ int main(int argc, char* argv[])
         }
     }
 
-    // modify weights to compare GJets to ZJetsToNuNu
-    //AnaSamples::FileSummary fsg = ss["GJets_HT-200To400"];
-    //printf("%s: xsec = %f kfactor = %f weight = %f\n", fsg.tag.c_str(), fsg.xsec, fsg.kfactor, fsg.getWeight());
-    // Definition in SusyAnaTools/Tools/samples.cc
-    // void SampleSet::modifyWeights(const std::vector<std::string>& sampleTags1, const std::vector<std::string>& sampleTags2, std::vector<bool>& matchingTags1)
-    std::vector<std::string> sampleTags1 = {"GJets_HT-200To400", "GJets_HT-400To600", "GJets_HT-600ToInf"};
-    std::vector<std::string> sampleTags2 = {"ZJetsToNuNu_HT_200to400", "ZJetsToNuNu_HT_400to600", "ZJetsToNuNu_HT_600to800", "ZJetsToNuNu_HT_800to1200", "ZJetsToNuNu_HT_1200to2500", "ZJetsToNuNu_HT_2500toInf"};
-    ss.modifyWeights(sampleTags1, sampleTags2);
 
     // Number of searchbins
     SearchBins sb(sbEra);
