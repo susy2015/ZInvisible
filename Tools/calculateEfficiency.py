@@ -8,6 +8,20 @@ import ROOT
 import argparse
 from decimal import Decimal
 
+# cross section
+def xsecFactor(k1, k2, xsec1, xsec2):
+    k_ratio = float(k2) / float(k1)
+    sum1 = sum(xsec1)
+    sum2 = sum(xsec2)
+    xsec_ratio = float(sum2) / float(sum1)
+    xfactor = k_ratio * xsec_ratio
+    print "k ratio: {0} / {1} = {2}".format(k2, k1, k_ratio)
+    print "xsec ratio: {0} / {1} = {2}".format(sum2, sum1, xsec_ratio)
+    print "xfactor: {0}".format(xfactor)
+    return xfactor
+
+
+
 # get results given input file and list of histograms
 def getResults(tag, inputFile, histograms):
     f = ROOT.TFile(inputFile)
@@ -71,38 +85,45 @@ if __name__ == "__main__":
     parser.add_argument("--input_file", "-f", default="result.root", help="input root file")
     options = parser.parse_args()
     
-    # gen
-    histogramMapGen = []
-    histogramMapGen += [{"gammaLVecGen"                : "MC_PhotonGenAccPt_singlegammaLVecGenptgammaLVecGen(pt)GJets #gamma Gensingle"}]
-    histogramMapGen += [{"gammaLVecGenEta"             : "MC_PhotonGenAccPt_singlegammaLVecGenEtaptgammaLVecGenEta(pt)GJets #gamma GenEtasingle"}]
-    histogramMapGen += [{"gammaLVecGenEtaPt"           : "MC_PhotonGenMatchPt_singlegammaLVecGenEtaPtptgammaLVecGenEtaPt(pt)GJets #gamma GenEtaPtsingle"}]
-    histogramMapGen += [{"gammaLVecGenEtaPtMatched"    : "MC_PhotonGenMatchPt_singlegammaLVecGenEtaPtMatchedptgammaLVecGenEtaPtMatched(pt)GJets #gamma GenEtaPtMatchedsingle"}]
-    
-    # reco
-    histogramMapReco = []
-    histogramMapReco += [{"gammaLVecReco"                : "MC_PhotonRecoAccPt_singlegammaLVecRecoptgammaLVecReco(pt)GJets #gamma Recosingle"}]
-    histogramMapReco += [{"gammaLVecRecoEta"             : "MC_PhotonRecoAccPt_singlegammaLVecRecoEtaptgammaLVecRecoEta(pt)GJets #gamma RecoEtasingle"}]
-    histogramMapReco += [{"gammaLVecRecoEtaPt"           : "MC_PhotonRecoIsoPt_singlegammaLVecRecoEtaPtptgammaLVecRecoEtaPt(pt)GJets #gamma RecoEtaPtsingle"}]
-    histogramMapReco += [{"gammaLVecRecoIso"             : "MC_PhotonRecoIsoPt_singlegammaLVecRecoIsoptgammaLVecRecoIso(pt)GJets #gamma RecoIsosingle"}]
-    histogramMapReco += [{"gammaLVecRecoEtaPtMatched"    : "MC_PhotonRecoMatchPt_singlegammaLVecRecoEtaPtMatchedptgammaLVecRecoEtaPtMatched(pt)GJets #gamma RecoEtaPtMatchedsingle"}]
+    # # gen
+    # histogramMapGen = []
+    # histogramMapGen += [{"gammaLVecGen"                : "MC_PhotonGenAccPt_singlegammaLVecGenptgammaLVecGen(pt)GJets #gamma Gensingle"}]
+    # histogramMapGen += [{"gammaLVecGenEta"             : "MC_PhotonGenAccPt_singlegammaLVecGenEtaptgammaLVecGenEta(pt)GJets #gamma GenEtasingle"}]
+    # histogramMapGen += [{"gammaLVecGenEtaPt"           : "MC_PhotonGenMatchPt_singlegammaLVecGenEtaPtptgammaLVecGenEtaPt(pt)GJets #gamma GenEtaPtsingle"}]
+    # histogramMapGen += [{"gammaLVecGenEtaPtMatched"    : "MC_PhotonGenMatchPt_singlegammaLVecGenEtaPtMatchedptgammaLVecGenEtaPtMatched(pt)GJets #gamma GenEtaPtMatchedsingle"}]
+    # 
+    # # reco
+    # histogramMapReco = []
+    # histogramMapReco += [{"gammaLVecReco"                : "MC_PhotonRecoAccPt_singlegammaLVecRecoptgammaLVecReco(pt)GJets #gamma Recosingle"}]
+    # histogramMapReco += [{"gammaLVecRecoEta"             : "MC_PhotonRecoAccPt_singlegammaLVecRecoEtaptgammaLVecRecoEta(pt)GJets #gamma RecoEtasingle"}]
+    # histogramMapReco += [{"gammaLVecRecoEtaPt"           : "MC_PhotonRecoIsoPt_singlegammaLVecRecoEtaPtptgammaLVecRecoEtaPt(pt)GJets #gamma RecoEtaPtsingle"}]
+    # histogramMapReco += [{"gammaLVecRecoIso"             : "MC_PhotonRecoIsoPt_singlegammaLVecRecoIsoptgammaLVecRecoIso(pt)GJets #gamma RecoIsosingle"}]
+    # histogramMapReco += [{"gammaLVecRecoEtaPtMatched"    : "MC_PhotonRecoMatchPt_singlegammaLVecRecoEtaPtMatchedptgammaLVecRecoEtaPtMatched(pt)GJets #gamma RecoEtaPtMatchedsingle"}]
    
 
-    resultsGen  = getResults("Gen",  options.input_file, histogramMapGen)
-    resultsReco = getResults("Reco", options.input_file, histogramMapReco)
+    # resultsGen  = getResults("Gen",  options.input_file, histogramMapGen)
+    # resultsReco = getResults("Reco", options.input_file, histogramMapReco)
 
-    # final
-    finalGen = {}
-    finalGen["genAcc"]           = resultsGen["gammaLVecGenEta/gammaLVecGen"]
-    finalGen["genMatchedToReco"] = resultsGen["gammaLVecGenEtaPtMatched/gammaLVecGenEtaPt"]
-    genEff = calcFinal(finalGen)
+    # # final
+    # finalGen = {}
+    # finalGen["genAcc"]           = resultsGen["gammaLVecGenEta/gammaLVecGen"]
+    # finalGen["genMatchedToReco"] = resultsGen["gammaLVecGenEtaPtMatched/gammaLVecGenEtaPt"]
+    # genEff = calcFinal(finalGen)
 
-    finalReco = {}
-    finalReco["recoAcc"]          = resultsReco["gammaLVecRecoEta/gammaLVecReco"]
-    finalReco["recoIso"]          = resultsReco["gammaLVecRecoIso/gammaLVecRecoEtaPt"]
-    finalReco["recoMatchedToGen"] = resultsReco["gammaLVecRecoEtaPtMatched/gammaLVecRecoIso"]
-    recoEff = calcFinal(finalReco)
+    # finalReco = {}
+    # finalReco["recoAcc"]          = resultsReco["gammaLVecRecoEta/gammaLVecReco"]
+    # finalReco["recoIso"]          = resultsReco["gammaLVecRecoIso/gammaLVecRecoEtaPt"]
+    # finalReco["recoMatchedToGen"] = resultsReco["gammaLVecRecoEtaPtMatched/gammaLVecRecoIso"]
+    # recoEff = calcFinal(finalReco)
     
-
+    # xsecFactor(k1, k2, xsec1, xsec2) 
+    k_GJets = 1.26
+    k_ZJetsToNuNu = 1.23
+    xsec_GJets = [1168, 132.5, 44.05]
+    xsec_ZJetsToNuNu = [77.67, 10.73, 2.559, 1.182, 0.2922, 0.0069]
+    xfactor = xsecFactor(k_GJets, k_ZJetsToNuNu, xsec_GJets, xsec_ZJetsToNuNu)
+    
+    
     # demo
     #calcEff([ 
     #        {"reco":            1 * 10 ** 6}, 
