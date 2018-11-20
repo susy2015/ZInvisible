@@ -207,9 +207,8 @@ int main(int argc, char* argv[])
     // Definition in SusyAnaTools/Tools/samples.cc
     // void SampleSet::modifyWeights(const std::vector<std::string>& sampleTags1, const std::vector<std::string>& sampleTags2, std::vector<bool>& matchingTags1)
     std::vector<std::string> sampleTags1 = {"GJets_HT-200To400", "GJets_HT-400To600", "GJets_HT-600ToInf"};
-    std::vector<std::string> sampleTags2 = {"ZJetsToNuNu_HT_200to400", "ZJetsToNuNu_HT_400to600"};
-    std::vector<bool> matchingTags1 = {true, true, false}; 
-    ss.modifyWeights(sampleTags1, sampleTags2, matchingTags1);
+    std::vector<std::string> sampleTags2 = {"ZJetsToNuNu_HT_200to400", "ZJetsToNuNu_HT_400to600", "ZJetsToNuNu_HT_600to800", "ZJetsToNuNu_HT_800to1200", "ZJetsToNuNu_HT_1200to2500", "ZJetsToNuNu_HT_2500toInf"};
+    ss.modifyWeights(sampleTags1, sampleTags2);
 
     // Number of searchbins
     SearchBins sb(sbEra);

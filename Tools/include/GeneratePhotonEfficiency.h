@@ -80,8 +80,13 @@ namespace plotterFunctions
             }
             data_t photonAcceptanceWeight   = 1.0 / photonAcceptance;
             data_t photonEfficiencyPtWeight = 1.0 / photonEfficiencyPt;
-            //std::cout << "photonAcceptance = "   << photonAcceptance   << " photonAcceptanceWeight = "   << photonAcceptanceWeight << std::endl;
-            //std::cout << "photonEfficiencyPt = " << photonEfficiencyPt << " photonEfficiencyPtWeight = " << photonEfficiencyPtWeight << std::endl;
+            
+            // if (photonPt > 0)
+            // {
+            //     std::cout << "photonAcceptance = "   << photonAcceptance   << " photonAcceptanceWeight = "   << photonAcceptanceWeight << std::endl;
+            //     std::cout << "photonEfficiencyPt = " << photonEfficiencyPt << " photonEfficiencyPtWeight = " << photonEfficiencyPtWeight << std::endl;
+            // }
+            
             tr.registerDerivedVar("photonAcceptance",         photonAcceptance);
             tr.registerDerivedVar("photonAcceptanceWeight",   photonAcceptanceWeight);
             tr.registerDerivedVar("photonEfficiencyPt",       photonEfficiencyPt);
