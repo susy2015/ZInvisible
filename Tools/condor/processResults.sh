@@ -36,7 +36,7 @@ if [ "$executableOption" = "-c" ]; then
     dirName="effhists"
 else
     resultFile="result.root"
-    exacutable="./makePlots -f -I $resultFile"
+    exacutable="./makePlots -f -I $resultFile" | grep -v LHAPDF
     dirName="histos"
 fi
 
