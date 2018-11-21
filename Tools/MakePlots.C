@@ -162,16 +162,36 @@ int main(int argc, char* argv[])
     // void SampleSet::modifyWeights(const std::vector<std::string>& sampleTags1, const std::vector<std::string>& sampleTags2, std::vector<bool>& matchingTags1)
     std::vector<std::string> sampleTags1 = {"GJets_HT-200To400", "GJets_HT-400To600", "GJets_HT-600ToInf"};
     std::vector<std::string> sampleTags2 = {"ZJetsToNuNu_HT_200to400", "ZJetsToNuNu_HT_400to600", "ZJetsToNuNu_HT_600to800", "ZJetsToNuNu_HT_800to1200", "ZJetsToNuNu_HT_1200to2500", "ZJetsToNuNu_HT_2500toInf"};
+    std::string sampleTag1 = "GJets";
+    std::string sampleTag2 = "ZJetsToNuNu";
 
-    printf("--- Original Weights ---\n");
-    for (const auto& tag : sampleTags1) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
-    for (const auto& tag : sampleTags2) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+    if (ss[dataSets] != ss.null())
+    {
+        printf("--- Using ss -----------\n");
+        printf("--- Original Weights ---\n");
+        for (const auto& tag : sampleTags1) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+        for (const auto& tag : sampleTags2) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
 
-    ss.modifyWeights(sampleTags1, sampleTags2);
+        ss.modifyWeights(sampleTags1, sampleTags2);
 
-    printf("--- Modified Weights ---\n");
-    for (const auto& tag : sampleTags1) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
-    for (const auto& tag : sampleTags2) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+        printf("--- Modified Weights ---\n");
+        for (const auto& tag : sampleTags1) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+        for (const auto& tag : sampleTags2) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+    }
+    else if (sc[dataSets] != sc.null())
+    {
+        printf("--- Using sc -----------\n");
+        printf("--- Original Weights ---\n");
+        for (const auto& fs : sc[sampleTag1]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
+        for (const auto& fs : sc[sampleTag2]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
+
+        sc.modifyWeights(sampleTag1, sampleTag2);
+        
+        printf("--- Modified Weights ---\n");
+        for (const auto& fs : sc[sampleTag1]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
+        for (const auto& fs : sc[sampleTag2]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
+
+    }
 
 
     const double zAcc = 1.0;
@@ -206,7 +226,6 @@ int main(int argc, char* argv[])
     {
         if(ss[dataSets] != ss.null())
         {
-            std::cout << "--- Using ss ---" << std::endl;
             fileMap[dataSets] = {ss[dataSets]};
             for(const auto& colls : ss[dataSets].getCollections())
             {
@@ -215,7 +234,6 @@ int main(int argc, char* argv[])
         }
         else if(sc[dataSets] != sc.null())
         {
-            std::cout << "--- Using sc ---" << std::endl;
             fileMap[dataSets] = {sc[dataSets]};
             int i = 0;
             for(const auto& fs : sc[dataSets])

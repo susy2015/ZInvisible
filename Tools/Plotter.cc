@@ -481,7 +481,7 @@ void Plotter::createHistsFromTuple()
                     if(doHists_)
                     {
                         double fileWgt = file.getWeight();
-                        printf("In Plotter.cc: %s file weight = %f\n", file.tag.c_str(), fileWgt);
+                        //printf("In Plotter.cc: %s file weight = %f\n", file.tag.c_str(), fileWgt);
 
                         for(auto& histsToFillVec : histsToFill)
                         {
@@ -499,7 +499,7 @@ void Plotter::createHistsFromTuple()
                             // get the weight associated with the dataset
                             double weight = fileWgt * dss.getWeight(tr) * dss.kfactor;
                             
-                            printf("In Plotter.cc: %s final weight = %f\n", file.tag.c_str(), weight);
+                            //printf("In Plotter.cc: %s final weight = %f\n", file.tag.c_str(), weight);
 
                             for(auto& hist : histsToFillVec.second.second)
                             {
