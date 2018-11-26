@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
     bool doWeights = false;
     bool doLeptons = false;
     bool doPhotons = false;
-    bool doZnunu = true;
+    bool doZnunu = false;
     bool doSearchBins = false;
     bool doPlots = true;
     bool doSave = true;
@@ -152,46 +152,45 @@ int main(int argc, char* argv[])
     //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples) : ss_(samples)
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
     
-    // modify weights to compare GJets to ZJetsToNuNu
-    // do this before creating fileMap
+    // // --- modify weights to compare GJets to ZJetsToNuNu
+    // // --- do this before creating fileMap
 
-    //AnaSamples::FileSummary fsg = ss["GJets_HT-200To400"];
-    //printf("%s: xsec = %f kfactor = %f weight = %f\n", fsg.tag.c_str(), fsg.xsec, fsg.kfactor, fsg.getWeight());
-    
-    // Definition in SusyAnaTools/Tools/samples.cc
-    // void SampleSet::modifyWeights(const std::vector<std::string>& sampleTags1, const std::vector<std::string>& sampleTags2, std::vector<bool>& matchingTags1)
-    std::vector<std::string> sampleTags1 = {"GJets_HT-200To400", "GJets_HT-400To600", "GJets_HT-600ToInf"};
-    std::vector<std::string> sampleTags2 = {"ZJetsToNuNu_HT_200to400", "ZJetsToNuNu_HT_400to600", "ZJetsToNuNu_HT_600to800", "ZJetsToNuNu_HT_800to1200", "ZJetsToNuNu_HT_1200to2500", "ZJetsToNuNu_HT_2500toInf"};
-    std::string sampleTag1 = "GJets";
-    std::string sampleTag2 = "ZJetsToNuNu";
+    // //AnaSamples::FileSummary fsg = ss["GJets_HT-200To400"];
+    // //printf("%s: xsec = %f kfactor = %f weight = %f\n", fsg.tag.c_str(), fsg.xsec, fsg.kfactor, fsg.getWeight());
+    // 
+    // std::vector<std::string> sampleTags1 = {"GJets_HT-200To400", "GJets_HT-400To600", "GJets_HT-600ToInf"};
+    // std::vector<std::string> sampleTags2 = {"ZJetsToNuNu_HT_200to400", "ZJetsToNuNu_HT_400to600", "ZJetsToNuNu_HT_600to800", "ZJetsToNuNu_HT_800to1200", "ZJetsToNuNu_HT_1200to2500", "ZJetsToNuNu_HT_2500toInf"};
+    // std::string sampleTag1 = "GJets";
+    // std::string sampleTag2 = "ZJetsToNuNu";
 
-    if (ss[dataSets] != ss.null())
-    {
-        printf("--- Using ss -----------\n");
-        printf("--- Original Weights ---\n");
-        for (const auto& tag : sampleTags1) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
-        for (const auto& tag : sampleTags2) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+    // if (ss[dataSets] != ss.null())
+    // {
+    //     printf("--- Using ss -----------\n");
+    //     printf("--- Original Weights ---\n");
+    //     for (const auto& tag : sampleTags1) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+    //     for (const auto& tag : sampleTags2) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
 
-        ss.modifyWeights(sampleTags1, sampleTags2);
+    //     // Definition in SusyAnaTools/Tools/samples.cc
+    //     ss.modifyWeights(sampleTags1, sampleTags2);
 
-        printf("--- Modified Weights ---\n");
-        for (const auto& tag : sampleTags1) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
-        for (const auto& tag : sampleTags2) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
-    }
-    else if (sc[dataSets] != sc.null())
-    {
-        printf("--- Using sc -----------\n");
-        printf("--- Original Weights ---\n");
-        for (const auto& fs : sc[sampleTag1]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
-        for (const auto& fs : sc[sampleTag2]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
+    //     printf("--- Modified Weights ---\n");
+    //     for (const auto& tag : sampleTags1) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+    //     for (const auto& tag : sampleTags2) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
+    // }
+    // else if (sc[dataSets] != sc.null())
+    // {
+    //     printf("--- Using sc -----------\n");
+    //     printf("--- Original Weights ---\n");
+    //     for (const auto& fs : sc[sampleTag1]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
+    //     for (const auto& fs : sc[sampleTag2]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
 
-        sc.modifyWeights(sampleTag1, sampleTag2);
-        
-        printf("--- Modified Weights ---\n");
-        for (const auto& fs : sc[sampleTag1]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
-        for (const auto& fs : sc[sampleTag2]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
-
-    }
+    //     // Definition in SusyAnaTools/Tools/samples.cc
+    //     sc.modifyWeights(sampleTag1, sampleTag2);
+    //     
+    //     printf("--- Modified Weights ---\n");
+    //     for (const auto& fs : sc[sampleTag1]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
+    //     for (const auto& fs : sc[sampleTag2]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
+    // }
 
 
     const double zAcc = 1.0;
@@ -877,17 +876,24 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dc_GJets_nj_phoclean           ("single", "cntNJetsPt20Eta24NoPhoton", {makePDSGJets("photon cleaned", met_cut)}               );
     Plotter::DataCollection dc_GJets_nj_phoclean_onephoton ("single", "cntNJetsPt20Eta24NoPhoton", {makePDSGJets("photon cleaned one photon", photon_cut)} );
     
-    vh.push_back(PHS("MC_GJets_nj", {dc_GJets_nj_all, dc_GJets_nj_all_onephoton, dc_GJets_nj_phoclean, dc_GJets_nj_phoclean_onephoton}, {1, 1}, "", 10, 0, 10, true, false, label_nj, label_Events));
+    //vh.push_back(PHS("MC_GJets_nj", {dc_GJets_nj_all, dc_GJets_nj_all_onephoton, dc_GJets_nj_phoclean, dc_GJets_nj_phoclean_onephoton}, {1, 1}, "", 10, 0, 10, true, false, label_nj, label_Events));
     
     // lepton jet cleaning
+    // variables: HT, MET, METPHI, dPhi, n_j, n_t, n_b 
     auto makePDSDY = [&](const std::string& label, const std::string& cuts) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], cuts, ""); };
     Plotter::DataCollection dc_DY_nj_all              ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSDY("all jets", met_cut)}                      );
     Plotter::DataCollection dc_DY_nj_all_lepveto      ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSDY("all jets lepton veto", lepton_cut)}       );
     Plotter::DataCollection dc_DY_nj_lepclean         ("single", "cntNJetsPt20Eta24NoLepton", {makePDSDY("lepton cleaned", met_cut)}                );
     Plotter::DataCollection dc_DY_nj_lepclean_lepveto ("single", "cntNJetsPt20Eta24NoLepton", {makePDSDY("lepton cleaned lepton veto", lepton_cut)} );
+    Plotter::DataCollection dc_DY_nt_all              ("single", "nTopCandSortedCntNoVeto",   {makePDSDY("all jets", met_cut)}                      );
+    Plotter::DataCollection dc_DY_nt_lepclean         ("single", "nTopCandSortedCntNoLepton", {makePDSDY("lepton cleaned", met_cut)}                );
     
-    vh.push_back(PHS("MC_DY_nj", {dc_DY_nj_all, dc_DY_nj_all_lepveto, dc_DY_nj_lepclean, dc_DY_nj_lepclean_lepveto}, {1, 1}, "", 10, 0, 10, true, false, label_nj, label_Events));
-    
+    //vh.push_back(PHS("MC_DY_nj", {dc_DY_nj_all, dc_DY_nj_all_lepveto, dc_DY_nj_lepclean, dc_DY_nj_lepclean_lepveto}, {1, 1}, "", 10, 0, 10, true, false, label_nj, label_Events));
+    vh.push_back(PHS("MC_DY_nj", {dc_DY_nj_all, dc_DY_nj_lepclean}, {2, 1}, "", 20, 0, 20, true, false, label_nj, label_Events));
+
+
+
+
     // Znunu
     auto makePDSZnunu       = [&](const std::string& label, const std::string& cuts="HTZinv>200") {return Plotter::DatasetSummary("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu"], cuts, ""); };
     auto makePDCGJetsZnunu  = [&](const std::string& var, const std::string& style, const std::string& label, const std::string& cuts) {return Plotter::DataCollection(style, {{var, makePDSPhoton(label, "GJets", "passPhotonSelection;" + cuts)}, {var, makePDSZnunu(label, cuts)}}); };
