@@ -7,6 +7,7 @@
 #include "GenerateWeight.h"
 #include "GeneratePhotonEfficiency.h"
 #include "GetSearchBin.h"
+#include "BasicLepton.h"
 #include "LepInfo.h"
 #include "MetSmear.h"
 #include "NJetAk8.h"

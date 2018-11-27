@@ -104,11 +104,12 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     // Important: create objects!!
     
     //AnaFunctions::prepareTopTagger();
-    myBLV       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
-    blvZinv     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
-    blvNoVeto   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoVeto");
-    blvNoLepton = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoLepton");
-    blvNoPhoton = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoPhoton");
+    myBLV              = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
+    blvZinv            = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    blvNoVeto          = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoVeto");
+    blvPFLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "PFLeptonCleaned");
+    blvDRLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "DRLeptonCleaned");
+    blvDRPhotonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "DRPhotonCleaned");
     //blvZinv1b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv1b");
     //blvZinv2b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv2b");
     //blvZinv3b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv3b");
@@ -124,6 +125,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     generatePhotonEfficiency  = new plotterFunctions::GeneratePhotonEfficiency;
     njWeight                  = new plotterFunctions::NJetWeight;
     lepInfo                   = new plotterFunctions::LepInfo;
+    basicLepton               = new plotterFunctions::BasicLepton;
     fakebtagvectors           = new plotterFunctions::Fakebtagvectors;
     getSearchBin              = new plotterFunctions::GetSearchBin(sbEra);
     triggerInfo               = new plotterFunctions::TriggerInfo;
@@ -174,8 +176,9 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(myBLV)                     delete myBLV;
     if(blvZinv)                   delete blvZinv;
     if(blvNoVeto)                 delete blvNoVeto;
-    if(blvNoLepton)               delete blvNoLepton;
-    if(blvNoPhoton)               delete blvNoPhoton;
+    if(blvPFLeptonCleaned)        delete blvPFLeptonCleaned;
+    if(blvDRLeptonCleaned)        delete blvDRLeptonCleaned;
+    if(blvDRPhotonCleaned)        delete blvDRPhotonCleaned;
     //if(blvZinv1b)                 delete blvZinv1b;
     //if(blvZinv2b)                 delete blvZinv2b;
     //if(blvZinv3b)                 delete blvZinv3b;
@@ -187,6 +190,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(generatePhotonEfficiency)  delete generatePhotonEfficiency;
     if(njWeight)                  delete njWeight;
     if(lepInfo)                   delete lepInfo;
+    if(basicLepton)               delete basicLepton;
     if(fakebtagvectors)           delete fakebtagvectors;
     if(getSearchBin)              delete getSearchBin;
     if(triggerInfo)               delete triggerInfo;
@@ -205,8 +209,10 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     //register functions with NTupleReader
     
     // order matters
-    // do this first
+    // get photons and leptons
+    // use photons and leptons to clean jets
     tr.registerFunction(*gamma);
+    tr.registerFunction(*basicLepton);
     tr.registerFunction(*generatePhotonEfficiency);
     tr.registerFunction(*cleanedJets);
 
@@ -215,8 +221,9 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*weights);
     tr.registerFunction(*blvZinv);
     tr.registerFunction(*blvNoVeto);
-    tr.registerFunction(*blvNoLepton);
-    tr.registerFunction(*blvNoPhoton);
+    tr.registerFunction(*blvPFLeptonCleaned);
+    tr.registerFunction(*blvDRLeptonCleaned);
+    tr.registerFunction(*blvDRPhotonCleaned);
     tr.registerFunction(*njWeight);
     tr.registerFunction(*fakebtagvectors);
     //tr.registerFunction(*blvZinv1b);
@@ -302,9 +309,10 @@ RegisterFunctionsCalcEff::RegisterFunctionsCalcEff() : RegisterFunctions()
 {
     //AnaFunctions::prepareTopTagger();
 
-    myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
-    gamma     = new plotterFunctions::Gamma;
-    lepInfo   = new plotterFunctions::LepInfo;
+    myBLV       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
+    gamma       = new plotterFunctions::Gamma;
+    lepInfo     = new plotterFunctions::LepInfo;
+    basicLepton = new plotterFunctions::BasicLepton;
 }
 
 RegisterFunctionsCalcEff::~RegisterFunctionsCalcEff()
@@ -312,15 +320,19 @@ RegisterFunctionsCalcEff::~RegisterFunctionsCalcEff()
     if(myBLV) delete myBLV;
     if(gamma) delete gamma;
     if(lepInfo) delete lepInfo;
+    if(basicLepton) delete basicLepton;
 }
 
 void RegisterFunctionsCalcEff::registerFunctions(NTupleReader& tr)
 {
-    //Make some global "constants" here
-
     //register functions with NTupleReader
-    // gamma, then myBLV, then lepInfo
+    
+    // order matters
+    // get photons and leptons
+    // then do baseline
+    // then do lepinfo
     tr.registerFunction(*gamma);
+    tr.registerFunction(*basicLepton);
     tr.registerFunction(*myBLV);
     tr.registerFunction(*lepInfo);
 }

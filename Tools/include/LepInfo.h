@@ -57,6 +57,19 @@ namespace plotterFunctions
             const auto& muonsFlagIDVec                      = tr.getVec<int>("muonsFlagMedium");
             const auto& elesFlagIDVec                       = tr.getVec<int>("elesFlagVeto");
 
+            const auto& cutMuVec                            = tr.getVec<TLorentzVector>("cutMuVec"); 
+            const auto& cutMuVecRecoOnly                    = tr.getVec<TLorentzVector>("cutMuVecRecoOnly"); 
+            const auto& cutMuCharge                         = tr.getVec<data_t>("cutMuCharge"); 
+            const auto& cutMuActivity                       = tr.getVec<data_t>("cutMuActivity"); 
+            const auto& cutMuSummedCharge                   = tr.getVar<int>("cutMuSummedCharge"); 
+            const auto& nTriggerMuons                       = tr.getVar<int>("nTriggerMuons"); 
+
+            const auto& cutElecVec                          = tr.getVec<TLorentzVector>("cutElecVec"); 
+            const auto& cutElecVecRecoOnly                  = tr.getVec<TLorentzVector>("cutElecVecRecoOnly"); 
+            const auto& cutElecCharge                       = tr.getVec<data_t>("cutElecCharge"); 
+            const auto& cutElecActivity                     = tr.getVec<data_t>("cutElecActivity"); 
+            const auto& cutElecSummedCharge                 = tr.getVar<int>("cutElecSummedCharge"); 
+
             const std::vector<data_t>& muonspfActivity      = tr.getVec<data_t>("muonspfActivity");
             const std::vector<data_t>& elespfActivity       = tr.getVec<data_t>("elespfActivity");
             const std::vector<data_t>& W_emu_pfActivityVec  = tr.getVec<data_t>("W_emu_pfActivityVec");
@@ -109,70 +122,73 @@ namespace plotterFunctions
             auto* genMuInAccAct             = new std::vector<data_t>();
             auto* genMuAct                  = new std::vector<data_t>();
             
-            auto* cutMuVec                  = new std::vector<TLorentzVector>();
-            auto* cutMuCharge               = new std::vector<data_t>();
-            auto* cutMuActivity             = new std::vector<data_t>();
-            
-            auto* cutElecVec                = new std::vector<TLorentzVector>();
-            auto* cutElecCharge             = new std::vector<data_t>();
-            auto* cutElecActivity           = new std::vector<data_t>();
+            // Registered in BasicLepton.h 
+            //auto* cutMuVec                  = new std::vector<TLorentzVector>();
+            //auto* cutMuCharge               = new std::vector<data_t>();
+            //auto* cutMuActivity             = new std::vector<data_t>();
+            //
+            //auto* cutElecVec                = new std::vector<TLorentzVector>();
+            //auto* cutElecCharge             = new std::vector<data_t>();
+            //auto* cutElecActivity           = new std::vector<data_t>();
 
-            std::vector<TLorentzVector> cutMuVecRecoOnly;
-            std::vector<TLorentzVector> cutElecVecRecoOnly;
+            //std::vector<TLorentzVector> cutMuVecRecoOnly;
+            //std::vector<TLorentzVector> cutElecVecRecoOnly;
             
             //std::vector<TLorentzVector>* Zrecopt = new std::vector<TLorentzVector>();
 
-            //muon selections
-            int sumMuCharge = 0;
-            int nTriggerMuons = 0;
+            // Registered in BasicLepton.h 
+            
+            // //muon selections
+            // int cutMuSummedCharge = 0;
+            // int nTriggerMuons = 0;
 
-            for(int i = 0; i < muonsLVec.size(); ++i)
-            {
-                if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
-                {
-                    cutMuVecRecoOnly.push_back(muonsLVec[i]);
-                }
-                if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
-                {
-                    if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
-                    {
-                        if(nTriggerMuons == 0 && muonsLVec[i].Pt() > 17)  nTriggerMuons++;
-                        else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
-                    }
-                    cutMuVec->push_back(muonsLVec[i]);
-                    //std::cout<<"cutMuVec PT "<<muonsLVec[i].Pt()<<std::endl; 
-                    cutMuCharge->push_back(muonsCharge[i]);
-                    cutMuActivity->push_back(muonspfActivity[i]);
-                    if(muonsCharge[i] > 0) sumMuCharge++;
-                    else                   sumMuCharge--;
-                }
-            }
-            //std::cout<<"New Muon Selection "<<(*cutMuVec).size()<<std::endl;
-            //electron selection
-            int sumElecCharge = 0;
-            for(int i = 0; i < elesLVec.size(); ++i)
-            {
-                if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr)) // emulates electrons with pt but no iso requirements.
-                {
-                    cutElecVecRecoOnly.push_back(elesLVec[i]);
-                }
+            // for(int i = 0; i < muonsLVec.size(); ++i)
+            // {
+            //     if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
+            //     {
+            //         cutMuVecRecoOnly.push_back(muonsLVec[i]);
+            //     }
+            //     if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
+            //     {
+            //         if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
+            //         {
+            //             if(nTriggerMuons == 0 && muonsLVec[i].Pt() > 17)  nTriggerMuons++;
+            //             else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
+            //         }
+            //         cutMuVec->push_back(muonsLVec[i]);
+            //         //std::cout<<"cutMuVec PT "<<muonsLVec[i].Pt()<<std::endl; 
+            //         cutMuCharge->push_back(muonsCharge[i]);
+            //         cutMuActivity->push_back(muonspfActivity[i]);
+            //         if(muonsCharge[i] > 0) cutMuSummedCharge++;
+            //         else                   cutMuSummedCharge--;
+            //     }
+            // }
+            // //std::cout<<"New Muon Selection "<<(*cutMuVec).size()<<std::endl;
+            // //electron selection
+            // int cutElecSummedCharge = 0;
+            // for(int i = 0; i < elesLVec.size(); ++i)
+            // {
+            //     if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr)) // emulates electrons with pt but no iso requirements.
+            //     {
+            //         cutElecVecRecoOnly.push_back(elesLVec[i]);
+            //     }
 
-                if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
-                {
-                    cutElecVec->push_back(elesLVec[i]);
-                    cutElecCharge->push_back(elesCharge[i]);
-                    cutElecActivity->push_back(AnaFunctions::getElectronActivity(elesLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, AnaConsts::elesAct));
-                    if(elesCharge[i] > 0) sumElecCharge++;
-                    else                  sumElecCharge--;
-                }
-            }
+            //     if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
+            //     {
+            //         cutElecVec->push_back(elesLVec[i]);
+            //         cutElecCharge->push_back(elesCharge[i]);
+            //         cutElecActivity->push_back(AnaFunctions::getElectronActivity(elesLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, AnaConsts::elesAct));
+            //         if(elesCharge[i] > 0) cutElecSummedCharge++;
+            //         else                  cutElecSummedCharge--;
+            //     }
+            // }
 
 
             //mu45 non-iso trigger emulation
             const double effsnom2012ABC[] = {0.928,0.8302,0.8018};
             const double upedge2012ABC[] = { 0.9, 1.2, 2.1};
             bool muTrigMu45 = false;
-            for(TLorentzVector& mu : *cutMuVec)
+            for(const TLorentzVector& mu : cutMuVec)
             {
                 if(mu.Pt() > 50)
                 {
@@ -244,10 +260,10 @@ namespace plotterFunctions
                             }
 
                             dRMin = 999.9;
-                            for(int j = 0; j < cutMuVec->size(); ++j)
+                            for(int j = 0; j < cutMuVec.size(); ++j)
                             {
                                 // difference in angle between gen and cut muons 
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutMuVec)[j]);
+                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVec[j]);
                                 if(dR < dRMin)
                                 {
                                     dRMin = dR;
@@ -291,10 +307,10 @@ namespace plotterFunctions
                             }
 
                             dRMin = 999.9;
-                            for(int j = 0; j < cutElecVec->size(); ++j)
+                            for(int j = 0; j < cutElecVec.size(); ++j)
                             {
                                 // difference in angle between gen and cut electrons
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], (*cutElecVec)[j]);
+                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVec[j]);
                                 if(dR < dRMin)
                                 {
                                     dRMin = dR;
@@ -356,37 +372,37 @@ namespace plotterFunctions
             double zMuMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
             TLorentzVector bestRecoMuZ;
             TLorentzVector Zrecopt;
-            for(int i = 0; i < cutMuVec->size(); ++i)
+            for(int i = 0; i < cutMuVec.size(); ++i)
             {
-            Zrecopt =  muonsLVec[0]+muonsLVec[1];//(*cutMuVec)[0] + (*cutMuVec)[1];
-                if((*cutMuVec)[i].Pt() < minMuPt) continue;
-                for(int j = 0; j < i && j < cutMuVec->size(); ++j)
+            Zrecopt =  muonsLVec[0]+muonsLVec[1];//cutMuVec[0] + cutMuVec[1];
+                if(cutMuVec[i].Pt() < minMuPt) continue;
+                for(int j = 0; j < i && j < cutMuVec.size(); ++j)
                 {
-                    if((*cutMuVec)[j].Pt() < minMuPt) continue;
-                    double zm = ((*cutMuVec)[i] + (*cutMuVec)[j]).M();
+                    if(cutMuVec[j].Pt() < minMuPt) continue;
+                    double zm = (cutMuVec[i] + cutMuVec[j]).M();
                     //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                     if(fabs(zm - zMass) < fabs(zMuMassCurrent - zMass))
                     {
-                        bestRecoMuZ = (*cutMuVec)[i] + (*cutMuVec)[j];
+                        bestRecoMuZ = cutMuVec[i] + cutMuVec[j];
                         zMuMassCurrent = zm;
                     }
                 }
             }
             //std::cout<<Zrecopt.Pt()<<" the fourth one"<<std::endl;
-            //Zrecopt = muonsLVec[0]+muonsLVec[1];//(*cutMuVec)[0] + (*cutMuVec)[1];
+            //Zrecopt = muonsLVec[0]+muonsLVec[1];//cutMuVec[0] + cutMuVec[1];
             double zElecMassCurrent = 1.0e300;
             TLorentzVector bestRecoElecZ;
-            for(int i = 0; i < cutElecVec->size(); ++i)
+            for(int i = 0; i < cutElecVec.size(); ++i)
             {
-                if((*cutElecVec)[i].Pt() < minElecPt) continue;
-                for(int j = 0; j < i && j < cutElecVec->size(); ++j)
+                if(cutElecVec[i].Pt() < minElecPt) continue;
+                for(int j = 0; j < i && j < cutElecVec.size(); ++j)
                 {
-                    if((*cutElecVec)[j].Pt() < minElecPt) continue;
-                    double zm = ((*cutElecVec)[i] + (*cutElecVec)[j]).M();
+                    if(cutElecVec[j].Pt() < minElecPt) continue;
+                    double zm = (cutElecVec[i] + cutElecVec[j]).M();
                     //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                     if(fabs(zm - zMass) < fabs(zElecMassCurrent - zMass))
                     {
-                        bestRecoElecZ = (*cutElecVec)[i] + (*cutElecVec)[j];
+                        bestRecoElecZ = cutElecVec[i] + cutElecVec[j];
                         zElecMassCurrent = zm;
                     }
                 }
@@ -394,17 +410,17 @@ namespace plotterFunctions
 
             double zElMuMassCurrent = 1.0e300;
             TLorentzVector bestRecoElMuZ;
-            for(int i = 0; i < cutMuVec->size(); ++i)
+            for(int i = 0; i < cutMuVec.size(); ++i)
             {
-                if((*cutMuVec)[i].Pt() < minMuPt) continue;
-                for(int j = 0; j < cutElecVec->size(); ++j)
+                if(cutMuVec[i].Pt() < minMuPt) continue;
+                for(int j = 0; j < cutElecVec.size(); ++j)
                 {
-                    if((*cutElecVec)[j].Pt() < minMuPt) continue;
-                    double zm = ((*cutMuVec)[i] + (*cutElecVec)[j]).M();
+                    if(cutElecVec[j].Pt() < minMuPt) continue;
+                    double zm = (cutMuVec[i] + cutElecVec[j]).M();
                     //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                     if(fabs(zm - zMass) < fabs(zElMuMassCurrent - zMass))
                     {
-                        bestRecoElMuZ = (*cutMuVec)[i] + (*cutElecVec)[j];
+                        bestRecoElMuZ = cutMuVec[i] + cutElecVec[j];
                         zElMuMassCurrent = zm;
                     }
                 }
@@ -420,14 +436,14 @@ namespace plotterFunctions
             TLorentzVector cleanMet = metV + metZ;
             //std::cout<<"metZ "<<metZ.Pt()<<std::endl;
             //std::cout<<"metV "<<metV.Pt()<<std::endl;
-            bool passDiMuSel   = passEleVeto  && (cutMuVec->size() == 2   && sumMuCharge == 0   && (*cutMuVec)[0].Pt() > highMuPt     && (*cutMuVec)[1].Pt() > minMuPt);
-            bool passDiElecSel = passMuonVeto && (cutElecVec->size() == 2 && sumElecCharge == 0 && (*cutElecVec)[0].Pt() > highElecPt && (*cutElecVec)[1].Pt() > minElecPt);
-            bool passElMuSel = (cutMuVec->size() == 1 && cutElecVec->size() == 1 && sumElecCharge == -sumMuCharge && (*cutMuVec)[0].Pt() > highMuPt && (*cutElecVec)[0].Pt() > minMuPt);
+            bool passDiMuSel   = passEleVeto  && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt);
+            bool passDiElecSel = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt);
+            bool passElMuSel = (cutMuVec.size() == 1 && cutElecVec.size() == 1 && cutElecSummedCharge == -cutMuSummedCharge && cutMuVec[0].Pt() > highMuPt && cutElecVec[0].Pt() > minMuPt);
 
-            bool passMuZinvSel   =  passEleVeto && (cutMuVec->size() == 2   && sumMuCharge == 0   && (*cutMuVec)[0].Pt() > highMuPt     && (*cutMuVec)[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
-            bool passElecZinvSel = passMuonVeto && (cutElecVec->size() == 2 && sumElecCharge == 0 && (*cutElecVec)[0].Pt() > highElecPt && (*cutElecVec)[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
-            bool passElMuZinvSel = (cutMuVec->size() == 1 && cutElecVec->size() == 1 && sumElecCharge == -sumMuCharge && (*cutMuVec)[0].Pt() > highMuPt && (*cutElecVec)[0].Pt() > minMuPt) && (bestRecoElMuZ.M() > zMassMin) && (bestRecoElMuZ.M() < zMassMax);
-            bool passMuZinvSel_lowpt   =  passEleVeto && (cutMuVec->size() == 2   && sumMuCharge == 0   && (*cutMuVec)[0].Pt() > minMuPt     && (*cutMuVec)[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
+            bool passMuZinvSel   =  passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
+            bool passElecZinvSel = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
+            bool passElMuZinvSel = (cutMuVec.size() == 1 && cutElecVec.size() == 1 && cutElecSummedCharge == -cutMuSummedCharge && cutMuVec[0].Pt() > highMuPt && cutElecVec[0].Pt() > minMuPt) && (bestRecoElMuZ.M() > zMassMin) && (bestRecoElMuZ.M() < zMassMax);
+            bool passMuZinvSel_lowpt   =  passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > minMuPt     && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
 
             double genMuPt   = -999.9;
             double genMuEta  = -999.9;
@@ -437,7 +453,7 @@ namespace plotterFunctions
             double cutMuEta2 = -999.9;
 
             // print number of muons
-            //printf("num gen mu: %d num mu: %d num cut mu: %d num cut mu reco only: %d\n", genMu->size(), muonsLVec.size(), cutMuVec->size(), cutMuVecRecoOnly.size());
+            //printf("num gen mu: %d num mu: %d num cut mu: %d num cut mu reco only: %d\n", genMu->size(), muonsLVec.size(), cutMuVec.size(), cutMuVecRecoOnly.size());
             
             if(genMu->size() >= 1)
             {
@@ -445,21 +461,21 @@ namespace plotterFunctions
                 genMuEta = genMu->at(0)->Eta();
             }
 
-            if(cutMuVec->size() >= 1) 
+            if(cutMuVec.size() >= 1) 
             {
-                cutMuPt1  = cutMuVec->at(0).Pt();
-                cutMuEta1 = cutMuVec->at(0).Eta();
+                cutMuPt1  = cutMuVec.at(0).Pt();
+                cutMuEta1 = cutMuVec.at(0).Eta();
             }
-            if(cutMuVec->size() >= 2) 
+            if(cutMuVec.size() >= 2) 
             {
-                cutMuPt2  = cutMuVec->at(1).Pt();
-                cutMuEta2 = cutMuVec->at(1).Eta();
+                cutMuPt2  = cutMuVec.at(1).Pt();
+                cutMuEta2 = cutMuVec.at(1).Eta();
             }
 
             double cutElecPt1 = -999.9;
             double cutElecPt2 = -999.9;
-            if(cutElecVec->size() >= 1) cutElecPt1 = cutElecVec->at(0).Pt();
-            if(cutElecVec->size() >= 2) cutElecPt2 = cutElecVec->at(1).Pt();
+            if(cutElecVec.size() >= 1) cutElecPt1 = cutElecVec.at(0).Pt();
+            if(cutElecVec.size() >= 2) cutElecPt2 = cutElecVec.at(1).Pt();
 
             double mindPhiMetJ = 999.9;
             int jc = 0;
@@ -551,10 +567,12 @@ namespace plotterFunctions
             tr.registerDerivedVar("ZPhiRes", bestRecoZ.Phi() - genZPhi);
             tr.registerDerivedVar("ZMRes", (bestRecoZ.M() - genZmass)/genZmass);
 
-            tr.registerDerivedVec("cutMuVec", cutMuVec);
-            tr.registerDerivedVec("cutElecVec", cutElecVec);
-            tr.registerDerivedVec("cutMuActivity", cutMuActivity);
-            tr.registerDerivedVec("cutElecActivity", cutElecActivity);
+            // Registered in BasicLepton.h 
+            //tr.registerDerivedVec("cutMuVec", cutMuVec);
+            //tr.registerDerivedVec("cutElecVec", cutElecVec);
+            //tr.registerDerivedVec("cutMuActivity", cutMuActivity);
+            //tr.registerDerivedVec("cutElecActivity", cutElecActivity);
+
             tr.registerDerivedVec("genMu", genMu);
             const auto& genMu_test = tr.getVec<const TLorentzVector*>("genMu");
             tr.registerDerivedVar("ngenMu", static_cast<data_t>(genMu->size()));

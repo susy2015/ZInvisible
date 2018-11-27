@@ -871,26 +871,30 @@ int main(int argc, char* argv[])
       lepton_cut += ";" + met_cut;
     }
     auto makePDSGJets = [&](const std::string& label, const std::string& cuts) {return Plotter::DatasetSummary("GJets "+label, fileMap["GJets"], cuts, ""); };
-    Plotter::DataCollection dc_GJets_nj_all                ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSGJets("all jets", met_cut)}                     );
-    Plotter::DataCollection dc_GJets_nj_all_onephoton      ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSGJets("all jets one photon", photon_cut)}       );
-    Plotter::DataCollection dc_GJets_nj_phoclean           ("single", "cntNJetsPt20Eta24NoPhoton", {makePDSGJets("photon cleaned", met_cut)}               );
-    Plotter::DataCollection dc_GJets_nj_phoclean_onephoton ("single", "cntNJetsPt20Eta24NoPhoton", {makePDSGJets("photon cleaned one photon", photon_cut)} );
+    //Plotter::DataCollection dc_GJets_nj_all                ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSGJets("all jets", met_cut)}                     );
+    //Plotter::DataCollection dc_GJets_nj_all_onephoton      ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSGJets("all jets one photon", photon_cut)}       );
+    //Plotter::DataCollection dc_GJets_nj_phoclean           ("single", "cntNJetsPt20Eta24NoPhoton", {makePDSGJets("photon cleaned", met_cut)}               );
+    //Plotter::DataCollection dc_GJets_nj_phoclean_onephoton ("single", "cntNJetsPt20Eta24NoPhoton", {makePDSGJets("photon cleaned one photon", photon_cut)} );
     
     //vh.push_back(PHS("MC_GJets_nj", {dc_GJets_nj_all, dc_GJets_nj_all_onephoton, dc_GJets_nj_phoclean, dc_GJets_nj_phoclean_onephoton}, {1, 1}, "", 10, 0, 10, true, false, label_nj, label_Events));
     
     // lepton jet cleaning
     // variables: HT, MET, METPHI, dPhi, n_j, n_t, n_b 
     auto makePDSDY = [&](const std::string& label, const std::string& cuts) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], cuts, ""); };
-    Plotter::DataCollection dc_DY_nj_all              ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSDY("all jets", met_cut)}                      );
-    Plotter::DataCollection dc_DY_nj_all_lepveto      ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSDY("all jets lepton veto", lepton_cut)}       );
-    Plotter::DataCollection dc_DY_nj_lepclean         ("single", "cntNJetsPt20Eta24NoLepton", {makePDSDY("lepton cleaned", met_cut)}                );
-    Plotter::DataCollection dc_DY_nj_lepclean_lepveto ("single", "cntNJetsPt20Eta24NoLepton", {makePDSDY("lepton cleaned lepton veto", lepton_cut)} );
-    Plotter::DataCollection dc_DY_nt_all              ("single", "nTopCandSortedCntNoVeto",   {makePDSDY("all jets", met_cut)}                      );
-    Plotter::DataCollection dc_DY_nt_lepclean         ("single", "nTopCandSortedCntNoLepton", {makePDSDY("lepton cleaned", met_cut)}                );
+    //Plotter::DataCollection dc_DY_nj_all              ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSDY("all jets", met_cut)}                      );
+    //Plotter::DataCollection dc_DY_nj_all_lepveto      ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSDY("all jets lepton veto", lepton_cut)}       );
+    //Plotter::DataCollection dc_DY_nj_lepclean         ("single", "cntNJetsPt20Eta24NoLepton", {makePDSDY("lepton cleaned", met_cut)}                );
+    //Plotter::DataCollection dc_DY_nj_lepclean_lepveto ("single", "cntNJetsPt20Eta24NoLepton", {makePDSDY("lepton cleaned lepton veto", lepton_cut)} );
+    //Plotter::DataCollection dc_DY_nt_all              ("single", "nTopCandSortedCntNoVeto",   {makePDSDY("all jets", met_cut)}                      );
+    //Plotter::DataCollection dc_DY_nt_lepclean         ("single", "nTopCandSortedCntNoLepton", {makePDSDY("lepton cleaned", met_cut)}                );
     
     //vh.push_back(PHS("MC_DY_nj", {dc_DY_nj_all, dc_DY_nj_all_lepveto, dc_DY_nj_lepclean, dc_DY_nj_lepclean_lepveto}, {1, 1}, "", 10, 0, 10, true, false, label_nj, label_Events));
-    vh.push_back(PHS("MC_DY_nj", {dc_DY_nj_all, dc_DY_nj_lepclean}, {2, 1}, "", 20, 0, 20, true, false, label_nj, label_Events));
-
+    
+    Plotter::DataCollection dc_DY_nj_all         ("single", "cntNJetsPt20Eta24NoVeto",          {makePDSDY("all jets", "")} );
+    Plotter::DataCollection dc_DY_nj_pflepclean  ("single", "cntNJetsPt20Eta24PFLeptonCleaned", {makePDSDY("PF lepton cleaned jets", "")} );
+    Plotter::DataCollection dc_DY_nj_drlepclean  ("single", "cntNJetsPt20Eta24DRLeptonCleaned", {makePDSDY("DR lepton cleaned jets", "")} );
+    
+    vh.push_back(PHS("MC_DY_nj", {dc_DY_nj_all, dc_DY_nj_pflepclean, dc_DY_nj_drlepclean}, {3, 2}, "", 20, 0, 20, true, false, label_nj, label_Events));
 
 
 
@@ -957,14 +961,14 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_nj_"     + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv", style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nj,  y_axis_label));
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_nb_"     + style, {makePDCGJetsZnunu("cntCSVSZinv",           style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nb,  y_axis_label));
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_nt_"     + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv", style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nt,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_dr_"     + style, {makePDCGJetsZnunu("dRjetsAndPhoton",       style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 80, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_dr_"     + style, {makePDCGJetsZnunu("dR_jetsLVec_NoPhoton",  style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 80, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_met_"        + style, {makePDCGJetsZnunu("metWithPhoton",         style, legend_label, "passBaselineZinv")},             {1, d}, "", 80, minPt,  maxPt,  log_scale, false, label_met, y_axis_label));
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_metphi_"     + style, {makePDCGJetsZnunu("metphiWithPhoton",      style, legend_label, "passBaselineZinv")},             {1, d}, "", 80, minPhi, maxPhi, log_scale, false, label_phi, y_axis_label));
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_ht_"         + style, {makePDCGJetsZnunu("HTZinv",                style, legend_label, "passBaselineZinv")},             {1, d}, "", 80, 0.0, 2000.0,    log_scale, false, label_ht,  y_axis_label));
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_nj_"         + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv", style, legend_label, "passBaselineZinv")},             {1, d}, "", 10, 0, 10,           log_scale, false, label_nj,  y_axis_label));
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_nb_"         + style, {makePDCGJetsZnunu("cntCSVSZinv",           style, legend_label, "passBaselineZinv")},             {1, d}, "", 10, 0, 10,           log_scale, false, label_nb,  y_axis_label));
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_nt_"         + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv", style, legend_label, "passBaselineZinv")},             {1, d}, "", 10, 0, 10,           log_scale, false, label_nt,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_dr_"         + style, {makePDCGJetsZnunu("dRjetsAndPhoton",       style, legend_label, "passBaselineZinv")},             {1, d}, "", 80, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_dr_"         + style, {makePDCGJetsZnunu("dR_jetsLVec_NoPhoton",  style, legend_label, "passBaselineZinv")},             {1, d}, "", 80, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
         }
     }
 

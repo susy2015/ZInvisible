@@ -19,6 +19,7 @@ namespace plotterFunctions
     class GenerateWeight;
     class GeneratePhotonEfficiency;
     class LepInfo;
+    class BasicLepton;
     class Fakebtagvectors;
     class GetSearchBin;
     class TriggerInfo;
@@ -58,8 +59,9 @@ private:
     BaselineVessel *myBLV;
     BaselineVessel *blvZinv;
     BaselineVessel *blvNoVeto;
-    BaselineVessel *blvNoLepton;
-    BaselineVessel *blvNoPhoton;
+    BaselineVessel *blvPFLeptonCleaned;
+    BaselineVessel *blvDRLeptonCleaned;
+    BaselineVessel *blvDRPhotonCleaned;
     //BaselineVessel *blvZinv1b;
     //BaselineVessel *blvZinv2b;
     //BaselineVessel *blvZinv3b;
@@ -70,6 +72,7 @@ private:
     plotterFunctions::GenerateWeight *weights;
     plotterFunctions::GeneratePhotonEfficiency *generatePhotonEfficiency;
     plotterFunctions::NJetWeight *njWeight;
+    plotterFunctions::BasicLepton *basicLepton;
     plotterFunctions::LepInfo *lepInfo;
     plotterFunctions::Fakebtagvectors *fakebtagvectors;
     plotterFunctions::GetSearchBin *getSearchBin;
@@ -117,6 +120,7 @@ private:
     BaselineVessel *myBLV;
     plotterFunctions::Gamma *gamma; //Caleb :-)
     plotterFunctions::LepInfo *lepInfo;
+    plotterFunctions::BasicLepton *basicLepton;
 
 public:
     RegisterFunctionsCalcEff();
