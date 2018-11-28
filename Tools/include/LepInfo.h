@@ -206,6 +206,8 @@ namespace plotterFunctions
 
             double genHt = 0.0;
 
+            // muon trigger of 50 GeV
+            // electron trigger of 33 GeV
             const double   minMuPt = 20.0,   highMuPt = 50.0;
             const double minElecPt = 20.0, highElecPt = 50.0;
             double nuPt1 = -999.9, nuPt2 = -999.9;
@@ -429,7 +431,7 @@ namespace plotterFunctions
             TLorentzVector metV, metZ;
             metV.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
 
-            TLorentzVector bestRecoZ = (true/*fabs(bestRecoElecZ.M() - zMass) > fabs(bestRecoMuZ.M() - zMass)*/)?(bestRecoMuZ):(bestRecoElecZ);
+            TLorentzVector bestRecoZ = (fabs(bestRecoElecZ.M() - zMass) > fabs(bestRecoMuZ.M() - zMass)) ? (bestRecoMuZ) : (bestRecoElecZ);
             //if(fabs(bestRecoZ.M() - zMass) > fabs(bestRecoElMuZ.M() - zMass)) bestRecoZ = bestRecoElMuZ;
 
             metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
@@ -440,10 +442,11 @@ namespace plotterFunctions
             bool passDiElecSel = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt);
             bool passElMuSel = (cutMuVec.size() == 1 && cutElecVec.size() == 1 && cutElecSummedCharge == -cutMuSummedCharge && cutMuVec[0].Pt() > highMuPt && cutElecVec[0].Pt() > minMuPt);
 
-            bool passMuZinvSel   =  passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
-            bool passElecZinvSel = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
-            bool passElMuZinvSel = (cutMuVec.size() == 1 && cutElecVec.size() == 1 && cutElecSummedCharge == -cutMuSummedCharge && cutMuVec[0].Pt() > highMuPt && cutElecVec[0].Pt() > minMuPt) && (bestRecoElMuZ.M() > zMassMin) && (bestRecoElMuZ.M() < zMassMax);
-            bool passMuZinvSel_lowpt   =  passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > minMuPt     && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
+            bool passMuZinvSel         = passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
+            bool passMuZinvSel_lowpt   = passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > minMuPt      && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
+            bool passElecZinvSel       = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
+            bool passElecZinvSel_lowpt = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > minElecPt  && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
+            bool passElMuZinvSel       = (cutMuVec.size() == 1 && cutElecVec.size() == 1 && cutElecSummedCharge == -cutMuSummedCharge && cutMuVec[0].Pt() > highMuPt && cutElecVec[0].Pt() > minMuPt) && (bestRecoElMuZ.M() > zMassMin) && (bestRecoElMuZ.M() < zMassMax);
 
             double genMuPt   = -999.9;
             double genMuEta  = -999.9;
@@ -612,12 +615,13 @@ namespace plotterFunctions
             tr.registerDerivedVar("passDiElecSel", passDiElecSel);
             tr.registerDerivedVar("passElMuSel", passElMuSel);
 
-            tr.registerDerivedVar("passMuZinvSel", passMuZinvSel);
-            tr.registerDerivedVar("passMuZinvSel_lowpt", passMuZinvSel_lowpt);
-            tr.registerDerivedVar("passElecZinvSel", passElecZinvSel);
-            tr.registerDerivedVar("passElMuZinvSel", passElMuZinvSel);
+            tr.registerDerivedVar("passMuZinvSel",         passMuZinvSel);
+            tr.registerDerivedVar("passMuZinvSel_lowpt",   passMuZinvSel_lowpt);
+            tr.registerDerivedVar("passElecZinvSel",       passElecZinvSel);
+            tr.registerDerivedVar("passElecZinvSel_lowpt", passElecZinvSel_lowpt);
+            tr.registerDerivedVar("passElMuZinvSel",       passElMuZinvSel);
 
-            tr.registerDerivedVar("Zrecopt",Zrecoptpt);
+            tr.registerDerivedVar("Zrecopt", Zrecoptpt);
             // gen tops
             tr.registerDerivedVec("genTops", genTops);
 
