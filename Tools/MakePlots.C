@@ -277,12 +277,10 @@ int main(int argc, char* argv[])
     std::string label_ht  = "H_{T} [GeV]";
     std::string label_mht = "MH_{T} [GeV]";
     std::string label_nj  = "N_{jets}";
-    std::string label_nb  = "N_{b}";
-    std::string label_nt  = "N_{t}";
+    std::string label_nb  = "N_{bottoms}";
+    std::string label_nt  = "N_{tops}";
     std::string label_dr  = "#DeltaR";
-    std::string label_dphi0  = "#Delta#phi_0";
-    std::string label_dphi1  = "#Delta#phi_1";
-    std::string label_dphi2  = "#Delta#phi_2";
+    std::string label_dphi  = "#Delta#phi_{i}";
     std::string label_mt2 = "M_{T2} [GeV]";
     std::string label_eta = "#eta";
     std::string label_MuPt = "p_{T}^{#mu} [GeV]";
@@ -905,21 +903,15 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dc_DY_ht_all             ("single", "HTNoVeto",                         {makePDSDY("all jets",               "")} );
     Plotter::DataCollection dc_DY_ht_pflepclean      ("single", "HTPFLeptonCleaned",                {makePDSDY("PF lepton cleaned jets", "")} );
     Plotter::DataCollection dc_DY_ht_drlepclean      ("single", "HTDRLeptonCleaned",                {makePDSDY("DR lepton cleaned jets", "")} );
-    Plotter::DataCollection dc_DY_met_all            ("single", "metNoVeto",                        {makePDSDY("all jets",               "")} );
-    Plotter::DataCollection dc_DY_met_pflepclean     ("single", "metPFLeptonCleaned",               {makePDSDY("PF lepton cleaned jets", "")} );
-    Plotter::DataCollection dc_DY_met_drlepclean     ("single", "metDRLeptonCleaned",               {makePDSDY("DR lepton cleaned jets", "")} );
-    Plotter::DataCollection dc_DY_metphi_all         ("single", "metphiNoVeto",                     {makePDSDY("all jets",               "")} );
-    Plotter::DataCollection dc_DY_metphi_pflepclean  ("single", "metphiPFLeptonCleaned",            {makePDSDY("PF lepton cleaned jets", "")} );
-    Plotter::DataCollection dc_DY_metphi_drlepclean  ("single", "metphiDRLeptonCleaned",            {makePDSDY("DR lepton cleaned jets", "")} );
-    Plotter::DataCollection dc_DY_dphi0_all          ("single", "dPhi0_CUTNoVeto",                  {makePDSDY("all jets",               "")} );
-    Plotter::DataCollection dc_DY_dphi0_pflepclean   ("single", "dPhi0_CUTPFLeptonCleaned",         {makePDSDY("PF lepton cleaned jets", "")} );
-    Plotter::DataCollection dc_DY_dphi0_drlepclean   ("single", "dPhi0_CUTDRLeptonCleaned",         {makePDSDY("DR lepton cleaned jets", "")} );
-    Plotter::DataCollection dc_DY_dphi1_all          ("single", "dPhi1_CUTNoVeto",                  {makePDSDY("all jets",               "")} );
-    Plotter::DataCollection dc_DY_dphi1_pflepclean   ("single", "dPhi1_CUTPFLeptonCleaned",         {makePDSDY("PF lepton cleaned jets", "")} );
-    Plotter::DataCollection dc_DY_dphi1_drlepclean   ("single", "dPhi1_CUTDRLeptonCleaned",         {makePDSDY("DR lepton cleaned jets", "")} );
-    Plotter::DataCollection dc_DY_dphi2_all          ("single", "dPhi2_CUTNoVeto",                  {makePDSDY("all jets",               "")} );
-    Plotter::DataCollection dc_DY_dphi2_pflepclean   ("single", "dPhi2_CUTPFLeptonCleaned",         {makePDSDY("PF lepton cleaned jets", "")} );
-    Plotter::DataCollection dc_DY_dphi2_drlepclean   ("single", "dPhi2_CUTDRLeptonCleaned",         {makePDSDY("DR lepton cleaned jets", "")} );
+    Plotter::DataCollection dc_DY_met_all            ("single", "met",                              {makePDSDY("all jets",               "")} );
+    Plotter::DataCollection dc_DY_met_pflepclean     ("single", "met",                              {makePDSDY("PF lepton cleaned jets", "")} );
+    Plotter::DataCollection dc_DY_met_drlepclean     ("single", "met",                              {makePDSDY("DR lepton cleaned jets", "")} );
+    Plotter::DataCollection dc_DY_metphi_all         ("single", "metphi",                           {makePDSDY("all jets",               "")} );
+    Plotter::DataCollection dc_DY_metphi_pflepclean  ("single", "metphi",                           {makePDSDY("PF lepton cleaned jets", "")} );
+    Plotter::DataCollection dc_DY_metphi_drlepclean  ("single", "metphi",                           {makePDSDY("DR lepton cleaned jets", "")} );
+    Plotter::DataCollection dc_DY_dphi_all           ("single", "dPhiVecNoVeto",                  {makePDSDY("all jets",               "")} );
+    Plotter::DataCollection dc_DY_dphi_pflepclean    ("single", "dPhiVecPFLeptonCleaned",         {makePDSDY("PF lepton cleaned jets", "")} );
+    Plotter::DataCollection dc_DY_dphi_drlepclean    ("single", "dPhiVecDRLeptonCleaned",         {makePDSDY("DR lepton cleaned jets", "")} );
     Plotter::DataCollection dc_DY_dr                 ("single", "dR_jetsLVec_drLeptonCleaned",      {makePDSDY("DR lepton cleaned jets", "")} );
     
     vh.push_back(PHS("MC_DY_nj",     {dc_DY_nj_all, dc_DY_nj_pflepclean, dc_DY_nj_drlepclean},             {3, 2}, "", 20, 0, 20, true, false, label_nj, label_Events));
@@ -927,11 +919,9 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("MC_DY_nb",     {dc_DY_nb_all, dc_DY_nb_pflepclean, dc_DY_nb_drlepclean},             {3, 2}, "", 20, 0, 20, true, false, label_nb, label_Events));
     vh.push_back(PHS("MC_DY_ht",     {dc_DY_ht_all, dc_DY_ht_pflepclean, dc_DY_ht_drlepclean},             {3, 2}, "", 80, 0.0, 2000.0, true, false, label_ht, label_Events));
     vh.push_back(PHS("MC_DY_met",    {dc_DY_met_all, dc_DY_met_pflepclean, dc_DY_met_drlepclean},          {3, 2}, "", 80, 0.0, 2000.0, true, false, label_met, label_Events));
-    vh.push_back(PHS("MC_DY_metphi", {dc_DY_metphi_all, dc_DY_metphi_pflepclean, dc_DY_metphi_drlepclean}, {3, 2}, "", 80, 0.0, 2000.0, true, false, label_metphi, label_Events));
-    vh.push_back(PHS("MC_DY_dphi0",  {dc_DY_dphi0_all, dc_DY_dphi0_pflepclean, dc_DY_dphi0_drlepclean},    {3, 2}, "", 80, 0.0, maxPhi, true, false, label_dphi0, label_Events));
-    vh.push_back(PHS("MC_DY_dphi1",  {dc_DY_dphi1_all, dc_DY_dphi1_pflepclean, dc_DY_dphi1_drlepclean},    {3, 2}, "", 80, 0.0, maxPhi, true, false, label_dphi1, label_Events));
-    vh.push_back(PHS("MC_DY_dphi2",  {dc_DY_dphi2_all, dc_DY_dphi2_pflepclean, dc_DY_dphi2_drlepclean},    {3, 2}, "", 80, 0.0, maxPhi, true, false, label_dphi2, label_Events));
-    vh.push_back(PHS("MC_DY_dr",     {dc_DY_dr},                                                           {1, 1}, "", 80, 0.0, 1.0, true, false, label_dr,    label_Events));
+    vh.push_back(PHS("MC_DY_metphi", {dc_DY_metphi_all, dc_DY_metphi_pflepclean, dc_DY_metphi_drlepclean}, {3, 2}, "", 80, minPhi, maxPhi, true, false, label_metphi, label_Events));
+    vh.push_back(PHS("MC_DY_dphi",   {dc_DY_dphi_all, dc_DY_dphi_pflepclean, dc_DY_dphi_drlepclean},       {3, 2}, "", 80, 0.0, maxPhi, true, false, label_dphi, label_Events));
+    vh.push_back(PHS("MC_DY_dr",     {dc_DY_dr},                                                           {1, 1}, "", 80, 0.0, 1.0, true, false, label_dr, label_Events));
 
     // Znunu
     auto makePDSZnunu       = [&](const std::string& label, const std::string& cuts="HTZinv>200") {return Plotter::DatasetSummary("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu"], cuts, ""); };
