@@ -932,56 +932,78 @@ int main(int argc, char* argv[])
     {
         std::vector<Plotter::DataCollection> dcVec;
         std::string selection = "passBaselineZinv;pass" + s + "ZinvSel_lowpt";
+        
         dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecNoVeto[0]",          {makePDSDY("all jets",               selection)} ) );
         dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecPFLeptonCleaned[0]", {makePDSDY("PF lepton cleaned jets", selection)} ) );
         dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecDRLeptonCleaned[0]", {makePDSDY("DR lepton cleaned jets", selection)} ) );
         dataCollectionMap.emplace("dPhi0_" + s, dcVec);
         dcVec.clear();
+        
+        dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecNoVeto[1]",          {makePDSDY("all jets",               selection)} ) );
+        dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecPFLeptonCleaned[1]", {makePDSDY("PF lepton cleaned jets", selection)} ) );
+        dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecDRLeptonCleaned[1]", {makePDSDY("DR lepton cleaned jets", selection)} ) );
+        dataCollectionMap.emplace("dPhi1_" + s, dcVec);
+        dcVec.clear();
+        
+        dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecNoVeto[2]",          {makePDSDY("all jets",               selection)} ) );
+        dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecPFLeptonCleaned[2]", {makePDSDY("PF lepton cleaned jets", selection)} ) );
+        dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecDRLeptonCleaned[2]", {makePDSDY("DR lepton cleaned jets", selection)} ) );
+        dataCollectionMap.emplace("dPhi2_" + s, dcVec);
+        dcVec.clear();
+        
+        dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPt", {makePDSDY("all jets",               selection)} ) );
+        dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPt", {makePDSDY("PF lepton cleaned jets", selection)} ) );
+        dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPt", {makePDSDY("DR lepton cleaned jets", selection)} ) );
+        dataCollectionMap.emplace("met_" + s, dcVec);
+        dcVec.clear();
+        
+        dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPhi", {makePDSDY("all jets",               selection)} ) );
+        dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPhi", {makePDSDY("PF lepton cleaned jets", selection)} ) );
+        dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPhi", {makePDSDY("DR lepton cleaned jets", selection)} ) );
+        dataCollectionMap.emplace("metphi_" + s, dcVec);
+        dcVec.clear();
+        
+        dcVec.emplace_back( Plotter::DataCollection("single", "dR_jetsLVec_drLeptonCleaned", {makePDSDY("all jets",               selection)} ) );
+        dataCollectionMap.emplace("dr_" + s, dcVec);
+        dcVec.clear();
     }
     
     std::vector<simplePlotStruct> plotParamsDY;
     
-    plotParamsDY.push_back({"nj_Elec",    dataCollectionMap.find("cntNJetsPt20Eta24_Elec")->second, 20, 0, 20, true, false, label_nj, label_Events});
-    plotParamsDY.push_back({"nj_Mu",      dataCollectionMap.find("cntNJetsPt20Eta24_Mu")->second,   20, 0, 20, true, false, label_nj, label_Events});
-    plotParamsDY.push_back({"nt_Elec",    dataCollectionMap.find("nTopCandSortedCnt_Elec")->second, 20, 0, 20, true, false, label_nt, label_Events});
-    plotParamsDY.push_back({"nt_Mu",      dataCollectionMap.find("nTopCandSortedCnt_Mu")->second,   20, 0, 20, true, false, label_nt, label_Events});
-    plotParamsDY.push_back({"nb_Elec",    dataCollectionMap.find("cntCSVS_Elec")->second,           20, 0, 20, true, false, label_nb, label_Events});
-    plotParamsDY.push_back({"nb_Mu",      dataCollectionMap.find("cntCSVS_Mu")->second,             20, 0, 20, true, false, label_nb, label_Events});
-    plotParamsDY.push_back({"ht_Elec",    dataCollectionMap.find("HT_Elec")->second,                80, 0.0, 2000.0, true, false, label_ht, label_Events});
-    plotParamsDY.push_back({"ht_Mu",      dataCollectionMap.find("HT_Mu")->second,                  80, 0.0, 2000.0, true, false, label_ht, label_Events});
-    plotParamsDY.push_back({"dphi0_Elec",  dataCollectionMap.find("dPhi0_Elec")->second,             80, 0.0, 2000.0, true, false, label_dphi0, label_Events});
-    plotParamsDY.push_back({"dphi0_Mu",    dataCollectionMap.find("dPhi0_Mu")->second,               80, 0.0, 2000.0, true, false, label_dphi0, label_Events});
+    plotParamsDY.push_back({"nj_Elec",      dataCollectionMap.find("cntNJetsPt20Eta24_Elec")->second, 20, 0, 20, true, false, label_nj, label_Events});
+    plotParamsDY.push_back({"nj_Mu",        dataCollectionMap.find("cntNJetsPt20Eta24_Mu")->second,   20, 0, 20, true, false, label_nj, label_Events});
+    plotParamsDY.push_back({"nt_Elec",      dataCollectionMap.find("nTopCandSortedCnt_Elec")->second, 20, 0, 20, true, false, label_nt, label_Events});
+    plotParamsDY.push_back({"nt_Mu",        dataCollectionMap.find("nTopCandSortedCnt_Mu")->second,   20, 0, 20, true, false, label_nt, label_Events});
+    plotParamsDY.push_back({"nb_Elec",      dataCollectionMap.find("cntCSVS_Elec")->second,           20, 0, 20, true, false, label_nb, label_Events});
+    plotParamsDY.push_back({"nb_Mu",        dataCollectionMap.find("cntCSVS_Mu")->second,             20, 0, 20, true, false, label_nb, label_Events});
+    plotParamsDY.push_back({"ht_Elec",      dataCollectionMap.find("HT_Elec")->second,                80, 0.0, 2000.0, true, false, label_ht, label_Events});
+    plotParamsDY.push_back({"ht_Mu",        dataCollectionMap.find("HT_Mu")->second,                  80, 0.0, 2000.0, true, false, label_ht, label_Events});
+    plotParamsDY.push_back({"met_Elec",     dataCollectionMap.find("met_Elec")->second,               80, 0.0, 2000.0, true, false, label_met, label_Events});
+    plotParamsDY.push_back({"met_Mu",       dataCollectionMap.find("met_Mu")->second,                 80, 0.0, 2000.0, true, false, label_met, label_Events});
+    plotParamsDY.push_back({"metphi_Elec",  dataCollectionMap.find("metphi_Elec")->second,            80, minPhi, maxPhi, true, false, label_metphi, label_Events});
+    plotParamsDY.push_back({"metphi_Mu",    dataCollectionMap.find("metphi_Mu")->second,              80, minPhi, maxPhi, true, false, label_metphi, label_Events});
+    plotParamsDY.push_back({"dphi0_Elec",   dataCollectionMap.find("dPhi0_Elec")->second,             80, 0.0, maxPhi, true, false, label_dphi0, label_Events});
+    plotParamsDY.push_back({"dphi0_Mu",     dataCollectionMap.find("dPhi0_Mu")->second,               80, 0.0, maxPhi, true, false, label_dphi0, label_Events});
+    plotParamsDY.push_back({"dphi1_Elec",   dataCollectionMap.find("dPhi1_Elec")->second,             80, 0.0, maxPhi, true, false, label_dphi1, label_Events});
+    plotParamsDY.push_back({"dphi1_Mu",     dataCollectionMap.find("dPhi1_Mu")->second,               80, 0.0, maxPhi, true, false, label_dphi1, label_Events});
+    plotParamsDY.push_back({"dphi2_Elec",   dataCollectionMap.find("dPhi2_Elec")->second,             80, 0.0, maxPhi, true, false, label_dphi2, label_Events});
+    plotParamsDY.push_back({"dphi2_Mu",     dataCollectionMap.find("dPhi2_Mu")->second,               80, 0.0, maxPhi, true, false, label_dphi2, label_Events});
+    plotParamsDY.push_back({"dr_Elec",      dataCollectionMap.find("dr_Elec")->second,                80, 0.0, 1.0, true, false, label_dr, label_Events});
+    plotParamsDY.push_back({"dr_Mu",        dataCollectionMap.find("dr_Mu")->second,                  80, 0.0, 1.0, true, false, label_dr, label_Events});
     
     for (const auto& p : plotParamsDY)
     {
-        vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {3, 2}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));
+        // note that we don't want a ratio for dr
+        if (p.variable.find("dr") != std::string::npos)
+        {
+            vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {1, 1}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));
+        }
+        else
+        {
+            vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {3, 2}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));
+        }
     }
     
-    
-    //Plotter::DataCollection dc_DY_dphi0_all          ("single", "dPhiVecNoVeto[0]",                 {makePDSDY("all jets",               "passBaselineZinv")} );
-    //Plotter::DataCollection dc_DY_dphi0_pflepclean   ("single", "dPhiVecPFLeptonCleaned[0]",        {makePDSDY("PF lepton cleaned jets", "passBaselineZinv")} );
-    //Plotter::DataCollection dc_DY_dphi0_drlepclean   ("single", "dPhiVecDRLeptonCleaned[0]",        {makePDSDY("DR lepton cleaned jets", "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_dphi1_all          ("single", "dPhiVecNoVeto[1]",                 {makePDSDY("all jets",               "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_dphi1_pflepclean   ("single", "dPhiVecPFLeptonCleaned[1]",        {makePDSDY("PF lepton cleaned jets", "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_dphi1_drlepclean   ("single", "dPhiVecDRLeptonCleaned[1]",        {makePDSDY("DR lepton cleaned jets", "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_dphi2_all          ("single", "dPhiVecNoVeto[2]",                 {makePDSDY("all jets",               "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_dphi2_pflepclean   ("single", "dPhiVecPFLeptonCleaned[2]",        {makePDSDY("PF lepton cleaned jets", "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_dphi2_drlepclean   ("single", "dPhiVecDRLeptonCleaned[2]",        {makePDSDY("DR lepton cleaned jets", "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_met_all            ("single", "cleanMetPt",                       {makePDSDY("all jets",               "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_met_pflepclean     ("single", "cleanMetPt",                       {makePDSDY("PF lepton cleaned jets", "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_met_drlepclean     ("single", "cleanMetPt",                       {makePDSDY("DR lepton cleaned jets", "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_metphi_all         ("single", "cleanMetPhi",                      {makePDSDY("all jets",               "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_metphi_pflepclean  ("single", "cleanMetPhi",                      {makePDSDY("PF lepton cleaned jets", "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_metphi_drlepclean  ("single", "cleanMetPhi",                      {makePDSDY("DR lepton cleaned jets", "passBaselineZinv")} );
-    Plotter::DataCollection dc_DY_dr                 ("single", "dR_jetsLVec_drLeptonCleaned",      {makePDSDY("DR lepton cleaned jets", "passBaselineZinv")} );
-    
-    //vh.push_back(PHS("MC_DY_dphi0",  {dc_DY_dphi0_all, dc_DY_dphi0_pflepclean, dc_DY_dphi0_drlepclean},    {3, 2}, "", 80, 0.0, maxPhi, true, false, label_dphi0, label_Events));
-    vh.push_back(PHS("MC_DY_dphi1",  {dc_DY_dphi1_all, dc_DY_dphi1_pflepclean, dc_DY_dphi1_drlepclean},    {3, 2}, "", 80, 0.0, maxPhi, true, false, label_dphi1, label_Events));
-    vh.push_back(PHS("MC_DY_dphi2",  {dc_DY_dphi2_all, dc_DY_dphi2_pflepclean, dc_DY_dphi2_drlepclean},    {3, 2}, "", 80, 0.0, maxPhi, true, false, label_dphi2, label_Events));
-    vh.push_back(PHS("MC_DY_met",    {dc_DY_met_all, dc_DY_met_pflepclean, dc_DY_met_drlepclean},          {3, 2}, "", 80, 0.0, 2000.0, true, false, label_met, label_Events));
-    vh.push_back(PHS("MC_DY_metphi", {dc_DY_metphi_all, dc_DY_metphi_pflepclean, dc_DY_metphi_drlepclean}, {3, 2}, "", 80, minPhi, maxPhi, true, false, label_metphi, label_Events));
-    vh.push_back(PHS("MC_DY_dr",     {dc_DY_dr},                                                           {1, 1}, "", 80, 0.0, 1.0, true, false, label_dr, label_Events));
-
     // Znunu
     auto makePDSZnunu       = [&](const std::string& label, const std::string& cuts="HTZinv>200") {return Plotter::DatasetSummary("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu"], cuts, ""); };
     auto makePDCGJetsZnunu  = [&](const std::string& var, const std::string& style, const std::string& label, const std::string& cuts) {return Plotter::DataCollection(style, {{var, makePDSPhoton(label, "GJets", "passPhotonSelection;" + cuts)}, {var, makePDSZnunu(label, cuts)}}); };
