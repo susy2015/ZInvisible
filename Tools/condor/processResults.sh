@@ -17,7 +17,7 @@
 dataSet=$1
 executableOption=$2
 
-exacutable=
+executable=
 resultFile=
 dirName=
 
@@ -32,11 +32,11 @@ fi
 
 if [ "$executableOption" = "-c" ]; then
     resultFile="effhists_"$dataSet".root"
-    exacutable="echo nothing to do"
+    executable="echo nothing to do"
     dirName="effhists"
 else
     resultFile="result.root"
-    exacutable="./makePlots -f -I $resultFile" | grep -v LHAPDF
+    executable="./makePlots -f -I $resultFile | grep -v LHAPDF"
     dirName="histos"
 fi
 
@@ -130,7 +130,9 @@ make -j8
 
 echo "- Running Exacutable"
 #./makePlots -f -I $resultFile
-$exacutable
+# use eval for running command that pipes to another command
+echo $executable
+eval $executable
 
 if [[ $? == 0 ]]; then
     echo "  Exacutable was successful"
