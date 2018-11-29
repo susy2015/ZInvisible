@@ -309,7 +309,7 @@ int main(int argc, char* argv[])
     std::string label_PhotonMass = "m^{#gamma} [GeV]";
     std::string label_PhotonEta = "#eta^{#gamma}";
     std::string label_PhotonPhi = "#phi^{#gamma}";
-    std::string label_jpt  = "j p_{T} [GeV]";
+    std::string label_jetpt  = "jet p_{T} [GeV]";
     std::string label_j1pt = "j_{1} p_{T} [GeV]";
     std::string label_j2pt = "j_{2} p_{T} [GeV]";
     std::string label_j3pt = "j_{3} p_{T} [GeV]";
@@ -910,136 +910,91 @@ int main(int argc, char* argv[])
     std::map<std::string, std::vector<Plotter::DataCollection> > dataCollectionMap;
     // vetor of variable names
     std::vector<std::string> variables = {"cntNJetsPt20Eta24", "nTopCandSortedCnt", "cntCSVS", "HT"};
-    // map of tags to labels
+    // vector of pais with tags and labels
     std::vector< std::pair<std::string, std::string> > tagVector;
     tagVector.emplace_back("NoVeto",          "all jets");
     tagVector.emplace_back("PFLeptonCleaned", "PF lepton cleaned jets");
     tagVector.emplace_back("DRLeptonCleaned", "DR lepton cleaned jets");
     // vector of DY selections
-    std::vector<std::string> selections = {"Elec", "Mu"};
+    std::vector<std::string> selectionVec = {"Elec", "Mu"};
+    // map of jets 
+    std::map<std::string, std::string> jetMap;
+    jetMap["NoVeto"]          = "jetsLVec";
+    jetMap["PFLeptonCleaned"] = "prodJetsNoLep_jetsLVec";
+    jetMap["DRLeptonCleaned"] = "jetsLVec_drLeptonCleaned";
     
-    bool useNewMethod = true;
     // fill map
     for (const auto& variable : variables)
     {
-        if (useNewMethod)
-        {
-            for (const auto& s : selections) 
-            {
-                std::vector<Plotter::DataCollection> dcVec;
-                for (const auto& tag : tagVector)
-                {
-                    dcVec.emplace_back( Plotter::DataCollection("single", variable + tag.first, {makePDSDY(tag.second, "passBaselineZinv;pass" + s + "ZinvSel_lowpt")} ) );
-                }
-                dataCollectionMap.emplace(variable + "_" + s, dcVec);
-            }
-        }
-        else
+        for (const auto& s : selectionVec) 
         {
             std::vector<Plotter::DataCollection> dcVec;
-            dcVec.emplace_back( Plotter::DataCollection("single", variable + "NoVeto",          {makePDSDY("all jets",               "passBaselineZinv;passElecZinvSel_lowpt")} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", variable + "PFLeptonCleaned", {makePDSDY("PF lepton cleaned jets", "passBaselineZinv;passElecZinvSel_lowpt")} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", variable + "DRLeptonCleaned", {makePDSDY("DR lepton cleaned jets", "passBaselineZinv;passElecZinvSel_lowpt")} ) );
-            dataCollectionMap.emplace(variable + "_Elec", dcVec);
-            dcVec.clear();
-            dcVec.emplace_back( Plotter::DataCollection("single", variable + "NoVeto",          {makePDSDY("all jets",               "passBaselineZinv;passMuZinvSel_lowpt")} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", variable + "PFLeptonCleaned", {makePDSDY("PF lepton cleaned jets", "passBaselineZinv;passMuZinvSel_lowpt")} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", variable + "DRLeptonCleaned", {makePDSDY("DR lepton cleaned jets", "passBaselineZinv;passMuZinvSel_lowpt")} ) );
-            dataCollectionMap.emplace(variable + "_Mu", dcVec);
-            dcVec.clear();
+            std::string selection = "passBaselineZinv;pass" + s + "ZinvSel_lowpt";
+            for (const auto& tag : tagVector)
+            {
+                dcVec.emplace_back( Plotter::DataCollection("single", variable + tag.first, {makePDSDY(tag.second, selection)} ) );
+            }
+            dataCollectionMap.emplace(variable + "_" + s, dcVec);
         }
     }
     
     // fill map
-    for (const auto& s : selections)
+    for (const auto& s : selectionVec)
     {
-        if (useNewMethod)
+        std::vector<Plotter::DataCollection> dcVec;
+        std::string selection = "passBaselineZinv;pass" + s + "ZinvSel_lowpt";
+        
+        for (const auto& tag : tagVector)
         {
-            std::vector<Plotter::DataCollection> dcVec;
-            
-            for (const auto& tag : tagVector)
-            {
-                dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, "passBaselineZinv;pass" + s + "ZinvSel_lowpt")} ) );
-            }
-            dataCollectionMap.emplace("dPhi0_" + s, dcVec);
-            dcVec.clear();
-            
-            for (const auto& tag : tagVector)
-            {
-                dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, "passBaselineZinv;pass" + s + "ZinvSel_lowpt")} ) );
-            }
-            dataCollectionMap.emplace("dPhi1_" + s, dcVec);
-            dcVec.clear();
-            
-            for (const auto& tag : tagVector)
-            {
-                dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, "passBaselineZinv;pass" + s + "ZinvSel_lowpt")} ) );
-            }
-            dataCollectionMap.emplace("dPhi2_" + s, dcVec);
-            dcVec.clear();
-            
-            for (const auto& tag : tagVector)
-            {
-                dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPt", {makePDSDY(tag.second, "passBaselineZinv;pass" + s + "ZinvSel_lowpt")} ) );
-            }
-            dataCollectionMap.emplace("met_" + s, dcVec);
-            dcVec.clear();
-            
-            for (const auto& tag : tagVector)
-            {
-                dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPhi", {makePDSDY(tag.second, "passBaselineZinv;pass" + s + "ZinvSel_lowpt")} ) );
-            }
-            dataCollectionMap.emplace("metphi_" + s, dcVec);
-            dcVec.clear();
-            
-            std::string selection = "passBaselineZinv;pass" + s + "ZinvSel_lowpt";
-            dcVec.emplace_back( Plotter::DataCollection("single", "dR_jetsLVec_drLeptonCleaned", {makePDSDY("all jets", selection)} ) );
-            dataCollectionMap.emplace("dr_" + s, dcVec);
-            dcVec.clear();
+            dcVec.emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(pt)", {makePDSDY(tag.second, selection)} ) );
         }
-        else
+        dataCollectionMap.emplace("jet_pt_" + s, dcVec);
+        dcVec.clear();
+        
+        for (const auto& tag : tagVector)
         {
-            std::vector<Plotter::DataCollection> dcVec;
-            std::string selection = "passBaselineZinv;pass" + s + "ZinvSel_lowpt";
-            
-            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecNoVeto[0]",          {makePDSDY("all jets",               selection)} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecPFLeptonCleaned[0]", {makePDSDY("PF lepton cleaned jets", selection)} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecDRLeptonCleaned[0]", {makePDSDY("DR lepton cleaned jets", selection)} ) );
-            dataCollectionMap.emplace("dPhi0_" + s, dcVec);
-            dcVec.clear();
-            
-            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecNoVeto[1]",          {makePDSDY("all jets",               selection)} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecPFLeptonCleaned[1]", {makePDSDY("PF lepton cleaned jets", selection)} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecDRLeptonCleaned[1]", {makePDSDY("DR lepton cleaned jets", selection)} ) );
-            dataCollectionMap.emplace("dPhi1_" + s, dcVec);
-            dcVec.clear();
-            
-            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecNoVeto[2]",          {makePDSDY("all jets",               selection)} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecPFLeptonCleaned[2]", {makePDSDY("PF lepton cleaned jets", selection)} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVecDRLeptonCleaned[2]", {makePDSDY("DR lepton cleaned jets", selection)} ) );
-            dataCollectionMap.emplace("dPhi2_" + s, dcVec);
-            dcVec.clear();
-            
-            dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPt", {makePDSDY("all jets",               selection)} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPt", {makePDSDY("PF lepton cleaned jets", selection)} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPt", {makePDSDY("DR lepton cleaned jets", selection)} ) );
-            dataCollectionMap.emplace("met_" + s, dcVec);
-            dcVec.clear();
-            
-            dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPhi", {makePDSDY("all jets",               selection)} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPhi", {makePDSDY("PF lepton cleaned jets", selection)} ) );
-            dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPhi", {makePDSDY("DR lepton cleaned jets", selection)} ) );
-            dataCollectionMap.emplace("metphi_" + s, dcVec);
-            dcVec.clear();
-            
-            dcVec.emplace_back( Plotter::DataCollection("single", "dR_jetsLVec_drLeptonCleaned", {makePDSDY("all jets",               selection)} ) );
-            dataCollectionMap.emplace("dr_" + s, dcVec);
-            dcVec.clear();
+            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selection)} ) );
         }
+        dataCollectionMap.emplace("dPhi0_" + s, dcVec);
+        dcVec.clear();
+        
+        for (const auto& tag : tagVector)
+        {
+            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selection)} ) );
+        }
+        dataCollectionMap.emplace("dPhi1_" + s, dcVec);
+        dcVec.clear();
+        
+        for (const auto& tag : tagVector)
+        {
+            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selection)} ) );
+        }
+        dataCollectionMap.emplace("dPhi2_" + s, dcVec);
+        dcVec.clear();
+        
+        for (const auto& tag : tagVector)
+        {
+            dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPt", {makePDSDY(tag.second, selection)} ) );
+        }
+        dataCollectionMap.emplace("met_" + s, dcVec);
+        dcVec.clear();
+        
+        for (const auto& tag : tagVector)
+        {
+            dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPhi", {makePDSDY(tag.second, selection)} ) );
+        }
+        dataCollectionMap.emplace("metphi_" + s, dcVec);
+        dcVec.clear();
+        
+        dcVec.emplace_back( Plotter::DataCollection("single", "dR_jetsLVec_drLeptonCleaned", {makePDSDY("all jets", selection)} ) );
+        dataCollectionMap.emplace("dr_" + s, dcVec);
+        dcVec.clear();
     }
     
     std::vector<simplePlotStruct> plotParamsDY;
     
+    plotParamsDY.push_back({"jet_pt_Elec",  dataCollectionMap.find("jet_pt_Elec")->second,            80, 0.0, 200.0, true, false, label_jetpt, label_Events});
+    plotParamsDY.push_back({"jet_pt_Mu",    dataCollectionMap.find("jet_pt_Mu")->second,              80, 0.0, 200.0, true, false, label_jetpt, label_Events});
     plotParamsDY.push_back({"nj_Elec",      dataCollectionMap.find("cntNJetsPt20Eta24_Elec")->second, 20, 0, 20, true, false, label_nj, label_Events});
     plotParamsDY.push_back({"nj_Mu",        dataCollectionMap.find("cntNJetsPt20Eta24_Mu")->second,   20, 0, 20, true, false, label_nj, label_Events});
     plotParamsDY.push_back({"nt_Elec",      dataCollectionMap.find("nTopCandSortedCnt_Elec")->second, 20, 0, 20, true, false, label_nt, label_Events});
