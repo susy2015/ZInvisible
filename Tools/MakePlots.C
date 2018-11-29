@@ -934,7 +934,7 @@ int main(int argc, char* argv[])
             {
                 dcVec.emplace_back( Plotter::DataCollection("single", variable + tag.first, {makePDSDY(tag.second, selection)} ) );
             }
-            dataCollectionMap.emplace(variable + "_" + s, dcVec);
+            dataCollectionMap[variable + "_" + s] = dcVec;
         }
     }
     
@@ -948,73 +948,65 @@ int main(int argc, char* argv[])
         {
             dcVec.emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(pt)", {makePDSDY(tag.second, selection)} ) );
         }
-        dataCollectionMap.emplace("jet_pt_" + s, dcVec);
+        dataCollectionMap["jet_pt_" + s] = dcVec;
         dcVec.clear();
         
         for (const auto& tag : tagVector)
         {
             dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selection)} ) );
         }
-        dataCollectionMap.emplace("dPhi0_" + s, dcVec);
+        dataCollectionMap["dPhi0_" + s] = dcVec;
         dcVec.clear();
         
         for (const auto& tag : tagVector)
         {
             dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selection)} ) );
         }
-        dataCollectionMap.emplace("dPhi1_" + s, dcVec);
+        dataCollectionMap["dPhi1_" + s] = dcVec;
         dcVec.clear();
         
         for (const auto& tag : tagVector)
         {
             dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selection)} ) );
         }
-        dataCollectionMap.emplace("dPhi2_" + s, dcVec);
+        dataCollectionMap["dPhi2_" + s] = dcVec;
         dcVec.clear();
         
         for (const auto& tag : tagVector)
         {
             dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPt", {makePDSDY(tag.second, selection)} ) );
         }
-        dataCollectionMap.emplace("met_" + s, dcVec);
+        dataCollectionMap["met_" + s] = dcVec;
         dcVec.clear();
         
         for (const auto& tag : tagVector)
         {
             dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPhi", {makePDSDY(tag.second, selection)} ) );
         }
-        dataCollectionMap.emplace("metphi_" + s, dcVec);
+        dataCollectionMap["metphi_" + s] = dcVec;
         dcVec.clear();
         
         dcVec.emplace_back( Plotter::DataCollection("single", "dR_jetsLVec_drLeptonCleaned", {makePDSDY("all jets", selection)} ) );
-        dataCollectionMap.emplace("dr_" + s, dcVec);
+        dataCollectionMap["dr_" + s] =  dcVec;
         dcVec.clear();
     }
     
     std::vector<simplePlotStruct> plotParamsDY;
     
-    plotParamsDY.push_back({"jet_pt_Elec",  dataCollectionMap.find("jet_pt_Elec")->second,            80, 0.0, 200.0, true, false, label_jetpt, label_Events});
-    plotParamsDY.push_back({"jet_pt_Mu",    dataCollectionMap.find("jet_pt_Mu")->second,              80, 0.0, 200.0, true, false, label_jetpt, label_Events});
-    plotParamsDY.push_back({"nj_Elec",      dataCollectionMap.find("cntNJetsPt20Eta24_Elec")->second, 20, 0, 20, true, false, label_nj, label_Events});
-    plotParamsDY.push_back({"nj_Mu",        dataCollectionMap.find("cntNJetsPt20Eta24_Mu")->second,   20, 0, 20, true, false, label_nj, label_Events});
-    plotParamsDY.push_back({"nt_Elec",      dataCollectionMap.find("nTopCandSortedCnt_Elec")->second, 20, 0, 20, true, false, label_nt, label_Events});
-    plotParamsDY.push_back({"nt_Mu",        dataCollectionMap.find("nTopCandSortedCnt_Mu")->second,   20, 0, 20, true, false, label_nt, label_Events});
-    plotParamsDY.push_back({"nb_Elec",      dataCollectionMap.find("cntCSVS_Elec")->second,           20, 0, 20, true, false, label_nb, label_Events});
-    plotParamsDY.push_back({"nb_Mu",        dataCollectionMap.find("cntCSVS_Mu")->second,             20, 0, 20, true, false, label_nb, label_Events});
-    plotParamsDY.push_back({"ht_Elec",      dataCollectionMap.find("HT_Elec")->second,                80, 0.0, 2000.0, true, false, label_ht, label_Events});
-    plotParamsDY.push_back({"ht_Mu",        dataCollectionMap.find("HT_Mu")->second,                  80, 0.0, 2000.0, true, false, label_ht, label_Events});
-    plotParamsDY.push_back({"met_Elec",     dataCollectionMap.find("met_Elec")->second,               80, 0.0, 2000.0, true, false, label_met, label_Events});
-    plotParamsDY.push_back({"met_Mu",       dataCollectionMap.find("met_Mu")->second,                 80, 0.0, 2000.0, true, false, label_met, label_Events});
-    plotParamsDY.push_back({"metphi_Elec",  dataCollectionMap.find("metphi_Elec")->second,            80, minPhi, maxPhi, true, false, label_metphi, label_Events});
-    plotParamsDY.push_back({"metphi_Mu",    dataCollectionMap.find("metphi_Mu")->second,              80, minPhi, maxPhi, true, false, label_metphi, label_Events});
-    plotParamsDY.push_back({"dphi0_Elec",   dataCollectionMap.find("dPhi0_Elec")->second,             80, 0.0, maxPhi, true, false, label_dphi0, label_Events});
-    plotParamsDY.push_back({"dphi0_Mu",     dataCollectionMap.find("dPhi0_Mu")->second,               80, 0.0, maxPhi, true, false, label_dphi0, label_Events});
-    plotParamsDY.push_back({"dphi1_Elec",   dataCollectionMap.find("dPhi1_Elec")->second,             80, 0.0, maxPhi, true, false, label_dphi1, label_Events});
-    plotParamsDY.push_back({"dphi1_Mu",     dataCollectionMap.find("dPhi1_Mu")->second,               80, 0.0, maxPhi, true, false, label_dphi1, label_Events});
-    plotParamsDY.push_back({"dphi2_Elec",   dataCollectionMap.find("dPhi2_Elec")->second,             80, 0.0, maxPhi, true, false, label_dphi2, label_Events});
-    plotParamsDY.push_back({"dphi2_Mu",     dataCollectionMap.find("dPhi2_Mu")->second,               80, 0.0, maxPhi, true, false, label_dphi2, label_Events});
-    plotParamsDY.push_back({"dr_Elec",      dataCollectionMap.find("dr_Elec")->second,                80, 0.0, 1.0, true, false, label_dr, label_Events});
-    plotParamsDY.push_back({"dr_Mu",        dataCollectionMap.find("dr_Mu")->second,                  80, 0.0, 1.0, true, false, label_dr, label_Events});
+    for (const auto& s : selectionVec)
+    {
+        plotParamsDY.push_back({"jet_pt_" + s,  dataCollectionMap["jet_pt_" + s],             80, 0.0, 80.0, true, false, label_jetpt, label_Events});
+        plotParamsDY.push_back({"nj_" + s,      dataCollectionMap["cntNJetsPt20Eta24_" + s],  20, 0, 20, true, false, label_nj, label_Events});
+        plotParamsDY.push_back({"nt_" + s,      dataCollectionMap["nTopCandSortedCnt_" + s],  20, 0, 20, true, false, label_nt, label_Events});
+        plotParamsDY.push_back({"nb_" + s,      dataCollectionMap["cntCSVS_" + s],            20, 0, 20, true, false, label_nb, label_Events});
+        plotParamsDY.push_back({"ht_" + s,      dataCollectionMap["HT_" + s],                 80, 0.0, 2000.0, true, false, label_ht, label_Events});
+        plotParamsDY.push_back({"met_" + s,     dataCollectionMap["met_" + s],                80, 0.0, 2000.0, true, false, label_met, label_Events});
+        plotParamsDY.push_back({"metphi_" + s,  dataCollectionMap["metphi_" + s],             80, minPhi, maxPhi, true, false, label_metphi, label_Events});
+        plotParamsDY.push_back({"dphi0_" + s,   dataCollectionMap["dPhi0_" + s],              80, 0.0, maxPhi, true, false, label_dphi0, label_Events});
+        plotParamsDY.push_back({"dphi1_" + s,   dataCollectionMap["dPhi1_" + s],              80, 0.0, maxPhi, true, false, label_dphi1, label_Events});
+        plotParamsDY.push_back({"dphi2_" + s,   dataCollectionMap["dPhi2_" + s],              80, 0.0, maxPhi, true, false, label_dphi2, label_Events});
+        plotParamsDY.push_back({"dr_" + s,      dataCollectionMap["dr_" + s],                 80, 0.0, 1.0, true, false, label_dr, label_Events});
+    }
     
     for (const auto& p : plotParamsDY)
     {
