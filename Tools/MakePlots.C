@@ -1015,6 +1015,11 @@ int main(int argc, char* argv[])
         {
             vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {1, 1}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));
         }
+        else if (p.variable.find("dphi") != std::string::npos)
+        {
+            std::cout << "Adding plot of " << p.variable << std::endl;
+            vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {3, 2}, "", p.nBins, p.xMin, p.xMax, 20.0, 400.0, p.logBool, p.normBool, p.xLabel, p.yLabel));
+        }
         else
         {
             vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {3, 2}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));

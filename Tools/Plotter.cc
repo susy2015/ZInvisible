@@ -136,12 +136,21 @@ void Plotter::Cuttable::extractCuts(std::set<std::string>& ab) const
     for(auto& cut : cutVec_) ab.insert(cut.rawName);
 }
 
-Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : Cuttable(cuts), name(l), nBins(nb), low(ll), high(ul), isLog(log), isNorm(norm), xAxisLabel(xal), yAxisLabel(yal), ratio(ratio), isRatio(isRatio)
+Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : Cuttable(cuts), name(l), nBins(nb), low(ll), high(ul), isLog(log), isNorm(norm), xAxisLabel(xal), yAxisLabel(yal), ratio(ratio), isRatio(isRatio), ymin_(-999.9), ymax_(-999.9), setYLimits(false)
 {
     parseName(ns);
 }
 
-Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, std::vector<double> be, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : Cuttable(cuts), name(l), nBins(0), low(0.0), high(0.0), binEdges(be), isLog(log), isNorm(norm), xAxisLabel(xal), yAxisLabel(yal), ratio(ratio), isRatio(isRatio)
+Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, double ymin, double ymax, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : HistSummary(l, ns, ratio, cuts, nb, ll, ul, log, norm, xal, yal, isRatio)
+{
+    std::cout << "name = " << l << ": using y axis limits: " << ymin << ", "<< ymax << std::endl;
+    ymin_ = ymin;
+    ymax_ = ymax;
+    setYLimits = true;
+    parseName(ns);
+}
+
+Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, std::vector<double> be, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : Cuttable(cuts), name(l), nBins(0), low(0.0), high(0.0), binEdges(be), isLog(log), isNorm(norm), xAxisLabel(xal), yAxisLabel(yal), ratio(ratio), isRatio(isRatio), ymin_(-999.9), ymax_(-999.9), setYLimits(false)
 {
     parseName(ns);
 }
@@ -984,7 +993,18 @@ void Plotter::plot()
         }
 
         gPad->SetLogy(hist.isLog);
-        if(hist.isLog)
+        if (hist.setYLimits)
+        {
+            if (hist.ymin_ > 0 && hist.ymax_ > 0)
+            {
+                dummy->GetYaxis()->SetRangeUser(hist.ymin_, hist.ymax_);
+            }
+            else
+            {
+                std::cout << "ERROR for " << hist.name << ": ymin and ymax must be positive" << std::endl;
+            }
+        }
+        else if(hist.isLog)
         {
             double locMin = std::min(0.2*minAvgWgt, std::max(0.00011, 0.05 * min));
             double legSpan = (log10(3*max) - log10(locMin)) * (leg->GetY1() - gPad->GetBottomMargin()) / ((1 - gPad->GetTopMargin()) - gPad->GetBottomMargin());
