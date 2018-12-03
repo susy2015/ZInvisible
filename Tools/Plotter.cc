@@ -143,11 +143,10 @@ Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollec
 
 Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, double ymin, double ymax, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : HistSummary(l, ns, ratio, cuts, nb, ll, ul, log, norm, xal, yal, isRatio)
 {
-    std::cout << "name = " << l << ": using y axis limits: " << ymin << ", "<< ymax << std::endl;
+    //std::cout << "name = " << l << ": using y axis limits: " << ymin << ", "<< ymax << std::endl;
     ymin_ = ymin;
     ymax_ = ymax;
     setYLimits = true;
-    parseName(ns);
 }
 
 Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, std::vector<double> be, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : Cuttable(cuts), name(l), nBins(0), low(0.0), high(0.0), binEdges(be), isLog(log), isNorm(norm), xAxisLabel(xal), yAxisLabel(yal), ratio(ratio), isRatio(isRatio), ymin_(-999.9), ymax_(-999.9), setYLimits(false)
@@ -997,6 +996,7 @@ void Plotter::plot()
         {
             if (hist.ymin_ > 0 && hist.ymax_ > 0)
             {
+                //std::cout << "In Plotter.cc: " << hist.name << " ymin, ymax = " << hist.ymin_ << ", " << hist.ymax_ << std::endl;
                 dummy->GetYaxis()->SetRangeUser(hist.ymin_, hist.ymax_);
             }
             else
