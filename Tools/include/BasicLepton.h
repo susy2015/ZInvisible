@@ -47,7 +47,7 @@ namespace plotterFunctions
             const auto& muonsMiniIso                        = tr.getVec<data_t>("muonsMiniIso");
             const auto& muonsCharge                         = tr.getVec<data_t>("muonsCharge");
             const std::vector<data_t>& muonspfActivity      = tr.getVec<data_t>("muonspfActivity");
-            const auto& muonsFlagIDVec                      = tr.getVec<int>("muonsFlagMedium");
+            const auto& muonsFlagIDVec                      = tr.getVec<int>("muonsFlagLoose");
 
             const auto& elesLVec                            = tr.getVec<TLorentzVector>("elesLVec");
             const auto& elesMiniIso                         = tr.getVec<data_t>("elesMiniIso");
