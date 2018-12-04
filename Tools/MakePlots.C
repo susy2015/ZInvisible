@@ -929,9 +929,10 @@ int main(int argc, char* argv[])
         for (const auto& s : selectionVec) 
         {
             std::vector<Plotter::DataCollection> dcVec;
-            std::string selection = "passBaselineZinv;pass" + s + "ZinvSel_lowpt";
+            std::string selection = "";
             for (const auto& tag : tagVector)
             {
+                selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
                 dcVec.emplace_back( Plotter::DataCollection("single", variable + tag.first, {makePDSDY(tag.second, selection)} ) );
             }
             dataCollectionMap[variable + "_" + s] = dcVec;
@@ -942,10 +943,11 @@ int main(int argc, char* argv[])
     for (const auto& s : selectionVec)
     {
         std::vector<Plotter::DataCollection> dcVec;
-        std::string selection = "passBaselineZinv;pass" + s + "ZinvSel_lowpt";
+        std::string selection = "";
         
         for (const auto& tag : tagVector)
         {
+            selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
             dcVec.emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(pt)", {makePDSDY(tag.second, selection)} ) );
         }
         dataCollectionMap["jet_pt_" + s] = dcVec;
@@ -953,6 +955,7 @@ int main(int argc, char* argv[])
         
         for (const auto& tag : tagVector)
         {
+            selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
             dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selection)} ) );
         }
         dataCollectionMap["dPhi0_" + s] = dcVec;
@@ -960,6 +963,7 @@ int main(int argc, char* argv[])
         
         for (const auto& tag : tagVector)
         {
+            selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
             dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selection)} ) );
         }
         dataCollectionMap["dPhi1_" + s] = dcVec;
@@ -967,6 +971,7 @@ int main(int argc, char* argv[])
         
         for (const auto& tag : tagVector)
         {
+            selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
             dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selection)} ) );
         }
         dataCollectionMap["dPhi2_" + s] = dcVec;
@@ -974,6 +979,7 @@ int main(int argc, char* argv[])
         
         for (const auto& tag : tagVector)
         {
+            selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
             dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPt", {makePDSDY(tag.second, selection)} ) );
         }
         dataCollectionMap["met_" + s] = dcVec;
@@ -981,11 +987,13 @@ int main(int argc, char* argv[])
         
         for (const auto& tag : tagVector)
         {
+            selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
             dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPhi", {makePDSDY(tag.second, selection)} ) );
         }
         dataCollectionMap["metphi_" + s] = dcVec;
         dcVec.clear();
         
+        selection = "passBaselineDRLeptonCleaned;pass" + s + "ZinvSel_lowpt";
         dcVec.emplace_back( Plotter::DataCollection("single", "dR_jetsLVec_drLeptonCleaned", {makePDSDY("all jets", selection)} ) );
         dataCollectionMap["dr_" + s] =  dcVec;
         dcVec.clear();
@@ -1019,6 +1027,7 @@ int main(int argc, char* argv[])
         {
             //std::cout << "Appending plot of " << p.variable << " with vector of size " << p.dataCollectionVector.size() << std::endl;
             vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {3, 2}, "", p.nBins, p.xMin, p.xMax, 10.0, 1000.0, p.logBool, p.normBool, p.xLabel, p.yLabel));
+            //vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {3, 2}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));
         }
         else
         {
