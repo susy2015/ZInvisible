@@ -1026,8 +1026,8 @@ int main(int argc, char* argv[])
         else if (p.variable.find("phi") != std::string::npos)
         {
             //std::cout << "Appending plot of " << p.variable << " with vector of size " << p.dataCollectionVector.size() << std::endl;
-            vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {3, 2}, "", p.nBins, p.xMin, p.xMax, 10.0, 1000.0, p.logBool, p.normBool, p.xLabel, p.yLabel));
-            //vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {3, 2}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));
+            //vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {3, 2}, "", p.nBins, p.xMin, p.xMax, 10.0, 1000.0, p.logBool, p.normBool, p.xLabel, p.yLabel));
+            vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {3, 2}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));
         }
         else
         {
