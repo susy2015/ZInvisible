@@ -922,14 +922,21 @@ int main(int argc, char* argv[])
     jetMap["NoVeto"]          = "jetsLVec";
     jetMap["PFLeptonCleaned"] = "prodJetsNoLep_jetsLVec";
     jetMap["DRLeptonCleaned"] = "jetsLVec_drLeptonCleaned";
+
+    // plot parameters
+    std::vector<simplePlotStruct> plotParamsDY;
+
+    // try combining the following sections into one loop
+    // selection, then variable, then tag (standard pattern)
+    // selection, then tag, then one line per variable (unique pattern)
     
     // fill map
-    for (const auto& variable : variables)
+    for (const auto& s : selectionVec) 
     {
-        for (const auto& s : selectionVec) 
+        std::string selection = "";
+        for (const auto& variable : variables)
         {
             std::vector<Plotter::DataCollection> dcVec;
-            std::string selection = "";
             for (const auto& tag : tagVector)
             {
                 selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
@@ -937,73 +944,32 @@ int main(int argc, char* argv[])
             }
             dataCollectionMap[variable + "_" + s] = dcVec;
         }
-    }
-    
-    // fill map
-    for (const auto& s : selectionVec)
-    {
-        std::vector<Plotter::DataCollection> dcVec;
-        std::string selection = "";
+        
+        dataCollectionMap["jet_pt_" + s] = std::vector<Plotter::DataCollection>();
+        dataCollectionMap["met_" + s]    = std::vector<Plotter::DataCollection>();
+        dataCollectionMap["metphi_" + s] = std::vector<Plotter::DataCollection>();
+        dataCollectionMap["dPhi0_" + s]  = std::vector<Plotter::DataCollection>();
+        dataCollectionMap["dPhi1_" + s]  = std::vector<Plotter::DataCollection>();
+        dataCollectionMap["dPhi2_" + s]  = std::vector<Plotter::DataCollection>();
+        dataCollectionMap["dr_" + s]     = std::vector<Plotter::DataCollection>();
         
         for (const auto& tag : tagVector)
         {
             selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
-            dcVec.emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(pt)", {makePDSDY(tag.second, selection)} ) );
+            dataCollectionMap["jet_pt_" + s].emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(pt)", {makePDSDY(tag.second, selection)} ) );
+            dataCollectionMap["met_" + s].emplace_back(    Plotter::DataCollection("single", "cleanMetPt", {makePDSDY(tag.second, selection)} ) );
+            dataCollectionMap["metphi_" + s].emplace_back( Plotter::DataCollection("single", "cleanMetPhi", {makePDSDY(tag.second, selection)} ) );
+            dataCollectionMap["dPhi0_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selection)} ) );
+            dataCollectionMap["dPhi1_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selection)} ) );
+            dataCollectionMap["dPhi2_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selection)} ) );
         }
-        dataCollectionMap["jet_pt_" + s] = dcVec;
-        dcVec.clear();
-        
-        for (const auto& tag : tagVector)
-        {
-            selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
-            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selection)} ) );
-        }
-        dataCollectionMap["dPhi0_" + s] = dcVec;
-        dcVec.clear();
-        
-        for (const auto& tag : tagVector)
-        {
-            selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
-            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selection)} ) );
-        }
-        dataCollectionMap["dPhi1_" + s] = dcVec;
-        dcVec.clear();
-        
-        for (const auto& tag : tagVector)
-        {
-            selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
-            dcVec.emplace_back( Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selection)} ) );
-        }
-        dataCollectionMap["dPhi2_" + s] = dcVec;
-        dcVec.clear();
-        
-        for (const auto& tag : tagVector)
-        {
-            selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
-            dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPt", {makePDSDY(tag.second, selection)} ) );
-        }
-        dataCollectionMap["met_" + s] = dcVec;
-        dcVec.clear();
-        
-        for (const auto& tag : tagVector)
-        {
-            selection = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
-            dcVec.emplace_back( Plotter::DataCollection("single", "cleanMetPhi", {makePDSDY(tag.second, selection)} ) );
-        }
-        dataCollectionMap["metphi_" + s] = dcVec;
-        dcVec.clear();
-        
+
         selection = "passBaselineDRLeptonCleaned;pass" + s + "ZinvSel_lowpt";
-        dcVec.emplace_back( Plotter::DataCollection("single", "dR_jetsLVec_drLeptonCleaned", {makePDSDY("all jets", selection)} ) );
-        dataCollectionMap["dr_" + s] =  dcVec;
-        dcVec.clear();
-    }
-    
-    std::vector<simplePlotStruct> plotParamsDY;
-    
-    for (const auto& s : selectionVec)
-    {
-        plotParamsDY.push_back({"jet_pt_" + s,  dataCollectionMap["jet_pt_" + s],             80, 0.0, 80.0, true, false, label_jetpt, label_Events});
+        dataCollectionMap["dr_" + s].emplace_back( Plotter::DataCollection("single", "dR_jetsLVec_drLeptonCleaned", {makePDSDY("all jets", selection)} ) );
+       
+        
+        // fill plot parameters
+        plotParamsDY.push_back({"jet_pt_" + s,  dataCollectionMap["jet_pt_" + s],             80, 0.0, 200.0, true, false, label_jetpt, label_Events});
         plotParamsDY.push_back({"nj_" + s,      dataCollectionMap["cntNJetsPt20Eta24_" + s],  20, 0, 20, true, false, label_nj, label_Events});
         plotParamsDY.push_back({"nt_" + s,      dataCollectionMap["nTopCandSortedCnt_" + s],  20, 0, 20, true, false, label_nt, label_Events});
         plotParamsDY.push_back({"nb_" + s,      dataCollectionMap["cntCSVS_" + s],            20, 0, 20, true, false, label_nb, label_Events});

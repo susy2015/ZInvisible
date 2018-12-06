@@ -812,6 +812,11 @@ void Plotter::plot()
         bool skip = false;
         for(auto& hvec : hist.hists)  for(auto& h : hvec.hcsVec) if(!h->h) skip = true;
         if(skip) continue;
+        if (! hist.fhist() )
+        {
+            std::cout << "\033[1;31m  ERROR for histogram " << hist.name << "; hist.fhist() does not work, skipping plot. Check that histogram is created properly. \033[0m"<< std::endl;
+            continue;
+        }
 
         bool showRatio = true;
         if(hist.ratio.first == hist.ratio.second || hist.ratio.first < 1 || hist.ratio.second < 1)
@@ -1278,6 +1283,8 @@ void Plotter::plot()
         if(h1) delete h1;
         if(h2) delete h2;
     }
+    // Plotter::plot() is complete
+    std::cout << "\033[1;32m  Plotter::plot() is complete. \033[0m"<< std::endl;
 }
 
 void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& tr, const double weight)
