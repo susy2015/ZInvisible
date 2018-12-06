@@ -18,7 +18,7 @@
 #include "TopTaggerResults.h"
 #include "TopTagger/Tools/cpp/PlotUtility.h"
 
-#include "TopTagger/TopTagger/include/TopObject.h"
+#include "TopTagger/TopTagger/interface/TopObject.h"
 
 #include "TH1.h"
 #include "TH2.h"
