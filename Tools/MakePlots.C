@@ -921,6 +921,8 @@ int main(int argc, char* argv[])
     tagVector.emplace_back("DRLeptonCleaned", "DR lepton cleaned jets");
     // vector of DY selections
     std::vector<std::string> selectionVec = {"Elec", "Mu"};
+    // vector of styles
+    std::vector<string> styleVec = {"single", "ratio"};
     // map of jets 
     std::map<std::string, std::string> jetMap;
     //jetMap["NoVeto"]          = "jetsLVec";
@@ -941,7 +943,6 @@ int main(int argc, char* argv[])
         std::string selectionNuNu = "";
         for (const auto& variable : variables)
         {
-            std::vector<Plotter::DataCollection> dcVec;
             for (const auto& tag : tagVector)
             {
                 // note that DY to LL and Z to NuNu have different selections
@@ -949,19 +950,10 @@ int main(int argc, char* argv[])
                 selectionLL = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
                 selectionNuNu = "passBaseline" + tag.first;
                 // DY and Z nu nu
-                dcVec.emplace_back( Plotter::DataCollection("single", variable + tag.first, {makePDSDY(tag.second, selectionLL)} ) );
-                dcVec.emplace_back( Plotter::DataCollection("single", variable + tag.first, {makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap[variable + "_" + s].emplace_back( Plotter::DataCollection("single", variable + tag.first, {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap[variable + "_" + s].emplace_back( Plotter::DataCollection("single", variable + tag.first, {makePDSZnunu(tag.second, selectionNuNu)} ) );
             }
-            dataCollectionMap[variable + "_" + s] = dcVec;
         }
-        
-        dataCollectionMap["jet_pt_" + s] = std::vector<Plotter::DataCollection>();
-        dataCollectionMap["met_" + s]    = std::vector<Plotter::DataCollection>();
-        dataCollectionMap["metphi_" + s] = std::vector<Plotter::DataCollection>();
-        dataCollectionMap["dPhi0_" + s]  = std::vector<Plotter::DataCollection>();
-        dataCollectionMap["dPhi1_" + s]  = std::vector<Plotter::DataCollection>();
-        dataCollectionMap["dPhi2_" + s]  = std::vector<Plotter::DataCollection>();
-        dataCollectionMap["dr_" + s]     = std::vector<Plotter::DataCollection>();
         
         for (const auto& tag : tagVector)
         {
@@ -974,12 +966,15 @@ int main(int argc, char* argv[])
             dataCollectionMap["met_" + s].emplace_back(    Plotter::DataCollection("single", "cleanMetPt",                  {makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["metphi_" + s].emplace_back( Plotter::DataCollection("single", "cleanMetPhi",                 {makePDSDY(tag.second, selectionLL)} ) );
             dataCollectionMap["metphi_" + s].emplace_back( Plotter::DataCollection("single", "cleanMetPhi",                 {makePDSZnunu(tag.second, selectionNuNu)} ) );
-            dataCollectionMap["dPhi0_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["dPhi0_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
-            dataCollectionMap["dPhi1_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["dPhi1_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
-            dataCollectionMap["dPhi2_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["dPhi2_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["dphi0_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL)} ) );
+            dataCollectionMap["dphi0_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["dphi1_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL)} ) );
+            dataCollectionMap["dphi1_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["dphi2_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL)} ) );
+            dataCollectionMap["dphi2_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["dphi0_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["dphi1_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["dphi2_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
         }
 
         selectionLL = "passBaselineDRLeptonCleaned;pass" + s + "ZinvSel_lowpt";
@@ -994,16 +989,19 @@ int main(int argc, char* argv[])
         plotParamsDY.push_back({"ht_" + s,      dataCollectionMap["HT_" + s],                 80, 0.0, 2000.0, true, false, label_ht, label_Events});
         plotParamsDY.push_back({"met_" + s,     dataCollectionMap["met_" + s],                80, 0.0, 2000.0, true, false, label_met, label_Events});
         plotParamsDY.push_back({"metphi_" + s,  dataCollectionMap["metphi_" + s],             80, minPhi, maxPhi, true, false, label_metphi, label_Events});
-        plotParamsDY.push_back({"dphi0_" + s,   dataCollectionMap["dPhi0_" + s],              80, 0.0, maxPhi, true, false, label_dphi0, label_Events});
-        plotParamsDY.push_back({"dphi1_" + s,   dataCollectionMap["dPhi1_" + s],              80, 0.0, maxPhi, true, false, label_dphi1, label_Events});
-        plotParamsDY.push_back({"dphi2_" + s,   dataCollectionMap["dPhi2_" + s],              80, 0.0, maxPhi, true, false, label_dphi2, label_Events});
+        plotParamsDY.push_back({"dphi0_" + s,   dataCollectionMap["dphi0_" + s],              80, 0.0, maxPhi, true, false, label_dphi0, label_Events});
+        plotParamsDY.push_back({"dphi1_" + s,   dataCollectionMap["dphi1_" + s],              80, 0.0, maxPhi, true, false, label_dphi1, label_Events});
+        plotParamsDY.push_back({"dphi2_" + s,   dataCollectionMap["dphi2_" + s],              80, 0.0, maxPhi, true, false, label_dphi2, label_Events});
+        plotParamsDY.push_back({"dphi0_" + s + "_ratio", dataCollectionMap["dphi0_" + s + "_ratio"], 80, 0.0, maxPhi, false, false, label_dphi0, label_Events});
+        plotParamsDY.push_back({"dphi1_" + s + "_ratio", dataCollectionMap["dphi1_" + s + "_ratio"], 80, 0.0, maxPhi, false, false, label_dphi1, label_Events});
+        plotParamsDY.push_back({"dphi2_" + s + "_ratio", dataCollectionMap["dphi2_" + s + "_ratio"], 80, 0.0, maxPhi, false, false, label_dphi2, label_Events});
         plotParamsDY.push_back({"dr_" + s,      dataCollectionMap["dr_" + s],                 80, 0.0, 1.0, true, false, label_dr, label_Events});
     }
     
     for (const auto& p : plotParamsDY)
     {
         // note that we don't want a ratio for dr
-        if (p.variable.find("dr") != std::string::npos)
+        if (p.variable.find("dr") != std::string::npos || p.variable.find("ratio") != std::string::npos)
         {
             vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {1, 1}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));
         }

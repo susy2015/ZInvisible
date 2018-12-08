@@ -814,6 +814,7 @@ void Plotter::plot()
         if(skip) continue;
         if (! hist.fhist() )
         {
+            // ERROR in red
             std::cout << "\033[1;31m  ERROR for histogram " << hist.name << "; hist.fhist() does not work, skipping plot. Check that histogram is created properly. \033[0m"<< std::endl;
             continue;
         }
@@ -1283,7 +1284,7 @@ void Plotter::plot()
         if(h1) delete h1;
         if(h2) delete h2;
     }
-    // Plotter::plot() is complete
+    // Plotter::plot() is complete: green
     std::cout << "\033[1;32m  Plotter::plot() is complete. \033[0m"<< std::endl;
 }
 
