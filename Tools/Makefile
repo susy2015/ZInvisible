@@ -54,7 +54,7 @@ LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 #PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d scalefactorplot systplot miniMakePlots beffCalc makeSignalHistograms makeTopPlots makeDataMCplots simpleAnalyzer
 #PROGRAMS = calcEff harvestHists makePlots moneyplot plot2d scalefactorplot systplot beffCalc makeSignalHistograms makeTopPlots makeDataMCplots simpleAnalyzer
-PROGRAMS = calcEff calcEffPhoton harvestHists makePlots moneyplot scalefactorplot systplot beffCalc makeSignalHistograms makeTopPlots makeDataMCplots makeDYPlots makePhotonPlots
+PROGRAMS = calcEff calcEffPhoton harvestHists makePlots moneyplot scalefactorplot systplot beffCalc makeSignalHistograms makeTopPlots makeDataMCplots makeDYPlots makePhotonPlots simpleAnalyzer
 
 all: mkobj PyWraps $(PROGRAMS)
 
@@ -178,8 +178,8 @@ makeTaggerHistograms: $(ODIR)/makeTaggerHistograms.o $(ODIR)/NTupleReader.o $(OD
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
 # unfortunately we have problems with simpleAnalyzer :-(
-#simpleAnalyzer: $(ODIR)/simpleAnalyzer.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o  $(ODIR)/TTbarCorrector.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/rootdict.o
-#	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
+simpleAnalyzer: $(ODIR)/simpleAnalyzer.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o  $(ODIR)/TTbarCorrector.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/rootdict.o
+	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
 clean:
 	rm -f $(ODIR)/*.o $(ODIR)/*.so $(ODIR)/*.d $(PROGRAMS) core 

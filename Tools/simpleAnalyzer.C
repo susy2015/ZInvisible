@@ -150,8 +150,8 @@ int main(int argc, char* argv[])
 
     std::cout << "Sample location: " << sampleloc << std::endl;
 
-    AnaSamples::SampleSet        ss("sampleSets.txt", AnaSamples::luminosity, runOnCondor);
-    AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
+    AnaSamples::SampleSet        ss("sampleSets.cfg", AnaSamples::luminosity, runOnCondor);
+    AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
 
     if(dataSets.find("Data") != std::string::npos){
        std::cout << "This looks like a data n-tuple. No weighting will be applied." << std::endl;
@@ -184,9 +184,9 @@ int main(int argc, char* argv[])
             //std::cout << "sigma*lumi: " << fs.getWeight() << std::endl;
 
             //BaselineVessel myBLV(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
-            plotterFunctions::AliasStealthVars setUpStealth;
-            plotterFunctions::PrepareTopCRSelection prepTopCR;
-            plotterFunctions::PrepareTopVars prepareTopVars;
+            //plotterFunctions::AliasStealthVars setUpStealth;
+            //plotterFunctions::PrepareTopCRSelection prepTopCR;
+            //plotterFunctions::PrepareTopVars prepareTopVars;
             plotterFunctions::TriggerInfo triggerInfo(false, false);
             BTagCorrector bTagCorrector("allINone_bTagEff.root", "", false, fs.tag);
             TTbarCorrector ttbarCorrector(false, "");
@@ -194,18 +194,10 @@ int main(int argc, char* argv[])
             Pileup_Sys pileup("PileupHistograms_0121_69p2mb_pm4p6.root");
 
             NTupleReader tr(t);            
-            if(runStealth)
-            {
-                setUpStealth.addAllAlias(tr);
-                tr.registerFunction(setUpStealth);
-            }
-            else
-            {
-                tr.registerFunction(pileup);
-            }
+            tr.registerFunction(pileup);
             tr.registerFunction(filterEvents);
-            tr.registerFunction(prepTopCR);
-            tr.registerFunction(prepareTopVars);
+            //tr.registerFunction(prepTopCR);
+            //tr.registerFunction(prepareTopVars);
             tr.registerFunction(triggerInfo);
             tr.registerFunction(bTagCorrector);
             tr.registerFunction(ttbarCorrector);
