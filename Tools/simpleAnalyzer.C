@@ -1,9 +1,10 @@
-#include "../../SusyAnaTools/Tools/NTupleReader.h"
-#include "../../SusyAnaTools/Tools/samples.h"
-#include "../../SusyAnaTools/Tools/SATException.h"
+#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "SusyAnaTools/Tools/samples.h"
+#include "SusyAnaTools/Tools/SATException.h"
 
-#include "../../TopTaggerTools/Tools/include/HistoContainer.h"
+#include "TopTaggerTools/Tools/include/HistoContainer.h"
 
+#include "CleanedJets.h"
 #include "derivedTupleVariables.h"
 #include "baselineDef.h"
 #include "BTagCorrector.h"
@@ -11,6 +12,7 @@
 #include "ISRCorrector.h"
 #include "PileupWeights.h"
 #include "customize.h"
+//#include "RegisterFunctions.h"
 
 #include "TopTaggerResults.h"
 #include "Constituent.h"
@@ -30,6 +32,36 @@
 #include "TLegend.h"
 #include "TRandom3.h"
 #include "TFile.h"
+
+
+std::set<AnaSamples::FileSummary> getFS(const std::string& dataSets, const bool& isCondor)
+{
+    AnaSamples::SampleSet        ss("sampleSets.cfg", AnaSamples::luminosity, isCondor);
+    AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
+
+    std::map<std::string, std::vector<AnaSamples::FileSummary>> fileMap;
+    if(ss[dataSets] != ss.null())
+    {
+        fileMap[dataSets] = {ss[dataSets]};
+        for(const auto& colls : ss[dataSets].getCollections())
+        {
+            fileMap[colls] = {ss[dataSets]};
+        }
+    }
+    else if(sc[dataSets] != sc.null())
+    {
+        fileMap[dataSets] = {sc[dataSets]};
+        int i = 0;
+        for(const auto& fs : sc[dataSets])
+        {
+            fileMap[sc.getSampleLabels(dataSets)[i++]].push_back(fs);
+        }
+    }
+    std::set<AnaSamples::FileSummary> vvf;
+    for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
+
+    return vvf;
+}
 
 void stripRoot(std::string &path)
 {
@@ -147,23 +179,26 @@ int main(int argc, char* argv[])
         savefile = false;
         std::cout << "Histogram file will not be saved." << std::endl;
     }
+    
+    const auto& myFS = getFS(dataSets, runOnCondor);
+    
 
-    std::cout << "Sample location: " << sampleloc << std::endl;
+    //std::cout << "Sample location: " << sampleloc << std::endl;
 
-    AnaSamples::SampleSet        ss("sampleSets.cfg", AnaSamples::luminosity, runOnCondor);
-    AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
+    //AnaSamples::SampleSet        ss("sampleSets.cfg", AnaSamples::luminosity, runOnCondor);
+    //AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
 
-    if(dataSets.find("Data") != std::string::npos){
-       std::cout << "This looks like a data n-tuple. No weighting will be applied." << std::endl;
-       doWgt = false;
-    }
+    //if(dataSets.find("Data") != std::string::npos){
+    //   std::cout << "This looks like a data n-tuple. No weighting will be applied." << std::endl;
+    //   doWgt = false;
+    //}
 
-    if(dataSets.find("TT") != std::string::npos){
-       std::cout << "This looks like a TTbar sample. Applying TTbar weighting" << std::endl;
-       enableTTbar = true;
-    }
+    //if(dataSets.find("TT") != std::string::npos){
+    //   std::cout << "This looks like a TTbar sample. Applying TTbar weighting" << std::endl;
+    //   enableTTbar = true;
+    //}
 
-    std::cout << "Dataset: " << dataSets << std::endl;
+    //std::cout << "Dataset: " << dataSets << std::endl;
 
     int events = 0, pevents = 0;
 
@@ -173,9 +208,12 @@ int main(int argc, char* argv[])
 
     try
     {
+        //auto& fs = ss[dataSets];
         //for(auto& fs : sc[dataSets])
-        auto& fs = ss[dataSets];
+        for(auto& fs : myFS)
         {
+            std::cout << "Tag: " << fs.tag << std::endl;
+
             TChain *t = new TChain(fs.treePath.c_str());
             fs.addFilesToChain(t, startFile, nFiles);
 
@@ -187,6 +225,18 @@ int main(int argc, char* argv[])
             //plotterFunctions::AliasStealthVars setUpStealth;
             //plotterFunctions::PrepareTopCRSelection prepTopCR;
             //plotterFunctions::PrepareTopVars prepareTopVars;
+            BaselineVessel myBLV("", "");
+            BaselineVessel blvZinv("Zinv");
+            BaselineVessel blvNoVeto("NoVeto");
+            BaselineVessel blvPFLeptonCleaned("PFLeptonCleaned");
+            BaselineVessel blvDRLeptonCleaned("DRLeptonCleaned");
+            BaselineVessel blvDRPhotonCleaned("DRPhotonCleaned");
+            CleanedJets cleanedJets;
+            plotterFunctions::GeneratePhotonEfficiency generatePhotonEfficiency;
+            plotterFunctions::Gamma gamma;
+            plotterFunctions::GenerateWeight weights;
+            plotterFunctions::LepInfo lepInfo;
+            plotterFunctions::BasicLepton basicLepton;
             plotterFunctions::TriggerInfo triggerInfo(false, false);
             BTagCorrector bTagCorrector("allINone_bTagEff.root", "", false, fs.tag);
             TTbarCorrector ttbarCorrector(false, "");
@@ -194,16 +244,29 @@ int main(int argc, char* argv[])
             Pileup_Sys pileup("PileupHistograms_0121_69p2mb_pm4p6.root");
 
             NTupleReader tr(t);            
-            tr.registerFunction(pileup);
-            tr.registerFunction(filterEvents);
+            tr.registerFunction(gamma);
+            tr.registerFunction(basicLepton);
+            tr.registerFunction(generatePhotonEfficiency);
+            tr.registerFunction(cleanedJets);
+            tr.registerFunction(myBLV);
+            tr.registerFunction(lepInfo);
+            tr.registerFunction(weights);
+            tr.registerFunction(blvZinv);
+            tr.registerFunction(blvNoVeto);
+            tr.registerFunction(blvPFLeptonCleaned);
+            tr.registerFunction(blvDRLeptonCleaned);
+            tr.registerFunction(blvDRPhotonCleaned);
+            //tr.registerFunction(pileup);
+            //tr.registerFunction(filterEvents);
             //tr.registerFunction(prepTopCR);
             //tr.registerFunction(prepareTopVars);
-            tr.registerFunction(triggerInfo);
-            tr.registerFunction(bTagCorrector);
-            tr.registerFunction(ttbarCorrector);
+            //tr.registerFunction(triggerInfo);
+            //tr.registerFunction(bTagCorrector);
+            //tr.registerFunction(ttbarCorrector);
             tr.registerFunction(ISRcorrector);
 
             double fileWgt = fs.getWeight();
+            std::cout << "Weight: " << fileWgt << std::endl;
 
             const int printInterval = 1000;
             int printNumber = 0;
@@ -220,6 +283,8 @@ int main(int argc, char* argv[])
                     printNumber = tr.getEvtNum() / printInterval;
                     std::cout << "Event #: " << printNumber * printInterval << std::endl;
                 }
+                
+                /*
 
                 const double& met    = tr.getVar<double>("met");
                 const double& metphi = tr.getVar<double>("metphi");
@@ -458,6 +523,7 @@ int main(int argc, char* argv[])
                     hists1Lep.fill(tr, eWeight, trand);
                 }
 
+                */
             }
         }
     }
