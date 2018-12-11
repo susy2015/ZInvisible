@@ -145,10 +145,8 @@ int main(int argc, char* argv[])
     std::cout << "Sample location: " << sampleloc << std::endl;
 
     // follow this syntax; order matters for your arguments
-    
     //SampleSet::SampleSet(std::string file, bool isCondor, double lumi)
     AnaSamples::SampleSet        ss("sampleSets.cfg", runOnCondor, AnaSamples::luminosity);
-    
     //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples) : ss_(samples)
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
     

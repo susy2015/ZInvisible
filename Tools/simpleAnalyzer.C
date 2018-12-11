@@ -36,7 +36,10 @@
 
 std::set<AnaSamples::FileSummary> getFS(const std::string& dataSets, const bool& isCondor)
 {
-    AnaSamples::SampleSet        ss("sampleSets.cfg", AnaSamples::luminosity, isCondor);
+    // follow this syntax; order matters for your arguments
+    //SampleSet::SampleSet(std::string file, bool isCondor, double lumi)
+    AnaSamples::SampleSet        ss("sampleSets.cfg", isCondor, AnaSamples::luminosity);
+    //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples) : ss_(samples)
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
 
     std::map<std::string, std::vector<AnaSamples::FileSummary>> fileMap;
@@ -164,12 +167,17 @@ int main(int argc, char* argv[])
     //if running on condor override all optional settings
     if(runOnCondor)
     {
+        std::cout << "Run on condor is true." << std::endl;
         char thistFile[128];
         stripRoot(filename);
         sprintf(thistFile, "%s_%s_%d.root", filename.c_str(), dataSets.c_str(), startFile);
         filename = thistFile;
         std::cout << "Filename modified for use with condor: " << filename << std::endl;
         sampleloc = "condor";
+    }
+    else
+    {
+        std::cout << "Run on condor is false." << std::endl;
     }
 
     TH1::AddDirectory(false);
