@@ -291,6 +291,48 @@ int main(int argc, char* argv[])
                     printNumber = tr.getEvtNum() / printInterval;
                     std::cout << "Event #: " << printNumber * printInterval << std::endl;
                 }
+
+                //////////////////////////
+                //  Jet Cleaning Study  //
+                //////////////////////////
+                std::map<std::string, std::vector<TLorentzVector> > objMap;
+                
+                const auto& cutElecVec               = tr.getVec<TLorentzVector>("cutElecVec");
+                const auto& cutMuVec                 = tr.getVec<TLorentzVector>("cutMuVec");
+                const auto& jetsLVec                 = tr.getVec<TLorentzVector>("jetsLVec");
+                const auto& jetsLVec_PFLeptonCleaned = tr.getVec<TLorentzVector>("prodJetsNoLep_jetsLVec");
+                const auto& jetsLVec_DRLeptonCleaned = tr.getVec<TLorentzVector>("jetsLVec_drLeptonCleaned");
+                const auto& n_jets                   = tr.getVar<int>("cntNJetsPt20Eta24");
+
+                std::vector<std::string> names = {"cutElecVec", "cutMuVec", "jetsLVec", "jetsLVec_PFLeptonCleaned", "jetsLVec_DRLeptonCleaned"};
+                objMap["cutElecVec"] = cutElecVec;
+                objMap["cutMuVec"] = cutMuVec;
+                objMap["jetsLVec"] = jetsLVec;
+                objMap["jetsLVec_PFLeptonCleaned"] = jetsLVec_PFLeptonCleaned;
+                objMap["jetsLVec_DRLeptonCleaned"] = jetsLVec_DRLeptonCleaned;
+
+                if (n_jets > 10)
+                {
+                    pevents++;
+                    printf("- n_jets (cntNJetsPt20Eta24) = %d\n", n_jets);
+                    for (const auto& name : names)
+                    {
+                        printf("- Collection: %s\n", name.c_str());
+                        int i = 0;
+                        for (const auto& obj : objMap[name])
+                        {
+                            printf("LVec %d: (pt, eta, phi, E) = (%f, %f, %f, %f)\n", i, obj.Pt(), obj.Eta(), obj.Phi(), obj.E());
+                            i++;
+                        }
+                    }
+                }
+                
+
+
+
+                //////////////////////////////////////
+                //  Old Version of simpleAnalyzer.C //
+                //////////////////////////////////////
                 
                 /*
 
