@@ -246,7 +246,7 @@ int main(int argc, char* argv[])
     int NSB = sb.nSearchBins();//37; // 45
 
     // min and max values for histos
-    int nBins = 60;
+    int nBins = 40;
     // p_t in GeV
     double minPt = 0.0;
     double maxPt = 2000.0;
@@ -308,6 +308,9 @@ int main(int argc, char* argv[])
     std::string label_PhotonEta = "#eta^{#gamma}";
     std::string label_PhotonPhi = "#phi^{#gamma}";
     std::string label_jetpt  = "jet p_{T} [GeV]";
+    std::string label_jeteta = "jet #eta [GeV]";
+    std::string label_jetphi = "jet #phi [GeV]";
+    std::string label_jetE   = "jet E [GeV]";
     std::string label_j1pt = "j_{1} p_{T} [GeV]";
     std::string label_j2pt = "j_{2} p_{T} [GeV]";
     std::string label_j3pt = "j_{3} p_{T} [GeV]";
@@ -958,18 +961,24 @@ int main(int argc, char* argv[])
             selectionLL = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
             selectionNuNu = "passBaseline" + tag.first;
             // DY and Z nu nu
-            dataCollectionMap["jet_pt_" + s].emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(pt)",    {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["jet_pt_" + s].emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(pt)",    {makePDSZnunu(tag.second, selectionNuNu)} ) );
-            dataCollectionMap["met_" + s].emplace_back(    Plotter::DataCollection("single", "cleanMetPt",                  {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["met_" + s].emplace_back(    Plotter::DataCollection("single", "cleanMetPt",                  {makePDSZnunu(tag.second, selectionNuNu)} ) );
-            dataCollectionMap["metphi_" + s].emplace_back( Plotter::DataCollection("single", "cleanMetPhi",                 {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["metphi_" + s].emplace_back( Plotter::DataCollection("single", "cleanMetPhi",                 {makePDSZnunu(tag.second, selectionNuNu)} ) );
-            dataCollectionMap["dphi0_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["dphi0_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
-            dataCollectionMap["dphi1_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["dphi1_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
-            dataCollectionMap["dphi2_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["dphi2_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["jet_pt_" + s].emplace_back(  Plotter::DataCollection("single", jetMap[tag.first] + "(pt)",    {makePDSDY(tag.second, selectionLL)} ) );
+            dataCollectionMap["jet_pt_" + s].emplace_back(  Plotter::DataCollection("single", jetMap[tag.first] + "(pt)",    {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["jet_eta_" + s].emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(eta)",   {makePDSDY(tag.second, selectionLL)} ) );
+            dataCollectionMap["jet_eta_" + s].emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(eta)",   {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["jet_phi_" + s].emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(phi)",   {makePDSDY(tag.second, selectionLL)} ) );
+            dataCollectionMap["jet_phi_" + s].emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(phi)",   {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["jet_E_" + s].emplace_back(   Plotter::DataCollection("single", jetMap[tag.first] + "(E)",     {makePDSDY(tag.second, selectionLL)} ) );
+            dataCollectionMap["jet_E_" + s].emplace_back(   Plotter::DataCollection("single", jetMap[tag.first] + "(E)",     {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["met_" + s].emplace_back(     Plotter::DataCollection("single", "cleanMetPt",                  {makePDSDY(tag.second, selectionLL)} ) );
+            dataCollectionMap["met_" + s].emplace_back(     Plotter::DataCollection("single", "cleanMetPt",                  {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["metphi_" + s].emplace_back(  Plotter::DataCollection("single", "cleanMetPhi",                 {makePDSDY(tag.second, selectionLL)} ) );
+            dataCollectionMap["metphi_" + s].emplace_back(  Plotter::DataCollection("single", "cleanMetPhi",                 {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["dphi0_" + s].emplace_back(   Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL)} ) );
+            dataCollectionMap["dphi0_" + s].emplace_back(   Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["dphi1_" + s].emplace_back(   Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL)} ) );
+            dataCollectionMap["dphi1_" + s].emplace_back(   Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
+            dataCollectionMap["dphi2_" + s].emplace_back(   Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL)} ) );
+            dataCollectionMap["dphi2_" + s].emplace_back(   Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["dphi0_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["dphi1_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["dphi2_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
@@ -980,20 +989,23 @@ int main(int argc, char* argv[])
        
         
         // fill plot parameters
-        plotParamsDY.push_back({"jet_pt_" + s,  dataCollectionMap["jet_pt_" + s],             80, 0.0, 200.0, true, false, label_jetpt, label_Events});
+        plotParamsDY.push_back({"jet_pt_" + s,  dataCollectionMap["jet_pt_" + s],             nBins, 0.0, 200.0, true, false, label_jetpt, label_Events});
+        plotParamsDY.push_back({"jet_eta_" + s, dataCollectionMap["jet_eta_" + s],            nBins, minEta, maxEta, true, false, label_jeteta, label_Events});
+        plotParamsDY.push_back({"jet_phi_" + s, dataCollectionMap["jet_phi_" + s],            nBins, minPhi, maxPhi, true, false, label_jetphi, label_Events});
+        plotParamsDY.push_back({"jet_E_" + s,   dataCollectionMap["jet_E_" + s],              nBins, 0.0, 2000.0, true, false, label_jetE, label_Events});
         plotParamsDY.push_back({"nj_" + s,      dataCollectionMap["cntNJetsPt20Eta24_" + s],  20, 0, 20, true, false, label_nj, label_Events});
         plotParamsDY.push_back({"nt_" + s,      dataCollectionMap["nTopCandSortedCnt_" + s],  20, 0, 20, true, false, label_nt, label_Events});
         plotParamsDY.push_back({"nb_" + s,      dataCollectionMap["cntCSVS_" + s],            20, 0, 20, true, false, label_nb, label_Events});
-        plotParamsDY.push_back({"ht_" + s,      dataCollectionMap["HT_" + s],                 80, 0.0, 2000.0, true, false, label_ht, label_Events});
-        plotParamsDY.push_back({"met_" + s,     dataCollectionMap["met_" + s],                80, 0.0, 2000.0, true, false, label_met, label_Events});
-        plotParamsDY.push_back({"metphi_" + s,  dataCollectionMap["metphi_" + s],             80, minPhi, maxPhi, true, false, label_metphi, label_Events});
-        plotParamsDY.push_back({"dphi0_" + s,   dataCollectionMap["dphi0_" + s],              80, 0.0, maxPhi, true, false, label_dphi0, label_Events});
-        plotParamsDY.push_back({"dphi1_" + s,   dataCollectionMap["dphi1_" + s],              80, 0.0, maxPhi, true, false, label_dphi1, label_Events});
-        plotParamsDY.push_back({"dphi2_" + s,   dataCollectionMap["dphi2_" + s],              80, 0.0, maxPhi, true, false, label_dphi2, label_Events});
-        plotParamsDY.push_back({"dphi0_" + s + "_ratio", dataCollectionMap["dphi0_" + s + "_ratio"], 80, 0.0, maxPhi, false, false, label_dphi0, label_Events});
-        plotParamsDY.push_back({"dphi1_" + s + "_ratio", dataCollectionMap["dphi1_" + s + "_ratio"], 80, 0.0, maxPhi, false, false, label_dphi1, label_Events});
-        plotParamsDY.push_back({"dphi2_" + s + "_ratio", dataCollectionMap["dphi2_" + s + "_ratio"], 80, 0.0, maxPhi, false, false, label_dphi2, label_Events});
-        plotParamsDY.push_back({"dr_" + s,      dataCollectionMap["dr_" + s],                 80, 0.0, 1.0, true, false, label_dr, label_Events});
+        plotParamsDY.push_back({"ht_" + s,      dataCollectionMap["HT_" + s],                 nBins, 0.0, 2000.0, true, false, label_ht, label_Events});
+        plotParamsDY.push_back({"met_" + s,     dataCollectionMap["met_" + s],                nBins, 0.0, 2000.0, true, false, label_met, label_Events});
+        plotParamsDY.push_back({"metphi_" + s,  dataCollectionMap["metphi_" + s],             nBins, minPhi, maxPhi, true, false, label_metphi, label_Events});
+        plotParamsDY.push_back({"dphi0_" + s,   dataCollectionMap["dphi0_" + s],              nBins, 0.0, maxPhi, true, false, label_dphi0, label_Events});
+        plotParamsDY.push_back({"dphi1_" + s,   dataCollectionMap["dphi1_" + s],              nBins, 0.0, maxPhi, true, false, label_dphi1, label_Events});
+        plotParamsDY.push_back({"dphi2_" + s,   dataCollectionMap["dphi2_" + s],              nBins, 0.0, maxPhi, true, false, label_dphi2, label_Events});
+        plotParamsDY.push_back({"dphi0_" + s + "_ratio", dataCollectionMap["dphi0_" + s + "_ratio"], nBins, 0.0, maxPhi, false, false, label_dphi0, "DYJetsToLL / ZJetsToNuNu"});
+        plotParamsDY.push_back({"dphi1_" + s + "_ratio", dataCollectionMap["dphi1_" + s + "_ratio"], nBins, 0.0, maxPhi, false, false, label_dphi1, "DYJetsToLL / ZJetsToNuNu"});
+        plotParamsDY.push_back({"dphi2_" + s + "_ratio", dataCollectionMap["dphi2_" + s + "_ratio"], nBins, 0.0, maxPhi, false, false, label_dphi2, "DYJetsToLL / ZJetsToNuNu"});
+        plotParamsDY.push_back({"dr_" + s,      dataCollectionMap["dr_" + s],                 nBins, 0.0, 1.0, true, false, label_dr, label_Events});
     }
     
     for (const auto& p : plotParamsDY)
