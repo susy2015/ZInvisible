@@ -163,6 +163,9 @@ int main(int argc, char* argv[])
         }
     }
 
+    // printing option for jet study
+    bool verbose = false;
+
     std::string sampleloc = AnaSamples::fileDir;
     //if running on condor override all optional settings
     if(runOnCondor)
@@ -311,7 +314,6 @@ int main(int argc, char* argv[])
                 objMap["jetsLVec_DRLeptonCleaned"] = jetsLVec_DRLeptonCleaned;
                 objMap["jetsLVec_PFLeptonCleaned"] = jetsLVec_PFLeptonCleaned;
 
-                bool verbose = true;
                 int min_jets = 10;
 
                 if (n_jets > min_jets)
