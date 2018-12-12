@@ -274,7 +274,7 @@ int main(int argc, char* argv[])
             tr.registerFunction(ISRcorrector);
 
             double fileWgt = fs.getWeight();
-            std::cout << "Weight: " << fileWgt << std::endl;
+            //std::cout << "Weight: " << fileWgt << std::endl;
 
             const int printInterval = 1000;
             int printNumber = 0;
@@ -304,27 +304,39 @@ int main(int argc, char* argv[])
                 const auto& jetsLVec_DRLeptonCleaned = tr.getVec<TLorentzVector>("jetsLVec_drLeptonCleaned");
                 const auto& n_jets                   = tr.getVar<int>("cntNJetsPt20Eta24");
 
-                std::vector<std::string> names = {"cutElecVec", "cutMuVec", "jetsLVec", "jetsLVec_PFLeptonCleaned", "jetsLVec_DRLeptonCleaned"};
+                std::vector<std::string> names = {"cutElecVec", "cutMuVec", "jetsLVec", "jetsLVec_DRLeptonCleaned", "jetsLVec_PFLeptonCleaned"};
                 objMap["cutElecVec"] = cutElecVec;
                 objMap["cutMuVec"] = cutMuVec;
                 objMap["jetsLVec"] = jetsLVec;
-                objMap["jetsLVec_PFLeptonCleaned"] = jetsLVec_PFLeptonCleaned;
                 objMap["jetsLVec_DRLeptonCleaned"] = jetsLVec_DRLeptonCleaned;
+                objMap["jetsLVec_PFLeptonCleaned"] = jetsLVec_PFLeptonCleaned;
 
-                if (n_jets > 10)
+                bool verbose = true;
+                int min_jets = 10;
+
+                if (n_jets > min_jets)
                 {
                     pevents++;
-                    printf("- n_jets (cntNJetsPt20Eta24) = %d\n", n_jets);
+                    printf("- n_jets (cntNJetsPt20Eta24) = %d ", n_jets);
+                    if (verbose) printf("\n");
                     for (const auto& name : names)
                     {
-                        printf("- Collection: %s\n", name.c_str());
-                        int i = 0;
-                        for (const auto& obj : objMap[name])
+                        if (verbose)
                         {
-                            printf("LVec %d: (pt, eta, phi, E) = (%f, %f, %f, %f)\n", i, obj.Pt(), obj.Eta(), obj.Phi(), obj.E());
-                            i++;
+                            printf("- Collection: %s; %d objects\n", name.c_str(), objMap[name].size());
+                            int i = 0;
+                            for (const auto& obj : objMap[name])
+                            {
+                                printf("LVec %d: (pt, eta, phi, E) = (%f, %f, %f, %f)\n", i, obj.Pt(), obj.Eta(), obj.Phi(), obj.E());
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            printf("| n_%s = %d ", name.c_str(), objMap[name].size());
                         }
                     }
+                    if (!verbose) printf("\n");
                 }
                 
 
