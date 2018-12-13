@@ -1,5 +1,5 @@
-#ifndef REGISTERFUNCTION_H
-#define REGISTERFUNCTION_H
+#ifndef REGISTERFUNCTIONS_H
+#define REGISTERFUNCTIONS_H
 
 #include <set>
 #include <string>

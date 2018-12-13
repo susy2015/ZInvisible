@@ -122,34 +122,34 @@ $(ODIR)/%.o : $(TTTSDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) -I$(TTTIDIR) $(INCLUDES) -o $@ -c $<
 
 
-calcEff: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/calcEff.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/Plotter.o $(ODIR)/MiniTupleMaker.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o  $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
+calcEff: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/calcEff.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/Plotter.o $(ODIR)/MiniTupleMaker.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o  $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-calcEffPhoton: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/calcEffPhoton.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/Plotter.o $(ODIR)/MiniTupleMaker.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o  $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
+calcEffPhoton: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/calcEffPhoton.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/Plotter.o $(ODIR)/MiniTupleMaker.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o  $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
 harvestHists: $(ODIR)/harvestHists.o
 	$(LD) $^ $(LIBS) -o $@
 
-makePlots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
+makePlots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-makeTopPlots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakeTopPlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
+makeTopPlots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakeTopPlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-makeDYPlots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakeDYPlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
+makeDYPlots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakeDYPlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-makePhotonPlots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePhotonPlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
+makePhotonPlots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePhotonPlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-miniMakePlots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/miniTupleSamples.o $(ODIR)/Plotter.o $(ODIR)/MinitupleMakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
+miniMakePlots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/miniTupleSamples.o $(ODIR)/Plotter.o $(ODIR)/MinitupleMakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-makeDataMCplots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
+makeDataMCplots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePlots.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/SusyUtility.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
-systematics: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/miniTupleSamples.o $(ODIR)/Systematic.o  $(ODIR)/Plotter.o $(ODIR)/systematics.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
+systematics: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/miniTupleSamples.o $(ODIR)/Systematic.o  $(ODIR)/Plotter.o $(ODIR)/systematics.o $(ODIR)/MiniTupleMaker.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
 nJetWgtSyst: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/nJetWgtSyst.o $(ODIR)/miniTupleSamples.o $(ODIR)/searchBins.o $(ODIR)/baselineDef.o $(ODIR)/customize.o
@@ -174,11 +174,11 @@ beffCalc: $(ODIR)/bTagEfficiencyCalc.o $(ODIR)/NTupleReader.o $(ODIR)/samples.o 
 makeSignalHistograms: $(ODIR)/makeSignalHistograms.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
-makeTaggerHistograms: $(ODIR)/makeTaggerHistograms.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o  $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o
+makeTaggerHistograms: $(ODIR)/makeTaggerHistograms.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o  $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
 # unfortunately we have problems with simpleAnalyzer :-(
-simpleAnalyzer: $(ODIR)/simpleAnalyzer.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o  $(ODIR)/TTbarCorrector.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/rootdict.o
+simpleAnalyzer: $(ODIR)/simpleAnalyzer.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o  $(ODIR)/TTbarCorrector.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o $(ODIR)/rootdict.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
 clean:
