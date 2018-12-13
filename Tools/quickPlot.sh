@@ -32,7 +32,7 @@ rm plots/*
 # Save root files for different MC
 
 echo " - Save root files for different MC"
-n_events=5000
+n_events=2000
 #sample1=GJets_HT-400To600
 sample1=DYJetsToLL_HT_400to600
 sample2=ZJetsToNuNu_HT_400to600

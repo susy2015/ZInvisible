@@ -927,8 +927,8 @@ int main(int argc, char* argv[])
     // map of jets 
     std::map<std::string, std::string> jetMap;
     //jetMap["NoVeto"]          = "jetsLVec";
-    jetMap["PFLeptonCleaned"] = "prodJetsNoLep_jetsLVec";
-    jetMap["DRLeptonCleaned"] = "jetsLVec_drLeptonCleaned";
+    jetMap["PFLeptonCleaned"] = "prodJetsNoLep_jetsLVec_pt20eta24";
+    jetMap["DRLeptonCleaned"] = "jetsLVec_drLeptonCleaned_pt20eta24";
 
     // plot parameters
     std::vector<simplePlotStruct> plotParamsDY;
