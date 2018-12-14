@@ -302,9 +302,9 @@ int main(int argc, char* argv[])
                 
                 const auto& cutElecVec               = tr.getVec<TLorentzVector>("cutElecVec");
                 const auto& cutMuVec                 = tr.getVec<TLorentzVector>("cutMuVec");
-                const auto& jetsLVec                 = tr.getVec<TLorentzVector>("jetsLVec");
-                const auto& jetsLVec_PFLeptonCleaned = tr.getVec<TLorentzVector>("prodJetsNoLep_jetsLVec");
-                const auto& jetsLVec_DRLeptonCleaned = tr.getVec<TLorentzVector>("jetsLVec_drLeptonCleaned");
+                const auto& jetsLVec                 = tr.getVec<TLorentzVector>("jetsLVec_pt20eta24");
+                const auto& jetsLVec_PFLeptonCleaned = tr.getVec<TLorentzVector>("prodJetsNoLep_jetsLVec_pt20eta24");
+                const auto& jetsLVec_DRLeptonCleaned = tr.getVec<TLorentzVector>("jetsLVec_drLeptonCleaned_pt20eta24");
                 const auto& n_jets                   = tr.getVar<int>("cntNJetsPt20Eta24");
 
                 std::vector<std::string> names = {"cutElecVec", "cutMuVec", "jetsLVec", "jetsLVec_DRLeptonCleaned", "jetsLVec_PFLeptonCleaned"};

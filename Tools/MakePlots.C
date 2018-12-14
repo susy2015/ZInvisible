@@ -933,11 +933,12 @@ int main(int argc, char* argv[])
 
     // map of y axis limits
     std::map< std::string, std::vector<float> > YAxisLimits;
-    YAxisLimits["jetphi"] = {    pow(10.0, 3), pow(10.0, 5)};
-    YAxisLimits["metphi"] = {    pow(10.0, 2), pow(10.0, 4)};
-    YAxisLimits["dphi0"]  = {    pow(10.0, 0), pow(10.0, 5)};
-    YAxisLimits["dphi1"]  = {5 * pow(10.0, 1), pow(10.0, 4)};
-    YAxisLimits["dphi2"]  = {5 * pow(10.0, 1), pow(10.0, 4)};
+    YAxisLimits["jetphi"] = {    pow(10.0, 2),      pow(10.0, 5)};
+    YAxisLimits["jeteta"] = {    pow(10.0, 2),      pow(10.0, 6)};
+    YAxisLimits["metphi"] = {    pow(10.0, 2),      pow(10.0, 4)};
+    YAxisLimits["dphi0"]  = {5 * pow(10.0, -1), 5 * pow(10.0, 5)};
+    YAxisLimits["dphi1"]  = {5 * pow(10.0, 1),      pow(10.0, 5)};
+    YAxisLimits["dphi2"]  = {5 * pow(10.0, 1),      pow(10.0, 5)};
 
     // plot parameters
     std::vector<simplePlotStruct> plotParamsDY;
@@ -1141,13 +1142,12 @@ int main(int argc, char* argv[])
 
     RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
 
-    std::cout << "Creating Plotter: Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);" << std::endl;
-   
-    printf("    fromTuple: %s\n", fromTuple ? "true" : "false"); fflush(stdout);
-    printf("    filename: %s\n", filename.c_str());              fflush(stdout);
-    printf("    nFiles: %d\n", nFiles);                          fflush(stdout);
-    printf("    startFile: %d\n", startFile);                    fflush(stdout);
-    printf("    nEvts: %d\n", nEvts);                            fflush(stdout);
+    //std::cout << "Creating Plotter: Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);" << std::endl;
+    //printf("    fromTuple: %s\n", fromTuple ? "true" : "false"); fflush(stdout);
+    //printf("    filename: %s\n", filename.c_str());              fflush(stdout);
+    //printf("    nFiles: %d\n", nFiles);                          fflush(stdout);
+    //printf("    startFile: %d\n", startFile);                    fflush(stdout);
+    //printf("    nEvts: %d\n", nEvts);                            fflush(stdout);
   
     Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);
     plotter.setCutFlows(cutFlowSummaries);
