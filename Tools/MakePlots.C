@@ -927,11 +927,14 @@ int main(int argc, char* argv[])
     std::vector<string> styleVec = {"single", "ratio"};
     // map of jets 
     std::map<std::string, std::string> jetMap;
+    // no pt or eta cuts
     //jetMap["NoVeto"]          = "jetsLVec";
-    jetMap["PFLeptonCleaned"] = "prodJetsNoLep_jetsLVec";
-    jetMap["DRLeptonCleaned"] = "jetsLVec_drLeptonCleaned";
-    //jetMap["PFLeptonCleaned"] = "prodJetsNoLep_jetsLVec_pt20eta24";
-    //jetMap["DRLeptonCleaned"] = "jetsLVec_drLeptonCleaned_pt20eta24";
+    //jetMap["PFLeptonCleaned"] = "prodJetsNoLep_jetsLVec";
+    //jetMap["DRLeptonCleaned"] = "jetsLVec_drLeptonCleaned";
+    // with pt and eta cuts
+    jetMap["NoVeto"]          = "jetsLVec_pt20eta24";
+    jetMap["PFLeptonCleaned"] = "prodJetsNoLep_jetsLVec_pt20eta24";
+    jetMap["DRLeptonCleaned"] = "jetsLVec_drLeptonCleaned_pt20eta24";
 
     // map of y axis limits
     std::map< std::string, std::vector<float> > YAxisLimits;
@@ -949,48 +952,48 @@ int main(int argc, char* argv[])
     // selection, then variable, then tag (standard pattern)
     // selection, then tag, then one line per variable (unique pattern)
     
+    std::string selectionLL = "";
+    std::string selectionNuNu = "passBaselineNoVeto";
     // fill map
     for (const auto& s : selectionVec) 
     {
-        std::string selectionLL = "";
-        std::string selectionNuNu = "";
         for (const auto& variable : variables)
         {
+            // z nunu
+            dataCollectionMap[variable + "_" + s].emplace_back( Plotter::DataCollection("single", variable + "NoVeto", {makePDSZnunu("all jets", selectionNuNu)} ) );
             for (const auto& tag : tagVector)
             {
                 // note that DY to LL and Z to NuNu have different selections
                 // DY to LL as di-lepton selection, while Z to NuNu does not
                 selectionLL = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
-                selectionNuNu = "passBaseline" + tag.first;
-                // DY and Z nu nu
+                // DY
                 dataCollectionMap[variable + "_" + s].emplace_back( Plotter::DataCollection("single", variable + tag.first, {makePDSDY(tag.second, selectionLL)} ) );
-                dataCollectionMap[variable + "_" + s].emplace_back( Plotter::DataCollection("single", variable + tag.first, {makePDSZnunu(tag.second, selectionNuNu)} ) );
             }
         }
         
+        // z nunu
+        dataCollectionMap["jetpt_" + s].emplace_back(  Plotter::DataCollection("single", jetMap["NoVeto"] + "(pt)",    {makePDSZnunu("all jets", selectionNuNu)} ) );
+        dataCollectionMap["jeteta_" + s].emplace_back( Plotter::DataCollection("single", jetMap["NoVeto"] + "(eta)",   {makePDSZnunu("all jets", selectionNuNu)} ) );
+        dataCollectionMap["jetphi_" + s].emplace_back( Plotter::DataCollection("single", jetMap["NoVeto"] + "(phi)",   {makePDSZnunu("all jets", selectionNuNu)} ) );
+        dataCollectionMap["jetE_" + s].emplace_back(   Plotter::DataCollection("single", jetMap["NoVeto"] + "(E)",     {makePDSZnunu("all jets", selectionNuNu)} ) );
+        dataCollectionMap["met_" + s].emplace_back(    Plotter::DataCollection("single", "cleanMetPt",                 {makePDSZnunu("all jets", selectionNuNu)} ) );
+        dataCollectionMap["metphi_" + s].emplace_back( Plotter::DataCollection("single", "cleanMetPhi",                {makePDSZnunu("all jets", selectionNuNu)} ) );
+        dataCollectionMap["dphi0_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVecNoVeto[0]",           {makePDSZnunu("all jets", selectionNuNu)} ) );
+        dataCollectionMap["dphi1_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVecNoVeto[1]",           {makePDSZnunu("all jets", selectionNuNu)} ) );
+        dataCollectionMap["dphi2_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVecNoVeto[2]",           {makePDSZnunu("all jets", selectionNuNu)} ) );
         for (const auto& tag : tagVector)
         {
             selectionLL = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
-            selectionNuNu = "passBaseline" + tag.first;
-            // DY and Z nu nu
+            // DY
             dataCollectionMap["jetpt_" + s].emplace_back(            Plotter::DataCollection("single", jetMap[tag.first] + "(pt)",    {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["jetpt_" + s].emplace_back(            Plotter::DataCollection("single", jetMap[tag.first] + "(pt)",    {makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["jeteta_" + s].emplace_back(           Plotter::DataCollection("single", jetMap[tag.first] + "(eta)",   {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["jeteta_" + s].emplace_back(           Plotter::DataCollection("single", jetMap[tag.first] + "(eta)",   {makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["jetphi_" + s].emplace_back(           Plotter::DataCollection("single", jetMap[tag.first] + "(phi)",   {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["jetphi_" + s].emplace_back(           Plotter::DataCollection("single", jetMap[tag.first] + "(phi)",   {makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["jetE_" + s].emplace_back(             Plotter::DataCollection("single", jetMap[tag.first] + "(E)",     {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["jetE_" + s].emplace_back(             Plotter::DataCollection("single", jetMap[tag.first] + "(E)",     {makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["met_" + s].emplace_back(              Plotter::DataCollection("single", "cleanMetPt",                  {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["met_" + s].emplace_back(              Plotter::DataCollection("single", "cleanMetPt",                  {makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["metphi_" + s].emplace_back(           Plotter::DataCollection("single", "cleanMetPhi",                 {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["metphi_" + s].emplace_back(           Plotter::DataCollection("single", "cleanMetPhi",                 {makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["dphi0_" + s].emplace_back(            Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["dphi0_" + s].emplace_back(            Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["dphi1_" + s].emplace_back(            Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["dphi1_" + s].emplace_back(            Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["dphi2_" + s].emplace_back(            Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL)} ) );
-            dataCollectionMap["dphi2_" + s].emplace_back(            Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["dphi0_" + s + "_ratio"].emplace_back( Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[0]",  {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["dphi1_" + s + "_ratio"].emplace_back( Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[1]",  {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
             dataCollectionMap["dphi2_" + s + "_ratio"].emplace_back( Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[2]",  {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
@@ -1033,12 +1036,12 @@ int main(int argc, char* argv[])
         // user defined y-axis limits
         else if (YAxisLimits.find(var) != YAxisLimits.end())
         {
-            vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {1, 2}, "", p.nBins, p.xMin, p.xMax, YAxisLimits[var][0], YAxisLimits[var][1], p.logBool, p.normBool, p.xLabel, p.yLabel));
+            vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {2, 1}, "", p.nBins, p.xMin, p.xMax, YAxisLimits[var][0], YAxisLimits[var][1], p.logBool, p.normBool, p.xLabel, p.yLabel));
         }
         // default case
         else
         {
-            vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {1, 2}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));
+            vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {2, 1}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));
         }
     }
     
