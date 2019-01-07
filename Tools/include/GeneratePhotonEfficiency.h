@@ -39,6 +39,7 @@ namespace plotterFunctions
     class GeneratePhotonEfficiency
     {
     private:
+        TH1F* hCrossSectionRatio;
         TH1F* hPhotonAccPt_num;
         TH1F* hPhotonAccPt_den;
         TH1F* hPhotonEffPt_num;
@@ -48,9 +49,11 @@ namespace plotterFunctions
         {
             const auto& gammaLVecPassLooseID = tr.getVec<TLorentzVector>("gammaLVecPassLooseID"); // loose photon
             const auto& passPhotonSelection  = tr.getVar<bool>("passPhotonSelection");            // photon selection
+            data_t photonCrossSectionRatio = -1.0;
             data_t photonAcceptance = -1.0;
             data_t photonEfficiencyPt = -1.0;
             data_t photonPt = -1.0;
+            photonCrossSectionRatio = hCrossSectionRatio->GetBinContent(1);
             if (passPhotonSelection)
             {
                 if (gammaLVecPassLooseID.size() == 1)
@@ -87,6 +90,7 @@ namespace plotterFunctions
             //     std::cout << "photonEfficiencyPt = " << photonEfficiencyPt << " photonEfficiencyPtWeight = " << photonEfficiencyPtWeight << std::endl;
             // }
             
+            tr.registerDerivedVar("photonCrossSectionRatio",  photonCrossSectionRatio);
             tr.registerDerivedVar("photonAcceptance",         photonAcceptance);
             tr.registerDerivedVar("photonAcceptanceWeight",   photonAcceptanceWeight);
             tr.registerDerivedVar("photonEfficiencyPt",       photonEfficiencyPt);
@@ -96,6 +100,7 @@ namespace plotterFunctions
     public:
         GeneratePhotonEfficiency()
         {
+            hCrossSectionRatio = nullptr;
             hPhotonAccPt_num = nullptr;
             hPhotonAccPt_den = nullptr;
             hPhotonEffPt_num = nullptr;
@@ -105,6 +110,7 @@ namespace plotterFunctions
             TFile *f = new TFile(histFile.c_str());
             if(f)
             {
+                hCrossSectionRatio = static_cast<TH1F*>(f->Get("hCrossSectionRatio"));
                 hPhotonAccPt_num = static_cast<TH1F*>(f->Get("hPhotonAccPt_num"));
                 hPhotonAccPt_den = static_cast<TH1F*>(f->Get("hPhotonAccPt_den"));
                 hPhotonEffPt_num = static_cast<TH1F*>(f->Get("hPhotonEffPt_num"));

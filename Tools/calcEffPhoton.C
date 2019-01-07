@@ -5,6 +5,7 @@
 #include <iostream>
 #include <getopt.h>
 
+#include "TVectorD.h"
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
@@ -76,11 +77,28 @@ int main(int argc, char* argv[])
     
     //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples) : ss_(samples)
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
+    double xsec_ratio = -1.0;
+    
+    if (ss[dataSets] != ss.null())
+    {
+        std::vector<std::string> sampleTags1 = {"GJets_HT-200To400", "GJets_HT-400To600", "GJets_HT-600ToInf"};
+        std::vector<std::string> sampleTags2 = {"ZJetsToNuNu_HT_200to400", "ZJetsToNuNu_HT_400to600", "ZJetsToNuNu_HT_600to800", "ZJetsToNuNu_HT_800to1200", "ZJetsToNuNu_HT_1200to2500", "ZJetsToNuNu_HT_2500toInf"};
+        xsec_ratio = ss.getCrossSectionRatio(sampleTags1, sampleTags2);
+    }
+    else if (sc[dataSets] != sc.null())
+    {
+        std::string sampleTag1 = "GJets";
+        std::string sampleTag2 = "ZJetsToNuNu";
+        xsec_ratio = sc.getCrossSectionRatio(sampleTag1, sampleTag2);
+    }
 
 
     TFile *f = new TFile(filename.c_str(),"RECREATE");
     f->cd();
 
+    // cross section ratio
+    TH1 *hCrossSectionRatio = new TH1D("hCrossSectionRatio", "hCrossSectionRatio", 1, 0, 1);
+    hCrossSectionRatio->Fill(0.5, xsec_ratio);
     // photons
     TH1 *hPhotonAccPt_num = new TH1D("hPhotonAccPt_num", "hPhotonAccPt_num", 200, 0, 2000);
     TH1 *hPhotonAccPt_den = new TH1D("hPhotonAccPt_den", "hPhotonAccPt_den", 200, 0, 2000);
@@ -186,6 +204,7 @@ int main(int argc, char* argv[])
     
     f->cd();
     
+    hCrossSectionRatio->Write();
     hPhotonAccPt_num->Write();
     hPhotonAccPt_den->Write();
     hPhotonEffPt_num->Write();
