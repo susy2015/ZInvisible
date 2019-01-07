@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
     bool doWeights = false;
     bool doLeptons = false;
     bool doPhotons = false;
-    bool doGJetsAndZnunu = true;
-    bool doDYAndZnunu = false;
+    bool doGJetsAndZnunu = false;
+    bool doDYAndZnunu = true;
     bool doSearchBins = false;
     bool doPlots = true;
     bool doSave = true;
