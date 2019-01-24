@@ -234,7 +234,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     //tr.registerFunction(*blvZinvJEUDn);
     //tr.registerFunction(*blvZinvMEUUp);
     //tr.registerFunction(*blvZinvMEUDn);
-    //tr.registerFunction(*getSearchBin);
+    tr.registerFunction(*getSearchBin);
     //tr.registerFunction(*systematicCalc);
     //tr.registerFunction(*triggerInfo);
     //tr.registerFunction(*prepareMiniTupleVars);

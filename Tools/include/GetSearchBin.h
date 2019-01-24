@@ -7,6 +7,7 @@
 #include "SusyAnaTools/Tools/NTupleReader.h"
 #include "SusyAnaTools/Tools/customize.h"
 #include "SusyAnaTools/Tools/searchBins.h"
+#include "SusyAnaTools/Tools/SB2018.h"
 #include "TopTagger/Tools/cpp/TaggerUtility.h"
 #include "TopTagger/Tools/cpp/PlotUtility.h"
 #include "ScaleFactors.h"
@@ -43,27 +44,57 @@ namespace plotterFunctions
 
         void getSearchBin(NTupleReader& tr)
         {
-            const auto& cntCSVS = tr.getVar<int>("cntCSVSZinv");
-            const auto& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
+            const auto& nb                  = tr.getVar<int>("cntCSVSZinv");
+            const auto& nt                  = tr.getVar<int>("nTopCandSortedCntZinv");
+            const auto& njets               = tr.getVar<int>("cntNJetsPt20Eta24Zinv");
+            const auto& nWs                 = tr.getVar<int>("nWs");
+            const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops");
+            const auto& met                 = tr.getVar<data_t>("cleanMetPt");
+            const auto& ht                  = tr.getVar<data_t>("HTZinv");
+            const auto& bottompt_scalar_sum = tr.getVar<data_t>("ptbZinv");
+            const auto& mtb                 = tr.getVar<data_t>("mtbZinv");
+            const auto& softbLVec           = tr.getVec<TLorentzVector>("softbLVecZinv");
+            const auto& ISRLVec             = tr.getVec<TLorentzVector>("vISRJetZinv");
+            
+            //const auto& bjetsLVec           = tr.getVec<TLorentzVector>("vBjsZinv");
+            //const auto& jet_vec = tr->getVec<TLorentzVector>(jetVecLabel);
+            
+            //const auto& MT2 = tr.getVar<data_t>("best_had_brJet_MT2Zinv");
+            //const auto& cleanMetPhi = tr.getVar<data_t>("cleanMetPhi");
             //const auto& nTopCandSortedCnt1b = tr.getVar<int>("nTopCandSortedCntZinv1b");
             //const auto& nTopCandSortedCnt2b = tr.getVar<int>("nTopCandSortedCntZinv2b");
             //const auto& nTopCandSortedCnt3b = tr.getVar<int>("nTopCandSortedCntZinv3b");
-            const auto& cleanMet = tr.getVar<data_t>("cleanMetPt");
-            const auto& cleanMetPhi = tr.getVar<data_t>("cleanMetPhi");
-            const auto& MT2 = tr.getVar<data_t>("best_had_brJet_MT2Zinv");
             //const auto& MT2_1b = tr.getVar<data_t>("best_had_brJet_MT2Zinv1b");
             //const auto& MT2_2b = tr.getVar<data_t>("best_had_brJet_MT2Zinv2b");
             //const auto& MT2_3b = tr.getVar<data_t>("best_had_brJet_MT2Zinv3b");
             //const auto& weight1fakeb = tr.getVar<data_t>("weight1fakeb");
             //const auto& weight2fakeb = tr.getVar<data_t>("weight2fakeb");
             //const auto& weight3fakeb = tr.getVar<data_t>("weight3fakeb");
-            //
             //const auto& nJet1bfakeWgt = tr.getVar<data_t>("nJet1bfakeWgt");
             //const auto& nJet2bfakeWgt = tr.getVar<data_t>("nJet2bfakeWgt");
             //const auto& nJet3bfakeWgt = tr.getVar<data_t>("nJet3bfakeWgt");
-            const auto& HT            = tr.getVar<data_t>("HTZinv");
             //const auto& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
-            //            //top
+            
+            //------------------------------------------//
+            //--- Updated Search Bins (January 2019) ---//
+            //------------------------------------------//
+
+            //================================SUS-16-049 (team_A) search bin low dm================================
+            //int SB_team_A_lowdm(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
+            //================================search bin v2 high dm================================================
+            //int SBv2_highdm(float mtb_cut, float mtb, int njets, int ntop, int nw, int nres, int nb, float met, float ht)
+            
+            //int cntCSVS = 0;
+            //cntCSVS = AnaFunctions::countCSVS(jet_vec, tr->getVec<float>(CSVVecLabel), AnaConsts::DeepCSV.at(eraLabel).at("cutM"), AnaConsts::bTagArr, vBidxs); 
+            
+            int nSV = softbLVec.size();
+            float ISRpt = 0.0;
+            if(ISRLVec.size() == 1) ISRpt = ISRLVec.at(0).Pt();
+            float mtb_cut = 175.0;
+
+            int nSearchBinLowDM = SB_team_A_lowdm(njets, nb, nSV, ISRpt, bottompt_scalar_sum, met);
+            int nSearchBinHighDM = SBv2_highdm(mtb_cut, mtb, njets, nt, nWs, nResolvedTops, nb, met, ht);
+
             /*
             std::shared_ptr<TopTagger> ttPtr;
             int monoJet;
@@ -75,7 +106,8 @@ namespace plotterFunctions
              std::cout<<monoJet<<std::endl;
             */
             //int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet);
-            int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);            
+            //int nSearchBin = sbins.find_Binning_Index(cntCSVS, nTopCandSortedCnt, MT2, cleanMet, HT);            
+
 
             //std::vector<std::pair<double, double> > * nb0Bins = new std::vector<std::pair<double, double> >();
             //std::vector<std::pair<double, double> > * nb0NJwBins = new std::vector<std::pair<double, double> >();
@@ -94,23 +126,24 @@ namespace plotterFunctions
             //const double w2b = wnb02 * weight2fakeb;
             //const double w3b = wnb03 * weight3fakeb;
 
-            if(cntCSVS == 0)
-            {
-                //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
-                //nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT), wnb01 * weight1fakeb));
-                //nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT), wnb02 * weight2fakeb));
-                //nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT), wnb03 * weight3fakeb));
+            //if(cntCSVS == 0)
+            //{
+            //    //nb0Bins->push_back(std::make_pair(find_Binning_Index(0, nTopCandSortedCnt, MT2, cleanMet), 1.0));
+            //    //nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT), wnb01 * weight1fakeb));
+            //    //nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT), wnb02 * weight2fakeb));
+            //    //nb0Bins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT), wnb03 * weight3fakeb));
 
-                //nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT), nJet1bfakeWgt));
-                //nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT), nJet2bfakeWgt));
-                //nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT), nJet3bfakeWgt));
+            //    //nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT), nJet1bfakeWgt));
+            //    //nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT), nJet2bfakeWgt));
+            //    //nb0NJwBins->emplace_back(std::pair<double, double>(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT), nJet3bfakeWgt));
 
-                //nb0BinsNW->emplace_back(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT));
-                //nb0BinsNW->emplace_back(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT));
-                //nb0BinsNW->emplace_back(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT));
-            }
+            //    //nb0BinsNW->emplace_back(sbins.find_Binning_Index(1, nTopCandSortedCnt1b, MT2_1b, cleanMet, HT));
+            //    //nb0BinsNW->emplace_back(sbins.find_Binning_Index(2, nTopCandSortedCnt2b, MT2_2b, cleanMet, HT));
+            //    //nb0BinsNW->emplace_back(sbins.find_Binning_Index(3, nTopCandSortedCnt3b, MT2_3b, cleanMet, HT));
+            //}
 
-            tr.registerDerivedVar("nSearchBin", nSearchBin);
+            tr.registerDerivedVar("nSearchBinLowDM", nSearchBinLowDM);
+            tr.registerDerivedVar("nSearchBinHighDM", nSearchBinHighDM);
             //tr.registerDerivedVec("nb0BinsNW", nb0BinsNW);
             //tr.registerDerivedVec("nb0Bins", nb0Bins);
             //tr.registerDerivedVec("nb0NJwBins", nb0NJwBins);
