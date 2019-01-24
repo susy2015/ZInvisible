@@ -247,6 +247,14 @@ int main(int argc, char* argv[])
     //SearchBins sb(sbEra);
     //int NSB = sb.nSearchBins(); // 84
     int NSB = 204;
+    // search bins for high and low dm
+    // Low DM, 53 bins: 0 - 52
+    // High DM, 151 bins: 53 - 203
+    // Total 204 bins: 0 - 203
+    int min_sb_low_dm = 0;
+    int max_sb_low_dm = 53;
+    int min_sb_high_dm = 53;
+    int max_sb_high_dm = 204;
 
     // min and max values for histos
     int nBins = 40;
@@ -1139,8 +1147,8 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dc_Znunu_nSearchBinHighDM("data", "nSearchBinHighDM", {makePDSZnunu("Search Bin High DM", "passBaselineHighDMZinv")});
     if (doSearchBins)
     {
-        vh.push_back(PHS("ZNuNu_nSearchBinLowDM",  {dc_Znunu_nSearchBinLowDM},  {1, 1}, "", NSB,  0, NSB, false, false,  "Search Bin Low DM", "Events", true));
-        vh.push_back(PHS("ZNuNu_nSearchBinHighDM", {dc_Znunu_nSearchBinHighDM}, {1, 1}, "", NSB,  0, NSB, false, false,  "Search Bin High DM", "Events", true));
+        vh.push_back(PHS("ZNuNu_nSearchBinLowDM",  {dc_Znunu_nSearchBinLowDM},  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,    min_sb_low_dm,  max_sb_low_dm,  false, false,  "Search Bin Low DM", "Events", true));
+        vh.push_back(PHS("ZNuNu_nSearchBinHighDM", {dc_Znunu_nSearchBinHighDM}, {1, 1}, "", max_sb_high_dm - min_sb_high_dm,  min_sb_high_dm, max_sb_high_dm, false, false,  "Search Bin High DM", "Events", true));
         //vh.push_back(PHS("Trigger_",         {trigger_nSearchBin},           {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
         //vh.push_back(PHS("TriggerScl_",      {trigger_nSearchBin_scaled},    {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
         //vh.push_back(PHS("TriggerWgt_",      {trigger_nSearchBin_weighted},  {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
