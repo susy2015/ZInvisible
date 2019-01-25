@@ -13,7 +13,7 @@
 # Make plots of results (containing both MC)
 
 
-combineResults=false
+combineResults=true
 
 # Compile MakePlots
 
@@ -34,15 +34,15 @@ rm plots/*
 # Save root files for different MC
 
 echo " - Save root files for different MC"
-n_events=10000
+n_events=1000
 sample1=GJets_HT-400To600
 #sample1=DYJetsToLL_HT_400to600
 sample2=ZJetsToNuNu_HT_400to600
 output1=""$sample1".root"
 output2=""$sample2".root"
 
-#echo " - Running makePlots to create $output1"
-#./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF
+echo " - Running makePlots to create $output1"
+./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF
 echo " - Running makePlots to create $output2"
 ./makePlots -D $sample2 -E $n_events -I $output2 | grep -v LHAPDF
 
