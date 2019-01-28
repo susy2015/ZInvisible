@@ -189,22 +189,6 @@ x509userproxy = $ENV(X509_USER_PROXY)
 
 """
 
-#submitFileGTP = """universe = grid
-#grid_resource = condor kodiak-ce.baylor.edu kodiak-ce.baylor.edu:9619
-#+remote_queue = "batch"
-#Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeTopPlots.sh
-#Should_Transfer_Files = YES
-#WhenToTransferOutput = ON_EXIT
-#Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gtp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz 
-#Output = logs/makePlots_$(Process).stdout
-#Error = logs/makePlots_$(Process).stderr
-#Log = logs/makePlots_$(Process).log
-#notify_user = ${LOGNAME}@FNAL.GOV
-#x509userproxy = $ENV(X509_USER_PROXY)
-#+maxWallTime = 2880
-#
-#"""
-
 #go make lepton efficiency
 submitFileGME = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEff.sh
@@ -216,18 +200,6 @@ notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
 
 """
-
-# #go make photon efficiency (broken)
-# submitFileGMEP = """universe = vanilla
-# Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEffPhoton.sh
-# Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
-# Should_Transfer_Files = YES
-# WhenToTransferOutput = ON_EXIT
-# Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/calcEffPhoton, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEffPhoton.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/zRes.root
-# notify_user = ${LOGNAME}@FNAL.GOV
-# x509userproxy = $ENV(X509_USER_PROXY)
-# 
-# """
 
 #go make photon efficiency
 submitFileGMEP = """universe = vanilla

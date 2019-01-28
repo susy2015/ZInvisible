@@ -69,19 +69,12 @@ int main(int argc, char* argv[])
     }
 
   
-    // the old version
-    //AnaSamples::SampleSet        ss(sampleloc, lumi);
-    //AnaSamples::SampleCollection sc(ss);
-    // the new version
-    //AnaSamples::SampleSet        ss("sampleSets.cfg");
-    //AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
-    
-    // follow this syntax; order matters for your arguments
+    // Important: follow this syntax; order matters for your arguments
     
     //SampleSet::SampleSet(std::string file, bool isCondor, double lumi)
     AnaSamples::SampleSet        ss("sampleSets.cfg", runOnCondor, AnaSamples::luminosity);
     
-    //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples) : ss_(samples)
+    //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples)
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
 
 
