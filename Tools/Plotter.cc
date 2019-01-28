@@ -143,7 +143,6 @@ Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollec
 
 Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, double ymin, double ymax, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : HistSummary(l, ns, ratio, cuts, nb, ll, ul, log, norm, xal, yal, isRatio)
 {
-    //std::cout << "name = " << l << ": using y axis limits: " << ymin << ", "<< ymax << std::endl;
     ymin_ = ymin;
     ymax_ = ymax;
     setYLimits = true;
@@ -256,9 +255,7 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
     double retval = 1.0;
     for(auto& weightName : weightVec_)
     {
-        //std::cout << "Before getting weight: " << weightName << std::endl;
         const double& weight = static_cast<double>(tr.getVar<data_t>(weightName));
-        //std::cout << "After getting weight: " << weightName << std::endl;
         if(weight == weight)
         {
             if(weight < 1e6)
@@ -531,10 +528,8 @@ void Plotter::createHistsFromTuple()
                     {
                         if(tr.getVar<bool>("passnJetsZinv"))
                         {
-                            //std::cout<<"passnJetsZinv is WORKING... "<<std::endl;
                             if(file.filePath.find("ZJetsToNuNu_") != std::string::npos || tr.getVar<bool>("passMuZinvSel"))
                             {
-                                //std::cout<<"Made it to the end of the line"<<std::endl;
                                 foutTuple_->cd();
                                 mtm->fill();
                                 fout_->cd();
@@ -557,7 +552,6 @@ void Plotter::createHistsFromTuple()
 
         if(foutTuple_ && tOut && mtm)
         {
-            //std::cout<<"This is the end my friend"<<std::endl;
             foutTuple_->cd();
             tOut->Write();
         }
@@ -1298,8 +1292,6 @@ void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& t
 
         if(type.find("*") != std::string::npos)
         {
-            // debug statement
-            //printf("name: %s type: %s\n", name.name.c_str(), type.c_str());
             if(type.find("TLorentzVector") != std::string::npos) 
             {
               if(type.find("const") != std::string::npos) fillHistFromVec<const TLorentzVector*>(h, name, tr, weight);
