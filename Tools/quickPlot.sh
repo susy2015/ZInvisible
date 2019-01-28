@@ -42,8 +42,10 @@ output1=""$sample1".root"
 output2=""$sample2".root"
 
 echo " - Running makePlots to create $output1"
+echo "./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF"
 ./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF
 echo " - Running makePlots to create $output2"
+echo "./makePlots -D $sample2 -E $n_events -I $output2 | grep -v LHAPDF"
 ./makePlots -D $sample2 -E $n_events -I $output2 | grep -v LHAPDF
 
 # hadd the results
@@ -59,7 +61,6 @@ if [ "$combineResults" = true ]; then
     # Make plots of results (containing both MC)
     
     echo " - Make plots of results (containing both MC)"
+    echo "./makePlots -f -I $result | grep -v LHAPDF"
     ./makePlots -f -I $result | grep -v LHAPDF
-
 fi
-

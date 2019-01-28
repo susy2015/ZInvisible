@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
         {"condor",           no_argument, 0, 'c'},
         {"dophotons",        no_argument, 0, 'g'},
         {"doleptons",        no_argument, 0, 'l'},
+        {"verbose",          no_argument, 0, 'v'},
         {"filename",   required_argument, 0, 'I'},
         {"dataSets",   required_argument, 0, 'D'},
         {"numFiles",   required_argument, 0, 'N'},
@@ -53,12 +54,13 @@ int main(int argc, char* argv[])
     bool doSave = true;
     bool doTuple = true;
     bool fromTuple = true;
+    bool verbose = false;
     string filename = "histoutput.root", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
     double lumi = AnaSamples::luminosity;
-    std::string sbEra = "SB_v1_2017";//"SB_v1_2017";
+    std::string sbEra = "SB_v1_2017";
 
-    while((opt = getopt_long(argc, argv, "pstfcglI:D:N:M:E:P:L:S:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "pstfcglvI:D:N:M:E:P:L:S:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
@@ -91,6 +93,10 @@ int main(int argc, char* argv[])
 
         case 'l':
             doLeptons = true;
+            break;
+
+        case 'v':
+            verbose = true;
             break;
 
         case 'I':
@@ -149,50 +155,9 @@ int main(int argc, char* argv[])
     // follow this syntax; order matters for your arguments
     //SampleSet::SampleSet(std::string file, bool isCondor, double lumi)
     AnaSamples::SampleSet        ss("sampleSets.cfg", runOnCondor, AnaSamples::luminosity);
-    //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples) : ss_(samples)
+    //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples)
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
     
-    // // --- modify weights to compare GJets to ZJetsToNuNu
-    // // --- do this before creating fileMap
-
-    // //AnaSamples::FileSummary fsg = ss["GJets_HT-200To400"];
-    // //printf("%s: xsec = %f kfactor = %f weight = %f\n", fsg.tag.c_str(), fsg.xsec, fsg.kfactor, fsg.getWeight());
-    // 
-    // std::vector<std::string> sampleTags1 = {"GJets_HT-200To400", "GJets_HT-400To600", "GJets_HT-600ToInf"};
-    // std::vector<std::string> sampleTags2 = {"ZJetsToNuNu_HT_200to400", "ZJetsToNuNu_HT_400to600", "ZJetsToNuNu_HT_600to800", "ZJetsToNuNu_HT_800to1200", "ZJetsToNuNu_HT_1200to2500", "ZJetsToNuNu_HT_2500toInf"};
-    // std::string sampleTag1 = "GJets";
-    // std::string sampleTag2 = "ZJetsToNuNu";
-
-    // if (ss[dataSets] != ss.null())
-    // {
-    //     printf("--- Using ss -----------\n");
-    //     printf("--- Original Weights ---\n");
-    //     for (const auto& tag : sampleTags1) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
-    //     for (const auto& tag : sampleTags2) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
-
-    //     // Definition in SusyAnaTools/Tools/samples.cc
-    //     ss.modifyWeights(sampleTags1, sampleTags2);
-
-    //     printf("--- Modified Weights ---\n");
-    //     for (const auto& tag : sampleTags1) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
-    //     for (const auto& tag : sampleTags2) printf("%s: weight = %f\n", tag.c_str(), ss[tag].getWeight());
-    // }
-    // else if (sc[dataSets] != sc.null())
-    // {
-    //     printf("--- Using sc -----------\n");
-    //     printf("--- Original Weights ---\n");
-    //     for (const auto& fs : sc[sampleTag1]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
-    //     for (const auto& fs : sc[sampleTag2]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
-
-    //     // Definition in SusyAnaTools/Tools/samples.cc
-    //     sc.modifyWeights(sampleTag1, sampleTag2);
-    //     
-    //     printf("--- Modified Weights ---\n");
-    //     for (const auto& fs : sc[sampleTag1]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
-    //     for (const auto& fs : sc[sampleTag2]) printf("%s: weight = %f\n", fs.tag.c_str(), fs.getWeight());
-    // }
-
-
     const double zAcc = 1.0;
     // const double zAcc = 0.5954;
     // const double zAcc = 0.855;
@@ -890,24 +855,10 @@ int main(int argc, char* argv[])
       lepton_cut += ";" + met_cut;
     }
     auto makePDSGJets = [&](const std::string& label, const std::string& cuts) {return Plotter::DatasetSummary("GJets "+label, fileMap["GJets"], cuts, ""); };
-    //Plotter::DataCollection dc_GJets_nj_all                ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSGJets("all jets", met_cut)}                     );
-    //Plotter::DataCollection dc_GJets_nj_all_onephoton      ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSGJets("all jets one photon", photon_cut)}       );
-    //Plotter::DataCollection dc_GJets_nj_phoclean           ("single", "cntNJetsPt20Eta24DRPhotonCleaned", {makePDSGJets("photon cleaned", met_cut)}               );
-    //Plotter::DataCollection dc_GJets_nj_phoclean_onephoton ("single", "cntNJetsPt20Eta24DRPhotonCleaned", {makePDSGJets("photon cleaned one photon", photon_cut)} );
     
-    //vh.push_back(PHS("MC_GJets_nj", {dc_GJets_nj_all, dc_GJets_nj_all_onephoton, dc_GJets_nj_phoclean, dc_GJets_nj_phoclean_onephoton}, {1, 1}, "", 10, 0, 10, true, false, label_nj, label_Events));
-    
-    // lepton jet cleaning
+    // lepton jet cleaning study
     // variables: HT, MET, METPHI, dPhi, n_j, n_t, n_b 
     auto makePDSDY = [&](const std::string& label, const std::string& cuts) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], cuts, ""); };
-    //Plotter::DataCollection dc_DY_nj_all              ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSDY("all jets", met_cut)}                      );
-    //Plotter::DataCollection dc_DY_nj_all_lepveto      ("single", "cntNJetsPt20Eta24NoVeto",   {makePDSDY("all jets lepton veto", lepton_cut)}       );
-    //Plotter::DataCollection dc_DY_nj_lepclean         ("single", "cntNJetsPt20Eta24NoLepton", {makePDSDY("lepton cleaned", met_cut)}                );
-    //Plotter::DataCollection dc_DY_nj_lepclean_lepveto ("single", "cntNJetsPt20Eta24NoLepton", {makePDSDY("lepton cleaned lepton veto", lepton_cut)} );
-    //Plotter::DataCollection dc_DY_nt_all              ("single", "nTopCandSortedCntNoVeto",   {makePDSDY("all jets", met_cut)}                      );
-    //Plotter::DataCollection dc_DY_nt_lepclean         ("single", "nTopCandSortedCntNoLepton", {makePDSDY("lepton cleaned", met_cut)}                );
-    
-    //vh.push_back(PHS("MC_DY_nj", {dc_DY_nj_all, dc_DY_nj_all_lepveto, dc_DY_nj_lepclean, dc_DY_nj_lepclean_lepveto}, {1, 1}, "", 10, 0, 10, true, false, label_nj, label_Events));
     
     if (doDYAndZnunu)
     {
@@ -1178,12 +1129,15 @@ int main(int argc, char* argv[])
 
     RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
 
-    //std::cout << "Creating Plotter: Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);" << std::endl;
-    //printf("    fromTuple: %s\n", fromTuple ? "true" : "false"); fflush(stdout);
-    //printf("    filename: %s\n", filename.c_str());              fflush(stdout);
-    //printf("    nFiles: %d\n", nFiles);                          fflush(stdout);
-    //printf("    startFile: %d\n", startFile);                    fflush(stdout);
-    //printf("    nEvts: %d\n", nEvts);                            fflush(stdout);
+    if (verbose)
+    {
+        std::cout << "Creating Plotter: Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);" << std::endl;
+        printf("    fromTuple: %s\n", fromTuple ? "true" : "false"); fflush(stdout);
+        printf("    filename: %s\n", filename.c_str());              fflush(stdout);
+        printf("    nFiles: %d\n", nFiles);                          fflush(stdout);
+        printf("    startFile: %d\n", startFile);                    fflush(stdout);
+        printf("    nEvts: %d\n", nEvts);                            fflush(stdout);
+    }
   
     Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);
     plotter.setCutFlows(cutFlowSummaries);
