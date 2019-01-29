@@ -348,8 +348,10 @@ for ds in datasets:
     ds = ds.strip()
 
     print ds
-    for s, n in sc.sampleList(ds):
+    # s: file, n:name, e:nEvts
+    for s, n, e in sc.sampleList(ds):
         print "\t%s"%n
+        #print "\t{0} {1} {2}".format(s, n, e)
         try:
             f = open(s)
         except IOError:
