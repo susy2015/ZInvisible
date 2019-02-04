@@ -101,31 +101,42 @@ void activateBranches(std::set<std::string>& activeBranches)
 
 RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra) : RegisterFunctions()
 {            
+    // Important: create objects!!
+    
     //AnaFunctions::prepareTopTagger();
-    myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
-    blvZinv   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    myBLV              = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
+    blvZinv            = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    blvNoVeto          = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoVeto");
+    blvPFLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "PFLeptonCleaned");
+    blvDRLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "DRLeptonCleaned");
+    blvDRPhotonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "DRPhotonCleaned");
     //blvZinv1b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv1b");
     //blvZinv2b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv2b");
     //blvZinv3b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv3b");
-    blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
-    blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
-    blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
-    blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
+    //blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
+    //blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
+    //blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
+    //blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
 
-    weights              = new plotterFunctions::GenerateWeight;
-    njWeight             = new plotterFunctions::NJetWeight;
-    lepInfo              = new plotterFunctions::LepInfo;
-    fakebtagvectors      = new plotterFunctions::Fakebtagvectors;
-    getSearchBin         = new plotterFunctions::GetSearchBin(sbEra);
-    triggerInfo          = new plotterFunctions::TriggerInfo;
-    prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(true);
-    systematicPrep       = new plotterFunctions::SystematicPrep;
-    systematicCalc       = new plotterFunctions::SystematicCalc(sbEra);
 
-    //taudiv               = new plotterFunctions::Taudiv;
-    taudiv               = new plotterFunctions::Taudiv(blvZinv->GetTopTaggerPtr());
-    nJetAk8              = new plotterFunctions::NJetAk8;
-    ak8DrMatch           = new plotterFunctions::Ak8DrMatch;
+    cleanedJets               = new CleanedJets;
+    gamma                     = new plotterFunctions::Gamma;
+    weights                   = new plotterFunctions::GenerateWeight;
+    generatePhotonEfficiency  = new plotterFunctions::GeneratePhotonEfficiency;
+    njWeight                  = new plotterFunctions::NJetWeight;
+    lepInfo                   = new plotterFunctions::LepInfo;
+    basicLepton               = new plotterFunctions::BasicLepton;
+    fakebtagvectors           = new plotterFunctions::Fakebtagvectors;
+    getSearchBin              = new plotterFunctions::GetSearchBin(sbEra);
+    triggerInfo               = new plotterFunctions::TriggerInfo;
+    prepareMiniTupleVars      = new plotterFunctions::PrepareMiniTupleVars(true);
+    systematicPrep            = new plotterFunctions::SystematicPrep;
+    systematicCalc            = new plotterFunctions::SystematicCalc(sbEra);
+
+    //taudiv                    = new plotterFunctions::Taudiv;
+    taudiv                    = new plotterFunctions::Taudiv(blvZinv->GetTopTaggerPtr());
+    nJetAk8                   = new plotterFunctions::NJetAk8;
+    ak8DrMatch                = new plotterFunctions::Ak8DrMatch;
 
     myPDFUnc = new PDFUncertainty();
     bTagCorrector = nullptr;
@@ -136,8 +147,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     }
     else
     {
-        //bTagCorrector = new BTagCorrector("bTagEffHists.root", "/uscms_data/d3/snorberg/CMSSW_8_0_23_patch1/src/ZInvisible/Tools", false);
-        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/ZInvisible/Tools/", false);
+        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools", false);
     }
 
     ISRcorrector = nullptr;
@@ -147,7 +157,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     }
     else
     {  
-        ISRcorrector = new ISRCorrector("allINone_ISRJets.root","/uscms_data/d3/nstrobbe/HadronicStop/CMSSW_8_0_25/src/SusyAnaTools/Tools/ISR_Root_Files/","");
+        ISRcorrector = new ISRCorrector("allINone_ISRJets.root","/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools","");
     }
     
     if(isCondor)
@@ -162,63 +172,80 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 }
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {
-    if(myBLV) delete myBLV;
-    if(blvZinv) delete blvZinv;
-    //if(blvZinv1b) delete blvZinv1b;
-    //if(blvZinv2b) delete blvZinv2b;
-    //if(blvZinv3b) delete blvZinv3b;
-    if(blvZinvJEUUp) delete blvZinvJEUUp;
-    if(blvZinvJEUDn) delete blvZinvJEUDn;
-    if(blvZinvMEUUp) delete blvZinvMEUUp;
-    if(blvZinvMEUDn) delete blvZinvMEUDn;
-    if(weights) delete weights;
-    if(njWeight) delete njWeight;
-    if(lepInfo) delete lepInfo;
-    if(fakebtagvectors) delete fakebtagvectors;
-    if(getSearchBin) delete getSearchBin;
-    if(triggerInfo) delete triggerInfo;
-    if(prepareMiniTupleVars) delete prepareMiniTupleVars;
-    if(myPDFUnc) delete myPDFUnc;
-    if(systematicPrep) delete systematicPrep;
-    if(systematicCalc) delete systematicCalc;
-    if(bTagCorrector) delete bTagCorrector;
-    if(ISRcorrector) delete ISRcorrector;
-    if(pileup)       delete pileup;
-    if(gamma) delete gamma;
+    if(cleanedJets)               delete cleanedJets;
+    if(myBLV)                     delete myBLV;
+    if(blvZinv)                   delete blvZinv;
+    if(blvNoVeto)                 delete blvNoVeto;
+    if(blvPFLeptonCleaned)        delete blvPFLeptonCleaned;
+    if(blvDRLeptonCleaned)        delete blvDRLeptonCleaned;
+    if(blvDRPhotonCleaned)        delete blvDRPhotonCleaned;
+    //if(blvZinv1b)                 delete blvZinv1b;
+    //if(blvZinv2b)                 delete blvZinv2b;
+    //if(blvZinv3b)                 delete blvZinv3b;
+    //if(blvZinvJEUUp)              delete blvZinvJEUUp;
+    //if(blvZinvJEUDn)              delete blvZinvJEUDn;
+    //if(blvZinvMEUUp)              delete blvZinvMEUUp;
+    //if(blvZinvMEUDn)              delete blvZinvMEUDn;
+    if(weights)                   delete weights;
+    if(generatePhotonEfficiency)  delete generatePhotonEfficiency;
+    if(njWeight)                  delete njWeight;
+    if(lepInfo)                   delete lepInfo;
+    if(basicLepton)               delete basicLepton;
+    if(fakebtagvectors)           delete fakebtagvectors;
+    if(getSearchBin)              delete getSearchBin;
+    if(triggerInfo)               delete triggerInfo;
+    if(prepareMiniTupleVars)      delete prepareMiniTupleVars;
+    if(myPDFUnc)                  delete myPDFUnc;
+    if(systematicPrep)            delete systematicPrep;
+    if(systematicCalc)            delete systematicCalc;
+    if(bTagCorrector)             delete bTagCorrector;
+    if(ISRcorrector)              delete ISRcorrector;
+    if(pileup)                    delete pileup;
+    if(gamma)                     delete gamma;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
 {
-    //Make some global "constants" here
-
     //register functions with NTupleReader
+    
+    // order matters
+    // get photons and leptons
+    // use photons and leptons to clean jets
+    tr.registerFunction(*gamma);
+    tr.registerFunction(*basicLepton);
+    tr.registerFunction(*generatePhotonEfficiency);
+    tr.registerFunction(*cleanedJets);
+
     tr.registerFunction(*myBLV);
     tr.registerFunction(*lepInfo);
     tr.registerFunction(*weights);
     tr.registerFunction(*blvZinv);
+    tr.registerFunction(*blvNoVeto);
+    tr.registerFunction(*blvPFLeptonCleaned);
+    tr.registerFunction(*blvDRLeptonCleaned);
+    tr.registerFunction(*blvDRPhotonCleaned);
     tr.registerFunction(*njWeight);
     tr.registerFunction(*fakebtagvectors);
     //tr.registerFunction(*blvZinv1b);
-   // tr.registerFunction(*blvZinv2b);
+    //tr.registerFunction(*blvZinv2b);
     //tr.registerFunction(*blvZinv3b);
-    tr.registerFunction(*systematicPrep);
-    tr.registerFunction(*blvZinvJEUUp);
-    tr.registerFunction(*blvZinvJEUDn);
-    tr.registerFunction(*blvZinvMEUUp);
-    tr.registerFunction(*blvZinvMEUDn);
+    //tr.registerFunction(*systematicPrep);
+    //tr.registerFunction(*blvZinvJEUUp);
+    //tr.registerFunction(*blvZinvJEUDn);
+    //tr.registerFunction(*blvZinvMEUUp);
+    //tr.registerFunction(*blvZinvMEUDn);
     tr.registerFunction(*getSearchBin);
-    tr.registerFunction(*systematicCalc);
-    tr.registerFunction(*triggerInfo);
-    tr.registerFunction(*prepareMiniTupleVars);
+    //tr.registerFunction(*systematicCalc);
+    //tr.registerFunction(*triggerInfo);
+    //tr.registerFunction(*prepareMiniTupleVars);
     //tr.registerFunction(&printInterestingEvents);
-    tr.registerFunction(*myPDFUnc);
-    tr.registerFunction(*bTagCorrector);
-    tr.registerFunction(*nJetAk8);
-    tr.registerFunction(*taudiv);
-    tr.registerFunction(*ak8DrMatch);
-    tr.registerFunction(*ISRcorrector);
-    tr.registerFunction(*pileup);
-    tr.registerFunction(*gamma);
+    //tr.registerFunction(*myPDFUnc);
+    //tr.registerFunction(*bTagCorrector);
+    //tr.registerFunction(*nJetAk8);
+    //tr.registerFunction(*taudiv);
+    //tr.registerFunction(*ak8DrMatch);
+    //tr.registerFunction(*ISRcorrector);
+    //tr.registerFunction(*pileup);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
@@ -282,21 +309,30 @@ RegisterFunctionsCalcEff::RegisterFunctionsCalcEff() : RegisterFunctions()
 {
     //AnaFunctions::prepareTopTagger();
 
-    myBLV     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
-    lepInfo   = new plotterFunctions::LepInfo;
+    myBLV       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
+    gamma       = new plotterFunctions::Gamma;
+    lepInfo     = new plotterFunctions::LepInfo;
+    basicLepton = new plotterFunctions::BasicLepton;
 }
 
 RegisterFunctionsCalcEff::~RegisterFunctionsCalcEff()
 {
     if(myBLV) delete myBLV;
+    if(gamma) delete gamma;
     if(lepInfo) delete lepInfo;
+    if(basicLepton) delete basicLepton;
 }
 
 void RegisterFunctionsCalcEff::registerFunctions(NTupleReader& tr)
 {
-    //Make some global "constants" here
-
     //register functions with NTupleReader
+    
+    // order matters
+    // get photons and leptons
+    // then do baseline
+    // then do lepinfo
+    tr.registerFunction(*gamma);
+    tr.registerFunction(*basicLepton);
     tr.registerFunction(*myBLV);
     tr.registerFunction(*lepInfo);
 }

@@ -1,10 +1,11 @@
-#ifndef REGISTERFUNCTION_H
-#define REGISTERFUNCTION_H
+#ifndef REGISTERFUNCTIONS_H
+#define REGISTERFUNCTIONS_H
 
 #include <set>
 #include <string>
 #include <vector>
 #include <functional>
+#include "SusyAnaTools/Tools/CleanedJets.h"
 
 class NTupleReader;
 class BaselineVessel;
@@ -16,7 +17,9 @@ class Pileup_Sys;
 namespace plotterFunctions
 {
     class GenerateWeight;
+    class GeneratePhotonEfficiency;
     class LepInfo;
+    class BasicLepton;
     class Fakebtagvectors;
     class GetSearchBin;
     class TriggerInfo;
@@ -55,6 +58,10 @@ class RegisterFunctionsNTuple : public RegisterFunctions
 private:
     BaselineVessel *myBLV;
     BaselineVessel *blvZinv;
+    BaselineVessel *blvNoVeto;
+    BaselineVessel *blvPFLeptonCleaned;
+    BaselineVessel *blvDRLeptonCleaned;
+    BaselineVessel *blvDRPhotonCleaned;
     //BaselineVessel *blvZinv1b;
     //BaselineVessel *blvZinv2b;
     //BaselineVessel *blvZinv3b;
@@ -63,7 +70,9 @@ private:
     BaselineVessel *blvZinvMEUUp;
     BaselineVessel *blvZinvMEUDn;
     plotterFunctions::GenerateWeight *weights;
+    plotterFunctions::GeneratePhotonEfficiency *generatePhotonEfficiency;
     plotterFunctions::NJetWeight *njWeight;
+    plotterFunctions::BasicLepton *basicLepton;
     plotterFunctions::LepInfo *lepInfo;
     plotterFunctions::Fakebtagvectors *fakebtagvectors;
     plotterFunctions::GetSearchBin *getSearchBin;
@@ -71,6 +80,7 @@ private:
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
     plotterFunctions::SystematicPrep *systematicPrep;
     plotterFunctions::SystematicCalc *systematicCalc;
+    CleanedJets *cleanedJets;
     plotterFunctions::Gamma *gamma; //Andres
     PDFUncertainty *myPDFUnc;
     BTagCorrector *bTagCorrector;
@@ -108,7 +118,9 @@ class RegisterFunctionsCalcEff : public RegisterFunctions
 {
 private:
     BaselineVessel *myBLV;
+    plotterFunctions::Gamma *gamma; //Caleb :-)
     plotterFunctions::LepInfo *lepInfo;
+    plotterFunctions::BasicLepton *basicLepton;
 
 public:
     RegisterFunctionsCalcEff();

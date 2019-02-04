@@ -28,10 +28,20 @@ with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg") as
             mvaFileName_Deep = line.split("=")[1].strip().strip("\"")
             break
 
+# TopTagger_DeepCombined.cfg
+mvaFileName_DeepCombined = ""
+with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DeepCombined.cfg") as meowttcfgFile:
+    for line in meowttcfgFile:
+        line = line.split("#")[0]
+        if "modelFile" in line:
+            mvaFileName_DeepCombined = line.split("=")[1].strip().strip("\"")
+            break
+
 #here I hack in the tarball for GMP, this needs to be generalized to the other options 
 
 filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root", 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/effhists_GJets.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight.root", 
@@ -40,10 +50,11 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}, 
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_DeepCombined}, 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DeepCombined.cfg",
                       environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
-                      environ["CMSSW_BASE"] + "/lib/${SCRAM_ARCH}/librecipeAUXOxbridgeMT2.so", 
                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_ml.so.3.1",
                       #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
@@ -56,8 +67,31 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.cfg"
-                      ]
+                     ]
 
+filestoTransferGMEP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/calcEffPhoton", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}, 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_DeepCombined}, 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg",
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DeepCombined.cfg",
+                       environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
+                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_ml.so.3.1",
+                       #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
+                       #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
+                       #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
+                       #environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root",
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_bTagEff.root", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/ISRWeights.root", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_ISRJets.root", 
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.cfg",
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.cfg"
+                      ]
 
 #go make plots!
 submitFileGMP = """universe = vanilla
@@ -155,31 +189,31 @@ x509userproxy = $ENV(X509_USER_PROXY)
 
 """
 
-#submitFileGTP = """universe = grid
-#grid_resource = condor kodiak-ce.baylor.edu kodiak-ce.baylor.edu:9619
-#+remote_queue = "batch"
-#Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeTopPlots.sh
-#Should_Transfer_Files = YES
-#WhenToTransferOutput = ON_EXIT
-#Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gtp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz 
-#Output = logs/makePlots_$(Process).stdout
-#Error = logs/makePlots_$(Process).stderr
-#Log = logs/makePlots_$(Process).log
-#notify_user = ${LOGNAME}@FNAL.GOV
-#x509userproxy = $ENV(X509_USER_PROXY)
-#+maxWallTime = 2880
-#
-#"""
-
 #go make lepton efficiency
 submitFileGME = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEff.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/calcEff, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEff.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/zRes.root, $ENV(CMSSW_BASE)/lib/$ENV(SCRAM_ARCH)/librecipeAUXOxbridgeMT2.so
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/calcEff, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEff.sh, $ENV(CMSSW_BASE)/src/ZInvisible/Tools/zRes.root
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = $ENV(X509_USER_PROXY)
+
+"""
+
+#go make photon efficiency
+submitFileGMEP = """universe = vanilla
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEffPhoton.sh
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeEffPhoton.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gmep.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz
+Output = logs/calcEffPhoton_$(Process).stdout
+Error = logs/calcEffPhoton_$(Process).stderr
+Log = logs/calcEffPhoton_$(Process).log
+notify_user = ${LOGNAME}@FNAL.GOV
+x509userproxy = $ENV(X509_USER_PROXY)
++maxWallTime = 2880
 
 """
 
@@ -222,6 +256,7 @@ parser.add_option ('-L',  dest='dataCollectionslong',   action='store_true', def
 parser.add_option ('-r',  dest='refLumi',               type='string',       default = None,  help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
 parser.add_option ('-c',  dest='noSubmit',              action='store_true', default = False, help="Do not submit jobs.  Only create condor_submit.txt.")
 parser.add_option ('-e',  dest='goMakeEff',             action='store_true', default = False, help="Run calcEff instead of makePlots.")
+parser.add_option ('-p',  dest='goMakeEffPhoton',       action='store_true', default = False, help="Run calcEffPhoton instead of makePlots.")
 parser.add_option ('-b',  dest='goMakeBeff',            action='store_true', default = False, help="Run beffCalc instead of makePlots.")
 parser.add_option ('-s',  dest='goMakeSigEff',          action='store_true', default = False, help="Run makeSignalHistograms instead of makePlots.")
 parser.add_option ('-t',  dest='goMakeTopPlots',        action='store_true', default = False, help="Run makeTopPlots instead of makePlots.")
@@ -237,21 +272,28 @@ def makeExeAndFriendsTarrball(filestoTransfer, fname):
         #WORLDSWORSESOLUTIONTOAPROBLEM
         system("mkdir -p WORLDSWORSESOLUTIONTOAPROBLEM")
         for fn in filestoTransfer:
-            system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s"%fn)
+            system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s" % fn)
         
-        tarallinputs = "tar czvf %s.tar.gz WORLDSWORSESOLUTIONTOAPROBLEM --dereference"%fname
+        print "Create tarball {0}.tag.gz".format(fname)
+        tarallinputs = "tar czvf %s.tar.gz WORLDSWORSESOLUTIONTOAPROBLEM --dereference" % fname
         print tarallinputs
         system(tarallinputs)
         system("rm -r WORLDSWORSESOLUTIONTOAPROBLEM")
 
 
 if not options.dataCollections and not options.dataCollectionslong:
+    print "Create tarball ${CMSSW_VERSION}.tar.gz"
     system("tar --exclude-caches-all --exclude-vcs -zcf ${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION} --exclude=src --exclude=tmp")
 
+# makeExeAndFriendsTarrball() is necessary now to apply WORLDSWORSESOLUTIONTOAPROBLEM 
 
 if options.goMakeEff:
     exeName = "calcEff"
     submitFile = submitFileGME
+elif options.goMakeEffPhoton:
+    exeName = "calcEffPhoton"
+    submitFile = submitFileGMEP
+    makeExeAndFriendsTarrball(filestoTransferGMEP, "gmep")
 elif options.goMakeBeff:
     exeName = "beffCalc"
     submitFile = submitFileGBE
@@ -306,8 +348,10 @@ for ds in datasets:
     ds = ds.strip()
 
     print ds
-    for s, n in sc.sampleList(ds):
+    # s: file, n:name, e:nEvts
+    for s, n, e in sc.sampleList(ds):
         print "\t%s"%n
+        #print "\t{0} {1} {2}".format(s, n, e)
         try:
             f = open(s)
         except IOError:

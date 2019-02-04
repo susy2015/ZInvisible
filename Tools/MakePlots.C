@@ -1,7 +1,9 @@
 #include "Plotter.h"
+#include "samples.h"
 #include "RegisterFunctions.h"
 #include "SusyAnaTools/Tools/searchBins.h"
 #include "SusyAnaTools/Tools/samples.h"
+#include "SusyAnaTools/Tools/SusyUtility.h"
 #include "TMath.h"
 
 #include <getopt.h>
@@ -30,6 +32,7 @@ int main(int argc, char* argv[])
         {"condor",           no_argument, 0, 'c'},
         {"dophotons",        no_argument, 0, 'g'},
         {"doleptons",        no_argument, 0, 'l'},
+        {"verbose",          no_argument, 0, 'v'},
         {"filename",   required_argument, 0, 'I'},
         {"dataSets",   required_argument, 0, 'D'},
         {"numFiles",   required_argument, 0, 'N'},
@@ -44,17 +47,20 @@ int main(int argc, char* argv[])
     bool doWeights = false;
     bool doLeptons = false;
     bool doPhotons = false;
-    bool doSearchBins = false;
+    bool doGJetsAndZnunu = true;
+    bool doDYAndZnunu = false;
+    bool doSearchBins = true;
     bool doPlots = true;
     bool doSave = true;
     bool doTuple = true;
     bool fromTuple = true;
+    bool verbose = false;
     string filename = "histoutput.root", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
     double lumi = AnaSamples::luminosity;
-    std::string sbEra = "SB_v1_2017";//"SB_v1_2017";
+    std::string sbEra = "SB_v1_2017";
 
-    while((opt = getopt_long(argc, argv, "pstfcglI:D:N:M:E:P:L:S:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "pstfcglvI:D:N:M:E:P:L:S:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
@@ -87,6 +93,10 @@ int main(int argc, char* argv[])
 
         case 'l':
             doLeptons = true;
+            break;
+
+        case 'v':
+            verbose = true;
             break;
 
         case 'I':
@@ -143,13 +153,11 @@ int main(int argc, char* argv[])
     std::cout << "Sample location: " << sampleloc << std::endl;
 
     // follow this syntax; order matters for your arguments
-    
     //SampleSet::SampleSet(std::string file, bool isCondor, double lumi)
     AnaSamples::SampleSet        ss("sampleSets.cfg", runOnCondor, AnaSamples::luminosity);
-    
-    //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples) : ss_(samples)
+    //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples)
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
-
+    
     const double zAcc = 1.0;
     // const double zAcc = 0.5954;
     // const double zAcc = 0.855;
@@ -199,12 +207,22 @@ int main(int argc, char* argv[])
         }
     }
 
+
     // Number of searchbins
-    SearchBins sb(sbEra);
-    int NSB = sb.nSearchBins();//37; // 45
+    //SearchBins sb(sbEra);
+    //int NSB = sb.nSearchBins(); // 84
+    int NSB = 204;
+    // search bins for high and low dm
+    // Low DM, 53 bins: 0 - 52
+    // High DM, 151 bins: 53 - 203
+    // Total 204 bins: 0 - 203
+    int min_sb_low_dm = 0;
+    int max_sb_low_dm = 53;
+    int min_sb_high_dm = 53;
+    int max_sb_high_dm = 204;
 
     // min and max values for histos
-    int nBins = 60;
+    int nBins = 40;
     // p_t in GeV
     double minPt = 0.0;
     double maxPt = 2000.0;
@@ -229,12 +247,16 @@ int main(int argc, char* argv[])
     // Shortcuts for axis labels
     std::string label_Events = "Events";
     std::string label_met = "p_{T}^{miss} [GeV]";
-    std::string label_phi = "#phi_{MET}";
+    std::string label_metphi = "#phi_{MET}";
     std::string label_ht  = "H_{T} [GeV]";
     std::string label_mht = "MH_{T} [GeV]";
     std::string label_nj  = "N_{jets}";
-    std::string label_nb  = "N_{b}";
-    std::string label_nt  = "N_{t}";
+    std::string label_nb  = "N_{bottoms}";
+    std::string label_nt  = "N_{tops}";
+    std::string label_dr  = "#DeltaR";
+    std::string label_dphi0  = "#Delta#phi_{0}";
+    std::string label_dphi1  = "#Delta#phi_{1}";
+    std::string label_dphi2  = "#Delta#phi_{2}";
     std::string label_mt2 = "M_{T2} [GeV]";
     std::string label_eta = "#eta";
     std::string label_MuPt = "p_{T}^{#mu} [GeV]";
@@ -261,7 +283,10 @@ int main(int argc, char* argv[])
     std::string label_PhotonMass = "m^{#gamma} [GeV]";
     std::string label_PhotonEta = "#eta^{#gamma}";
     std::string label_PhotonPhi = "#phi^{#gamma}";
-    std::string label_jpt  = "j p_{T} [GeV]";
+    std::string label_jetpt  = "jet p_{T} [GeV]";
+    std::string label_jeteta = "jet #eta [GeV]";
+    std::string label_jetphi = "jet #phi [GeV]";
+    std::string label_jetE   = "jet E [GeV]";
     std::string label_j1pt = "j_{1} p_{T} [GeV]";
     std::string label_j2pt = "j_{2} p_{T} [GeV]";
     std::string label_j3pt = "j_{3} p_{T} [GeV]";
@@ -327,12 +352,13 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
     Plotter::DatasetSummary dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
     std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
+    
  
     //lambda is your friend
     //for electrons do not use muTrigWgt (it is 0.0 for electrons)
     auto makePDSMu     = [&](const std::string& label) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
     auto makePDSElec   = [&](const std::string& label) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
-    auto makePDSPhoton = [&](const std::string& label, const std::string& sample="GJets") {return Plotter::DatasetSummary("GJets "+label, fileMap[sample], "passPhotonSelection;passLeptVeto;HT>200", ""); };
+    auto makePDSPhoton = [&](const std::string& label, const std::string& sample="GJets", const std::string& cuts="passPhotonSelection;HTZinv>200") {return Plotter::DatasetSummary("GJets "+label, fileMap[sample], cuts, "photonAcceptanceWeight;photonEfficiencyPtWeight;photonCrossSectionRatio"); };
     
     // acceptance
     // muons
@@ -813,62 +839,273 @@ int main(int argc, char* argv[])
     Plotter::DataCollection trigger_nSearchBin_weighted( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_weighted}  });
     
     // Znunu
-    auto makePDSZnunu       = [&](const std::string& label) {return Plotter::DatasetSummary("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu"], "passLeptVeto;HT>200", ""); };
-    auto makePDCGJetsZnunu  = [&](const std::string& var, const std::string& style, const std::string& label) {return Plotter::DataCollection(style, {{var, makePDSPhoton(label)}, {var, makePDSZnunu(label)}}); };
-
-    // Stack HT Plot
-    // GJets_HT-200To400
-    // GJets_HT-400To600
-    // GJets_HT-600ToInf
-    std::vector<std::vector<Plotter::DatasetSummary>> Photon_HT_stack = {
-                                                                          {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400")}, 
-                                                                          {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600")},
-                                                                          {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf")}
-                                                                        };
-
-    std::string style_stack = "stack";
-    Plotter::DataCollection dc_GJets_ht("stack", "HT",  Photon_HT_stack);
-    Plotter::DataCollection dc_Znunu_ht("data",  "HT",  {makePDSZnunu("HT > 200")});
-    vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht_" + style_stack, {dc_GJets_ht, dc_Znunu_ht}, {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
+    auto makePDSZnunu       = [&](const std::string& label, const std::string& cuts="HTZinv>200") {return Plotter::DatasetSummary("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu"], cuts, ""); };
+    auto makePDCGJetsZnunu  = [&](const std::string& var, const std::string& style, const std::string& label, const std::string& cuts) {return Plotter::DataCollection(style, {{var, makePDSPhoton(label, "GJets", "passPhotonSelection;" + cuts)}, {var, makePDSZnunu(label, cuts)}}); };
     
-    std::vector<std::string> styles = {"single", "ratio"};
-    // Z#rightarrow#nu#nu
-    // ratio = GJets / ZJetsToNuNu
-    for (const auto & style : styles)
+    // study jet collections and jet cleaning
+    // photon jet cleaning
+    std::string met_cut = "";
+    //std::string met_cut = "met>250";
+    std::string photon_cut = "passPhotonSelection"; 
+    std::string lepton_cut = "passLeptVeto"; 
+    // use met cut if it is not an empty string
+    if (! met_cut.empty() )
     {
-        // denominator index (2 for single, 1 for ratio)
-        int d = 0;
-        std::string y_axis_label;
-        std::string legend_label;
-        if (style.compare("single") == 0)
+      photon_cut += ";" + met_cut;
+      lepton_cut += ";" + met_cut;
+    }
+    auto makePDSGJets = [&](const std::string& label, const std::string& cuts) {return Plotter::DatasetSummary("GJets "+label, fileMap["GJets"], cuts, ""); };
+    
+    // lepton jet cleaning study
+    // variables: HT, MET, METPHI, dPhi, n_j, n_t, n_b 
+    auto makePDSDY = [&](const std::string& label, const std::string& cuts) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], cuts, ""); };
+    
+    if (doDYAndZnunu)
+    {
+        struct simplePlotStruct
         {
-            d = 2;
-            y_axis_label = label_Events;
-            legend_label = "MC";
-        }
-        if (style.compare("ratio") == 0)
+            std::string variable;                                       // met, HT, etc.
+            std::vector<Plotter::DataCollection> dataCollectionVector;  // vector of Data Collections
+            int nBins;                                                  // number of bins
+            double xMin;                                                // x min for histo
+            double xMax;                                                // x max for histo
+            bool logBool;                                               // bool for log scale (true for pt)
+            bool normBool;                                              // bool for norm (false)
+            std::string xLabel;                                         // x axis label
+            std::string yLabel;                                         // y axis label
+        };
+        
+        // map of variable names to vector of data collections
+        std::map<std::string, std::vector<Plotter::DataCollection> > dataCollectionMap;
+        // vetor of variable names
+        std::vector<std::string> variables = {"cntNJetsPt20Eta24", "nTopCandSortedCnt", "cntCSVS", "HT"};
+        // vector of pais with tags and labels
+        std::vector< std::pair<std::string, std::string> > tagVector;
+        //tagVector.emplace_back("NoVeto",          "all jets");
+        tagVector.emplace_back("PFLeptonCleaned", "PF lepton cleaned jets");
+        tagVector.emplace_back("DRLeptonCleaned", "DR lepton cleaned jets");
+        // vector of DY selections
+        std::vector<std::string> selectionVec = {"Elec", "Mu"};
+        // vector of styles
+        std::vector<string> styleVec = {"", "_ratio"};
+        // map of jets 
+        std::map<std::string, std::string> jetMap;
+        
+        // no pt or eta cuts
+        //jetMap["NoVeto"]          = "jetsLVec";
+        //jetMap["PFLeptonCleaned"] = "prodJetsNoLep_jetsLVec";
+        //jetMap["DRLeptonCleaned"] = "jetsLVec_drLeptonCleaned";
+        // with pt and eta cuts
+        jetMap["NoVeto"]          = "jetsLVec_pt20eta24";
+        jetMap["PFLeptonCleaned"] = "prodJetsNoLep_jetsLVec_pt20eta24";
+        jetMap["DRLeptonCleaned"] = "jetsLVec_drLeptonCleaned_pt20eta24";
+
+        // map of y axis limits
+        std::map< std::string, std::vector<float> > YAxisLimits;
+        YAxisLimits["jetphi"] = {    pow(10.0, 2),      pow(10.0, 5)};
+        YAxisLimits["jeteta"] = {    pow(10.0, 2),      pow(10.0, 6)};
+        YAxisLimits["metphi"] = {    pow(10.0, 2),      pow(10.0, 4)};
+        YAxisLimits["dphi0"]  = {5 * pow(10.0, -1), 5 * pow(10.0, 5)};
+        YAxisLimits["dphi1"]  = {5 * pow(10.0, 1),      pow(10.0, 5)};
+        YAxisLimits["dphi2"]  = {5 * pow(10.0, 1),      pow(10.0, 5)};
+
+        // plot parameters
+        std::vector<simplePlotStruct> plotParamsDY;
+
+        // try combining the following sections into one loop
+        // selection, then variable, then tag (standard pattern)
+        // selection, then tag, then one line per variable (unique pattern)
+        
+        std::string selectionLL = "";
+        std::string selectionNuNu = "passBaselineNoVeto";
+        // fill map
+        for (const auto& s : selectionVec) 
         {
-            d = 1;
-            y_axis_label = "GJets / ZJetsToNuNu";
-            legend_label = "over ZJetsToNuNu";
+            for (const auto& variable : variables)
+            {
+                // z nunu
+                dataCollectionMap[variable + "_" + s].emplace_back( Plotter::DataCollection("single", variable + "NoVeto", {makePDSZnunu("all jets", selectionNuNu)} ) );
+                for (const auto& tag : tagVector)
+                {
+                    // note that DY to LL and Z to NuNu have different selections
+                    // DY to LL has dilepton selection, while Z to NuNu does not
+                    selectionLL = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
+                    // DY
+                    dataCollectionMap[variable + "_" + s].emplace_back(           Plotter::DataCollection("single", variable + tag.first, {makePDSDY(tag.second, selectionLL)} ) );
+                    dataCollectionMap[variable + "_" + s+ "_ratio"].emplace_back( Plotter::DataCollection("ratio",  variable + tag.first, {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                }
+            }
+            
+            // z nunu
+            dataCollectionMap["jetpt_" + s].emplace_back(  Plotter::DataCollection("single", jetMap["NoVeto"] + "(pt)",    {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["jeteta_" + s].emplace_back( Plotter::DataCollection("single", jetMap["NoVeto"] + "(eta)",   {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["jetphi_" + s].emplace_back( Plotter::DataCollection("single", jetMap["NoVeto"] + "(phi)",   {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["jetE_" + s].emplace_back(   Plotter::DataCollection("single", jetMap["NoVeto"] + "(E)",     {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["met_" + s].emplace_back(    Plotter::DataCollection("single", "cleanMetPt",                 {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["metphi_" + s].emplace_back( Plotter::DataCollection("single", "cleanMetPhi",                {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["dphi0_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVecNoVeto[0]",           {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["dphi1_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVecNoVeto[1]",           {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["dphi2_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVecNoVeto[2]",           {makePDSZnunu("all jets", selectionNuNu)} ) );
+            for (const auto& tag : tagVector)
+            {
+                selectionLL = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
+                // DY
+                dataCollectionMap["jetpt_" + s].emplace_back(  Plotter::DataCollection("single", jetMap[tag.first] + "(pt)",    {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["jeteta_" + s].emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(eta)",   {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["jetphi_" + s].emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(phi)",   {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["jetE_" + s].emplace_back(   Plotter::DataCollection("single", jetMap[tag.first] + "(E)",     {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["met_" + s].emplace_back(    Plotter::DataCollection("single", "cleanMetPt",                  {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["metphi_" + s].emplace_back( Plotter::DataCollection("single", "cleanMetPhi",                 {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["dphi0_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["dphi1_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["dphi2_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["jetpt_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", jetMap[tag.first] + "(pt)",    {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["jeteta_" + s + "_ratio"].emplace_back( Plotter::DataCollection("ratio", jetMap[tag.first] + "(eta)",   {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["jetphi_" + s + "_ratio"].emplace_back( Plotter::DataCollection("ratio", jetMap[tag.first] + "(phi)",   {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["jetE_" + s + "_ratio"].emplace_back(   Plotter::DataCollection("ratio", jetMap[tag.first] + "(E)",     {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["met_" + s + "_ratio"].emplace_back(    Plotter::DataCollection("ratio", "cleanMetPt",                  {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["metphi_" + s + "_ratio"].emplace_back( Plotter::DataCollection("ratio", "cleanMetPhi",                 {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["dphi0_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["dphi1_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["dphi2_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+            }
+
+            selectionLL = "passBaselineDRLeptonCleaned;pass" + s + "ZinvSel_lowpt";
+            dataCollectionMap["dr_" + s].emplace_back( Plotter::DataCollection("single", "dR_jetsLVec_drLeptonCleaned", {makePDSDY("all jets", selectionLL)} ) );
+           
+            
+            // fill plot parameters
+            for (const auto& style : styleVec)
+            {
+                std::string y_axis_label = label_Events;
+                if (style.compare("_ratio") == 0)
+                {
+                    y_axis_label = "DYJetsToLL / ZJetsToNuNu";
+                }
+             
+                plotParamsDY.push_back({"jetpt_" + s + style,   dataCollectionMap["jetpt_" + s + style],              nBins, 0.0, 200.0, true, false, label_jetpt, y_axis_label});
+                plotParamsDY.push_back({"jeteta_" + s + style,  dataCollectionMap["jeteta_" + s + style],             nBins, minEta, maxEta, true, false, label_jeteta, y_axis_label});
+                plotParamsDY.push_back({"jetphi_" + s + style,  dataCollectionMap["jetphi_" + s + style],             nBins, minPhi, maxPhi, true, false, label_jetphi, y_axis_label});
+                plotParamsDY.push_back({"jetE_" + s + style,    dataCollectionMap["jetE_" + s + style],               nBins, 0.0, 2000.0, true, false, label_jetE, y_axis_label});
+                plotParamsDY.push_back({"nj_" + s + style,      dataCollectionMap["cntNJetsPt20Eta24_" + s + style],  20, 0, 20, true, false, label_nj, y_axis_label});
+                plotParamsDY.push_back({"nt_" + s + style,      dataCollectionMap["nTopCandSortedCnt_" + s + style],  20, 0, 20, true, false, label_nt, y_axis_label});
+                plotParamsDY.push_back({"nb_" + s + style,      dataCollectionMap["cntCSVS_" + s + style],            20, 0, 20, true, false, label_nb, y_axis_label});
+                plotParamsDY.push_back({"ht_" + s + style,      dataCollectionMap["HT_" + s + style],                 nBins, 0.0, 2000.0, true, false, label_ht, y_axis_label});
+                plotParamsDY.push_back({"met_" + s + style,     dataCollectionMap["met_" + s + style],                nBins, 0.0, 2000.0, true, false, label_met, y_axis_label});
+                plotParamsDY.push_back({"metphi_" + s + style,  dataCollectionMap["metphi_" + s + style],             nBins, minPhi, maxPhi, true, false, label_metphi, y_axis_label});
+                plotParamsDY.push_back({"dphi0_" + s + style,   dataCollectionMap["dphi0_" + s + style],              nBins, 0.0, maxPhi, true, false, label_dphi0, y_axis_label});
+                plotParamsDY.push_back({"dphi1_" + s + style,   dataCollectionMap["dphi1_" + s + style],              nBins, 0.0, maxPhi, true, false, label_dphi1, y_axis_label});
+                plotParamsDY.push_back({"dphi2_" + s + style,   dataCollectionMap["dphi2_" + s + style],              nBins, 0.0, maxPhi, true, false, label_dphi2, y_axis_label});
+            }
+                plotParamsDY.push_back({"dr_" + s,      dataCollectionMap["dr_" + s],                 nBins, 0.0, 1.0, true, false, label_dr, label_Events});
         }
-        // use metWithPhoton instead of met (it had the photon pt added to it)
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_met_"    + style, {makePDCGJetsZnunu("metWithPhoton",     style, legend_label)}, {1, d}, "", 100, minPt,  maxPt,  true, false, label_met, y_axis_label));
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_metphi_" + style, {makePDCGJetsZnunu("metphiWithPhoton",  style, legend_label)}, {1, d}, "", 100, minPhi, maxPhi, true, false, label_phi, y_axis_label));
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht_"     + style, {makePDCGJetsZnunu("HT",                style, legend_label)}, {1, d}, "", 100, 0.0,  2000.0,   true, false, label_ht,  y_axis_label));
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nj_"     + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24", style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nj,  y_axis_label));
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nb_"     + style, {makePDCGJetsZnunu("cntCSVS",           style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nb,  y_axis_label));
-        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_nt_"     + style, {makePDCGJetsZnunu("nTopCandSortedCnt", style, legend_label)}, {1, d}, "", 10, 0, 10,           true, false, label_nt,  y_axis_label));
+        
+        for (const auto& p : plotParamsDY)
+        {
+            // check for ratio before checking for y-axis limits
+            // dr and ratio options
+            std::vector<std::string> splitVar = SusyUtility::getVecFromString(p.variable, '_');
+            std::string var = splitVar[0];
+            if (p.variable.find("dr") != std::string::npos || p.variable.find("ratio") != std::string::npos)
+            {
+                vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {1, 1}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));
+            }
+            // user defined y-axis limits
+            else if (YAxisLimits.find(var) != YAxisLimits.end())
+            {
+                vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {2, 1}, "", p.nBins, p.xMin, p.xMax, YAxisLimits[var][0], YAxisLimits[var][1], p.logBool, p.normBool, p.xLabel, p.yLabel));
+            }
+            // default case
+            else
+            {
+                vh.push_back(PHS("MC_DY_" + p.variable, {p.dataCollectionVector}, {2, 1}, "", p.nBins, p.xMin, p.xMax, p.logBool, p.normBool, p.xLabel, p.yLabel));
+            }
+        }
+    }
+    
+    
+    // photon cuts: passPhotonSelection;passLeptVeto;HTZinv>200
+
+    if (doGJetsAndZnunu)
+    {
+        // Stack HT Plot
+        // GJets_HT-200To400
+        // GJets_HT-400To600
+        // GJets_HT-600ToInf
+        
+        std::string style_stack = "stack";
+        std::vector<std::vector<Plotter::DatasetSummary>> Photon_HT_stack_cuts = {
+                                                                                   {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400", "HTZinv>200;metWithPhoton>250")}, 
+                                                                                   {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600", "HTZinv>200;metWithPhoton>250")},
+                                                                                   {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf", "HTZinv>200;metWithPhoton>250")}
+                                                                                 };
+        std::vector<std::vector<Plotter::DatasetSummary>> Photon_HT_stack_baseline = {
+                                                                                       {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400", "passBaselineZinv")}, 
+                                                                                       {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600", "passBaselineZinv")},
+                                                                                       {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf", "passBaselineZinv")}
+                                                                                     };
+  
+        Plotter::DataCollection dc_GJets_ht_cuts(     "stack", "HTZinv",  Photon_HT_stack_cuts);
+        Plotter::DataCollection dc_GJets_ht_baseline( "stack", "HTZinv",  Photon_HT_stack_baseline);
+        Plotter::DataCollection dc_Znunu_ht_cuts(     "data",  "HTZinv",  {makePDSZnunu("HT > 200", "HTZinv>200;metWithPhoton>250")});
+        Plotter::DataCollection dc_Znunu_ht_baseline( "data",  "HTZinv",  {makePDSZnunu("HT > 200", "passBaselineZinv")});
+        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_ht_" + style_stack, {dc_GJets_ht_cuts, dc_Znunu_ht_cuts},         {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
+        vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_ht_"     + style_stack, {dc_GJets_ht_baseline, dc_Znunu_ht_baseline}, {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
+        
+        std::vector<std::string> styles = {"single", "ratio"};
+        // Z#rightarrow#nu#nu
+        // ratio = GJets / ZJetsToNuNu
+        for (const auto & style : styles)
+        {
+            // denominator index (2 for single, 1 for ratio)
+            int d = 0;
+            bool log_scale = false;
+            std::string y_axis_label;
+            std::string legend_label;
+            if (style.compare("single") == 0)
+            {
+                d = 2;
+                log_scale = true;
+                y_axis_label = label_Events;
+                legend_label = "MC";
+            }
+            else if (style.compare("ratio") == 0)
+            {
+                d = 1;
+                log_scale = false;
+                y_axis_label = "GJets / ZJetsToNuNu";
+                legend_label = "over ZJetsToNuNu";
+            }
+            // use metWithPhoton instead of met (it had the photon pt added to it)
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_met_"    + style, {makePDCGJetsZnunu("metWithPhoton",         style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 80, minPt,  maxPt,  log_scale, false, label_met, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_metphi_" + style, {makePDCGJetsZnunu("metphiWithPhoton",      style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 80, minPhi, maxPhi, log_scale, false, label_metphi, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_ht_"     + style, {makePDCGJetsZnunu("HTZinv",                style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 80, 0.0, 2000.0,    log_scale, false, label_ht,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_nj_"     + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv", style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nj,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_nb_"     + style, {makePDCGJetsZnunu("cntCSVSZinv",           style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nb,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_nt_"     + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv", style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 10, 0, 10,           log_scale, false, label_nt,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_dr_"     + style, {makePDCGJetsZnunu("dR_jetsLVec_drPhotonCleaned",  style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 80, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_met_"        + style, {makePDCGJetsZnunu("metWithPhoton",         style, legend_label, "passBaselineZinv")},             {1, d}, "", 80, minPt,  maxPt,  log_scale, false, label_met, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_metphi_"     + style, {makePDCGJetsZnunu("metphiWithPhoton",      style, legend_label, "passBaselineZinv")},             {1, d}, "", 80, minPhi, maxPhi, log_scale, false, label_metphi, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_ht_"         + style, {makePDCGJetsZnunu("HTZinv",                style, legend_label, "passBaselineZinv")},             {1, d}, "", 80, 0.0, 2000.0,    log_scale, false, label_ht,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_nj_"         + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv", style, legend_label, "passBaselineZinv")},             {1, d}, "", 10, 0, 10,           log_scale, false, label_nj,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_nb_"         + style, {makePDCGJetsZnunu("cntCSVSZinv",           style, legend_label, "passBaselineZinv")},             {1, d}, "", 10, 0, 10,           log_scale, false, label_nb,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_nt_"         + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv", style, legend_label, "passBaselineZinv")},             {1, d}, "", 10, 0, 10,           log_scale, false, label_nt,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_baseline_dr_"         + style, {makePDCGJetsZnunu("dR_jetsLVec_drPhotonCleaned",  style, legend_label, "passBaselineZinv")},             {1, d}, "", 80, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
+        }
     }
 
+    Plotter::DataCollection dc_Znunu_nSearchBinLowDM("data", "nSearchBinLowDM", {makePDSZnunu("Search Bin Low DM", "passBaselineLowDMZinv")});
+    Plotter::DataCollection dc_Znunu_nSearchBinHighDM("data", "nSearchBinHighDM", {makePDSZnunu("Search Bin High DM", "passBaselineHighDMZinv")});
     if (doSearchBins)
     {
-        vh.push_back(PHS("Trigger_",         {trigger_nSearchBin},           {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-        vh.push_back(PHS("TriggerScl_",      {trigger_nSearchBin_scaled},    {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-        vh.push_back(PHS("TriggerWgt_",      {trigger_nSearchBin_weighted},  {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-        vh.push_back(PHS("Trigger_Zinv_",    {trigger_nSearchBin},           {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-        vh.push_back(PHS("TriggerScl_Zinv_", {trigger_nSearchBin_scaled},    {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-        vh.push_back(PHS("TriggerWgt_Zinv_", {trigger_nSearchBin_weighted},  {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
+        vh.push_back(PHS("ZNuNu_nSearchBinLowDM",  {dc_Znunu_nSearchBinLowDM},  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,    min_sb_low_dm,  max_sb_low_dm,  false, false,  "Search Bin Low DM", "Events", true));
+        vh.push_back(PHS("ZNuNu_nSearchBinHighDM", {dc_Znunu_nSearchBinHighDM}, {1, 1}, "", max_sb_high_dm - min_sb_high_dm,  min_sb_high_dm, max_sb_high_dm, false, false,  "Search Bin High DM", "Events", true));
+        //vh.push_back(PHS("Trigger_",         {trigger_nSearchBin},           {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
+        //vh.push_back(PHS("TriggerScl_",      {trigger_nSearchBin_scaled},    {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
+        //vh.push_back(PHS("TriggerWgt_",      {trigger_nSearchBin_weighted},  {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
+        //vh.push_back(PHS("Trigger_Zinv_",    {trigger_nSearchBin},           {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
+        //vh.push_back(PHS("TriggerScl_Zinv_", {trigger_nSearchBin_scaled},    {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
+        //vh.push_back(PHS("TriggerWgt_Zinv_", {trigger_nSearchBin_weighted},  {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
     }
     //Generate cutflows 
     vector<string> cfsZ = {"",
@@ -892,13 +1129,15 @@ int main(int argc, char* argv[])
 
     RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
 
-    std::cout << "Creating Plotter: Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);" << std::endl;
-   
-    printf("    fromTuple: %s\n", fromTuple ? "true" : "false"); fflush(stdout);
-    printf("    filename: %s\n", filename.c_str());              fflush(stdout);
-    printf("    nFiles: %d\n", nFiles);                          fflush(stdout);
-    printf("    startFile: %d\n", startFile);                    fflush(stdout);
-    printf("    nEvts: %d\n", nEvts);                            fflush(stdout);
+    if (verbose)
+    {
+        std::cout << "Creating Plotter: Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);" << std::endl;
+        printf("    fromTuple: %s\n", fromTuple ? "true" : "false"); fflush(stdout);
+        printf("    filename: %s\n", filename.c_str());              fflush(stdout);
+        printf("    nFiles: %d\n", nFiles);                          fflush(stdout);
+        printf("    startFile: %d\n", startFile);                    fflush(stdout);
+        printf("    nEvts: %d\n", nEvts);                            fflush(stdout);
+    }
   
     Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);
     plotter.setCutFlows(cutFlowSummaries);

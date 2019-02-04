@@ -3,8 +3,19 @@
 export PATH=${PATH}:/cvmfs/cms.cern.ch/common
 export CMS_PATH=/cvmfs/cms.cern.ch
 
+echo "----- 1st ls -----"
+ls -lhrt
+echo "------------------"
+
 #get the release setup and in place
-tar -xzf $2.tar.gz
+CMSSW_TARBALL="$2.tar.gz"
+if [ -f $CMSSW_TARBALL ]; then
+    tar -xzf $CMSSW_TARBALL
+else
+    echo "ERROR in goMakeEffPhoton.sh: The tarball $CMSSW_TARBALL does not exist. Exiting now."
+    #exit 1
+fi
+
 cd $2/
 mkdir -p src
 cd src
@@ -12,7 +23,14 @@ scram b ProjectRename
 eval `scramv1 runtime -sh`
 
 #set up local code
-tar -xzf ${_CONDOR_SCRATCH_DIR}/gmp.tar.gz
+FILES_TARBALL="${_CONDOR_SCRATCH_DIR}/gmep.tar.gz"
+if [ -f $FILES_TARBALL ]; then
+    tar -xzf $FILES_TARBALL
+else
+    echo "ERROR in goMakeEffPhoton.sh: The tarball $FILES_TARBALL does not exist. Exiting now."
+    #exit 1
+fi
+
 cd WORLDSWORSESOLUTIONTOAPROBLEM
 
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}
@@ -20,14 +38,18 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}
 echo "xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') ."
 xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
 
+echo "----- 2nd ls -----"
 ls -lhrt
+echo "------------------"
 
-./makePlots -st --condor -D $1 -N $3 -M $4 -L $5 -S SB_v1_2017 | grep -v LHAPDF
+./calcEffPhoton --condor -D $1 -N $3 -M $4 
 
+echo "----- 3rd ls -----"
 ls -lhrt
+echo "------------------"
 
 # declare array of patterns
-declare -a patterns=("histoutput_" "minituple_histoutput_")
+declare -a patterns=("effhists_")
 
 # for each pattern, check that files beginning with pattern exist and move them if they do
 for pattern in "${patterns[@]}"

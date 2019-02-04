@@ -125,6 +125,8 @@ public:
         std::string name;
         int nBins;
         double low, high;
+        double ymin_, ymax_;
+        bool setYLimits;
         bool isLog, isNorm, isRatio;
         std::string xAxisLabel, yAxisLabel;
         std::pair<int, int> ratio;
@@ -132,6 +134,7 @@ public:
 
         HistSummary() {}
         HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, bool log, bool norm, std::string xal, std::string yal, bool isRatio = true);
+        HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, double ymin, double max, bool log, bool norm, std::string xal, std::string yal, bool isRatio = true);
         HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, std::vector<double> be, bool log, bool norm, std::string xal, std::string yal, bool isRatio = true);
         ~HistSummary();
 

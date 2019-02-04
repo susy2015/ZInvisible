@@ -13,6 +13,8 @@
 # Make plots of results (containing both MC)
 
 
+combineResults=true
+
 # Compile MakePlots
 
 echo " - Compile MakePlots"
@@ -33,28 +35,32 @@ rm plots/*
 
 echo " - Save root files for different MC"
 n_events=1000
-sample1=GJets_HT-200To400
-sample2=ZJetsToNuNu_HT_200to400
+sample1=GJets_HT-400To600
+#sample1=DYJetsToLL_HT_400to600
+sample2=ZJetsToNuNu_HT_400to600
 output1=""$sample1".root"
 output2=""$sample2".root"
 
 echo " - Running makePlots to create $output1"
-./makePlots -D $sample1 -E $n_events -I $output1
+echo "./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF"
+./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF
 echo " - Running makePlots to create $output2"
-./makePlots -D $sample2 -E $n_events -I $output2
+echo "./makePlots -D $sample2 -E $n_events -I $output2 | grep -v LHAPDF"
+./makePlots -D $sample2 -E $n_events -I $output2 | grep -v LHAPDF
 
 # hadd the results
+if [ "$combineResults" = true ]; then
 
-# IMPORTANT: you need quotes around each variable (due to underscores)
-# otherwise bash interprets the underscores as part of the variable names
-result=""$sample1"_and_"$sample2".root"
-echo " - hadd the results to create $result"
-# Use -f to overwrite target file if it already exists
-hadd -f $result $output1 $output2
-
-# Make plots of results (containing both MC)
-
-echo " - Make plots of results (containing both MC)"
-./makePlots -f -I $result
-
-
+    # IMPORTANT: you need quotes around each variable (due to underscores)
+    # otherwise bash interprets the underscores as part of the variable names
+    result=""$sample1"_and_"$sample2".root"
+    echo " - hadd the results to create $result"
+    # Use -f to overwrite target file if it already exists
+    hadd -f $result $output1 $output2
+    
+    # Make plots of results (containing both MC)
+    
+    echo " - Make plots of results (containing both MC)"
+    echo "./makePlots -f -I $result | grep -v LHAPDF"
+    ./makePlots -f -I $result | grep -v LHAPDF
+fi

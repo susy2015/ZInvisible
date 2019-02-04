@@ -136,12 +136,19 @@ void Plotter::Cuttable::extractCuts(std::set<std::string>& ab) const
     for(auto& cut : cutVec_) ab.insert(cut.rawName);
 }
 
-Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : Cuttable(cuts), name(l), nBins(nb), low(ll), high(ul), isLog(log), isNorm(norm), xAxisLabel(xal), yAxisLabel(yal), ratio(ratio), isRatio(isRatio)
+Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : Cuttable(cuts), name(l), nBins(nb), low(ll), high(ul), isLog(log), isNorm(norm), xAxisLabel(xal), yAxisLabel(yal), ratio(ratio), isRatio(isRatio), ymin_(-999.9), ymax_(-999.9), setYLimits(false)
 {
     parseName(ns);
 }
 
-Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, std::vector<double> be, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : Cuttable(cuts), name(l), nBins(0), low(0.0), high(0.0), binEdges(be), isLog(log), isNorm(norm), xAxisLabel(xal), yAxisLabel(yal), ratio(ratio), isRatio(isRatio)
+Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, double ymin, double ymax, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : HistSummary(l, ns, ratio, cuts, nb, ll, ul, log, norm, xal, yal, isRatio)
+{
+    ymin_ = ymin;
+    ymax_ = ymax;
+    setYLimits = true;
+}
+
+Plotter::HistSummary::HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, std::vector<double> be, bool log, bool norm, std::string xal, std::string yal, bool isRatio) : Cuttable(cuts), name(l), nBins(0), low(0.0), high(0.0), binEdges(be), isLog(log), isNorm(norm), xAxisLabel(xal), yAxisLabel(yal), ratio(ratio), isRatio(isRatio), ymin_(-999.9), ymax_(-999.9), setYLimits(false)
 {
     parseName(ns);
 }
@@ -249,7 +256,6 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
     for(auto& weightName : weightVec_)
     {
         const double& weight = static_cast<double>(tr.getVar<data_t>(weightName));
-        //std::cout<<weightName<<std::endl;
         if(weight == weight)
         {
             if(weight < 1e6)
@@ -480,6 +486,7 @@ void Plotter::createHistsFromTuple()
                     if(doHists_)
                     {
                         double fileWgt = file.getWeight();
+                        //printf("In Plotter.cc: %s file weight = %f\n", file.tag.c_str(), fileWgt);
 
                         for(auto& histsToFillVec : histsToFill)
                         {
@@ -496,6 +503,8 @@ void Plotter::createHistsFromTuple()
 
                             // get the weight associated with the dataset
                             double weight = fileWgt * dss.getWeight(tr) * dss.kfactor;
+                            
+                            //printf("In Plotter.cc: %s final weight = %f\n", file.tag.c_str(), weight);
 
                             for(auto& hist : histsToFillVec.second.second)
                             {
@@ -519,10 +528,8 @@ void Plotter::createHistsFromTuple()
                     {
                         if(tr.getVar<bool>("passnJetsZinv"))
                         {
-                            //std::cout<<"FUCK YEAH WORKING"<<std::endl;
                             if(file.filePath.find("ZJetsToNuNu_") != std::string::npos || tr.getVar<bool>("passMuZinvSel"))
                             {
-                                //std::cout<<"Made it to the end of the line"<<std::endl;
                                 foutTuple_->cd();
                                 mtm->fill();
                                 fout_->cd();
@@ -545,7 +552,6 @@ void Plotter::createHistsFromTuple()
 
         if(foutTuple_ && tOut && mtm)
         {
-            //std::cout<<"This is the end my friend"<<std::endl;
             foutTuple_->cd();
             tOut->Write();
         }
@@ -666,6 +672,7 @@ double Plotter::Cut::translateVar(const NTupleReader& tr) const
     {
         if     (type.find("pair")           != std::string::npos) return Plotter::getVarFromVec<std::pair<double, double>>(name, tr).first;
         else if(type.find("double")         != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<double>(name, tr));
+        else if(type.find("float")         != std::string::npos) return static_cast<float>(Plotter::getVarFromVec<float>(name, tr));
         else if(type.find("unsigned int")   != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<unsigned int>(name, tr));
         else if(type.find("int")            != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<int>(name, tr));
         else if(type.find("TLorentzVector") != std::string::npos) return Plotter::getVarFromVec<TLorentzVector, double>(name, tr);
@@ -673,9 +680,9 @@ double Plotter::Cut::translateVar(const NTupleReader& tr) const
     else
     {
         if     (type.find("double")       != std::string::npos) return tr.getVar<double>(name.name);
+        else if(type.find("float")        != std::string::npos) return static_cast<float>(tr.getVar<float>(name.name));
         else if(type.find("unsigned int") != std::string::npos) return static_cast<double>(tr.getVar<unsigned int>(name.name));
         else if(type.find("int")          != std::string::npos) return static_cast<double>(tr.getVar<int>(name.name));
-        else if(type.find("float")        != std::string::npos) return static_cast<double>(tr.getVar<float>(name.name));
         else if(type.find("char")         != std::string::npos) return static_cast<double>(tr.getVar<char>(name.name));
         else if(type.find("short")        != std::string::npos) return static_cast<double>(tr.getVar<short>(name.name));
         else if(type.find("long")         != std::string::npos) return static_cast<double>(tr.getVar<long>(name.name));
@@ -799,6 +806,12 @@ void Plotter::plot()
         bool skip = false;
         for(auto& hvec : hist.hists)  for(auto& h : hvec.hcsVec) if(!h->h) skip = true;
         if(skip) continue;
+        if (! hist.fhist() )
+        {
+            // ERROR in red
+            std::cout << "\033[1;31m  ERROR for histogram " << hist.name << "; hist.fhist() does not work, skipping plot. Check that histogram is created properly. \033[0m"<< std::endl;
+            continue;
+        }
 
         bool showRatio = true;
         if(hist.ratio.first == hist.ratio.second || hist.ratio.first < 1 || hist.ratio.second < 1)
@@ -979,7 +992,19 @@ void Plotter::plot()
         }
 
         gPad->SetLogy(hist.isLog);
-        if(hist.isLog)
+        if (hist.setYLimits)
+        {
+            if (hist.ymin_ > 0 && hist.ymax_ > 0)
+            {
+                //std::cout << "In Plotter.cc: " << hist.name << " ymin, ymax = " << hist.ymin_ << ", " << hist.ymax_ << std::endl;
+                dummy->GetYaxis()->SetRangeUser(hist.ymin_, hist.ymax_);
+            }
+            else
+            {
+                std::cout << "ERROR for " << hist.name << ": ymin and ymax must be positive" << std::endl;
+            }
+        }
+        else if(hist.isLog)
         {
             double locMin = std::min(0.2*minAvgWgt, std::max(0.00011, 0.05 * min));
             double legSpan = (log10(3*max) - log10(locMin)) * (leg->GetY1() - gPad->GetBottomMargin()) / ((1 - gPad->GetTopMargin()) - gPad->GetBottomMargin());
@@ -1253,6 +1278,8 @@ void Plotter::plot()
         if(h1) delete h1;
         if(h2) delete h2;
     }
+    // Plotter::plot() is complete: green
+    std::cout << "\033[1;32m  Plotter::plot() is complete. \033[0m"<< std::endl;
 }
 
 void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& tr, const double weight)
@@ -1262,45 +1289,29 @@ void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& t
 
     if(type.find("vector") != std::string::npos)
     {
-        if(type.find("const") != std::string::npos)
-        {
 
-            if(type.find("*") != std::string::npos)
+        if(type.find("*") != std::string::npos)
+        {
+            if(type.find("TLorentzVector") != std::string::npos) 
             {
-                // debug statement
-                //printf("name: %s type: %s\n", name.name.c_str(), type.c_str());
-                if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<const TLorentzVector*>(h, name, tr, weight);
-            }
-            else
-            {
-                if     (type.find("pair")           != std::string::npos) fillHistFromVec<std::pair<double, double>>(h, name, tr, weight);
-                else if(type.find("double")         != std::string::npos) fillHistFromVec<double>(h, name, tr, weight);
-                else if(type.find("unsigned int")   != std::string::npos) fillHistFromVec<unsigned int>(h, name, tr, weight);
-                else if(type.find("int")            != std::string::npos) fillHistFromVec<int>(h, name, tr, weight);
-                else if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector>(h, name, tr, weight);
+              if(type.find("const") != std::string::npos) fillHistFromVec<const TLorentzVector*>(h, name, tr, weight);
+              else                                        fillHistFromVec<TLorentzVector*>(h, name, tr, weight);
             }
         }
         else
         {
-            if(type.find("*") != std::string::npos)
-            {
-                // debug statement
-                //printf("name: %s type: %s\n", name.name.c_str(), type.c_str());
-                if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector*>(h, name, tr, weight);
-            }
-            else
-            {
-                if     (type.find("pair")           != std::string::npos) fillHistFromVec<std::pair<double, double>>(h, name, tr, weight);
-                else if(type.find("double")         != std::string::npos) fillHistFromVec<double>(h, name, tr, weight);
-                else if(type.find("unsigned int")   != std::string::npos) fillHistFromVec<unsigned int>(h, name, tr, weight);
-                else if(type.find("int")            != std::string::npos) fillHistFromVec<int>(h, name, tr, weight);
-                else if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector>(h, name, tr, weight);
-            }
+            if     (type.find("pair")           != std::string::npos) fillHistFromVec<std::pair<double, double>>(h, name, tr, weight);
+            else if(type.find("double")         != std::string::npos) fillHistFromVec<double>(h, name, tr, weight);
+            else if(type.find("float")          != std::string::npos) fillHistFromVec<float>(h, name, tr, weight);
+            else if(type.find("unsigned int")   != std::string::npos) fillHistFromVec<unsigned int>(h, name, tr, weight);
+            else if(type.find("int")            != std::string::npos) fillHistFromVec<int>(h, name, tr, weight);
+            else if(type.find("TLorentzVector") != std::string::npos) fillHistFromVec<TLorentzVector>(h, name, tr, weight);
         }
     }
     else
     {
         if     (type.find("double")         != std::string::npos) h->Fill(tr.getVar<double>(name.name), weight);
+        else if(type.find("float")          != std::string::npos) h->Fill(tr.getVar<float>(name.name), weight);
         else if(type.find("unsigned int")   != std::string::npos) h->Fill(tr.getVar<unsigned int>(name.name), weight);
         else if(type.find("int")            != std::string::npos) h->Fill(tr.getVar<int>(name.name), weight);
         else if(type.find("float")          != std::string::npos) h->Fill(tr.getVar<float>(name.name), weight);
