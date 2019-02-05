@@ -119,6 +119,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     //blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
 
 
+    getVectors                = new GetVectors;
     cleanedJets               = new CleanedJets;
     gamma                     = new plotterFunctions::Gamma;
     weights                   = new plotterFunctions::GenerateWeight;
@@ -172,6 +173,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 }
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {
+    if(getVectors)                delete getVectors;
     if(cleanedJets)               delete cleanedJets;
     if(myBLV)                     delete myBLV;
     if(blvZinv)                   delete blvZinv;
@@ -211,6 +213,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     // order matters
     // get photons and leptons
     // use photons and leptons to clean jets
+    tr.registerFunction(*getVectors);
     tr.registerFunction(*gamma);
     tr.registerFunction(*basicLepton);
     tr.registerFunction(*generatePhotonEfficiency);

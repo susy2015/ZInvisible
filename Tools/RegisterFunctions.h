@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include "SusyAnaTools/Tools/GetVectors.h"
 #include "SusyAnaTools/Tools/CleanedJets.h"
 
 class NTupleReader;
@@ -80,6 +81,7 @@ private:
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
     plotterFunctions::SystematicPrep *systematicPrep;
     plotterFunctions::SystematicCalc *systematicCalc;
+    GetVectors *getVectors;
     CleanedJets *cleanedJets;
     plotterFunctions::Gamma *gamma; //Andres
     PDFUncertainty *myPDFUnc;
