@@ -19,8 +19,6 @@ ZINVISIBLE = $(CMSSW_BASE)/src/ZInvisible
 # Then you can use sytax like this:
 # ZINVISIBLE = @ZINVISIBLE@ 
 
-#OPENCV_DIRECTORY=/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/
-
 CXX        = g++
 
 CXXFLAGS  += -I. -I$(CMSSW_BASE)/src -std=c++0x -I$(LHAPDF_DATA_PATH)/../../include
@@ -47,14 +45,9 @@ INCLUDES += -I$(ZINVISIBLE)/Tools/include
 CXXFLAGS += -DDOTENSORFLOWPYBIND
 
 LIBS       = $(shell root-config --glibs)
-#MT2LIB     = -L$(shell $(PYTHONCFG) --prefix)/lib $(shell $(PYTHONCFG) --libs) -L$(TTTDIR) -lTopTagger -L$(OPENCV_DIRECTORY)/lib/ -lopencv_ml -lopencv_core
 MT2LIB     = -L$(shell $(PYTHONCFG) --prefix)/lib $(shell $(PYTHONCFG) --libs) -L$(TTTDIR) -lTopTagger
 LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
-#OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
-
-#PROGRAMS = calcEff harvestHists makePlots systematics nJetWgtSyst moneyplot plot2d scalefactorplot systplot miniMakePlots beffCalc makeSignalHistograms makeTopPlots makeDataMCplots simpleAnalyzer
-#PROGRAMS = calcEff harvestHists makePlots moneyplot plot2d scalefactorplot systplot beffCalc makeSignalHistograms makeTopPlots makeDataMCplots simpleAnalyzer
 PROGRAMS = calcEff calcEffPhoton harvestHists makePlots moneyplot scalefactorplot systplot beffCalc makeSignalHistograms makeTopPlots makeDataMCplots makeDYPlots makePhotonPlots simpleAnalyzer
 
 all: mkobj PyWraps $(PROGRAMS)
@@ -165,10 +158,6 @@ scalefactorplot: $(ODIR)/scalefactorplot.o
 systplot: $(ODIR)/systplot.o $(ODIR)/SATException.o $(ODIR)/searchBins.o 
 	$(LD) $^ $(LIBS) -o $@
 
-# problem
-#plot2d: $(ODIR)/plot2D.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/Plotter.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/Systematic.o $(ODIR)/samples.o $(ODIR)/MiniTupleMaker.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
-#	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
-
 beffCalc: $(ODIR)/bTagEfficiencyCalc.o $(ODIR)/NTupleReader.o $(ODIR)/samples.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/SATException.o
 	$(LD) $^ $(LIBS)  $(MT2LIB) -o $@
 
@@ -178,7 +167,6 @@ makeSignalHistograms: $(ODIR)/makeSignalHistograms.o $(ODIR)/NTupleReader.o $(OD
 makeTaggerHistograms: $(ODIR)/makeTaggerHistograms.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o  $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
-# unfortunately we have problems with simpleAnalyzer :-(
 simpleAnalyzer: $(ODIR)/simpleAnalyzer.o $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o  $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o  $(ODIR)/TTbarCorrector.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o $(ODIR)/rootdict.o
 	$(LD) $^ $(LIBS) $(MT2LIB) -o $@
 
