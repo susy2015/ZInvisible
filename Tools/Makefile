@@ -19,7 +19,7 @@ ZINVISIBLE = $(CMSSW_BASE)/src/ZInvisible
 # Then you can use sytax like this:
 # ZINVISIBLE = @ZINVISIBLE@ 
 
-OPENCV_DIRECTORY=/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/
+#OPENCV_DIRECTORY=/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/
 
 CXX        = g++
 
@@ -47,7 +47,8 @@ INCLUDES += -I$(ZINVISIBLE)/Tools/include
 CXXFLAGS += -DDOTENSORFLOWPYBIND
 
 LIBS       = $(shell root-config --glibs)
-MT2LIB     = -L$(shell $(PYTHONCFG) --prefix)/lib $(shell $(PYTHONCFG) --libs) -L$(TTTDIR) -lTopTagger -L$(OPENCV_DIRECTORY)/lib/ -lopencv_ml -lopencv_core
+#MT2LIB     = -L$(shell $(PYTHONCFG) --prefix)/lib $(shell $(PYTHONCFG) --libs) -L$(TTTDIR) -lTopTagger -L$(OPENCV_DIRECTORY)/lib/ -lopencv_ml -lopencv_core
+MT2LIB     = -L$(shell $(PYTHONCFG) --prefix)/lib $(shell $(PYTHONCFG) --libs) -L$(TTTDIR) -lTopTagger
 LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 #OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
