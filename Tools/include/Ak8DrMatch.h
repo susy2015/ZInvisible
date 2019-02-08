@@ -39,12 +39,11 @@ namespace plotterFunctions
      class Ak8DrMatch {
      private:
          void generateAk8DrMatch(NTupleReader& tr) {
-             const auto& jetsLVec           = tr.getVec<TLorentzVector>("jetsLVec");
-             const auto& puppiJetsLVec      = tr.getVec<TLorentzVector>("puppiJetsLVec");
-             const auto& puppiLVectight_top = tr.getVec<TLorentzVector>("puppiLVectight_top");
-             const auto& puppiLVecLoose_top = tr.getVec<TLorentzVector>("puppiLVecLoose_top");
-             const auto& puppiLVectight_w   = tr.getVec<TLorentzVector>("puppiLVectight_w");
-             const auto& puppiLVecLoose_w   = tr.getVec<TLorentzVector>("puppiLVecLoose_w");  
+             const auto& jetsLVec           = tr.getVec<TLorentzVector>("JetTLV");
+             const auto& puppiJetsLVec      = tr.getVec<TLorentzVector>("FatJet");
+             //const auto& puppiLVectight_top = tr.getVec<TLorentzVector>("puppiLVectight_top");
+             //const auto& puppiLVecLoose_top = tr.getVec<TLorentzVector>("puppiLVecLoose_top");
+             //const auto& puppiLVectight_w   = tr.getVec<TLorentzVector>("puppiLVectight_w");
 
              int nJetsAK41_min = 0;
              int nJetsAK41_med = 0; 

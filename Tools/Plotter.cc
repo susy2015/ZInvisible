@@ -307,8 +307,10 @@ Plotter::DataCollection::DataCollection(std::string type, std::string var, std::
 
 void Plotter::createHistsFromTuple()
 {
+    //std::cout << "Running createHistsFromTuple()" << std::endl;
     for(const AnaSamples::FileSummary& file : trees_)
     {
+        //std::cout << "FileSummary tag from trees_: " << file.tag << std::endl;
         std::set<std::string> activeBranches;
 
         //get file list 
@@ -318,6 +320,7 @@ void Plotter::createHistsFromTuple()
         std::map<std::pair<std::string, const DatasetSummary*>, std::pair<const HistSummary*, std::vector<std::shared_ptr<HistCutSummary>>>> histsToFill;
         for(HistSummary& hs : hists_)
         {
+            //std::cout << "HistSummary name = " << hs.name << std::endl;
             for(HistVecAndType& histvec : hs.hists)
             {
                 for(std::shared_ptr<HistCutSummary>& hist : histvec.hcsVec)
@@ -346,8 +349,10 @@ void Plotter::createHistsFromTuple()
 
                     for(const DatasetSummary& ds : hist->dss)
                     {
+                        //std::cout << "DatasetSummary label: " << ds.label << std::endl;
                         for(const AnaSamples::FileSummary& fileToComp : ds.files)
                         {
+                            //std::cout << "FileSummary tag from DatasetSummary: " << fileToComp.tag << std::endl;
                             if(file == fileToComp)
                             {
                                 hist->dssp = &ds;
@@ -393,7 +398,11 @@ void Plotter::createHistsFromTuple()
         }
 
         // Do not process files if there are no histograms asking for it
-        if(!histsToFill.size() && !cutFlowsToFill.size()) continue;
+        if(!histsToFill.size() && !cutFlowsToFill.size())
+        {
+            std::cout << "WARNING: skipping file summary " << file.tag << std::endl;
+            continue;
+        }
 
         //TChain *t = new TChain(file.treePath.c_str());
         //file.addFilesToChain(t);
@@ -486,7 +495,7 @@ void Plotter::createHistsFromTuple()
                     if(doHists_)
                     {
                         double fileWgt = file.getWeight();
-                        //printf("In Plotter.cc: %s file weight = %f\n", file.tag.c_str(), fileWgt);
+                        printf("In Plotter.cc: %s file weight = %f\n", file.tag.c_str(), fileWgt);
 
                         for(auto& histsToFillVec : histsToFill)
                         {
@@ -728,6 +737,7 @@ void Plotter::saveHists()
                     TDirectory* mydir = fout_->GetDirectory(dirname.c_str());
                     if(mydir == 0)
                     {
+                        std::cout << "Creating directory " << dirname << " in the root file" << std::endl;
                         mydir = fout_->mkdir(dirname.c_str(),dirname.c_str());
                     }
                     mydir->cd();
@@ -766,6 +776,7 @@ void Plotter::setLumi(const double lumi)
 
 void Plotter::setDoHists(const bool doHists)
 {
+    std::cout << "set doHists_ to " << doHists << std::endl;
     doHists_ = doHists;
 }
 

@@ -220,15 +220,15 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*cleanedJets);
 
     tr.registerFunction(*myBLV);
-    tr.registerFunction(*lepInfo);
-    tr.registerFunction(*weights);
-    tr.registerFunction(*blvZinv);
-    tr.registerFunction(*blvNoVeto);
-    tr.registerFunction(*blvPFLeptonCleaned);
-    tr.registerFunction(*blvDRLeptonCleaned);
-    tr.registerFunction(*blvDRPhotonCleaned);
-    tr.registerFunction(*njWeight);
-    tr.registerFunction(*fakebtagvectors);
+    //tr.registerFunction(*lepInfo);
+    //tr.registerFunction(*weights);
+    //tr.registerFunction(*blvZinv);
+    //tr.registerFunction(*blvNoVeto);
+    //tr.registerFunction(*blvPFLeptonCleaned);
+    //tr.registerFunction(*blvDRLeptonCleaned);
+    //tr.registerFunction(*blvDRPhotonCleaned);
+    //tr.registerFunction(*njWeight);
+    //tr.registerFunction(*fakebtagvectors);
     //tr.registerFunction(*blvZinv1b);
     //tr.registerFunction(*blvZinv2b);
     //tr.registerFunction(*blvZinv3b);
@@ -237,7 +237,9 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     //tr.registerFunction(*blvZinvJEUDn);
     //tr.registerFunction(*blvZinvMEUUp);
     //tr.registerFunction(*blvZinvMEUDn);
+    
     tr.registerFunction(*getSearchBin);
+    
     //tr.registerFunction(*systematicCalc);
     //tr.registerFunction(*triggerInfo);
     //tr.registerFunction(*prepareMiniTupleVars);

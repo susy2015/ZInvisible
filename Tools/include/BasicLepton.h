@@ -42,31 +42,31 @@ namespace plotterFunctions
         TRandom3 *tr3;
         void basicLepton(NTupleReader& tr)
         {
-            const auto& muonsLVec                           = tr.getVec<TLorentzVector>("muonsLVec");
-            const auto& muonsRelIso                         = tr.getVec<data_t>("muonsRelIso");
-            const auto& muonsMiniIso                        = tr.getVec<data_t>("muonsMiniIso");
-            const auto& muonsCharge                         = tr.getVec<data_t>("muonsCharge");
-            const std::vector<data_t>& muonspfActivity      = tr.getVec<data_t>("muonspfActivity");
-            const auto& muonsFlagIDVec                      = tr.getVec<int>("muonsFlagLoose");
+            const auto& muonsLVec                           = tr.getVec<TLorentzVector>("MuonTLV");
+            const auto& muonsRelIso                         = tr.getVec<data_t>("Muon_miniPFRelIso_all");
+            const auto& muonsMiniIso                        = tr.getVec<char>("Muon_miniIsoId");
+            const auto& muonsCharge                         = tr.getVec<int>("Muon_charge");
+            //const auto& muonspfActivity                     = tr.getVec<data_t>("muonspfActivity");
+            const auto& muonsFlagIDVec                      = tr.getVec<bool_t>("Muon_Stop0l");
 
-            const auto& elesLVec                            = tr.getVec<TLorentzVector>("elesLVec");
-            const auto& elesMiniIso                         = tr.getVec<data_t>("elesMiniIso");
-            const auto& elesCharge                          = tr.getVec<data_t>("elesCharge");
-            const auto& elesisEB                            = tr.getVec<unsigned int>("elesisEB");
-            const std::vector<data_t>& elespfActivity       = tr.getVec<data_t>("elespfActivity");
-            const auto& elesFlagIDVec                       = tr.getVec<int>("elesFlagVeto");
+            const auto& elesLVec                            = tr.getVec<TLorentzVector>("ElectronTLV");
+            const auto& elesMiniIso                         = tr.getVec<data_t>("Electron_miniPFRelIso_all");
+            const auto& elesCharge                          = tr.getVec<int>("Electron_charge");
+            //const auto& elesisEB                            = tr.getVec<unsigned int>("elesisEB");
+            //const auto& elespfActivity                      = tr.getVec<data_t>("elespfActivity");
+            const auto& elesFlagIDVec                       = tr.getVec<bool_t>("Electron_Stop0l");
 
             //muons
             auto* cutMuVec                  = new std::vector<TLorentzVector>();
             auto* cutMuVecRecoOnly          = new std::vector<TLorentzVector>();
             auto* cutMuCharge               = new std::vector<data_t>();
-            auto* cutMuActivity             = new std::vector<data_t>();
+            //auto* cutMuActivity             = new std::vector<data_t>();
             
             //electrons
             auto* cutElecVec                = new std::vector<TLorentzVector>();
             auto* cutElecVecRecoOnly        = new std::vector<TLorentzVector>();
             auto* cutElecCharge             = new std::vector<data_t>();
-            auto* cutElecActivity           = new std::vector<data_t>();
+            //auto* cutElecActivity           = new std::vector<data_t>();
 
             //std::vector<TLorentzVector> cutMuVecRecoOnly;
             //std::vector<TLorentzVector> cutElecVecRecoOnly;
@@ -79,11 +79,13 @@ namespace plotterFunctions
 
             for(int i = 0; i < muonsLVec.size(); ++i)
             {
-                if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
+                //if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
+                if(muonsFlagIDVec[i])
                 {
                     cutMuVecRecoOnly->push_back(muonsLVec[i]);
                 }
-                if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
+                //if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
+                if(muonsFlagIDVec[i])
                 {
                     if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
                     {
@@ -93,7 +95,7 @@ namespace plotterFunctions
                     cutMuVec->push_back(muonsLVec[i]);
                     //std::cout<<"cutMuVec PT "<<muonsLVec[i].Pt()<<std::endl; 
                     cutMuCharge->push_back(muonsCharge[i]);
-                    cutMuActivity->push_back(muonspfActivity[i]);
+                    //cutMuActivity->push_back(muonspfActivity[i]);
                     if(muonsCharge[i] > 0) cutMuSummedCharge++;
                     else                   cutMuSummedCharge--;
                 }
@@ -103,16 +105,18 @@ namespace plotterFunctions
             int cutElecSummedCharge = 0;
             for(int i = 0; i < elesLVec.size(); ++i)
             {
-                if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr)) // emulates electrons with pt but no iso requirements.
+                //if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr)) // emulates electrons with pt but no iso requirements.
+                if(elesFlagIDVec[i])
                 {
                     cutElecVecRecoOnly->push_back(elesLVec[i]);
                 }
 
-                if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
+                //if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
+                if(elesFlagIDVec[i])
                 {
                     cutElecVec->push_back(elesLVec[i]);
                     cutElecCharge->push_back(elesCharge[i]);
-                    cutElecActivity->push_back(elespfActivity[i]);
+                    //cutElecActivity->push_back(elespfActivity[i]);
                     if(elesCharge[i] > 0) cutElecSummedCharge++;
                     else                  cutElecSummedCharge--;
                 }
@@ -121,7 +125,7 @@ namespace plotterFunctions
             //muons
             tr.registerDerivedVec("cutMuVec",             cutMuVec);
             tr.registerDerivedVec("cutMuVecRecoOnly",     cutMuVecRecoOnly);
-            tr.registerDerivedVec("cutMuActivity",        cutMuActivity);
+            //tr.registerDerivedVec("cutMuActivity",        cutMuActivity);
             tr.registerDerivedVec("cutMuCharge",          cutMuCharge);
             tr.registerDerivedVar("cutMuSummedCharge",    cutMuSummedCharge);
             tr.registerDerivedVar("nTriggerMuons",        nTriggerMuons);
@@ -129,7 +133,7 @@ namespace plotterFunctions
             //electrons
             tr.registerDerivedVec("cutElecVec",           cutElecVec);
             tr.registerDerivedVec("cutElecVecRecoOnly",   cutElecVecRecoOnly);
-            tr.registerDerivedVec("cutElecActivity",      cutElecActivity);
+            //tr.registerDerivedVec("cutElecActivity",      cutElecActivity);
             tr.registerDerivedVec("cutElecCharge",        cutElecCharge);
             tr.registerDerivedVar("cutElecSummedCharge",  cutElecSummedCharge);
             

@@ -41,7 +41,8 @@ namespace plotterFunctions
     private:
         void fakebtagvectors(NTupleReader& tr)
         {
-            const auto& prodJetsNoLep_jetsLVec = tr.getVec<TLorentzVector>("prodJetsNoLep_jetsLVec");
+            //const auto& prodJetsNoLep_jetsLVec = tr.getVec<TLorentzVector>("prodJetsNoLep_jetsLVec");
+            const auto& prodJetsNoLep_jetsLVec = tr.getVec<TLorentzVector>("JetTLV");
             const auto& cleanJetpt30ArrBTag = tr.getVec<data_t>("prodJetsNoLep_recoJetsCSVv2");
 
             double maxCSV = 0.0;
