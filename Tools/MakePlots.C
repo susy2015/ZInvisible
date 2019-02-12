@@ -1094,7 +1094,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    Plotter::DataCollection dc_Znunu_nSearchBinLowDM("data", "nSearchBinLowDM", {makePDSZnunu("Search Bin Low DM", "passBaselineLowDMZinv")});
+    Plotter::DataCollection dc_Znunu_nSearchBinLowDM("data",  "nSearchBinLowDM",  {makePDSZnunu("Search Bin Low DM", "passBaselineLowDMZinv")});
     Plotter::DataCollection dc_Znunu_nSearchBinHighDM("data", "nSearchBinHighDM", {makePDSZnunu("Search Bin High DM", "passBaselineHighDMZinv")});
     if (doSearchBins)
     {

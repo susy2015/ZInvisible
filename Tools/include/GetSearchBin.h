@@ -44,17 +44,19 @@ namespace plotterFunctions
 
         void getSearchBin(NTupleReader& tr)
         {
-            const auto& nb                  = tr.getVar<int>("cntCSVSZinv");
-            const auto& nt                  = tr.getVar<int>("nTopCandSortedCntZinv");
-            const auto& njets               = tr.getVar<int>("cntNJetsPt20Eta24Zinv");
-            const auto& nWs                 = tr.getVar<int>("nWs");
+            const auto& nBottoms            = tr.getVar<int>("nBottomsZinv");
+            const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottomsZinv");
+            const auto& nMergedTops         = tr.getVar<int>("nMergedTopsZinv");
+            const auto& nJets               = tr.getVar<int>("nJetsZinv");
+            const auto& nWs                 = tr.getVar<int>("nWsZinv");
             const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops");
-            const auto& met                 = tr.getVar<data_t>("cleanMetPt");
+            //const auto& met                 = tr.getVar<data_t>("cleanMetPt");
+            const auto& met                 = tr.getVar<data_t>("metWithPhoton");
             const auto& ht                  = tr.getVar<data_t>("HTZinv");
             const auto& bottompt_scalar_sum = tr.getVar<data_t>("ptbZinv");
             const auto& mtb                 = tr.getVar<data_t>("mtbZinv");
-            const auto& softbLVec           = tr.getVec<TLorentzVector>("softbLVecZinv");
-            const auto& ISRLVec             = tr.getVec<TLorentzVector>("vISRJetZinv");
+            //onst auto& softbLVec           = tr.getVec<TLorentzVector>("softbLVecZinv");
+            const auto& ISRJet              = tr.getVar<TLorentzVector>("ISRJetZinv");
             
             //------------------------------------------//
             //--- Updated Search Bins (January 2019) ---//
@@ -65,13 +67,15 @@ namespace plotterFunctions
             //================================search bin v2 high dm================================================
             //int SBv2_highdm(float mtb_cut, float mtb, int njets, int ntop, int nw, int nres, int nb, float met, float ht)
             
-            int nSV = softbLVec.size();
+            //int nSV = softbLVec.size();
             float ISRpt = 0.0;
-            if(ISRLVec.size() == 1) ISRpt = ISRLVec.at(0).Pt();
+            ISRpt = ISRJet.Pt();
+            //if(ISRJet.size() == 1) ISRpt = ISRJet.at(0).Pt();
             float mtb_cut = 175.0;
 
-            int nSearchBinLowDM = SB_team_A_lowdm(njets, nb, nSV, ISRpt, bottompt_scalar_sum, met);
-            int nSearchBinHighDM = SBv2_highdm(mtb_cut, mtb, njets, nt, nWs, nResolvedTops, nb, met, ht);
+            int nSearchBinLowDM = SB_team_A_lowdm(nJets, nBottoms, nSoftBottoms, ISRpt, bottompt_scalar_sum, met);
+                                                                    //n_top_merged, n_top_resolved
+            int nSearchBinHighDM = SBv2_highdm(mtb_cut, mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met, ht);
 
 
             tr.registerDerivedVar("nSearchBinLowDM", nSearchBinLowDM);

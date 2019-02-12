@@ -218,8 +218,9 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*basicLepton);
     tr.registerFunction(*generatePhotonEfficiency);
     tr.registerFunction(*cleanedJets);
-
     tr.registerFunction(*myBLV);
+    tr.registerFunction(*blvZinv);
+    
     //tr.registerFunction(*lepInfo);
     //tr.registerFunction(*weights);
     //tr.registerFunction(*blvZinv);
