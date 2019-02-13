@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
 
     // follow this syntax; order matters for your arguments
     //SampleSet::SampleSet(std::string file, bool isCondor, double lumi)
-    AnaSamples::SampleSet        ss("sampleSets.cfg", runOnCondor, AnaSamples::luminosity);
+    AnaSamples::SampleSet        ss("sampleSets_2016.cfg", runOnCondor, AnaSamples::luminosity);
     //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples)
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
     
