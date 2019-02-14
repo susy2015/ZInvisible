@@ -495,7 +495,7 @@ void Plotter::createHistsFromTuple()
                     if(doHists_)
                     {
                         double fileWgt = file.getWeight();
-                        printf("In Plotter.cc: %s file weight = %f\n", file.tag.c_str(), fileWgt);
+                        //printf("In Plotter.cc: %s file weight = %f\n", file.tag.c_str(), fileWgt);
 
                         for(auto& histsToFillVec : histsToFill)
                         {
