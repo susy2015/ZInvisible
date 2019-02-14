@@ -129,47 +129,43 @@ voms-proxy-info
 Here is an example of submitting a condor job.
 ```
 cd $CMSSW_BASE/src/ZInvisible/Tools/condor
+
+# list available sample sets
 python condorSubmit.py -l
-python condorSubmit.py -d DYJetsToLL,TTbar,Data_SingleMuon
+
+# submit specific sample sets
+python condorSubmit.py -d GJets,ZJetsToNuNu
 ```
-You can check your condor job with this command.
+
+Here are some useful condor commands.
 ```
-condor_q
+condor_q                    check condor jobs
+condor_rm USERNAME          remove all condor jobs (replace USERNAME with your username)
+condor_userprio             check condor priority (lower values are better)
+watch "condor_q | tail"     watch job status; use CRTL-C to stop
 ```
-You can remove all your condor jobs with this command (replace USERNAME with your username).
-```
-condor_rm USERNAME
-```
-You can check your condor priority with this command (assuming you have a job running).
-```
-condor_userprio
-```
-You can watch your condor job with this command.
-```
-watch "condor_q | tail"
-```
-Users with lower priority have their jobs done first. It is better to have a lower priority.
 
 Your condor jobs should produce log, stdout, and stderr files for each job in the logs directory. You can check these for errors.
 
-If your jobs complete successfully, the jobs will output root files to the condor directory. You can add them together using hadd.
+If your jobs complete successfully, the jobs will output root files to the condor directory. We have a script called processResults.sh to hadd the output files, which adds the root histograms together and produce one file. The script required a name for the jobs, such as the sample name(s).
+
+
 ```
-mkdir myhistos
-mv *.root myhistos
-hadd result.root myhistos/*.root
+./processResults.sh ZJetsToNuNu 
 ```
 
-Now you can copy this file to the Tools directory and run makePlots.
-```
-cp result.root $CMSSW_BASE/src/ZInvisible/Tools
-cd $CMSSW_BASE/src/ZInvisible/Tools
-make -j8
-./makePlots -f -O result.root
-```
-This should generate some pdf and png files, which you may rsync and view as desired.
+The script processResults.sh will 
+- create a directory with the name you provide, the date, and a version number for that date (1,2,3...).
+- move the root files there and hadd them (checking for broken files)
+- copy the resulting file to ZInvisible/Tools
+- run MakePlots on the resulting histogram 
+
+This should generate some pdf and png files in the ZInvisible/Tools/plots directory, which you may rsync and view as desired.
 
 
 ## La Fin
+
 If everything has worked up to this point, you have arrived at The End. You will go far, my friend. Otherwise, don't worry. Keep trying and contact an expert if you cannot resolve the issues. Feel free to post issues on the issues page of this repository. Also, you are welcome to help solve the current issues if you have time.
+
 
 
