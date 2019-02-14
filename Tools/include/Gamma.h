@@ -154,24 +154,24 @@ namespace plotterFunctions
         if (gammaLVecRecoEta->size() != tightPhotonID.size())     passTest2 = false;
         if (debug || !passTest2) // print debugging statements
         {
-          printf("gammaLVecGen gammaLVecReco gammaLVecRecoEta loosePhotonID tightPhotonID: %d | %d == %d == %d %d --- %s, %s\n", \
+          //printf("gammaLVecGen gammaLVecReco gammaLVecRecoEta loosePhotonID tightPhotonID: %d | %d == %d == %d %d --- %s, %s\n", \
             int(gammaLVecGen->size()), int(gammaLVecReco->size()), int(gammaLVecRecoEta->size()), int(loosePhotonID.size()), int(tightPhotonID.size()), \
             passTest1 ? "passTest1" : "failTest1", passTest2 ? "passTest2" : "failTest2");
         }
         if (!passTest2)
         {
-          // we should probably throw an exception here
-          printf(" - ERROR in include/Gamma.h: TLorentzVector gammaLVecRecoEta for reco photons does not have the same length as one or more photon ntuple vectors.\n");
-          printf(" - Set debug=true in include/Gamma.h for more information.\n");
-          // throw exception
-          try
-          {
-            throw 20;
-          }
-          catch (int e)
-          {
-            std::cout << "Exception: TLorentzVector photonLVecRecoEta for reco photons does not have the same length as one or more photon ntuple vectors." << std::endl;
-          }
+          // // we should probably throw an exception here
+          // printf(" - ERROR in include/Gamma.h: TLorentzVector gammaLVecRecoEta for reco photons does not have the same length as one or more photon ntuple vectors.\n");
+          // printf(" - Set debug=true in include/Gamma.h for more information.\n");
+          // // throw exception
+          // try
+          // {
+          //   throw 20;
+          // }
+          // catch (int e)
+          // {
+          //   std::cout << "Exception: TLorentzVector photonLVecRecoEta for reco photons does not have the same length as one or more photon ntuple vectors." << std::endl;
+          // }
         }
 
         //Select reco photons within the ECAL acceptance region and Pt > 200 GeV 

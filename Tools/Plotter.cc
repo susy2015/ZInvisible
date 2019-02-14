@@ -737,7 +737,7 @@ void Plotter::saveHists()
                     TDirectory* mydir = fout_->GetDirectory(dirname.c_str());
                     if(mydir == 0)
                     {
-                        std::cout << "Creating directory " << dirname << " in the root file" << std::endl;
+                        //std::cout << "Creating directory " << dirname << " in the root file" << std::endl;
                         mydir = fout_->mkdir(dirname.c_str(),dirname.c_str());
                     }
                     mydir->cd();
