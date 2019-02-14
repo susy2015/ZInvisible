@@ -1,56 +1,35 @@
 # ZInvisible
 
+## Setup Other Repos
 
-## Download
+First follow the instructions here: https://github.com/susy2015/SusyAnaTools#instructions. Once you are done, you should have a CMSSW area setup that contains the TopTagger repo and the SusyAnaTools repo.
 
-Checkout a CMSSW 9_X_X release of 9_3_3 or later (including 9_4_X, but not 10_X_X_).
+
+## ZInvisible Repo
+
+Go your CMSSW area which you should have already setup (see https://github.com/susy2015/SusyAnaTools#instructions). We recommend using CMSSW_10_2_9, which has support for uproot. The command cmsenv will need to be run during every new terminal session.
+
+WARNING: It is unwise to rename the path of your CMSSW area (e.g. any directory in your path before the CMSSW_10_2_9 directory) after checking out a CMSSW release. It will cause things to break because CMSSW_BASE will still be set to the old directory name.
+
 ```
-cmsrel CMSSW_9_3_3
-cd CMSSW_9_3_3/src
+cd CMSSW_10_2_9
 cmsenv
 ```
 
-The command `cmsenv` will need to be run from this area every time that you login. Make sure that the command `cmsenv` worked by checking the environment variable CMSSW_BASE. 
-```
-echo $CMSSW_BASE
-```
-The result should be the path of your CMSSW area.
-```
-cmslpc23.fnal.gov src $ echo $CMSSW_BASE
-/uscms_data/d3/caleb/SUSY_Analysis/CMSSW_9_3_3
-```
-If CMSSW_BASE is empty, then `cmsenv` did not work. You can try doing `cmsenv` again from the directory CMSSW_9_3_3/src. Also, as Chris and Caleb have discovered, it is unwise to rename the directories of your working area after checking out a CMSSW release. It will cause things to break because CMSSW_BASE will still be set to the old directory name.
-
-Clone the following repositories
+Checkout and compile the ZInvisible repository.
 
 ```
+cd $CMSSW_BASE/src
 git clone git@github.com:susy2015/ZInvisible.git
-git clone git@github.com:susy2015/SusyAnaTools.git
-git clone git@github.com:susy2015/TopTagger.git
 ```
-
-For the ZInvisible estimation, we are currently using
-
-* the master branch of the ZInvisible repository
-* the CastTopTaggerInputsAsDoubles branch of the SusyAnaTools repository
-* the master branch of the TopTagger repository
-* ntuples with values stored as doubles
-
-The ntuples used in our analysis are being changed from doubles to floats. At the moment double ntuples are available. When float ntuples become available, we will switch to the master branch of SusyAnaTools.
 
 ## Setup
 
 
-### SusyAnaTools
-Checkout the master branch.
-```
-cd $CMSSW_BASE/src/SusyAnaTools/Tools
-git branch -v
-```
-
 ### TopTagger
 
 Checkout the master branch of the TopTagger. Follow the TopTagger instructions for Standalone (edm free) install instructions within CMSSW [here](https://github.com/susy2015/TopTagger/tree/master/TopTagger#standalone-edm-free-install-instructions-within-cmssw), but exclude the commands you have already done (don't repeat CMSSW setup and cloning TopTagger repository).
+
 ```
 cd $CMSSW_BASE/src/TopTagger/TopTagger/test
 ./configure
@@ -65,7 +44,7 @@ cd $CMSSW_BASE/src/ZInvisible/Tools
 git fetch origin
 git checkout calebGJets
 ```
-Setup the TopTagger environment. This will need to be run after running `cmsenv` everytime 
+Setup the TopTagger environment. This will need to be run after running `cmsenv` in every new terminal session.
 ```
 source $CMSSW_BASE/src/TopTagger/TopTagger/test/taggerSetup.sh
 ```
