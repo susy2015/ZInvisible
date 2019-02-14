@@ -1,8 +1,14 @@
 # ZInvisible
 
+
 ## Setup Other Repos
 
 First follow the instructions here: https://github.com/susy2015/SusyAnaTools#instructions. Once you are done, you should have a CMSSW area setup that contains the TopTagger repo and the SusyAnaTools repo.
+
+
+## TopTagger
+
+If you want to install the TopTagger for Standalone (edm free), follow the instructions within CMSSW [here](https://github.com/susy2015/TopTagger/tree/master/TopTagger#standalone-edm-free-install-instructions-within-cmssw), but exclude the commands you have already done (don't repeat CMSSW setup and cloning TopTagger repository).
 
 
 ## ZInvisible Repo
@@ -25,45 +31,10 @@ git clone git@github.com:susy2015/ZInvisible.git
 
 ## Setup
 
-
-### TopTagger
-
-Checkout the master branch of the TopTagger. Follow the TopTagger instructions for Standalone (edm free) install instructions within CMSSW [here](https://github.com/susy2015/TopTagger/tree/master/TopTagger#standalone-edm-free-install-instructions-within-cmssw), but exclude the commands you have already done (don't repeat CMSSW setup and cloning TopTagger repository).
-
-```
-cd $CMSSW_BASE/src/TopTagger/TopTagger/test
-./configure
-make -j8
-```
-
-### ZInvisible
-
-Checkout the branch calebGJets.
-```
-cd $CMSSW_BASE/src/ZInvisible/Tools
-git fetch origin
-git checkout calebGJets
-```
 Setup the TopTagger environment. This will need to be run after running `cmsenv` in every new terminal session.
 ```
+cd ZInvisible/Tools
 source $CMSSW_BASE/src/TopTagger/TopTagger/test/taggerSetup.sh
-```
-Checkout a compatible version of the TopTagger. This will only need to be done once in this working area (unless you want to use a different TopTagger version). The commands `tcsh` and `bash` should only be used if you are using bash. This is because there is a `setup.csh` script, but there is no `setup.sh` available.
-
-If you are using bash, do run `tcsh` to swich to tcsh. Then do the following.
-```
-source $CMSSW_BASE/src/SusyAnaTools/Tools/setup.csh
-getTaggerCfg.sh -t MVAAK8_Tight_v1.2.1
-```
-If you are using bash run `bash` to return to bash.
-
-The flag `-t` is for tag. There is a `-o` flag for override for overriding an existing version of the TopTagger in your area.
-
-Check the TopTagger.cfg soft link with `ls -l TopTagger.cfg`. You should see the same version of the TopTagger that you checked out.
-
-```
-cmslpc23.fnal.gov Tools $ ls -l TopTagger.cfg
-lrwxrwxrwx 1 caleb us_cms 119 Jun 21 18:52 TopTagger.cfg -> /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/TopTaggerCfg-MVAAK8_Tight_v1.2.1/TopTagger.cfg
 ```
 
 Now compile.
@@ -73,20 +44,40 @@ mkdir obj
 make -j8
 ```
 
+Checkout the TopTagger config files. This will only need to be done once in this working area (unless you want to use a different TopTagger version).
+```
+source $CMSSW_BASE/src/TopTagger/TopTagger/scripts/getTaggerCfg.sh -t DeepCombined_Example_Res_T_DeepAK8_T_v1.0.0 -f TopTagger_DeepCombined.cfg
+```
+
+The flag `-t` is for tag, and flag `-f` is for the name of the softlink. There is a `-o` flag for overriding existing TopTagger config files in your area.
+
+Check the TopTagger.cfg soft link with `ls -l TopTagger_DeepCombined.cfg`. You should see the same version of the TopTagger that you checked out.
+
+Checkout the StopCfg config files, which will only need to be done once (unless you update to newer config files).
+
+```
+source $CMSSW_BASE/src/SusyAnaTools/Tools/scripts/getStopCfg.sh -t PostProcessedNanoAOD_v1.0.1
+```
+The flag `-t` is for tag. There is a `-o` flag for overriding existing TopTagger config files in your area.
+
 Copy some files from Caleb. The text files are used by makePlots, and the root files are used by moneyplot.
 ```
-cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/sampleSets.txt .
-cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/sampleCollections.txt .
 cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/syst_all.root .
 cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/ALL_approval_2Zjets.root .
 cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/result.root .
 ```
 
+## Running Scripts
+
 Now try running makePlots.
 ```
-./makePlots -D ZJetsToNuNu -E 1000
+./makePlots -D ZJetsToNuNu -E 1000 | grep -v LHAPDF
 ```
-The `-s` option is for only saving the root file and not making pdf/png files. You can remove the `-s` option to generate myriad pdf/png files. The `-D` option is for the dataset (ZJetsToNuNu). The `-E` option is for number of events to process (1000).
+
+The `-D` option is for the dataset (ZJetsToNuNu). The `-E` option is for number of events to process (1000).
+
+This script should output some pdf/png plots. The `-s` option can be used for only saving the root file and not making pdf/png files.
+
 You can also run over a specific HT sample range.
 ```
 ./makePlots -D ZJetsToNuNu_HT_100to200 -E 1000
@@ -122,7 +113,7 @@ You can also try running the moneyplot script.
 ```
 The moneyplot script should create some text, pdf, and png files that contain moneyplot in the name. The plots show the the central value of the ZInsibile background estimation for each of the 84 search bins and the accosiated uncertainties. The text files show the contents of each bin and the associated unertainties.
 
-### Condor
+## Condor
 
 If you have reached this point, you probably want to try running on condor. You can use mutliple MC and Data sets on condor, and you can run many jobs to run over a lot of data. Condor will return multiple root files. These can been added together and then plotted.
 
@@ -178,7 +169,7 @@ make -j8
 This should generate some pdf and png files, which you may rsync and view as desired.
 
 
-### La Fin
-If everything has worked up to this point, you have arrived at The End. You will go far, my friend. Otherwise, don't worry. Keep trying and contact an expert if you cannot resolve the issues. Feel free to post issues on the issues page. Also, you are welcome to help solve the current issues if you have time.
+## La Fin
+If everything has worked up to this point, you have arrived at The End. You will go far, my friend. Otherwise, don't worry. Keep trying and contact an expert if you cannot resolve the issues. Feel free to post issues on the issues page of this repository. Also, you are welcome to help solve the current issues if you have time.
 
 
