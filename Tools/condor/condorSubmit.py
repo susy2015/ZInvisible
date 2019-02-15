@@ -37,6 +37,9 @@ with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DeepCombined.
             mvaFileName_DeepCombined = line.split("=")[1].strip().strip("\"")
             break
 
+sampleSetsFile = "sampleSets_2016.cfg"
+sampleCollectionsFile = "sampleCollections.cfg"
+
 #here I hack in the tarball for GMP, this needs to be generalized to the other options 
 
 filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots", 
@@ -65,8 +68,8 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/ISRWeights.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_ISRJets.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.cfg",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.cfg"
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile,
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile
                      ]
 
 filestoTransferGMEP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/calcEffPhoton", 
@@ -89,8 +92,8 @@ filestoTransferGMEP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/calcEffPho
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/ISRWeights.root", 
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_ISRJets.root", 
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
-                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.cfg",
-                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.cfg"
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile,
+                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile
                       ]
 
 #go make plots!
@@ -112,8 +115,8 @@ x509userproxy = $ENV(X509_USER_PROXY)
 #Here is the configuration for the Data/MC validation of the TopTagger 
 filestoTransferTT  = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/simpleAnalyzer",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections.cfg",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets.cfg",
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile,
+                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile,
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/Legacy_TopTagger.cfg",
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_AllComb.cfg",
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg_trijetOnly.cfg",
@@ -316,7 +319,7 @@ else:
 nFilesPerJob = options.numfile
 
 fileParts = [submitFile]
-sc = SampleCollection("../sampleSets.cfg", "../sampleCollections.cfg")
+sc = SampleCollection("../" + sampleSetsFile, "../" + sampleCollectionsFile)
 datasets = []
 
 if options.dataCollections or options.dataCollectionslong:
