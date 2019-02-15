@@ -397,8 +397,9 @@ void Plotter::createHistsFromTuple()
             }
         }
 
+        bool keepGoing = false;
         // Do not process files if there are no histograms asking for it
-        if(!histsToFill.size() && !cutFlowsToFill.size())
+        if(!keepGoing && !histsToFill.size() && !cutFlowsToFill.size())
         {
             std::cout << "WARNING: skipping file summary " << file.tag << std::endl;
             continue;
