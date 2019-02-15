@@ -121,6 +121,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 
     getVectors                = new GetVectors;
     cleanedJets               = new CleanedJets;
+    runTopTagger              = new RunTopTagger;
     gamma                     = new plotterFunctions::Gamma;
     weights                   = new plotterFunctions::GenerateWeight;
     generatePhotonEfficiency  = new plotterFunctions::GeneratePhotonEfficiency;
@@ -175,6 +176,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {
     if(getVectors)                delete getVectors;
     if(cleanedJets)               delete cleanedJets;
+    if(runTopTagger)              delete runTopTagger;
     if(myBLV)                     delete myBLV;
     if(blvZinv)                   delete blvZinv;
     if(blvNoVeto)                 delete blvNoVeto;
@@ -218,6 +220,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*basicLepton);
     tr.registerFunction(*generatePhotonEfficiency);
     tr.registerFunction(*cleanedJets);
+    tr.registerFunction(*runTopTagger);
     tr.registerFunction(*myBLV);
     tr.registerFunction(*blvZinv);
     

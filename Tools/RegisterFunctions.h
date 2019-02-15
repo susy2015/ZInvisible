@@ -7,6 +7,7 @@
 #include <functional>
 #include "SusyAnaTools/Tools/GetVectors.h"
 #include "SusyAnaTools/Tools/CleanedJets.h"
+#include "SusyAnaTools/Tools/RunTopTagger.h"
 
 class NTupleReader;
 class BaselineVessel;
@@ -83,6 +84,7 @@ private:
     plotterFunctions::SystematicCalc *systematicCalc;
     GetVectors *getVectors;
     CleanedJets *cleanedJets;
+    RunTopTagger *runTopTagger;
     plotterFunctions::Gamma *gamma; //Andres
     PDFUncertainty *myPDFUnc;
     BTagCorrector *bTagCorrector;
