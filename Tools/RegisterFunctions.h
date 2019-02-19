@@ -71,28 +71,28 @@ private:
     BaselineVessel *blvZinvJEUDn;
     BaselineVessel *blvZinvMEUUp;
     BaselineVessel *blvZinvMEUDn;
-    plotterFunctions::GenerateWeight *weights;
-    plotterFunctions::GeneratePhotonEfficiency *generatePhotonEfficiency;
-    plotterFunctions::NJetWeight *njWeight;
-    plotterFunctions::BasicLepton *basicLepton;
-    plotterFunctions::LepInfo *lepInfo;
-    plotterFunctions::Fakebtagvectors *fakebtagvectors;
-    plotterFunctions::GetSearchBin *getSearchBin;
-    plotterFunctions::TriggerInfo *triggerInfo;
-    plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
-    plotterFunctions::SystematicPrep *systematicPrep;
-    plotterFunctions::SystematicCalc *systematicCalc;
-    GetVectors *getVectors;
-    CleanedJets *cleanedJets;
-    RunTopTagger *runTopTagger;
-    plotterFunctions::Gamma *gamma; //Andres
-    PDFUncertainty *myPDFUnc;
-    BTagCorrector *bTagCorrector;
-    ISRCorrector *ISRcorrector;
-    Pileup_Sys *pileup;
-    plotterFunctions::Taudiv *taudiv;
-    plotterFunctions::NJetAk8 *nJetAk8;
-    plotterFunctions::Ak8DrMatch *ak8DrMatch;
+    plotterFunctions::GenerateWeight            *weights;
+    plotterFunctions::GeneratePhotonEfficiency  *generatePhotonEfficiency;
+    plotterFunctions::NJetWeight                *njWeight;
+    plotterFunctions::BasicLepton               *basicLepton;
+    plotterFunctions::LepInfo                   *lepInfo;
+    plotterFunctions::Fakebtagvectors           *fakebtagvectors;
+    plotterFunctions::GetSearchBin              *getSearchBin;
+    plotterFunctions::TriggerInfo               *triggerInfo;
+    plotterFunctions::PrepareMiniTupleVars      *prepareMiniTupleVars;
+    plotterFunctions::SystematicPrep            *systematicPrep;
+    plotterFunctions::SystematicCalc            *systematicCalc;
+    GetVectors                                  *getVectors;
+    CleanedJets                                 *cleanedJets;
+    RunTopTagger                                *runTopTagger;
+    plotterFunctions::Gamma                     *gamma; //Andres
+    PDFUncertainty                              *myPDFUnc;
+    BTagCorrector                               *bTagCorrector;
+    ISRCorrector                                *ISRcorrector;
+    Pileup_Sys                                  *pileup;
+    plotterFunctions::Taudiv                    *taudiv;
+    plotterFunctions::NJetAk8                   *nJetAk8;
+    plotterFunctions::Ak8DrMatch                *ak8DrMatch;
 
 public:
     RegisterFunctionsNTuple(bool isCondor = false, std::string sbEra = "SB_v1_2017");
