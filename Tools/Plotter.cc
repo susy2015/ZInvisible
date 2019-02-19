@@ -397,7 +397,7 @@ void Plotter::createHistsFromTuple()
             }
         }
 
-        bool keepGoing = false;
+        bool keepGoing = true;
         // Do not process files if there are no histograms asking for it
         if(!keepGoing && !histsToFill.size() && !cutFlowsToFill.size())
         {
