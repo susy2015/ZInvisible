@@ -1,3 +1,7 @@
+// calcEffPhoton.C
+// - calculate photon acceptance and efficiency factors
+// - calculate (Data - Background) / MC weights for GJets and DYJetsToLL
+
 #include "SusyAnaTools/Tools/samples.h"
 #include "RegisterFunctions.h"
 #include "NTupleReader.h"
@@ -15,8 +19,6 @@
 
 int main(int argc, char* argv[])
 {
-    using namespace std;
-
     int opt;
     int option_index = 0;
     static struct option long_options[] = {
@@ -29,7 +31,7 @@ int main(int argc, char* argv[])
 
     bool runOnCondor = false;
     int nFiles = -1, startFile = 0, nEvts = -1;
-    string dataSets = "";
+    std::string dataSets = "";
 
     while((opt = getopt_long(argc, argv, "cD:N:M:E:", long_options, &option_index)) != -1)
     {
@@ -57,8 +59,8 @@ int main(int argc, char* argv[])
         }
     }
 
-    string filename = "effhists.root";
-    string sampleloc = AnaSamples::fileDir;
+    std::string filename = "effhists.root";
+    std::string sampleloc = AnaSamples::fileDir;
 
     //if running on condor override all optional settings
     if(runOnCondor)
@@ -73,7 +75,7 @@ int main(int argc, char* argv[])
     // follow this syntax; order matters for your arguments
     
     //SampleSet::SampleSet(std::string file, bool isCondor, double lumi)
-    AnaSamples::SampleSet        ss("sampleSets.cfg", runOnCondor, AnaSamples::luminosity);
+    AnaSamples::SampleSet        ss("sampleSets_2016.cfg", runOnCondor, AnaSamples::luminosity);
     
     //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples) : ss_(samples)
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
@@ -111,29 +113,37 @@ int main(int argc, char* argv[])
     rt.activateBranches(activeBranches);
 
     // --- new method: testing ---
-    map<string, vector<AnaSamples::FileSummary>> fileMap;
+    std::map<std::string, std::vector<AnaSamples::FileSummary>> fileMap;
     
-    std::cout << "dataSets = " << dataSets << std::endl;
+    std::cout << "User dataSets: " << dataSets << std::endl;
+    std::vector<std::string> dataSetList = {"ZJetsToNuNu", "DYJetsToLL", "GJets"}; 
     
-    if(ss[dataSets] != ss.null())
+    std::cout << "All dataSets: ";
+    for (const auto& dataSet : dataSetList)
     {
-        fileMap[dataSets] = {ss[dataSets]};
-        for(const auto& colls : ss[dataSets].getCollections())
+        std::cout << dataSet << " ";
+
+        if(ss[dataSet] != ss.null())
         {
-            fileMap[colls] = {ss[dataSets]};
+            fileMap[dataSet] = {ss[dataSet]};
+            for(const auto& colls : ss[dataSet].getCollections())
+            {
+                fileMap[colls] = {ss[dataSet]};
+            }
+        }
+        else if(sc[dataSet] != sc.null())
+        {
+            fileMap[dataSet] = {sc[dataSet]};
+            int i = 0;
+            for(const auto& fs : sc[dataSet])
+            {
+                fileMap[sc.getSampleLabels(dataSet)[i++]].push_back(fs);
+            }
         }
     }
-    else if(sc[dataSets] != sc.null())
-    {
-        fileMap[dataSets] = {sc[dataSets]};
-        int i = 0;
-        for(const auto& fs : sc[dataSets])
-        {
-            fileMap[sc.getSampleLabels(dataSets)[i++]].push_back(fs);
-        }
-    }
+    std::cout << std::endl;
     
-    set<AnaSamples::FileSummary> setFS;
+    std::set<AnaSamples::FileSummary> setFS;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) setFS.insert(fs);
     
     std::cout << "Running over files..." << std::endl;

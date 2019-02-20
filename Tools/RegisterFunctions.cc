@@ -318,32 +318,54 @@ RegisterFunctionsCalcEff::RegisterFunctionsCalcEff() : RegisterFunctions()
 {
     //AnaFunctions::prepareTopTagger();
 
-    myBLV       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
-    gamma       = new plotterFunctions::Gamma;
-    lepInfo     = new plotterFunctions::LepInfo;
-    basicLepton = new plotterFunctions::BasicLepton;
+    myBLV   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
+    blvZinv = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    getVectors                = new GetVectors;
+    cleanedJets               = new CleanedJets;
+    runTopTagger              = new RunTopTagger;
+    gamma                     = new plotterFunctions::Gamma;
+    basicLepton               = new plotterFunctions::BasicLepton;
+    generatePhotonEfficiency  = new plotterFunctions::GeneratePhotonEfficiency;
 }
 
 RegisterFunctionsCalcEff::~RegisterFunctionsCalcEff()
 {
     if(myBLV) delete myBLV;
+    if(blvZinv) delete blvZinv;
+    if(getVectors) delete getVectors;
+    if(cleanedJets) delete cleanedJets;
+    if(runTopTagger) delete runTopTagger;
     if(gamma) delete gamma;
-    if(lepInfo) delete lepInfo;
     if(basicLepton) delete basicLepton;
+    if(generatePhotonEfficiency) delete generatePhotonEfficiency;
 }
 
 void RegisterFunctionsCalcEff::registerFunctions(NTupleReader& tr)
 {
     //register functions with NTupleReader
     
+    // old version
+    
     // order matters
     // get photons and leptons
     // then do baseline
     // then do lepinfo
+    //tr.registerFunction(*gamma);
+    //tr.registerFunction(*basicLepton);
+    //tr.registerFunction(*myBLV);
+    //tr.registerFunction(*lepInfo);
+
+
+    // new version
+    tr.registerFunction(*getVectors);
     tr.registerFunction(*gamma);
     tr.registerFunction(*basicLepton);
+    tr.registerFunction(*generatePhotonEfficiency);
+    tr.registerFunction(*cleanedJets);
+    tr.registerFunction(*runTopTagger);
     tr.registerFunction(*myBLV);
-    tr.registerFunction(*lepInfo);
+    tr.registerFunction(*blvZinv);
+
 }
 
 void RegisterFunctionsCalcEff::activateBranches(std::set<std::string>& activeBranches)

@@ -71,6 +71,14 @@ private:
     BaselineVessel *blvZinvJEUDn;
     BaselineVessel *blvZinvMEUUp;
     BaselineVessel *blvZinvMEUDn;
+    GetVectors                                  *getVectors;
+    CleanedJets                                 *cleanedJets;
+    RunTopTagger                                *runTopTagger;
+    plotterFunctions::Gamma                     *gamma;
+    PDFUncertainty                              *myPDFUnc;
+    BTagCorrector                               *bTagCorrector;
+    ISRCorrector                                *ISRcorrector;
+    Pileup_Sys                                  *pileup;
     plotterFunctions::GenerateWeight            *weights;
     plotterFunctions::GeneratePhotonEfficiency  *generatePhotonEfficiency;
     plotterFunctions::NJetWeight                *njWeight;
@@ -82,14 +90,6 @@ private:
     plotterFunctions::PrepareMiniTupleVars      *prepareMiniTupleVars;
     plotterFunctions::SystematicPrep            *systematicPrep;
     plotterFunctions::SystematicCalc            *systematicCalc;
-    GetVectors                                  *getVectors;
-    CleanedJets                                 *cleanedJets;
-    RunTopTagger                                *runTopTagger;
-    plotterFunctions::Gamma                     *gamma; //Andres
-    PDFUncertainty                              *myPDFUnc;
-    BTagCorrector                               *bTagCorrector;
-    ISRCorrector                                *ISRcorrector;
-    Pileup_Sys                                  *pileup;
     plotterFunctions::Taudiv                    *taudiv;
     plotterFunctions::NJetAk8                   *nJetAk8;
     plotterFunctions::Ak8DrMatch                *ak8DrMatch;
@@ -121,10 +121,14 @@ public:
 class RegisterFunctionsCalcEff : public RegisterFunctions
 {
 private:
-    BaselineVessel *myBLV;
-    plotterFunctions::Gamma *gamma; //Caleb :-)
-    plotterFunctions::LepInfo *lepInfo;
-    plotterFunctions::BasicLepton *basicLepton;
+    BaselineVessel                              *myBLV;
+    BaselineVessel                              *blvZinv;
+    GetVectors                                  *getVectors;
+    CleanedJets                                 *cleanedJets;
+    RunTopTagger                                *runTopTagger;
+    plotterFunctions::Gamma                     *gamma;
+    plotterFunctions::BasicLepton               *basicLepton;
+    plotterFunctions::GeneratePhotonEfficiency  *generatePhotonEfficiency;
 
 public:
     RegisterFunctionsCalcEff();
