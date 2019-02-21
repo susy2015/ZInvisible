@@ -37,6 +37,10 @@ with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DeepCombined.
             mvaFileName_DeepCombined = line.split("=")[1].strip().strip("\"")
             break
 
+print "mvaFileName = {0}".format(mvaFileName)
+print "mvaFileName_Deep = {0}".format(mvaFileName_Deep)
+print "mvaFileName_DeepCombined = {0}".format(mvaFileName_DeepCombined)
+
 sampleSetsFile = "sampleSets_2016.cfg"
 sampleCollectionsFile = "sampleCollections.cfg"
 
@@ -51,9 +55,9 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight_allJets.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}, 
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_DeepCombined}, 
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}, 
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_DeepCombined}, 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DeepCombined.cfg",
@@ -68,16 +72,22 @@ filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/ISRWeights.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_ISRJets.root", 
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile,
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile,
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile
                      ]
+
+if mvaFileName:                 filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
+if mvaFileName_Deep:            filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}]
+if mvaFileName_DeepCombined:    filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_DeepCombined}]
+if sampleSetsFile:              filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile]
+if sampleCollectionsFile:       filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile]
 
 filestoTransferGMEP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/calcEffPhoton", 
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
-                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
-                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}, 
-                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_DeepCombined}, 
+                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}, 
+                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}, 
+                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_DeepCombined}, 
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg",
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DeepCombined.cfg",
@@ -92,9 +102,15 @@ filestoTransferGMEP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/calcEffPho
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/ISRWeights.root", 
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_ISRJets.root", 
                        environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
-                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile,
-                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile
+                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile,
+                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile
                       ]
+
+if mvaFileName:                 filestoTransferGMEP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
+if mvaFileName_Deep:            filestoTransferGMEP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}]
+if mvaFileName_DeepCombined:    filestoTransferGMEP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_DeepCombined}]
+if sampleSetsFile:              filestoTransferGMEP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile]
+if sampleCollectionsFile:       filestoTransferGMEP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile]
 
 #go make plots!
 submitFileGMP = """universe = vanilla
@@ -123,7 +139,7 @@ filestoTransferTT  = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/simpleAnaly
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg-MVAAK8_Tight_v1.2.1_dijetOnly.cfg",
                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
                       "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_ml.so.3.1",
-                      environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName},
+                      #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName},
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"TrainingOutput_dR20_pt30_depth12_500tree_2017_Feb16.model"},
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"weights-t2tt850-sm-baseline-nodphi-nomtb-hqu-08112016.xml"},
                       #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":"sdWTag_ttbarTraining_v0.xml"},
@@ -136,6 +152,8 @@ filestoTransferTT  = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/simpleAnaly
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
                       ]
+
+if mvaFileName: filestoTransferTT += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
 
 #go make TTopTagger plots!
 submitFileTT = """universe = vanilla
@@ -175,6 +193,8 @@ filestoTransferGTP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeTopPlot
                       environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                       environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
                       ]
+
+if mvaFileName: filestoTransferTT += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
 
 #print filestoTransferGTP
 
@@ -275,6 +295,7 @@ def makeExeAndFriendsTarrball(filestoTransfer, fname):
         #WORLDSWORSESOLUTIONTOAPROBLEM
         system("mkdir -p WORLDSWORSESOLUTIONTOAPROBLEM")
         for fn in filestoTransfer:
+            print "fn = {0}".format(fn)
             system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s" % fn)
         
         print "Create tarball {0}.tag.gz".format(fname)
@@ -353,8 +374,8 @@ for ds in datasets:
     print ds
     # s: file, n:name, e:nEvts
     for s, n, e in sc.sampleList(ds):
-        print "\t%s"%n
-        #print "\t{0} {1} {2}".format(s, n, e)
+        #print "\t%s"%n
+        print "\t{0} {1} {2}".format(s, n, e)
         try:
             f = open(s)
         except IOError:

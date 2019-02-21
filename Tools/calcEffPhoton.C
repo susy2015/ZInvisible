@@ -106,6 +106,12 @@ int main(int argc, char* argv[])
     TH1 *hPhotonAccPt_den = new TH1D("hPhotonAccPt_den", "hPhotonAccPt_den", 200, 0, 2000);
     TH1 *hPhotonEffPt_num = new TH1D("hPhotonEffPt_num", "hPhotonEffPt_num", 200, 0, 2000);
     TH1 *hPhotonEffPt_den = new TH1D("hPhotonEffPt_den", "hPhotonEffPt_den", 200, 0, 2000);
+    // Data
+    TH1 *hData_singleElectron_nJets = new TH1D("hData_singleElectron_nJets", "hData_singleElectron_nJets", 20, 0, 20);
+    TH1 *hData_singleMuon_nJets     = new TH1D("hData_singleMuon_nJets", "hData_singleMuon_nJets", 20, 0, 20);
+    TH1 *hData_singlePhoton_nJets   = new TH1D("hData_singlePhoton_nJets", "hData_singlePhoton_nJets", 20, 0, 20);
+
+    // MC
     
     RegisterFunctionsCalcEff rt;
 
@@ -116,7 +122,8 @@ int main(int argc, char* argv[])
     std::map<std::string, std::vector<AnaSamples::FileSummary>> fileMap;
     
     std::cout << "User dataSets: " << dataSets << std::endl;
-    std::vector<std::string> dataSetList = {"ZJetsToNuNu", "DYJetsToLL", "GJets"}; 
+    //std::vector<std::string> dataSetList = {"ZJetsToNuNu", "DYJetsToLL", "GJets"}; 
+    std::vector<std::string> dataSetList = {"TTGJets", "QCD", "Diboson", "Rare"}; 
     
     std::cout << "All dataSets: ";
     for (const auto& dataSet : dataSetList)
@@ -150,6 +157,7 @@ int main(int argc, char* argv[])
     int printInterval = 1000;
     for(const AnaSamples::FileSummary& file : setFS)
     {
+        std::cout << file.tag << std::endl;
         int fileCount = 0, startCount = 0;
         int NEvtsTotal = 0;
         file.readFileList(); //get file list
