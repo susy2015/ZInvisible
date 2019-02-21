@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
     };
 
     bool runOnCondor = false;
+    bool doLL        = true;
     bool doWeights = false;
     bool doLeptons = false;
     bool doPhotons = false;
@@ -321,6 +322,7 @@ int main(int argc, char* argv[])
 
     vector<Plotter::HistSummary> vh;
 
+    
     // Datasetsummaries we are using                                                                                                        
     // no weight (genWeight deals with negative weights); also add btag weights here                                                        
     Plotter::DatasetSummary dsData_SingleMuon("Data",         fileMap["Data_SingleMuon"], "passMuTrigger",   "");
@@ -353,6 +355,41 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
     std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
     
+    auto makePDS_DiLepton = [&](const std::string& cuts, const std::string& weights)
+    {
+        Plotter::DatasetSummary dsDY(     "DY",           fileMap["DYJetsToLL"],      cuts,   weights);
+        Plotter::DatasetSummary dsDYInc(  "DY Inc",       fileMap["IncDY"],           cuts,   weights);
+        Plotter::DatasetSummary dstt2l(   "t#bar{t}",     fileMap["TTbarNoHad"],      cuts,   weights);
+        Plotter::DatasetSummary dstW(     "Single t",     fileMap["SingleTopZinv"],   cuts,   weights);
+        Plotter::DatasetSummary dsttZ(    "t#bar{t}Z",    fileMap["TTZ"],             cuts,   weights);
+        Plotter::DatasetSummary dsVV(     "Diboson",      fileMap["Diboson"],         cuts,   weights);
+        Plotter::DatasetSummary dsRare(   "Rare ",        fileMap["Rare"],            cuts,   weights);
+        std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dsDY, dsDYInc}, {dstt2l}, {dstW}, {dsttZ, dsVV, dsRare}};
+        return stack_MC;
+    };
+    
+    if (doLL)
+    {
+        Plotter::DatasetSummary dsData_SingleMuon_LowDM("Data", fileMap["Data_SingleMuon"],  "passBaselineLowDM;passMuZinvSel",  "");
+        Plotter::DatasetSummary dsData_SingleMuon_HighDM("Data", fileMap["Data_SingleMuon"], "passBaselineHighDM;passMuZinvSel", "");
+        std::vector<std::vector<Plotter::DatasetSummary>> Stack_MC_Muon_LowDM = makePDS_DiLepton("passBaselineLowDM;passMuZinvSel","");
+        std::vector<std::vector<Plotter::DatasetSummary>> Stack_MC_Muon_HighDM = makePDS_DiLepton("passBaselineHighDM;passMuZinvSel","");
+        
+        Plotter::DataCollection dcData_SingleMuon_LowDM_nj(  "data",   "cntNJetsPt30Eta24Zinv", {dsData_SingleMuon_LowDM});
+        Plotter::DataCollection dcData_SingleMuon_HighDM_nj( "data",   "cntNJetsPt30Eta24Zinv", {dsData_SingleMuon_HighDM});
+        Plotter::DataCollection dcMC_LowDM_nj(               "stack",  "cntNJetsPt30Eta24Zinv", Stack_MC_Muon_LowDM);
+        Plotter::DataCollection dcMC_HighDM_nj(              "stack",  "cntNJetsPt30Eta24Zinv", Stack_MC_Muon_HighDM);
+        
+        Plotter::DataCollection dcData_SingleMuon_LowDM_met(  "data",   "metWithPhoton", {dsData_SingleMuon_LowDM});
+        Plotter::DataCollection dcData_SingleMuon_HighDM_met( "data",   "metWithPhoton", {dsData_SingleMuon_HighDM});
+        Plotter::DataCollection dcMC_LowDM_met(               "stack",  "metWithPhoton", Stack_MC_Muon_LowDM);
+        Plotter::DataCollection dcMC_HighDM_met(              "stack",  "metWithPhoton", Stack_MC_Muon_HighDM);
+                
+        vh.push_back(PHS("DataMC_SingleMuon_LowDM_nj",  {dcData_SingleMuon_LowDM_nj,  dcMC_LowDM_nj}, {1, 2}, "",  30,  0,  30, true, false, label_nj, "Events"));
+        vh.push_back(PHS("DataMC_SingleMuon_HighDM_nj", {dcData_SingleMuon_HighDM_nj, dcMC_HighDM_nj}, {1, 2}, "", 30,  0,  30, true, false, label_nj, "Events"));
+        vh.push_back(PHS("DataMC_SingleMuon_LowDM_met", {dcData_SingleMuon_LowDM_met, dcMC_LowDM_met}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_met, "Events"));
+        vh.push_back(PHS("DataMC_SingleMuon_LowDM_met", {dcData_SingleMuon_LowDM_met, dcMC_LowDM_met}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_met, "Events"));
+    }
  
     //lambda is your friend
     //for electrons do not use muTrigWgt (it is 0.0 for electrons)
@@ -360,6 +397,7 @@ int main(int argc, char* argv[])
     auto makePDSElec   = [&](const std::string& label) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
     auto makePDSPhoton = [&](const std::string& label, const std::string& sample="GJets", const std::string& cuts="passPhotonSelection;HTZinv>200") {return Plotter::DatasetSummary("GJets "+label, fileMap[sample], cuts, "photonAcceptanceWeight;photonEfficiencyPtWeight;photonCrossSectionRatio"); };
     
+    /*
     // acceptance
     // muons
     Plotter::DataCollection dcMC_ngenMu(            "single", "ngenMu",                     {dsDY_mu});
@@ -383,6 +421,8 @@ int main(int argc, char* argv[])
     Plotter::DataCollection dcMC_genElecEta(          "single", "genElec(eta)",             {dsDY_elec});
     Plotter::DataCollection dcMC_genElecInAccEta(     "single", "genElecInAcc(eta)",        {dsDY_elec});
     Plotter::DataCollection dcMC_genMatchElecInAccEta("single", "genMatchElecInAcc(eta)",   {dsDY_elec});
+    */
+
     // magic lambda functions... give it pt, eta, etc
     // leptons
     // acceptance = genInAcc / gen (acceptance / MC)
@@ -429,10 +469,12 @@ int main(int argc, char* argv[])
     // photons acc: gammaLVecGenEtaPt
     // photons reco: gammaLVecGenRecoMatched
     // photons iso: gammaLVecGenIso
+    /*
     Plotter::DataCollection dcMC_genPhotonPt(     "single", "gammaLVecGenEtaPt(pt)",      {dsPhoton});
     Plotter::DataCollection dcMC_genPhotonEta(    "single", "gammaLVecGenEtaPt(eta)",     {dsPhoton});
     Plotter::DataCollection dcMC_matchedPhotonPt( "single", "promptPhotons(pt)",        {dsPhoton});
     Plotter::DataCollection dcMC_matchedPhotonEta("single", "promptPhotons(eta)",       {dsPhoton});
+    */
 
     // tops
     Plotter::DataCollection dcMC_T1tttt("single",  "genTops(pt)", {dsT1tttt_gluino1200_lsp800, dsT1tttt_gluino1500_lsp100, dsT1tttt_gluino2000_lsp100});
