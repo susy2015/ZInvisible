@@ -42,14 +42,13 @@ namespace plotterFunctions
         TRandom3 *tr3;
         void lepInfo(NTupleReader& tr)
         {
-            const auto& genDecayPdgIdVec                    = tr.getVec<int>("genDecayPdgIdVec");
-            const auto& genDecayIdxVec                      = tr.getVec<int>("genDecayIdxVec");
-            const auto& genDecayMomIdxVec                   = tr.getVec<int>("genDecayMomIdxVec");
+            const auto& genDecayPdgIdVec                    = tr.getVec<int>("GenPart_pdgId");
+            //const auto& genDecayIdxVec                      = tr.getVec<int>("genDecayIdxVec");
+            //const auto& genDecayMomIdxVec                   = tr.getVec<int>("genDecayMomIdxVec");
             const auto& genDecayLVec                        = tr.getVec<TLorentzVector>("GenPartTLV");
             const auto& muonsLVec                           = tr.getVec<TLorentzVector>("MuonTLV");
             const auto& muonsRelIso                         = tr.getVec<data_t>("Muon_miniPFRelIso_all");
-            const auto& muonsMiniIso                        = tr.getVec<data_t>("Muon_miniIsoId");
-            const auto& W_emuVec                            = tr.getVec<int>("W_emuVec");
+            //const auto& W_emuVec                            = tr.getVec<int>("W_emuVec");
             const auto& muonsCharge                         = tr.getVec<int>("Muon_charge");
             const auto& jetsLVec                            = tr.getVec<TLorentzVector>("JetTLV");
             //const auto& recoJetschargedHadronEnergyFraction = tr.getVec<data_t>("recoJetschargedHadronEnergyFraction");
@@ -59,28 +58,24 @@ namespace plotterFunctions
             const auto& cutMuVec                            = tr.getVec<TLorentzVector>("cutMuVec"); 
             const auto& cutMuVecRecoOnly                    = tr.getVec<TLorentzVector>("cutMuVecRecoOnly"); 
             const auto& cutMuCharge                         = tr.getVec<data_t>("cutMuCharge"); 
-            const auto& cutMuActivity                       = tr.getVec<data_t>("cutMuActivity"); 
+            //const auto& cutMuActivity                       = tr.getVec<data_t>("cutMuActivity"); 
             const auto& cutMuSummedCharge                   = tr.getVar<int>("cutMuSummedCharge"); 
             const auto& nTriggerMuons                       = tr.getVar<int>("nTriggerMuons"); 
 
             const auto& cutElecVec                          = tr.getVec<TLorentzVector>("cutElecVec"); 
             const auto& cutElecVecRecoOnly                  = tr.getVec<TLorentzVector>("cutElecVecRecoOnly"); 
             const auto& cutElecCharge                       = tr.getVec<data_t>("cutElecCharge"); 
-            const auto& cutElecActivity                     = tr.getVec<data_t>("cutElecActivity"); 
+            //const auto& cutElecActivity                     = tr.getVec<data_t>("cutElecActivity"); 
             const auto& cutElecSummedCharge                 = tr.getVar<int>("cutElecSummedCharge"); 
 
-            const std::vector<data_t>& muonspfActivity      = tr.getVec<data_t>("muonspfActivity");
-            const std::vector<data_t>& elespfActivity       = tr.getVec<data_t>("elespfActivity");
-            const std::vector<data_t>& W_emu_pfActivityVec  = tr.getVec<data_t>("W_emu_pfActivityVec");
+            //const std::vector<data_t>& muonspfActivity      = tr.getVec<data_t>("muonspfActivity");
+            //const std::vector<data_t>& elespfActivity       = tr.getVec<data_t>("elespfActivity");
+            //const std::vector<data_t>& W_emu_pfActivityVec  = tr.getVec<data_t>("W_emu_pfActivityVec");
 
             //const data_t& ht                              = tr.getVar<data_t>("ht");
-            const auto& met                                 = tr.getVar<data_t>("met");
-            const auto& metphi                              = tr.getVar<data_t>("metphi");
+            const auto& met                                 = tr.getVar<data_t>("MET_pt");
+            const auto& metphi                              = tr.getVar<data_t>("MET_phi");
 
-            const std::vector<TLorentzVector, std::allocator<TLorentzVector> > elesLVec = tr.getVec<TLorentzVector>("elesLVec");
-            const auto& elesMiniIso    = tr.getVec<data_t>("elesMiniIso");
-            const auto& elesCharge     = tr.getVec<data_t>("elesCharge");
-            const auto& elesisEB       = tr.getVec<unsigned int>("elesisEB");
 
             //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
 
@@ -105,10 +100,10 @@ namespace plotterFunctions
             auto* genMatchElecInAccRes      = new std::vector<data_t>();
             auto* genElecInAcc              = new std::vector<TLorentzVector>();
             auto* genElec                   = new std::vector<TLorentzVector>();
-            auto* genMatchIsoElecInAccAct   = new std::vector<data_t>();
-            auto* genMatchElecInAccAct      = new std::vector<data_t>();
-            auto* genElecInAccAct           = new std::vector<data_t>();
-            auto* genElecAct                = new std::vector<data_t>();
+            //auto* genMatchIsoElecInAccAct   = new std::vector<data_t>();
+            //auto* genMatchElecInAccAct      = new std::vector<data_t>();
+            //auto* genElecInAccAct           = new std::vector<data_t>();
+            //auto* genElecAct                = new std::vector<data_t>();
 
             auto* genMatchIsoMuInAcc        = new std::vector<TLorentzVector>();
             auto* genMatchMuInAcc           = new std::vector<const TLorentzVector*>();
@@ -116,71 +111,10 @@ namespace plotterFunctions
             //auto* genMuInAcc                = new std::vector<const TLorentzVector*>();
             auto* genMuInAcc                = new std::vector<TLorentzVector>();
             auto* genMu                     = new std::vector<const TLorentzVector*>();
-            auto* genMatchIsoMuInAccAct     = new std::vector<data_t>();
-            auto* genMatchMuInAccAct        = new std::vector<data_t>();
-            auto* genMuInAccAct             = new std::vector<data_t>();
-            auto* genMuAct                  = new std::vector<data_t>();
-            
-            // Registered in BasicLepton.h 
-            //auto* cutMuVec                  = new std::vector<TLorentzVector>();
-            //auto* cutMuCharge               = new std::vector<data_t>();
-            //auto* cutMuActivity             = new std::vector<data_t>();
-            //
-            //auto* cutElecVec                = new std::vector<TLorentzVector>();
-            //auto* cutElecCharge             = new std::vector<data_t>();
-            //auto* cutElecActivity           = new std::vector<data_t>();
-
-            //std::vector<TLorentzVector> cutMuVecRecoOnly;
-            //std::vector<TLorentzVector> cutElecVecRecoOnly;
-            
-            //std::vector<TLorentzVector>* Zrecopt = new std::vector<TLorentzVector>();
-
-            // Registered in BasicLepton.h 
-            
-            // //muon selections
-            // int cutMuSummedCharge = 0;
-            // int nTriggerMuons = 0;
-
-            // for(int i = 0; i < muonsLVec.size(); ++i)
-            // {
-            //     if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
-            //     {
-            //         cutMuVecRecoOnly.push_back(muonsLVec[i]);
-            //     }
-            //     if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
-            //     {
-            //         if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
-            //         {
-            //             if(nTriggerMuons == 0 && muonsLVec[i].Pt() > 17)  nTriggerMuons++;
-            //             else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
-            //         }
-            //         cutMuVec->push_back(muonsLVec[i]);
-            //         //std::cout<<"cutMuVec PT "<<muonsLVec[i].Pt()<<std::endl; 
-            //         cutMuCharge->push_back(muonsCharge[i]);
-            //         cutMuActivity->push_back(muonspfActivity[i]);
-            //         if(muonsCharge[i] > 0) cutMuSummedCharge++;
-            //         else                   cutMuSummedCharge--;
-            //     }
-            // }
-            // //std::cout<<"New Muon Selection "<<(*cutMuVec).size()<<std::endl;
-            // //electron selection
-            // int cutElecSummedCharge = 0;
-            // for(int i = 0; i < elesLVec.size(); ++i)
-            // {
-            //     if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr)) // emulates electrons with pt but no iso requirements.
-            //     {
-            //         cutElecVecRecoOnly.push_back(elesLVec[i]);
-            //     }
-
-            //     if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
-            //     {
-            //         cutElecVec->push_back(elesLVec[i]);
-            //         cutElecCharge->push_back(elesCharge[i]);
-            //         cutElecActivity->push_back(AnaFunctions::getElectronActivity(elesLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, AnaConsts::elesAct));
-            //         if(elesCharge[i] > 0) cutElecSummedCharge++;
-            //         else                  cutElecSummedCharge--;
-            //     }
-            // }
+            //auto* genMatchIsoMuInAccAct     = new std::vector<data_t>();
+            //auto* genMatchMuInAccAct        = new std::vector<data_t>();
+            //auto* genMuInAccAct             = new std::vector<data_t>();
+            //auto* genMuAct                  = new std::vector<data_t>();
 
 
             //mu45 non-iso trigger emulation
@@ -209,38 +143,39 @@ namespace plotterFunctions
             // electron trigger of 33 GeV
             const double   minMuPt = 20.0,   highMuPt = 50.0;
             const double minElecPt = 20.0, highElecPt = 50.0;
-            double nuPt1 = -999.9, nuPt2 = -999.9;
+            double muPt1 = -999.9, muPt2 = -999.9;
 
             // gen tops
-            std::vector<TLorentzVector>* genTops = nullptr;
+            //std::vector<TLorentzVector>* genTops = nullptr;
             //Gen info parsing
             if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
             {
                 // gen tops
-                genTops = new std::vector<TLorentzVector>(ttUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
+                //genTops = new std::vector<TLorentzVector>(ttUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
 
                 for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
                 {
                     // genHt
                     if((abs(genDecayPdgIdVec[i]) != 0 &&  abs(genDecayPdgIdVec[i]) < 6) || (abs(genDecayPdgIdVec[i]) > 100 && abs(genDecayPdgIdVec[i]) < 10000)) genHt += genDecayLVec[i].Pt();
 
-                    if(genDecayPdgIdVec[i] ==  13) nuPt1 = genDecayLVec[i].Pt(); // mu+
-                    if(genDecayPdgIdVec[i] == -13) nuPt2 = genDecayLVec[i].Pt(); // mu-
+                    if(genDecayPdgIdVec[i] ==  13) muPt1 = genDecayLVec[i].Pt(); // mu+
+                    if(genDecayPdgIdVec[i] == -13) muPt2 = genDecayLVec[i].Pt(); // mu-
                 }
 
-                for(int index = 0; index < W_emuVec.size(); ++index)
+                //for(int index = 0; index < W_emuVec.size(); ++index)
+                for (int i = 0; i < genDecayPdgIdVec.size(); ++i)
                 {
-                    int i = W_emuVec[index];
+                    //int i = W_emuVec[index];
 
                     //muon efficiency and acceptance
                     if(abs(genDecayPdgIdVec[i]) == 13)
                     {
                         genMu->push_back(&genDecayLVec[i]);
-                        genMuAct->push_back(W_emu_pfActivityVec[index]);
+                        //genMuAct->push_back(W_emu_pfActivityVec[index]);
                         if(AnaFunctions::passMuonAccOnly(genDecayLVec[i], AnaConsts::muonsMiniIsoArr) && genDecayLVec[i].Pt() > minMuPt)
                         {
                             genMuInAcc->push_back(genDecayLVec[i]);
-                            genMuInAccAct->push_back(genMuAct->back());
+                            //genMuInAccAct->push_back(genMuAct->back());
                             double dRMin = 999.9;
                             double matchPt = -999.9;
                             for(int j = 0; j < cutMuVecRecoOnly.size(); ++j)
@@ -256,7 +191,7 @@ namespace plotterFunctions
                             if(dRMin < 0.02)
                             {
                                 genMatchMuInAcc->push_back(&genDecayLVec[i]);
-                                genMatchMuInAccAct->push_back(genMuAct->back());
+                                //genMatchMuInAccAct->push_back(genMuAct->back());
                                 genMatchMuInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
                             }
 
@@ -273,7 +208,7 @@ namespace plotterFunctions
                             if(dRMin < 0.02)
                             {
                                 genMatchIsoMuInAcc->push_back(genDecayLVec[i]);
-                                genMatchIsoMuInAccAct->push_back(genMuAct->back());
+                                //genMatchIsoMuInAccAct->push_back(genMuAct->back());
                             }
                         }
                     }
@@ -282,11 +217,11 @@ namespace plotterFunctions
                     if(abs(genDecayPdgIdVec[i]) == 11)
                     {
                         genElec->push_back(genDecayLVec[i]);
-                        genElecAct->push_back(W_emu_pfActivityVec[index]);
+                        //genElecAct->push_back(W_emu_pfActivityVec[index]);
                         if(AnaFunctions::passElectronAccOnly(genDecayLVec[i], AnaConsts::elesMiniIsoArr) && genDecayLVec[i].Pt() > minElecPt)
                         {
                             genElecInAcc->push_back(genDecayLVec[i]);
-                            genElecInAccAct->push_back(genElecAct->back());
+                            //genElecInAccAct->push_back(genElecAct->back());
                             //printf("genElecInAcc p_t = %f\n", genDecayLVec[i].Pt());
                             double dRMin = 999.9;
                             double matchPt = -999.9;
@@ -303,7 +238,7 @@ namespace plotterFunctions
                             if(dRMin < 0.02)
                             {
                                 genMatchElecInAcc->push_back(genDecayLVec[i]);
-                                genMatchElecInAccAct->push_back(genElecAct->back());
+                                //genMatchElecInAccAct->push_back(genElecAct->back());
                                 genMatchElecInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
                             }
 
@@ -320,17 +255,17 @@ namespace plotterFunctions
                             if(dRMin < 0.02)
                             {
                                 genMatchIsoElecInAcc->push_back(genDecayLVec[i]);
-                                genMatchIsoElecInAccAct->push_back(genElecAct->back());
+                                //genMatchIsoElecInAccAct->push_back(genElecAct->back());
                             }
                         }
                     }
                 }
             }
             // create empty vector if it is nullptr
-            if (genTops == nullptr)
-            {
-                genTops = new std::vector<TLorentzVector>();
-            }
+            //if (genTops == nullptr)
+            //{
+            //    genTops = new std::vector<TLorentzVector>();
+            //}
 
             data_t genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
             int nZ = 0;
@@ -350,17 +285,19 @@ namespace plotterFunctions
                         genZmass = genDecayLVec[j].M();
                     }
                 }
-                if(nZ > 1) std::cout << "!!!WARNING MORE THAN 1 Z FOUND!!!" << std::endl;
+                std::cout << "nZ = " << nZ;
+                if(nZ > 1) std::cout << " - WARNING: MORE THAN 1 Z FOUND!!!";
+                std::cout << std::endl;
 
-                if(&W_emuVec != nullptr)
-                {
-                    if(W_emuVec.size() == 0) pdgIdZDec = 15;
-                    else if(W_emuVec.size() == 2)
-                    {
-                        if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 11) pdgIdZDec = 11;
-                        else if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 13) pdgIdZDec = 13;
-                    }
-                }
+                // if(&W_emuVec != nullptr)
+                // {
+                //     if(W_emuVec.size() == 0) pdgIdZDec = 15;
+                //     else if(W_emuVec.size() == 2)
+                //     {
+                //         if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 11) pdgIdZDec = 11;
+                //         else if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 13) pdgIdZDec = 13;
+                //     }
+                // }
 
             }
 
@@ -579,28 +516,28 @@ namespace plotterFunctions
             const auto& genMu_test = tr.getVec<const TLorentzVector*>("genMu");
             tr.registerDerivedVar("ngenMu", static_cast<data_t>(genMu->size()));
             tr.registerDerivedVec("genMuInAcc", genMuInAcc);
-            tr.registerDerivedVec("genMuAct", genMuAct);
+            //tr.registerDerivedVec("genMuAct", genMuAct);
             tr.registerDerivedVar("ngenMuInAcc", static_cast<data_t>(genMuInAcc->size()));
-            tr.registerDerivedVec("genMuInAccAct", genMuInAccAct);
+            //tr.registerDerivedVec("genMuInAccAct", genMuInAccAct);
             tr.registerDerivedVec("genMatchMuInAcc", genMatchMuInAcc);
             tr.registerDerivedVec("genMatchMuInAccRes", genMatchMuInAccRes);
             tr.registerDerivedVec("genMatchIsoMuInAcc", genMatchIsoMuInAcc);
             tr.registerDerivedVar("ngenMatchMuInAcc", static_cast<data_t>(genMatchMuInAcc->size()));
-            tr.registerDerivedVec("genMatchMuInAccAct", genMatchMuInAccAct);
-            tr.registerDerivedVec("genMatchIsoMuInAccAct", genMatchIsoMuInAccAct);
+            //tr.registerDerivedVec("genMatchMuInAccAct", genMatchMuInAccAct);
+            //tr.registerDerivedVec("genMatchIsoMuInAccAct", genMatchIsoMuInAccAct);
 
             tr.registerDerivedVec("genElec", genElec);
             tr.registerDerivedVar("ngenElec", static_cast<data_t>(genElec->size()));
             tr.registerDerivedVec("genElecInAcc", genElecInAcc);
-            tr.registerDerivedVec("genElecAct", genElecAct);
+            //tr.registerDerivedVec("genElecAct", genElecAct);
             tr.registerDerivedVar("ngenElecInAcc", static_cast<data_t>(genElecInAcc->size()));
-            tr.registerDerivedVec("genElecInAccAct", genElecInAccAct);
+            //tr.registerDerivedVec("genElecInAccAct", genElecInAccAct);
             tr.registerDerivedVec("genMatchElecInAcc", genMatchElecInAcc);
             tr.registerDerivedVec("genMatchElecInAccRes", genMatchElecInAccRes);
             tr.registerDerivedVec("genMatchIsoElecInAcc", genMatchIsoElecInAcc);
             tr.registerDerivedVar("ngenMatchElecInAcc", static_cast<data_t>(genMatchElecInAcc->size()));
-            tr.registerDerivedVec("genMatchElecInAccAct", genMatchElecInAccAct);
-            tr.registerDerivedVec("genMatchIsoElecInAccAct", genMatchIsoElecInAccAct);
+            //tr.registerDerivedVec("genMatchElecInAccAct", genMatchElecInAccAct);
+            //tr.registerDerivedVec("genMatchIsoElecInAccAct", genMatchIsoElecInAccAct);
 
             tr.registerDerivedVar("genZPt", genZPt);
             tr.registerDerivedVar("genZEta", genZEta);
@@ -622,7 +559,7 @@ namespace plotterFunctions
 
             tr.registerDerivedVar("Zrecopt", Zrecoptpt);
             // gen tops
-            tr.registerDerivedVec("genTops", genTops);
+            //tr.registerDerivedVec("genTops", genTops);
 
         }
 
