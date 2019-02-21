@@ -150,7 +150,7 @@ namespace plotterFunctions
             //std::vector<TLorentzVector>* genTops = nullptr;
             //Gen info parsing
             
-            int GenPartMask = 0x2100;
+            const int GENPARTMASK = 0x2100;
             
             if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
             {
@@ -170,8 +170,8 @@ namespace plotterFunctions
                 for (int i = 0; i < genDecayPdgIdVec.size(); ++i)
                 {
                     //int i = W_emuVec[index];
-                    int maskedStatusFlag = (GenPart_statusFlags[i] & GenPartMask);
-                    bool isGoodGenPart = (maskedStatusFlag == GenPartMask);
+                    int maskedStatusFlag = (GenPart_statusFlags[i] & GENPARTMASK);
+                    bool isGoodGenPart = (maskedStatusFlag == GENPARTMASK);
                     if (isGoodGenPart)
                     {
                         //muon efficiency and acceptance
@@ -287,9 +287,9 @@ namespace plotterFunctions
                 {
                     //WARNING: make sure to use parentheses; otherwise == happens first and & second!!!
                     //if ((GenPart_statusFlags[j] & 0x2100) == 0x2100)
-                    int maskedStatusFlag = (GenPart_statusFlags[j] & GenPartMask);
-                    bool isGoodGenPart = (maskedStatusFlag == GenPartMask);
-                    if(debug) printf("flag = 0x%x; maskedFlag = 0x%x; mask = 0x%x; pdgid = %d",GenPart_statusFlags[j], maskedStatusFlag, GenPartMask, genDecayPdgIdVec[j]);
+                    int maskedStatusFlag = (GenPart_statusFlags[j] & GENPARTMASK);
+                    bool isGoodGenPart = (maskedStatusFlag == GENPARTMASK);
+                    if(debug) printf("flag = 0x%x; maskedFlag = 0x%x; mask = 0x%x; pdgid = %d",GenPart_statusFlags[j], maskedStatusFlag, GENPARTMASK, genDecayPdgIdVec[j]);
                     if (isGoodGenPart)
                     {
                         if(abs(genDecayPdgIdVec[j]) == 23)
