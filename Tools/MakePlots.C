@@ -43,12 +43,13 @@ int main(int argc, char* argv[])
         {"sbEra",      required_argument, 0, 'S'}
     };
 
-    bool runOnCondor = false;
-    bool doLL        = true;
+    bool runOnCondor    = false;
+    bool doDataMCLL     = true;
+    bool doDataMCPhoton = true;
     bool doWeights = false;
     bool doLeptons = false;
     bool doPhotons = false;
-    bool doGJetsAndZnunu = true;
+    bool doGJetsAndZnunu = false;
     bool doDYAndZnunu = false;
     bool doSearchBins = true;
     bool doPlots = true;
@@ -321,8 +322,12 @@ int main(int argc, char* argv[])
     };
 
     vector<Plotter::HistSummary> vh;
-
     
+    ////////////////////////////////////////////////
+    // --- version with weights for reference --- //
+    ////////////////////////////////////////////////
+    
+    /*
     // Datasetsummaries we are using                                                                                                        
     // no weight (genWeight deals with negative weights); also add btag weights here                                                        
     Plotter::DatasetSummary dsData_SingleMuon("Data",         fileMap["Data_SingleMuon"], "passMuTrigger",   "");
@@ -338,7 +343,7 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dsT1tttt_gluino1500_lsp100("T1tttt_gluino1500_lsp100",     fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "",  "");
     Plotter::DatasetSummary dsT1tttt_gluino2000_lsp100("T1tttt_gluino2000_lsp100",     fileMap["Signal_T1tttt_mGluino2000_mLSP100"], "",  "");
     Plotter::DatasetSummary dsVV(             "Diboson",      fileMap["Diboson"],        "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
-    Plotter::DatasetSummary dsRare(           "Rare ",        fileMap["Rare"],           "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    Plotter::DatasetSummary dsRare(           "Rare",         fileMap["Rare"],           "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dsDY_mu, dsDYInc_mu}, {dstt2l}, {dstW}, {dsRare, dsVV, dsttZ}};
 
     // Apply data/mc njet weight for DY and ttbar                                                                                                                                    
@@ -348,14 +353,52 @@ int main(int argc, char* argv[])
     Plotter::DatasetSummary dswtW(             "Single t",   fileMap["SingleTopZinv"],   "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
     Plotter::DatasetSummary dswttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     Plotter::DatasetSummary dswVV(             "Diboson",    fileMap["Diboson"],         "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
-    Plotter::DatasetSummary dswRare(           "Rare ",      fileMap["Rare"],            "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    Plotter::DatasetSummary dswRare(           "Rare",       fileMap["Rare"],            "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
     std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswRare, dswVV, dswttZ}};
 
     Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
     Plotter::DatasetSummary dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
     std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
+    */
+
+    /////////////////////////////////////
+    // --- version without weights --- //
+    /////////////////////////////////////
     
-    auto makePDS_DiLepton = [&](const std::string& cuts, const std::string& weights)
+    // Datasetsummaries we are using                                                                                                        
+    // no weight (genWeight deals with negative weights); also add btag weights here                                                        
+    Plotter::DatasetSummary dsData_SingleMuon("Data",         fileMap["Data_SingleMuon"], "passMuTrigger",   "");
+    Plotter::DatasetSummary dsDY_mu(          "DY #mu",       fileMap["DYJetsToLL"],      "",   "");
+    Plotter::DatasetSummary dsDYInc_mu(       "DY HT<100",    fileMap["IncDY"],           "",   "");
+    Plotter::DatasetSummary dsDY_elec(        "DY e",         fileMap["DYJetsToLL"],      "",   ""); 
+    Plotter::DatasetSummary dsDYInc_elec(     "DY HT<100",    fileMap["IncDY"],           "",   ""); 
+    Plotter::DatasetSummary dsPhoton(         "#gamma+ jets", fileMap["GJets"],           "",   "");
+    Plotter::DatasetSummary dstt2l(           "t#bar{t}",     fileMap["TTbarNoHad"],      "",   "");
+    Plotter::DatasetSummary dstW(             "Single t",     fileMap["SingleTopZinv"],   "",   "");
+    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",    fileMap["TTZ"],             "",   "");
+    Plotter::DatasetSummary dsVV(             "Diboson",      fileMap["Diboson"],        "",    "");
+    Plotter::DatasetSummary dsRare(           "Rare",         fileMap["Rare"],           "",    "");
+    Plotter::DatasetSummary dsT1tttt_gluino1200_lsp800("T1tttt_gluino1200_lsp800",     fileMap["Signal_T1tttt_mGluino1200_mLSP800"], "",  "");
+    Plotter::DatasetSummary dsT1tttt_gluino1500_lsp100("T1tttt_gluino1500_lsp100",     fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "",  "");
+    Plotter::DatasetSummary dsT1tttt_gluino2000_lsp100("T1tttt_gluino2000_lsp100",     fileMap["Signal_T1tttt_mGluino2000_mLSP100"], "",  "");
+    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dsDY_mu, dsDYInc_mu}, {dstt2l}, {dstW}, {dsRare, dsVV, dsttZ}};
+
+    // Apply data/mc njet weight for DY and ttbar                                                                                                                                    
+    Plotter::DatasetSummary dswDY(             "DY",         fileMap["DYJetsToLL"],      "",            "");
+    Plotter::DatasetSummary dswDYInc(          "DY HT<100",  fileMap["IncDY"],           "",            "");
+    Plotter::DatasetSummary dswtt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",            "");
+    Plotter::DatasetSummary dswtW(             "Single t",   fileMap["SingleTopZinv"],   "",            "");
+    Plotter::DatasetSummary dswttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "");
+    Plotter::DatasetSummary dswVV(             "Diboson",    fileMap["Diboson"],         "",            "");
+    Plotter::DatasetSummary dswRare(           "Rare",       fileMap["Rare"],            "",            "");
+    std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswRare, dswVV, dswttZ}};
+
+    Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "");
+    Plotter::DatasetSummary dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "",            "");
+    std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
+
+
+    auto makeStackMC_DiLepton = [&](const std::string& cuts, const std::string& weights)
     {
         Plotter::DatasetSummary dsDY(     "DY",           fileMap["DYJetsToLL"],      cuts,   weights);
         Plotter::DatasetSummary dsDYInc(  "DY Inc",       fileMap["IncDY"],           cuts,   weights);
@@ -363,32 +406,80 @@ int main(int argc, char* argv[])
         Plotter::DatasetSummary dstW(     "Single t",     fileMap["SingleTopZinv"],   cuts,   weights);
         Plotter::DatasetSummary dsttZ(    "t#bar{t}Z",    fileMap["TTZ"],             cuts,   weights);
         Plotter::DatasetSummary dsVV(     "Diboson",      fileMap["Diboson"],         cuts,   weights);
-        Plotter::DatasetSummary dsRare(   "Rare ",        fileMap["Rare"],            cuts,   weights);
-        std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dsDY, dsDYInc}, {dstt2l}, {dstW}, {dsttZ, dsVV, dsRare}};
-        return stack_MC;
+        Plotter::DatasetSummary dsRare(   "Rare",         fileMap["Rare"],            cuts,   weights);
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC = {{dsDY, dsDYInc}, {dstt2l}, {dstW}, {dsttZ, dsVV, dsRare}};
+        return StackMC;
     };
     
-    if (doLL)
+    auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
     {
-        Plotter::DatasetSummary dsData_SingleMuon_LowDM("Data", fileMap["Data_SingleMuon"],  "passBaselineLowDM;passMuZinvSel",  "");
-        Plotter::DatasetSummary dsData_SingleMuon_HighDM("Data", fileMap["Data_SingleMuon"], "passBaselineHighDM;passMuZinvSel", "");
-        std::vector<std::vector<Plotter::DatasetSummary>> Stack_MC_Muon_LowDM = makePDS_DiLepton("passBaselineLowDM;passMuZinvSel","");
-        std::vector<std::vector<Plotter::DatasetSummary>> Stack_MC_Muon_HighDM = makePDS_DiLepton("passBaselineHighDM;passMuZinvSel","");
+        Plotter::DatasetSummary dsGJets(      "#gamma+jets",      fileMap["GJets"],         cuts,   weights);
+        Plotter::DatasetSummary dsQCD(        "QCD",              fileMap["QCD"],           cuts,   weights);
+        Plotter::DatasetSummary dsTTGJets(    "t#bar{t}#gamma",   fileMap["TTGJets"],       cuts,   weights);
+        Plotter::DatasetSummary dsWJetsToLNu( "W(l#nu)+jets",     fileMap["WJetsToLNu"],    cuts,   weights);
+        Plotter::DatasetSummary dsTTbarAll(   "t#bar{t}",         fileMap["TTbarAll"],      cuts,   weights);
+        Plotter::DatasetSummary dsTTZ(        "t#bar{t}Z",        fileMap["TTZ"],           cuts,   weights);
+        Plotter::DatasetSummary dstW(         "tW",               fileMap["tW"],            cuts,   weights);
+        Plotter::DatasetSummary dsDiboson(    "Diboson",          fileMap["Diboson"],       cuts,   weights);
+        Plotter::DatasetSummary dsRare(       "Rare",             fileMap["Rare"],          cuts,   weights);
+        //std::vector<std::vector<Plotter::DatasetSummary>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC = {{dsGJets}, {dsQCD}, {dsTTGJets}, {dsWJetsToLNu}, {dsTTbarAll}, {dstW}, {dsDiboson}, {dsTTZ, dsRare}};
+        return StackMC;
+    };
+    
+    if (doDataMCLL)
+    {
+        // Di-Muon
+
+        // TODO: change variables to a tag for ZinvLL (to use cleaned jet collection, etc)
+        Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passBaselineLowDM;passMuZinvSel",  "");
+        Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"], "passBaselineHighDM;passMuZinvSel", "");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDM;passMuZinvSel","");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDM;passMuZinvSel","");
         
-        Plotter::DataCollection dcData_SingleMuon_LowDM_nj(  "data",   "cntNJetsPt30Eta24Zinv", {dsData_SingleMuon_LowDM});
-        Plotter::DataCollection dcData_SingleMuon_HighDM_nj( "data",   "cntNJetsPt30Eta24Zinv", {dsData_SingleMuon_HighDM});
-        Plotter::DataCollection dcMC_LowDM_nj(               "stack",  "cntNJetsPt30Eta24Zinv", Stack_MC_Muon_LowDM);
-        Plotter::DataCollection dcMC_HighDM_nj(              "stack",  "cntNJetsPt30Eta24Zinv", Stack_MC_Muon_HighDM);
+        // n_jets
+        Plotter::DataCollection dcData_Muon_LowDM_nj(  "data",   "cntNJetsPt30Eta24Zinv", {dsData_Muon_LowDM});
+        Plotter::DataCollection dcData_Muon_HighDM_nj( "data",   "cntNJetsPt30Eta24Zinv", {dsData_Muon_HighDM});
+        Plotter::DataCollection dcMC_Muon_LowDM_nj(    "stack",  "cntNJetsPt30Eta24Zinv", StackMC_Muon_LowDM);
+        Plotter::DataCollection dcMC_Muon_HighDM_nj(   "stack",  "cntNJetsPt30Eta24Zinv", StackMC_Muon_HighDM);
         
-        Plotter::DataCollection dcData_SingleMuon_LowDM_met(  "data",   "metWithPhoton", {dsData_SingleMuon_LowDM});
-        Plotter::DataCollection dcData_SingleMuon_HighDM_met( "data",   "metWithPhoton", {dsData_SingleMuon_HighDM});
-        Plotter::DataCollection dcMC_LowDM_met(               "stack",  "metWithPhoton", Stack_MC_Muon_LowDM);
-        Plotter::DataCollection dcMC_HighDM_met(              "stack",  "metWithPhoton", Stack_MC_Muon_HighDM);
+        // met
+        Plotter::DataCollection dcData_Muon_LowDM_met(  "data",   "cleanMetPt", {dsData_Muon_LowDM});
+        Plotter::DataCollection dcData_Muon_HighDM_met( "data",   "cleanMetPt", {dsData_Muon_HighDM});
+        Plotter::DataCollection dcMC_Muon_LowDM_met(    "stack",  "cleanMetPt", StackMC_Muon_LowDM);
+        Plotter::DataCollection dcMC_Muon_HighDM_met(   "stack",  "cleanMetPt", StackMC_Muon_HighDM);
                 
-        vh.push_back(PHS("DataMC_SingleMuon_LowDM_nj",  {dcData_SingleMuon_LowDM_nj,  dcMC_LowDM_nj}, {1, 2}, "",  30,  0,  30, true, false, label_nj, "Events"));
-        vh.push_back(PHS("DataMC_SingleMuon_HighDM_nj", {dcData_SingleMuon_HighDM_nj, dcMC_HighDM_nj}, {1, 2}, "", 30,  0,  30, true, false, label_nj, "Events"));
-        vh.push_back(PHS("DataMC_SingleMuon_LowDM_met", {dcData_SingleMuon_LowDM_met, dcMC_LowDM_met}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_met, "Events"));
-        vh.push_back(PHS("DataMC_SingleMuon_LowDM_met", {dcData_SingleMuon_LowDM_met, dcMC_LowDM_met}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_met, "Events"));
+        vh.push_back(PHS("DataMC_Muon_LowDM_nj",   {dcData_Muon_LowDM_nj,   dcMC_Muon_LowDM_nj},   {1, 2}, "", 30,  0,  30, true, false, label_nj, "Events"));
+        vh.push_back(PHS("DataMC_Muon_HighDM_nj",  {dcData_Muon_HighDM_nj,  dcMC_Muon_HighDM_nj},  {1, 2}, "", 30,  0,  30, true, false, label_nj, "Events"));
+        vh.push_back(PHS("DataMC_Muon_LowDM_met",  {dcData_Muon_LowDM_met,  dcMC_Muon_LowDM_met},  {1, 2}, "", 80,  minPt, maxPt, true, false, label_met, "Events"));
+        vh.push_back(PHS("DataMC_Muon_HighDM_met", {dcData_Muon_HighDM_met, dcMC_Muon_HighDM_met}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_met, "Events"));
+    }
+    if (doDataMCPhoton)
+    {
+        // Photon 
+
+        // TODO: change variables to a tag for ZinvPhoton (to used cleaned jet collection, etc)
+        Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passBaselineLowDM;passPhotonSelection",  "");
+        Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passBaselineHighDM;passPhotonSelection",  "");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM;passPhotonSelection","");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM;passPhotonSelection","");
+        
+        // n_jets
+        Plotter::DataCollection dcData_Photon_LowDM_nj(  "data",   "cntNJetsPt30Eta24Zinv", {dsData_Photon_LowDM});
+        Plotter::DataCollection dcData_Photon_HighDM_nj( "data",   "cntNJetsPt30Eta24Zinv", {dsData_Photon_HighDM});
+        Plotter::DataCollection dcMC_Photon_LowDM_nj(    "stack",  "cntNJetsPt30Eta24Zinv", StackMC_Photon_LowDM);
+        Plotter::DataCollection dcMC_Photon_HighDM_nj(   "stack",  "cntNJetsPt30Eta24Zinv", StackMC_Photon_HighDM);
+        
+        // met
+        Plotter::DataCollection dcData_Photon_LowDM_met(  "data",   "metWithPhoton", {dsData_Photon_LowDM});
+        Plotter::DataCollection dcData_Photon_HighDM_met( "data",   "metWithPhoton", {dsData_Photon_HighDM});
+        Plotter::DataCollection dcMC_Photon_LowDM_met(    "stack",  "metWithPhoton", StackMC_Photon_LowDM);
+        Plotter::DataCollection dcMC_Photon_HighDM_met(   "stack",  "metWithPhoton", StackMC_Photon_HighDM);
+        
+        vh.push_back(PHS("DataMC_Photon_LowDM_nj",   {dcData_Photon_LowDM_nj,   dcMC_Photon_LowDM_nj},   {1, 2}, "", 30,  0,  30, true, false, label_nj, "Events"));
+        vh.push_back(PHS("DataMC_Photon_HighDM_nj",  {dcData_Photon_HighDM_nj,  dcMC_Photon_HighDM_nj},  {1, 2}, "", 30,  0,  30, true, false, label_nj, "Events"));
+        vh.push_back(PHS("DataMC_Photon_LowDM_met",  {dcData_Photon_LowDM_met,  dcMC_Photon_LowDM_met},  {1, 2}, "", 80,  minPt, maxPt, true, false, label_met, "Events"));
+        vh.push_back(PHS("DataMC_Photon_HighDM_met", {dcData_Photon_HighDM_met, dcMC_Photon_HighDM_met}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_met, "Events"));
     }
  
     //lambda is your friend
