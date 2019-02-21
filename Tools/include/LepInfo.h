@@ -43,6 +43,7 @@ namespace plotterFunctions
         void lepInfo(NTupleReader& tr)
         {
             const auto& genDecayPdgIdVec                    = tr.getVec<int>("GenPart_pdgId");
+            const auto& GenPart_statusFlags                 = tr.getVec<int>("GenPart_statusFlags");
             //const auto& genDecayIdxVec                      = tr.getVec<int>("genDecayIdxVec");
             //const auto& genDecayMomIdxVec                   = tr.getVec<int>("genDecayMomIdxVec");
             const auto& genDecayLVec                        = tr.getVec<TLorentzVector>("GenPartTLV");
@@ -137,125 +138,132 @@ namespace plotterFunctions
                 }
             }
 
-            double genHt = 0.0;
+            //double genHt = 0.0;
 
             // muon trigger of 50 GeV
             // electron trigger of 33 GeV
             const double   minMuPt = 20.0,   highMuPt = 50.0;
             const double minElecPt = 20.0, highElecPt = 50.0;
-            double muPt1 = -999.9, muPt2 = -999.9;
+            //double muPt1 = -999.9, muPt2 = -999.9;
 
             // gen tops
             //std::vector<TLorentzVector>* genTops = nullptr;
             //Gen info parsing
+            
+            int GenPartMask = 0x2100;
+            
             if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
             {
                 // gen tops
                 //genTops = new std::vector<TLorentzVector>(ttUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
 
-                for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
-                {
-                    // genHt
-                    if((abs(genDecayPdgIdVec[i]) != 0 &&  abs(genDecayPdgIdVec[i]) < 6) || (abs(genDecayPdgIdVec[i]) > 100 && abs(genDecayPdgIdVec[i]) < 10000)) genHt += genDecayLVec[i].Pt();
+                // for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
+                // {
+                //     // genHt
+                //     if((abs(genDecayPdgIdVec[i]) != 0 &&  abs(genDecayPdgIdVec[i]) < 6) || (abs(genDecayPdgIdVec[i]) > 100 && abs(genDecayPdgIdVec[i]) < 10000)) genHt += genDecayLVec[i].Pt();
 
-                    if(genDecayPdgIdVec[i] ==  13) muPt1 = genDecayLVec[i].Pt(); // mu+
-                    if(genDecayPdgIdVec[i] == -13) muPt2 = genDecayLVec[i].Pt(); // mu-
-                }
+                //     if(genDecayPdgIdVec[i] ==  13) muPt1 = genDecayLVec[i].Pt(); // mu+
+                //     if(genDecayPdgIdVec[i] == -13) muPt2 = genDecayLVec[i].Pt(); // mu-
+                // }
 
                 //for(int index = 0; index < W_emuVec.size(); ++index)
                 for (int i = 0; i < genDecayPdgIdVec.size(); ++i)
                 {
                     //int i = W_emuVec[index];
-
-                    //muon efficiency and acceptance
-                    if(abs(genDecayPdgIdVec[i]) == 13)
+                    int maskedStatusFlag = (GenPart_statusFlags[i] & GenPartMask);
+                    bool isGoodGenPart = (maskedStatusFlag == GenPartMask);
+                    if (isGoodGenPart)
                     {
-                        genMu->push_back(&genDecayLVec[i]);
-                        //genMuAct->push_back(W_emu_pfActivityVec[index]);
-                        if(AnaFunctions::passMuonAccOnly(genDecayLVec[i], AnaConsts::muonsMiniIsoArr) && genDecayLVec[i].Pt() > minMuPt)
+                        //muon efficiency and acceptance
+                        if(abs(genDecayPdgIdVec[i]) == 13)
                         {
-                            genMuInAcc->push_back(genDecayLVec[i]);
-                            //genMuInAccAct->push_back(genMuAct->back());
-                            double dRMin = 999.9;
-                            double matchPt = -999.9;
-                            for(int j = 0; j < cutMuVecRecoOnly.size(); ++j)
+                            genMu->push_back(&genDecayLVec[i]);
+                            //genMuAct->push_back(W_emu_pfActivityVec[index]);
+                            if(AnaFunctions::passMuonAccOnly(genDecayLVec[i], AnaConsts::muonsMiniIsoArr) && genDecayLVec[i].Pt() > minMuPt)
                             {
-                                // difference in angle between gen and reco muons 
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVecRecoOnly[j]);
-                                if(dR < dRMin)
+                                genMuInAcc->push_back(genDecayLVec[i]);
+                                //genMuInAccAct->push_back(genMuAct->back());
+                                double dRMin = 999.9;
+                                double matchPt = -999.9;
+                                for(int j = 0; j < cutMuVecRecoOnly.size(); ++j)
                                 {
-                                    dRMin = dR;
-                                    matchPt = cutMuVecRecoOnly[j].Pt();
+                                    // difference in angle between gen and reco muons 
+                                    double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVecRecoOnly[j]);
+                                    if(dR < dRMin)
+                                    {
+                                        dRMin = dR;
+                                        matchPt = cutMuVecRecoOnly[j].Pt();
+                                    }
                                 }
-                            }
-                            if(dRMin < 0.02)
-                            {
-                                genMatchMuInAcc->push_back(&genDecayLVec[i]);
-                                //genMatchMuInAccAct->push_back(genMuAct->back());
-                                genMatchMuInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
-                            }
+                                if(dRMin < 0.02)
+                                {
+                                    genMatchMuInAcc->push_back(&genDecayLVec[i]);
+                                    //genMatchMuInAccAct->push_back(genMuAct->back());
+                                    genMatchMuInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
+                                }
 
-                            dRMin = 999.9;
-                            for(int j = 0; j < cutMuVec.size(); ++j)
-                            {
-                                // difference in angle between gen and cut muons 
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVec[j]);
-                                if(dR < dRMin)
+                                dRMin = 999.9;
+                                for(int j = 0; j < cutMuVec.size(); ++j)
                                 {
-                                    dRMin = dR;
+                                    // difference in angle between gen and cut muons 
+                                    double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVec[j]);
+                                    if(dR < dRMin)
+                                    {
+                                        dRMin = dR;
+                                    }
                                 }
-                            }
-                            if(dRMin < 0.02)
-                            {
-                                genMatchIsoMuInAcc->push_back(genDecayLVec[i]);
-                                //genMatchIsoMuInAccAct->push_back(genMuAct->back());
+                                if(dRMin < 0.02)
+                                {
+                                    genMatchIsoMuInAcc->push_back(genDecayLVec[i]);
+                                    //genMatchIsoMuInAccAct->push_back(genMuAct->back());
+                                }
                             }
                         }
-                    }
 
-                    //Elec efficiency and acceptance
-                    if(abs(genDecayPdgIdVec[i]) == 11)
-                    {
-                        genElec->push_back(genDecayLVec[i]);
-                        //genElecAct->push_back(W_emu_pfActivityVec[index]);
-                        if(AnaFunctions::passElectronAccOnly(genDecayLVec[i], AnaConsts::elesMiniIsoArr) && genDecayLVec[i].Pt() > minElecPt)
+                        //electron efficiency and acceptance
+                        if(abs(genDecayPdgIdVec[i]) == 11)
                         {
-                            genElecInAcc->push_back(genDecayLVec[i]);
-                            //genElecInAccAct->push_back(genElecAct->back());
-                            //printf("genElecInAcc p_t = %f\n", genDecayLVec[i].Pt());
-                            double dRMin = 999.9;
-                            double matchPt = -999.9;
-                            for(int j = 0; j < cutElecVecRecoOnly.size(); ++j)
+                            genElec->push_back(genDecayLVec[i]);
+                            //genElecAct->push_back(W_emu_pfActivityVec[index]);
+                            if(AnaFunctions::passElectronAccOnly(genDecayLVec[i], AnaConsts::elesMiniIsoArr) && genDecayLVec[i].Pt() > minElecPt)
                             {
-                                // difference in angle between gen and reco electrons
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVecRecoOnly[j]);
-                                if(dR < dRMin)
+                                genElecInAcc->push_back(genDecayLVec[i]);
+                                //genElecInAccAct->push_back(genElecAct->back());
+                                //printf("genElecInAcc p_t = %f\n", genDecayLVec[i].Pt());
+                                double dRMin = 999.9;
+                                double matchPt = -999.9;
+                                for(int j = 0; j < cutElecVecRecoOnly.size(); ++j)
                                 {
-                                    dRMin = dR;
-                                    matchPt = cutElecVecRecoOnly[j].Pt();
+                                    // difference in angle between gen and reco electrons
+                                    double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVecRecoOnly[j]);
+                                    if(dR < dRMin)
+                                    {
+                                        dRMin = dR;
+                                        matchPt = cutElecVecRecoOnly[j].Pt();
+                                    }
                                 }
-                            }
-                            if(dRMin < 0.02)
-                            {
-                                genMatchElecInAcc->push_back(genDecayLVec[i]);
-                                //genMatchElecInAccAct->push_back(genElecAct->back());
-                                genMatchElecInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
-                            }
+                                if(dRMin < 0.02)
+                                {
+                                    genMatchElecInAcc->push_back(genDecayLVec[i]);
+                                    //genMatchElecInAccAct->push_back(genElecAct->back());
+                                    genMatchElecInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
+                                }
 
-                            dRMin = 999.9;
-                            for(int j = 0; j < cutElecVec.size(); ++j)
-                            {
-                                // difference in angle between gen and cut electrons
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVec[j]);
-                                if(dR < dRMin)
+                                dRMin = 999.9;
+                                for(int j = 0; j < cutElecVec.size(); ++j)
                                 {
-                                    dRMin = dR;
+                                    // difference in angle between gen and cut electrons
+                                    double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVec[j]);
+                                    if(dR < dRMin)
+                                    {
+                                        dRMin = dR;
+                                    }
                                 }
-                            }
-                            if(dRMin < 0.02)
-                            {
-                                genMatchIsoElecInAcc->push_back(genDecayLVec[i]);
-                                //genMatchIsoElecInAccAct->push_back(genElecAct->back());
+                                if(dRMin < 0.02)
+                                {
+                                    genMatchIsoElecInAcc->push_back(genDecayLVec[i]);
+                                    //genMatchIsoElecInAccAct->push_back(genElecAct->back());
+                                }
                             }
                         }
                     }
@@ -267,6 +275,8 @@ namespace plotterFunctions
             //    genTops = new std::vector<TLorentzVector>();
             //}
 
+            bool debug = false;
+
             data_t genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
             int nZ = 0;
             TLorentzVector genZ;
@@ -275,19 +285,36 @@ namespace plotterFunctions
             {
                 for(int j = 0; j <  genDecayPdgIdVec.size(); ++j)
                 {
-                    if(abs(genDecayPdgIdVec[j]) == 23)
+                    //WARNING: make sure to use parentheses; otherwise == happens first and & second!!!
+                    //if ((GenPart_statusFlags[j] & 0x2100) == 0x2100)
+                    int maskedStatusFlag = (GenPart_statusFlags[j] & GenPartMask);
+                    bool isGoodGenPart = (maskedStatusFlag == GenPartMask);
+                    if(debug) printf("flag = 0x%x; maskedFlag = 0x%x; mask = 0x%x; pdgid = %d",GenPart_statusFlags[j], maskedStatusFlag, GenPartMask, genDecayPdgIdVec[j]);
+                    if (isGoodGenPart)
                     {
-                        nZ++;
-                        genZ = genDecayLVec[j];
-                        genZPt = genDecayLVec[j].Pt();
-                        genZEta = genDecayLVec[j].Eta();
-                        genZPhi = genDecayLVec[j].Phi();
-                        genZmass = genDecayLVec[j].M();
+                        if(abs(genDecayPdgIdVec[j]) == 23)
+                        {
+                            if (debug) printf(" - behold, a Z boson");
+                            nZ++;
+                            genZ = genDecayLVec[j];
+                            genZPt = genDecayLVec[j].Pt();
+                            genZEta = genDecayLVec[j].Eta();
+                            genZPhi = genDecayLVec[j].Phi();
+                            genZmass = genDecayLVec[j].M();
+                        }
                     }
+                    if(debug) std::cout << std::endl;
                 }
-                std::cout << "nZ = " << nZ;
-                if(nZ > 1) std::cout << " - WARNING: MORE THAN 1 Z FOUND!!!";
-                std::cout << std::endl;
+                if (debug)
+                {
+                    std::cout << "nZ = " << nZ;
+                    if(nZ > 1) std::cout << " - WARNING: MORE THAN 1 Z FOUND!!!";
+                    std::cout << std::endl;
+                }
+                else
+                {
+                    if(nZ > 1) std::cout << " - WARNING: MORE THAN 1 Z FOUND!!! Set debug = true for more info." << std::endl;
+                }
 
                 // if(&W_emuVec != nullptr)
                 // {
@@ -492,7 +519,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("cleanMetPt", cleanMetPt);
             tr.registerDerivedVar("cleanMetPhi", cleanMetPhi);
             //tr.registerDerivedVar("cleanMet2Pt", cleanMet2Pt);
-            tr.registerDerivedVar("genHt", genHt);
+            //tr.registerDerivedVar("genHt", genHt);
             tr.registerDerivedVar("cutMuPt1", cutMuPt1);
             tr.registerDerivedVar("cutMuPt2", cutMuPt2);
             tr.registerDerivedVar("cutMuEta1", cutMuEta1);
