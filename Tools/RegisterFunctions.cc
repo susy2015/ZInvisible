@@ -224,7 +224,8 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*myBLV);
     tr.registerFunction(*blvZinv);
     
-    //tr.registerFunction(*lepInfo);
+    //tr.registerFunction(*lepInfo); // TODO: fix lepInfo to use with NanoAOD; it is broken right now
+    
     //tr.registerFunction(*weights);
     //tr.registerFunction(*blvZinv);
     //tr.registerFunction(*blvNoVeto);
