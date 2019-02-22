@@ -152,7 +152,8 @@ namespace plotterFunctions
             
             const int GENPARTMASK = 0x2100;
             
-            if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
+            //if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
+            if(tr.checkBranch("GenPartTLV") && &genDecayLVec != nullptr)
             {
                 // gen tops
                 //genTops = new std::vector<TLorentzVector>(ttUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
@@ -281,7 +282,7 @@ namespace plotterFunctions
             int nZ = 0;
             TLorentzVector genZ;
             int pdgIdZDec = 0;
-            if(&genDecayPdgIdVec != nullptr)
+            if(tr.checkBranch("GenPartTLV") && &genDecayLVec != nullptr)
             {
                 for(int j = 0; j <  genDecayPdgIdVec.size(); ++j)
                 {

@@ -65,8 +65,6 @@ namespace plotterFunctions
         const auto& loosePhotonID        = tr.getVec<unsigned char>("Photon_mvaID_WP80");
         const auto& tightPhotonID        = tr.getVec<unsigned char>("Photon_mvaID_WP90");
         //const auto& genMatched           = tr.getVec<data_t>("genMatched");
-        const auto& Photon_genPartFlav   = tr.getVec<char>("Photon_genPartFlav");
-        const auto& Photon_genPartIdx    = tr.getVec<int>("Photon_genPartIdx");
         const auto& met                  = tr.getVar<data_t>("MET_pt");
         const auto& metphi               = tr.getVar<data_t>("MET_phi");
 
