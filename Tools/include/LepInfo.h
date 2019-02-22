@@ -42,11 +42,17 @@ namespace plotterFunctions
         TRandom3 *tr3;
         void lepInfo(NTupleReader& tr)
         {
-            const auto& genDecayPdgIdVec                    = tr.getVec<int>("GenPart_pdgId");
-            const auto& GenPart_statusFlags                 = tr.getVec<int>("GenPart_statusFlags");
+            std::vector<int> genDecayPdgIdVec;
+            std::vector<int> GenPart_statusFlags;
+            std::vector<TLorentzVector> genDecayLVec;
+            if (tr.checkBranch("GenPartTLV"))
+            {
+                genDecayPdgIdVec                    = tr.getVec<int>("GenPart_pdgId");
+                GenPart_statusFlags                 = tr.getVec<int>("GenPart_statusFlags");
+                genDecayLVec                        = tr.getVec<TLorentzVector>("GenPartTLV");
+            }
             //const auto& genDecayIdxVec                      = tr.getVec<int>("genDecayIdxVec");
             //const auto& genDecayMomIdxVec                   = tr.getVec<int>("genDecayMomIdxVec");
-            const auto& genDecayLVec                        = tr.getVec<TLorentzVector>("GenPartTLV");
             const auto& muonsLVec                           = tr.getVec<TLorentzVector>("MuonTLV");
             const auto& muonsRelIso                         = tr.getVec<data_t>("Muon_miniPFRelIso_all");
             //const auto& W_emuVec                            = tr.getVec<int>("W_emuVec");
