@@ -34,6 +34,8 @@ rm plots/*
 # Run on all samples
 # declare an array of samples
 # Z to LL and photon samples for Data and MC
+# don't run a sample twice 
+# the samples TTZ, Diboson, Rare are used for both lepton and photon
 declare -a samples=(
                     "Data_SingleMuon_2016"
                     "DYJetsToLL_HT_400to600"
@@ -49,10 +51,7 @@ declare -a samples=(
                     "TTGJets"
                     "WJetsToLNu_HT_400to600"
                     "TTbarAll"
-                    "TTZ"
                     "tW"
-                    "Diboson"
-                    "Rare"
                     "ZJetsToNuNu_HT_400to600"
                    )
 
