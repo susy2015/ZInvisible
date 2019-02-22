@@ -31,32 +31,70 @@ fi
 echo " - Remove existing plots"
 rm plots/*
 
-# Save root files for different MC
+# Run on all samples
+# declare an array of samples
+# Z to LL and photon samples for Data and MC
+declare -a samples=(
+                    "Data_SingleMuon_2016"
+                    "DYJetsToLL_HT_400to600"
+                    "IncDY"
+                    "TTbarNoHad"
+                    "SingleTopZinv"
+                    "TTZ"
+                    "Diboson"
+                    "Rare"
+                    "Data_SinglePhoton_2016"
+                    "GJets_HT-400To600"
+                    "QCD_HT500to700"
+                    "TTGJets"
+                    "WJetsToLNu_HT_400to600"
+                    "TTbarAll"
+                    "TTZ"
+                    "tW"
+                    "Diboson"
+                    "Rare"
+                    "ZJetsToNuNu_HT_400to600"
+                   )
 
-echo " - Save root files for different MC"
-n_events=10000
-sample1=GJets_HT-400To600
+outputFiles=
+n_events=1000
+
+# loop through samples array
+for sample in "${samples[@]}"
+do
+    output=""$sample".root"
+    outputFiles="$outputFiles $output"
+    echo " - Running makePlots to create $output"
+    echo "./makePlots -D $sample -E $n_events -I $output | grep -v LHAPDF"
+    ./makePlots -D $sample -E $n_events -I $output | grep -v LHAPDF
+done
+
+# --- for only two samples --- #
+
+#sample1=GJets_HT-400To600
 #sample1=DYJetsToLL_HT_400to600
-sample2=ZJetsToNuNu_HT_400to600
-output1=""$sample1".root"
-output2=""$sample2".root"
+#sample2=ZJetsToNuNu_HT_400to600
+#output1=""$sample1".root"
+#output2=""$sample2".root"
 
-echo " - Running makePlots to create $output1"
-echo "./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF"
-./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF
-echo " - Running makePlots to create $output2"
-echo "./makePlots -D $sample2 -E $n_events -I $output2 | grep -v LHAPDF"
-./makePlots -D $sample2 -E $n_events -I $output2 | grep -v LHAPDF
+#echo " - Running makePlots to create $output1"
+#echo "./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF"
+#./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF
+#echo " - Running makePlots to create $output2"
+#echo "./makePlots -D $sample2 -E $n_events -I $output2 | grep -v LHAPDF"
+#./makePlots -D $sample2 -E $n_events -I $output2 | grep -v LHAPDF
 
 # hadd the results
 if [ "$combineResults" = true ]; then
 
-    # IMPORTANT: you need quotes around each variable (due to underscores)
-    # otherwise bash interprets the underscores as part of the variable names
-    result=""$sample1"_and_"$sample2".root"
+    # IMPORTANT: You need quotes around each variable (due to underscores).
+    #            Otherwise bash interprets the underscores as part of the variable names.
+    #result=""$sample1"_and_"$sample2".root"
+    result="quickResult.root"
     echo " - hadd the results to create $result"
     # Use -f to overwrite target file if it already exists
-    hadd -f $result $output1 $output2
+    #hadd -f $result $output1 $output2
+    hadd -f $result $outputFiles
     
     # Make plots of results (containing both MC)
     
