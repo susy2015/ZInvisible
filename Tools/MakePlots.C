@@ -231,6 +231,8 @@ int main(int argc, char* argv[])
     // Energy in GeV
     double minEnergy = 0.0;
     double maxEnergy = 2000.0;
+    int minJets = 0;
+    int maxJets = 20;
     // mass in GeV
     // mass of electron: 0.511 MeV = 5.11 * 10^-4 GeV
     // mass of muon: 106 MeV = 0.106 GeV
@@ -433,20 +435,20 @@ int main(int argc, char* argv[])
 
         // TODO: change variables to a tag for ZinvLL (to use cleaned jet collection, etc)
         // TODO: fix lepInfo module to use in Nano AOD and calculate passMuZinvSel
-        //Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passBaselineLowDM;passMuZinvSel",  "");
-        //Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passBaselineHighDM;passMuZinvSel", "");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDM;passMuZinvSel","");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDM;passMuZinvSel","");
-        Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "",  "");
-        Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "", "");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("","");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("","");
+        Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passBaselineLowDMDRLeptonCleaned;passMuZinvSel",  "");
+        Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passBaselineHighDMDRLeptonCleaned;passMuZinvSel", "");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDMDRLeptonCleaned;passMuZinvSel","");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDMDRLeptonCleaned;passMuZinvSel","");
+        //Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "",  "");
+        //Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "", "");
+        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("","");
+        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("","");
         
         // n_jets
-        Plotter::DataCollection dcData_Muon_LowDM_nj(  "data",   "cntNJetsPt30Eta24Zinv", {dsData_Muon_LowDM});
-        Plotter::DataCollection dcData_Muon_HighDM_nj( "data",   "cntNJetsPt30Eta24Zinv", {dsData_Muon_HighDM});
-        Plotter::DataCollection dcMC_Muon_LowDM_nj(    "stack",  "cntNJetsPt30Eta24Zinv", StackMC_Muon_LowDM);
-        Plotter::DataCollection dcMC_Muon_HighDM_nj(   "stack",  "cntNJetsPt30Eta24Zinv", StackMC_Muon_HighDM);
+        Plotter::DataCollection dcData_Muon_LowDM_nj(  "data",   "nJetsDRLeptonCleaned", {dsData_Muon_LowDM});
+        Plotter::DataCollection dcData_Muon_HighDM_nj( "data",   "nJetsDRLeptonCleaned", {dsData_Muon_HighDM});
+        Plotter::DataCollection dcMC_Muon_LowDM_nj(    "stack",  "nJetsDRLeptonCleaned", StackMC_Muon_LowDM);
+        Plotter::DataCollection dcMC_Muon_HighDM_nj(   "stack",  "nJetsDRLeptonCleaned", StackMC_Muon_HighDM);
         
         // met
         Plotter::DataCollection dcData_Muon_LowDM_met(  "data",   "cleanMetPt", {dsData_Muon_LowDM});
@@ -454,8 +456,8 @@ int main(int argc, char* argv[])
         Plotter::DataCollection dcMC_Muon_LowDM_met(    "stack",  "cleanMetPt", StackMC_Muon_LowDM);
         Plotter::DataCollection dcMC_Muon_HighDM_met(   "stack",  "cleanMetPt", StackMC_Muon_HighDM);
                 
-        vh.push_back(PHS("DataMC_Muon_LowDM_nj",   {dcData_Muon_LowDM_nj,   dcMC_Muon_LowDM_nj},   {1, 2}, "", 30,  0,  30, true, false, label_nj, "Events"));
-        vh.push_back(PHS("DataMC_Muon_HighDM_nj",  {dcData_Muon_HighDM_nj,  dcMC_Muon_HighDM_nj},  {1, 2}, "", 30,  0,  30, true, false, label_nj, "Events"));
+        vh.push_back(PHS("DataMC_Muon_LowDM_nj",   {dcData_Muon_LowDM_nj,   dcMC_Muon_LowDM_nj},   {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
+        vh.push_back(PHS("DataMC_Muon_HighDM_nj",  {dcData_Muon_HighDM_nj,  dcMC_Muon_HighDM_nj},  {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
         vh.push_back(PHS("DataMC_Muon_LowDM_met",  {dcData_Muon_LowDM_met,  dcMC_Muon_LowDM_met},  {1, 2}, "", 80,  minPt, maxPt, true, false, label_met, "Events"));
         vh.push_back(PHS("DataMC_Muon_HighDM_met", {dcData_Muon_HighDM_met, dcMC_Muon_HighDM_met}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_met, "Events"));
     }
@@ -464,20 +466,20 @@ int main(int argc, char* argv[])
         // Photon 
 
         // TODO: change variables to a tag for ZinvPhoton (to used cleaned jet collection, etc)
-        //Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passBaselineLowDM;passPhotonSelection",  "");
-        //Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passBaselineHighDM;passPhotonSelection",  "");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM;passPhotonSelection","");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM;passPhotonSelection","");
-        Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "",  "");
-        Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "",  "");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("","");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("","");
+        Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passBaselineLowDMDRPhotonCleaned;passPhotonSelection",  "");
+        Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passBaselineHighDMDRPhotonCleaned;passPhotonSelection",  "");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDMDRPhotonCleaned;passPhotonSelection","");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDMDRPhotonCleaned;passPhotonSelection","");
+        //Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "",  "");
+        //Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "",  "");
+        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("","");
+        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("","");
         
         // n_jets
-        Plotter::DataCollection dcData_Photon_LowDM_nj(  "data",   "cntNJetsPt30Eta24Zinv", {dsData_Photon_LowDM});
-        Plotter::DataCollection dcData_Photon_HighDM_nj( "data",   "cntNJetsPt30Eta24Zinv", {dsData_Photon_HighDM});
-        Plotter::DataCollection dcMC_Photon_LowDM_nj(    "stack",  "cntNJetsPt30Eta24Zinv", StackMC_Photon_LowDM);
-        Plotter::DataCollection dcMC_Photon_HighDM_nj(   "stack",  "cntNJetsPt30Eta24Zinv", StackMC_Photon_HighDM);
+        Plotter::DataCollection dcData_Photon_LowDM_nj(  "data",   "nJetsDRPhotonCleaned", {dsData_Photon_LowDM});
+        Plotter::DataCollection dcData_Photon_HighDM_nj( "data",   "nJetsDRPhotonCleaned", {dsData_Photon_HighDM});
+        Plotter::DataCollection dcMC_Photon_LowDM_nj(    "stack",  "nJetsDRPhotonCleaned", StackMC_Photon_LowDM);
+        Plotter::DataCollection dcMC_Photon_HighDM_nj(   "stack",  "nJetsDRPhotonCleaned", StackMC_Photon_HighDM);
         
         // met
         Plotter::DataCollection dcData_Photon_LowDM_met(  "data",   "metWithPhoton", {dsData_Photon_LowDM});
@@ -485,8 +487,8 @@ int main(int argc, char* argv[])
         Plotter::DataCollection dcMC_Photon_LowDM_met(    "stack",  "metWithPhoton", StackMC_Photon_LowDM);
         Plotter::DataCollection dcMC_Photon_HighDM_met(   "stack",  "metWithPhoton", StackMC_Photon_HighDM);
         
-        vh.push_back(PHS("DataMC_Photon_LowDM_nj",   {dcData_Photon_LowDM_nj,   dcMC_Photon_LowDM_nj},   {1, 2}, "", 30,  0,  30, true, false, label_nj, "Events"));
-        vh.push_back(PHS("DataMC_Photon_HighDM_nj",  {dcData_Photon_HighDM_nj,  dcMC_Photon_HighDM_nj},  {1, 2}, "", 30,  0,  30, true, false, label_nj, "Events"));
+        vh.push_back(PHS("DataMC_Photon_LowDM_nj",   {dcData_Photon_LowDM_nj,   dcMC_Photon_LowDM_nj},   {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
+        vh.push_back(PHS("DataMC_Photon_HighDM_nj",  {dcData_Photon_HighDM_nj,  dcMC_Photon_HighDM_nj},  {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
         vh.push_back(PHS("DataMC_Photon_LowDM_met",  {dcData_Photon_LowDM_met,  dcMC_Photon_LowDM_met},  {1, 2}, "", 80,  minPt, maxPt, true, false, label_met, "Events"));
         vh.push_back(PHS("DataMC_Photon_HighDM_met", {dcData_Photon_HighDM_met, dcMC_Photon_HighDM_met}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_met, "Events"));
     }
@@ -665,15 +667,15 @@ int main(int argc, char* argv[])
 
     // electron cut levels
     std::vector<std::pair<std::string,std::string>> cutlevels_electrons = {
-        //{"nothing",                   ""},
-        {"nosel",                     "passNoiseEventFilterZinv"},
+        {"nothing",                   ""},
+        //{"nosel",                     "passNoiseEventFilterZinv"},
         //{"elecZinv",                  "passNoiseEventFilterZinv;passElecZinvSel"},
     };
 
     // muon cut levels; commented some cut leves to make less plots
     std::vector<std::pair<std::string,std::string>> cutlevels_muon = {
-        //{"nothing",                   ""},
-        {"nosel",                     "passNoiseEventFilterZinv"},
+        {"nothing",                   ""},
+        //{"nosel",                     "passNoiseEventFilterZinv"},
         //{"muZinv",                    "passNoiseEventFilterZinv;passMuZinvSel"},
         //{"muZinv_blnotag",            "passMuZinvSel;passBaselineNoTagZinv"},
         //{"muZinv_bl",                 "passMuZinvSel;passBaselineZinv"},
@@ -1251,8 +1253,8 @@ int main(int argc, char* argv[])
         }
     }
 
-    Plotter::DataCollection dc_Znunu_nSearchBinLowDM("data",  "nSearchBinLowDM",  {makePDSZnunu("Search Bin Low DM", "passBaselineLowDMZinv")});
-    Plotter::DataCollection dc_Znunu_nSearchBinHighDM("data", "nSearchBinHighDM", {makePDSZnunu("Search Bin High DM", "passBaselineHighDMZinv")});
+    Plotter::DataCollection dc_Znunu_nSearchBinLowDM("data",  "nSearchBinLowDM",  {makePDSZnunu("Search Bin Low DM", "passBaselineLowDM")});
+    Plotter::DataCollection dc_Znunu_nSearchBinHighDM("data", "nSearchBinHighDM", {makePDSZnunu("Search Bin High DM", "passBaselineHighDM")});
     if (doSearchBins)
     {
         vh.push_back(PHS("ZNuNu_nSearchBinLowDM",  {dc_Znunu_nSearchBinLowDM},  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,    min_sb_low_dm,  max_sb_low_dm,  false, false,  "Search Bin Low DM", "Events", true));
@@ -1266,18 +1268,18 @@ int main(int argc, char* argv[])
     }
     //Generate cutflows 
     vector<string> cfsZ = {"",
-                           "passNoiseEventFilterZinv",
-                           "passNoiseEventFilterZinv;passLeptVeto",
-                           "passNoiseEventFilterZinv;passLeptVeto",
-                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv",
-                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv",
-                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv",
-                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv;passMETZinv",
-                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passTaggerZinv;passMETZinv;passBJetsZinv",
-                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
-                           "passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
-                           "passLeptVeto;passBaselineLowDMZinv",
-                           "passLeptVeto;passBaselineHighDMZinv"};
+                           //"passNoiseEventFilterZinv",
+                           //"passNoiseEventFilterZinv;passLeptVeto",
+                           //"passNoiseEventFilterZinv;passLeptVeto",
+                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv",
+                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv",
+                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv",
+                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv;passMETZinv",
+                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passTaggerZinv;passMETZinv;passBJetsZinv",
+                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
+                           "passLeptVeto;passBaselineLowDM",
+                           "passLeptVeto;passBaselineHighDM"};
     vector<Plotter::CutFlowSummary> cutFlowSummaries;
 
     cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("ZtoNuNu",           PDC("", "", {dsDY_nunu}),           cfsZ));

@@ -222,9 +222,14 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*cleanedJets);
     tr.registerFunction(*runTopTagger);
     tr.registerFunction(*myBLV);
-    tr.registerFunction(*blvZinv);
+    //tr.registerFunction(*blvZinv);
     
     tr.registerFunction(*lepInfo); // TODO: fix lepInfo to use with NanoAOD; it is broken right now
+    
+    tr.registerFunction(*blvDRLeptonCleaned);
+    tr.registerFunction(*blvDRPhotonCleaned);
+    
+    tr.registerFunction(*getSearchBin);
     
     //tr.registerFunction(*weights);
     //tr.registerFunction(*blvZinv);
@@ -243,7 +248,6 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     //tr.registerFunction(*blvZinvMEUUp);
     //tr.registerFunction(*blvZinvMEUDn);
     
-    tr.registerFunction(*getSearchBin);
     
     //tr.registerFunction(*systematicCalc);
     //tr.registerFunction(*triggerInfo);

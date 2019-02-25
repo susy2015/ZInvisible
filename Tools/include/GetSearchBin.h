@@ -44,19 +44,19 @@ namespace plotterFunctions
 
         void getSearchBin(NTupleReader& tr)
         {
-            const auto& nBottoms            = tr.getVar<int>("nBottomsZinv");
-            const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottomsZinv");
-            const auto& nMergedTops         = tr.getVar<int>("nMergedTopsZinv");
-            const auto& nJets               = tr.getVar<int>("nJetsZinv");
-            const auto& nWs                 = tr.getVar<int>("nWsZinv");
+            const auto& nBottoms            = tr.getVar<int>("nBottoms");
+            const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottoms");
+            const auto& nMergedTops         = tr.getVar<int>("nMergedTops");
+            const auto& nJets               = tr.getVar<int>("nJets");
+            const auto& nWs                 = tr.getVar<int>("nWs");
             const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops");
             //const auto& met                 = tr.getVar<data_t>("cleanMetPt");
             const auto& met                 = tr.getVar<data_t>("metWithPhoton");
-            const auto& ht                  = tr.getVar<data_t>("HTZinv");
-            const auto& bottompt_scalar_sum = tr.getVar<data_t>("ptbZinv");
-            const auto& mtb                 = tr.getVar<data_t>("mtbZinv");
-            //onst auto& softbLVec           = tr.getVec<TLorentzVector>("softbLVecZinv");
-            const auto& ISRJet              = tr.getVar<TLorentzVector>("ISRJetZinv");
+            const auto& ht                  = tr.getVar<data_t>("HT");
+            const auto& bottompt_scalar_sum = tr.getVar<data_t>("ptb");
+            const auto& mtb                 = tr.getVar<data_t>("mtb");
+            //onst auto& softbLVec           = tr.getVec<TLorentzVector>("softbLVec");
+            const auto& ISRJet              = tr.getVar<TLorentzVector>("ISRJet");
             
             //------------------------------------------//
             //--- Updated Search Bins (January 2019) ---//
