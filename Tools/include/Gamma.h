@@ -59,14 +59,15 @@ namespace plotterFunctions
       void generateGamma(NTupleReader& tr) {
         //std::cout << "Running Gamma.h" << std::endl;
 
-        const auto& gammaLVec            = tr.getVec<TLorentzVector>("PhotonTLV");     // reco photon
+        const auto& gammaLVec              = tr.getVec<TLorentzVector>("PhotonTLV");     // reco photon
         //const auto& gammaLVecGen         = tr.getVec<TLorentzVector>("gammaLVecGen");  // gen photon
         //const auto& genPartonLVec        = tr.getVec<TLorentzVector>("genPartonLVec"); // gen parton 
-        const auto& loosePhotonID        = tr.getVec<unsigned char>("Photon_mvaID_WP80");
-        const auto& tightPhotonID        = tr.getVec<unsigned char>("Photon_mvaID_WP90");
+        const auto& Photon_cutBased        = tr.getVec<int>("Photon_cutBased");
+        //const auto& loosePhotonID        = tr.getVec<unsigned char>("Photon_mvaID_WP80");
+        //const auto& tightPhotonID        = tr.getVec<unsigned char>("Photon_mvaID_WP90");
         //const auto& genMatched           = tr.getVec<data_t>("genMatched");
-        const auto& met                  = tr.getVar<data_t>("MET_pt");
-        const auto& metphi               = tr.getVar<data_t>("MET_phi");
+        const auto& met                    = tr.getVar<data_t>("MET_pt");
+        const auto& metphi                 = tr.getVar<data_t>("MET_phi");
 
 
         // toggle debugging print statements
@@ -105,11 +106,7 @@ namespace plotterFunctions
         //auto* directPhotons             = new std::vector<TLorentzVector>();
         //auto* totalPhotons              = new std::vector<TLorentzVector>();
 
-
-
         // Determine Gen Photons 
-
-
 
         //Pass cuts; use some variables from ntuples
         
@@ -133,65 +130,60 @@ namespace plotterFunctions
           }
         }
 
-        //Select reco photons; only eta cuts for now
-        for(int i = 0; i < gammaLVec.size(); ++i)
-        {
-            gammaLVecReco->push_back(gammaLVec[i]);
-          // passing ECAL barrel/endcap eta cuts
-          // this needs to be done prior to any other cuts (pt, gen matched, etc)
-          // this cut should match passAcc which is done in StopTupleMaker/SkimsAUX/plugins/PhotonIDisoProducer.cc
-          if (PhotonFunctions::passPhotonECAL(gammaLVec[i])) 
-          {
-            gammaLVecRecoEta->push_back(gammaLVec[i]);
-          }
-        }
         
-        // check vector lengths: gammaLVecRecoEta should have the same length as photon ntuple values for which passAcc=true
-        bool passTest1 = true;
-        bool passTest2 = true;
-        if (gammaLVecReco->size()    != gammaLVecRecoEta->size()) passTest1 = false;
-        if (gammaLVecRecoEta->size() != loosePhotonID.size())     passTest2 = false;
-        if (gammaLVecRecoEta->size() != tightPhotonID.size())     passTest2 = false;
-        if (debug || !passTest2) // print debugging statements
+        // check photon vector lengths
+        bool passTest1 = (gammaLVec.size() == Photon_cutBased.size());
+        if (debug || !passTest1) // print debugging statements
         {
-          //printf("gammaLVecGen gammaLVecReco gammaLVecRecoEta loosePhotonID tightPhotonID: %d | %d == %d == %d %d --- %s, %s\n", \
-            int(gammaLVecGen->size()), int(gammaLVecReco->size()), int(gammaLVecRecoEta->size()), int(loosePhotonID.size()), int(tightPhotonID.size()), \
-            passTest1 ? "passTest1" : "failTest1", passTest2 ? "passTest2" : "failTest2");
+          printf("gammaLVecGen | gammaLVec == Photon_cutBased: %d | %d == %d --- %s\n",
+            int(gammaLVecGen->size()), int(gammaLVec.size()), int(Photon_cutBased.size()),
+            passTest1 ? "passTest1" : "failTest1");
         }
-        if (!passTest2)
+        if (!passTest1)
         {
-          // // we should probably throw an exception here
-          // printf(" - ERROR in include/Gamma.h: TLorentzVector gammaLVecRecoEta for reco photons does not have the same length as one or more photon ntuple vectors.\n");
-          // printf(" - Set debug=true in include/Gamma.h for more information.\n");
-          // // throw exception
+          // we should probably throw an exception here
+          printf(" - ERROR in include/Gamma.h: vectors of photon variables do not have the same size.\n");
+          printf(" - Set debug=true in include/Gamma.h for more information.\n");
+          // throw exception
+          throw 20;
           // try
           // {
           //   throw 20;
           // }
           // catch (int e)
           // {
-          //   std::cout << "Exception: TLorentzVector photonLVecRecoEta for reco photons does not have the same length as one or more photon ntuple vectors." << std::endl;
+          //   std::cout << "Exception: photon ntuple vectors do not have the same length." << std::endl;
           // }
         }
 
         //Select reco photons within the ECAL acceptance region and Pt > 200 GeV 
-        for(int i = 0; i < gammaLVecRecoEta->size(); ++i)
+        for(int i = 0; i < gammaLVec.size(); ++i)
         {
-          // pt and eta cuts
-          if (PhotonFunctions::passPhotonEtaPt((*gammaLVecRecoEta)[i])) 
+          gammaLVecReco->push_back(gammaLVec[i]);
+          if (PhotonFunctions::passPhotonECAL(gammaLVec[i])) 
           {
-            gammaLVecRecoEtaPt->push_back((*gammaLVecRecoEta)[i]);
-            //Select iso photons passing passAcc, passIDLoose and passIsoLoose
-            if(bool(loosePhotonID[i]))  gammaLVecPassLooseID  -> push_back((*gammaLVecRecoEta)[i]);
-            if(bool(tightPhotonID[i]))  gammaLVecPassTightID  -> push_back((*gammaLVecRecoEta)[i]);
-            if(bool(loosePhotonID[i]))
+            gammaLVecRecoEta->push_back(gammaLVec[i]);
+            // pt and eta cuts
+            if (PhotonFunctions::passPhotonEtaPt(gammaLVec[i])) 
             {
-              gammaLVecRecoIso->push_back((*gammaLVecRecoEta)[i]);
-              // gen match
-              //if (bool(genMatched[i]))
-              if (PhotonFunctions::isGenMatched_Method1((*gammaLVecRecoEta)[i], *gammaLVecGen))
+              gammaLVecRecoEtaPt->push_back(gammaLVec[i]);
+              // Photon ID: Photon_cutBased from Photon_cutBasedBitmap  Int_t   cut-based ID bitmap, 2^(0:loose, 1:medium, 2:tight)
+              // use parentheses so that & is before ==
+              bool passLoosePhotonID  = (Photon_cutBased[i] & 0x1) == 0x1;
+              bool passMediumPhotonID = (Photon_cutBased[i] & 0x2) == 0x2;
+              bool passTightPhotonID  = (Photon_cutBased[i] & 0x4) == 0x4;
+              if(passLoosePhotonID)  gammaLVecPassLooseID  -> push_back(gammaLVec[i]);
+              if(passMediumPhotonID) gammaLVecPassMediumID -> push_back(gammaLVec[i]);
+              if(passTightPhotonID)  gammaLVecPassTightID  -> push_back(gammaLVec[i]);
+              if(passLoosePhotonID)
               {
-                gammaLVecRecoEtaPtMatched->push_back((*gammaLVecRecoEta)[i]);
+                gammaLVecRecoIso->push_back(gammaLVec[i]);
+                // gen match
+                //if (bool(genMatched[i]))
+                if (PhotonFunctions::isGenMatched_Method1(gammaLVec[i], *gammaLVecGen))
+                {
+                  gammaLVecRecoEtaPtMatched->push_back(gammaLVec[i]);
+                }
               }
             }
           }
