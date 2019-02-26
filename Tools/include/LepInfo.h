@@ -29,6 +29,7 @@
 #include "TRandom3.h"
 #include "TVector2.h"
 
+#include <memory>
 #include <vector>
 #include <iostream>
 #include <string>
@@ -39,7 +40,8 @@ namespace plotterFunctions
     class LepInfo
     {
     private:
-        TRandom3 *tr3;
+        // use shared_ptr, which will delete and clear dynamically allocated memory
+        std::shared_ptr<TRandom3> tr3;
         void lepInfo(NTupleReader& tr)
         {
             std::vector<int> genDecayPdgIdVec;
@@ -598,9 +600,8 @@ namespace plotterFunctions
         }
 
     public:
-        LepInfo()
+        LepInfo() : tr3(new TRandom3())
         {
-            tr3 = new TRandom3();
         }
 
         void operator()(NTupleReader& tr)
