@@ -79,6 +79,7 @@ namespace plotterFunctions
         float metphiWithPhoton = -999.9;
         bool passPhotonSelection = false;
         
+        // if you use new, you need to register it or destroy it yourself to clear memory
         auto* gammaLVecGen              = new std::vector<TLorentzVector>(); 
         auto* gammaLVecGenEta           = new std::vector<TLorentzVector>(); 
         auto* gammaLVecGenEtaPt         = new std::vector<TLorentzVector>(); 
@@ -91,8 +92,9 @@ namespace plotterFunctions
         auto* gammaLVecPassLooseID      = new std::vector<TLorentzVector>();
         auto* gammaLVecPassMediumID     = new std::vector<TLorentzVector>();
         auto* gammaLVecPassTightID      = new std::vector<TLorentzVector>();
-        auto* metLVec                   = new TLorentzVector();
-        auto* metWithPhotonLVec         = new TLorentzVector();
+        
+        // don't use new if it will not be registered or destroyed
+        TLorentzVector metWithPhotonLVec;
         
         //auto* promptPhotons             = new std::vector<TLorentzVector>(); 
         //auto* fakePhotons               = new std::vector<TLorentzVector>();
@@ -195,21 +197,18 @@ namespace plotterFunctions
           }
         }
 
-        // set met LVec
-        // Pt, Eta, Phi, E
-        //metLVec->SetPtEtaPhiE(met, 0.0, metphi, met);
+        // set default met LVec using met and metphi
         // Pt, Eta, Phi, M
-        metLVec->SetPtEtaPhiM(met, 0.0, metphi, 0.0);
-        metWithPhotonLVec = metLVec;
-        metWithPhoton     = metLVec->Pt();
-        metphiWithPhoton  = metLVec->Phi();
+        metWithPhotonLVec.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
+        metWithPhoton     = metWithPhotonLVec.Pt();
+        metphiWithPhoton  = metWithPhotonLVec.Phi();
         // pass photon selection and add to MET
-        if (gammaLVecRecoIso->size() == 1)
+        if (gammaLVecPassLooseID->size() == 1)
         {
             // Add LVecs of MET and Photon
-            *metWithPhotonLVec += (*gammaLVecRecoIso)[0];
-            metWithPhoton       = metWithPhotonLVec->Pt();
-            metphiWithPhoton    = metWithPhotonLVec->Phi();
+            metWithPhotonLVec  += (*gammaLVecPassLooseID)[0];
+            metWithPhoton       = metWithPhotonLVec.Pt();
+            metphiWithPhoton    = metWithPhotonLVec.Phi();
             passPhotonSelection = true;
         }
 
