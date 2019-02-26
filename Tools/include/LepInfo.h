@@ -56,13 +56,10 @@ namespace plotterFunctions
             //const auto& genDecayIdxVec                      = tr.getVec<int>("genDecayIdxVec");
             //const auto& genDecayMomIdxVec                   = tr.getVec<int>("genDecayMomIdxVec");
             const auto& muonsLVec                           = tr.getVec<TLorentzVector>("MuonTLV");
-            const auto& muonsRelIso                         = tr.getVec<data_t>("Muon_miniPFRelIso_all");
             //const auto& W_emuVec                            = tr.getVec<int>("W_emuVec");
             const auto& muonsCharge                         = tr.getVec<int>("Muon_charge");
             const auto& jetsLVec                            = tr.getVec<TLorentzVector>("JetTLV");
             //const auto& recoJetschargedHadronEnergyFraction = tr.getVec<data_t>("recoJetschargedHadronEnergyFraction");
-            const auto& muonsFlagIDVec                      = tr.getVec<bool_t>("Muon_Stop0l");
-            const auto& elesFlagIDVec                       = tr.getVec<bool_t>("Electron_Stop0l");
 
             const auto& cutMuVec                            = tr.getVec<TLorentzVector>("cutMuVec"); 
             const auto& cutMuVecRecoOnly                    = tr.getVec<TLorentzVector>("cutMuVecRecoOnly"); 

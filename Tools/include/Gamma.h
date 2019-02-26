@@ -169,9 +169,9 @@ namespace plotterFunctions
               gammaLVecRecoEtaPt->push_back(gammaLVec[i]);
               // Photon ID: Photon_cutBased from Photon_cutBasedBitmap  Int_t   cut-based ID bitmap, 2^(0:loose, 1:medium, 2:tight)
               // use parentheses so that & is before ==
-              bool passLoosePhotonID  = (Photon_cutBased[i] & 0x1) == 0x1;
-              bool passMediumPhotonID = (Photon_cutBased[i] & 0x2) == 0x2;
-              bool passTightPhotonID  = (Photon_cutBased[i] & 0x4) == 0x4;
+              bool passLoosePhotonID  = bool(Photon_cutBased[i] & 0x1);
+              bool passMediumPhotonID = bool(Photon_cutBased[i] & 0x2);
+              bool passTightPhotonID  = bool(Photon_cutBased[i] & 0x4);
               if(passLoosePhotonID)  gammaLVecPassLooseID  -> push_back(gammaLVec[i]);
               if(passMediumPhotonID) gammaLVecPassMediumID -> push_back(gammaLVec[i]);
               if(passTightPhotonID)  gammaLVecPassTightID  -> push_back(gammaLVec[i]);

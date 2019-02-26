@@ -39,7 +39,6 @@ namespace plotterFunctions
     class BasicLepton
     {
     private:
-        TRandom3 *tr3;
         void basicLepton(NTupleReader& tr)
         {
             const auto& muonsLVec                           = tr.getVec<TLorentzVector>("MuonTLV");
@@ -47,14 +46,17 @@ namespace plotterFunctions
             const auto& muonsMiniIso                        = tr.getVec<char>("Muon_miniIsoId");
             const auto& muonsCharge                         = tr.getVec<int>("Muon_charge");
             //const auto& muonspfActivity                     = tr.getVec<data_t>("muonspfActivity");
-            const auto& muonsFlagIDVec                      = tr.getVec<bool_t>("Muon_Stop0l");
+            // Muon_mediumId
+            //const auto& muonsFlagIDVec                      = tr.getVec<bool_t>("Muon_Stop0l");
+            const auto& muonsFlagIDVec                      = tr.getVec<bool_t>("Muon_mediumId");
 
             const auto& elesLVec                            = tr.getVec<TLorentzVector>("ElectronTLV");
             const auto& elesMiniIso                         = tr.getVec<data_t>("Electron_miniPFRelIso_all");
             const auto& elesCharge                          = tr.getVec<int>("Electron_charge");
             //const auto& elesisEB                            = tr.getVec<unsigned int>("elesisEB");
             //const auto& elespfActivity                      = tr.getVec<data_t>("elespfActivity");
-            const auto& elesFlagIDVec                       = tr.getVec<bool_t>("Electron_Stop0l");
+            //const auto& elesFlagIDVec                       = tr.getVec<bool_t>("Electron_Stop0l");
+            const auto& elesFlagIDVec                       = tr.getVec<int>("Electron_cutBasedNoIso");
 
             //muons
             auto* cutMuVec                  = new std::vector<TLorentzVector>();
@@ -79,13 +81,13 @@ namespace plotterFunctions
 
             for(int i = 0; i < muonsLVec.size(); ++i)
             {
-                //if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
-                if(muonsFlagIDVec[i])
+                //if(muonsFlagIDVec[i])
+                if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
                 {
                     cutMuVecRecoOnly->push_back(muonsLVec[i]);
                 }
-                //if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
-                if(muonsFlagIDVec[i])
+                //if(muonsFlagIDVec[i])
+                if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
                 {
                     if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
                     {
@@ -105,14 +107,17 @@ namespace plotterFunctions
             int cutElecSummedCharge = 0;
             for(int i = 0; i < elesLVec.size(); ++i)
             {
-                //if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr)) // emulates electrons with pt but no iso requirements.
-                if(elesFlagIDVec[i])
+                // Electron_cutBased    Int_t   cut-based ID Fall17 V2 (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)
+                // Electron_cutBasedNoIso: Removed isolation requirement from eGamma ID;  Int_t  (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)
+                bool passElectonID = (elesFlagIDVec[i] == 3);
+                //if(elesFlagIDVec[i])
+                if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, passElectonID, AnaConsts::elesMiniIsoArr)) // emulates electrons with pt but no iso requirements.
                 {
                     cutElecVecRecoOnly->push_back(elesLVec[i]);
                 }
 
-                //if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
-                if(elesFlagIDVec[i])
+                //if(elesFlagIDVec[i])
+                if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, passElectonID, AnaConsts::elesMiniIsoArr))
                 {
                     cutElecVec->push_back(elesLVec[i]);
                     cutElecCharge->push_back(elesCharge[i]);
@@ -143,7 +148,6 @@ namespace plotterFunctions
     public:
         BasicLepton()
         {
-            tr3 = new TRandom3();
         }
 
         void operator()(NTupleReader& tr)
