@@ -435,8 +435,8 @@ int main(int argc, char* argv[])
 
         // TODO: change variables to a tag for ZinvLL (to use cleaned jet collection, etc)
         // TODO: fix lepInfo module to use in Nano AOD and calculate passMuZinvSel
-        Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passBaselineLowDMDRLeptonCleaned;passMuZinvSel",  "");
-        Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passBaselineHighDMDRLeptonCleaned;passMuZinvSel", "");
+        Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineLowDMDRLeptonCleaned;passMuZinvSel",  "");
+        Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineHighDMDRLeptonCleaned;passMuZinvSel", "");
         std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDMDRLeptonCleaned;passMuZinvSel","");
         std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDMDRLeptonCleaned;passMuZinvSel","");
         //Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "",  "");
@@ -466,8 +466,8 @@ int main(int argc, char* argv[])
         // Photon 
 
         // TODO: change variables to a tag for ZinvPhoton (to used cleaned jet collection, etc)
-        Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passBaselineLowDMDRPhotonCleaned;passPhotonSelection",  "");
-        Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passBaselineHighDMDRPhotonCleaned;passPhotonSelection",  "");
+        Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineLowDMDRPhotonCleaned;passPhotonSelection",  "");
+        Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDMDRPhotonCleaned;passPhotonSelection",  "");
         std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDMDRPhotonCleaned;passPhotonSelection","");
         std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDMDRPhotonCleaned;passPhotonSelection","");
         //Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "",  "");
