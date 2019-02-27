@@ -62,8 +62,8 @@ private:
     BaselineVessel *blvZinv;
     BaselineVessel *blvNoVeto;
     BaselineVessel *blvPFLeptonCleaned;
-    BaselineVessel *blvDRLeptonCleaned;
-    BaselineVessel *blvDRPhotonCleaned;
+    BaselineVessel *blv_drLeptonCleaned;
+    BaselineVessel *blv_drPhotonCleaned;
     //BaselineVessel *blvZinv1b;
     //BaselineVessel *blvZinv2b;
     //BaselineVessel *blvZinv3b;

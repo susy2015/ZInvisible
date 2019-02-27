@@ -442,20 +442,20 @@ int main(int argc, char* argv[])
         //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("","");
         
         // apply selection
-        //Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineLowDMDRLeptonCleaned;passMuZinvSel",  "");
-        //Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineHighDMDRLeptonCleaned;passMuZinvSel", "");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDMDRLeptonCleaned;passMuZinvSel","");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDMDRLeptonCleaned;passMuZinvSel","");
-        Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineLowDMDRLeptonCleaned",  "");
-        Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineHighDMDRLeptonCleaned", "");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDMDRLeptonCleaned","");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDMDRLeptonCleaned","");
+        //Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineLowDM_drLeptonCleaned;passMuZinvSel",  "");
+        //Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineHighDM_drLeptonCleaned;passMuZinvSel", "");
+        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDM_drLeptonCleaned;passMuZinvSel","");
+        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDM_drLeptonCleaned;passMuZinvSel","");
+        Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineLowDM_drLeptonCleaned",  "");
+        Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineHighDM_drLeptonCleaned", "");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDM_drLeptonCleaned","");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDM_drLeptonCleaned","");
         
         // n_jets
-        Plotter::DataCollection dcData_Muon_LowDM_nj(  "data",   "nJetsDRLeptonCleaned", {dsData_Muon_LowDM});
-        Plotter::DataCollection dcData_Muon_HighDM_nj( "data",   "nJetsDRLeptonCleaned", {dsData_Muon_HighDM});
-        Plotter::DataCollection dcMC_Muon_LowDM_nj(    "stack",  "nJetsDRLeptonCleaned", StackMC_Muon_LowDM);
-        Plotter::DataCollection dcMC_Muon_HighDM_nj(   "stack",  "nJetsDRLeptonCleaned", StackMC_Muon_HighDM);
+        Plotter::DataCollection dcData_Muon_LowDM_nj(  "data",   "nJets_drLeptonCleaned", {dsData_Muon_LowDM});
+        Plotter::DataCollection dcData_Muon_HighDM_nj( "data",   "nJets_drLeptonCleaned", {dsData_Muon_HighDM});
+        Plotter::DataCollection dcMC_Muon_LowDM_nj(    "stack",  "nJets_drLeptonCleaned", StackMC_Muon_LowDM);
+        Plotter::DataCollection dcMC_Muon_HighDM_nj(   "stack",  "nJets_drLeptonCleaned", StackMC_Muon_HighDM);
         
         // met
         Plotter::DataCollection dcData_Muon_LowDM_met(  "data",   "cleanMetPt", {dsData_Muon_LowDM});
@@ -481,20 +481,20 @@ int main(int argc, char* argv[])
         //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("","");
         
         // apply selection
-        //Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineLowDMDRPhotonCleaned;passPhotonSelection",  "");
-        //Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDMDRPhotonCleaned;passPhotonSelection",  "");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDMDRPhotonCleaned;passPhotonSelection","");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDMDRPhotonCleaned;passPhotonSelection","");
-        Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineLowDMDRPhotonCleaned",  "");
-        Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDMDRPhotonCleaned",  "");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDMDRPhotonCleaned","");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDMDRPhotonCleaned","");
+        //Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineLowDM_drPhotonCleaned;passPhotonSelection",  "");
+        //Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDM_drPhotonCleaned;passPhotonSelection",  "");
+        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM_drPhotonCleaned;passPhotonSelection","");
+        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM_drPhotonCleaned;passPhotonSelection","");
+        Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineLowDM_drPhotonCleaned",  "");
+        Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDM_drPhotonCleaned",  "");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM_drPhotonCleaned","");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM_drPhotonCleaned","");
         
         // n_jets
-        Plotter::DataCollection dcData_Photon_LowDM_nj(  "data",   "nJetsDRPhotonCleaned", {dsData_Photon_LowDM});
-        Plotter::DataCollection dcData_Photon_HighDM_nj( "data",   "nJetsDRPhotonCleaned", {dsData_Photon_HighDM});
-        Plotter::DataCollection dcMC_Photon_LowDM_nj(    "stack",  "nJetsDRPhotonCleaned", StackMC_Photon_LowDM);
-        Plotter::DataCollection dcMC_Photon_HighDM_nj(   "stack",  "nJetsDRPhotonCleaned", StackMC_Photon_HighDM);
+        Plotter::DataCollection dcData_Photon_LowDM_nj(  "data",   "nJets_drPhotonCleaned", {dsData_Photon_LowDM});
+        Plotter::DataCollection dcData_Photon_HighDM_nj( "data",   "nJets_drPhotonCleaned", {dsData_Photon_HighDM});
+        Plotter::DataCollection dcMC_Photon_LowDM_nj(    "stack",  "nJets_drPhotonCleaned", StackMC_Photon_LowDM);
+        Plotter::DataCollection dcMC_Photon_HighDM_nj(   "stack",  "nJets_drPhotonCleaned", StackMC_Photon_HighDM);
         
         // met
         Plotter::DataCollection dcData_Photon_LowDM_met(  "data",   "metWithPhoton", {dsData_Photon_LowDM});
@@ -1042,7 +1042,7 @@ int main(int argc, char* argv[])
         std::vector< std::pair<std::string, std::string> > tagVector;
         //tagVector.emplace_back("NoVeto",          "all jets");
         tagVector.emplace_back("PFLeptonCleaned", "PF lepton cleaned jets");
-        tagVector.emplace_back("DRLeptonCleaned", "DR lepton cleaned jets");
+        tagVector.emplace_back("_drLeptonCleaned", "DR lepton cleaned jets");
         // vector of DY selections
         std::vector<std::string> selectionVec = {"Elec", "Mu"};
         // vector of styles
@@ -1053,11 +1053,11 @@ int main(int argc, char* argv[])
         // no pt or eta cuts
         //jetMap["NoVeto"]          = "jetsLVec";
         //jetMap["PFLeptonCleaned"] = "prodJetsNoLep_jetsLVec";
-        //jetMap["DRLeptonCleaned"] = "jetsLVec_drLeptonCleaned";
+        //jetMap["_drLeptonCleaned"] = "jetsLVec_drLeptonCleaned";
         // with pt and eta cuts
         jetMap["NoVeto"]          = "jetsLVec_pt20eta24";
         jetMap["PFLeptonCleaned"] = "prodJetsNoLep_jetsLVec_pt20eta24";
-        jetMap["DRLeptonCleaned"] = "jetsLVec_drLeptonCleaned_pt20eta24";
+        jetMap["_drLeptonCleaned"] = "jetsLVec_drLeptonCleaned_pt20eta24";
 
         // map of y axis limits
         std::map< std::string, std::vector<float> > YAxisLimits;
@@ -1129,7 +1129,7 @@ int main(int argc, char* argv[])
                 dataCollectionMap["dphi2_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
             }
 
-            selectionLL = "passBaselineDRLeptonCleaned;pass" + s + "ZinvSel_lowpt";
+            selectionLL = "passBaseline_drLeptonCleaned;pass" + s + "ZinvSel_lowpt";
             dataCollectionMap["dr_" + s].emplace_back( Plotter::DataCollection("single", "dR_jetsLVec_drLeptonCleaned", {makePDSDY("all jets", selectionLL)} ) );
            
             

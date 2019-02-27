@@ -104,12 +104,12 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     // Important: create objects!!
     
     //AnaFunctions::prepareTopTagger();
-    myBLV              = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
-    blvZinv            = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
-    blvNoVeto          = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoVeto");
-    blvPFLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "PFLeptonCleaned");
-    blvDRLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "DRLeptonCleaned");
-    blvDRPhotonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "DRPhotonCleaned");
+    myBLV               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
+    blvZinv             = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    blvNoVeto           = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoVeto");
+    blvPFLeptonCleaned  = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "PFLeptonCleaned");
+    blv_drLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drLeptonCleaned");
+    blv_drPhotonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drPhotonCleaned");
     //blvZinv1b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv1b");
     //blvZinv2b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv2b");
     //blvZinv3b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv3b");
@@ -181,8 +181,8 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(blvZinv)                   delete blvZinv;
     if(blvNoVeto)                 delete blvNoVeto;
     if(blvPFLeptonCleaned)        delete blvPFLeptonCleaned;
-    if(blvDRLeptonCleaned)        delete blvDRLeptonCleaned;
-    if(blvDRPhotonCleaned)        delete blvDRPhotonCleaned;
+    if(blv_drLeptonCleaned)        delete blv_drLeptonCleaned;
+    if(blv_drPhotonCleaned)        delete blv_drPhotonCleaned;
     //if(blvZinv1b)                 delete blvZinv1b;
     //if(blvZinv2b)                 delete blvZinv2b;
     //if(blvZinv3b)                 delete blvZinv3b;
@@ -226,8 +226,8 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     
     tr.registerFunction(*lepInfo); // TODO: fix lepInfo to use with NanoAOD; it is broken right now
     
-    tr.registerFunction(*blvDRLeptonCleaned);
-    tr.registerFunction(*blvDRPhotonCleaned);
+    tr.registerFunction(*blv_drLeptonCleaned);
+    tr.registerFunction(*blv_drPhotonCleaned);
     
     tr.registerFunction(*getSearchBin);
     
@@ -235,8 +235,8 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     //tr.registerFunction(*blvZinv);
     //tr.registerFunction(*blvNoVeto);
     //tr.registerFunction(*blvPFLeptonCleaned);
-    //tr.registerFunction(*blvDRLeptonCleaned);
-    //tr.registerFunction(*blvDRPhotonCleaned);
+    //tr.registerFunction(*blv_drLeptonCleaned);
+    //tr.registerFunction(*blv_drPhotonCleaned);
     //tr.registerFunction(*njWeight);
     //tr.registerFunction(*fakebtagvectors);
     //tr.registerFunction(*blvZinv1b);
