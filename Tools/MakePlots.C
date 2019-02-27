@@ -444,10 +444,12 @@ int main(int argc, char* argv[])
         // apply selection
         //Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineLowDMDRLeptonCleaned;passMuZinvSel",  "");
         //Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineHighDMDRLeptonCleaned;passMuZinvSel", "");
-        Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passBaselineLowDMDRLeptonCleaned;passMuZinvSel",  "");
-        Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passBaselineHighDMDRLeptonCleaned;passMuZinvSel", "");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDMDRLeptonCleaned;passMuZinvSel","");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDMDRLeptonCleaned;passMuZinvSel","");
+        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDMDRLeptonCleaned;passMuZinvSel","");
+        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDMDRLeptonCleaned;passMuZinvSel","");
+        Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineLowDMDRLeptonCleaned",  "");
+        Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineHighDMDRLeptonCleaned", "");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDMDRLeptonCleaned","");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDMDRLeptonCleaned","");
         
         // n_jets
         Plotter::DataCollection dcData_Muon_LowDM_nj(  "data",   "nJetsDRLeptonCleaned", {dsData_Muon_LowDM});
@@ -481,10 +483,12 @@ int main(int argc, char* argv[])
         // apply selection
         //Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineLowDMDRPhotonCleaned;passPhotonSelection",  "");
         //Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDMDRPhotonCleaned;passPhotonSelection",  "");
-        Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passBaselineLowDMDRPhotonCleaned;passPhotonSelection",  "");
-        Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passBaselineHighDMDRPhotonCleaned;passPhotonSelection",  "");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDMDRPhotonCleaned;passPhotonSelection","");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDMDRPhotonCleaned;passPhotonSelection","");
+        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDMDRPhotonCleaned;passPhotonSelection","");
+        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDMDRPhotonCleaned;passPhotonSelection","");
+        Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineLowDMDRPhotonCleaned",  "");
+        Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDMDRPhotonCleaned",  "");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDMDRPhotonCleaned","");
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDMDRPhotonCleaned","");
         
         // n_jets
         Plotter::DataCollection dcData_Photon_LowDM_nj(  "data",   "nJetsDRPhotonCleaned", {dsData_Photon_LowDM});
