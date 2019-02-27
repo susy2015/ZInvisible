@@ -402,14 +402,14 @@ int main(int argc, char* argv[])
 
     auto makeStackMC_DiLepton = [&](const std::string& cuts, const std::string& weights)
     {
-        Plotter::DatasetSummary dsDY(     "DY",           fileMap["DYJetsToLL"],      cuts,   weights);
-        Plotter::DatasetSummary dsDYInc(  "DY Inc",       fileMap["IncDY"],           cuts,   weights);
-        Plotter::DatasetSummary dstt2l(   "t#bar{t}",     fileMap["TTbarNoHad"],      cuts,   weights);
-        Plotter::DatasetSummary dstW(     "Single t",     fileMap["SingleTopZinv"],   cuts,   weights);
-        Plotter::DatasetSummary dsttZ(    "t#bar{t}Z",    fileMap["TTZ"],             cuts,   weights);
-        Plotter::DatasetSummary dsVV(     "Diboson",      fileMap["Diboson"],         cuts,   weights);
-        Plotter::DatasetSummary dsRare(   "Rare",         fileMap["Rare"],            cuts,   weights);
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC = {{dsDY, dsDYInc}, {dstt2l}, {dstW}, {dsRare, dsttZ, dsVV}};
+        Plotter::DatasetSummary dsDY(            "DY",           fileMap["DYJetsToLL"],      cuts,   weights);
+        //Plotter::DatasetSummary dsDYInc(  "DY Inc",       fileMap["IncDY"],           cuts,   weights);
+        Plotter::DatasetSummary dsTTbarNoHad(    "t#bar{t}",     fileMap["TTbarNoHad"],      cuts,   weights);
+        Plotter::DatasetSummary dsSingleTopZinv( "Single t",     fileMap["SingleTopZinv"],   cuts,   weights);
+        Plotter::DatasetSummary dsRare(          "Rare",         fileMap["Rare"],            cuts,   weights);
+        Plotter::DatasetSummary dsTTZ(           "t#bar{t}Z",    fileMap["TTZ"],             cuts,   weights);
+        Plotter::DatasetSummary dsDiboson(       "Diboson",      fileMap["Diboson"],         cuts,   weights);
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC = {{dsDY}, {dsTTbarNoHad}, {dsSingleTopZinv}, {dsRare, dsTTZ, dsDiboson}};
         return StackMC;
     };
     
@@ -417,15 +417,14 @@ int main(int argc, char* argv[])
     {
         Plotter::DatasetSummary dsGJets(      "#gamma+jets",      fileMap["GJets"],         cuts,   weights);
         Plotter::DatasetSummary dsQCD(        "QCD",              fileMap["QCD"],           cuts,   weights);
-        Plotter::DatasetSummary dsTTGJets(    "t#bar{t}#gamma",   fileMap["TTGJets"],       cuts,   weights);
         Plotter::DatasetSummary dsWJetsToLNu( "W(l#nu)+jets",     fileMap["WJetsToLNu"],    cuts,   weights);
         Plotter::DatasetSummary dsTTbarAll(   "t#bar{t}",         fileMap["TTbarAll"],      cuts,   weights);
-        Plotter::DatasetSummary dsTTZ(        "t#bar{t}Z",        fileMap["TTZ"],           cuts,   weights);
         Plotter::DatasetSummary dstW(         "tW",               fileMap["tW"],            cuts,   weights);
         Plotter::DatasetSummary dsDiboson(    "Diboson",          fileMap["Diboson"],       cuts,   weights);
         Plotter::DatasetSummary dsRare(       "Rare",             fileMap["Rare"],          cuts,   weights);
+        Plotter::DatasetSummary dsTTZ(        "t#bar{t}Z",        fileMap["TTZ"],           cuts,   weights);
         //std::vector<std::vector<Plotter::DatasetSummary>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC = {{dsGJets}, {dsQCD}, {dsTTGJets}, {dsWJetsToLNu}, {dsTTbarAll}, {dstW}, {dsDiboson}, {dsRare, dsTTZ}};
+        std::vector<std::vector<Plotter::DatasetSummary>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTbarAll}, {dstW}, {dsDiboson}, {dsRare, dsTTZ}};
         return StackMC;
     };
     
