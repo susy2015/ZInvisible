@@ -119,26 +119,29 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     //blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
 
 
-    getVectors                = new GetVectors;
-    cleanedJets               = new CleanedJets;
-    runTopTagger              = new RunTopTagger;
-    gamma                     = new plotterFunctions::Gamma;
-    weights                   = new plotterFunctions::GenerateWeight;
-    generatePhotonEfficiency  = new plotterFunctions::GeneratePhotonEfficiency;
-    njWeight                  = new plotterFunctions::NJetWeight;
-    lepInfo                   = new plotterFunctions::LepInfo;
-    basicLepton               = new plotterFunctions::BasicLepton;
-    fakebtagvectors           = new plotterFunctions::Fakebtagvectors;
-    getSearchBin              = new plotterFunctions::GetSearchBin(sbEra);
-    triggerInfo               = new plotterFunctions::TriggerInfo;
-    prepareMiniTupleVars      = new plotterFunctions::PrepareMiniTupleVars(true);
-    systematicPrep            = new plotterFunctions::SystematicPrep;
-    systematicCalc            = new plotterFunctions::SystematicCalc(sbEra);
+    getVectors                   = new GetVectors;
+    cleanedJets                  = new CleanedJets;
+    // RunTopTagger(std::string taggerCfg = "TopTagger.cfg", std::string suffix = "", bool doLeptonCleaning = false, bool doPhotonCleaning = false)
+    runTopTagger                 = new RunTopTagger;
+    runTopTagger_drLeptonCleaned = new RunTopTagger("TopTagger.cfg","_drLeptonCleaned",true,false);
+    runTopTagger_drPhotonCleaned = new RunTopTagger("TopTagger.cfg","_drPhotonCleaned",false,true);
+    gamma                        = new plotterFunctions::Gamma;
+    weights                      = new plotterFunctions::GenerateWeight;
+    generatePhotonEfficiency     = new plotterFunctions::GeneratePhotonEfficiency;
+    njWeight                     = new plotterFunctions::NJetWeight;
+    lepInfo                      = new plotterFunctions::LepInfo;
+    basicLepton                  = new plotterFunctions::BasicLepton;
+    fakebtagvectors              = new plotterFunctions::Fakebtagvectors;
+    getSearchBin                 = new plotterFunctions::GetSearchBin(sbEra);
+    triggerInfo                  = new plotterFunctions::TriggerInfo;
+    prepareMiniTupleVars         = new plotterFunctions::PrepareMiniTupleVars(true);
+    systematicPrep               = new plotterFunctions::SystematicPrep;
+    systematicCalc               = new plotterFunctions::SystematicCalc(sbEra);
 
     //taudiv                    = new plotterFunctions::Taudiv;
-    taudiv                    = new plotterFunctions::Taudiv(blvZinv->GetTopTaggerPtr());
-    nJetAk8                   = new plotterFunctions::NJetAk8;
-    ak8DrMatch                = new plotterFunctions::Ak8DrMatch;
+    taudiv                       = new plotterFunctions::Taudiv(blvZinv->GetTopTaggerPtr());
+    nJetAk8                      = new plotterFunctions::NJetAk8;
+    ak8DrMatch                   = new plotterFunctions::Ak8DrMatch;
 
     myPDFUnc = new PDFUncertainty();
     bTagCorrector = nullptr;
@@ -174,38 +177,40 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 }
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {
-    if(getVectors)                delete getVectors;
-    if(cleanedJets)               delete cleanedJets;
-    if(runTopTagger)              delete runTopTagger;
-    if(myBLV)                     delete myBLV;
-    if(blvZinv)                   delete blvZinv;
-    if(blvNoVeto)                 delete blvNoVeto;
-    if(blvPFLeptonCleaned)        delete blvPFLeptonCleaned;
-    if(blv_drLeptonCleaned)        delete blv_drLeptonCleaned;
-    if(blv_drPhotonCleaned)        delete blv_drPhotonCleaned;
-    //if(blvZinv1b)                 delete blvZinv1b;
-    //if(blvZinv2b)                 delete blvZinv2b;
-    //if(blvZinv3b)                 delete blvZinv3b;
-    //if(blvZinvJEUUp)              delete blvZinvJEUUp;
-    //if(blvZinvJEUDn)              delete blvZinvJEUDn;
-    //if(blvZinvMEUUp)              delete blvZinvMEUUp;
-    //if(blvZinvMEUDn)              delete blvZinvMEUDn;
-    if(weights)                   delete weights;
-    if(generatePhotonEfficiency)  delete generatePhotonEfficiency;
-    if(njWeight)                  delete njWeight;
-    if(lepInfo)                   delete lepInfo;
-    if(basicLepton)               delete basicLepton;
-    if(fakebtagvectors)           delete fakebtagvectors;
-    if(getSearchBin)              delete getSearchBin;
-    if(triggerInfo)               delete triggerInfo;
-    if(prepareMiniTupleVars)      delete prepareMiniTupleVars;
-    if(myPDFUnc)                  delete myPDFUnc;
-    if(systematicPrep)            delete systematicPrep;
-    if(systematicCalc)            delete systematicCalc;
-    if(bTagCorrector)             delete bTagCorrector;
-    if(ISRcorrector)              delete ISRcorrector;
-    if(pileup)                    delete pileup;
-    if(gamma)                     delete gamma;
+    if(getVectors)                   delete getVectors;
+    if(cleanedJets)                  delete cleanedJets;
+    if(runTopTagger)                 delete runTopTagger;
+    if(runTopTagger_drLeptonCleaned) delete runTopTagger_drLeptonCleaned;
+    if(runTopTagger_drPhotonCleaned) delete runTopTagger_drPhotonCleaned;
+    if(myBLV)                        delete myBLV;
+    if(blvZinv)                      delete blvZinv;
+    if(blvNoVeto)                    delete blvNoVeto;
+    if(blvPFLeptonCleaned)           delete blvPFLeptonCleaned;
+    if(blv_drLeptonCleaned)          delete blv_drLeptonCleaned;
+    if(blv_drPhotonCleaned)          delete blv_drPhotonCleaned;
+    //if(blvZinv1b)                  delete blvZinv1b;
+    //if(blvZinv2b)                  delete blvZinv2b;
+    //if(blvZinv3b)                  delete blvZinv3b;
+    //if(blvZinvJEUUp)               delete blvZinvJEUUp;
+    //if(blvZinvJEUDn)               delete blvZinvJEUDn;
+    //if(blvZinvMEUUp)               delete blvZinvMEUUp;
+    //if(blvZinvMEUDn)               delete blvZinvMEUDn;
+    if(weights)                      delete weights;
+    if(generatePhotonEfficiency)     delete generatePhotonEfficiency;
+    if(njWeight)                     delete njWeight;
+    if(lepInfo)                      delete lepInfo;
+    if(basicLepton)                  delete basicLepton;
+    if(fakebtagvectors)              delete fakebtagvectors;
+    if(getSearchBin)                 delete getSearchBin;
+    if(triggerInfo)                  delete triggerInfo;
+    if(prepareMiniTupleVars)         delete prepareMiniTupleVars;
+    if(myPDFUnc)                     delete myPDFUnc;
+    if(systematicPrep)               delete systematicPrep;
+    if(systematicCalc)               delete systematicCalc;
+    if(bTagCorrector)                delete bTagCorrector;
+    if(ISRcorrector)                 delete ISRcorrector;
+    if(pileup)                       delete pileup;
+    if(gamma)                        delete gamma;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -221,6 +226,8 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*generatePhotonEfficiency);
     tr.registerFunction(*cleanedJets);
     tr.registerFunction(*runTopTagger);
+    tr.registerFunction(*runTopTagger_drLeptonCleaned);
+    tr.registerFunction(*runTopTagger_drPhotonCleaned);
     tr.registerFunction(*myBLV);
     //tr.registerFunction(*blvZinv);
     

@@ -74,6 +74,8 @@ private:
     GetVectors                                  *getVectors;
     CleanedJets                                 *cleanedJets;
     RunTopTagger                                *runTopTagger;
+    RunTopTagger                                *runTopTagger_drLeptonCleaned;
+    RunTopTagger                                *runTopTagger_drPhotonCleaned;
     plotterFunctions::Gamma                     *gamma;
     PDFUncertainty                              *myPDFUnc;
     BTagCorrector                               *bTagCorrector;
