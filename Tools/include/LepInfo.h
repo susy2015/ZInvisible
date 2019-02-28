@@ -63,14 +63,12 @@ namespace plotterFunctions
 
             const auto& cutMuVec                            = tr.getVec<TLorentzVector>("cutMuVec"); 
             const auto& cutMuVecRecoOnly                    = tr.getVec<TLorentzVector>("cutMuVecRecoOnly"); 
-            const auto& cutMuCharge                         = tr.getVec<data_t>("cutMuCharge"); 
             //const auto& cutMuActivity                       = tr.getVec<data_t>("cutMuActivity"); 
             const auto& cutMuSummedCharge                   = tr.getVar<int>("cutMuSummedCharge"); 
             const auto& nTriggerMuons                       = tr.getVar<int>("nTriggerMuons"); 
 
             const auto& cutElecVec                          = tr.getVec<TLorentzVector>("cutElecVec"); 
             const auto& cutElecVecRecoOnly                  = tr.getVec<TLorentzVector>("cutElecVecRecoOnly"); 
-            const auto& cutElecCharge                       = tr.getVec<data_t>("cutElecCharge"); 
             //const auto& cutElecActivity                     = tr.getVec<data_t>("cutElecActivity"); 
             const auto& cutElecSummedCharge                 = tr.getVar<int>("cutElecSummedCharge"); 
 

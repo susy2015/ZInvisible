@@ -45,6 +45,7 @@ namespace plotterFunctions
             const auto& muonsRelIso                         = tr.getVec<data_t>("Muon_miniPFRelIso_all");
             const auto& muonsMiniIso                        = tr.getVec<char>("Muon_miniIsoId");
             const auto& muonsCharge                         = tr.getVec<int>("Muon_charge");
+            const auto& muonsJetIndex                       = tr.getVec<int>("Muon_jetIdx");
             //const auto& muonspfActivity                     = tr.getVec<data_t>("muonspfActivity");
             // Muon_mediumId
             //const auto& muonsFlagIDVec                      = tr.getVec<bool_t>("Muon_Stop0l");
@@ -53,6 +54,7 @@ namespace plotterFunctions
             const auto& elesLVec                            = tr.getVec<TLorentzVector>("ElectronTLV");
             const auto& elesMiniIso                         = tr.getVec<data_t>("Electron_miniPFRelIso_all");
             const auto& elesCharge                          = tr.getVec<int>("Electron_charge");
+            const auto& elesJetIndex                        = tr.getVec<int>("Electron_jetIdx");
             //const auto& elesisEB                            = tr.getVec<unsigned int>("elesisEB");
             //const auto& elespfActivity                      = tr.getVec<data_t>("elespfActivity");
             //const auto& elesFlagIDVec                       = tr.getVec<bool_t>("Electron_Stop0l");
@@ -61,13 +63,15 @@ namespace plotterFunctions
             //muons
             auto* cutMuVec                  = new std::vector<TLorentzVector>();
             auto* cutMuVecRecoOnly          = new std::vector<TLorentzVector>();
-            auto* cutMuCharge               = new std::vector<data_t>();
+            auto* cutMuCharge               = new std::vector<int>();
+            auto* cutMuJetIndex             = new std::vector<int>();
             //auto* cutMuActivity             = new std::vector<data_t>();
             
             //electrons
             auto* cutElecVec                = new std::vector<TLorentzVector>();
             auto* cutElecVecRecoOnly        = new std::vector<TLorentzVector>();
-            auto* cutElecCharge             = new std::vector<data_t>();
+            auto* cutElecCharge             = new std::vector<int>();
+            auto* cutElecJetIndex           = new std::vector<int>();
             //auto* cutElecActivity           = new std::vector<data_t>();
 
             //std::vector<TLorentzVector> cutMuVecRecoOnly;
@@ -95,8 +99,9 @@ namespace plotterFunctions
                         else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
                     }
                     cutMuVec->push_back(muonsLVec[i]);
-                    //std::cout<<"cutMuVec PT "<<muonsLVec[i].Pt()<<std::endl; 
                     cutMuCharge->push_back(muonsCharge[i]);
+                    cutMuJetIndex->push_back(muonsJetIndex[i]);
+                    //std::cout<<"cutMuVec PT "<<muonsLVec[i].Pt()<<std::endl; 
                     //cutMuActivity->push_back(muonspfActivity[i]);
                     if(muonsCharge[i] > 0) cutMuSummedCharge++;
                     else                   cutMuSummedCharge--;
@@ -121,6 +126,7 @@ namespace plotterFunctions
                 {
                     cutElecVec->push_back(elesLVec[i]);
                     cutElecCharge->push_back(elesCharge[i]);
+                    cutElecJetIndex->push_back(elesJetIndex[i]);
                     //cutElecActivity->push_back(elespfActivity[i]);
                     if(elesCharge[i] > 0) cutElecSummedCharge++;
                     else                  cutElecSummedCharge--;
@@ -133,6 +139,7 @@ namespace plotterFunctions
             //tr.registerDerivedVec("cutMuActivity",        cutMuActivity);
             tr.registerDerivedVec("cutMuCharge",          cutMuCharge);
             tr.registerDerivedVar("cutMuSummedCharge",    cutMuSummedCharge);
+            tr.registerDerivedVec("cutMuJetIndex",        cutMuJetIndex);
             tr.registerDerivedVar("nTriggerMuons",        nTriggerMuons);
             
             //electrons
@@ -141,6 +148,7 @@ namespace plotterFunctions
             //tr.registerDerivedVec("cutElecActivity",      cutElecActivity);
             tr.registerDerivedVec("cutElecCharge",        cutElecCharge);
             tr.registerDerivedVar("cutElecSummedCharge",  cutElecSummedCharge);
+            tr.registerDerivedVec("cutElecJetIndex",      cutElecJetIndex);
             
 
         }
