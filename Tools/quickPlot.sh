@@ -36,25 +36,33 @@ rm plots/*
 # Z to LL and photon samples for Data and MC
 # don't run a sample twice 
 # the samples TTZ, Diboson, Rare are used for both lepton and photon
+# declare -a samples=(
+#                     "Data_SingleMuon_2016"
+#                     "DYJetsToLL_HT_400to600"
+#                     "TTbarNoHad"
+#                     "SingleTopZinv"
+#                     "Rare"
+#                     "TTZ"
+#                     "Diboson"
+#                     "Data_SinglePhoton_2016"
+#                     "GJets_HT-400To600"
+#                     "QCD_HT500to700"
+#                     "WJetsToLNu_HT_400to600"
+#                     "TTbarAll"
+#                     "tW"
+#                     "ZJetsToNuNu_HT_400to600"
+#                    )
+# declare -a samples=(
+#                     "Data_SingleMuon_2016"
+#                     "DYJetsToLL_HT_400to600"
+#                    )
 declare -a samples=(
-                    "Data_SingleMuon_2016"
-                    "DYJetsToLL_HT_400to600"
-                    "TTbarNoHad"
-                    "SingleTopZinv"
-                    "Rare"
-                    "TTZ"
-                    "Diboson"
                     "Data_SinglePhoton_2016"
                     "GJets_HT-400To600"
-                    "QCD_HT500to700"
-                    "WJetsToLNu_HT_400to600"
-                    "TTbarAll"
-                    "tW"
-                    "ZJetsToNuNu_HT_400to600"
                    )
 
 outputFiles=
-n_events=1000
+n_events=10000
 
 # loop through samples array
 for sample in "${samples[@]}"
