@@ -54,13 +54,11 @@ rm plots/*
 #                    )
 declare -a samples=(
                     "Data_SingleMuon_2016"
-                    "DYJetsToLL_HT_400to600"
-                    "Data_SinglePhoton_2016"
-                    "GJets_HT-400To600"
+                    "DYJetsToLL_Inc"
                    )
 
 outputFiles=
-n_events=50000
+n_events=20000
 
 # loop through samples array
 for sample in "${samples[@]}"

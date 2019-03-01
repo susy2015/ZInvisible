@@ -405,11 +405,17 @@ namespace plotterFunctions
             TLorentzVector cleanMet = metV + metZ;
             //std::cout<<"metZ "<<metZ.Pt()<<std::endl;
             //std::cout<<"metV "<<metV.Pt()<<std::endl;
+            
+            
             bool passDiMuSel   = passEleVeto  && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt);
             bool passDiElecSel = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt);
             bool passElMuSel = (cutMuVec.size() == 1 && cutElecVec.size() == 1 && cutElecSummedCharge == -cutMuSummedCharge && cutMuVec[0].Pt() > highMuPt && cutElecVec[0].Pt() > minMuPt);
 
-            bool passMuZinvSel         = passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
+            // for testing
+            //bool passMuZinvSel         = passEleVeto && (cutMuVec.size() == 2 && cutMuSummedCharge == 0 && cutMuVec[0].Pt() > highMuPt);
+            bool passMuZinvSel         = passEleVeto && (cutMuVec.size() == 2 && cutMuSummedCharge == 0) && (bestRecoMuZ.M() > 50.0);
+            
+            //bool passMuZinvSel         = passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
             bool passMuZinvSel_lowpt   = passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > minMuPt      && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
             bool passElecZinvSel       = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
             bool passElecZinvSel_lowpt = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > minElecPt  && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
@@ -422,9 +428,36 @@ namespace plotterFunctions
             double cutMuEta1 = -999.9;
             double cutMuEta2 = -999.9;
 
+            
             // print number of muons
             //printf("num gen mu: %d num mu: %d num cut mu: %d num cut mu reco only: %d\n", genMu->size(), muonsLVec.size(), cutMuVec.size(), cutMuVecRecoOnly.size());
-            
+
+            // print passMuZinvSel conditions
+            bool printMuon = false;
+            if (printMuon)
+            {
+                if (cutMuVec.size() > 0)
+                {
+                    printf("passEleVeto: %d ", passEleVeto);
+                    printf("cutMuVec.size() == 2: %d ", cutMuVec.size() == 2);
+                    printf("cutMuSummedCharge == 0: %d ", cutMuSummedCharge == 0);
+                    printf("cutMuVec[0].Pt() > highMuPt: %d ", cutMuVec[0].Pt() > highMuPt);
+                    printf("cutMuVec[1].Pt() > minMuPt: %d ", cutMuVec[1].Pt() > minMuPt);
+                    printf("bestRecoMuZ.M() > zMassMin: %d ", bestRecoMuZ.M() > zMassMin);
+                    printf("bestRecoMuZ.M() < zMassMax: %d ", bestRecoMuZ.M() < zMassMax);
+                    if (passMuZinvSel)
+                    {
+                        printf(" --- passMuZinvSel");
+                    }
+                    printf("\n");
+                }
+                else
+                {
+                    printf("WARNING: no cut muons found in event.\n");
+                }
+            }
+
+
             if(genMu->size() >= 1)
             {
                 genMuPt  = genMu->at(0)->Pt();
