@@ -53,12 +53,12 @@ rm plots/*
 #                     "ZJetsToNuNu_HT_400to600"
 #                    )
 declare -a samples=(
-                    "Data_SingleMuon_2016"
-                    "DYJetsToLL_Inc"
+                    "TTbarNoHad"
+                    "TTbarAll"
                    )
 
 outputFiles=
-n_events=20000
+n_events=10000
 
 # loop through samples array
 for sample in "${samples[@]}"
