@@ -323,7 +323,8 @@ int main(int argc, char* argv[])
         {"RecoMatch_ratio",   "RecoEtaPtMatched / RecoIso"},
     };
 
-    vector<Plotter::HistSummary> vh;
+    //vector<Plotter::HistSummary> vh;
+    vector<PHS> vh;
     
     ////////////////////////////////////////////////
     // --- version with weights for reference --- //
