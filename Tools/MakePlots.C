@@ -166,7 +166,7 @@ int main(int argc, char* argv[])
     const double znunu_mumu_ratio = 5.942;
     const double znunu_ee_ratio   = 5.942;
 
-    map<string, vector<AnaSamples::FileSummary>> fileMap;
+    map<string, vector<AFS>> fileMap;
 
     //Select approperiate datasets here
     if(dataSets.compare("TEST") == 0)
@@ -333,35 +333,35 @@ int main(int argc, char* argv[])
     /*
     // Datasetsummaries we are using                                                                                                        
     // no weight (genWeight deals with negative weights); also add btag weights here                                                        
-    Plotter::DatasetSummary dsData_SingleMuon("Data",         fileMap["Data_SingleMuon"], "passMuTrigger",   "");
-    Plotter::DatasetSummary dsDY_mu(          "DY #mu",       fileMap["DYJetsToLL"],      "",        "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
-    Plotter::DatasetSummary dsDYInc_mu(       "DY HT<100",    fileMap["IncDY"],           "genHT<100",   "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
-    Plotter::DatasetSummary dsDY_elec(        "DY e",         fileMap["DYJetsToLL"],      "",          "bTagSF_EventWeightSimple_Central;_PUweightFactor"); // do not use muTrigWgt for electrons (it is 0.0)
-    Plotter::DatasetSummary dsDYInc_elec(     "DY HT<100",    fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;_PUweightFactor"); // do not use muTrigWgt for electrons (it is 0.0)
-    Plotter::DatasetSummary dsPhoton(         "#gamma+ jets", fileMap["GJets"],         "",            "bTagSF_EventWeightSimple_Central;_PUweightFactor");
-    Plotter::DatasetSummary dstt2l(           "t#bar{t}",     fileMap["TTbarNoHad"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;isr_Unc_Cent;_PUweightFactor");
-    Plotter::DatasetSummary dstW(             "Single t",     fileMap["SingleTopZinv"],   "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
-    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",    fileMap["TTZ"],             "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
-    Plotter::DatasetSummary dsT1tttt_gluino1200_lsp800("T1tttt_gluino1200_lsp800",     fileMap["Signal_T1tttt_mGluino1200_mLSP800"], "",  "");
-    Plotter::DatasetSummary dsT1tttt_gluino1500_lsp100("T1tttt_gluino1500_lsp100",     fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "",  "");
-    Plotter::DatasetSummary dsT1tttt_gluino2000_lsp100("T1tttt_gluino2000_lsp100",     fileMap["Signal_T1tttt_mGluino2000_mLSP100"], "",  "");
-    Plotter::DatasetSummary dsVV(             "Diboson",      fileMap["Diboson"],        "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
-    Plotter::DatasetSummary dsRare(           "Rare",         fileMap["Rare"],           "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
-    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dsDY_mu, dsDYInc_mu}, {dstt2l}, {dstW}, {dsRare, dsVV, dsttZ}};
+    PDS dsData_SingleMuon("Data",         fileMap["Data_SingleMuon"], "passMuTrigger",   "");
+    PDS dsDY_mu(          "DY #mu",       fileMap["DYJetsToLL"],      "",        "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    PDS dsDYInc_mu(       "DY HT<100",    fileMap["IncDY"],           "genHT<100",   "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    PDS dsDY_elec(        "DY e",         fileMap["DYJetsToLL"],      "",          "bTagSF_EventWeightSimple_Central;_PUweightFactor"); // do not use muTrigWgt for electrons (it is 0.0)
+    PDS dsDYInc_elec(     "DY HT<100",    fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;_PUweightFactor"); // do not use muTrigWgt for electrons (it is 0.0)
+    PDS dsPhoton(         "#gamma+ jets", fileMap["GJets"],         "",            "bTagSF_EventWeightSimple_Central;_PUweightFactor");
+    PDS dstt2l(           "t#bar{t}",     fileMap["TTbarNoHad"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;isr_Unc_Cent;_PUweightFactor");
+    PDS dstW(             "Single t",     fileMap["SingleTopZinv"],   "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    PDS dsttZ(            "t#bar{t}Z",    fileMap["TTZ"],             "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    PDS dsT1tttt_gluino1200_lsp800("T1tttt_gluino1200_lsp800",     fileMap["Signal_T1tttt_mGluino1200_mLSP800"], "",  "");
+    PDS dsT1tttt_gluino1500_lsp100("T1tttt_gluino1500_lsp100",     fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "",  "");
+    PDS dsT1tttt_gluino2000_lsp100("T1tttt_gluino2000_lsp100",     fileMap["Signal_T1tttt_mGluino2000_mLSP100"], "",  "");
+    PDS dsVV(             "Diboson",      fileMap["Diboson"],        "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    PDS dsRare(           "Rare",         fileMap["Rare"],           "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    std::vector<std::vector<PDS>> stack_MC = {{dsDY_mu, dsDYInc_mu}, {dstt2l}, {dstW}, {dsRare, dsVV, dsttZ}};
 
     // Apply data/mc njet weight for DY and ttbar                                                                                                                                    
-    Plotter::DatasetSummary dswDY(             "DY",         fileMap["DYJetsToLL"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;njWGJets;_PUweightFactor");
-    Plotter::DatasetSummary dswDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "muTrigWgt;bTagSF_EventWeightSimple_Central;njWGJets;_PUweightFactor");
-    Plotter::DatasetSummary dswtt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;nJetWgtTTbar;isr_Unc_Cent;_PUweightFactor");
-    Plotter::DatasetSummary dswtW(             "Single t",   fileMap["SingleTopZinv"],   "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
-    Plotter::DatasetSummary dswttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
-    Plotter::DatasetSummary dswVV(             "Diboson",    fileMap["Diboson"],         "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
-    Plotter::DatasetSummary dswRare(           "Rare",       fileMap["Rare"],            "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
-    std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswRare, dswVV, dswttZ}};
+    PDS dswDY(             "DY",         fileMap["DYJetsToLL"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;njWGJets;_PUweightFactor");
+    PDS dswDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "muTrigWgt;bTagSF_EventWeightSimple_Central;njWGJets;_PUweightFactor");
+    PDS dswtt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;nJetWgtTTbar;isr_Unc_Cent;_PUweightFactor");
+    PDS dswtW(             "Single t",   fileMap["SingleTopZinv"],   "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    PDS dswttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    PDS dswVV(             "Diboson",    fileMap["Diboson"],         "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor;genWeight");
+    PDS dswRare(           "Rare",       fileMap["Rare"],            "",            "muTrigWgt;bTagSF_EventWeightSimple_Central;genWeight;_PUweightFactor");
+    std::vector<std::vector<PDS>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswRare, dswVV, dswttZ}};
 
-    Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
-    Plotter::DatasetSummary dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
-    std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
+    PDS dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
+    PDS dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "genHT<100",   "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
+    std::vector<std::vector<PDS>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
     */
 
     /////////////////////////////////////
@@ -370,63 +370,63 @@ int main(int argc, char* argv[])
     
     // Datasetsummaries we are using                                                                                                        
     // no weight (genWeight deals with negative weights); also add btag weights here                                                        
-    Plotter::DatasetSummary dsData_SingleMuon("Data",         fileMap["Data_SingleMuon"], "passMuTrigger",   "");
-    Plotter::DatasetSummary dsDY_mu(          "DY #mu",       fileMap["DYJetsToLL"],      "",   "");
-    Plotter::DatasetSummary dsDYInc_mu(       "DY HT<100",    fileMap["IncDY"],           "",   "");
-    Plotter::DatasetSummary dsDY_elec(        "DY e",         fileMap["DYJetsToLL"],      "",   ""); 
-    Plotter::DatasetSummary dsDYInc_elec(     "DY HT<100",    fileMap["IncDY"],           "",   ""); 
-    Plotter::DatasetSummary dsPhoton(         "#gamma+ jets", fileMap["GJets"],           "",   "");
-    Plotter::DatasetSummary dstt2l(           "t#bar{t}",     fileMap["TTbarNoHad"],      "",   "");
-    Plotter::DatasetSummary dstW(             "Single t",     fileMap["SingleTopZinv"],   "",   "");
-    Plotter::DatasetSummary dsttZ(            "t#bar{t}Z",    fileMap["TTZ"],             "",   "");
-    Plotter::DatasetSummary dsVV(             "Diboson",      fileMap["Diboson"],        "",    "");
-    Plotter::DatasetSummary dsRare(           "Rare",         fileMap["Rare"],           "",    "");
-    Plotter::DatasetSummary dsT1tttt_gluino1200_lsp800("T1tttt_gluino1200_lsp800",     fileMap["Signal_T1tttt_mGluino1200_mLSP800"], "",  "");
-    Plotter::DatasetSummary dsT1tttt_gluino1500_lsp100("T1tttt_gluino1500_lsp100",     fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "",  "");
-    Plotter::DatasetSummary dsT1tttt_gluino2000_lsp100("T1tttt_gluino2000_lsp100",     fileMap["Signal_T1tttt_mGluino2000_mLSP100"], "",  "");
-    std::vector<std::vector<Plotter::DatasetSummary>> stack_MC = {{dsDY_mu, dsDYInc_mu}, {dstt2l}, {dstW}, {dsRare, dsVV, dsttZ}};
+    PDS dsData_SingleMuon("Data",         fileMap["Data_SingleMuon"], "passMuTrigger",   "");
+    PDS dsDY_mu(          "DY #mu",       fileMap["DYJetsToLL"],      "",   "");
+    PDS dsDYInc_mu(       "DY HT<100",    fileMap["IncDY"],           "",   "");
+    PDS dsDY_elec(        "DY e",         fileMap["DYJetsToLL"],      "",   ""); 
+    PDS dsDYInc_elec(     "DY HT<100",    fileMap["IncDY"],           "",   ""); 
+    PDS dsPhoton(         "#gamma+ jets", fileMap["GJets"],           "",   "");
+    PDS dstt2l(           "t#bar{t}",     fileMap["TTbarNoHad"],      "",   "");
+    PDS dstW(             "Single t",     fileMap["SingleTopZinv"],   "",   "");
+    PDS dsttZ(            "t#bar{t}Z",    fileMap["TTZ"],             "",   "");
+    PDS dsVV(             "Diboson",      fileMap["Diboson"],        "",    "");
+    PDS dsRare(           "Rare",         fileMap["Rare"],           "",    "");
+    PDS dsT1tttt_gluino1200_lsp800("T1tttt_gluino1200_lsp800",     fileMap["Signal_T1tttt_mGluino1200_mLSP800"], "",  "");
+    PDS dsT1tttt_gluino1500_lsp100("T1tttt_gluino1500_lsp100",     fileMap["Signal_T1tttt_mGluino1500_mLSP100"], "",  "");
+    PDS dsT1tttt_gluino2000_lsp100("T1tttt_gluino2000_lsp100",     fileMap["Signal_T1tttt_mGluino2000_mLSP100"], "",  "");
+    std::vector<std::vector<PDS>> stack_MC = {{dsDY_mu, dsDYInc_mu}, {dstt2l}, {dstW}, {dsRare, dsVV, dsttZ}};
 
     // Apply data/mc njet weight for DY and ttbar                                                                                                                                    
-    Plotter::DatasetSummary dswDY(             "DY",         fileMap["DYJetsToLL"],      "",            "");
-    Plotter::DatasetSummary dswDYInc(          "DY HT<100",  fileMap["IncDY"],           "",            "");
-    Plotter::DatasetSummary dswtt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",            "");
-    Plotter::DatasetSummary dswtW(             "Single t",   fileMap["SingleTopZinv"],   "",            "");
-    Plotter::DatasetSummary dswttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "");
-    Plotter::DatasetSummary dswVV(             "Diboson",    fileMap["Diboson"],         "",            "");
-    Plotter::DatasetSummary dswRare(           "Rare",       fileMap["Rare"],            "",            "");
-    std::vector<std::vector<Plotter::DatasetSummary>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswRare, dswVV, dswttZ}};
+    PDS dswDY(             "DY",         fileMap["DYJetsToLL"],      "",            "");
+    PDS dswDYInc(          "DY HT<100",  fileMap["IncDY"],           "",            "");
+    PDS dswtt2l(           "t#bar{t}",   fileMap["TTbarNoHad"],      "",            "");
+    PDS dswtW(             "Single t",   fileMap["SingleTopZinv"],   "",            "");
+    PDS dswttZ(            "t#bar{t}Z",  fileMap["TTZ"],             "",            "");
+    PDS dswVV(             "Diboson",    fileMap["Diboson"],         "",            "");
+    PDS dswRare(           "Rare",       fileMap["Rare"],            "",            "");
+    std::vector<std::vector<PDS>> stackw_MC = {{dswDY, dswDYInc}, {dswtt2l}, {dswtW}, {dswRare, dswVV, dswttZ}};
 
-    Plotter::DatasetSummary dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "");
-    Plotter::DatasetSummary dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "",            "");
-    std::vector<std::vector<Plotter::DatasetSummary>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
+    PDS dswwDY(             "DY",         fileMap["DYJetsToLL"],      "",            "");
+    PDS dswwDYInc(          "DY HT<100",  fileMap["IncDY"],           "",            "");
+    std::vector<std::vector<PDS>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
 
 
     auto makeStackMC_DiLepton = [&](const std::string& cuts, const std::string& weights)
     {
-        Plotter::DatasetSummary dsDY(            "DY",           fileMap["DYJetsToLL"],      cuts,   weights);
-        //Plotter::DatasetSummary dsDYInc(         "DY Inc",       fileMap["IncDY"],           cuts,   weights);
-        Plotter::DatasetSummary dsTTbarNoHad(    "t#bar{t}",     fileMap["TTbarNoHad"],      cuts,   weights);
-        Plotter::DatasetSummary dsSingleTopZinv( "Single t",     fileMap["SingleTopZinv"],   cuts,   weights);
-        Plotter::DatasetSummary dsRare(          "Rare",         fileMap["Rare"],            cuts,   weights);
-        Plotter::DatasetSummary dsTTZ(           "t#bar{t}Z",    fileMap["TTZ"],             cuts,   weights);
-        Plotter::DatasetSummary dsDiboson(       "Diboson",      fileMap["Diboson"],         cuts,   weights);
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC = {{dsDY}, {dsTTbarNoHad}, {dsSingleTopZinv}, {dsRare, dsTTZ, dsDiboson}};
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC = {{dsDYInc}, {dsTTbarNoHad}, {dsSingleTopZinv}, {dsRare, dsTTZ, dsDiboson}};
+        PDS dsDY(            "DY",           fileMap["DYJetsToLL"],      cuts,   weights);
+        //PDS dsDYInc(         "DY Inc",       fileMap["IncDY"],           cuts,   weights);
+        PDS dsTTbarNoHad(    "t#bar{t}",     fileMap["TTbarNoHad"],      cuts,   weights);
+        PDS dsSingleTopZinv( "Single t",     fileMap["SingleTopZinv"],   cuts,   weights);
+        PDS dsRare(          "Rare",         fileMap["Rare"],            cuts,   weights);
+        PDS dsTTZ(           "t#bar{t}Z",    fileMap["TTZ"],             cuts,   weights);
+        PDS dsDiboson(       "Diboson",      fileMap["Diboson"],         cuts,   weights);
+        std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTbarNoHad}, {dsSingleTopZinv}, {dsRare, dsTTZ, dsDiboson}};
+        //std::vector<std::vector<PDS>> StackMC = {{dsDYInc}, {dsTTbarNoHad}, {dsSingleTopZinv}, {dsRare, dsTTZ, dsDiboson}};
         return StackMC;
     };
     
     auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
     {
-        Plotter::DatasetSummary dsGJets(      "#gamma+jets",      fileMap["GJets"],         cuts,   weights);
-        Plotter::DatasetSummary dsQCD(        "QCD",              fileMap["QCD"],           cuts,   weights);
-        Plotter::DatasetSummary dsWJetsToLNu( "W(l#nu)+jets",     fileMap["WJetsToLNu"],    cuts,   weights);
-        Plotter::DatasetSummary dsTTbarAll(   "t#bar{t}",         fileMap["TTbarAll"],      cuts,   weights);
-        Plotter::DatasetSummary dstW(         "tW",               fileMap["tW"],            cuts,   weights);
-        Plotter::DatasetSummary dsRare(       "Rare",             fileMap["Rare"],          cuts,   weights);
-        Plotter::DatasetSummary dsTTZ(        "t#bar{t}Z",        fileMap["TTZ"],           cuts,   weights);
-        Plotter::DatasetSummary dsDiboson(    "Diboson",          fileMap["Diboson"],       cuts,   weights);
-        //std::vector<std::vector<Plotter::DatasetSummary>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTbarAll}, {dstW}, {dsRare, dsTTZ, dsDiboson}};
+        PDS dsGJets(      "#gamma+jets",      fileMap["GJets"],         cuts,   weights);
+        PDS dsQCD(        "QCD",              fileMap["QCD"],           cuts,   weights);
+        PDS dsWJetsToLNu( "W(l#nu)+jets",     fileMap["WJetsToLNu"],    cuts,   weights);
+        PDS dsTTbarAll(   "t#bar{t}",         fileMap["TTbarAll"],      cuts,   weights);
+        PDS dstW(         "tW",               fileMap["tW"],            cuts,   weights);
+        PDS dsRare(       "Rare",             fileMap["Rare"],          cuts,   weights);
+        PDS dsTTZ(        "t#bar{t}Z",        fileMap["TTZ"],           cuts,   weights);
+        PDS dsDiboson(    "Diboson",          fileMap["Diboson"],       cuts,   weights);
+        //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
+        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTbarAll}, {dstW}, {dsRare, dsTTZ, dsDiboson}};
         return StackMC;
     };
     
@@ -438,53 +438,53 @@ int main(int argc, char* argv[])
         // TODO: fix lepInfo module to use in Nano AOD and calculate passMuZinvSel
         
         // no selection
-        //Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "",  "");
-        //Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "", "");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("","");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("","");
+        //PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "",  "");
+        //PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "", "");
+        //std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("","");
+        //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("","");
         //testing muons
-        //Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuZinvSel",  "");
-        //Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuZinvSel", "");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passMuZinvSel","");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passMuZinvSel","");
+        //PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuZinvSel",  "");
+        //PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuZinvSel", "");
+        //std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passMuZinvSel","");
+        //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passMuZinvSel","");
         
         // apply selection
-        //Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineLowDM_drLeptonCleaned",  "");
-        //Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineHighDM_drLeptonCleaned", "");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDM_drLeptonCleaned","");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDM_drLeptonCleaned","");
-        Plotter::DatasetSummary dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineLowDM_drLeptonCleaned;passMuZinvSel",  "");
-        Plotter::DatasetSummary dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineHighDM_drLeptonCleaned;passMuZinvSel", "");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDM_drLeptonCleaned;passMuZinvSel","");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDM_drLeptonCleaned;passMuZinvSel","");
+        //PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineLowDM_drLeptonCleaned",  "");
+        //PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineHighDM_drLeptonCleaned", "");
+        //std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDM_drLeptonCleaned","");
+        //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDM_drLeptonCleaned","");
+        PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineLowDM_drLeptonCleaned;passMuZinvSel",  "");
+        PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineHighDM_drLeptonCleaned;passMuZinvSel", "");
+        std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDM_drLeptonCleaned;passMuZinvSel","");
+        std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDM_drLeptonCleaned;passMuZinvSel","");
         
         // n_jets
-        Plotter::DataCollection dcData_Muon_LowDM_nj(  "data",   "nJets_drLeptonCleaned", {dsData_Muon_LowDM});
-        Plotter::DataCollection dcData_Muon_HighDM_nj( "data",   "nJets_drLeptonCleaned", {dsData_Muon_HighDM});
-        Plotter::DataCollection dcMC_Muon_LowDM_nj(    "stack",  "nJets_drLeptonCleaned", StackMC_Muon_LowDM);
-        Plotter::DataCollection dcMC_Muon_HighDM_nj(   "stack",  "nJets_drLeptonCleaned", StackMC_Muon_HighDM);
+        PDC dcData_Muon_LowDM_nj(  "data",   "nJets_drLeptonCleaned", {dsData_Muon_LowDM});
+        PDC dcData_Muon_HighDM_nj( "data",   "nJets_drLeptonCleaned", {dsData_Muon_HighDM});
+        PDC dcMC_Muon_LowDM_nj(    "stack",  "nJets_drLeptonCleaned", StackMC_Muon_LowDM);
+        PDC dcMC_Muon_HighDM_nj(   "stack",  "nJets_drLeptonCleaned", StackMC_Muon_HighDM);
         
         // met
-        Plotter::DataCollection dcData_Muon_LowDM_met(  "data",   "cleanMetPt", {dsData_Muon_LowDM});
-        Plotter::DataCollection dcData_Muon_HighDM_met( "data",   "cleanMetPt", {dsData_Muon_HighDM});
-        Plotter::DataCollection dcMC_Muon_LowDM_met(    "stack",  "cleanMetPt", StackMC_Muon_LowDM);
-        Plotter::DataCollection dcMC_Muon_HighDM_met(   "stack",  "cleanMetPt", StackMC_Muon_HighDM);
+        PDC dcData_Muon_LowDM_met(  "data",   "cleanMetPt", {dsData_Muon_LowDM});
+        PDC dcData_Muon_HighDM_met( "data",   "cleanMetPt", {dsData_Muon_HighDM});
+        PDC dcMC_Muon_LowDM_met(    "stack",  "cleanMetPt", StackMC_Muon_LowDM);
+        PDC dcMC_Muon_HighDM_met(   "stack",  "cleanMetPt", StackMC_Muon_HighDM);
 
         // muon pt
-        Plotter::DataCollection dcData_Muon_LowDM_Mu1pt(  "data",   "cutMuPt1", {dsData_Muon_LowDM});
-        Plotter::DataCollection dcData_Muon_HighDM_Mu1pt( "data",   "cutMuPt1", {dsData_Muon_HighDM});
-        Plotter::DataCollection dcMC_Muon_LowDM_Mu1pt(    "stack",  "cutMuPt1", StackMC_Muon_LowDM);
-        Plotter::DataCollection dcMC_Muon_HighDM_Mu1pt(   "stack",  "cutMuPt1", StackMC_Muon_HighDM);
-        Plotter::DataCollection dcData_Muon_LowDM_Mu2pt(  "data",   "cutMuPt2", {dsData_Muon_LowDM});
-        Plotter::DataCollection dcData_Muon_HighDM_Mu2pt( "data",   "cutMuPt2", {dsData_Muon_HighDM});
-        Plotter::DataCollection dcMC_Muon_LowDM_Mu2pt(    "stack",  "cutMuPt2", StackMC_Muon_LowDM);
-        Plotter::DataCollection dcMC_Muon_HighDM_Mu2pt(   "stack",  "cutMuPt2", StackMC_Muon_HighDM);
+        PDC dcData_Muon_LowDM_Mu1pt(  "data",   "cutMuPt1", {dsData_Muon_LowDM});
+        PDC dcData_Muon_HighDM_Mu1pt( "data",   "cutMuPt1", {dsData_Muon_HighDM});
+        PDC dcMC_Muon_LowDM_Mu1pt(    "stack",  "cutMuPt1", StackMC_Muon_LowDM);
+        PDC dcMC_Muon_HighDM_Mu1pt(   "stack",  "cutMuPt1", StackMC_Muon_HighDM);
+        PDC dcData_Muon_LowDM_Mu2pt(  "data",   "cutMuPt2", {dsData_Muon_LowDM});
+        PDC dcData_Muon_HighDM_Mu2pt( "data",   "cutMuPt2", {dsData_Muon_HighDM});
+        PDC dcMC_Muon_LowDM_Mu2pt(    "stack",  "cutMuPt2", StackMC_Muon_LowDM);
+        PDC dcMC_Muon_HighDM_Mu2pt(   "stack",  "cutMuPt2", StackMC_Muon_HighDM);
         
         // bestRecoZM
-        Plotter::DataCollection dcData_Muon_LowDM_bestRecoZM(  "data",   "bestRecoZM", {dsData_Muon_LowDM});
-        Plotter::DataCollection dcData_Muon_HighDM_bestRecoZM( "data",   "bestRecoZM", {dsData_Muon_HighDM});
-        Plotter::DataCollection dcMC_Muon_LowDM_bestRecoZM(    "stack",  "bestRecoZM", StackMC_Muon_LowDM);
-        Plotter::DataCollection dcMC_Muon_HighDM_bestRecoZM(   "stack",  "bestRecoZM", StackMC_Muon_HighDM);
+        PDC dcData_Muon_LowDM_bestRecoZM(  "data",   "bestRecoZM", {dsData_Muon_LowDM});
+        PDC dcData_Muon_HighDM_bestRecoZM( "data",   "bestRecoZM", {dsData_Muon_HighDM});
+        PDC dcMC_Muon_LowDM_bestRecoZM(    "stack",  "bestRecoZM", StackMC_Muon_LowDM);
+        PDC dcMC_Muon_HighDM_bestRecoZM(   "stack",  "bestRecoZM", StackMC_Muon_HighDM);
                 
         vh.push_back(PHS("DataMC_Muon_LowDM_nj",   {dcData_Muon_LowDM_nj,   dcMC_Muon_LowDM_nj},   {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
         vh.push_back(PHS("DataMC_Muon_HighDM_nj",  {dcData_Muon_HighDM_nj,  dcMC_Muon_HighDM_nj},  {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
@@ -504,32 +504,32 @@ int main(int argc, char* argv[])
         // TODO: change variables to a tag for ZinvPhoton (to used cleaned jet collection, etc)
         
         // no selection
-        //Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "",  "");
-        //Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "",  "");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("","");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("","");
+        //PDS dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "",  "");
+        //PDS dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "",  "");
+        //std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("","");
+        //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("","");
         
         // apply selection
-        //Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineLowDM_drPhotonCleaned",  "");
-        //Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDM_drPhotonCleaned",  "");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM_drPhotonCleaned","");
-        //std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM_drPhotonCleaned","");
-        Plotter::DatasetSummary dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineLowDM_drPhotonCleaned;passPhotonSelection",  "");
-        Plotter::DatasetSummary dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDM_drPhotonCleaned;passPhotonSelection",  "");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM_drPhotonCleaned;passPhotonSelection","");
-        std::vector<std::vector<Plotter::DatasetSummary>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM_drPhotonCleaned;passPhotonSelection","");
+        //PDS dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineLowDM_drPhotonCleaned",  "");
+        //PDS dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDM_drPhotonCleaned",  "");
+        //std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM_drPhotonCleaned","");
+        //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM_drPhotonCleaned","");
+        PDS dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineLowDM_drPhotonCleaned;passPhotonSelection",  "");
+        PDS dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDM_drPhotonCleaned;passPhotonSelection",  "");
+        std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM_drPhotonCleaned;passPhotonSelection","");
+        std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM_drPhotonCleaned;passPhotonSelection","");
         
         // n_jets
-        Plotter::DataCollection dcData_Photon_LowDM_nj(  "data",   "nJets_drPhotonCleaned", {dsData_Photon_LowDM});
-        Plotter::DataCollection dcData_Photon_HighDM_nj( "data",   "nJets_drPhotonCleaned", {dsData_Photon_HighDM});
-        Plotter::DataCollection dcMC_Photon_LowDM_nj(    "stack",  "nJets_drPhotonCleaned", StackMC_Photon_LowDM);
-        Plotter::DataCollection dcMC_Photon_HighDM_nj(   "stack",  "nJets_drPhotonCleaned", StackMC_Photon_HighDM);
+        PDC dcData_Photon_LowDM_nj(  "data",   "nJets_drPhotonCleaned", {dsData_Photon_LowDM});
+        PDC dcData_Photon_HighDM_nj( "data",   "nJets_drPhotonCleaned", {dsData_Photon_HighDM});
+        PDC dcMC_Photon_LowDM_nj(    "stack",  "nJets_drPhotonCleaned", StackMC_Photon_LowDM);
+        PDC dcMC_Photon_HighDM_nj(   "stack",  "nJets_drPhotonCleaned", StackMC_Photon_HighDM);
         
         // met
-        Plotter::DataCollection dcData_Photon_LowDM_met(  "data",   "metWithPhoton", {dsData_Photon_LowDM});
-        Plotter::DataCollection dcData_Photon_HighDM_met( "data",   "metWithPhoton", {dsData_Photon_HighDM});
-        Plotter::DataCollection dcMC_Photon_LowDM_met(    "stack",  "metWithPhoton", StackMC_Photon_LowDM);
-        Plotter::DataCollection dcMC_Photon_HighDM_met(   "stack",  "metWithPhoton", StackMC_Photon_HighDM);
+        PDC dcData_Photon_LowDM_met(  "data",   "metWithPhoton", {dsData_Photon_LowDM});
+        PDC dcData_Photon_HighDM_met( "data",   "metWithPhoton", {dsData_Photon_HighDM});
+        PDC dcMC_Photon_LowDM_met(    "stack",  "metWithPhoton", StackMC_Photon_LowDM);
+        PDC dcMC_Photon_HighDM_met(   "stack",  "metWithPhoton", StackMC_Photon_HighDM);
         
         vh.push_back(PHS("DataMC_Photon_LowDM_nj",   {dcData_Photon_LowDM_nj,   dcMC_Photon_LowDM_nj},   {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
         vh.push_back(PHS("DataMC_Photon_HighDM_nj",  {dcData_Photon_HighDM_nj,  dcMC_Photon_HighDM_nj},  {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
@@ -541,74 +541,74 @@ int main(int argc, char* argv[])
 
     //lambda is your friend
     //for electrons do not use muTrigWgt (it is 0.0 for electrons)
-    auto makePDSMu     = [&](const std::string& label) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
-    auto makePDSElec   = [&](const std::string& label) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
-    auto makePDSPhoton = [&](const std::string& label, const std::string& sample="GJets", const std::string& cuts="passPhotonSelection;HTZinv>200") {return Plotter::DatasetSummary("GJets "+label, fileMap[sample], cuts, "photonAcceptanceWeight;photonEfficiencyPtWeight;photonCrossSectionRatio"); };
+    auto makePDSMu     = [&](const std::string& label) {return PDS("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
+    auto makePDSElec   = [&](const std::string& label) {return PDS("DYJetsToLL "+label, fileMap["DYJetsToLL"], "", "bTagSF_EventWeightSimple_Central;_PUweightFactor"); };
+    auto makePDSPhoton = [&](const std::string& label, const std::string& sample="GJets", const std::string& cuts="passPhotonSelection;HTZinv>200") {return PDS("GJets "+label, fileMap[sample], cuts, "photonAcceptanceWeight;photonEfficiencyPtWeight;photonCrossSectionRatio"); };
     
     /*
     // acceptance
     // muons
-    Plotter::DataCollection dcMC_ngenMu(            "single", "ngenMu",                     {dsDY_mu});
-    Plotter::DataCollection dcMC_ngenMatchMu(       "single", "ngenMatchMu",                {dsDY_mu});
-    Plotter::DataCollection dcMC_ngenMuInAcc(       "single", "ngenMuInAcc",                {dsDY_mu});
-    Plotter::DataCollection dcMC_ngenMatchMuInAcc(  "single", "ngenMatchMuInAcc",           {dsDY_mu});
-    Plotter::DataCollection dcMC_genMuPt(           "single", "genMu(pt)",                  {dsDY_mu});
-    Plotter::DataCollection dcMC_genMuInAccPt(      "single", "genMuInAcc(pt)",             {dsDY_mu});
-    Plotter::DataCollection dcMC_genMatchMuInAccPt( "single", "genMatchMuInAcc(pt)",        {dsDY_mu});
-    Plotter::DataCollection dcMC_genMuEta(          "single", "genMu(eta)",                 {dsDY_mu});
-    Plotter::DataCollection dcMC_genMuInAccEta(     "single", "genMuInAcc(eta)",            {dsDY_mu});
-    Plotter::DataCollection dcMC_genMatchMuInAccEta("single", "genMatchMuInAcc(eta)",       {dsDY_mu});
+    PDC dcMC_ngenMu(            "single", "ngenMu",                     {dsDY_mu});
+    PDC dcMC_ngenMatchMu(       "single", "ngenMatchMu",                {dsDY_mu});
+    PDC dcMC_ngenMuInAcc(       "single", "ngenMuInAcc",                {dsDY_mu});
+    PDC dcMC_ngenMatchMuInAcc(  "single", "ngenMatchMuInAcc",           {dsDY_mu});
+    PDC dcMC_genMuPt(           "single", "genMu(pt)",                  {dsDY_mu});
+    PDC dcMC_genMuInAccPt(      "single", "genMuInAcc(pt)",             {dsDY_mu});
+    PDC dcMC_genMatchMuInAccPt( "single", "genMatchMuInAcc(pt)",        {dsDY_mu});
+    PDC dcMC_genMuEta(          "single", "genMu(eta)",                 {dsDY_mu});
+    PDC dcMC_genMuInAccEta(     "single", "genMuInAcc(eta)",            {dsDY_mu});
+    PDC dcMC_genMatchMuInAccEta("single", "genMatchMuInAcc(eta)",       {dsDY_mu});
     // electrons
-    Plotter::DataCollection dcMC_ngenElec(            "single", "ngenElec",                 {dsDY_elec});
-    Plotter::DataCollection dcMC_ngenMatchElec(       "single", "ngenMatchElec",            {dsDY_elec});
-    Plotter::DataCollection dcMC_ngenElecInAcc(       "single", "ngenElecInAcc",            {dsDY_elec});
-    Plotter::DataCollection dcMC_ngenMatchElecInAcc(  "single", "ngenMatchElecInAcc",       {dsDY_elec});
-    Plotter::DataCollection dcMC_genElecPt(           "single", "genElec(pt)",              {dsDY_elec});
-    Plotter::DataCollection dcMC_genElecInAccPt(      "single", "genElecInAcc(pt)",         {dsDY_elec});
-    Plotter::DataCollection dcMC_genMatchElecInAccPt( "single", "genMatchElecInAcc(pt)",    {dsDY_elec});
-    Plotter::DataCollection dcMC_genElecEta(          "single", "genElec(eta)",             {dsDY_elec});
-    Plotter::DataCollection dcMC_genElecInAccEta(     "single", "genElecInAcc(eta)",        {dsDY_elec});
-    Plotter::DataCollection dcMC_genMatchElecInAccEta("single", "genMatchElecInAcc(eta)",   {dsDY_elec});
+    PDC dcMC_ngenElec(            "single", "ngenElec",                 {dsDY_elec});
+    PDC dcMC_ngenMatchElec(       "single", "ngenMatchElec",            {dsDY_elec});
+    PDC dcMC_ngenElecInAcc(       "single", "ngenElecInAcc",            {dsDY_elec});
+    PDC dcMC_ngenMatchElecInAcc(  "single", "ngenMatchElecInAcc",       {dsDY_elec});
+    PDC dcMC_genElecPt(           "single", "genElec(pt)",              {dsDY_elec});
+    PDC dcMC_genElecInAccPt(      "single", "genElecInAcc(pt)",         {dsDY_elec});
+    PDC dcMC_genMatchElecInAccPt( "single", "genMatchElecInAcc(pt)",    {dsDY_elec});
+    PDC dcMC_genElecEta(          "single", "genElec(eta)",             {dsDY_elec});
+    PDC dcMC_genElecInAccEta(     "single", "genElecInAcc(eta)",        {dsDY_elec});
+    PDC dcMC_genMatchElecInAccEta("single", "genMatchElecInAcc(eta)",   {dsDY_elec});
     */
 
     // magic lambda functions... give it pt, eta, etc
     // leptons
     // acceptance = genInAcc / gen (acceptance / MC)
-    auto makePDCElecAcc_single = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genElecInAcc("+var+")", makePDSElec("e acc")}, {"genElec("+var+")", makePDSElec("e gen")}}); };
-    auto makePDCMuAcc_single   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMuInAcc("+var+")",   makePDSMu("#mu acc")}, {"genMu("+var+")",   makePDSMu("#mu gen")}}); };
-    auto makePDCElecAcc_ratio = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genElecInAcc("+var+")", makePDSElec("e acc over gen")}, {"genElec("+var+")", makePDSElec("e acc over gen")}}); };
-    auto makePDCMuAcc_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMuInAcc("+var+")",   makePDSMu("#mu acc over gen")}, {"genMu("+var+")",   makePDSMu("#mu acc over gen")}}); };
+    auto makePDCElecAcc_single = [&](const std::string& var, const std::string& style) {return PDC(style, {{"genElecInAcc("+var+")", makePDSElec("e acc")}, {"genElec("+var+")", makePDSElec("e gen")}}); };
+    auto makePDCMuAcc_single   = [&](const std::string& var, const std::string& style) {return PDC(style, {{"genMuInAcc("+var+")",   makePDSMu("#mu acc")}, {"genMu("+var+")",   makePDSMu("#mu gen")}}); };
+    auto makePDCElecAcc_ratio = [&](const std::string& var, const std::string& style) {return PDC(style, {{"genElecInAcc("+var+")", makePDSElec("e acc over gen")}, {"genElec("+var+")", makePDSElec("e acc over gen")}}); };
+    auto makePDCMuAcc_ratio   = [&](const std::string& var, const std::string& style) {return PDC(style, {{"genMuInAcc("+var+")",   makePDSMu("#mu acc over gen")}, {"genMu("+var+")",   makePDSMu("#mu acc over gen")}}); };
     // reco efficiency = genMatchInAcc / genInAcc (reco / acceptance)
-    auto makePDCElecReco_single = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchElecInAcc("+var+")", makePDSElec("e reco")}, {"genElecInAcc("+var+")", makePDSElec("e acc")}}); };
-    auto makePDCMuReco_single   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco")}, {"genMuInAcc("+var+")",   makePDSMu("#mu acc")}}); };
-    auto makePDCElecReco_ratio = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchElecInAcc("+var+")", makePDSElec("e reco over acc")}, {"genElecInAcc("+var+")", makePDSElec("e reco over acc")}}); };
-    auto makePDCMuReco_ratio   = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco over acc")}, {"genMuInAcc("+var+")",   makePDSMu("#mu reco over acc")}}); };
+    auto makePDCElecReco_single = [&](const std::string& var, const std::string& style) {return PDC(style, {{"genMatchElecInAcc("+var+")", makePDSElec("e reco")}, {"genElecInAcc("+var+")", makePDSElec("e acc")}}); };
+    auto makePDCMuReco_single   = [&](const std::string& var, const std::string& style) {return PDC(style, {{"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco")}, {"genMuInAcc("+var+")",   makePDSMu("#mu acc")}}); };
+    auto makePDCElecReco_ratio = [&](const std::string& var, const std::string& style) {return PDC(style, {{"genMatchElecInAcc("+var+")", makePDSElec("e reco over acc")}, {"genElecInAcc("+var+")", makePDSElec("e reco over acc")}}); };
+    auto makePDCMuReco_ratio   = [&](const std::string& var, const std::string& style) {return PDC(style, {{"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco over acc")}, {"genMuInAcc("+var+")",   makePDSMu("#mu reco over acc")}}); };
     // iso efficiency = genMatchIsoInAcc / genMatchInAcc (iso / reco)
-    auto makePDCElecIso_single  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso")}, {"genMatchElecInAcc("+var+")", makePDSElec("e reco")}}); };
-    auto makePDCMuIso_single    = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco")}}); };
-    auto makePDCElecIso_ratio  = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso over reco")}, {"genMatchElecInAcc("+var+")", makePDSElec("e iso over reco")}}); };
-    auto makePDCMuIso_ratio    = [&](const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}}); };
+    auto makePDCElecIso_single  = [&](const std::string& var, const std::string& style) {return PDC(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso")}, {"genMatchElecInAcc("+var+")", makePDSElec("e reco")}}); };
+    auto makePDCMuIso_single    = [&](const std::string& var, const std::string& style) {return PDC(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu reco")}}); };
+    auto makePDCElecIso_ratio  = [&](const std::string& var, const std::string& style) {return PDC(style, {{"genMatchIsoElecInAcc("+var+")", makePDSElec("e iso over reco")}, {"genMatchElecInAcc("+var+")", makePDSElec("e iso over reco")}}); };
+    auto makePDCMuIso_ratio    = [&](const std::string& var, const std::string& style) {return PDC(style, {{"genMatchIsoMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}, {"genMatchMuInAcc("+var+")",   makePDSMu("#mu iso over reco")}}); };
     // photons
     // Tag must be Gen or Reco
     // acceptance = gammaLVecTagEtaPt / gammaLVecTag (acc / tag)
-    auto makePDCPhotonAcc_single   = [&](const std::string& tag, const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVec"+tag+"Eta("+var+")", makePDSPhoton(tag+"Eta")},           {"gammaLVec"+tag+"("+var+")", makePDSPhoton(tag)}}); };
-    auto makePDCPhotonAcc_ratio    = [&](const std::string& tag, const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVec"+tag+"Eta("+var+")", makePDSPhoton(tag+"Eta over "+tag)}, {"gammaLVec"+tag+"("+var+")", makePDSPhoton(tag+"Eta over "+tag)}}); };
+    auto makePDCPhotonAcc_single   = [&](const std::string& tag, const std::string& var, const std::string& style) {return PDC(style, {{"gammaLVec"+tag+"Eta("+var+")", makePDSPhoton(tag+"Eta")},           {"gammaLVec"+tag+"("+var+")", makePDSPhoton(tag)}}); };
+    auto makePDCPhotonAcc_ratio    = [&](const std::string& tag, const std::string& var, const std::string& style) {return PDC(style, {{"gammaLVec"+tag+"Eta("+var+")", makePDSPhoton(tag+"Eta over "+tag)}, {"gammaLVec"+tag+"("+var+")", makePDSPhoton(tag+"Eta over "+tag)}}); };
     // iso efficiency = gammaLVecTagIso / gammaLVecTagEtaPt (iso / acc)
     // iso is only for reco!
-    auto makePDCPhotonIso_single   = [&](const std::string& tag, const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVec"+tag+"Iso("+var+")", makePDSPhoton(tag+"Iso")},                   {"gammaLVec"+tag+"EtaPt("+var+")", makePDSPhoton(tag+"EtaPt")}}); };
-    auto makePDCPhotonIso_ratio    = [&](const std::string& tag, const std::string& var, const std::string& style) {return Plotter::DataCollection(style, {{"gammaLVec"+tag+"Iso("+var+")", makePDSPhoton(tag+"Iso over "+tag+"EtaPt")}, {"gammaLVec"+tag+"EtaPt("+var+")", makePDSPhoton(tag+"Iso over "+tag+"EtaPt")}}); };
+    auto makePDCPhotonIso_single   = [&](const std::string& tag, const std::string& var, const std::string& style) {return PDC(style, {{"gammaLVec"+tag+"Iso("+var+")", makePDSPhoton(tag+"Iso")},                   {"gammaLVec"+tag+"EtaPt("+var+")", makePDSPhoton(tag+"EtaPt")}}); };
+    auto makePDCPhotonIso_ratio    = [&](const std::string& tag, const std::string& var, const std::string& style) {return PDC(style, {{"gammaLVec"+tag+"Iso("+var+")", makePDSPhoton(tag+"Iso over "+tag+"EtaPt")}, {"gammaLVec"+tag+"EtaPt("+var+")", makePDSPhoton(tag+"Iso over "+tag+"EtaPt")}}); };
     // Gen matched to Reco efficiency = gammaLVecGenMatched / gammaLVecGenEtaPt  (match / acc)
     // Reco matched to Gen efficiency = gammaLVecRecoMatched / gammaLVecRecoIso  (match / iso)
     auto makePDCPhotonMatch_single = [&](const std::string& tag, const std::string& var, const std::string& style) 
     {
-        if (tag.compare("Gen") == 0)    return Plotter::DataCollection(style, {{"gammaLVec"+tag+"EtaPtMatched("+var+")", makePDSPhoton(tag+"EtaPtMatched")}, {"gammaLVec"+tag+"EtaPt("+var+")", makePDSPhoton(tag+"EtaPt")}}); 
-        if (tag.compare("Reco") == 0)   return Plotter::DataCollection(style, {{"gammaLVec"+tag+"EtaPtMatched("+var+")", makePDSPhoton(tag+"EtaPtMatched")}, {"gammaLVec"+tag+"Iso("+var+")", makePDSPhoton(tag+"Iso")}});
+        if (tag.compare("Gen") == 0)    return PDC(style, {{"gammaLVec"+tag+"EtaPtMatched("+var+")", makePDSPhoton(tag+"EtaPtMatched")}, {"gammaLVec"+tag+"EtaPt("+var+")", makePDSPhoton(tag+"EtaPt")}}); 
+        if (tag.compare("Reco") == 0)   return PDC(style, {{"gammaLVec"+tag+"EtaPtMatched("+var+")", makePDSPhoton(tag+"EtaPtMatched")}, {"gammaLVec"+tag+"Iso("+var+")", makePDSPhoton(tag+"Iso")}});
         printf("ERROR: Tag must be Gen or Reco for Photon matching.\n");
     };
     auto makePDCPhotonMatch_ratio  = [&](const std::string& tag, const std::string& var, const std::string& style)
     {
-        if (tag.compare("Gen") == 0)    return Plotter::DataCollection(style, {{"gammaLVec"+tag+"EtaPtMatched("+var+")", makePDSPhoton(tag+"EtaPtMatched over "+tag+"EtaPt")}, {"gammaLVec"+tag+"EtaPt("+var+")", makePDSPhoton(tag+"EtaPtMatched over "+tag+"EtaPt")}}); 
-        if (tag.compare("Reco") == 0)   return Plotter::DataCollection(style, {{"gammaLVec"+tag+"EtaPtMatched("+var+")", makePDSPhoton(tag+"EtaPtMatched over "+tag+"Iso")},   {"gammaLVec"+tag+"Iso("+var+")", makePDSPhoton(tag+"EtaPtMatched over "+tag+"Iso")}}); 
+        if (tag.compare("Gen") == 0)    return PDC(style, {{"gammaLVec"+tag+"EtaPtMatched("+var+")", makePDSPhoton(tag+"EtaPtMatched over "+tag+"EtaPt")}, {"gammaLVec"+tag+"EtaPt("+var+")", makePDSPhoton(tag+"EtaPtMatched over "+tag+"EtaPt")}}); 
+        if (tag.compare("Reco") == 0)   return PDC(style, {{"gammaLVec"+tag+"EtaPtMatched("+var+")", makePDSPhoton(tag+"EtaPtMatched over "+tag+"Iso")},   {"gammaLVec"+tag+"Iso("+var+")", makePDSPhoton(tag+"EtaPtMatched over "+tag+"Iso")}}); 
         printf("ERROR: Tag must be Gen or Reco for Photon matching.\n");
     };
     
@@ -618,97 +618,97 @@ int main(int argc, char* argv[])
     // photons reco: gammaLVecGenRecoMatched
     // photons iso: gammaLVecGenIso
     /*
-    Plotter::DataCollection dcMC_genPhotonPt(     "single", "gammaLVecGenEtaPt(pt)",      {dsPhoton});
-    Plotter::DataCollection dcMC_genPhotonEta(    "single", "gammaLVecGenEtaPt(eta)",     {dsPhoton});
-    Plotter::DataCollection dcMC_matchedPhotonPt( "single", "promptPhotons(pt)",        {dsPhoton});
-    Plotter::DataCollection dcMC_matchedPhotonEta("single", "promptPhotons(eta)",       {dsPhoton});
+    PDC dcMC_genPhotonPt(     "single", "gammaLVecGenEtaPt(pt)",      {dsPhoton});
+    PDC dcMC_genPhotonEta(    "single", "gammaLVecGenEtaPt(eta)",     {dsPhoton});
+    PDC dcMC_matchedPhotonPt( "single", "promptPhotons(pt)",        {dsPhoton});
+    PDC dcMC_matchedPhotonEta("single", "promptPhotons(eta)",       {dsPhoton});
     */
 
     // tops
-    Plotter::DataCollection dcMC_T1tttt("single",  "genTops(pt)", {dsT1tttt_gluino1200_lsp800, dsT1tttt_gluino1500_lsp100, dsT1tttt_gluino2000_lsp100});
+    PDC dcMC_T1tttt("single",  "genTops(pt)", {dsT1tttt_gluino1200_lsp800, dsT1tttt_gluino1500_lsp100, dsT1tttt_gluino2000_lsp100});
 
     // nj                                                                                                                                                                            
-    Plotter::DataCollection dcData_SingleMuon_nj("data",   "cntNJetsPt30Eta24Zinv", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_nj(             "stack",  "cntNJetsPt30Eta24Zinv", stack_MC);
-    Plotter::DataCollection dcwMC_nj(            "stack",  "cntNJetsPt30Eta24Zinv", stackw_MC);
-    Plotter::DataCollection dcwwMC_nj(           "stack",  "cntNJetsPt30Eta24Zinv", stackww_MC);
+    PDC dcData_SingleMuon_nj("data",   "cntNJetsPt30Eta24Zinv", {dsData_SingleMuon});
+    PDC dcMC_nj(             "stack",  "cntNJetsPt30Eta24Zinv", stack_MC);
+    PDC dcwMC_nj(            "stack",  "cntNJetsPt30Eta24Zinv", stackw_MC);
+    PDC dcwwMC_nj(           "stack",  "cntNJetsPt30Eta24Zinv", stackww_MC);
  
     // gen Z pt: genZPt
-    Plotter::DataCollection dcData_DY_gen_pt("data",  "genZPt", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_DY_gen_pt("stack",   "genZPt", stack_MC);
+    PDC dcData_DY_gen_pt("data",  "genZPt", {dsData_SingleMuon});
+    PDC dcMC_DY_gen_pt("stack",   "genZPt", stack_MC);
   
     // reco Z pt: bestRecoZPt
-    Plotter::DataCollection dcData_DY_reco_pt("data",  "bestRecoZPt", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_DY_reco_pt("stack",   "bestRecoZPt", stack_MC);
+    PDC dcData_DY_reco_pt("data",  "bestRecoZPt", {dsData_SingleMuon});
+    PDC dcMC_DY_reco_pt("stack",   "bestRecoZPt", stack_MC);
 
     // gen Z eta
-    Plotter::DataCollection dcData_DY_eta("data",  "genZEta", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_DY_eta("stack",   "genZEta", stack_MC);
+    PDC dcData_DY_eta("data",  "genZEta", {dsData_SingleMuon});
+    PDC dcMC_DY_eta("stack",   "genZEta", stack_MC);
 
     // gen Z phi
-    Plotter::DataCollection dcData_DY_phi("data",  "genZPhi", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_DY_phi("stack",   "genZPhi", stack_MC);
+    PDC dcData_DY_phi("data",  "genZPhi", {dsData_SingleMuon});
+    PDC dcMC_DY_phi("stack",   "genZPhi", stack_MC);
 
     // invariant mass
-    Plotter::DataCollection dcData_DY_mass("data",  "genZmass", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_DY_mass("stack",   "genZmass", stack_MC);
+    PDC dcData_DY_mass("data",  "genZmass", {dsData_SingleMuon});
+    PDC dcMC_DY_mass("stack",   "genZmass", stack_MC);
 
     // met                                                                                                                                                                           
-    Plotter::DataCollection dcData_SingleMuon_met("data",   "cleanMetPt", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_met(             "stack",  "cleanMetPt", stack_MC);
-    Plotter::DataCollection dcwMC_met(            "stack",  "cleanMetPt", stackw_MC);
-    Plotter::DataCollection dcwwMC_met(           "stack",  "cleanMetPt", stackww_MC);
+    PDC dcData_SingleMuon_met("data",   "cleanMetPt", {dsData_SingleMuon});
+    PDC dcMC_met(             "stack",  "cleanMetPt", stack_MC);
+    PDC dcwMC_met(            "stack",  "cleanMetPt", stackw_MC);
+    PDC dcwwMC_met(           "stack",  "cleanMetPt", stackww_MC);
     // ntops                                                                                                                                                                         
-    Plotter::DataCollection dcData_SingleMuon_nt("data",   "nTopCandSortedCntZinv", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_nt(             "stack",  "nTopCandSortedCntZinv", stack_MC);
-    Plotter::DataCollection dcwMC_nt(            "stack",  "nTopCandSortedCntZinv", stackw_MC);
-    Plotter::DataCollection dcwwMC_nt(           "stack",  "nTopCandSortedCntZinv", stackww_MC);
+    PDC dcData_SingleMuon_nt("data",   "nTopCandSortedCntZinv", {dsData_SingleMuon});
+    PDC dcMC_nt(             "stack",  "nTopCandSortedCntZinv", stack_MC);
+    PDC dcwMC_nt(            "stack",  "nTopCandSortedCntZinv", stackw_MC);
+    PDC dcwwMC_nt(           "stack",  "nTopCandSortedCntZinv", stackww_MC);
     // MT2                                                                                                                                                                           
-    Plotter::DataCollection dcData_SingleMuon_mt2("data",   "best_had_brJet_MT2Zinv", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_mt2(             "stack",  "best_had_brJet_MT2Zinv", stack_MC);
-    Plotter::DataCollection dcwMC_mt2(            "stack",  "best_had_brJet_MT2Zinv", stackw_MC);
-    Plotter::DataCollection dcwwMC_mt2(           "stack",  "best_had_brJet_MT2Zinv", stackww_MC);
+    PDC dcData_SingleMuon_mt2("data",   "best_had_brJet_MT2Zinv", {dsData_SingleMuon});
+    PDC dcMC_mt2(             "stack",  "best_had_brJet_MT2Zinv", stack_MC);
+    PDC dcwMC_mt2(            "stack",  "best_had_brJet_MT2Zinv", stackw_MC);
+    PDC dcwwMC_mt2(           "stack",  "best_had_brJet_MT2Zinv", stackww_MC);
     // nb                                                                                                                                  
-    Plotter::DataCollection dcData_SingleMuon_nb("data",   "cntCSVSZinv", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_nb(             "stack",  "cntCSVSZinv", stack_MC);
-    Plotter::DataCollection dcwMC_nb(            "stack",  "cntCSVSZinv", stackw_MC);
-    Plotter::DataCollection dcwwMC_nb(           "stack",  "cntCSVSZinv", stackww_MC);
+    PDC dcData_SingleMuon_nb("data",   "cntCSVSZinv", {dsData_SingleMuon});
+    PDC dcMC_nb(             "stack",  "cntCSVSZinv", stack_MC);
+    PDC dcwMC_nb(            "stack",  "cntCSVSZinv", stackw_MC);
+    PDC dcwwMC_nb(           "stack",  "cntCSVSZinv", stackww_MC);
     // ht                                                                                                                                                                            
-    Plotter::DataCollection dcData_SingleMuon_ht("data",   "HTZinv", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_ht(             "stack",  "HTZinv", stack_MC);
-    Plotter::DataCollection dcwMC_ht(            "stack",  "HTZinv", stackw_MC);
-    Plotter::DataCollection dcwwMC_ht(           "stack",  "HTZinv", stackww_MC);
+    PDC dcData_SingleMuon_ht("data",   "HTZinv", {dsData_SingleMuon});
+    PDC dcMC_ht(             "stack",  "HTZinv", stack_MC);
+    PDC dcwMC_ht(            "stack",  "HTZinv", stackw_MC);
+    PDC dcwwMC_ht(           "stack",  "HTZinv", stackww_MC);
     // gen mu pt
     // gen mu eta
     // mu1pt                                                                                                                                                                         
-    Plotter::DataCollection dcData_SingleMuon_mu1pt("data",   "cutMuPt1", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_mu1pt(             "stack",  "cutMuPt1", stack_MC);
-    Plotter::DataCollection dcwMC_mu1pt(            "stack",  "cutMuPt1", stackw_MC);
+    PDC dcData_SingleMuon_mu1pt("data",   "cutMuPt1", {dsData_SingleMuon});
+    PDC dcMC_mu1pt(             "stack",  "cutMuPt1", stack_MC);
+    PDC dcwMC_mu1pt(            "stack",  "cutMuPt1", stackw_MC);
     // mu1eta                                                                                                                                                                         
-    Plotter::DataCollection dcData_SingleMuon_mu1eta("data",   "cutMuEta1", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_mu1eta(             "stack",  "cutMuEta1", stack_MC);
-    Plotter::DataCollection dcwMC_mu1eta(            "stack",  "cutMuEta1", stackw_MC);
+    PDC dcData_SingleMuon_mu1eta("data",   "cutMuEta1", {dsData_SingleMuon});
+    PDC dcMC_mu1eta(             "stack",  "cutMuEta1", stack_MC);
+    PDC dcwMC_mu1eta(            "stack",  "cutMuEta1", stackw_MC);
     // mu2pt                                                                                                                                                                         
-    Plotter::DataCollection dcData_SingleMuon_mu2pt("data",   "cutMuPt2", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_mu2pt(             "stack",  "cutMuPt2", stack_MC);
-    Plotter::DataCollection dcwMC_mu2pt(            "stack",  "cutMuPt2", stackw_MC);
+    PDC dcData_SingleMuon_mu2pt("data",   "cutMuPt2", {dsData_SingleMuon});
+    PDC dcMC_mu2pt(             "stack",  "cutMuPt2", stack_MC);
+    PDC dcwMC_mu2pt(            "stack",  "cutMuPt2", stackw_MC);
     // mu2eta                                                                                                                                                                         
-    Plotter::DataCollection dcData_SingleMuon_mu2eta("data",   "cutMuEta2", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_mu2eta(             "stack",  "cutMuEta2", stack_MC);
-    Plotter::DataCollection dcwMC_mu2eta(            "stack",  "cutMuEta2", stackw_MC);
+    PDC dcData_SingleMuon_mu2eta("data",   "cutMuEta2", {dsData_SingleMuon});
+    PDC dcMC_mu2eta(             "stack",  "cutMuEta2", stack_MC);
+    PDC dcwMC_mu2eta(            "stack",  "cutMuEta2", stackw_MC);
     // mll                                                                                                                                                                           
-    Plotter::DataCollection dcData_SingleMuon_mll("data",   "bestRecoZM", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_mll(             "stack",  "bestRecoZM", stack_MC);
-    Plotter::DataCollection dcwMC_mll(            "stack",  "bestRecoZM", stackw_MC);
+    PDC dcData_SingleMuon_mll("data",   "bestRecoZM", {dsData_SingleMuon});
+    PDC dcMC_mll(             "stack",  "bestRecoZM", stack_MC);
+    PDC dcwMC_mll(            "stack",  "bestRecoZM", stackw_MC);
     // nsearchbins                                                                                                                                                                   
-    Plotter::DataCollection dcData_SingleMuon_nSearchBin("data",   "nSearchBin", {dsData_SingleMuon});
-    Plotter::DataCollection dcMC_nSearchBin(             "stack",  "nSearchBin", stack_MC);
-    Plotter::DataCollection dcwMC_nSearchBin(            "stack",  "nSearchBin", stackw_MC);
-    Plotter::DataCollection dcwwMC_nSearchBin(           "stack",  "nSearchBin", stackww_MC);
+    PDC dcData_SingleMuon_nSearchBin("data",   "nSearchBin", {dsData_SingleMuon});
+    PDC dcMC_nSearchBin(             "stack",  "nSearchBin", stack_MC);
+    PDC dcwMC_nSearchBin(            "stack",  "nSearchBin", stackw_MC);
+    PDC dcwwMC_nSearchBin(           "stack",  "nSearchBin", stackww_MC);
 
-    Plotter::DataCollection dcData_SingleMuon_mht("data",   "cleanMHt", {dsData_SingleMuon});
-    Plotter::DataCollection dcwwMC_mht(           "stack",  "cleanMHt", stackww_MC);
-    Plotter::DataCollection dcwMC_mht(            "stack",  "cleanMHt", stackw_MC);
+    PDC dcData_SingleMuon_mht("data",   "cleanMHt", {dsData_SingleMuon});
+    PDC dcwwMC_mht(           "stack",  "cleanMHt", stackww_MC);
+    PDC dcwMC_mht(            "stack",  "cleanMHt", stackw_MC);
 
 
     // electron cut levels
@@ -734,8 +734,8 @@ int main(int argc, char* argv[])
     };
 
     // for reference from Plotter.h
-    // HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, bool log, bool norm, std::string xal, std::string yal, bool isRatio = true);
-    // HistSummary(std::string l, std::vector<Plotter::DataCollection> ns, std::pair<int, int> ratio, std::string cuts, std::vector<double> be, bool log, bool norm, std::string xal, std::string yal, bool isRatio = true);
+    // HistSummary(std::string l, std::vector<PDC> ns, std::pair<int, int> ratio, std::string cuts, int nb, double ll, double ul, bool log, bool norm, std::string xal, std::string yal, bool isRatio = true);
+    // HistSummary(std::string l, std::vector<PDC> ns, std::pair<int, int> ratio, std::string cuts, std::vector<double> be, bool log, bool norm, std::string xal, std::string yal, bool isRatio = true);
 
     // structs: ordering is the same as the HistSummary constructor
     struct plotStruct
@@ -744,7 +744,7 @@ int main(int argc, char* argv[])
         std::string measurement;                // Acc, RecoEff, IsoEff, etc.
         std::string variable;                   // Pt, Eta, Phi, Energy, Mass, etc.
         //std::string shortVar;                 // pt, eta, phi, E, M, etc.
-        Plotter::DataCollection dataCollection; // Data Collection returned by makePDCElecAcc, makePDCElecReco, etc.
+        PDC dataCollection; // Data Collection returned by makePDCElecAcc, makePDCElecReco, etc.
         std::string style;                      // ratio, single, etc.
         int nbins;                              // number of bins
         double xMin;                            // x min for histo
@@ -1008,29 +1008,29 @@ int main(int argc, char* argv[])
     //vh.push_back(PHS("DataMC_T1tttt", {dcMC_T1tttt}, {1, 1}, "passNoiseEventFilterZinv", 60, minPt, maxPt, true, false, label_genTopPt, "Events"));
 
     // Znunu
-    Plotter::DatasetSummary dsDY_nunu("Z#rightarrow#nu#nu", fileMap["ZJetsToNuNu"], "passLeptVeto", "");
+    PDS dsDY_nunu("Z#rightarrow#nu#nu", fileMap["ZJetsToNuNu"], "passLeptVeto", "");
     // nothing
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerCentral(          "Z#rightarrow#nu#nu Trigger Central ",        fileMap["ZJetsToNuNu"], "passLeptVeto",    "");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerUp(               "Z#rightarrow#nu#nu Trigger Up ",             fileMap["ZJetsToNuNu"], "passLeptVeto",    "");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerDown(             "Z#rightarrow#nu#nu Trigger Down ",           fileMap["ZJetsToNuNu"], "passLeptVeto",    "");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm(                         "Z#rightarrow#nu#nu Njet+norm ",              fileMap["ZJetsToNuNu"], "passLeptVeto",    "");
+    PDS dsDY_nunu_njetnorm_TriggerCentral(          "Z#rightarrow#nu#nu Trigger Central ",        fileMap["ZJetsToNuNu"], "passLeptVeto",    "");
+    PDS dsDY_nunu_njetnorm_TriggerUp(               "Z#rightarrow#nu#nu Trigger Up ",             fileMap["ZJetsToNuNu"], "passLeptVeto",    "");
+    PDS dsDY_nunu_njetnorm_TriggerDown(             "Z#rightarrow#nu#nu Trigger Down ",           fileMap["ZJetsToNuNu"], "passLeptVeto",    "");
+    PDS dsDY_nunu_njetnorm(                         "Z#rightarrow#nu#nu Njet+norm ",              fileMap["ZJetsToNuNu"], "passLeptVeto",    "");
     // only b jet scale factor
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerCentral_scaled(   "Z#rightarrow#nu#nu Trigger scale Central ", fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerUp_scaled(        "Z#rightarrow#nu#nu Trigger scale Up ",      fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerDown_scaled(      "Z#rightarrow#nu#nu Trigger scale Down ",    fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_scaled(                  "Z#rightarrow#nu#nu Njet+norm scale ",       fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central");
+    PDS dsDY_nunu_njetnorm_TriggerCentral_scaled(   "Z#rightarrow#nu#nu Trigger scale Central ", fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central");
+    PDS dsDY_nunu_njetnorm_TriggerUp_scaled(        "Z#rightarrow#nu#nu Trigger scale Up ",      fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central");
+    PDS dsDY_nunu_njetnorm_TriggerDown_scaled(      "Z#rightarrow#nu#nu Trigger scale Down ",    fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central");
+    PDS dsDY_nunu_njetnorm_scaled(                  "Z#rightarrow#nu#nu Njet+norm scale ",       fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central");
     // bjet scale factor, shape factor and normalization
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerCentral_weighted( "Z#rightarrow#nu#nu Trigger weight Central ", fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b;TriggerEffMC");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerUp_weighted(      "Z#rightarrow#nu#nu Trigger weight Up ",      fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b;TriggerEffUpMC");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_TriggerDown_weighted(    "Z#rightarrow#nu#nu Trigger weight Down ",    fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b;TriggerEffDownMC");
-    Plotter::DatasetSummary dsDY_nunu_njetnorm_weighted(                "Z#rightarrow#nu#nu Njet+norm weight ",       fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
-    Plotter::DataCollection trigger_nSearchBin( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBin",    dsDY_nunu_njetnorm}  });
-    Plotter::DataCollection trigger_nSearchBin_scaled( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_scaled}  });
-    Plotter::DataCollection trigger_nSearchBin_weighted( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_weighted}  });
+    PDS dsDY_nunu_njetnorm_TriggerCentral_weighted( "Z#rightarrow#nu#nu Trigger weight Central ", fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b;TriggerEffMC");
+    PDS dsDY_nunu_njetnorm_TriggerUp_weighted(      "Z#rightarrow#nu#nu Trigger weight Up ",      fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b;TriggerEffUpMC");
+    PDS dsDY_nunu_njetnorm_TriggerDown_weighted(    "Z#rightarrow#nu#nu Trigger weight Down ",    fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b;TriggerEffDownMC");
+    PDS dsDY_nunu_njetnorm_weighted(                "Z#rightarrow#nu#nu Njet+norm weight ",       fileMap["ZJetsToNuNu"], "passLeptVeto",    "bTagSF_EventWeightSimple_Central;njWGJets;normWgt0b");
+    PDC trigger_nSearchBin( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown}, {"nSearchBin",    dsDY_nunu_njetnorm}  });
+    PDC trigger_nSearchBin_scaled( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_scaled}, {"nSearchBin",    dsDY_nunu_njetnorm_scaled}  });
+    PDC trigger_nSearchBin_weighted( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_weighted}  });
     
     // Znunu
-    auto makePDSZnunu       = [&](const std::string& label, const std::string& cuts="HTZinv>200") {return Plotter::DatasetSummary("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu"], cuts, ""); };
-    auto makePDCGJetsZnunu  = [&](const std::string& var, const std::string& style, const std::string& label, const std::string& cuts) {return Plotter::DataCollection(style, {{var, makePDSPhoton(label, "GJets", "passPhotonSelection;" + cuts)}, {var, makePDSZnunu(label, cuts)}}); };
+    auto makePDSZnunu       = [&](const std::string& label, const std::string& cuts="HTZinv>200") {return PDS("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu"], cuts, ""); };
+    auto makePDCGJetsZnunu  = [&](const std::string& var, const std::string& style, const std::string& label, const std::string& cuts) {return PDC(style, {{var, makePDSPhoton(label, "GJets", "passPhotonSelection;" + cuts)}, {var, makePDSZnunu(label, cuts)}}); };
     
     // study jet collections and jet cleaning
     // photon jet cleaning
@@ -1044,18 +1044,18 @@ int main(int argc, char* argv[])
       photon_cut += ";" + met_cut;
       lepton_cut += ";" + met_cut;
     }
-    auto makePDSGJets = [&](const std::string& label, const std::string& cuts) {return Plotter::DatasetSummary("GJets "+label, fileMap["GJets"], cuts, ""); };
+    auto makePDSGJets = [&](const std::string& label, const std::string& cuts) {return PDS("GJets "+label, fileMap["GJets"], cuts, ""); };
     
     // lepton jet cleaning study
     // variables: HT, MET, METPHI, dPhi, n_j, n_t, n_b 
-    auto makePDSDY = [&](const std::string& label, const std::string& cuts) {return Plotter::DatasetSummary("DYJetsToLL "+label, fileMap["DYJetsToLL"], cuts, ""); };
+    auto makePDSDY = [&](const std::string& label, const std::string& cuts) {return PDS("DYJetsToLL "+label, fileMap["DYJetsToLL"], cuts, ""); };
     
     if (doDYAndZnunu)
     {
         struct simplePlotStruct
         {
             std::string variable;                                       // met, HT, etc.
-            std::vector<Plotter::DataCollection> dataCollectionVector;  // vector of Data Collections
+            std::vector<PDC> dataCollectionVector;  // vector of Data Collections
             int nBins;                                                  // number of bins
             double xMin;                                                // x min for histo
             double xMax;                                                // x max for histo
@@ -1066,7 +1066,7 @@ int main(int argc, char* argv[])
         };
         
         // map of variable names to vector of data collections
-        std::map<std::string, std::vector<Plotter::DataCollection> > dataCollectionMap;
+        std::map<std::string, std::vector<PDC> > dataCollectionMap;
         // vetor of variable names
         std::vector<std::string> variables = {"cntNJetsPt20Eta24", "nTopCandSortedCnt", "cntCSVS", "HT"};
         // vector of pais with tags and labels
@@ -1114,54 +1114,54 @@ int main(int argc, char* argv[])
             for (const auto& variable : variables)
             {
                 // z nunu
-                dataCollectionMap[variable + "_" + s].emplace_back( Plotter::DataCollection("single", variable + "NoVeto", {makePDSZnunu("all jets", selectionNuNu)} ) );
+                dataCollectionMap[variable + "_" + s].emplace_back( PDC("single", variable + "NoVeto", {makePDSZnunu("all jets", selectionNuNu)} ) );
                 for (const auto& tag : tagVector)
                 {
                     // note that DY to LL and Z to NuNu have different selections
                     // DY to LL has dilepton selection, while Z to NuNu does not
                     selectionLL = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
                     // DY
-                    dataCollectionMap[variable + "_" + s].emplace_back(           Plotter::DataCollection("single", variable + tag.first, {makePDSDY(tag.second, selectionLL)} ) );
-                    dataCollectionMap[variable + "_" + s+ "_ratio"].emplace_back( Plotter::DataCollection("ratio",  variable + tag.first, {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                    dataCollectionMap[variable + "_" + s].emplace_back(           PDC("single", variable + tag.first, {makePDSDY(tag.second, selectionLL)} ) );
+                    dataCollectionMap[variable + "_" + s+ "_ratio"].emplace_back( PDC("ratio",  variable + tag.first, {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
                 }
             }
             
             // z nunu
-            dataCollectionMap["jetpt_" + s].emplace_back(  Plotter::DataCollection("single", jetMap["NoVeto"] + "(pt)",    {makePDSZnunu("all jets", selectionNuNu)} ) );
-            dataCollectionMap["jeteta_" + s].emplace_back( Plotter::DataCollection("single", jetMap["NoVeto"] + "(eta)",   {makePDSZnunu("all jets", selectionNuNu)} ) );
-            dataCollectionMap["jetphi_" + s].emplace_back( Plotter::DataCollection("single", jetMap["NoVeto"] + "(phi)",   {makePDSZnunu("all jets", selectionNuNu)} ) );
-            dataCollectionMap["jetE_" + s].emplace_back(   Plotter::DataCollection("single", jetMap["NoVeto"] + "(E)",     {makePDSZnunu("all jets", selectionNuNu)} ) );
-            dataCollectionMap["met_" + s].emplace_back(    Plotter::DataCollection("single", "cleanMetPt",                 {makePDSZnunu("all jets", selectionNuNu)} ) );
-            dataCollectionMap["metphi_" + s].emplace_back( Plotter::DataCollection("single", "cleanMetPhi",                {makePDSZnunu("all jets", selectionNuNu)} ) );
-            dataCollectionMap["dphi0_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVecNoVeto[0]",           {makePDSZnunu("all jets", selectionNuNu)} ) );
-            dataCollectionMap["dphi1_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVecNoVeto[1]",           {makePDSZnunu("all jets", selectionNuNu)} ) );
-            dataCollectionMap["dphi2_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVecNoVeto[2]",           {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["jetpt_" + s].emplace_back(  PDC("single", jetMap["NoVeto"] + "(pt)",    {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["jeteta_" + s].emplace_back( PDC("single", jetMap["NoVeto"] + "(eta)",   {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["jetphi_" + s].emplace_back( PDC("single", jetMap["NoVeto"] + "(phi)",   {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["jetE_" + s].emplace_back(   PDC("single", jetMap["NoVeto"] + "(E)",     {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["met_" + s].emplace_back(    PDC("single", "cleanMetPt",                 {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["metphi_" + s].emplace_back( PDC("single", "cleanMetPhi",                {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["dphi0_" + s].emplace_back(  PDC("single", "dPhiVecNoVeto[0]",           {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["dphi1_" + s].emplace_back(  PDC("single", "dPhiVecNoVeto[1]",           {makePDSZnunu("all jets", selectionNuNu)} ) );
+            dataCollectionMap["dphi2_" + s].emplace_back(  PDC("single", "dPhiVecNoVeto[2]",           {makePDSZnunu("all jets", selectionNuNu)} ) );
             for (const auto& tag : tagVector)
             {
                 selectionLL = "passBaseline" + tag.first + ";pass" + s + "ZinvSel_lowpt";
                 // DY
-                dataCollectionMap["jetpt_" + s].emplace_back(  Plotter::DataCollection("single", jetMap[tag.first] + "(pt)",    {makePDSDY(tag.second, selectionLL)} ) );
-                dataCollectionMap["jeteta_" + s].emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(eta)",   {makePDSDY(tag.second, selectionLL)} ) );
-                dataCollectionMap["jetphi_" + s].emplace_back( Plotter::DataCollection("single", jetMap[tag.first] + "(phi)",   {makePDSDY(tag.second, selectionLL)} ) );
-                dataCollectionMap["jetE_" + s].emplace_back(   Plotter::DataCollection("single", jetMap[tag.first] + "(E)",     {makePDSDY(tag.second, selectionLL)} ) );
-                dataCollectionMap["met_" + s].emplace_back(    Plotter::DataCollection("single", "cleanMetPt",                  {makePDSDY(tag.second, selectionLL)} ) );
-                dataCollectionMap["metphi_" + s].emplace_back( Plotter::DataCollection("single", "cleanMetPhi",                 {makePDSDY(tag.second, selectionLL)} ) );
-                dataCollectionMap["dphi0_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL)} ) );
-                dataCollectionMap["dphi1_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL)} ) );
-                dataCollectionMap["dphi2_" + s].emplace_back(  Plotter::DataCollection("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL)} ) );
-                dataCollectionMap["jetpt_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", jetMap[tag.first] + "(pt)",    {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
-                dataCollectionMap["jeteta_" + s + "_ratio"].emplace_back( Plotter::DataCollection("ratio", jetMap[tag.first] + "(eta)",   {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
-                dataCollectionMap["jetphi_" + s + "_ratio"].emplace_back( Plotter::DataCollection("ratio", jetMap[tag.first] + "(phi)",   {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
-                dataCollectionMap["jetE_" + s + "_ratio"].emplace_back(   Plotter::DataCollection("ratio", jetMap[tag.first] + "(E)",     {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
-                dataCollectionMap["met_" + s + "_ratio"].emplace_back(    Plotter::DataCollection("ratio", "cleanMetPt",                  {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
-                dataCollectionMap["metphi_" + s + "_ratio"].emplace_back( Plotter::DataCollection("ratio", "cleanMetPhi",                 {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
-                dataCollectionMap["dphi0_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
-                dataCollectionMap["dphi1_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
-                dataCollectionMap["dphi2_" + s + "_ratio"].emplace_back(  Plotter::DataCollection("ratio", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["jetpt_" + s].emplace_back(  PDC("single", jetMap[tag.first] + "(pt)",    {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["jeteta_" + s].emplace_back( PDC("single", jetMap[tag.first] + "(eta)",   {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["jetphi_" + s].emplace_back( PDC("single", jetMap[tag.first] + "(phi)",   {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["jetE_" + s].emplace_back(   PDC("single", jetMap[tag.first] + "(E)",     {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["met_" + s].emplace_back(    PDC("single", "cleanMetPt",                  {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["metphi_" + s].emplace_back( PDC("single", "cleanMetPhi",                 {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["dphi0_" + s].emplace_back(  PDC("single", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["dphi1_" + s].emplace_back(  PDC("single", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["dphi2_" + s].emplace_back(  PDC("single", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL)} ) );
+                dataCollectionMap["jetpt_" + s + "_ratio"].emplace_back(  PDC("ratio", jetMap[tag.first] + "(pt)",    {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["jeteta_" + s + "_ratio"].emplace_back( PDC("ratio", jetMap[tag.first] + "(eta)",   {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["jetphi_" + s + "_ratio"].emplace_back( PDC("ratio", jetMap[tag.first] + "(phi)",   {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["jetE_" + s + "_ratio"].emplace_back(   PDC("ratio", jetMap[tag.first] + "(E)",     {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["met_" + s + "_ratio"].emplace_back(    PDC("ratio", "cleanMetPt",                  {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["metphi_" + s + "_ratio"].emplace_back( PDC("ratio", "cleanMetPhi",                 {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["dphi0_" + s + "_ratio"].emplace_back(  PDC("ratio", "dPhiVec" + tag.first + "[0]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["dphi1_" + s + "_ratio"].emplace_back(  PDC("ratio", "dPhiVec" + tag.first + "[1]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
+                dataCollectionMap["dphi2_" + s + "_ratio"].emplace_back(  PDC("ratio", "dPhiVec" + tag.first + "[2]", {makePDSDY(tag.second, selectionLL), makePDSZnunu(tag.second, selectionNuNu)} ) );
             }
 
             selectionLL = "passBaseline_drLeptonCleaned;pass" + s + "ZinvSel_lowpt";
-            dataCollectionMap["dr_" + s].emplace_back( Plotter::DataCollection("single", "dR_jetsLVec_drLeptonCleaned", {makePDSDY("all jets", selectionLL)} ) );
+            dataCollectionMap["dr_" + s].emplace_back( PDC("single", "dR_jetsLVec_drLeptonCleaned", {makePDSDY("all jets", selectionLL)} ) );
            
             
             // fill plot parameters
@@ -1224,28 +1224,28 @@ int main(int argc, char* argv[])
         // GJets_HT-600ToInf
         
         std::string style_stack = "stack";
-        std::vector<std::vector<Plotter::DatasetSummary>> Photon_HT_stack_cuts = {
+        std::vector<std::vector<PDS>> Photon_HT_stack_cuts = {
                                                                                    {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400", "HTZinv>200;metWithPhoton>250")}, 
                                                                                    {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600", "HTZinv>200;metWithPhoton>250")},
                                                                                    {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf", "HTZinv>200;metWithPhoton>250")}
                                                                                  };
-        std::vector<std::vector<Plotter::DatasetSummary>> Photon_HT_stack_BaselineLowDM  = {
+        std::vector<std::vector<PDS>> Photon_HT_stack_BaselineLowDM  = {
                                                                                              {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400", "passBaselineLowDMZinv")}, 
                                                                                              {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600", "passBaselineLowDMZinv")},
                                                                                              {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf", "passBaselineLowDMZinv")}
                                                                                            };
-        std::vector<std::vector<Plotter::DatasetSummary>> Photon_HT_stack_BaselineHighDM = {
+        std::vector<std::vector<PDS>> Photon_HT_stack_BaselineHighDM = {
                                                                                              {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400", "passBaselineHighDMZinv")}, 
                                                                                              {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600", "passBaselineHighDMZinv")},
                                                                                              {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf", "passBaselineHighDMZinv")}
                                                                                            };
   
-        Plotter::DataCollection dc_GJets_ht_cuts(     "stack", "HTZinv",  Photon_HT_stack_cuts);
-        Plotter::DataCollection dc_GJets_ht_BaselineLowDM(  "stack", "HTZinv",  Photon_HT_stack_BaselineLowDM);
-        Plotter::DataCollection dc_GJets_ht_BaselineHighDM( "stack", "HTZinv",  Photon_HT_stack_BaselineHighDM);
-        Plotter::DataCollection dc_Znunu_ht_cuts(     "data",  "HTZinv",  {makePDSZnunu("HT > 200", "HTZinv>200;metWithPhoton>250")});
-        Plotter::DataCollection dc_Znunu_ht_BaselineLowDM( "data",  "HTZinv",  {makePDSZnunu("HT > 200",  "passBaselineLowDMZinv")});
-        Plotter::DataCollection dc_Znunu_ht_BaselineHighDM( "data",  "HTZinv",  {makePDSZnunu("HT > 200", "passBaselineHighDMZinv")});
+        PDC dc_GJets_ht_cuts(     "stack", "HTZinv",  Photon_HT_stack_cuts);
+        PDC dc_GJets_ht_BaselineLowDM(  "stack", "HTZinv",  Photon_HT_stack_BaselineLowDM);
+        PDC dc_GJets_ht_BaselineHighDM( "stack", "HTZinv",  Photon_HT_stack_BaselineHighDM);
+        PDC dc_Znunu_ht_cuts(     "data",  "HTZinv",  {makePDSZnunu("HT > 200", "HTZinv>200;metWithPhoton>250")});
+        PDC dc_Znunu_ht_BaselineLowDM( "data",  "HTZinv",  {makePDSZnunu("HT > 200",  "passBaselineLowDMZinv")});
+        PDC dc_Znunu_ht_BaselineHighDM( "data",  "HTZinv",  {makePDSZnunu("HT > 200", "passBaselineHighDMZinv")});
         vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_ht_" + style_stack, {dc_GJets_ht_cuts, dc_Znunu_ht_cuts},         {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
         vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_ht_"   + style_stack, {dc_GJets_ht_BaselineLowDM,  dc_Znunu_ht_BaselineLowDM}, {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
         vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_ht_"  + style_stack, {dc_GJets_ht_BaselineHighDM, dc_Znunu_ht_BaselineHighDM}, {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
@@ -1299,8 +1299,8 @@ int main(int argc, char* argv[])
         }
     }
 
-    Plotter::DataCollection dc_Znunu_nSearchBinLowDM("data",  "nSearchBinLowDM",  {makePDSZnunu("Search Bin Low DM", "passBaselineLowDM")});
-    Plotter::DataCollection dc_Znunu_nSearchBinHighDM("data", "nSearchBinHighDM", {makePDSZnunu("Search Bin High DM", "passBaselineHighDM")});
+    PDC dc_Znunu_nSearchBinLowDM("data",  "nSearchBinLowDM",  {makePDSZnunu("Search Bin Low DM", "passBaselineLowDM")});
+    PDC dc_Znunu_nSearchBinHighDM("data", "nSearchBinHighDM", {makePDSZnunu("Search Bin High DM", "passBaselineHighDM")});
     if (doSearchBins)
     {
         vh.push_back(PHS("ZNuNu_nSearchBinLowDM",  {dc_Znunu_nSearchBinLowDM},  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,    min_sb_low_dm,  max_sb_low_dm,  false, false,  "Search Bin Low DM", "Events", true));
@@ -1330,7 +1330,7 @@ int main(int argc, char* argv[])
 
     cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("ZtoNuNu",           PDC("", "", {dsDY_nunu}),           cfsZ));
 
-    set<AnaSamples::FileSummary> vvf;
+    set<AFS> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
     RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
