@@ -1031,7 +1031,7 @@ void Plotter::plot()
         else
         {
             double locMin = 0.0;
-            double ratioMin = 0.0;
+            double ratioMin = 0.5;
             double legMin = (1.2*max - locMin) * (leg->GetY1() - gPad->GetBottomMargin()) / ((1 - gPad->GetTopMargin()) - gPad->GetBottomMargin());
             if(lmax > legMin)
             {
@@ -1040,11 +1040,12 @@ void Plotter::plot()
             dummy->GetYaxis()->SetRangeUser(0.0, max*1.2);
             if(hist.hists.front().type.compare("ratio") == 0) 
             {
-                dummy->GetYaxis()->SetRangeUser(ratioMin, max*1.2);
-                if (max > 5)
-                {
-                    dummy->GetYaxis()->SetRangeUser(ratioMin, 5*1.2);
-                }
+                dummy->GetYaxis()->SetRangeUser(ratioMin, 2.0);
+                //dummy->GetYaxis()->SetRangeUser(ratioMin, max*1.2);
+                //if (max > 5)
+                //{
+                //    dummy->GetYaxis()->SetRangeUser(ratioMin, 5*1.2);
+                //}
             }
         }
         dummy->Draw();

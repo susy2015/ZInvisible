@@ -79,6 +79,8 @@ namespace plotterFunctions
         //float photonPtCut = 200.0;
         float metWithPhoton = -999.9;
         float metphiWithPhoton = -999.9;
+        float cutPhotonPt = -999.9;
+        float cutPhotonEta = -999.9;
         bool passPhotonSelection = false;
         
         // if you use new, you need to register it or destroy it yourself to clear memory
@@ -213,6 +215,8 @@ namespace plotterFunctions
         // pass photon selection and add to MET
         if (gammaLVecPassLooseID->size() == 1)
         {
+            cutPhotonPt  = (*gammaLVecPassLooseID)[0].Pt();
+            cutPhotonEta = (*gammaLVecPassLooseID)[0].Eta();
             // Add LVecs of MET and Photon
             metWithPhotonLVec  += (*gammaLVecPassLooseID)[0];
             metWithPhoton       = metWithPhotonLVec.Pt();
@@ -258,6 +262,8 @@ namespace plotterFunctions
 // --- End of section not used (as of October 19, 2018)        
 
         // Register derived variables
+        tr.registerDerivedVar("cutPhotonPt", cutPhotonPt);
+        tr.registerDerivedVar("cutPhotonEta", cutPhotonEta);
         tr.registerDerivedVar("metWithPhoton", metWithPhoton);
         tr.registerDerivedVar("metphiWithPhoton", metphiWithPhoton);
         tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);

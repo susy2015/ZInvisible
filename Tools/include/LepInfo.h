@@ -146,7 +146,7 @@ namespace plotterFunctions
             // muon trigger of 50 GeV
             // electron trigger of 33 GeV
             const double   minMuPt = 20.0,   highMuPt = 50.0;
-            const double minElecPt = 20.0, highElecPt = 50.0;
+            const double minElecPt = 20.0, highElecPt = 40.0;
             //double muPt1 = -999.9, muPt2 = -999.9;
 
             // gen tops
@@ -413,9 +413,9 @@ namespace plotterFunctions
 
             // for testing
             //bool passMuZinvSel         = passEleVeto && (cutMuVec.size() == 2 && cutMuSummedCharge == 0 && cutMuVec[0].Pt() > highMuPt);
-            bool passMuZinvSel         = passEleVeto && (cutMuVec.size() == 2 && cutMuSummedCharge == 0) && (bestRecoMuZ.M() > 50.0);
+            //bool passMuZinvSel         = passEleVeto && (cutMuVec.size() == 2 && cutMuSummedCharge == 0) && (bestRecoMuZ.M() > 50.0);
             
-            //bool passMuZinvSel         = passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
+            bool passMuZinvSel         = passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
             bool passMuZinvSel_lowpt   = passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > minMuPt      && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
             bool passElecZinvSel       = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
             bool passElecZinvSel_lowpt = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > minElecPt  && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
@@ -541,20 +541,20 @@ namespace plotterFunctions
             */
             //if(genZPt > 600) std::cout << "HELLO THERE!!!!" << std::endl;
             //if(genZPt > 600 && mindPhiMetJ < 0.5) std::cout << "BONJOUR!!! \t" << genZPt << "\t" << mindPhiMetJ << "\t" << run << "\t" << lumi << "\t" << event << std::endl;
-            //std::cout<<"cleanMetPt "<<cleanMet.Pt()<<std::endl;
+            //std::cout<<"metWithLL "<<cleanMet.Pt()<<std::endl;
             //std::cout<<" "<<std::endl;
 
             //printf("ngenElec = %d; ngenElecInAcc = %d; ngenMatchElecInAcc = %d\n", genElec->size(), genElecInAcc->size(), genMatchElecInAcc->size());
 
-            data_t bestRecoZPt = bestRecoZ.Pt();
-            data_t cleanMetPt  = cleanMet.Pt();
-            data_t cleanMetPhi = cleanMet.Phi();
-            data_t Zrecoptpt = Zrecopt.Pt();
+            data_t bestRecoZPt  = bestRecoZ.Pt();
+            data_t metWithLL    = cleanMet.Pt();
+            data_t metphiWithLL = cleanMet.Phi();
+            data_t Zrecoptpt    = Zrecopt.Pt();
             //data_t cleanMet2Pt = static_cast<data_t>(cleanMet2.Pt());
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
             tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
-            tr.registerDerivedVar("cleanMetPt", cleanMetPt);
-            tr.registerDerivedVar("cleanMetPhi", cleanMetPhi);
+            tr.registerDerivedVar("metWithLL", metWithLL);
+            tr.registerDerivedVar("metphiWithLL", metphiWithLL);
             //tr.registerDerivedVar("cleanMet2Pt", cleanMet2Pt);
             //tr.registerDerivedVar("genHt", genHt);
             tr.registerDerivedVar("cutMuPt1", cutMuPt1);
