@@ -67,7 +67,7 @@ Plotter::Plotter(std::vector<HistSummary>& h, std::set<AnaSamples::FileSummary>&
     hists_ = h;
     trees_ = t;
     readFromTuple_ = readFromTuple;
-    lumi_ = AnaSamples::luminosity;
+    lumi_ = AnaSamples::luminosity_2016;
     foutTuple_ = nullptr;
     if(ofname.size() == 0) ofname = "histoutput.root";
     if(readFromTuple)

@@ -12,7 +12,7 @@
 # - Make plots of results
 
 combineResults=true
-year="2016"
+year="2017"
 
 # Compile MakePlots
 
@@ -64,7 +64,7 @@ declare -a samples=(
                    )
 
 outputFiles=
-n_events=1000
+n_events=5000
 
 # loop through samples array
 for sample in "${samples[@]}"

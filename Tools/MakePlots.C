@@ -60,9 +60,9 @@ int main(int argc, char* argv[])
     bool verbose = false;
     string filename = "histoutput.root", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
-    double lumi = AnaSamples::luminosity;
+    double lumi = AnaSamples::luminosity_2016;
     std::string sbEra = "SB_v1_2017";
-    std::string year = "2017";
+    std::string year = "2016";
 
     while((opt = getopt_long(argc, argv, "pstfcglvI:D:N:M:E:P:L:S:Y:", long_options, &option_index)) != -1)
     {
