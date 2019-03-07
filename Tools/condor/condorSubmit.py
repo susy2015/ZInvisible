@@ -41,8 +41,10 @@ print "mvaFileName = {0}".format(mvaFileName)
 print "mvaFileName_Deep = {0}".format(mvaFileName_Deep)
 print "mvaFileName_DeepCombined = {0}".format(mvaFileName_DeepCombined)
 
-sampleSetsFile = "sampleSets_2016.cfg"
-sampleCollectionsFile = "sampleCollections.cfg"
+#sampleSetsFile = "sampleSets_2016.cfg"
+#sampleCollectionsFile = "sampleCollections.cfg"
+sampleSetsFile = "sampleSets_PostProcessed_2016.cfg"
+sampleCollectionsFile = "sampleCollections_2016.cfg"
 
 #here I hack in the tarball for GMP, this needs to be generalized to the other options 
 

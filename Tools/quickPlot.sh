@@ -4,16 +4,15 @@
 
 # Intended for quick use and multiple plots (not on condor)
 
-# Outline
-
-# Compile MakePlots
-# Remove existing plots
-# Save root files for different MC
-# hadd the results
-# Make plots of results (containing both MC)
-
+# Overview
+# - Compile MakePlots
+# - Remove existing plots
+# - Make plots for different samples (saved to root files)
+# - hadd the results
+# - Make plots of results
 
 combineResults=true
+year="2016"
 
 # Compile MakePlots
 
@@ -57,12 +56,15 @@ rm plots/*
 #                    "DYJetsToLL_HT_400to600"
 #                   )
 declare -a samples=(
-                    "Data_SinglePhoton_2016"
-                    "GJets_HT-400To600"
+                    "Data_SingleMuon_"$year""
+                    "DYJetsToLL_HT_400to600_"$year""
+                    "Data_SinglePhoton_"$year""
+                    "GJets_HT-400To600_"$year""
+                    "ZJetsToNuNu_HT_400to600_"$year""
                    )
 
 outputFiles=
-n_events=5000
+n_events=1000
 
 # loop through samples array
 for sample in "${samples[@]}"
@@ -70,24 +72,9 @@ do
     output=""$sample".root"
     outputFiles="$outputFiles $output"
     echo " - Running makePlots to create $output"
-    echo "./makePlots -D $sample -E $n_events -I $output | grep -v LHAPDF"
-    ./makePlots -D $sample -E $n_events -I $output | grep -v LHAPDF
+    echo "./makePlots -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF"
+    ./makePlots -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF
 done
-
-# --- for only two samples --- #
-
-#sample1=GJets_HT-400To600
-#sample1=DYJetsToLL_HT_400to600
-#sample2=ZJetsToNuNu_HT_400to600
-#output1=""$sample1".root"
-#output2=""$sample2".root"
-
-#echo " - Running makePlots to create $output1"
-#echo "./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF"
-#./makePlots -D $sample1 -E $n_events -I $output1 | grep -v LHAPDF
-#echo " - Running makePlots to create $output2"
-#echo "./makePlots -D $sample2 -E $n_events -I $output2 | grep -v LHAPDF"
-#./makePlots -D $sample2 -E $n_events -I $output2 | grep -v LHAPDF
 
 # hadd the results
 if [ "$combineResults" = true ]; then
@@ -105,5 +92,5 @@ if [ "$combineResults" = true ]; then
     
     echo " - Make plots of results (containing both MC)"
     echo "./makePlots -f -I $result | grep -v LHAPDF"
-    ./makePlots -f -I $result | grep -v LHAPDF
+    ./makePlots -f -I $result -Y $year | grep -v LHAPDF
 fi

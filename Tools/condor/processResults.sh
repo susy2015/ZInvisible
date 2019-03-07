@@ -16,6 +16,7 @@
 # options
 dataSet=$1
 executableOption=$2
+year="2016"
 
 executable=
 resultFile=
@@ -36,7 +37,7 @@ if [ "$executableOption" = "-c" ]; then
     dirName="effhists"
 else
     resultFile="result.root"
-    executable="./makePlots -f -I $resultFile | grep -v LHAPDF"
+    executable="./makePlots -f -I $resultFile -Y $year | grep -v LHAPDF"
     dirName="histos"
 fi
 
@@ -125,11 +126,7 @@ fi
 echo "- Compiling Exacutable"
 make -j8
 
-#echo "- Running Exacutable with -g for photons"
-#./makePlots -f -g -I $resultFile
-
 echo "- Running Exacutable"
-#./makePlots -f -I $resultFile
 # use eval for running command that pipes to another command
 echo $executable
 eval $executable
