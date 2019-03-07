@@ -141,7 +141,12 @@ int main(int argc, char* argv[])
         }
     }
 
+    // _year
     std::string yearTag = "_" + year; 
+    // lumi for Plotter
+    if (year.compare("2016") == 0) lumi = AnaSamples::luminosity_2016;
+    if (year.compare("2017") == 0) lumi = AnaSamples::luminosity_2017;
+
 
     //if running on condor override all optional settings
     if(runOnCondor)

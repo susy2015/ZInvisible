@@ -496,7 +496,7 @@ void Plotter::createHistsFromTuple()
                     if(doHists_)
                     {
                         double fileWgt = file.getWeight();
-                        //printf("In Plotter.cc: %s file weight = %f\n", file.tag.c_str(), fileWgt);
+                        //printf("In Plotter.cc: %s --- weight = %f; lumi = %f\n", file.tag.c_str(), fileWgt, file.lumi);
 
                         for(auto& histsToFillVec : histsToFill)
                         {
@@ -1255,7 +1255,8 @@ void Plotter::plot()
 
         c->cd(1);
         char lumistamp[128];
-        sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", lumi_ / 1000.0);
+        sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", getLumi() / 1000.0);
+        //printf("Luminosity Label: %.1f fb^{-1} (13 TeV)\n", getLumi() / 1000.0);
 
         TLatex mark;
         mark.SetNDC(true);
