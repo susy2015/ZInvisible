@@ -2,7 +2,7 @@
 
 export PATH=${PATH}:/cvmfs/cms.cern.ch/common
 export CMS_PATH=/cvmfs/cms.cern.ch
-year="2016"
+year="2017"
 
 #get the release setup and in place
 tar -xzf $2.tar.gz

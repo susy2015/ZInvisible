@@ -16,7 +16,7 @@
 # options
 dataSet=$1
 executableOption=$2
-year="2016"
+year="2017"
 
 executable=
 resultFile=
@@ -83,7 +83,8 @@ error=1
 while [[ $error != 0 ]]
 do
     echo "- Executing hadd to add histograms to create $resultFile; see hadd.log for stdout and stderr"
-    hadd $resultFile *.root &> hadd.log
+    #time hadd $resultFile *.root &> hadd.log
+    time ahadd.py $resultFile *.root &> hadd.log
     error=$?
     if [[ $error != 0 ]]; then
         echo "  ERROR: hadd command failed"
@@ -95,8 +96,9 @@ do
         file=$(expr match "$message" "$substring \(.*\)")
         echo "    message: $message"
         echo "    file: $file"
-        echo "- Moving broken file $file to $brokenDir"
+        echo "- Moving broken file $file and hadd.log to $brokenDir"
         mv $file $brokenDir
+        mv hadd.log $brokenDir
         echo "- Removing $resultFile"
         rm $resultFile
     else

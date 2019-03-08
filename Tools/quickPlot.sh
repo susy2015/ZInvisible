@@ -12,7 +12,7 @@
 # - Make plots of results
 
 combineResults=true
-year="2016"
+year="2017"
 
 # Compile MakePlots
 
