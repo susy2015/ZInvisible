@@ -12,7 +12,13 @@
 # - Make plots of results
 
 combineResults=true
-year="2017"
+year=$1
+
+if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
+then
+    echo "Please enter 2016, 2017, or 2018 for the year as the first argument."
+    exit 1
+fi
 
 # Compile MakePlots
 
@@ -52,10 +58,6 @@ rm plots/*
 #                     "ZJetsToNuNu_HT_400to600"
 #                    )
 #declare -a samples=(
-#                    "Data_SingleMuon_2016"
-#                    "DYJetsToLL_HT_400to600"
-#                   )
-#declare -a samples=(
 #                    "Data_SingleMuon_"$year""
 #                    "DYJetsToLL_HT_400to600_"$year""
 #                    "Data_SinglePhoton_"$year""
@@ -63,13 +65,12 @@ rm plots/*
 #                    "ZJetsToNuNu_HT_400to600_"$year""
 #                   )
 declare -a samples=(
+                    "Data_SingleMuon_"$year""
                     "DYJetsToLL_HT_400to600_"$year""
-                    "GJets_HT-400To600_"$year""
-                    "ZJetsToNuNu_HT_400to600_"$year""
                    )
 
 outputFiles=
-n_events=2000
+n_events=10000
 
 # loop through samples array
 for sample in "${samples[@]}"

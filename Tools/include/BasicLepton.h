@@ -92,8 +92,8 @@ namespace plotterFunctions
                     cutMuVecRecoOnly->push_back(muonsLVec[i]);
                 }
                 //if(muonsFlagIDVec[i])
-                //if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, true, AnaConsts::muonsMiniIsoArr))
-                if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i] / muonsLVec[i].Pt(), 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
+                //if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i] / muonsLVec[i].Pt(), 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
+                if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
                 {
                     //if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
                     //{
@@ -130,7 +130,8 @@ namespace plotterFunctions
                 }
 
                 //if(elesFlagIDVec[i])
-                if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i] / elesLVec[i].Pt(), -1, passElectonID, AnaConsts::elesMiniIsoArr))
+                //if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i] / elesLVec[i].Pt(), -1, passElectonID, AnaConsts::elesMiniIsoArr))
+                if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, passElectonID, AnaConsts::elesMiniIsoArr))
                 {
                     cutElecVec->push_back(elesLVec[i]);
                     cutElecCharge->push_back(elesCharge[i]);

@@ -14,39 +14,45 @@
 
 
 # options
-dataSet=$1
-executableOption=$2
-year="2017"
+dirName=$1
+year=$2
+executableOption=$3
 
 executable=
 resultFile=
-dirName=
+dirPrefix=
 
 zinvDir=$CMSSW_BASE/src/ZInvisible/Tools
 condorDir=$zinvDir/condor
 
-if [ -z "$dataSet" ]; then
-    echo "- ERROR: Please provide a data set for the directory name."
+if [ -z "$dirName" ]; then
+    echo "Please provide a directory name as the first argument."
     echo "  Examples: DYJetsToLL, GJets, ZJetsToNuNu, etc."
     exit 1
 fi
 
+if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
+then
+    echo "Please enter 2016, 2017, or 2018 for the year as the second argument."
+    exit 1
+fi
+
 if [ "$executableOption" = "-c" ]; then
-    resultFile="effhists_"$dataSet".root"
+    resultFile="effhists_"$dirName".root"
     executable="echo nothing to do"
-    dirName="effhists"
+    dirPrefix="effhists"
 else
     resultFile="result.root"
     executable="./makePlots -f -I $resultFile -Y $year | grep -v LHAPDF"
-    dirName="histos"
+    dirPrefix="histos"
 fi
 
-echo "- Running processResults.sh for the data set $dataSet"
+echo "- Running processResults.sh for the data set $dirName"
 
 # data directory
 today=$(date '+%d_%b_%Y')
 i=1
-dataDir=""$dirName"_"$dataSet"_"$today"_"$i""
+dataDir=""$dirPrefix"_"$dirName"_"$today"_"$i""
 
 # directory for broken files
 brokenDir="broken_files"
@@ -65,7 +71,7 @@ while [[ -d $dataDir ]]
 do
     echo "- Found directory $dataDir"
     i=$[$i+1]
-    dataDir=""$dirName"_"$1"_"$today"_"$i""
+    dataDir=""$dirPrefix"_"$dirName"_"$today"_"$i""
 done
 
 # create unique data directory
