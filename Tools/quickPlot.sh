@@ -64,9 +64,13 @@ rm plots/*
 #                    "GJets_HT-400To600_"$year""
 #                    "ZJetsToNuNu_HT_400to600_"$year""
 #                   )
+#declare -a samples=(
+#                    "Data_SingleMuon_"$year""
+#                    "DYJetsToLL_HT_400to600_"$year""
+#                   )
 declare -a samples=(
-                    "Data_SingleMuon_"$year""
-                    "DYJetsToLL_HT_400to600_"$year""
+                    "Data_SinglePhoton_"$year""
+                    "GJets_HT-100To200_"$year""
                    )
 
 outputFiles=

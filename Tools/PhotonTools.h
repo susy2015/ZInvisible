@@ -68,8 +68,10 @@ namespace PhotonFunctions
   }
 
   // pt cut
+  // 2016, HLT_Photon175 (not pre-scaled): photon turn on at 200 GeV
+  // 2017, HLT_Photon200 (not pre-scaled): photon turn on at 220 GeV
   bool passPhotonPt(const TLorentzVector& photon){
-    const double minPt = 200.0;
+    const double minPt = 220.0;
     const double perPhotonPt = photon.Pt();
     return (perPhotonPt > minPt);
   }
