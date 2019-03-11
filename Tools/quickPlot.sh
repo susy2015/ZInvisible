@@ -35,6 +35,11 @@ fi
 
 echo " - Remove existing plots"
 rm plots/*
+    
+# IMPORTANT: You need quotes around each variable (due to underscores).
+#            Otherwise bash interprets the underscores as part of the variable names.
+#            example: for var1 and var2, use ""$var1"_"$var2""
+#            without the quotes, "$var1_$var2" is interpretted as ""$var1_""$var2""
 
 # Run on all samples
 # declare an array of samples
@@ -70,11 +75,11 @@ rm plots/*
 #                   )
 declare -a samples=(
                     "Data_SinglePhoton_"$year""
-                    "GJets_HT-100To200_"$year""
+                    "GJets_HT-400To600_"$year""
                    )
 
 outputFiles=
-n_events=10000
+n_events=1000
 
 # loop through samples array
 for sample in "${samples[@]}"
@@ -82,25 +87,25 @@ do
     output=""$sample".root"
     outputFiles="$outputFiles $output"
     echo " - Running makePlots to create $output"
+    echo ""
     echo "./makePlots -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF"
+    echo ""
     ./makePlots -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF
 done
 
 # hadd the results
 if [ "$combineResults" = true ]; then
 
-    # IMPORTANT: You need quotes around each variable (due to underscores).
-    #            Otherwise bash interprets the underscores as part of the variable names.
-    #result=""$sample1"_and_"$sample2".root"
     result="quickResult.root"
-    echo " - hadd the results to create $result"
+    echo "- Executing hadd to add histograms to create $result; see hadd.log for stdout and stderr"
     # Use -f to overwrite target file if it already exists
-    #hadd -f $result $output1 $output2
-    hadd -f $result $outputFiles
+    #time hadd -f $result $outputFiles &> hadd.log
+    time ahadd.py -f $result $outputFiles &> hadd.log
     
     # Make plots of results (containing both MC)
-    
     echo " - Make plots of results (containing both MC)"
+    echo ""
     echo "./makePlots -f -I $result | grep -v LHAPDF"
+    echo ""
     ./makePlots -f -I $result -Y $year | grep -v LHAPDF
 fi
