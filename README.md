@@ -5,7 +5,9 @@
 
 First follow the instructions here: https://github.com/susy2015/SusyAnaTools#instructions. Once you are done, you should have a CMSSW area setup that contains the TopTagger repo and the SusyAnaTools repo.
 
-<details> TopTagger for Standalone (edm free) </summary>
+<details> 
+
+<summary> TopTagger for Standalone (edm free) </summary>
 
 If you want to install the TopTagger for Standalone (edm free), follow the instructions within CMSSW [here](https://github.com/susy2015/TopTagger/tree/master/TopTagger#standalone-edm-free-install-instructions-within-cmssw), but exclude the commands you have already done (don't repeat CMSSW setup and cloning TopTagger repository).
 
