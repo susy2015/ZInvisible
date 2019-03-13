@@ -3,7 +3,7 @@
 
 ## Setup TopTagger and SusyAnaTools 
 
-First follow the instructions here: https://github.com/susy2015/SusyAnaTools#instructions. Once you are done, you should have a CMSSW area setup that contains the TopTagger repo and the SusyAnaTools repo.
+First follow the instructions [here](https://github.com/susy2015/SusyAnaTools#instructions). Once you are done, you should have a CMSSW area setup that contains the TopTagger repo and the SusyAnaTools repo.
 
 <details> 
 
@@ -15,62 +15,52 @@ If you want to install the TopTagger for Standalone (edm free), follow the instr
 
 ## Setup ZInvisible
 
-Go your CMSSW area which you should have already setup (see https://github.com/susy2015/SusyAnaTools#instructions). We recommend using CMSSW_10_2_9, which has support for uproot. The command cmsenv will need to be run during every new terminal session.
-
-WARNING: It is unwise to rename the path of your CMSSW area (e.g. any directory in your path before the CMSSW_10_2_9 directory) after checking out a CMSSW release. It will cause things to break because CMSSW_BASE will still be set to the old directory name.
-
+Go your CMSSW area which you should have already setup (see instructions [here](https://github.com/susy2015/SusyAnaTools#instructions). We recommend using CMSSW_10_2_9, which has support for uproot. The command cmsenv will need to be run during every new terminal session.
 ```
 cd CMSSW_10_2_9
 cmsenv
 ```
 
-Checkout and compile the ZInvisible repository.
+WARNING: It is unwise to rename the path of your CMSSW area (e.g. any directory in your path before the CMSSW_10_2_9 directory) after checking out a CMSSW release. It will cause things to break because CMSSW_BASE will still be set to the old directory name.
 
+Checkout the ZInvisible repository.
 ```
 cd $CMSSW_BASE/src
 git clone git@github.com:susy2015/ZInvisible.git
+cd ZInvisible/Tools
 ```
 
 ## Get Configuration Files
 
-Follow the instructions here: https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files
+Go to the `ZInvisible/Tools` directory.
+```
+cd ZInvisible/Tools
+```
+
+Then follow the instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files).
+
+Make sure that you checkout the configuration files in the `ZInvisible/Tools` directory (with softlinks if you use getTaggerCfg.sh and getStopCfg.sh). You may specify a different directory for the area where the release is downloaded, as the softlinks will point to that location.
 
 ## Setup
 
 Setup the TopTagger environment. This will need to be run after running `cmsenv` in every new terminal session.
 ```
-cd ZInvisible/Tools
+cd $CMSSW_BASE/src/ZInvisible/Tools
 source $CMSSW_BASE/src/TopTagger/TopTagger/test/taggerSetup.sh
 ```
 
-Now compile.
+Now compile. 
 ```
 cd $CMSSW_BASE/src/ZInvisible/Tools
 mkdir obj
 make -j8
 ```
 
-Checkout the TopTagger config files. This will only need to be done once in this working area (unless you want to use a different TopTagger version).
-```
-source $CMSSW_BASE/src/TopTagger/TopTagger/scripts/getTaggerCfg.sh -t DeepCombined_Example_Res_T_DeepAK8_T_v1.0.0 -f TopTagger_DeepCombined.cfg
-```
+You will need to compile after making changes to the source code (.cc, .h, Makefile, etc). If you change the Makefile, you will need to run `make clean` and then `make`.
 
-The flag `-t` is for tag, and flag `-f` is for the name of the softlink. There is a `-o` flag for overriding existing TopTagger config files in your area.
-
-Check the TopTagger.cfg soft link with `ls -l TopTagger_DeepCombined.cfg`. You should see the same version of the TopTagger that you checked out.
-
-Checkout the StopCfg config files, which will only need to be done once (unless you update to newer config files).
-
-```
-source $CMSSW_BASE/src/SusyAnaTools/Tools/scripts/getStopCfg.sh -t PostProcessedNanoAOD_v1.0.1
-```
-The flag `-t` is for tag. There is a `-o` flag for overriding existing TopTagger config files in your area.
-
-Copy some files from Caleb. The text files are used by makePlots, and the root files are used by moneyplot.
+Copy this root file containing systematics (from the SUS-16-050 analysis). This file is used by moneyplot to show systematics in each search bin. We still need to redo the systematics for the full Run 2 analysis.
 ```
 cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/syst_all.root .
-cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/ALL_approval_2Zjets.root .
-cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/result.root .
 ```
 
 ## Running Scripts
@@ -112,6 +102,14 @@ The "-l" option will make lepton plots, and the "-g" option will make photon plo
 ./makePlots -D DYJetsToLL -E 1000 -l
 ./makePlots -D GJets -E 1000 -g
 ```
+
+There is also a script for running over multiple samples and a small number of events without using condor. The year is the only argument. Here are the commands for 2016 and 2017.
+```
+./quickPlot.sh 2016
+./quickPlot.sh 2017
+```
+
+Different samples and number of events can be specified by editing quickPlot.sh.
 
 You can also try running the moneyplot script.
 ```
