@@ -1,17 +1,17 @@
 # ZInvisible
 
 
-## Setup Other Repos
+## Setup TopTagger and SusyAnaTools 
 
 First follow the instructions here: https://github.com/susy2015/SusyAnaTools#instructions. Once you are done, you should have a CMSSW area setup that contains the TopTagger repo and the SusyAnaTools repo.
 
-
-## TopTagger
+<details> TopTagger for Standalone (edm free) </summary>
 
 If you want to install the TopTagger for Standalone (edm free), follow the instructions within CMSSW [here](https://github.com/susy2015/TopTagger/tree/master/TopTagger#standalone-edm-free-install-instructions-within-cmssw), but exclude the commands you have already done (don't repeat CMSSW setup and cloning TopTagger repository).
 
+</details>
 
-## ZInvisible Repo
+## Setup ZInvisible
 
 Go your CMSSW area which you should have already setup (see https://github.com/susy2015/SusyAnaTools#instructions). We recommend using CMSSW_10_2_9, which has support for uproot. The command cmsenv will need to be run during every new terminal session.
 
@@ -28,6 +28,10 @@ Checkout and compile the ZInvisible repository.
 cd $CMSSW_BASE/src
 git clone git@github.com:susy2015/ZInvisible.git
 ```
+
+## Get Configuration Files
+
+Follow the instructions here: https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files
 
 ## Setup
 
@@ -147,25 +151,86 @@ watch "condor_q | tail"     watch job status; use CRTL-C to stop
 
 Your condor jobs should produce log, stdout, and stderr files for each job in the logs directory. You can check these for errors.
 
-If your jobs complete successfully, the jobs will output root files to the condor directory. We have a script called processResults.sh to hadd the output files, which adds the root histograms together and produce one file. The script required a name for the jobs, such as the sample name(s).
+### Data/MC Samples
 
-
+Submit 2016 MC only:
 ```
-./processResults.sh ZJetsToNuNu 
+python condorSubmit.py -d DYJetsToLL_2016,TTbarNoHad_2016,SingleTopZinv_2016,Rare_2016,TTZ_2016,Diboson_2016,GJets_2016,QCD_2016,WJetsToLNu_2016,TTbarAll_2016,tW_2016,ZJetsToNuNu_2016 -n 1 -y 2016
+```
+
+Submit 2016 Data only:
+```
+python condorSubmit.py -d Data_SingleMuon_2016,Data_SinglePhoton_2016 -n 1 -y 2016
+```
+
+Submit 2016 Data and MC:
+```
+python condorSubmit.py -d Data_SingleMuon_2016,DYJetsToLL_2016,TTbarNoHad_2016,SingleTopZinv_2016,Rare_2016,TTZ_2016,Diboson_2016,Data_SinglePhoton_2016,GJets_2016,QCD_2016,WJetsToLNu_2016,TTbarAll_2016,tW_2016,ZJetsToNuNu_2016 -n 1 -y 2016
+```
+
+Submit 2017 MC only:
+```
+python condorSubmit.py -d DYJetsToLL_2017,TTbarNoHad_2017,SingleTopZinv_2017,Rare_2017,TTZ_2017,Diboson_2017,GJets_2017,QCD_2017,WJetsToLNu_2017,TTbarAll_2017,tW_2017,ZJetsToNuNu_2017 -n 1 -y 2017
+```
+
+Submit 2017 Data only:
+```
+python condorSubmit.py -d Data_SingleMuon_2017,Data_SinglePhoton_2017 -n 1 -y 2017
+```
+
+Submit 2017 Data and MC:
+```
+python condorSubmit.py -d Data_SingleMuon_2017,DYJetsToLL_2017,TTbarNoHad_2017,SingleTopZinv_2017,Rare_2017,TTZ_2017,Diboson_2017,Data_SinglePhoton_2017,GJets_2017,QCD_2017,WJetsToLNu_2017,TTbarAll_2017,tW_2017,ZJetsToNuNu_2017 -n 1 -y 2017
+```
+
+Submit 2017 Muon Data and MC:
+```
+python condorSubmit.py -d Data_SingleMuon_2017,DYJetsToLL_2017,TTbarNoHad_2017,SingleTopZinv_2017,Rare_2017,TTZ_2017,Diboson_2017,ZJetsToNuNu_2017 -n 1 -y 2017
+```
+
+Submit 2017 Photon Data and MC:
+```
+python condorSubmit.py -d Rare_2017,TTZ_2017,Diboson_2017,Data_SinglePhoton_2017,GJets_2017,QCD_2017,WJetsToLNu_2017,TTbarAll_2017,tW_2017,ZJetsToNuNu_2017 -n 1 -y 2017
+```
+
+
+### Process Output from Condor
+
+If your jobs complete successfully, the jobs will output root files to the condor directory. We have a script called processResults.sh to hadd the output files, which adds the root histograms together and produces one file.
+
+WARNING: The processResults.sh script moves all root files from your current directory to a new directory and adds them together. Make sure your condor directory only contains root files that were output from condor and that you want to add together.
+
+The script requires two arguments in this order: name, year . The name will be used to create the directory that stores all the root files. The year should be 2016, 2017, or 2018 corresponding to the Data/MC year.
+```
+./processResults.sh NAME_FOR_DIRECTORY YEAR
+```
+
+Here is an example.
+```
+./processResults.sh ZJetsToNuNu 2016
 ```
 
 The script processResults.sh will 
-- create a directory with the name you provide, the date, and a version number for that date (1,2,3...).
-- move the root files there and hadd them (checking for broken files)
-- copy the resulting file to ZInvisible/Tools
-- run MakePlots on the resulting histogram 
+- create a new directory with the name you provide, the date, and a version number for that date (1,2,3...).
+- move all root files from current directory to the new directory and hadd them (checking for broken files)
+- copy the resulting root file to ZInvisible/Tools
+- run MakePlots using this root file
 
 This should generate some pdf and png files in the ZInvisible/Tools/plots directory, which you may rsync and view as desired.
 
+Process 2016 results:
+```
+./processResults.sh PhotonAndMuonControlRegionSelection_2016 2016
+```
+
+Process 2017 results:
+```
+./processResults.sh PhotonAndMuonControlRegionSelection_2017 2017
+```
 
 ## La Fin
 
-If everything has worked up to this point, you have arrived at The End. You will go far, my friend. Otherwise, don't worry. Keep trying and contact an expert if you cannot resolve the issues. Feel free to post issues on the issues page of this repository. Also, you are welcome to help solve the current issues if you have time.
+If everything has worked up to this point, you have arrived at The End... for now. You will go far, my friend. Otherwise, don't worry. Keep trying and contact an expert if you cannot resolve the issues. Feel free to post issues on the issues page of this repository. Also, you are welcome to help solve the current issues if you have time.
 
 
 
