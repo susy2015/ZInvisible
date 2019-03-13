@@ -3,7 +3,7 @@
 
 ## Setup TopTagger and SusyAnaTools 
 
-First follow the instructions [here](https://github.com/susy2015/SusyAnaTools#instructions). Once you are done, you should have a CMSSW area setup that contains the TopTagger repo and the SusyAnaTools repo.
+First follow the instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#instructions). Once you are done, you should have a CMSSW area setup that contains the TopTagger repo and the SusyAnaTools repo.
 
 <details> 
 
@@ -15,7 +15,7 @@ If you want to install the TopTagger for Standalone (edm free), follow the instr
 
 ## Setup ZInvisible
 
-Go your CMSSW area which you should have already setup (see instructions [here](https://github.com/susy2015/SusyAnaTools#instructions). We recommend using CMSSW_10_2_9, which has support for uproot. The command cmsenv will need to be run during every new terminal session.
+Go your CMSSW area which you should have already setup (see instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#instructions). We recommend using CMSSW_10_2_9, which has support for uproot. The command cmsenv will need to be run during every new terminal session.
 ```
 cd CMSSW_10_2_9
 cmsenv
