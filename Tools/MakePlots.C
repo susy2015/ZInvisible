@@ -589,10 +589,10 @@ int main(int argc, char* argv[])
         //PDS dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDM_drPhotonCleaned",  "");
         //std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM_drPhotonCleaned","");
         //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM_drPhotonCleaned","");
-        PDS dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton" + yearTag], "passPhotonTrigger;passBaselineLowDM_drPhotonCleaned;passPhotonSelection",  "");
-        PDS dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton" + yearTag], "passPhotonTrigger;passBaselineHighDM_drPhotonCleaned;passPhotonSelection",  "");
-        std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM_drPhotonCleaned;passPhotonSelection","");
-        std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM_drPhotonCleaned;passPhotonSelection","");
+        PDS dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton" + yearTag], "passPhotonTrigger;passBaselineLowDM_drPhotonCleaned;passPhotonSelection;MET_pt<200",  "");
+        PDS dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton" + yearTag], "passPhotonTrigger;passBaselineHighDM_drPhotonCleaned;passPhotonSelection;MET_pt<200",  "");
+        std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM_drPhotonCleaned;passPhotonSelection;MET_pt<200","");
+        std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM_drPhotonCleaned;passPhotonSelection;MET_pt<200","");
         
         // n_jets
         PDC dcData_Photon_LowDM_nj(  "data",   "nJets_drPhotonCleaned", {dsData_Photon_LowDM});

@@ -777,7 +777,6 @@ void Plotter::setLumi(const double lumi)
 
 void Plotter::setDoHists(const bool doHists)
 {
-    std::cout << "set doHists_ to " << doHists << std::endl;
     doHists_ = doHists;
 }
 

@@ -79,7 +79,7 @@ declare -a samples=(
                    )
 
 outputFiles=
-n_events=1000
+n_events=2000
 
 # loop through samples array
 for sample in "${samples[@]}"
