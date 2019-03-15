@@ -285,6 +285,10 @@ int main(int argc, char* argv[])
     double minPhi = -1.0 * TMath::Pi();
     double maxPhi = TMath::Pi();
 
+    // met bin edges
+    std::vector<double> metBinEdges      = {250.0, 300.0, 400.0, 500.0, 750.0, 1000.0, 1500.0, 2000.0};
+    std::vector<double> photonPtBinEdges = {220.0, 300.0, 400.0, 500.0, 750.0, 1000.0, 1500.0, 2000.0};
+
     // Shortcuts for axis labels
     std::string label_Events = "Events";
     //std::string label_met = "p_{T}^{miss} [GeV]";
@@ -560,8 +564,8 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMC_Muon_HighDM_nj" + yearTag,          {dcData_Muon_HighDM_nj, dcMC_Muon_HighDM_nj},  {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
         vh.push_back(PHS("DataMC_Muon_LowDM_ht" + yearTag,           {dcData_Muon_LowDM_ht,  dcMC_Muon_LowDM_ht},  {1, 2}, "", 80,  minPt, maxPt, true, false, label_ht, "Events"));
         vh.push_back(PHS("DataMC_Muon_HighDM_ht" + yearTag,          {dcData_Muon_HighDM_ht, dcMC_Muon_HighDM_ht}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_ht, "Events"));
-        vh.push_back(PHS("DataMC_Muon_LowDM_met" + yearTag,          {dcData_Muon_LowDM_met,  dcMC_Muon_LowDM_met},  {1, 2}, "", 80,  minPt, maxPt, true, false, label_metWithLL, "Events"));
-        vh.push_back(PHS("DataMC_Muon_HighDM_met" + yearTag,         {dcData_Muon_HighDM_met, dcMC_Muon_HighDM_met}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_metWithLL, "Events"));
+        vh.push_back(PHS("DataMC_Muon_LowDM_met" + yearTag,          {dcData_Muon_LowDM_met,  dcMC_Muon_LowDM_met},  {1, 2}, "", metBinEdges, true, false, label_metWithLL, "Events"));
+        vh.push_back(PHS("DataMC_Muon_HighDM_met" + yearTag,         {dcData_Muon_HighDM_met, dcMC_Muon_HighDM_met}, {1, 2}, "", metBinEdges, true, false, label_metWithLL, "Events"));
         vh.push_back(PHS("DataMC_Muon_LowDM_metphi" + yearTag,       {dcData_Muon_LowDM_metphi,  dcMC_Muon_LowDM_metphi},  {1, 2}, "", 80,  minPhi, maxPhi, true, false, label_metphiWithLL, "Events"));
         vh.push_back(PHS("DataMC_Muon_HighDM_metphi" + yearTag,      {dcData_Muon_HighDM_metphi, dcMC_Muon_HighDM_metphi}, {1, 2}, "", 80,  minPhi, maxPhi, true, false, label_metphiWithLL, "Events"));
         vh.push_back(PHS("DataMC_Muon_LowDM_MuPt1" + yearTag,        {dcData_Muon_LowDM_MuPt1,  dcMC_Muon_LowDM_MuPt1},  {1, 2}, "", 80,  minPt, maxPt, true, false, label_MuPt1, "Events"));
@@ -639,12 +643,12 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMC_Photon_HighDM_nj" + yearTag,         {dcData_Photon_HighDM_nj,  dcMC_Photon_HighDM_nj},  {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
         vh.push_back(PHS("DataMC_Photon_LowDM_ht" + yearTag,          {dcData_Photon_LowDM_ht,  dcMC_Photon_LowDM_ht},  {1, 2}, "", 80,  minPt, maxPt, true, false, label_ht, "Events"));
         vh.push_back(PHS("DataMC_Photon_HighDM_ht" + yearTag,         {dcData_Photon_HighDM_ht, dcMC_Photon_HighDM_ht}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_ht, "Events"));
-        vh.push_back(PHS("DataMC_Photon_LowDM_met" + yearTag,         {dcData_Photon_LowDM_met,  dcMC_Photon_LowDM_met},  {1, 2}, "", 80,  minPt, maxPt, true, false, label_metWithPhoton, "Events"));
-        vh.push_back(PHS("DataMC_Photon_HighDM_met" + yearTag,        {dcData_Photon_HighDM_met, dcMC_Photon_HighDM_met}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_metWithPhoton, "Events"));
+        vh.push_back(PHS("DataMC_Photon_LowDM_met" + yearTag,         {dcData_Photon_LowDM_met,  dcMC_Photon_LowDM_met},  {1, 2}, "", metBinEdges, true, false, label_metWithPhoton, "Events"));
+        vh.push_back(PHS("DataMC_Photon_HighDM_met" + yearTag,        {dcData_Photon_HighDM_met, dcMC_Photon_HighDM_met}, {1, 2}, "", metBinEdges, true, false, label_metWithPhoton, "Events"));
         vh.push_back(PHS("DataMC_Photon_LowDM_metphi" + yearTag,      {dcData_Photon_LowDM_metphi,  dcMC_Photon_LowDM_metphi},  {1, 2}, "", 80,  minPhi, maxPhi, true, false, label_metphiWithPhoton, "Events"));
         vh.push_back(PHS("DataMC_Photon_HighDM_metphi" + yearTag,     {dcData_Photon_HighDM_metphi, dcMC_Photon_HighDM_metphi}, {1, 2}, "", 80,  minPhi, maxPhi, true, false, label_metphiWithPhoton, "Events"));
-        vh.push_back(PHS("DataMC_Photon_LowDM_PhotonPt" + yearTag,    {dcData_Photon_LowDM_PhotonPt,  dcMC_Photon_LowDM_PhotonPt},  {1, 2}, "", 80,  minPt, maxPt, true, false, label_PhotonPt, "Events"));
-        vh.push_back(PHS("DataMC_Photon_HighDM_PhotonPt" + yearTag,   {dcData_Photon_HighDM_PhotonPt, dcMC_Photon_HighDM_PhotonPt}, {1, 2}, "", 80,  minPt, maxPt, true, false, label_PhotonPt, "Events"));
+        vh.push_back(PHS("DataMC_Photon_LowDM_PhotonPt" + yearTag,    {dcData_Photon_LowDM_PhotonPt,  dcMC_Photon_LowDM_PhotonPt},  {1, 2}, "", photonPtBinEdges, true, false, label_PhotonPt, "Events"));
+        vh.push_back(PHS("DataMC_Photon_HighDM_PhotonPt" + yearTag,   {dcData_Photon_HighDM_PhotonPt, dcMC_Photon_HighDM_PhotonPt}, {1, 2}, "", photonPtBinEdges, true, false, label_PhotonPt, "Events"));
         vh.push_back(PHS("DataMC_Photon_LowDM_PhotonEta" + yearTag,   {dcData_Photon_LowDM_PhotonEta,  dcMC_Photon_LowDM_PhotonEta},  {1, 2}, "", 80,  minEta, maxEta, true, false, label_PhotonEta, "Events"));
         vh.push_back(PHS("DataMC_Photon_HighDM_PhotonEta" + yearTag,  {dcData_Photon_HighDM_PhotonEta, dcMC_Photon_HighDM_PhotonEta}, {1, 2}, "", 80,  minEta, maxEta, true, false, label_PhotonEta, "Events"));
     }

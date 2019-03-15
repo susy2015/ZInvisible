@@ -62,24 +62,24 @@ rm plots/*
 #                     "tW"
 #                     "ZJetsToNuNu_HT_400to600"
 #                    )
-#declare -a samples=(
-#                    "Data_SingleMuon_"$year""
-#                    "DYJetsToLL_HT_400to600_"$year""
-#                    "Data_SinglePhoton_"$year""
-#                    "GJets_HT-400To600_"$year""
-#                    "ZJetsToNuNu_HT_400to600_"$year""
-#                   )
-#declare -a samples=(
-#                    "Data_SingleMuon_"$year""
-#                    "DYJetsToLL_HT_400to600_"$year""
-#                   )
 declare -a samples=(
+                    "Data_SingleMuon_"$year""
+                    "DYJetsToLL_HT_400to600_"$year""
                     "Data_SinglePhoton_"$year""
                     "GJets_HT-400To600_"$year""
+                    "ZJetsToNuNu_HT_400to600_"$year""
                    )
+#declare -a samples=(
+#                    "Data_SingleMuon_"$year""
+#                    "DYJetsToLL_HT_400to600_"$year""
+#                   )
+#declare -a samples=(
+#                    "Data_SinglePhoton_"$year""
+#                    "GJets_HT-400To600_"$year""
+#                   )
 
 outputFiles=
-n_events=1000
+n_events=10000
 
 # loop through samples array
 for sample in "${samples[@]}"
