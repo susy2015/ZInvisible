@@ -56,7 +56,7 @@ rm plots/*
 #                     "Diboson"
 #                     "Data_SinglePhoton_2016"
 #                     "GJets_HT-400To600"
-#                     "QCD_HT500to700"
+#                     "QCD_HT300to500_2016"
 #                     "WJetsToLNu_HT_400to600"
 #                     "TTbarAll"
 #                     "tW"
@@ -65,8 +65,10 @@ rm plots/*
 declare -a samples=(
                     "Data_SingleMuon_"$year""
                     "DYJetsToLL_HT_400to600_"$year""
+                    "TTbarNoHad_"$year""
                     "Data_SinglePhoton_"$year""
                     "GJets_HT-400To600_"$year""
+                    "QCD_HT300to500_"$year""
                     "ZJetsToNuNu_HT_400to600_"$year""
                    )
 #declare -a samples=(
@@ -79,7 +81,7 @@ declare -a samples=(
 #                   )
 
 outputFiles=
-n_events=10000
+n_events=2000
 
 # loop through samples array
 for sample in "${samples[@]}"
