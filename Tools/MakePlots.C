@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
     };
 
     bool runOnCondor    = false;
-    bool doDataMCLL     = true;
+    bool doDataMCLL     = false;
     bool doDataMCPhoton = true;
     bool doWeights = false;
     bool doLeptons = false;
@@ -60,10 +60,13 @@ int main(int argc, char* argv[])
     bool verbose = false;
     string filename = "histoutput.root", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
-    double lumi = AnaSamples::luminosity_2016;
+    double lumi      = -1.0;
+    double lumi_2016 = -1.0;
+    double lumi_2017 = -1.0;
+    double lumi_2018 = -1.0;
     std::string sbEra = "SB_v1_2017";
-    std::string year = "2016";
-
+    std::string year = "";
+    std::string PhotonDataset = "";
     while((opt = getopt_long(argc, argv, "pstfcglvI:D:N:M:E:P:L:S:Y:", long_options, &option_index)) != -1)
     {
         switch(opt)
@@ -140,12 +143,51 @@ int main(int argc, char* argv[])
             break;
         }
     }
-
+    
     // _year
     std::string yearTag = "_" + year; 
+
+    if (doDataMCPhoton && doDataMCLL)
+    {
+        std::cout << "Due to different luminosities for our post-processed photon and muon datasets (currently), you may not do DataMC for photon and muon datasets at the same time. Please pick one." << std::endl;
+        exit(1);
+    }
+
+    // lumi for SampleSet
+    if (doDataMCPhoton)
+    {
+        lumi_2016 = AnaSamples::luminosity_2016; 
+        lumi_2017 = AnaSamples::luminosity_photon_2017; 
+        lumi_2018 = AnaSamples::luminosity_photon_2018; 
+    }
+    else if (doDataMCLL)
+    {
+        lumi_2016 = AnaSamples::luminosity_2016; 
+        lumi_2017 = AnaSamples::luminosity_muon_2017; 
+        lumi_2018 = AnaSamples::luminosity_muon_2018; 
+    }
+    
     // lumi for Plotter
-    if (year.compare("2016") == 0) lumi = AnaSamples::luminosity_2016;
-    if (year.compare("2017") == 0) lumi = AnaSamples::luminosity_2017;
+    if (year.compare("2016") == 0)
+    {
+        lumi = lumi_2016;
+        PhotonDataset = "Data_SinglePhoton";
+    }
+    else if (year.compare("2017") == 0)
+    {
+        lumi = lumi_2017;
+        PhotonDataset = "Data_SinglePhoton";
+    }
+    else if (year.compare("2018") == 0)
+    {
+        lumi = lumi_2018;
+        PhotonDataset = "Data_EGamma";
+    }
+    else
+    {
+        std::cout << "Please enter 2016, 2017, or 2018 for the year using the -Y option." << std::endl;
+        exit(1);
+    }
 
 
     //if running on condor override all optional settings
@@ -174,23 +216,23 @@ int main(int argc, char* argv[])
         AnaSamples::SampleCollection sc;
     };
 
-    // --- follow this syntax; order matters for your arguments --- //
+    // --- follow the syntax; order matters for your arguments --- //
     
     //SampleSet::SampleSet(std::string file, bool isCondor, double lumi)
-    //AnaSamples::SampleSet        SS_2016("sampleSets_2016.cfg", runOnCondor, AnaSamples::luminosity_2016);
-    AnaSamples::SampleSet        SS_2016("sampleSets_PostProcessed_2016.cfg", runOnCondor, AnaSamples::luminosity_2016);
-    AnaSamples::SampleSet        SS_2017("sampleSets_PostProcessed_2017.cfg", runOnCondor, AnaSamples::luminosity_2017);
+    AnaSamples::SampleSet        SS_2016("sampleSets_PostProcessed_2016.cfg", runOnCondor, lumi_2016);
+    AnaSamples::SampleSet        SS_2017("sampleSets_PostProcessed_2017.cfg", runOnCondor, lumi_2017);
+    AnaSamples::SampleSet        SS_2018("sampleSets_PostProcessed_2018.cfg", runOnCondor, lumi_2018);
     
     //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples)
-    //AnaSamples::SampleCollection SC_2016("sampleCollections.cfg", SS_2016);
     AnaSamples::SampleCollection SC_2016("sampleCollections_2016.cfg", SS_2016);
     AnaSamples::SampleCollection SC_2017("sampleCollections_2017.cfg", SS_2017);
+    AnaSamples::SampleCollection SC_2018("sampleCollections_2018.cfg", SS_2018);
 
     // Warning: keep years together when you add them to sampleList:
     std::vector<sampleStruct> sampleList;
     sampleList.push_back({SS_2016, SC_2016});
     sampleList.push_back({SS_2017, SC_2017});
-
+    sampleList.push_back({SS_2018, SC_2018});
     
     const double zAcc = 1.0;
     // const double zAcc = 0.5954;
@@ -484,21 +526,12 @@ int main(int argc, char* argv[])
         // TODO: fix lepInfo module to use in Nano AOD and calculate passMuZinvSel
         
         // no selection
-        //PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "",  "");
-        //PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "", "");
+        //PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],  "",  "");
+        //PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],  "", "");
         //std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("","");
         //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("","");
-        //testing muons
-        //PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuZinvSel",  "");
-        //PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuZinvSel", "");
-        //std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passMuZinvSel","");
-        //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passMuZinvSel","");
         
         // apply selection
-        //PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineLowDM_drLeptonCleaned",  "");
-        //PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon"],  "passMuTrigger;passBaselineHighDM_drLeptonCleaned", "");
-        //std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDM_drLeptonCleaned","");
-        //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDM_drLeptonCleaned","");
         PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],  "passMuTrigger;passBaselineLowDM_drLeptonCleaned;passMuZinvSel",  "");
         PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],  "passMuTrigger;passBaselineHighDM_drLeptonCleaned;passMuZinvSel", "");
         std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDM_drLeptonCleaned;passMuZinvSel","");
@@ -588,18 +621,14 @@ int main(int argc, char* argv[])
         // TODO: change variables to a tag for ZinvPhoton (to used cleaned jet collection, etc)
         
         // no selection
-        //PDS dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "",  "");
-        //PDS dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "",  "");
+        //PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset + yearTag], "",  "");
+        //PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset + yearTag], "",  "");
         //std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("","");
         //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("","");
         
         // apply selection
-        //PDS dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineLowDM_drPhotonCleaned",  "");
-        //PDS dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton"], "passPhotonTrigger;passBaselineHighDM_drPhotonCleaned",  "");
-        //std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM_drPhotonCleaned","");
-        //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM_drPhotonCleaned","");
-        PDS dsData_Photon_LowDM("Data",  fileMap["Data_SinglePhoton" + yearTag], "passPhotonTrigger;passBaselineLowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250",  "");
-        PDS dsData_Photon_HighDM("Data", fileMap["Data_SinglePhoton" + yearTag], "passPhotonTrigger;passBaselineHighDM_drPhotonCleaned;passPhotonSelection;MET_pt<250",  "");
+        PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset + yearTag], "passPhotonTrigger;passBaselineLowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250",  "");
+        PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset + yearTag], "passPhotonTrigger;passBaselineHighDM_drPhotonCleaned;passPhotonSelection;MET_pt<250",  "");
         std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
         std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
         

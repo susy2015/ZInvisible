@@ -20,6 +20,20 @@ then
     exit 1
 fi
 
+
+# Photon Datasets
+# 2016: Data_SinglePhoton_2016
+# 2017: Data_SinglePhoton_2017
+# 2018: Data_EGamma_2018
+
+PhotonDataset="Data_SinglePhoton"
+
+if [[ "$year" == "2018" ]]
+then
+    PhotonDataset="Data_EGamma"
+fi
+
+
 # Compile MakePlots
 
 echo " - Compile MakePlots"
@@ -54,7 +68,7 @@ rm plots/*
 #                     "Rare"
 #                     "TTZ"
 #                     "Diboson"
-#                     "Data_SinglePhoton_2016"
+#                     ""$PhotonDataset"_2016"
 #                     "GJets_HT-400To600"
 #                     "QCD_HT300to500_2016"
 #                     "WJetsToLNu_HT_400to600"
@@ -62,26 +76,26 @@ rm plots/*
 #                     "tW"
 #                     "ZJetsToNuNu_HT_400to600"
 #                    )
-declare -a samples=(
-                    "Data_SingleMuon_"$year""
-                    "DYJetsToLL_HT_400to600_"$year""
-                    "TTbarNoHad_"$year""
-                    "Data_SinglePhoton_"$year""
-                    "GJets_HT-400To600_"$year""
-                    "QCD_HT300to500_"$year""
-                    "ZJetsToNuNu_HT_400to600_"$year""
-                   )
+#declare -a samples=(
+#                    "Data_SingleMuon_"$year""
+#                    "DYJetsToLL_HT_400to600_"$year""
+#                    "TTbarNoHad_"$year""
+#                    ""$PhotonDataset"_"$year""
+#                    "GJets_HT-400To600_"$year""
+#                    "QCD_HT300to500_"$year""
+#                    "ZJetsToNuNu_HT_400to600_"$year""
+#                   )
 #declare -a samples=(
 #                    "Data_SingleMuon_"$year""
 #                    "DYJetsToLL_HT_400to600_"$year""
 #                   )
-#declare -a samples=(
-#                    "Data_SinglePhoton_"$year""
-#                    "GJets_HT-400To600_"$year""
-#                   )
+declare -a samples=(
+                    ""$PhotonDataset"_"$year""
+                    "GJets_HT-400To600_"$year""
+                   )
 
 outputFiles=
-n_events=2000
+n_events=10000
 
 # loop through samples array
 for sample in "${samples[@]}"
