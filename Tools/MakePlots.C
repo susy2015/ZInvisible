@@ -45,8 +45,8 @@ int main(int argc, char* argv[])
     };
 
     bool runOnCondor    = false;
-    bool doDataMCLL     = false;
-    bool doDataMCPhoton = true;
+    bool doDataMCLL     = true;
+    bool doDataMCPhoton = false;
     bool doWeights = false;
     bool doLeptons = false;
     bool doPhotons = false;
@@ -1478,7 +1478,7 @@ int main(int argc, char* argv[])
     set<AFS> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
-    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
+    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, year, sbEra);
 
     if (verbose)
     {
