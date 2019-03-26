@@ -1,6 +1,7 @@
 #!/cvmfs/cms.cern.ch/slc6_amd64_gcc491/cms/cmssw/CMSSW_7_4_8/external/slc6_amd64_gcc491/bin/python
 ####!${SRT_CMSSW_RELEASE_BASE_SCRAMRTDEL}/external/${SCRAM_ARCH}/bin/python
 
+import subprocess
 import sys
 import os
 from os import system, environ
@@ -305,7 +306,7 @@ def main():
             #WORLDSWORSESOLUTIONTOAPROBLEM
             system("mkdir -p WORLDSWORSESOLUTIONTOAPROBLEM")
             for fn in filestoTransfer:
-                print "fn = {0}".format(fn)
+                #print "fn = {0}".format(fn)
                 system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s" % fn)
             
             print "Create tarball {0}.tag.gz".format(fname)
@@ -373,13 +374,19 @@ def main():
         print "Normalizing to %s pb-1" % (lumi)
     
     for ds in datasets:
+        total_files = 0
         ds = ds.strip()
-    
-        print ds
+        #print ds
+        #print "# --- {0} --- #".format(ds)
+        
         # s: file, n:name, e:nEvts
         for s, n, e in sc.sampleList(ds):
+            n_files = sum(1 for line in open(s))
+            total_files += n_files
+            #n_files = subprocess.check_output(["grep", "root " + s +" | wc -l"])  
             #print "\t%s"%n
-            print "\t{0} {1} {2}".format(s, n, e)
+            #print "\t{0} {1} {2}".format(s, n, e)
+            #print "\t{0} {1}".format(n, n_files)
             try:
                 f = open(s)
             except IOError:
@@ -402,6 +409,8 @@ def main():
                     fileParts.append("Queue\n\n")
     
                 f.close()
+        print "{0} {1}".format(ds, total_files)
+        #print "{0}\n{1}".format(ds, total_files)
     
     fout = open("condor_submit.txt", "w")
     fout.write(''.join(fileParts))
