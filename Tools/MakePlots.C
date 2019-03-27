@@ -45,8 +45,8 @@ int main(int argc, char* argv[])
     };
 
     bool runOnCondor    = false;
-    bool doDataMCLL     = false;
-    bool doDataMCPhoton = true;
+    bool doDataMCLL     = true;
+    bool doDataMCPhoton = false;
     bool doWeights = false;
     bool doLeptons = false;
     bool doPhotons = false;
@@ -425,7 +425,7 @@ int main(int argc, char* argv[])
     /*
     // Datasetsummaries we are using                                                                                                        
     // no weight (genWeight deals with negative weights); also add btag weights here                                                        
-    PDS dsData_SingleMuon("Data",         fileMap["Data_SingleMuon"], "passMuTrigger",   "");
+    PDS dsData_SingleMuon("Data",         fileMap["Data_SingleMuon"], "passMuonTrigger",   "");
     PDS dsDY_mu(          "DY #mu",       fileMap["DYJetsToLL"],      "",        "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     PDS dsDYInc_mu(       "DY HT<100",    fileMap["IncDY"],           "genHT<100",   "muTrigWgt;bTagSF_EventWeightSimple_Central;_PUweightFactor");
     PDS dsDY_elec(        "DY e",         fileMap["DYJetsToLL"],      "",          "bTagSF_EventWeightSimple_Central;_PUweightFactor"); // do not use muTrigWgt for electrons (it is 0.0)
@@ -462,7 +462,7 @@ int main(int argc, char* argv[])
     
     // Datasetsummaries we are using                                                                                                        
     // no weight (genWeight deals with negative weights); also add btag weights here                                                        
-    PDS dsData_SingleMuon("Data",         fileMap["Data_SingleMuon" + yearTag], "passMuTrigger",   "");
+    PDS dsData_SingleMuon("Data",         fileMap["Data_SingleMuon" + yearTag], "passMuonTrigger",   "");
     PDS dsDY_mu(          "DY #mu",       fileMap["DYJetsToLL" + yearTag],      "",   "");
     PDS dsDYInc_mu(       "DY HT<100",    fileMap["IncDY" + yearTag],           "",   "");
     PDS dsDY_elec(        "DY e",         fileMap["DYJetsToLL" + yearTag],      "",   ""); 
@@ -536,8 +536,8 @@ int main(int argc, char* argv[])
         //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("","");
         
         // apply selection
-        PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],  "passMuTrigger;passBaselineLowDM_drLeptonCleaned;passMuZinvSel",  "");
-        PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],  "passMuTrigger;passBaselineHighDM_drLeptonCleaned;passMuZinvSel", "");
+        PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],  "passMuonTrigger;passBaselineLowDM_drLeptonCleaned;passMuZinvSel",  "");
+        PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],  "passMuonTrigger;passBaselineHighDM_drLeptonCleaned;passMuZinvSel", "");
         std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDM_drLeptonCleaned;passMuZinvSel","");
         std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDM_drLeptonCleaned;passMuZinvSel","");
         
