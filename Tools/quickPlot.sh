@@ -87,11 +87,14 @@ rm plots/*
 #                    "QCD_HT300to500_"$year""
 #                    "ZJetsToNuNu_HT_400to600_"$year""
 #                   )
-
 declare -a samples=(
-                    "Data_SingleMuon_"$year""
+                    "Data_SingleElectron_"$year""
                     "DYJetsToLL_HT_400to600_"$year""
                    )
+#declare -a samples=(
+#                    "Data_SingleMuon_"$year""
+#                    "DYJetsToLL_HT_400to600_"$year""
+#                   )
 #declare -a samples=(
 #                    ""$PhotonDataset"_"$year""
 #                    "GJets_HT-400To600_"$year""
@@ -99,7 +102,7 @@ declare -a samples=(
 #                   )
 
 outputFiles=
-n_events=100000
+n_events=200000
 
 # loop through samples array
 for sample in "${samples[@]}"
@@ -111,6 +114,12 @@ do
     echo "./makePlots -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF"
     echo ""
     ./makePlots -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF
+    retVal=$?
+    #echo "makePlots return value: $retVal"
+    if [ $retVal -ne 0 ]; then
+        echo "ERROR: There was an error when running makePlots."
+        exit $retVal;
+    fi
 done
 
 # hadd the results
