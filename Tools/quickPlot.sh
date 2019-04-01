@@ -94,7 +94,7 @@ rm plots/*
 #                    "IncDY_"$year""
 #                   )
 declare -a samples=(
-                    "Data_SingleMuon_"$year""
+                    "Data_SingleElectron_"$year""
                     "DYJetsToLL_HT_400to600_"$year""
                    )
 #declare -a samples=(
