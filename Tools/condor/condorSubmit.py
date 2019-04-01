@@ -375,18 +375,20 @@ def main():
     
     for ds in datasets:
         total_files = 0
+        total_events = 0
         ds = ds.strip()
         #print ds
-        #print "# --- {0} --- #".format(ds)
+        print "# --- {0} --- #".format(ds)
         
         # s: file, n:name, e:nEvts
         for s, n, e in sc.sampleList(ds):
             n_files = sum(1 for line in open(s))
             total_files += n_files
+            total_events += e
             #n_files = subprocess.check_output(["grep", "root " + s +" | wc -l"])  
             #print "\t%s"%n
             #print "\t{0} {1} {2}".format(s, n, e)
-            #print "\t{0} {1}".format(n, n_files)
+            print "\t{0}: n_files={1}, n_events={2}".format(n, n_files, e)
             try:
                 f = open(s)
             except IOError:
@@ -409,7 +411,7 @@ def main():
                     fileParts.append("Queue\n\n")
     
                 f.close()
-        print "{0} {1}".format(ds, total_files)
+        print "\t{0}: total_files={1}, total_events={2}".format(ds, total_files, total_events)
         #print "{0}\n{1}".format(ds, total_files)
     
     fout = open("condor_submit.txt", "w")
