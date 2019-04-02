@@ -505,16 +505,25 @@ int main(int argc, char* argv[])
 
     auto makeStackMC_DiLepton = [&](const std::string& cuts, const std::string& weights)
     {
+        // use DYInc if true, otherwise use DYJetsToLL (HT binned DY)
+        bool useDYInc = true;
+        PDS dsDYInc(         "DY Inc",       fileMap["IncDY" + yearTag],           cuts,   weights);
         PDS dsDY(            "DY",           fileMap["DYJetsToLL" + yearTag],      cuts,   weights);
-        //PDS dsDYInc(         "DY Inc",       fileMap["IncDY" + yearTag],           cuts,   weights);
         PDS dsTTbarNoHad(    "t#bar{t}",     fileMap["TTbarNoHad" + yearTag],      cuts,   weights);
         PDS dsSingleTopZinv( "Single t",     fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsRare(          "Rare",         fileMap["Rare" + yearTag],            cuts,   weights);
         PDS dsTTZ(           "t#bar{t}Z",    fileMap["TTZ" + yearTag],             cuts,   weights);
         PDS dsDiboson(       "Diboson",      fileMap["Diboson" + yearTag],         cuts,   weights);
-        std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTbarNoHad}, {dsSingleTopZinv}, {dsRare, dsTTZ, dsDiboson}};
-        //std::vector<std::vector<PDS>> StackMC = {{dsDYInc}, {dsTTbarNoHad}, {dsSingleTopZinv}, {dsRare, dsTTZ, dsDiboson}};
-        return StackMC;
+        if (useDYInc)
+        {
+            std::vector<std::vector<PDS>> StackMC = {{dsDYInc}, {dsTTbarNoHad}, {dsSingleTopZinv}, {dsRare, dsTTZ, dsDiboson}};
+            return StackMC;
+        }
+        else
+        {
+            std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTbarNoHad}, {dsSingleTopZinv}, {dsRare, dsTTZ, dsDiboson}};
+            return StackMC;
+        }
     };
     
     auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
@@ -548,44 +557,40 @@ int main(int argc, char* argv[])
     vector<string> CutLevels_Data_Electron_LowDM = {"",
                                                     "passElectronTrigger",
                                                     "passElectronTrigger;SAT_Pass_EventFilter",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM;passElecZinvSel"
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM;passElecZinvSel"
                                                    };
     vector<string> CutLevels_Data_Electron_HighDM = {"",
                                                      "passElectronTrigger",
                                                      "passElectronTrigger;SAT_Pass_EventFilter",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM;passElecZinvSel"
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM;passElecZinvSel"
                                                     };
     vector<string> CutLevels_MC_Electron_LowDM = {"",
                                                   "SAT_Pass_EventFilter",
-                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto",
-                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET",
-                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT",
-                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
-                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM",
-                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM",
-                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM;passElecZinvSel"
+                                                  "SAT_Pass_EventFilter;SAT_Pass_MET",
+                                                  "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT",
+                                                  "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
+                                                  "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM",
+                                                  "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM",
+                                                  "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM;passElecZinvSel"
                                                  };
     vector<string> CutLevels_MC_Electron_HighDM = {"",
                                                    "SAT_Pass_EventFilter",
-                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto",
-                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET",
-                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT",
-                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
-                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM",
-                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM",
-                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM;passElecZinvSel"
+                                                   "SAT_Pass_EventFilter;SAT_Pass_MET",
+                                                   "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT",
+                                                   "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
+                                                   "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM",
+                                                   "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM",
+                                                   "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM;passElecZinvSel"
                                                   };
     vector<Plotter::CutFlowSummary> cutFlowSummaries;
 

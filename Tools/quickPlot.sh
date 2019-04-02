@@ -88,15 +88,15 @@ rm plots/*
 #                    "ZJetsToNuNu_HT_400to600_"$year""
 #                   )
 # DY (inclusive): IncDY
+declare -a samples=(
+                    "Data_SingleElectron_"$year""
+                    "IncDY_"$year""
+                   )
 # DY (HT binned): DYJetsToLL
 #declare -a samples=(
 #                    "Data_SingleElectron_"$year""
-#                    "IncDY_"$year""
+#                    "DYJetsToLL_HT_400to600_"$year""
 #                   )
-declare -a samples=(
-                    "Data_SingleElectron_"$year""
-                    "DYJetsToLL_HT_400to600_"$year""
-                   )
 #declare -a samples=(
 #                    ""$PhotonDataset"_"$year""
 #                    "GJets_HT-400To600_"$year""
