@@ -12,6 +12,7 @@
 # - Make plots of results
 
 combineResults=true
+useDYInc=false
 year=$1
 
 if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
@@ -87,21 +88,26 @@ rm plots/*
 #                    "QCD_HT300to500_"$year""
 #                    "ZJetsToNuNu_HT_400to600_"$year""
 #                   )
-# DY (inclusive): IncDY
-declare -a samples=(
-                    "Data_SingleElectron_"$year""
-                    "IncDY_"$year""
-                   )
-# DY (HT binned): DYJetsToLL
-#declare -a samples=(
-#                    "Data_SingleElectron_"$year""
-#                    "DYJetsToLL_HT_400to600_"$year""
-#                   )
+
 #declare -a samples=(
 #                    ""$PhotonDataset"_"$year""
 #                    "GJets_HT-400To600_"$year""
 #                    "QCD_HT300to500_"$year""
 #                   )
+
+if [ "$useDYInc" = true ]; then
+# DY (inclusive): IncDY
+declare -a samples=(
+                    "Data_SingleElectron_"$year""
+                    "IncDY_"$year""
+                   )
+else
+# DY (HT binned): DYJetsToLL
+declare -a samples=(
+                    "Data_SingleElectron_"$year""
+                    "DYJetsToLL_HT_400to600_"$year""
+                   )
+fi
 
 outputFiles=
 n_events=100000

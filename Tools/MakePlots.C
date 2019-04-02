@@ -506,7 +506,7 @@ int main(int argc, char* argv[])
     auto makeStackMC_DiLepton = [&](const std::string& cuts, const std::string& weights)
     {
         // use DYInc if true, otherwise use DYJetsToLL (HT binned DY)
-        bool useDYInc = true;
+        bool useDYInc = false;
         PDS dsDYInc(         "DY Inc",       fileMap["IncDY" + yearTag],           cuts,   weights);
         PDS dsDY(            "DY",           fileMap["DYJetsToLL" + yearTag],      cuts,   weights);
         PDS dsTTbarNoHad(    "t#bar{t}",     fileMap["TTbarNoHad" + yearTag],      cuts,   weights);
