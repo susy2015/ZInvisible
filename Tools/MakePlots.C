@@ -532,6 +532,64 @@ int main(int argc, char* argv[])
         return StackMC;
     };
     
+    // example cut flows used for SUS-16-050
+    //"passNoiseEventFilterZinv",
+    //"passNoiseEventFilterZinv;passLeptVeto",
+    //"passNoiseEventFilterZinv;passLeptVeto",
+    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv",
+    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv",
+    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv",
+    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv;passMETZinv",
+    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passTaggerZinv;passMETZinv;passBJetsZinv",
+    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
+    
+    //Generate cutflows 
+    vector<string> CutLevels_Data_Electron_LowDM = {"",
+                                                    "passElectronTrigger",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM;passElecZinvSel"
+                                                   };
+    vector<string> CutLevels_Data_Electron_HighDM = {"",
+                                                     "passElectronTrigger",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM;passElecZinvSel"
+                                                    };
+    vector<string> CutLevels_MC_Electron_LowDM = {"",
+                                                  "SAT_Pass_EventFilter",
+                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto",
+                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET",
+                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT",
+                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
+                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM",
+                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM",
+                                                  "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM;passElecZinvSel"
+                                                 };
+    vector<string> CutLevels_MC_Electron_HighDM = {"",
+                                                   "SAT_Pass_EventFilter",
+                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto",
+                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET",
+                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT",
+                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
+                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM",
+                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM",
+                                                   "SAT_Pass_EventFilter;Pass_LeptonVeto;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM;passElecZinvSel"
+                                                  };
+    vector<Plotter::CutFlowSummary> cutFlowSummaries;
+
+    
     // di-electron
     if (doDataMCElectron)
     {
@@ -545,16 +603,16 @@ int main(int argc, char* argv[])
         //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton("","");
         
         // testing
-        //PDS dsData_Electron_LowDM("Data",  fileMap["Data_SingleElectron" + yearTag],  "passBaselineLowDM_drLeptonCleaned;passElecZinvSel",  "");
-        //PDS dsData_Electron_HighDM("Data", fileMap["Data_SingleElectron" + yearTag],  "passBaselineHighDM_drLeptonCleaned;passElecZinvSel", "");
-        //std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "passBaselineLowDM_drLeptonCleaned;passElecZinvSel","");
-        //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "passBaselineHighDM_drLeptonCleaned;passElecZinvSel","");
+        //PDS dsData_Electron_LowDM("Data",  fileMap["Data_SingleElectron" + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel",  "");
+        //PDS dsData_Electron_HighDM("Data", fileMap["Data_SingleElectron" + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel", "");
+        //std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel","");
+        //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel","");
         
         // apply selection
-        PDS dsData_Electron_LowDM("Data",  fileMap["Data_SingleElectron" + yearTag],  "passBaselineLowDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger",  "");
-        PDS dsData_Electron_HighDM("Data", fileMap["Data_SingleElectron" + yearTag],  "passBaselineHighDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger", "");
-        std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "passBaselineLowDM_drLeptonCleaned;passElecZinvSel","");
-        std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "passBaselineHighDM_drLeptonCleaned;passElecZinvSel","");
+        PDS dsData_Electron_LowDM("Data",  fileMap["Data_SingleElectron" + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger",  "");
+        PDS dsData_Electron_HighDM("Data", fileMap["Data_SingleElectron" + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger", "");
+        std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel","");
+        std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel","");
         
         // n_jets
         PDC dcData_Electron_LowDM_nj(  "data",   "nJets_drLeptonCleaned", {dsData_Electron_LowDM});
@@ -655,6 +713,14 @@ int main(int argc, char* argv[])
             vh.push_back(PHS(nameLowDM,  {dcVecData_Electron_LowDM_dPhi[i], dcVecMC_Electron_LowDM_dPhi[i]},    {1, 2}, "", nBins,  0.0, maxPhi, true, false, vec_label_dphi[i], "Events"));
             vh.push_back(PHS(nameHighDM, {dcVecData_Electron_HighDM_dPhi[i], dcVecMC_Electron_HighDM_dPhi[i]},  {1, 2}, "", nBins,  0.0, maxPhi, true, false, vec_label_dphi[i], "Events"));
         }
+    
+        // cut flow
+        // Plotter::CutFlowSummary::CutFlowSummary(std::string n, Plotter::DataCollection ns, std::vector<std::string> cutLevels)
+        // name, DataCollection, cutLevels
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Electron_LowDM_met",    dcData_Electron_LowDM_met,  CutLevels_Data_Electron_LowDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Electron_HighDM_met",   dcData_Electron_HighDM_met, CutLevels_Data_Electron_HighDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Electron_LowDM_met",      dcMC_Electron_LowDM_met,    CutLevels_MC_Electron_LowDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Electron_HighDM_met",     dcMC_Electron_HighDM_met,   CutLevels_MC_Electron_HighDM));
     }
     
     // di-muon
@@ -670,10 +736,10 @@ int main(int argc, char* argv[])
         //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("","");
         
         // apply selection
-        PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],     "passBaselineLowDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger",  "");
-        PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],     "passBaselineHighDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger", "");
-        std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("passBaselineLowDM_drLeptonCleaned;passMuZinvSel","");
-        std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("passBaselineHighDM_drLeptonCleaned;passMuZinvSel","");
+        PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],     "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger",  "");
+        PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],     "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger", "");
+        std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel","");
+        std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel","");
         
         // n_jets
         PDC dcData_Muon_LowDM_nj(  "data",   "nJets_drLeptonCleaned", {dsData_Muon_LowDM});
@@ -789,10 +855,10 @@ int main(int argc, char* argv[])
         //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("","");
         
         // apply selection
-        PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset + yearTag],       "passBaselineLowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
-        PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset + yearTag],       "passBaselineHighDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
-        std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("passBaselineLowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
-        std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("passBaselineHighDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
+        PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset + yearTag],       "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
+        PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset + yearTag],       "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
+        std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
+        std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
         
         // n_jets
         PDC dcData_Photon_LowDM_nj(  "data",   "nJets_drPhotonCleaned", {dsData_Photon_LowDM});
@@ -1560,22 +1626,22 @@ int main(int argc, char* argv[])
                                                                                    {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf", "HTZinv>200;metWithPhoton>250")}
                                                                                  };
         std::vector<std::vector<PDS>> Photon_HT_stack_BaselineLowDM  = {
-                                                                                             {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400", "passBaselineLowDMZinv")}, 
-                                                                                             {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600", "passBaselineLowDMZinv")},
-                                                                                             {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf", "passBaselineLowDMZinv")}
+                                                                                             {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400", "SAT_Pass_lowDMZinv")}, 
+                                                                                             {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600", "SAT_Pass_lowDMZinv")},
+                                                                                             {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf", "SAT_Pass_lowDMZinv")}
                                                                                            };
         std::vector<std::vector<PDS>> Photon_HT_stack_BaselineHighDM = {
-                                                                                             {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400", "passBaselineHighDMZinv")}, 
-                                                                                             {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600", "passBaselineHighDMZinv")},
-                                                                                             {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf", "passBaselineHighDMZinv")}
+                                                                                             {makePDSPhoton("200 < HT < 400", "GJets_HT-200To400", "SAT_Pass_highDMZinv")}, 
+                                                                                             {makePDSPhoton("400 < HT < 600", "GJets_HT-400To600", "SAT_Pass_highDMZinv")},
+                                                                                             {makePDSPhoton("600 > HT",       "GJets_HT-600ToInf", "SAT_Pass_highDMZinv")}
                                                                                            };
   
         PDC dc_GJets_ht_cuts(     "stack", "HTZinv",  Photon_HT_stack_cuts);
         PDC dc_GJets_ht_BaselineLowDM(  "stack", "HTZinv",  Photon_HT_stack_BaselineLowDM);
         PDC dc_GJets_ht_BaselineHighDM( "stack", "HTZinv",  Photon_HT_stack_BaselineHighDM);
         PDC dc_Znunu_ht_cuts(     "data",  "HTZinv",  {makePDSZnunu("HT > 200", "HTZinv>200;metWithPhoton>250")});
-        PDC dc_Znunu_ht_BaselineLowDM( "data",  "HTZinv",  {makePDSZnunu("HT > 200",  "passBaselineLowDMZinv")});
-        PDC dc_Znunu_ht_BaselineHighDM( "data",  "HTZinv",  {makePDSZnunu("HT > 200", "passBaselineHighDMZinv")});
+        PDC dc_Znunu_ht_BaselineLowDM( "data",  "HTZinv",  {makePDSZnunu("HT > 200",  "SAT_Pass_lowDMZinv")});
+        PDC dc_Znunu_ht_BaselineHighDM( "data",  "HTZinv",  {makePDSZnunu("HT > 200", "SAT_Pass_highDMZinv")});
         vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_ht_" + style_stack, {dc_GJets_ht_cuts, dc_Znunu_ht_cuts},         {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
         vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_ht_"   + style_stack, {dc_GJets_ht_BaselineLowDM,  dc_Znunu_ht_BaselineLowDM}, {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
         vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_ht_"  + style_stack, {dc_GJets_ht_BaselineHighDM, dc_Znunu_ht_BaselineHighDM}, {1, 2}, "", 100, 0.0, 2000.0, true, false, label_ht, label_Events));
@@ -1612,25 +1678,25 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_nb_"        + style, {makePDCGJetsZnunu("cntCSVSZinv",                  style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 10, 0, 10,          log_scale, false, label_nb,  y_axis_label));
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_nt_"        + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv",        style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 10, 0, 10,          log_scale, false, label_nt,  y_axis_label));
             vh.push_back(PHS("MC_GJets_ZJetsToNuNu_ht200_met250_dr_"        + style, {makePDCGJetsZnunu("dR_jetsLVec_drPhotonCleaned",  style, legend_label, "HTZinv>200;metWithPhoton>250")}, {1, d}, "", 80, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_met_"      + style, {makePDCGJetsZnunu("metWithPhoton",                style, legend_label, "passBaselineLowDMZinv")},        {1, d}, "", 80, minPt,  maxPt,  log_scale, false, label_met, y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_metphi_"   + style, {makePDCGJetsZnunu("metphiWithPhoton",             style, legend_label, "passBaselineLowDMZinv")},        {1, d}, "", 80, minPhi, maxPhi, log_scale, false, label_metphi, y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_ht_"       + style, {makePDCGJetsZnunu("HTZinv",                       style, legend_label, "passBaselineLowDMZinv")},        {1, d}, "", 80, 0.0, 2000.0,    log_scale, false, label_ht,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_nj_"       + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv",        style, legend_label, "passBaselineLowDMZinv")},        {1, d}, "", 10, 0, 10,          log_scale, false, label_nj,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_nb_"       + style, {makePDCGJetsZnunu("cntCSVSZinv",                  style, legend_label, "passBaselineLowDMZinv")},        {1, d}, "", 10, 0, 10,          log_scale, false, label_nb,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_nt_"       + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv",        style, legend_label, "passBaselineLowDMZinv")},        {1, d}, "", 10, 0, 10,          log_scale, false, label_nt,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_dr_"       + style, {makePDCGJetsZnunu("dR_jetsLVec_drPhotonCleaned",  style, legend_label, "passBaselineLowDMZinv")},        {1, d}, "", 80, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_met_"     + style, {makePDCGJetsZnunu("metWithPhoton",                style, legend_label, "passBaselineHighDMZinv")},       {1, d}, "", 80, minPt,  maxPt,  log_scale, false, label_met, y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_metphi_"  + style, {makePDCGJetsZnunu("metphiWithPhoton",             style, legend_label, "passBaselineHighDMZinv")},       {1, d}, "", 80, minPhi, maxPhi, log_scale, false, label_metphi, y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_ht_"      + style, {makePDCGJetsZnunu("HTZinv",                       style, legend_label, "passBaselineHighDMZinv")},       {1, d}, "", 80, 0.0, 2000.0,    log_scale, false, label_ht,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_nj_"      + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv",        style, legend_label, "passBaselineHighDMZinv")},       {1, d}, "", 10, 0, 10,          log_scale, false, label_nj,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_nb_"      + style, {makePDCGJetsZnunu("cntCSVSZinv",                  style, legend_label, "passBaselineHighDMZinv")},       {1, d}, "", 10, 0, 10,          log_scale, false, label_nb,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_nt_"      + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv",        style, legend_label, "passBaselineHighDMZinv")},       {1, d}, "", 10, 0, 10,          log_scale, false, label_nt,  y_axis_label));
-            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_dr_"      + style, {makePDCGJetsZnunu("dR_jetsLVec_drPhotonCleaned",  style, legend_label, "passBaselineHighDMZinv")},       {1, d}, "", 80, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_met_"      + style, {makePDCGJetsZnunu("metWithPhoton",                style, legend_label, "SAT_Pass_lowDMZinv")},        {1, d}, "", 80, minPt,  maxPt,  log_scale, false, label_met, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_metphi_"   + style, {makePDCGJetsZnunu("metphiWithPhoton",             style, legend_label, "SAT_Pass_lowDMZinv")},        {1, d}, "", 80, minPhi, maxPhi, log_scale, false, label_metphi, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_ht_"       + style, {makePDCGJetsZnunu("HTZinv",                       style, legend_label, "SAT_Pass_lowDMZinv")},        {1, d}, "", 80, 0.0, 2000.0,    log_scale, false, label_ht,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_nj_"       + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv",        style, legend_label, "SAT_Pass_lowDMZinv")},        {1, d}, "", 10, 0, 10,          log_scale, false, label_nj,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_nb_"       + style, {makePDCGJetsZnunu("cntCSVSZinv",                  style, legend_label, "SAT_Pass_lowDMZinv")},        {1, d}, "", 10, 0, 10,          log_scale, false, label_nb,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_nt_"       + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv",        style, legend_label, "SAT_Pass_lowDMZinv")},        {1, d}, "", 10, 0, 10,          log_scale, false, label_nt,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineLowDM_dr_"       + style, {makePDCGJetsZnunu("dR_jetsLVec_drPhotonCleaned",  style, legend_label, "SAT_Pass_lowDMZinv")},        {1, d}, "", 80, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_met_"     + style, {makePDCGJetsZnunu("metWithPhoton",                style, legend_label, "SAT_Pass_highDMZinv")},       {1, d}, "", 80, minPt,  maxPt,  log_scale, false, label_met, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_metphi_"  + style, {makePDCGJetsZnunu("metphiWithPhoton",             style, legend_label, "SAT_Pass_highDMZinv")},       {1, d}, "", 80, minPhi, maxPhi, log_scale, false, label_metphi, y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_ht_"      + style, {makePDCGJetsZnunu("HTZinv",                       style, legend_label, "SAT_Pass_highDMZinv")},       {1, d}, "", 80, 0.0, 2000.0,    log_scale, false, label_ht,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_nj_"      + style, {makePDCGJetsZnunu("cntNJetsPt20Eta24Zinv",        style, legend_label, "SAT_Pass_highDMZinv")},       {1, d}, "", 10, 0, 10,          log_scale, false, label_nj,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_nb_"      + style, {makePDCGJetsZnunu("cntCSVSZinv",                  style, legend_label, "SAT_Pass_highDMZinv")},       {1, d}, "", 10, 0, 10,          log_scale, false, label_nb,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_nt_"      + style, {makePDCGJetsZnunu("nTopCandSortedCntZinv",        style, legend_label, "SAT_Pass_highDMZinv")},       {1, d}, "", 10, 0, 10,          log_scale, false, label_nt,  y_axis_label));
+            vh.push_back(PHS("MC_GJets_ZJetsToNuNu_BaselineHighDM_dr_"      + style, {makePDCGJetsZnunu("dR_jetsLVec_drPhotonCleaned",  style, legend_label, "SAT_Pass_highDMZinv")},       {1, d}, "", 80, 0, 10.0,        log_scale, false, label_dr,  y_axis_label));
         }
     }
 
-    PDC dc_Znunu_nSearchBinLowDM("data",  "nSearchBinLowDM",  {makePDSZnunu("Search Bin Low DM", "passBaselineLowDM")});
-    PDC dc_Znunu_nSearchBinHighDM("data", "nSearchBinHighDM", {makePDSZnunu("Search Bin High DM", "passBaselineHighDM")});
+    PDC dc_Znunu_nSearchBinLowDM("data",  "nSearchBinLowDM",  {makePDSZnunu("Search Bin Low DM", "SAT_Pass_lowDM")});
+    PDC dc_Znunu_nSearchBinHighDM("data", "nSearchBinHighDM", {makePDSZnunu("Search Bin High DM", "SAT_Pass_highDM")});
     if (doSearchBins)
     {
         vh.push_back(PHS("ZNuNu_nSearchBinLowDM" + yearTag,  {dc_Znunu_nSearchBinLowDM},  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,    min_sb_low_dm,  max_sb_low_dm,  false, false,  "Search Bin Low DM", "Events", true));
@@ -1642,23 +1708,26 @@ int main(int argc, char* argv[])
         //vh.push_back(PHS("TriggerScl_Zinv_", {trigger_nSearchBin_scaled},    {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
         //vh.push_back(PHS("TriggerWgt_Zinv_", {trigger_nSearchBin_weighted},  {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
     }
+    
     //Generate cutflows 
-    vector<string> cfsZ = {"",
-                           //"passNoiseEventFilterZinv",
-                           //"passNoiseEventFilterZinv;passLeptVeto",
-                           //"passNoiseEventFilterZinv;passLeptVeto",
-                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv",
-                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv",
-                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv",
-                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv;passMETZinv",
-                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passTaggerZinv;passMETZinv;passBJetsZinv",
-                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
-                           //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
-                           "passLeptVeto;passBaselineLowDM",
-                           "passLeptVeto;passBaselineHighDM"};
-    vector<Plotter::CutFlowSummary> cutFlowSummaries;
+    //vector<string> cfsZ = {"",
+    //                       //"passNoiseEventFilterZinv",
+    //                       //"passNoiseEventFilterZinv;passLeptVeto",
+    //                       //"passNoiseEventFilterZinv;passLeptVeto",
+    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv",
+    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv",
+    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv",
+    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv;passMETZinv",
+    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passTaggerZinv;passMETZinv;passBJetsZinv",
+    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
+    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
+    //                       "passLeptVeto;SAT_Pass_lowDM",
+    //                       "passLeptVeto;SAT_Pass_highDM"};
+    //vector<Plotter::CutFlowSummary> cutFlowSummaries;
 
-    cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("ZtoNuNu",           PDC("", "", {dsDY_nunu}),           cfsZ));
+    // Plotter::CutFlowSummary::CutFlowSummary(std::string n, Plotter::DataCollection ns, std::vector<std::string> cutLevels)
+    // name, DataCollection, cutLevels
+    //cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("ZtoNuNu",           PDC("", "", {dsDY_nunu}),           cfsZ));
 
     set<AFS> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
