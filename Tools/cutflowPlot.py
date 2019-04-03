@@ -10,7 +10,7 @@ def main():
     # don't display canvases while running
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
     f_name = "quickResult.root"
-    #f_name = "ElectronCutFlow_v2.root"
+    #f_name = "ElectronCutFlow_v3.root"
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
     c = ROOT.TCanvas("c", "c", 800, 800)
@@ -18,6 +18,7 @@ def main():
     if not f:
         print "Unable to load the file {0}".format(f_name)
         return
+    # Data: apply trigger
     data_cuts = [
         "no cuts",
         "trigger",
@@ -29,7 +30,9 @@ def main():
         "baseline",
         "Z to ee"
     ]
+    # MC: no trigger, use placeholder
     mc_cuts = [
+        "no cuts",
         "no cuts",
         "filter",
         "MET",
@@ -39,20 +42,41 @@ def main():
         "baseline",
         "Z to ee"
     ]
+    
+    #h_map = {
+    #    "CutFlow_MC_Electron_LowDM_met" : mc_cuts,
+    #    "CutFlow_MC_Electron_HighDM_met" : mc_cuts,
+    #    "CutFlow_Data_Electron_LowDM_met" : data_cuts,
+    #    "CutFlow_Data_Electron_HighDM_met" : data_cuts
+    #}
+    #
+    #for h_name in h_map:
+    #    h = f.Get(h_dir + h_name)
+    #    labelBins(h, h_map[h_name])
+    #    h.GetYaxis().SetRangeUser(0.1, 10.0**9)
+    #    h.Draw("hist")
+    #    c.SetLogy()
+    #    c.Update()
+    #    c.SaveAs(plot_dir + h_name + ".pdf")
+
     h_map = {
-        "CutFlow_MC_Electron_LowDM_met" : mc_cuts,
-        "CutFlow_MC_Electron_HighDM_met" : mc_cuts,
-        "CutFlow_Data_Electron_LowDM_met" : data_cuts,
-        "CutFlow_Data_Electron_HighDM_met" : data_cuts
+        "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_MC_Electron_LowDM_met",  "mc" : "CutFlow_Data_Electron_LowDM_met"},
+        "CutFlow_Electron_HighDM" : {"data" : "CutFlow_MC_Electron_HighDM_met", "mc" : "CutFlow_Data_Electron_HighDM_met"}
     }
-    for h_name in h_map:
-        h = f.Get(h_dir + h_name)
-        labelBins(h, h_map[h_name])
-        h.GetYaxis().SetRangeUser(0.1, 10.0**9)
-        h.Draw("hist")
+    
+    for key in h_map:
+        h_mc   = f.Get(h_dir + h_map[key]["mc"])
+        h_data = f.Get(h_dir + h_map[key]["data"])
+        h_mc.SetLineColor(ROOT.kBlue)
+        h_data.SetLineColor(ROOT.kRed)
+        labelBins(h_mc, data_cuts)
+        h_mc.GetYaxis().SetRangeUser(0.1, 10.0**9)
+        h_mc.Draw("hist")
+        h_data.Draw("hist same")
         c.SetLogy()
         c.Update()
-        c.SaveAs(plot_dir + h_name + ".pdf")
+        c.SaveAs(plot_dir + key + ".pdf")
+
 
 
 if __name__ == "__main__":

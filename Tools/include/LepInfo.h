@@ -112,8 +112,8 @@ namespace plotterFunctions
                 }
             }
 
-            // muon trigger of 50 GeV
-            // electron trigger of 33 GeV
+            // muon trigger turn on:     50 GeV
+            // electron trigger turn on: 50 GeV
             const double   minMuPt = 20.0,   highMuPt = 50.0;
             const double minElecPt = 20.0, highElecPt = 50.0;
 

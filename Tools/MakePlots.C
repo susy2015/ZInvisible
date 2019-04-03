@@ -315,7 +315,7 @@ int main(int argc, char* argv[])
     int nBins = 40;
     // p_t in GeV
     double minPt = 0.0;
-    double maxPt = 2000.0;
+    double maxPt = 1000.0;
     // Energy in GeV
     double minEnergy = 0.0;
     double maxEnergy = 2000.0;
@@ -554,6 +554,7 @@ int main(int argc, char* argv[])
     //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
     
     //Generate cutflows 
+    // data: apply trigger
     vector<string> CutLevels_Data_Electron_LowDM = {"",
                                                     "passElectronTrigger",
                                                     "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned",
@@ -574,7 +575,9 @@ int main(int argc, char* argv[])
                                                      "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETHighDM_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned",
                                                      "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETHighDM_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel"
                                                    };
+    // MC: do not apply trigger; apply no cuts twice so that bins match data cut flow
     vector<string> CutLevels_MC_Electron_LowDM = {"",
+                                                  "", // no trigger cut for MC; placeholder so that bins match data
                                                   "SAT_Pass_EventFilter_drLeptonCleaned",
                                                   "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned",
                                                   "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
@@ -584,6 +587,7 @@ int main(int argc, char* argv[])
                                                   "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETLowDM_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel"
                                                  };
     vector<string> CutLevels_MC_Electron_HighDM = {"",
+                                                   "", // no trigger cut for MC; placeholder so that bins match data
                                                   "SAT_Pass_EventFilter_drLeptonCleaned",
                                                   "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned",
                                                   "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
