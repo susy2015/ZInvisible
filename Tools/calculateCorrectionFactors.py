@@ -49,6 +49,8 @@ class Histogram:
         self.histogram = 0
 
 def main():
+    # don't display canvases while running
+    ROOT.gROOT.SetBatch(ROOT.kTRUE)
     plot_dir = "correctionFactors/"
     c = ROOT.TCanvas("c", "c", 800, 800)
     f_name = "condor/histos_PhotonAndMuonControlRegionSelection_2016_11_Mar_2019_2/result.root"
