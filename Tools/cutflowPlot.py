@@ -9,7 +9,7 @@ def labelBins(hist, labels):
 def main():
     # don't display canvases while running
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    f_name = "quickResult.root"
+    f_name = "quickResult_v2.root"
     #f_name = "ElectronCutFlow_v3.root"
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
@@ -67,12 +67,25 @@ def main():
     for key in h_map:
         h_mc   = f.Get(h_dir + h_map[key]["mc"])
         h_data = f.Get(h_dir + h_map[key]["data"])
+        
+        # setup histograms
+        labelBins(h_mc, data_cuts)
+        h_mc.SetStats(ROOT.kFALSE)
+        h_mc.GetYaxis().SetRangeUser(0.1, 10.0**9)
         h_mc.SetLineColor(ROOT.kBlue)
         h_data.SetLineColor(ROOT.kRed)
-        labelBins(h_mc, data_cuts)
-        h_mc.GetYaxis().SetRangeUser(0.1, 10.0**9)
+        
+        # draw histograms
         h_mc.Draw("hist")
         h_data.Draw("hist same")
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
+        #legend = ROOT.TLegend()
+        legend.AddEntry(h_mc,   "MC",  "l")
+        legend.AddEntry(h_data, "Data","l")
+        legend.Draw()
+        
         c.SetLogy()
         c.Update()
         c.SaveAs(plot_dir + key + ".pdf")
