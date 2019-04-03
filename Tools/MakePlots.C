@@ -556,42 +556,42 @@ int main(int argc, char* argv[])
     //Generate cutflows 
     vector<string> CutLevels_Data_Electron_LowDM = {"",
                                                     "passElectronTrigger",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM",
-                                                    "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM;passElecZinvSel"
+                                                    "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETLowDM_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned",
+                                                    "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETLowDM_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel"
                                                    };
     vector<string> CutLevels_Data_Electron_HighDM = {"",
                                                      "passElectronTrigger",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM",
-                                                     "passElectronTrigger;SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM;passElecZinvSel"
-                                                    };
+                                                     "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETHighDM_drLeptonCleaned",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETHighDM_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned",
+                                                     "passElectronTrigger;SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETHighDM_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel"
+                                                   };
     vector<string> CutLevels_MC_Electron_LowDM = {"",
-                                                  "SAT_Pass_EventFilter",
-                                                  "SAT_Pass_EventFilter;SAT_Pass_MET",
-                                                  "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT",
-                                                  "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
-                                                  "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM",
-                                                  "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM",
-                                                  "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETLowDM;SAT_Pass_lowDM;passElecZinvSel"
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned",
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned",
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned",
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETLowDM_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned",
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETLowDM_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel"
                                                  };
     vector<string> CutLevels_MC_Electron_HighDM = {"",
-                                                   "SAT_Pass_EventFilter",
-                                                   "SAT_Pass_EventFilter;SAT_Pass_MET",
-                                                   "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT",
-                                                   "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20",
-                                                   "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM",
-                                                   "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM",
-                                                   "SAT_Pass_EventFilter;SAT_Pass_MET;SAT_Pass_HT;SAT_Pass_NJets20;SAT_Pass_dPhiMETHighDM;SAT_Pass_highDM;passElecZinvSel"
-                                                  };
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned",
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned",
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned",
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETHighDM_drLeptonCleaned",
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETHighDM_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned",
+                                                  "SAT_Pass_EventFilter_drLeptonCleaned;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_dPhiMETHighDM_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel"
+                                                 };
     vector<Plotter::CutFlowSummary> cutFlowSummaries;
 
     

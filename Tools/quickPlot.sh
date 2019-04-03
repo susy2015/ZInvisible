@@ -14,6 +14,8 @@
 combineResults=true
 useDYInc=false
 year=$1
+outputFiles=
+n_events=100000
 
 if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
 then
@@ -109,8 +111,6 @@ declare -a samples=(
                    )
 fi
 
-outputFiles=
-n_events=100000
 
 # loop through samples array
 for sample in "${samples[@]}"

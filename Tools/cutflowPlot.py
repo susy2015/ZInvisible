@@ -3,13 +3,14 @@ import ROOT
 def labelBins(hist, labels):
     x_axis = hist.GetXaxis()
     for i, label in enumerate(labels, 1):
-        print i, label
+        #print i, label
         x_axis.SetBinLabel(i, label)
 
 def main():
     # don't display canvases while running
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    f_name = "ElectronCutFlow_v2.root"
+    f_name = "quickResult.root"
+    #f_name = "ElectronCutFlow_v2.root"
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
     c = ROOT.TCanvas("c", "c", 800, 800)

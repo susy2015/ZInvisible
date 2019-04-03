@@ -903,7 +903,7 @@ void Plotter::plot()
                     hvec.hcsVec.front()->h->SetLineWidth(3);
                     hvec.hcsVec.front()->h->SetMarkerColor(kBlack);
                     hvec.hcsVec.front()->h->SetMarkerStyle(20);
-                    double integral = hvec.hcsVec.front()->h->Integral(0, hvec.hcsVec.front()->h->GetNbinsX() + 1);
+                    double integral = hvec.hcsVec.front()->h->Integral(1, hvec.hcsVec.front()->h->GetNbinsX() + 1);
                     if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", hvec.hcsVec.front()->label.c_str(), integral);
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", hvec.hcsVec.front()->label.c_str(), integral);
                     else                      sprintf(legEntry, "%s (%0.2e)",  hvec.hcsVec.front()->label.c_str(), integral);

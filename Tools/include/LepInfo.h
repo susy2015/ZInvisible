@@ -115,7 +115,7 @@ namespace plotterFunctions
             // muon trigger of 50 GeV
             // electron trigger of 33 GeV
             const double   minMuPt = 20.0,   highMuPt = 50.0;
-            const double minElecPt = 20.0, highElecPt = 40.0;
+            const double minElecPt = 20.0, highElecPt = 50.0;
 
             //Gen info parsing
             const int GENPARTMASK = 0x2100;
