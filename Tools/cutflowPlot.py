@@ -12,7 +12,7 @@ def labelBins(hist, labels):
 def main():
     # don't display canvases while running
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    f_name = "quickResult_v4.root"
+    f_name = "quickResult.root"
     #f_name = "ElectronCutFlow_v4.root"
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
