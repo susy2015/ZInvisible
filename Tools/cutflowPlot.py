@@ -12,8 +12,8 @@ def labelBins(hist, labels):
 def main():
     # don't display canvases while running
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    f_name = "quickResult_v2.root"
-    #f_name = "ElectronCutFlow_v3.root"
+    #f_name = "quickResult_v2.root"
+    f_name = "ElectronCutFlow_v4.root"
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
     c = ROOT.TCanvas("c", "c", 800, 800)
@@ -45,26 +45,10 @@ def main():
         "baseline",
         "Z to ee"
     ]
-    
-    #h_map = {
-    #    "CutFlow_MC_Electron_LowDM_met" : mc_cuts,
-    #    "CutFlow_MC_Electron_HighDM_met" : mc_cuts,
-    #    "CutFlow_Data_Electron_LowDM_met" : data_cuts,
-    #    "CutFlow_Data_Electron_HighDM_met" : data_cuts
-    #}
-    #
-    #for h_name in h_map:
-    #    h = f.Get(h_dir + h_name)
-    #    labelBins(h, h_map[h_name])
-    #    h.GetYaxis().SetRangeUser(0.1, 10.0**9)
-    #    h.Draw("hist")
-    #    c.SetLogy()
-    #    c.Update()
-    #    c.SaveAs(plot_dir + h_name + ".pdf")
 
     h_map = {
-        "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_MC_Electron_LowDM_met",  "mc" : "CutFlow_Data_Electron_LowDM_met"},
-        "CutFlow_Electron_HighDM" : {"data" : "CutFlow_MC_Electron_HighDM_met", "mc" : "CutFlow_Data_Electron_HighDM_met"}
+        "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met"},
+        "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met"}
     }
     
     for key in h_map:
@@ -75,10 +59,10 @@ def main():
         labelBins(h_mc, data_cuts)
         h_mc.SetStats(ROOT.kFALSE)
         h_mc.GetYaxis().SetRangeUser(0.1, 10.0**9)
-        #h_mc.SetLineColor(ROOT.kBlue)
-        #h_data.SetLineColor(ROOT.kRed)
-        h_mc.SetLineColor(getColorIndex("muted blue"))
-        h_data.SetLineColor(getColorIndex("tomato"))
+        h_mc.SetLineColor(getColorIndex("blue"))
+        h_data.SetLineColor(getColorIndex("red"))
+        h_mc.SetLineWidth(3)
+        h_data.SetLineWidth(3)
         
         # draw histograms
         h_mc.Draw("hist")
@@ -94,7 +78,6 @@ def main():
         c.SetLogy()
         c.Update()
         c.SaveAs(plot_dir + key + ".pdf")
-
 
 
 if __name__ == "__main__":
