@@ -2,6 +2,12 @@
 import ROOT
 import json
 
+# xkcd color survey
+# see https://xkcd.com/color/rgb.txt
+# see https://xkcd.com/color/rgb/
+# download text file using "wget https://xkcd.com/color/rgb.txt"
+# generate json file from the text file by running main()
+
 # print color, RGB, and index
 def printColors():
     with open("rgb.json", "r") as input_file:
@@ -15,7 +21,7 @@ def getColorIndex(color):
     with open("rgb.json", "r") as input_file:
         data = json.load(input_file)
         index = ROOT.TColor.GetColor(data[color])
-        print "{0}: {1}: {2}".format(color, data[color], index) 
+        #print "{0}: {1}: {2}".format(color, data[color], index) 
         return index
 
 # make RGB json file from xkcd colors text file

@@ -12,8 +12,8 @@ def labelBins(hist, labels):
 def main():
     # don't display canvases while running
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    #f_name = "quickResult_v2.root"
-    f_name = "ElectronCutFlow_v4.root"
+    f_name = "quickResult_v3.root"
+    #f_name = "ElectronCutFlow_v4.root"
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
     c = ROOT.TCanvas("c", "c", 800, 800)
@@ -23,26 +23,28 @@ def main():
         return
     # Data: apply trigger
     data_cuts = [
-        "no cuts",
-        "trigger",
-        "filter",
+        "No cuts",
+        "Trigger",
+        "Filter",
+        "JetID",
         "MET",
         "HT",
         "nJets",
-        "dPhi",
-        "baseline",
+        "Baseline",
+        "#Deltam",
         "Z to ee"
     ]
     # MC: no trigger, use placeholder
     mc_cuts = [
-        "no cuts",
-        "no cuts",
-        "filter",
+        "No cuts",
+        "No cuts",
+        "Filter",
+        "JetID",
         "MET",
         "HT",
         "nJets",
-        "dPhi",
-        "baseline",
+        "Baseline",
+        "#Deltam",
         "Z to ee"
     ]
 
@@ -57,6 +59,7 @@ def main():
         
         # setup histograms
         labelBins(h_mc, data_cuts)
+        h_mc.SetTitle(key)
         h_mc.SetStats(ROOT.kFALSE)
         h_mc.GetYaxis().SetRangeUser(0.1, 10.0**9)
         h_mc.SetLineColor(getColorIndex("blue"))
@@ -71,8 +74,8 @@ def main():
         # legend: TLegend(x1,y1,x2,y2)
         legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
         #legend = ROOT.TLegend()
-        legend.AddEntry(h_mc,   "MC",  "l")
         legend.AddEntry(h_data, "Data","l")
+        legend.AddEntry(h_mc,   "MC",  "l")
         legend.Draw()
         
         c.SetLogy()
