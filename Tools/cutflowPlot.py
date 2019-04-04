@@ -1,4 +1,7 @@
+# cutflowPlot.py
+
 import ROOT
+from colors import getColorIndex
 
 def labelBins(hist, labels):
     x_axis = hist.GetXaxis()
@@ -72,8 +75,10 @@ def main():
         labelBins(h_mc, data_cuts)
         h_mc.SetStats(ROOT.kFALSE)
         h_mc.GetYaxis().SetRangeUser(0.1, 10.0**9)
-        h_mc.SetLineColor(ROOT.kBlue)
-        h_data.SetLineColor(ROOT.kRed)
+        #h_mc.SetLineColor(ROOT.kBlue)
+        #h_data.SetLineColor(ROOT.kRed)
+        h_mc.SetLineColor(getColorIndex("muted blue"))
+        h_data.SetLineColor(getColorIndex("tomato"))
         
         # draw histograms
         h_mc.Draw("hist")
