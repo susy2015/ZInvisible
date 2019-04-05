@@ -1,5 +1,6 @@
 # cutflowPlot.py
 
+import os
 import ROOT
 from colors import getColorIndex
 
@@ -12,15 +13,18 @@ def labelBins(hist, labels):
 def main():
     # don't display canvases while running
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    f_name = "quickResult.root"
+    f_name = "quickResult_electron_v1.root"
+    #f_name = "quickResult_muon_v1.root"
     #f_name = "ElectronCutFlow_v5.root"
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
+    exists = os.path.isfile(f_name)
+    if not exists: 
+        print "The file {0} does not exist".format(f_name)
+        return
+    
     c = ROOT.TCanvas("c", "c", 800, 800)
     f = ROOT.TFile(f_name)
-    if not f:
-        print "Unable to load the file {0}".format(f_name)
-        return
     # Data: apply trigger
     data_cuts = [
         "No cuts",

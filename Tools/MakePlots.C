@@ -554,8 +554,11 @@ int main(int argc, char* argv[])
     //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
     
     //Generate cutflows 
-    // data: apply trigger
-    std::vector<std::string> CutLevels_Data_Electron_LowDM = {
+    
+    // Data: apply trigger
+    
+    // Electron
+    std::vector<std::string> CutLevels_Data_Electron = {
                               "",
                               "passElectronTrigger",
                               "passElectronTrigger;Pass_EventFilter",
@@ -563,26 +566,41 @@ int main(int argc, char* argv[])
                               "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned",
                               "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
                               "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned",
-                              "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned",
-                              "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned",
-                              "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto",
-                              "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto;passElecZinvSel"
+                              "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned"
                              };
-    std::vector<std::string> CutLevels_Data_Electron_HighDM = {
+    
+    std::vector<std::string> CutLevels_Data_Electron_LowDM  = CutLevels_Data_Electron;
+    std::vector<std::string> CutLevels_Data_Electron_HighDM = CutLevels_Data_Electron;
+    CutLevels_Data_Electron_LowDM.push_back("passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned");
+    CutLevels_Data_Electron_LowDM.push_back("passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto");
+    CutLevels_Data_Electron_LowDM.push_back("passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto;passElecZinvSel");
+    CutLevels_Data_Electron_HighDM.push_back("passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned");
+    CutLevels_Data_Electron_HighDM.push_back("passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto");
+    CutLevels_Data_Electron_HighDM.push_back("passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto;passElecZinvSel");
+    
+    // Muon
+    std::vector<std::string> CutLevels_Data_Muon = {
                               "",
-                              "passElectronTrigger",
-                              "passElectronTrigger;Pass_EventFilter",
-                              "passElectronTrigger;Pass_EventFilter;Pass_JetID",
-                              "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned",
-                              "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
-                              "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned",
-                              "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned",
-                              "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned",
-                              "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto",
-                              "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto;passElecZinvSel"
+                              "passMuonTrigger",
+                              "passMuonTrigger;Pass_EventFilter",
+                              "passMuonTrigger;Pass_EventFilter;Pass_JetID",
+                              "passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned",
+                              "passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
+                              "passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned",
+                              "passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned"
                              };
+    
+    std::vector<std::string> CutLevels_Data_Muon_LowDM  = CutLevels_Data_Muon;
+    std::vector<std::string> CutLevels_Data_Muon_HighDM = CutLevels_Data_Muon;
+    CutLevels_Data_Muon_LowDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned");
+    CutLevels_Data_Muon_LowDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_EletronVeto");
+    CutLevels_Data_Muon_LowDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_EletronVeto;passMuZinvSel");
+    CutLevels_Data_Muon_HighDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned");
+    CutLevels_Data_Muon_HighDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_EletronVeto");
+    CutLevels_Data_Muon_HighDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_EletronVeto;passMuZinvSel");
+    
     // MC: do not apply trigger; apply no cuts twice so that bins match data cut flow
-    std::vector<std::string> CutLevels_MC_Electron_LowDM = {
+    std::vector<std::string> CutLevels_MC = {
                               "",
                               "", // no trigger cut for MC; placeholder so that bins match data
                               "Pass_EventFilter",
@@ -591,23 +609,28 @@ int main(int argc, char* argv[])
                               "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
                               "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned",
                               "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned",
-                              "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned",
-                              "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto",
-                              "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto;passElecZinvSel"
                              };
-    std::vector<std::string> CutLevels_MC_Electron_HighDM = {
-                              "",
-                              "", // no trigger cut for MC; placeholder so that bins match data
-                              "Pass_EventFilter",
-                              "Pass_EventFilter;Pass_JetID",
-                              "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned",
-                              "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
-                              "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned",
-                              "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned",
-                              "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned",
-                              "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto",
-                              "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto;passElecZinvSel"
-                             };
+    
+    // Electron
+    std::vector<std::string> CutLevels_MC_Electron_LowDM  = CutLevels_MC;
+    std::vector<std::string> CutLevels_MC_Electron_HighDM = CutLevels_MC;
+    CutLevels_MC_Electron_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned");
+    CutLevels_MC_Electron_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto");
+    CutLevels_MC_Electron_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto;passElecZinvSel");
+    CutLevels_MC_Electron_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned");
+    CutLevels_MC_Electron_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto");
+    CutLevels_MC_Electron_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto;passElecZinvSel");
+    
+    // Muon
+    std::vector<std::string> CutLevels_MC_Muon_LowDM  = CutLevels_MC;
+    std::vector<std::string> CutLevels_MC_Muon_HighDM = CutLevels_MC;
+    CutLevels_MC_Muon_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned");
+    CutLevels_MC_Muon_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_EletronVeto");
+    CutLevels_MC_Muon_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_EletronVeto;passMuZinvSel");
+    CutLevels_MC_Muon_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned");
+    CutLevels_MC_Muon_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_EletronVeto");
+    CutLevels_MC_Muon_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_EletronVeto;passMuZinvSel");
+    
     std::vector<Plotter::CutFlowSummary> cutFlowSummaries;
 
     
@@ -735,9 +758,8 @@ int main(int argc, char* argv[])
             vh.push_back(PHS(nameHighDM, {dcVecData_Electron_HighDM_dPhi[i], dcVecMC_Electron_HighDM_dPhi[i]},  {1, 2}, "", nBins,  0.0, maxPhi, true, false, vec_label_dphi[i], "Events"));
         }
     
-        // cut flow
+        // cut flow: name, DataCollection, cutLevels
         // Plotter::CutFlowSummary::CutFlowSummary(std::string n, Plotter::DataCollection ns, std::vector<std::string> cutLevels)
-        // name, DataCollection, cutLevels
         cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Electron_LowDM_met",    dcData_Electron_LowDM_met,  CutLevels_Data_Electron_LowDM));
         cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Electron_HighDM_met",   dcData_Electron_HighDM_met, CutLevels_Data_Electron_HighDM));
         cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Electron_LowDM_met",      dcMC_Electron_LowDM_met,    CutLevels_MC_Electron_LowDM));
@@ -861,6 +883,13 @@ int main(int argc, char* argv[])
             vh.push_back(PHS(nameLowDM,  {dcVecData_Muon_LowDM_dPhi[i], dcVecMC_Muon_LowDM_dPhi[i]},    {1, 2}, "", nBins,  0.0, maxPhi, true, false, vec_label_dphi[i], "Events"));
             vh.push_back(PHS(nameHighDM, {dcVecData_Muon_HighDM_dPhi[i], dcVecMC_Muon_HighDM_dPhi[i]},  {1, 2}, "", nBins,  0.0, maxPhi, true, false, vec_label_dphi[i], "Events"));
         }
+        
+        // cut flow: name, DataCollection, cutLevels
+        // Plotter::CutFlowSummary::CutFlowSummary(std::string n, Plotter::DataCollection ns, std::vector<std::string> cutLevels)
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Muon_LowDM_met",    dcData_Muon_LowDM_met,  CutLevels_Data_Muon_LowDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Muon_HighDM_met",   dcData_Muon_HighDM_met, CutLevels_Data_Muon_HighDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Muon_LowDM_met",      dcMC_Muon_LowDM_met,    CutLevels_MC_Muon_LowDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Muon_HighDM_met",     dcMC_Muon_HighDM_met,   CutLevels_MC_Muon_HighDM));
     }
 
     if (doDataMCPhoton)
