@@ -29,6 +29,8 @@ fi
 # 2017: Data_SinglePhoton_2017
 # 2018: Data_EGamma_2018
 
+#LeptonDataset="Data_SingleElectron"
+LeptonDataset="Data_SingleMuon"
 PhotonDataset="Data_SinglePhoton"
 
 if [[ "$year" == "2018" ]]
@@ -100,13 +102,13 @@ rm plots/*
 if [ "$useDYInc" = true ]; then
 # DY (inclusive): IncDY
 declare -a samples=(
-                    "Data_SingleElectron_"$year""
+                    ""$LeptonDataset"_"$year""
                     "IncDY_"$year""
                    )
 else
 # DY (HT binned): DYJetsToLL
 declare -a samples=(
-                    "Data_SingleElectron_"$year""
+                    ""$LeptonDataset"_"$year""
                     "DYJetsToLL_HT_400to600_"$year""
                    )
 fi
@@ -146,3 +148,5 @@ if [ "$combineResults" = true ]; then
     echo ""
     ./makePlots -f -I $result -Y $year | grep -v LHAPDF
 fi
+
+

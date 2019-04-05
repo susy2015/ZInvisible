@@ -44,9 +44,9 @@ int main(int argc, char* argv[])
         {"year",       required_argument, 0, 'Y'}
     };
 
-    bool runOnCondor    = false;
-    bool doDataMCElectron   = true;
-    bool doDataMCMuon       = false;
+    bool runOnCondor        = false;
+    bool doDataMCElectron   = false;
+    bool doDataMCMuon       = true;
     bool doDataMCPhoton     = false;
     bool doWeights = false;
     bool doLeptons = false;

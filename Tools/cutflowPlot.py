@@ -11,10 +11,13 @@ def labelBins(hist, labels):
         x_axis.SetBinLabel(i, label)
 
 def main():
+    doElectron = False
     # don't display canvases while running
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    f_name = "quickResult_electron_v1.root"
-    #f_name = "quickResult_muon_v1.root"
+    if doElectron:
+        f_name = "quickResult_electron_v1.root"
+    else:
+        f_name = "quickResult_muon_v1.root"
     #f_name = "ElectronCutFlow_v5.root"
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
@@ -25,8 +28,8 @@ def main():
     
     c = ROOT.TCanvas("c", "c", 800, 800)
     f = ROOT.TFile(f_name)
-    # Data: apply trigger
-    data_cuts = [
+    # Data: apply trigger; MC: no trigger
+    cuts = [
         "No cuts",
         "Trigger",
         "Filter",
@@ -35,36 +38,47 @@ def main():
         "HT",
         "nJets",
         "Baseline",
-        "#Deltam",
-        "Muon veto",
-        "Z to ee"
-    ]
-    # MC: no trigger, use placeholder
-    mc_cuts = [
-        "No cuts",
-        "No cuts",
-        "Filter",
-        "JetID",
-        "MET",
-        "HT",
-        "nJets",
-        "Baseline",
-        "#Deltam",
-        "Muon veto",
-        "Z to ee"
     ]
 
-    h_map = {
-        "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met"},
-        "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met"}
+    # Electron
+    cutsElectronLowDM = cuts[:]
+    cutsElectronLowDM.append("Low #Deltam")
+    cutsElectronLowDM.append("Muon veto")
+    cutsElectronLowDM.append("Z to ee")
+    cutsElectronHighDM = cuts[:]
+    cutsElectronHighDM.append("High #Deltam")
+    cutsElectronHighDM.append("Muon veto")
+    cutsElectronHighDM.append("Z to ee")
+    # Muon 
+    cutsMuonLowDM = cuts[:]
+    cutsMuonLowDM.append("Low #Deltam")
+    cutsMuonLowDM.append("Electron veto")
+    cutsMuonLowDM.append("Z to #mu#mu")
+    cutsMuonHighDM = cuts[:]
+    cutsMuonHighDM.append("High #Deltam")
+    cutsMuonHighDM.append("Electron veto")
+    cutsMuonHighDM.append("Z to #mu#mu")
+    
+    h_map_Electron = {
+        "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met", "cuts" : cutsElectronLowDM},
+        "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsElectronHighDM}
     }
+    h_map_Muon = {
+        "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met", "cuts" : cutsMuonLowDM},
+        "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsMuonHighDM}
+    }
+    if doElectron:
+        h_map = h_map_Electron
+    else:
+        h_map = h_map_Muon
     
     for key in h_map:
         h_mc   = f.Get(h_dir + h_map[key]["mc"])
         h_data = f.Get(h_dir + h_map[key]["data"])
+        cutList = h_map[key]["cuts"]    
         
         # setup histograms
-        labelBins(h_mc, data_cuts)
+        labelBins(h_mc, cutList)
         h_mc.SetTitle(key)
         h_mc.SetStats(ROOT.kFALSE)
         h_mc.GetYaxis().SetRangeUser(0.1, 10.0**9)
