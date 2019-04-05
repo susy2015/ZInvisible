@@ -13,7 +13,7 @@ def main():
     # don't display canvases while running
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
     f_name = "quickResult.root"
-    #f_name = "ElectronCutFlow_v4.root"
+    #f_name = "ElectronCutFlow_v5.root"
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
     c = ROOT.TCanvas("c", "c", 800, 800)
@@ -32,6 +32,7 @@ def main():
         "nJets",
         "Baseline",
         "#Deltam",
+        "Muon veto",
         "Z to ee"
     ]
     # MC: no trigger, use placeholder
@@ -45,6 +46,7 @@ def main():
         "nJets",
         "Baseline",
         "#Deltam",
+        "Muon veto",
         "Z to ee"
     ]
 
