@@ -4,23 +4,21 @@ import os
 import ROOT
 from colors import getColorIndex
 
-def labelBins(hist, labels):
+def setupHist(hist, labels, title, color):
     x_axis = hist.GetXaxis()
+    y_axis = hist.GetYaxis()
+    # label bins
     for i, label in enumerate(labels, 1):
         #print i, label
         x_axis.SetBinLabel(i, label)
+    
+    y_axis.SetRangeUser(0.1, 10.0**9)
+    hist.SetTitle(title)
+    hist.SetStats(ROOT.kFALSE)
+    hist.SetLineColor(getColorIndex(color))
+    hist.SetLineWidth(3)
 
 def main():
-    # old version
-    #doElectron = False
-    #if doElectron:
-    #    f_name = "quickResult_electron_v1.root"
-    #    #f_name = "ElectronCutFlow_v5.root"
-    #else:
-    #    f_name = "quickResult_muon_v1.root"
-    #    #f_name = "MuonCutFlow_v5.root"
-    # don't display canvases while running
-    
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
     f_name_Electron = "quickResult_Electron_v1.root"
     f_name_Muon     = "quickResult_Muon_v1.root"
@@ -90,14 +88,9 @@ def main():
         h_data  = f.Get(h_dir + h_map[key]["data"])
         
         # setup histograms
-        labelBins(h_mc, cutList)
-        h_mc.SetTitle(key)
-        h_mc.SetStats(ROOT.kFALSE)
-        h_mc.GetYaxis().SetRangeUser(0.1, 10.0**9)
-        h_mc.SetLineColor(getColorIndex("blue"))
-        h_data.SetLineColor(getColorIndex("red"))
-        h_mc.SetLineWidth(3)
-        h_data.SetLineWidth(3)
+        #setupHist(hist, labels, title, color):
+        setupHist(h_mc,   cutList, key, "blue")
+        setupHist(h_data, cutList, key, "red")
         
         # draw histograms
         h_mc.Draw("hist")
