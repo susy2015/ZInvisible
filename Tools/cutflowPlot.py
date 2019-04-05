@@ -11,23 +11,31 @@ def labelBins(hist, labels):
         x_axis.SetBinLabel(i, label)
 
 def main():
-    doElectron = False
+    # old version
+    #doElectron = False
+    #if doElectron:
+    #    f_name = "quickResult_electron_v1.root"
+    #    #f_name = "ElectronCutFlow_v5.root"
+    #else:
+    #    f_name = "quickResult_muon_v1.root"
+    #    #f_name = "MuonCutFlow_v5.root"
     # don't display canvases while running
+    
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    if doElectron:
-        f_name = "quickResult_electron_v1.root"
-    else:
-        f_name = "quickResult_muon_v1.root"
-    #f_name = "ElectronCutFlow_v5.root"
+    f_name_Electron = "quickResult_Electron_v1.root"
+    f_name_Muon     = "quickResult_Muon_v1.root"
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
-    exists = os.path.isfile(f_name)
-    if not exists: 
-        print "The file {0} does not exist".format(f_name)
-        return
+    f_names = [f_name_Electron, f_name_Muon]
+    for f_name in f_names:
+        exists = os.path.isfile(f_name)
+        if not exists: 
+            print "The file {0} does not exist".format(f_name)
+            return
     
     c = ROOT.TCanvas("c", "c", 800, 800)
-    f = ROOT.TFile(f_name)
+    f_Electron = ROOT.TFile(f_name_Electron)
+    f_Muon     = ROOT.TFile(f_name_Muon)
     # Data: apply trigger; MC: no trigger
     cuts = [
         "No cuts",
@@ -58,24 +66,28 @@ def main():
     cutsMuonHighDM.append("High #Deltam")
     cutsMuonHighDM.append("Electron veto")
     cutsMuonHighDM.append("Z to #mu#mu")
+    # Lepton
+    cutsLeptonLowDM = cuts[:]
+    cutsLeptonLowDM.append("Low #Deltam")
+    cutsLeptonLowDM.append("Lepton veto")
+    cutsLeptonLowDM.append("Z to LL")
+    cutsLeptonHighDM = cuts[:]
+    cutsLeptonHighDM.append("High #Deltam")
+    cutsLeptonHighDM.append("Lepton veto")
+    cutsLeptonHighDM.append("Z to LL")
     
-    h_map_Electron = {
-        "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met", "cuts" : cutsElectronLowDM},
-        "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsElectronHighDM}
+    h_map = {
+        "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met",  "cuts" : cutsElectronLowDM,  "file" : f_Electron},
+        "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsElectronHighDM, "file" : f_Electron},
+        "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsMuonLowDM,  "file" : f_Muon},
+        "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsMuonHighDM, "file" : f_Muon}
     }
-    h_map_Muon = {
-        "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met", "cuts" : cutsMuonLowDM},
-        "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsMuonHighDM}
-    }
-    if doElectron:
-        h_map = h_map_Electron
-    else:
-        h_map = h_map_Muon
     
     for key in h_map:
-        h_mc   = f.Get(h_dir + h_map[key]["mc"])
-        h_data = f.Get(h_dir + h_map[key]["data"])
         cutList = h_map[key]["cuts"]    
+        f       = h_map[key]["file"]
+        h_mc    = f.Get(h_dir + h_map[key]["mc"])
+        h_data  = f.Get(h_dir + h_map[key]["data"])
         
         # setup histograms
         labelBins(h_mc, cutList)
