@@ -80,6 +80,10 @@ def main():
         "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsMuonLowDM,  "file" : f_Muon},
         "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsMuonHighDM, "file" : f_Muon}
     }
+    plot_map = {
+        "CutFlow_LowDM"  : {"Electron" : "CutFlow_Electron_LowDM",  "Muon" : "CutFlow_Muon_LowDM",  "cuts" :  cutsLeptonLowDM},
+        "CutFlow_HighDM" : {"Electron" : "CutFlow_Electron_HighDM", "Muon" : "CutFlow_Muon_HighDM", "cuts" :  cutsLeptonHighDM}
+    }
     
     for key in h_map:
         cutList = h_map[key]["cuts"]    
@@ -99,15 +103,53 @@ def main():
         # legend: TLegend(x1,y1,x2,y2)
         legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
         #legend = ROOT.TLegend()
-        legend.AddEntry(h_data, "Data","l")
-        legend.AddEntry(h_mc,   "MC",  "l")
+        legend.AddEntry(h_data, "Data", "l")
+        legend.AddEntry(h_mc,   "MC",   "l")
         legend.Draw()
         
         c.SetLogy()
         c.Update()
         c.SaveAs(plot_dir + key + ".pdf")
 
+    for key in plot_map:
+        cutList         = plot_map[key]["cuts"]
+        key_Electron    = plot_map[key]["Electron"]
+        key_Muon        = plot_map[key]["Muon"]
+        f_Electron      = h_map[key_Electron]["file"]
+        f_Muon          = h_map[key_Muon]["file"]
+        h_Electron_mc   = f_Electron.Get(h_dir + h_map[key_Electron]["mc"])
+        h_Electron_data = f_Electron.Get(h_dir + h_map[key_Electron]["data"])
+        h_Muon_mc       = f_Muon.Get(h_dir + h_map[key_Muon]["mc"])
+        h_Muon_data     = f_Muon.Get(h_dir + h_map[key_Muon]["data"])
+        
+        # setup histograms
+        #setupHist(hist, labels, title, color):
+        setupHist(h_Electron_mc,   cutList, key, "blue")
+        setupHist(h_Electron_data, cutList, key, "red")
+        setupHist(h_Muon_mc,       cutList, key, "green")
+        setupHist(h_Muon_data,     cutList, key, "purple")
+        
+        # draw histograms
+        h_Electron_mc.Draw("hist")
+        h_Electron_data.Draw("hist same")
+        h_Muon_mc.Draw("hist same")
+        h_Muon_data.Draw("hist same")
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
+        #legend = ROOT.TLegend()
+        legend.AddEntry(h_Electron_data, "Electron Data", "l")
+        legend.AddEntry(h_Electron_mc,   "Electron MC",   "l")
+        legend.AddEntry(h_Muon_data,     "Muon Data",     "l")
+        legend.AddEntry(h_Muon_mc,       "Muon MC",       "l")
+        legend.Draw()
+        
+        c.SetLogy()
+        c.Update()
+        c.SaveAs(plot_dir + key + ".pdf")
 
 if __name__ == "__main__":
     main()
+
+
 
