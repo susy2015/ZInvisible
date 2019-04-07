@@ -45,8 +45,8 @@ int main(int argc, char* argv[])
     };
 
     bool runOnCondor        = false;
-    bool doDataMCElectron   = false;
-    bool doDataMCMuon       = true;
+    bool doDataMCElectron   = true;
+    bool doDataMCMuon       = false;
     bool doDataMCPhoton     = false;
     bool doWeights = false;
     bool doLeptons = false;

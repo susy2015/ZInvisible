@@ -4,7 +4,7 @@ import os
 import ROOT
 from colors import getColorIndex
 
-def setupHist(hist, labels, title, color):
+def setupHist(hist, labels, title, color, y_min, y_max):
     x_axis = hist.GetXaxis()
     y_axis = hist.GetYaxis()
     # label bins
@@ -12,7 +12,7 @@ def setupHist(hist, labels, title, color):
         #print i, label
         x_axis.SetBinLabel(i, label)
     
-    y_axis.SetRangeUser(0.1, 10.0**9)
+    y_axis.SetRangeUser(y_min, y_max)
     hist.SetTitle(title)
     hist.SetStats(ROOT.kFALSE)
     hist.SetLineColor(getColorIndex(color))
@@ -20,8 +20,10 @@ def setupHist(hist, labels, title, color):
 
 def main():
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    f_name_Electron = "quickResult_Electron_v1.root"
+    f_name_Electron = "quickResult_Electron_v2.root"
     f_name_Muon     = "quickResult_Muon_v1.root"
+    #f_name_Electron = "ElectronCutFlow_v5.root"
+    #f_name_Muon     = "MuonCutFlow_v1.root"
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
     f_names = [f_name_Electron, f_name_Muon]
@@ -92,9 +94,9 @@ def main():
         h_data  = f.Get(h_dir + h_map[key]["data"])
         
         # setup histograms
-        #setupHist(hist, labels, title, color):
-        setupHist(h_mc,   cutList, key, "blue")
-        setupHist(h_data, cutList, key, "red")
+        #setupHist(hist, labels, title, color, y_min, y_max):
+        setupHist(h_mc,   cutList, key, "blue", 0.1, 10.0**9)
+        setupHist(h_data, cutList, key, "red",  0.1, 10.0**9)
         
         # draw histograms
         h_mc.Draw("hist")
@@ -117,17 +119,25 @@ def main():
         key_Muon        = plot_map[key]["Muon"]
         f_Electron      = h_map[key_Electron]["file"]
         f_Muon          = h_map[key_Muon]["file"]
+        # histograms
         h_Electron_mc   = f_Electron.Get(h_dir + h_map[key_Electron]["mc"])
         h_Electron_data = f_Electron.Get(h_dir + h_map[key_Electron]["data"])
         h_Muon_mc       = f_Muon.Get(h_dir + h_map[key_Muon]["mc"])
         h_Muon_data     = f_Muon.Get(h_dir + h_map[key_Muon]["data"])
+        # ratios
+        h_ratio_mc   = h_Electron_mc.Clone("h_ratio_mc")
+        h_ratio_data = h_Electron_data.Clone("h_ratio_data")
+        h_ratio_mc.Divide(h_Muon_mc)
+        h_ratio_data.Divide(h_Muon_data)
         
         # setup histograms
-        #setupHist(hist, labels, title, color):
-        setupHist(h_Electron_mc,   cutList, key, "blue")
-        setupHist(h_Electron_data, cutList, key, "red")
-        setupHist(h_Muon_mc,       cutList, key, "green")
-        setupHist(h_Muon_data,     cutList, key, "purple")
+        #setupHist(hist, labels, title, color, y_min, y_max):
+        setupHist(h_Electron_mc,   cutList, key, "blue",   0.1, 10.0**9)
+        setupHist(h_Electron_data, cutList, key, "red",    0.1, 10.0**9)
+        setupHist(h_Muon_mc,       cutList, key, "green",  0.1, 10.0**9)
+        setupHist(h_Muon_data,     cutList, key, "purple", 0.1, 10.0**9)
+        setupHist(h_ratio_mc,      cutList, key, "blue",   0.0, 2.0)
+        setupHist(h_ratio_data,    cutList, key, "red",    0.0, 2.0)
         
         # draw histograms
         h_Electron_mc.Draw("hist")
@@ -137,19 +147,38 @@ def main():
         
         # legend: TLegend(x1,y1,x2,y2)
         legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
-        #legend = ROOT.TLegend()
         legend.AddEntry(h_Electron_data, "Electron Data", "l")
         legend.AddEntry(h_Electron_mc,   "Electron MC",   "l")
         legend.AddEntry(h_Muon_data,     "Muon Data",     "l")
         legend.AddEntry(h_Muon_mc,       "Muon MC",       "l")
         legend.Draw()
         
-        c.SetLogy()
+        c.SetLogy(1) # set log y
         c.Update()
         c.SaveAs(plot_dir + key + ".pdf")
 
+        # draw ratios
+        h_ratio_mc.Draw("hist")
+        h_ratio_data.Draw("hist same")
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
+        legend.AddEntry(h_ratio_data, "Electron/Muon Data", "l")
+        legend.AddEntry(h_ratio_mc,   "Electron/Muon MC",   "l")
+        legend.Draw()
+        
+        c.SetLogy(0) # unset log y
+        c.Update()
+        c.SaveAs(plot_dir + key + "_ratios.pdf")
+
+
+
 if __name__ == "__main__":
     main()
+
+
+
+
 
 
 

@@ -29,8 +29,8 @@ fi
 # 2017: Data_SinglePhoton_2017
 # 2018: Data_EGamma_2018
 
-#LeptonDataset="Data_SingleElectron"
-LeptonDataset="Data_SingleMuon"
+LeptonDataset="Data_SingleElectron"
+#LeptonDataset="Data_SingleMuon"
 PhotonDataset="Data_SinglePhoton"
 
 if [[ "$year" == "2018" ]]
