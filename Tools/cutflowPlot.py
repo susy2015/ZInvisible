@@ -32,7 +32,12 @@ def main():
         if not exists: 
             print "The file {0} does not exist".format(f_name)
             return
-    
+    # colors
+    red_color    = "vermillion"
+    blue_color   = "electric blue"
+    green_color  = "irish green" 
+    purple_color = "violet"
+
     c = ROOT.TCanvas("c", "c", 800, 800)
     f_Electron = ROOT.TFile(f_name_Electron)
     f_Muon     = ROOT.TFile(f_name_Muon)
@@ -95,8 +100,8 @@ def main():
         
         # setup histograms
         #setupHist(hist, labels, title, color, y_min, y_max):
-        setupHist(h_mc,   cutList, key, "blue", 0.1, 10.0**9)
-        setupHist(h_data, cutList, key, "red",  0.1, 10.0**9)
+        setupHist(h_mc,   cutList, key, blue_color, 0.1, 10.0**9)
+        setupHist(h_data, cutList, key, red_color,  0.1, 10.0**9)
         
         # draw histograms
         h_mc.Draw("hist")
@@ -132,12 +137,12 @@ def main():
         
         # setup histograms
         #setupHist(hist, labels, title, color, y_min, y_max):
-        setupHist(h_Electron_mc,   cutList, key, "blue",   0.1, 10.0**9)
-        setupHist(h_Electron_data, cutList, key, "red",    0.1, 10.0**9)
-        setupHist(h_Muon_mc,       cutList, key, "green",  0.1, 10.0**9)
-        setupHist(h_Muon_data,     cutList, key, "purple", 0.1, 10.0**9)
-        setupHist(h_ratio_mc,      cutList, key, "blue",   0.0, 2.0)
-        setupHist(h_ratio_data,    cutList, key, "red",    0.0, 2.0)
+        setupHist(h_Electron_mc,   cutList, key, blue_color,   0.1, 10.0**9)
+        setupHist(h_Electron_data, cutList, key, red_color,    0.1, 10.0**9)
+        setupHist(h_Muon_mc,       cutList, key, green_color,  0.1, 10.0**9)
+        setupHist(h_Muon_data,     cutList, key, purple_color, 0.1, 10.0**9)
+        setupHist(h_ratio_mc,      cutList, key, blue_color,   0.0, 2.0)
+        setupHist(h_ratio_data,    cutList, key, red_color,    0.0, 2.0)
         
         # draw histograms
         h_Electron_mc.Draw("hist")
@@ -175,10 +180,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
 
 
 
