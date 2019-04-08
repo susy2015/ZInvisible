@@ -20,10 +20,13 @@ def setupHist(hist, labels, title, color, y_min, y_max):
 
 def main():
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    f_name_Electron = "quickResult_Electron_v2.root"
-    f_name_Muon     = "quickResult_Muon_v1.root"
-    #f_name_Electron = "ElectronCutFlow_v5.root"
-    #f_name_Muon     = "MuonCutFlow_v1.root"
+    quickResult = False
+    if quickResult:
+        f_name_Electron = "quickResult_Electron_v2.root"
+        f_name_Muon     = "quickResult_Muon_v1.root"
+    else:
+        f_name_Electron = "ElectronCutFlow_v6.root"
+        f_name_Muon     = "MuonCutFlow_v1.root"
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
     f_names = [f_name_Electron, f_name_Muon]
@@ -37,6 +40,10 @@ def main():
     blue_color   = "electric blue"
     green_color  = "irish green" 
     purple_color = "violet"
+
+    # y axis limits
+    y_min = 10.0**1
+    y_max = 10.0**10
 
     c = ROOT.TCanvas("c", "c", 800, 800)
     f_Electron = ROOT.TFile(f_name_Electron)
@@ -100,8 +107,8 @@ def main():
         
         # setup histograms
         #setupHist(hist, labels, title, color, y_min, y_max):
-        setupHist(h_mc,   cutList, key, blue_color, 0.1, 10.0**9)
-        setupHist(h_data, cutList, key, red_color,  0.1, 10.0**9)
+        setupHist(h_mc,   cutList, key, blue_color, y_min, y_max)
+        setupHist(h_data, cutList, key, red_color,  y_min, y_max)
         
         # draw histograms
         h_mc.Draw("hist")
@@ -130,21 +137,27 @@ def main():
         h_Muon_mc       = f_Muon.Get(h_dir + h_map[key_Muon]["mc"])
         h_Muon_data     = f_Muon.Get(h_dir + h_map[key_Muon]["data"])
         # ratios
-        h_ratio_mc   = h_Electron_mc.Clone("h_ratio_mc")
-        h_ratio_data = h_Electron_data.Clone("h_ratio_data")
+        h_ratio_mc          = h_Electron_mc.Clone("h_ratio_mc")
+        h_ratio_data        = h_Electron_data.Clone("h_ratio_data")
+        h_ratio_Electron    = h_Electron_data.Clone("h_ratio_Electron")
+        h_ratio_Muon        = h_Muon_data.Clone("h_ratio_Muon")
         h_ratio_mc.Divide(h_Muon_mc)
         h_ratio_data.Divide(h_Muon_data)
+        h_ratio_Electron.Divide(h_Electron_mc)
+        h_ratio_Muon.Divide(h_Muon_mc)
         
         # setup histograms
         #setupHist(hist, labels, title, color, y_min, y_max):
-        setupHist(h_Electron_mc,   cutList, key, blue_color,   0.1, 10.0**9)
-        setupHist(h_Electron_data, cutList, key, red_color,    0.1, 10.0**9)
-        setupHist(h_Muon_mc,       cutList, key, green_color,  0.1, 10.0**9)
-        setupHist(h_Muon_data,     cutList, key, purple_color, 0.1, 10.0**9)
-        setupHist(h_ratio_mc,      cutList, key, blue_color,   0.0, 2.0)
-        setupHist(h_ratio_data,    cutList, key, red_color,    0.0, 2.0)
+        setupHist(h_Electron_mc,    cutList, key, blue_color,   y_min, y_max)
+        setupHist(h_Electron_data,  cutList, key, red_color,    y_min, y_max)
+        setupHist(h_Muon_mc,        cutList, key, green_color,  y_min, y_max)
+        setupHist(h_Muon_data,      cutList, key, purple_color, y_min, y_max)
+        setupHist(h_ratio_mc,       cutList, key, blue_color,   0.0, 2.0)
+        setupHist(h_ratio_data,     cutList, key, red_color,    0.0, 2.0)
+        setupHist(h_ratio_Electron, cutList, key, red_color,    0.0, 2.0)
+        setupHist(h_ratio_Muon,     cutList, key, purple_color, 0.0, 2.0)
         
-        # draw histograms
+        # --- draw histograms --- #
         h_Electron_mc.Draw("hist")
         h_Electron_data.Draw("hist same")
         h_Muon_mc.Draw("hist same")
@@ -162,7 +175,7 @@ def main():
         c.Update()
         c.SaveAs(plot_dir + key + ".pdf")
 
-        # draw ratios
+        # --- draw histograms --- #
         h_ratio_mc.Draw("hist")
         h_ratio_data.Draw("hist same")
         
@@ -174,7 +187,35 @@ def main():
         
         c.SetLogy(0) # unset log y
         c.Update()
-        c.SaveAs(plot_dir + key + "_ratios.pdf")
+        c.SaveAs(plot_dir + key + "_ElectronMuonRatios.pdf")
+        
+        # --- draw histograms --- #
+        h_ratio_Electron.Draw("hist")
+        h_ratio_Muon.Draw("hist same")
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
+        legend.AddEntry(h_ratio_Electron, "Electron Data/MC", "l")
+        legend.AddEntry(h_ratio_Muon,     "Muon Data/MC",     "l")
+        legend.Draw()
+        
+        c.SetLogy(0) # unset log y
+        c.Update()
+        c.SaveAs(plot_dir + key + "_DataMCRatios.pdf")
+
+        # log scale of same ratio plot
+        # set y axis for log y
+        setupHist(h_ratio_Electron, cutList, key, red_color,    0.1, 100.0)
+        setupHist(h_ratio_Muon,     cutList, key, purple_color, 0.1, 100.0)
+        
+        # --- draw histograms --- #
+        h_ratio_Electron.Draw("hist")
+        h_ratio_Muon.Draw("hist same")
+        legend.Draw()
+        
+        c.SetLogy(1) # set log y
+        c.Update()
+        c.SaveAs(plot_dir + key + "_DataMCRatios_LogScale.pdf")
 
 
 
