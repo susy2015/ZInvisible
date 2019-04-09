@@ -12,7 +12,7 @@
 # - Make plots of results
 
 combineResults=true
-useDYInc=false
+useDYInc=true
 year=$1
 outputFiles=
 n_events=100000
@@ -99,16 +99,29 @@ rm plots/*
 #                    "QCD_HT300to500_"$year""
 #                   )
 
+# with data
+#if [ "$useDYInc" = true ]; then
+## DY (inclusive): IncDY
+#declare -a samples=(
+#                    ""$LeptonDataset"_"$year""
+#                    "IncDY_"$year""
+#                   )
+#else
+## DY (HT binned): DYJetsToLL
+#declare -a samples=(
+#                    ""$LeptonDataset"_"$year""
+#                    "DYJetsToLL_HT_400to600_"$year""
+#                   )
+#fi
+
 if [ "$useDYInc" = true ]; then
 # DY (inclusive): IncDY
 declare -a samples=(
-                    ""$LeptonDataset"_"$year""
                     "IncDY_"$year""
                    )
 else
 # DY (HT binned): DYJetsToLL
 declare -a samples=(
-                    ""$LeptonDataset"_"$year""
                     "DYJetsToLL_HT_400to600_"$year""
                    )
 fi

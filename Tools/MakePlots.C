@@ -506,7 +506,7 @@ int main(int argc, char* argv[])
     auto makeStackMC_DiLepton = [&](const std::string& cuts, const std::string& weights)
     {
         // use DYInc if true, otherwise use DYJetsToLL (HT binned DY)
-        bool useDYInc = false;
+        bool useDYInc = true;
         PDS dsDYInc(         "DY Inc",       fileMap["IncDY" + yearTag],           cuts,   weights);
         PDS dsDY(            "DY",           fileMap["DYJetsToLL" + yearTag],      cuts,   weights);
         PDS dsTTbarNoHad(    "t#bar{t}",     fileMap["TTbarNoHad" + yearTag],      cuts,   weights);
@@ -529,7 +529,7 @@ int main(int argc, char* argv[])
     auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
     {
         PDS dsGJets(      "#gamma+jets",      fileMap["GJets" + yearTag],         cuts,   weights);
-        PDS dsQCD(        "QCD",              fileMap["QCD_Photon" + yearTag],           cuts,   weights);
+        PDS dsQCD(        "QCD",              fileMap["QCD_Photon" + yearTag],    cuts,   weights);
         PDS dsWJetsToLNu( "W(l#nu)+jets",     fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
         PDS dsTTbarAll(   "t#bar{t}",         fileMap["TTbarAll" + yearTag],      cuts,   weights);
         PDS dstW(         "tW",               fileMap["tW" + yearTag],            cuts,   weights);
@@ -637,6 +637,41 @@ int main(int argc, char* argv[])
     // di-electron
     if (doDataMCElectron)
     {
+        bool useDYInc = true;
+        std::string DY_sample = "";
+        if (useDYInc) DY_sample = "IncDY";
+        else          DY_sample = "DYJetsToLL";
+        // use IncDY or DYJetsToLL
+        PDS dsDY_LowDM("DY",                    fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned",                   "");
+        PDS dsDY_LowDM_Electron("DY Electron",  fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto",     "");
+        PDS dsDY_LowDM_Muon("DY Muon",          fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;Pass_EletronVeto",  "");
+        PDS dsDY_HighDM("DY",                   fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned",                   "");
+        PDS dsDY_HighDM_Electron("DY Electron", fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto",     "");
+        PDS dsDY_HighDM_Muon("DY Muon",         fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;Pass_EletronVeto",  "");
+        // number of Electrons
+        PDC dcMC_LowDM_nElectrons("single",           "nElectrons_Stop0l", {dsDY_LowDM});
+        PDC dcMC_LowDM_Electron_nElectrons("single",  "nElectrons_Stop0l", {dsDY_LowDM_Electron});
+        PDC dcMC_LowDM_Muon_nElectrons("single",      "nElectrons_Stop0l", {dsDY_LowDM_Muon});
+        PDC dcMC_HighDM_nElectrons("single",          "nElectrons_Stop0l", {dsDY_HighDM});
+        PDC dcMC_HighDM_Electron_nElectrons("single", "nElectrons_Stop0l", {dsDY_HighDM_Electron});
+        PDC dcMC_HighDM_Muon_nElectrons("single",     "nElectrons_Stop0l", {dsDY_HighDM_Muon});
+        // number of Muons
+        PDC dcMC_LowDM_nMuons("single",           "nMuons_Stop0l", {dsDY_LowDM});
+        PDC dcMC_LowDM_Electron_nMuons("single",  "nMuons_Stop0l", {dsDY_LowDM_Electron});
+        PDC dcMC_LowDM_Muon_nMuons("single",      "nMuons_Stop0l", {dsDY_LowDM_Muon});
+        PDC dcMC_HighDM_nMuons("single",          "nMuons_Stop0l", {dsDY_HighDM});
+        PDC dcMC_HighDM_Electron_nMuons("single", "nMuons_Stop0l", {dsDY_HighDM_Electron});
+        PDC dcMC_HighDM_Muon_nMuons("single",     "nMuons_Stop0l", {dsDY_HighDM_Muon});
+        
+        vh.push_back(PHS("MC_LowDM_nElectrons" + yearTag,  {dcMC_LowDM_nElectrons},  {1, 1}, "", 20, 0, 20, true, false, "nElectrons", "Events"));
+        vh.push_back(PHS("MC_HighDM_nElectrons" + yearTag, {dcMC_HighDM_nElectrons}, {1, 1}, "", 20, 0, 20, true, false, "nElectrons", "Events"));
+        vh.push_back(PHS("MC_LowDM_nMuons" + yearTag,      {dcMC_LowDM_nMuons},      {1, 1}, "", 20, 0, 20, true, false, "nMuons", "Events"));
+        vh.push_back(PHS("MC_HighDM_nMuons" + yearTag,     {dcMC_HighDM_nMuons},     {1, 1}, "", 20, 0, 20, true, false, "nMuons", "Events"));
+        //vh.push_back(PHS("MC_LowDM_nElectrons" + yearTag,  {dcMC_LowDM_nElectrons, dcMC_LowDM_Electron_nElectrons, dcMC_LowDM_Muon_nElectrons},    {1, 1}, "", 10,  0,  10, true, false, "nElectrons", "Events"));
+        //vh.push_back(PHS("MC_HighDM_nElectrons" + yearTag, {dcMC_HighDM_nElectrons, dcMC_HighDM_Electron_nElectrons, dcMC_HighDM_Muon_nElectrons}, {1, 1}, "", 10,  0,  10, true, false, "nElectrons", "Events"));
+        //vh.push_back(PHS("MC_LowDM_nMuons" + yearTag,  {dcMC_LowDM_nMuons, dcMC_LowDM_Electron_nMuons, dcMC_LowDM_Muon_nMuons},    {1, 1}, "", 10,  0,  10, true, false, "nMuons", "Events"));
+        //vh.push_back(PHS("MC_HighDM_nMuons" + yearTag, {dcMC_HighDM_nMuons, dcMC_HighDM_Electron_nMuons, dcMC_HighDM_Muon_nMuons}, {1, 1}, "", 10,  0,  10, true, false, "nMuons", "Events"));
+
         // TODO: change variables to a tag for ZinvLL (to use cleaned jet collection, etc)
         // TODO: fix lepInfo module to use in Nano AOD and calculate passElecZinvSel
         
