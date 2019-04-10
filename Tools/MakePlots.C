@@ -642,18 +642,31 @@ int main(int argc, char* argv[])
         if (useDYInc) DY_sample = "IncDY";
         else          DY_sample = "DYJetsToLL";
         // use IncDY or DYJetsToLL
+
+        // use vetos
         //PDS dsDY_LowDM("DY",                         fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned",                   "");
         //PDS dsDY_LowDM_Electron("DY Pass_MuonVeto",  fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto",     "");
         //PDS dsDY_LowDM_Muon("DY Pass_ElectronVeto",   fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;Pass_ElectronVeto",  "");
         //PDS dsDY_HighDM("DY",                        fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned",                   "");
         //PDS dsDY_HighDM_Electron("DY Pass_MuonVeto", fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto",     "");
         //PDS dsDY_HighDM_Muon("DY Pass_ElectronVeto",  fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;Pass_ElectronVeto",  "");
-        PDS dsDY_LowDM("DY",                    fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned",                "");
-        PDS dsDY_LowDM_Electron("DY Electron",  fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passDiElecSel",  "");
-        PDS dsDY_LowDM_Muon("DY Muon",          fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passDiMuSel",    "");
-        PDS dsDY_HighDM("DY",                   fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned",               "");
-        PDS dsDY_HighDM_Electron("DY Electron", fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passDiElecSel", "");
-        PDS dsDY_HighDM_Muon("DY Muon",         fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passDiMuSel",   "");
+        
+        // including baseline
+        //PDS dsDY_LowDM("DY",                    fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned",                "");
+        //PDS dsDY_LowDM_Electron("DY Electron",  fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passDiElecSel",  "");
+        //PDS dsDY_LowDM_Muon("DY Muon",          fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passDiMuSel",    "");
+        //PDS dsDY_HighDM("DY",                   fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned",               "");
+        //PDS dsDY_HighDM_Electron("DY Electron", fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passDiElecSel", "");
+        //PDS dsDY_HighDM_Muon("DY Muon",         fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passDiMuSel",   "");
+        
+        // remove baseline  
+        PDS dsDY_LowDM("DY",                    fileMap[DY_sample + yearTag],  "",               "");
+        PDS dsDY_LowDM_Electron("DY Electron",  fileMap[DY_sample + yearTag],  "passDiElecSel",  "");
+        PDS dsDY_LowDM_Muon("DY Muon",          fileMap[DY_sample + yearTag],  "passDiMuSel",    "");
+        PDS dsDY_HighDM("DY",                   fileMap[DY_sample + yearTag],  "",               "");
+        PDS dsDY_HighDM_Electron("DY Electron", fileMap[DY_sample + yearTag],  "passDiElecSel",  "");
+        PDS dsDY_HighDM_Muon("DY Muon",         fileMap[DY_sample + yearTag],  "passDiMuSel",    "");
+
         // number of Electrons
         PDC dcMC_LowDM_nElectrons("single",           "nElectrons_Stop0l", {dsDY_LowDM});
         PDC dcMC_LowDM_Electron_nElectrons("single",  "nElectrons_Stop0l", {dsDY_LowDM_Electron});
