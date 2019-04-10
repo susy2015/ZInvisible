@@ -1180,8 +1180,8 @@ void Plotter::plot()
                             d2ymax = std::max(d2ymax, h1->GetBinContent(iBin));
                         }
                     }
-                    dummy2->GetYaxis()->SetRangeUser(d2ymin, 1.5*d2ymax);
-                    //dummy2->GetYaxis()->SetRangeUser(0.5, 1.5);
+                    //dummy2->GetYaxis()->SetRangeUser(d2ymin, 1.5*d2ymax);
+                    dummy2->GetYaxis()->SetRangeUser(0.0, 2.1);
                 }
                 else // pull distribution
                 {
