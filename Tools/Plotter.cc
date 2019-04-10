@@ -1175,13 +1175,13 @@ void Plotter::plot()
                     double d2ymax = 1.5;
                     for(int iBin = 1; iBin <= h1->GetNbinsX(); ++iBin)
                     {
-                        if(h1->GetBinContent(iBin) < 5.0)
+                        if(h1->GetBinContent(iBin) < 2.1)
                         {
                             d2ymax = std::max(d2ymax, h1->GetBinContent(iBin));
                         }
                     }
                     dummy2->GetYaxis()->SetRangeUser(d2ymin, 1.5*d2ymax);
-                    //dummy2->GetYaxis()->SetRangeUser(0.3, 1.6);
+                    //dummy2->GetYaxis()->SetRangeUser(0.5, 1.5);
                 }
                 else // pull distribution
                 {
