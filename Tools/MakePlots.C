@@ -503,10 +503,11 @@ int main(int argc, char* argv[])
     std::vector<std::vector<PDS>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
 
 
+    // use DYInc if true, otherwise use DYJetsToLL (HT binned DY)
+    bool useDYInc = false;
+    
     auto makeStackMC_DiLepton = [&](const std::string& cuts, const std::string& weights)
     {
-        // use DYInc if true, otherwise use DYJetsToLL (HT binned DY)
-        bool useDYInc = true;
         PDS dsDYInc(         "DY Inc",       fileMap["IncDY" + yearTag],           cuts,   weights);
         PDS dsDY(            "DY",           fileMap["DYJetsToLL" + yearTag],      cuts,   weights);
         PDS dsTTbarNoHad(    "t#bar{t}",     fileMap["TTbarNoHad" + yearTag],      cuts,   weights);
@@ -637,7 +638,6 @@ int main(int argc, char* argv[])
     // di-electron
     if (doDataMCElectron)
     {
-        bool useDYInc = true;
         std::string DY_sample = "";
         if (useDYInc) DY_sample = "IncDY";
         else          DY_sample = "DYJetsToLL";
@@ -662,15 +662,24 @@ int main(int argc, char* argv[])
         PDC dcMC_HighDM_nMuons("single",          "nMuons_Stop0l", {dsDY_HighDM});
         PDC dcMC_HighDM_Electron_nMuons("single", "nMuons_Stop0l", {dsDY_HighDM_Electron});
         PDC dcMC_HighDM_Muon_nMuons("single",     "nMuons_Stop0l", {dsDY_HighDM_Muon});
+        // bestRecoZM
+        PDC dcMC_LowDM_bestRecoZM("single",           "bestRecoZM", {dsDY_LowDM});
+        PDC dcMC_LowDM_Electron_bestRecoZM("single",  "bestRecoZM", {dsDY_LowDM_Electron});
+        PDC dcMC_LowDM_Muon_bestRecoZM("single",      "bestRecoZM", {dsDY_LowDM_Muon});
+        PDC dcMC_HighDM_bestRecoZM("single",          "bestRecoZM", {dsDY_HighDM});
+        PDC dcMC_HighDM_Electron_bestRecoZM("single", "bestRecoZM", {dsDY_HighDM_Electron});
+        PDC dcMC_HighDM_Muon_bestRecoZM("single",     "bestRecoZM", {dsDY_HighDM_Muon});
         
-        vh.push_back(PHS("MC_LowDM_nElectrons" + yearTag,  {dcMC_LowDM_nElectrons},  {1, 1}, "", 20, 0, 20, true, false, "nElectrons", "Events"));
-        vh.push_back(PHS("MC_HighDM_nElectrons" + yearTag, {dcMC_HighDM_nElectrons}, {1, 1}, "", 20, 0, 20, true, false, "nElectrons", "Events"));
-        vh.push_back(PHS("MC_LowDM_nMuons" + yearTag,      {dcMC_LowDM_nMuons},      {1, 1}, "", 20, 0, 20, true, false, "nMuons", "Events"));
-        vh.push_back(PHS("MC_HighDM_nMuons" + yearTag,     {dcMC_HighDM_nMuons},     {1, 1}, "", 20, 0, 20, true, false, "nMuons", "Events"));
-        //vh.push_back(PHS("MC_LowDM_nElectrons" + yearTag,  {dcMC_LowDM_nElectrons, dcMC_LowDM_Electron_nElectrons, dcMC_LowDM_Muon_nElectrons},    {1, 1}, "", 10,  0,  10, true, false, "nElectrons", "Events"));
-        //vh.push_back(PHS("MC_HighDM_nElectrons" + yearTag, {dcMC_HighDM_nElectrons, dcMC_HighDM_Electron_nElectrons, dcMC_HighDM_Muon_nElectrons}, {1, 1}, "", 10,  0,  10, true, false, "nElectrons", "Events"));
-        //vh.push_back(PHS("MC_LowDM_nMuons" + yearTag,  {dcMC_LowDM_nMuons, dcMC_LowDM_Electron_nMuons, dcMC_LowDM_Muon_nMuons},    {1, 1}, "", 10,  0,  10, true, false, "nMuons", "Events"));
-        //vh.push_back(PHS("MC_HighDM_nMuons" + yearTag, {dcMC_HighDM_nMuons, dcMC_HighDM_Electron_nMuons, dcMC_HighDM_Muon_nMuons}, {1, 1}, "", 10,  0,  10, true, false, "nMuons", "Events"));
+        //vh.push_back(PHS("MC_LowDM_nElectrons" + yearTag,  {dcMC_LowDM_nElectrons},  {1, 1}, "", 20, 0, 20, true, false, "nElectrons", "Events"));
+        //vh.push_back(PHS("MC_HighDM_nElectrons" + yearTag, {dcMC_HighDM_nElectrons}, {1, 1}, "", 20, 0, 20, true, false, "nElectrons", "Events"));
+        //vh.push_back(PHS("MC_LowDM_nMuons" + yearTag,      {dcMC_LowDM_nMuons},      {1, 1}, "", 20, 0, 20, true, false, "nMuons", "Events"));
+        //vh.push_back(PHS("MC_HighDM_nMuons" + yearTag,     {dcMC_HighDM_nMuons},     {1, 1}, "", 20, 0, 20, true, false, "nMuons", "Events"));
+        vh.push_back(PHS("MC_LowDM_nElectrons" + yearTag,  {dcMC_LowDM_nElectrons, dcMC_LowDM_Electron_nElectrons, dcMC_LowDM_Muon_nElectrons},    {2, 3}, "", 10,  0,  10, true, false, "nElectrons", "Events"));
+        vh.push_back(PHS("MC_HighDM_nElectrons" + yearTag, {dcMC_HighDM_nElectrons, dcMC_HighDM_Electron_nElectrons, dcMC_HighDM_Muon_nElectrons}, {2, 3}, "", 10,  0,  10, true, false, "nElectrons", "Events"));
+        vh.push_back(PHS("MC_LowDM_nMuons" + yearTag,      {dcMC_LowDM_nMuons, dcMC_LowDM_Electron_nMuons, dcMC_LowDM_Muon_nMuons},                {2, 3}, "", 10,  0,  10, true, false, "nMuons", "Events"));
+        vh.push_back(PHS("MC_HighDM_nMuons" + yearTag,     {dcMC_HighDM_nMuons, dcMC_HighDM_Electron_nMuons, dcMC_HighDM_Muon_nMuons},             {2, 3}, "", 10,  0,  10, true, false, "nMuons", "Events"));
+        vh.push_back(PHS("MC_LowDM_bestRecoZM" + yearTag,  {dcMC_LowDM_bestRecoZM, dcMC_LowDM_Electron_bestRecoZM, dcMC_LowDM_Muon_bestRecoZM},    {2, 3}, "", 100, 0.0, 200.0, true, false, "bestRecoZM", "Events"));
+        vh.push_back(PHS("MC_HighDM_bestRecoZM" + yearTag, {dcMC_HighDM_bestRecoZM, dcMC_HighDM_Electron_bestRecoZM, dcMC_HighDM_Muon_bestRecoZM}, {2, 3}, "", 100, 0.0, 200.0, true, false, "bestRecoZM", "Events"));
 
         // TODO: change variables to a tag for ZinvLL (to use cleaned jet collection, etc)
         // TODO: fix lepInfo module to use in Nano AOD and calculate passElecZinvSel
