@@ -99,33 +99,33 @@ rm plots/*
 #                    "QCD_HT300to500_"$year""
 #                   )
 
-# Data and MC
-if [ "$useDYInc" = true ]; then
-# DY (inclusive): IncDY
-declare -a samples=(
-                    ""$LeptonDataset"_"$year""
-                    "IncDY_"$year""
-                   )
-else
-# DY (HT binned): DYJetsToLL
-declare -a samples=(
-                    ""$LeptonDataset"_"$year""
-                    "DYJetsToLL_HT_400to600_"$year""
-                   )
-fi
-
-# MC only
+## Data and MC
 #if [ "$useDYInc" = true ]; then
 ## DY (inclusive): IncDY
 #declare -a samples=(
+#                    ""$LeptonDataset"_"$year""
 #                    "IncDY_"$year""
 #                   )
 #else
 ## DY (HT binned): DYJetsToLL
 #declare -a samples=(
+#                    ""$LeptonDataset"_"$year""
 #                    "DYJetsToLL_HT_400to600_"$year""
 #                   )
 #fi
+
+# MC only
+if [ "$useDYInc" = true ]; then
+# DY (inclusive): IncDY
+declare -a samples=(
+                    "IncDY_"$year""
+                   )
+else
+# DY (HT binned): DYJetsToLL
+declare -a samples=(
+                    "DYJetsToLL_HT_400to600_"$year""
+                   )
+fi
 
 
 # loop through samples array
