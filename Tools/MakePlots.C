@@ -350,6 +350,8 @@ int main(int argc, char* argv[])
     std::string label_metphiWithLL = "#phi_{MET}^{LL}";
     std::string label_metphiWithPhoton = "#phi_{MET}^{#gamma}";
     std::string label_ht  = "H_{T} [GeV]";
+    std::string label_mtb = "M_{T}(b_{1,2}, #slash{E}_{T}) [GeV]";
+    std::string label_ptb = "p_{T}(b) [GeV]";
     std::string label_mht = "MH_{T} [GeV]";
     std::string label_nj  = "N_{jets}";
     std::string label_nb  = "N_{bottoms}";
@@ -903,11 +905,24 @@ int main(int argc, char* argv[])
         PDC dcMC_Muon_LowDM_bestRecoZM(    "stack",  "bestRecoZM", StackMC_Muon_LowDM);
         PDC dcMC_Muon_HighDM_bestRecoZM(   "stack",  "bestRecoZM", StackMC_Muon_HighDM);
         
+        // mtb
+        PDC dcData_Muon_LowDM_mtb(  "data",   "mtb_drLeptonCleaned", {dsData_Muon_LowDM});
+        PDC dcData_Muon_HighDM_mtb( "data",   "mtb_drLeptonCleaned", {dsData_Muon_HighDM});
+        PDC dcMC_Muon_LowDM_mtb(    "stack",  "mtb_drLeptonCleaned", StackMC_Muon_LowDM);
+        PDC dcMC_Muon_HighDM_mtb(   "stack",  "mtb_drLeptonCleaned", StackMC_Muon_HighDM);
+        
+        // ptb
+        PDC dcData_Muon_LowDM_ptb(  "data",   "ptb_drLeptonCleaned", {dsData_Muon_LowDM});
+        PDC dcData_Muon_HighDM_ptb( "data",   "ptb_drLeptonCleaned", {dsData_Muon_HighDM});
+        PDC dcMC_Muon_LowDM_ptb(    "stack",  "ptb_drLeptonCleaned", StackMC_Muon_LowDM);
+        PDC dcMC_Muon_HighDM_ptb(   "stack",  "ptb_drLeptonCleaned", StackMC_Muon_HighDM);
+        
         // dphi
         std::vector<PDC> dcVecData_Muon_LowDM_dPhi;
         std::vector<PDC> dcVecData_Muon_HighDM_dPhi;
         std::vector<PDC> dcVecMC_Muon_LowDM_dPhi;
         std::vector<PDC> dcVecMC_Muon_HighDM_dPhi;
+
         for (int i = 0; i < 4; i++)
         {
             std::string var = "dPhiVec_drLeptonCleaned[" + std::to_string(i) + "]";
@@ -937,6 +952,10 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMC_Muon_HighDM_bestRecoZPt" + yearTag, {dcData_Muon_HighDM_bestRecoZPt, dcMC_Muon_HighDM_bestRecoZPt}, {1, 2}, "", nBins,  minPt, maxPt, true, false, "bestRecoZPt", "Events"));
         vh.push_back(PHS("DataMC_Muon_LowDM_bestRecoZM" + yearTag,   {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_bestRecoZM},  {1, 2}, "", nBins, 70.0, 110.0, true, false, "bestRecoZM", "Events"));
         vh.push_back(PHS("DataMC_Muon_HighDM_bestRecoZM" + yearTag,  {dcData_Muon_HighDM_bestRecoZM,  dcMC_Muon_HighDM_bestRecoZM}, {1, 2}, "", nBins, 70.0, 110.0, true, false, "bestRecoZM", "Events"));
+        vh.push_back(PHS("DataMC_Muon_LowDM_mtb" + yearTag,          {dcData_Muon_LowDM_mtb,   dcMC_Muon_LowDM_mtb},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_mtb, "Events"));
+        vh.push_back(PHS("DataMC_Muon_HighDM_mtb" + yearTag,         {dcData_Muon_HighDM_mtb,  dcMC_Muon_HighDM_mtb}, {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_mtb, "Events"));
+        vh.push_back(PHS("DataMC_Muon_LowDM_ptb" + yearTag,          {dcData_Muon_LowDM_ptb,   dcMC_Muon_LowDM_ptb},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_ptb, "Events"));
+        vh.push_back(PHS("DataMC_Muon_HighDM_ptb" + yearTag,         {dcData_Muon_HighDM_ptb,  dcMC_Muon_HighDM_ptb}, {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_ptb, "Events"));
         
         // dphi
         for (int i = 0; i < 4; i++)
