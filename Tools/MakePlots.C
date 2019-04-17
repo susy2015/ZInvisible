@@ -746,6 +746,8 @@ int main(int argc, char* argv[])
         PDC dcData_Electron_HighDM_metphi( "data",   "metphiWithLL", {dsData_Electron_HighDM});
         PDC dcMC_Electron_LowDM_metphi(    "stack",  "metphiWithLL", StackMC_Electron_LowDM);
         PDC dcMC_Electron_HighDM_metphi(   "stack",  "metphiWithLL", StackMC_Electron_HighDM);
+        
+        // jet pt
 
         // electron pt
         PDC dcData_Electron_LowDM_ElecPt1(  "data",   "cutElecPt1", {dsData_Electron_LowDM});
@@ -778,6 +780,18 @@ int main(int argc, char* argv[])
         PDC dcData_Electron_HighDM_bestRecoZM( "data",   "bestRecoZM", {dsData_Electron_HighDM});
         PDC dcMC_Electron_LowDM_bestRecoZM(    "stack",  "bestRecoZM", StackMC_Electron_LowDM);
         PDC dcMC_Electron_HighDM_bestRecoZM(   "stack",  "bestRecoZM", StackMC_Electron_HighDM);
+        
+        // mtb
+        PDC dcData_Electron_LowDM_mtb(  "data",   "mtb_drLeptonCleaned", {dsData_Electron_LowDM});
+        PDC dcData_Electron_HighDM_mtb( "data",   "mtb_drLeptonCleaned", {dsData_Electron_HighDM});
+        PDC dcMC_Electron_LowDM_mtb(    "stack",  "mtb_drLeptonCleaned", StackMC_Electron_LowDM);
+        PDC dcMC_Electron_HighDM_mtb(   "stack",  "mtb_drLeptonCleaned", StackMC_Electron_HighDM);
+        
+        // ptb
+        PDC dcData_Electron_LowDM_ptb(  "data",   "ptb_drLeptonCleaned", {dsData_Electron_LowDM});
+        PDC dcData_Electron_HighDM_ptb( "data",   "ptb_drLeptonCleaned", {dsData_Electron_HighDM});
+        PDC dcMC_Electron_LowDM_ptb(    "stack",  "ptb_drLeptonCleaned", StackMC_Electron_LowDM);
+        PDC dcMC_Electron_HighDM_ptb(   "stack",  "ptb_drLeptonCleaned", StackMC_Electron_HighDM);
         
         // dphi
         std::vector<PDC> dcVecData_Electron_LowDM_dPhi;
@@ -813,6 +827,10 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMC_Electron_HighDM_bestRecoZPt" + yearTag, {dcData_Electron_HighDM_bestRecoZPt, dcMC_Electron_HighDM_bestRecoZPt}, {1, 2}, "", nBins,  minPt, maxPt, true, false, "bestRecoZPt", "Events"));
         vh.push_back(PHS("DataMC_Electron_LowDM_bestRecoZM" + yearTag,   {dcData_Electron_LowDM_bestRecoZM,   dcMC_Electron_LowDM_bestRecoZM},  {1, 2}, "", nBins, 70.0, 110.0, true, false, "bestRecoZM", "Events"));
         vh.push_back(PHS("DataMC_Electron_HighDM_bestRecoZM" + yearTag,  {dcData_Electron_HighDM_bestRecoZM,  dcMC_Electron_HighDM_bestRecoZM}, {1, 2}, "", nBins, 70.0, 110.0, true, false, "bestRecoZM", "Events"));
+        vh.push_back(PHS("DataMC_Electron_LowDM_mtb" + yearTag,          {dcData_Electron_LowDM_mtb,   dcMC_Electron_LowDM_mtb},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_mtb, "Events"));
+        vh.push_back(PHS("DataMC_Electron_HighDM_mtb" + yearTag,         {dcData_Electron_HighDM_mtb,  dcMC_Electron_HighDM_mtb}, {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_mtb, "Events"));
+        vh.push_back(PHS("DataMC_Electron_LowDM_ptb" + yearTag,          {dcData_Electron_LowDM_ptb,   dcMC_Electron_LowDM_ptb},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_ptb, "Events"));
+        vh.push_back(PHS("DataMC_Electron_HighDM_ptb" + yearTag,         {dcData_Electron_HighDM_ptb,  dcMC_Electron_HighDM_ptb}, {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_ptb, "Events"));
         
         // dphi
         for (int i = 0; i < 4; i++)
