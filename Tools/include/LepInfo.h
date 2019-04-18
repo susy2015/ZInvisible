@@ -67,14 +67,14 @@ namespace plotterFunctions
             const auto& metphi                              = tr.getVar<data_t>("MET_phi");
 
             bool Pass_MuonVeto = false;
-            bool Pass_ElectronVeto = false;
+            bool Pass_ElecVeto = false;
             
             try
             {
                 const auto& Pass_MuonVetoTmp    = tr.getVar<bool>("Pass_MuonVeto");
-                const auto& Pass_ElectronVetoTmp = tr.getVar<bool>("Pass_ElectronVeto");
+                const auto& Pass_ElecVetoTmp = tr.getVar<bool>("Pass_ElecVeto");
                 if(&Pass_MuonVetoTmp    != nullptr) Pass_MuonVeto       = Pass_MuonVetoTmp;
-                if(&Pass_ElectronVetoTmp != nullptr) Pass_ElectronVeto    = Pass_ElectronVetoTmp;
+                if(&Pass_ElecVetoTmp != nullptr) Pass_ElecVeto    = Pass_ElecVetoTmp;
             }
             catch(const std::string e)
             {
@@ -323,16 +323,16 @@ namespace plotterFunctions
             metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
             TLorentzVector cleanMet = metV + metZ;
             
-            //bool passDiMuSel   = Pass_ElectronVeto  && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt);
+            //bool passDiMuSel   = Pass_ElecVeto  && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt);
             //bool passDiElecSel = Pass_MuonVeto     && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt);
             bool passDiMuSel   = (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt);
             bool passDiElecSel = (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt);
             bool passElMuSel = (cutMuVec.size() == 1 && cutElecVec.size() == 1 && cutElecSummedCharge == -cutMuSummedCharge && cutMuVec[0].Pt() > highMuPt && cutElecVec[0].Pt() > minMuPt);
 
-            bool passMuZinvSel         = Pass_ElectronVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
-            bool passMuZinvSel_lowpt   = Pass_ElectronVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > minMuPt      && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
-            bool passElecZinvSel       = Pass_MuonVeto    && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
-            bool passElecZinvSel_lowpt = Pass_MuonVeto    && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > minElecPt  && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
+            bool passMuZinvSel         = Pass_ElecVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
+            bool passMuZinvSel_lowpt   = Pass_ElecVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > minMuPt      && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
+            bool passElecZinvSel       = Pass_MuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
+            bool passElecZinvSel_lowpt = Pass_MuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > minElecPt  && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
             bool passElMuZinvSel       = (cutMuVec.size() == 1 && cutElecVec.size() == 1 && cutElecSummedCharge == -cutMuSummedCharge && cutMuVec[0].Pt() > highMuPt && cutElecVec[0].Pt() > minMuPt) && (bestRecoElMuZ.M() > zMassMin) && (bestRecoElMuZ.M() < zMassMax);
 
             double genMuPt     = -999.9;
@@ -355,7 +355,7 @@ namespace plotterFunctions
             {
                 if (cutMuVec.size() > 0)
                 {
-                    printf("Pass_ElectronVeto: %d ", Pass_ElectronVeto);
+                    printf("Pass_ElecVeto: %d ", Pass_ElecVeto);
                     printf("cutMuVec.size() == 2: %d ", cutMuVec.size() == 2);
                     printf("cutMuSummedCharge == 0: %d ", cutMuSummedCharge == 0);
                     printf("cutMuVec[0].Pt() > highMuPt: %d ", cutMuVec[0].Pt() > highMuPt);

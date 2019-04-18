@@ -596,11 +596,11 @@ int main(int argc, char* argv[])
     std::vector<std::string> CutLevels_Data_Muon_LowDM  = CutLevels_Data_Muon;
     std::vector<std::string> CutLevels_Data_Muon_HighDM = CutLevels_Data_Muon;
     CutLevels_Data_Muon_LowDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned");
-    CutLevels_Data_Muon_LowDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_ElectronVeto");
-    CutLevels_Data_Muon_LowDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_ElectronVeto;passMuZinvSel");
+    CutLevels_Data_Muon_LowDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_ElecVeto");
+    CutLevels_Data_Muon_LowDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_ElecVeto;passMuZinvSel");
     CutLevels_Data_Muon_HighDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned");
-    CutLevels_Data_Muon_HighDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_ElectronVeto");
-    CutLevels_Data_Muon_HighDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_ElectronVeto;passMuZinvSel");
+    CutLevels_Data_Muon_HighDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_ElecVeto");
+    CutLevels_Data_Muon_HighDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_ElecVeto;passMuZinvSel");
     
     // MC: do not apply trigger; apply no cuts twice so that bins match data cut flow
     std::vector<std::string> CutLevels_MC = {
@@ -628,11 +628,11 @@ int main(int argc, char* argv[])
     std::vector<std::string> CutLevels_MC_Muon_LowDM  = CutLevels_MC;
     std::vector<std::string> CutLevels_MC_Muon_HighDM = CutLevels_MC;
     CutLevels_MC_Muon_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned");
-    CutLevels_MC_Muon_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_ElectronVeto");
-    CutLevels_MC_Muon_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_ElectronVeto;passMuZinvSel");
+    CutLevels_MC_Muon_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_ElecVeto");
+    CutLevels_MC_Muon_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_ElecVeto;passMuZinvSel");
     CutLevels_MC_Muon_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned");
-    CutLevels_MC_Muon_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_ElectronVeto");
-    CutLevels_MC_Muon_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_ElectronVeto;passMuZinvSel");
+    CutLevels_MC_Muon_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_ElecVeto");
+    CutLevels_MC_Muon_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_ElecVeto;passMuZinvSel");
     
     std::vector<Plotter::CutFlowSummary> cutFlowSummaries;
 
@@ -648,10 +648,10 @@ int main(int argc, char* argv[])
         // use vetos
         //PDS dsDY_LowDM("DY",                         fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned",                   "");
         //PDS dsDY_LowDM_Electron("DY Pass_MuonVeto",  fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto",     "");
-        //PDS dsDY_LowDM_Muon("DY Pass_ElectronVeto",   fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;Pass_ElectronVeto",  "");
+        //PDS dsDY_LowDM_Muon("DY Pass_ElecVeto",   fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;Pass_ElecVeto",  "");
         //PDS dsDY_HighDM("DY",                        fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned",                   "");
         //PDS dsDY_HighDM_Electron("DY Pass_MuonVeto", fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto",     "");
-        //PDS dsDY_HighDM_Muon("DY Pass_ElectronVeto",  fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;Pass_ElectronVeto",  "");
+        //PDS dsDY_HighDM_Muon("DY Pass_ElecVeto",  fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;Pass_ElecVeto",  "");
         
         // including baseline
         //PDS dsDY_LowDM("DY",                    fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned",                "");
@@ -747,7 +747,29 @@ int main(int argc, char* argv[])
         PDC dcMC_Electron_LowDM_metphi(    "stack",  "metphiWithLL", StackMC_Electron_LowDM);
         PDC dcMC_Electron_HighDM_metphi(   "stack",  "metphiWithLL", StackMC_Electron_HighDM);
         
-        // jet pt
+        // jetpt
+        PDC dcData_Electron_LowDM_jetpt(  "data",   "JetTLV(pt)", {dsData_Electron_LowDM});
+        PDC dcData_Electron_HighDM_jetpt( "data",   "JetTLV(pt)", {dsData_Electron_HighDM});
+        PDC dcMC_Electron_LowDM_jetpt(    "stack",  "JetTLV(pt)", StackMC_Electron_LowDM);
+        PDC dcMC_Electron_HighDM_jetpt(   "stack",  "JetTLV(pt)", StackMC_Electron_HighDM);
+
+        // jetpt_drLeptonCleaned
+        PDC dcData_Electron_LowDM_jetpt_drLeptonCleaned(  "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_LowDM});
+        PDC dcData_Electron_HighDM_jetpt_drLeptonCleaned( "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_HighDM});
+        PDC dcMC_Electron_LowDM_jetpt_drLeptonCleaned(    "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_LowDM);
+        PDC dcMC_Electron_HighDM_jetpt_drLeptonCleaned(   "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_HighDM);
+
+        // jeteta
+        PDC dcData_Electron_LowDM_jeteta(  "data",   "JetTLV(eta)", {dsData_Electron_LowDM});
+        PDC dcData_Electron_HighDM_jeteta( "data",   "JetTLV(eta)", {dsData_Electron_HighDM});
+        PDC dcMC_Electron_LowDM_jeteta(    "stack",  "JetTLV(eta)", StackMC_Electron_LowDM);
+        PDC dcMC_Electron_HighDM_jeteta(   "stack",  "JetTLV(eta)", StackMC_Electron_HighDM);
+
+        // jeteta_drLeptonCleaned
+        PDC dcData_Electron_LowDM_jeteta_drLeptonCleaned(  "data",   "JetTLV_drLeptonCleaned(eta)", {dsData_Electron_LowDM});
+        PDC dcData_Electron_HighDM_jeteta_drLeptonCleaned( "data",   "JetTLV_drLeptonCleaned(eta)", {dsData_Electron_HighDM});
+        PDC dcMC_Electron_LowDM_jeteta_drLeptonCleaned(    "stack",  "JetTLV_drLeptonCleaned(eta)", StackMC_Electron_LowDM);
+        PDC dcMC_Electron_HighDM_jeteta_drLeptonCleaned(   "stack",  "JetTLV_drLeptonCleaned(eta)", StackMC_Electron_HighDM);
 
         // electron pt
         PDC dcData_Electron_LowDM_ElecPt1(  "data",   "cutElecPt1", {dsData_Electron_LowDM});
@@ -782,16 +804,40 @@ int main(int argc, char* argv[])
         PDC dcMC_Electron_HighDM_bestRecoZM(   "stack",  "bestRecoZM", StackMC_Electron_HighDM);
         
         // mtb
-        PDC dcData_Electron_LowDM_mtb(  "data",   "mtb_drLeptonCleaned", {dsData_Electron_LowDM});
-        PDC dcData_Electron_HighDM_mtb( "data",   "mtb_drLeptonCleaned", {dsData_Electron_HighDM});
-        PDC dcMC_Electron_LowDM_mtb(    "stack",  "mtb_drLeptonCleaned", StackMC_Electron_LowDM);
-        PDC dcMC_Electron_HighDM_mtb(   "stack",  "mtb_drLeptonCleaned", StackMC_Electron_HighDM);
+        PDC dcData_Electron_LowDM_mtb(  "data",   "mtb", {dsData_Electron_LowDM});
+        PDC dcData_Electron_HighDM_mtb( "data",   "mtb", {dsData_Electron_HighDM});
+        PDC dcMC_Electron_LowDM_mtb(    "stack",  "mtb", StackMC_Electron_LowDM);
+        PDC dcMC_Electron_HighDM_mtb(   "stack",  "mtb", StackMC_Electron_HighDM);
+        
+        // mtb_drLeptonCleaned
+        PDC dcData_Electron_LowDM_mtb_drLeptonCleaned(  "data",   "mtb_drLeptonCleaned", {dsData_Electron_LowDM});
+        PDC dcData_Electron_HighDM_mtb_drLeptonCleaned( "data",   "mtb_drLeptonCleaned", {dsData_Electron_HighDM});
+        PDC dcMC_Electron_LowDM_mtb_drLeptonCleaned(    "stack",  "mtb_drLeptonCleaned", StackMC_Electron_LowDM);
+        PDC dcMC_Electron_HighDM_mtb_drLeptonCleaned(   "stack",  "mtb_drLeptonCleaned", StackMC_Electron_HighDM);
+        
+        // Stop0l_Mtb
+        PDC dcData_Electron_LowDM_Stop0l_Mtb(  "data",   "Stop0l_Mtb", {dsData_Electron_LowDM});
+        PDC dcData_Electron_HighDM_Stop0l_Mtb( "data",   "Stop0l_Mtb", {dsData_Electron_HighDM});
+        PDC dcMC_Electron_LowDM_Stop0l_Mtb(    "stack",  "Stop0l_Mtb", StackMC_Electron_LowDM);
+        PDC dcMC_Electron_HighDM_Stop0l_Mtb(   "stack",  "Stop0l_Mtb", StackMC_Electron_HighDM);
         
         // ptb
-        PDC dcData_Electron_LowDM_ptb(  "data",   "ptb_drLeptonCleaned", {dsData_Electron_LowDM});
-        PDC dcData_Electron_HighDM_ptb( "data",   "ptb_drLeptonCleaned", {dsData_Electron_HighDM});
-        PDC dcMC_Electron_LowDM_ptb(    "stack",  "ptb_drLeptonCleaned", StackMC_Electron_LowDM);
-        PDC dcMC_Electron_HighDM_ptb(   "stack",  "ptb_drLeptonCleaned", StackMC_Electron_HighDM);
+        PDC dcData_Electron_LowDM_ptb(  "data",   "ptb", {dsData_Electron_LowDM});
+        PDC dcData_Electron_HighDM_ptb( "data",   "ptb", {dsData_Electron_HighDM});
+        PDC dcMC_Electron_LowDM_ptb(    "stack",  "ptb", StackMC_Electron_LowDM);
+        PDC dcMC_Electron_HighDM_ptb(   "stack",  "ptb", StackMC_Electron_HighDM);
+        
+        // ptb_drLeptonCleaned
+        PDC dcData_Electron_LowDM_ptb_drLeptonCleaned(  "data",   "ptb_drLeptonCleaned", {dsData_Electron_LowDM});
+        PDC dcData_Electron_HighDM_ptb_drLeptonCleaned( "data",   "ptb_drLeptonCleaned", {dsData_Electron_HighDM});
+        PDC dcMC_Electron_LowDM_ptb_drLeptonCleaned(    "stack",  "ptb_drLeptonCleaned", StackMC_Electron_LowDM);
+        PDC dcMC_Electron_HighDM_ptb_drLeptonCleaned(   "stack",  "ptb_drLeptonCleaned", StackMC_Electron_HighDM);
+        
+        // Stop0l_Ptb
+        PDC dcData_Electron_LowDM_Stop0l_Ptb(  "data",   "Stop0l_Ptb", {dsData_Electron_LowDM});
+        PDC dcData_Electron_HighDM_Stop0l_Ptb( "data",   "Stop0l_Ptb", {dsData_Electron_HighDM});
+        PDC dcMC_Electron_LowDM_Stop0l_Ptb(    "stack",  "Stop0l_Ptb", StackMC_Electron_LowDM);
+        PDC dcMC_Electron_HighDM_Stop0l_Ptb(   "stack",  "Stop0l_Ptb", StackMC_Electron_HighDM);
         
         // dphi
         std::vector<PDC> dcVecData_Electron_LowDM_dPhi;
@@ -809,12 +855,20 @@ int main(int argc, char* argv[])
                 
         vh.push_back(PHS("DataMC_Electron_LowDM_nj" + yearTag,           {dcData_Electron_LowDM_nj,   dcMC_Electron_LowDM_nj},   {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
         vh.push_back(PHS("DataMC_Electron_HighDM_nj" + yearTag,          {dcData_Electron_HighDM_nj,  dcMC_Electron_HighDM_nj},  {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
-        vh.push_back(PHS("DataMC_Electron_LowDM_ht" + yearTag,           {dcData_Electron_LowDM_ht,   dcMC_Electron_LowDM_ht},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_ht, "Events"));
-        vh.push_back(PHS("DataMC_Electron_HighDM_ht" + yearTag,          {dcData_Electron_HighDM_ht,  dcMC_Electron_HighDM_ht}, {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_ht, "Events"));
+        vh.push_back(PHS("DataMC_Electron_LowDM_ht" + yearTag,           {dcData_Electron_LowDM_ht,   dcMC_Electron_LowDM_ht},   {1, 2}, "", nBins,  minPt, maxPt, true, false, label_ht, "Events"));
+        vh.push_back(PHS("DataMC_Electron_HighDM_ht" + yearTag,          {dcData_Electron_HighDM_ht,  dcMC_Electron_HighDM_ht},  {1, 2}, "", nBins,  minPt, maxPt, true, false, label_ht, "Events"));
         vh.push_back(PHS("DataMC_Electron_LowDM_met" + yearTag,          {dcData_Electron_LowDM_met,  dcMC_Electron_LowDM_met},  {1, 2}, "", nBins,  minPt, maxPt, true, false, label_metWithLL, "Events"));
         vh.push_back(PHS("DataMC_Electron_HighDM_met" + yearTag,         {dcData_Electron_HighDM_met, dcMC_Electron_HighDM_met}, {1, 2}, "", nBins,  minPt, maxPt, true, false, label_metWithLL, "Events"));
         vh.push_back(PHS("DataMC_Electron_LowDM_metphi" + yearTag,       {dcData_Electron_LowDM_metphi,  dcMC_Electron_LowDM_metphi},  {1, 2}, "", nBins,  minPhi, maxPhi, true, false, label_metphiWithLL, "Events"));
         vh.push_back(PHS("DataMC_Electron_HighDM_metphi" + yearTag,      {dcData_Electron_HighDM_metphi, dcMC_Electron_HighDM_metphi}, {1, 2}, "", nBins,  minPhi, maxPhi, true, false, label_metphiWithLL, "Events"));
+        vh.push_back(PHS("DataMC_Electron_LowDM_jetpt" + yearTag,        {dcData_Electron_LowDM_jetpt,   dcMC_Electron_LowDM_jetpt},   {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_jetpt, "Events"));
+        vh.push_back(PHS("DataMC_Electron_HighDM_jetpt" + yearTag,       {dcData_Electron_HighDM_jetpt,  dcMC_Electron_HighDM_jetpt},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_jetpt, "Events"));
+        vh.push_back(PHS("DataMC_Electron_LowDM_jetpt_drLeptonCleaned" + yearTag,        {dcData_Electron_LowDM_jetpt_drLeptonCleaned,   dcMC_Electron_LowDM_jetpt_drLeptonCleaned},   {1, 2}, "",   nBins,  minPt, maxPt, true, false, "lepton cleaned "+label_jetpt, "Events"));
+        vh.push_back(PHS("DataMC_Electron_HighDM_jetpt_drLeptonCleaned" + yearTag,       {dcData_Electron_HighDM_jetpt_drLeptonCleaned,  dcMC_Electron_HighDM_jetpt_drLeptonCleaned},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, "lepton cleaned "+label_jetpt, "Events"));
+        vh.push_back(PHS("DataMC_Electron_LowDM_jeteta" + yearTag,       {dcData_Electron_LowDM_jeteta,  dcMC_Electron_LowDM_jeteta},  {1, 2}, "",   nBins,  minEta, maxEta, true, false, label_jeteta, "Events"));
+        vh.push_back(PHS("DataMC_Electron_HighDM_jeteta" + yearTag,      {dcData_Electron_HighDM_jeteta, dcMC_Electron_HighDM_jeteta}, {1, 2}, "",   nBins,  minEta, maxEta, true, false, label_jeteta, "Events"));
+        vh.push_back(PHS("DataMC_Electron_LowDM_jeteta_drLeptonCleaned" + yearTag,       {dcData_Electron_LowDM_jeteta_drLeptonCleaned,  dcMC_Electron_LowDM_jeteta_drLeptonCleaned},  {1, 2}, "",   nBins,  minEta, maxEta, true, false, "lepton cleaned "+label_jeteta, "Events"));
+        vh.push_back(PHS("DataMC_Electron_HighDM_jeteta_drLeptonCleaned" + yearTag,      {dcData_Electron_HighDM_jeteta_drLeptonCleaned, dcMC_Electron_HighDM_jeteta_drLeptonCleaned}, {1, 2}, "",   nBins,  minEta, maxEta, true, false, "lepton cleaned "+label_jeteta, "Events"));
         vh.push_back(PHS("DataMC_Electron_LowDM_ElecPt1" + yearTag,      {dcData_Electron_LowDM_ElecPt1,   dcMC_Electron_LowDM_ElecPt1},  {1, 2}, "", nBins,  minPt, maxPt, true, false, label_ElecPt1, "Events"));
         vh.push_back(PHS("DataMC_Electron_HighDM_ElecPt1" + yearTag,     {dcData_Electron_HighDM_ElecPt1,  dcMC_Electron_HighDM_ElecPt1}, {1, 2}, "", nBins,  minPt, maxPt, true, false, label_ElecPt1, "Events"));
         vh.push_back(PHS("DataMC_Electron_LowDM_ElecPt2" + yearTag,      {dcData_Electron_LowDM_ElecPt2,   dcMC_Electron_LowDM_ElecPt2},  {1, 2}, "", nBins,  minPt, maxPt, true, false, label_ElecPt2, "Events"));
@@ -829,8 +883,16 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMC_Electron_HighDM_bestRecoZM" + yearTag,  {dcData_Electron_HighDM_bestRecoZM,  dcMC_Electron_HighDM_bestRecoZM}, {1, 2}, "", nBins, 70.0, 110.0, true, false, "bestRecoZM", "Events"));
         vh.push_back(PHS("DataMC_Electron_LowDM_mtb" + yearTag,          {dcData_Electron_LowDM_mtb,   dcMC_Electron_LowDM_mtb},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_mtb, "Events"));
         vh.push_back(PHS("DataMC_Electron_HighDM_mtb" + yearTag,         {dcData_Electron_HighDM_mtb,  dcMC_Electron_HighDM_mtb}, {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_mtb, "Events"));
+        vh.push_back(PHS("DataMC_Electron_LowDM_mtb_drLeptonCleaned" + yearTag,          {dcData_Electron_LowDM_mtb_drLeptonCleaned,   dcMC_Electron_LowDM_mtb_drLeptonCleaned},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, "lepton cleaned "+label_mtb, "Events"));
+        vh.push_back(PHS("DataMC_Electron_HighDM_mtb_drLeptonCleaned" + yearTag,         {dcData_Electron_HighDM_mtb_drLeptonCleaned,  dcMC_Electron_HighDM_mtb_drLeptonCleaned}, {1, 2}, "",   nBins,  minPt, maxPt, true, false, "lepton cleaned "+label_mtb, "Events"));
+        vh.push_back(PHS("DataMC_Electron_LowDM_Stop0l_Mtb" + yearTag,   {dcData_Electron_LowDM_Stop0l_Mtb,   dcMC_Electron_LowDM_Stop0l_Mtb},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, "Stop0l "+label_mtb, "Events"));
+        vh.push_back(PHS("DataMC_Electron_HighDM_Stop0l_Mtb" + yearTag,  {dcData_Electron_HighDM_Stop0l_Mtb,  dcMC_Electron_HighDM_Stop0l_Mtb}, {1, 2}, "",   nBins,  minPt, maxPt, true, false, "Stop0l "+label_mtb, "Events"));
         vh.push_back(PHS("DataMC_Electron_LowDM_ptb" + yearTag,          {dcData_Electron_LowDM_ptb,   dcMC_Electron_LowDM_ptb},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_ptb, "Events"));
         vh.push_back(PHS("DataMC_Electron_HighDM_ptb" + yearTag,         {dcData_Electron_HighDM_ptb,  dcMC_Electron_HighDM_ptb}, {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_ptb, "Events"));
+        vh.push_back(PHS("DataMC_Electron_LowDM_ptb_drLeptonCleaned" + yearTag,          {dcData_Electron_LowDM_ptb_drLeptonCleaned,   dcMC_Electron_LowDM_ptb_drLeptonCleaned},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, "lepton cleaned "+label_ptb, "Events"));
+        vh.push_back(PHS("DataMC_Electron_HighDM_ptb_drLeptonCleaned" + yearTag,         {dcData_Electron_HighDM_ptb_drLeptonCleaned,  dcMC_Electron_HighDM_ptb_drLeptonCleaned}, {1, 2}, "",   nBins,  minPt, maxPt, true, false, "lepton cleaned "+label_ptb, "Events"));
+        vh.push_back(PHS("DataMC_Electron_LowDM_Stop0l_Ptb" + yearTag,   {dcData_Electron_LowDM_Stop0l_Ptb,   dcMC_Electron_LowDM_Stop0l_Ptb},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, "Stop0l "+label_ptb, "Events"));
+        vh.push_back(PHS("DataMC_Electron_HighDM_Stop0l_Ptb" + yearTag,  {dcData_Electron_HighDM_Stop0l_Ptb,  dcMC_Electron_HighDM_Stop0l_Ptb}, {1, 2}, "",   nBins,  minPt, maxPt, true, false, "Stop0l "+label_ptb, "Events"));
         
         // dphi
         for (int i = 0; i < 4; i++)
