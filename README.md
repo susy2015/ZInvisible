@@ -43,10 +43,21 @@ Make sure that you checkout the configuration files in the `ZInvisible/Tools` di
 
 ## Setup
 
-Setup the TopTagger environment. This will need to be run after running `cmsenv` in every new terminal session.
+Go to your working area and then setup the TopTagger environment. This will need to be run after running `cmsenv` in every new terminal session. Use the command for your shell (bash or tcsh). Type "echo $SHELL" to check your shell if you don't know it.
+
+Go to working area:
 ```
 cd $CMSSW_BASE/src/ZInvisible/Tools
+```
+
+For bash users:
+```
 source $CMSSW_BASE/src/TopTagger/TopTagger/test/taggerSetup.sh
+```
+
+For tcsh users:
+```
+source $CMSSW_BASE/src/TopTagger/TopTagger/test/taggerSetup.csh
 ```
 
 Now compile. 
