@@ -29,7 +29,6 @@ cd $CMSSW_BASE/src
 git clone git@github.com:susy2015/ZInvisible.git
 cd ZInvisible/Tools
 ```
-mkdir plots
 
 ## Get Configuration Files
 
@@ -65,6 +64,7 @@ Now compile.
 ```
 cd $CMSSW_BASE/src/ZInvisible/Tools
 mkdir obj
+mkdir plots
 make -j8
 ```
 
