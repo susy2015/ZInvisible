@@ -88,7 +88,7 @@ This script should output some pdf/png plots. The `-s` option can be used for on
 
 You can also run over a specific HT sample range.
 ```
-./makePlots -D ZJetsToNuNu_2016__HT_100to200 -E 1000 -Y 2016
+./makePlots -D ZJetsToNuNu_HT_100to200_2016 -E 1000 -Y 2016
 ```
 
 If `makePlots` succeeds it will create a file named `histoutput.root`. You can open this file with a TBrowser either on cmslpc or by copying it to your machine.
