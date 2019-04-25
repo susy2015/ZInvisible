@@ -29,6 +29,7 @@ cd $CMSSW_BASE/src
 git clone git@github.com:susy2015/ZInvisible.git
 cd ZInvisible/Tools
 ```
+mkdir plots
 
 ## Get Configuration Files
 
@@ -78,7 +79,7 @@ cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/syst
 
 Now try running makePlots.
 ```
-./makePlots -D ZJetsToNuNu -E 1000 | grep -v LHAPDF
+./makePlots -D ZJetsToNuNu_2016 -Y 2016 -E 1000 | grep -v LHAPDF
 ```
 
 The `-D` option is for the dataset (ZJetsToNuNu). The `-E` option is for number of events to process (1000).
@@ -87,7 +88,7 @@ This script should output some pdf/png plots. The `-s` option can be used for on
 
 You can also run over a specific HT sample range.
 ```
-./makePlots -D ZJetsToNuNu_HT_100to200 -E 1000
+./makePlots -D ZJetsToNuNu_2016__HT_100to200 -E 1000 -Y 2016
 ```
 
 If `makePlots` succeeds it will create a file named `histoutput.root`. You can open this file with a TBrowser either on cmslpc or by copying it to your machine.
