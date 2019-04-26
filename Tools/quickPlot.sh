@@ -15,7 +15,7 @@ combineResults=true
 useDYInc=false
 year=$1
 outputFiles=
-n_events=100
+n_events=100000
 
 if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
 then
