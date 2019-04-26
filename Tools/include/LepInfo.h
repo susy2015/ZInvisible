@@ -248,13 +248,15 @@ namespace plotterFunctions
                 if (debug)
                 {
                     std::cout << "nZ = " << nZ;
-                    if(nZ > 1) std::cout << " - WARNING: MORE THAN 1 Z FOUND!!!";
+                    // be quiet... this prints a lot for ZZTo4Q :-)
+                    //if(nZ > 1) std::cout << " - WARNING: MORE THAN 1 Z FOUND!!!";
                     std::cout << std::endl;
                 }
-                else
-                {
-                    if(nZ > 1) std::cout << " - WARNING: MORE THAN 1 Z FOUND!!! Set debug = true for more info." << std::endl;
-                }
+                // be quiet... this prints a lot for ZZTo4Q :-)
+                //else
+                //{
+                //    if(nZ > 1) std::cout << " - WARNING: MORE THAN 1 Z FOUND!!! Set debug = true for more info." << std::endl;
+                //}
 
             }
 

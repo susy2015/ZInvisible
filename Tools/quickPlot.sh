@@ -15,7 +15,7 @@ combineResults=true
 useDYInc=false
 year=$1
 outputFiles=
-n_events=100000
+n_events=1000
 
 if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
 then
@@ -102,34 +102,34 @@ rm plots/*
 ###############
 # Data and MC #
 ###############
-#if [ "$useDYInc" = true ]; then
-## DY (inclusive): IncDY
-#declare -a samples=(
-#                    ""$LeptonDataset"_"$year""
-#                    "IncDY_"$year""
-#                   )
-#else
-## DY (HT binned): DYJetsToLL
-#declare -a samples=(
-#                    ""$LeptonDataset"_"$year""
-#                    "DYJetsToLL_HT_400to600_"$year""
-#                   )
-#fi
-
-###########
-# MC only #
-###########
 if [ "$useDYInc" = true ]; then
 # DY (inclusive): IncDY
 declare -a samples=(
+                    ""$LeptonDataset"_"$year""
                     "IncDY_"$year""
                    )
 else
 # DY (HT binned): DYJetsToLL
 declare -a samples=(
+                    ""$LeptonDataset"_"$year""
                     "DYJetsToLL_HT_400to600_"$year""
                    )
 fi
+
+###########
+# MC only #
+###########
+#if [ "$useDYInc" = true ]; then
+## DY (inclusive): IncDY
+#declare -a samples=(
+#                    "IncDY_"$year""
+#                   )
+#else
+## DY (HT binned): DYJetsToLL
+#declare -a samples=(
+#                    "DYJetsToLL_HT_400to600_"$year""
+#                   )
+#fi
 
 
 # loop through samples array
