@@ -382,7 +382,8 @@ def main():
         
         # s: file, n:name, e:nEvts
         for s, n, e in sc.sampleList(ds):
-            #print "\t{0} {1} {2}".format(s, n, e)
+            # debugging
+            print "\t{0} {1} {2}".format(s, n, e)
             n_files = sum(1 for line in open(s))
             total_files += n_files
             total_events += e
