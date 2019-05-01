@@ -15,14 +15,13 @@ combineResults=true
 useDYInc=false
 year=$1
 outputFiles=
-n_events=1000
+n_events=10000
 
 if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
 then
     echo "Please enter 2016, 2017, or 2018 for the year as the first argument."
     exit 1
 fi
-
 
 # Photon Datasets
 # 2016: Data_SinglePhoton_2016

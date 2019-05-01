@@ -277,7 +277,8 @@ namespace plotterFunctions
                 {
                     if(cutMuVec[j].Pt() < minMuPt) continue;
                     double zm = (cutMuVec[i] + cutMuVec[j]).M();
-                    if(fabs(zm - zMass) < fabs(zMuMassCurrent - zMass))
+                    // check that zm is non-zero... otherwise 0.0 is chosen over values > 182.0
+                    if(zm > 0.0 && fabs(zm - zMass) < fabs(zMuMassCurrent - zMass))
                     {
                         bestRecoMuZ = cutMuVec[i] + cutMuVec[j];
                         zMuMassCurrent = zm;
@@ -293,7 +294,8 @@ namespace plotterFunctions
                 {
                     if(cutElecVec[j].Pt() < minElecPt) continue;
                     double zm = (cutElecVec[i] + cutElecVec[j]).M();
-                    if(fabs(zm - zMass) < fabs(zElecMassCurrent - zMass))
+                    // check that zm is non-zero... otherwise 0.0 is chosen over values > 182.0
+                    if(zm > 0.0 && fabs(zm - zMass) < fabs(zElecMassCurrent - zMass))
                     {
                         bestRecoElecZ = cutElecVec[i] + cutElecVec[j];
                         zElecMassCurrent = zm;
@@ -321,7 +323,33 @@ namespace plotterFunctions
             TLorentzVector metV, metZ;
             metV.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
 
-            TLorentzVector bestRecoZ = (fabs(bestRecoElecZ.M() - zMass) > fabs(bestRecoMuZ.M() - zMass)) ? (bestRecoMuZ) : (bestRecoElecZ);
+            // initialized by (0., 0., 0., 0.)
+            TLorentzVector bestRecoZ;
+            
+            // compare masses if both are non-zero
+            if (bestRecoElecZ.M() > 0.0 && bestRecoMuZ.M() > 0.0)
+            {
+                if (fabs(bestRecoElecZ.M() - zMass) < fabs(bestRecoMuZ.M() - zMass))
+                {
+                    bestRecoZ = bestRecoElecZ;
+                }
+                else
+                {
+                    bestRecoZ = bestRecoMuZ;
+                }
+            }
+            // otherwise pick non-zero mass (if any are non-zero)
+            else
+            {
+                if (bestRecoElecZ.M() > 0.0)
+                {
+                    bestRecoZ = bestRecoElecZ;
+                }
+                else if (bestRecoMuZ.M() > 0.0)
+                {
+                    bestRecoZ = bestRecoMuZ;
+                }
+            }
             metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
             TLorentzVector cleanMet = metV + metZ;
             
