@@ -160,7 +160,7 @@ if [ "$combineResults" = true ]; then
     time ahadd.py -f $result $outputFiles &> hadd.log
     
     # Make plots of results (containing both MC)
-    echo " - Make plots of results (containing both MC)"
+    echo " - Make plots using combined results"
     echo ""
     echo "./makePlots -f -I $result | grep -v LHAPDF"
     echo ""

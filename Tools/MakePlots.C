@@ -703,9 +703,6 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MC_LowDM_bestRecoZM" + yearTag,  {dcMC_LowDM_bestRecoZM, dcMC_LowDM_Electron_bestRecoZM, dcMC_LowDM_Muon_bestRecoZM},    {2, 3}, "", 100, 0.0, 200.0, true, false, "bestRecoZM", "Events"));
         vh.push_back(PHS("MC_HighDM_bestRecoZM" + yearTag, {dcMC_HighDM_bestRecoZM, dcMC_HighDM_Electron_bestRecoZM, dcMC_HighDM_Muon_bestRecoZM}, {2, 3}, "", 100, 0.0, 200.0, true, false, "bestRecoZM", "Events"));
 
-        // TODO: change variables to a tag for ZinvLL (to use cleaned jet collection, etc)
-        // TODO: fix lepInfo module to use in Nano AOD and calculate passElecZinvSel
-        
         // no selection
         //PDS dsData_Electron_LowDM("Data",  fileMap["Data_SingleElectron" + yearTag],  "",  "");
         //PDS dsData_Electron_HighDM("Data", fileMap["Data_SingleElectron" + yearTag],  "", "");
@@ -939,9 +936,6 @@ int main(int argc, char* argv[])
     // di-muon
     if (doDataMCMuon)
     {
-        // TODO: change variables to a tag for ZinvLL (to use cleaned jet collection, etc)
-        // TODO: fix lepInfo module to use in Nano AOD and calculate passMuZinvSel
-        
         // no selection
         //PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],  "",  "");
         //PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],  "", "");
@@ -1083,8 +1077,6 @@ int main(int argc, char* argv[])
     {
         // Photon 
 
-        // TODO: change variables to a tag for ZinvPhoton (to used cleaned jet collection, etc)
-        
         // no selection
         //PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset + yearTag], "",  "");
         //PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset + yearTag], "",  "");
