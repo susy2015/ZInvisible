@@ -97,7 +97,9 @@ def getMatrixInverseError(A, A_error):
     return Ainverse_error
 
 def getNormAndError(file_name, year, verbose):
-    print file_name
+    print "------------------------------------------------------------------------------"
+    print "Year: {0}".format(year)
+    print "File: {0}".format(file_name)
     f = ROOT.TFile(file_name)
     # variable is also TDirectoryFile that holds histograms 
     variable = "bestRecoZM"
@@ -115,23 +117,6 @@ def getNormAndError(file_name, year, verbose):
                 "Rare"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMRarestack"
             }
     
-    # old version
-    #histos = { 
-    #    "LowDM": {
-    #        "Data"     : "DataMC_Electron_LowDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
-    #        "DY"       : "DataMC_Electron_LowDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
-    #        "TTbar"    : "DataMC_Electron_LowDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMt#bar{t}stack",
-    #        "Single t" : "DataMC_Electron_LowDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMSingle tstack",
-    #        "Rare"     : "DataMC_Electron_LowDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMRarestack"
-    #    },
-    #    "HighDM" : {
-    #        "Data"     : "DataMC_Electron_HighDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
-    #        "DY"       : "DataMC_Electron_HighDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
-    #        "TTbar"    : "DataMC_Electron_HighDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMt#bar{t}stack",
-    #        "Single t" : "DataMC_Electron_HighDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMSingle tstack",
-    #        "Rare"     : "DataMC_Electron_HighDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMRarestack"
-    #    }
-    #} 
     for particle in histos:
         print particle
         for region in histos[particle]:
@@ -209,20 +194,15 @@ def getNormAndError(file_name, year, verbose):
             
             print "R_Z = {0:.4f} +/- {1:.4f}".format(b1, b1_error)
             print "R_T = {0:.4f} +/- {1:.4f}".format(b2, b2_error)
+    print "------------------------------------------------------------------------------"
 
 def main():
     verbose = False
-    #file_list = []
-    #file_list.append("condor/histos_ElectronControlRegionSelection_2016_01_May_2019_2/result.root")
-    #for file_name in file_list:
-    #    getNormAndError(file_name, verbose)
     getNormAndError("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016", verbose)
+    getNormAndError("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017", verbose)
+    getNormAndError("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018", verbose)
 
 if __name__ == "__main__":
     main()
-
-
-
-
 
 

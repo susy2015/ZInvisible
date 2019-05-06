@@ -81,6 +81,10 @@ mkdir $dataDir
 echo "- Moving root files to $dataDir"
 mv *.root $dataDir
 
+# number of files
+numFiles=$(ls $dataDir/*.root | wc -l | cut -f1 -d " ")
+echo "Number of files returned from condor: $numFiles"
+
 # add histograms
 cd $dataDir
 error=1
