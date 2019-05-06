@@ -67,6 +67,7 @@ int main(int argc, char* argv[])
     double lumi_2018 = -1.0;
     std::string sbEra = "SB_v1_2017";
     std::string year = "";
+    std::string ElectronDataset = "";
     std::string PhotonDataset = "";
     while((opt = getopt_long(argc, argv, "pstfcglvI:D:N:M:E:P:L:S:Y:", long_options, &option_index)) != -1)
     {
@@ -180,16 +181,19 @@ int main(int argc, char* argv[])
     if (year.compare("2016") == 0)
     {
         lumi = lumi_2016;
+        ElectronDataset = "Data_SingleElectron";
         PhotonDataset = "Data_SinglePhoton";
     }
     else if (year.compare("2017") == 0)
     {
         lumi = lumi_2017;
+        ElectronDataset = "Data_SingleElectron";
         PhotonDataset = "Data_SinglePhoton";
     }
     else if (year.compare("2018") == 0)
     {
         lumi = lumi_2018;
+        ElectronDataset = "Data_EGamma";
         PhotonDataset = "Data_EGamma";
     }
     else
@@ -277,6 +281,11 @@ int main(int argc, char* argv[])
         {
             AnaSamples::SampleSet ss = sample.ss;
             AnaSamples::SampleCollection sc = sample.sc;
+            // calculate total luminosity for data
+            //for (const auto& item : ss.getMap())
+            //{
+            //    printf("%s: lumi = %f\n", item.first, getSampleLumi(item.first);
+            //}
             if(ss[dataSets] != ss.null())
             {
                 fileMap[dataSets] = {ss[dataSets]};
@@ -704,20 +713,20 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MC_HighDM_bestRecoZM" + yearTag, {dcMC_HighDM_bestRecoZM, dcMC_HighDM_Electron_bestRecoZM, dcMC_HighDM_Muon_bestRecoZM}, {2, 3}, "", 200, 0.0, 400.0, true, false, "bestRecoZM", "Events"));
 
         // no selection
-        //PDS dsData_Electron_LowDM("Data",  fileMap["Data_SingleElectron" + yearTag],  "",  "");
-        //PDS dsData_Electron_HighDM("Data", fileMap["Data_SingleElectron" + yearTag],  "", "");
+        //PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset + yearTag],  "",  "");
+        //PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset + yearTag],  "", "");
         //std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton("","");
         //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton("","");
         
         // testing
-        //PDS dsData_Electron_LowDM("Data",  fileMap["Data_SingleElectron" + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel",  "");
-        //PDS dsData_Electron_HighDM("Data", fileMap["Data_SingleElectron" + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel", "");
+        //PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel",  "");
+        //PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel", "");
         //std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel","");
         //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel","");
         
         // apply selection
-        PDS dsData_Electron_LowDM("Data",  fileMap["Data_SingleElectron" + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger",  "");
-        PDS dsData_Electron_HighDM("Data", fileMap["Data_SingleElectron" + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger", "");
+        PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger",  "");
+        PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger", "");
         std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel","");
         std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel","");
         
