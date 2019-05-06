@@ -15,7 +15,7 @@ combineResults=true
 useDYInc=false
 year=$1
 outputFiles=
-n_events=10000
+n_events=1000
 
 if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
 then
@@ -23,17 +23,21 @@ then
     exit 1
 fi
 
+# Electron Datasets
+# 2016: Data_SingleElectron_2016
+# 2017: Data_SingleElectron_2017
+# 2018: Data_EGamma_2018
 # Photon Datasets
 # 2016: Data_SinglePhoton_2016
 # 2017: Data_SinglePhoton_2017
 # 2018: Data_EGamma_2018
 
-LeptonDataset="Data_SingleElectron"
-#LeptonDataset="Data_SingleMuon"
+ElectronDataset="Data_SingleElectron"
 PhotonDataset="Data_SinglePhoton"
 
 if [[ "$year" == "2018" ]]
 then
+    ElectronDataset="Data_EGamma"
     PhotonDataset="Data_EGamma"
 fi
 
@@ -81,16 +85,15 @@ rm plots/*
 #                     "ZJetsToNuNu_HT_400to600"
 #                    )
 
-# WARNING: only do both muon and photon data at the same time if the luminosities are the same
-#declare -a samples=(
-#                    "Data_SingleMuon_"$year""
-#                    "DYJetsToLL_HT_400to600_"$year""
-#                    "TTbarNoHad_"$year""
-#                    ""$PhotonDataset"_"$year""
-#                    "GJets_HT-400To600_"$year""
-#                    "QCD_HT300to500_"$year""
-#                    "ZJetsToNuNu_HT_400to600_"$year""
-#                   )
+# WARNING: only do electron, muon and photon data at the same time if the luminosities are the same
+declare -a samples=(
+                    ""$ElectronDataset"_"$year""
+                    "Data_SingleMuon_"$year""
+                    "DYJetsToLL_HT_400to600_"$year""
+                    ""$PhotonDataset"_"$year""
+                    "GJets_HT_400To600_"$year""
+                    "ZJetsToNuNu_HT_400to600_"$year""
+                   )
 
 #declare -a samples=(
 #                    ""$PhotonDataset"_"$year""
@@ -101,19 +104,19 @@ rm plots/*
 ###############
 # Data and MC #
 ###############
-if [ "$useDYInc" = true ]; then
-# DY (inclusive): IncDY
-declare -a samples=(
-                    ""$LeptonDataset"_"$year""
-                    "IncDY_"$year""
-                   )
-else
-# DY (HT binned): DYJetsToLL
-declare -a samples=(
-                    ""$LeptonDataset"_"$year""
-                    "DYJetsToLL_HT_400to600_"$year""
-                   )
-fi
+#if [ "$useDYInc" = true ]; then
+## DY (inclusive): IncDY
+#declare -a samples=(
+#                    ""$ElectronDataset"_"$year""
+#                    "IncDY_"$year""
+#                   )
+#else
+## DY (HT binned): DYJetsToLL
+#declare -a samples=(
+#                    ""$ElectronDataset"_"$year""
+#                    "DYJetsToLL_HT_400to600_"$year""
+#                   )
+#fi
 
 ###########
 # MC only #

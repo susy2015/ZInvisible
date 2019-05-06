@@ -396,19 +396,25 @@ def main():
     if options.refLumi != None:
         lumi = lumis[options.refLumi]
         print "Normalizing to %s pb-1" % (lumi)
-    
+   
+    total_files = 0
+    total_events = 0
     for ds in datasets:
-        total_files = 0
-        total_events = 0
+        sample_files = 0
+        sample_events = 0
         ds = ds.strip()
         #print ds
         print "# --- {0} --- #".format(ds)
+        if "Data" in ds:
+            print "Lumi: {0}".format(sc.getFixedLumi())
         
         # s: file, n:name, e:nEvts
         for s, n, e in sc.sampleList(ds):
             # debugging
             #print "\t{0} {1} {2}".format(s, n, e)
             n_files = sum(1 for line in open(s))
+            sample_files += n_files
+            sample_events += e
             total_files += n_files
             total_events += e
             print "\t{0}: n_files={1}, n_events={2}".format(n, n_files, e)
@@ -434,7 +440,12 @@ def main():
                     fileParts.append("Queue\n\n")
     
                 f.close()
-        print "\t{0}: total_files={1}, total_events={2}".format(ds, total_files, total_events)
+        # number of files and events in sample
+        print "\t{0}: sample_files={1}, sample_events={2}".format(ds, sample_files, sample_events)
+     
+    # total number of files and events
+    print "# --- Totals --- #"
+    print "total_files={0}, total_events={1}".format(total_files, total_events)
     
     fout = open("condor_submit.txt", "w")
     fout.write(''.join(fileParts))
