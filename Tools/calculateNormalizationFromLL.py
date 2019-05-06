@@ -96,111 +96,127 @@ def getMatrixInverseError(A, A_error):
     Ainverse_error[1][1] = getMultiplicationError( A[0][0] / det,  A[0][0], A_error[0][0], det, det_error)
     return Ainverse_error
 
-def getNormAndError(file_name, verbose):
+def getNormAndError(file_name, year, verbose):
     print file_name
     f = ROOT.TFile(file_name)
-    # histograms
-    # Low DM
     # variable is also TDirectoryFile that holds histograms 
     variable = "bestRecoZM"
-    histos = { 
-        "LowDM": {
-            "Data"     : "DataMC_Electron_LowDM_bestRecoZM_2016bestRecoZMbestRecoZMDatadata",
-            "DY"       : "DataMC_Electron_LowDM_bestRecoZM_2016bestRecoZMbestRecoZMDYstack",
-            "TTbar"    : "DataMC_Electron_LowDM_bestRecoZM_2016bestRecoZMbestRecoZMt#bar{t}stack",
-            "Single t" : "DataMC_Electron_LowDM_bestRecoZM_2016bestRecoZMbestRecoZMSingle tstack",
-            "Rare"     : "DataMC_Electron_LowDM_bestRecoZM_2016bestRecoZMbestRecoZMRarestack"
-        },
-        "HighDM" : {
-            "Data"     : "DataMC_Electron_HighDM_bestRecoZM_2016bestRecoZMbestRecoZMDatadata",
-            "DY"       : "DataMC_Electron_HighDM_bestRecoZM_2016bestRecoZMbestRecoZMDYstack",
-            "TTbar"    : "DataMC_Electron_HighDM_bestRecoZM_2016bestRecoZMbestRecoZMt#bar{t}stack",
-            "Single t" : "DataMC_Electron_HighDM_bestRecoZM_2016bestRecoZMbestRecoZMSingle tstack",
-            "Rare"     : "DataMC_Electron_HighDM_bestRecoZM_2016bestRecoZMbestRecoZMRarestack"
-        }
-    } 
-    for key in histos:
-        print key
-        h_Data  = f.Get(variable + "/" + histos[key]["Data"])
-        h_DY    = f.Get(variable + "/" + histos[key]["DY"])
-        h_TTbar = f.Get(variable + "/" + histos[key]["TTbar"])
+    # histograms
+    # example: DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
+    histos = {}
+    for particle in ["Electron", "Muon"]:
+        histos[particle] = {}
+        for region in ["LowDM", "HighDM"]:
+            histos[particle][region] = { 
+                "Data"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
+                "DY"       : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
+                "TTbar"    : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMt#bar{t}stack",
+                "Single t" : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMSingle tstack",
+                "Rare"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMRarestack"
+            }
+    
+    # old version
+    #histos = { 
+    #    "LowDM": {
+    #        "Data"     : "DataMC_Electron_LowDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
+    #        "DY"       : "DataMC_Electron_LowDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
+    #        "TTbar"    : "DataMC_Electron_LowDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMt#bar{t}stack",
+    #        "Single t" : "DataMC_Electron_LowDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMSingle tstack",
+    #        "Rare"     : "DataMC_Electron_LowDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMRarestack"
+    #    },
+    #    "HighDM" : {
+    #        "Data"     : "DataMC_Electron_HighDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
+    #        "DY"       : "DataMC_Electron_HighDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
+    #        "TTbar"    : "DataMC_Electron_HighDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMt#bar{t}stack",
+    #        "Single t" : "DataMC_Electron_HighDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMSingle tstack",
+    #        "Rare"     : "DataMC_Electron_HighDM_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMRarestack"
+    #    }
+    #} 
+    for particle in histos:
+        print particle
+        for region in histos[particle]:
+            print region
+            h_Data  = f.Get(variable + "/" + histos[particle][region]["Data"])
+            h_DY    = f.Get(variable + "/" + histos[particle][region]["DY"])
+            h_TTbar = f.Get(variable + "/" + histos[particle][region]["TTbar"])
 
-        #############################
-        # Calculating Normalization #
-        #############################
-        minMass = 50.0
-        Zmass = 91.0
-        minZmass = Zmass - 10.0
-        maxZmass = Zmass + 10.0
-        bin_1 = h_Data.FindBin(minMass)
-        bin_2 = h_Data.FindBin(minZmass)
-        bin_3 = h_Data.FindBin(maxZmass)
-        bin_4 = h_Data.GetNbinsX() + 1
-        if verbose:
-            for i, bin_i in enumerate([bin_1, bin_2, bin_3, bin_4]):
-                print "bin_{0}: {1}".format(i, bin_i)
-        
-        # pass error to IntegralAndError as Double_t & error 
-        # use ROOT.Double for pass-by-ref of doubles
-        #Double_t TH1::IntegralAndError  (Int_t binx1,
-        #                                 Int_t binx2,
-        #                                 Double_t & error,
-        #                                 Option_t * option = "" 
-        #                                 ) const
-        
-        # MC matrix (A)
-        # a11: DY on Z mass peak
-        # a12: TTbar on Z mass peak
-        # a21: DY off Z mass peak
-        # a22: TTbar off Z mass peak
-        # Data (x)
-        # x1: data on Z mass peak
-        # x2: data off Z mass peak
-        # Normalization (b)
-        # b1: R_Z (DY normalization)
-        # b2: R_T (TTbar normalization)
+            #############################
+            # Calculating Normalization #
+            #############################
+            minMass = 50.0
+            Zmass = 91.0
+            minZmass = Zmass - 10.0
+            maxZmass = Zmass + 10.0
+            bin_1 = h_Data.FindBin(minMass)
+            bin_2 = h_Data.FindBin(minZmass)
+            bin_3 = h_Data.FindBin(maxZmass)
+            bin_4 = h_Data.GetNbinsX() + 1
+            if verbose:
+                for i, bin_i in enumerate([bin_1, bin_2, bin_3, bin_4]):
+                    print "bin_{0}: {1}".format(i, bin_i)
+            
+            # pass error to IntegralAndError as Double_t & error 
+            # use ROOT.Double for pass-by-ref of doubles
+            #Double_t TH1::IntegralAndError  (Int_t binx1,
+            #                                 Int_t binx2,
+            #                                 Double_t & error,
+            #                                 Option_t * option = "" 
+            #                                 ) const
+            
+            # MC matrix (A)
+            # a11: DY on Z mass peak
+            # a12: TTbar on Z mass peak
+            # a21: DY off Z mass peak
+            # a22: TTbar off Z mass peak
+            # Data (x)
+            # x1: data on Z mass peak
+            # x2: data off Z mass peak
+            # Normalization (b)
+            # b1: R_Z (DY normalization)
+            # b2: R_T (TTbar normalization)
 
-        # MC matrix
-        a11_error = ROOT.Double()
-        a12_error = ROOT.Double()
-        a21_error_1 = ROOT.Double()
-        a21_error_2 = ROOT.Double()
-        a22_error_1 = ROOT.Double()
-        a22_error_2 = ROOT.Double()
-        a11 = h_DY.IntegralAndError(bin_2, bin_3, a11_error) 
-        a12 = h_TTbar.IntegralAndError(bin_2, bin_3, a12_error) 
-        a21 = h_DY.IntegralAndError(bin_1, bin_2, a21_error_1) + h_DY.IntegralAndError(bin_3, bin_4, a21_error_2)
-        a22 = h_TTbar.IntegralAndError(bin_1, bin_2, a22_error_1) + h_TTbar.IntegralAndError(bin_3, bin_4, a22_error_2)
-        A = np.array([[a11, a12], [a21, a22]])
-        a21_error = getAdditionError(a21_error_1, a21_error_2) 
-        a22_error = getAdditionError(a22_error_1, a22_error_2) 
-        A_error = np.array([[a11_error, a12_error], [a21_error, a22_error]])
-        # Data
-        x1_error = ROOT.Double()
-        x2_error_1 = ROOT.Double()
-        x2_error_2 = ROOT.Double()
-        x1 = h_Data.IntegralAndError(bin_2, bin_3, x1_error)
-        x2 = h_Data.IntegralAndError(bin_1, bin_2, x2_error_1) + h_Data.IntegralAndError(bin_3, bin_4, x2_error_2)
-        x = [x1, x2]
-        x2_error = getAdditionError(x2_error_1, x2_error_2)
-        x_error = [x1_error, x2_error]
-        # calculate normalization and error
-        norm = calcNorm(A, x, verbose)
-        error = calcError(A, A_error, x, x_error, verbose)
-        b1 = norm[0]
-        b2 = norm[1]
-        b1_error = error[0]
-        b2_error = error[1]
-        
-        print "R_Z = {0:.4f} +/- {1:.4f}".format(b1, b1_error)
-        print "R_T = {0:.4f} +/- {1:.4f}".format(b2, b2_error)
+            # MC matrix
+            a11_error = ROOT.Double()
+            a12_error = ROOT.Double()
+            a21_error_1 = ROOT.Double()
+            a21_error_2 = ROOT.Double()
+            a22_error_1 = ROOT.Double()
+            a22_error_2 = ROOT.Double()
+            a11 = h_DY.IntegralAndError(bin_2, bin_3, a11_error) 
+            a12 = h_TTbar.IntegralAndError(bin_2, bin_3, a12_error) 
+            a21 = h_DY.IntegralAndError(bin_1, bin_2, a21_error_1) + h_DY.IntegralAndError(bin_3, bin_4, a21_error_2)
+            a22 = h_TTbar.IntegralAndError(bin_1, bin_2, a22_error_1) + h_TTbar.IntegralAndError(bin_3, bin_4, a22_error_2)
+            A = np.array([[a11, a12], [a21, a22]])
+            a21_error = getAdditionError(a21_error_1, a21_error_2) 
+            a22_error = getAdditionError(a22_error_1, a22_error_2) 
+            A_error = np.array([[a11_error, a12_error], [a21_error, a22_error]])
+            # Data
+            x1_error = ROOT.Double()
+            x2_error_1 = ROOT.Double()
+            x2_error_2 = ROOT.Double()
+            x1 = h_Data.IntegralAndError(bin_2, bin_3, x1_error)
+            x2 = h_Data.IntegralAndError(bin_1, bin_2, x2_error_1) + h_Data.IntegralAndError(bin_3, bin_4, x2_error_2)
+            x = [x1, x2]
+            x2_error = getAdditionError(x2_error_1, x2_error_2)
+            x_error = [x1_error, x2_error]
+            # calculate normalization and error
+            norm = calcNorm(A, x, verbose)
+            error = calcError(A, A_error, x, x_error, verbose)
+            b1 = norm[0]
+            b2 = norm[1]
+            b1_error = error[0]
+            b2_error = error[1]
+            
+            print "R_Z = {0:.4f} +/- {1:.4f}".format(b1, b1_error)
+            print "R_T = {0:.4f} +/- {1:.4f}".format(b2, b2_error)
 
 def main():
     verbose = False
-    file_list = []
-    file_list.append("condor/histos_ElectronControlRegionSelection_2016_01_May_2019_2/result.root")
-    for file_name in file_list:
-        getNormAndError(file_name, verbose)
+    #file_list = []
+    #file_list.append("condor/histos_ElectronControlRegionSelection_2016_01_May_2019_2/result.root")
+    #for file_name in file_list:
+    #    getNormAndError(file_name, verbose)
+    getNormAndError("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016", verbose)
 
 if __name__ == "__main__":
     main()
