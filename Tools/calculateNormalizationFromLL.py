@@ -105,10 +105,12 @@ def getNormAndError(file_name, year, verbose):
     variable = "bestRecoZM"
     # histograms
     # example: DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
+    particles = ["Electron", "Muon"]
+    regions   = ["LowDM", "HighDM"]
     histos = {}
-    for particle in ["Electron", "Muon"]:
+    for particle in particles:
         histos[particle] = {}
-        for region in ["LowDM", "HighDM"]:
+        for region in regions:
             histos[particle][region] = { 
                 "Data"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
                 "DY"       : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
@@ -117,9 +119,9 @@ def getNormAndError(file_name, year, verbose):
                 "Rare"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMRarestack"
             }
     
-    for particle in histos:
+    for particle in particles:
         print particle
-        for region in histos[particle]:
+        for region in regions:
             print region
             h_Data  = f.Get(variable + "/" + histos[particle][region]["Data"])
             h_DY    = f.Get(variable + "/" + histos[particle][region]["DY"])
@@ -185,7 +187,7 @@ def getNormAndError(file_name, year, verbose):
             x2_error = getAdditionError(x2_error_1, x2_error_2)
             x_error = [x1_error, x2_error]
             # calculate normalization and error
-            norm = calcNorm(A, x, verbose)
+            norm  = calcNorm(A, x, verbose)
             error = calcError(A, A_error, x, x_error, verbose)
             b1 = norm[0]
             b2 = norm[1]

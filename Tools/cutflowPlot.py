@@ -18,23 +18,22 @@ def setupHist(hist, labels, title, color, y_min, y_max):
     hist.SetLineColor(getColorIndex(color))
     hist.SetLineWidth(3)
 
-def main():
+def makePlots(f_name, year):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    quickResult = False
-    if quickResult:
-        f_name_Electron = "quickResult_Electron_v2.root"
-        f_name_Muon     = "quickResult_Muon_v1.root"
-    else:
-        f_name_Electron = "ElectronCutFlow_v6.root"
-        f_name_Muon     = "MuonCutFlow_v1.root"
-    plot_dir = "cutflows/"
+    f_name_Electron = f_name
+    f_name_Muon     = f_name
+    plot_dir = "cutflows_"+year+"/"
     h_dir = "CutFlows/"
+    # check that files exist
     f_names = [f_name_Electron, f_name_Muon]
     for f_name in f_names:
         exists = os.path.isfile(f_name)
         if not exists: 
             print "The file {0} does not exist".format(f_name)
             return
+    # make directory for plots if it does not exist
+    if not os.path.exists(plot_dir):
+        os.makedirs(plot_dir)
     # colors
     red_color    = "vermillion"
     blue_color   = "electric blue"
@@ -217,7 +216,10 @@ def main():
         c.Update()
         c.SaveAs(plot_dir + key + "_DataMCRatios_LogScale.pdf")
 
-
+def main():
+    makePlots("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016")
+    makePlots("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017")
+    makePlots("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018")
 
 if __name__ == "__main__":
     main()
