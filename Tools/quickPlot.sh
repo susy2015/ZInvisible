@@ -12,7 +12,7 @@
 # - Make plots of results
 
 combineResults=true
-useDYInc=true
+useDYInc=false
 year=$1
 outputFiles=
 n_events=100000
