@@ -47,51 +47,73 @@ def makePlots(f_name, year):
     c = ROOT.TCanvas("c", "c", 800, 800)
     f_Electron = ROOT.TFile(f_name_Electron)
     f_Muon     = ROOT.TFile(f_name_Muon)
-    # Data: apply trigger; MC: no trigger
+    
+    # old version
+    #cuts = [
+    #    "No cuts",
+    #    "Trigger",
+    #    "Filter",
+    #    "JetID",
+    #    "MET",
+    #    "HT",
+    #    "nJets",
+    #    "Baseline",
+    #]
+
+    # # Electron
+    # cutsElectronLowDM = cuts[:]
+    # cutsElectronLowDM.append("Low #Deltam")
+    # cutsElectronLowDM.append("Muon veto")
+    # cutsElectronLowDM.append("Z to ee")
+    # cutsElectronHighDM = cuts[:]
+    # cutsElectronHighDM.append("High #Deltam")
+    # cutsElectronHighDM.append("Muon veto")
+    # cutsElectronHighDM.append("Z to ee")
+    # # Muon 
+    # cutsMuonLowDM = cuts[:]
+    # cutsMuonLowDM.append("Low #Deltam")
+    # cutsMuonLowDM.append("Electron veto")
+    # cutsMuonLowDM.append("Z to #mu#mu")
+    # cutsMuonHighDM = cuts[:]
+    # cutsMuonHighDM.append("High #Deltam")
+    # cutsMuonHighDM.append("Electron veto")
+    # cutsMuonHighDM.append("Z to #mu#mu")
+    # Lepton
+    # cutsLeptonLowDM = cuts[:]
+    # cutsLeptonLowDM.append("Low #Deltam")
+    # cutsLeptonLowDM.append("Lepton veto")
+    # cutsLeptonLowDM.append("Z to LL")
+    # cutsLeptonHighDM = cuts[:]
+    # cutsLeptonHighDM.append("High #Deltam")
+    # cutsLeptonHighDM.append("Lepton veto")
+    # cutsLeptonHighDM.append("Z to LL")
+    
+    # new version
     cuts = [
         "No cuts",
         "Trigger",
-        "Filter",
+        "Lepton veto",
+        "LL pt",
+        "LL charge",
+        "m_LL > 50",
         "JetID",
+        "EventFilter",
         "MET",
         "HT",
         "nJets",
-        "Baseline",
+        "dPhi",
     ]
-
-    # Electron
-    cutsElectronLowDM = cuts[:]
-    cutsElectronLowDM.append("Low #Deltam")
-    cutsElectronLowDM.append("Muon veto")
-    cutsElectronLowDM.append("Z to ee")
-    cutsElectronHighDM = cuts[:]
-    cutsElectronHighDM.append("High #Deltam")
-    cutsElectronHighDM.append("Muon veto")
-    cutsElectronHighDM.append("Z to ee")
-    # Muon 
-    cutsMuonLowDM = cuts[:]
-    cutsMuonLowDM.append("Low #Deltam")
-    cutsMuonLowDM.append("Electron veto")
-    cutsMuonLowDM.append("Z to #mu#mu")
-    cutsMuonHighDM = cuts[:]
-    cutsMuonHighDM.append("High #Deltam")
-    cutsMuonHighDM.append("Electron veto")
-    cutsMuonHighDM.append("Z to #mu#mu")
-    # Lepton
+    # copy list instead of pointer to list
     cutsLeptonLowDM = cuts[:]
     cutsLeptonLowDM.append("Low #Deltam")
-    cutsLeptonLowDM.append("Lepton veto")
-    cutsLeptonLowDM.append("Z to LL")
     cutsLeptonHighDM = cuts[:]
     cutsLeptonHighDM.append("High #Deltam")
-    cutsLeptonHighDM.append("Lepton veto")
-    cutsLeptonHighDM.append("Z to LL")
     
     h_map = {
-        "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met",  "cuts" : cutsElectronLowDM,  "file" : f_Electron},
-        "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsElectronHighDM, "file" : f_Electron},
-        "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsMuonLowDM,  "file" : f_Muon},
-        "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsMuonHighDM, "file" : f_Muon}
+        "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met",  "cuts" : cutsLeptonLowDM,  "file" : f_Electron},
+        "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsLeptonHighDM, "file" : f_Electron},
+        "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsLeptonLowDM,  "file" : f_Muon},
+        "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsLeptonHighDM, "file" : f_Muon}
     }
     plot_map = {
         "CutFlow_LowDM"  : {"Electron" : "CutFlow_Electron_LowDM",  "Muon" : "CutFlow_Muon_LowDM",  "cuts" :  cutsLeptonLowDM},
@@ -101,8 +123,16 @@ def makePlots(f_name, year):
     for key in h_map:
         cutList = h_map[key]["cuts"]    
         f       = h_map[key]["file"]
-        h_mc    = f.Get(h_dir + h_map[key]["mc"])
-        h_data  = f.Get(h_dir + h_map[key]["data"])
+        h_mc_name   = h_dir + h_map[key]["mc"]
+        h_data_name = h_dir + h_map[key]["data"]
+        h_mc        = f.Get(h_mc_name)
+        h_data      = f.Get(h_data_name)
+        if not h_mc:
+            print "ERROR: Unable to load histogram {0}".format(h_mc_name)
+            exit(1)
+        if not h_data:
+            print "ERROR: Unable to load histogram {0}".format(h_data_name)
+            exit(1)
         
         # setup histograms
         #setupHist(hist, labels, title, color, y_min, y_max):
@@ -217,9 +247,10 @@ def makePlots(f_name, year):
         c.SaveAs(plot_dir + key + "_DataMCRatios_LogScale.pdf")
 
 def main():
-    makePlots("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016")
-    makePlots("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017")
-    makePlots("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018")
+    #makePlots("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016")
+    #makePlots("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017")
+    #makePlots("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018")
+    makePlots("quickResult_2018.root", "2018")
 
 if __name__ == "__main__":
     main()

@@ -15,7 +15,7 @@ combineResults=true
 useDYInc=false
 year=$1
 outputFiles=
-n_events=1000
+n_events=10000
 
 if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
 then
@@ -116,34 +116,36 @@ rm plots/*
 ###############
 # Data and MC #
 ###############
-#if [ "$useDYInc" = true ]; then
-## DY (inclusive): IncDY
-#declare -a samples=(
-#                    ""$ElectronDataset"_"$year""
-#                    "IncDY_"$year""
-#                   )
-#else
-## DY (HT binned): DYJetsToLL
-#declare -a samples=(
-#                    ""$ElectronDataset"_"$year""
-#                    "DYJetsToLL_HT_400to600_"$year""
-#                   )
-#fi
-
-###########
-# MC only #
-###########
 if [ "$useDYInc" = true ]; then
 # DY (inclusive): IncDY
 declare -a samples=(
+                    ""$ElectronDataset"_"$year"_PeriodB"
+                    "Data_SingleMuon_"$year"_PeriodB"
                     "IncDY_"$year""
                    )
 else
 # DY (HT binned): DYJetsToLL
 declare -a samples=(
+                    ""$ElectronDataset"_"$year"_PeriodB"
+                    "Data_SingleMuon_"$year"_PeriodB"
                     "DYJetsToLL_HT_400to600_"$year""
                    )
 fi
+
+###########
+# MC only #
+###########
+#if [ "$useDYInc" = true ]; then
+## DY (inclusive): IncDY
+#declare -a samples=(
+#                    "IncDY_"$year""
+#                   )
+#else
+## DY (HT binned): DYJetsToLL
+#declare -a samples=(
+#                    "DYJetsToLL_HT_400to600_"$year""
+#                   )
+#fi
 
 
 # loop through samples array
@@ -153,9 +155,9 @@ do
     outputFiles="$outputFiles $output"
     echo " - Running makePlots to create $output"
     echo ""
-    echo "./makePlots -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF"
+    echo "./makePlots -st -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF"
     echo ""
-    ./makePlots -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF
+    ./makePlots -st -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF
     retVal=$?
     #echo "makePlots return value: $retVal"
     if [ $retVal -ne 0 ]; then
