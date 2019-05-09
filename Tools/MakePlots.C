@@ -557,126 +557,8 @@ int main(int argc, char* argv[])
         return StackMC;
     };
     
-    // example cut flows used for SUS-16-050
-    //"passNoiseEventFilterZinv",
-    //"passNoiseEventFilterZinv;passLeptVeto",
-    //"passNoiseEventFilterZinv;passLeptVeto",
-    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv",
-    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv",
-    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv",
-    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv;passMETZinv",
-    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passTaggerZinv;passMETZinv;passBJetsZinv",
-    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
-    //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
-    
-    //Generate cutflows 
-    // for testing
-    //printf("Example cut flows\n");
-    //std::vector<std::string> testCuts = {"", "", "", "cut1", "cut2", "cut3", "cut4", "cut5"};
-    //std::vector<std::string> testCutLevels = SusyUtility::getCutLevels(testCuts);
-    //for (const auto& cuts : testCutLevels)
-    //{
-    //    printf("cuts: %s\n", cuts.c_str());
-    //}
-    
-    // old version of cutflows
-    // Data: apply trigger
-    
-    // // Electron
-    // std::vector<std::string> CutLevels_Data_Electron = {
-    //                           "",
-    //                           "passElectronTrigger",
-    //                           "passElectronTrigger;Pass_EventFilter",
-    //                           "passElectronTrigger;Pass_EventFilter;Pass_JetID",
-    //                           "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned",
-    //                           "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
-    //                           "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned",
-    //                           "passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned"
-    //                          };
-    // 
-    // std::vector<std::string> CutLevels_Data_Electron_LowDM  = CutLevels_Data_Electron;
-    // std::vector<std::string> CutLevels_Data_Electron_HighDM = CutLevels_Data_Electron;
-    // CutLevels_Data_Electron_LowDM.push_back("passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned");
-    // CutLevels_Data_Electron_LowDM.push_back("passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto");
-    // CutLevels_Data_Electron_LowDM.push_back("passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto;passElecZinvSel");
-    // CutLevels_Data_Electron_HighDM.push_back("passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned");
-    // CutLevels_Data_Electron_HighDM.push_back("passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto");
-    // CutLevels_Data_Electron_HighDM.push_back("passElectronTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto;passElecZinvSel");
-    // 
-    // // Muon
-    // std::vector<std::string> CutLevels_Data_Muon = {
-    //                           "",
-    //                           "passMuonTrigger",
-    //                           "passMuonTrigger;Pass_EventFilter",
-    //                           "passMuonTrigger;Pass_EventFilter;Pass_JetID",
-    //                           "passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned",
-    //                           "passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
-    //                           "passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned",
-    //                           "passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned"
-    //                          };
-    // 
-    // std::vector<std::string> CutLevels_Data_Muon_LowDM  = CutLevels_Data_Muon;
-    // std::vector<std::string> CutLevels_Data_Muon_HighDM = CutLevels_Data_Muon;
-    // CutLevels_Data_Muon_LowDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned");
-    // CutLevels_Data_Muon_LowDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_ElecVeto");
-    // CutLevels_Data_Muon_LowDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_ElecVeto;passMuZinvSel");
-    // CutLevels_Data_Muon_HighDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned");
-    // CutLevels_Data_Muon_HighDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_ElecVeto");
-    // CutLevels_Data_Muon_HighDM.push_back("passMuonTrigger;Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_ElecVeto;passMuZinvSel");
-    // 
-    // // MC: do not apply trigger; apply no cuts twice so that bins match data cut flow
-    // std::vector<std::string> CutLevels_MC = {
-    //                           "",
-    //                           "", // no trigger cut for MC; placeholder so that bins match data
-    //                           "Pass_EventFilter",
-    //                           "Pass_EventFilter;Pass_JetID",
-    //                           "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned",
-    //                           "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned",
-    //                           "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned",
-    //                           "Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned",
-    //                          };
-    // 
-    // // Electron
-    // std::vector<std::string> CutLevels_MC_Electron_LowDM  = CutLevels_MC;
-    // std::vector<std::string> CutLevels_MC_Electron_HighDM = CutLevels_MC;
-    // CutLevels_MC_Electron_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned");
-    // CutLevels_MC_Electron_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto");
-    // CutLevels_MC_Electron_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto;passElecZinvSel");
-    // CutLevels_MC_Electron_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned");
-    // CutLevels_MC_Electron_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto");
-    // CutLevels_MC_Electron_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto;passElecZinvSel");
-    // 
-    // // Muon
-    // std::vector<std::string> CutLevels_MC_Muon_LowDM  = CutLevels_MC;
-    // std::vector<std::string> CutLevels_MC_Muon_HighDM = CutLevels_MC;
-    // CutLevels_MC_Muon_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned");
-    // CutLevels_MC_Muon_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_ElecVeto");
-    // CutLevels_MC_Muon_LowDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_lowDM_drLeptonCleaned;Pass_ElecVeto;passMuZinvSel");
-    // CutLevels_MC_Muon_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned");
-    // CutLevels_MC_Muon_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_ElecVeto");
-    // CutLevels_MC_Muon_HighDM.push_back("Pass_EventFilter;Pass_JetID;SAT_Pass_MET_drLeptonCleaned;SAT_Pass_HT_drLeptonCleaned;SAT_Pass_NJets20_drLeptonCleaned;SAT_Pass_Baseline_drLeptonCleaned;SAT_Pass_highDM_drLeptonCleaned;Pass_ElecVeto;passMuZinvSel");
-    
-
-    // new version 
 
     std::vector<Plotter::CutFlowSummary> cutFlowSummaries;
-
-    
-    // Electron for reference
-    //std::vector<std::string> CutLevels_Data_Electron_ref = {
-    //                          "",
-    //                          "passElectronTrigger",
-    //                          "Pass_EventFilter",
-    //                          "Pass_JetID",
-    //                          "SAT_Pass_MET_drLeptonCleaned",
-    //                          "SAT_Pass_HT_drLeptonCleaned",
-    //                          "SAT_Pass_NJets20_drLeptonCleaned",
-    //                          "SAT_Pass_Baseline_drLeptonCleaned"
-    //                         };
-    // passElecPt
-    // passMuPt
-    // SAT_Pass_lowDM_drLeptonCleaned
-    // SAT_Pass_highDM_drLeptonCleaned
 
     // Electron
     std::vector<std::string> Cuts_Data_Electron = {
@@ -738,14 +620,6 @@ int main(int argc, char* argv[])
     std::vector<std::string> CutLevels_Data_Muon_HighDM = SusyUtility::getCutLevels(Cuts_Data_Muon_HighDM);
     std::vector<std::string> CutLevels_MC_Muon_LowDM    = SusyUtility::getCutLevels(Cuts_MC_Muon_LowDM);
     std::vector<std::string> CutLevels_MC_Muon_HighDM   = SusyUtility::getCutLevels(Cuts_MC_Muon_HighDM);
-    
-    // for testing
-    //printf("CutLevels_Data_Electron_LowDM\n");
-    //for (const auto& cuts : CutLevels_Data_Electron_LowDM)
-    //{
-    //    printf("cuts: %s\n", cuts.c_str());
-    //}
-
     
     // di-electron
     if (doDataMCElectron)
