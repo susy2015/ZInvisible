@@ -149,35 +149,6 @@ int main(int argc, char* argv[])
     // _year
     std::string yearTag = "_" + year; 
 
-    // --- HACK due to different luminosities in different datasets (within the same year) --- //
-
-    // only run over one dataset due to different luminosities
-    //if (int(doDataMCElectron) + int(doDataMCMuon) + int(doDataMCPhoton) != 1)
-    //{
-    //    std::cout << "Due to different luminosities for our post-processed datasets within the same year (currently), you may not do DataMC for different datasets at the same time." << std::endl;
-    //    std::cout << "Please pick only one from Electron, Muon, or Photon." << std::endl;
-    //    exit(1);
-    //}
-
-    // lumi for SampleSet
-    //if (doDataMCElectron)
-    //{
-    //    lumi_2016 = AnaSamples::luminosity_electron_2016; 
-    //    lumi_2017 = AnaSamples::luminosity_electron_2017; 
-    //    lumi_2018 = AnaSamples::luminosity_electron_2018; 
-    //}
-    //else if (doDataMCMuon)
-    //{
-    //    lumi_2016 = AnaSamples::luminosity_muon_2016; 
-    //    lumi_2017 = AnaSamples::luminosity_muon_2017; 
-    //    lumi_2018 = AnaSamples::luminosity_muon_2018; 
-    //}
-    //else if (doDataMCPhoton)
-    //{
-    //    lumi_2016 = AnaSamples::luminosity_photon_2016; 
-    //    lumi_2017 = AnaSamples::luminosity_photon_2017; 
-    //    lumi_2018 = AnaSamples::luminosity_photon_2018; 
-    //}
     
     // lumi for Plotter
     if (year.compare("2016") == 0)
@@ -629,21 +600,21 @@ int main(int argc, char* argv[])
         else          DY_sample = "DYJetsToLL";
         // use IncDY or DYJetsToLL
 
-        // use vetos
-        //PDS dsDY_LowDM("DY",                         fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned",                   "");
-        //PDS dsDY_LowDM_Electron("DY Pass_MuonVeto",  fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto",     "");
-        //PDS dsDY_LowDM_Muon("DY Pass_ElecVeto",   fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;Pass_ElecVeto",  "");
-        //PDS dsDY_HighDM("DY",                        fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned",                   "");
-        //PDS dsDY_HighDM_Electron("DY Pass_MuonVeto", fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto",     "");
-        //PDS dsDY_HighDM_Muon("DY Pass_ElecVeto",  fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;Pass_ElecVeto",  "");
-        
-        // including baseline
-        //PDS dsDY_LowDM("DY",                    fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned",                "");
-        //PDS dsDY_LowDM_Electron("DY Electron",  fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passDiElecSel",  "");
-        //PDS dsDY_LowDM_Muon("DY Muon",          fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passDiMuSel",    "");
-        //PDS dsDY_HighDM("DY",                   fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned",               "");
-        //PDS dsDY_HighDM_Electron("DY Electron", fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passDiElecSel", "");
-        //PDS dsDY_HighDM_Muon("DY Muon",         fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passDiMuSel",   "");
+        // // use vetos
+        // PDS dsDY_LowDM("DY",                         fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned",                   "");
+        // PDS dsDY_LowDM_Electron("DY Pass_MuonVeto",  fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;Pass_MuonVeto",     "");
+        // PDS dsDY_LowDM_Muon("DY Pass_ElecVeto",      fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;Pass_ElecVeto",  "");
+        // PDS dsDY_HighDM("DY",                        fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned",                   "");
+        // PDS dsDY_HighDM_Electron("DY Pass_MuonVeto", fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;Pass_MuonVeto",     "");
+        // PDS dsDY_HighDM_Muon("DY Pass_ElecVeto",     fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;Pass_ElecVeto",  "");
+        // 
+        // // including baseline
+        // PDS dsDY_LowDM("DY",                    fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned",                "");
+        // PDS dsDY_LowDM_Electron("DY Electron",  fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passDiElecSel",  "");
+        // PDS dsDY_LowDM_Muon("DY Muon",          fileMap[DY_sample + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passDiMuSel",    "");
+        // PDS dsDY_HighDM("DY",                   fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned",               "");
+        // PDS dsDY_HighDM_Electron("DY Electron", fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passDiElecSel", "");
+        // PDS dsDY_HighDM_Muon("DY Muon",         fileMap[DY_sample + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passDiMuSel",   "");
         
         // remove baseline  
         PDS dsDY_LowDM("DY",                    fileMap[DY_sample + yearTag],  "",               "");
@@ -687,22 +658,22 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MC_HighDM_bestRecoZM" + yearTag, {dcMC_HighDM_bestRecoZM, dcMC_HighDM_Electron_bestRecoZM, dcMC_HighDM_Muon_bestRecoZM}, {2, 3}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
 
         // no selection
-        //PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset + yearTag],  "",  "");
-        //PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset + yearTag],  "", "");
-        //std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton("","");
-        //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton("","");
+        PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset + yearTag],  "",  "");
+        PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset + yearTag],  "", "");
+        std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton("","");
+        std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton("","");
         
-        // testing
-        //PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel",  "");
-        //PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel", "");
-        //std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel","");
-        //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel","");
+        // without lepton cleaning
+        //PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset + yearTag],  "SAT_Pass_lowDM;passElecZinvSel;passElectronTrigger",  "");
+        //PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset + yearTag],  "SAT_Pass_highDM;passElecZinvSel;passElectronTrigger", "");
+        //std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM;passElecZinvSel","");
+        //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM;passElecZinvSel","");
         
         // apply selection
-        PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger",  "");
-        PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger", "");
-        std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel","");
-        std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel","");
+        //PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset + yearTag],  "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger",  "");
+        //PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset + yearTag],  "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger", "");
+        //std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel","");
+        //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel","");
         
         // n_jets
         PDC dcData_Electron_LowDM_nj(  "data",   "nJets_drLeptonCleaned", {dsData_Electron_LowDM});
@@ -922,16 +893,16 @@ int main(int argc, char* argv[])
     if (doDataMCMuon)
     {
         // no selection
-        //PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],  "",  "");
-        //PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],  "", "");
-        //std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("","");
-        //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("","");
+        PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],  "",  "");
+        PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],  "", "");
+        std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("","");
+        std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("","");
         
         // apply selection
-        PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],     "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger",  "");
-        PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],     "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger", "");
-        std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel","");
-        std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel","");
+        //PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],     "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger",  "");
+        //PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],     "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger", "");
+        //std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel","");
+        //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel","");
         
         // n_jets
         PDC dcData_Muon_LowDM_nj(  "data",   "nJets_drLeptonCleaned", {dsData_Muon_LowDM});
@@ -1065,16 +1036,16 @@ int main(int argc, char* argv[])
         // Photon 
 
         // no selection
-        //PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset + yearTag], "",  "");
-        //PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset + yearTag], "",  "");
-        //std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("","");
-        //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("","");
+        PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset + yearTag], "",  "");
+        PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset + yearTag], "",  "");
+        std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("","");
+        std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("","");
         
         // apply selection
-        PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset + yearTag],       "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
-        PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset + yearTag],       "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
-        std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
-        std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
+        //PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset + yearTag],       "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
+        //PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset + yearTag],       "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
+        //std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
+        //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
         
         // n_jets
         PDC dcData_Photon_LowDM_nj(  "data",   "nJets_drPhotonCleaned", {dsData_Photon_LowDM});
