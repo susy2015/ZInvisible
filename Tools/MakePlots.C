@@ -149,35 +149,6 @@ int main(int argc, char* argv[])
     // _year
     std::string yearTag = "_" + year; 
 
-    // --- HACK due to different luminosities in different datasets (within the same year) --- //
-
-    // only run over one dataset due to different luminosities
-    //if (int(doDataMCElectron) + int(doDataMCMuon) + int(doDataMCPhoton) != 1)
-    //{
-    //    std::cout << "Due to different luminosities for our post-processed datasets within the same year (currently), you may not do DataMC for different datasets at the same time." << std::endl;
-    //    std::cout << "Please pick only one from Electron, Muon, or Photon." << std::endl;
-    //    exit(1);
-    //}
-
-    // lumi for SampleSet
-    //if (doDataMCElectron)
-    //{
-    //    lumi_2016 = AnaSamples::luminosity_electron_2016; 
-    //    lumi_2017 = AnaSamples::luminosity_electron_2017; 
-    //    lumi_2018 = AnaSamples::luminosity_electron_2018; 
-    //}
-    //else if (doDataMCMuon)
-    //{
-    //    lumi_2016 = AnaSamples::luminosity_muon_2016; 
-    //    lumi_2017 = AnaSamples::luminosity_muon_2017; 
-    //    lumi_2018 = AnaSamples::luminosity_muon_2018; 
-    //}
-    //else if (doDataMCPhoton)
-    //{
-    //    lumi_2016 = AnaSamples::luminosity_photon_2016; 
-    //    lumi_2017 = AnaSamples::luminosity_photon_2017; 
-    //    lumi_2018 = AnaSamples::luminosity_photon_2018; 
-    //}
     
     // lumi for Plotter
     if (year.compare("2016") == 0)
