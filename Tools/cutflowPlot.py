@@ -48,47 +48,6 @@ def makePlots(f_name, year):
     f_Electron = ROOT.TFile(f_name_Electron)
     f_Muon     = ROOT.TFile(f_name_Muon)
     
-    # old version
-    #cuts = [
-    #    "No cuts",
-    #    "Trigger",
-    #    "Filter",
-    #    "JetID",
-    #    "MET",
-    #    "HT",
-    #    "nJets",
-    #    "Baseline",
-    #]
-
-    # # Electron
-    # cutsElectronLowDM = cuts[:]
-    # cutsElectronLowDM.append("Low #Deltam")
-    # cutsElectronLowDM.append("Muon veto")
-    # cutsElectronLowDM.append("Z to ee")
-    # cutsElectronHighDM = cuts[:]
-    # cutsElectronHighDM.append("High #Deltam")
-    # cutsElectronHighDM.append("Muon veto")
-    # cutsElectronHighDM.append("Z to ee")
-    # # Muon 
-    # cutsMuonLowDM = cuts[:]
-    # cutsMuonLowDM.append("Low #Deltam")
-    # cutsMuonLowDM.append("Electron veto")
-    # cutsMuonLowDM.append("Z to #mu#mu")
-    # cutsMuonHighDM = cuts[:]
-    # cutsMuonHighDM.append("High #Deltam")
-    # cutsMuonHighDM.append("Electron veto")
-    # cutsMuonHighDM.append("Z to #mu#mu")
-    # Lepton
-    # cutsLeptonLowDM = cuts[:]
-    # cutsLeptonLowDM.append("Low #Deltam")
-    # cutsLeptonLowDM.append("Lepton veto")
-    # cutsLeptonLowDM.append("Z to LL")
-    # cutsLeptonHighDM = cuts[:]
-    # cutsLeptonHighDM.append("High #Deltam")
-    # cutsLeptonHighDM.append("Lepton veto")
-    # cutsLeptonHighDM.append("Z to LL")
-    
-    # new version
     cuts = [
         "No cuts",
         "Trigger",
