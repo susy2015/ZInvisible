@@ -571,13 +571,13 @@ int main(int argc, char* argv[])
     
     //Generate cutflows 
     // for testing
-    printf("Give me those cut flows boy!\n");
-    std::vector<std::string> testCuts = {"", "", "", "cut1", "cut2", "cut3", "cut4", "cut5"};
-    std::vector<std::string> testCutLevels = SusyUtility::getCutLevels(testCuts);
-    for (const auto& cuts : testCutLevels)
-    {
-        printf("cuts: %s\n", cuts.c_str());
-    }
+    //printf("Example cut flows\n");
+    //std::vector<std::string> testCuts = {"", "", "", "cut1", "cut2", "cut3", "cut4", "cut5"};
+    //std::vector<std::string> testCutLevels = SusyUtility::getCutLevels(testCuts);
+    //for (const auto& cuts : testCutLevels)
+    //{
+    //    printf("cuts: %s\n", cuts.c_str());
+    //}
     
     // old version of cutflows
     // Data: apply trigger
@@ -697,7 +697,7 @@ int main(int argc, char* argv[])
     std::vector<std::string> Cuts_Data_Muon = {
                               "",
                               "passMuonTrigger",
-                              "Pass_ElectronVeto",
+                              "Pass_ElecVeto",
                               "passMuPt",
                               "passDiMuSel",
                               "passMuZinvSel",
@@ -738,6 +738,13 @@ int main(int argc, char* argv[])
     std::vector<std::string> CutLevels_Data_Muon_HighDM = SusyUtility::getCutLevels(Cuts_Data_Muon_HighDM);
     std::vector<std::string> CutLevels_MC_Muon_LowDM    = SusyUtility::getCutLevels(Cuts_MC_Muon_LowDM);
     std::vector<std::string> CutLevels_MC_Muon_HighDM   = SusyUtility::getCutLevels(Cuts_MC_Muon_HighDM);
+    
+    // for testing
+    //printf("CutLevels_Data_Electron_LowDM\n");
+    //for (const auto& cuts : CutLevels_Data_Electron_LowDM)
+    //{
+    //    printf("cuts: %s\n", cuts.c_str());
+    //}
 
     
     // di-electron
