@@ -15,7 +15,7 @@ combineResults=true
 useDYInc=false
 year=$1
 outputFiles=
-n_events=20000
+n_events=1000
 
 if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
 then
@@ -87,25 +87,25 @@ rm plots/*
 
 # WARNING: only do electron, muon and photon data at the same time if the luminosities are the same
 # In 2018, only run over EGamma once (same dataset for electrons and photons
-if [[ "$year" == "2018" ]]
-then
-declare -a samples=(
-                    ""$ElectronDataset"_"$year""
-                    "Data_SingleMuon_"$year""
-                    "DYJetsToLL_HT_400to600_"$year""
-                    "GJets_HT_400To600_"$year""
-                    "ZJetsToNuNu_HT_400to600_"$year""
-                   )
-else
-declare -a samples=(
-                    ""$ElectronDataset"_"$year""
-                    "Data_SingleMuon_"$year""
-                    ""$PhotonDataset"_"$year""
-                    "DYJetsToLL_HT_400to600_"$year""
-                    "GJets_HT_400To600_"$year""
-                    "ZJetsToNuNu_HT_400to600_"$year""
-                   )
-fi
+#if [[ "$year" == "2018" ]]
+#then
+#declare -a samples=(
+#                    ""$ElectronDataset"_"$year""
+#                    "Data_SingleMuon_"$year""
+#                    "DYJetsToLL_HT_400to600_"$year""
+#                    "GJets_HT_400To600_"$year""
+#                    "ZJetsToNuNu_HT_400to600_"$year""
+#                   )
+#else
+#declare -a samples=(
+#                    ""$ElectronDataset"_"$year""
+#                    "Data_SingleMuon_"$year""
+#                    ""$PhotonDataset"_"$year""
+#                    "DYJetsToLL_HT_400to600_"$year""
+#                    "GJets_HT_400To600_"$year""
+#                    "ZJetsToNuNu_HT_400to600_"$year""
+#                   )
+#fi
 
 #declare -a samples=(
 #                    ""$PhotonDataset"_"$year""
@@ -133,17 +133,17 @@ fi
 ###########
 # MC only #
 ###########
-#if [ "$useDYInc" = true ]; then
-## DY (inclusive): IncDY
-#declare -a samples=(
-#                    "IncDY_"$year""
-#                   )
-#else
-## DY (HT binned): DYJetsToLL
-#declare -a samples=(
-#                    "DYJetsToLL_HT_400to600_"$year""
-#                   )
-#fi
+if [ "$useDYInc" = true ]; then
+# DY (inclusive): IncDY
+declare -a samples=(
+                    "IncDY_"$year""
+                   )
+else
+# DY (HT binned): DYJetsToLL
+declare -a samples=(
+                    "DYJetsToLL_HT_400to600_"$year""
+                   )
+fi
 
 
 # loop through samples array
