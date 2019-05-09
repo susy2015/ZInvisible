@@ -15,7 +15,7 @@ combineResults=true
 useDYInc=false
 year=$1
 outputFiles=
-n_events=100000
+n_events=10000
 
 if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
 then
@@ -120,12 +120,14 @@ if [ "$useDYInc" = true ]; then
 # DY (inclusive): IncDY
 declare -a samples=(
                     ""$ElectronDataset"_"$year"_PeriodB"
+                    "Data_SingleMuon_"$year"_PeriodB"
                     "IncDY_"$year""
                    )
 else
 # DY (HT binned): DYJetsToLL
 declare -a samples=(
                     ""$ElectronDataset"_"$year"_PeriodB"
+                    "Data_SingleMuon_"$year"_PeriodB"
                     "DYJetsToLL_HT_400to600_"$year""
                    )
 fi
