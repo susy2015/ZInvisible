@@ -142,6 +142,8 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 
     myPDFUnc = new PDFUncertainty();
     bTagCorrector = nullptr;
+    ISRcorrector = nullptr;
+    pileup = nullptr;
 
     // bTagCorrector not used anymore
     //if(isCondor)
@@ -153,24 +155,23 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     //    bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools", false);
     //}
 
-    ISRcorrector = nullptr;
-    if(isCondor)
-    {
-       ISRcorrector = new ISRCorrector("allINone_ISRJets.root","","");   
-    }
-    else
-    {  
-        ISRcorrector = new ISRCorrector("allINone_ISRJets.root","/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools","");
-    }
-    
-    if(isCondor)
-    {
-        pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
-    }
-    else
-    {
-        pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
-    } 
+    //if(isCondor)
+    //{
+    //   ISRcorrector = new ISRCorrector("allINone_ISRJets.root","","");   
+    //}
+    //else
+    //{  
+    //    ISRcorrector = new ISRCorrector("allINone_ISRJets.root","/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools","");
+    //}
+    //
+    //if(isCondor)
+    //{
+    //    pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
+    //}
+    //else
+    //{
+    //    pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
+    //} 
     
 }
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
