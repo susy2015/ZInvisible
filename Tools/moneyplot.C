@@ -39,9 +39,15 @@ void smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, d
 //int main(int argc, char* argv[])
 void run(std::string inputFile, std::string inputHist, std::string outputFile)
 {
+    printf("start of run()\n");
+    printf("input file: %s\n", inputFile.c_str());
+    printf("output file: %s\n", outputFile.c_str());
     // open file to write info tables
     std::string txtStr = ".txt";
+    printf("before freopen()\n");
     freopen((outputFile + txtStr).c_str(), "w", stdout);
+    printf("after freopen()\n");
+
     
     // Be careful. Accessing root files and/or histograms that don't exist will cause seg faults.
     // Make sure the file and histogram names are correct.
@@ -49,8 +55,12 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     // open input file
     TFile* f1 = TFile::Open(inputFile.c_str());
     
+    printf("f1: %d\n", f1);
+    
     // load histogram from file
     TH1D* h1 = (TH1D*)f1->Get(inputHist.c_str());
+    
+    printf("h1: %d\n", h1);
 
     // Get the relevant information
     //std::string inputFile = "result.root";
@@ -107,7 +117,7 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     //TH1D* h8 = (TH1D*)f2->Get("hPDF_sym");
     //TH1D* h9 = (TH1D*)f2->Get("hTrig_sym");
 
-    //TH1D* h5_2 = (TH1D*)h5->Clone("hOther_ratio_sym"); WTF JOE!!!!
+    //TH1D* h5_2 = (TH1D*)h5->Clone("hOther_ratio_sym"); yo no se
 
     //TGraphAsymmErrors* g1 = (TGraphAsymmErrors*)f2->Get("");
     TGraphAsymmErrors* g3 = new TGraphAsymmErrors();
@@ -160,6 +170,7 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
         v_uncertainty.push_back(err);
         std::cout << "bin " << i << ", rel unc (njet): " << h2->GetBinContent(i) << ", rel unc (norm): " << rel_unc_2  << "" << std::endl;
     }
+    printf("print 2\n");
 
     TGraphAsymmErrors* g1 = new TGraphAsymmErrors(n,x,y,exl,exh,eyl_1,eyh_1);
     TGraphAsymmErrors* g2 = new TGraphAsymmErrors(n,x,y,exl,exh,eyl_2,eyh_2);
@@ -276,6 +287,7 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
         if(lmax > legMin) max *= (lmax - locMin)/(legMin - locMin);
         dummy->GetYaxis()->SetRangeUser(0.0, max*1.4);
     }
+    printf("print 3\n");
 
     dummy->Draw();
     
@@ -325,6 +337,7 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     //Below line is the overall for the binng
     //SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
     // make money plot png/pdf
+    printf("making plots\n");
     std::string pngStr = ".png";
     std::string pdfStr = ".pdf";
     c->Print((outputFile + pngStr).c_str());
@@ -422,9 +435,14 @@ int main(int argc, char* argv[])
     //--------------------------------//
     //--- Search Bins January 2019 ---//
     //--------------------------------//
-    std::string inputFile = "ZJetsToNuNu_HT_400to600.root";
-    run(inputFile, "nSearchBinLowDM/ZNuNu_nSearchBinLowDMnSearchBinLowDMnSearchBinLowDMZJetsToNuNu Search Bin Low DMdata", "moneyplot_LowDM");
-    run(inputFile, "nSearchBinHighDM/ZNuNu_nSearchBinHighDMnSearchBinHighDMnSearchBinHighDMZJetsToNuNu Search Bin High DMdata", "moneyplot_HighDM");
+    // old histogram names
+    //std::string inputFile = "ZJetsToNuNu_HT_400to600.root";
+    //run(inputFile, "nSearchBinLowDM/ZNuNu_nSearchBinLowDMnSearchBinLowDMnSearchBinLowDMZJetsToNuNu Search Bin Low DMdata", "moneyplot_LowDM");
+    //run(inputFile, "nSearchBinHighDM/ZNuNu_nSearchBinHighDMnSearchBinHighDMnSearchBinHighDMZJetsToNuNu Search Bin High DMdata", "moneyplot_HighDM");
+    // new histogram names
+    std::string inputFile = "condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root";
+    run(inputFile, "nSearchBinLowDM/ZNuNu_nSearchBinLowDM_2016nSearchBinLowDMnSearchBinLowDMZJetsToNuNu Search Bin Low DMdata", "moneyplot_LowDM");
+    run(inputFile, "nSearchBinHighDM/ZNuNu_nSearchBinHighDM_2016nSearchBinHighDMnSearchBinHighDMZJetsToNuNu Search Bin High DMdata", "moneyplot_HighDM");
 
 
     return 0;
