@@ -39,14 +39,9 @@ void smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, d
 //int main(int argc, char* argv[])
 void run(std::string inputFile, std::string inputHist, std::string outputFile)
 {
-    printf("start of run()\n");
-    printf("input file: %s\n", inputFile.c_str());
-    printf("output file: %s\n", outputFile.c_str());
     // open file to write info tables
     std::string txtStr = ".txt";
-    printf("before freopen()\n");
     freopen((outputFile + txtStr).c_str(), "w", stdout);
-    printf("after freopen()\n");
 
     
     // Be careful. Accessing root files and/or histograms that don't exist will cause seg faults.
@@ -55,12 +50,8 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     // open input file
     TFile* f1 = TFile::Open(inputFile.c_str());
     
-    printf("f1: %d\n", f1);
-    
     // load histogram from file
     TH1D* h1 = (TH1D*)f1->Get(inputHist.c_str());
-    
-    printf("h1: %d\n", h1);
 
     // Get the relevant information
     //std::string inputFile = "result.root";
@@ -170,7 +161,6 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
         v_uncertainty.push_back(err);
         std::cout << "bin " << i << ", rel unc (njet): " << h2->GetBinContent(i) << ", rel unc (norm): " << rel_unc_2  << "" << std::endl;
     }
-    printf("print 2\n");
 
     TGraphAsymmErrors* g1 = new TGraphAsymmErrors(n,x,y,exl,exh,eyl_1,eyh_1);
     TGraphAsymmErrors* g2 = new TGraphAsymmErrors(n,x,y,exl,exh,eyl_2,eyh_2);
@@ -287,7 +277,6 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
         if(lmax > legMin) max *= (lmax - locMin)/(legMin - locMin);
         dummy->GetYaxis()->SetRangeUser(0.0, max*1.4);
     }
-    printf("print 3\n");
 
     dummy->Draw();
     
@@ -337,7 +326,6 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     //Below line is the overall for the binng
     //SearchBins::drawSBregionDef(dummy->GetMinimum(),dummy->GetMaximum());
     // make money plot png/pdf
-    printf("making plots\n");
     std::string pngStr = ".png";
     std::string pdfStr = ".pdf";
     c->Print((outputFile + pngStr).c_str());
