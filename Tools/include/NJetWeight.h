@@ -126,6 +126,8 @@ namespace plotterFunctions
             MCfake2b = nullptr;
             MCfake3b = nullptr;
 
+            // not used anymore
+            /*
             TFile *f = new TFile("njetWgtHists.root");
             if(f)
             {
@@ -177,6 +179,7 @@ namespace plotterFunctions
               {
                 std::cout << "Failed to open: dataMCreweight_allJets.root" << std::endl;
               }
+              */
         }
 
         ~NJetWeight()

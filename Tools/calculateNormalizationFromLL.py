@@ -200,9 +200,15 @@ def getNormAndError(file_name, year, verbose):
 
 def main():
     verbose = False
-    getNormAndError("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016", verbose)
-    getNormAndError("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017", verbose)
-    getNormAndError("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018", verbose)
+    # May 5, 2019 Results
+    #getNormAndError("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016", verbose)
+    #getNormAndError("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017", verbose)
+    #getNormAndError("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018", verbose)
+    # May 9, 2019 Results
+    getNormAndError("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016", verbose)
+    getNormAndError("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017", verbose)
+    getNormAndError("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018", verbose)
+
 
 if __name__ == "__main__":
     main()

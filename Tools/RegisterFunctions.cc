@@ -143,14 +143,15 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     myPDFUnc = new PDFUncertainty();
     bTagCorrector = nullptr;
 
-    if(isCondor)
-    {
-        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
-    }
-    else
-    {
-        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools", false);
-    }
+    // bTagCorrector not used anymore
+    //if(isCondor)
+    //{
+    //    bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
+    //}
+    //else
+    //{
+    //    bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools", false);
+    //}
 
     ISRcorrector = nullptr;
     if(isCondor)
