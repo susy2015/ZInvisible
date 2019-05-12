@@ -206,9 +206,11 @@ def makePlots(f_name, year):
         c.SaveAs(plot_dir + key + "_DataMCRatios_LogScale.pdf")
 
 def main():
+    # May 5, 2019 Results
     #makePlots("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016")
     #makePlots("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017")
     #makePlots("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018")
+    # May 9, 2019 Results
     makePlots("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016")
     makePlots("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017")
     makePlots("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018")
