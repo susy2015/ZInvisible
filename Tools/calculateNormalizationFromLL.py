@@ -8,7 +8,15 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 class Normalization:
     def __init__(self):
-        norm_map = {}
+        self.norm_map = {}
+        self.output_file = 0 
+        self.years = []
+        self.particles = ["Electron", "Muon"]
+        self.regions   = ["LowDM", "HighDM"]
+        self.regions_tex = {
+                             "LowDM"  : "Low $\Delta m$",
+                             "HighDM" : "High $\Delta m$"
+                           }
 
     def calcNorm(self, A, x, verbose=False):
         # --- Solve for b --- #
@@ -101,6 +109,8 @@ class Normalization:
         return Ainverse_error
     
     def getNormAndError(self, file_name, year, verbose):
+        self.years.append(year)
+        self.norm_map[year] = {}
         print "------------------------------------------------------------------------------"
         print "Year: {0}".format(year)
         print "File: {0}".format(file_name)
@@ -109,12 +119,10 @@ class Normalization:
         variable = "bestRecoZM"
         # histograms
         # example: DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
-        particles = ["Electron", "Muon"]
-        regions   = ["LowDM", "HighDM"]
         histos = {}
-        for particle in particles:
+        for particle in self.particles:
             histos[particle] = {}
-            for region in regions:
+            for region in self.regions:
                 histos[particle][region] = { 
                     "Data"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
                     "DY"       : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
@@ -123,9 +131,11 @@ class Normalization:
                     "Rare"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMRarestack"
                 }
         
-        for particle in particles:
+        for particle in self.particles:
+            self.norm_map[year][particle] = {}
             print particle
-            for region in regions:
+            for region in self.regions:
+                self.norm_map[year][particle][region] = {}
                 print region
                 h_Data  = f.Get(variable + "/" + histos[particle][region]["Data"])
                 h_DY    = f.Get(variable + "/" + histos[particle][region]["DY"])
@@ -148,10 +158,10 @@ class Normalization:
                 
                 # pass error to IntegralAndError as Double_t & error 
                 # use ROOT.Double for pass-by-ref of doubles
-                #Double_t TH1::IntegralAndError  (Int_t binx1,
-                #                                 Int_t binx2,
-                #                                 Double_t & error,
-                #                                 Option_t * option = "" 
+                # Double_t TH1::IntegralAndError  (Int_t binx1,
+                #                                  Int_t binx2,
+                #                                  Double_t & error,
+                #                                  Option_t * option = "" 
                 #                                 ) const
                 
                 # MC matrix (A)
@@ -198,9 +208,50 @@ class Normalization:
                 b1_error = error[0]
                 b2_error = error[1]
                 
-                print "R_Z = {0:.4f} +/- {1:.4f}".format(b1, b1_error)
-                print "R_T = {0:.4f} +/- {1:.4f}".format(b2, b2_error)
+                R_Z_print = "R_Z = {0:.4f} +/- {1:.4f}".format(b1, b1_error)
+                R_T_print = "R_T = {0:.4f} +/- {1:.4f}".format(b2, b2_error)
+                R_Z_tex = "${0:.4f} \pm {1:.4f}$".format(b1, b1_error)
+                R_T_tex = "${0:.4f} \pm {1:.4f}$".format(b2, b2_error)
+                print R_Z_print 
+                print R_T_print
+                self.norm_map[year][particle][region]["R_Z"] = R_Z_tex 
+                self.norm_map[year][particle][region]["R_T"] = R_T_tex 
         print "------------------------------------------------------------------------------"
+    
+    def writeLine(self, line):
+        self.output_file.write(line + "\n")
+
+    def makeTexFile(self, output_name):
+        # write latex file with table
+        with open(output_name, "w+") as f:
+            self.output_file = f
+            # begin document
+            self.writeLine("\documentclass{article}")
+            self.writeLine("\usepackage[utf8]{inputenc}")
+            self.writeLine("\usepackage{geometry}")
+            self.writeLine("\usepackage{longtable}")
+            self.writeLine("\geometry{margin=1in}")
+            self.writeLine("")
+            self.writeLine("\\begin{document}")
+            self.writeLine("Normalization")
+            # begin table
+            self.writeLine("\\begin{table}[h]")
+            self.writeLine("\\begin{tabular}{|c|c|c|c|c|}")
+            self.writeLine("\hline Year & CR & Selection & $R_Z$ & $R_T$ \\\\")
+            # write values to table
+            for year in self.years:
+                for particle in self.particles:
+                    for region in self.regions:
+                        R_Z = self.norm_map[year][particle][region]["R_Z"] 
+                        R_T = self.norm_map[year][particle][region]["R_T"] 
+                        region_tex = self.regions_tex[region]
+                        self.writeLine("\hline {0} & {1} & {2} & {3} & {4} \\\\".format(year, particle, region_tex, R_Z, R_T))
+            self.writeLine("\hline")
+            self.writeLine("\end{tabular}")
+            # end table
+            self.writeLine("\end{table}")
+            # end document
+            self.writeLine("\end{document}")
 
 def main():
     verbose = False
@@ -213,6 +264,7 @@ def main():
     N.getNormAndError("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016", verbose)
     N.getNormAndError("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017", verbose)
     N.getNormAndError("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018", verbose)
+    N.makeTexFile("normalization.tex")
 
 
 if __name__ == "__main__":
