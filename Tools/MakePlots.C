@@ -151,6 +151,9 @@ int main(int argc, char* argv[])
     // year and periods
     std::string yearTag   = "_" + year; 
     std::string periodTag = ""; 
+    // HEM veto for 2018 periods C and C
+    std::string HEMVeto_drLeptonCleaned = "";
+    std::string HEMVeto_drPhotonCleaned = "";
 
     // lumi for Plotter
     if (year.compare("2016") == 0)
@@ -181,12 +184,15 @@ int main(int argc, char* argv[])
     else if (year.compare("2018_CD") == 0)
     {
         // use lumi for periods C + D
-        lumi_2018       = AnaSamples::luminosity_2018_CD;
-        lumi            = lumi_2018;
-        yearTag         = "_2018"; 
-        periodTag       = "_PeriodsCD";
-        ElectronDataset = "Data_EGamma";
-        PhotonDataset   = "Data_EGamma";
+        lumi_2018               = AnaSamples::luminosity_2018_CD;
+        lumi                    = lumi_2018;
+        // HEM vetos: use ";veto_name" so that it can be appended to cuts
+        HEMVeto_drLeptonCleaned = ";SAT_Pass_HEMVeto20_drLeptonCleaned";
+        HEMVeto_drPhotonCleaned = ";SAT_Pass_HEMVeto20_drPhotonCleaned";
+        yearTag                 = "_2018"; 
+        periodTag               = "_PeriodsCD";
+        ElectronDataset         = "Data_EGamma";
+        PhotonDataset           = "Data_EGamma";
     }
     else
     {
@@ -701,10 +707,10 @@ int main(int argc, char* argv[])
         //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM;passElecZinvSel","");
         
         // apply selection
-        PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset],        "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger",  "");
-        PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset],        "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger", "");
-        std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel","");
-        std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel","");
+        PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset],                  "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger" + HEMVeto_drLeptonCleaned,  "");
+        PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset],                  "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger" + HEMVeto_drLeptonCleaned, "");
+        std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel" + HEMVeto_drLeptonCleaned,"");
+        std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel" + HEMVeto_drLeptonCleaned,"");
         
         // n_jets
         PDC dcData_Electron_LowDM_nj(  "data",   "nJets_drLeptonCleaned", {dsData_Electron_LowDM});
@@ -930,10 +936,10 @@ int main(int argc, char* argv[])
         //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("","");
         
         // apply selection
-        PDS dsData_Muon_LowDM("Data",  fileMap[MuonDataset],     "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger",  "");
-        PDS dsData_Muon_HighDM("Data", fileMap[MuonDataset],     "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger", "");
-        std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel","");
-        std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel","");
+        PDS dsData_Muon_LowDM("Data",  fileMap[MuonDataset],                      "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger" + HEMVeto_drLeptonCleaned,  "");
+        PDS dsData_Muon_HighDM("Data", fileMap[MuonDataset],                      "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger" + HEMVeto_drLeptonCleaned, "");
+        std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel" + HEMVeto_drLeptonCleaned,"");
+        std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel" + HEMVeto_drLeptonCleaned,"");
         
         // n_jets
         PDC dcData_Muon_LowDM_nj(  "data",   "nJets_drLeptonCleaned", {dsData_Muon_LowDM});
@@ -1067,16 +1073,16 @@ int main(int argc, char* argv[])
         // Photon 
 
         // no selection
-        PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset], "",  "");
-        PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset], "",  "");
-        std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("","");
-        std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("","");
+        //PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset], "",  "");
+        //PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset], "",  "");
+        //std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("","");
+        //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("","");
         
         // apply selection
-        //PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset],       "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
-        //PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset],       "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
-        //std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
-        //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
+        PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset],                  "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger" + HEMVeto_drPhotonCleaned,  "");
+        PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset],                  "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger" + HEMVeto_drPhotonCleaned,  "");
+        std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon( "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250" + HEMVeto_drPhotonCleaned,"");
+        std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon( "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250" + HEMVeto_drPhotonCleaned,"");
         
         // n_jets
         PDC dcData_Photon_LowDM_nj(  "data",   "nJets_drPhotonCleaned", {dsData_Photon_LowDM});
