@@ -62,13 +62,11 @@ int main(int argc, char* argv[])
     string filename = "histoutput.root", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
     double lumi      = -1.0;
-    const double lumi_2016 = AnaSamples::luminosity_2016;
-    const double lumi_2017 = AnaSamples::luminosity_2017;
-    const double lumi_2018 = AnaSamples::luminosity_2018;
+    double lumi_2016 = AnaSamples::luminosity_2016;
+    double lumi_2017 = AnaSamples::luminosity_2017;
+    double lumi_2018 = AnaSamples::luminosity_2018;
     std::string sbEra = "SB_v1_2017";
     std::string year = "";
-    std::string ElectronDataset = "";
-    std::string PhotonDataset = "";
     while((opt = getopt_long(argc, argv, "pstfcglvI:D:N:M:E:P:L:S:Y:", long_options, &option_index)) != -1)
     {
         switch(opt)
@@ -146,34 +144,64 @@ int main(int argc, char* argv[])
         }
     }
     
-    // _year
-    std::string yearTag = "_" + year; 
+    // datasets
+    std::string ElectronDataset = "Data_SingleElectron";
+    std::string MuonDataset     = "Data_SingleMuon";
+    std::string PhotonDataset   = "Data_SinglePhoton";
+    // year and periods
+    std::string yearTag   = "_" + year; 
+    std::string periodTag = ""; 
 
-    
     // lumi for Plotter
     if (year.compare("2016") == 0)
     {
-        lumi = lumi_2016;
-        ElectronDataset = "Data_SingleElectron";
-        PhotonDataset = "Data_SinglePhoton";
+        lumi            = lumi_2016;
     }
     else if (year.compare("2017") == 0)
     {
-        lumi = lumi_2017;
-        ElectronDataset = "Data_SingleElectron";
-        PhotonDataset = "Data_SinglePhoton";
+        lumi            = lumi_2017;
     }
     else if (year.compare("2018") == 0)
     {
-        lumi = lumi_2018;
+        // use lumi for periods A + B + C + D
+        lumi            = lumi_2018;
         ElectronDataset = "Data_EGamma";
-        PhotonDataset = "Data_EGamma";
+        PhotonDataset   = "Data_EGamma";
+    }
+    else if (year.compare("2018_AB") == 0)
+    {
+        // use lumi for periods A + B
+        lumi_2018       = AnaSamples::luminosity_2018_AB;
+        lumi            = lumi_2018;
+        yearTag         = "_2018"; 
+        periodTag       = "_PeriodsAB";
+        ElectronDataset = "Data_EGamma";
+        PhotonDataset   = "Data_EGamma";
+    }
+    else if (year.compare("2018_CD") == 0)
+    {
+        // use lumi for periods C + D
+        lumi_2018       = AnaSamples::luminosity_2018_CD;
+        lumi            = lumi_2018;
+        yearTag         = "_2018"; 
+        periodTag       = "_PeriodsCD";
+        ElectronDataset = "Data_EGamma";
+        PhotonDataset   = "Data_EGamma";
     }
     else
     {
-        std::cout << "Please enter 2016, 2017, or 2018 for the year using the -Y option." << std::endl;
+        std::cout << "Please enter 2016, 2017, 2018, 2018_AB or 2018_CD for the year using the -Y option." << std::endl;
         exit(1);
     }
+    
+    // add year and period tags
+    ElectronDataset = ElectronDataset + yearTag + periodTag;
+    MuonDataset     = MuonDataset     + yearTag + periodTag;
+    PhotonDataset   = PhotonDataset   + yearTag + periodTag;
+    // testing
+    printf("ElectronDataset: %s\n", ElectronDataset.c_str());
+    printf("MuonDataset: %s\n",     MuonDataset.c_str());
+    printf("PhotonDataset: %s\n",   PhotonDataset.c_str());
 
 
     //if running on condor override all optional settings
@@ -198,8 +226,9 @@ int main(int argc, char* argv[])
 
     struct sampleStruct
     {
-        AnaSamples::SampleSet ss;
-        AnaSamples::SampleCollection sc;
+        AnaSamples::SampleSet           sample_set;
+        AnaSamples::SampleCollection    sample_collection;
+        std::string                     sample_year;
     };
 
     // --- follow the syntax; order matters for your arguments --- //
@@ -216,9 +245,9 @@ int main(int argc, char* argv[])
 
     // Warning: keep years together when you add them to sampleList:
     std::vector<sampleStruct> sampleList;
-    sampleList.push_back({SS_2016, SC_2016});
-    sampleList.push_back({SS_2017, SC_2017});
-    sampleList.push_back({SS_2018, SC_2018});
+    sampleList.push_back({SS_2016, SC_2016, "2016"});
+    sampleList.push_back({SS_2017, SC_2017, "2017"});
+    sampleList.push_back({SS_2018, SC_2018, "2018"});
     
     const double zAcc = 1.0;
     // const double zAcc = 0.5954;
@@ -237,7 +266,7 @@ int main(int argc, char* argv[])
         fileMap["ZJetsToNuNu_HT_2500toInf" + yearTag]  = {SS_2016["ZJetsToNuNu_HT_2500toInf" + yearTag]};
         fileMap["TTbarDiLep" + yearTag]                = {SS_2016["TTbarDiLep" + yearTag]};
         fileMap["TTbarNoHad" + yearTag]                = {SS_2016["TTbarDiLep" + yearTag]};
-        fileMap["Data_SingleMuon" + yearTag]           = {SS_2016["Data_SingleMuon" + yearTag]};
+        fileMap[MuonDataset]                           = {SS_2016[MuonDataset]};
     }
     else if(dataSets.compare("TEST2") == 0)
     {
@@ -246,18 +275,20 @@ int main(int argc, char* argv[])
         fileMap["IncDY" + yearTag]                   = {SS_2016["DYJetsToLL_Inc" + yearTag]}; 
         fileMap["TTbarDiLep" + yearTag]              = {SS_2016["TTbarDiLep" + yearTag]};
         fileMap["TTbarNoHad" + yearTag]              = {SS_2016["TTbarDiLep" + yearTag]};
-        fileMap["Data_SingleMuon" + yearTag]         = {SS_2016["Data_SingleMuon" + yearTag]};
+        fileMap[MuonDataset]                         = {SS_2016[MuonDataset]};
     }
     else
     {
         for (const auto& sample : sampleList)
         {
-            AnaSamples::SampleSet ss = sample.ss;
-            AnaSamples::SampleCollection sc = sample.sc;
+            AnaSamples::SampleSet           ss = sample.sample_set;
+            AnaSamples::SampleCollection    sc = sample.sample_collection;
+            std::string                     sy = sample.sample_year; 
             // --- calculate total luminosity for data --- //
-            //printf("%s: lumi = %f\n", (ElectronDataset + yearTag).c_str(),    sc.getSampleLumi(ElectronDataset + yearTag));
-            //printf("%s: lumi = %f\n", ("Data_SingleMuon" + yearTag).c_str(),  sc.getSampleLumi("Data_SingleMuon" + yearTag));
-            //printf("%s: lumi = %f\n", (PhotonDataset + yearTag).c_str(),      sc.getSampleLumi(PhotonDataset + yearTag));
+            printf("year: %s\n", sy.c_str());
+            printf("%s: lumi = %f\n", (ElectronDataset).c_str(),    sc.getSampleLumi(ElectronDataset));
+            printf("%s: lumi = %f\n", (MuonDataset).c_str(),        sc.getSampleLumi(MuonDataset));
+            printf("%s: lumi = %f\n", (PhotonDataset).c_str(),      sc.getSampleLumi(PhotonDataset));
             if(ss[dataSets] != ss.null())
             {
                 fileMap[dataSets] = {ss[dataSets]};
@@ -458,7 +489,7 @@ int main(int argc, char* argv[])
     
     // Datasetsummaries we are using                                                                                                        
     // no weight (genWeight deals with negative weights); also add btag weights here                                                        
-    PDS dsData_SingleMuon("Data",         fileMap["Data_SingleMuon" + yearTag], "passMuonTrigger",   "");
+    PDS dsData_SingleMuon("Data",         fileMap[MuonDataset],  "passMuonTrigger",   "");
     PDS dsDY_mu(          "DY #mu",       fileMap["DYJetsToLL" + yearTag],      "",   "");
     PDS dsDYInc_mu(       "DY HT<100",    fileMap["IncDY" + yearTag],           "",   "");
     PDS dsDY_elec(        "DY e",         fileMap["DYJetsToLL" + yearTag],      "",   ""); 
@@ -658,20 +689,20 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MC_HighDM_bestRecoZM" + yearTag, {dcMC_HighDM_bestRecoZM, dcMC_HighDM_Electron_bestRecoZM, dcMC_HighDM_Muon_bestRecoZM}, {2, 3}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
 
         // no selection
-        //PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset + yearTag],  "",  "");
-        //PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset + yearTag],  "", "");
+        //PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset],  "",  "");
+        //PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset],  "", "");
         //std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton("","");
         //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton("","");
         
         // without lepton cleaning
-        //PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset + yearTag],  "SAT_Pass_lowDM;passElecZinvSel;passElectronTrigger",  "");
-        //PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset + yearTag],  "SAT_Pass_highDM;passElecZinvSel;passElectronTrigger", "");
+        //PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset],  "SAT_Pass_lowDM;passElecZinvSel;passElectronTrigger",  "");
+        //PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset],  "SAT_Pass_highDM;passElecZinvSel;passElectronTrigger", "");
         //std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM;passElecZinvSel","");
         //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM;passElecZinvSel","");
         
         // apply selection
-        PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset + yearTag],        "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger",  "");
-        PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset + yearTag],        "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger", "");
+        PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset],        "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger",  "");
+        PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset],        "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger", "");
         std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel","");
         std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel","");
         
@@ -893,14 +924,14 @@ int main(int argc, char* argv[])
     if (doDataMCMuon)
     {
         // no selection
-        //PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],  "",  "");
-        //PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],  "", "");
+        //PDS dsData_Muon_LowDM("Data",  fileMap[MuonDataset],  "",  "");
+        //PDS dsData_Muon_HighDM("Data", fileMap[MuonDataset],  "", "");
         //std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("","");
         //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("","");
         
         // apply selection
-        PDS dsData_Muon_LowDM("Data",  fileMap["Data_SingleMuon" + yearTag],     "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger",  "");
-        PDS dsData_Muon_HighDM("Data", fileMap["Data_SingleMuon" + yearTag],     "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger", "");
+        PDS dsData_Muon_LowDM("Data",  fileMap[MuonDataset],     "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger",  "");
+        PDS dsData_Muon_HighDM("Data", fileMap[MuonDataset],     "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger", "");
         std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton("SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel","");
         std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton("SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel","");
         
@@ -1036,14 +1067,14 @@ int main(int argc, char* argv[])
         // Photon 
 
         // no selection
-        PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset + yearTag], "",  "");
-        PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset + yearTag], "",  "");
+        PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset], "",  "");
+        PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset], "",  "");
         std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("","");
         std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("","");
         
         // apply selection
-        //PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset + yearTag],       "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
-        //PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset + yearTag],       "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
+        //PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset],       "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
+        //PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset],       "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger",  "");
         //std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon("SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
         //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon("SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250","");
         

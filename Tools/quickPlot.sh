@@ -17,9 +17,9 @@ year=$1
 outputFiles=
 n_events=1000
 
-if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
+if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" && "$year" != "2018_AB" && "$year" != "2018_CD" ]]
 then
-    echo "Please enter 2016, 2017, or 2018 for the year as the first argument."
+    echo "Please enter 2016, 2017, 2018, 2018_AB or 2018_CD for the year as the first argument."
     exit 1
 fi
 
@@ -32,15 +32,39 @@ fi
 # 2017: Data_SinglePhoton_2017
 # 2018: Data_EGamma_2018
 
+yearTag="_"$year""
+periodTag=
+
 ElectronDataset="Data_SingleElectron"
+MuonDataset="Data_SingleMuon"
 PhotonDataset="Data_SinglePhoton"
 
 if [[ "$year" == "2018" ]]
 then
     ElectronDataset="Data_EGamma"
     PhotonDataset="Data_EGamma"
+elif [[ "$year" == "2018_AB" ]]
+then
+    yearTag="_2018"
+    periodTag="_PeriodsAB"
+    ElectronDataset="Data_EGamma"
+    PhotonDataset="Data_EGamma"
+elif [[ "$year" == "2018_CD" ]]
+then
+    yearTag="_2018"
+    periodTag="_PeriodsCD"
+    ElectronDataset="Data_EGamma"
+    PhotonDataset="Data_EGamma"
 fi
 
+ElectronDataset=""$ElectronDataset""$yearTag""$periodTag""
+MuonDataset=""$MuonDataset""$yearTag""$periodTag""
+PhotonDataset=""$PhotonDataset""$yearTag""$periodTag""
+
+# testing
+echo "ElectronDataset: $ElectronDataset"
+echo "MuonDataset: $MuonDataset"
+echo "PhotonDataset: $PhotonDataset"
 
 # Compile MakePlots
 
@@ -90,27 +114,27 @@ rm plots/*
 #if [[ "$year" == "2018" ]]
 #then
 #declare -a samples=(
-#                    ""$ElectronDataset"_"$year""
-#                    "Data_SingleMuon_"$year""
-#                    "DYJetsToLL_HT_400to600_"$year""
-#                    "GJets_HT_400To600_"$year""
-#                    "ZJetsToNuNu_HT_400to600_"$year""
+#                    ""$ElectronDataset""$yearTag""
+#                    "Data_SingleMuon"$yearTag""
+#                    "DYJetsToLL_HT_400to600"$yearTag""
+#                    "GJets_HT_400To600"$yearTag""
+#                    "ZJetsToNuNu_HT_400to600"$yearTag""
 #                   )
 #else
 #declare -a samples=(
-#                    ""$ElectronDataset"_"$year""
-#                    "Data_SingleMuon_"$year""
-#                    ""$PhotonDataset"_"$year""
-#                    "DYJetsToLL_HT_400to600_"$year""
-#                    "GJets_HT_400To600_"$year""
-#                    "ZJetsToNuNu_HT_400to600_"$year""
+#                    ""$ElectronDataset""$yearTag""
+#                    "Data_SingleMuon"$yearTag""
+#                    ""$PhotonDataset""$yearTag""
+#                    "DYJetsToLL_HT_400to600"$yearTag""
+#                    "GJets_HT_400To600"$yearTag""
+#                    "ZJetsToNuNu_HT_400to600"$yearTag""
 #                   )
 #fi
 
 #declare -a samples=(
-#                    ""$PhotonDataset"_"$year""
-#                    "GJets_HT-400To600_"$year""
-#                    "QCD_HT300to500_"$year""
+#                    ""$PhotonDataset""$yearTag""
+#                    "GJets_HT-400To600"$yearTag""
+#                    "QCD_HT300to500"$yearTag""
 #                   )
 
 ###############
@@ -119,16 +143,16 @@ rm plots/*
 if [ "$useDYInc" = true ]; then
 # DY (inclusive): IncDY
 declare -a samples=(
-                    ""$ElectronDataset"_"$year"_PeriodB"
-                    "Data_SingleMuon_"$year"_PeriodB"
-                    "IncDY_"$year""
+                    "$ElectronDataset"
+                    "$MuonDataset"
+                    "IncDY"$yearTag""
                    )
 else
 # DY (HT binned): DYJetsToLL
 declare -a samples=(
-                    ""$ElectronDataset"_"$year"_PeriodB"
-                    "Data_SingleMuon_"$year"_PeriodB"
-                    "DYJetsToLL_HT_400to600_"$year""
+                    "$ElectronDataset"
+                    "$MuonDataset"
+                    "DYJetsToLL_HT_400to600"$yearTag""
                    )
 fi
 
@@ -138,12 +162,12 @@ fi
 #if [ "$useDYInc" = true ]; then
 ## DY (inclusive): IncDY
 #declare -a samples=(
-#                    "IncDY_"$year""
+#                    "IncDY"$yearTag""
 #                   )
 #else
 ## DY (HT binned): DYJetsToLL
 #declare -a samples=(
-#                    "DYJetsToLL_HT_400to600_"$year""
+#                    "DYJetsToLL_HT_400to600"$yearTag""
 #                   )
 #fi
 
