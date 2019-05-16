@@ -62,9 +62,9 @@ MuonDataset=""$MuonDataset""$yearTag""$periodTag""
 PhotonDataset=""$PhotonDataset""$yearTag""$periodTag""
 
 # testing
-echo "ElectronDataset: $ElectronDataset"
-echo "MuonDataset: $MuonDataset"
-echo "PhotonDataset: $PhotonDataset"
+#echo "ElectronDataset: $ElectronDataset"
+#echo "MuonDataset: $MuonDataset"
+#echo "PhotonDataset: $PhotonDataset"
 
 # Compile MakePlots
 
@@ -193,7 +193,7 @@ done
 # hadd the results
 if [ "$combineResults" = true ]; then
 
-    result="quickResult.root"
+    result="quickResult_"$year".root"
     echo "- Executing hadd to add histograms to create $result; see hadd.log for stdout and stderr"
     # Use -f to overwrite target file if it already exists
     #time hadd -f $result $outputFiles &> hadd.log
