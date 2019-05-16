@@ -19,6 +19,8 @@ class Normalization:
                              "LowDM"  : "Low $\Delta m$",
                              "HighDM" : "High $\Delta m$"
                            }
+    def setUseAllMC(self, value):
+        self.useAllMC = value
 
     def calcNorm(self, A, x):
         # --- Solve for b --- #
@@ -223,10 +225,10 @@ class Normalization:
                 b1_error = error[0]
                 b2_error = error[1]
                 
-                R_Z_print = "R_Z = {0:.4f} +/- {1:.4f}".format(b1, b1_error)
-                R_T_print = "R_T = {0:.4f} +/- {1:.4f}".format(b2, b2_error)
-                R_Z_tex = "${0:.4f} \pm {1:.4f}$".format(b1, b1_error)
-                R_T_tex = "${0:.4f} \pm {1:.4f}$".format(b2, b2_error)
+                R_Z_print = "R_Z = {0:.3f} +/- {1:.3f}".format(b1, b1_error)
+                R_T_print = "R_T = {0:.3f} +/- {1:.3f}".format(b2, b2_error)
+                R_Z_tex = "${0:.3f} \pm {1:.3f}$".format(b1, b1_error)
+                R_T_tex = "${0:.3f} \pm {1:.3f}$".format(b2, b2_error)
                 print R_Z_print 
                 print R_T_print
                 self.norm_map[year][particle][region]["R_Z"] = R_Z_tex 
@@ -252,15 +254,15 @@ class Normalization:
             # begin table
             self.writeLine("\\begin{table}[h]")
             self.writeLine("\\begin{tabular}{|c|c|c|c|c|}")
-            self.writeLine("\hline Year & CR & Selection & $R_Z$ & $R_T$ \\\\")
+            self.writeLine("\hline Selection & Era & CR & $R_Z$ & $R_T$ \\\\")
             # write values to table
-            for year in self.years:
-                for particle in self.particles:
-                    for region in self.regions:
+            for region in self.regions:
+                for year in self.years:
+                    for particle in self.particles:
                         R_Z = self.norm_map[year][particle][region]["R_Z"] 
                         R_T = self.norm_map[year][particle][region]["R_T"] 
                         region_tex = self.regions_tex[region]
-                        self.writeLine("\hline {0} & {1} & {2} & {3} & {4} \\\\".format(year, particle, region_tex, R_Z, R_T))
+                        self.writeLine("\hline {0} & {1} & {2} & {3} & {4} \\\\".format(region_tex, year, particle, R_Z, R_T))
             self.writeLine("\hline")
             self.writeLine("\end{tabular}")
             # end table
@@ -272,19 +274,23 @@ def main():
     useAllMC = False
     verbose = False
     version = 2
+    useAllMC_map = {1:False, 2:False, 3:True}
     N = Normalization(useAllMC, verbose)
     if version == 1:
         # May 5, 2019 Results
+        N.setUseAllMC(useAllMC_map[version])
         N.getNormAndError("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016")
         N.getNormAndError("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017")
         N.getNormAndError("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018")
     elif version == 2:
         # May 9, 2019 Results
+        N.setUseAllMC(useAllMC_map[version])
         N.getNormAndError("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016")
         N.getNormAndError("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017")
         N.getNormAndError("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018")
     elif version == 3:
         # May 16, 2019 Results
+        N.setUseAllMC(useAllMC_map[version])
         N.getNormAndError("condor/DataMC_2016_submission_2019-05-16_00-32-07/result.root",    "2016")
         N.getNormAndError("condor/DataMC_2017_submission_2019-05-16_00-34-21/result.root",    "2017")
         N.getNormAndError("condor/DataMC_2018_AB_submission_2019-05-16_00-35-46/result.root", "2018_AB")
