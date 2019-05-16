@@ -43,12 +43,14 @@ def main():
         exit(1)
 
     # sample config files
-    if year != "2016" and year != "2017" and year != "2018":
-        print "Please use -y to enter year (2016, 2017, or 2018)."
+    years = ["2016", "2017", "2018", "2018_AB", "2018_CD"]
+    if year not in years:
+        print "Please use -y to enter year (2016, 2017, 2018, 2018_AB, or 2018_CD)."
         exit(1)
 
-    sampleSetsFile = "sampleSets_PostProcessed_" + year + ".cfg"
-    sampleCollectionsFile = "sampleCollections_" + year + ".cfg"
+    yearWithoutPeriod = year[0:4] 
+    sampleSetsFile = "sampleSets_PostProcessed_" + yearWithoutPeriod + ".cfg"
+    sampleCollectionsFile = "sampleCollections_" + yearWithoutPeriod + ".cfg"
     
     # TopTagger.cfg
     mvaFileName = ""
