@@ -10,15 +10,17 @@ class Normalization:
     def __init__(self, useAllMC, verbose):
         self.useAllMC = useAllMC
         self.verbose = verbose
+        self.ERROR_CODE = -999
         self.norm_map = {}
         self.output_file = 0 
-        self.years = []
+        self.eras = []
         self.particles = ["Electron", "Muon"]
         self.regions   = ["LowDM", "HighDM"]
         self.regions_tex = {
                              "LowDM"  : "Low $\Delta m$",
                              "HighDM" : "High $\Delta m$"
                            }
+
     def setUseAllMC(self, value):
         self.useAllMC = value
 
@@ -33,7 +35,9 @@ class Normalization:
             Ainverse = np.linalg.inv(A)
         except:
             print "ERROR: Cannot calculate inverse because matrix is singular (or possibly other error...)."
-            return [-999, -999]
+            print "A:"
+            print A
+            return [self.ERROR_CODE, self.ERROR_CODE]
         b = np.dot(Ainverse, x)
         if self.verbose:
             x_calc = np.dot(A, b)
@@ -60,7 +64,9 @@ class Normalization:
             Ainverse = np.linalg.inv(A)
         except:
             print "ERROR: Cannot calculate inverse because matrix is singular (or possibly other error...)."
-            return [-999, -999]
+            print "A:"
+            print A
+            return [self.ERROR_CODE, self.ERROR_CODE]
         Ainverse_error = self.getMatrixInverseError(A, A_error)
         # from equation b = A^(-1) * x
         b_error = np.zeros(2)
@@ -112,16 +118,19 @@ class Normalization:
         Ainverse_error[1][1] = self.getMultiplicationError( A[0][0] / det,  A[0][0], A_error[0][0], det, det_error)
         return Ainverse_error
     
-    def getNormAndError(self, file_name, year):
-        self.years.append(year)
-        self.norm_map[year] = {}
+    def getNormAndError(self, file_name, era):
+        year = era[0:4]
+        self.eras.append(era)
+        self.norm_map[era] = {}
         print "------------------------------------------------------------------------------"
+        print "Era: {0}".format(era)
         print "Year: {0}".format(year)
         print "File: {0}".format(file_name)
         f = ROOT.TFile(file_name)
         # variable is also TDirectoryFile that holds histograms 
         variable = "bestRecoZM"
         # histograms
+        # examples (DY and ttbar only)
         # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDYstack
         # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMt#bar{t}stack 
@@ -149,10 +158,10 @@ class Normalization:
                     }
         
         for particle in self.particles:
-            self.norm_map[year][particle] = {}
+            self.norm_map[era][particle] = {}
             print particle
             for region in self.regions:
-                self.norm_map[year][particle][region] = {}
+                self.norm_map[era][particle][region] = {}
                 print region
                 h_Data    = f.Get(variable + "/" + histos[particle][region]["Data"])
                 h_ZToLL   = f.Get(variable + "/" + histos[particle][region]["ZToLL"])
@@ -163,15 +172,21 @@ class Normalization:
                 #############################
                 minMass = 50.0
                 Zmass = 91.0
-                minZmass = Zmass - 10.0
-                maxZmass = Zmass + 10.0
+                window = 10.0
+                minZmass = Zmass - window
+                maxZmass = Zmass + window
                 bin_1 = h_Data.FindBin(minMass)
-                bin_2 = h_Data.FindBin(minZmass)
-                bin_3 = h_Data.FindBin(maxZmass)
-                bin_4 = h_Data.GetNbinsX() + 1
+                bin_2 = h_Data.FindBin(minZmass) - 1
+                bin_3 = bin_2 + 1
+                bin_4 = h_Data.FindBin(maxZmass) - 1
+                bin_5 = bin_4 + 1
+                bin_6 = h_Data.GetNbinsX() + 1
+                bins = [bin_1, bin_2, bin_3, bin_4, bin_5, bin_6]
                 if self.verbose:
-                    for i, bin_i in enumerate([bin_1, bin_2, bin_3, bin_4]):
-                        print "bin_{0}: {1}".format(i, bin_i)
+                    for i, bin_i in enumerate(bins):
+                        lower_edge = h_Data.GetBinLowEdge(bin_i)
+                        upper_edge = lower_edge + h_Data.GetBinWidth(bin_i)
+                        print "bin_{0}: {1} [{2}, {3}]".format(i+1, bin_i, lower_edge, upper_edge)
                 
                 # pass error to IntegralAndError as Double_t & error 
                 # use ROOT.Double for pass-by-ref of doubles
@@ -192,6 +207,10 @@ class Normalization:
                 # Normalization (b)
                 # b1: R_Z (ZToLL normalization)
                 # b2: R_T (NoZToLL normalization)
+                
+                # Integration limis
+                # on Z mass peak:  bin_3 to bin_4
+                # off Z mass peak: bin_1 to bin_2 and bin_5 to bin_6 
     
                 # MC matrix
                 a11_error = ROOT.Double()
@@ -200,10 +219,10 @@ class Normalization:
                 a21_error_2 = ROOT.Double()
                 a22_error_1 = ROOT.Double()
                 a22_error_2 = ROOT.Double()
-                a11 = h_ZToLL.IntegralAndError(bin_2, bin_3, a11_error) 
-                a12 = h_NoZToLL.IntegralAndError(bin_2, bin_3, a12_error) 
-                a21 = h_ZToLL.IntegralAndError(bin_1, bin_2, a21_error_1) + h_ZToLL.IntegralAndError(bin_3, bin_4, a21_error_2)
-                a22 = h_NoZToLL.IntegralAndError(bin_1, bin_2, a22_error_1) + h_NoZToLL.IntegralAndError(bin_3, bin_4, a22_error_2)
+                a11 = h_ZToLL.IntegralAndError(bin_3, bin_4, a11_error) 
+                a12 = h_NoZToLL.IntegralAndError(bin_3, bin_4, a12_error) 
+                a21 = h_ZToLL.IntegralAndError(bin_1, bin_2, a21_error_1) + h_ZToLL.IntegralAndError(bin_5, bin_6, a21_error_2)
+                a22 = h_NoZToLL.IntegralAndError(bin_1, bin_2, a22_error_1) + h_NoZToLL.IntegralAndError(bin_5, bin_6, a22_error_2)
                 A = np.array([[a11, a12], [a21, a22]])
                 a21_error = self.getAdditionError(a21_error_1, a21_error_2) 
                 a22_error = self.getAdditionError(a22_error_1, a22_error_2) 
@@ -212,8 +231,8 @@ class Normalization:
                 x1_error = ROOT.Double()
                 x2_error_1 = ROOT.Double()
                 x2_error_2 = ROOT.Double()
-                x1 = h_Data.IntegralAndError(bin_2, bin_3, x1_error)
-                x2 = h_Data.IntegralAndError(bin_1, bin_2, x2_error_1) + h_Data.IntegralAndError(bin_3, bin_4, x2_error_2)
+                x1 = h_Data.IntegralAndError(bin_3, bin_4, x1_error)
+                x2 = h_Data.IntegralAndError(bin_1, bin_2, x2_error_1) + h_Data.IntegralAndError(bin_5, bin_6, x2_error_2)
                 x = [x1, x2]
                 x2_error = self.getAdditionError(x2_error_1, x2_error_2)
                 x_error = [x1_error, x2_error]
@@ -231,8 +250,8 @@ class Normalization:
                 R_T_tex = "${0:.3f} \pm {1:.3f}$".format(b2, b2_error)
                 print R_Z_print 
                 print R_T_print
-                self.norm_map[year][particle][region]["R_Z"] = R_Z_tex 
-                self.norm_map[year][particle][region]["R_T"] = R_T_tex 
+                self.norm_map[era][particle][region]["R_Z"] = R_Z_tex 
+                self.norm_map[era][particle][region]["R_T"] = R_T_tex 
         print "------------------------------------------------------------------------------"
     
     def writeLine(self, line):
@@ -257,12 +276,13 @@ class Normalization:
             self.writeLine("\hline Selection & Era & CR & $R_Z$ & $R_T$ \\\\")
             # write values to table
             for region in self.regions:
-                for year in self.years:
+                for era in self.eras:
                     for particle in self.particles:
-                        R_Z = self.norm_map[year][particle][region]["R_Z"] 
-                        R_T = self.norm_map[year][particle][region]["R_T"] 
+                        R_Z = self.norm_map[era][particle][region]["R_Z"] 
+                        R_T = self.norm_map[era][particle][region]["R_T"] 
                         region_tex = self.regions_tex[region]
-                        self.writeLine("\hline {0} & {1} & {2} & {3} & {4} \\\\".format(region_tex, year, particle, R_Z, R_T))
+                        era_tex = era.replace("_", " ")
+                        self.writeLine("\hline {0} & {1} & {2} & {3} & {4} \\\\".format(region_tex, era_tex, particle, R_Z, R_T))
             self.writeLine("\hline")
             self.writeLine("\end{tabular}")
             # end table
@@ -273,7 +293,7 @@ class Normalization:
 def main():
     useAllMC = False
     verbose = False
-    version = 2
+    version = 3
     useAllMC_map = {1:False, 2:False, 3:True}
     N = Normalization(useAllMC, verbose)
     if version == 1:
