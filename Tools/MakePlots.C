@@ -747,15 +747,15 @@ int main(int argc, char* argv[])
         PDS dsData_Electron_LowDM("Data",  fileMap[ElectronDataset],                  "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger"  + semicolon_HEMVeto_drLeptonCleaned, "");
         PDS dsData_Electron_HighDM("Data", fileMap[ElectronDataset],                  "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel;passElectronTrigger" + semicolon_HEMVeto_drLeptonCleaned, "");
         // all weights
-        //std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zee_pt;puWeight;BTagWeight;PrefireWeight");
-        //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zee_pt;puWeight;BTagWeight;PrefireWeight");
-        //std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Normalization  = makeStackMC_DiLepton_Normalization( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zee_pt;puWeight;BTagWeight;PrefireWeight");
-        //std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Normalization = makeStackMC_DiLepton_Normalization( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zee_pt;puWeight;BTagWeight;PrefireWeight");
-        // remove PrefireWeight as it is missing in 2018 for PostProcessed_StopTuple_V2.9.0
-        std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zee_pt;puWeight;BTagWeight" + PrefireWeight);
-        std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zee_pt;puWeight;BTagWeight" + PrefireWeight);
-        std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Normalization  = makeStackMC_DiLepton_Normalization( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zee_pt;puWeight;BTagWeight" + PrefireWeight);
-        std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Normalization = makeStackMC_DiLepton_Normalization( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zee_pt;puWeight;BTagWeight" + PrefireWeight);
+        //std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zee_pt;puWeight;BTagWeight" + PrefireWeight);
+        //std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zee_pt;puWeight;BTagWeight" + PrefireWeight);
+        //std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Normalization  = makeStackMC_DiLepton_Normalization( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zee_pt;puWeight;BTagWeight" + PrefireWeight);
+        //std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Normalization = makeStackMC_DiLepton_Normalization( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zee_pt;puWeight;BTagWeight" + PrefireWeight);
+        // remove Stop0l_trigger_eff_Zee_pt because it applies a Z mass cut
+        std::vector<std::vector<PDS>> StackMC_Electron_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "puWeight;BTagWeight" + PrefireWeight);
+        std::vector<std::vector<PDS>> StackMC_Electron_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "puWeight;BTagWeight" + PrefireWeight);
+        std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Normalization  = makeStackMC_DiLepton_Normalization( "SAT_Pass_lowDM_drLeptonCleaned;passElecZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "puWeight;BTagWeight" + PrefireWeight);
+        std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Normalization = makeStackMC_DiLepton_Normalization( "SAT_Pass_highDM_drLeptonCleaned;passElecZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "puWeight;BTagWeight" + PrefireWeight);
         
         // n_jets
         PDC dcData_Electron_LowDM_nj(  "data",   "nJets_drLeptonCleaned", {dsData_Electron_LowDM});
@@ -990,15 +990,15 @@ int main(int argc, char* argv[])
         PDS dsData_Muon_LowDM("Data",  fileMap[MuonDataset],                      "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger"  + semicolon_HEMVeto_drLeptonCleaned, "");
         PDS dsData_Muon_HighDM("Data", fileMap[MuonDataset],                      "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel;passMuonTrigger" + semicolon_HEMVeto_drLeptonCleaned, "");
         // all weights
-        //std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zmumu_pt;puWeight;BTagWeight;PrefireWeight");
-        //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zmumu_pt;puWeight;BTagWeight;PrefireWeight");
-        //std::vector<std::vector<PDS>> StackMC_Muon_LowDM_Normalization  = makeStackMC_DiLepton_Normalization( "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zmumu_pt;puWeight;BTagWeight;PrefireWeight");
-        //std::vector<std::vector<PDS>> StackMC_Muon_HighDM_Normalization = makeStackMC_DiLepton_Normalization( "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zmumu_pt;puWeight;BTagWeight;PrefireWeight");
-        // remove PrefireWeight as it is missing in 2018 for PostProcessed_StopTuple_V2.9.0
-        std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zmumu_pt;puWeight;BTagWeight" + PrefireWeight);
-        std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zmumu_pt;puWeight;BTagWeight" + PrefireWeight);
-        std::vector<std::vector<PDS>> StackMC_Muon_LowDM_Normalization  = makeStackMC_DiLepton_Normalization( "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zmumu_pt;puWeight;BTagWeight" + PrefireWeight);
-        std::vector<std::vector<PDS>> StackMC_Muon_HighDM_Normalization = makeStackMC_DiLepton_Normalization( "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zmumu_pt;puWeight;BTagWeight" + PrefireWeight);
+        //std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zmumu_pt;puWeight;BTagWeight" + PrefireWeight);
+        //std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zmumu_pt;puWeight;BTagWeight" + PrefireWeight);
+        //std::vector<std::vector<PDS>> StackMC_Muon_LowDM_Normalization  = makeStackMC_DiLepton_Normalization( "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zmumu_pt;puWeight;BTagWeight" + PrefireWeight);
+        //std::vector<std::vector<PDS>> StackMC_Muon_HighDM_Normalization = makeStackMC_DiLepton_Normalization( "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "Stop0l_trigger_eff_Zmumu_pt;puWeight;BTagWeight" + PrefireWeight);
+        // remove Stop0l_trigger_eff_Zmumu_pt because it applies a Z mass cut
+        std::vector<std::vector<PDS>> StackMC_Muon_LowDM  = makeStackMC_DiLepton( "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "puWeight;BTagWeight" + PrefireWeight);
+        std::vector<std::vector<PDS>> StackMC_Muon_HighDM = makeStackMC_DiLepton( "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "puWeight;BTagWeight" + PrefireWeight);
+        std::vector<std::vector<PDS>> StackMC_Muon_LowDM_Normalization  = makeStackMC_DiLepton_Normalization( "SAT_Pass_lowDM_drLeptonCleaned;passMuZinvSel"  + semicolon_HEMVeto_drLeptonCleaned, "puWeight;BTagWeight" + PrefireWeight);
+        std::vector<std::vector<PDS>> StackMC_Muon_HighDM_Normalization = makeStackMC_DiLepton_Normalization( "SAT_Pass_highDM_drLeptonCleaned;passMuZinvSel" + semicolon_HEMVeto_drLeptonCleaned, "puWeight;BTagWeight" + PrefireWeight);
         
         // n_jets
         PDC dcData_Muon_LowDM_nj(  "data",   "nJets_drLeptonCleaned", {dsData_Muon_LowDM});
