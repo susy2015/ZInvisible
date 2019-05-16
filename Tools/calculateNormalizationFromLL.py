@@ -7,7 +7,9 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 class Normalization:
-    def __init__(self):
+    def __init__(self, useAllMC, verbose):
+        self.useAllMC = useAllMC
+        self.verbose = verbose
         self.norm_map = {}
         self.output_file = 0 
         self.years = []
@@ -18,7 +20,7 @@ class Normalization:
                              "HighDM" : "High $\Delta m$"
                            }
 
-    def calcNorm(self, A, x, verbose=False):
+    def calcNorm(self, A, x):
         # --- Solve for b --- #
         # x = A * b           #
         # b = A^(-1) * x      #
@@ -31,7 +33,7 @@ class Normalization:
             print "ERROR: Cannot calculate inverse because matrix is singular (or possibly other error...)."
             return [-999, -999]
         b = np.dot(Ainverse, x)
-        if verbose:
+        if self.verbose:
             x_calc = np.dot(A, b)
             print "-----------------------------------"
             print "A:"
@@ -50,7 +52,7 @@ class Normalization:
     
         return b
     
-    def calcError(self, A, A_error, x, x_error, verbose):
+    def calcError(self, A, A_error, x, x_error):
         # inverse of matrix
         try:
             Ainverse = np.linalg.inv(A)
@@ -66,7 +68,7 @@ class Normalization:
         b2_error_2 = self.getMultiplicationError(Ainverse[1][1] * x[1], Ainverse[1][1], Ainverse_error[1][1], x[1], x_error[1])
         b_error[0] = self.getAdditionError(b1_error_1, b1_error_2)
         b_error[1] = self.getAdditionError(b2_error_1, b2_error_2)
-        if verbose:
+        if self.verbose:
             print "-----------------------------------"
             print "A_error:"
             print A_error
@@ -108,7 +110,7 @@ class Normalization:
         Ainverse_error[1][1] = self.getMultiplicationError( A[0][0] / det,  A[0][0], A_error[0][0], det, det_error)
         return Ainverse_error
     
-    def getNormAndError(self, file_name, year, verbose):
+    def getNormAndError(self, file_name, year):
         self.years.append(year)
         self.norm_map[year] = {}
         print "------------------------------------------------------------------------------"
@@ -118,18 +120,31 @@ class Normalization:
         # variable is also TDirectoryFile that holds histograms 
         variable = "bestRecoZM"
         # histograms
-        # example: DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
+        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
+        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDYstack
+        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMt#bar{t}stack 
+        # examples (all MC)
+        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
+        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMZToLLstack
+        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMNoZToLLstack 
         histos = {}
         for particle in self.particles:
             histos[particle] = {}
             for region in self.regions:
-                histos[particle][region] = { 
-                    "Data"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
-                    "DY"       : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
-                    "TTbar"    : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMt#bar{t}stack",
-                    "Single t" : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMSingle tstack",
-                    "Rare"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMRarestack"
-                }
+                if self.useAllMC:
+                    # using ZToLL and NoZToLL MC for normalization 
+                    histos[particle][region] = { 
+                        "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
+                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMZToLLstack",
+                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMNoZToLLstack",
+                    }
+                else:
+                    # using only DY and ttbar for normalization 
+                    histos[particle][region] = { 
+                        "Data"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
+                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
+                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMt#bar{t}stack",
+                    }
         
         for particle in self.particles:
             self.norm_map[year][particle] = {}
@@ -137,9 +152,9 @@ class Normalization:
             for region in self.regions:
                 self.norm_map[year][particle][region] = {}
                 print region
-                h_Data  = f.Get(variable + "/" + histos[particle][region]["Data"])
-                h_DY    = f.Get(variable + "/" + histos[particle][region]["DY"])
-                h_TTbar = f.Get(variable + "/" + histos[particle][region]["TTbar"])
+                h_Data    = f.Get(variable + "/" + histos[particle][region]["Data"])
+                h_ZToLL   = f.Get(variable + "/" + histos[particle][region]["ZToLL"])
+                h_NoZToLL = f.Get(variable + "/" + histos[particle][region]["NoZToLL"])
     
                 #############################
                 # Calculating Normalization #
@@ -152,7 +167,7 @@ class Normalization:
                 bin_2 = h_Data.FindBin(minZmass)
                 bin_3 = h_Data.FindBin(maxZmass)
                 bin_4 = h_Data.GetNbinsX() + 1
-                if verbose:
+                if self.verbose:
                     for i, bin_i in enumerate([bin_1, bin_2, bin_3, bin_4]):
                         print "bin_{0}: {1}".format(i, bin_i)
                 
@@ -165,16 +180,16 @@ class Normalization:
                 #                                 ) const
                 
                 # MC matrix (A)
-                # a11: DY on Z mass peak
-                # a12: TTbar on Z mass peak
-                # a21: DY off Z mass peak
-                # a22: TTbar off Z mass peak
+                # a11: ZToLL on Z mass peak
+                # a12: NoZToLL on Z mass peak
+                # a21: ZToLL off Z mass peak
+                # a22: NoZToLL off Z mass peak
                 # Data (x)
                 # x1: data on Z mass peak
                 # x2: data off Z mass peak
                 # Normalization (b)
-                # b1: R_Z (DY normalization)
-                # b2: R_T (TTbar normalization)
+                # b1: R_Z (ZToLL normalization)
+                # b2: R_T (NoZToLL normalization)
     
                 # MC matrix
                 a11_error = ROOT.Double()
@@ -183,10 +198,10 @@ class Normalization:
                 a21_error_2 = ROOT.Double()
                 a22_error_1 = ROOT.Double()
                 a22_error_2 = ROOT.Double()
-                a11 = h_DY.IntegralAndError(bin_2, bin_3, a11_error) 
-                a12 = h_TTbar.IntegralAndError(bin_2, bin_3, a12_error) 
-                a21 = h_DY.IntegralAndError(bin_1, bin_2, a21_error_1) + h_DY.IntegralAndError(bin_3, bin_4, a21_error_2)
-                a22 = h_TTbar.IntegralAndError(bin_1, bin_2, a22_error_1) + h_TTbar.IntegralAndError(bin_3, bin_4, a22_error_2)
+                a11 = h_ZToLL.IntegralAndError(bin_2, bin_3, a11_error) 
+                a12 = h_NoZToLL.IntegralAndError(bin_2, bin_3, a12_error) 
+                a21 = h_ZToLL.IntegralAndError(bin_1, bin_2, a21_error_1) + h_ZToLL.IntegralAndError(bin_3, bin_4, a21_error_2)
+                a22 = h_NoZToLL.IntegralAndError(bin_1, bin_2, a22_error_1) + h_NoZToLL.IntegralAndError(bin_3, bin_4, a22_error_2)
                 A = np.array([[a11, a12], [a21, a22]])
                 a21_error = self.getAdditionError(a21_error_1, a21_error_2) 
                 a22_error = self.getAdditionError(a22_error_1, a22_error_2) 
@@ -201,8 +216,8 @@ class Normalization:
                 x2_error = self.getAdditionError(x2_error_1, x2_error_2)
                 x_error = [x1_error, x2_error]
                 # calculate normalization and error
-                norm  = self.calcNorm(A, x, verbose)
-                error = self.calcError(A, A_error, x, x_error, verbose)
+                norm  = self.calcNorm(A, x)
+                error = self.calcError(A, A_error, x, x_error)
                 b1 = norm[0]
                 b2 = norm[1]
                 b1_error = error[0]
@@ -254,16 +269,26 @@ class Normalization:
             self.writeLine("\end{document}")
 
 def main():
+    useAllMC = False
     verbose = False
-    N = Normalization()
-    # May 5, 2019 Results
-    #N.getNormAndError("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016", verbose)
-    #N.getNormAndError("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017", verbose)
-    #N.getNormAndError("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018", verbose)
-    # May 9, 2019 Results
-    N.getNormAndError("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016", verbose)
-    N.getNormAndError("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017", verbose)
-    N.getNormAndError("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018", verbose)
+    version = 2
+    N = Normalization(useAllMC, verbose)
+    if version == 1:
+        # May 5, 2019 Results
+        N.getNormAndError("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016")
+        N.getNormAndError("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017")
+        N.getNormAndError("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018")
+    elif version == 2:
+        # May 9, 2019 Results
+        N.getNormAndError("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016")
+        N.getNormAndError("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017")
+        N.getNormAndError("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018")
+    elif version == 3:
+        # May 16, 2019 Results
+        N.getNormAndError("condor/DataMC_2016_submission_2019-05-16_00-32-07/result.root",    "2016")
+        N.getNormAndError("condor/DataMC_2017_submission_2019-05-16_00-34-21/result.root",    "2017")
+        N.getNormAndError("condor/DataMC_2018_AB_submission_2019-05-16_00-35-46/result.root", "2018_AB")
+        N.getNormAndError("condor/DataMC_2018_CD_submission_2019-05-16_00-37-53/result.root", "2018_CD")
     N.makeTexFile("normalization.tex")
 
 
