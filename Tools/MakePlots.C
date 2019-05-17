@@ -635,6 +635,21 @@ int main(int argc, char* argv[])
                               "SAT_Pass_NJets20_drLeptonCleaned",
                               "SAT_Pass_dPhiMETLowDM",
                              };
+    // Photon
+    std::vector<std::string> Cuts_Data_Photon = {
+                              "",
+                              "passPhotonTrigger",
+                              "Pass_LeptonVeto",
+                              "passPhotonSelection",
+                              HEMVeto_drPhotonCleaned,
+                              "Pass_JetID",
+                              "Pass_EventFilter",
+                              "MET_pt<250",
+                              "SAT_Pass_MET_drPhotonCleaned",
+                              "SAT_Pass_HT_drPhotonCleaned",
+                              "SAT_Pass_NJets20_drPhotonCleaned",
+                              "SAT_Pass_dPhiMETLowDM",
+                             };
     
     
     // Electron
@@ -665,6 +680,20 @@ int main(int argc, char* argv[])
     std::vector<std::string> CutLevels_Data_Muon_HighDM = SusyUtility::getCutLevels(Cuts_Data_Muon_HighDM);
     std::vector<std::string> CutLevels_MC_Muon_LowDM    = SusyUtility::getCutLevels(Cuts_MC_Muon_LowDM);
     std::vector<std::string> CutLevels_MC_Muon_HighDM   = SusyUtility::getCutLevels(Cuts_MC_Muon_HighDM);
+    // Photon
+    std::vector<std::string> Cuts_Data_Photon_LowDM  = Cuts_Data_Photon;
+    std::vector<std::string> Cuts_Data_Photon_HighDM = Cuts_Data_Photon;
+    Cuts_Data_Photon_LowDM.push_back("SAT_Pass_lowDM_drPhotonCleaned");
+    Cuts_Data_Photon_HighDM.push_back("SAT_Pass_highDM_drPhotonCleaned");
+    std::vector<std::string> Cuts_MC_Photon_LowDM   = Cuts_Data_Photon_LowDM;
+    std::vector<std::string> Cuts_MC_Photon_HighDM  = Cuts_Data_Photon_HighDM;
+    // no trigger cut for MC; placeholder so that bins match data
+    Cuts_MC_Photon_LowDM[1]  = "";
+    Cuts_MC_Photon_HighDM[1] = "";
+    std::vector<std::string> CutLevels_Data_Photon_LowDM  = SusyUtility::getCutLevels(Cuts_Data_Photon_LowDM);
+    std::vector<std::string> CutLevels_Data_Photon_HighDM = SusyUtility::getCutLevels(Cuts_Data_Photon_HighDM);
+    std::vector<std::string> CutLevels_MC_Photon_LowDM    = SusyUtility::getCutLevels(Cuts_MC_Photon_LowDM);
+    std::vector<std::string> CutLevels_MC_Photon_HighDM   = SusyUtility::getCutLevels(Cuts_MC_Photon_HighDM);
     
     // di-electron
     if (doDataMCElectron)
@@ -1147,11 +1176,11 @@ int main(int argc, char* argv[])
         PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset],                  "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger"  + semicolon_HEMVeto_drPhotonCleaned,  "");
         PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset],                  "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger" + semicolon_HEMVeto_drPhotonCleaned,  "");
         // all weights
-        //std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon( "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250"  + semicolon_HEMVeto_drPhotonCleaned, "Stop0l_trigger_eff_Photon_pt;puWeight;BTagWeight;PrefireWeight");
-        //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon( "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250" + semicolon_HEMVeto_drPhotonCleaned, "Stop0l_trigger_eff_Photon_pt;puWeight;BTagWeight;PrefireWeight");
-        // remove PrefireWeight as it is missing in 2018 for PostProcessed_StopTuple_V2.9.0
-        std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon( "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250"  + semicolon_HEMVeto_drPhotonCleaned, "Stop0l_trigger_eff_Photon_pt;puWeight;BTagWeight" + PrefireWeight);
-        std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon( "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250" + semicolon_HEMVeto_drPhotonCleaned, "Stop0l_trigger_eff_Photon_pt;puWeight;BTagWeight" + PrefireWeight);
+        //std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon( "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250"  + semicolon_HEMVeto_drPhotonCleaned, "Stop0l_trigger_eff_Photon_pt;puWeight;BTagWeight" + PrefireWeight);
+        //std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon( "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250" + semicolon_HEMVeto_drPhotonCleaned, "Stop0l_trigger_eff_Photon_pt;puWeight;BTagWeight" + PrefireWeight);
+        // remove Stop0l_trigger_eff_Photon_pt
+        std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon( "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250"  + semicolon_HEMVeto_drPhotonCleaned, "puWeight;BTagWeight" + PrefireWeight);
+        std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon( "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250" + semicolon_HEMVeto_drPhotonCleaned, "puWeight;BTagWeight" + PrefireWeight);
         
         // n_jets
         PDC dcData_Photon_LowDM_nj(  "data",   "nJets_drPhotonCleaned", {dsData_Photon_LowDM});
@@ -1224,6 +1253,13 @@ int main(int argc, char* argv[])
             vh.push_back(PHS(nameLowDM,  {dcVecData_Photon_LowDM_dPhi[i], dcVecMC_Photon_LowDM_dPhi[i]},    {1, 2}, "", nBins,  0.0, maxPhi, true, false, vec_label_dphi[i], "Events"));
             vh.push_back(PHS(nameHighDM, {dcVecData_Photon_HighDM_dPhi[i], dcVecMC_Photon_HighDM_dPhi[i]},  {1, 2}, "", nBins,  0.0, maxPhi, true, false, vec_label_dphi[i], "Events"));
         }
+        
+        // cut flow: name, DataCollection, cutLevels
+        // Plotter::CutFlowSummary::CutFlowSummary(std::string n, Plotter::DataCollection ns, std::vector<std::string> cutLevels)
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Photon_LowDM_met",    dcData_Photon_LowDM_met,  CutLevels_Data_Photon_LowDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Photon_HighDM_met",   dcData_Photon_HighDM_met, CutLevels_Data_Photon_HighDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Photon_LowDM_met",      dcMC_Photon_LowDM_met,    CutLevels_MC_Photon_LowDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Photon_HighDM_met",     dcMC_Photon_HighDM_met,   CutLevels_MC_Photon_HighDM));
     }
 
 

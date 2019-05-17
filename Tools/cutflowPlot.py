@@ -18,20 +18,15 @@ def setupHist(hist, labels, title, color, y_min, y_max):
     hist.SetLineColor(getColorIndex(color))
     hist.SetLineWidth(3)
 
-def makePlots(f_name, year, useHEMVeto):
+def makePlots(f_name, year, doPhotons, useHEMVeto):
     yearTag = "_" + year
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    f_name_Electron = f_name
-    f_name_Muon     = f_name
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
-    # check that files exist
-    f_names = [f_name_Electron, f_name_Muon]
-    for f_name in f_names:
-        exists = os.path.isfile(f_name)
-        if not exists: 
-            print "The file {0} does not exist".format(f_name)
-            return
+    # check that the files exist
+    if not os.path.isfile(f_name): 
+        print "The file {0} does not exist".format(f_name)
+        return
     # make directory for plots if it does not exist
     if not os.path.exists(plot_dir):
         os.makedirs(plot_dir)
@@ -45,28 +40,41 @@ def makePlots(f_name, year, useHEMVeto):
     y_min = 10.0**1
     y_max = 10.0**10
 
+    rootFile = ROOT.TFile(f_name)
     c = ROOT.TCanvas("c", "c", 800, 800)
-    f_Electron = ROOT.TFile(f_name_Electron)
-    f_Muon     = ROOT.TFile(f_name_Muon)
     cuts = []
     if useHEMVeto:
-        cuts = [
+        cutsLepton = [
             "No cuts",
             "Trigger",
             "Lepton veto",
             "LL pt",
             "LL charge",
             "m_LL > 50",
-            "HEMVeto",
+            "HEM veto",
             "JetID",
-            "EventFilter",
+            "Event filter",
             "MET",
             "HT",
             "nJets",
             "dPhi",
         ]
+        cutsPhoton = [
+            "No cuts",
+            "Trigger",
+            "Lepton veto",
+            "Photon p_{T}",
+            "HEM veto",
+            "JetID",
+            "Event filter",
+            "original MET < 250",
+            "modified MET > 250",
+            "HT",
+            "nJets",
+            "dPhi",
+        ]
     else:
-        cuts = [
+        cutsLepton = [
             "No cuts",
             "Trigger",
             "Lepton veto",
@@ -74,8 +82,21 @@ def makePlots(f_name, year, useHEMVeto):
             "LL charge",
             "m_LL > 50",
             "JetID",
-            "EventFilter",
+            "Event filter",
             "MET",
+            "HT",
+            "nJets",
+            "dPhi",
+        ]
+        cutsPhoton = [
+            "No cuts",
+            "Trigger",
+            "Lepton veto",
+            "Photon p_{T}",
+            "JetID",
+            "Event filter",
+            "original MET < 250",
+            "modified MET > 250",
             "HT",
             "nJets",
             "dPhi",
@@ -83,17 +104,32 @@ def makePlots(f_name, year, useHEMVeto):
 
 
     # copy list instead of pointer to list
-    cutsLeptonLowDM = cuts[:]
+    cutsLeptonLowDM = cutsLepton[:]
     cutsLeptonLowDM.append("Low #Deltam")
-    cutsLeptonHighDM = cuts[:]
+    cutsLeptonHighDM = cutsLepton[:]
     cutsLeptonHighDM.append("High #Deltam")
+    cutsPhotonLowDM = cutsPhoton[:]
+    cutsPhotonLowDM.append("Low #Deltam")
+    cutsPhotonHighDM = cutsPhoton[:]
+    cutsPhotonHighDM.append("High #Deltam")
     
-    h_map = {
-        "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met",  "cuts" : cutsLeptonLowDM,  "file" : f_Electron},
-        "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsLeptonHighDM, "file" : f_Electron},
-        "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsLeptonLowDM,  "file" : f_Muon},
-        "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsLeptonHighDM, "file" : f_Muon}
-    }
+    h_map = {}
+    if doPhotons:
+        h_map = {
+            "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met",  "cuts" : cutsLeptonLowDM},
+            "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsLeptonHighDM},
+            "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsLeptonLowDM},
+            "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsLeptonHighDM},
+            "CutFlow_Photon_LowDM"  : {"data" : "CutFlow_Data_Photon_LowDM_met",  "mc" : "CutFlow_MC_Photon_LowDM_met",  "cuts" : cutsPhotonLowDM},
+            "CutFlow_Photon_HighDM" : {"data" : "CutFlow_Data_Photon_HighDM_met", "mc" : "CutFlow_MC_Photon_HighDM_met", "cuts" : cutsPhotonHighDM}
+        }
+    else:
+        h_map = {
+            "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met",  "cuts" : cutsLeptonLowDM},
+            "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsLeptonHighDM},
+            "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsLeptonLowDM},
+            "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsLeptonHighDM}
+        }
     plot_map = {
         "CutFlow_LowDM"  : {"Electron" : "CutFlow_Electron_LowDM",  "Muon" : "CutFlow_Muon_LowDM",  "cuts" :  cutsLeptonLowDM},
         "CutFlow_HighDM" : {"Electron" : "CutFlow_Electron_HighDM", "Muon" : "CutFlow_Muon_HighDM", "cuts" :  cutsLeptonHighDM}
@@ -102,11 +138,10 @@ def makePlots(f_name, year, useHEMVeto):
     for key in h_map:
         plot_name = plot_dir + key
         cutList = h_map[key]["cuts"]    
-        f       = h_map[key]["file"]
         h_mc_name   = h_dir + h_map[key]["mc"]
         h_data_name = h_dir + h_map[key]["data"]
-        h_mc        = f.Get(h_mc_name)
-        h_data      = f.Get(h_data_name)
+        h_mc        = rootFile.Get(h_mc_name)
+        h_data      = rootFile.Get(h_data_name)
         if not h_mc:
             print "ERROR: Unable to load histogram {0}".format(h_mc_name)
             exit(1)
@@ -140,13 +175,11 @@ def makePlots(f_name, year, useHEMVeto):
         cutList         = plot_map[key]["cuts"]
         key_Electron    = plot_map[key]["Electron"]
         key_Muon        = plot_map[key]["Muon"]
-        f_Electron      = h_map[key_Electron]["file"]
-        f_Muon          = h_map[key_Muon]["file"]
         # histograms
-        h_Electron_mc   = f_Electron.Get(h_dir + h_map[key_Electron]["mc"])
-        h_Electron_data = f_Electron.Get(h_dir + h_map[key_Electron]["data"])
-        h_Muon_mc       = f_Muon.Get(h_dir + h_map[key_Muon]["mc"])
-        h_Muon_data     = f_Muon.Get(h_dir + h_map[key_Muon]["data"])
+        h_Electron_mc   = rootFile.Get(h_dir + h_map[key_Electron]["mc"])
+        h_Electron_data = rootFile.Get(h_dir + h_map[key_Electron]["data"])
+        h_Muon_mc       = rootFile.Get(h_dir + h_map[key_Muon]["mc"])
+        h_Muon_data     = rootFile.Get(h_dir + h_map[key_Muon]["data"])
         # ratios
         h_ratio_mc          = h_Electron_mc.Clone("h_ratio_mc")
         h_ratio_data        = h_Electron_data.Clone("h_ratio_data")
@@ -235,24 +268,29 @@ def makePlots(f_name, year, useHEMVeto):
 def main():
     version = 3
     # set per version
-    useHEMVeto_map = {1: False, 2:False, 3:True}
-    useHEMVeto = useHEMVeto_map[version]
+    useHEMVeto_map = {1: False, 2:False, 3:True,  4:True}
+    doPhotons_map  = {1: False, 2:False, 3:False, 4:True}
+    useHEMVeto     = useHEMVeto_map[version]
+    doPhotons      = doPhotons_map[version]
     if version == 1:
         # May 5, 2019 Results
-        makePlots("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016", useHEMVeto)
-        makePlots("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017", useHEMVeto)
-        makePlots("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018", useHEMVeto)
+        makePlots("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016", doPhotons, useHEMVeto)
+        makePlots("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017", doPhotons, useHEMVeto)
+        makePlots("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018", doPhotons, useHEMVeto)
     if version == 2:
         # May 9, 2019 Results
-        makePlots("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016", useHEMVeto)
-        makePlots("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017", useHEMVeto)
-        makePlots("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018", useHEMVeto)
+        makePlots("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016", doPhotons, useHEMVeto)
+        makePlots("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017", doPhotons, useHEMVeto)
+        makePlots("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018", doPhotons, useHEMVeto)
     if version == 3:
         # May 16, 2019 Results
-        makePlots("condor/DataMC_2016_submission_2019-05-16_10-06-59/result.root",    "2016",    useHEMVeto)
-        makePlots("condor/DataMC_2017_submission_2019-05-16_10-09-29/result.root",    "2017",    useHEMVeto)
-        makePlots("condor/DataMC_2018_AB_submission_2019-05-16_10-10-30/result.root", "2018_AB", useHEMVeto)
-        makePlots("condor/DataMC_2018_CD_submission_2019-05-16_10-12-04/result.root", "2018_CD", useHEMVeto)
+        makePlots("condor/DataMC_2016_submission_2019-05-16_10-06-59/result.root",    "2016",    doPhotons, useHEMVeto)
+        makePlots("condor/DataMC_2017_submission_2019-05-16_10-09-29/result.root",    "2017",    doPhotons, useHEMVeto)
+        makePlots("condor/DataMC_2018_AB_submission_2019-05-16_10-10-30/result.root", "2018_AB", doPhotons, useHEMVeto)
+        makePlots("condor/DataMC_2018_CD_submission_2019-05-16_10-12-04/result.root", "2018_CD", doPhotons, useHEMVeto)
+    if version == 4:
+        # photon cutflows
+        makePlots("quickResult_photonCutflow_2016.root", "2016", doPhotons, useHEMVeto)
 
 if __name__ == "__main__":
     main()

@@ -15,7 +15,7 @@ combineResults=true
 useDYInc=false
 year=$1
 outputFiles=
-n_events=20000
+n_events=1000
 
 if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" && "$year" != "2018_AB" && "$year" != "2018_CD" ]]
 then
@@ -111,28 +111,28 @@ rm plots/*
 
 # WARNING: only do electron, muon and photon data at the same time if the luminosities are the same
 # In 2018, only run over EGamma once (same dataset for electrons and photons
-#if [[ "$year" == "2018" ]]
-#then
-#declare -a samples=(
-#                    ""$ElectronDataset""$yearTag""
-#                    "Data_SingleMuon"$yearTag""
-#                    "DYJetsToLL_HT_400to600"$yearTag""
-#                    "GJets_HT_400To600"$yearTag""
-#                    "ZJetsToNuNu_HT_400to600"$yearTag""
-#                   )
-#else
-#declare -a samples=(
-#                    ""$ElectronDataset""$yearTag""
-#                    "Data_SingleMuon"$yearTag""
-#                    ""$PhotonDataset""$yearTag""
-#                    "DYJetsToLL_HT_400to600"$yearTag""
-#                    "GJets_HT_400To600"$yearTag""
-#                    "ZJetsToNuNu_HT_400to600"$yearTag""
-#                   )
-#fi
+if [[ "$year" == "2018" ||  "$year" == "2018_AB" || "$year" == "2018_CD" ]]
+then
+declare -a samples=(
+                    ""$ElectronDataset""
+                    ""$MuonDataset""
+                    "DYJetsToLL_HT_400to600"$yearTag""
+                    "GJets_HT_400To600"$yearTag""
+                    "ZJetsToNuNu_HT_400to600"$yearTag""
+                   )
+else
+declare -a samples=(
+                    ""$ElectronDataset""
+                    ""$MuonDataset""
+                    ""$PhotonDataset""
+                    "DYJetsToLL_HT_400to600"$yearTag""
+                    "GJets_HT_400To600"$yearTag""
+                    "ZJetsToNuNu_HT_400to600"$yearTag""
+                   )
+fi
 
 #declare -a samples=(
-#                    ""$PhotonDataset""$yearTag""
+#                    ""$PhotonDataset""
 #                    "GJets_HT-400To600"$yearTag""
 #                    "QCD_HT300to500"$yearTag""
 #                   )
@@ -140,21 +140,21 @@ rm plots/*
 ###############
 # Data and MC #
 ###############
-if [ "$useDYInc" = true ]; then
-# DY (inclusive): IncDY
-declare -a samples=(
-                    "$ElectronDataset"
-                    "$MuonDataset"
-                    "IncDY"$yearTag""
-                   )
-else
-# DY (HT binned): DYJetsToLL
-declare -a samples=(
-                    "$ElectronDataset"
-                    "$MuonDataset"
-                    "DYJetsToLL_HT_400to600"$yearTag""
-                   )
-fi
+#if [ "$useDYInc" = true ]; then
+## DY (inclusive): IncDY
+#declare -a samples=(
+#                    "$ElectronDataset"
+#                    "$MuonDataset"
+#                    "IncDY"$yearTag""
+#                   )
+#else
+## DY (HT binned): DYJetsToLL
+#declare -a samples=(
+#                    "$ElectronDataset"
+#                    "$MuonDataset"
+#                    "DYJetsToLL_HT_400to600"$yearTag""
+#                   )
+#fi
 
 ###########
 # MC only #
