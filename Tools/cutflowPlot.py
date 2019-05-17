@@ -18,7 +18,7 @@ def setupHist(hist, labels, title, color, y_min, y_max):
     hist.SetLineColor(getColorIndex(color))
     hist.SetLineWidth(3)
 
-def makePlots(f_name, year):
+def makePlots(f_name, year, useHEMVeto):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
     f_name_Electron = f_name
     f_name_Muon     = f_name
@@ -47,21 +47,40 @@ def makePlots(f_name, year):
     c = ROOT.TCanvas("c", "c", 800, 800)
     f_Electron = ROOT.TFile(f_name_Electron)
     f_Muon     = ROOT.TFile(f_name_Muon)
-    
-    cuts = [
-        "No cuts",
-        "Trigger",
-        "Lepton veto",
-        "LL pt",
-        "LL charge",
-        "m_LL > 50",
-        "JetID",
-        "EventFilter",
-        "MET",
-        "HT",
-        "nJets",
-        "dPhi",
-    ]
+    cuts = []
+    if useHEMVeto:
+        cuts = [
+            "No cuts",
+            "Trigger",
+            "Lepton veto",
+            "LL pt",
+            "LL charge",
+            "m_LL > 50",
+            "HEMVeto",
+            "JetID",
+            "EventFilter",
+            "MET",
+            "HT",
+            "nJets",
+            "dPhi",
+        ]
+    else:
+        cuts = [
+            "No cuts",
+            "Trigger",
+            "Lepton veto",
+            "LL pt",
+            "LL charge",
+            "m_LL > 50",
+            "JetID",
+            "EventFilter",
+            "MET",
+            "HT",
+            "nJets",
+            "dPhi",
+        ]
+
+
     # copy list instead of pointer to list
     cutsLeptonLowDM = cuts[:]
     cutsLeptonLowDM.append("Low #Deltam")
@@ -112,6 +131,7 @@ def makePlots(f_name, year):
         c.SetLogy()
         c.Update()
         c.SaveAs(plot_dir + key + ".pdf")
+        c.SaveAs(plot_dir + key + ".png")
 
     for key in plot_map:
         cutList         = plot_map[key]["cuts"]
@@ -162,6 +182,7 @@ def makePlots(f_name, year):
         c.SetLogy(1) # set log y
         c.Update()
         c.SaveAs(plot_dir + key + ".pdf")
+        c.SaveAs(plot_dir + key + ".png")
 
         # --- draw histograms --- #
         h_ratio_mc.Draw("hist")
@@ -176,6 +197,7 @@ def makePlots(f_name, year):
         c.SetLogy(0) # unset log y
         c.Update()
         c.SaveAs(plot_dir + key + "_ElectronMuonRatios.pdf")
+        c.SaveAs(plot_dir + key + "_ElectronMuonRatios.png")
         
         # --- draw histograms --- #
         h_ratio_Electron.Draw("hist")
@@ -190,6 +212,7 @@ def makePlots(f_name, year):
         c.SetLogy(0) # unset log y
         c.Update()
         c.SaveAs(plot_dir + key + "_DataMCRatios.pdf")
+        c.SaveAs(plot_dir + key + "_DataMCRatios.png")
 
         # log scale of same ratio plot
         # set y axis for log y
@@ -204,19 +227,34 @@ def makePlots(f_name, year):
         c.SetLogy(1) # set log y
         c.Update()
         c.SaveAs(plot_dir + key + "_DataMCRatios_LogScale.pdf")
+        c.SaveAs(plot_dir + key + "_DataMCRatios_LogScale.png")
 
 def main():
-    # May 5, 2019 Results
-    #makePlots("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016")
-    #makePlots("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017")
-    #makePlots("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018")
-    # May 9, 2019 Results
-    makePlots("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016")
-    makePlots("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017")
-    makePlots("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018")
+    version = 3
+    # set per version
+    useHEMVeto_map = {1: False, 2:False, 3:True}
+    useHEMVeto = useHEMVeto_map[version]
+    if version == 1:
+        # May 5, 2019 Results
+        makePlots("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016", useHEMVeto)
+        makePlots("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017", useHEMVeto)
+        makePlots("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018", useHEMVeto)
+    if version == 2:
+        # May 9, 2019 Results
+        makePlots("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016", useHEMVeto)
+        makePlots("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017", useHEMVeto)
+        makePlots("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018", useHEMVeto)
+    if version == 3:
+        # May 16, 2019 Results
+        makePlots("condor/DataMC_2016_submission_2019-05-16_10-06-59/result.root",    "2016",    useHEMVeto)
+        makePlots("condor/DataMC_2017_submission_2019-05-16_10-09-29/result.root",    "2017",    useHEMVeto)
+        makePlots("condor/DataMC_2018_AB_submission_2019-05-16_10-10-30/result.root", "2018_AB", useHEMVeto)
+        makePlots("condor/DataMC_2018_CD_submission_2019-05-16_10-12-04/result.root", "2018_CD", useHEMVeto)
 
 if __name__ == "__main__":
     main()
+
+
 
 
 

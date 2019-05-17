@@ -291,26 +291,24 @@ class Normalization:
             self.writeLine("\end{document}")
 
 def main():
-    useAllMC = False
     verbose = False
+    # set per version
     version = 3
     useAllMC_map = {1:False, 2:False, 3:True}
+    useAllMC = useAllMC_map[version]
     N = Normalization(useAllMC, verbose)
     if version == 1:
         # May 5, 2019 Results
-        N.setUseAllMC(useAllMC_map[version])
         N.getNormAndError("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016")
         N.getNormAndError("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017")
         N.getNormAndError("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018")
     elif version == 2:
         # May 9, 2019 Results
-        N.setUseAllMC(useAllMC_map[version])
         N.getNormAndError("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016")
         N.getNormAndError("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017")
         N.getNormAndError("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018")
     elif version == 3:
         # May 16, 2019 Results
-        N.setUseAllMC(useAllMC_map[version])
         N.getNormAndError("condor/DataMC_2016_submission_2019-05-16_10-06-59/result.root",    "2016")
         N.getNormAndError("condor/DataMC_2017_submission_2019-05-16_10-09-29/result.root",    "2017")
         N.getNormAndError("condor/DataMC_2018_AB_submission_2019-05-16_10-10-30/result.root", "2018_AB")
@@ -320,5 +318,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
 
 
