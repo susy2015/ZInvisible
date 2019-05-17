@@ -19,10 +19,11 @@ def setupHist(hist, labels, title, color, y_min, y_max):
     hist.SetLineWidth(3)
 
 def makePlots(f_name, year, useHEMVeto):
+    yearTag = "_" + year
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
     f_name_Electron = f_name
     f_name_Muon     = f_name
-    plot_dir = "cutflows_"+year+"/"
+    plot_dir = "cutflows/"
     h_dir = "CutFlows/"
     # check that files exist
     f_names = [f_name_Electron, f_name_Muon]
@@ -99,6 +100,7 @@ def makePlots(f_name, year, useHEMVeto):
     }
     
     for key in h_map:
+        plot_name = plot_dir + key
         cutList = h_map[key]["cuts"]    
         f       = h_map[key]["file"]
         h_mc_name   = h_dir + h_map[key]["mc"]
@@ -114,8 +116,8 @@ def makePlots(f_name, year, useHEMVeto):
         
         # setup histograms
         #setupHist(hist, labels, title, color, y_min, y_max):
-        setupHist(h_mc,   cutList, key, blue_color, y_min, y_max)
-        setupHist(h_data, cutList, key, red_color,  y_min, y_max)
+        setupHist(h_mc,   cutList, key + yearTag, blue_color, y_min, y_max)
+        setupHist(h_data, cutList, key + yearTag, red_color,  y_min, y_max)
         
         # draw histograms
         h_mc.Draw("hist")
@@ -130,10 +132,11 @@ def makePlots(f_name, year, useHEMVeto):
         
         c.SetLogy()
         c.Update()
-        c.SaveAs(plot_dir + key + ".pdf")
-        c.SaveAs(plot_dir + key + ".png")
+        c.SaveAs(plot_name + yearTag + ".pdf")
+        c.SaveAs(plot_name + yearTag + ".png")
 
     for key in plot_map:
+        plot_name = plot_dir + key
         cutList         = plot_map[key]["cuts"]
         key_Electron    = plot_map[key]["Electron"]
         key_Muon        = plot_map[key]["Muon"]
@@ -156,14 +159,14 @@ def makePlots(f_name, year, useHEMVeto):
         
         # setup histograms
         #setupHist(hist, labels, title, color, y_min, y_max):
-        setupHist(h_Electron_mc,    cutList, key, blue_color,   y_min, y_max)
-        setupHist(h_Electron_data,  cutList, key, red_color,    y_min, y_max)
-        setupHist(h_Muon_mc,        cutList, key, green_color,  y_min, y_max)
-        setupHist(h_Muon_data,      cutList, key, purple_color, y_min, y_max)
-        setupHist(h_ratio_mc,       cutList, key, blue_color,   0.0, 2.0)
-        setupHist(h_ratio_data,     cutList, key, red_color,    0.0, 2.0)
-        setupHist(h_ratio_Electron, cutList, key, red_color,    0.0, 2.0)
-        setupHist(h_ratio_Muon,     cutList, key, purple_color, 0.0, 2.0)
+        setupHist(h_Electron_mc,    cutList, key + yearTag, blue_color,   y_min, y_max)
+        setupHist(h_Electron_data,  cutList, key + yearTag, red_color,    y_min, y_max)
+        setupHist(h_Muon_mc,        cutList, key + yearTag, green_color,  y_min, y_max)
+        setupHist(h_Muon_data,      cutList, key + yearTag, purple_color, y_min, y_max)
+        setupHist(h_ratio_mc,       cutList, key + yearTag, blue_color,   0.0, 2.0)
+        setupHist(h_ratio_data,     cutList, key + yearTag, red_color,    0.0, 2.0)
+        setupHist(h_ratio_Electron, cutList, key + yearTag, red_color,    0.0, 2.0)
+        setupHist(h_ratio_Muon,     cutList, key + yearTag, purple_color, 0.0, 2.0)
         
         # --- draw histograms --- #
         h_Electron_mc.Draw("hist")
@@ -181,8 +184,8 @@ def makePlots(f_name, year, useHEMVeto):
         
         c.SetLogy(1) # set log y
         c.Update()
-        c.SaveAs(plot_dir + key + ".pdf")
-        c.SaveAs(plot_dir + key + ".png")
+        c.SaveAs(plot_name + yearTag + ".pdf")
+        c.SaveAs(plot_name + yearTag + ".png")
 
         # --- draw histograms --- #
         h_ratio_mc.Draw("hist")
@@ -196,8 +199,8 @@ def makePlots(f_name, year, useHEMVeto):
         
         c.SetLogy(0) # unset log y
         c.Update()
-        c.SaveAs(plot_dir + key + "_ElectronMuonRatios.pdf")
-        c.SaveAs(plot_dir + key + "_ElectronMuonRatios.png")
+        c.SaveAs(plot_name + "_ElectronMuonRatios" + yearTag + ".pdf")
+        c.SaveAs(plot_name + "_ElectronMuonRatios" + yearTag + ".png")
         
         # --- draw histograms --- #
         h_ratio_Electron.Draw("hist")
@@ -211,13 +214,13 @@ def makePlots(f_name, year, useHEMVeto):
         
         c.SetLogy(0) # unset log y
         c.Update()
-        c.SaveAs(plot_dir + key + "_DataMCRatios.pdf")
-        c.SaveAs(plot_dir + key + "_DataMCRatios.png")
+        c.SaveAs(plot_name + "_DataMCRatios" + yearTag + ".pdf")
+        c.SaveAs(plot_name + "_DataMCRatios" + yearTag + ".png")
 
         # log scale of same ratio plot
         # set y axis for log y
-        setupHist(h_ratio_Electron, cutList, key, red_color,    0.1, 100.0)
-        setupHist(h_ratio_Muon,     cutList, key, purple_color, 0.1, 100.0)
+        setupHist(h_ratio_Electron, cutList, key + yearTag, red_color,    0.1, 100.0)
+        setupHist(h_ratio_Muon,     cutList, key + yearTag, purple_color, 0.1, 100.0)
         
         # --- draw histograms --- #
         h_ratio_Electron.Draw("hist")
@@ -226,8 +229,8 @@ def makePlots(f_name, year, useHEMVeto):
         
         c.SetLogy(1) # set log y
         c.Update()
-        c.SaveAs(plot_dir + key + "_DataMCRatios_LogScale.pdf")
-        c.SaveAs(plot_dir + key + "_DataMCRatios_LogScale.png")
+        c.SaveAs(plot_name + "_DataMCRatios_LogScale" + yearTag + ".pdf")
+        c.SaveAs(plot_name + "_DataMCRatios_LogScale" + yearTag + ".png")
 
 def main():
     version = 3
