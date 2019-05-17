@@ -184,8 +184,8 @@ class Normalization:
                 bins = [bin_1, bin_2, bin_3, bin_4, bin_5, bin_6]
                 if self.verbose:
                     for i, bin_i in enumerate(bins):
-                        lower_edge = h_Data.GetBinLowEdge(bin_i)
-                        upper_edge = lower_edge + h_Data.GetBinWidth(bin_i)
+                        lower_edge = h_Data.GetXaxis().GetBinLowEdge(bin_i)
+                        upper_edge = h_Data.GetXaxis().GetBinUpEdge(bin_i)
                         print "bin_{0}: {1} [{2}, {3}]".format(i+1, bin_i, lower_edge, upper_edge)
                 
                 # pass error to IntegralAndError as Double_t & error 
@@ -311,10 +311,10 @@ def main():
     elif version == 3:
         # May 16, 2019 Results
         N.setUseAllMC(useAllMC_map[version])
-        N.getNormAndError("condor/DataMC_2016_submission_2019-05-16_00-32-07/result.root",    "2016")
-        N.getNormAndError("condor/DataMC_2017_submission_2019-05-16_00-34-21/result.root",    "2017")
-        N.getNormAndError("condor/DataMC_2018_AB_submission_2019-05-16_00-35-46/result.root", "2018_AB")
-        N.getNormAndError("condor/DataMC_2018_CD_submission_2019-05-16_00-37-53/result.root", "2018_CD")
+        N.getNormAndError("condor/DataMC_2016_submission_2019-05-16_10-06-59/result.root",    "2016")
+        N.getNormAndError("condor/DataMC_2017_submission_2019-05-16_10-09-29/result.root",    "2017")
+        N.getNormAndError("condor/DataMC_2018_AB_submission_2019-05-16_10-10-30/result.root", "2018_AB")
+        N.getNormAndError("condor/DataMC_2018_CD_submission_2019-05-16_10-12-04/result.root", "2018_CD")
     N.makeTexFile("normalization.tex")
 
 
