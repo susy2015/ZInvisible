@@ -266,7 +266,7 @@ def makePlots(f_name, year, doPhotons, useHEMVeto):
         c.SaveAs(plot_name + "_DataMCRatios_LogScale" + yearTag + ".png")
 
 def main():
-    version = 3
+    version = 4
     # set per version
     useHEMVeto_map = {1: False, 2:False, 3:True,  4:True}
     doPhotons_map  = {1: False, 2:False, 3:False, 4:True}
@@ -289,13 +289,13 @@ def main():
         makePlots("condor/DataMC_2018_AB_submission_2019-05-16_10-10-30/result.root", "2018_AB", doPhotons, useHEMVeto)
         makePlots("condor/DataMC_2018_CD_submission_2019-05-16_10-12-04/result.root", "2018_CD", doPhotons, useHEMVeto)
     if version == 4:
-        # photon cutflows
-        makePlots("quickResult_photonCutflow_2016.root", "2016", doPhotons, useHEMVeto)
+        # May 17, 2019 Results
+        makePlots("condor/DataMC_2016_submission_2019-05-17_18-46-29/result.root",    "2016",    doPhotons, useHEMVeto)
+        makePlots("condor/DataMC_2017_submission_2019-05-17_18-47-28/result.root",    "2017",    doPhotons, useHEMVeto)
+        makePlots("condor/DataMC_2018_AB_submission_2019-05-17_18-48-10/result.root", "2018_AB", doPhotons, useHEMVeto)
+        makePlots("condor/DataMC_2018_CD_submission_2019-05-17_18-50-16/result.root", "2018_CD", doPhotons, useHEMVeto)
 
 if __name__ == "__main__":
     main()
-
-
-
 
 
