@@ -82,8 +82,9 @@ make -j8
 
 You will need to compile after making changes to the source code (.cc, .h, Makefile, etc). If you change the Makefile, you will need to run `make clean` and then `make`.
 
-Copy this root file containing systematics (from the SUS-16-050 analysis). This file is used by moneyplot to show systematics in each search bin. We still need to redo the systematics for the full Run 2 analysis.
+Copy the following root files from Caleb's area. These files will need to be updated for our full Run 2 analysis (if we still use them).
 ```
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/effhists_GJets.root .
 cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/syst_all.root .
 ```
 
