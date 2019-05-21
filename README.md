@@ -1,9 +1,20 @@
 # ZInvisible
 
+## Overview
+
+These instructions will walk through downloading and setting up the following repositories that are required to run the ZInvisible framework.
+- [ZInvisible](https://github.com/susy2015/ZInvisible/tree/NanoAOD)
+- [SusyAnaTools](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD)
+- [TopTagger](https://github.com/susy2015/TopTagger)
+- [TopTaggerTools](https://github.com/susy2015/TopTaggerTools)
+
+The ZInvisible framework also uses configuration files from the StopCfg and TopTaggerCfg repositories. Here are links to the available releases.
+- [StopCfg](https://github.com/susy2015/StopCfg/releases)
+- [TopTaggerCfg](https://github.com/susy2015/TopTaggerCfg/releases)
 
 ## Setup TopTagger and SusyAnaTools 
 
-First follow the instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#instructions). Once you are done, you should have a CMSSW area setup that contains the TopTagger repo and the SusyAnaTools repo.
+First follow the instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#instructions). Once you are done, you should have a CMSSW area setup that contains the TopTagger, TopTaggerTools, and SusyAnaTools repositories.
 
 <details> 
 
@@ -28,6 +39,7 @@ Checkout the ZInvisible repository.
 cd $CMSSW_BASE/src
 git clone git@github.com:susy2015/ZInvisible.git
 cd ZInvisible/Tools
+git checkout NanoAOD
 ```
 
 ## Get Configuration Files
