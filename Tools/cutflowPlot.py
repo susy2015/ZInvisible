@@ -18,14 +18,14 @@ def setupHist(hist, labels, title, color, y_min, y_max):
     hist.SetLineColor(getColorIndex(color))
     hist.SetLineWidth(3)
 
-def makePlots(f_name, year, doPhotons, useHEMVeto):
+def makePlots(file_name, year, doPhotons, useHEMVeto):
     yearTag = "_" + year
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
-    # check that the files exist
-    if not os.path.isfile(f_name): 
-        print "The file {0} does not exist".format(f_name)
+    # check that the file exists
+    if not os.path.isfile(file_name): 
+        print "The file {0} does not exist".format(file_name)
         return
     # make directory for plots if it does not exist
     if not os.path.exists(plot_dir):
@@ -40,7 +40,7 @@ def makePlots(f_name, year, doPhotons, useHEMVeto):
     y_min = 10.0**1
     y_max = 10.0**10
 
-    rootFile = ROOT.TFile(f_name)
+    rootFile = ROOT.TFile(file_name)
     c = ROOT.TCanvas("c", "c", 800, 800)
     cuts = []
     if useHEMVeto:

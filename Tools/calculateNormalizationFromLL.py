@@ -1,4 +1,6 @@
 # calculateNormalizationFromLL.py
+
+import os
 import numpy as np
 import ROOT
 
@@ -12,6 +14,7 @@ class Normalization:
         self.verbose = verbose
         self.ERROR_CODE = -999
         self.norm_map = {}
+        self.histos = {}
         self.output_file = 0 
         self.eras = []
         self.particles = ["Electron", "Muon"]
@@ -20,6 +23,37 @@ class Normalization:
                              "LowDM"  : "Low $\Delta m$",
                              "HighDM" : "High $\Delta m$"
                            }
+        # variable is also TDirectoryFile that holds histograms 
+        self.variable = "bestRecoZM"
+    
+    def setupHistos(self, year):
+        # histograms
+        # examples (DY and ttbar only)
+        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
+        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDYstack
+        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMt#bar{t}stack 
+        # examples (all MC)
+        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
+        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMZToLLstack
+        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMNoZToLLstack 
+        self.histos[year] = {}
+        for particle in self.particles:
+            self.histos[year][particle] = {}
+            for region in self.regions:
+                if self.useAllMC:
+                    # using ZToLL and NoZToLL MC for normalization 
+                    self.histos[year][particle][region] = { 
+                        "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
+                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMZToLLstack",
+                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMNoZToLLstack",
+                    }
+                else:
+                    # using only DY and ttbar for normalization 
+                    self.histos[year][particle][region] = { 
+                        "Data"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
+                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
+                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMt#bar{t}stack",
+                    }
 
     def setUseAllMC(self, value):
         self.useAllMC = value
@@ -119,6 +153,8 @@ class Normalization:
         return Ainverse_error
     
     def getNormAndError(self, file_name, era):
+        # currently the histograms are named by year (2018) and not era (2018_AB)
+        # we should probalby change the histograms to use era (2018_AB)
         year = era[0:4]
         self.eras.append(era)
         self.norm_map[era] = {}
@@ -126,36 +162,13 @@ class Normalization:
         print "Era: {0}".format(era)
         print "Year: {0}".format(year)
         print "File: {0}".format(file_name)
+        # check that the file exists
+        if not os.path.isfile(file_name): 
+            print "The file {0} does not exist".format(file_name)
+            return
         f = ROOT.TFile(file_name)
-        # variable is also TDirectoryFile that holds histograms 
-        variable = "bestRecoZM"
-        # histograms
-        # examples (DY and ttbar only)
-        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
-        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDYstack
-        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMt#bar{t}stack 
-        # examples (all MC)
-        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
-        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMZToLLstack
-        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMNoZToLLstack 
-        histos = {}
-        for particle in self.particles:
-            histos[particle] = {}
-            for region in self.regions:
-                if self.useAllMC:
-                    # using ZToLL and NoZToLL MC for normalization 
-                    histos[particle][region] = { 
-                        "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
-                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMZToLLstack",
-                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMNoZToLLstack",
-                    }
-                else:
-                    # using only DY and ttbar for normalization 
-                    histos[particle][region] = { 
-                        "Data"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
-                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
-                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMt#bar{t}stack",
-                    }
+        # setup histogram map
+        self.setupHistos(year)
         
         for particle in self.particles:
             self.norm_map[era][particle] = {}
@@ -163,9 +176,9 @@ class Normalization:
             for region in self.regions:
                 self.norm_map[era][particle][region] = {}
                 print region
-                h_Data    = f.Get(variable + "/" + histos[particle][region]["Data"])
-                h_ZToLL   = f.Get(variable + "/" + histos[particle][region]["ZToLL"])
-                h_NoZToLL = f.Get(variable + "/" + histos[particle][region]["NoZToLL"])
+                h_Data    = f.Get(self.variable + "/" + self.histos[year][particle][region]["Data"])
+                h_ZToLL   = f.Get(self.variable + "/" + self.histos[year][particle][region]["ZToLL"])
+                h_NoZToLL = f.Get(self.variable + "/" + self.histos[year][particle][region]["NoZToLL"])
     
                 #############################
                 # Calculating Normalization #
