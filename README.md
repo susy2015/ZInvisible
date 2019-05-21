@@ -105,7 +105,7 @@ You can also run over a specific HT sample range.
 
 If `makePlots` succeeds it will create a file named `histoutput.root`. You can open this file with a TBrowser either on cmslpc or by copying it to your machine.
 
-Here is the command structure for using rsync to copy file to your machine. Replace USERNAME with your cmslpc username. Replace WORKINGAREA with the contects of $PWD, which you can get with `pwd`.
+Here is an example of using rsync to copy a root file to your computer. Replace USERNAME with your cmslpc username. Replace WORKINGAREA the cmslpc path to the root file which you can get with `pwd`.
 ```
 rsync -avz USERNAME@cmslpc-sl6.fnal.gov:WORKINGAREA/histoutput.root .
 ```
