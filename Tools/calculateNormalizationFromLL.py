@@ -167,6 +167,7 @@ class Normalization:
         if not os.path.isfile(file_name): 
             print "The file {0} does not exist".format(file_name)
             return
+        
         f = ROOT.TFile(file_name)
         # setup histogram map
         self.setupHistoMap(year)
