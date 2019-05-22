@@ -6,6 +6,7 @@ import ROOT
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
+# make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 class Normalization:
@@ -26,7 +27,7 @@ class Normalization:
         # variable is also TDirectoryFile that holds histograms 
         self.variable = "bestRecoZM"
     
-    def setupHistos(self, year):
+    def setupHistoMap(self, year):
         # histograms
         # examples (DY and ttbar only)
         # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
@@ -168,7 +169,7 @@ class Normalization:
             return
         f = ROOT.TFile(file_name)
         # setup histogram map
-        self.setupHistos(year)
+        self.setupHistoMap(year)
         
         for particle in self.particles:
             self.norm_map[era][particle] = {}

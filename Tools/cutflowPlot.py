@@ -3,6 +3,11 @@
 import os
 import ROOT
 from colors import getColorIndex
+    
+# make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
+ROOT.PyConfig.IgnoreCommandLineOptions = True
+# make plots faster without displaying them
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 def setupHist(hist, labels, title, color, y_min, y_max):
     x_axis = hist.GetXaxis()
@@ -20,9 +25,12 @@ def setupHist(hist, labels, title, color, y_min, y_max):
 
 def makePlots(file_name, year, doPhotons, useHEMVeto):
     yearTag = "_" + year
-    ROOT.gROOT.SetBatch(ROOT.kTRUE)
     plot_dir = "cutflows/"
     h_dir = "CutFlows/"
+    if plot_dir[-1] != "/":
+        plot_dir += "/"
+    if h_dir[-1] != "/":
+        h_dir += "/"
     # check that the file exists
     if not os.path.isfile(file_name): 
         print "The file {0} does not exist".format(file_name)
@@ -165,7 +173,7 @@ def makePlots(file_name, year, doPhotons, useHEMVeto):
         legend.AddEntry(h_mc,   "MC",   "l")
         legend.Draw()
         
-        c.SetLogy()
+        c.SetLogy(1) # set log y
         c.Update()
         c.SaveAs(plot_name + yearTag + ".pdf")
         c.SaveAs(plot_name + yearTag + ".png")
