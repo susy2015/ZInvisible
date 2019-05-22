@@ -29,13 +29,13 @@ class Shape:
         self.histos[year] = {}
         for region in self.regions:
             self.histos[year][region] = {
-                    "Data"  : "DataMC_Photon_" + region + "_met_2016metWithPhotonmetWithPhotonDatadata",
-                    "GJets" : "DataMC_Photon_" + region + "_met_2016metWithPhotonmetWithPhoton#gamma+jetsstack",
-                    "QCD"   : "DataMC_Photon_" + region + "_met_2016metWithPhotonmetWithPhotonQCDstack",
-                    "WJets" : "DataMC_Photon_" + region + "_met_2016metWithPhotonmetWithPhotonW(l#nu)+jetsstack",
-                    "TTbar" : "DataMC_Photon_" + region + "_met_2016metWithPhotonmetWithPhotont#bar{t}stack",
-                    "tW"    : "DataMC_Photon_" + region + "_met_2016metWithPhotonmetWithPhotontWstack",
-                    "Rare"  : "DataMC_Photon_" + region + "_met_2016metWithPhotonmetWithPhotonRarestack",
+                    "Data"  : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhotonDatadata",
+                    "GJets" : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhoton#gamma+jetsstack",
+                    "QCD"   : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhotonQCDstack",
+                    "WJets" : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhotonW(l#nu)+jetsstack",
+                    "TTbar" : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhotont#bar{t}stack",
+                    "tW"    : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhotontWstack",
+                    "Rare"  : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhotonRarestack",
             }
     
     def getShape(self, file_name, era): 
@@ -73,6 +73,7 @@ class Shape:
             h_MC.Add(h_tW)
             h_MC.Add(h_Rare)
 
+
             # number of data events
             nData = h_Data.Integral(0, h_Data.GetNbinsX() + 1)
             nMC   = h_MC.Integral(0,   h_MC.GetNbinsX() + 1)
@@ -83,7 +84,13 @@ class Shape:
 
             h_MC_normalized = h_MC.Clone("h_MC_normalized")
             h_MC_normalized.Scale(ratio)
-        
+            
+            # ratios
+            h_ratio = h_Data.Clone("h_ratio")
+            h_ratio.Divide(h_MC)
+            h_ratio_normalized = h_Data.Clone("h_ratio_normalized")
+            h_ratio_normalized.Divide(h_MC_normalized)
+         
             
             # draw histograms
             h_Data.Draw("hist")
@@ -102,6 +109,22 @@ class Shape:
             c.Update()
             c.SaveAs(plot_name + "_normalized" + eraTag + ".pdf")
             c.SaveAs(plot_name + "_normalized" + eraTag + ".png")
+            
+            # draw histograms
+            h_ratio.Draw("hist")
+            # save histograms
+            c.SetLogy(0) # unset log y
+            c.Update()
+            c.SaveAs(plot_name + "_ratio" + eraTag + ".pdf")
+            c.SaveAs(plot_name + "_ratio" + eraTag + ".png")
+            
+            # draw histograms
+            h_ratio_normalized.Draw("hist")
+            # save histograms
+            c.SetLogy(0) # unset log y
+            c.Update()
+            c.SaveAs(plot_name + "_ratio_normalized" + eraTag + ".pdf")
+            c.SaveAs(plot_name + "_ratio_normalized" + eraTag + ".png")
         
 
 def main():
