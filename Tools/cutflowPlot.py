@@ -23,9 +23,8 @@ def setupHist(hist, labels, title, color, y_min, y_max):
     hist.SetLineColor(getColorIndex(color))
     hist.SetLineWidth(3)
 
-def makePlots(file_name, year, doPhotons, useHEMVeto):
+def makeCutflows(file_name, year, plot_dir, doPhotons, useHEMVeto):
     yearTag = "_" + year
-    plot_dir = "cutflows/"
     h_dir = "CutFlows/"
     if plot_dir[-1] != "/":
         plot_dir += "/"
@@ -50,6 +49,13 @@ def makePlots(file_name, year, doPhotons, useHEMVeto):
 
     rootFile = ROOT.TFile(file_name)
     c = ROOT.TCanvas("c", "c", 800, 800)
+        
+    # legend: TLegend(x1,y1,x2,y2)
+    legend_x1 = 0.5
+    legend_x2 = 0.9 
+    legend_y1 = 0.7 
+    legend_y2 = 0.9 
+
     cuts = []
     if useHEMVeto:
         cutsLepton = [
@@ -167,8 +173,7 @@ def makePlots(file_name, year, doPhotons, useHEMVeto):
         h_data.Draw("hist same")
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
-        #legend = ROOT.TLegend()
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
         legend.AddEntry(h_data, "Data", "l")
         legend.AddEntry(h_mc,   "MC",   "l")
         legend.Draw()
@@ -216,7 +221,7 @@ def makePlots(file_name, year, doPhotons, useHEMVeto):
         h_Muon_data.Draw("hist same")
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
         legend.AddEntry(h_Electron_data, "Electron Data", "l")
         legend.AddEntry(h_Electron_mc,   "Electron MC",   "l")
         legend.AddEntry(h_Muon_data,     "Muon Data",     "l")
@@ -233,7 +238,7 @@ def makePlots(file_name, year, doPhotons, useHEMVeto):
         h_ratio_data.Draw("hist same")
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
         legend.AddEntry(h_ratio_data, "Electron/Muon Data", "l")
         legend.AddEntry(h_ratio_mc,   "Electron/Muon MC",   "l")
         legend.Draw()
@@ -248,7 +253,7 @@ def makePlots(file_name, year, doPhotons, useHEMVeto):
         h_ratio_Muon.Draw("hist same")
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
         legend.AddEntry(h_ratio_Electron, "Electron Data/MC", "l")
         legend.AddEntry(h_ratio_Muon,     "Muon Data/MC",     "l")
         legend.Draw()
@@ -274,6 +279,7 @@ def makePlots(file_name, year, doPhotons, useHEMVeto):
         c.SaveAs(plot_name + "_DataMCRatios_LogScale" + yearTag + ".png")
 
 def main():
+    plot_dir = "more_plots"
     version = 4
     # set per version
     useHEMVeto_map = {1: False, 2:False, 3:True,  4:True}
@@ -282,26 +288,26 @@ def main():
     doPhotons      = doPhotons_map[version]
     if version == 1:
         # May 5, 2019 Results
-        makePlots("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016", doPhotons, useHEMVeto)
-        makePlots("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017", doPhotons, useHEMVeto)
-        makePlots("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018", doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016", plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017", plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018", plot_dir, doPhotons, useHEMVeto)
     if version == 2:
         # May 9, 2019 Results
-        makePlots("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016", doPhotons, useHEMVeto)
-        makePlots("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017", doPhotons, useHEMVeto)
-        makePlots("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018", doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016", plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017", plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018", plot_dir, doPhotons, useHEMVeto)
     if version == 3:
         # May 16, 2019 Results
-        makePlots("condor/DataMC_2016_submission_2019-05-16_10-06-59/result.root",    "2016",    doPhotons, useHEMVeto)
-        makePlots("condor/DataMC_2017_submission_2019-05-16_10-09-29/result.root",    "2017",    doPhotons, useHEMVeto)
-        makePlots("condor/DataMC_2018_AB_submission_2019-05-16_10-10-30/result.root", "2018_AB", doPhotons, useHEMVeto)
-        makePlots("condor/DataMC_2018_CD_submission_2019-05-16_10-12-04/result.root", "2018_CD", doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2016_submission_2019-05-16_10-06-59/result.root",    "2016",    plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2017_submission_2019-05-16_10-09-29/result.root",    "2017",    plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2018_AB_submission_2019-05-16_10-10-30/result.root", "2018_AB", plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2018_CD_submission_2019-05-16_10-12-04/result.root", "2018_CD", plot_dir, doPhotons, useHEMVeto)
     if version == 4:
         # May 17, 2019 Results
-        makePlots("condor/DataMC_2016_submission_2019-05-17_18-46-29/result.root",    "2016",    doPhotons, useHEMVeto)
-        makePlots("condor/DataMC_2017_submission_2019-05-17_18-47-28/result.root",    "2017",    doPhotons, useHEMVeto)
-        makePlots("condor/DataMC_2018_AB_submission_2019-05-17_18-48-10/result.root", "2018_AB", doPhotons, useHEMVeto)
-        makePlots("condor/DataMC_2018_CD_submission_2019-05-17_18-50-16/result.root", "2018_CD", doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2016_submission_2019-05-17_18-46-29/result.root",    "2016",    plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2017_submission_2019-05-17_18-47-28/result.root",    "2017",    plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2018_AB_submission_2019-05-17_18-48-10/result.root", "2018_AB", plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2018_CD_submission_2019-05-17_18-50-16/result.root", "2018_CD", plot_dir, doPhotons, useHEMVeto)
 
 if __name__ == "__main__":
     main()

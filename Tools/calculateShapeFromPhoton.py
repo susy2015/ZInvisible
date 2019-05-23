@@ -12,13 +12,13 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 
 class Shape:
-    def __init__(self, verbose):
+    def __init__(self, plot_dir, verbose):
         self.verbose = verbose
         self.histos = {}
         self.regions   = ["LowDM", "HighDM"]
         # variable is also TDirectoryFile that holds histograms 
         self.variable = "metWithPhoton"
-        self.plot_dir = "met_shapes/"
+        self.plot_dir = plot_dir
         if self.plot_dir[-1] != "/":
             self.plot_dir += "/"
             
@@ -82,7 +82,6 @@ class Shape:
         legend_x2 = 0.9 
         legend_y1 = 0.7 
         legend_y2 = 0.9 
-
         
         # setup histogram map
         self.setupHistoMap(year)
@@ -194,8 +193,9 @@ class Shape:
         
 
 def main():
+    plot_dir = "more_plots"
     verbose = True
-    S = Shape(verbose)
+    S = Shape(plot_dir, verbose)
     S.getShape("condor/DataMC_2016_submission_2019-05-21_13-29-18/result.root", "2016")
     S.getShape("condor/DataMC_2017_submission_2019-05-21_13-32-05/result.root", "2017")
     S.getShape("condor/DataMC_2018_AB_submission_2019-05-21_13-32-36/result.root", "2018_AB")
