@@ -9,6 +9,7 @@ import subprocess
 import sys
 import os
 from os import system, environ
+import json
 
 sys.path = [environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/condor/",] + sys.path
 from samples import SampleCollection
@@ -401,6 +402,7 @@ def main():
    
     total_files = 0
     total_events = 0
+    jobMap = {}
     for ds in datasets:
         sample_files = 0
         sample_events = 0
@@ -419,6 +421,7 @@ def main():
             sample_events += e
             total_files += n_files
             total_events += e
+            jobMap[n] =  n_files
             print "\t{0}: n_files={1}, n_events={2}".format(n, n_files, e)
             try:
                 f = open(s)
@@ -449,6 +452,9 @@ def main():
     print "# --- Totals --- #"
     print "total_files={0}, total_events={1}".format(total_files, total_events)
     
+    with open("nJobs.json", "w") as outfile:
+        json.dump(jobMap, outfile, sort_keys=True, indent=4)
+    
     fout = open("condor_submit.txt", "w")
     fout.write(''.join(fileParts))
     fout.close()
@@ -457,6 +463,8 @@ def main():
         system('mkdir -p logs')
         system("echo 'condor_submit condor_submit.txt'")
         system('condor_submit condor_submit.txt')
+
+    print "Condor submission directory: {0}".format(dirName)
 
 if __name__ == "__main__":
     main()
