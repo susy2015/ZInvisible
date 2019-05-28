@@ -159,20 +159,21 @@ def main():
     #
     #"""
     # new version for submitting from specific directory for submission (use relative instead of full paths for tar files)
+    # note that tabs and spaces will appear in condor_submit.txt if you have them here
     submitFileGMP = """universe = vanilla
-    Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
-    Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
-    Should_Transfer_Files = YES
-    WhenToTransferOutput = ON_EXIT
-    Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,gmp.tar.gz,$ENV(CMSSW_VERSION).tar.gz
-    Output = logs/makePlots_$(Process).stdout
-    Error = logs/makePlots_$(Process).stderr
-    Log = logs/makePlots_$(Process).log
-    notify_user = ${LOGNAME}@FNAL.GOV
-    x509userproxy = $ENV(X509_USER_PROXY)
-    +maxWallTime = 2880
-    
-    """
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,gmp.tar.gz,$ENV(CMSSW_VERSION).tar.gz
+Output = logs/makePlots_$(Process).stdout
+Error = logs/makePlots_$(Process).stderr
+Log = logs/makePlots_$(Process).log
+notify_user = ${LOGNAME}@FNAL.GOV
+x509userproxy = $ENV(X509_USER_PROXY)
++maxWallTime = 2880
+
+"""
     
     #Here is the configuration for the Data/MC validation of the TopTagger 
     filestoTransferTT  = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/simpleAnalyzer",
@@ -439,9 +440,9 @@ def main():
                         count = count + 1
                 for startFileNum in xrange(0, count, nFilesPerJob):
                     fileParts.append("Arguments = %s $ENV(CMSSW_VERSION) %i %i %f %s %s\n"%(n, nFilesPerJob, startFileNum, lumi, s, year))
-                    fileParts.append("Output = logs/%s_%s_%i.stdout\n"%(exeName, n, startFileNum))
-                    fileParts.append("Error = logs/%s_%s_%i.stderr\n"%(exeName, n, startFileNum))
-                    fileParts.append("Log = logs/%s_%s_%i.log\n"%(exeName, n, startFileNum))
+                    fileParts.append("Output = logs/$(Cluster)_$(Process)_%s_%s_%i.stdout\n"%(exeName, n, startFileNum))
+                    fileParts.append("Error = logs/$(Cluster)_$(Process)_%s_%s_%i.stderr\n"%(exeName, n, startFileNum))
+                    fileParts.append("Log = logs/$(Cluster)_$(Process)_%s_%s_%i.log\n"%(exeName, n, startFileNum))
                     fileParts.append("Queue\n\n")
     
                 f.close()
