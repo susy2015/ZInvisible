@@ -15,15 +15,18 @@ class Normalization:
         self.verbose = verbose
         self.ERROR_CODE = -999
         self.norm_map = {}
+        self.norm_map_tex = {}
         self.histos = {}
         self.output_file = 0 
         self.eras = []
         self.particles = ["Electron", "Muon"]
+        self.channels = self.particles + ["Lepton"]
         self.regions   = ["LowDM", "HighDM"]
         self.regions_tex = {
                              "LowDM"  : "Low $\Delta m$",
                              "HighDM" : "High $\Delta m$"
                            }
+        self.factors = ["R_Z", "R_T"]
         # variable is also TDirectoryFile that holds histograms 
         self.variable = "bestRecoZM"
     
@@ -128,6 +131,12 @@ class Normalization:
         # dq = sqrt( dx^2 + dy^2 )
         return abs(np.sqrt( dx**2 + dy**2 ))
     
+    def getConstantMultiplicationError(self, a, dx):
+        # a is a constant
+        # q  = a * x
+        # dq = |a| * dx
+        return abs(a * dx)
+    
     def getMultiplicationError(self, q, x, dx, y, dy):
         # q = x * y 
         # q = x / y 
@@ -158,7 +167,18 @@ class Normalization:
         # we should probalby change the histograms to use era (2018_AB)
         year = era[0:4]
         self.eras.append(era)
+        
+        # define maps for every channel (not just particles)
         self.norm_map[era] = {}
+        self.norm_map_tex[era] = {}
+        for channel in self.channels:
+            self.norm_map[era][channel] = {}
+            self.norm_map_tex[era][channel] = {}
+            for region in self.regions:
+                self.norm_map[era][channel][region] = {}
+                self.norm_map_tex[era][channel][region] = {}
+        
+        
         print "------------------------------------------------------------------------------"
         print "Era: {0}".format(era)
         print "Year: {0}".format(year)
@@ -173,10 +193,8 @@ class Normalization:
         self.setupHistoMap(year)
         
         for particle in self.particles:
-            self.norm_map[era][particle] = {}
             print particle
             for region in self.regions:
-                self.norm_map[era][particle][region] = {}
                 print region
                 h_Data    = f.Get(self.variable + "/" + self.histos[year][particle][region]["Data"])
                 h_ZToLL   = f.Get(self.variable + "/" + self.histos[year][particle][region]["ZToLL"])
@@ -259,14 +277,54 @@ class Normalization:
                 b1_error = error[0]
                 b2_error = error[1]
                 
-                R_Z_print = "R_Z = {0:.3f} +/- {1:.3f}".format(b1, b1_error)
-                R_T_print = "R_T = {0:.3f} +/- {1:.3f}".format(b2, b2_error)
-                R_Z_tex = "${0:.3f} \pm {1:.3f}$".format(b1, b1_error)
-                R_T_tex = "${0:.3f} \pm {1:.3f}$".format(b2, b2_error)
-                print R_Z_print 
-                print R_T_print
-                self.norm_map[era][particle][region]["R_Z"] = R_Z_tex 
-                self.norm_map[era][particle][region]["R_T"] = R_T_tex 
+                values = {}
+                values["R_Z"] = b1
+                values["R_T"] = b2
+                values["R_Z_error"] = b1_error
+                values["R_T_error"] = b2_error
+                
+                # loop over factors
+                for factor in self.factors:
+                    value       = values[factor]
+                    value_error = values[factor + "_error"]
+                    factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
+                    factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
+                    print factor_print 
+                    self.norm_map[era][particle][region][factor] = value
+                    self.norm_map[era][particle][region][factor + "_error"] = value_error
+                    self.norm_map_tex[era][particle][region][factor] = factor_tex
+                
+
+        # weighted average: combine channels
+        print "Lepton"
+        for region in self.regions:
+            print region
+            for factor in self.factors:
+                # take the weighted average over particles
+                weighted_average_numerator = 0.0
+                weighted_average_denominator = 0.0
+                errors_numerator = {}
+                error_numerator = 0.0
+                for particle in self.particles:
+                    value       = self.norm_map[era][particle][region][factor]
+                    value_error = self.norm_map[era][particle][region][factor + "_error"]
+                    weighted_average_numerator   += value / (value_error ** 2)
+                    weighted_average_denominator += 1.0 / (value_error ** 2)
+                    errors_numerator[particle] = self.getConstantMultiplicationError(1.0 / (value_error ** 2), value_error) 
+                for i,particle in enumerate(self.particles):
+                    if i == 0:
+                        error_numerator = errors_numerator[particle]
+                    else:
+                        error_numerator = self.getAdditionError(error_numerator, errors_numerator[particle])
+                value       = weighted_average_numerator / weighted_average_denominator
+                value_error = self.getConstantMultiplicationError(1.0 / weighted_average_denominator, error_numerator)
+                factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
+                factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
+                print factor_print 
+                self.norm_map[era]["Lepton"][region][factor] = value
+                self.norm_map[era]["Lepton"][region][factor + "_error"] = value_error
+                self.norm_map_tex[era]["Lepton"][region][factor] = factor_tex
+
         print "------------------------------------------------------------------------------"
     
     def writeLine(self, line):
@@ -292,12 +350,12 @@ class Normalization:
             # write values to table
             for region in self.regions:
                 for era in self.eras:
-                    for particle in self.particles:
-                        R_Z = self.norm_map[era][particle][region]["R_Z"] 
-                        R_T = self.norm_map[era][particle][region]["R_T"] 
+                    for channel in self.channels:
+                        R_Z = self.norm_map_tex[era][channel][region]["R_Z"] 
+                        R_T = self.norm_map_tex[era][channel][region]["R_T"] 
                         region_tex = self.regions_tex[region]
                         era_tex = era.replace("_", " ")
-                        self.writeLine("\hline {0} & {1} & {2} & {3} & {4} \\\\".format(region_tex, era_tex, particle, R_Z, R_T))
+                        self.writeLine("\hline {0} & {1} & {2} & {3} & {4} \\\\".format(region_tex, era_tex, channel, R_Z, R_T))
             self.writeLine("\hline")
             self.writeLine("\end{tabular}")
             # end table
@@ -333,8 +391,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
 
 
