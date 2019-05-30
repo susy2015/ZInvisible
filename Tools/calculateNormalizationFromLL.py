@@ -20,7 +20,7 @@ class Normalization:
         self.output_file = 0 
         self.eras = []
         self.particles = ["Electron", "Muon"]
-        self.channels = self.particles + ["Lepton"]
+        self.channels = self.particles + ["Combined"]
         self.regions   = ["LowDM", "HighDM"]
         self.regions_tex = {
                              "LowDM"  : "Low $\Delta m$",
@@ -296,7 +296,7 @@ class Normalization:
                 
 
         # weighted average: combine channels
-        print "Lepton"
+        print "Combined"
         for region in self.regions:
             print region
             for factor in self.factors:
@@ -321,9 +321,9 @@ class Normalization:
                 factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
                 factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
                 print factor_print 
-                self.norm_map[era]["Lepton"][region][factor] = value
-                self.norm_map[era]["Lepton"][region][factor + "_error"] = value_error
-                self.norm_map_tex[era]["Lepton"][region][factor] = factor_tex
+                self.norm_map[era]["Combined"][region][factor] = value
+                self.norm_map[era]["Combined"][region][factor + "_error"] = value_error
+                self.norm_map_tex[era]["Combined"][region][factor] = factor_tex
 
         print "------------------------------------------------------------------------------"
     
