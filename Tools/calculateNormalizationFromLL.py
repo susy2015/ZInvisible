@@ -179,10 +179,11 @@ class Normalization:
                 self.norm_map_tex[era][channel][region] = {}
         
         
-        print "------------------------------------------------------------------------------"
-        print "Era: {0}".format(era)
-        print "Year: {0}".format(year)
-        print "File: {0}".format(file_name)
+        if self.verbose:
+            print "------------------------------------------------------------------------------"
+            print "Era: {0}".format(era)
+            print "Year: {0}".format(year)
+            print "File: {0}".format(file_name)
         # check that the file exists
         if not os.path.isfile(file_name): 
             print "The file {0} does not exist".format(file_name)
@@ -193,9 +194,11 @@ class Normalization:
         self.setupHistoMap(year)
         
         for particle in self.particles:
-            print particle
+            if self.verbose:
+                print particle
             for region in self.regions:
-                print region
+                if self.verbose:
+                    print region
                 h_Data    = f.Get(self.variable + "/" + self.histos[year][particle][region]["Data"])
                 h_ZToLL   = f.Get(self.variable + "/" + self.histos[year][particle][region]["ZToLL"])
                 h_NoZToLL = f.Get(self.variable + "/" + self.histos[year][particle][region]["NoZToLL"])
@@ -289,16 +292,19 @@ class Normalization:
                     value_error = values[factor + "_error"]
                     factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
                     factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
-                    print factor_print 
+                    if self.verbose:
+                        print factor_print 
                     self.norm_map[era][particle][region][factor] = value
                     self.norm_map[era][particle][region][factor + "_error"] = value_error
                     self.norm_map_tex[era][particle][region][factor] = factor_tex
                 
 
         # weighted average: combine channels
-        print "Combined"
+        if self.verbose:
+            print "Combined"
         for region in self.regions:
-            print region
+            if self.verbose:
+                print region
             for factor in self.factors:
                 # take the weighted average over particles
                 weighted_average_numerator = 0.0
@@ -320,12 +326,14 @@ class Normalization:
                 value_error = self.getConstantMultiplicationError(1.0 / weighted_average_denominator, error_numerator)
                 factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
                 factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
-                print factor_print 
+                if self.verbose:
+                    print factor_print 
                 self.norm_map[era]["Combined"][region][factor] = value
                 self.norm_map[era]["Combined"][region][factor + "_error"] = value_error
                 self.norm_map_tex[era]["Combined"][region][factor] = factor_tex
 
-        print "------------------------------------------------------------------------------"
+        if self.verbose:
+            print "------------------------------------------------------------------------------"
     
     def writeLine(self, line):
         self.output_file.write(line + "\n")
