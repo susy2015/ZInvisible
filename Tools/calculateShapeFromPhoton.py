@@ -175,8 +175,8 @@ class Shape:
                     # Data and MC
                     
                     # draw histograms
-                    h_Data.Draw(draw_option)
-                    h_MC.Draw(draw_option + " same")
+                    h_MC.Draw(draw_option)
+                    h_Data.Draw(draw_option + "same")
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
                     legend.AddEntry(h_Data, "Data", "l")
@@ -191,8 +191,8 @@ class Shape:
                     # Data and Normalized MC
                     
                     # draw histograms
-                    h_Data.Draw(draw_option)
-                    h_MC_normalized.Draw(draw_option + " same")
+                    h_MC_normalized.Draw(draw_option)
+                    h_Data.Draw(draw_option + "same")
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
                     legend.AddEntry(h_Data,          "Data",          "l")

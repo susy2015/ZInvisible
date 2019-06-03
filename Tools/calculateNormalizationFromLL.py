@@ -314,9 +314,10 @@ class Normalization:
                 for particle in self.particles:
                     value       = self.norm_map[era][particle][region][factor]
                     value_error = self.norm_map[era][particle][region][factor + "_error"]
-                    weighted_average_numerator   += value / (value_error ** 2)
-                    weighted_average_denominator += 1.0 / (value_error ** 2)
-                    errors_numerator[particle] = self.getConstantMultiplicationError(1.0 / (value_error ** 2), value_error) 
+                    weight = 1.0 / (value_error ** 2)
+                    weighted_average_numerator   += weight * value
+                    weighted_average_denominator += weight
+                    errors_numerator[particle] = self.getConstantMultiplicationError(weight, value_error) 
                 for i,particle in enumerate(self.particles):
                     if i == 0:
                         error_numerator = errors_numerator[particle]

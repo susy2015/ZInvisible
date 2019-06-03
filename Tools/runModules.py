@@ -8,11 +8,11 @@ from searchBins import SearchBins
 from searchBins import ValidationBins
 
 def main():
-    doCutflows = False
+    doCutflows = True
     doPhotons = True
     useHEMVeto = True
     useAllMC = True
-    draw = False
+    draw = True
     verbose = False
     
     plot_dir = "more_plots"
