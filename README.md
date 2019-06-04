@@ -225,17 +225,37 @@ python condorSubmit.py -d Rare_2017,TTZ_2017,Diboson_2017,Data_SinglePhoton_2017
 
 ### Process Output from Condor
 
-If your jobs complete successfully, the jobs will output root files to the condor directory. We have a script called processResults.sh to hadd the output files, which adds the root histograms together and produces one file.
+First get ahadd.py. This is a script that uses multithreading to add histograms together by applying hadd in parallel.
+```
+mkdir ~/bin
+cd ~/bin
+git@github.com:pastika/Alex-Hadd.git
+ln -s Alex-Hadd/ahadd.py .
+```
+
+Add `~/bin` to your path. I also have `SusyAnaTools/Tools/scripts/` in my path. You can add this line to your ~/.bash_profile using your USERNAME and PATH_TO_WORKING_AREA.
+```
+export PATH="$PATH:/uscms/home/USERNAME/bin/:/uscms/home/USERNAME/PATH_TO_WORKING_AREA/SusyAnaTools/Tools/scripts/"
+```
+
+Then source your ~/.bash_profile to apply this change to your PATH.
+```
+source ~/.bash_profile
+```
+
+If your condor jobs complete successfully, the jobs will output root files to the condor directory. We have a script called processResults.sh to hadd the output files, which adds the root histograms together and produces one file.
 
 WARNING: The processResults.sh script moves all root files from your current directory to a new directory and adds them together. Make sure your condor directory only contains root files that were output from condor and that you want to add together.
 
 The script requires two arguments in this order: name, year . The name will be used to create the directory that stores all the root files. The year should be 2016, 2017, or 2018 corresponding to the Data/MC year.
 ```
+cd $CMSSW_BASE/src/ZInvisible/Tools/condor
 ./processResults.sh NAME_FOR_DIRECTORY YEAR
 ```
 
 Here is an example.
 ```
+cd $CMSSW_BASE/src/ZInvisible/Tools/condor
 ./processResults.sh ZJetsToNuNu 2016
 ```
 
