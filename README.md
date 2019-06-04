@@ -46,12 +46,16 @@ git checkout NanoAOD
 
 Go to the `ZInvisible/Tools` directory.
 ```
-cd ZInvisible/Tools
+cd $CMSSW_BASE/src/ZInvisible/Tools
+mkdir ../../myTopTaggerCfgs
+mkdir ../../myStopCfgs
+getTaggerCfg.sh -t DeepCombined_fromNanoAOD_RES_T_DeepAK8_T_v1.0.1 -d ../../myTopTaggerCfgs -o
+getStopCfg.sh -t PostProcessed_StopTuple_V2.9.0 -d ../../myStopCfgs -o
 ```
 
-Then follow the instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files).
+There are more detailed instructions that you can reference [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files).
 
-Make sure that you checkout the configuration files in the `ZInvisible/Tools` directory (with softlinks if you use getTaggerCfg.sh and getStopCfg.sh). You may specify a different directory for the area where the release is downloaded, as the softlinks will point to that location.
+Make sure that you checkout the configuration files in the `$CMSSW_BASE/src/ZInvisible/Tools` directory (with softlinks if you use getTaggerCfg.sh and getStopCfg.sh). You may specify a different directory for the area where the release is downloaded, as the softlinks will point to that location.
 
 ## Setup
 
