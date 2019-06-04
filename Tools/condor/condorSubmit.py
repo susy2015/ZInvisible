@@ -19,8 +19,8 @@ def main():
     
     parser = optparse.OptionParser("usage: %prog [options]\n")
     
-    parser.add_option ('-n',  dest='numfile',               type='int',          default = 5,     help="number of files per job")
-    parser.add_option ('-d',  dest='datasets',              type='string',       default = '',    help="List of datasets 'ZJetsToNuNu,GJets,DYJetsToLL'")
+    parser.add_option ('-n',  dest='numfile',               type='int',          default = 5,     help="number of files per job (default: 5)")
+    parser.add_option ('-d',  dest='datasets',              type='string',       default = '',    help="List of datasets 'ZJetsToNuNu_2016,GJets_2016,DYJetsToLL_2016'")
     parser.add_option ('-l',  dest='dataCollections',       action='store_true', default = False, help="List all datacollections")
     parser.add_option ('-L',  dest='dataCollectionslong',   action='store_true', default = False, help="List all datacollections and sub collections")
     parser.add_option ('-r',  dest='refLumi',               type='string',       default = None,  help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
