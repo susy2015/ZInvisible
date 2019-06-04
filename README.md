@@ -44,7 +44,7 @@ git checkout NanoAOD
 
 ## Get Configuration Files
 
-Go to the `ZInvisible/Tools` directory.
+Go to the `ZInvisible/Tools` directory and checkout the config files using getTaggerCfg.sh and getStopCfg.sh.
 ```
 cd $CMSSW_BASE/src/ZInvisible/Tools
 mkdir ../../myTopTaggerCfgs
