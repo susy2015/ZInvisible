@@ -3,6 +3,11 @@
 import os
 import ROOT
 from colors import getColorIndex
+    
+# make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
+ROOT.PyConfig.IgnoreCommandLineOptions = True
+# make plots faster without displaying them
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 def setupHist(hist, labels, title, color, y_min, y_max):
     x_axis = hist.GetXaxis()
@@ -18,23 +23,20 @@ def setupHist(hist, labels, title, color, y_min, y_max):
     hist.SetLineColor(getColorIndex(color))
     hist.SetLineWidth(3)
 
-def main():
-    ROOT.gROOT.SetBatch(ROOT.kTRUE)
-    quickResult = False
-    if quickResult:
-        f_name_Electron = "quickResult_Electron_v2.root"
-        f_name_Muon     = "quickResult_Muon_v1.root"
-    else:
-        f_name_Electron = "ElectronCutFlow_v6.root"
-        f_name_Muon     = "MuonCutFlow_v1.root"
-    plot_dir = "cutflows/"
+def makeCutflows(file_name, year, plot_dir, doPhotons, useHEMVeto):
+    yearTag = "_" + year
     h_dir = "CutFlows/"
-    f_names = [f_name_Electron, f_name_Muon]
-    for f_name in f_names:
-        exists = os.path.isfile(f_name)
-        if not exists: 
-            print "The file {0} does not exist".format(f_name)
-            return
+    if plot_dir[-1] != "/":
+        plot_dir += "/"
+    if h_dir[-1] != "/":
+        h_dir += "/"
+    # check that the file exists
+    if not os.path.isfile(file_name): 
+        print "The file {0} does not exist".format(file_name)
+        return
+    # make directory for plots if it does not exist
+    if not os.path.exists(plot_dir):
+        os.makedirs(plot_dir)
     # colors
     red_color    = "vermillion"
     blue_color   = "electric blue"
@@ -45,97 +47,152 @@ def main():
     y_min = 10.0**1
     y_max = 10.0**10
 
+    rootFile = ROOT.TFile(file_name)
     c = ROOT.TCanvas("c", "c", 800, 800)
-    f_Electron = ROOT.TFile(f_name_Electron)
-    f_Muon     = ROOT.TFile(f_name_Muon)
-    # Data: apply trigger; MC: no trigger
-    cuts = [
-        "No cuts",
-        "Trigger",
-        "Filter",
-        "JetID",
-        "MET",
-        "HT",
-        "nJets",
-        "Baseline",
-    ]
+        
+    # legend: TLegend(x1,y1,x2,y2)
+    legend_x1 = 0.5
+    legend_x2 = 0.9 
+    legend_y1 = 0.7 
+    legend_y2 = 0.9 
 
-    # Electron
-    cutsElectronLowDM = cuts[:]
-    cutsElectronLowDM.append("Low #Deltam")
-    cutsElectronLowDM.append("Muon veto")
-    cutsElectronLowDM.append("Z to ee")
-    cutsElectronHighDM = cuts[:]
-    cutsElectronHighDM.append("High #Deltam")
-    cutsElectronHighDM.append("Muon veto")
-    cutsElectronHighDM.append("Z to ee")
-    # Muon 
-    cutsMuonLowDM = cuts[:]
-    cutsMuonLowDM.append("Low #Deltam")
-    cutsMuonLowDM.append("Electron veto")
-    cutsMuonLowDM.append("Z to #mu#mu")
-    cutsMuonHighDM = cuts[:]
-    cutsMuonHighDM.append("High #Deltam")
-    cutsMuonHighDM.append("Electron veto")
-    cutsMuonHighDM.append("Z to #mu#mu")
-    # Lepton
-    cutsLeptonLowDM = cuts[:]
+    cuts = []
+    if useHEMVeto:
+        cutsLepton = [
+            "No cuts",
+            "Trigger",
+            "Lepton veto",
+            "LL pt",
+            "LL charge",
+            "m_LL > 50",
+            "HEM veto",
+            "JetID",
+            "Event filter",
+            "MET",
+            "HT",
+            "nJets",
+            "dPhi",
+        ]
+        cutsPhoton = [
+            "No cuts",
+            "Trigger",
+            "Lepton veto",
+            "Photon p_{T}",
+            "HEM veto",
+            "JetID",
+            "Event filter",
+            "original MET < 250",
+            "modified MET > 250",
+            "HT",
+            "nJets",
+            "dPhi",
+        ]
+    else:
+        cutsLepton = [
+            "No cuts",
+            "Trigger",
+            "Lepton veto",
+            "LL pt",
+            "LL charge",
+            "m_LL > 50",
+            "JetID",
+            "Event filter",
+            "MET",
+            "HT",
+            "nJets",
+            "dPhi",
+        ]
+        cutsPhoton = [
+            "No cuts",
+            "Trigger",
+            "Lepton veto",
+            "Photon p_{T}",
+            "JetID",
+            "Event filter",
+            "original MET < 250",
+            "modified MET > 250",
+            "HT",
+            "nJets",
+            "dPhi",
+        ]
+
+
+    # copy list instead of pointer to list
+    cutsLeptonLowDM = cutsLepton[:]
     cutsLeptonLowDM.append("Low #Deltam")
-    cutsLeptonLowDM.append("Lepton veto")
-    cutsLeptonLowDM.append("Z to LL")
-    cutsLeptonHighDM = cuts[:]
+    cutsLeptonHighDM = cutsLepton[:]
     cutsLeptonHighDM.append("High #Deltam")
-    cutsLeptonHighDM.append("Lepton veto")
-    cutsLeptonHighDM.append("Z to LL")
+    cutsPhotonLowDM = cutsPhoton[:]
+    cutsPhotonLowDM.append("Low #Deltam")
+    cutsPhotonHighDM = cutsPhoton[:]
+    cutsPhotonHighDM.append("High #Deltam")
     
-    h_map = {
-        "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met",  "cuts" : cutsElectronLowDM,  "file" : f_Electron},
-        "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsElectronHighDM, "file" : f_Electron},
-        "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsMuonLowDM,  "file" : f_Muon},
-        "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsMuonHighDM, "file" : f_Muon}
-    }
+    h_map = {}
+    if doPhotons:
+        h_map = {
+            "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met",  "cuts" : cutsLeptonLowDM},
+            "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsLeptonHighDM},
+            "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsLeptonLowDM},
+            "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsLeptonHighDM},
+            "CutFlow_Photon_LowDM"  : {"data" : "CutFlow_Data_Photon_LowDM_met",  "mc" : "CutFlow_MC_Photon_LowDM_met",  "cuts" : cutsPhotonLowDM},
+            "CutFlow_Photon_HighDM" : {"data" : "CutFlow_Data_Photon_HighDM_met", "mc" : "CutFlow_MC_Photon_HighDM_met", "cuts" : cutsPhotonHighDM}
+        }
+    else:
+        h_map = {
+            "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met",  "cuts" : cutsLeptonLowDM},
+            "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsLeptonHighDM},
+            "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsLeptonLowDM},
+            "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsLeptonHighDM}
+        }
     plot_map = {
         "CutFlow_LowDM"  : {"Electron" : "CutFlow_Electron_LowDM",  "Muon" : "CutFlow_Muon_LowDM",  "cuts" :  cutsLeptonLowDM},
         "CutFlow_HighDM" : {"Electron" : "CutFlow_Electron_HighDM", "Muon" : "CutFlow_Muon_HighDM", "cuts" :  cutsLeptonHighDM}
     }
     
     for key in h_map:
+        plot_name = plot_dir + key
         cutList = h_map[key]["cuts"]    
-        f       = h_map[key]["file"]
-        h_mc    = f.Get(h_dir + h_map[key]["mc"])
-        h_data  = f.Get(h_dir + h_map[key]["data"])
+        h_mc_name   = h_dir + h_map[key]["mc"]
+        h_data_name = h_dir + h_map[key]["data"]
+        h_mc        = rootFile.Get(h_mc_name)
+        h_data      = rootFile.Get(h_data_name)
+        if not h_mc:
+            print "ERROR: Unable to load histogram {0}".format(h_mc_name)
+            exit(1)
+        if not h_data:
+            print "ERROR: Unable to load histogram {0}".format(h_data_name)
+            exit(1)
         
         # setup histograms
         #setupHist(hist, labels, title, color, y_min, y_max):
-        setupHist(h_mc,   cutList, key, blue_color, y_min, y_max)
-        setupHist(h_data, cutList, key, red_color,  y_min, y_max)
+        setupHist(h_mc,   cutList, key + yearTag, blue_color, y_min, y_max)
+        setupHist(h_data, cutList, key + yearTag, red_color,  y_min, y_max)
         
         # draw histograms
         h_mc.Draw("hist")
         h_data.Draw("hist same")
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
-        #legend = ROOT.TLegend()
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
         legend.AddEntry(h_data, "Data", "l")
         legend.AddEntry(h_mc,   "MC",   "l")
         legend.Draw()
         
-        c.SetLogy()
+        c.SetLogy(1) # set log y
         c.Update()
-        c.SaveAs(plot_dir + key + ".pdf")
+        c.SaveAs(plot_name + yearTag + ".pdf")
+        c.SaveAs(plot_name + yearTag + ".png")
 
     for key in plot_map:
+        plot_name = plot_dir + key
         cutList         = plot_map[key]["cuts"]
         key_Electron    = plot_map[key]["Electron"]
         key_Muon        = plot_map[key]["Muon"]
-        f_Electron      = h_map[key_Electron]["file"]
-        f_Muon          = h_map[key_Muon]["file"]
         # histograms
-        h_Electron_mc   = f_Electron.Get(h_dir + h_map[key_Electron]["mc"])
-        h_Electron_data = f_Electron.Get(h_dir + h_map[key_Electron]["data"])
-        h_Muon_mc       = f_Muon.Get(h_dir + h_map[key_Muon]["mc"])
-        h_Muon_data     = f_Muon.Get(h_dir + h_map[key_Muon]["data"])
+        h_Electron_mc   = rootFile.Get(h_dir + h_map[key_Electron]["mc"])
+        h_Electron_data = rootFile.Get(h_dir + h_map[key_Electron]["data"])
+        h_Muon_mc       = rootFile.Get(h_dir + h_map[key_Muon]["mc"])
+        h_Muon_data     = rootFile.Get(h_dir + h_map[key_Muon]["data"])
         # ratios
         h_ratio_mc          = h_Electron_mc.Clone("h_ratio_mc")
         h_ratio_data        = h_Electron_data.Clone("h_ratio_data")
@@ -148,14 +205,14 @@ def main():
         
         # setup histograms
         #setupHist(hist, labels, title, color, y_min, y_max):
-        setupHist(h_Electron_mc,    cutList, key, blue_color,   y_min, y_max)
-        setupHist(h_Electron_data,  cutList, key, red_color,    y_min, y_max)
-        setupHist(h_Muon_mc,        cutList, key, green_color,  y_min, y_max)
-        setupHist(h_Muon_data,      cutList, key, purple_color, y_min, y_max)
-        setupHist(h_ratio_mc,       cutList, key, blue_color,   0.0, 2.0)
-        setupHist(h_ratio_data,     cutList, key, red_color,    0.0, 2.0)
-        setupHist(h_ratio_Electron, cutList, key, red_color,    0.0, 2.0)
-        setupHist(h_ratio_Muon,     cutList, key, purple_color, 0.0, 2.0)
+        setupHist(h_Electron_mc,    cutList, key + yearTag, blue_color,   y_min, y_max)
+        setupHist(h_Electron_data,  cutList, key + yearTag, red_color,    y_min, y_max)
+        setupHist(h_Muon_mc,        cutList, key + yearTag, green_color,  y_min, y_max)
+        setupHist(h_Muon_data,      cutList, key + yearTag, purple_color, y_min, y_max)
+        setupHist(h_ratio_mc,       cutList, key + yearTag, blue_color,   0.0, 2.0)
+        setupHist(h_ratio_data,     cutList, key + yearTag, red_color,    0.0, 2.0)
+        setupHist(h_ratio_Electron, cutList, key + yearTag, red_color,    0.0, 2.0)
+        setupHist(h_ratio_Muon,     cutList, key + yearTag, purple_color, 0.0, 2.0)
         
         # --- draw histograms --- #
         h_Electron_mc.Draw("hist")
@@ -164,7 +221,7 @@ def main():
         h_Muon_data.Draw("hist same")
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
         legend.AddEntry(h_Electron_data, "Electron Data", "l")
         legend.AddEntry(h_Electron_mc,   "Electron MC",   "l")
         legend.AddEntry(h_Muon_data,     "Muon Data",     "l")
@@ -173,40 +230,43 @@ def main():
         
         c.SetLogy(1) # set log y
         c.Update()
-        c.SaveAs(plot_dir + key + ".pdf")
+        c.SaveAs(plot_name + yearTag + ".pdf")
+        c.SaveAs(plot_name + yearTag + ".png")
 
         # --- draw histograms --- #
         h_ratio_mc.Draw("hist")
         h_ratio_data.Draw("hist same")
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
         legend.AddEntry(h_ratio_data, "Electron/Muon Data", "l")
         legend.AddEntry(h_ratio_mc,   "Electron/Muon MC",   "l")
         legend.Draw()
         
         c.SetLogy(0) # unset log y
         c.Update()
-        c.SaveAs(plot_dir + key + "_ElectronMuonRatios.pdf")
+        c.SaveAs(plot_name + "_ElectronMuonRatios" + yearTag + ".pdf")
+        c.SaveAs(plot_name + "_ElectronMuonRatios" + yearTag + ".png")
         
         # --- draw histograms --- #
         h_ratio_Electron.Draw("hist")
         h_ratio_Muon.Draw("hist same")
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend = ROOT.TLegend(0.7, 0.9, 0.7, 0.9)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
         legend.AddEntry(h_ratio_Electron, "Electron Data/MC", "l")
         legend.AddEntry(h_ratio_Muon,     "Muon Data/MC",     "l")
         legend.Draw()
         
         c.SetLogy(0) # unset log y
         c.Update()
-        c.SaveAs(plot_dir + key + "_DataMCRatios.pdf")
+        c.SaveAs(plot_name + "_DataMCRatios" + yearTag + ".pdf")
+        c.SaveAs(plot_name + "_DataMCRatios" + yearTag + ".png")
 
         # log scale of same ratio plot
         # set y axis for log y
-        setupHist(h_ratio_Electron, cutList, key, red_color,    0.1, 100.0)
-        setupHist(h_ratio_Muon,     cutList, key, purple_color, 0.1, 100.0)
+        setupHist(h_ratio_Electron, cutList, key + yearTag, red_color,    0.1, 100.0)
+        setupHist(h_ratio_Muon,     cutList, key + yearTag, purple_color, 0.1, 100.0)
         
         # --- draw histograms --- #
         h_ratio_Electron.Draw("hist")
@@ -215,12 +275,41 @@ def main():
         
         c.SetLogy(1) # set log y
         c.Update()
-        c.SaveAs(plot_dir + key + "_DataMCRatios_LogScale.pdf")
+        c.SaveAs(plot_name + "_DataMCRatios_LogScale" + yearTag + ".pdf")
+        c.SaveAs(plot_name + "_DataMCRatios_LogScale" + yearTag + ".png")
 
-
+def main():
+    plot_dir = "more_plots"
+    version = 4
+    # set per version
+    useHEMVeto_map = {1: False, 2:False, 3:True,  4:True}
+    doPhotons_map  = {1: False, 2:False, 3:False, 4:True}
+    useHEMVeto     = useHEMVeto_map[version]
+    doPhotons      = doPhotons_map[version]
+    if version == 1:
+        # May 5, 2019 Results
+        makeCutflows("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016", plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017", plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018", plot_dir, doPhotons, useHEMVeto)
+    if version == 2:
+        # May 9, 2019 Results
+        makeCutflows("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016", plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017", plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018", plot_dir, doPhotons, useHEMVeto)
+    if version == 3:
+        # May 16, 2019 Results
+        makeCutflows("condor/DataMC_2016_submission_2019-05-16_10-06-59/result.root",    "2016",    plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2017_submission_2019-05-16_10-09-29/result.root",    "2017",    plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2018_AB_submission_2019-05-16_10-10-30/result.root", "2018_AB", plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2018_CD_submission_2019-05-16_10-12-04/result.root", "2018_CD", plot_dir, doPhotons, useHEMVeto)
+    if version == 4:
+        # May 17, 2019 Results
+        makeCutflows("condor/DataMC_2016_submission_2019-05-17_18-46-29/result.root",    "2016",    plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2017_submission_2019-05-17_18-47-28/result.root",    "2017",    plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2018_AB_submission_2019-05-17_18-48-10/result.root", "2018_AB", plot_dir, doPhotons, useHEMVeto)
+        makeCutflows("condor/DataMC_2018_CD_submission_2019-05-17_18-50-16/result.root", "2018_CD", plot_dir, doPhotons, useHEMVeto)
 
 if __name__ == "__main__":
     main()
-
 
 

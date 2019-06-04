@@ -22,18 +22,20 @@ executable=
 resultFile=
 dirPrefix=
 
+dataDir="output"
+brokenDir="broken_files" # directory for broken root files
 zinvDir=$CMSSW_BASE/src/ZInvisible/Tools
 condorDir=$zinvDir/condor
 
 if [ -z "$dirName" ]; then
     echo "Please provide a directory name as the first argument."
-    echo "  Examples: DYJetsToLL, GJets, ZJetsToNuNu, etc."
+    echo "  Example: DataMC_2016_submission_2019-05-05_21-57-41"
     exit 1
 fi
 
-if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
+if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" && "$year" != "2018_AB" && "$year" != "2018_CD" ]]
 then
-    echo "Please enter 2016, 2017, or 2018 for the year as the second argument."
+    echo "Please enter 2016, 2017, 2018, 2018_AB or 2018_CD for the year as the first argument."
     exit 1
 fi
 
@@ -49,30 +51,27 @@ fi
 
 echo "- Running processResults.sh for the data set $dirName"
 
-# data directory
-today=$(date '+%d_%b_%Y')
-i=1
-dataDir=""$dirPrefix"_"$dirName"_"$today"_"$i""
+# old version: make new data directory
+#today=$(date '+%d_%b_%Y')
+#i=1
+#dataDir=""$dirPrefix"_"$dirName"_"$today"_"$i""
 
-# directory for broken files
-brokenDir="broken_files"
-
-# go to condor directory
-cd $condorDir
+# go to directory to process
+cd $condorDir/$dirName
 
 # check if there are any root files here
 if [[ ! $(ls *.root) ]]; then
-    echo "- ERROR: There are no root files in the directory $condorDir to process."
+    echo "- ERROR: There are no root files in the directory $condorDir/$dirName to process."
     exit 1
 fi
 
 # check if data directory exists
-while [[ -d $dataDir ]]
-do
-    echo "- Found directory $dataDir"
-    i=$[$i+1]
-    dataDir=""$dirPrefix"_"$dirName"_"$today"_"$i""
-done
+#while [[ -d $dataDir ]]
+#do
+#    echo "- Found directory $dataDir"
+#    i=$[$i+1]
+#    dataDir=""$dirPrefix"_"$dirName"_"$today"_"$i""
+#done
 
 # create unique data directory
 echo "- Creating directory $dataDir"
@@ -81,6 +80,10 @@ mkdir $dataDir
 # move root files to data directory
 echo "- Moving root files to $dataDir"
 mv *.root $dataDir
+
+# number of files
+numFiles=$(ls $dataDir/*.root | wc -l | cut -f1 -d " ")
+echo "Number of files returned from condor: $numFiles"
 
 # add histograms
 cd $dataDir
@@ -112,9 +115,10 @@ do
     fi
 done
 
-echo "- Copying $resultFile to $zinvDir"
+echo "- Copying $resultFile to $zinvDir and moving $resultFile to $condorDir/$dirName"
 if [[ -f $resultFile ]]; then
     cp $resultFile $zinvDir
+    mv $resultFile $condorDir/$dirName
 else
     echo "  ERROR: the file $resultFile does not exit"
     exit 1

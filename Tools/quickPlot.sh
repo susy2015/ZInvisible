@@ -17,27 +17,54 @@ year=$1
 outputFiles=
 n_events=1000
 
-if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" ]]
+if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" && "$year" != "2018_AB" && "$year" != "2018_CD" ]]
 then
-    echo "Please enter 2016, 2017, or 2018 for the year as the first argument."
+    echo "Please enter 2016, 2017, 2018, 2018_AB or 2018_CD for the year as the first argument."
     exit 1
 fi
 
-
+# Electron Datasets
+# 2016: Data_SingleElectron_2016
+# 2017: Data_SingleElectron_2017
+# 2018: Data_EGamma_2018
 # Photon Datasets
 # 2016: Data_SinglePhoton_2016
 # 2017: Data_SinglePhoton_2017
 # 2018: Data_EGamma_2018
 
-LeptonDataset="Data_SingleElectron"
-#LeptonDataset="Data_SingleMuon"
+yearTag="_"$year""
+periodTag=
+
+ElectronDataset="Data_SingleElectron"
+MuonDataset="Data_SingleMuon"
 PhotonDataset="Data_SinglePhoton"
 
 if [[ "$year" == "2018" ]]
 then
+    ElectronDataset="Data_EGamma"
+    PhotonDataset="Data_EGamma"
+elif [[ "$year" == "2018_AB" ]]
+then
+    yearTag="_2018"
+    periodTag="_PeriodsAB"
+    ElectronDataset="Data_EGamma"
+    PhotonDataset="Data_EGamma"
+elif [[ "$year" == "2018_CD" ]]
+then
+    yearTag="_2018"
+    periodTag="_PeriodsCD"
+    ElectronDataset="Data_EGamma"
     PhotonDataset="Data_EGamma"
 fi
 
+ElectronDataset=""$ElectronDataset""$yearTag""$periodTag""
+MuonDataset=""$MuonDataset""$yearTag""$periodTag""
+PhotonDataset=""$PhotonDataset""$yearTag""$periodTag""
+
+# testing
+#echo "ElectronDataset: $ElectronDataset"
+#echo "MuonDataset: $MuonDataset"
+#echo "PhotonDataset: $PhotonDataset"
 
 # Compile MakePlots
 
@@ -82,21 +109,32 @@ rm plots/*
 #                     "ZJetsToNuNu_HT_400to600"
 #                    )
 
-# WARNING: only do both muon and photon data at the same time if the luminosities are the same
-#declare -a samples=(
-#                    "Data_SingleMuon_"$year""
-#                    "DYJetsToLL_HT_400to600_"$year""
-#                    "TTbarNoHad_"$year""
-#                    ""$PhotonDataset"_"$year""
-#                    "GJets_HT-400To600_"$year""
-#                    "QCD_HT300to500_"$year""
-#                    "ZJetsToNuNu_HT_400to600_"$year""
-#                   )
+# WARNING: only do electron, muon and photon data at the same time if the luminosities are the same
+# In 2018, only run over EGamma once (same dataset for electrons and photons
+if [[ "$year" == "2018" ||  "$year" == "2018_AB" || "$year" == "2018_CD" ]]
+then
+declare -a samples=(
+                    ""$ElectronDataset""
+                    ""$MuonDataset""
+                    "DYJetsToLL_HT_400to600"$yearTag""
+                    "GJets_HT_400To600"$yearTag""
+                    "ZJetsToNuNu_HT_400to600"$yearTag""
+                   )
+else
+declare -a samples=(
+                    ""$ElectronDataset""
+                    ""$MuonDataset""
+                    ""$PhotonDataset""
+                    "DYJetsToLL_HT_400to600"$yearTag""
+                    "GJets_HT_400To600"$yearTag""
+                    "ZJetsToNuNu_HT_400to600"$yearTag""
+                   )
+fi
 
 #declare -a samples=(
-#                    ""$PhotonDataset"_"$year""
-#                    "GJets_HT-400To600_"$year""
-#                    "QCD_HT300to500_"$year""
+#                    ""$PhotonDataset""
+#                    "GJets_HT-400To600"$yearTag""
+#                    "QCD_HT300to500"$yearTag""
 #                   )
 
 ###############
@@ -105,31 +143,33 @@ rm plots/*
 #if [ "$useDYInc" = true ]; then
 ## DY (inclusive): IncDY
 #declare -a samples=(
-#                    ""$LeptonDataset"_"$year""
-#                    "IncDY_"$year""
+#                    "$ElectronDataset"
+#                    "$MuonDataset"
+#                    "IncDY"$yearTag""
 #                   )
 #else
 ## DY (HT binned): DYJetsToLL
 #declare -a samples=(
-#                    ""$LeptonDataset"_"$year""
-#                    "DYJetsToLL_HT_400to600_"$year""
+#                    "$ElectronDataset"
+#                    "$MuonDataset"
+#                    "DYJetsToLL_HT_400to600"$yearTag""
 #                   )
 #fi
 
 ###########
 # MC only #
 ###########
-if [ "$useDYInc" = true ]; then
-# DY (inclusive): IncDY
-declare -a samples=(
-                    "IncDY_"$year""
-                   )
-else
-# DY (HT binned): DYJetsToLL
-declare -a samples=(
-                    "DYJetsToLL_HT_400to600_"$year""
-                   )
-fi
+#if [ "$useDYInc" = true ]; then
+## DY (inclusive): IncDY
+#declare -a samples=(
+#                    "IncDY"$yearTag""
+#                   )
+#else
+## DY (HT binned): DYJetsToLL
+#declare -a samples=(
+#                    "DYJetsToLL_HT_400to600"$yearTag""
+#                   )
+#fi
 
 
 # loop through samples array
@@ -139,9 +179,9 @@ do
     outputFiles="$outputFiles $output"
     echo " - Running makePlots to create $output"
     echo ""
-    echo "./makePlots -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF"
+    echo "./makePlots -st -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF"
     echo ""
-    ./makePlots -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF
+    ./makePlots -st -D $sample -E $n_events -I $output -Y $year | grep -v LHAPDF
     retVal=$?
     #echo "makePlots return value: $retVal"
     if [ $retVal -ne 0 ]; then
@@ -153,14 +193,14 @@ done
 # hadd the results
 if [ "$combineResults" = true ]; then
 
-    result="quickResult.root"
+    result="quickResult_"$year".root"
     echo "- Executing hadd to add histograms to create $result; see hadd.log for stdout and stderr"
     # Use -f to overwrite target file if it already exists
     #time hadd -f $result $outputFiles &> hadd.log
     time ahadd.py -f $result $outputFiles &> hadd.log
     
     # Make plots of results (containing both MC)
-    echo " - Make plots of results (containing both MC)"
+    echo " - Make plots using combined results"
     echo ""
     echo "./makePlots -f -I $result | grep -v LHAPDF"
     echo ""

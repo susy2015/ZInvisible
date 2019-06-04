@@ -73,7 +73,7 @@ namespace plotterFunctions
             //if(ISRJet.size() == 1) ISRpt = ISRJet.at(0).Pt();
             float mtb_cut = 175.0;
 
-            int nSearchBinLowDM = SB_team_A_lowdm(nJets, nBottoms, nSoftBottoms, ISRpt, bottompt_scalar_sum, met);
+            int nSearchBinLowDM = SBv2_lowdm(nJets, nBottoms, nSoftBottoms, ISRpt, bottompt_scalar_sum, met);
                                                                     //n_top_merged, n_top_resolved
             int nSearchBinHighDM = SBv2_highdm(mtb_cut, mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met, ht);
 

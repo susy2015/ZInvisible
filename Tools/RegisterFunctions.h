@@ -97,7 +97,7 @@ private:
     plotterFunctions::Ak8DrMatch                *ak8DrMatch;
 
 public:
-    RegisterFunctionsNTuple(bool isCondor, std::string year, std::string sbEra = "SB_v1_2017");
+    RegisterFunctionsNTuple(bool isCondor, std::string sbEra = "SB_v1_2017");
     ~RegisterFunctionsNTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);

@@ -1,24 +1,26 @@
 #!/cvmfs/cms.cern.ch/slc6_amd64_gcc491/cms/cmssw/CMSSW_7_4_8/external/slc6_amd64_gcc491/bin/python
 ####!${SRT_CMSSW_RELEASE_BASE_SCRAMRTDEL}/external/${SCRAM_ARCH}/bin/python
 
+
+import optparse 
+import subprocess
+import datetime
 import subprocess
 import sys
 import os
 from os import system, environ
+import json
+
 sys.path = [environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/condor/",] + sys.path
-
 from samples import SampleCollection
-import optparse 
-import subprocess
-
 
 # main()
 def main():
     
     parser = optparse.OptionParser("usage: %prog [options]\n")
     
-    parser.add_option ('-n',  dest='numfile',               type='int',          default = 5,     help="number of files per job")
-    parser.add_option ('-d',  dest='datasets',              type='string',       default = '',    help="List of datasets 'ZJetsToNuNu,GJets,DYJetsToLL'")
+    parser.add_option ('-n',  dest='numfile',               type='int',          default = 5,     help="number of files per job (default: 5)")
+    parser.add_option ('-d',  dest='datasets',              type='string',       default = '',    help="List of datasets 'ZJetsToNuNu_2016,GJets_2016,DYJetsToLL_2016'")
     parser.add_option ('-l',  dest='dataCollections',       action='store_true', default = False, help="List all datacollections")
     parser.add_option ('-L',  dest='dataCollectionslong',   action='store_true', default = False, help="List all datacollections and sub collections")
     parser.add_option ('-r',  dest='refLumi',               type='string',       default = None,  help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
@@ -42,12 +44,14 @@ def main():
         exit(1)
 
     # sample config files
-    if year != "2016" and year != "2017" and year != "2018":
-        print "Please use -y to enter year (2016, 2017, or 2018)."
+    years = ["2016", "2017", "2018", "2018_AB", "2018_CD"]
+    if year not in years:
+        print "Please use -y to enter year (2016, 2017, 2018, 2018_AB, or 2018_CD)."
         exit(1)
 
-    sampleSetsFile = "sampleSets_PostProcessed_" + year + ".cfg"
-    sampleCollectionsFile = "sampleCollections_" + year + ".cfg"
+    yearWithoutPeriod = year[0:4] 
+    sampleSetsFile = "sampleSets_PostProcessed_" + yearWithoutPeriod + ".cfg"
+    sampleCollectionsFile = "sampleCollections_" + yearWithoutPeriod + ".cfg"
     
     # TopTagger.cfg
     mvaFileName = ""
@@ -65,35 +69,45 @@ def main():
     #here I hack in the tarball for GMP, this needs to be generalized to the other options 
     
     filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots", 
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/effhists_GJets.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCweights.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dataMCreweight_allJets.root", 
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
-                          environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_bTagEff.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/ISRWeights.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_ISRJets.root", 
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root"
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
+                          environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2016.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2017.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2018.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2016.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2017.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2018.cfg"
                          ]
     
     if mvaFileName:                 filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
-    if sampleSetsFile:              filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile]
-    if sampleCollectionsFile:       filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile]
     
     filestoTransferGMEP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/calcEffPhoton", 
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
-                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
-                           environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_bTagEff.root", 
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/ISRWeights.root", 
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_ISRJets.root", 
-                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root"
+                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
+                           environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2016.cfg",
+                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2017.cfg",
+                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2018.cfg",
+                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2016.cfg",
+                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2017.cfg",
+                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2018.cfg"
                           ]
     
     if mvaFileName:                 filestoTransferGMEP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
@@ -101,34 +115,55 @@ def main():
     if sampleCollectionsFile:       filestoTransferGMEP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile]
     
     #go make plots!
+    # old version for submitting from condor directory
+    #submitFileGMP = """universe = vanilla
+    #Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
+    #Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+    #Should_Transfer_Files = YES
+    #WhenToTransferOutput = ON_EXIT
+    #Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gmp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz
+    #Output = logs/makePlots_$(Process).stdout
+    #Error = logs/makePlots_$(Process).stderr
+    #Log = logs/makePlots_$(Process).log
+    #notify_user = ${LOGNAME}@FNAL.GOV
+    #x509userproxy = $ENV(X509_USER_PROXY)
+    #+maxWallTime = 2880
+    #
+    #"""
+    # new version for submitting from specific directory for submission (use relative instead of full paths for tar files)
+    # note that tabs and spaces will appear in condor_submit.txt if you have them here
     submitFileGMP = """universe = vanilla
-    Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
-    Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
-    Should_Transfer_Files = YES
-    WhenToTransferOutput = ON_EXIT
-    Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/gmp.tar.gz,$ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/$ENV(CMSSW_VERSION).tar.gz
-    Output = logs/makePlots_$(Process).stdout
-    Error = logs/makePlots_$(Process).stderr
-    Log = logs/makePlots_$(Process).log
-    notify_user = ${LOGNAME}@FNAL.GOV
-    x509userproxy = $ENV(X509_USER_PROXY)
-    +maxWallTime = 2880
-    
-    """
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh,gmp.tar.gz,$ENV(CMSSW_VERSION).tar.gz
+Output = logs/makePlots_$(Process).stdout
+Error = logs/makePlots_$(Process).stderr
+Log = logs/makePlots_$(Process).log
+notify_user = ${LOGNAME}@FNAL.GOV
+x509userproxy = $ENV(X509_USER_PROXY)
++maxWallTime = 2880
+
+"""
     
     #Here is the configuration for the Data/MC validation of the TopTagger 
     filestoTransferTT  = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/simpleAnalyzer",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile,
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile,
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
-                          environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                           environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
                           environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
                           environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                           environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
-                          ]
+                          environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2016.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2017.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2018.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2016.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2017.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2018.cfg"
+                         ]
     
     if mvaFileName: filestoTransferTT += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
     
@@ -150,14 +185,14 @@ def main():
     
     #go make top plots!
     filestoTransferGTP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makeTopPlots",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
-                          environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                           environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/allINone_bTagEff.root", 
                           environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/ISRWeights.root", 
                           environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/ISR_Root_Files/allINone_ISRJets.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                           environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
+                          environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg"
                           ]
     
     if mvaFileName: filestoTransferTT += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
@@ -236,9 +271,17 @@ def main():
     
     """
     
-    
     submitFile = ""
     exeName = ""
+    
+    # load samples
+    sc = SampleCollection("../" + sampleSetsFile, "../" + sampleCollectionsFile)
+    
+    # make directory for condor submission
+    now = datetime.datetime.now()
+    dirName = "DataMC_%s_submission_%s" % (year, now.strftime("%Y-%m-%d_%H-%M-%S"))
+    os.system("mkdir %s"%dirName)
+    os.chdir(dirName)
     
     def makeExeAndFriendsTarrball(filestoTransfer, fname):
         if not options.dataCollections and not options.dataCollectionslong:
@@ -290,7 +333,6 @@ def main():
     nFilesPerJob = options.numfile
     
     fileParts = [submitFile]
-    sc = SampleCollection("../" + sampleSetsFile, "../" + sampleCollectionsFile)
     
     if options.dataCollections or options.dataCollectionslong:
         scl = sc.sampleCollectionList()
@@ -311,22 +353,29 @@ def main():
     if options.refLumi != None:
         lumi = lumis[options.refLumi]
         print "Normalizing to %s pb-1" % (lumi)
-    
+   
+    total_files = 0
+    total_events = 0
+    jobMap = {}
     for ds in datasets:
-        total_files = 0
-        total_events = 0
+        sample_files = 0
+        sample_events = 0
         ds = ds.strip()
         #print ds
         print "# --- {0} --- #".format(ds)
+        if "Data" in ds:
+            print "Lumi: {0}".format(sc.getFixedLumi())
         
         # s: file, n:name, e:nEvts
         for s, n, e in sc.sampleList(ds):
+            # debugging
             #print "\t{0} {1} {2}".format(s, n, e)
             n_files = sum(1 for line in open(s))
+            sample_files += n_files
+            sample_events += e
             total_files += n_files
             total_events += e
-            #n_files = subprocess.check_output(["grep", "root " + s +" | wc -l"])  
-            #print "\t%s"%n
+            jobMap[n] =  n_files
             print "\t{0}: n_files={1}, n_events={2}".format(n, n_files, e)
             try:
                 f = open(s)
@@ -344,14 +393,21 @@ def main():
                         count = count + 1
                 for startFileNum in xrange(0, count, nFilesPerJob):
                     fileParts.append("Arguments = %s $ENV(CMSSW_VERSION) %i %i %f %s %s\n"%(n, nFilesPerJob, startFileNum, lumi, s, year))
-                    fileParts.append("Output = logs/%s_%s_%i.stdout\n"%(exeName, n, startFileNum))
-                    fileParts.append("Error = logs/%s_%s_%i.stderr\n"%(exeName, n, startFileNum))
-                    fileParts.append("Log = logs/%s_%s_%i.log\n"%(exeName, n, startFileNum))
+                    fileParts.append("Output = logs/$(Cluster)_$(Process)_%s_%s_%i.stdout\n"%(exeName, n, startFileNum))
+                    fileParts.append("Error = logs/$(Cluster)_$(Process)_%s_%s_%i.stderr\n"%(exeName, n, startFileNum))
+                    fileParts.append("Log = logs/$(Cluster)_$(Process)_%s_%s_%i.log\n"%(exeName, n, startFileNum))
                     fileParts.append("Queue\n\n")
     
                 f.close()
-        print "\t{0}: total_files={1}, total_events={2}".format(ds, total_files, total_events)
-        #print "{0}\n{1}".format(ds, total_files)
+        # number of files and events in sample
+        print "\t{0}: sample_files={1}, sample_events={2}".format(ds, sample_files, sample_events)
+     
+    # total number of files and events
+    print "# --- Totals --- #"
+    print "total_files={0}, total_events={1}".format(total_files, total_events)
+    
+    with open("nJobs.json", "w") as outfile:
+        json.dump(jobMap, outfile, sort_keys=True, indent=4)
     
     fout = open("condor_submit.txt", "w")
     fout.write(''.join(fileParts))
@@ -361,6 +417,8 @@ def main():
         system('mkdir -p logs')
         system("echo 'condor_submit condor_submit.txt'")
         system('condor_submit condor_submit.txt')
+
+    print "Condor submission directory: {0}".format(dirName)
 
 if __name__ == "__main__":
     main()

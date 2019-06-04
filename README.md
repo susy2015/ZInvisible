@@ -1,9 +1,20 @@
 # ZInvisible
 
+## Overview
+
+These instructions will walk through downloading and setting up the following repositories that are required to run the ZInvisible framework.
+- [ZInvisible](https://github.com/susy2015/ZInvisible/tree/NanoAOD)
+- [SusyAnaTools](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD)
+- [TopTagger](https://github.com/susy2015/TopTagger)
+- [TopTaggerTools](https://github.com/susy2015/TopTaggerTools)
+
+The ZInvisible framework also uses configuration files from the StopCfg and TopTaggerCfg repositories. Here are links to the available releases.
+- [StopCfg](https://github.com/susy2015/StopCfg/releases)
+- [TopTaggerCfg](https://github.com/susy2015/TopTaggerCfg/releases)
 
 ## Setup TopTagger and SusyAnaTools 
 
-First follow the instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#instructions). Once you are done, you should have a CMSSW area setup that contains the TopTagger repo and the SusyAnaTools repo.
+First follow the instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#instructions). Once you are done, you should have a CMSSW area setup that contains the TopTagger, TopTaggerTools, and SusyAnaTools repositories.
 
 <details> 
 
@@ -28,18 +39,23 @@ Checkout the ZInvisible repository.
 cd $CMSSW_BASE/src
 git clone git@github.com:susy2015/ZInvisible.git
 cd ZInvisible/Tools
+git checkout NanoAOD
 ```
 
 ## Get Configuration Files
 
-Go to the `ZInvisible/Tools` directory.
+Go to the `ZInvisible/Tools` directory and checkout the config files using getTaggerCfg.sh and getStopCfg.sh.
 ```
-cd ZInvisible/Tools
+cd $CMSSW_BASE/src/ZInvisible/Tools
+mkdir ../../myTopTaggerCfgs
+mkdir ../../myStopCfgs
+getTaggerCfg.sh -t DeepCombined_fromNanoAOD_RES_T_DeepAK8_T_v1.0.1 -d ../../myTopTaggerCfgs -o
+getStopCfg.sh -t PostProcessed_StopTuple_V2.9.0 -d ../../myStopCfgs -o
 ```
 
-Then follow the instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files).
+There are more detailed instructions that you can reference [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files).
 
-Make sure that you checkout the configuration files in the `ZInvisible/Tools` directory (with softlinks if you use getTaggerCfg.sh and getStopCfg.sh). You may specify a different directory for the area where the release is downloaded, as the softlinks will point to that location.
+Make sure that you checkout the configuration files in the `$CMSSW_BASE/src/ZInvisible/Tools` directory (with softlinks if you use getTaggerCfg.sh and getStopCfg.sh). You may specify a different directory for the area where the release is downloaded, as the softlinks will point to that location.
 
 ## Setup
 
@@ -64,13 +80,15 @@ Now compile.
 ```
 cd $CMSSW_BASE/src/ZInvisible/Tools
 mkdir obj
+mkdir plots
 make -j8
 ```
 
 You will need to compile after making changes to the source code (.cc, .h, Makefile, etc). If you change the Makefile, you will need to run `make clean` and then `make`.
 
-Copy this root file containing systematics (from the SUS-16-050 analysis). This file is used by moneyplot to show systematics in each search bin. We still need to redo the systematics for the full Run 2 analysis.
+Copy the following root files from Caleb's area. These files will need to be updated for our full Run 2 analysis (if we still use them).
 ```
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/effhists_GJets.root .
 cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/syst_all.root .
 ```
 
@@ -78,7 +96,7 @@ cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/syst
 
 Now try running makePlots.
 ```
-./makePlots -D ZJetsToNuNu -E 1000 | grep -v LHAPDF
+./makePlots -D ZJetsToNuNu_2016 -Y 2016 -E 1000 | grep -v LHAPDF
 ```
 
 The `-D` option is for the dataset (ZJetsToNuNu). The `-E` option is for number of events to process (1000).
@@ -87,12 +105,12 @@ This script should output some pdf/png plots. The `-s` option can be used for on
 
 You can also run over a specific HT sample range.
 ```
-./makePlots -D ZJetsToNuNu_HT_100to200 -E 1000
+./makePlots -D ZJetsToNuNu_HT_100to200_2016 -E 1000 -Y 2016
 ```
 
 If `makePlots` succeeds it will create a file named `histoutput.root`. You can open this file with a TBrowser either on cmslpc or by copying it to your machine.
 
-Here is the command structure for using rsync to copy file to your machine. Replace USERNAME with your cmslpc username. Replace WORKINGAREA with the contects of $PWD, which you can get with `pwd`.
+Here is an example of using rsync to copy a root file to your computer. Replace USERNAME with your cmslpc username. Replace WORKINGAREA the cmslpc path to the root file which you can get with `pwd`.
 ```
 rsync -avz USERNAME@cmslpc-sl6.fnal.gov:WORKINGAREA/histoutput.root .
 ```

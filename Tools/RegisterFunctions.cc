@@ -99,20 +99,17 @@ void activateBranches(std::set<std::string>& activeBranches)
 
 ////////////////////////////////
 
-RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string year, std::string sbEra) : RegisterFunctions()
+RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra) : RegisterFunctions()
 {            
     // Important: create objects!!
     
     //AnaFunctions::prepareTopTagger();
-    myBLV               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "");
-    blvZinv             = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "Zinv");
-    blvNoVeto           = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "NoVeto");
-    blvPFLeptonCleaned  = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "PFLeptonCleaned");
-    blv_drLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned");
-    blv_drPhotonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned");
-    //blvZinv1b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv1b");
-    //blvZinv2b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv2b");
-    //blvZinv3b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv3b");
+    myBLV               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "");
+    blvZinv             = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    blvNoVeto           = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoVeto");
+    blvPFLeptonCleaned  = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "PFLeptonCleaned");
+    blv_drLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drLeptonCleaned");
+    blv_drPhotonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drPhotonCleaned");
     //blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
     //blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
     //blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
@@ -145,34 +142,36 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string year
 
     myPDFUnc = new PDFUncertainty();
     bTagCorrector = nullptr;
-
-    if(isCondor)
-    {
-        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
-    }
-    else
-    {
-        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools", false);
-    }
-
     ISRcorrector = nullptr;
-    if(isCondor)
-    {
-       ISRcorrector = new ISRCorrector("allINone_ISRJets.root","","");   
-    }
-    else
-    {  
-        ISRcorrector = new ISRCorrector("allINone_ISRJets.root","/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools","");
-    }
-    
-    if(isCondor)
-    {
-        pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
-    }
-    else
-    {
-        pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
-    } 
+    pileup = nullptr;
+
+    // bTagCorrector not used anymore
+    //if(isCondor)
+    //{
+    //    bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
+    //}
+    //else
+    //{
+    //    bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools", false);
+    //}
+
+    //if(isCondor)
+    //{
+    //   ISRcorrector = new ISRCorrector("allINone_ISRJets.root","","");   
+    //}
+    //else
+    //{  
+    //    ISRcorrector = new ISRCorrector("allINone_ISRJets.root","/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools","");
+    //}
+    //
+    //if(isCondor)
+    //{
+    //    pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
+    //}
+    //else
+    //{
+    //    pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
+    //} 
     
 }
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
@@ -330,8 +329,8 @@ RegisterFunctionsCalcEff::RegisterFunctionsCalcEff() : RegisterFunctions()
 {
     //AnaFunctions::prepareTopTagger();
 
-    myBLV   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "2016");
-    blvZinv = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "2016", "Zinv");
+    myBLV   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
+    blvZinv = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
     getVectors                = new GetVectors;
     cleanedJets               = new CleanedJets;
     runTopTagger              = new RunTopTagger;
@@ -439,7 +438,7 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 
 RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
-    myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "2016", "TopTag", "");
+    myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
     //prepareTopVars = new plotterFunctions::PrepareTopVars();
     triggerInfo = new plotterFunctions::TriggerInfo(false, true);
 }
