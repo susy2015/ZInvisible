@@ -19,7 +19,7 @@ class Normalization:
         self.histos = {}
         self.output_file = 0 
         self.eras = []
-        self.particles = ["Electron"]
+        self.particles = ["Electron", "Muon"]
         self.channels = self.particles + ["Combined"]
         self.regions   = ["LowDM", "HighDM"]
         self.regions_tex = {
@@ -31,15 +31,15 @@ class Normalization:
         self.variable = "metWithLL"
     
     def setupHistoMap(self, year):
-        # histograms
-        # examples (DY and ttbar only)
-        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
-        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDYstack
-        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMt#bar{t}stack 
-        # examples (all MC)
-        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
-        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMZToLLstack
-        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMNoZToLLstack 
+       # DataMC_Electron_LowDM_Normalization_met_2016metWithLLmetWithLLZToLLstack
+       # DataMC_Electron_LowDM_Normalization_met_2016metWithLLmetWithLLNoZToLLstack
+       # DataMC_Electron_HighDM_Normalization_met_2016metWithLLmetWithLLZToLLstack
+       # DataMC_Electron_HighDM_Normalization_met_2016metWithLLmetWithLLNoZToLLstack
+       # DataMC_Muon_LowDM_Normalization_met_2016metWithLLmetWithLLZToLLstack
+       # DataMC_Muon_LowDM_Normalization_met_2016metWithLLmetWithLLNoZToLLstack
+       # DataMC_Muon_HighDM_Normalization_met_2016metWithLLmetWithLLZToLLstack
+       # DataMC_Muon_HighDM_Normalization_met_2016metWithLLmetWithLLNoZToLLstack
+
         self.histos[year] = {}
         for particle in self.particles:
             self.histos[year][particle] = {}
@@ -47,9 +47,9 @@ class Normalization:
                 if self.useAllMC:
                     # using ZToLL and NoZToLL MC for normalization 
                     self.histos[year][particle][region] = { 
-                        "Data"     : "DataMC_" + particle + "_" + region + "_met_" + year + "metWithLLmetWithLLDatadata",
-                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_met_" + year + "metWithLLmetWithLLZToLLstack",
-                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_met_" + year + "metWithLLmetWithLLNoZToLLstack",
+                        "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_met_" + year + "metWithLLmetWithLLDatadata",
+                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_met_" + year + "metWithLLmetWithLLZToLLstack",
+                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_met_" + year + "metWithLLmetWithLLNoZToLLstack",
                     }
                 else:
                     # using only DY and ttbar for normalization 
@@ -391,7 +391,7 @@ def main():
     verbose = True
     useAllMC = True
     N = Normalization(useAllMC, verbose)
-    N.getNormAndError("condor/histos_DYJetsToLL_04_Jun_2019_1/result.root", "2016")
+    N.getNormAndError("quickResult_2016.root", "2016")
     N.makeTexFile("normalization.tex")
 
 

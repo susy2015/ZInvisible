@@ -813,6 +813,8 @@ int main(int argc, char* argv[])
         PDC dcData_Electron_HighDM_met( "data",   "metWithLL", {dsData_Electron_HighDM});
         PDC dcMC_Electron_LowDM_met(    "stack",  "metWithLL", StackMC_Electron_LowDM);
         PDC dcMC_Electron_HighDM_met(   "stack",  "metWithLL", StackMC_Electron_HighDM);
+        PDC dcMC_Electron_LowDM_Normalization_met(    "stack",  "metWithLL", StackMC_Electron_LowDM_Normalization);
+        PDC dcMC_Electron_HighDM_Normalization_met(   "stack",  "metWithLL", StackMC_Electron_HighDM_Normalization);
         
         // metphi
         PDC dcData_Electron_LowDM_metphi(  "data",   "metphiWithLL", {dsData_Electron_LowDM});
@@ -950,6 +952,8 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMC_Electron_HighDM_nj" + yearTag,                                 {dcData_Electron_HighDM_nj,  dcMC_Electron_HighDM_nj},  {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
         vh.push_back(PHS("DataMC_Electron_LowDM_ht" + yearTag,                                  {dcData_Electron_LowDM_ht,   dcMC_Electron_LowDM_ht},   {1, 2}, "", nBins,  minPt, maxPt, true, false, label_ht, "Events"));
         vh.push_back(PHS("DataMC_Electron_HighDM_ht" + yearTag,                                 {dcData_Electron_HighDM_ht,  dcMC_Electron_HighDM_ht},  {1, 2}, "", nBins,  minPt, maxPt, true, false, label_ht, "Events"));
+        vh.push_back(PHS("DataMC_Electron_LowDM_Normalization_met" + yearTag,                                 {dcData_Electron_LowDM_met,  dcMC_Electron_LowDM_Normalization_met},  {1, 2}, "", nBins,  minPt, maxPt, true, false, label_metWithLL, "Events"));
+        vh.push_back(PHS("DataMC_Electron_HighDM_Normalization_met" + yearTag,                                {dcData_Electron_HighDM_met, dcMC_Electron_HighDM_Normalization_met}, {1, 2}, "", nBins,  minPt, maxPt, true, false, label_metWithLL, "Events"));
         vh.push_back(PHS("DataMC_Electron_LowDM_met" + yearTag,                                 {dcData_Electron_LowDM_met,  dcMC_Electron_LowDM_met},  {1, 2}, "", nBins,  minPt, maxPt, true, false, label_metWithLL, "Events"));
         vh.push_back(PHS("DataMC_Electron_HighDM_met" + yearTag,                                {dcData_Electron_HighDM_met, dcMC_Electron_HighDM_met}, {1, 2}, "", nBins,  minPt, maxPt, true, false, label_metWithLL, "Events"));
         vh.push_back(PHS("DataMC_Electron_LowDM_metphi" + yearTag,                              {dcData_Electron_LowDM_metphi,  dcMC_Electron_LowDM_metphi},  {1, 2}, "", nBins,  minPhi, maxPhi, true, false, label_metphiWithLL, "Events"));
@@ -1056,6 +1060,8 @@ int main(int argc, char* argv[])
         PDC dcData_Muon_HighDM_met( "data",   "metWithLL", {dsData_Muon_HighDM});
         PDC dcMC_Muon_LowDM_met(    "stack",  "metWithLL", StackMC_Muon_LowDM);
         PDC dcMC_Muon_HighDM_met(   "stack",  "metWithLL", StackMC_Muon_HighDM);
+        PDC dcMC_Muon_LowDM_Normalization_met(    "stack",  "metWithLL", StackMC_Muon_LowDM_Normalization);
+        PDC dcMC_Muon_HighDM_Normalization_met(   "stack",  "metWithLL", StackMC_Muon_HighDM_Normalization);
         
         // metphi
         PDC dcData_Muon_LowDM_metphi(  "data",   "metphiWithLL", {dsData_Muon_LowDM});
@@ -1128,6 +1134,8 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("DataMC_Muon_HighDM_nj" + yearTag,                                 {dcData_Muon_HighDM_nj,  dcMC_Muon_HighDM_nj},  {1, 2}, "", maxJets,  minJets,  maxJets, true, false, label_nj, "Events"));
         vh.push_back(PHS("DataMC_Muon_LowDM_ht" + yearTag,                                  {dcData_Muon_LowDM_ht,   dcMC_Muon_LowDM_ht},  {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_ht, "Events"));
         vh.push_back(PHS("DataMC_Muon_HighDM_ht" + yearTag,                                 {dcData_Muon_HighDM_ht,  dcMC_Muon_HighDM_ht}, {1, 2}, "",   nBins,  minPt, maxPt, true, false, label_ht, "Events"));
+        vh.push_back(PHS("DataMC_Muon_LowDM_Normalization_met" + yearTag,                                 {dcData_Muon_LowDM_met,  dcMC_Muon_LowDM_Normalization_met},  {1, 2}, "", nBins,  minPt, maxPt, true, false, label_metWithLL, "Events"));
+        vh.push_back(PHS("DataMC_Muon_HighDM_Normalization_met" + yearTag,                                {dcData_Muon_HighDM_met, dcMC_Muon_HighDM_Normalization_met}, {1, 2}, "", nBins,  minPt, maxPt, true, false, label_metWithLL, "Events"));
         vh.push_back(PHS("DataMC_Muon_LowDM_met" + yearTag,                                 {dcData_Muon_LowDM_met,  dcMC_Muon_LowDM_met},  {1, 2}, "", nBins,  minPt, maxPt, true, false, label_metWithLL, "Events"));
         vh.push_back(PHS("DataMC_Muon_HighDM_met" + yearTag,                                {dcData_Muon_HighDM_met, dcMC_Muon_HighDM_met}, {1, 2}, "", nBins,  minPt, maxPt, true, false, label_metWithLL, "Events"));
         vh.push_back(PHS("DataMC_Muon_LowDM_metphi" + yearTag,                              {dcData_Muon_LowDM_metphi,  dcMC_Muon_LowDM_metphi},  {1, 2}, "", nBins,  minPhi, maxPhi, true, false, label_metphiWithLL, "Events"));
