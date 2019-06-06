@@ -37,6 +37,7 @@ def main():
             S.getShape(result_file, era)
 
         N.makeTexFile("normalization.tex")
+        
         # search bins
         SB = SearchBins(N, S, eras, verbose)
         # validation bins
@@ -45,6 +46,8 @@ def main():
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
             VB.getValues(result_file, era)
+        
+        VB.makeTexFile("zinv_prediction.tex")
 
 
 if __name__ == "__main__":

@@ -2037,8 +2037,8 @@ int main(int argc, char* argv[])
     PDC dc_Znunu_nSearchBinLowDM("data",            "nSearchBinLowDM",              {makePDSZnunu("Search Bin Low DM",              "SAT_Pass_lowDM")});
     PDC dc_Znunu_nSearchBinHighDM("data",           "nSearchBinHighDM",             {makePDSZnunu("Search Bin High DM",             "SAT_Pass_highDM")});
     PDC dc_Znunu_nValidationBinLowDM("data",        "nValidationBinLowDM",          {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM")});
-    PDC dc_Znunu_nValidationBinLowDMHighMET("data", "nValidationBinLowDMHighMET",   {makePDSZnunu("Validation Bin Low DM High MET", "SAT_Pass_mid_dPhiMETLowDM")});
-    PDC dc_Znunu_nValidationBinHighDM("data",       "nValidationBinHighDM",         {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_mid_dPhiMETHighDM")});
+    PDC dc_Znunu_nValidationBinLowDMHighMET("data", "nValidationBinLowDMHighMET",   {makePDSZnunu("Validation Bin Low DM High MET", "SAT_Pass_lowDM_mid_dPhi")});
+    PDC dc_Znunu_nValidationBinHighDM("data",       "nValidationBinHighDM",         {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_highDM_mid_dPhi")});
     if (doSearchBins)
     {
         vh.push_back(PHS("ZNuNu_nSearchBinLowDM" + yearTag,             {dc_Znunu_nSearchBinLowDM},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));

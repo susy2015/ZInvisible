@@ -30,6 +30,7 @@ class ValidationBins:
         self.eras = eras
         self.verbose = verbose
         self.binValues = {}
+        self.values = ["norm", "shape", "mc", "pred"]
         # bins 0 to 45; bins 19, 20, and 21 are not included
         self.low_dm_bins_normal     = range( 0, 15)
         self.low_dm_bins_highmet    = range(15, 19)
@@ -128,6 +129,10 @@ class ValidationBins:
             p_error = self.N.getMultiplicationErrorList(p, x_list, dx_list)
             self.binValues[era][b]["pred"] = p
             self.binValues[era][b]["pred_error"] = p_error
+            
+            for value in self.values:
+                self.binValues[era][b][value + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(self.binValues[era][b][value], self.binValues[era][b][value + "_error"])
+
             if self.verbose:
                 print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
                             b, n, n_error, s, s_error, m, m_error, p, p_error 
@@ -148,6 +153,43 @@ class ValidationBins:
         h_lowdm.Write()
         h_highdm.Write()
         f.Close()
+    
+    
+    def writeLine(self, line):
+        self.output_file.write(line + "\n")
+
+    def makeTexFile(self, output_name):
+        # write latex file with table
+        with open(output_name, "w+") as f:
+            self.output_file = f
+            # begin document
+            self.writeLine("\documentclass{article}")
+            self.writeLine("\usepackage[utf8]{inputenc}")
+            self.writeLine("\usepackage{geometry}")
+            self.writeLine("\usepackage{longtable}")
+            self.writeLine("\geometry{margin=1in}")
+            self.writeLine("")
+            self.writeLine("\\begin{document}")
+            self.writeLine("Z Invisible Predition for Validation Bins \\\\")
+            for era in self.eras:
+                # begin table
+                self.writeLine(era)
+                self.writeLine("\\begin{table}[h]")
+                self.writeLine("\\begin{tabular}{|c|c|c|c|c|}")
+                self.writeLine("\hline Bin & $R_Z$ & $S_\gamma$ & MC & Pred. \\\\")
+                # write values to table
+                for b in self.all_bins:
+                    norm  = self.binValues[era][b]["norm_tex"]
+                    shape = self.binValues[era][b]["shape_tex"]
+                    mc    = self.binValues[era][b]["mc_tex"]
+                    pred  = self.binValues[era][b]["pred_tex"]
+                    self.writeLine("\hline {0} & {1} & {2} & {3} & {4} \\\\".format(b, norm, shape, mc, pred))
+                self.writeLine("\hline")
+                self.writeLine("\end{tabular}")
+                # end table
+                self.writeLine("\end{table}")
+            # end document
+            self.writeLine("\end{document}")
 
 
 
