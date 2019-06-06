@@ -8,19 +8,23 @@ from searchBins import SearchBins
 from searchBins import ValidationBins
 
 def main():
-    doCutflows = True
+    doCutflows = False
     doPhotons = True
     useHEMVeto = True
     useAllMC = True
-    draw = True
-    verbose = False
+    draw = False
+    verbose = True
     
     plot_dir = "more_plots"
-    json_file = "run.json" 
-    eras = ["2016", "2017", "2018_AB", "2018_CD"]
+    #json_file = "run_1.json" 
+    #eras = ["2016", "2017", "2018_AB", "2018_CD"]
+    json_file = "run_2.json" 
+    eras = ["2016"]
 
-    N = Normalization(useAllMC, verbose)
-    S = Shape(plot_dir, draw,verbose)
+    #N = Normalization(useAllMC, verbose)
+    #S = Shape(plot_dir, draw, verbose)
+    N = Normalization(useAllMC, False)
+    S = Shape(plot_dir, draw, False)
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
@@ -32,12 +36,15 @@ def main():
             N.getNormAndError(result_file, era)
             S.getShape(result_file, era)
 
-    N.makeTexFile("normalization.tex")
-    # search bins
-    SB = SearchBins(N, S, eras)
-    # validation bins
-    VB = ValidationBins(N, S, eras)
-    VB.getValues()
+        N.makeTexFile("normalization.tex")
+        # search bins
+        SB = SearchBins(N, S, eras, verbose)
+        # validation bins
+        VB = ValidationBins(N, S, eras, verbose)
+        for era in eras:
+            runDir = runMap[era]
+            result_file = "condor/" + runDir + "/result.root"
+            VB.getValues(result_file, era)
 
 
 if __name__ == "__main__":

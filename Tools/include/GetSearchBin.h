@@ -40,7 +40,6 @@ namespace plotterFunctions
     class GetSearchBin
     {
     private:
-        SearchBins sbins;
 
         void getSearchBin(NTupleReader& tr)
         {
@@ -50,41 +49,49 @@ namespace plotterFunctions
             const auto& nJets               = tr.getVar<int>("nJets");
             const auto& nWs                 = tr.getVar<int>("nWs");
             const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops");
-            //const auto& met                 = tr.getVar<data_t>("cleanMetPt");
-            const auto& met                 = tr.getVar<data_t>("metWithPhoton");
+            const auto& met                 = tr.getVar<data_t>("MET_pt");
             const auto& ht                  = tr.getVar<data_t>("HT");
-            const auto& bottompt_scalar_sum = tr.getVar<data_t>("ptb");
+            const auto& ptb                 = tr.getVar<data_t>("ptb");
             const auto& mtb                 = tr.getVar<data_t>("mtb");
-            //onst auto& softbLVec           = tr.getVec<TLorentzVector>("softbLVec");
-            const auto& ISRJet              = tr.getVar<TLorentzVector>("ISRJet");
+            const auto& ISRJetPt            = tr.getVar<data_t>("ISRJetPt");
+            
+            float mtb_cut = 175.0;
             
             //------------------------------------------//
             //--- Updated Search Bins (January 2019) ---//
             //------------------------------------------//
-
             //================================SUS-16-049 (team_A) search bin low dm================================
-            //int SB_team_A_lowdm(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
+            // int SB_team_A_lowdm(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
             //================================search bin v2 high dm================================================
-            //int SBv2_highdm(float mtb_cut, float mtb, int njets, int ntop, int nw, int nres, int nb, float met, float ht)
-            
-            //int nSV = softbLVec.size();
-            float ISRpt = 0.0;
-            ISRpt = ISRJet.Pt();
-            //if(ISRJet.size() == 1) ISRpt = ISRJet.at(0).Pt();
-            float mtb_cut = 175.0;
-
-            int nSearchBinLowDM = SBv2_lowdm(nJets, nBottoms, nSoftBottoms, ISRpt, bottompt_scalar_sum, met);
-                                                                    //n_top_merged, n_top_resolved
+            // int SBv2_highdm(float mtb_cut, float mtb, int njets, int ntop, int nw, int nres, int nb, float met, float ht)
+            int nSearchBinLowDM  = SBv2_lowdm(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
             int nSearchBinHighDM = SBv2_highdm(mtb_cut, mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met, ht);
-
-
-            tr.registerDerivedVar("nSearchBinLowDM", nSearchBinLowDM);
-            tr.registerDerivedVar("nSearchBinHighDM", nSearchBinHighDM);
+            
+            //-------------------------------------------//
+            //--- Updated Validation Bins (June 2019) ---//
+            //-------------------------------------------//
+            //================================SUS-16-049 (team_A) low dm validation=================================================
+            // int SBv2_lowdm_validation(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
+            //================================low dm validation high MET=================================================
+            // int SBv2_lowdm_validation_high_MET(int nb, int nSV, float ISRpt, float met)
+            //================================SBv2 high dm validation=================================================
+            // int SBv2_highdm_validation(float mtb, int njets, int ntop, int nw, int nres, int nb, float met)
+            int nValidationBinLowDM        = SBv2_lowdm_validation(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+            int nValidationBinLowDMHighMET = SBv2_lowdm_validation_high_MET(nBottoms, nSoftBottoms, ISRJetPt, met);
+            int nValidationBinHighDM       = SBv2_highdm_validation(mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met); 
+            
+            tr.registerDerivedVar("nSearchBinLowDM",              nSearchBinLowDM);
+            tr.registerDerivedVar("nSearchBinHighDM",             nSearchBinHighDM);
+            tr.registerDerivedVar("nValidationBinLowDM",          nValidationBinLowDM);
+            tr.registerDerivedVar("nValidationBinLowDMHighMET",   nValidationBinLowDMHighMET);
+            tr.registerDerivedVar("nValidationBinHighDM",         nValidationBinHighDM);
         }
 
     public:
 
-        GetSearchBin(std::string sb_era) : sbins(sb_era) {}
+        GetSearchBin(){}
+        
+        ~GetSearchBin(){}
 
         void operator()(NTupleReader& tr)
         {

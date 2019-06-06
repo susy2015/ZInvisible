@@ -324,11 +324,10 @@ int main(int argc, char* argv[])
     }
 
 
-    // Number of searchbins
     //SearchBins sb(sbEra);
-    //int NSB = sb.nSearchBins(); // 84
+    // Number of searchbins
     int NSB = 204;
-    // search bins for high and low dm
+    // search bins for low and high dm
     // Low DM, 53 bins: 0 - 52
     // High DM, 151 bins: 53 - 203
     // Total 204 bins: 0 - 203
@@ -336,6 +335,17 @@ int main(int argc, char* argv[])
     int max_sb_low_dm = 53;
     int min_sb_high_dm = 53;
     int max_sb_high_dm = 204;
+    //Validation Bins
+    // Low DM, 15 bins: 0 - 14
+    // Low DM High MET, 4 bins: 15 - 18
+    // High DM, 24 bins: 22 - 45
+    // Total 43 bins: 0 - 18 and 22 - 45
+    int min_vb_low_dm = 0;
+    int max_vb_low_dm = 15;
+    int min_vb_low_dm_high_met = 15;
+    int max_vb_low_dm_high_met = 19;
+    int min_vb_high_dm = 22;
+    int max_vb_high_dm = 46;
 
     // min and max values for histos
     int nBins = 40;
@@ -2024,12 +2034,18 @@ int main(int argc, char* argv[])
         }
     }
 
-    PDC dc_Znunu_nSearchBinLowDM("data",  "nSearchBinLowDM",  {makePDSZnunu("Search Bin Low DM", "SAT_Pass_lowDM")});
-    PDC dc_Znunu_nSearchBinHighDM("data", "nSearchBinHighDM", {makePDSZnunu("Search Bin High DM", "SAT_Pass_highDM")});
+    PDC dc_Znunu_nSearchBinLowDM("data",            "nSearchBinLowDM",              {makePDSZnunu("Search Bin Low DM",              "SAT_Pass_lowDM")});
+    PDC dc_Znunu_nSearchBinHighDM("data",           "nSearchBinHighDM",             {makePDSZnunu("Search Bin High DM",             "SAT_Pass_highDM")});
+    PDC dc_Znunu_nValidationBinLowDM("data",        "nValidationBinLowDM",          {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM")});
+    PDC dc_Znunu_nValidationBinLowDMHighMET("data", "nValidationBinLowDMHighMET",   {makePDSZnunu("Validation Bin Low DM High MET", "SAT_Pass_mid_dPhiMETLowDM")});
+    PDC dc_Znunu_nValidationBinHighDM("data",       "nValidationBinHighDM",         {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_mid_dPhiMETHighDM")});
     if (doSearchBins)
     {
-        vh.push_back(PHS("ZNuNu_nSearchBinLowDM" + yearTag,  {dc_Znunu_nSearchBinLowDM},  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,    min_sb_low_dm,  max_sb_low_dm,  false, false,  "Search Bin Low DM", "Events", true));
-        vh.push_back(PHS("ZNuNu_nSearchBinHighDM" + yearTag, {dc_Znunu_nSearchBinHighDM}, {1, 1}, "", max_sb_high_dm - min_sb_high_dm,  min_sb_high_dm, max_sb_high_dm, false, false,  "Search Bin High DM", "Events", true));
+        vh.push_back(PHS("ZNuNu_nSearchBinLowDM" + yearTag,             {dc_Znunu_nSearchBinLowDM},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
+        vh.push_back(PHS("ZNuNu_nSearchBinHighDM" + yearTag,            {dc_Znunu_nSearchBinHighDM},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
+        vh.push_back(PHS("ZNuNu_nValidationBinLowDM" + yearTag,         {dc_Znunu_nValidationBinLowDM},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
+        vh.push_back(PHS("ZNuNu_nValidationBinLowDMHighMET" + yearTag,  {dc_Znunu_nValidationBinLowDMHighMET},  {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
+        vh.push_back(PHS("ZNuNu_nValidationBinHighDM" + yearTag,        {dc_Znunu_nValidationBinHighDM},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
         //vh.push_back(PHS("Trigger_",         {trigger_nSearchBin},           {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
         //vh.push_back(PHS("TriggerScl_",      {trigger_nSearchBin_scaled},    {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
         //vh.push_back(PHS("TriggerWgt_",      {trigger_nSearchBin_weighted},  {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));

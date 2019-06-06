@@ -129,7 +129,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     lepInfo                      = new plotterFunctions::LepInfo;
     basicLepton                  = new plotterFunctions::BasicLepton;
     fakebtagvectors              = new plotterFunctions::Fakebtagvectors;
-    getSearchBin                 = new plotterFunctions::GetSearchBin(sbEra);
+    getSearchBin                 = new plotterFunctions::GetSearchBin;
     triggerInfo                  = new plotterFunctions::TriggerInfo;
     prepareMiniTupleVars         = new plotterFunctions::PrepareMiniTupleVars(true);
     systematicPrep               = new plotterFunctions::SystematicPrep;
@@ -222,21 +222,19 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*getVectors);
     tr.registerFunction(*gamma);
     tr.registerFunction(*basicLepton);
-    tr.registerFunction(*generatePhotonEfficiency);
+    //tr.registerFunction(*generatePhotonEfficiency);
     tr.registerFunction(*cleanedJets);
     tr.registerFunction(*runTopTagger);
     tr.registerFunction(*runTopTagger_drLeptonCleaned);
     tr.registerFunction(*runTopTagger_drPhotonCleaned);
     tr.registerFunction(*myBLV);
-    //tr.registerFunction(*blvZinv);
-    
-    tr.registerFunction(*lepInfo); // TODO: fix lepInfo to use with NanoAOD; it is broken right now
-    
+    tr.registerFunction(*lepInfo);
     tr.registerFunction(*blv_drLeptonCleaned);
     tr.registerFunction(*blv_drPhotonCleaned);
-    
     tr.registerFunction(*getSearchBin);
     
+    // old version including JEC and systematics
+    // here for reference only
     //tr.registerFunction(*weights);
     //tr.registerFunction(*blvZinv);
     //tr.registerFunction(*blvNoVeto);
@@ -253,8 +251,6 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     //tr.registerFunction(*blvZinvJEUDn);
     //tr.registerFunction(*blvZinvMEUUp);
     //tr.registerFunction(*blvZinvMEUDn);
-    
-    
     //tr.registerFunction(*systematicCalc);
     //tr.registerFunction(*triggerInfo);
     //tr.registerFunction(*prepareMiniTupleVars);
@@ -292,8 +288,6 @@ void RegisterFunctionsNTuple::remakeISRreweight(std::string sampleName)
 
 RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()
 {            
-    //AnaFunctions::prepareTopTagger();
-
     njWeight             = new plotterFunctions::NJetWeight;
     triggerInfo          = new plotterFunctions::TriggerInfo(true);
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
@@ -310,8 +304,6 @@ RegisterFunctionsMiniTuple::~RegisterFunctionsMiniTuple()
         
 void RegisterFunctionsMiniTuple::registerFunctions(NTupleReader& tr)
 {
-    //Make some global "constants" here
-
     //register functions with NTupleReader
     tr.registerFunction(*njWeight);
     tr.registerFunction(*triggerInfo);
@@ -354,24 +346,10 @@ RegisterFunctionsCalcEff::~RegisterFunctionsCalcEff()
 void RegisterFunctionsCalcEff::registerFunctions(NTupleReader& tr)
 {
     //register functions with NTupleReader
-    
-    // old version
-    
-    // order matters
-    // get photons and leptons
-    // then do baseline
-    // then do lepinfo
-    //tr.registerFunction(*gamma);
-    //tr.registerFunction(*basicLepton);
-    //tr.registerFunction(*myBLV);
-    //tr.registerFunction(*lepInfo);
-
-
-    // new version
     tr.registerFunction(*getVectors);
     tr.registerFunction(*gamma);
     tr.registerFunction(*basicLepton);
-    tr.registerFunction(*generatePhotonEfficiency);
+    //tr.registerFunction(*generatePhotonEfficiency);
     tr.registerFunction(*cleanedJets);
     tr.registerFunction(*runTopTagger);
     tr.registerFunction(*myBLV);
@@ -439,23 +417,18 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
     myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
-    //prepareTopVars = new plotterFunctions::PrepareTopVars();
     triggerInfo = new plotterFunctions::TriggerInfo(false, true);
 }
 
 RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
 {
     if(myBLV) delete myBLV;
-    //if(prepareTopVars) delete prepareTopVars;
 }
 
 void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
 {
     tr.registerFunction(*myBLV);
-    //tr.registerFunction(*prepareTopVars);
     tr.registerFunction(*triggerInfo);
-//    tr.registerFunction(*taudiv);
-//    tr.registerFunction(*ak8DrMatch);
 }
 
 /////////////////////////////////

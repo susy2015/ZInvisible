@@ -143,6 +143,18 @@ class Normalization:
         # dq = q * sqrt( (dx/x)^2 + (dy/y)^2) )
         return abs(q * np.sqrt( (dx/x)**2 + (dy/y)**2 ))
     
+    def getMultiplicationErrorList(self, q, x_list, dx_list):
+        # q = x * y * ... 
+        # q = x / y / ...
+        # dq = q * sqrt( (dx/x)^2 + (dy/y)^2) + ... )
+        if len(x_list) != len(dx_list):
+            print "ERROR in getMultiplicationErrorList(): x_list and dx_list do not have the same length"
+            return self.ERROR_CODE
+        s = 0.0
+        for i in xrange(len(x_list)):
+            s += (dx_list[i] / x_list[i]) ** 2
+        return abs(q * np.sqrt(s))
+    
     def getMatrixDeterminantError(self, A, A_error):
         # get error for determinant
         # |A| = a11 * a22 - a12 * a21
