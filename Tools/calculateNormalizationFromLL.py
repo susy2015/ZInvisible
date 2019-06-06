@@ -19,7 +19,7 @@ class Normalization:
         self.histos = {}
         self.output_file = 0 
         self.eras = []
-        self.particles = ["Electron", "Muon"]
+        self.particles = ["Electron"]
         self.channels = self.particles + ["Combined"]
         self.regions   = ["LowDM", "HighDM"]
         self.regions_tex = {
@@ -28,7 +28,7 @@ class Normalization:
                            }
         self.factors = ["R_Z", "R_T"]
         # variable is also TDirectoryFile that holds histograms 
-        self.variable = "bestRecoZM"
+        self.variable = "metWithLL"
     
     def setupHistoMap(self, year):
         # histograms
@@ -47,16 +47,16 @@ class Normalization:
                 if self.useAllMC:
                     # using ZToLL and NoZToLL MC for normalization 
                     self.histos[year][particle][region] = { 
-                        "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
-                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMZToLLstack",
-                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMNoZToLLstack",
+                        "Data"     : "DataMC_" + particle + "_" + region + "_met_" + year + "metWithLLmetWithLLDatadata",
+                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_met_" + year + "metWithLLmetWithLLZToLLstack",
+                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_met_" + year + "metWithLLmetWithLLNoZToLLstack",
                     }
                 else:
                     # using only DY and ttbar for normalization 
                     self.histos[year][particle][region] = { 
-                        "Data"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
-                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
-                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMt#bar{t}stack",
+                        "Data"     : "DataMC_" + particle + "_" + region + "_met_" + year + "metWithLLmetWithLLDatadata",
+                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_met_" + year + "metWithLLmetWithLLDYstack",
+                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_met_" + year + "metWithLLmetWithLLt#bar{t}stack",
                     }
 
     def setUseAllMC(self, value):
@@ -200,6 +200,9 @@ class Normalization:
                 if self.verbose:
                     print region
                 h_Data    = f.Get(self.variable + "/" + self.histos[year][particle][region]["Data"])
+
+		print self.variable + "/" + self.histos[year][particle][region]["Data"]
+
                 h_ZToLL   = f.Get(self.variable + "/" + self.histos[year][particle][region]["ZToLL"])
                 h_NoZToLL = f.Get(self.variable + "/" + self.histos[year][particle][region]["NoZToLL"])
     
@@ -223,7 +226,7 @@ class Normalization:
                         lower_edge = h_Data.GetXaxis().GetBinLowEdge(bin_i)
                         upper_edge = h_Data.GetXaxis().GetBinUpEdge(bin_i)
                         print "bin_{0}: {1} [{2}, {3}]".format(i+1, bin_i, lower_edge, upper_edge)
-                
+			print h_Data.GetBinContent(i)               		 
                 # pass error to IntegralAndError as Double_t & error 
                 # use ROOT.Double for pass-by-ref of doubles
                 # Double_t TH1::IntegralAndError  (Int_t binx1,
@@ -373,28 +376,10 @@ class Normalization:
             self.writeLine("\end{document}")
 
 def main():
-    verbose = False
-    # set per version
-    version = 3
-    useAllMC_map = {1:False, 2:False, 3:True}
-    useAllMC = useAllMC_map[version]
+    verbose = True
+    useAllMC = True
     N = Normalization(useAllMC, verbose)
-    if version == 1:
-        # May 5, 2019 Results
-        N.getNormAndError("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016")
-        N.getNormAndError("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017")
-        N.getNormAndError("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018")
-    elif version == 2:
-        # May 9, 2019 Results
-        N.getNormAndError("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016")
-        N.getNormAndError("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017")
-        N.getNormAndError("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018")
-    elif version == 3:
-        # May 16, 2019 Results
-        N.getNormAndError("condor/DataMC_2016_submission_2019-05-16_10-06-59/result.root",    "2016")
-        N.getNormAndError("condor/DataMC_2017_submission_2019-05-16_10-09-29/result.root",    "2017")
-        N.getNormAndError("condor/DataMC_2018_AB_submission_2019-05-16_10-10-30/result.root", "2018_AB")
-        N.getNormAndError("condor/DataMC_2018_CD_submission_2019-05-16_10-12-04/result.root", "2018_CD")
+    N.getNormAndError("condor/histos_DYJetsToLL_04_Jun_2019_1/result.root", "2016")
     N.makeTexFile("normalization.tex")
 
 
