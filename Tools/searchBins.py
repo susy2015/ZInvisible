@@ -108,12 +108,20 @@ class ValidationBins:
         # print values 
         if self.verbose:
             print era
-            for b in self.all_bins:
-                print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f}".format(b, 
-                        self.binValues[era][b]["norm"],  self.binValues[era][b]["norm_error"], 
-                        self.binValues[era][b]["shape"], self.binValues[era][b]["shape_error"],
-                        self.binValues[era][b]["mc"],    self.binValues[era][b]["mc_error"]
+        for b in self.all_bins:
+            n       = self.binValues[era][b]["norm"]
+            n_error = self.binValues[era][b]["norm_error"]
+            s       = self.binValues[era][b]["shape"]
+            s_error = self.binValues[era][b]["shape_error"]
+            m       = self.binValues[era][b]["mc"]
+            m_error = self.binValues[era][b]["mc_error"]
+            p       = n * s * m
+            x_list = [n, s, m]
+            dx_list = [n_error, s_error, m_error]
+            p_error = self.N.getMultiplicationErrorList(p, x_list, dx_list)
+            if self.verbose:
+                print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
+                            b, n, n_error, s, s_error, m, m_error, p, p_error 
                         )
-
 
 

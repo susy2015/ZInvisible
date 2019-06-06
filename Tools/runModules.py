@@ -21,8 +21,10 @@ def main():
     json_file = "run_2.json" 
     eras = ["2016"]
 
-    N = Normalization(useAllMC, verbose)
-    S = Shape(plot_dir, draw,verbose)
+    #N = Normalization(useAllMC, verbose)
+    #S = Shape(plot_dir, draw, verbose)
+    N = Normalization(useAllMC, False)
+    S = Shape(plot_dir, draw, False)
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
