@@ -105,6 +105,13 @@ class ValidationBins:
             self.binValues[era][b]["mc_error"] = h_validation_highdm.GetBinError(bin_i)
             bin_i += 1
 
+        # new file
+        new_file = "validationBinsZinv_" + era + ".root"
+        f = ROOT.TFile(new_file, "recreate")
+        # define histograms 
+        h_lowdm  = ROOT.TH1F("validation_lowdm",  "validation_lowdm",  19,  0, 19) 
+        h_highdm = ROOT.TH1F("validation_highdm", "validation_highdm", 24, 22, 46) 
+
         # print values 
         if self.verbose:
             print era
@@ -119,9 +126,28 @@ class ValidationBins:
             x_list = [n, s, m]
             dx_list = [n_error, s_error, m_error]
             p_error = self.N.getMultiplicationErrorList(p, x_list, dx_list)
+            self.binValues[era][b]["pred"] = p
+            self.binValues[era][b]["pred_error"] = p_error
             if self.verbose:
                 print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
                             b, n, n_error, s, s_error, m, m_error, p, p_error 
                         )
+        # set histogram content and error
+        bin_i = 1
+        for b in self.low_dm_bins:
+            h_lowdm.SetBinContent(bin_i, self.binValues[era][b]["pred"])
+            h_lowdm.SetBinError(bin_i, self.binValues[era][b]["pred_error"])
+            bin_i += 1
+        bin_i = 1
+        for b in self.high_dm_bins:
+            h_highdm.SetBinContent(bin_i, self.binValues[era][b]["pred"])
+            h_highdm.SetBinError(bin_i, self.binValues[era][b]["pred_error"])
+            bin_i += 1
+
+        # write histograms to file
+        h_lowdm.Write()
+        h_highdm.Write()
+        f.Close()
+
 
 
