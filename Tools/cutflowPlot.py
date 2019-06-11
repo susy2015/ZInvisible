@@ -57,6 +57,17 @@ def makeCutflows(file_name, year, plot_dir, doPhotons):
     legend_y2 = 0.9 
 
     cuts = []
+    # Z NuNu in validation region
+    cutsZNuNu = [
+        "No cuts",
+        "Lepton veto",
+        "HEM veto",
+        "JetID",
+        "Event filter",
+        "MET",
+        "HT",
+        "nJets",
+    ]
     cutsLepton = [
         "No cuts",
         "Trigger",
@@ -88,6 +99,12 @@ def makeCutflows(file_name, year, plot_dir, doPhotons):
     ]
 
     # copy list instead of pointer to list
+    cutsZNuNuLowDM = cutsZNuNu[:]
+    cutsZNuNuLowDM.append("dPhi and Low #Deltam")
+    cutsZNuNuLowDMHighMET = cutsZNuNu[:]
+    cutsZNuNuLowDMHighMET.append("mid dPhi and Low #Deltam")
+    cutsZNuNuHighDM = cutsZNuNu[:]
+    cutsZNuNuHighDM.append("mid dPhi and High #Deltam")
     cutsLeptonLowDM = cutsLepton[:]
     cutsLeptonLowDM.append("Low #Deltam")
     cutsLeptonHighDM = cutsLepton[:]
@@ -96,55 +113,62 @@ def makeCutflows(file_name, year, plot_dir, doPhotons):
     cutsPhotonLowDM.append("Low #Deltam")
     cutsPhotonHighDM = cutsPhoton[:]
     cutsPhotonHighDM.append("High #Deltam")
+
+    # ZNuNu MC
+    # CutFlow_MC_ZNuNu_met_LowDM
+    # CutFlow_MC_ZNuNu_met_LowDM_HighMET
+    # CutFlow_MC_ZNuNu_met_HighDM
     
-    h_map = {}
+    h_map = {
+        "CutFlow_ZNuNu_LowDM"         : {"mc" : "CutFlow_MC_ZNuNu_met_LowDM",         "cuts" : cutsZNuNuLowDM},
+        "CutFlow_ZNuNu_LowDM_HighMET" : {"mc" : "CutFlow_MC_ZNuNu_met_LowDM_HighMET", "cuts" : cutsZNuNuLowDMHighMET},
+        "CutFlow_ZNuNu_HighDM"        : {"mc" : "CutFlow_MC_ZNuNu_met_HighDM",        "cuts" : cutsZNuNuHighDM},
+        "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met",  "cuts" : cutsLeptonLowDM},
+        "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsLeptonHighDM},
+        "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsLeptonLowDM},
+        "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsLeptonHighDM}
+    }
     if doPhotons:
-        h_map = {
-            "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met",  "cuts" : cutsLeptonLowDM},
-            "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsLeptonHighDM},
-            "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsLeptonLowDM},
-            "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsLeptonHighDM},
-            "CutFlow_Photon_LowDM"  : {"data" : "CutFlow_Data_Photon_LowDM_met",  "mc" : "CutFlow_MC_Photon_LowDM_met",  "cuts" : cutsPhotonLowDM},
-            "CutFlow_Photon_HighDM" : {"data" : "CutFlow_Data_Photon_HighDM_met", "mc" : "CutFlow_MC_Photon_HighDM_met", "cuts" : cutsPhotonHighDM}
-        }
-    else:
-        h_map = {
-            "CutFlow_Electron_LowDM"  : {"data" : "CutFlow_Data_Electron_LowDM_met",  "mc" : "CutFlow_MC_Electron_LowDM_met",  "cuts" : cutsLeptonLowDM},
-            "CutFlow_Electron_HighDM" : {"data" : "CutFlow_Data_Electron_HighDM_met", "mc" : "CutFlow_MC_Electron_HighDM_met", "cuts" : cutsLeptonHighDM},
-            "CutFlow_Muon_LowDM"  : {"data" : "CutFlow_Data_Muon_LowDM_met",  "mc" : "CutFlow_MC_Muon_LowDM_met",  "cuts" : cutsLeptonLowDM},
-            "CutFlow_Muon_HighDM" : {"data" : "CutFlow_Data_Muon_HighDM_met", "mc" : "CutFlow_MC_Muon_HighDM_met", "cuts" : cutsLeptonHighDM}
-        }
+        h_map["CutFlow_Photon_LowDM"]  = {"data" : "CutFlow_Data_Photon_LowDM_met",  "mc" : "CutFlow_MC_Photon_LowDM_met",  "cuts" : cutsPhotonLowDM}
+        h_map["CutFlow_Photon_HighDM"] = {"data" : "CutFlow_Data_Photon_HighDM_met", "mc" : "CutFlow_MC_Photon_HighDM_met", "cuts" : cutsPhotonHighDM}
     plot_map = {
         "CutFlow_LowDM"  : {"Electron" : "CutFlow_Electron_LowDM",  "Muon" : "CutFlow_Muon_LowDM",  "cuts" :  cutsLeptonLowDM},
         "CutFlow_HighDM" : {"Electron" : "CutFlow_Electron_HighDM", "Muon" : "CutFlow_Muon_HighDM", "cuts" :  cutsLeptonHighDM}
     }
     
     for key in h_map:
+        doData = False
+        if "data" in h_map[key]:
+            doData = True
         plot_name = plot_dir + key
         cutList = h_map[key]["cuts"]    
         h_mc_name   = h_dir + h_map[key]["mc"]
-        h_data_name = h_dir + h_map[key]["data"]
         h_mc        = rootFile.Get(h_mc_name)
-        h_data      = rootFile.Get(h_data_name)
         if not h_mc:
             print "ERROR: Unable to load histogram {0}".format(h_mc_name)
             exit(1)
-        if not h_data:
-            print "ERROR: Unable to load histogram {0}".format(h_data_name)
-            exit(1)
+        if doData:
+            h_data_name = h_dir + h_map[key]["data"]
+            h_data      = rootFile.Get(h_data_name)
+            if not h_data:
+                print "ERROR: Unable to load histogram {0}".format(h_data_name)
+                exit(1)
         
         # setup histograms
         #setupHist(hist, labels, title, color, y_min, y_max):
         setupHist(h_mc,   cutList, key + yearTag, blue_color, y_min, y_max)
-        setupHist(h_data, cutList, key + yearTag, red_color,  y_min, y_max)
+        if doData:
+            setupHist(h_data, cutList, key + yearTag, red_color,  y_min, y_max)
         
         # draw histograms
         h_mc.Draw("hist")
-        h_data.Draw("hist same")
+        if doData:
+            h_data.Draw("hist same")
         
         # legend: TLegend(x1,y1,x2,y2)
         legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-        legend.AddEntry(h_data, "Data", "l")
+        if doData:
+            legend.AddEntry(h_data, "Data", "l")
         legend.AddEntry(h_mc,   "MC",   "l")
         legend.Draw()
         
@@ -252,11 +276,7 @@ def main():
     plot_dir = "more_plots"
     # set per version
     doPhotons = True
-    # May 17, 2019 Results
-    makeCutflows("condor/DataMC_2016_submission_2019-05-17_18-46-29/result.root",    "2016",    plot_dir, doPhotons)
-    makeCutflows("condor/DataMC_2017_submission_2019-05-17_18-47-28/result.root",    "2017",    plot_dir, doPhotons)
-    makeCutflows("condor/DataMC_2018_AB_submission_2019-05-17_18-48-10/result.root", "2018_AB", plot_dir, doPhotons)
-    makeCutflows("condor/DataMC_2018_CD_submission_2019-05-17_18-50-16/result.root", "2018_CD", plot_dir, doPhotons)
+    makeCutflows("condor/DataMC_2016_submission_2019-06-10_16-31-29/result.root",    "2016",    plot_dir, doPhotons)
 
 if __name__ == "__main__":
     main()
