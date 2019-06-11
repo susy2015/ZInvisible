@@ -10,7 +10,6 @@ from searchBins import ValidationBins
 def main():
     doCutflows = True
     doPhotons = True
-    useHEMVeto = True
     useAllMC = True
     draw = True
     verbose = True
@@ -32,7 +31,7 @@ def main():
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
             if doCutflows:
-                makeCutflows(result_file, era, plot_dir, doPhotons, useHEMVeto)
+                makeCutflows(result_file, era, plot_dir, doPhotons)
             N.getNormAndError(result_file, era)
             S.getShape(result_file, era)
 

@@ -23,7 +23,7 @@ def setupHist(hist, labels, title, color, y_min, y_max):
     hist.SetLineColor(getColorIndex(color))
     hist.SetLineWidth(3)
 
-def makeCutflows(file_name, year, plot_dir, doPhotons, useHEMVeto):
+def makeCutflows(file_name, year, plot_dir, doPhotons):
     yearTag = "_" + year
     h_dir = "CutFlows/"
     if plot_dir[-1] != "/":
@@ -57,65 +57,35 @@ def makeCutflows(file_name, year, plot_dir, doPhotons, useHEMVeto):
     legend_y2 = 0.9 
 
     cuts = []
-    if useHEMVeto:
-        cutsLepton = [
-            "No cuts",
-            "Trigger",
-            "Lepton veto",
-            "LL pt",
-            "LL charge",
-            "m_LL > 50",
-            "HEM veto",
-            "JetID",
-            "Event filter",
-            "MET",
-            "HT",
-            "nJets",
-            "dPhi",
-        ]
-        cutsPhoton = [
-            "No cuts",
-            "Trigger",
-            "Lepton veto",
-            "Photon p_{T}",
-            "HEM veto",
-            "JetID",
-            "Event filter",
-            "original MET < 250",
-            "modified MET > 250",
-            "HT",
-            "nJets",
-            "dPhi",
-        ]
-    else:
-        cutsLepton = [
-            "No cuts",
-            "Trigger",
-            "Lepton veto",
-            "LL pt",
-            "LL charge",
-            "m_LL > 50",
-            "JetID",
-            "Event filter",
-            "MET",
-            "HT",
-            "nJets",
-            "dPhi",
-        ]
-        cutsPhoton = [
-            "No cuts",
-            "Trigger",
-            "Lepton veto",
-            "Photon p_{T}",
-            "JetID",
-            "Event filter",
-            "original MET < 250",
-            "modified MET > 250",
-            "HT",
-            "nJets",
-            "dPhi",
-        ]
-
+    cutsLepton = [
+        "No cuts",
+        "Trigger",
+        "Lepton veto",
+        "LL pt",
+        "LL charge",
+        "m_LL > 50",
+        "HEM veto",
+        "JetID",
+        "Event filter",
+        "MET",
+        "HT",
+        "nJets",
+        "dPhi",
+    ]
+    cutsPhoton = [
+        "No cuts",
+        "Trigger",
+        "Lepton veto",
+        "Photon p_{T}",
+        "HEM veto",
+        "JetID",
+        "Event filter",
+        "original MET < 250",
+        "modified MET > 250",
+        "HT",
+        "nJets",
+        "dPhi",
+    ]
 
     # copy list instead of pointer to list
     cutsLeptonLowDM = cutsLepton[:]
@@ -280,34 +250,13 @@ def makeCutflows(file_name, year, plot_dir, doPhotons, useHEMVeto):
 
 def main():
     plot_dir = "more_plots"
-    version = 4
     # set per version
-    useHEMVeto_map = {1: False, 2:False, 3:True,  4:True}
-    doPhotons_map  = {1: False, 2:False, 3:False, 4:True}
-    useHEMVeto     = useHEMVeto_map[version]
-    doPhotons      = doPhotons_map[version]
-    if version == 1:
-        # May 5, 2019 Results
-        makeCutflows("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016", plot_dir, doPhotons, useHEMVeto)
-        makeCutflows("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017", plot_dir, doPhotons, useHEMVeto)
-        makeCutflows("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018", plot_dir, doPhotons, useHEMVeto)
-    if version == 2:
-        # May 9, 2019 Results
-        makeCutflows("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016", plot_dir, doPhotons, useHEMVeto)
-        makeCutflows("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017", plot_dir, doPhotons, useHEMVeto)
-        makeCutflows("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018", plot_dir, doPhotons, useHEMVeto)
-    if version == 3:
-        # May 16, 2019 Results
-        makeCutflows("condor/DataMC_2016_submission_2019-05-16_10-06-59/result.root",    "2016",    plot_dir, doPhotons, useHEMVeto)
-        makeCutflows("condor/DataMC_2017_submission_2019-05-16_10-09-29/result.root",    "2017",    plot_dir, doPhotons, useHEMVeto)
-        makeCutflows("condor/DataMC_2018_AB_submission_2019-05-16_10-10-30/result.root", "2018_AB", plot_dir, doPhotons, useHEMVeto)
-        makeCutflows("condor/DataMC_2018_CD_submission_2019-05-16_10-12-04/result.root", "2018_CD", plot_dir, doPhotons, useHEMVeto)
-    if version == 4:
-        # May 17, 2019 Results
-        makeCutflows("condor/DataMC_2016_submission_2019-05-17_18-46-29/result.root",    "2016",    plot_dir, doPhotons, useHEMVeto)
-        makeCutflows("condor/DataMC_2017_submission_2019-05-17_18-47-28/result.root",    "2017",    plot_dir, doPhotons, useHEMVeto)
-        makeCutflows("condor/DataMC_2018_AB_submission_2019-05-17_18-48-10/result.root", "2018_AB", plot_dir, doPhotons, useHEMVeto)
-        makeCutflows("condor/DataMC_2018_CD_submission_2019-05-17_18-50-16/result.root", "2018_CD", plot_dir, doPhotons, useHEMVeto)
+    doPhotons = True
+    # May 17, 2019 Results
+    makeCutflows("condor/DataMC_2016_submission_2019-05-17_18-46-29/result.root",    "2016",    plot_dir, doPhotons)
+    makeCutflows("condor/DataMC_2017_submission_2019-05-17_18-47-28/result.root",    "2017",    plot_dir, doPhotons)
+    makeCutflows("condor/DataMC_2018_AB_submission_2019-05-17_18-48-10/result.root", "2018_AB", plot_dir, doPhotons)
+    makeCutflows("condor/DataMC_2018_CD_submission_2019-05-17_18-50-16/result.root", "2018_CD", plot_dir, doPhotons)
 
 if __name__ == "__main__":
     main()
