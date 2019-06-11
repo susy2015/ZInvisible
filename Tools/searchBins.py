@@ -78,14 +78,16 @@ class ValidationBins:
             self.binValues[era][b]["shape"]       = self.S.shape_map[era]["HighDM"]["met_400toINF"]
             self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["HighDM"]["met_400toINF_error"]
 
-        # Z to NuNu MC values 
+        # Z to NuNu MC histograms v1
         # nValidationBinLowDM: ZNuNu_nValidationBinLowDM_2016nValidationBinLowDMnValidationBinLowDMZJetsToNuNu Validation Bin Low DMdata
         # nValidationBinLowDMHighMET: ZNuNu_nValidationBinLowDMHighMET_2016nValidationBinLowDMHighMETnValidationBinLowDMHighMETZJetsToNuNu Validation Bin Low DM High METdata
         # nValidationBinHighDM: ZNuNu_nValidationBinHighDM_2016nValidationBinHighDMnValidationBinHighDMZJetsToNuNu Validation Bin High DMdata
+        # Z to NuNu MC histograms v2
+        # nValidationBinLowDM: ZNuNu_nValidationBin_LowDM_2016nValidationBinLowDMnValidationBinLowDMZJetsToNuNu Validation Bin Low DMdata 
         f = ROOT.TFile(file_name)
-        h_validation_lowdm          = f.Get("nValidationBinLowDM/ZNuNu_nValidationBinLowDM_" + year + "nValidationBinLowDMnValidationBinLowDMZJetsToNuNu Validation Bin Low DMdata")
-        h_validation_lowdm_highmet  = f.Get("nValidationBinLowDMHighMET/ZNuNu_nValidationBinLowDMHighMET_" + year + "nValidationBinLowDMHighMETnValidationBinLowDMHighMETZJetsToNuNu Validation Bin Low DM High METdata")
-        h_validation_highdm         = f.Get("nValidationBinHighDM/ZNuNu_nValidationBinHighDM_" + year + "nValidationBinHighDMnValidationBinHighDMZJetsToNuNu Validation Bin High DMdata")
+        h_validation_lowdm          = f.Get("nValidationBinLowDM/ZNuNu_nValidationBin_LowDM_" + year + "nValidationBinLowDMnValidationBinLowDMZJetsToNuNu Validation Bin Low DMdata")
+        h_validation_lowdm_highmet  = f.Get("nValidationBinLowDMHighMET/ZNuNu_nValidationBin_LowDM_HighMET_" + year + "nValidationBinLowDMHighMETnValidationBinLowDMHighMETZJetsToNuNu Validation Bin Low DM High METdata")
+        h_validation_highdm         = f.Get("nValidationBinHighDM/ZNuNu_nValidationBin_HighDM_" + year + "nValidationBinHighDMnValidationBinHighDMZJetsToNuNu Validation Bin High DMdata")
         
         # Note: bin_i and b are different
         # bin_i is histogram bin number
