@@ -21,6 +21,7 @@
 #include "TopTagger/TopTagger/interface/TopObject.h"
 
 #include "TFile.h"
+#include "TEfficiency.h"
 #include "TH1.h"
 #include "TH2.h"
 #include "TFile.h"
@@ -45,6 +46,8 @@ namespace plotterFunctions
         std::shared_ptr<TRandom3> tr3;
         std::string year_;
         std::map<std::string, std::string> trigger_eff_map;
+        TEfficiency* Efficiency_Electron_pt;
+        TEfficiency* Efficiency_Muon_pt;
         bool file_exists;
         
         void lepInfo(NTupleReader& tr)
@@ -526,6 +529,8 @@ namespace plotterFunctions
     public:
         LepInfo(std::string year = "") : tr3(new TRandom3()), year_(year)
         {
+            Efficiency_Electron_pt = nullptr;
+            Efficiency_Muon_pt     = nullptr;
             trigger_eff_map["2016"] = "2016_trigger_eff.root";
             trigger_eff_map["2017"] = "2017_trigger_eff.root";
             trigger_eff_map["2018"] = "2018_trigger_eff.root";
@@ -536,6 +541,8 @@ namespace plotterFunctions
             TFile *f = new TFile(trigger_eff_file_name.c_str());
             if(file_exists && f)
             {
+                Efficiency_Electron_pt  = static_cast<TEfficiency*>(f->Get("Electron_pt"));
+                Efficiency_Muon_pt      = static_cast<TEfficiency*>(f->Get("Muon_pt"));
                 f->Close();
                 delete f;
             }
