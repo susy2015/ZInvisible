@@ -44,7 +44,8 @@ namespace plotterFunctions
         // use shared_ptr, which will delete and clear dynamically allocated memory
         std::shared_ptr<TRandom3> tr3;
         std::string year_;
-        TFile trigger_eff_file;
+        std::map<std::string, std::string> trigger_eff_map;
+        bool file_exists;
         
         void lepInfo(NTupleReader& tr)
         {
@@ -525,6 +526,23 @@ namespace plotterFunctions
     public:
         LepInfo(std::string year = "") : tr3(new TRandom3()), year_(year)
         {
+            trigger_eff_map["2016"] = "2016_trigger_eff.root";
+            trigger_eff_map["2017"] = "2017_trigger_eff.root";
+            trigger_eff_map["2018"] = "2018_trigger_eff.root";
+            std::string trigger_eff_file_name = trigger_eff_map.at(year_);
+            // check if file exists
+            struct stat buffer;  
+            file_exists = bool(stat(trigger_eff_file_name.c_str(), &buffer) == 0);
+            TFile *f = new TFile(trigger_eff_file_name.c_str());
+            if(file_exists && f)
+            {
+                f->Close();
+                delete f;
+            }
+            else
+            {
+                std::cout << "Failed to open the file " << trigger_eff_file_name << ". The lepton trigger efficiencies will not be used."<< std::endl;
+            }
         }
 
         void operator()(NTupleReader& tr)
