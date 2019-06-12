@@ -20,6 +20,7 @@
 
 #include "TopTagger/TopTagger/interface/TopObject.h"
 
+#include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
 #include "TFile.h"
@@ -42,6 +43,9 @@ namespace plotterFunctions
     private:
         // use shared_ptr, which will delete and clear dynamically allocated memory
         std::shared_ptr<TRandom3> tr3;
+        std::string year_;
+        TFile trigger_eff_file;
+        
         void lepInfo(NTupleReader& tr)
         {
             std::vector<int> genDecayPdgIdVec;
@@ -516,11 +520,10 @@ namespace plotterFunctions
             tr.registerDerivedVar("passElMuZinvSelOnZMassPeak",  passElMuZinvSelOnZMassPeak);
             tr.registerDerivedVar("passElMuZinvSelOffZMassPeak", passElMuZinvSelOffZMassPeak);
             tr.registerDerivedVar("Zrecopt", Zrecoptpt);
-
         }
 
     public:
-        LepInfo() : tr3(new TRandom3())
+        LepInfo(std::string year = "") : tr3(new TRandom3()), year_(year)
         {
         }
 
@@ -531,4 +534,5 @@ namespace plotterFunctions
     };
 
 }
+
 #endif

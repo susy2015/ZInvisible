@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
         {"plotDir",    required_argument, 0, 'P'},
         {"luminosity", required_argument, 0, 'L'},
         {"sbEra",      required_argument, 0, 'S'},
-        {"year",       required_argument, 0, 'Y'}
+        {"era",        required_argument, 0, 'Y'}
     };
 
     bool runOnCondor        = false;
@@ -66,6 +66,7 @@ int main(int argc, char* argv[])
     double lumi_2017 = AnaSamples::luminosity_2017;
     double lumi_2018 = AnaSamples::luminosity_2018;
     std::string sbEra = "SB_v1_2017";
+    std::string era  = "";
     std::string year = "";
     while((opt = getopt_long(argc, argv, "pstfcglvI:D:N:M:E:P:L:S:Y:", long_options, &option_index)) != -1)
     {
@@ -139,7 +140,7 @@ int main(int argc, char* argv[])
             break;
         
         case 'Y':
-            year = optarg;
+            era = optarg;
             break;
         }
     }
@@ -149,6 +150,7 @@ int main(int argc, char* argv[])
     std::string MuonDataset     = "Data_SingleMuon";
     std::string PhotonDataset   = "Data_SinglePhoton";
     // year and periods
+    std::string eraTag    = "_" + era; 
     std::string yearTag   = "_" + year; 
     std::string periodTag = ""; 
     // HEM veto for 2018 periods C and C
