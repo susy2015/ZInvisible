@@ -45,6 +45,8 @@ class ValidationBins:
         self.high_dm_bins_met_400toINF = range(23, 46, 2)
 
     def getValues(self, file_name, era):
+        # new root file to save validation bin histograms
+        new_file = "validationBinsZinv_" + era + ".root"
         year = era[0:4]
         self.binValues[era] = {}
         for b in self.all_bins:
@@ -108,8 +110,6 @@ class ValidationBins:
             self.binValues[era][b]["mc_error"] = h_validation_highdm.GetBinError(bin_i)
             bin_i += 1
 
-        # new file
-        new_file = "validationBinsZinv_" + era + ".root"
         f = ROOT.TFile(new_file, "recreate")
         # define histograms 
         h_lowdm  = ROOT.TH1F("validation_lowdm",  "validation_lowdm",  19,  0, 19) 
