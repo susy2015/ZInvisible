@@ -48,7 +48,9 @@ namespace plotterFunctions
         std::map<std::string, std::string> trigger_eff_map;
         TEfficiency* Efficiency_Electron_pt;
         TEfficiency* Efficiency_Muon_pt;
-        bool file_exists;
+        bool file_exists    = false;
+        bool year_valid     = false;
+        bool use_lepton_eff = false;
         
         void lepInfo(NTupleReader& tr)
         {
@@ -529,27 +531,38 @@ namespace plotterFunctions
     public:
         LepInfo(std::string year = "") : tr3(new TRandom3()), year_(year)
         {
+            std::string trigger_eff_file_name = "";
             Efficiency_Electron_pt = nullptr;
             Efficiency_Muon_pt     = nullptr;
             trigger_eff_map["2016"] = "2016_trigger_eff.root";
             trigger_eff_map["2017"] = "2017_trigger_eff.root";
             trigger_eff_map["2018"] = "2018_trigger_eff.root";
-            std::string trigger_eff_file_name = trigger_eff_map.at(year_);
-            // check if file exists
-            struct stat buffer;  
-            file_exists = bool(stat(trigger_eff_file_name.c_str(), &buffer) == 0);
-            TFile *f = new TFile(trigger_eff_file_name.c_str());
-            if(file_exists && f)
+            // check that year is valid
+            year_valid = trigger_eff_map.find(year_) != trigger_eff_map.end();
+            if (year_valid)
             {
-                Efficiency_Electron_pt  = static_cast<TEfficiency*>(f->Get("Electron_pt"));
-                Efficiency_Muon_pt      = static_cast<TEfficiency*>(f->Get("Muon_pt"));
-                f->Close();
-                delete f;
+                trigger_eff_file_name = trigger_eff_map.at(year_);
+                // check if file exists
+                struct stat buffer;  
+                file_exists = bool(stat(trigger_eff_file_name.c_str(), &buffer) == 0);
+                TFile *f = new TFile(trigger_eff_file_name.c_str());
+                if(file_exists && f)
+                {
+                    Efficiency_Electron_pt  = static_cast<TEfficiency*>(f->Get("Electron_pt"));
+                    Efficiency_Muon_pt      = static_cast<TEfficiency*>(f->Get("Muon_pt"));
+                    f->Close();
+                    delete f;
+                }
+                else
+                {
+                    std::cout << "Failed to open the file " << trigger_eff_file_name << ". The lepton trigger efficiencies will not be used."<< std::endl;
+                }
             }
             else
             {
-                std::cout << "Failed to open the file " << trigger_eff_file_name << ". The lepton trigger efficiencies will not be used."<< std::endl;
+                std::cout << "The year " << year_ << " is not valid. The lepton trigger efficiencies will not be used."<< std::endl;
             }
+            use_lepton_eff = year_valid && file_exists;
         }
 
         void operator()(NTupleReader& tr)
