@@ -45,7 +45,7 @@ namespace plotterFunctions
         // use shared_ptr, which will delete and clear dynamically allocated memory
         std::shared_ptr<TRandom3> tr3;
         std::string year_;
-        std::map<std::string, std::string>  trigger_eff_file_map;
+        std::map<std::string, std::string>        trigger_eff_file_map;
         std::map<std::string, TGraphAsymmErrors*> trigger_eff_obj_map;
         TGraphAsymmErrors* Efficiency_Electron_pt;
         TGraphAsymmErrors* Efficiency_Electron_eta;
@@ -397,43 +397,16 @@ namespace plotterFunctions
             bool passElMuZinvSelOnZMassPeak   = passElMuSel     && passElMuOnZMassPeak;
             bool passElMuZinvSelOffZMassPeak  = passElMuSel     && passElMuOffZMassPeak;
 
-            double genMuPt     = -999.9;
-            double genMuEta    = -999.9;
-            double cutMuPt1    = -999.9;
-            double cutMuPt2    = -999.9;
-            double cutMuEta1   = -999.9;
-            double cutMuEta2   = -999.9;
-            double cutElecPt1  = -999.9;
-            double cutElecPt2  = -999.9;
-            double cutElecEta1 = -999.9;
-            double cutElecEta2 = -999.9;
-            
-            // print passMuZinvSelOnZMassPeak conditions
-            bool printMuon = false;
-            if (printMuon)
-            {
-                printf("num gen mu: %d num mu: %d num cut mu: %d num cut mu reco only: %d\n", genMu->size(), muonsLVec.size(), cutMuVec.size(), cutMuVecRecoOnly.size());
-                if (cutMuVec.size() > 0)
-                {
-                    printf("Pass_ElecVeto: %d ", Pass_ElecVeto);
-                    printf("cutMuVec.size() == 2: %d ", cutMuVec.size() == 2);
-                    printf("cutMuSummedCharge == 0: %d ", cutMuSummedCharge == 0);
-                    printf("cutMuVec[0].Pt() > highMuPt: %d ", cutMuVec[0].Pt() > highMuPt);
-                    printf("cutMuVec[1].Pt() > minMuPt: %d ", cutMuVec[1].Pt() > minMuPt);
-                    printf("bestRecoMuZ.M() > zMassLow: %d ", bestRecoMuZ.M() > zMassLow);
-                    printf("bestRecoMuZ.M() < zMassHigh: %d ", bestRecoMuZ.M() < zMassHigh);
-                    if (passMuZinvSelOnZMassPeak)
-                    {
-                        printf(" --- passMuZinvSelOnZMassPeak");
-                    }
-                    printf("\n");
-                }
-                else
-                {
-                    printf("WARNING: no cut muons found in event.\n");
-                }
-            }
-
+            data_t genMuPt     = -999.9;
+            data_t genMuEta    = -999.9;
+            data_t cutMuPt1    = -999.9;
+            data_t cutMuPt2    = -999.9;
+            data_t cutMuEta1   = -999.9;
+            data_t cutMuEta2   = -999.9;
+            data_t cutElecPt1  = -999.9;
+            data_t cutElecPt2  = -999.9;
+            data_t cutElecEta1 = -999.9;
+            data_t cutElecEta2 = -999.9;
 
             if(genMu->size() >= 1)
             {
@@ -477,10 +450,10 @@ namespace plotterFunctions
             data_t metphiWithLL = cleanMet.Phi();
             
             // di-lepton efficiencies
-            double DiMuTriggerEffPt    = 1.0;
-            double DiMuTriggerEffEta   = 1.0;
-            double DiElecTriggerEffPt  = 1.0;
-            double DiElecTriggerEffEta = 1.0;
+            data_t DiMuTriggerEffPt    = 1.0;
+            data_t DiMuTriggerEffEta   = 1.0;
+            data_t DiElecTriggerEffPt  = 1.0;
+            data_t DiElecTriggerEffEta = 1.0;
             if (cutMuVec.size() == 2)
             {
                 std::vector<double> leptonPts  = {cutMuPt1, cutMuPt2};
@@ -492,8 +465,59 @@ namespace plotterFunctions
             {
                 std::vector<double> leptonPts  = {cutElecPt1, cutElecPt2};
                 std::vector<double> leptonEtas = {cutElecEta1, cutElecEta2};
-                DiElecTriggerEffPt  = getEfficiency("Elecon_pt", leptonPts);
-                DiElecTriggerEffEta = getEfficiency("Elecon_eta", leptonEtas);
+                DiElecTriggerEffPt  = getEfficiency("Electron_pt", leptonPts);
+                DiElecTriggerEffEta = getEfficiency("Electron_eta", leptonEtas);
+            }
+            
+            // print passMuZinvSelOnZMassPeak conditions
+            bool printMuon = false;
+            if (printMuon)
+            {
+                printf("num gen mu: %d num mu: %d num cut mu: %d num cut mu reco only: %d\n", genMu->size(), muonsLVec.size(), cutMuVec.size(), cutMuVecRecoOnly.size());
+                if (cutMuVec.size() > 0)
+                {
+                    printf("Pass_ElecVeto: %d ", Pass_ElecVeto);
+                    printf("cutMuVec.size() == 2: %d ", cutMuVec.size() == 2);
+                    printf("cutMuSummedCharge == 0: %d ", cutMuSummedCharge == 0);
+                    printf("cutMuVec[0].Pt() > highMuPt: %d ", cutMuVec[0].Pt() > highMuPt);
+                    printf("cutMuVec[1].Pt() > minMuPt: %d ", cutMuVec[1].Pt() > minMuPt);
+                    printf("bestRecoMuZ.M() > zMassLow: %d ", bestRecoMuZ.M() > zMassLow);
+                    printf("bestRecoMuZ.M() < zMassHigh: %d ", bestRecoMuZ.M() < zMassHigh);
+                    if (passMuZinvSelOnZMassPeak)
+                    {
+                        printf(" --- passMuZinvSelOnZMassPeak");
+                    }
+                    printf("\n");
+                }
+                else
+                {
+                    printf("WARNING: no cut muons found in event.\n");
+                }
+            }
+
+            bool printEff = true;
+            if (printEff)
+            {
+                if (cutMuVec.size() == 2)
+                {
+                    printf("cutMuPt1 = %f ",  cutMuPt1);
+                    printf("cutMuPt2 = %f ",  cutMuPt2);
+                    printf("cutMuEta1 = %f ", cutMuEta1);
+                    printf("cutMuEta2 = %f ", cutMuEta2);
+                    printf("DiMuTriggerEffPt = %f ",  DiMuTriggerEffPt);
+                    printf("DiMuTriggerEffEta = %f ", DiMuTriggerEffEta);
+                    printf("\n");
+                }
+                if (cutElecVec.size() == 2)
+                {
+                    printf("cutElecPt1 = %f ",  cutElecPt1);
+                    printf("cutElecPt2 = %f ",  cutElecPt2);
+                    printf("cutElecEta1 = %f ", cutElecEta1);
+                    printf("cutElecEta2 = %f ", cutElecEta2);
+                    printf("DiElecTriggerEffPt = %f ",  DiElecTriggerEffPt);
+                    printf("DiElecTriggerEffEta = %f ", DiElecTriggerEffEta);
+                    printf("\n");
+                }
             }
             
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
@@ -560,6 +584,7 @@ namespace plotterFunctions
 
         double getEfficiency(std::string kinematic, std::vector<double> values)
         {
+            bool verbose = true;
             bool kinematic_valid = trigger_eff_obj_map.find(kinematic) != trigger_eff_obj_map.end();
             if (use_lepton_eff && kinematic_valid)
             {
@@ -567,23 +592,39 @@ namespace plotterFunctions
                 std::vector<float> efficiencies;
                 for (const auto& value : values)
                 {
-                    int bin = 0;
-                    while (bin < eff->GetN() && eff->GetX()[bin] - eff->GetErrorXlow(bin) < kinematic)
+                    int x_i = 0;
+                    while (x_i < eff->GetN() && eff->GetX()[x_i] - eff->GetErrorXlow(x_i) < value)
                     {
-                         ++bin;
+                         ++x_i;
                     }
-                    efficiencies.push_back(eff->GetY()[bin]);
+                    efficiencies.push_back(eff->GetY()[x_i]);
+                }
+                if (verbose)
+                {
+                    printf("Trigger Eff %s: ", kinematic.c_str());
                 }
                 float product = 1.0;
                 for (const auto& e : efficiencies)
                 {
                     product *= (1.0 - e);
+                    if (verbose)
+                    {
+                        printf("%f ", e);
+                    }
                 }
                 float efficiency = 1.0 - product;
-                return product;
+                if (verbose)
+                {
+                    printf("; eff = %f\n", efficiency);
+                }
+                return efficiency;
             }
             else
             {
+                if (verbose)
+                {
+                    printf("Setting trigger efficiency to 1.0.\n");
+                }
                 return 1.0;
             }
         }
