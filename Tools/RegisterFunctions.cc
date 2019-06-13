@@ -99,7 +99,7 @@ void activateBranches(std::set<std::string>& activeBranches)
 
 ////////////////////////////////
 
-RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra) : RegisterFunctions()
+RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra, std::string year) : RegisterFunctions()
 {            
     // Important: create objects!!
     
@@ -126,7 +126,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     weights                      = new plotterFunctions::GenerateWeight;
     generatePhotonEfficiency     = new plotterFunctions::GeneratePhotonEfficiency;
     njWeight                     = new plotterFunctions::NJetWeight;
-    lepInfo                      = new plotterFunctions::LepInfo;
+    lepInfo                      = new plotterFunctions::LepInfo(year);
     basicLepton                  = new plotterFunctions::BasicLepton;
     fakebtagvectors              = new plotterFunctions::Fakebtagvectors;
     getSearchBin                 = new plotterFunctions::GetSearchBin;

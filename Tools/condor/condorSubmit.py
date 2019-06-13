@@ -70,6 +70,9 @@ def main():
     
     filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/2016_trigger_eff.root", 
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/2017_trigger_eff.root", 
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/2018_trigger_eff.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/lepEffHists.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/effhists_GJets.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/njetWgtHists.root", 
@@ -95,6 +98,9 @@ def main():
     
     filestoTransferGMEP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/calcEffPhoton", 
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
+                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/2016_trigger_eff.root", 
+                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/2017_trigger_eff.root", 
+                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/2018_trigger_eff.root", 
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_bTagEff.root", 
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/ISRWeights.root", 
