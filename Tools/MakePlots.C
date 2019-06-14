@@ -690,8 +690,11 @@ int main(int argc, char* argv[])
     std::vector<std::string> Cuts_MC_ZNuNu_LowDM          = Cuts_MC_ZNuNu;
     std::vector<std::string> Cuts_MC_ZNuNu_LowDM_HighMET  = Cuts_MC_ZNuNu;
     std::vector<std::string> Cuts_MC_ZNuNu_HighDM         = Cuts_MC_ZNuNu;
+    Cuts_MC_ZNuNu_LowDM.push_back("SAT_Pass_dPhiMETLowDM");
     Cuts_MC_ZNuNu_LowDM.push_back("SAT_Pass_lowDM");
+    Cuts_MC_ZNuNu_LowDM_HighMET.push_back("SAT_Pass_mid_dPhiMETLowDM");
     Cuts_MC_ZNuNu_LowDM_HighMET.push_back("SAT_Pass_lowDM_mid_dPhi");
+    Cuts_MC_ZNuNu_HighDM.push_back("SAT_Pass_mid_dPhiMETHighDM");
     Cuts_MC_ZNuNu_HighDM.push_back("SAT_Pass_highDM_mid_dPhi");
     std::vector<std::string> CutLevels_MC_ZNuNu_LowDM         = SusyUtility::getCutLevels(Cuts_MC_ZNuNu_LowDM);
     std::vector<std::string> CutLevels_MC_ZNuNu_LowDM_HighMET = SusyUtility::getCutLevels(Cuts_MC_ZNuNu_LowDM_HighMET);
@@ -1802,7 +1805,7 @@ int main(int argc, char* argv[])
     PDC trigger_nSearchBin_weighted( "single", {{"nSearchBin",    dsDY_nunu_njetnorm_TriggerCentral_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerUp_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_TriggerDown_weighted}, {"nSearchBin",    dsDY_nunu_njetnorm_weighted}  });
     
     // Znunu
-    auto makePDSZnunu       = [&](const std::string& label, const std::string& cuts) {return PDS("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu" + yearTag], cuts, "puWeight;BTagWeight" + PrefireWeight); };
+    auto makePDSZnunu       = [&](const std::string& label, const std::string& cuts = "", const std::string& weights = "") {return PDS("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu" + yearTag], cuts, weights); };
     auto makePDCGJetsZnunu  = [&](const std::string& var,   const std::string& style, const std::string& label, const std::string& cuts) {return PDC(style, {{var, makePDSPhoton(label, "GJets", "passPhotonSelection;" + cuts)}, {var, makePDSZnunu(label, cuts)}}); };
     
     // study jet collections and jet cleaning
@@ -2072,15 +2075,15 @@ int main(int argc, char* argv[])
         }
     }
 
-    PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM",              {makePDSZnunu("Search Bin Low DM",              "Pass_EventFilter;Pass_JetID;SAT_Pass_lowDM")});
-    PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM",             {makePDSZnunu("Search Bin High DM",             "Pass_EventFilter;Pass_JetID;SAT_Pass_highDM")});
-    PDC dcMC_ZNuNu_nValidationBin_LowDM("data",         "nValidationBinLowDM",          {makePDSZnunu("Validation Bin Low DM",          "Pass_EventFilter;Pass_JetID;SAT_Pass_lowDM")});
-    PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET",   {makePDSZnunu("Validation Bin Low DM High MET", "Pass_EventFilter;Pass_JetID;SAT_Pass_lowDM_mid_dPhi" + semicolon_HEMVeto)});
-    PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM",         {makePDSZnunu("Validation Bin High DM",         "Pass_EventFilter;Pass_JetID;SAT_Pass_highDM_mid_dPhi" + semicolon_HEMVeto)});
+    PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM",            {makePDSZnunu("Search Bin Low DM",              "Pass_EventFilter;Pass_JetID;SAT_Pass_lowDM" + semicolon_HEMVeto,             "Stop0l_trigger_eff_MET_low_dm;puWeight;BTagWeight" + PrefireWeight)});
+    PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM",           {makePDSZnunu("Search Bin High DM",             "Pass_EventFilter;Pass_JetID;SAT_Pass_highDM" + semicolon_HEMVeto,            "Stop0l_trigger_eff_MET_high_dm;puWeight;BTagWeight" + PrefireWeight)});
+    PDC dcMC_ZNuNu_nValidationBin_LowDM("data",         "nValidationBinLowDM",        {makePDSZnunu("Validation Bin Low DM",          "Pass_EventFilter;Pass_JetID;SAT_Pass_lowDM" + semicolon_HEMVeto,             "Stop0l_trigger_eff_MET_low_dm;puWeight;BTagWeight" + PrefireWeight)});
+    PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET", {makePDSZnunu("Validation Bin Low DM High MET", "Pass_EventFilter;Pass_JetID;SAT_Pass_lowDM_mid_dPhi" + semicolon_HEMVeto,    "Stop0l_trigger_eff_MET_low_dm;puWeight;BTagWeight" + PrefireWeight)});
+    PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM",       {makePDSZnunu("Validation Bin High DM",         "Pass_EventFilter;Pass_JetID;SAT_Pass_highDM_mid_dPhi" + semicolon_HEMVeto,   "Stop0l_trigger_eff_MET_high_dm;puWeight;BTagWeight" + PrefireWeight)});
     // MET using validation bins for cutflow
-    PDC dcMC_ZNuNu_met_LowDM("data",                    "MET_pt",                       {makePDSZnunu("MET Low DM",                     "Pass_EventFilter;Pass_JetID;SAT_Pass_lowDM")});
-    PDC dcMC_ZNuNu_met_LowDM_HighMET("data",            "MET_pt",                       {makePDSZnunu("MET Low DM High MET",            "Pass_EventFilter;Pass_JetID;SAT_Pass_lowDM_mid_dPhi" + semicolon_HEMVeto)});
-    PDC dcMC_ZNuNu_met_HighDM("data",                   "MET_pt",                       {makePDSZnunu("MET High DM",                    "Pass_EventFilter;Pass_JetID;SAT_Pass_highDM_mid_dPhi" + semicolon_HEMVeto)});
+    PDC dcMC_ZNuNu_met_LowDM("data",                    "MET_pt",                     {makePDSZnunu("MET Low DM",                     "Pass_EventFilter;Pass_JetID;SAT_Pass_lowDM" + semicolon_HEMVeto,             "Stop0l_trigger_eff_MET_low_dm;puWeight;BTagWeight" + PrefireWeight)});
+    PDC dcMC_ZNuNu_met_LowDM_HighMET("data",            "MET_pt",                     {makePDSZnunu("MET Low DM High MET",            "Pass_EventFilter;Pass_JetID;SAT_Pass_lowDM_mid_dPhi" + semicolon_HEMVeto,    "Stop0l_trigger_eff_MET_low_dm;puWeight;BTagWeight" + PrefireWeight)});
+    PDC dcMC_ZNuNu_met_HighDM("data",                   "MET_pt",                     {makePDSZnunu("MET High DM",                    "Pass_EventFilter;Pass_JetID;SAT_Pass_highDM_mid_dPhi" + semicolon_HEMVeto,   "Stop0l_trigger_eff_MET_high_dm;puWeight;BTagWeight" + PrefireWeight)});
     if (doSearchBins)
     {
         vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + eraTag,             {dcMC_ZNuNu_nSearchBin_LowDM},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));

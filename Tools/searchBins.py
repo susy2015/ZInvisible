@@ -41,6 +41,7 @@ class ValidationBins:
         self.low_dm_bins_met_300toINF  = [17, 18]
         self.low_dm_bins_met_250to400  = [0, 1, 2, 3, 6, 7, 12, 13, 14]
         self.low_dm_bins_met_400toINF  = [15, 16]
+        self.low_dm_bins_met_250toINF  = [15, 16, 17, 18]
         self.high_dm_bins_met_250to400 = range(22, 46, 2)
         self.high_dm_bins_met_400toINF = range(23, 46, 2)
 
@@ -63,15 +64,18 @@ class ValidationBins:
         for b in self.low_dm_bins_met_250to300: 
             self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_250to300"]
             self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_250to300_error"]
-        for b in self.low_dm_bins_met_300toINF: 
-            self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_300toINF"]
-            self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_300toINF_error"]
+        #for b in self.low_dm_bins_met_300toINF: 
+        #    self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_300toINF"]
+        #    self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_300toINF_error"]
         for b in self.low_dm_bins_met_250to400: 
             self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_250to400"]
             self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_250to400_error"]
-        for b in self.low_dm_bins_met_400toINF: 
-            self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_400toINF"]
-            self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_400toINF_error"]
+        #for b in self.low_dm_bins_met_400toINF: 
+        #    self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_400toINF"]
+        #    self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_400toINF_error"]
+        for b in self.low_dm_bins_met_250toINF: 
+            self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_250toINF"]
+            self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_250toINF_error"]
         # HighDM
         for b in self.high_dm_bins_met_250to400: 
             self.binValues[era][b]["shape"]       = self.S.shape_map[era]["HighDM"]["met_250to400"]

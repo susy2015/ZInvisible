@@ -584,7 +584,7 @@ namespace plotterFunctions
 
         double getEfficiency(std::string kinematic, std::vector<double> values)
         {
-            bool verbose = true;
+            bool verbose = false;
             bool kinematic_valid = trigger_eff_obj_map.find(kinematic) != trigger_eff_obj_map.end();
             if (use_lepton_eff && kinematic_valid)
             {

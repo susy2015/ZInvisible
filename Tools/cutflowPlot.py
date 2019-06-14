@@ -100,11 +100,14 @@ def makeCutflows(file_name, year, plot_dir, doPhotons):
 
     # copy list instead of pointer to list
     cutsZNuNuLowDM = cutsZNuNu[:]
-    cutsZNuNuLowDM.append("dPhi and Low #Deltam")
+    cutsZNuNuLowDM.append("dPhi")
+    cutsZNuNuLowDM.append("Low #Deltam")
     cutsZNuNuLowDMHighMET = cutsZNuNu[:]
-    cutsZNuNuLowDMHighMET.append("mid dPhi and Low #Deltam")
+    cutsZNuNuLowDMHighMET.append("mid dPhi")
+    cutsZNuNuLowDMHighMET.append("Low #Deltam")
     cutsZNuNuHighDM = cutsZNuNu[:]
-    cutsZNuNuHighDM.append("mid dPhi and High #Deltam")
+    cutsZNuNuHighDM.append("mid dPhi")
+    cutsZNuNuHighDM.append("High #Deltam")
     cutsLeptonLowDM = cutsLepton[:]
     cutsLeptonLowDM.append("Low #Deltam")
     cutsLeptonHighDM = cutsLepton[:]
@@ -276,7 +279,7 @@ def main():
     plot_dir = "more_plots"
     # set per version
     doPhotons = True
-    makeCutflows("condor/DataMC_2016_submission_2019-06-10_16-31-29/result.root",    "2016",    plot_dir, doPhotons)
+    makeCutflows("histoutput.root",    "2016",    plot_dir, doPhotons)
 
 if __name__ == "__main__":
     main()
