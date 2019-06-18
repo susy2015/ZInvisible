@@ -89,6 +89,7 @@ class Shape:
         legend_y1 = 0.7 
         legend_y2 = 0.9 
 
+        xbin_250 = np.array([0.0, 250.0, 1000.0])
         xbin_300 = np.array([0.0, 250.0, 300.0, 1000.0])
         xbin_400 = np.array([0.0, 250.0, 400.0, 1000.0])
         
@@ -132,14 +133,18 @@ class Shape:
             h_Data.Rebin(2)
             h_MC.Rebin(2)
             h_MC_normalized.Rebin(2)
+            h_Data_250 = h_Data.Rebin(2, "h_Data_250", xbin_250)
             h_Data_300 = h_Data.Rebin(3, "h_Data_300", xbin_300)
             h_Data_400 = h_Data.Rebin(3, "h_Data_400", xbin_400)
+            h_MC_250 = h_MC.Rebin(2, "h_MC_250", xbin_250)
             h_MC_300 = h_MC.Rebin(3, "h_MC_300", xbin_300)
             h_MC_400 = h_MC.Rebin(3, "h_MC_400", xbin_400)
+            h_MC_normalized_250 = h_MC_normalized.Rebin(2, "h_MC_normalized_250", xbin_250)
             h_MC_normalized_300 = h_MC_normalized.Rebin(3, "h_MC_normalized_300", xbin_300)
             h_MC_normalized_400 = h_MC_normalized.Rebin(3, "h_MC_normalized_400", xbin_400)
             h_map = {
                         "standard" : {"data":h_Data,     "mc":h_MC,     "mc_norm":h_MC_normalized},
+                        "250"      : {"data":h_Data_250, "mc":h_MC_250, "mc_norm":h_MC_normalized_250},
                         "300"      : {"data":h_Data_300, "mc":h_MC_300, "mc_norm":h_MC_normalized_300},
                         "400"      : {"data":h_Data_400, "mc":h_MC_400, "mc_norm":h_MC_normalized_400}
             }
@@ -245,6 +250,8 @@ class Shape:
         self.shape_map[era]["LowDM"]["met_250to400_error"] = self.ratio_map[era]["LowDM"]["400"].GetBinError(2)
         self.shape_map[era]["LowDM"]["met_400toINF"]       = self.ratio_map[era]["LowDM"]["400"].GetBinContent(3)
         self.shape_map[era]["LowDM"]["met_400toINF_error"] = self.ratio_map[era]["LowDM"]["400"].GetBinError(3)
+        self.shape_map[era]["LowDM"]["met_250toINF"]       = self.ratio_map[era]["LowDM"]["250"].GetBinContent(2)
+        self.shape_map[era]["LowDM"]["met_250toINF_error"] = self.ratio_map[era]["LowDM"]["250"].GetBinError(2)
         # HighDM
         self.shape_map[era]["HighDM"]["met_250to400"]       = self.ratio_map[era]["HighDM"]["400"].GetBinContent(2)
         self.shape_map[era]["HighDM"]["met_250to400_error"] = self.ratio_map[era]["HighDM"]["400"].GetBinError(2)

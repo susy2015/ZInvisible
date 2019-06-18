@@ -8,17 +8,16 @@ from searchBins import SearchBins
 from searchBins import ValidationBins
 
 def main():
-    doCutflows = False
+    doCutflows = True
     doPhotons = True
-    useHEMVeto = True
     useAllMC = True
-    draw = False
+    draw = True
     verbose = True
     
     plot_dir = "more_plots"
     #json_file = "run_1.json" 
     #eras = ["2016", "2017", "2018_AB", "2018_CD"]
-    json_file = "run_2.json" 
+    json_file = "run_5.json" 
     eras = ["2016"]
 
     #N = Normalization(useAllMC, verbose)
@@ -32,11 +31,12 @@ def main():
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
             if doCutflows:
-                makeCutflows(result_file, era, plot_dir, doPhotons, useHEMVeto)
+                makeCutflows(result_file, era, plot_dir, doPhotons)
             N.getNormAndError(result_file, era)
             S.getShape(result_file, era)
 
-        N.makeTexFile("normalization.tex")
+        N.makeTexFile("normalization_Zmass.tex")
+        
         # search bins
         SB = SearchBins(N, S, eras, verbose)
         # validation bins
@@ -45,6 +45,8 @@ def main():
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
             VB.getValues(result_file, era)
+        
+        VB.makeTexFile("zinv_prediction_v5.tex")
 
 
 if __name__ == "__main__":

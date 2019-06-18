@@ -20,6 +20,8 @@
 
 #include "TopTagger/TopTagger/interface/TopObject.h"
 
+#include "TFile.h"
+#include "TGraphAsymmErrors.h"
 #include "TH1.h"
 #include "TH2.h"
 #include "TFile.h"
@@ -42,6 +44,17 @@ namespace plotterFunctions
     private:
         // use shared_ptr, which will delete and clear dynamically allocated memory
         std::shared_ptr<TRandom3> tr3;
+        std::string year_;
+        std::map<std::string, std::string>        trigger_eff_file_map;
+        std::map<std::string, TGraphAsymmErrors*> trigger_eff_obj_map;
+        TGraphAsymmErrors* Efficiency_Electron_pt;
+        TGraphAsymmErrors* Efficiency_Electron_eta;
+        TGraphAsymmErrors* Efficiency_Muon_pt;
+        TGraphAsymmErrors* Efficiency_Muon_eta;
+        bool file_exists    = false;
+        bool year_valid     = false;
+        bool use_lepton_eff = false;
+        
         void lepInfo(NTupleReader& tr)
         {
             std::vector<int> genDecayPdgIdVec;
@@ -352,6 +365,7 @@ namespace plotterFunctions
                     bestRecoZ = bestRecoMuZ;
                 }
             }
+            
             metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
             TLorentzVector cleanMet = metV + metZ;
             
@@ -383,43 +397,16 @@ namespace plotterFunctions
             bool passElMuZinvSelOnZMassPeak   = passElMuSel     && passElMuOnZMassPeak;
             bool passElMuZinvSelOffZMassPeak  = passElMuSel     && passElMuOffZMassPeak;
 
-            double genMuPt     = -999.9;
-            double genMuEta    = -999.9;
-            double cutMuPt1    = -999.9;
-            double cutMuPt2    = -999.9;
-            double cutMuEta1   = -999.9;
-            double cutMuEta2   = -999.9;
-            double cutElecPt1  = -999.9;
-            double cutElecPt2  = -999.9;
-            double cutElecEta1 = -999.9;
-            double cutElecEta2 = -999.9;
-            
-            // print passMuZinvSelOnZMassPeak conditions
-            bool printMuon = false;
-            if (printMuon)
-            {
-                printf("num gen mu: %d num mu: %d num cut mu: %d num cut mu reco only: %d\n", genMu->size(), muonsLVec.size(), cutMuVec.size(), cutMuVecRecoOnly.size());
-                if (cutMuVec.size() > 0)
-                {
-                    printf("Pass_ElecVeto: %d ", Pass_ElecVeto);
-                    printf("cutMuVec.size() == 2: %d ", cutMuVec.size() == 2);
-                    printf("cutMuSummedCharge == 0: %d ", cutMuSummedCharge == 0);
-                    printf("cutMuVec[0].Pt() > highMuPt: %d ", cutMuVec[0].Pt() > highMuPt);
-                    printf("cutMuVec[1].Pt() > minMuPt: %d ", cutMuVec[1].Pt() > minMuPt);
-                    printf("bestRecoMuZ.M() > zMassLow: %d ", bestRecoMuZ.M() > zMassLow);
-                    printf("bestRecoMuZ.M() < zMassHigh: %d ", bestRecoMuZ.M() < zMassHigh);
-                    if (passMuZinvSelOnZMassPeak)
-                    {
-                        printf(" --- passMuZinvSelOnZMassPeak");
-                    }
-                    printf("\n");
-                }
-                else
-                {
-                    printf("WARNING: no cut muons found in event.\n");
-                }
-            }
-
+            data_t genMuPt     = -999.9;
+            data_t genMuEta    = -999.9;
+            data_t cutMuPt1    = -999.9;
+            data_t cutMuPt2    = -999.9;
+            data_t cutMuEta1   = -999.9;
+            data_t cutMuEta2   = -999.9;
+            data_t cutElecPt1  = -999.9;
+            data_t cutElecPt2  = -999.9;
+            data_t cutElecEta1 = -999.9;
+            data_t cutElecEta2 = -999.9;
 
             if(genMu->size() >= 1)
             {
@@ -456,22 +443,99 @@ namespace plotterFunctions
                 mindPhiMetJ = std::min(mindPhiMetJ, fabs(ROOT::Math::VectorUtil::DeltaPhi(genZ, jet)));
             }
 
+            // Z values
             data_t bestRecoZPt  = bestRecoZ.Pt();
+            data_t Zrecoptpt    = Zrecopt.Pt();
             data_t metWithLL    = cleanMet.Pt();
             data_t metphiWithLL = cleanMet.Phi();
-            data_t Zrecoptpt    = Zrecopt.Pt();
+            
+            // di-lepton efficiencies
+            data_t DiMuTriggerEffPt    = 1.0;
+            data_t DiMuTriggerEffEta   = 1.0;
+            data_t DiElecTriggerEffPt  = 1.0;
+            data_t DiElecTriggerEffEta = 1.0;
+            if (cutMuVec.size() == 2)
+            {
+                std::vector<double> leptonPts  = {cutMuPt1, cutMuPt2};
+                std::vector<double> leptonEtas = {cutMuEta1, cutMuEta2};
+                DiMuTriggerEffPt  = getEfficiency("Muon_pt", leptonPts);
+                DiMuTriggerEffEta = getEfficiency("Muon_eta", leptonEtas);
+            }
+            if (cutElecVec.size() == 2)
+            {
+                std::vector<double> leptonPts  = {cutElecPt1, cutElecPt2};
+                std::vector<double> leptonEtas = {cutElecEta1, cutElecEta2};
+                DiElecTriggerEffPt  = getEfficiency("Electron_pt", leptonPts);
+                DiElecTriggerEffEta = getEfficiency("Electron_eta", leptonEtas);
+            }
+            
+            // print passMuZinvSelOnZMassPeak conditions
+            bool printMuon = false;
+            if (printMuon)
+            {
+                printf("num gen mu: %d num mu: %d num cut mu: %d num cut mu reco only: %d\n", genMu->size(), muonsLVec.size(), cutMuVec.size(), cutMuVecRecoOnly.size());
+                if (cutMuVec.size() > 0)
+                {
+                    printf("Pass_ElecVeto: %d ", Pass_ElecVeto);
+                    printf("cutMuVec.size() == 2: %d ", cutMuVec.size() == 2);
+                    printf("cutMuSummedCharge == 0: %d ", cutMuSummedCharge == 0);
+                    printf("cutMuVec[0].Pt() > highMuPt: %d ", cutMuVec[0].Pt() > highMuPt);
+                    printf("cutMuVec[1].Pt() > minMuPt: %d ", cutMuVec[1].Pt() > minMuPt);
+                    printf("bestRecoMuZ.M() > zMassLow: %d ", bestRecoMuZ.M() > zMassLow);
+                    printf("bestRecoMuZ.M() < zMassHigh: %d ", bestRecoMuZ.M() < zMassHigh);
+                    if (passMuZinvSelOnZMassPeak)
+                    {
+                        printf(" --- passMuZinvSelOnZMassPeak");
+                    }
+                    printf("\n");
+                }
+                else
+                {
+                    printf("WARNING: no cut muons found in event.\n");
+                }
+            }
+
+            bool printEff = true;
+            if (printEff)
+            {
+                if (cutMuVec.size() == 2)
+                {
+                    printf("cutMuPt1 = %f ",  cutMuPt1);
+                    printf("cutMuPt2 = %f ",  cutMuPt2);
+                    printf("cutMuEta1 = %f ", cutMuEta1);
+                    printf("cutMuEta2 = %f ", cutMuEta2);
+                    printf("DiMuTriggerEffPt = %f ",  DiMuTriggerEffPt);
+                    printf("DiMuTriggerEffEta = %f ", DiMuTriggerEffEta);
+                    printf("\n");
+                }
+                if (cutElecVec.size() == 2)
+                {
+                    printf("cutElecPt1 = %f ",  cutElecPt1);
+                    printf("cutElecPt2 = %f ",  cutElecPt2);
+                    printf("cutElecEta1 = %f ", cutElecEta1);
+                    printf("cutElecEta2 = %f ", cutElecEta2);
+                    printf("DiElecTriggerEffPt = %f ",  DiElecTriggerEffPt);
+                    printf("DiElecTriggerEffEta = %f ", DiElecTriggerEffEta);
+                    printf("\n");
+                }
+            }
+            
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
             tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
             tr.registerDerivedVar("metWithLL", metWithLL);
             tr.registerDerivedVar("metphiWithLL", metphiWithLL);
-            tr.registerDerivedVar("cutMuPt1", cutMuPt1);
-            tr.registerDerivedVar("cutMuPt2", cutMuPt2);
-            tr.registerDerivedVar("cutMuEta1", cutMuEta1);
-            tr.registerDerivedVar("cutMuEta2", cutMuEta2);
-            tr.registerDerivedVar("cutElecPt1", cutElecPt1);
-            tr.registerDerivedVar("cutElecPt2", cutElecPt2);
+            tr.registerDerivedVar("cutMuPt1",    cutMuPt1);
+            tr.registerDerivedVar("cutMuPt2",    cutMuPt2);
+            tr.registerDerivedVar("cutMuEta1",   cutMuEta1);
+            tr.registerDerivedVar("cutMuEta2",   cutMuEta2);
+            tr.registerDerivedVar("cutElecPt1",  cutElecPt1);
+            tr.registerDerivedVar("cutElecPt2",  cutElecPt2);
             tr.registerDerivedVar("cutElecEta1", cutElecEta1);
             tr.registerDerivedVar("cutElecEta2", cutElecEta2);
+            tr.registerDerivedVar("DiMuTriggerEffPt",    DiMuTriggerEffPt);
+            tr.registerDerivedVar("DiMuTriggerEffEta",   DiMuTriggerEffEta);
+            tr.registerDerivedVar("DiElecTriggerEffPt",  DiElecTriggerEffPt);
+            tr.registerDerivedVar("DiElecTriggerEffEta", DiElecTriggerEffEta);
             tr.registerDerivedVar("mindPhiMetJ", mindPhiMetJ);
             tr.registerDerivedVar("ZPtRes", (bestRecoZPt - genZPt)/genZPt);
             tr.registerDerivedVar("ZEtaRes", bestRecoZ.Eta() - genZEta);
@@ -516,12 +580,96 @@ namespace plotterFunctions
             tr.registerDerivedVar("passElMuZinvSelOnZMassPeak",  passElMuZinvSelOnZMassPeak);
             tr.registerDerivedVar("passElMuZinvSelOffZMassPeak", passElMuZinvSelOffZMassPeak);
             tr.registerDerivedVar("Zrecopt", Zrecoptpt);
+        }
 
+        double getEfficiency(std::string kinematic, std::vector<double> values)
+        {
+            bool verbose = false;
+            bool kinematic_valid = trigger_eff_obj_map.find(kinematic) != trigger_eff_obj_map.end();
+            if (use_lepton_eff && kinematic_valid)
+            {
+                TGraphAsymmErrors* eff = trigger_eff_obj_map[kinematic];
+                std::vector<float> efficiencies;
+                for (const auto& value : values)
+                {
+                    int x_i = 0;
+                    while (x_i < eff->GetN() && eff->GetX()[x_i] - eff->GetErrorXlow(x_i) < value)
+                    {
+                         ++x_i;
+                    }
+                    efficiencies.push_back(eff->GetY()[x_i]);
+                }
+                if (verbose)
+                {
+                    printf("Trigger Eff %s: ", kinematic.c_str());
+                }
+                float product = 1.0;
+                for (const auto& e : efficiencies)
+                {
+                    product *= (1.0 - e);
+                    if (verbose)
+                    {
+                        printf("%f ", e);
+                    }
+                }
+                float efficiency = 1.0 - product;
+                if (verbose)
+                {
+                    printf("; eff = %f\n", efficiency);
+                }
+                return efficiency;
+            }
+            else
+            {
+                if (verbose)
+                {
+                    printf("Setting trigger efficiency to 1.0.\n");
+                }
+                return 1.0;
+            }
         }
 
     public:
-        LepInfo() : tr3(new TRandom3())
+        LepInfo(std::string year = "") : tr3(new TRandom3()), year_(year)
         {
+            std::string trigger_eff_file_name = "";
+            Efficiency_Electron_pt = nullptr;
+            Efficiency_Muon_pt     = nullptr;
+            trigger_eff_file_map["2016"] = "2016_trigger_eff.root";
+            trigger_eff_file_map["2017"] = "2017_trigger_eff.root";
+            trigger_eff_file_map["2018"] = "2018_trigger_eff.root";
+            // check that year is valid
+            year_valid = trigger_eff_file_map.find(year_) != trigger_eff_file_map.end();
+            if (year_valid)
+            {
+                trigger_eff_file_name = trigger_eff_file_map.at(year_);
+                // check if file exists
+                struct stat buffer;  
+                file_exists = bool(stat(trigger_eff_file_name.c_str(), &buffer) == 0);
+                TFile *f = new TFile(trigger_eff_file_name.c_str());
+                if(file_exists && f)
+                {
+                    Efficiency_Electron_pt  = static_cast<TGraphAsymmErrors*>(f->Get("Electron_pt"));
+                    Efficiency_Electron_eta = static_cast<TGraphAsymmErrors*>(f->Get("Electron_eta"));
+                    Efficiency_Muon_pt      = static_cast<TGraphAsymmErrors*>(f->Get("Muon_pt"));
+                    Efficiency_Muon_eta     = static_cast<TGraphAsymmErrors*>(f->Get("Muon_eta"));
+                    trigger_eff_obj_map["Electron_pt"]  = Efficiency_Electron_pt;
+                    trigger_eff_obj_map["Electron_eta"] = Efficiency_Electron_eta;
+                    trigger_eff_obj_map["Muon_pt"]      = Efficiency_Muon_pt;
+                    trigger_eff_obj_map["Muon_eta"]     = Efficiency_Muon_eta;
+                    f->Close();
+                    delete f;
+                }
+                else
+                {
+                    std::cout << "Failed to open the file " << trigger_eff_file_name << ". The lepton trigger efficiencies will not be used."<< std::endl;
+                }
+            }
+            else
+            {
+                std::cout << "The year " << year_ << " is not valid. The lepton trigger efficiencies will not be used."<< std::endl;
+            }
+            use_lepton_eff = year_valid && file_exists;
         }
 
         void operator()(NTupleReader& tr)
@@ -531,4 +679,5 @@ namespace plotterFunctions
     };
 
 }
+
 #endif
