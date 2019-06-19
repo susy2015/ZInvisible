@@ -37,17 +37,6 @@ class Shape:
         self.color_purple = "violet"
         self.color_black  = "black"
 
-    def setupHist(self, hist, title, x_title, y_title, color, y_min, y_max):
-        x_axis = hist.GetXaxis()
-        y_axis = hist.GetYaxis()
-        y_axis.SetRangeUser(y_min, y_max)
-        hist.SetTitle(title)
-        x_axis.SetTitle(x_title)
-        y_axis.SetTitle(y_title)
-        hist.SetStats(ROOT.kFALSE)
-        hist.SetLineColor(getColorIndex(color))
-        hist.SetLineWidth(3)
-
     def setupHistoMap(self, year):
         # histograms
         # example
