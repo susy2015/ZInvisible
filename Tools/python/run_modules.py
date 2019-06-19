@@ -38,9 +38,9 @@ def main():
         N.makeTexFile("normalization_Zmass.tex")
         
         # search bins
-        SB = SearchBins(N, S, eras, verbose)
+        SB = SearchBins(N, S, eras, plot_dir, verbose)
         # validation bins
-        VB = ValidationBins(N, S, eras, verbose)
+        VB = ValidationBins(N, S, eras, plot_dir, verbose)
         for era in eras:
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"

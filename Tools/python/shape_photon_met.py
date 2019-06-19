@@ -1,9 +1,10 @@
-# calculateShapeFromPhoton.py
+# shape_photon_met.py
 
 import os
 import numpy as np
 import ROOT
 from colors import getColorIndex
+from tools import setupHist
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -162,12 +163,12 @@ class Shape:
                 h_ratio_normalized.Divide(h_MC_normalized)
         
                 # setup histograms
-                #setupHist(self, hist, title, x_title, y_title, color, y_min, y_max)
-                self.setupHist(h_Data,              self.variable + "_" + region + eraTag, self.label_met, "Events", self.color_red,   10.0 ** -1, 10.0 ** 6)
-                self.setupHist(h_MC,                self.variable + "_" + region + eraTag, self.label_met, "Events", self.color_blue,  10.0 ** -1, 10.0 ** 6)
-                self.setupHist(h_MC_normalized,     self.variable + "_" + region + eraTag, self.label_met, "Events", self.color_blue,  10.0 ** -1, 10.0 ** 6)
-                self.setupHist(h_ratio,             self.variable + "_" + region + eraTag, self.label_met, "Data/MC", self.color_black, 0.0, 3.0)
-                self.setupHist(h_ratio_normalized,  self.variable + "_" + region + eraTag, self.label_met, "Data/MC", self.color_black, 0.0, 3.0)
+                #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+                setupHist(h_Data,              self.variable + "_" + region + eraTag, self.label_met, "Events",  self.color_red,   10.0 ** -1, 10.0 ** 6)
+                setupHist(h_MC,                self.variable + "_" + region + eraTag, self.label_met, "Events",  self.color_blue,  10.0 ** -1, 10.0 ** 6)
+                setupHist(h_MC_normalized,     self.variable + "_" + region + eraTag, self.label_met, "Events",  self.color_blue,  10.0 ** -1, 10.0 ** 6)
+                setupHist(h_ratio,             self.variable + "_" + region + eraTag, self.label_met, "Data/MC", self.color_black, 0.0, 3.0)
+                setupHist(h_ratio_normalized,  self.variable + "_" + region + eraTag, self.label_met, "Data/MC", self.color_black, 0.0, 3.0)
          
                 # map for normalized ratios
                 self.ratio_map[era][region][key] = h_ratio_normalized
