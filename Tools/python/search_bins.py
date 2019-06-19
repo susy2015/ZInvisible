@@ -203,8 +203,8 @@ class ValidationBins:
         h_pred_lowdm.Draw("error same")
         # legend: TLegend(x1,y1,x2,y2)
         legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-        legend.AddEntry(h_mc_lowdm,   "MC",    "l")
-        legend.AddEntry(h_pred_lowdm, "Caleb", "l")
+        legend.AddEntry(h_mc_lowdm,   "MC",   "l")
+        legend.AddEntry(h_pred_lowdm, "Pred", "l")
         legend.Draw()
             
         # save histograms
@@ -221,8 +221,8 @@ class ValidationBins:
         h_pred_highdm.Draw("error same")
         # legend: TLegend(x1,y1,x2,y2)
         legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-        legend.AddEntry(h_mc_highdm,   "MC",    "l")
-        legend.AddEntry(h_pred_highdm, "Caleb", "l")
+        legend.AddEntry(h_mc_highdm,   "MC",   "l")
+        legend.AddEntry(h_pred_highdm, "Pred", "l")
         legend.Draw()
             
         # save histograms
