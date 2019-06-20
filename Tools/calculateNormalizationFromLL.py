@@ -28,18 +28,18 @@ class Normalization:
                            }
         self.factors = ["R_Z", "R_T"]
         # variable is also TDirectoryFile that holds histograms 
-        self.variable = "metWithLL"
+        self.variable = "bestRecoZM"
     
     def setupHistoMap(self, year):
-       # DataMC_Electron_LowDM_Normalization_met_2016metWithLLmetWithLLZToLLstack
-       # DataMC_Electron_LowDM_Normalization_met_2016metWithLLmetWithLLNoZToLLstack
-       # DataMC_Electron_HighDM_Normalization_met_2016metWithLLmetWithLLZToLLstack
-       # DataMC_Electron_HighDM_Normalization_met_2016metWithLLmetWithLLNoZToLLstack
-       # DataMC_Muon_LowDM_Normalization_met_2016metWithLLmetWithLLZToLLstack
-       # DataMC_Muon_LowDM_Normalization_met_2016metWithLLmetWithLLNoZToLLstack
-       # DataMC_Muon_HighDM_Normalization_met_2016metWithLLmetWithLLZToLLstack
-       # DataMC_Muon_HighDM_Normalization_met_2016metWithLLmetWithLLNoZToLLstack
-
+        # histograms
+        # examples (DY and ttbar only)
+        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
+        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDYstack
+        # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMt#bar{t}stack 
+        # examples (all MC)
+        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
+        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMZToLLstack
+        # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMNoZToLLstack 
         self.histos[year] = {}
         for particle in self.particles:
             self.histos[year][particle] = {}
@@ -47,16 +47,16 @@ class Normalization:
                 if self.useAllMC:
                     # using ZToLL and NoZToLL MC for normalization 
                     self.histos[year][particle][region] = { 
-                        "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_met_" + year + "metWithLLmetWithLLDatadata",
-                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_met_" + year + "metWithLLmetWithLLZToLLstack",
-                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_met_" + year + "metWithLLmetWithLLNoZToLLstack",
+                        "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
+                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMZToLLstack",
+                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMNoZToLLstack",
                     }
                 else:
                     # using only DY and ttbar for normalization 
                     self.histos[year][particle][region] = { 
-                        "Data"     : "DataMC_" + particle + "_" + region + "_met_" + year + "metWithLLmetWithLLDatadata",
-                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_met_" + year + "metWithLLmetWithLLDYstack",
-                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_met_" + year + "metWithLLmetWithLLt#bar{t}stack",
+                        "Data"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
+                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
+                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMt#bar{t}stack",
                     }
 
     def setUseAllMC(self, value):
@@ -212,9 +212,6 @@ class Normalization:
                 if self.verbose:
                     print region
                 h_Data    = f.Get(self.variable + "/" + self.histos[year][particle][region]["Data"])
-
-		print self.variable + "/" + self.histos[year][particle][region]["Data"]
-
                 h_ZToLL   = f.Get(self.variable + "/" + self.histos[year][particle][region]["ZToLL"])
                 h_NoZToLL = f.Get(self.variable + "/" + self.histos[year][particle][region]["NoZToLL"])
     
@@ -238,7 +235,7 @@ class Normalization:
                         lower_edge = h_Data.GetXaxis().GetBinLowEdge(bin_i)
                         upper_edge = h_Data.GetXaxis().GetBinUpEdge(bin_i)
                         print "bin_{0}: {1} [{2}, {3}]".format(i+1, bin_i, lower_edge, upper_edge)
-			print h_Data.GetBinContent(i)               		 
+                
                 # pass error to IntegralAndError as Double_t & error 
                 # use ROOT.Double for pass-by-ref of doubles
                 # Double_t TH1::IntegralAndError  (Int_t binx1,
@@ -388,10 +385,28 @@ class Normalization:
             self.writeLine("\end{document}")
 
 def main():
-    verbose = True
-    useAllMC = True
+    verbose = False
+    # set per version
+    version = 3
+    useAllMC_map = {1:False, 2:False, 3:True}
+    useAllMC = useAllMC_map[version]
     N = Normalization(useAllMC, verbose)
-    N.getNormAndError("quickResult_2016.root", "2016")
+    if version == 1:
+        # May 5, 2019 Results
+        N.getNormAndError("condor/DataMC_2016_submission_2019-05-05_21-57-41/result.root", "2016")
+        N.getNormAndError("condor/DataMC_2017_submission_2019-05-05_22-28-09/result.root", "2017")
+        N.getNormAndError("condor/DataMC_2018_submission_2019-05-05_22-44-26/result.root", "2018")
+    elif version == 2:
+        # May 9, 2019 Results
+        N.getNormAndError("condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root", "2016")
+        N.getNormAndError("condor/DataMC_2017_submission_2019-05-09_17-16-54/result.root", "2017")
+        N.getNormAndError("condor/DataMC_2018_submission_2019-05-09_17-15-04/result.root", "2018")
+    elif version == 3:
+        # May 16, 2019 Results
+        N.getNormAndError("condor/DataMC_2016_submission_2019-05-16_10-06-59/result.root",    "2016")
+        N.getNormAndError("condor/DataMC_2017_submission_2019-05-16_10-09-29/result.root",    "2017")
+        N.getNormAndError("condor/DataMC_2018_AB_submission_2019-05-16_10-10-30/result.root", "2018_AB")
+        N.getNormAndError("condor/DataMC_2018_CD_submission_2019-05-16_10-12-04/result.root", "2018_CD")
     N.makeTexFile("normalization.tex")
 
 
