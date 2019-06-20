@@ -15,7 +15,7 @@ combineResults=true
 useDYInc=false
 year=$1
 outputFiles=
-n_events=1000
+n_events=50000
 
 if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" && "$year" != "2018_AB" && "$year" != "2018_CD" ]]
 then
@@ -117,16 +117,13 @@ declare -a samples=(
                     ""$ElectronDataset""
                     ""$MuonDataset""
                     "DYJetsToLL_HT_400to600"$yearTag""
-                    "GJets_HT_400To600"$yearTag""
                     "ZJetsToNuNu_HT_400to600"$yearTag""
                    )
 else
 declare -a samples=(
                     ""$ElectronDataset""
                     ""$MuonDataset""
-                    ""$PhotonDataset""
                     "DYJetsToLL_HT_400to600"$yearTag""
-                    "GJets_HT_400To600"$yearTag""
                     "ZJetsToNuNu_HT_400to600"$yearTag""
                    )
 fi
