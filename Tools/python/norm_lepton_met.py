@@ -1,4 +1,4 @@
-# calculateNormalizationFromLL.py
+# norm_lepton_met.py
 
 import os
 import numpy as np

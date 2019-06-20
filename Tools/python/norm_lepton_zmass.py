@@ -1,4 +1,4 @@
-# calculateNormalizationFromLL.py
+# norm_lepton_zmass.py
 
 import os
 import numpy as np

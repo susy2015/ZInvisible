@@ -1,4 +1,4 @@
-#Shaper
+# shape_lepton_njet.py
 
 import os
 import numpy as np

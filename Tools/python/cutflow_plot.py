@@ -1,4 +1,4 @@
-# cutflowPlot.py
+# cutflow_plot.py
 
 import os
 import ROOT

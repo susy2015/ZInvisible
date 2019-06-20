@@ -1,6 +1,7 @@
-# searchBins.py
+# search_bins.py
 
 import ROOT
+from tools import setupHist
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -11,10 +12,13 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 # search bins 
 class SearchBins:
-    def __init__(self, normalization, shape, eras, verbose):
+    def __init__(self, normalization, shape, eras, plot_dir, verbose):
         self.N = normalization
         self.S = shape
         self.eras = eras
+        self.plot_dir = plot_dir
+        if self.plot_dir[-1] != "/":
+            self.plot_dir += "/"
         self.verbose = verbose
         self.low_dm_bins  = range( 0, 1)
         self.high_dm_bins = range( 1, 2)
@@ -24,10 +28,13 @@ class SearchBins:
 
 # vadliation bins
 class ValidationBins:
-    def __init__(self, normalization, shape, eras, verbose):
+    def __init__(self, normalization, shape, eras, plot_dir, verbose):
         self.N = normalization
         self.S = shape
         self.eras = eras
+        self.plot_dir = plot_dir
+        if self.plot_dir[-1] != "/":
+            self.plot_dir += "/"
         self.verbose = verbose
         self.binValues = {}
         self.values = ["norm", "shape", "mc", "pred"]
@@ -44,11 +51,19 @@ class ValidationBins:
         self.low_dm_bins_met_250toINF  = [15, 16, 17, 18]
         self.high_dm_bins_met_250to400 = range(22, 46, 2)
         self.high_dm_bins_met_400toINF = range(23, 46, 2)
+        # colors
+        self.color_red    = "vermillion"
+        self.color_blue   = "electric blue"
+        self.color_green  = "irish green" 
+        self.color_purple = "violet"
+        self.color_black  = "black"
 
     def getValues(self, file_name, era):
         # new root file to save validation bin histograms
         new_file = "validationBinsZinv_" + era + ".root"
+        draw_option = "hist error"
         year = era[0:4]
+        eraTag = "_" + era
         self.binValues[era] = {}
         for b in self.all_bins:
             self.binValues[era][b] = {}
@@ -116,8 +131,17 @@ class ValidationBins:
 
         f = ROOT.TFile(new_file, "recreate")
         # define histograms 
-        h_lowdm  = ROOT.TH1F("validation_lowdm",  "validation_lowdm",  19,  0, 19) 
-        h_highdm = ROOT.TH1F("validation_highdm", "validation_highdm", 24, 22, 46) 
+        h_mc_lowdm    = ROOT.TH1F("validation_mc_lowdm",    "validation_mc_lowdm",    19,  0, 19) 
+        h_mc_highdm   = ROOT.TH1F("validation_mc_highdm",   "validation_mc_highdm",   24, 22, 46) 
+        h_pred_lowdm  = ROOT.TH1F("validation_pred_lowdm",  "validation_pred_lowdm",  19,  0, 19) 
+        h_pred_highdm = ROOT.TH1F("validation_pred_highdm", "validation_pred_highdm", 24, 22, 46) 
+
+        # setup histograms
+        #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+        setupHist(h_mc_lowdm,    "validation_mc_lowdm" + eraTag,    "Validation Bin", "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
+        setupHist(h_mc_highdm,   "validation_mc_highdm" + eraTag,   "Validation Bin", "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
+        setupHist(h_pred_lowdm,  "validation_pred_lowdm" + eraTag,  "Validation Bin", "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
+        setupHist(h_pred_highdm, "validation_pred_highdm" + eraTag, "Validation Bin", "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
 
         # print values 
         if self.verbose:
@@ -146,20 +170,77 @@ class ValidationBins:
         # set histogram content and error
         bin_i = 1
         for b in self.low_dm_bins:
-            h_lowdm.SetBinContent(bin_i, self.binValues[era][b]["pred"])
-            h_lowdm.SetBinError(bin_i, self.binValues[era][b]["pred_error"])
+            h_mc_lowdm.SetBinContent(bin_i, self.binValues[era][b]["mc"])
+            h_mc_lowdm.SetBinError(bin_i, self.binValues[era][b]["mc_error"])
+            h_pred_lowdm.SetBinContent(bin_i, self.binValues[era][b]["pred"])
+            h_pred_lowdm.SetBinError(bin_i, self.binValues[era][b]["pred_error"])
             bin_i += 1
         bin_i = 1
         for b in self.high_dm_bins:
-            h_highdm.SetBinContent(bin_i, self.binValues[era][b]["pred"])
-            h_highdm.SetBinError(bin_i, self.binValues[era][b]["pred_error"])
+            h_mc_highdm.SetBinContent(bin_i, self.binValues[era][b]["mc"])
+            h_mc_highdm.SetBinError(bin_i, self.binValues[era][b]["mc_error"])
+            h_pred_highdm.SetBinContent(bin_i, self.binValues[era][b]["pred"])
+            h_pred_highdm.SetBinError(bin_i, self.binValues[era][b]["pred_error"])
             bin_i += 1
 
-        # write histograms to file
-        h_lowdm.Write()
-        h_highdm.Write()
+        h_map = {}
+        h_map["lowdm"] = {}
+        h_map["lowdm"]["mc"]   = h_mc_lowdm
+        h_map["lowdm"]["pred"] = h_pred_lowdm
+        h_map["highdm"] = {}
+        h_map["highdm"]["mc"]   = h_mc_highdm
+        h_map["highdm"]["pred"] = h_pred_highdm
+
+        # draw histograms
+        c = ROOT.TCanvas("c", "c", 800, 800)
+        c.Divide(1, 2)
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.5
+        legend_x2 = 0.9 
+        legend_y1 = 0.7 
+        legend_y2 = 0.9 
+
+        ###################
+        # Draw Histograms #
+        ###################
+
+        for region in h_map:
+            print region
+            h_mc   = h_map[region]["mc"]
+            h_pred = h_map[region]["pred"]
+            h_ratio = h_pred.Clone("h_ratio")
+            h_ratio.Divide(h_mc)
+        
+            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+            setupHist(h_ratio, "h_ratio", "Validation Bin", "Events", self.color_black, 0.5, 1.5)
+
+            # histograms
+            c.cd(1)
+            ROOT.gPad.SetLogy(1) # set log y
+            # ZInv MC and Prediction
+            h_mc.Draw(draw_option)
+            h_pred.Draw("error same")
+            # legend: TLegend(x1,y1,x2,y2)
+            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend.AddEntry(h_mc,   "MC",   "l")
+            legend.AddEntry(h_pred, "Pred", "l")
+            legend.Draw()
+           
+            # ratios
+            c.cd(2)
+            h_ratio.Draw(draw_option)
+                
+            # save histograms
+            plot_name = self.plot_dir + "validation_" + region
+            c.Update()
+            c.SaveAs(plot_name + eraTag + ".pdf")
+            c.SaveAs(plot_name + eraTag + ".png")
+            # write histograms to file
+            h_mc.Write()
+            h_pred.Write()
+        
         f.Close()
-    
     
     def writeLine(self, line):
         self.output_file.write(line + "\n")

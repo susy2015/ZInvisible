@@ -1,11 +1,11 @@
-# runModules.py
+# run_modules.py
 
 import json
-from cutflowPlot import makeCutflows 
-from calculateNormalizationFromLL import Normalization
-from calculateShapeFromPhoton import Shape
-from searchBins import SearchBins
-from searchBins import ValidationBins
+from cutflow_plot import makeCutflows 
+from norm_lepton_zmass import Normalization
+from shape_photon_met import Shape
+from search_bins import SearchBins
+from search_bins import ValidationBins
 
 def main():
     doCutflows = True
@@ -38,9 +38,9 @@ def main():
         N.makeTexFile("normalization_Zmass.tex")
         
         # search bins
-        SB = SearchBins(N, S, eras, verbose)
+        SB = SearchBins(N, S, eras, plot_dir, verbose)
         # validation bins
-        VB = ValidationBins(N, S, eras, verbose)
+        VB = ValidationBins(N, S, eras, plot_dir, verbose)
         for era in eras:
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
