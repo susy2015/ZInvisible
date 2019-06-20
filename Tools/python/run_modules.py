@@ -1,4 +1,4 @@
-# runModules.py
+# run_modules.py
 
 import json
 from cutflow_plot import makeCutflows 
