@@ -193,6 +193,7 @@ class ValidationBins:
 
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
+        c.Divide(1, 2)
         
         # legend: TLegend(x1,y1,x2,y2)
         legend_x1 = 0.5
@@ -210,7 +211,13 @@ class ValidationBins:
             h_pred = h_map[region]["pred"]
             h_ratio = h_pred.Clone("h_ratio")
             h_ratio.Divide(h_mc)
+        
+            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+            setupHist(h_ratio, "h_ratio", "Validation Bin", "Events", self.color_black, 0.5, 1.5)
 
+            # histograms
+            c.cd(1)
+            ROOT.gPad.SetLogy(1) # set log y
             # ZInv MC and Prediction
             h_mc.Draw(draw_option)
             h_pred.Draw("error same")
@@ -219,10 +226,13 @@ class ValidationBins:
             legend.AddEntry(h_mc,   "MC",   "l")
             legend.AddEntry(h_pred, "Pred", "l")
             legend.Draw()
+           
+            # ratios
+            c.cd(2)
+            h_ratio.Draw(draw_option)
                 
             # save histograms
             plot_name = self.plot_dir + "validation_" + region
-            c.SetLogy(1) # set log y
             c.Update()
             c.SaveAs(plot_name + eraTag + ".pdf")
             c.SaveAs(plot_name + eraTag + ".png")
