@@ -183,6 +183,14 @@ class ValidationBins:
             h_pred_highdm.SetBinError(bin_i, self.binValues[era][b]["pred_error"])
             bin_i += 1
 
+        h_map = {}
+        h_map["lowdm"] = {}
+        h_map["lowdm"]["mc"]   = h_mc_lowdm
+        h_map["lowdm"]["pred"] = h_pred_lowdm
+        h_map["highdm"] = {}
+        h_map["highdm"]["mc"]   = h_mc_highdm
+        h_map["highdm"]["pred"] = h_pred_highdm
+
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
         
@@ -195,50 +203,34 @@ class ValidationBins:
         ###################
         # Draw Histograms #
         ###################
-        
-        # lowdm
 
-        # ZInv MC and Prediction
-        h_mc_lowdm.Draw(draw_option)
-        h_pred_lowdm.Draw("error same")
-        # legend: TLegend(x1,y1,x2,y2)
-        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-        legend.AddEntry(h_mc_lowdm,   "MC",   "l")
-        legend.AddEntry(h_pred_lowdm, "Pred", "l")
-        legend.Draw()
-            
-        # save histograms
-        plot_name = self.plot_dir + "validation_lowdm"
-        c.SetLogy(1) # set log y
-        c.Update()
-        c.SaveAs(plot_name + eraTag + ".pdf")
-        c.SaveAs(plot_name + eraTag + ".png")
-        
-        # highdm
+        for region in h_map:
+            print region
+            h_mc   = h_map[region]["mc"]
+            h_pred = h_map[region]["pred"]
+            h_ratio = h_pred.Clone("h_ratio")
+            h_ratio.Divide(h_mc)
 
-        # ZInv MC and Prediction
-        h_mc_highdm.Draw(draw_option)
-        h_pred_highdm.Draw("error same")
-        # legend: TLegend(x1,y1,x2,y2)
-        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-        legend.AddEntry(h_mc_highdm,   "MC",   "l")
-        legend.AddEntry(h_pred_highdm, "Pred", "l")
-        legend.Draw()
-            
-        # save histograms
-        plot_name = self.plot_dir + "validation_highdm"
-        c.SetLogy(1) # set log y
-        c.Update()
-        c.SaveAs(plot_name + eraTag + ".pdf")
-        c.SaveAs(plot_name + eraTag + ".png")
+            # ZInv MC and Prediction
+            h_mc.Draw(draw_option)
+            h_pred.Draw("error same")
+            # legend: TLegend(x1,y1,x2,y2)
+            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend.AddEntry(h_mc,   "MC",   "l")
+            legend.AddEntry(h_pred, "Pred", "l")
+            legend.Draw()
+                
+            # save histograms
+            plot_name = self.plot_dir + "validation_" + region
+            c.SetLogy(1) # set log y
+            c.Update()
+            c.SaveAs(plot_name + eraTag + ".pdf")
+            c.SaveAs(plot_name + eraTag + ".png")
+            # write histograms to file
+            h_mc.Write()
+            h_pred.Write()
         
-        # write histograms to file
-        h_mc_lowdm.Write()
-        h_mc_highdm.Write()
-        h_pred_lowdm.Write()
-        h_pred_highdm.Write()
         f.Close()
-    
     
     def writeLine(self, line):
         self.output_file.write(line + "\n")
