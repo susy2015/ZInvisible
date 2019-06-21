@@ -34,12 +34,21 @@ cmsenv
 
 **WARNING:** It is unwise to rename the path of your CMSSW area (e.g. any directory in your path before the CMSSW_10_2_9 directory) after checking out a CMSSW release. It will cause things to break because CMSSW_BASE will still be set to the old directory name.
 
+
 Checkout the ZInvisible repository.
 ```
 cd $CMSSW_BASE/src
 git clone git@github.com:susy2015/ZInvisible.git
 cd ZInvisible/Tools
 git checkout NanoAOD
+```
+
+Checkout the NanoSUSY-tools repository and make softlinks of the trigger efficiency root files.
+```
+cd $CMSSW_BASE/src
+git clone -b postpro_v2.7 git@github.com:susy2015/NanoSUSY-tools.git PhysicsTools/NanoSUSYTools
+cd $CMSSW_BASE/src/ZInvisible/Tools
+ln -s $CMSSW_BASE/src/PhysicsTools/NanoSUSYTools/data/trigger_eff/*.root .
 ```
 
 ## Get Configuration Files

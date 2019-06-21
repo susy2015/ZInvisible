@@ -495,7 +495,7 @@ namespace plotterFunctions
                 }
             }
 
-            bool printEff = true;
+            bool printEff = false;
             if (printEff)
             {
                 if (cutMuVec.size() == 2)
