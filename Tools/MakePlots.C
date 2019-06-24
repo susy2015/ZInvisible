@@ -614,16 +614,17 @@ int main(int argc, char* argv[])
     
     auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
     {
-        PDS dsGJets(      "#gamma+jets",      fileMap["GJets" + yearTag],         cuts,   weights);
-        PDS dsQCD(        "QCD",              fileMap["QCD_Photon" + yearTag],    cuts,   weights);
-        PDS dsWJetsToLNu( "W(l#nu)+jets",     fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
-        PDS dsTTbarAll(   "t#bar{t}",         fileMap["TTbarAll" + yearTag],      cuts,   weights + ISRWeight);
-        PDS dstW(         "tW",               fileMap["tW" + yearTag],            cuts,   weights);
-        PDS dsRare(       "Rare",             fileMap["Rare" + yearTag],          cuts,   weights);
-        PDS dsDiboson(    "Diboson",          fileMap["Diboson" + yearTag],       cuts,   weights);
-        PDS dsTTZ(        "t#bar{t}Z",        fileMap["TTZ" + yearTag],           cuts,   weights);
+        PDS dsGJets(      "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,   weights);
+        PDS dsQCD(        "QCD",                    fileMap["QCD_Photon" + yearTag],    cuts,   weights);
+        PDS dsWJetsToLNu( "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
+        PDS dsTTG(        "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,   weights);
+        PDS dsTTbarAll(   "t#bar{t}",               fileMap["TTbarAll" + yearTag],      cuts,   weights + ISRWeight);
+        PDS dstW(         "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
+        PDS dsRare(       "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
+        PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
+        PDS dsTTZ(        "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
         //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
-        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTbarAll}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
+        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dsTTbarAll}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
         return StackMC;
     };
     
