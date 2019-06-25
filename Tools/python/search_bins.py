@@ -62,7 +62,6 @@ class ValidationBins:
         # new root file to save validation bin histograms
         new_file = "validationBinsZinv_" + era + ".root"
         draw_option = "hist error"
-        year = era[0:4]
         eraTag = "_" + era
         self.binValues[era] = {}
         for b in self.all_bins:
@@ -106,9 +105,9 @@ class ValidationBins:
         # Z to NuNu MC histograms v2
         # nValidationBinLowDM: ZNuNu_nValidationBin_LowDM_2016nValidationBinLowDMnValidationBinLowDMZJetsToNuNu Validation Bin Low DMdata 
         f = ROOT.TFile(file_name)
-        h_validation_lowdm          = f.Get("nValidationBinLowDM/ZNuNu_nValidationBin_LowDM_" + year + "nValidationBinLowDMnValidationBinLowDMZJetsToNuNu Validation Bin Low DMdata")
-        h_validation_lowdm_highmet  = f.Get("nValidationBinLowDMHighMET/ZNuNu_nValidationBin_LowDM_HighMET_" + year + "nValidationBinLowDMHighMETnValidationBinLowDMHighMETZJetsToNuNu Validation Bin Low DM High METdata")
-        h_validation_highdm         = f.Get("nValidationBinHighDM/ZNuNu_nValidationBin_HighDM_" + year + "nValidationBinHighDMnValidationBinHighDMZJetsToNuNu Validation Bin High DMdata")
+        h_validation_lowdm          = f.Get("nValidationBinLowDM/ZNuNu_nValidationBin_LowDM_" + era + "nValidationBinLowDMnValidationBinLowDMZJetsToNuNu Validation Bin Low DMdata")
+        h_validation_lowdm_highmet  = f.Get("nValidationBinLowDMHighMET/ZNuNu_nValidationBin_LowDM_HighMET_" + era + "nValidationBinLowDMHighMETnValidationBinLowDMHighMETZJetsToNuNu Validation Bin Low DM High METdata")
+        h_validation_highdm         = f.Get("nValidationBinHighDM/ZNuNu_nValidationBin_HighDM_" + era + "nValidationBinHighDMnValidationBinHighDMZJetsToNuNu Validation Bin High DMdata")
         
         # Note: bin_i and b are different
         # bin_i is histogram bin number

@@ -15,10 +15,8 @@ def main():
     verbose = True
     
     plot_dir = "more_plots"
-    #json_file = "run_1.json" 
-    #eras = ["2016", "2017", "2018_AB", "2018_CD"]
-    json_file = "run_6.json" 
-    eras = ["2016"]
+    json_file = "run_2.json" 
+    eras = ["2016", "2017", "2018_AB", "2018_CD"]
 
     #N = Normalization(useAllMC, verbose)
     #S = Shape(plot_dir, draw, verbose)
@@ -46,7 +44,7 @@ def main():
             result_file = "condor/" + runDir + "/result.root"
             VB.getValues(result_file, era)
         
-        VB.makeTexFile("zinv_prediction_v6.tex")
+        VB.makeTexFile("zinv_prediction.tex")
 
 
 if __name__ == "__main__":

@@ -23,8 +23,8 @@ def setupHist(hist, labels, title, color, y_min, y_max):
     hist.SetLineColor(getColorIndex(color))
     hist.SetLineWidth(3)
 
-def makeCutflows(file_name, year, plot_dir, doPhotons):
-    yearTag = "_" + year
+def makeCutflows(file_name, era, plot_dir, doPhotons):
+    eraTag = "_" + era
     h_dir = "CutFlows/"
     if plot_dir[-1] != "/":
         plot_dir += "/"
@@ -159,9 +159,9 @@ def makeCutflows(file_name, year, plot_dir, doPhotons):
         
         # setup histograms
         #setupHist(hist, labels, title, color, y_min, y_max):
-        setupHist(h_mc,   cutList, key + yearTag, blue_color, y_min, y_max)
+        setupHist(h_mc,   cutList, key + eraTag, blue_color, y_min, y_max)
         if doData:
-            setupHist(h_data, cutList, key + yearTag, red_color,  y_min, y_max)
+            setupHist(h_data, cutList, key + eraTag, red_color,  y_min, y_max)
         
         # draw histograms
         h_mc.Draw("hist")
@@ -177,8 +177,8 @@ def makeCutflows(file_name, year, plot_dir, doPhotons):
         
         c.SetLogy(1) # set log y
         c.Update()
-        c.SaveAs(plot_name + yearTag + ".pdf")
-        c.SaveAs(plot_name + yearTag + ".png")
+        c.SaveAs(plot_name + eraTag + ".pdf")
+        c.SaveAs(plot_name + eraTag + ".png")
 
     for key in plot_map:
         plot_name = plot_dir + key
@@ -202,14 +202,14 @@ def makeCutflows(file_name, year, plot_dir, doPhotons):
         
         # setup histograms
         #setupHist(hist, labels, title, color, y_min, y_max):
-        setupHist(h_Electron_mc,    cutList, key + yearTag, blue_color,   y_min, y_max)
-        setupHist(h_Electron_data,  cutList, key + yearTag, red_color,    y_min, y_max)
-        setupHist(h_Muon_mc,        cutList, key + yearTag, green_color,  y_min, y_max)
-        setupHist(h_Muon_data,      cutList, key + yearTag, purple_color, y_min, y_max)
-        setupHist(h_ratio_mc,       cutList, key + yearTag, blue_color,   0.0, 2.0)
-        setupHist(h_ratio_data,     cutList, key + yearTag, red_color,    0.0, 2.0)
-        setupHist(h_ratio_Electron, cutList, key + yearTag, red_color,    0.0, 2.0)
-        setupHist(h_ratio_Muon,     cutList, key + yearTag, purple_color, 0.0, 2.0)
+        setupHist(h_Electron_mc,    cutList, key + eraTag, blue_color,   y_min, y_max)
+        setupHist(h_Electron_data,  cutList, key + eraTag, red_color,    y_min, y_max)
+        setupHist(h_Muon_mc,        cutList, key + eraTag, green_color,  y_min, y_max)
+        setupHist(h_Muon_data,      cutList, key + eraTag, purple_color, y_min, y_max)
+        setupHist(h_ratio_mc,       cutList, key + eraTag, blue_color,   0.0, 2.0)
+        setupHist(h_ratio_data,     cutList, key + eraTag, red_color,    0.0, 2.0)
+        setupHist(h_ratio_Electron, cutList, key + eraTag, red_color,    0.0, 2.0)
+        setupHist(h_ratio_Muon,     cutList, key + eraTag, purple_color, 0.0, 2.0)
         
         # --- draw histograms --- #
         h_Electron_mc.Draw("hist")
@@ -227,8 +227,8 @@ def makeCutflows(file_name, year, plot_dir, doPhotons):
         
         c.SetLogy(1) # set log y
         c.Update()
-        c.SaveAs(plot_name + yearTag + ".pdf")
-        c.SaveAs(plot_name + yearTag + ".png")
+        c.SaveAs(plot_name + eraTag + ".pdf")
+        c.SaveAs(plot_name + eraTag + ".png")
 
         # --- draw histograms --- #
         h_ratio_mc.Draw("hist")
@@ -242,8 +242,8 @@ def makeCutflows(file_name, year, plot_dir, doPhotons):
         
         c.SetLogy(0) # unset log y
         c.Update()
-        c.SaveAs(plot_name + "_ElectronMuonRatios" + yearTag + ".pdf")
-        c.SaveAs(plot_name + "_ElectronMuonRatios" + yearTag + ".png")
+        c.SaveAs(plot_name + "_ElectronMuonRatios" + eraTag + ".pdf")
+        c.SaveAs(plot_name + "_ElectronMuonRatios" + eraTag + ".png")
         
         # --- draw histograms --- #
         h_ratio_Electron.Draw("hist")
@@ -257,13 +257,13 @@ def makeCutflows(file_name, year, plot_dir, doPhotons):
         
         c.SetLogy(0) # unset log y
         c.Update()
-        c.SaveAs(plot_name + "_DataMCRatios" + yearTag + ".pdf")
-        c.SaveAs(plot_name + "_DataMCRatios" + yearTag + ".png")
+        c.SaveAs(plot_name + "_DataMCRatios" + eraTag + ".pdf")
+        c.SaveAs(plot_name + "_DataMCRatios" + eraTag + ".png")
 
         # log scale of same ratio plot
         # set y axis for log y
-        setupHist(h_ratio_Electron, cutList, key + yearTag, red_color,    0.1, 100.0)
-        setupHist(h_ratio_Muon,     cutList, key + yearTag, purple_color, 0.1, 100.0)
+        setupHist(h_ratio_Electron, cutList, key + eraTag, red_color,    0.1, 100.0)
+        setupHist(h_ratio_Muon,     cutList, key + eraTag, purple_color, 0.1, 100.0)
         
         # --- draw histograms --- #
         h_ratio_Electron.Draw("hist")
@@ -272,8 +272,8 @@ def makeCutflows(file_name, year, plot_dir, doPhotons):
         
         c.SetLogy(1) # set log y
         c.Update()
-        c.SaveAs(plot_name + "_DataMCRatios_LogScale" + yearTag + ".pdf")
-        c.SaveAs(plot_name + "_DataMCRatios_LogScale" + yearTag + ".png")
+        c.SaveAs(plot_name + "_DataMCRatios_LogScale" + eraTag + ".pdf")
+        c.SaveAs(plot_name + "_DataMCRatios_LogScale" + eraTag + ".png")
 
 def main():
     plot_dir = "more_plots"

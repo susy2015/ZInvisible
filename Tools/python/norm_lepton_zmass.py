@@ -30,7 +30,7 @@ class Normalization:
         # variable is also TDirectoryFile that holds histograms 
         self.variable = "bestRecoZM"
     
-    def setupHistoMap(self, year):
+    def setupHistoMap(self, era):
         # histograms
         # examples (DY and ttbar only)
         # DataMC_Electron_LowDM_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
@@ -40,23 +40,23 @@ class Normalization:
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMZToLLstack
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMNoZToLLstack 
-        self.histos[year] = {}
+        self.histos[era] = {}
         for particle in self.particles:
-            self.histos[year][particle] = {}
+            self.histos[era][particle] = {}
             for region in self.regions:
                 if self.useAllMC:
                     # using ZToLL and NoZToLL MC for normalization 
-                    self.histos[year][particle][region] = { 
-                        "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
-                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMZToLLstack",
-                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMNoZToLLstack",
+                    self.histos[era][particle][region] = { 
+                        "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + era + "bestRecoZMbestRecoZMDatadata",
+                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + era + "bestRecoZMbestRecoZMZToLLstack",
+                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + era + "bestRecoZMbestRecoZMNoZToLLstack",
                     }
                 else:
                     # using only DY and ttbar for normalization 
-                    self.histos[year][particle][region] = { 
-                        "Data"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDatadata",
-                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMDYstack",
-                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + year + "bestRecoZMbestRecoZMt#bar{t}stack",
+                    self.histos[era][particle][region] = { 
+                        "Data"     : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + era + "bestRecoZMbestRecoZMDatadata",
+                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + era + "bestRecoZMbestRecoZMDYstack",
+                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_bestRecoZM_0to400_" + era + "bestRecoZMbestRecoZMt#bar{t}stack",
                     }
 
     def setUseAllMC(self, value):
@@ -148,10 +148,13 @@ class Normalization:
         # q = x / y / ...
         # dq = q * sqrt( (dx/x)^2 + (dy/y)^2) + ... )
         if len(x_list) != len(dx_list):
-            print "ERROR in getMultiplicationErrorList(): x_list and dx_list do not have the same length"
+            print "ERROR in getMultiplicationErrorList(): x_list and dx_list do not have the same length."
             return self.ERROR_CODE
         s = 0.0
         for i in xrange(len(x_list)):
+            if x_list[i] == 0.0:
+                print "ERROR in getMultiplicationErrorList(): Cannot divide by zero."
+                return self.ERROR_CODE
             s += (dx_list[i] / x_list[i]) ** 2
         return abs(q * np.sqrt(s))
     
@@ -175,9 +178,6 @@ class Normalization:
         return Ainverse_error
     
     def getNormAndError(self, file_name, era):
-        # currently the histograms are named by year (2018) and not era (2018_AB)
-        # we should probalby change the histograms to use era (2018_AB)
-        year = era[0:4]
         self.eras.append(era)
         
         # define maps for every channel (not just particles)
@@ -194,7 +194,6 @@ class Normalization:
         if self.verbose:
             print "------------------------------------------------------------------------------"
             print "Era: {0}".format(era)
-            print "Year: {0}".format(year)
             print "File: {0}".format(file_name)
         # check that the file exists
         if not os.path.isfile(file_name): 
@@ -203,7 +202,7 @@ class Normalization:
         
         f = ROOT.TFile(file_name)
         # setup histogram map
-        self.setupHistoMap(year)
+        self.setupHistoMap(era)
         
         for particle in self.particles:
             if self.verbose:
@@ -211,9 +210,9 @@ class Normalization:
             for region in self.regions:
                 if self.verbose:
                     print region
-                h_Data    = f.Get(self.variable + "/" + self.histos[year][particle][region]["Data"])
-                h_ZToLL   = f.Get(self.variable + "/" + self.histos[year][particle][region]["ZToLL"])
-                h_NoZToLL = f.Get(self.variable + "/" + self.histos[year][particle][region]["NoZToLL"])
+                h_Data    = f.Get(self.variable + "/" + self.histos[era][particle][region]["Data"])
+                h_ZToLL   = f.Get(self.variable + "/" + self.histos[era][particle][region]["ZToLL"])
+                h_NoZToLL = f.Get(self.variable + "/" + self.histos[era][particle][region]["NoZToLL"])
     
                 #############################
                 # Calculating Normalization #

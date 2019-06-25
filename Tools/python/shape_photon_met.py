@@ -37,30 +37,27 @@ class Shape:
         self.color_purple = "violet"
         self.color_black  = "black"
 
-    def setupHistoMap(self, year):
+    def setupHistoMap(self, era):
         # histograms
         # example
         # DataMC_Photon_LowDM_met_2016metWithPhotonmetWithPhotonDatadata
         # DataMC_Photon_LowDM_met_2016metWithPhotonmetWithPhoton#gamma+jetsstack
-        self.histos[year] = {}
+        self.histos[era] = {}
         for region in self.regions:
-            self.histos[year][region] = {
-                    "Data"  : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhotonDatadata",
-                    "GJets" : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhoton#gamma+jetsstack",
-                    "QCD"   : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhotonQCDstack",
-                    "WJets" : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhotonW(l#nu)+jetsstack",
-                    "TTbar" : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhotont#bar{t}stack",
-                    "tW"    : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhotontWstack",
-                    "Rare"  : "DataMC_Photon_" + region + "_met_" + year + "metWithPhotonmetWithPhotonRarestack",
+            self.histos[era][region] = {
+                    "Data"  : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhotonDatadata",
+                    "GJets" : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhoton#gamma+jetsstack",
+                    "QCD"   : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhotonQCDstack",
+                    "WJets" : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhotonW(l#nu)+jetsstack",
+                    "TTbar" : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhotont#bar{t}stack",
+                    "tW"    : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhotontWstack",
+                    "Rare"  : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhotonRarestack",
             }
     
     def getShape(self, file_name, era): 
-        # currently the histograms are named by year (2018) and not era (2018_AB)
-        # we should probalby change the histograms to use era (2018_AB)
         self.ratio_map[era] = {}
         self.shape_map[era] = {}
         draw_option = "hist error"
-        year = era[0:4]
         eraTag = "_" + era
         # check that the file exists
         if not os.path.isfile(file_name): 
@@ -84,7 +81,7 @@ class Shape:
         xbin_400 = np.array([0.0, 250.0, 400.0, 1000.0])
         
         # setup histogram map
-        self.setupHistoMap(year)
+        self.setupHistoMap(era)
         
         for region in self.regions:
             self.ratio_map[era][region] = {}
@@ -92,13 +89,13 @@ class Shape:
             
             plot_name = self.plot_dir + self.variable + "_" + region
             
-            h_Data  = f.Get(self.variable + "/" + self.histos[year][region]["Data"])
-            h_GJets = f.Get(self.variable + "/" + self.histos[year][region]["GJets"])
-            h_QCD   = f.Get(self.variable + "/" + self.histos[year][region]["QCD"])
-            h_WJets = f.Get(self.variable + "/" + self.histos[year][region]["WJets"])
-            h_TTbar = f.Get(self.variable + "/" + self.histos[year][region]["TTbar"])
-            h_tW    = f.Get(self.variable + "/" + self.histos[year][region]["tW"])
-            h_Rare  = f.Get(self.variable + "/" + self.histos[year][region]["Rare"])
+            h_Data  = f.Get(self.variable + "/" + self.histos[era][region]["Data"])
+            h_GJets = f.Get(self.variable + "/" + self.histos[era][region]["GJets"])
+            h_QCD   = f.Get(self.variable + "/" + self.histos[era][region]["QCD"])
+            h_WJets = f.Get(self.variable + "/" + self.histos[era][region]["WJets"])
+            h_TTbar = f.Get(self.variable + "/" + self.histos[era][region]["TTbar"])
+            h_tW    = f.Get(self.variable + "/" + self.histos[era][region]["tW"])
+            h_Rare  = f.Get(self.variable + "/" + self.histos[era][region]["Rare"])
              
             # add MC
             h_MC = h_GJets.Clone("h_MC") 
