@@ -1,7 +1,7 @@
 # search_bins.py
 
 import ROOT
-from tools import setupHist
+from tools import setupHist, getMultiplicationErrorList
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -155,7 +155,7 @@ class ValidationBins:
             p       = n * s * m
             x_list = [n, s, m]
             dx_list = [n_error, s_error, m_error]
-            p_error = self.N.getMultiplicationErrorList(p, x_list, dx_list)
+            p_error = getMultiplicationErrorList(p, x_list, dx_list)
             self.binValues[era][b]["pred"] = p
             self.binValues[era][b]["pred_error"] = p_error
             

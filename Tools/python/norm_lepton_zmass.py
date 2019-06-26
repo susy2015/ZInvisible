@@ -3,6 +3,7 @@
 import os
 import numpy as np
 import ROOT
+import tools
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -13,7 +14,7 @@ class Normalization:
     def __init__(self, useAllMC, verbose):
         self.useAllMC = useAllMC
         self.verbose = verbose
-        self.ERROR_CODE = -999
+        self.ERROR_CODE = tools.ERROR_CODE
         self.norm_map = {}
         self.norm_map_tex = {}
         self.histos = {}
@@ -105,15 +106,15 @@ class Normalization:
             print "A:"
             print A
             return [self.ERROR_CODE, self.ERROR_CODE]
-        Ainverse_error = self.getMatrixInverseError(A, A_error)
+        Ainverse_error = tools.getMatrixInverseError(A, A_error)
         # from equation b = A^(-1) * x
         b_error = np.zeros(2)
-        b1_error_1 = self.getMultiplicationError(Ainverse[0][0] * x[0], Ainverse[0][0], Ainverse_error[0][0], x[0], x_error[0])
-        b1_error_2 = self.getMultiplicationError(Ainverse[0][1] * x[1], Ainverse[0][1], Ainverse_error[0][1], x[1], x_error[1])
-        b2_error_1 = self.getMultiplicationError(Ainverse[1][0] * x[0], Ainverse[1][0], Ainverse_error[1][0], x[0], x_error[0])
-        b2_error_2 = self.getMultiplicationError(Ainverse[1][1] * x[1], Ainverse[1][1], Ainverse_error[1][1], x[1], x_error[1])
-        b_error[0] = self.getAdditionError(b1_error_1, b1_error_2)
-        b_error[1] = self.getAdditionError(b2_error_1, b2_error_2)
+        b1_error_1 = tools.getMultiplicationError(Ainverse[0][0] * x[0], Ainverse[0][0], Ainverse_error[0][0], x[0], x_error[0])
+        b1_error_2 = tools.getMultiplicationError(Ainverse[0][1] * x[1], Ainverse[0][1], Ainverse_error[0][1], x[1], x_error[1])
+        b2_error_1 = tools.getMultiplicationError(Ainverse[1][0] * x[0], Ainverse[1][0], Ainverse_error[1][0], x[0], x_error[0])
+        b2_error_2 = tools.getMultiplicationError(Ainverse[1][1] * x[1], Ainverse[1][1], Ainverse_error[1][1], x[1], x_error[1])
+        b_error[0] = tools.getAdditionError(b1_error_1, b1_error_2)
+        b_error[1] = tools.getAdditionError(b2_error_1, b2_error_2)
         if self.verbose:
             print "-----------------------------------"
             print "A_error:"
@@ -125,57 +126,6 @@ class Normalization:
             print "-----------------------------------"
         return b_error 
     
-    def getAdditionError(self, dx, dy):
-        # q  = x + y
-        # q  = x - y
-        # dq = sqrt( dx^2 + dy^2 )
-        return abs(np.sqrt( dx**2 + dy**2 ))
-    
-    def getConstantMultiplicationError(self, a, dx):
-        # a is a constant
-        # q  = a * x
-        # dq = |a| * dx
-        return abs(a * dx)
-    
-    def getMultiplicationError(self, q, x, dx, y, dy):
-        # q = x * y 
-        # q = x / y 
-        # dq = q * sqrt( (dx/x)^2 + (dy/y)^2) )
-        return abs(q * np.sqrt( (dx/x)**2 + (dy/y)**2 ))
-    
-    def getMultiplicationErrorList(self, q, x_list, dx_list):
-        # q = x * y * ... 
-        # q = x / y / ...
-        # dq = q * sqrt( (dx/x)^2 + (dy/y)^2) + ... )
-        if len(x_list) != len(dx_list):
-            print "ERROR in getMultiplicationErrorList(): x_list and dx_list do not have the same length."
-            return self.ERROR_CODE
-        s = 0.0
-        for i in xrange(len(x_list)):
-            if x_list[i] == 0.0:
-                print "ERROR in getMultiplicationErrorList(): Cannot divide by zero."
-                return self.ERROR_CODE
-            s += (dx_list[i] / x_list[i]) ** 2
-        return abs(q * np.sqrt(s))
-    
-    def getMatrixDeterminantError(self, A, A_error):
-        # get error for determinant
-        # |A| = a11 * a22 - a12 * a21
-        error_1 = self.getMultiplicationError(A[0][0] * A[1][1], A[0][0], A_error[0][0], A[1][1], A_error[1][1])
-        error_2 = self.getMultiplicationError(A[0][1] * A[1][0], A[0][1], A_error[0][1], A[1][0], A_error[1][0])
-        det_error = self.getAdditionError(error_1, error_2)
-        return det_error
-    
-    def getMatrixInverseError(self, A, A_error):
-        # from equation for A^(-1)
-        det = np.linalg.det(A)
-        det_error = self.getMatrixDeterminantError(A, A_error)
-        Ainverse_error = np.zeros((2,2))
-        Ainverse_error[0][0] = self.getMultiplicationError( A[1][1] / det,  A[1][1], A_error[1][1], det, det_error)
-        Ainverse_error[0][1] = self.getMultiplicationError(-A[0][1] / det, -A[0][1], A_error[0][1], det, det_error)
-        Ainverse_error[1][0] = self.getMultiplicationError(-A[1][0] / det, -A[1][0], A_error[1][0], det, det_error)
-        Ainverse_error[1][1] = self.getMultiplicationError( A[0][0] / det,  A[0][0], A_error[0][0], det, det_error)
-        return Ainverse_error
     
     def getNormAndError(self, file_name, era):
         self.eras.append(era)
@@ -271,8 +221,8 @@ class Normalization:
                 a21 = h_ZToLL.IntegralAndError(bin_1, bin_2, a21_error_1) + h_ZToLL.IntegralAndError(bin_5, bin_6, a21_error_2)
                 a22 = h_NoZToLL.IntegralAndError(bin_1, bin_2, a22_error_1) + h_NoZToLL.IntegralAndError(bin_5, bin_6, a22_error_2)
                 A = np.array([[a11, a12], [a21, a22]])
-                a21_error = self.getAdditionError(a21_error_1, a21_error_2) 
-                a22_error = self.getAdditionError(a22_error_1, a22_error_2) 
+                a21_error = tools.getAdditionError(a21_error_1, a21_error_2) 
+                a22_error = tools.getAdditionError(a22_error_1, a22_error_2) 
                 A_error = np.array([[a11_error, a12_error], [a21_error, a22_error]])
                 # Data
                 x1_error = ROOT.Double()
@@ -281,7 +231,7 @@ class Normalization:
                 x1 = h_Data.IntegralAndError(bin_3, bin_4, x1_error)
                 x2 = h_Data.IntegralAndError(bin_1, bin_2, x2_error_1) + h_Data.IntegralAndError(bin_5, bin_6, x2_error_2)
                 x = [x1, x2]
-                x2_error = self.getAdditionError(x2_error_1, x2_error_2)
+                x2_error = tools.getAdditionError(x2_error_1, x2_error_2)
                 x_error = [x1_error, x2_error]
                 # calculate normalization and error
                 norm  = self.calcNorm(A, x)
@@ -328,14 +278,14 @@ class Normalization:
                     weight = 1.0 / (value_error ** 2)
                     weighted_average_numerator   += weight * value
                     weighted_average_denominator += weight
-                    errors_numerator[particle] = self.getConstantMultiplicationError(weight, value_error) 
+                    errors_numerator[particle] = tools.getConstantMultiplicationError(weight, value_error) 
                 for i,particle in enumerate(self.particles):
                     if i == 0:
                         error_numerator = errors_numerator[particle]
                     else:
-                        error_numerator = self.getAdditionError(error_numerator, errors_numerator[particle])
+                        error_numerator = tools.getAdditionError(error_numerator, errors_numerator[particle])
                 value       = weighted_average_numerator / weighted_average_denominator
-                value_error = self.getConstantMultiplicationError(1.0 / weighted_average_denominator, error_numerator)
+                value_error = tools.getConstantMultiplicationError(1.0 / weighted_average_denominator, error_numerator)
                 factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
                 factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
                 if self.verbose:
