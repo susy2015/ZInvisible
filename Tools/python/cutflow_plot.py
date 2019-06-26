@@ -44,7 +44,7 @@ def makeCutflows(file_name, era, plot_dir, doPhotons):
     purple_color = "violet"
 
     # y axis limits
-    y_min = 10.0**1
+    y_min = 10.0**-1
     y_max = 10.0**10
 
     rootFile = ROOT.TFile(file_name)

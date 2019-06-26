@@ -256,11 +256,13 @@ class ValidationBins:
             self.writeLine("\geometry{margin=1in}")
             self.writeLine("")
             self.writeLine("\\begin{document}")
-            self.writeLine("Z Invisible Predition for Validation Bins \\\\")
             for era in self.eras:
+                era_tex = era.replace("_", " ")
                 # begin table
-                self.writeLine(era)
-                self.writeLine("\\begin{table}[h]")
+                self.writeLine("\\begin{table}[ht]")
+                self.writeLine("\\caption{{Z Invisible Predition for Validation Bins ({0})}}".format(era_tex))
+                self.writeLine("\\vspace{2mm}")
+                self.writeLine("\\centering")
                 self.writeLine("\\begin{tabular}{|c|c|c|c|c|}")
                 self.writeLine("\hline Bin & $R_Z$ & $S_\gamma$ & MC & Pred. \\\\")
                 # write values to table
