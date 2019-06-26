@@ -42,6 +42,7 @@ class Shape:
         # example
         # DataMC_Photon_LowDM_met_2016metWithPhotonmetWithPhotonDatadata
         # DataMC_Photon_LowDM_met_2016metWithPhotonmetWithPhoton#gamma+jetsstack
+        # DataMC_Photon_LowDM_met_2016metWithPhotonmetWithPhotont#bar{t}#gamma+jetsstack
         self.histos[era] = {}
         for region in self.regions:
             self.histos[era][region] = {
@@ -49,6 +50,7 @@ class Shape:
                     "GJets" : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhoton#gamma+jetsstack",
                     "QCD"   : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhotonQCDstack",
                     "WJets" : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhotonW(l#nu)+jetsstack",
+                    "TTG"   : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhotont#bar{t}#gamma+jetsstack",
                     "TTbar" : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhotont#bar{t}stack",
                     "tW"    : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhotontWstack",
                     "Rare"  : "DataMC_Photon_" + region + "_met_" + era + "metWithPhotonmetWithPhotonRarestack",
@@ -93,6 +95,7 @@ class Shape:
             h_GJets = f.Get(self.variable + "/" + self.histos[era][region]["GJets"])
             h_QCD   = f.Get(self.variable + "/" + self.histos[era][region]["QCD"])
             h_WJets = f.Get(self.variable + "/" + self.histos[era][region]["WJets"])
+            h_TTG   = f.Get(self.variable + "/" + self.histos[era][region]["TTG"])
             h_TTbar = f.Get(self.variable + "/" + self.histos[era][region]["TTbar"])
             h_tW    = f.Get(self.variable + "/" + self.histos[era][region]["tW"])
             h_Rare  = f.Get(self.variable + "/" + self.histos[era][region]["Rare"])
@@ -101,6 +104,7 @@ class Shape:
             h_MC = h_GJets.Clone("h_MC") 
             h_MC.Add(h_QCD)
             h_MC.Add(h_WJets)
+            h_MC.Add(h_TTG)
             h_MC.Add(h_TTbar)
             h_MC.Add(h_tW)
             h_MC.Add(h_Rare)
