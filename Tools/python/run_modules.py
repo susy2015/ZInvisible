@@ -8,11 +8,11 @@ from search_bins import SearchBins
 from search_bins import ValidationBins
 
 def main():
-    doCutflows = True
+    doCutflows = False
     doPhotons = True
     useAllMC = True
-    draw = True
-    verbose = True
+    draw = False
+    verbose = False
     
     plot_dir = "more_plots"
     json_file = "run_2.json" 

@@ -312,9 +312,11 @@ class Normalization:
             self.writeLine("\geometry{margin=1in}")
             self.writeLine("")
             self.writeLine("\\begin{document}")
-            self.writeLine("Normalization")
             # begin table
-            self.writeLine("\\begin{table}[h]")
+            self.writeLine("\\begin{table}[ht]")
+            self.writeLine("\\caption{Normalization}")
+            self.writeLine("\\vspace{2mm}")
+            self.writeLine("\\centering")
             self.writeLine("\\begin{tabular}{|c|c|c|c|c|}")
             self.writeLine("\hline Selection & Era & CR & $R_Z$ & $R_T$ \\\\")
             # write values to table
