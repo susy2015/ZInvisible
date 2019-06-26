@@ -99,66 +99,72 @@ class Shape:
             h_TTbar = f.Get(self.variable + "/" + self.histos[era][region]["TTbar"])
             h_tW    = f.Get(self.variable + "/" + self.histos[era][region]["tW"])
             h_Rare  = f.Get(self.variable + "/" + self.histos[era][region]["Rare"])
-             
-            # add MC
-            h_MC = h_GJets.Clone("h_MC") 
-            h_MC.Add(h_QCD)
-            h_MC.Add(h_WJets)
-            h_MC.Add(h_TTG)
-            h_MC.Add(h_TTbar)
-            h_MC.Add(h_tW)
-            h_MC.Add(h_Rare)
             
-            # number of events
-            nData = h_Data.Integral(0, h_Data.GetNbinsX() + 1)
-            nMC   = h_MC.Integral(0,   h_MC.GetNbinsX() + 1)
-            ratio = nData / nMC
+            # MC_background
+            h_back = h_QCD.Clone("h_back")
+            h_back.Add(h_WJets)
+            h_back.Add(h_TTG)
+            h_back.Add(h_TTbar)
+            h_back.Add(h_tW)
+            h_back.Add(h_Rare)
+
+            # numerator = Data - MC_background
+            h_num = h_Data.Clone("h_num")
+            h_num.Add(h_back, -1)
+             
+            # denominator = MC_signal
+            h_den = h_GJets.Clone("h_den") 
+            
+            # number of events for normalization
+            nNum  = h_num.Integral(0, h_num.GetNbinsX() + 1)
+            nDen  = h_den.Integral(0, h_den.GetNbinsX() + 1)
+            ratio = float(nNum) / float(nDen)
             
             if self.verbose:
-                print "{0} {1}: nData = {2:.3f}, nMC = {3:.3f}, ratio = {4:.3f}".format(era, region, nData, nMC, ratio)
+                print "{0} {1}: nNum = {2:.3f}, nDen = {3:.3f}, ratio = {4:.3f}".format(era, region, nNum, nDen, ratio)
 
-            h_MC_normalized = h_MC.Clone("h_MC_normalized")
-            h_MC_normalized.Scale(ratio)
+            h_den_normalized = h_den.Clone("h_den_normalized")
+            h_den_normalized.Scale(ratio)
             
             # rebin
-            h_Data.Rebin(2)
-            h_MC.Rebin(2)
-            h_MC_normalized.Rebin(2)
-            h_Data_250 = h_Data.Rebin(2, "h_Data_250", xbin_250)
-            h_Data_300 = h_Data.Rebin(3, "h_Data_300", xbin_300)
-            h_Data_400 = h_Data.Rebin(3, "h_Data_400", xbin_400)
-            h_MC_250 = h_MC.Rebin(2, "h_MC_250", xbin_250)
-            h_MC_300 = h_MC.Rebin(3, "h_MC_300", xbin_300)
-            h_MC_400 = h_MC.Rebin(3, "h_MC_400", xbin_400)
-            h_MC_normalized_250 = h_MC_normalized.Rebin(2, "h_MC_normalized_250", xbin_250)
-            h_MC_normalized_300 = h_MC_normalized.Rebin(3, "h_MC_normalized_300", xbin_300)
-            h_MC_normalized_400 = h_MC_normalized.Rebin(3, "h_MC_normalized_400", xbin_400)
+            h_num.Rebin(2)
+            h_den.Rebin(2)
+            h_den_normalized.Rebin(2)
+            h_num_250 = h_num.Rebin(2, "h_num_250", xbin_250)
+            h_num_300 = h_num.Rebin(3, "h_num_300", xbin_300)
+            h_num_400 = h_num.Rebin(3, "h_num_400", xbin_400)
+            h_den_250 = h_den.Rebin(2, "h_den_250", xbin_250)
+            h_den_300 = h_den.Rebin(3, "h_den_300", xbin_300)
+            h_den_400 = h_den.Rebin(3, "h_den_400", xbin_400)
+            h_den_normalized_250 = h_den_normalized.Rebin(2, "h_den_normalized_250", xbin_250)
+            h_den_normalized_300 = h_den_normalized.Rebin(3, "h_den_normalized_300", xbin_300)
+            h_den_normalized_400 = h_den_normalized.Rebin(3, "h_den_normalized_400", xbin_400)
             h_map = {
-                        "standard" : {"data":h_Data,     "mc":h_MC,     "mc_norm":h_MC_normalized},
-                        "250"      : {"data":h_Data_250, "mc":h_MC_250, "mc_norm":h_MC_normalized_250},
-                        "300"      : {"data":h_Data_300, "mc":h_MC_300, "mc_norm":h_MC_normalized_300},
-                        "400"      : {"data":h_Data_400, "mc":h_MC_400, "mc_norm":h_MC_normalized_400}
+                        "standard" : {"num":h_num,     "den":h_den,     "den_norm":h_den_normalized},
+                        "250"      : {"num":h_num_250, "den":h_den_250, "den_norm":h_den_normalized_250},
+                        "300"      : {"num":h_num_300, "den":h_den_300, "den_norm":h_den_normalized_300},
+                        "400"      : {"num":h_num_400, "den":h_den_400, "den_norm":h_den_normalized_400}
             }
             
             for key in h_map:
                 keyTag = "_" + key
-                h_Data          = h_map[key]["data"]
-                h_MC            = h_map[key]["mc"]
-                h_MC_normalized = h_map[key]["mc_norm"]
+                h_num            = h_map[key]["num"]
+                h_den            = h_map[key]["den"]
+                h_den_normalized = h_map[key]["den_norm"]
             
                 # ratios
-                h_ratio = h_Data.Clone("h_ratio")
-                h_ratio.Divide(h_MC)
-                h_ratio_normalized = h_Data.Clone("h_ratio_normalized")
-                h_ratio_normalized.Divide(h_MC_normalized)
+                h_ratio = h_num.Clone("h_ratio")
+                h_ratio.Divide(h_den)
+                h_ratio_normalized = h_num.Clone("h_ratio_normalized")
+                h_ratio_normalized.Divide(h_den_normalized)
         
                 # setup histograms
                 #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-                setupHist(h_Data,              self.variable + "_" + region + eraTag, self.label_met, "Events",  self.color_red,   10.0 ** -1, 10.0 ** 6)
-                setupHist(h_MC,                self.variable + "_" + region + eraTag, self.label_met, "Events",  self.color_blue,  10.0 ** -1, 10.0 ** 6)
-                setupHist(h_MC_normalized,     self.variable + "_" + region + eraTag, self.label_met, "Events",  self.color_blue,  10.0 ** -1, 10.0 ** 6)
-                setupHist(h_ratio,             self.variable + "_" + region + eraTag, self.label_met, "Data/MC", self.color_black, 0.0, 3.0)
-                setupHist(h_ratio_normalized,  self.variable + "_" + region + eraTag, self.label_met, "Data/MC", self.color_black, 0.0, 3.0)
+                setupHist(h_num,               self.variable + "_" + region + eraTag, self.label_met, "Events",  self.color_red,   10.0 ** -1, 10.0 ** 6)
+                setupHist(h_den,               self.variable + "_" + region + eraTag, self.label_met, "Events",  self.color_blue,  10.0 ** -1, 10.0 ** 6)
+                setupHist(h_den_normalized,    self.variable + "_" + region + eraTag, self.label_met, "Events",  self.color_blue,  10.0 ** -1, 10.0 ** 6)
+                setupHist(h_ratio,             self.variable + "_" + region + eraTag, self.label_met, "(Data - Back.)/Sig.",         self.color_black, 0.0, 3.0)
+                setupHist(h_ratio_normalized,  self.variable + "_" + region + eraTag, self.label_met, "(Data - Back.)/(Norm. Sig.)", self.color_black, 0.0, 3.0)
          
                 # map for normalized ratios
                 self.ratio_map[era][region][key] = h_ratio_normalized
@@ -171,12 +177,12 @@ class Shape:
                     # Data and MC
                     
                     # draw histograms
-                    h_MC.Draw(draw_option)
-                    h_Data.Draw(draw_option + "same")
+                    h_den.Draw(draw_option)
+                    h_num.Draw(draw_option + "same")
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                    legend.AddEntry(h_Data, "Data", "l")
-                    legend.AddEntry(h_MC,   "MC",   "l")
+                    legend.AddEntry(h_num, "Data - Background", "l")
+                    legend.AddEntry(h_den, "Signal",            "l")
                     legend.Draw()
                     # save histograms
                     c.SetLogy(1) # set log y
@@ -187,12 +193,12 @@ class Shape:
                     # Data and Normalized MC
                     
                     # draw histograms
-                    h_MC_normalized.Draw(draw_option)
-                    h_Data.Draw(draw_option + "same")
+                    h_den_normalized.Draw(draw_option)
+                    h_num.Draw(draw_option + "same")
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                    legend.AddEntry(h_Data,          "Data",          "l")
-                    legend.AddEntry(h_MC_normalized, "Normalized MC", "l")
+                    legend.AddEntry(h_num,            "Data - Background", "l")
+                    legend.AddEntry(h_den_normalized, "Normalized Signal", "l")
                     legend.Draw()
                     # save histograms
                     c.SetLogy(1) # set log y
@@ -206,7 +212,7 @@ class Shape:
                     h_ratio.Draw(draw_option)
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                    legend.AddEntry(h_ratio, "Data/MC", "l")
+                    legend.AddEntry(h_ratio, "(Data - Back.)/Sig.", "l")
                     legend.Draw()
                     # save histograms
                     c.SetLogy(0) # unset log y
@@ -220,7 +226,7 @@ class Shape:
                     h_ratio_normalized.Draw(draw_option)
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                    legend.AddEntry(h_ratio_normalized, "Data/(Normalized MC)", "l")
+                    legend.AddEntry(h_ratio_normalized, "(Data - Back.)/(Norm. Sig.)", "l")
                     legend.Draw()
                     # save histograms
                     c.SetLogy(0) # unset log y
