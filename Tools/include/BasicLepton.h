@@ -46,22 +46,26 @@ namespace plotterFunctions
             const auto& muonsCharge      = tr.getVec<int>("Muon_charge");
             const auto& muonsJetIndex    = tr.getVec<int>("Muon_jetIdx");
             const auto& muonsFlagIDVec   = tr.getVec<bool_t>("Muon_mediumId");
+            const auto& muonsScaleFactor = tr.getVec<data_t>("Muon_MediumSF");
             const auto& elesLVec         = tr.getVec<TLorentzVector>("ElectronTLV");
             const auto& elesMiniIso      = tr.getVec<data_t>("Electron_miniPFRelIso_all");
             const auto& elesCharge       = tr.getVec<int>("Electron_charge");
             const auto& elesJetIndex     = tr.getVec<int>("Electron_jetIdx");
             const auto& elesFlagIDVec    = tr.getVec<int>("Electron_cutBasedNoIso");
+            const auto& elesScaleFactor  = tr.getVec<data_t>("Electron_MediumSF");
 
             //muons
             auto* cutMuVec            = new std::vector<TLorentzVector>();
             auto* cutMuVecRecoOnly    = new std::vector<TLorentzVector>();
             auto* cutMuCharge         = new std::vector<int>();
             auto* cutMuJetIndex       = new std::vector<int>();
+            auto* cutMuSF             = new std::vector<data_t>();
             //electrons
             auto* cutElecVec          = new std::vector<TLorentzVector>();
             auto* cutElecVecRecoOnly  = new std::vector<TLorentzVector>();
             auto* cutElecCharge       = new std::vector<int>();
             auto* cutElecJetIndex     = new std::vector<int>();
+            auto* cutElecSF           = new std::vector<data_t>();
 
             int cutMuSummedCharge = 0;
             int nTriggerMuons = 0;
@@ -91,7 +95,8 @@ namespace plotterFunctions
                     cutMuVec->push_back(muonsLVec[i]);
                     cutMuCharge->push_back(muonsCharge[i]);
                     cutMuJetIndex->push_back(muonsJetIndex[i]);
-                    
+                    cutMuSF->push_back(muonsScaleFactor[i]);
+
                     if(muonsCharge[i] > 0) cutMuSummedCharge++;
                     else                   cutMuSummedCharge--;
                 }
@@ -117,6 +122,7 @@ namespace plotterFunctions
                     cutElecVec->push_back(elesLVec[i]);
                     cutElecCharge->push_back(elesCharge[i]);
                     cutElecJetIndex->push_back(elesJetIndex[i]);
+                    cutElecSF->push_back(elesScaleFactor[i]);
                     //cutElecActivity->push_back(elespfActivity[i]);
                     if(elesCharge[i] > 0) cutElecSummedCharge++;
                     else                  cutElecSummedCharge--;
@@ -129,6 +135,7 @@ namespace plotterFunctions
             tr.registerDerivedVec("cutMuCharge",          cutMuCharge);
             tr.registerDerivedVar("cutMuSummedCharge",    cutMuSummedCharge);
             tr.registerDerivedVec("cutMuJetIndex",        cutMuJetIndex);
+            tr.registerDerivedVec("cutMuSF",              cutMuSF);
             tr.registerDerivedVar("nTriggerMuons",        nTriggerMuons);
             //electrons
             tr.registerDerivedVec("cutElecVec",           cutElecVec);
@@ -136,6 +143,7 @@ namespace plotterFunctions
             tr.registerDerivedVec("cutElecCharge",        cutElecCharge);
             tr.registerDerivedVar("cutElecSummedCharge",  cutElecSummedCharge);
             tr.registerDerivedVec("cutElecJetIndex",      cutElecJetIndex);
+            tr.registerDerivedVec("cutElecSF",            cutElecSF);
 
         }
 

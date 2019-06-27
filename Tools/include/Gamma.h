@@ -65,6 +65,7 @@ namespace plotterFunctions
         //const auto& Photon_cutBased        = tr.getVec<int>("Photon_cutBased");
         const auto& Photon_jetIdx          = tr.getVec<int>("Photon_jetIdx");
         const auto& Photon_Stop0l          = tr.getVec<unsigned char>("Photon_Stop0l");
+        const auto& Photon_LooseSF         = tr.getVec<data_t>("Photon_LooseSF");
         //const auto& loosePhotonID        = tr.getVec<unsigned char>("Photon_mvaID_WP80");
         //const auto& tightPhotonID        = tr.getVec<unsigned char>("Photon_mvaID_WP90");
         //const auto& genMatched           = tr.getVec<data_t>("genMatched");
@@ -82,6 +83,7 @@ namespace plotterFunctions
         float metphiWithPhoton = -999.9;
         float cutPhotonPt = -999.9;
         float cutPhotonEta = -999.9;
+        float photonSF = 1.0;
         bool passPhotonSelection = false;
         
         // if you use new, you need to register it or destroy it yourself to clear memory
@@ -98,6 +100,7 @@ namespace plotterFunctions
         //auto* gammaLVecPassMediumID     = new std::vector<TLorentzVector>();
         //auto* gammaLVecPassTightID      = new std::vector<TLorentzVector>();
         auto* gammaJetIndexPassLooseID  = new std::vector<int>();
+        auto* gammaSFPassLooseID        = new std::vector<float>();
         //auto* gammaJetIndexPassMediumID = new std::vector<int>();
         //auto* gammaJetIndexPassTightID  = new std::vector<int>();
         
@@ -184,6 +187,7 @@ namespace plotterFunctions
               {
                   gammaLVecPassLooseID->push_back(gammaLVec[i]);
                   gammaJetIndexPassLooseID->push_back(Photon_jetIdx[i]);
+                  gammaSFPassLooseID->push_back(Photon_LooseSF[i]);
               }
               //if(passMediumPhotonID) 
               //{
@@ -223,6 +227,7 @@ namespace plotterFunctions
             metWithPhotonLVec  += (*gammaLVecPassLooseID)[0];
             metWithPhoton       = metWithPhotonLVec.Pt();
             metphiWithPhoton    = metWithPhotonLVec.Phi();
+            photonSF            = (*gammaSFPassLooseID)[0];
             passPhotonSelection = true;
         }
 
@@ -268,6 +273,7 @@ namespace plotterFunctions
         tr.registerDerivedVar("cutPhotonEta", cutPhotonEta);
         tr.registerDerivedVar("metWithPhoton", metWithPhoton);
         tr.registerDerivedVar("metphiWithPhoton", metphiWithPhoton);
+        tr.registerDerivedVar("photonSF", photonSF);
         tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
         
         tr.registerDerivedVec("gammaLVecGen", gammaLVecGen);
@@ -285,6 +291,7 @@ namespace plotterFunctions
         tr.registerDerivedVec("gammaJetIndexPassLooseID", gammaJetIndexPassLooseID);
         //tr.registerDerivedVec("gammaJetIndexPassMediumID", gammaJetIndexPassMediumID);
         //tr.registerDerivedVec("gammaJetIndexPassTightID", gammaJetIndexPassTightID);
+        tr.registerDerivedVec("gammaSFPassLooseID", gammaSFPassLooseID);
         
         //tr.registerDerivedVar("photonMet", photonMet);
         

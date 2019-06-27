@@ -71,10 +71,12 @@ namespace plotterFunctions
             const auto& jetsLVec                            = tr.getVec<TLorentzVector>("JetTLV");
             const auto& cutMuVec                            = tr.getVec<TLorentzVector>("cutMuVec"); 
             const auto& cutMuVecRecoOnly                    = tr.getVec<TLorentzVector>("cutMuVecRecoOnly"); 
+            const auto& cutMuSF                             = tr.getVec<data_t>("cutMuSF"); 
             const auto& cutMuSummedCharge                   = tr.getVar<int>("cutMuSummedCharge"); 
             const auto& nTriggerMuons                       = tr.getVar<int>("nTriggerMuons"); 
             const auto& cutElecVec                          = tr.getVec<TLorentzVector>("cutElecVec"); 
             const auto& cutElecVecRecoOnly                  = tr.getVec<TLorentzVector>("cutElecVecRecoOnly"); 
+            const auto& cutElecSF                           = tr.getVec<data_t>("cutElecSF"); 
             const auto& cutElecSummedCharge                 = tr.getVar<int>("cutElecSummedCharge"); 
             const auto& met                                 = tr.getVar<data_t>("MET_pt");
             const auto& metphi                              = tr.getVar<data_t>("MET_phi");
@@ -449,17 +451,20 @@ namespace plotterFunctions
             data_t metWithLL    = cleanMet.Pt();
             data_t metphiWithLL = cleanMet.Phi();
             
-            // di-lepton efficiencies
+            // di-lepton trigger efficiencies and scale factors
             data_t DiMuTriggerEffPt    = 1.0;
             data_t DiMuTriggerEffEta   = 1.0;
+            data_t DiMuSF              = 1.0;
             data_t DiElecTriggerEffPt  = 1.0;
             data_t DiElecTriggerEffEta = 1.0;
+            data_t DiElecSF            = 1.0;
             if (cutMuVec.size() == 2)
             {
                 std::vector<double> leptonPts  = {cutMuPt1, cutMuPt2};
                 std::vector<double> leptonEtas = {cutMuEta1, cutMuEta2};
                 DiMuTriggerEffPt  = getEfficiency("Muon_pt", leptonPts);
                 DiMuTriggerEffEta = getEfficiency("Muon_eta", leptonEtas);
+                DiMuSF = cutMuSF[0] * cutMuSF[1];
             }
             if (cutElecVec.size() == 2)
             {
@@ -467,6 +472,7 @@ namespace plotterFunctions
                 std::vector<double> leptonEtas = {cutElecEta1, cutElecEta2};
                 DiElecTriggerEffPt  = getEfficiency("Electron_pt", leptonPts);
                 DiElecTriggerEffEta = getEfficiency("Electron_eta", leptonEtas);
+                DiElecSF = cutElecSF[0] * cutElecSF[1];
             }
             
             // print passMuZinvSelOnZMassPeak conditions
@@ -534,8 +540,10 @@ namespace plotterFunctions
             tr.registerDerivedVar("cutElecEta2", cutElecEta2);
             tr.registerDerivedVar("DiMuTriggerEffPt",    DiMuTriggerEffPt);
             tr.registerDerivedVar("DiMuTriggerEffEta",   DiMuTriggerEffEta);
+            tr.registerDerivedVar("DiMuSF",              DiMuSF);
             tr.registerDerivedVar("DiElecTriggerEffPt",  DiElecTriggerEffPt);
             tr.registerDerivedVar("DiElecTriggerEffEta", DiElecTriggerEffEta);
+            tr.registerDerivedVar("DiElecSF",            DiElecSF);
             tr.registerDerivedVar("mindPhiMetJ", mindPhiMetJ);
             tr.registerDerivedVar("ZPtRes", (bestRecoZPt - genZPt)/genZPt);
             tr.registerDerivedVar("ZEtaRes", bestRecoZ.Eta() - genZEta);
