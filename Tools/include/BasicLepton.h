@@ -53,14 +53,14 @@ namespace plotterFunctions
             const auto& elesFlagIDVec    = tr.getVec<int>("Electron_cutBasedNoIso");
             
             // the scale factors only exist in MC, not in Data
+            //const auto& muonsScaleFactor = tr.getVec<data_t>("Muon_MediumSF");
+            //const auto& elesScaleFactor  = tr.getVec<data_t>("Electron_MediumSF");
             bool useMuonSF     = tr.checkBranch("Muon_MediumSF");
             bool useElectronSF = tr.checkBranch("Electron_MediumSF");
             std::vector<data_t> muonsScaleFactor;
             std::vector<data_t> elesScaleFactor;
             if (useMuonSF)      { muonsScaleFactor = tr.getVec<data_t>("Muon_MediumSF");     }   
             if (useElectronSF)  { elesScaleFactor  = tr.getVec<data_t>("Electron_MediumSF"); }   
-            //const auto& muonsScaleFactor = tr.getVec<data_t>("Muon_MediumSF");
-            //const auto& elesScaleFactor  = tr.getVec<data_t>("Electron_MediumSF");
 
             //muons
             auto* cutMuVec            = new std::vector<TLorentzVector>();
