@@ -46,13 +46,21 @@ namespace plotterFunctions
             const auto& muonsCharge      = tr.getVec<int>("Muon_charge");
             const auto& muonsJetIndex    = tr.getVec<int>("Muon_jetIdx");
             const auto& muonsFlagIDVec   = tr.getVec<bool_t>("Muon_mediumId");
-            const auto& muonsScaleFactor = tr.getVec<data_t>("Muon_MediumSF");
             const auto& elesLVec         = tr.getVec<TLorentzVector>("ElectronTLV");
             const auto& elesMiniIso      = tr.getVec<data_t>("Electron_miniPFRelIso_all");
             const auto& elesCharge       = tr.getVec<int>("Electron_charge");
             const auto& elesJetIndex     = tr.getVec<int>("Electron_jetIdx");
             const auto& elesFlagIDVec    = tr.getVec<int>("Electron_cutBasedNoIso");
-            const auto& elesScaleFactor  = tr.getVec<data_t>("Electron_MediumSF");
+            
+            // the scale factors only exist in MC, not in Data
+            bool useMuonSF     = tr.checkBranch("Muon_MediumSF");
+            bool useElectronSF = tr.checkBranch("Electron_MediumSF");
+            std::vector<data_t> muonsScaleFactor;
+            std::vector<data_t> elesScaleFactor;
+            if (useMuonSF)      { muonsScaleFactor = tr.getVec<data_t>("Muon_MediumSF");     }   
+            if (useElectronSF)  { elesScaleFactor  = tr.getVec<data_t>("Electron_MediumSF"); }   
+            //const auto& muonsScaleFactor = tr.getVec<data_t>("Muon_MediumSF");
+            //const auto& elesScaleFactor  = tr.getVec<data_t>("Electron_MediumSF");
 
             //muons
             auto* cutMuVec            = new std::vector<TLorentzVector>();
@@ -73,29 +81,22 @@ namespace plotterFunctions
             //muon selections
             for(int i = 0; i < muonsLVec.size(); ++i)
             {
-                //if(muonsFlagIDVec[i])
-                //if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, true, AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
                 if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
                 {
                     cutMuVecRecoOnly->push_back(muonsLVec[i]);
                 }
-                //if(muonsFlagIDVec[i])
-                //if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i] / muonsLVec[i].Pt(), 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
                 if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
                 {
-                    //if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
-                    //{
-                    //    if(nTriggerMuons == 0 && muonsLVec[i].Pt() > 17)  nTriggerMuons++;
-                    //    else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
-                    //}
-                    
                     if(nTriggerMuons == 0 && muonsLVec[i].Pt() > 17)  nTriggerMuons++;
                     else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
                     
                     cutMuVec->push_back(muonsLVec[i]);
                     cutMuCharge->push_back(muonsCharge[i]);
                     cutMuJetIndex->push_back(muonsJetIndex[i]);
-                    cutMuSF->push_back(muonsScaleFactor[i]);
+                    if (useMuonSF)
+                    {
+                        cutMuSF->push_back(muonsScaleFactor[i]); 
+                    } 
 
                     if(muonsCharge[i] > 0) cutMuSummedCharge++;
                     else                   cutMuSummedCharge--;
@@ -109,21 +110,20 @@ namespace plotterFunctions
                 // Electron_cutBased    Int_t   cut-based ID Fall17 V2 (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)
                 // Electron_cutBasedNoIso: Removed isolation requirement from eGamma ID;  Int_t  (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)
                 bool passElectonID = (elesFlagIDVec[i] >= 3);
-                //if(elesFlagIDVec[i])
                 if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, passElectonID, AnaConsts::elesMiniIsoArr)) // emulates electrons with pt but no iso requirements.
                 {
                     cutElecVecRecoOnly->push_back(elesLVec[i]);
                 }
 
-                //if(elesFlagIDVec[i])
-                //if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i] / elesLVec[i].Pt(), -1, passElectonID, AnaConsts::elesMiniIsoArr))
                 if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, passElectonID, AnaConsts::elesMiniIsoArr))
                 {
                     cutElecVec->push_back(elesLVec[i]);
                     cutElecCharge->push_back(elesCharge[i]);
                     cutElecJetIndex->push_back(elesJetIndex[i]);
-                    cutElecSF->push_back(elesScaleFactor[i]);
-                    //cutElecActivity->push_back(elespfActivity[i]);
+                    if (useElectronSF)
+                    {
+                        cutElecSF->push_back(elesScaleFactor[i]);
+                    }
                     if(elesCharge[i] > 0) cutElecSummedCharge++;
                     else                  cutElecSummedCharge--;
                 }

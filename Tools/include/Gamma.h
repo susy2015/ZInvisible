@@ -65,12 +65,18 @@ namespace plotterFunctions
         //const auto& Photon_cutBased        = tr.getVec<int>("Photon_cutBased");
         const auto& Photon_jetIdx          = tr.getVec<int>("Photon_jetIdx");
         const auto& Photon_Stop0l          = tr.getVec<unsigned char>("Photon_Stop0l");
-        const auto& Photon_LooseSF         = tr.getVec<data_t>("Photon_LooseSF");
         //const auto& loosePhotonID        = tr.getVec<unsigned char>("Photon_mvaID_WP80");
         //const auto& tightPhotonID        = tr.getVec<unsigned char>("Photon_mvaID_WP90");
         //const auto& genMatched           = tr.getVec<data_t>("genMatched");
         const auto& met                    = tr.getVar<data_t>("MET_pt");
         const auto& metphi                 = tr.getVar<data_t>("MET_phi");
+        
+        
+        // the scale factors only exist in MC, not in Data
+        //const auto& Photon_LooseSF         = tr.getVec<data_t>("Photon_LooseSF");
+        bool usePhotonSF = tr.checkBranch("Photon_LooseSF");
+        std::vector<data_t> Photon_LooseSF;
+        if (usePhotonSF) { Photon_LooseSF = tr.getVec<data_t>("Photon_LooseSF"); }   
 
 
         // toggle debugging print statements
@@ -187,7 +193,10 @@ namespace plotterFunctions
               {
                   gammaLVecPassLooseID->push_back(gammaLVec[i]);
                   gammaJetIndexPassLooseID->push_back(Photon_jetIdx[i]);
-                  gammaSFPassLooseID->push_back(Photon_LooseSF[i]);
+                  if (usePhotonSF)
+                  {
+                      gammaSFPassLooseID->push_back(Photon_LooseSF[i]);
+                  }
               }
               //if(passMediumPhotonID) 
               //{
@@ -227,8 +236,11 @@ namespace plotterFunctions
             metWithPhotonLVec  += (*gammaLVecPassLooseID)[0];
             metWithPhoton       = metWithPhotonLVec.Pt();
             metphiWithPhoton    = metWithPhotonLVec.Phi();
-            photonSF            = (*gammaSFPassLooseID)[0];
             passPhotonSelection = true;
+            if (gammaSFPassLooseID->size() == 1)
+            {
+                photonSF = (*gammaSFPassLooseID)[0];
+            }
         }
 
 // --- Beginning of section not used (as of October 19, 2018)        
