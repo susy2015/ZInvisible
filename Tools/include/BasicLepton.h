@@ -55,12 +55,12 @@ namespace plotterFunctions
             // the scale factors only exist in MC, not in Data
             //const auto& muonsScaleFactor = tr.getVec<data_t>("Muon_MediumSF");
             //const auto& elesScaleFactor  = tr.getVec<data_t>("Electron_MediumSF");
-            bool useMuonSF     = tr.checkBranch("Muon_MediumSF");
-            bool useElectronSF = tr.checkBranch("Electron_MediumSF");
+            bool useMuSF   = tr.checkBranch("Muon_MediumSF");
+            bool useElecSF = tr.checkBranch("Electron_MediumSF");
             std::vector<data_t> muonsScaleFactor;
             std::vector<data_t> elesScaleFactor;
-            if (useMuonSF)      { muonsScaleFactor = tr.getVec<data_t>("Muon_MediumSF");     }   
-            if (useElectronSF)  { elesScaleFactor  = tr.getVec<data_t>("Electron_MediumSF"); }   
+            if (useMuSF)    { muonsScaleFactor = tr.getVec<data_t>("Muon_MediumSF");     }   
+            if (useElecSF)  { elesScaleFactor  = tr.getVec<data_t>("Electron_MediumSF"); }   
 
             //muons
             auto* cutMuVec            = new std::vector<TLorentzVector>();
@@ -93,9 +93,13 @@ namespace plotterFunctions
                     cutMuVec->push_back(muonsLVec[i]);
                     cutMuCharge->push_back(muonsCharge[i]);
                     cutMuJetIndex->push_back(muonsJetIndex[i]);
-                    if (useMuonSF)
+                    if (useMuSF)
                     {
                         cutMuSF->push_back(muonsScaleFactor[i]); 
+                    } 
+                    else
+                    {
+                        cutMuSF->push_back(1.0); 
                     } 
 
                     if(muonsCharge[i] > 0) cutMuSummedCharge++;
@@ -120,9 +124,13 @@ namespace plotterFunctions
                     cutElecVec->push_back(elesLVec[i]);
                     cutElecCharge->push_back(elesCharge[i]);
                     cutElecJetIndex->push_back(elesJetIndex[i]);
-                    if (useElectronSF)
+                    if (useElecSF)
                     {
                         cutElecSF->push_back(elesScaleFactor[i]);
+                    }
+                    else
+                    {
+                        cutElecSF->push_back(1.0);
                     }
                     if(elesCharge[i] > 0) cutElecSummedCharge++;
                     else                  cutElecSummedCharge--;

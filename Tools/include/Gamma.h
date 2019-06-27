@@ -197,6 +197,10 @@ namespace plotterFunctions
                   {
                       gammaSFPassLooseID->push_back(Photon_LooseSF[i]);
                   }
+                  else
+                  {
+                      gammaSFPassLooseID->push_back(1.0);
+                  }
               }
               //if(passMediumPhotonID) 
               //{
@@ -236,11 +240,8 @@ namespace plotterFunctions
             metWithPhotonLVec  += (*gammaLVecPassLooseID)[0];
             metWithPhoton       = metWithPhotonLVec.Pt();
             metphiWithPhoton    = metWithPhotonLVec.Phi();
+            photonSF            = (*gammaSFPassLooseID)[0];
             passPhotonSelection = true;
-            if (gammaSFPassLooseID->size() == 1)
-            {
-                photonSF = (*gammaSFPassLooseID)[0];
-            }
         }
 
 // --- Beginning of section not used (as of October 19, 2018)        
@@ -287,7 +288,6 @@ namespace plotterFunctions
         tr.registerDerivedVar("metphiWithPhoton", metphiWithPhoton);
         tr.registerDerivedVar("photonSF", photonSF);
         tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
-        
         tr.registerDerivedVec("gammaLVecGen", gammaLVecGen);
         tr.registerDerivedVec("gammaLVecGenEta", gammaLVecGenEta);
         tr.registerDerivedVec("gammaLVecGenEtaPt", gammaLVecGenEtaPt);
@@ -306,7 +306,6 @@ namespace plotterFunctions
         tr.registerDerivedVec("gammaSFPassLooseID", gammaSFPassLooseID);
         
         //tr.registerDerivedVar("photonMet", photonMet);
-        
         //tr.registerDerivedVec("cutPhotons", loosePhotons);
         //tr.registerDerivedVec("totalPhotons", totalPhotons);
         //tr.registerDerivedVec("promptPhotons", promptPhotons);
@@ -317,7 +316,6 @@ namespace plotterFunctions
         //tr.registerDerivedVar("nPhoton", loosePhotons->size());
         //tr.registerDerivedVar("nFakes", fakePhotons->size());
         //tr.registerDerivedVar("nPrompt", promptPhotons->size());
-        
         //tr.registerDerivedVar("passNphoton", totalPhotons->size() >= 1);
         //tr.registerDerivedVar("passNloose", loosePhotons->size() >= 1);
         //tr.registerDerivedVar("passNmedium", mediumPhotons->size() >= 1);

@@ -464,10 +464,7 @@ namespace plotterFunctions
                 std::vector<double> leptonEtas = {cutMuEta1, cutMuEta2};
                 DiMuTriggerEffPt  = getEfficiency("Muon_pt", leptonPts);
                 DiMuTriggerEffEta = getEfficiency("Muon_eta", leptonEtas);
-                if (cutMuSF.size() == 2)
-                {
-                    DiMuSF = cutMuSF[0] * cutMuSF[1];
-                }
+                DiMuSF = cutMuSF[0] * cutMuSF[1];
             }
             if (cutElecVec.size() == 2)
             {
@@ -475,10 +472,7 @@ namespace plotterFunctions
                 std::vector<double> leptonEtas = {cutElecEta1, cutElecEta2};
                 DiElecTriggerEffPt  = getEfficiency("Electron_pt", leptonPts);
                 DiElecTriggerEffEta = getEfficiency("Electron_eta", leptonEtas);
-                if (cutElecSF.size() == 2)
-                {
-                    DiElecSF = cutElecSF[0] * cutElecSF[1];
-                }
+                DiElecSF = cutElecSF[0] * cutElecSF[1];
             }
             
             // print passMuZinvSelOnZMassPeak conditions
