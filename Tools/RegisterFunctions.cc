@@ -99,109 +99,117 @@ void activateBranches(std::set<std::string>& activeBranches)
 
 ////////////////////////////////
 
-RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra) : RegisterFunctions()
+RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra, std::string year) : RegisterFunctions()
 {            
     // Important: create objects!!
     
     //AnaFunctions::prepareTopTagger();
-    myBLV              = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "", "");
-    blvZinv            = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
-    blvNoVeto          = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoVeto");
-    blvPFLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "PFLeptonCleaned");
-    blvDRLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "DRLeptonCleaned");
-    blvDRPhotonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "DRPhotonCleaned");
-    //blvZinv1b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv1b");
-    //blvZinv2b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv2b");
-    //blvZinv3b = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv3b");
+    myBLV               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "");
+    blvZinv             = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    blvNoVeto           = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoVeto");
+    blvPFLeptonCleaned  = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "PFLeptonCleaned");
+    blv_drLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drLeptonCleaned");
+    blv_drPhotonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drPhotonCleaned");
     //blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
     //blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
     //blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
     //blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
 
 
-    cleanedJets               = new CleanedJets;
-    gamma                     = new plotterFunctions::Gamma;
-    weights                   = new plotterFunctions::GenerateWeight;
-    generatePhotonEfficiency  = new plotterFunctions::GeneratePhotonEfficiency;
-    njWeight                  = new plotterFunctions::NJetWeight;
-    lepInfo                   = new plotterFunctions::LepInfo;
-    basicLepton               = new plotterFunctions::BasicLepton;
-    fakebtagvectors           = new plotterFunctions::Fakebtagvectors;
-    getSearchBin              = new plotterFunctions::GetSearchBin(sbEra);
-    triggerInfo               = new plotterFunctions::TriggerInfo;
-    prepareMiniTupleVars      = new plotterFunctions::PrepareMiniTupleVars(true);
-    systematicPrep            = new plotterFunctions::SystematicPrep;
-    systematicCalc            = new plotterFunctions::SystematicCalc(sbEra);
+    getVectors                   = new GetVectors;
+    cleanedJets                  = new CleanedJets;
+    // RunTopTagger(std::string taggerCfg = "TopTagger.cfg", std::string suffix = "", bool doLeptonCleaning = false, bool doPhotonCleaning = false)
+    runTopTagger                 = new RunTopTagger;
+    runTopTagger_drLeptonCleaned = new RunTopTagger("TopTagger.cfg","_drLeptonCleaned",true,false);
+    runTopTagger_drPhotonCleaned = new RunTopTagger("TopTagger.cfg","_drPhotonCleaned",false,true);
+    gamma                        = new plotterFunctions::Gamma;
+    weights                      = new plotterFunctions::GenerateWeight;
+    generatePhotonEfficiency     = new plotterFunctions::GeneratePhotonEfficiency;
+    njWeight                     = new plotterFunctions::NJetWeight;
+    lepInfo                      = new plotterFunctions::LepInfo(year);
+    basicLepton                  = new plotterFunctions::BasicLepton;
+    fakebtagvectors              = new plotterFunctions::Fakebtagvectors;
+    getSearchBin                 = new plotterFunctions::GetSearchBin;
+    triggerInfo                  = new plotterFunctions::TriggerInfo;
+    prepareMiniTupleVars         = new plotterFunctions::PrepareMiniTupleVars(true);
+    systematicPrep               = new plotterFunctions::SystematicPrep;
+    systematicCalc               = new plotterFunctions::SystematicCalc(sbEra);
 
     //taudiv                    = new plotterFunctions::Taudiv;
-    taudiv                    = new plotterFunctions::Taudiv(blvZinv->GetTopTaggerPtr());
-    nJetAk8                   = new plotterFunctions::NJetAk8;
-    ak8DrMatch                = new plotterFunctions::Ak8DrMatch;
+    taudiv                       = new plotterFunctions::Taudiv(blvZinv->GetTopTaggerPtr());
+    nJetAk8                      = new plotterFunctions::NJetAk8;
+    ak8DrMatch                   = new plotterFunctions::Ak8DrMatch;
 
     myPDFUnc = new PDFUncertainty();
     bTagCorrector = nullptr;
-
-    if(isCondor)
-    {
-        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
-    }
-    else
-    {
-        bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools", false);
-    }
-
     ISRcorrector = nullptr;
-    if(isCondor)
-    {
-       ISRcorrector = new ISRCorrector("allINone_ISRJets.root","","");   
-    }
-    else
-    {  
-        ISRcorrector = new ISRCorrector("allINone_ISRJets.root","/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools","");
-    }
-    
-    if(isCondor)
-    {
-        pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
-    }
-    else
-    {
-        pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
-    } 
+    pileup = nullptr;
+
+    // bTagCorrector not used anymore
+    //if(isCondor)
+    //{
+    //    bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
+    //}
+    //else
+    //{
+    //    bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools", false);
+    //}
+
+    //if(isCondor)
+    //{
+    //   ISRcorrector = new ISRCorrector("allINone_ISRJets.root","","");   
+    //}
+    //else
+    //{  
+    //    ISRcorrector = new ISRCorrector("allINone_ISRJets.root","/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools","");
+    //}
+    //
+    //if(isCondor)
+    //{
+    //    pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
+    //}
+    //else
+    //{
+    //    pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
+    //} 
     
 }
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {
-    if(cleanedJets)               delete cleanedJets;
-    if(myBLV)                     delete myBLV;
-    if(blvZinv)                   delete blvZinv;
-    if(blvNoVeto)                 delete blvNoVeto;
-    if(blvPFLeptonCleaned)        delete blvPFLeptonCleaned;
-    if(blvDRLeptonCleaned)        delete blvDRLeptonCleaned;
-    if(blvDRPhotonCleaned)        delete blvDRPhotonCleaned;
-    //if(blvZinv1b)                 delete blvZinv1b;
-    //if(blvZinv2b)                 delete blvZinv2b;
-    //if(blvZinv3b)                 delete blvZinv3b;
-    //if(blvZinvJEUUp)              delete blvZinvJEUUp;
-    //if(blvZinvJEUDn)              delete blvZinvJEUDn;
-    //if(blvZinvMEUUp)              delete blvZinvMEUUp;
-    //if(blvZinvMEUDn)              delete blvZinvMEUDn;
-    if(weights)                   delete weights;
-    if(generatePhotonEfficiency)  delete generatePhotonEfficiency;
-    if(njWeight)                  delete njWeight;
-    if(lepInfo)                   delete lepInfo;
-    if(basicLepton)               delete basicLepton;
-    if(fakebtagvectors)           delete fakebtagvectors;
-    if(getSearchBin)              delete getSearchBin;
-    if(triggerInfo)               delete triggerInfo;
-    if(prepareMiniTupleVars)      delete prepareMiniTupleVars;
-    if(myPDFUnc)                  delete myPDFUnc;
-    if(systematicPrep)            delete systematicPrep;
-    if(systematicCalc)            delete systematicCalc;
-    if(bTagCorrector)             delete bTagCorrector;
-    if(ISRcorrector)              delete ISRcorrector;
-    if(pileup)                    delete pileup;
-    if(gamma)                     delete gamma;
+    if(getVectors)                   delete getVectors;
+    if(cleanedJets)                  delete cleanedJets;
+    if(runTopTagger)                 delete runTopTagger;
+    if(runTopTagger_drLeptonCleaned) delete runTopTagger_drLeptonCleaned;
+    if(runTopTagger_drPhotonCleaned) delete runTopTagger_drPhotonCleaned;
+    if(myBLV)                        delete myBLV;
+    if(blvZinv)                      delete blvZinv;
+    if(blvNoVeto)                    delete blvNoVeto;
+    if(blvPFLeptonCleaned)           delete blvPFLeptonCleaned;
+    if(blv_drLeptonCleaned)          delete blv_drLeptonCleaned;
+    if(blv_drPhotonCleaned)          delete blv_drPhotonCleaned;
+    //if(blvZinv1b)                  delete blvZinv1b;
+    //if(blvZinv2b)                  delete blvZinv2b;
+    //if(blvZinv3b)                  delete blvZinv3b;
+    //if(blvZinvJEUUp)               delete blvZinvJEUUp;
+    //if(blvZinvJEUDn)               delete blvZinvJEUDn;
+    //if(blvZinvMEUUp)               delete blvZinvMEUUp;
+    //if(blvZinvMEUDn)               delete blvZinvMEUDn;
+    if(weights)                      delete weights;
+    if(generatePhotonEfficiency)     delete generatePhotonEfficiency;
+    if(njWeight)                     delete njWeight;
+    if(lepInfo)                      delete lepInfo;
+    if(basicLepton)                  delete basicLepton;
+    if(fakebtagvectors)              delete fakebtagvectors;
+    if(getSearchBin)                 delete getSearchBin;
+    if(triggerInfo)                  delete triggerInfo;
+    if(prepareMiniTupleVars)         delete prepareMiniTupleVars;
+    if(myPDFUnc)                     delete myPDFUnc;
+    if(systematicPrep)               delete systematicPrep;
+    if(systematicCalc)               delete systematicCalc;
+    if(bTagCorrector)                delete bTagCorrector;
+    if(ISRcorrector)                 delete ISRcorrector;
+    if(pileup)                       delete pileup;
+    if(gamma)                        delete gamma;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -211,21 +219,30 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     // order matters
     // get photons and leptons
     // use photons and leptons to clean jets
+    tr.registerFunction(*getVectors);
     tr.registerFunction(*gamma);
     tr.registerFunction(*basicLepton);
-    tr.registerFunction(*generatePhotonEfficiency);
+    //tr.registerFunction(*generatePhotonEfficiency);
     tr.registerFunction(*cleanedJets);
-
+    tr.registerFunction(*runTopTagger);
+    tr.registerFunction(*runTopTagger_drLeptonCleaned);
+    tr.registerFunction(*runTopTagger_drPhotonCleaned);
     tr.registerFunction(*myBLV);
     tr.registerFunction(*lepInfo);
-    tr.registerFunction(*weights);
-    tr.registerFunction(*blvZinv);
-    tr.registerFunction(*blvNoVeto);
-    tr.registerFunction(*blvPFLeptonCleaned);
-    tr.registerFunction(*blvDRLeptonCleaned);
-    tr.registerFunction(*blvDRPhotonCleaned);
-    tr.registerFunction(*njWeight);
-    tr.registerFunction(*fakebtagvectors);
+    tr.registerFunction(*blv_drLeptonCleaned);
+    tr.registerFunction(*blv_drPhotonCleaned);
+    tr.registerFunction(*getSearchBin);
+    
+    // old version including JEC and systematics
+    // here for reference only
+    //tr.registerFunction(*weights);
+    //tr.registerFunction(*blvZinv);
+    //tr.registerFunction(*blvNoVeto);
+    //tr.registerFunction(*blvPFLeptonCleaned);
+    //tr.registerFunction(*blv_drLeptonCleaned);
+    //tr.registerFunction(*blv_drPhotonCleaned);
+    //tr.registerFunction(*njWeight);
+    //tr.registerFunction(*fakebtagvectors);
     //tr.registerFunction(*blvZinv1b);
     //tr.registerFunction(*blvZinv2b);
     //tr.registerFunction(*blvZinv3b);
@@ -234,7 +251,6 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     //tr.registerFunction(*blvZinvJEUDn);
     //tr.registerFunction(*blvZinvMEUUp);
     //tr.registerFunction(*blvZinvMEUDn);
-    tr.registerFunction(*getSearchBin);
     //tr.registerFunction(*systematicCalc);
     //tr.registerFunction(*triggerInfo);
     //tr.registerFunction(*prepareMiniTupleVars);
@@ -272,8 +288,6 @@ void RegisterFunctionsNTuple::remakeISRreweight(std::string sampleName)
 
 RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()
 {            
-    //AnaFunctions::prepareTopTagger();
-
     njWeight             = new plotterFunctions::NJetWeight;
     triggerInfo          = new plotterFunctions::TriggerInfo(true);
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
@@ -290,8 +304,6 @@ RegisterFunctionsMiniTuple::~RegisterFunctionsMiniTuple()
         
 void RegisterFunctionsMiniTuple::registerFunctions(NTupleReader& tr)
 {
-    //Make some global "constants" here
-
     //register functions with NTupleReader
     tr.registerFunction(*njWeight);
     tr.registerFunction(*triggerInfo);
@@ -309,32 +321,40 @@ RegisterFunctionsCalcEff::RegisterFunctionsCalcEff() : RegisterFunctions()
 {
     //AnaFunctions::prepareTopTagger();
 
-    myBLV       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
-    gamma       = new plotterFunctions::Gamma;
-    lepInfo     = new plotterFunctions::LepInfo;
-    basicLepton = new plotterFunctions::BasicLepton;
+    myBLV   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
+    blvZinv = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    getVectors                = new GetVectors;
+    cleanedJets               = new CleanedJets;
+    runTopTagger              = new RunTopTagger;
+    gamma                     = new plotterFunctions::Gamma;
+    basicLepton               = new plotterFunctions::BasicLepton;
+    generatePhotonEfficiency  = new plotterFunctions::GeneratePhotonEfficiency;
 }
 
 RegisterFunctionsCalcEff::~RegisterFunctionsCalcEff()
 {
     if(myBLV) delete myBLV;
+    if(blvZinv) delete blvZinv;
+    if(getVectors) delete getVectors;
+    if(cleanedJets) delete cleanedJets;
+    if(runTopTagger) delete runTopTagger;
     if(gamma) delete gamma;
-    if(lepInfo) delete lepInfo;
     if(basicLepton) delete basicLepton;
+    if(generatePhotonEfficiency) delete generatePhotonEfficiency;
 }
 
 void RegisterFunctionsCalcEff::registerFunctions(NTupleReader& tr)
 {
     //register functions with NTupleReader
-    
-    // order matters
-    // get photons and leptons
-    // then do baseline
-    // then do lepinfo
+    tr.registerFunction(*getVectors);
     tr.registerFunction(*gamma);
     tr.registerFunction(*basicLepton);
+    //tr.registerFunction(*generatePhotonEfficiency);
+    tr.registerFunction(*cleanedJets);
+    tr.registerFunction(*runTopTagger);
     tr.registerFunction(*myBLV);
-    tr.registerFunction(*lepInfo);
+    tr.registerFunction(*blvZinv);
+
 }
 
 void RegisterFunctionsCalcEff::activateBranches(std::set<std::string>& activeBranches)
@@ -397,23 +417,18 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
     myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
-    //prepareTopVars = new plotterFunctions::PrepareTopVars();
     triggerInfo = new plotterFunctions::TriggerInfo(false, true);
 }
 
 RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
 {
     if(myBLV) delete myBLV;
-    //if(prepareTopVars) delete prepareTopVars;
 }
 
 void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
 {
     tr.registerFunction(*myBLV);
-    //tr.registerFunction(*prepareTopVars);
     tr.registerFunction(*triggerInfo);
-//    tr.registerFunction(*taudiv);
-//    tr.registerFunction(*ak8DrMatch);
 }
 
 /////////////////////////////////

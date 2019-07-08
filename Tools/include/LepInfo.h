@@ -20,6 +20,8 @@
 
 #include "TopTagger/TopTagger/interface/TopObject.h"
 
+#include "TFile.h"
+#include "TGraphAsymmErrors.h"
 #include "TH1.h"
 #include "TH2.h"
 #include "TFile.h"
@@ -29,6 +31,7 @@
 #include "TRandom3.h"
 #include "TVector2.h"
 
+#include <memory>
 #include <vector>
 #include <iostream>
 #include <string>
@@ -39,66 +42,58 @@ namespace plotterFunctions
     class LepInfo
     {
     private:
-        TRandom3 *tr3;
+        // use shared_ptr, which will delete and clear dynamically allocated memory
+        std::shared_ptr<TRandom3> tr3;
+        std::string year_;
+        std::map<std::string, std::string>        trigger_eff_file_map;
+        std::map<std::string, TGraphAsymmErrors*> trigger_eff_obj_map;
+        TGraphAsymmErrors* Efficiency_Electron_pt;
+        TGraphAsymmErrors* Efficiency_Electron_eta;
+        TGraphAsymmErrors* Efficiency_Muon_pt;
+        TGraphAsymmErrors* Efficiency_Muon_eta;
+        bool file_exists    = false;
+        bool year_valid     = false;
+        bool use_lepton_eff = false;
+        
         void lepInfo(NTupleReader& tr)
         {
-            const auto& genDecayPdgIdVec                    = tr.getVec<int>("genDecayPdgIdVec");
-            const auto& genDecayIdxVec                      = tr.getVec<int>("genDecayIdxVec");
-            const auto& genDecayMomIdxVec                   = tr.getVec<int>("genDecayMomIdxVec");
-            const auto& genDecayLVec                        = tr.getVec<TLorentzVector>("genDecayLVec");
-            const auto& muonsLVec                           = tr.getVec<TLorentzVector>("muonsLVec");
-            const auto& muonsRelIso                         = tr.getVec<data_t>("muonsRelIso");
-            const auto& muonsMiniIso                        = tr.getVec<data_t>("muonsMiniIso");
-            const auto& W_emuVec                            = tr.getVec<int>("W_emuVec");
-            const auto& muonsCharge                         = tr.getVec<data_t>("muonsCharge");
-            const auto& jetsLVec                            = tr.getVec<TLorentzVector>("jetsLVec");
-            const auto& recoJetschargedEmEnergyFraction     = tr.getVec<data_t>("recoJetschargedEmEnergyFraction");
-            const auto& recoJetschargedHadronEnergyFraction = tr.getVec<data_t>("recoJetschargedHadronEnergyFraction");
-            const auto& muonsFlagIDVec                      = tr.getVec<int>("muonsFlagMedium");
-            const auto& elesFlagIDVec                       = tr.getVec<int>("elesFlagVeto");
-
+            std::vector<int> genDecayPdgIdVec;
+            std::vector<int> GenPart_statusFlags;
+            std::vector<TLorentzVector> genDecayLVec;
+            if (tr.checkBranch("GenPartTLV"))
+            {
+                genDecayPdgIdVec                    = tr.getVec<int>("GenPart_pdgId");
+                GenPart_statusFlags                 = tr.getVec<int>("GenPart_statusFlags");
+                genDecayLVec                        = tr.getVec<TLorentzVector>("GenPartTLV");
+            }
+            const auto& muonsLVec                           = tr.getVec<TLorentzVector>("MuonTLV");
+            const auto& muonsCharge                         = tr.getVec<int>("Muon_charge");
+            const auto& jetsLVec                            = tr.getVec<TLorentzVector>("JetTLV");
             const auto& cutMuVec                            = tr.getVec<TLorentzVector>("cutMuVec"); 
             const auto& cutMuVecRecoOnly                    = tr.getVec<TLorentzVector>("cutMuVecRecoOnly"); 
-            const auto& cutMuCharge                         = tr.getVec<data_t>("cutMuCharge"); 
-            const auto& cutMuActivity                       = tr.getVec<data_t>("cutMuActivity"); 
+            const auto& cutMuSF                             = tr.getVec<data_t>("cutMuSF"); 
             const auto& cutMuSummedCharge                   = tr.getVar<int>("cutMuSummedCharge"); 
             const auto& nTriggerMuons                       = tr.getVar<int>("nTriggerMuons"); 
-
             const auto& cutElecVec                          = tr.getVec<TLorentzVector>("cutElecVec"); 
             const auto& cutElecVecRecoOnly                  = tr.getVec<TLorentzVector>("cutElecVecRecoOnly"); 
-            const auto& cutElecCharge                       = tr.getVec<data_t>("cutElecCharge"); 
-            const auto& cutElecActivity                     = tr.getVec<data_t>("cutElecActivity"); 
+            const auto& cutElecSF                           = tr.getVec<data_t>("cutElecSF"); 
             const auto& cutElecSummedCharge                 = tr.getVar<int>("cutElecSummedCharge"); 
+            const auto& met                                 = tr.getVar<data_t>("MET_pt");
+            const auto& metphi                              = tr.getVar<data_t>("MET_phi");
 
-            const std::vector<data_t>& muonspfActivity      = tr.getVec<data_t>("muonspfActivity");
-            const std::vector<data_t>& elespfActivity       = tr.getVec<data_t>("elespfActivity");
-            const std::vector<data_t>& W_emu_pfActivityVec  = tr.getVec<data_t>("W_emu_pfActivityVec");
-
-            //const data_t& ht                              = tr.getVar<data_t>("ht");
-            const auto& met                                 = tr.getVar<data_t>("met");
-            const auto& metphi                              = tr.getVar<data_t>("metphi");
-
-            const std::vector<TLorentzVector, std::allocator<TLorentzVector> > elesLVec = tr.getVec<TLorentzVector>("elesLVec");
-            const auto& elesMiniIso    = tr.getVec<data_t>("elesMiniIso");
-            const auto& elesCharge     = tr.getVec<data_t>("elesCharge");
-            const auto& elesisEB       = tr.getVec<unsigned int>("elesisEB");
-
-            //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
-
-            bool passMuonVeto = false;
-            bool passEleVeto = false;
-
-
+            bool Pass_MuonVeto = false;
+            bool Pass_ElecVeto = false;
+            
             try
             {
-                const auto& passMuonVetoTmp  = tr.getVar<bool>("passMuonVeto");
-                const auto& passEleVetoTmp   = tr.getVar<bool>("passEleVeto");
-                if(&passMuonVetoTmp != nullptr) passMuonVeto = passMuonVetoTmp;
-                if(&passEleVetoTmp != nullptr) passEleVeto = passEleVetoTmp;
+                const auto& Pass_MuonVetoTmp = tr.getVar<bool>("Pass_MuonVeto");
+                const auto& Pass_ElecVetoTmp = tr.getVar<bool>("Pass_ElecVeto");
+                if(&Pass_MuonVetoTmp != nullptr) Pass_MuonVeto = Pass_MuonVetoTmp;
+                if(&Pass_ElecVetoTmp != nullptr) Pass_ElecVeto = Pass_ElecVetoTmp;
             }
             catch(const std::string e)
             {
-                //std::cout << "void muInfo(NTupleReader& tr): Caught exception, variable \"" << e << "\" not found" << std::endl;
+                std::cout << "In LepInfo.h: Caught exception, variable \"" << e << "\" not found" << std::endl;
             }
 
             auto* genMatchIsoElecInAcc      = new std::vector<TLorentzVector>();
@@ -106,83 +101,11 @@ namespace plotterFunctions
             auto* genMatchElecInAccRes      = new std::vector<data_t>();
             auto* genElecInAcc              = new std::vector<TLorentzVector>();
             auto* genElec                   = new std::vector<TLorentzVector>();
-            auto* genMatchIsoElecInAccAct   = new std::vector<data_t>();
-            auto* genMatchElecInAccAct      = new std::vector<data_t>();
-            auto* genElecInAccAct           = new std::vector<data_t>();
-            auto* genElecAct                = new std::vector<data_t>();
-
             auto* genMatchIsoMuInAcc        = new std::vector<TLorentzVector>();
             auto* genMatchMuInAcc           = new std::vector<const TLorentzVector*>();
             auto* genMatchMuInAccRes        = new std::vector<data_t>();
-            //auto* genMuInAcc                = new std::vector<const TLorentzVector*>();
             auto* genMuInAcc                = new std::vector<TLorentzVector>();
             auto* genMu                     = new std::vector<const TLorentzVector*>();
-            auto* genMatchIsoMuInAccAct     = new std::vector<data_t>();
-            auto* genMatchMuInAccAct        = new std::vector<data_t>();
-            auto* genMuInAccAct             = new std::vector<data_t>();
-            auto* genMuAct                  = new std::vector<data_t>();
-            
-            // Registered in BasicLepton.h 
-            //auto* cutMuVec                  = new std::vector<TLorentzVector>();
-            //auto* cutMuCharge               = new std::vector<data_t>();
-            //auto* cutMuActivity             = new std::vector<data_t>();
-            //
-            //auto* cutElecVec                = new std::vector<TLorentzVector>();
-            //auto* cutElecCharge             = new std::vector<data_t>();
-            //auto* cutElecActivity           = new std::vector<data_t>();
-
-            //std::vector<TLorentzVector> cutMuVecRecoOnly;
-            //std::vector<TLorentzVector> cutElecVecRecoOnly;
-            
-            //std::vector<TLorentzVector>* Zrecopt = new std::vector<TLorentzVector>();
-
-            // Registered in BasicLepton.h 
-            
-            // //muon selections
-            // int cutMuSummedCharge = 0;
-            // int nTriggerMuons = 0;
-
-            // for(int i = 0; i < muonsLVec.size(); ++i)
-            // {
-            //     if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
-            //     {
-            //         cutMuVecRecoOnly.push_back(muonsLVec[i]);
-            //     }
-            //     if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
-            //     {
-            //         if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
-            //         {
-            //             if(nTriggerMuons == 0 && muonsLVec[i].Pt() > 17)  nTriggerMuons++;
-            //             else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
-            //         }
-            //         cutMuVec->push_back(muonsLVec[i]);
-            //         //std::cout<<"cutMuVec PT "<<muonsLVec[i].Pt()<<std::endl; 
-            //         cutMuCharge->push_back(muonsCharge[i]);
-            //         cutMuActivity->push_back(muonspfActivity[i]);
-            //         if(muonsCharge[i] > 0) cutMuSummedCharge++;
-            //         else                   cutMuSummedCharge--;
-            //     }
-            // }
-            // //std::cout<<"New Muon Selection "<<(*cutMuVec).size()<<std::endl;
-            // //electron selection
-            // int cutElecSummedCharge = 0;
-            // for(int i = 0; i < elesLVec.size(); ++i)
-            // {
-            //     if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr)) // emulates electrons with pt but no iso requirements.
-            //     {
-            //         cutElecVecRecoOnly.push_back(elesLVec[i]);
-            //     }
-
-            //     if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, elesisEB[i], elesFlagIDVec[i], AnaConsts::elesMiniIsoArr))
-            //     {
-            //         cutElecVec->push_back(elesLVec[i]);
-            //         cutElecCharge->push_back(elesCharge[i]);
-            //         cutElecActivity->push_back(AnaFunctions::getElectronActivity(elesLVec[i], jetsLVec, recoJetschargedHadronEnergyFraction, AnaConsts::elesAct));
-            //         if(elesCharge[i] > 0) cutElecSummedCharge++;
-            //         else                  cutElecSummedCharge--;
-            //     }
-            // }
-
 
             //mu45 non-iso trigger emulation
             const double effsnom2012ABC[] = {0.928,0.8302,0.8018};
@@ -204,172 +127,161 @@ namespace plotterFunctions
                 }
             }
 
-            double genHt = 0.0;
-
-            // muon trigger of 50 GeV
-            // electron trigger of 33 GeV
+            // muon trigger turn on:     50 GeV
+            // electron trigger turn on: 50 GeV
             const double   minMuPt = 20.0,   highMuPt = 50.0;
-            const double minElecPt = 20.0, highElecPt = 50.0;
-            double nuPt1 = -999.9, nuPt2 = -999.9;
+            const double minElecPt = 20.0, highElecPt = 40.0;
 
-            // gen tops
-            std::vector<TLorentzVector>* genTops = nullptr;
             //Gen info parsing
-            if(tr.checkBranch("genDecayPdgIdVec") && &genDecayLVec != nullptr)
+            const int GENPARTMASK = 0x2100;
+            
+            if(tr.checkBranch("GenPartTLV") && &genDecayLVec != nullptr)
             {
-                // gen tops
-                genTops = new std::vector<TLorentzVector>(ttUtility::GetHadTopLVec(genDecayLVec, genDecayPdgIdVec, genDecayIdxVec, genDecayMomIdxVec));
-
-                for(int i = 0; i < genDecayPdgIdVec.size() && i < genDecayLVec.size(); ++i)
+                for (int i = 0; i < genDecayPdgIdVec.size(); ++i)
                 {
-                    // genHt
-                    if((abs(genDecayPdgIdVec[i]) != 0 &&  abs(genDecayPdgIdVec[i]) < 6) || (abs(genDecayPdgIdVec[i]) > 100 && abs(genDecayPdgIdVec[i]) < 10000)) genHt += genDecayLVec[i].Pt();
-
-                    if(genDecayPdgIdVec[i] ==  13) nuPt1 = genDecayLVec[i].Pt(); // mu+
-                    if(genDecayPdgIdVec[i] == -13) nuPt2 = genDecayLVec[i].Pt(); // mu-
-                }
-
-                for(int index = 0; index < W_emuVec.size(); ++index)
-                {
-                    int i = W_emuVec[index];
-
-                    //muon efficiency and acceptance
-                    if(abs(genDecayPdgIdVec[i]) == 13)
+                    //int i = W_emuVec[index];
+                    int maskedStatusFlag = (GenPart_statusFlags[i] & GENPARTMASK);
+                    bool isGoodGenPart = (maskedStatusFlag == GENPARTMASK);
+                    if (isGoodGenPart)
                     {
-                        genMu->push_back(&genDecayLVec[i]);
-                        genMuAct->push_back(W_emu_pfActivityVec[index]);
-                        if(AnaFunctions::passMuonAccOnly(genDecayLVec[i], AnaConsts::muonsMiniIsoArr) && genDecayLVec[i].Pt() > minMuPt)
+                        //muon efficiency and acceptance
+                        if(abs(genDecayPdgIdVec[i]) == 13)
                         {
-                            genMuInAcc->push_back(genDecayLVec[i]);
-                            genMuInAccAct->push_back(genMuAct->back());
-                            double dRMin = 999.9;
-                            double matchPt = -999.9;
-                            for(int j = 0; j < cutMuVecRecoOnly.size(); ++j)
+                            genMu->push_back(&genDecayLVec[i]);
+                            if(AnaFunctions::passMuonAccOnly(genDecayLVec[i], AnaConsts::muonsMiniIsoArr) && genDecayLVec[i].Pt() > minMuPt)
                             {
-                                // difference in angle between gen and reco muons 
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVecRecoOnly[j]);
-                                if(dR < dRMin)
+                                genMuInAcc->push_back(genDecayLVec[i]);
+                                double dRMin = 999.9;
+                                double matchPt = -999.9;
+                                for(int j = 0; j < cutMuVecRecoOnly.size(); ++j)
                                 {
-                                    dRMin = dR;
-                                    matchPt = cutMuVecRecoOnly[j].Pt();
+                                    // difference in angle between gen and reco muons 
+                                    double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVecRecoOnly[j]);
+                                    if(dR < dRMin)
+                                    {
+                                        dRMin = dR;
+                                        matchPt = cutMuVecRecoOnly[j].Pt();
+                                    }
                                 }
-                            }
-                            if(dRMin < 0.02)
-                            {
-                                genMatchMuInAcc->push_back(&genDecayLVec[i]);
-                                genMatchMuInAccAct->push_back(genMuAct->back());
-                                genMatchMuInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
-                            }
+                                if(dRMin < 0.02)
+                                {
+                                    genMatchMuInAcc->push_back(&genDecayLVec[i]);
+                                    genMatchMuInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
+                                }
 
-                            dRMin = 999.9;
-                            for(int j = 0; j < cutMuVec.size(); ++j)
-                            {
-                                // difference in angle between gen and cut muons 
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVec[j]);
-                                if(dR < dRMin)
+                                dRMin = 999.9;
+                                for(int j = 0; j < cutMuVec.size(); ++j)
                                 {
-                                    dRMin = dR;
+                                    // difference in angle between gen and cut muons 
+                                    double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutMuVec[j]);
+                                    if(dR < dRMin)
+                                    {
+                                        dRMin = dR;
+                                    }
                                 }
-                            }
-                            if(dRMin < 0.02)
-                            {
-                                genMatchIsoMuInAcc->push_back(genDecayLVec[i]);
-                                genMatchIsoMuInAccAct->push_back(genMuAct->back());
+                                if(dRMin < 0.02)
+                                {
+                                    genMatchIsoMuInAcc->push_back(genDecayLVec[i]);
+                                }
                             }
                         }
-                    }
 
-                    //Elec efficiency and acceptance
-                    if(abs(genDecayPdgIdVec[i]) == 11)
-                    {
-                        genElec->push_back(genDecayLVec[i]);
-                        genElecAct->push_back(W_emu_pfActivityVec[index]);
-                        if(AnaFunctions::passElectronAccOnly(genDecayLVec[i], AnaConsts::elesMiniIsoArr) && genDecayLVec[i].Pt() > minElecPt)
+                        //electron efficiency and acceptance
+                        if(abs(genDecayPdgIdVec[i]) == 11)
                         {
-                            genElecInAcc->push_back(genDecayLVec[i]);
-                            genElecInAccAct->push_back(genElecAct->back());
-                            //printf("genElecInAcc p_t = %f\n", genDecayLVec[i].Pt());
-                            double dRMin = 999.9;
-                            double matchPt = -999.9;
-                            for(int j = 0; j < cutElecVecRecoOnly.size(); ++j)
+                            genElec->push_back(genDecayLVec[i]);
+                            if(AnaFunctions::passElectronAccOnly(genDecayLVec[i], AnaConsts::elesMiniIsoArr) && genDecayLVec[i].Pt() > minElecPt)
                             {
-                                // difference in angle between gen and reco electrons
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVecRecoOnly[j]);
-                                if(dR < dRMin)
+                                genElecInAcc->push_back(genDecayLVec[i]);
+                                double dRMin = 999.9;
+                                double matchPt = -999.9;
+                                for(int j = 0; j < cutElecVecRecoOnly.size(); ++j)
                                 {
-                                    dRMin = dR;
-                                    matchPt = cutElecVecRecoOnly[j].Pt();
+                                    // difference in angle between gen and reco electrons
+                                    double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVecRecoOnly[j]);
+                                    if(dR < dRMin)
+                                    {
+                                        dRMin = dR;
+                                        matchPt = cutElecVecRecoOnly[j].Pt();
+                                    }
                                 }
-                            }
-                            if(dRMin < 0.02)
-                            {
-                                genMatchElecInAcc->push_back(genDecayLVec[i]);
-                                genMatchElecInAccAct->push_back(genElecAct->back());
-                                genMatchElecInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
-                            }
+                                if(dRMin < 0.02)
+                                {
+                                    genMatchElecInAcc->push_back(genDecayLVec[i]);
+                                    genMatchElecInAccRes->push_back((genDecayLVec[i].Pt() - matchPt)/genDecayLVec[i].Pt());
+                                }
 
-                            dRMin = 999.9;
-                            for(int j = 0; j < cutElecVec.size(); ++j)
-                            {
-                                // difference in angle between gen and cut electrons
-                                double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVec[j]);
-                                if(dR < dRMin)
+                                dRMin = 999.9;
+                                for(int j = 0; j < cutElecVec.size(); ++j)
                                 {
-                                    dRMin = dR;
+                                    // difference in angle between gen and cut electrons
+                                    double dR = ROOT::Math::VectorUtil::DeltaR(genDecayLVec[i], cutElecVec[j]);
+                                    if(dR < dRMin)
+                                    {
+                                        dRMin = dR;
+                                    }
                                 }
-                            }
-                            if(dRMin < 0.02)
-                            {
-                                genMatchIsoElecInAcc->push_back(genDecayLVec[i]);
-                                genMatchIsoElecInAccAct->push_back(genElecAct->back());
+                                if(dRMin < 0.02)
+                                {
+                                    genMatchIsoElecInAcc->push_back(genDecayLVec[i]);
+                                }
                             }
                         }
                     }
                 }
             }
-            // create empty vector if it is nullptr
-            if (genTops == nullptr)
-            {
-                genTops = new std::vector<TLorentzVector>();
-            }
+
+            bool debug = false;
 
             data_t genZPt = -999.9, genZEta = -999.9, genZmass = -999.9, genZPhi;
             int nZ = 0;
             TLorentzVector genZ;
             int pdgIdZDec = 0;
-            if(&genDecayPdgIdVec != nullptr)
+            if(tr.checkBranch("GenPartTLV") && &genDecayLVec != nullptr)
             {
                 for(int j = 0; j <  genDecayPdgIdVec.size(); ++j)
                 {
-                    if(abs(genDecayPdgIdVec[j]) == 23)
+                    //WARNING: make sure to use parentheses; otherwise == happens first and & second!!!
+                    int maskedStatusFlag = (GenPart_statusFlags[j] & GENPARTMASK);
+                    bool isGoodGenPart = (maskedStatusFlag == GENPARTMASK);
+                    if(debug) printf("flag = 0x%x; maskedFlag = 0x%x; mask = 0x%x; pdgid = %d",GenPart_statusFlags[j], maskedStatusFlag, GENPARTMASK, genDecayPdgIdVec[j]);
+                    if (isGoodGenPart)
                     {
-                        nZ++;
-                        genZ = genDecayLVec[j];
-                        genZPt = genDecayLVec[j].Pt();
-                        genZEta = genDecayLVec[j].Eta();
-                        genZPhi = genDecayLVec[j].Phi();
-                        genZmass = genDecayLVec[j].M();
+                        if(abs(genDecayPdgIdVec[j]) == 23)
+                        {
+                            if (debug) printf(" - behold, a Z boson");
+                            nZ++;
+                            genZ = genDecayLVec[j];
+                            genZPt = genDecayLVec[j].Pt();
+                            genZEta = genDecayLVec[j].Eta();
+                            genZPhi = genDecayLVec[j].Phi();
+                            genZmass = genDecayLVec[j].M();
+                        }
                     }
+                    if(debug) std::cout << std::endl;
                 }
-                if(nZ > 1) std::cout << "!!!WARNING MORE THAN 1 Z FOUND!!!" << std::endl;
-
-                if(&W_emuVec != nullptr)
+                if (debug)
                 {
-                    if(W_emuVec.size() == 0) pdgIdZDec = 15;
-                    else if(W_emuVec.size() == 2)
-                    {
-                        if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 11) pdgIdZDec = 11;
-                        else if(abs(genDecayPdgIdVec[W_emuVec[0]]) == 13) pdgIdZDec = 13;
-                    }
+                    std::cout << "nZ = " << nZ;
+                    // be quiet... this prints a lot for ZZTo4Q :-)
+                    //if(nZ > 1) std::cout << " - WARNING: MORE THAN 1 Z FOUND!!!";
+                    std::cout << std::endl;
                 }
+                // be quiet... this prints a lot for ZZTo4Q :-)
+                //else
+                //{
+                //    if(nZ > 1) std::cout << " - WARNING: MORE THAN 1 Z FOUND!!! Set debug = true for more info." << std::endl;
+                //}
 
             }
 
             bool passDiMuTrig  = nTriggerMuons >= 2;
 
-            const double zMassMin = 81.0;
-            const double zMass    = 91.0;
-            const double zMassMax = 101.0;
+            // the Z mass cut logic assumes that zMassMin < zMassLow
+            const double zMassMin  =  50.0;
+            const double zMassLow  =  81.0;
+            const double zMass     =  91.0;
+            const double zMassHigh = 101.0;
 
             double zMuMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
             TLorentzVector bestRecoMuZ;
@@ -382,16 +294,14 @@ namespace plotterFunctions
                 {
                     if(cutMuVec[j].Pt() < minMuPt) continue;
                     double zm = (cutMuVec[i] + cutMuVec[j]).M();
-                    //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
-                    if(fabs(zm - zMass) < fabs(zMuMassCurrent - zMass))
+                    // check that zm is non-zero... otherwise 0.0 is chosen over values > 182.0
+                    if(zm > 0.0 && fabs(zm - zMass) < fabs(zMuMassCurrent - zMass))
                     {
                         bestRecoMuZ = cutMuVec[i] + cutMuVec[j];
                         zMuMassCurrent = zm;
                     }
                 }
             }
-            //std::cout<<Zrecopt.Pt()<<" the fourth one"<<std::endl;
-            //Zrecopt = muonsLVec[0]+muonsLVec[1];//cutMuVec[0] + cutMuVec[1];
             double zElecMassCurrent = 1.0e300;
             TLorentzVector bestRecoElecZ;
             for(int i = 0; i < cutElecVec.size(); ++i)
@@ -401,8 +311,8 @@ namespace plotterFunctions
                 {
                     if(cutElecVec[j].Pt() < minElecPt) continue;
                     double zm = (cutElecVec[i] + cutElecVec[j]).M();
-                    //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
-                    if(fabs(zm - zMass) < fabs(zElecMassCurrent - zMass))
+                    // check that zm is non-zero... otherwise 0.0 is chosen over values > 182.0
+                    if(zm > 0.0 && fabs(zm - zMass) < fabs(zElecMassCurrent - zMass))
                     {
                         bestRecoElecZ = cutElecVec[i] + cutElecVec[j];
                         zElecMassCurrent = zm;
@@ -419,7 +329,6 @@ namespace plotterFunctions
                 {
                     if(cutElecVec[j].Pt() < minMuPt) continue;
                     double zm = (cutMuVec[i] + cutElecVec[j]).M();
-                    //if(zm > zMassMin && zm < zMassMax && fabs(zm - zMass) < fabs(zMassCurrent - zMass))
                     if(fabs(zm - zMass) < fabs(zElMuMassCurrent - zMass))
                     {
                         bestRecoElMuZ = cutMuVec[i] + cutElecVec[j];
@@ -431,39 +340,81 @@ namespace plotterFunctions
             TLorentzVector metV, metZ;
             metV.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
 
-            TLorentzVector bestRecoZ = (fabs(bestRecoElecZ.M() - zMass) > fabs(bestRecoMuZ.M() - zMass)) ? (bestRecoMuZ) : (bestRecoElecZ);
-            //if(fabs(bestRecoZ.M() - zMass) > fabs(bestRecoElMuZ.M() - zMass)) bestRecoZ = bestRecoElMuZ;
-
+            // initialized by (0., 0., 0., 0.)
+            TLorentzVector bestRecoZ;
+            
+            // compare masses if both are non-zero
+            if (bestRecoElecZ.M() > 0.0 && bestRecoMuZ.M() > 0.0)
+            {
+                if (fabs(bestRecoElecZ.M() - zMass) < fabs(bestRecoMuZ.M() - zMass))
+                {
+                    bestRecoZ = bestRecoElecZ;
+                }
+                else
+                {
+                    bestRecoZ = bestRecoMuZ;
+                }
+            }
+            // otherwise pick non-zero mass (if any are non-zero)
+            else
+            {
+                if (bestRecoElecZ.M() > 0.0)
+                {
+                    bestRecoZ = bestRecoElecZ;
+                }
+                else if (bestRecoMuZ.M() > 0.0)
+                {
+                    bestRecoZ = bestRecoMuZ;
+                }
+            }
+            
             metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
             TLorentzVector cleanMet = metV + metZ;
-            //std::cout<<"metZ "<<metZ.Pt()<<std::endl;
-            //std::cout<<"metV "<<metV.Pt()<<std::endl;
-            bool passDiMuSel   = passEleVeto  && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt);
-            bool passDiElecSel = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt);
-            bool passElMuSel = (cutMuVec.size() == 1 && cutElecVec.size() == 1 && cutElecSummedCharge == -cutMuSummedCharge && cutMuVec[0].Pt() > highMuPt && cutElecVec[0].Pt() > minMuPt);
-
-            bool passMuZinvSel         = passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
-            bool passMuZinvSel_lowpt   = passEleVeto && (cutMuVec.size() == 2   && cutMuSummedCharge == 0   && cutMuVec[0].Pt() > minMuPt      && cutMuVec[1].Pt() > minMuPt)     && (bestRecoMuZ.M() > zMassMin)   && (bestRecoMuZ.M() < zMassMax);
-            bool passElecZinvSel       = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
-            bool passElecZinvSel_lowpt = passMuonVeto && (cutElecVec.size() == 2 && cutElecSummedCharge == 0 && cutElecVec[0].Pt() > minElecPt  && cutElecVec[1].Pt() > minElecPt) && (bestRecoElecZ.M() > zMassMin) && (bestRecoElecZ.M() < zMassMax);
-            bool passElMuZinvSel       = (cutMuVec.size() == 1 && cutElecVec.size() == 1 && cutElecSummedCharge == -cutMuSummedCharge && cutMuVec[0].Pt() > highMuPt && cutElecVec[0].Pt() > minMuPt) && (bestRecoElMuZ.M() > zMassMin) && (bestRecoElMuZ.M() < zMassMax);
-
-            double genMuPt   = -999.9;
-            double genMuEta  = -999.9;
-            double cutMuPt1  = -999.9;
-            double cutMuPt2  = -999.9;
-            double cutMuEta1 = -999.9;
-            double cutMuEta2 = -999.9;
-
-            // print number of muons
-            //printf("num gen mu: %d num mu: %d num cut mu: %d num cut mu reco only: %d\n", genMu->size(), muonsLVec.size(), cutMuVec.size(), cutMuVecRecoOnly.size());
             
+            // di-lepton selections
+            bool passMuPt      = (cutMuVec.size() == 2   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt);
+            bool passElecPt    = (cutElecVec.size() == 2 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt);
+            bool passDiMuSel   = (passMuPt   && cutMuSummedCharge == 0);
+            bool passDiElecSel = (passElecPt && cutElecSummedCharge == 0);
+            bool passElMuSel   = (cutMuVec.size() == 1   && cutElecVec.size() == 1   && cutElecSummedCharge == -cutMuSummedCharge 
+                                                         && ( (cutMuVec[0].Pt() > highMuPt && cutElecVec[0].Pt() > minElecPt) || (cutMuVec[0].Pt() > minMuPt && cutElecVec[0].Pt() > highElecPt) ) );
+            // Z mass peak selections
+            bool passMuZMassMin       = bestRecoMuZ.M()  > zMassMin;
+            bool passMuOnZMassPeak    = (bestRecoMuZ.M() > zMassLow)    && (bestRecoMuZ.M() < zMassHigh);
+            bool passMuOffZMassPeak   = passMuZMassMin && ! passMuOnZMassPeak;
+            bool passElecZMassMin     = bestRecoElecZ.M()  > zMassMin;
+            bool passElecOnZMassPeak  = (bestRecoElecZ.M() > zMassLow)  && (bestRecoElecZ.M() < zMassHigh);
+            bool passElecOffZMassPeak = passElecZMassMin && ! passElecOnZMassPeak;
+            bool passElMuZMassMin     = bestRecoElMuZ.M()  > zMassMin;
+            bool passElMuOnZMassPeak  = (bestRecoElMuZ.M() > zMassLow)  && (bestRecoElMuZ.M() < zMassHigh);
+            bool passElMuOffZMassPeak = passElMuZMassMin && ! passElMuOnZMassPeak;
+
+            bool passMuZinvSel                = Pass_ElecVeto   && passDiMuSel && passMuZMassMin;
+            bool passMuZinvSelOnZMassPeak     = passMuZinvSel   && passMuOnZMassPeak;
+            bool passMuZinvSelOffZMassPeak    = passMuZinvSel   && passMuOffZMassPeak;
+            bool passElecZinvSel              = Pass_MuonVeto   && passDiElecSel && passElecZMassMin;
+            bool passElecZinvSelOnZMassPeak   = passElecZinvSel && passElecOnZMassPeak;
+            bool passElecZinvSelOffZMassPeak  = passElecZinvSel && passElecOffZMassPeak;
+            bool passElMuZinvSel              = passElMuSel     && passElMuZMassMin;
+            bool passElMuZinvSelOnZMassPeak   = passElMuSel     && passElMuOnZMassPeak;
+            bool passElMuZinvSelOffZMassPeak  = passElMuSel     && passElMuOffZMassPeak;
+
+            data_t genMuPt     = -999.9;
+            data_t genMuEta    = -999.9;
+            data_t cutMuPt1    = -999.9;
+            data_t cutMuPt2    = -999.9;
+            data_t cutMuEta1   = -999.9;
+            data_t cutMuEta2   = -999.9;
+            data_t cutElecPt1  = -999.9;
+            data_t cutElecPt2  = -999.9;
+            data_t cutElecEta1 = -999.9;
+            data_t cutElecEta2 = -999.9;
+
             if(genMu->size() >= 1)
             {
                 genMuPt  = genMu->at(0)->Pt();
                 genMuEta = genMu->at(0)->Eta();
             }
-
             if(cutMuVec.size() >= 1) 
             {
                 cutMuPt1  = cutMuVec.at(0).Pt();
@@ -474,11 +425,16 @@ namespace plotterFunctions
                 cutMuPt2  = cutMuVec.at(1).Pt();
                 cutMuEta2 = cutMuVec.at(1).Eta();
             }
-
-            double cutElecPt1 = -999.9;
-            double cutElecPt2 = -999.9;
-            if(cutElecVec.size() >= 1) cutElecPt1 = cutElecVec.at(0).Pt();
-            if(cutElecVec.size() >= 2) cutElecPt2 = cutElecVec.at(1).Pt();
+            if(cutElecVec.size() >= 1) 
+            {
+                cutElecPt1  = cutElecVec.at(0).Pt();
+                cutElecEta1 = cutElecVec.at(0).Eta();
+            }
+            if(cutElecVec.size() >= 2) 
+            {
+                cutElecPt2  = cutElecVec.at(1).Pt();
+                cutElecEta2 = cutElecVec.at(1).Eta();
+            }
 
             double mindPhiMetJ = 999.9;
             int jc = 0;
@@ -488,121 +444,128 @@ namespace plotterFunctions
                 jc++;
                 mindPhiMetJ = std::min(mindPhiMetJ, fabs(ROOT::Math::VectorUtil::DeltaPhi(genZ, jet)));
             }
-            //vTopsNCandNewMVA->push_back(top.getNConstituents());
-/*
-            int indexMuTrigger, indexElecTrigger, indexHTMHTTrigger, indexMuHTTrigger;
-            topTagger::type3TopTagger t3tagger;
-            TopTagger *tt, *ttMVA, *ttAllComb;
-            Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
-            TopCat topMatcher_;
 
-            const TopTaggerResults& ttrMVA = ttMVA->getResults();
-            std::vector<TopObject> topMVACands = ttrMVA.getTopCandidates();
-            int monoJet;
-            int diJet;
-            int triJet;
-            for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
+            // Z values
+            data_t bestRecoZPt  = bestRecoZ.Pt();
+            data_t Zrecoptpt    = Zrecopt.Pt();
+            data_t metWithLL    = cleanMet.Pt();
+            data_t metphiWithLL = cleanMet.Phi();
+            
+            // di-lepton trigger efficiencies and scale factors
+            data_t DiMuTriggerEffPt    = 1.0;
+            data_t DiMuTriggerEffEta   = 1.0;
+            data_t DiMuSF              = 1.0;
+            data_t DiElecTriggerEffPt  = 1.0;
+            data_t DiElecTriggerEffEta = 1.0;
+            data_t DiElecSF            = 1.0;
+            if (cutMuVec.size() == 2)
             {
-                auto& top = *ttrMVA.getTops()[iTop];
-            if top.getNConstituents() =1 monoJet++;
-            if top.getNConstituents() =2 diJet++;
-            if top.getNConstituents() =3 triJet++;
+                std::vector<double> leptonPts  = {cutMuPt1, cutMuPt2};
+                std::vector<double> leptonEtas = {cutMuEta1, cutMuEta2};
+                DiMuTriggerEffPt  = getEfficiency("Muon_pt", leptonPts);
+                DiMuTriggerEffEta = getEfficiency("Muon_eta", leptonEtas);
+                DiMuSF = cutMuSF[0] * cutMuSF[1];
             }
-*/
-            //const int& nTopCandSortedCnt = tr.getVar<int>("nTopCandSortedCntZinv");
-            /*
-            std::shared_ptr<TopTagger> ttPtr;
-            int monoJet;
-            const TopTaggerResults& ttr = ttPtr->getResults();
-            std::vector<TopObject*> Ntop = ttr.getTops();
-            for(int i=1; i<nTopCandSortedCnt; i++){
-            if(Ntop[i]->getNConstituents() == 1) monoJet++;
-            }
-            std::cout<<monoJet<<std::endl;
-            */
-            //tr.getTops();
-            //TopTagger *tt, *ttMVA, *ttAllComb;
-            //ttMVA = new TopTagger();
-            //ttMVA->setCfgFile("TopTagger.cfg");
-            //const TopTaggerResults& ttResults = ttMVA->getResults();
-            //std::vector<TopObject>& topCandidates = ttResults.getTopCandidates();
-            //if(topCandidates.getNConstituents() = 1) monoJet++;
-            //TopTagger *tt, *ttMVA, *ttAllComb;
-            //ttMVA->setCfgFile("TopTagger.cfg");
-            /*
-            const TopTaggerResults& ttrMVA = ttMVA->getResults();
-            for(int iTop = 0; iTop < ttrMVA.getTops().size(); ++iTop)
+            if (cutElecVec.size() == 2)
             {
-                auto& top = *ttrMVA.getTops()[iTop];
-             
-             if(top.getNConstituents() == 1) monoJet++;
-             }
-            std::cout<< monoJet << std::endl;
-            */
-            //if(genZPt > 600) std::cout << "HELLO THERE!!!!" << std::endl;
-            //if(genZPt > 600 && mindPhiMetJ < 0.5) std::cout << "BONJOUR!!! \t" << genZPt << "\t" << mindPhiMetJ << "\t" << run << "\t" << lumi << "\t" << event << std::endl;
-            //std::cout<<"cleanMetPt "<<cleanMet.Pt()<<std::endl;
-            //std::cout<<" "<<std::endl;
+                std::vector<double> leptonPts  = {cutElecPt1, cutElecPt2};
+                std::vector<double> leptonEtas = {cutElecEta1, cutElecEta2};
+                DiElecTriggerEffPt  = getEfficiency("Electron_pt", leptonPts);
+                DiElecTriggerEffEta = getEfficiency("Electron_eta", leptonEtas);
+                DiElecSF = cutElecSF[0] * cutElecSF[1];
+            }
+            
+            // print passMuZinvSelOnZMassPeak conditions
+            bool printMuon = false;
+            if (printMuon)
+            {
+                printf("num gen mu: %d num mu: %d num cut mu: %d num cut mu reco only: %d\n", genMu->size(), muonsLVec.size(), cutMuVec.size(), cutMuVecRecoOnly.size());
+                if (cutMuVec.size() > 0)
+                {
+                    printf("Pass_ElecVeto: %d ", Pass_ElecVeto);
+                    printf("cutMuVec.size() == 2: %d ", cutMuVec.size() == 2);
+                    printf("cutMuSummedCharge == 0: %d ", cutMuSummedCharge == 0);
+                    printf("cutMuVec[0].Pt() > highMuPt: %d ", cutMuVec[0].Pt() > highMuPt);
+                    printf("cutMuVec[1].Pt() > minMuPt: %d ", cutMuVec[1].Pt() > minMuPt);
+                    printf("bestRecoMuZ.M() > zMassLow: %d ", bestRecoMuZ.M() > zMassLow);
+                    printf("bestRecoMuZ.M() < zMassHigh: %d ", bestRecoMuZ.M() < zMassHigh);
+                    if (passMuZinvSelOnZMassPeak)
+                    {
+                        printf(" --- passMuZinvSelOnZMassPeak");
+                    }
+                    printf("\n");
+                }
+                else
+                {
+                    printf("WARNING: no cut muons found in event.\n");
+                }
+            }
 
-            //printf("ngenElec = %d; ngenElecInAcc = %d; ngenMatchElecInAcc = %d\n", genElec->size(), genElecInAcc->size(), genMatchElecInAcc->size());
-
-            data_t bestRecoZPt = bestRecoZ.Pt();
-            data_t cleanMetPt  = cleanMet.Pt();
-            data_t cleanMetPhi = cleanMet.Phi();
-            data_t Zrecoptpt = Zrecopt.Pt();
-            //data_t cleanMet2Pt = static_cast<data_t>(cleanMet2.Pt());
+            bool printEff = false;
+            if (printEff)
+            {
+                if (cutMuVec.size() == 2)
+                {
+                    printf("cutMuPt1 = %f ",  cutMuPt1);
+                    printf("cutMuPt2 = %f ",  cutMuPt2);
+                    printf("cutMuEta1 = %f ", cutMuEta1);
+                    printf("cutMuEta2 = %f ", cutMuEta2);
+                    printf("DiMuTriggerEffPt = %f ",  DiMuTriggerEffPt);
+                    printf("DiMuTriggerEffEta = %f ", DiMuTriggerEffEta);
+                    printf("\n");
+                }
+                if (cutElecVec.size() == 2)
+                {
+                    printf("cutElecPt1 = %f ",  cutElecPt1);
+                    printf("cutElecPt2 = %f ",  cutElecPt2);
+                    printf("cutElecEta1 = %f ", cutElecEta1);
+                    printf("cutElecEta2 = %f ", cutElecEta2);
+                    printf("DiElecTriggerEffPt = %f ",  DiElecTriggerEffPt);
+                    printf("DiElecTriggerEffEta = %f ", DiElecTriggerEffEta);
+                    printf("\n");
+                }
+            }
+            
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
             tr.registerDerivedVar("bestRecoZM", bestRecoZ.M());
-            tr.registerDerivedVar("cleanMetPt", cleanMetPt);
-            tr.registerDerivedVar("cleanMetPhi", cleanMetPhi);
-            //tr.registerDerivedVar("cleanMet2Pt", cleanMet2Pt);
-            tr.registerDerivedVar("genHt", genHt);
-            tr.registerDerivedVar("cutMuPt1", cutMuPt1);
-            tr.registerDerivedVar("cutMuPt2", cutMuPt2);
-            tr.registerDerivedVar("cutMuEta1", cutMuEta1);
-            tr.registerDerivedVar("cutMuEta2", cutMuEta2);
-            tr.registerDerivedVar("cutElecPt1", cutElecPt1);
-            tr.registerDerivedVar("cutElecPt2", cutElecPt2);
+            tr.registerDerivedVar("metWithLL", metWithLL);
+            tr.registerDerivedVar("metphiWithLL", metphiWithLL);
+            tr.registerDerivedVar("cutMuPt1",    cutMuPt1);
+            tr.registerDerivedVar("cutMuPt2",    cutMuPt2);
+            tr.registerDerivedVar("cutMuEta1",   cutMuEta1);
+            tr.registerDerivedVar("cutMuEta2",   cutMuEta2);
+            tr.registerDerivedVar("cutElecPt1",  cutElecPt1);
+            tr.registerDerivedVar("cutElecPt2",  cutElecPt2);
+            tr.registerDerivedVar("cutElecEta1", cutElecEta1);
+            tr.registerDerivedVar("cutElecEta2", cutElecEta2);
+            tr.registerDerivedVar("DiMuTriggerEffPt",    DiMuTriggerEffPt);
+            tr.registerDerivedVar("DiMuTriggerEffEta",   DiMuTriggerEffEta);
+            tr.registerDerivedVar("DiMuSF",              DiMuSF);
+            tr.registerDerivedVar("DiElecTriggerEffPt",  DiElecTriggerEffPt);
+            tr.registerDerivedVar("DiElecTriggerEffEta", DiElecTriggerEffEta);
+            tr.registerDerivedVar("DiElecSF",            DiElecSF);
             tr.registerDerivedVar("mindPhiMetJ", mindPhiMetJ);
-
             tr.registerDerivedVar("ZPtRes", (bestRecoZPt - genZPt)/genZPt);
             tr.registerDerivedVar("ZEtaRes", bestRecoZ.Eta() - genZEta);
             tr.registerDerivedVar("ZPhiRes", bestRecoZ.Phi() - genZPhi);
             tr.registerDerivedVar("ZMRes", (bestRecoZ.M() - genZmass)/genZmass);
-
-            // Registered in BasicLepton.h 
-            //tr.registerDerivedVec("cutMuVec", cutMuVec);
-            //tr.registerDerivedVec("cutElecVec", cutElecVec);
-            //tr.registerDerivedVec("cutMuActivity", cutMuActivity);
-            //tr.registerDerivedVec("cutElecActivity", cutElecActivity);
-
             tr.registerDerivedVec("genMu", genMu);
             const auto& genMu_test = tr.getVec<const TLorentzVector*>("genMu");
             tr.registerDerivedVar("ngenMu", static_cast<data_t>(genMu->size()));
             tr.registerDerivedVec("genMuInAcc", genMuInAcc);
-            tr.registerDerivedVec("genMuAct", genMuAct);
             tr.registerDerivedVar("ngenMuInAcc", static_cast<data_t>(genMuInAcc->size()));
-            tr.registerDerivedVec("genMuInAccAct", genMuInAccAct);
             tr.registerDerivedVec("genMatchMuInAcc", genMatchMuInAcc);
             tr.registerDerivedVec("genMatchMuInAccRes", genMatchMuInAccRes);
             tr.registerDerivedVec("genMatchIsoMuInAcc", genMatchIsoMuInAcc);
             tr.registerDerivedVar("ngenMatchMuInAcc", static_cast<data_t>(genMatchMuInAcc->size()));
-            tr.registerDerivedVec("genMatchMuInAccAct", genMatchMuInAccAct);
-            tr.registerDerivedVec("genMatchIsoMuInAccAct", genMatchIsoMuInAccAct);
-
             tr.registerDerivedVec("genElec", genElec);
             tr.registerDerivedVar("ngenElec", static_cast<data_t>(genElec->size()));
             tr.registerDerivedVec("genElecInAcc", genElecInAcc);
-            tr.registerDerivedVec("genElecAct", genElecAct);
             tr.registerDerivedVar("ngenElecInAcc", static_cast<data_t>(genElecInAcc->size()));
-            tr.registerDerivedVec("genElecInAccAct", genElecInAccAct);
             tr.registerDerivedVec("genMatchElecInAcc", genMatchElecInAcc);
             tr.registerDerivedVec("genMatchElecInAccRes", genMatchElecInAccRes);
             tr.registerDerivedVec("genMatchIsoElecInAcc", genMatchIsoElecInAcc);
             tr.registerDerivedVar("ngenMatchElecInAcc", static_cast<data_t>(genMatchElecInAcc->size()));
-            tr.registerDerivedVec("genMatchElecInAccAct", genMatchElecInAccAct);
-            tr.registerDerivedVec("genMatchIsoElecInAccAct", genMatchIsoElecInAccAct);
-
             tr.registerDerivedVar("genZPt", genZPt);
             tr.registerDerivedVar("genZEta", genZEta);
             tr.registerDerivedVar("genZPhi", genZPhi);
@@ -610,27 +573,111 @@ namespace plotterFunctions
             tr.registerDerivedVar("pdgIdZDec", pdgIdZDec);
             tr.registerDerivedVar("passDiMuIsoTrig", passDiMuTrig);
             tr.registerDerivedVar("passSingleMu45", muTrigMu45);
-
-            tr.registerDerivedVar("passDiMuSel", passDiMuSel);
-            tr.registerDerivedVar("passDiElecSel", passDiElecSel);
-            tr.registerDerivedVar("passElMuSel", passElMuSel);
-
-            tr.registerDerivedVar("passMuZinvSel",         passMuZinvSel);
-            tr.registerDerivedVar("passMuZinvSel_lowpt",   passMuZinvSel_lowpt);
-            tr.registerDerivedVar("passElecZinvSel",       passElecZinvSel);
-            tr.registerDerivedVar("passElecZinvSel_lowpt", passElecZinvSel_lowpt);
-            tr.registerDerivedVar("passElMuZinvSel",       passElMuZinvSel);
-
+            tr.registerDerivedVar("passMuPt",                    passMuPt);
+            tr.registerDerivedVar("passElecPt",                  passElecPt);
+            tr.registerDerivedVar("passDiMuSel",                 passDiMuSel);
+            tr.registerDerivedVar("passDiElecSel",               passDiElecSel);
+            tr.registerDerivedVar("passElMuSel",                 passElMuSel);
+            tr.registerDerivedVar("passMuZinvSel",               passMuZinvSel);
+            tr.registerDerivedVar("passMuZinvSelOnZMassPeak",    passMuZinvSelOnZMassPeak);
+            tr.registerDerivedVar("passMuZinvSelOffZMassPeak",   passMuZinvSelOffZMassPeak);
+            tr.registerDerivedVar("passElecZinvSel",             passElecZinvSel);
+            tr.registerDerivedVar("passElecZinvSelOnZMassPeak",  passElecZinvSelOnZMassPeak);
+            tr.registerDerivedVar("passElecZinvSelOffZMassPeak", passElecZinvSelOffZMassPeak);
+            tr.registerDerivedVar("passElMuZinvSel",             passElMuZinvSel);
+            tr.registerDerivedVar("passElMuZinvSelOnZMassPeak",  passElMuZinvSelOnZMassPeak);
+            tr.registerDerivedVar("passElMuZinvSelOffZMassPeak", passElMuZinvSelOffZMassPeak);
             tr.registerDerivedVar("Zrecopt", Zrecoptpt);
-            // gen tops
-            tr.registerDerivedVec("genTops", genTops);
+        }
 
+        double getEfficiency(std::string kinematic, std::vector<double> values)
+        {
+            bool verbose = false;
+            bool kinematic_valid = trigger_eff_obj_map.find(kinematic) != trigger_eff_obj_map.end();
+            if (use_lepton_eff && kinematic_valid)
+            {
+                TGraphAsymmErrors* eff = trigger_eff_obj_map[kinematic];
+                std::vector<float> efficiencies;
+                for (const auto& value : values)
+                {
+                    int x_i = 0;
+                    while (x_i < eff->GetN() && eff->GetX()[x_i] - eff->GetErrorXlow(x_i) < value)
+                    {
+                         ++x_i;
+                    }
+                    efficiencies.push_back(eff->GetY()[x_i]);
+                }
+                if (verbose)
+                {
+                    printf("Trigger Eff %s: ", kinematic.c_str());
+                }
+                float product = 1.0;
+                for (const auto& e : efficiencies)
+                {
+                    product *= (1.0 - e);
+                    if (verbose)
+                    {
+                        printf("%f ", e);
+                    }
+                }
+                float efficiency = 1.0 - product;
+                if (verbose)
+                {
+                    printf("; eff = %f\n", efficiency);
+                }
+                return efficiency;
+            }
+            else
+            {
+                if (verbose)
+                {
+                    printf("Setting trigger efficiency to 1.0.\n");
+                }
+                return 1.0;
+            }
         }
 
     public:
-        LepInfo()
+        LepInfo(std::string year = "") : tr3(new TRandom3()), year_(year)
         {
-            tr3 = new TRandom3();
+            std::string trigger_eff_file_name = "";
+            Efficiency_Electron_pt = nullptr;
+            Efficiency_Muon_pt     = nullptr;
+            trigger_eff_file_map["2016"] = "2016_trigger_eff.root";
+            trigger_eff_file_map["2017"] = "2017_trigger_eff.root";
+            trigger_eff_file_map["2018"] = "2018_trigger_eff.root";
+            // check that year is valid
+            year_valid = trigger_eff_file_map.find(year_) != trigger_eff_file_map.end();
+            if (year_valid)
+            {
+                trigger_eff_file_name = trigger_eff_file_map.at(year_);
+                // check if file exists
+                struct stat buffer;  
+                file_exists = bool(stat(trigger_eff_file_name.c_str(), &buffer) == 0);
+                TFile *f = new TFile(trigger_eff_file_name.c_str());
+                if(file_exists && f)
+                {
+                    Efficiency_Electron_pt  = static_cast<TGraphAsymmErrors*>(f->Get("Electron_pt"));
+                    Efficiency_Electron_eta = static_cast<TGraphAsymmErrors*>(f->Get("Electron_eta"));
+                    Efficiency_Muon_pt      = static_cast<TGraphAsymmErrors*>(f->Get("Muon_pt"));
+                    Efficiency_Muon_eta     = static_cast<TGraphAsymmErrors*>(f->Get("Muon_eta"));
+                    trigger_eff_obj_map["Electron_pt"]  = Efficiency_Electron_pt;
+                    trigger_eff_obj_map["Electron_eta"] = Efficiency_Electron_eta;
+                    trigger_eff_obj_map["Muon_pt"]      = Efficiency_Muon_pt;
+                    trigger_eff_obj_map["Muon_eta"]     = Efficiency_Muon_eta;
+                    f->Close();
+                    delete f;
+                }
+                else
+                {
+                    std::cout << "Failed to open the file " << trigger_eff_file_name << ". The lepton trigger efficiencies will not be used."<< std::endl;
+                }
+            }
+            else
+            {
+                std::cout << "The year " << year_ << " is not valid. The lepton trigger efficiencies will not be used."<< std::endl;
+            }
+            use_lepton_eff = year_valid && file_exists;
         }
 
         void operator()(NTupleReader& tr)
@@ -640,4 +687,5 @@ namespace plotterFunctions
     };
 
 }
+
 #endif

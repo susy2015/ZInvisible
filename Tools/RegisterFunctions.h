@@ -5,7 +5,9 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include "SusyAnaTools/Tools/GetVectors.h"
 #include "SusyAnaTools/Tools/CleanedJets.h"
+#include "SusyAnaTools/Tools/RunTopTagger.h"
 
 class NTupleReader;
 class BaselineVessel;
@@ -60,8 +62,8 @@ private:
     BaselineVessel *blvZinv;
     BaselineVessel *blvNoVeto;
     BaselineVessel *blvPFLeptonCleaned;
-    BaselineVessel *blvDRLeptonCleaned;
-    BaselineVessel *blvDRPhotonCleaned;
+    BaselineVessel *blv_drLeptonCleaned;
+    BaselineVessel *blv_drPhotonCleaned;
     //BaselineVessel *blvZinv1b;
     //BaselineVessel *blvZinv2b;
     //BaselineVessel *blvZinv3b;
@@ -69,29 +71,33 @@ private:
     BaselineVessel *blvZinvJEUDn;
     BaselineVessel *blvZinvMEUUp;
     BaselineVessel *blvZinvMEUDn;
-    plotterFunctions::GenerateWeight *weights;
-    plotterFunctions::GeneratePhotonEfficiency *generatePhotonEfficiency;
-    plotterFunctions::NJetWeight *njWeight;
-    plotterFunctions::BasicLepton *basicLepton;
-    plotterFunctions::LepInfo *lepInfo;
-    plotterFunctions::Fakebtagvectors *fakebtagvectors;
-    plotterFunctions::GetSearchBin *getSearchBin;
-    plotterFunctions::TriggerInfo *triggerInfo;
-    plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
-    plotterFunctions::SystematicPrep *systematicPrep;
-    plotterFunctions::SystematicCalc *systematicCalc;
-    CleanedJets *cleanedJets;
-    plotterFunctions::Gamma *gamma; //Andres
-    PDFUncertainty *myPDFUnc;
-    BTagCorrector *bTagCorrector;
-    ISRCorrector *ISRcorrector;
-    Pileup_Sys *pileup;
-    plotterFunctions::Taudiv *taudiv;
-    plotterFunctions::NJetAk8 *nJetAk8;
-    plotterFunctions::Ak8DrMatch *ak8DrMatch;
+    GetVectors                                  *getVectors;
+    CleanedJets                                 *cleanedJets;
+    RunTopTagger                                *runTopTagger;
+    RunTopTagger                                *runTopTagger_drLeptonCleaned;
+    RunTopTagger                                *runTopTagger_drPhotonCleaned;
+    plotterFunctions::Gamma                     *gamma;
+    PDFUncertainty                              *myPDFUnc;
+    BTagCorrector                               *bTagCorrector;
+    ISRCorrector                                *ISRcorrector;
+    Pileup_Sys                                  *pileup;
+    plotterFunctions::GenerateWeight            *weights;
+    plotterFunctions::GeneratePhotonEfficiency  *generatePhotonEfficiency;
+    plotterFunctions::NJetWeight                *njWeight;
+    plotterFunctions::BasicLepton               *basicLepton;
+    plotterFunctions::LepInfo                   *lepInfo;
+    plotterFunctions::Fakebtagvectors           *fakebtagvectors;
+    plotterFunctions::GetSearchBin              *getSearchBin;
+    plotterFunctions::TriggerInfo               *triggerInfo;
+    plotterFunctions::PrepareMiniTupleVars      *prepareMiniTupleVars;
+    plotterFunctions::SystematicPrep            *systematicPrep;
+    plotterFunctions::SystematicCalc            *systematicCalc;
+    plotterFunctions::Taudiv                    *taudiv;
+    plotterFunctions::NJetAk8                   *nJetAk8;
+    plotterFunctions::Ak8DrMatch                *ak8DrMatch;
 
 public:
-    RegisterFunctionsNTuple(bool isCondor = false, std::string sbEra = "SB_v1_2017");
+    RegisterFunctionsNTuple(bool isCondor, std::string sbEra, std::string year);
     ~RegisterFunctionsNTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);
@@ -117,10 +123,14 @@ public:
 class RegisterFunctionsCalcEff : public RegisterFunctions
 {
 private:
-    BaselineVessel *myBLV;
-    plotterFunctions::Gamma *gamma; //Caleb :-)
-    plotterFunctions::LepInfo *lepInfo;
-    plotterFunctions::BasicLepton *basicLepton;
+    BaselineVessel                              *myBLV;
+    BaselineVessel                              *blvZinv;
+    GetVectors                                  *getVectors;
+    CleanedJets                                 *cleanedJets;
+    RunTopTagger                                *runTopTagger;
+    plotterFunctions::Gamma                     *gamma;
+    plotterFunctions::BasicLepton               *basicLepton;
+    plotterFunctions::GeneratePhotonEfficiency  *generatePhotonEfficiency;
 
 public:
     RegisterFunctionsCalcEff();

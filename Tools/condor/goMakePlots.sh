@@ -2,6 +2,7 @@
 
 export PATH=${PATH}:/cvmfs/cms.cern.ch/common
 export CMS_PATH=/cvmfs/cms.cern.ch
+year=$7
 
 #get the release setup and in place
 tar -xzf $2.tar.gz
@@ -22,7 +23,7 @@ xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
 
 ls -lhrt
 
-./makePlots -st --condor -D $1 -N $3 -M $4 -L $5 -S SB_v1_2017 | grep -v LHAPDF
+./makePlots -st --condor -D $1 -N $3 -M $4 -L $5 -S SB_v1_2017 -Y $year | grep -v LHAPDF
 
 ls -lhrt
 

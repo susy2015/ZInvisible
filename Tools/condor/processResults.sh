@@ -14,58 +14,64 @@
 
 
 # options
-dataSet=$1
-executableOption=$2
+dirName=$1
+year=$2
+executableOption=$3
 
 executable=
 resultFile=
-dirName=
+dirPrefix=
 
+dataDir="output"
+brokenDir="broken_files" # directory for broken root files
 zinvDir=$CMSSW_BASE/src/ZInvisible/Tools
 condorDir=$zinvDir/condor
 
-if [ -z "$dataSet" ]; then
-    echo "- ERROR: Please provide a data set for the directory name."
-    echo "  Examples: DYJetsToLL, GJets, ZJetsToNuNu, etc."
+if [ -z "$dirName" ]; then
+    echo "Please provide a directory name as the first argument."
+    echo "  Example: DataMC_2016_submission_2019-05-05_21-57-41"
+    exit 1
+fi
+
+if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" && "$year" != "2018_AB" && "$year" != "2018_CD" ]]
+then
+    echo "Please enter 2016, 2017, 2018, 2018_AB or 2018_CD for the year as the first argument."
     exit 1
 fi
 
 if [ "$executableOption" = "-c" ]; then
-    resultFile="effhists_"$dataSet".root"
+    resultFile="effhists_"$dirName".root"
     executable="echo nothing to do"
-    dirName="effhists"
+    dirPrefix="effhists"
 else
     resultFile="result.root"
-    executable="./makePlots -f -I $resultFile | grep -v LHAPDF"
-    dirName="histos"
+    executable="./makePlots -f -I $resultFile -Y $year | grep -v LHAPDF"
+    dirPrefix="histos"
 fi
 
-echo "- Running processResults.sh for the data set $dataSet"
+echo "- Running processResults.sh for the data set $dirName"
 
-# data directory
-today=$(date '+%d_%b_%Y')
-i=1
-dataDir=""$dirName"_"$dataSet"_"$today"_"$i""
+# old version: make new data directory
+#today=$(date '+%d_%b_%Y')
+#i=1
+#dataDir=""$dirPrefix"_"$dirName"_"$today"_"$i""
 
-# directory for broken files
-brokenDir="broken_files"
-
-# go to condor directory
-cd $condorDir
+# go to directory to process
+cd $condorDir/$dirName
 
 # check if there are any root files here
 if [[ ! $(ls *.root) ]]; then
-    echo "- ERROR: There are no root files in the directory $condorDir to process."
+    echo "- ERROR: There are no root files in the directory $condorDir/$dirName to process."
     exit 1
 fi
 
 # check if data directory exists
-while [[ -d $dataDir ]]
-do
-    echo "- Found directory $dataDir"
-    i=$[$i+1]
-    dataDir=""$dirName"_"$1"_"$today"_"$i""
-done
+#while [[ -d $dataDir ]]
+#do
+#    echo "- Found directory $dataDir"
+#    i=$[$i+1]
+#    dataDir=""$dirPrefix"_"$dirName"_"$today"_"$i""
+#done
 
 # create unique data directory
 echo "- Creating directory $dataDir"
@@ -75,6 +81,10 @@ mkdir $dataDir
 echo "- Moving root files to $dataDir"
 mv *.root $dataDir
 
+# number of files
+numFiles=$(ls $dataDir/*.root | wc -l | cut -f1 -d " ")
+echo "Number of files returned from condor: $numFiles"
+
 # add histograms
 cd $dataDir
 error=1
@@ -82,7 +92,8 @@ error=1
 while [[ $error != 0 ]]
 do
     echo "- Executing hadd to add histograms to create $resultFile; see hadd.log for stdout and stderr"
-    hadd $resultFile *.root &> hadd.log
+    #time hadd $resultFile *.root &> hadd.log
+    time ahadd.py $resultFile *.root &> hadd.log
     error=$?
     if [[ $error != 0 ]]; then
         echo "  ERROR: hadd command failed"
@@ -94,8 +105,9 @@ do
         file=$(expr match "$message" "$substring \(.*\)")
         echo "    message: $message"
         echo "    file: $file"
-        echo "- Moving broken file $file to $brokenDir"
+        echo "- Moving broken file $file and hadd.log to $brokenDir"
         mv $file $brokenDir
+        mv hadd.log $brokenDir
         echo "- Removing $resultFile"
         rm $resultFile
     else
@@ -103,9 +115,10 @@ do
     fi
 done
 
-echo "- Copying $resultFile to $zinvDir"
+echo "- Copying $resultFile to $zinvDir and moving $resultFile to $condorDir/$dirName"
 if [[ -f $resultFile ]]; then
     cp $resultFile $zinvDir
+    mv $resultFile $condorDir/$dirName
 else
     echo "  ERROR: the file $resultFile does not exit"
     exit 1
@@ -125,11 +138,7 @@ fi
 echo "- Compiling Exacutable"
 make -j8
 
-#echo "- Running Exacutable with -g for photons"
-#./makePlots -f -g -I $resultFile
-
 echo "- Running Exacutable"
-#./makePlots -f -I $resultFile
 # use eval for running command that pipes to another command
 echo $executable
 eval $executable

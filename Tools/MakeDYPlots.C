@@ -31,8 +31,8 @@ int main(int argc, char* argv[])
     bool doPlots = true, doSave = true, doTuple = true, fromTuple = true, runOnCondor = false;
     string histFile = "", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
     int nFiles = -1, startFile = 0, nEvts = -1;
-    double lumi = AnaSamples::luminosity;
-    std::string sbEra = "SB_v1_2017";//"SB_v1_2017";
+    double lumi = AnaSamples::luminosity_2016;
+    std::string sbEra = "SB_v1_2017";
 
     while((opt = getopt_long(argc, argv, "pstfcH:D:N:M:E:P:L:S:", long_options, &option_index)) != -1)
     {
@@ -111,8 +111,8 @@ int main(int argc, char* argv[])
     //AnaSamples::SampleSet        ss(sampleloc, lumi);
     //AnaSamples::SampleCollection sc(ss);
     // the new version
-    AnaSamples::SampleSet        ss("sampleSets.txt");
-    AnaSamples::SampleCollection sc("sampleCollections.txt", ss);
+    AnaSamples::SampleSet        ss("sampleSets.cfg");
+    AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
 
     const double zAcc = 1.0;
     //    const double zAcc = 0.5954;
@@ -417,7 +417,7 @@ int main(int argc, char* argv[])
     set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
-    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
+    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra, "2016");
 
     Plotter plotter(vh, vvf, fromTuple, histFile, nFiles, startFile, nEvts);
     plotter.setCutFlows(cutFlowSummaries);

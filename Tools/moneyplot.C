@@ -42,6 +42,7 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     // open file to write info tables
     std::string txtStr = ".txt";
     freopen((outputFile + txtStr).c_str(), "w", stdout);
+
     
     // Be careful. Accessing root files and/or histograms that don't exist will cause seg faults.
     // Make sure the file and histogram names are correct.
@@ -107,7 +108,7 @@ void run(std::string inputFile, std::string inputHist, std::string outputFile)
     //TH1D* h8 = (TH1D*)f2->Get("hPDF_sym");
     //TH1D* h9 = (TH1D*)f2->Get("hTrig_sym");
 
-    //TH1D* h5_2 = (TH1D*)h5->Clone("hOther_ratio_sym"); WTF JOE!!!!
+    //TH1D* h5_2 = (TH1D*)h5->Clone("hOther_ratio_sym"); yo no se
 
     //TGraphAsymmErrors* g1 = (TGraphAsymmErrors*)f2->Get("");
     TGraphAsymmErrors* g3 = new TGraphAsymmErrors();
@@ -422,9 +423,14 @@ int main(int argc, char* argv[])
     //--------------------------------//
     //--- Search Bins January 2019 ---//
     //--------------------------------//
-    std::string inputFile = "ZJetsToNuNu_HT_400to600.root";
-    run(inputFile, "nSearchBinLowDM/ZNuNu_nSearchBinLowDMnSearchBinLowDMnSearchBinLowDMZJetsToNuNu Search Bin Low DMdata", "moneyplot_LowDM");
-    run(inputFile, "nSearchBinHighDM/ZNuNu_nSearchBinHighDMnSearchBinHighDMnSearchBinHighDMZJetsToNuNu Search Bin High DMdata", "moneyplot_HighDM");
+    // old histogram names
+    //std::string inputFile = "ZJetsToNuNu_HT_400to600.root";
+    //run(inputFile, "nSearchBinLowDM/ZNuNu_nSearchBinLowDMnSearchBinLowDMnSearchBinLowDMZJetsToNuNu Search Bin Low DMdata", "moneyplot_LowDM");
+    //run(inputFile, "nSearchBinHighDM/ZNuNu_nSearchBinHighDMnSearchBinHighDMnSearchBinHighDMZJetsToNuNu Search Bin High DMdata", "moneyplot_HighDM");
+    // new histogram names
+    std::string inputFile = "condor/DataMC_2016_submission_2019-05-09_17-19-42/result.root";
+    run(inputFile, "nSearchBinLowDM/ZNuNu_nSearchBinLowDM_2016nSearchBinLowDMnSearchBinLowDMZJetsToNuNu Search Bin Low DMdata", "moneyplot_LowDM");
+    run(inputFile, "nSearchBinHighDM/ZNuNu_nSearchBinHighDM_2016nSearchBinHighDMnSearchBinHighDMZJetsToNuNu Search Bin High DMdata", "moneyplot_HighDM");
 
 
     return 0;

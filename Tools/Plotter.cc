@@ -67,7 +67,7 @@ Plotter::Plotter(std::vector<HistSummary>& h, std::set<AnaSamples::FileSummary>&
     hists_ = h;
     trees_ = t;
     readFromTuple_ = readFromTuple;
-    lumi_ = AnaSamples::luminosity;
+    lumi_ = AnaSamples::luminosity_2016;
     foutTuple_ = nullptr;
     if(ofname.size() == 0) ofname = "histoutput.root";
     if(readFromTuple)
@@ -307,8 +307,10 @@ Plotter::DataCollection::DataCollection(std::string type, std::string var, std::
 
 void Plotter::createHistsFromTuple()
 {
+    //std::cout << "Running createHistsFromTuple()" << std::endl;
     for(const AnaSamples::FileSummary& file : trees_)
     {
+        //std::cout << "FileSummary tag from trees_: " << file.tag << std::endl;
         std::set<std::string> activeBranches;
 
         //get file list 
@@ -318,6 +320,7 @@ void Plotter::createHistsFromTuple()
         std::map<std::pair<std::string, const DatasetSummary*>, std::pair<const HistSummary*, std::vector<std::shared_ptr<HistCutSummary>>>> histsToFill;
         for(HistSummary& hs : hists_)
         {
+            //std::cout << "HistSummary name = " << hs.name << std::endl;
             for(HistVecAndType& histvec : hs.hists)
             {
                 for(std::shared_ptr<HistCutSummary>& hist : histvec.hcsVec)
@@ -346,8 +349,10 @@ void Plotter::createHistsFromTuple()
 
                     for(const DatasetSummary& ds : hist->dss)
                     {
+                        //std::cout << "DatasetSummary label: " << ds.label << std::endl;
                         for(const AnaSamples::FileSummary& fileToComp : ds.files)
                         {
+                            //std::cout << "FileSummary tag from DatasetSummary: " << fileToComp.tag << std::endl;
                             if(file == fileToComp)
                             {
                                 hist->dssp = &ds;
@@ -392,8 +397,13 @@ void Plotter::createHistsFromTuple()
             }
         }
 
+        bool keepGoing = true;
         // Do not process files if there are no histograms asking for it
-        if(!histsToFill.size() && !cutFlowsToFill.size()) continue;
+        if(!keepGoing && !histsToFill.size() && !cutFlowsToFill.size())
+        {
+            std::cout << "WARNING: skipping file summary " << file.tag << std::endl;
+            continue;
+        }
 
         //TChain *t = new TChain(file.treePath.c_str());
         //file.addFilesToChain(t);
@@ -486,7 +496,7 @@ void Plotter::createHistsFromTuple()
                     if(doHists_)
                     {
                         double fileWgt = file.getWeight();
-                        //printf("In Plotter.cc: %s file weight = %f\n", file.tag.c_str(), fileWgt);
+                        //printf("In Plotter.cc: %s --- weight = %f; lumi = %f\n", file.tag.c_str(), fileWgt, file.lumi);
 
                         for(auto& histsToFillVec : histsToFill)
                         {
@@ -728,6 +738,7 @@ void Plotter::saveHists()
                     TDirectory* mydir = fout_->GetDirectory(dirname.c_str());
                     if(mydir == 0)
                     {
+                        //std::cout << "Creating directory " << dirname << " in the root file" << std::endl;
                         mydir = fout_->mkdir(dirname.c_str(),dirname.c_str());
                     }
                     mydir->cd();
@@ -799,6 +810,8 @@ void Plotter::plot()
     // setTDRStyle() is defined in SusyAnaTools/Tools/tdrstyle.h
     setTDRStyle();
     //gROOT->SetStyle("Plain");
+    // make png files
+    bool make_png = true;
 
     for(HistSummary& hist : hists_)
     {
@@ -892,7 +905,7 @@ void Plotter::plot()
                     hvec.hcsVec.front()->h->SetLineWidth(3);
                     hvec.hcsVec.front()->h->SetMarkerColor(kBlack);
                     hvec.hcsVec.front()->h->SetMarkerStyle(20);
-                    double integral = hvec.hcsVec.front()->h->Integral(0, hvec.hcsVec.front()->h->GetNbinsX() + 1);
+                    double integral = hvec.hcsVec.front()->h->Integral(1, hvec.hcsVec.front()->h->GetNbinsX() + 1);
                     if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", hvec.hcsVec.front()->label.c_str(), integral);
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", hvec.hcsVec.front()->label.c_str(), integral);
                     else                      sprintf(legEntry, "%s (%0.2e)",  hvec.hcsVec.front()->label.c_str(), integral);
@@ -1019,7 +1032,7 @@ void Plotter::plot()
         else
         {
             double locMin = 0.0;
-            double ratioMin = 0.0;
+            double ratioMin = 0.5;
             double legMin = (1.2*max - locMin) * (leg->GetY1() - gPad->GetBottomMargin()) / ((1 - gPad->GetTopMargin()) - gPad->GetBottomMargin());
             if(lmax > legMin)
             {
@@ -1028,11 +1041,12 @@ void Plotter::plot()
             dummy->GetYaxis()->SetRangeUser(0.0, max*1.2);
             if(hist.hists.front().type.compare("ratio") == 0) 
             {
-                dummy->GetYaxis()->SetRangeUser(ratioMin, max*1.2);
-                if (max > 5)
-                {
-                    dummy->GetYaxis()->SetRangeUser(ratioMin, 5*1.2);
-                }
+                dummy->GetYaxis()->SetRangeUser(ratioMin, 2.0);
+                //dummy->GetYaxis()->SetRangeUser(ratioMin, max*1.2);
+                //if (max > 5)
+                //{
+                //    dummy->GetYaxis()->SetRangeUser(ratioMin, 5*1.2);
+                //}
             }
         }
         dummy->Draw();
@@ -1163,13 +1177,13 @@ void Plotter::plot()
                     double d2ymax = 1.5;
                     for(int iBin = 1; iBin <= h1->GetNbinsX(); ++iBin)
                     {
-                        if(h1->GetBinContent(iBin) < 5.0)
+                        if(h1->GetBinContent(iBin) < 2.1)
                         {
                             d2ymax = std::max(d2ymax, h1->GetBinContent(iBin));
                         }
                     }
-                    dummy2->GetYaxis()->SetRangeUser(d2ymin, 1.5*d2ymax);
-                    //dummy2->GetYaxis()->SetRangeUser(0.3, 1.6);
+                    //dummy2->GetYaxis()->SetRangeUser(d2ymin, 1.5*d2ymax);
+                    dummy2->GetYaxis()->SetRangeUser(0.0, 2.1);
                 }
                 else // pull distribution
                 {
@@ -1242,7 +1256,8 @@ void Plotter::plot()
 
         c->cd(1);
         char lumistamp[128];
-        sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", lumi_ / 1000.0);
+        sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", getLumi() / 1000.0);
+        //printf("Luminosity Label: %.1f fb^{-1} (13 TeV)\n", getLumi() / 1000.0);
 
         TLatex mark;
         mark.SetNDC(true);
@@ -1268,8 +1283,11 @@ void Plotter::plot()
         mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
 
         fixOverlay();
-        c->Print((plotDir_ + hist.name+".png").c_str());
         c->Print((plotDir_ + hist.name+".pdf").c_str());
+        if (make_png)
+        {
+            c->Print((plotDir_ + hist.name+".png").c_str());
+        }
 
         delete leg;
         delete dummy;
