@@ -628,6 +628,26 @@ int main(int argc, char* argv[])
         return StackMC;
     };
     
+    // Validation Bins Selection
+    std::map<std::string, std::string> validation_cuts_low_dm = {
+        {"NBeq0_NSVeq0",     ";nBottoms_drLeptonCleaned=0;nSoftBottoms_drLeptonCleaned=0"},
+        {"NBeq0_NSVge1",     ";nBottoms_drLeptonCleaned=0;nSoftBottoms_drLeptonCleaned>=1"},
+        {"NBeq1_NSVeq0",     ";nBottoms_drLeptonCleaned=1;nSoftBottoms_drLeptonCleaned=0"},
+        {"NBeq1_NSVge1",     ";nBottoms_drLeptonCleaned=1;nSoftBottoms_drLeptonCleaned>=1"},
+        {"NBge2",            ";nBottoms_drLeptonCleaned>=2"},
+    };
+    std::map<std::string, std::string> validation_cuts_low_dm_mid_dphi = {
+        {"NBeq0_NSVeq0",     ";nBottoms_drLeptonCleaned=0;nSoftBottoms_drLeptonCleaned=0"},
+        {"NBeq0_NSVge1",     ";nBottoms_drLeptonCleaned=0;nSoftBottoms_drLeptonCleaned>=1"},
+        {"NBge1_NSVeq0",     ";nBottoms_drLeptonCleaned=1;nSoftBottoms_drLeptonCleaned=0"},
+        {"NBge1_NSVge1",     ";nBottoms_drLeptonCleaned=1;nSoftBottoms_drLeptonCleaned>=1"},
+    };
+    std::map<std::string, std::string> validation_cuts_high_dm_mid_dphi = {
+        {"NBeq1",     ";nBottoms_drLeptonCleaned=1"},
+        {"NBge2",     ";nBottoms_drLeptonCleaned>=2"},
+    };
+
+
 
     std::vector<Plotter::CutFlowSummary> cutFlowSummaries;
     
@@ -905,13 +925,15 @@ int main(int argc, char* argv[])
         if (useDYInc) DY_sample = "IncDY";
         else          DY_sample = "DYJetsToLL";
 
+        // MC DY comparison of electron and muon selection
+
         // only di-lepton selection
         PDS dsDY_LowDM("DY",                    fileMap[DY_sample + yearTag],  "",               "");
-        PDS dsDY_LowDM_Electron("DY Electron",  fileMap[DY_sample + yearTag],  "passDiElecSel",  "");
-        PDS dsDY_LowDM_Muon("DY Muon",          fileMap[DY_sample + yearTag],  "passDiMuSel",    "");
+        PDS dsDY_LowDM_Electron("DY Electron",  fileMap[DY_sample + yearTag],  "passDiElecSel",  "DiElecSF");
+        PDS dsDY_LowDM_Muon("DY Muon",          fileMap[DY_sample + yearTag],  "passDiMuSel",    "DiMuSF");
         PDS dsDY_HighDM("DY",                   fileMap[DY_sample + yearTag],  "",               "");
-        PDS dsDY_HighDM_Electron("DY Electron", fileMap[DY_sample + yearTag],  "passDiElecSel",  "");
-        PDS dsDY_HighDM_Muon("DY Muon",         fileMap[DY_sample + yearTag],  "passDiMuSel",    "");
+        PDS dsDY_HighDM_Electron("DY Electron", fileMap[DY_sample + yearTag],  "passDiElecSel",  "DiElecSF");
+        PDS dsDY_HighDM_Muon("DY Muon",         fileMap[DY_sample + yearTag],  "passDiMuSel",    "DiMuSF");
 
         // number of Electrons
         PDC dcMC_LowDM_nElectrons("single",           "nElectrons_Stop0l", {dsDY_LowDM});
@@ -941,6 +963,11 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("MC_HighDM_nMuons" + eraTag,     {dcMC_HighDM_nMuons, dcMC_HighDM_Electron_nMuons, dcMC_HighDM_Muon_nMuons},             {2, 3}, "", 10,  0,  10, true, false, "nMuons", "Events"));
         vh.push_back(PHS("MC_LowDM_bestRecoZM" + eraTag,  {dcMC_LowDM_bestRecoZM, dcMC_LowDM_Electron_bestRecoZM, dcMC_LowDM_Muon_bestRecoZM},    {2, 3}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
         vh.push_back(PHS("MC_HighDM_bestRecoZM" + eraTag, {dcMC_HighDM_bestRecoZM, dcMC_HighDM_Electron_bestRecoZM, dcMC_HighDM_Muon_bestRecoZM}, {2, 3}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
+
+
+        // Validation Bins Selection
+
+
 
         // Data
         // Note: Apply Flag_eeBadScFilter to Data but not MC
