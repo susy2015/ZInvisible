@@ -17,8 +17,6 @@ class SearchBins:
         self.S = shape
         self.eras = eras
         self.plot_dir = plot_dir
-        if self.plot_dir[-1] != "/":
-            self.plot_dir += "/"
         self.verbose = verbose
         self.low_dm_bins  = range( 0, 1)
         self.high_dm_bins = range( 1, 2)
@@ -33,8 +31,6 @@ class ValidationBins:
         self.S = shape
         self.eras = eras
         self.plot_dir = plot_dir
-        if self.plot_dir[-1] != "/":
-            self.plot_dir += "/"
         self.verbose = verbose
         self.binValues = {}
         self.values = ["norm", "shape", "mc", "pred"]

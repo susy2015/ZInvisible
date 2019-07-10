@@ -26,17 +26,14 @@ def setupHist(hist, labels, title, color, y_min, y_max):
 def makeCutflows(file_name, era, plot_dir, doPhotons):
     eraTag = "_" + era
     h_dir = "CutFlows/"
-    if plot_dir[-1] != "/":
-        plot_dir += "/"
     if h_dir[-1] != "/":
         h_dir += "/"
+    
     # check that the file exists
     if not os.path.isfile(file_name): 
         print "The file {0} does not exist".format(file_name)
         return
-    # make directory for plots if it does not exist
-    if not os.path.exists(plot_dir):
-        os.makedirs(plot_dir)
+    
     # colors
     red_color    = "vermillion"
     blue_color   = "electric blue"
@@ -276,10 +273,10 @@ def makeCutflows(file_name, era, plot_dir, doPhotons):
         c.SaveAs(plot_name + "_DataMCRatios_LogScale" + eraTag + ".png")
 
 def main():
-    plot_dir = "more_plots"
+    plot_dir = "more_plots/"
     # set per version
     doPhotons = True
-    makeCutflows("histoutput.root",    "2016",    plot_dir, doPhotons)
+    makeCutflows("histoutput.root", "2016", plot_dir, doPhotons)
 
 if __name__ == "__main__":
     main()

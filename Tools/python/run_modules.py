@@ -1,6 +1,7 @@
 # run_modules.py
 
 import json
+import os
 from cutflow_plot import makeCutflows 
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
@@ -14,14 +15,28 @@ def main():
     draw = True
     verbose = False
     
-    plot_dir = "more_plots"
-    json_file = "run_2.json" 
     eras = ["2016", "2017", "2018_AB", "2018_CD"]
+    json_file = "run_2019-06-23.json" 
+    
+    plot_dir  = "more_plots"
+    # add "/" to directory if not present
+    if plot_dir[-1] != "/":
+        plot_dir += "/"
+    # make directory if it does not exist
+    if not os.path.exists(plot_dir):
+        os.makedirs(plot_dir)
+    
+    latex_dir = "latex_files"
+    # add "/" to directory if not present
+    if latex_dir[-1] != "/":
+        latex_dir += "/"
+    # make directory if it does not exist
+    if not os.path.exists(latex_dir):
+        os.makedirs(latex_dir)
+    
 
-    #N = Normalization(useAllMC, verbose)
-    #S = Shape(plot_dir, draw, verbose)
-    N = Normalization(useAllMC, False)
-    S = Shape(plot_dir, draw, False)
+    N = Normalization(useAllMC, verbose)
+    S = Shape(plot_dir, draw, verbose)
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
@@ -33,7 +48,7 @@ def main():
             N.getNormAndError(result_file, era)
             S.getShape(result_file, era)
 
-        N.makeTexFile("normalization_Zmass.tex")
+        N.makeTexFile(latex_dir + "normalization_Zmass.tex")
         
         # search bins
         SB = SearchBins(N, S, eras, plot_dir, verbose)
@@ -44,7 +59,7 @@ def main():
             result_file = "condor/" + runDir + "/result.root"
             VB.getValues(result_file, era)
         
-        VB.makeTexFile("zinv_prediction.tex")
+        VB.makeTexFile(latex_dir + "zinv_prediction.tex")
 
 
 if __name__ == "__main__":

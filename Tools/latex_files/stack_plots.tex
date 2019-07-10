@@ -1,0 +1,47 @@
+\documentclass[10pt,xcolor=svgnames,fleqn,aspectratio=169]{beamer}
+
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{xcolor,colortbl}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{graphicx}
+\usepackage{cancel}
+
+\def\blue{\color{DodgerBlue}}
+\def\green{\color{Green}}
+\def\red{\color{Red}}
+\def\Orchid{\color{Orchid}}
+\definecolor{DodgerBlueDark}{HTML}{1873cc}
+
+\mode<presentation>
+\usetheme{Copenhagen}
+\usecolortheme[named=DodgerBlueDark]{structure}
+%\useoutertheme{infolines}
+\useoutertheme[footline=authortitle]{miniframes}
+%\setbeamertemplate{headline}[infolines theme]
+\setbeamertemplate{headline}[default]
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[miniframes theme]
+\setbeamertemplate{footline}[page number]
+
+\title{Z to Invisible: Data and MC Stack Plots}
+
+\author{\textcolor{DodgerBlueDark}{\bf C.~Smith\inst{1}}}
+\institute{\inst{1} Baylor}
+\date{\today}
+
+\renewcommand{\arraystretch}{1.2}
+\begin{document}
+
+\begin{frame}[plain]
+\maketitle
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{stack_snippet.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+
