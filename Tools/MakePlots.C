@@ -657,7 +657,7 @@ int main(int argc, char* argv[])
                               "SAT_Pass_MET_drLeptonCleaned",
                               "SAT_Pass_HT_drLeptonCleaned",
                               "SAT_Pass_NJets20_drLeptonCleaned",
-                              "SAT_Pass_dPhiMETLowDM",
+                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
                              };
     // Electron_Loose
     std::vector<std::string> Cuts_Data_Electron_Loose = {
@@ -673,7 +673,7 @@ int main(int argc, char* argv[])
                               "SAT_Pass_MET_Loose_drLeptonCleaned",
                               "SAT_Pass_HT_drLeptonCleaned",
                               "SAT_Pass_NJets20_drLeptonCleaned",
-                              "SAT_Pass_dPhiMETLowDM",
+                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
                              };
     // Electron_Mid
     std::vector<std::string> Cuts_Data_Electron_Mid = {
@@ -689,7 +689,7 @@ int main(int argc, char* argv[])
                               "SAT_Pass_MET_Mid_drLeptonCleaned",
                               "SAT_Pass_HT_drLeptonCleaned",
                               "SAT_Pass_NJets20_drLeptonCleaned",
-                              "SAT_Pass_dPhiMETLowDM",
+                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
                              };
     // Muon
     std::vector<std::string> Cuts_Data_Muon = {
@@ -705,7 +705,7 @@ int main(int argc, char* argv[])
                               "SAT_Pass_MET_drLeptonCleaned",
                               "SAT_Pass_HT_drLeptonCleaned",
                               "SAT_Pass_NJets20_drLeptonCleaned",
-                              "SAT_Pass_dPhiMETLowDM",
+                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
                              };
     // Muon_Loose
     std::vector<std::string> Cuts_Data_Muon_Loose = {
@@ -721,7 +721,7 @@ int main(int argc, char* argv[])
                               "SAT_Pass_MET_Loose_drLeptonCleaned",
                               "SAT_Pass_HT_drLeptonCleaned",
                               "SAT_Pass_NJets20_drLeptonCleaned",
-                              "SAT_Pass_dPhiMETLowDM",
+                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
                              };
     // Muon_Mid
     std::vector<std::string> Cuts_Data_Muon_Mid = {
@@ -737,7 +737,7 @@ int main(int argc, char* argv[])
                               "SAT_Pass_MET_Mid_drLeptonCleaned",
                               "SAT_Pass_HT_drLeptonCleaned",
                               "SAT_Pass_NJets20_drLeptonCleaned",
-                              "SAT_Pass_dPhiMETLowDM",
+                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
                              };
     // Photon
     std::vector<std::string> Cuts_Data_Photon = {
@@ -752,7 +752,24 @@ int main(int argc, char* argv[])
                               "SAT_Pass_MET_drPhotonCleaned",
                               "SAT_Pass_HT_drPhotonCleaned",
                               "SAT_Pass_NJets20_drPhotonCleaned",
-                              "SAT_Pass_dPhiMETLowDM",
+                              "SAT_Pass_dPhiMETLowDM_drPhotonCleaned",
+                             };
+    std::vector<std::string> Cuts_Data_Photon_LowDM_All = {
+                              "passPhotonTrigger;Pass_LeptonVeto;passPhotonSelection;Flag_eeBadScFilter" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,
+                              "SAT_Pass_Baseline_drPhotonCleaned",
+                              "nMergedTops_drPhotonCleaned=0",
+                              "nResolvedTops_drPhotonCleaned=0",
+                              "nWs_drPhotonCleaned=0",
+                              "SAT_Pass_ISR_drPhotonCleaned",
+                              "SAT_Pass_S_MET_drPhotonCleaned",
+                              "SAT_Pass_MTB_LowDM_drPhotonCleaned",
+                             };
+    std::vector<std::string> Cuts_Data_Photon_HighDM_All = {
+                              "passPhotonTrigger;Pass_LeptonVeto;passPhotonSelection;Flag_eeBadScFilter" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,
+                              "SAT_Pass_Baseline_drPhotonCleaned",
+                              "SAT_Pass_dPhiMETHighDM_drPhotonCleaned",
+                              "nBottoms_drPhotonCleaned>=1",
+                              "nJets_drPhotonCleaned>=5",
                              };
     
     
@@ -896,6 +913,18 @@ int main(int argc, char* argv[])
     std::vector<std::string> CutLevels_Data_Photon_HighDM = SusyUtility::getCutLevels(Cuts_Data_Photon_HighDM);
     std::vector<std::string> CutLevels_MC_Photon_LowDM    = SusyUtility::getCutLevels(Cuts_MC_Photon_LowDM);
     std::vector<std::string> CutLevels_MC_Photon_HighDM   = SusyUtility::getCutLevels(Cuts_MC_Photon_HighDM);
+    // Cuts_Data_Photon_LowDM_All
+    std::vector<std::string> Cuts_MC_Photon_LowDM_All     = Cuts_Data_Photon_LowDM_All;
+    // don't apply passPhotonTrigger and Flag_eeBadScFilter to MC
+    Cuts_MC_Photon_LowDM_All[0] = "Pass_LeptonVeto;passPhotonSelection" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned;
+    std::vector<std::string> CutLevels_Data_Photon_LowDM_All    = SusyUtility::getCutLevels(Cuts_Data_Photon_LowDM_All);
+    std::vector<std::string> CutLevels_MC_Photon_LowDM_All      = SusyUtility::getCutLevels(Cuts_MC_Photon_LowDM_All);
+    // Cuts_Data_Photon_HighDM_All
+    std::vector<std::string> Cuts_MC_Photon_HighDM_All     = Cuts_Data_Photon_HighDM_All;
+    // don't apply passPhotonTrigger and Flag_eeBadScFilter to MC
+    Cuts_MC_Photon_HighDM_All[0] = "Pass_LeptonVeto;passPhotonSelection" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned;
+    std::vector<std::string> CutLevels_Data_Photon_HighDM_All    = SusyUtility::getCutLevels(Cuts_Data_Photon_HighDM_All);
+    std::vector<std::string> CutLevels_MC_Photon_HighDM_All      = SusyUtility::getCutLevels(Cuts_MC_Photon_HighDM_All);
     
     // di-electron
     if (doDataMCElectron)
@@ -1595,10 +1624,14 @@ int main(int argc, char* argv[])
         
         // cut flow: name, DataCollection, cutLevels
         // Plotter::CutFlowSummary::CutFlowSummary(std::string n, Plotter::DataCollection ns, std::vector<std::string> cutLevels)
-        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Photon_LowDM_met",    dcData_Photon_LowDM_met,  CutLevels_Data_Photon_LowDM));
-        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Photon_HighDM_met",   dcData_Photon_HighDM_met, CutLevels_Data_Photon_HighDM));
-        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Photon_LowDM_met",      dcMC_Photon_LowDM_met,    CutLevels_MC_Photon_LowDM));
-        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Photon_HighDM_met",     dcMC_Photon_HighDM_met,   CutLevels_MC_Photon_HighDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Photon_LowDM_met",      dcData_Photon_LowDM_met,  CutLevels_Data_Photon_LowDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Photon_HighDM_met",     dcData_Photon_HighDM_met, CutLevels_Data_Photon_HighDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Photon_LowDM_met",        dcMC_Photon_LowDM_met,    CutLevels_MC_Photon_LowDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Photon_HighDM_met",       dcMC_Photon_HighDM_met,   CutLevels_MC_Photon_HighDM));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Photon_LowDM_All_met",  dcData_Photon_LowDM_met,  CutLevels_Data_Photon_LowDM_All));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_Photon_HighDM_All_met", dcData_Photon_HighDM_met, CutLevels_Data_Photon_HighDM_All));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Photon_LowDM_All_met",    dcMC_Photon_LowDM_met,    CutLevels_MC_Photon_LowDM_All));
+        cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Photon_HighDM_All_met",   dcMC_Photon_HighDM_met,   CutLevels_MC_Photon_HighDM_All));
     }
 
 
