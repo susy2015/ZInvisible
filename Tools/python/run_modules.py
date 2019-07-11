@@ -16,7 +16,7 @@ def main():
     verbose = False
     
     eras = ["2016", "2017", "2018_AB", "2018_CD"]
-    json_file = "run_2019-06-23.json" 
+    json_file = "run_2019-07-10.json" 
     
     plot_dir  = "more_plots"
     # add "/" to directory if not present

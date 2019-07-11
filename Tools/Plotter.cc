@@ -487,6 +487,8 @@ void Plotter::createHistsFromTuple()
                             }
                         }
                     }
+                    // skip events for testing
+                    //if (tr.getEvtNum() < 350000) continue;
 
                     //If maxEvents_ is set, stop after so many events
                     if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;

@@ -94,6 +94,23 @@ def makeCutflows(file_name, era, plot_dir, doPhotons):
         "nJets",
         "dPhi",
     ]
+    cutsPhotonLowDMAll = [
+        "preBaseline",
+        "baseline",
+        "nMergedTops",
+        "nResolvedTops",
+        "nWs",
+        "ISR",
+        "Smet",
+        "mtb",
+    ]
+    cutsPhotonHighDMAll = [
+        "preBaseline",
+        "baseline",
+        "dPhi",
+        "nBottoms",
+        "nJets",
+    ]
 
     # copy list instead of pointer to list
     cutsZNuNuLowDM = cutsZNuNu[:]
@@ -131,6 +148,8 @@ def makeCutflows(file_name, era, plot_dir, doPhotons):
     if doPhotons:
         h_map["CutFlow_Photon_LowDM"]  = {"data" : "CutFlow_Data_Photon_LowDM_met",  "mc" : "CutFlow_MC_Photon_LowDM_met",  "cuts" : cutsPhotonLowDM}
         h_map["CutFlow_Photon_HighDM"] = {"data" : "CutFlow_Data_Photon_HighDM_met", "mc" : "CutFlow_MC_Photon_HighDM_met", "cuts" : cutsPhotonHighDM}
+        h_map["CutFlow_Photon_LowDM_All"]  = {"data" : "CutFlow_Data_Photon_LowDM_All_met",  "mc" : "CutFlow_MC_Photon_LowDM_All_met",  "cuts" : cutsPhotonLowDMAll}
+        h_map["CutFlow_Photon_HighDM_All"] = {"data" : "CutFlow_Data_Photon_HighDM_All_met", "mc" : "CutFlow_MC_Photon_HighDM_All_met", "cuts" : cutsPhotonHighDMAll}
     plot_map = {
         "CutFlow_LowDM"  : {"Electron" : "CutFlow_Electron_LowDM",  "Muon" : "CutFlow_Muon_LowDM",  "cuts" :  cutsLeptonLowDM},
         "CutFlow_HighDM" : {"Electron" : "CutFlow_Electron_HighDM", "Muon" : "CutFlow_Muon_HighDM", "cuts" :  cutsLeptonHighDM}
