@@ -118,20 +118,6 @@ public:
         DataCollection(std::string type, std::string var, std::vector<std::vector<DatasetSummary>> vvds);
     };
 
-	class Scanner
-	{
-		public:
-			std::string name;
-			std::set<std::string> vars;
-			std::vector<DatasetSummary> datasets;
-			double weight;
-			DatasetSummary currentDS;
-
-			Scanner(std::string name, std::set<std::string> vars, std::vector<DatasetSummary> datasets);
-
-			void initBranches();
-	};
-
     class HistSummary : public Cuttable
     {
     public:
@@ -190,7 +176,6 @@ public:
     void setRegisterFunction(RegisterFunctions* rf);
     void setPrintInterval(const int printInterval);
     void setCutFlows(std::vector<CutFlowSummary> cfs);
-	void setScanners(std::vector<Scanner> scanners);
 
     double getLumi();
 
@@ -200,7 +185,6 @@ public:
 private:
     std::vector<HistSummary> hists_;
     std::vector<CutFlowSummary> cutFlows_;
-	std::vector<Scanner> scanners_;
     std::set<AnaSamples::FileSummary> trees_;
     std::string plotDir_;
     std::string foutTupleName_;
