@@ -32,7 +32,8 @@ cd CMSSW_10_2_9
 cmsenv
 ```
 
-WARNING: It is unwise to rename the path of your CMSSW area (e.g. any directory in your path before the CMSSW_10_2_9 directory) after checking out a CMSSW release. It will cause things to break because CMSSW_BASE will still be set to the old directory name.
+**WARNING:** It is unwise to rename the path of your CMSSW area (e.g. any directory in your path before the CMSSW_10_2_9 directory) after checking out a CMSSW release. It will cause things to break because CMSSW_BASE will still be set to the old directory name.
+
 
 Checkout the ZInvisible repository.
 ```
@@ -42,16 +43,28 @@ cd ZInvisible/Tools
 git checkout NanoAOD
 ```
 
+Checkout the NanoSUSY-tools repository and make softlinks of the trigger efficiency root files.
+```
+cd $CMSSW_BASE/src
+git clone -b postpro_v2.7 git@github.com:susy2015/NanoSUSY-tools.git PhysicsTools/NanoSUSYTools
+cd $CMSSW_BASE/src/ZInvisible/Tools
+ln -s $CMSSW_BASE/src/PhysicsTools/NanoSUSYTools/data/trigger_eff/*.root .
+```
+
 ## Get Configuration Files
 
-Go to the `ZInvisible/Tools` directory.
+Go to the `ZInvisible/Tools` directory and checkout the config files using getTaggerCfg.sh and getStopCfg.sh.
 ```
-cd ZInvisible/Tools
+cd $CMSSW_BASE/src/ZInvisible/Tools
+mkdir ../../myTopTaggerCfgs
+mkdir ../../myStopCfgs
+getTaggerCfg.sh -t DeepCombined_fromNanoAOD_RES_T_DeepAK8_T_v1.0.1 -d ../../myTopTaggerCfgs -o
+getStopCfg.sh -t PostProcessed_StopTuple_V2.9.0 -d ../../myStopCfgs -o
 ```
 
-Then follow the instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files).
+There are more detailed instructions that you can reference [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files).
 
-Make sure that you checkout the configuration files in the `ZInvisible/Tools` directory (with softlinks if you use getTaggerCfg.sh and getStopCfg.sh). You may specify a different directory for the area where the release is downloaded, as the softlinks will point to that location.
+Make sure that you checkout the configuration files in the `$CMSSW_BASE/src/ZInvisible/Tools` directory (with softlinks if you use getTaggerCfg.sh and getStopCfg.sh). You may specify a different directory for the area where the release is downloaded, as the softlinks will point to that location.
 
 ## Setup
 
@@ -82,8 +95,9 @@ make -j8
 
 You will need to compile after making changes to the source code (.cc, .h, Makefile, etc). If you change the Makefile, you will need to run `make clean` and then `make`.
 
-Copy this root file containing systematics (from the SUS-16-050 analysis). This file is used by moneyplot to show systematics in each search bin. We still need to redo the systematics for the full Run 2 analysis.
+Copy the following root files from Caleb's area. These files will need to be updated for our full Run 2 analysis (if we still use them).
 ```
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/effhists_GJets.root .
 cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/syst_all.root .
 ```
 
@@ -175,62 +189,67 @@ watch "condor_q | tail"     watch job status; use CRTL-C to stop
 
 Your condor jobs should produce log, stdout, and stderr files for each job in the logs directory. You can check these for errors.
 
-### Data/MC Samples
+### Submitting Data and MC Samples
 
-Submit 2016 MC only:
-```
-python condorSubmit.py -d DYJetsToLL_2016,TTbarNoHad_2016,SingleTopZinv_2016,Rare_2016,TTZ_2016,Diboson_2016,GJets_2016,QCD_2016,WJetsToLNu_2016,TTbarAll_2016,tW_2016,ZJetsToNuNu_2016 -n 1 -y 2016
-```
+- All Data and MC for Run 2
+- Electron, Muon, and Photon Control Regions
 
-Submit 2016 Data only:
-```
-python condorSubmit.py -d Data_SingleMuon_2016,Data_SinglePhoton_2016 -n 1 -y 2016
-```
+Note: If you use both the lepton and photon control regions, do not run over both TTbarNoHad and TTbarAll, as TTbarNoHad is a subset of TTbarAll. Just use TTbarAll.
 
-Submit 2016 Data and MC:
+Submit 2016 Electron, Muon and Photon Data and MC:
 ```
-python condorSubmit.py -d Data_SingleMuon_2016,DYJetsToLL_2016,TTbarNoHad_2016,SingleTopZinv_2016,Rare_2016,TTZ_2016,Diboson_2016,Data_SinglePhoton_2016,GJets_2016,QCD_2016,WJetsToLNu_2016,TTbarAll_2016,tW_2016,ZJetsToNuNu_2016 -n 1 -y 2016
+python condorSubmit.py -d Data_SingleElectron_2016,Data_SingleMuon_2016,Data_SinglePhoton_2016,DYJetsToLL_2016,SingleTopZinv_2016,Rare_2016,TTZ_2016,Diboson_2016,GJets_2016,QCD_Photon_2016,WJetsToLNu_2016,TTbarAll_2016,tW_2016,ZJetsToNuNu_2016 -n 2 -y 2016
 ```
 
-Submit 2017 MC only:
+Submit 2017 Electron, Muon and Photon Data and MC:
 ```
-python condorSubmit.py -d DYJetsToLL_2017,TTbarNoHad_2017,SingleTopZinv_2017,Rare_2017,TTZ_2017,Diboson_2017,GJets_2017,QCD_2017,WJetsToLNu_2017,TTbarAll_2017,tW_2017,ZJetsToNuNu_2017 -n 1 -y 2017
-```
-
-Submit 2017 Data only:
-```
-python condorSubmit.py -d Data_SingleMuon_2017,Data_SinglePhoton_2017 -n 1 -y 2017
+python condorSubmit.py -d Data_SingleElectron_2017,Data_SingleMuon_2017,Data_SinglePhoton_2017,DYJetsToLL_2017,SingleTopZinv_2017,Rare_2017,TTZ_2017,Diboson_2017,GJets_2017,QCD_Photon_2017,WJetsToLNu_2017,TTbarAll_2017,tW_2017,ZJetsToNuNu_2017 -n 2 -y 2017
 ```
 
-Submit 2017 Data and MC:
+Submit 2018_AB Electron, Muon and Photon Data and MC:
 ```
-python condorSubmit.py -d Data_SingleMuon_2017,DYJetsToLL_2017,TTbarNoHad_2017,SingleTopZinv_2017,Rare_2017,TTZ_2017,Diboson_2017,Data_SinglePhoton_2017,GJets_2017,QCD_2017,WJetsToLNu_2017,TTbarAll_2017,tW_2017,ZJetsToNuNu_2017 -n 1 -y 2017
-```
-
-Submit 2017 Muon Data and MC:
-```
-python condorSubmit.py -d Data_SingleMuon_2017,DYJetsToLL_2017,TTbarNoHad_2017,SingleTopZinv_2017,Rare_2017,TTZ_2017,Diboson_2017,ZJetsToNuNu_2017 -n 1 -y 2017
+python condorSubmit.py -d Data_EGamma_2018_PeriodsAB,Data_SingleMuon_2018_PeriodsAB,DYJetsToLL_2018,SingleTopZinv_2018,Rare_2018,TTZ_2018,Diboson_2018,GJets_2018,QCD_Photon_2018,WJetsToLNu_2018,TTbarAll_2018,tW_2018,ZJetsToNuNu_2018 -n 2 -y 2018_AB
 ```
 
-Submit 2017 Photon Data and MC:
+Submit 2018_CD Electron, Muon and Photon Data and MC:
 ```
-python condorSubmit.py -d Rare_2017,TTZ_2017,Diboson_2017,Data_SinglePhoton_2017,GJets_2017,QCD_2017,WJetsToLNu_2017,TTbarAll_2017,tW_2017,ZJetsToNuNu_2017 -n 1 -y 2017
+python condorSubmit.py -d Data_EGamma_2018_PeriodsCD,Data_SingleMuon_2018_PeriodsCD,DYJetsToLL_2018,SingleTopZinv_2018,Rare_2018,TTZ_2018,Diboson_2018,GJets_2018,QCD_Photon_2018,WJetsToLNu_2018,TTbarAll_2018,tW_2018,ZJetsToNuNu_2018 -n 2 -y 2018_CD
 ```
 
 
 ### Process Output from Condor
 
-If your jobs complete successfully, the jobs will output root files to the condor directory. We have a script called processResults.sh to hadd the output files, which adds the root histograms together and produces one file.
+First get ahadd.py. This is a script that uses multithreading to add histograms together by applying hadd in parallel.
+```
+mkdir ~/bin
+cd ~/bin
+git@github.com:pastika/Alex-Hadd.git
+ln -s Alex-Hadd/ahadd.py .
+```
 
-WARNING: The processResults.sh script moves all root files from your current directory to a new directory and adds them together. Make sure your condor directory only contains root files that were output from condor and that you want to add together.
+Add `~/bin` to your path. I also have `SusyAnaTools/Tools/scripts/` in my path. You can add this line to your ~/.bash_profile using your USERNAME and PATH_TO_WORKING_AREA.
+```
+export PATH="$PATH:/uscms/home/USERNAME/bin/:/uscms/home/USERNAME/PATH_TO_WORKING_AREA/SusyAnaTools/Tools/scripts/"
+```
+
+Then source your ~/.bash_profile to apply this change to your PATH.
+```
+source ~/.bash_profile
+```
+
+If your condor jobs complete successfully, the jobs will output root files to the condor directory. We have a script called processResults.sh to hadd the output files, which adds the root histograms together and produces one file.
+
+**WARNING:** The processResults.sh script moves all root files from your current directory to a new directory and adds them together. Make sure your condor directory only contains root files that were output from condor and that you want to add together.
 
 The script requires two arguments in this order: name, year . The name will be used to create the directory that stores all the root files. The year should be 2016, 2017, or 2018 corresponding to the Data/MC year.
 ```
+cd $CMSSW_BASE/src/ZInvisible/Tools/condor
 ./processResults.sh NAME_FOR_DIRECTORY YEAR
 ```
 
 Here is an example.
 ```
+cd $CMSSW_BASE/src/ZInvisible/Tools/condor
 ./processResults.sh ZJetsToNuNu 2016
 ```
 

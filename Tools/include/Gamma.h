@@ -2,20 +2,20 @@
 #define GAMMA_H
 
 #include "TypeDefinitions.h"
-#include "PhotonTools.h"
+#include "ZInvisible/Tools/PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
 #include "SusyAnaTools/Tools/customize.h"
 #include "SusyAnaTools/Tools/searchBins.h"
 #include "TopTagger/Tools/cpp/TaggerUtility.h"
 #include "TopTagger/Tools/cpp/PlotUtility.h"
-#include "ScaleFactors.h"
-#include "ScaleFactorsttBar.h"
+#include "ZInvisible/Tools/ScaleFactors.h"
+#include "ZInvisible/Tools/ScaleFactorsttBar.h"
 
-#include "TopTagger.h"
-#include "TTModule.h"
-#include "TopTaggerUtilities.h"
-#include "TopTaggerResults.h"
+#include "TopTagger/TopTagger/interface/TopTagger.h"
+#include "TopTagger/TopTagger/interface/TTModule.h"
+#include "TopTagger/TopTagger/interface/TopTaggerUtilities.h"
+#include "TopTagger/TopTagger/interface/TopTaggerResults.h"
 #include "TopTagger/Tools/cpp/PlotUtility.h"
 
 #include "TopTagger/TopTagger/interface/TopObject.h"
@@ -70,6 +70,13 @@ namespace plotterFunctions
         //const auto& genMatched           = tr.getVec<data_t>("genMatched");
         const auto& met                    = tr.getVar<data_t>("MET_pt");
         const auto& metphi                 = tr.getVar<data_t>("MET_phi");
+        
+        
+        // the scale factors only exist in MC, not in Data
+        //const auto& Photon_LooseSF         = tr.getVec<data_t>("Photon_LooseSF");
+        bool usePhotonSF = tr.checkBranch("Photon_LooseSF");
+        std::vector<data_t> Photon_LooseSF;
+        if (usePhotonSF) { Photon_LooseSF = tr.getVec<data_t>("Photon_LooseSF"); }   
 
 
         // toggle debugging print statements
@@ -82,6 +89,7 @@ namespace plotterFunctions
         float metphiWithPhoton = -999.9;
         float cutPhotonPt = -999.9;
         float cutPhotonEta = -999.9;
+        float photonSF = 1.0;
         bool passPhotonSelection = false;
         
         // if you use new, you need to register it or destroy it yourself to clear memory
@@ -98,6 +106,7 @@ namespace plotterFunctions
         //auto* gammaLVecPassMediumID     = new std::vector<TLorentzVector>();
         //auto* gammaLVecPassTightID      = new std::vector<TLorentzVector>();
         auto* gammaJetIndexPassLooseID  = new std::vector<int>();
+        auto* gammaSFPassLooseID        = new std::vector<float>();
         //auto* gammaJetIndexPassMediumID = new std::vector<int>();
         //auto* gammaJetIndexPassTightID  = new std::vector<int>();
         
@@ -184,6 +193,14 @@ namespace plotterFunctions
               {
                   gammaLVecPassLooseID->push_back(gammaLVec[i]);
                   gammaJetIndexPassLooseID->push_back(Photon_jetIdx[i]);
+                  if (usePhotonSF)
+                  {
+                      gammaSFPassLooseID->push_back(Photon_LooseSF[i]);
+                  }
+                  else
+                  {
+                      gammaSFPassLooseID->push_back(1.0);
+                  }
               }
               //if(passMediumPhotonID) 
               //{
@@ -223,6 +240,7 @@ namespace plotterFunctions
             metWithPhotonLVec  += (*gammaLVecPassLooseID)[0];
             metWithPhoton       = metWithPhotonLVec.Pt();
             metphiWithPhoton    = metWithPhotonLVec.Phi();
+            photonSF            = (*gammaSFPassLooseID)[0];
             passPhotonSelection = true;
         }
 
@@ -268,8 +286,8 @@ namespace plotterFunctions
         tr.registerDerivedVar("cutPhotonEta", cutPhotonEta);
         tr.registerDerivedVar("metWithPhoton", metWithPhoton);
         tr.registerDerivedVar("metphiWithPhoton", metphiWithPhoton);
+        tr.registerDerivedVar("photonSF", photonSF);
         tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
-        
         tr.registerDerivedVec("gammaLVecGen", gammaLVecGen);
         tr.registerDerivedVec("gammaLVecGenEta", gammaLVecGenEta);
         tr.registerDerivedVec("gammaLVecGenEtaPt", gammaLVecGenEtaPt);
@@ -285,9 +303,9 @@ namespace plotterFunctions
         tr.registerDerivedVec("gammaJetIndexPassLooseID", gammaJetIndexPassLooseID);
         //tr.registerDerivedVec("gammaJetIndexPassMediumID", gammaJetIndexPassMediumID);
         //tr.registerDerivedVec("gammaJetIndexPassTightID", gammaJetIndexPassTightID);
+        tr.registerDerivedVec("gammaSFPassLooseID", gammaSFPassLooseID);
         
         //tr.registerDerivedVar("photonMet", photonMet);
-        
         //tr.registerDerivedVec("cutPhotons", loosePhotons);
         //tr.registerDerivedVec("totalPhotons", totalPhotons);
         //tr.registerDerivedVec("promptPhotons", promptPhotons);
@@ -298,7 +316,6 @@ namespace plotterFunctions
         //tr.registerDerivedVar("nPhoton", loosePhotons->size());
         //tr.registerDerivedVar("nFakes", fakePhotons->size());
         //tr.registerDerivedVar("nPrompt", promptPhotons->size());
-        
         //tr.registerDerivedVar("passNphoton", totalPhotons->size() >= 1);
         //tr.registerDerivedVar("passNloose", loosePhotons->size() >= 1);
         //tr.registerDerivedVar("passNmedium", mediumPhotons->size() >= 1);

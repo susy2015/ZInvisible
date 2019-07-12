@@ -33,6 +33,7 @@
 #include <iostream>
 #include <string>
 #include <set>
+#include <sys/stat.h>
 
 namespace plotterFunctions
 {
@@ -44,16 +45,23 @@ namespace plotterFunctions
         TH1F* hPhotonAccPt_den;
         TH1F* hPhotonEffPt_num;
         TH1F* hPhotonEffPt_den;
+        bool file_exists;
 
         void generatePhotonEfficiency(NTupleReader& tr)
         {
+            // don't run module if file does not exist
+            if (! file_exists) return;
             const auto& gammaLVecPassLooseID = tr.getVec<TLorentzVector>("gammaLVecPassLooseID"); // loose photon
             const auto& passPhotonSelection  = tr.getVar<bool>("passPhotonSelection");            // photon selection
             data_t photonCrossSectionRatio = -1.0;
             data_t photonAcceptance = -1.0;
             data_t photonEfficiencyPt = -1.0;
             data_t photonPt = -1.0;
-            photonCrossSectionRatio = hCrossSectionRatio->GetBinContent(1);
+            // check that histogram is exists
+            if (hCrossSectionRatio)
+            {
+                photonCrossSectionRatio = hCrossSectionRatio->GetBinContent(1);
+            }
             if (passPhotonSelection)
             {
                 if (gammaLVecPassLooseID.size() == 1)
@@ -107,8 +115,11 @@ namespace plotterFunctions
             hPhotonEffPt_den = nullptr;
             TH1::AddDirectory(false);
             std::string histFile = "effhists_GJets.root";
+            // check if file exists
+            struct stat buffer;  
+            file_exists = bool(stat(histFile.c_str(), &buffer) == 0);
             TFile *f = new TFile(histFile.c_str());
-            if(f)
+            if(file_exists && f)
             {
                 hCrossSectionRatio = static_cast<TH1F*>(f->Get("hCrossSectionRatio"));
                 hPhotonAccPt_num = static_cast<TH1F*>(f->Get("hPhotonAccPt_num"));
@@ -120,7 +131,7 @@ namespace plotterFunctions
             }
             else
             {
-                std::cout << "Failed to open the file " << histFile << std::endl;
+                std::cout << "Failed to open the file " << histFile << ". The GeneratePhotonEfficiency.h module will not be run."<< std::endl;
             }
         }
         ~GeneratePhotonEfficiency() {}
