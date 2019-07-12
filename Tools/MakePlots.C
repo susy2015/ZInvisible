@@ -181,15 +181,15 @@ int main(int argc, char* argv[])
     }
     else if (era.compare("2018") == 0)
     {
-        ElectronDataset = "Data_EGamma";
-        PhotonDataset   = "Data_EGamma";
+        ElectronDataset         = "Data_EGamma";
+        PhotonDataset           = "Data_EGamma";
         Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
     }
     else if (year.compare("2018_PreHEM") == 0)
     {
-        periodTag       = "_PreHEM";
-        ElectronDataset = "Data_EGamma";
-        PhotonDataset   = "Data_EGamma";
+        periodTag               = "_PreHEM";
+        ElectronDataset         = "Data_EGamma";
+        PhotonDataset           = "Data_EGamma";
         Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
     }
     else if (year.compare("2018_PostHEM") == 0)
