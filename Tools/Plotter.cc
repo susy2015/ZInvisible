@@ -305,6 +305,10 @@ Plotter::DataCollection::DataCollection(std::string type, std::string var, std::
     }
 }
 
+Plotter::Scanner::Scanner(std::string name, std::set<std::string> vars, std::vector<DatasetSummary> datasets)
+	: name(name), vars(vars), datasets(datasets)
+{}
+
 void Plotter::createHistsFromTuple()
 {
     //std::cout << "Running createHistsFromTuple()" << std::endl;
@@ -397,6 +401,8 @@ void Plotter::createHistsFromTuple()
             }
         }
 
+		std::vector<std::pair<MiniTupleMaker*, Scanner*>> scannersToFill;
+
         bool keepGoing = true;
         // Do not process files if there are no histograms asking for it
         if(!keepGoing && !histsToFill.size() && !cutFlowsToFill.size())
@@ -409,30 +415,9 @@ void Plotter::createHistsFromTuple()
         //file.addFilesToChain(t);
         std::cout << "Processing file(s): " << file.filePath << std::endl;
 
-        //Set up mini tuple maker
-        TTree *tOut = nullptr;
-        MiniTupleMaker* mtm = nullptr;
-
         if(registerfunc_ == nullptr) registerfunc_ = new RegisterFunctions();
         registerfunc_->remakeBTagCorrector(file.tag);
         registerfunc_->remakeISRreweight(file.tag);
-
-        if(doTuple_)
-        {
-            size_t start = file.filePath.rfind('/');
-            size_t stop  = file.filePath.rfind('.');
-            if(int(stop) - (int(start) + 1) > 0)
-            {
-                std::string treeName = file.filePath.substr(start + 1, stop - start - 1);
-                if(!foutTuple_) foutTuple_ = new TFile(foutTupleName_.c_str(), "RECREATE");
-                foutTuple_->cd();
-                tOut = new TTree(treeName.c_str(), treeName.c_str());
-                mtm = new MiniTupleMaker(tOut);
-                if(file.isData_) mtm->setTupleVars(registerfunc_->getMiniTupleSetData());
-                else             mtm->setTupleVars(registerfunc_->getMiniTupleSet());
-                fout_->cd();
-            }
-        }
 
         int fileCount = 0, startCount = 0;
         int NEvtsTotal = 0;
@@ -474,18 +459,54 @@ void Plotter::createHistsFromTuple()
                     //Things to run only on first event
                     if(tr.isFirstEvent())
                     {
-                        //Initialize the mini tuple branches, needs to be done after first call of tr.getNextEvent()
-                        if(tOut && mtm)
-                        {
-                            try
-                            {
-                                mtm->initBranches(tr);
-                            }
-                            catch(const std::string e)
-                            {
-                                std::cout << "Exception caught in Plotter::createHistsFromTuple(), text follows" << std::endl << e << std::endl;
-                            }
-                        }
+						for(Scanner& sc : scanners_)
+						{
+							for(DatasetSummary& ds : sc.datasets)
+							{
+								TDirectory *tupledir = (TDirectory*) fout_->Get(sc.name.c_str());
+								if(tupledir == NULL)
+								{
+									tupledir = fout_->mkdir(sc.name.c_str(), sc.name.c_str());
+									tupledir->Write();
+								}
+								tupledir->cd();
+
+								TTree *tupletree = (TTree*) tupledir->Get(ds.label.c_str());
+								if(tupletree == NULL)
+									tupletree = new TTree(ds.label.c_str(), ds.label.c_str(), 99, tupledir);
+
+								TBranch *weightbranch = tupletree->GetBranch("weight");
+								if(weightbranch == NULL)
+									tupletree->Branch("weight", &(sc.weight));
+								else
+									weightbranch->SetAddress(&(sc.weight));
+
+								MiniTupleMaker * mtm = new MiniTupleMaker(tupletree);
+								mtm->setTupleVars(sc.vars);
+								mtm->initBranches(tr);
+
+								bool tofill = false;
+								for(const AnaSamples::FileSummary& fileToComp : ds.files)
+								{
+									if(file == fileToComp)
+									{
+										tofill = true;
+									}
+								}
+								
+								if(tofill)
+								{
+									sc.currentDS = ds;
+									scannersToFill.push_back(std::make_pair(mtm, &sc));
+								}
+								else
+								{
+									// Go ahead and write the empty TTree now because we won't write it later
+									tupledir->cd();
+									tupletree->Write();
+								}
+							}
+						}
                     }
 
                     //If maxEvents_ is set, stop after so many events
@@ -533,6 +554,16 @@ void Plotter::createHistsFromTuple()
                         cutFlow->fillHist(tr, weight);
                     }
 
+					double fileWgt = file.getWeight();
+					for (auto &scpair : scannersToFill)
+					{
+						if(scpair.second->currentDS.passCuts(tr))
+						{
+							scpair.second->weight = fileWgt * scpair.second->currentDS.getWeight(tr) * scpair.second->currentDS.kfactor;
+							scpair.first->fill();
+						}
+					}
+					/*
                     //fill mini tuple
                     if(tOut && mtm)
                     {
@@ -546,6 +577,7 @@ void Plotter::createHistsFromTuple()
                             }
                         }
                     }
+					*/
 
                     ++NEvtsTotal;
                 }
@@ -560,12 +592,20 @@ void Plotter::createHistsFromTuple()
             delete f;
         }
 
+		for(auto & scpair : scannersToFill)
+		{
+			scpair.first->GetTree()->GetDirectory()->cd();
+			scpair.first->GetTree()->Write();
+		}
+
+		/*
         if(foutTuple_ && tOut && mtm)
         {
             foutTuple_->cd();
             tOut->Write();
         }
         if(mtm) delete mtm;
+		*/
     }
 }
 
@@ -798,6 +838,11 @@ void Plotter::setPrintInterval(const int printInterval)
 void Plotter::setCutFlows(std::vector<CutFlowSummary> cfs)
 {
     cutFlows_ = cfs;
+}
+
+void Plotter::setScanners(std::vector<Scanner> scanners)
+{
+	scanners_ = scanners;
 }
 
 double Plotter::getLumi()

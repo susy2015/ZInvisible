@@ -48,8 +48,6 @@ public:
         
     virtual void registerFunctions(NTupleReader& tr) {};
     virtual void activateBranches(std::set<std::string>& activeBranches) {};
-    virtual const std::set<std::string> getMiniTupleSet();
-    virtual const std::set<std::string> getMiniTupleSetData();
     virtual void remakeBTagCorrector(std::string sampleName) {};
     virtual void remakeISRreweight(std::string sampleName) {};
     
