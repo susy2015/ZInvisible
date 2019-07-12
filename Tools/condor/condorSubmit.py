@@ -1,6 +1,4 @@
-#!/cvmfs/cms.cern.ch/slc6_amd64_gcc491/cms/cmssw/CMSSW_7_4_8/external/slc6_amd64_gcc491/bin/python
-####!${SRT_CMSSW_RELEASE_BASE_SCRAMRTDEL}/external/${SCRAM_ARCH}/bin/python
-
+#!/usr/bin/env python
 
 import optparse 
 import subprocess
@@ -38,14 +36,11 @@ def main():
     datasets = []
     if options.datasets:
         datasets = options.datasets.split(',')
-    else:
-        print "Please use -d to specify one or more datasets (separate with commas)."
-        exit(1)
 
     # sample config files
-    years = ["2016", "2017", "2018", "2018_AB", "2018_CD"]
+    years = ["2016", "2017", "2018", "2018_PreHEM", "2018_PostHEM"]
     if year not in years:
-        print "Please use -y to enter year (2016, 2017, 2018, 2018_AB, or 2018_CD)."
+        print "Please use -y to enter year (2016, 2017, 2018, 2018_PreHEM, or 2018_PostHEM)."
         exit(1)
 
     yearWithoutPeriod = year[0:4] 
@@ -61,27 +56,7 @@ def main():
                 mvaFileName = line.split("=")[1].strip().strip("\"")
                 break
     
-    # TopTagger_Deep.cfg
-    mvaFileName_Deep = ""
-    with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg") as meowttcfgFile:
-        for line in meowttcfgFile:
-            line = line.split("#")[0]
-            if "modelFile" in line:
-                mvaFileName_Deep = line.split("=")[1].strip().strip("\"")
-                break
-    
-    # TopTagger_DeepCombined.cfg
-    mvaFileName_DeepCombined = ""
-    with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DeepCombined.cfg") as meowttcfgFile:
-        for line in meowttcfgFile:
-            line = line.split("#")[0]
-            if "modelFile" in line:
-                mvaFileName_DeepCombined = line.split("=")[1].strip().strip("\"")
-                break
-    
     print "mvaFileName = {0}".format(mvaFileName)
-    print "mvaFileName_Deep = {0}".format(mvaFileName_Deep)
-    print "mvaFileName_DeepCombined = {0}".format(mvaFileName_DeepCombined)
     
     
     #here I hack in the tarball for GMP, this needs to be generalized to the other options 
@@ -103,8 +78,6 @@ def main():
                           "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_ml.so.3.1",
                           environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DeepCombined.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2016.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2017.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2018.cfg",
@@ -114,8 +87,6 @@ def main():
                          ]
     
     if mvaFileName:                 filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
-    if mvaFileName_Deep:            filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}]
-    if mvaFileName_DeepCombined:    filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_DeepCombined}]
     # for only transfering one year of samples
     #if sampleSetsFile:              filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile]
     #if sampleCollectionsFile:       filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile]
@@ -124,8 +95,6 @@ def main():
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/puppiCorr.root",
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
-                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Deep.cfg",
-                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DeepCombined.cfg",
                            environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                            "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_core.so.3.1",
                            "/uscms_data/d3/pastika/zinv/dev/CMSSW_7_4_8/src/opencv/lib/libopencv_ml.so.3.1",
@@ -136,8 +105,6 @@ def main():
                           ]
     
     if mvaFileName:                 filestoTransferGMEP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
-    if mvaFileName_Deep:            filestoTransferGMEP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_Deep}]
-    if mvaFileName_DeepCombined:    filestoTransferGMEP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName_DeepCombined}]
     if sampleSetsFile:              filestoTransferGMEP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleSetsFile]
     if sampleCollectionsFile:       filestoTransferGMEP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/" + sampleCollectionsFile]
     
@@ -408,7 +375,7 @@ def main():
         #print ds
         print "# --- {0} --- #".format(ds)
         if "Data" in ds:
-            print "Lumi: {0}".format(sc.getFixedLumi())
+            print "Lumi: {0}".format(lumis[ds])
         
         # s: file, n:name, e:nEvts
         for s, n, e in sc.sampleList(ds):
