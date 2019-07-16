@@ -287,6 +287,7 @@ namespace plotterFunctions
             double zMuMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
             TLorentzVector bestRecoMuZ;
             TLorentzVector Zrecopt;
+            auto* bestRecoMuZindices = new std::vector<int>();
             for(int i = 0; i < cutMuVec.size(); ++i)
             {
             Zrecopt =  muonsLVec[0]+muonsLVec[1];//cutMuVec[0] + cutMuVec[1];
@@ -300,6 +301,8 @@ namespace plotterFunctions
                     {
                         bestRecoMuZ = cutMuVec[i] + cutMuVec[j];
                         zMuMassCurrent = zm;
+                        bestRecoMuZindices->push_back(j); //j < i in for loop
+                        bestRecoMuZindices->push_back(i);
                     }
                 }
             }
@@ -542,6 +545,7 @@ namespace plotterFunctions
             
             tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
             tr.registerDerivedVar("bestRecoZM", bestRecoZM);
+            tr.registerDerivedVec("bestRecoMuZindices", bestRecoMuZindices);
             tr.registerDerivedVar("metWithLL", metWithLL);
             tr.registerDerivedVar("metphiWithLL", metphiWithLL);
             tr.registerDerivedVar("cutMuPt1",    cutMuPt1);
