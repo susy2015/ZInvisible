@@ -460,6 +460,7 @@ namespace plotterFunctions
             data_t DiElecTriggerEffPt  = 1.0;
             data_t DiElecTriggerEffEta = 1.0;
             data_t DiElecSF            = 1.0;
+            data_t MuonTriggerEffPt    = 1.0; //Used for TTZ3Lep study
             if (cutMuVec.size() == 2)
             {
                 std::vector<double> leptonPts  = {cutMuPt1, cutMuPt2};
@@ -467,6 +468,7 @@ namespace plotterFunctions
                 DiMuTriggerEffPt  = getEfficiency("Muon_pt", leptonPts);
                 DiMuTriggerEffEta = getEfficiency("Muon_eta", leptonEtas);
                 DiMuSF = cutMuSF[0] * cutMuSF[1];
+                MuonTriggerEffPt =  getEfficiency("Muon_pt", leptonPts);
             }
             if (cutElecVec.size() == 2)
             {
@@ -475,6 +477,16 @@ namespace plotterFunctions
                 DiElecTriggerEffPt  = getEfficiency("Electron_pt", leptonPts);
                 DiElecTriggerEffEta = getEfficiency("Electron_eta", leptonEtas);
                 DiElecSF = cutElecSF[0] * cutElecSF[1];
+            }
+            if (cutMuVec.size() == 1)
+            {
+                std::vector<double> leptonPts  = {cutMuPt1};
+                MuonTriggerEffPt = getEfficiency("Muon_pt", leptonPts);
+            }
+            if (cutMuVec.size() == 3)
+            {
+                std::vector<double> leptonPts  = {cutMuPt1, cutMuPt2, cutMuVec[2].Pt()};
+                MuonTriggerEffPt = getEfficiency("Muon_pt", leptonPts);
             }
             
             // print passMuZinvSelOnZMassPeak conditions
@@ -546,6 +558,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("DiElecTriggerEffPt",  DiElecTriggerEffPt);
             tr.registerDerivedVar("DiElecTriggerEffEta", DiElecTriggerEffEta);
             tr.registerDerivedVar("DiElecSF",            DiElecSF);
+            tr.registerDerivedVar("MuonTriggerEffPt",    MuonTriggerEffPt);
             tr.registerDerivedVar("mindPhiMetJ", mindPhiMetJ);
             tr.registerDerivedVar("ZPtRes", (bestRecoZPt - genZPt)/genZPt);
             tr.registerDerivedVar("ZEtaRes", bestRecoZ.Eta() - genZEta);
