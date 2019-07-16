@@ -286,11 +286,9 @@ namespace plotterFunctions
 
             double zMuMassCurrent = 1.0e300, zEff = 1.0e100, zAcc = 1.0e100;
             TLorentzVector bestRecoMuZ;
-            TLorentzVector Zrecopt;
             auto* bestRecoMuZindices = new std::vector<int>();
             for(int i = 0; i < cutMuVec.size(); ++i)
             {
-            Zrecopt =  muonsLVec[0]+muonsLVec[1];//cutMuVec[0] + cutMuVec[1];
                 if(cutMuVec[i].Pt() < minMuPt) continue;
                 for(int j = 0; j < i && j < cutMuVec.size(); ++j)
                 {
@@ -452,7 +450,6 @@ namespace plotterFunctions
             // Z values
             data_t bestRecoZPt  = bestRecoZ.Pt();
             data_t bestRecoZM   = bestRecoZ.M();
-            data_t Zrecoptpt    = Zrecopt.Pt();
             data_t metWithLL    = cleanMet.Pt();
             data_t metphiWithLL = cleanMet.Phi();
             
@@ -606,7 +603,6 @@ namespace plotterFunctions
             tr.registerDerivedVar("passElMuZinvSel",             passElMuZinvSel);
             tr.registerDerivedVar("passElMuZinvSelOnZMassPeak",  passElMuZinvSelOnZMassPeak);
             tr.registerDerivedVar("passElMuZinvSelOffZMassPeak", passElMuZinvSelOffZMassPeak);
-            tr.registerDerivedVar("Zrecopt", Zrecoptpt);
         }
 
         double getEfficiency(std::string kinematic, std::vector<double> values)
