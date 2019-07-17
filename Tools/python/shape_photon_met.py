@@ -21,8 +21,6 @@ class Shape:
         # variable is also TDirectoryFile that holds histograms 
         self.variable = "metWithPhoton"
         self.plot_dir = plot_dir
-        if self.plot_dir[-1] != "/":
-            self.plot_dir += "/"
         self.ratio_map = {}
         self.shape_map = {}
             
@@ -65,9 +63,6 @@ class Shape:
         if not os.path.isfile(file_name): 
             print "The file {0} does not exist".format(file_name)
             return
-        # make directory for plots if it does not exist
-        if not os.path.exists(self.plot_dir):
-            os.makedirs(self.plot_dir)
         
         f = ROOT.TFile(file_name)
         c = ROOT.TCanvas("c", "c", 800, 800)
@@ -257,7 +252,7 @@ class Shape:
         
 
 def main():
-    plot_dir = "more_plots"
+    plot_dir = "more_plots/"
     draw = False
     verbose = False
     S = Shape(plot_dir, draw, verbose)

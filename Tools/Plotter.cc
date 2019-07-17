@@ -487,6 +487,8 @@ void Plotter::createHistsFromTuple()
                             }
                         }
                     }
+                    // skip events for testing
+                    //if (tr.getEvtNum() < 350000) continue;
 
                     //If maxEvents_ is set, stop after so many events
                     if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;
@@ -701,9 +703,8 @@ double Plotter::Cut::translateVar(const NTupleReader& tr) const
 
 bool Plotter::Cut::boolReturn(const NTupleReader& tr) const
 {
-    // Functions here
-
-    // Booleans here
+    //debugging
+    //std::cout << "In Plotter::Cut::boolReturn(): name.name = " << name.name << std::endl;
     return tr.getVar<bool>(name.name);
 }
 

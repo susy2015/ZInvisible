@@ -2,20 +2,20 @@
 #define GAMMA_H
 
 #include "TypeDefinitions.h"
-#include "PhotonTools.h"
+#include "ZInvisible/Tools/PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
 #include "SusyAnaTools/Tools/customize.h"
 #include "SusyAnaTools/Tools/searchBins.h"
 #include "TopTagger/Tools/cpp/TaggerUtility.h"
 #include "TopTagger/Tools/cpp/PlotUtility.h"
-#include "ScaleFactors.h"
-#include "ScaleFactorsttBar.h"
+#include "ZInvisible/Tools/ScaleFactors.h"
+#include "ZInvisible/Tools/ScaleFactorsttBar.h"
 
-#include "TopTagger.h"
-#include "TTModule.h"
-#include "TopTaggerUtilities.h"
-#include "TopTaggerResults.h"
+#include "TopTagger/TopTagger/interface/TopTagger.h"
+#include "TopTagger/TopTagger/interface/TTModule.h"
+#include "TopTagger/TopTagger/interface/TopTaggerUtilities.h"
+#include "TopTagger/TopTagger/interface/TopTaggerResults.h"
 #include "TopTagger/Tools/cpp/PlotUtility.h"
 
 #include "TopTagger/TopTagger/interface/TopObject.h"
