@@ -570,7 +570,7 @@ int main(int argc, char* argv[])
     {
         PDS dsDYInc(         "DY Inc",       fileMap["IncDY" + yearTag],           cuts,   weights);
         PDS dsDY(            "DY",           fileMap["DYJetsToLL" + yearTag],      cuts,   weights);
-        PDS dsTTbar(         "t#bar{t}",     fileMap["TTbar" + yearTag],           cuts,   weights + ISRWeight);
+        PDS dsTTbar(         "t#bar{t}",     fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight);
         PDS dsSingleTopZinv( "Single t",     fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsRare(          "Rare",         fileMap["Rare" + yearTag],            cuts,   weights);
         PDS dsDiboson(       "Diboson",      fileMap["Diboson" + yearTag],         cuts,   weights);
@@ -591,7 +591,7 @@ int main(int argc, char* argv[])
     {
         PDS dsDYInc(            "IncZToLL",         fileMap["IncDY" + yearTag],           cuts,   weights);
         PDS dsDY(               "ZToLL",            fileMap["DYJetsToLL" + yearTag],      cuts,   weights);
-        PDS dsTTbar(            "NoZToLL",          fileMap["TTbar" + yearTag],           cuts,   weights + ISRWeight);
+        PDS dsTTbar(            "NoZToLL",          fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight);
         PDS dsSingleTopZinv(    "Single t",         fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsRareZ(            "RareZ",            fileMap["RareZ" + yearTag],           cuts,   weights);
         PDS dsRareNoZ(          "RareNoZ",          fileMap["RareNoZ" + yearTag],         cuts,   weights);
@@ -740,6 +740,11 @@ int main(int argc, char* argv[])
                               "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
                              };
     // Photon
+    // pre-baseline cuts for Data and MC
+    // apply passPhotonTrigger and Flag_eeBadScFilter to Data but not to MC
+    std::string preBaselineCutsPhotonData = "passPhotonTrigger;Pass_LeptonVeto;passPhotonSelection;SAT_Pass_JetID_drPhotonCleaned;SAT_Pass_EventFilter_drPhotonCleaned;Flag_eeBadScFilter;MET_pt<250" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned;
+    std::string preBaselineCutsPhotonMC   = "Pass_LeptonVeto;passPhotonSelection;SAT_Pass_JetID_drPhotonCleaned;SAT_Pass_EventFilter_drPhotonCleaned;MET_pt<250" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned;
+    //standard baseline
     std::vector<std::string> Cuts_Data_Photon = {
                               "",
                               "passPhotonTrigger",
@@ -754,8 +759,9 @@ int main(int argc, char* argv[])
                               "SAT_Pass_NJets20_drPhotonCleaned",
                               "SAT_Pass_dPhiMETLowDM_drPhotonCleaned",
                              };
+    // all low dm and high dm cuts
     std::vector<std::string> Cuts_Data_Photon_LowDM_All = {
-                              "passPhotonTrigger;Pass_LeptonVeto;passPhotonSelection;Flag_eeBadScFilter" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,
+                              preBaselineCutsPhotonData,
                               "SAT_Pass_Baseline_drPhotonCleaned",
                               "nMergedTops_drPhotonCleaned=0",
                               "nResolvedTops_drPhotonCleaned=0",
@@ -765,7 +771,7 @@ int main(int argc, char* argv[])
                               "SAT_Pass_MTB_LowDM_drPhotonCleaned",
                              };
     std::vector<std::string> Cuts_Data_Photon_HighDM_All = {
-                              "passPhotonTrigger;Pass_LeptonVeto;passPhotonSelection;Flag_eeBadScFilter" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,
+                              preBaselineCutsPhotonData,
                               "SAT_Pass_Baseline_drPhotonCleaned",
                               "SAT_Pass_dPhiMETHighDM_drPhotonCleaned",
                               "nBottoms_drPhotonCleaned>=1",
@@ -913,18 +919,15 @@ int main(int argc, char* argv[])
     std::vector<std::string> CutLevels_Data_Photon_HighDM = SusyUtility::getCutLevels(Cuts_Data_Photon_HighDM);
     std::vector<std::string> CutLevels_MC_Photon_LowDM    = SusyUtility::getCutLevels(Cuts_MC_Photon_LowDM);
     std::vector<std::string> CutLevels_MC_Photon_HighDM   = SusyUtility::getCutLevels(Cuts_MC_Photon_HighDM);
-    // Cuts_Data_Photon_LowDM_All
+    // All low dm and high dm cuts
     std::vector<std::string> Cuts_MC_Photon_LowDM_All     = Cuts_Data_Photon_LowDM_All;
-    // don't apply passPhotonTrigger and Flag_eeBadScFilter to MC
-    Cuts_MC_Photon_LowDM_All[0] = "Pass_LeptonVeto;passPhotonSelection" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned;
-    std::vector<std::string> CutLevels_Data_Photon_LowDM_All    = SusyUtility::getCutLevels(Cuts_Data_Photon_LowDM_All);
-    std::vector<std::string> CutLevels_MC_Photon_LowDM_All      = SusyUtility::getCutLevels(Cuts_MC_Photon_LowDM_All);
-    // Cuts_Data_Photon_HighDM_All
-    std::vector<std::string> Cuts_MC_Photon_HighDM_All     = Cuts_Data_Photon_HighDM_All;
-    // don't apply passPhotonTrigger and Flag_eeBadScFilter to MC
-    Cuts_MC_Photon_HighDM_All[0] = "Pass_LeptonVeto;passPhotonSelection" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned;
-    std::vector<std::string> CutLevels_Data_Photon_HighDM_All    = SusyUtility::getCutLevels(Cuts_Data_Photon_HighDM_All);
-    std::vector<std::string> CutLevels_MC_Photon_HighDM_All      = SusyUtility::getCutLevels(Cuts_MC_Photon_HighDM_All);
+    std::vector<std::string> Cuts_MC_Photon_HighDM_All    = Cuts_Data_Photon_HighDM_All;
+    Cuts_MC_Photon_LowDM_All[0]  = preBaselineCutsPhotonMC;
+    Cuts_MC_Photon_HighDM_All[0] = preBaselineCutsPhotonMC;
+    std::vector<std::string> CutLevels_Data_Photon_LowDM_All   = SusyUtility::getCutLevels(Cuts_Data_Photon_LowDM_All);
+    std::vector<std::string> CutLevels_Data_Photon_HighDM_All  = SusyUtility::getCutLevels(Cuts_Data_Photon_HighDM_All);
+    std::vector<std::string> CutLevels_MC_Photon_LowDM_All     = SusyUtility::getCutLevels(Cuts_MC_Photon_LowDM_All);
+    std::vector<std::string> CutLevels_MC_Photon_HighDM_All    = SusyUtility::getCutLevels(Cuts_MC_Photon_HighDM_All);
     
     // di-electron
     if (doDataMCElectron)
@@ -1541,9 +1544,9 @@ int main(int argc, char* argv[])
         // Photon 
         
         // Data
-        // Note: Apply Flag_eeBadScFilter to Data but not MC
-        PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset], "Flag_eeBadScFilter;SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger"  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-        PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset], "Flag_eeBadScFilter;SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+        // Note: Apply passPhotonTrigger and Flag_eeBadScFilter to Data but not MC
+        PDS dsData_Photon_LowDM("Data",  fileMap[PhotonDataset], "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger;Flag_eeBadScFilter"  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+        PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset], "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger;Flag_eeBadScFilter" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
         // MC
         // all weights
         std::string PhotonWeights = "Stop0l_trigger_eff_Photon_pt;photonSF;puWeight;BTagWeight" + PrefireWeight;
