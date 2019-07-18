@@ -38,6 +38,9 @@ def getMultiplicationError(q, x, dx, y, dy):
     # q = x * y 
     # q = x / y 
     # dq = q * sqrt( (dx/x)^2 + (dy/y)^2) )
+    if x == 0.0 or y == 0.0:
+        print "ERROR in getMultiplicationError(): Cannot divide by zero."
+        return ERROR_CODE
     return abs(q * np.sqrt( (dx/x)**2 + (dy/y)**2 ))
 
 def getMultiplicationErrorList(q, x_list, dx_list):

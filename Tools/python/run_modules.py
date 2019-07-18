@@ -1,5 +1,6 @@
 # run_modules.py
 
+import argparse
 import json
 import os
 from cutflow_plot import makeCutflows 
@@ -9,15 +10,25 @@ from search_bins import SearchBins
 from search_bins import ValidationBins
 
 def main():
+    # options
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--json_file",    "-j", default="",                             help="json file containing runs")
+    parser.add_argument("--verbose",      "-v", default = False, action = "store_true", help="verbose flag to print more things")
+    
+    options     = parser.parse_args()
+    json_file   = options.json_file
+    verbose     = options.verbose
+    
     doCutflows = True
     doPhotons = True
-    useAllMC = True
+    useNbNsvSelection = True
     draw = True
-    verbose = False
+
+    if not os.path.exists(json_file):
+        print "The json file \"{0}\" containing runs does not exist.".format(json_file)
+        return
     
     eras = ["2016", "2017", "2018_AB", "2018_CD"]
-    json_file = "run_2019-07-10.json" 
-    
     plot_dir  = "more_plots"
     # add "/" to directory if not present
     if plot_dir[-1] != "/":
@@ -35,7 +46,7 @@ def main():
         os.makedirs(latex_dir)
     
 
-    N = Normalization(useAllMC, verbose)
+    N = Normalization(useNbNsvSelection, verbose)
     S = Shape(plot_dir, draw, verbose)
     
     with open(json_file, "r") as input_file:
