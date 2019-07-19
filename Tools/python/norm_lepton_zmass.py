@@ -27,16 +27,14 @@ class Normalization:
         self.channels = self.particles + ["Combined"]
         if self.validation:
             # for validation bins
-            self.regions   = ["LowDM", "LowDM_MiddPhi", "HighDM_MiddPhi"]
+            self.regions   = ["LowDM", "HighDM"]
             self.regions_tex = {
-                                 "LowDM"            : "Low $\Delta m$",
-                                 "LowDM_MiddPhi"    : "Low $\Delta m$ Mid $\Delta \phi$",
-                                 "HighDM_MiddPhi"   : "High $\Delta m$ Mid $\Delta \phi$"
+                                 "LowDM"  : "Low $\Delta m$",
+                                 "HighDM" : "High $\Delta m$"
                                }
             self.selections  = {
-                                  "LowDM"            : ["NBeq0_NSVeq0", "NBeq0_NSVge1", "NBeq1_NSVeq0", "NBeq1_NSVge1", "NBge2"],
-                                  "LowDM_MiddPhi"    : ["NBeq0_NSVeq0", "NBeq0_NSVge1", "NBge1_NSVeq0", "NBge1_NSVge1"],
-                                  "HighDM_MiddPhi"   : ["NBeq1", "NBge2"]
+                                  "LowDM"  : ["NBeq0_NSVeq0", "NBeq0_NSVge1", "NBeq1_NSVeq0", "NBeq1_NSVge1", "NBge1_NSVeq0", "NBge1_NSVge1", "NBge2"],
+                                  "HighDM" : ["NBeq1", "NBge2"]
                                }
             self.selections_tex = {
                                      "NBeq0_NSVeq0" : "$N_{b} = 0, N_{sv} = 0$",
