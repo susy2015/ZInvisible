@@ -29,12 +29,13 @@ const int NCOLORS = sizeof(colors)/sizeof(int);
 
 const int stackColors[] = {
     kAzure   + 2,
+    kRed     - 7,
     kOrange  - 3,
     kSpring  - 5,
     kMagenta - 2,
     kAzure   - 4,
+    kRed     - 3,
     kTeal    - 7,
-    kRed     - 7,
     kAzure   + 0,
     kGreen   + 2,
     kMagenta - 1,
@@ -703,7 +704,7 @@ double Plotter::Cut::translateVar(const NTupleReader& tr) const
 
 bool Plotter::Cut::boolReturn(const NTupleReader& tr) const
 {
-    //debugging
+    //for debugging bools
     //std::cout << "In Plotter::Cut::boolReturn(): name.name = " << name.name << std::endl;
     return tr.getVar<bool>(name.name);
 }
