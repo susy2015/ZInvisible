@@ -96,7 +96,10 @@ namespace plotterFunctions
         float cutPhotonPt = -999.9;
         float cutPhotonEta = -999.9;
         float photonSF = 1.0;
-        bool passPhotonSelection = false;
+        bool passPhotonSelection            = false;
+        bool passPhotonSelectionDirect      = false;
+        bool passPhotonSelectionFragmented  = false;
+        bool passPhotonSelectionFake        = false;
         
         // if you use new, you need to register it or destroy it yourself to clear memory
         auto* GenPartonTLV              = new std::vector<TLorentzVector>(); 
@@ -119,20 +122,20 @@ namespace plotterFunctions
         //auto* gammaJetIndexPassMediumID = new std::vector<int>();
         //auto* gammaJetIndexPassTightID  = new std::vector<int>();
         auto* promptPhotons     = new std::vector<TLorentzVector>();
-        auto* directPhotons     = new std::vector<TLorentzVector>();
-        auto* fakePhotons       = new std::vector<TLorentzVector>();
-        auto* fragmentedPhotons = new std::vector<TLorentzVector>();
+        auto* DirectPhotons     = new std::vector<TLorentzVector>();
+        auto* FragmentedPhotons = new std::vector<TLorentzVector>();
+        auto* FakePhotons       = new std::vector<TLorentzVector>();
         
         // don't use new if it will not be registered or destroyed
         TLorentzVector metWithPhotonLVec;
         
         //auto* promptPhotons             = new std::vector<TLorentzVector>(); 
-        //auto* fakePhotons               = new std::vector<TLorentzVector>();
+        //auto* FakePhotons               = new std::vector<TLorentzVector>();
         //auto* fragmentationQCD          = new std::vector<TLorentzVector>();
         //auto* loosePhotons              = new std::vector<TLorentzVector>();
         //auto* mediumPhotons             = new std::vector<TLorentzVector>();
         //auto* tightPhotons              = new std::vector<TLorentzVector>();
-        //auto* directPhotons             = new std::vector<TLorentzVector>();
+        //auto* DirectPhotons             = new std::vector<TLorentzVector>();
         //auto* totalPhotons              = new std::vector<TLorentzVector>();
 
         //NanoAOD Gen Particles Ref: https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html#GenPart
@@ -234,12 +237,12 @@ namespace plotterFunctions
                             {
                                 RecoPhotonTLVEtaPtMatched->push_back(gammaLVec[i]);
                                 promptPhotons->push_back(gammaLVec[i]);
-                                if(PhotonFunctions::isDirectPhoton(gammaLVec[i],        *GenPartonTLV))  directPhotons->push_back(gammaLVec[i]);
-                                if(PhotonFunctions::isFragmentationPhoton(gammaLVec[i], *GenPartonTLV))  fragmentedPhotons->push_back(gammaLVec[i]);
+                                if(PhotonFunctions::isDirectPhoton(gammaLVec[i],        *GenPartonTLV))  DirectPhotons->push_back(gammaLVec[i]);
+                                if(PhotonFunctions::isFragmentationPhoton(gammaLVec[i], *GenPartonTLV))  FragmentedPhotons->push_back(gammaLVec[i]);
                             }
                             else
                             {
-                                fakePhotons->push_back(gammaLVec[i]);
+                                FakePhotons->push_back(gammaLVec[i]);
                             }
                         }
                         if (usePhotonSF)
@@ -281,6 +284,13 @@ namespace plotterFunctions
             metphiWithPhoton    = metWithPhotonLVec.Phi();
             photonSF            = (*gammaSFPassLooseID)[0];
             passPhotonSelection = true;
+            // MC Only
+            if (! isData)
+            {
+                if (DirectPhotons->size() == 1)     passPhotonSelectionDirect       = true;
+                if (FragmentedPhotons->size() == 1) passPhotonSelectionFragmented   = true;
+                if (FakePhotons->size() == 1)       passPhotonSelectionFake         = true;
+            }                                               
         }
 
 // - Beginning of section not used (as of October 19, 2018)        
@@ -310,10 +320,10 @@ namespace plotterFunctions
 //            if(PhotonFunctions::isGenMatched_Method1((*RecoPhotonTLVEta)[i],GenPhotonTLV))
 //            {
 //              promptPhotons->push_back((*RecoPhotonTLVEta)[i]);
-//              if(PhotonFunctions::isDirectPhoton((*RecoPhotonTLVEta)[i],GenPartonTLV)) directPhotons->push_back((*RecoPhotonTLVEta)[i]);
+//              if(PhotonFunctions::isDirectPhoton((*RecoPhotonTLVEta)[i],GenPartonTLV)) DirectPhotons->push_back((*RecoPhotonTLVEta)[i]);
 //              if(PhotonFunctions::isFragmentationPhoton((*RecoPhotonTLVEta)[i],GenPartonTLV)) fragmentationQCD->push_back((*RecoPhotonTLVEta)[i]);
 //            }
-//            else fakePhotons->push_back((*RecoPhotonTLVEta)[i]);
+//            else FakePhotons->push_back((*RecoPhotonTLVEta)[i]);
 //          }
 //        }
 //      }
@@ -321,12 +331,15 @@ namespace plotterFunctions
 // - End of section not used (as of October 19, 2018)        
 
         // Register derived variables
+        tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
+        tr.registerDerivedVar("passPhotonSelectionDirect", passPhotonSelectionDirect);
+        tr.registerDerivedVar("passPhotonSelectionFragmented", passPhotonSelectionFragmented);
+        tr.registerDerivedVar("passPhotonSelectionFake", passPhotonSelectionFake);
         tr.registerDerivedVar("cutPhotonPt", cutPhotonPt);
         tr.registerDerivedVar("cutPhotonEta", cutPhotonEta);
         tr.registerDerivedVar("metWithPhoton", metWithPhoton);
         tr.registerDerivedVar("metphiWithPhoton", metphiWithPhoton);
         tr.registerDerivedVar("photonSF", photonSF);
-        tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
         tr.registerDerivedVec("GenPartonTLV", GenPartonTLV);
         tr.registerDerivedVec("GenPhotonTLV", GenPhotonTLV);
         tr.registerDerivedVec("GenPhotonTLVEta", GenPhotonTLVEta);
@@ -347,28 +360,28 @@ namespace plotterFunctions
         //tr.registerDerivedVec("gammaJetIndexPassTightID", gammaJetIndexPassTightID);
         tr.registerDerivedVec("gammaSFPassLooseID", gammaSFPassLooseID);
         tr.registerDerivedVec("promptPhotons", promptPhotons);
-        tr.registerDerivedVec("directPhotons", directPhotons);
-        tr.registerDerivedVec("fakePhotons", fakePhotons);
-        tr.registerDerivedVec("fragmentedPhotons", fragmentedPhotons);
+        tr.registerDerivedVec("DirectPhotons", DirectPhotons);
+        tr.registerDerivedVec("FragmentedPhotons", FragmentedPhotons);
+        tr.registerDerivedVec("FakePhotons", FakePhotons);
         
         //tr.registerDerivedVar("photonMet", photonMet);
         //tr.registerDerivedVec("cutPhotons", loosePhotons);
         //tr.registerDerivedVec("totalPhotons", totalPhotons);
         //tr.registerDerivedVec("promptPhotons", promptPhotons);
-        //tr.registerDerivedVec("fakePhotons", fakePhotons);
+        //tr.registerDerivedVec("FakePhotons", FakePhotons);
         //tr.registerDerivedVec("fragmentationQCD", fragmentationQCD);
-        //tr.registerDerivedVec("directPhotons", directPhotons);
+        //tr.registerDerivedVec("DirectPhotons", DirectPhotons);
         //tr.registerDerivedVar("nPhotonNoID", totalPhotons->size());
         //tr.registerDerivedVar("nPhoton", loosePhotons->size());
-        //tr.registerDerivedVar("nFakes", fakePhotons->size());
+        //tr.registerDerivedVar("nFakes", FakePhotons->size());
         //tr.registerDerivedVar("nPrompt", promptPhotons->size());
         //tr.registerDerivedVar("passNphoton", totalPhotons->size() >= 1);
         //tr.registerDerivedVar("passNloose", loosePhotons->size() >= 1);
         //tr.registerDerivedVar("passNmedium", mediumPhotons->size() >= 1);
         //tr.registerDerivedVar("passNtight", tightPhotons->size() >= 1);
-        //tr.registerDerivedVar("passFakes", fakePhotons->size() >= 1);
+        //tr.registerDerivedVar("passFakes", FakePhotons->size() >= 1);
         //tr.registerDerivedVar("passPrompt", promptPhotons->size() >= 1);
-        //tr.registerDerivedVar("passDirect", directPhotons->size() >= 1);
+        //tr.registerDerivedVar("passDirect", DirectPhotons->size() >= 1);
         //tr.registerDerivedVar("passFragmentation", fragmentationQCD->size() >= 1);
     }
 
