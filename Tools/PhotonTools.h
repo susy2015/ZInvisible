@@ -128,7 +128,6 @@ namespace PhotonFunctions
   bool isGenMatched_Method1(const TLorentzVector& photon, std::vector<TLorentzVector> genPhotons){
     double RecoPt = photon.Pt();
     bool genMatched = false;
-    
     //std::cout << "genPhotons: " << genPhotons.size() << std::endl;
     for(int i = 0; i < genPhotons.size(); i++){
       double deltaR = ROOT::Math::VectorUtil::DeltaR(genPhotons[i],photon);

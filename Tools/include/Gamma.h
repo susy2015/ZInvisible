@@ -58,19 +58,21 @@ namespace plotterFunctions
 
       void generateGamma(NTupleReader& tr) {
         //std::cout << "Running Gamma.h" << std::endl;
-
-        const auto& gammaLVec              = tr.getVec<TLorentzVector>("PhotonTLV");     // reco photon
-        //const auto& gammaLVecGen         = tr.getVec<TLorentzVector>("gammaLVecGen");  // gen photon
-        //const auto& genPartonLVec        = tr.getVec<TLorentzVector>("genPartonLVec"); // gen parton 
+        std::vector<TLorentzVector> genPartonLVec;
+        std::vector<TLorentzVector> Photon_genPartIdx;
+        // get gen variables if they exist (MC only)
+        bool isData = ! tr_->checkBranch("GenPart_pt");
+        if (! isData)
+        {
+          const auto& genPartonLVec          = tr.getVec<TLorentzVector>("GenPartTLV"); // gen parton 
+          const auto& Photon_genPartIdx      = tr.getVec<int>("Photon_genPartIdx");
+        }
         //const auto& Photon_cutBased        = tr.getVec<int>("Photon_cutBased");
+        const auto& gammaLVec              = tr.getVec<TLorentzVector>("PhotonTLV");  // reco photon
         const auto& Photon_jetIdx          = tr.getVec<int>("Photon_jetIdx");
         const auto& Photon_Stop0l          = tr.getVec<unsigned char>("Photon_Stop0l");
-        //const auto& loosePhotonID        = tr.getVec<unsigned char>("Photon_mvaID_WP80");
-        //const auto& tightPhotonID        = tr.getVec<unsigned char>("Photon_mvaID_WP90");
-        //const auto& genMatched           = tr.getVec<data_t>("genMatched");
         const auto& met                    = tr.getVar<data_t>("MET_pt");
         const auto& metphi                 = tr.getVar<data_t>("MET_phi");
-        
         
         // the scale factors only exist in MC, not in Data
         //const auto& Photon_LooseSF         = tr.getVec<data_t>("Photon_LooseSF");
@@ -109,6 +111,10 @@ namespace plotterFunctions
         auto* gammaSFPassLooseID        = new std::vector<float>();
         //auto* gammaJetIndexPassMediumID = new std::vector<int>();
         //auto* gammaJetIndexPassTightID  = new std::vector<int>();
+        auto* promptPhotons     = new std::vector<TLorentzVector>();
+        auto* directPhotons     = new std::vector<TLorentzVector>();
+        auto* fakePhotons       = new std::vector<TLorentzVector>();
+        auto* fragmentedPhotons = new std::vector<TLorentzVector>();
         
         // don't use new if it will not be registered or destroyed
         TLorentzVector metWithPhotonLVec;
@@ -145,7 +151,6 @@ namespace plotterFunctions
             }
           }
         }
-
         
         // check photon vector lengths
         bool passTest1 = (gammaLVec.size() == Photon_Stop0l.size());
@@ -191,16 +196,28 @@ namespace plotterFunctions
               //bool passTightPhotonID  = bool(Photon_cutBased[i] & 0x4);
               if(passLoosePhotonID)  
               {
-                  gammaLVecPassLooseID->push_back(gammaLVec[i]);
-                  gammaJetIndexPassLooseID->push_back(Photon_jetIdx[i]);
-                  if (usePhotonSF)
-                  {
-                      gammaSFPassLooseID->push_back(Photon_LooseSF[i]);
-                  }
-                  else
-                  {
-                      gammaSFPassLooseID->push_back(1.0);
-                  }
+                gammaLVecPassLooseID->push_back(gammaLVec[i]);
+                gammaJetIndexPassLooseID->push_back(Photon_jetIdx[i]);
+                if (usePhotonSF)
+                {
+                    gammaSFPassLooseID->push_back(Photon_LooseSF[i]);
+                }
+                else
+                {
+                    gammaSFPassLooseID->push_back(1.0);
+                }
+                gammaLVecRecoIso->push_back(gammaLVec[i]);
+                if (PhotonFunctions::isGenMatched_Method1(gammaLVec[i], *gammaLVecGen))
+                {
+                  gammaLVecRecoEtaPtMatched->push_back(gammaLVec[i]);
+                  promptPhotons->push_back((*gammaLVecRecoEta)[i]);
+                  if(PhotonFunctions::isDirectPhoton((*gammaLVecRecoEta)[i],genPartonLVec))         directPhotons->push_back((*gammaLVecRecoEta)[i]);
+                  if(PhotonFunctions::isFragmentationPhoton((*gammaLVecRecoEta)[i],genPartonLVec))  fragmentedPhotons->push_back((*gammaLVecRecoEta)[i]);
+                }
+                else
+                {
+                  fakePhotons->push_back((*gammaLVecRecoEta)[i]);
+                }
               }
               //if(passMediumPhotonID) 
               //{
@@ -212,16 +229,6 @@ namespace plotterFunctions
               //    gammaLVecPassTightID->push_back(gammaLVec[i]);
               //    gammaJetIndexPassTightID->push_back(Photon_jetIdx[i]);
               //}
-              if(passLoosePhotonID)
-              {
-                gammaLVecRecoIso->push_back(gammaLVec[i]);
-                // gen match
-                //if (bool(genMatched[i]))
-                if (PhotonFunctions::isGenMatched_Method1(gammaLVec[i], *gammaLVecGen))
-                {
-                  gammaLVecRecoEtaPtMatched->push_back(gammaLVec[i]);
-                }
-              }
             }
           }
         }
@@ -268,7 +275,7 @@ namespace plotterFunctions
 //          {
 //            if((*gammaLVecRecoEta)[i].Pt() > photonPtCut && loosePhotonID[i])
 //            {
-//              if(PhotonFunctions::isGenMatched_Method2((*gammaLVecRecoEta)[i],gammaLVecGen))
+//              if(PhotonFunctions::isGenMatched_Method1((*gammaLVecRecoEta)[i],gammaLVecGen))
 //              {
 //                promptPhotons->push_back((*gammaLVecRecoEta)[i]);
 //                if(PhotonFunctions::isDirectPhoton((*gammaLVecRecoEta)[i],genPartonLVec)) directPhotons->push_back((*gammaLVecRecoEta)[i]);
@@ -304,6 +311,10 @@ namespace plotterFunctions
         //tr.registerDerivedVec("gammaJetIndexPassMediumID", gammaJetIndexPassMediumID);
         //tr.registerDerivedVec("gammaJetIndexPassTightID", gammaJetIndexPassTightID);
         tr.registerDerivedVec("gammaSFPassLooseID", gammaSFPassLooseID);
+        tr.registerDerivedVec("promptPhotons", promptPhotons);
+        tr.registerDerivedVec("directPhotons", directPhotons);
+        tr.registerDerivedVec("fakePhotons", fakePhotons);
+        tr.registerDerivedVec("fragmentedPhotons", fragmentationQCD);
         
         //tr.registerDerivedVar("photonMet", photonMet);
         //tr.registerDerivedVec("cutPhotons", loosePhotons);
