@@ -237,8 +237,8 @@ namespace plotterFunctions
                             {
                                 RecoPhotonTLVEtaPtMatched->push_back(gammaLVec[i]);
                                 promptPhotons->push_back(gammaLVec[i]);
-                                if(PhotonFunctions::isDirectPhoton(gammaLVec[i],        *GenPartonTLV))  DirectPhotons->push_back(gammaLVec[i]);
-                                if(PhotonFunctions::isFragmentationPhoton(gammaLVec[i], *GenPartonTLV))  FragmentedPhotons->push_back(gammaLVec[i]);
+                                if      (PhotonFunctions::isDirectPhoton(gammaLVec[i],        *GenPartonTLV))  DirectPhotons->push_back(gammaLVec[i]);
+                                else if (PhotonFunctions::isFragmentationPhoton(gammaLVec[i], *GenPartonTLV))  FragmentedPhotons->push_back(gammaLVec[i]);
                             }
                             else
                             {
@@ -287,9 +287,9 @@ namespace plotterFunctions
             // MC Only
             if (! isData)
             {
-                if (DirectPhotons->size() == 1)     passPhotonSelectionDirect       = true;
-                if (FragmentedPhotons->size() == 1) passPhotonSelectionFragmented   = true;
-                if (FakePhotons->size() == 1)       passPhotonSelectionFake         = true;
+                if      (DirectPhotons->size() == 1)     passPhotonSelectionDirect       = true;
+                else if (FragmentedPhotons->size() == 1) passPhotonSelectionFragmented   = true;
+                else if (FakePhotons->size() == 1)       passPhotonSelectionFake         = true;
             }                                               
         }
 
