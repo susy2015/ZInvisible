@@ -57,6 +57,9 @@ namespace plotterFunctions
     private:
 
     void generateGamma(NTupleReader& tr) {
+        
+        bool verbose = false;
+
         std::vector<TLorentzVector> GenPartTLV;
         std::vector<int> GenPart_pdgId;
         std::vector<int> GenPart_status;
@@ -142,6 +145,8 @@ namespace plotterFunctions
         //Particle Status Codes Ref: http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
         //Particle ID Numbering Ref: http://pdg.lbl.gov/2018/reviews/rpp2018-rev-monte-carlo-numbering.pdf
 
+        //std::cout << "isData: " << isData << std::endl;
+        
         // Determine GenPhotons and GenPartons from GenPart (gen particles) 
         if (! isData)
         {
@@ -155,16 +160,20 @@ namespace plotterFunctions
                 // gluons: + (9 and 21)
                 // outgoing particles of the hardest subprocess: status == 23
                 // fromHardProcess: stautsFlags == 8
-                if ( ( (abs(pdgId) > 1 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 ) && status == 23 && statusFlags == 8)
+                //if ( ( (abs(pdgId) > 1 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 ) && status == 23 && statusFlags == 8)
+                if ( ( (abs(pdgId) > 1 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 ) && status == 23)
                 {
+                    //printf("Found GenParton: pdgId = %d, status = %d, statusFlags = %d\n", pdgId, status, statusFlags);
                     GenPartonTLV->push_back(GenPartTLV[i]);
                 }
                 // Particle IDs
                 // photons: +22
                 // stable: status == 1
                 // isPrompt: statusFlags == 0
-                if (pdgId == 22 && status == 1 && statusFlags == 0)
+                //if (pdgId == 22 && status == 1 && statusFlags == 0)
+                if (pdgId == 22 && status == 1)
                 {
+                    //printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d\n", pdgId, status, statusFlags);
                     GenPhotonTLV->push_back(GenPartTLV[i]);
                 }
             }
@@ -225,6 +234,7 @@ namespace plotterFunctions
                     //bool passTightPhotonID  = bool(Photon_cutBased[i] & 0x4);
                     if(passLoosePhotonID)  
                     {
+                        if (verbose) printf("Found LoosePhoton; ");
                         RecoPhotonTLVIso->push_back(gammaLVec[i]);
                         gammaLVecPassLooseID->push_back(gammaLVec[i]);
                         gammaJetIndexPassLooseID->push_back(Photon_jetIdx[i]);
@@ -235,13 +245,25 @@ namespace plotterFunctions
                             gammaGenParticleFlavorPassLooseID->push_back(Photon_genPartFlav[i]);
                             if (PhotonFunctions::isGenMatched_Method1(gammaLVec[i], *GenPhotonTLV))
                             {
+                                if (verbose) printf("Found PromptPhoton; ");
                                 RecoPhotonTLVEtaPtMatched->push_back(gammaLVec[i]);
                                 promptPhotons->push_back(gammaLVec[i]);
-                                if      (PhotonFunctions::isDirectPhoton(gammaLVec[i],        *GenPartonTLV))  DirectPhotons->push_back(gammaLVec[i]);
-                                else if (PhotonFunctions::isFragmentationPhoton(gammaLVec[i], *GenPartonTLV))  FragmentedPhotons->push_back(gammaLVec[i]);
+                                if (PhotonFunctions::isFragmentationPhoton(gammaLVec[i], *GenPartonTLV))
+                                {
+                                    if (verbose) printf("Found FragmentedPhoton\n");
+                                    FragmentedPhotons->push_back(gammaLVec[i]);
+                                }
+                                // direct photon if not fragmented
+                                else
+                                {
+                                    if (verbose) printf("Found DirectPhoton\n");
+                                    DirectPhotons->push_back(gammaLVec[i]);
+                                }
                             }
+                            // fake photon if not prompt
                             else
                             {
+                                if (verbose) printf("Found FakePhoton\n");
                                 FakePhotons->push_back(gammaLVec[i]);
                             }
                         }
