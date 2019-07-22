@@ -30,8 +30,8 @@ const int NCOLORS = sizeof(colors)/sizeof(int);
 const int stackColors[] = {
     kAzure   + 2,
     kRed     - 7,
-    kOrange  - 3,
     kSpring  - 5,
+    kOrange  - 3,
     kMagenta - 2,
     kAzure   - 4,
     kRed     - 3,
