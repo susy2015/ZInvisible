@@ -34,31 +34,15 @@
 #include <string>
 #include <set>
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                                                                                          //
-// Photon Objects in CMSSW8028_2016 ntuples                                                                                 //
-//                                                                                                                          //
-// Parton TLorentzVector:                  GenPartonTLV        from genParticles   pt > 10                                  //
-// Generated Photon TLorentzVector:        GenPhotonTLV        from genParticles   pt > 10                                  //
-// Accepted Photon Variable (Loose):       loosePhotonID       from photonCands    passAcc                                  // 
-// Accepted Photon Variable (Medium):      mediumPhotonID      from photonCands    passAcc                                  // 
-// Accepted Photon Variable (Tight):       tightPhotonID       from photonCands    passAcc                                  // 
-// Reconstructed Photon TLorentzVector:    gammaLVec           from photonCands    no cuts                                  //
-// Reconstructed Photon Variable:          genMatched          from photonCands    passAcc                                  // 
-// Full ID Isolated Photon Variable:       fullID              from photonCands    passAcc and passID and passIso           //
-// Loose ID Isolated Photon Variable:      extraLooseID        from photonCands    passAcc passIDLoose and passIsoLoose     //
-//                                                                                                                          //
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 namespace plotterFunctions
 {
     class Gamma {
 
     private:
+        std::string year_;
+        bool verbose = false;
 
     void generateGamma(NTupleReader& tr) {
-        
-        bool verbose = false;
 
         std::vector<TLorentzVector> GenPartTLV;
         std::vector<int> GenPart_pdgId;
@@ -66,6 +50,7 @@ namespace plotterFunctions
         std::vector<int> GenPart_statusFlags;
         std::vector<int> Photon_genPartIdx;
         std::vector<unsigned char> Photon_genPartFlav;
+        
         // get gen variables if they exist (MC only)
         bool isData = ! tr.checkBranch("GenPart_pt");
         if (! isData)
@@ -77,7 +62,6 @@ namespace plotterFunctions
             Photon_genPartIdx     = tr.getVec<int>("Photon_genPartIdx");
             Photon_genPartFlav    = tr.getVec<unsigned char>("Photon_genPartFlav");
         }
-        //const auto& Photon_cutBased        = tr.getVec<int>("Photon_cutBased");
         const auto& gammaLVec              = tr.getVec<TLorentzVector>("PhotonTLV");  // reco photon
         const auto& Photon_jetIdx          = tr.getVec<int>("Photon_jetIdx");
         const auto& Photon_Stop0l          = tr.getVec<unsigned char>("Photon_Stop0l");
@@ -88,12 +72,41 @@ namespace plotterFunctions
         bool usePhotonSF = tr.checkBranch("Photon_LooseSF");
         std::vector<data_t> Photon_LooseSF;
         if (usePhotonSF) { Photon_LooseSF = tr.getVec<data_t>("Photon_LooseSF"); }   
-
-
-        // toggle debugging print statements
-        bool debug = false;
-
-        //variables to be used in the analysis code
+        
+        // --- Photon ID --- //
+        // 2016:      Use Photon_cutBased       : Int_t cut-based Spring16-V2p2 ID (0:fail, 1: :loose, 2:medium, 3:tight)
+        // 2017,2018: Use Photon_cutBasedBitmap : Int_t cut-based ID bitmap, 2^(0:loose, 1: medium, 2:tight); should be 2017 V2
+        std::vector<int>  Photon_ID;
+        std::vector<bool> Photon_PassLooseID;
+        std::vector<bool> Photon_PassMediumID;
+        std::vector<bool> Photon_PassTightID;
+        // 2016
+        if (year_.compare("2016") == 0)
+        {
+            Photon_ID = tr.getVec<int>("Photon_cutBased");
+            for (const auto& id : Photon_ID)
+            {
+                Photon_PassLooseID.push_back(  bool(id > 0) );
+                Photon_PassMediumID.push_back( bool(id > 1) );
+                Photon_PassTightID.push_back(  bool(id > 2) );
+            }
+        }
+        // 2017, 2018
+        else
+        {
+            Photon_ID = tr.getVec<int>("Photon_cutBasedBitmap");
+            for (const auto& id : Photon_ID)
+            {
+                Photon_PassLooseID.push_back(  bool(id & 1) );
+                Photon_PassMediumID.push_back( bool(id & 2) );
+                Photon_PassTightID.push_back(  bool(id & 4) );
+            }
+        }
+        for (int i = 0; i < Photon_ID.size(); ++i)
+        {
+            std::cout << "id = " << Photon_ID[i] << "; (L, M, T) = (" << Photon_PassLooseID[i] << ", " << Photon_PassMediumID[i] << ", " << Photon_PassTightID[i] << ")" << std::endl;
+        }
+        
         float metWithPhoton = -999.9;
         float metphiWithPhoton = -999.9;
         float cutPhotonPt = -999.9;
@@ -124,29 +137,18 @@ namespace plotterFunctions
         auto* gammaSFPassLooseID                    = new std::vector<float>();
         //auto* gammaJetIndexPassMediumID = new std::vector<int>();
         //auto* gammaJetIndexPassTightID  = new std::vector<int>();
-        auto* promptPhotons     = new std::vector<TLorentzVector>();
+        auto* PromptPhotons     = new std::vector<TLorentzVector>();
         auto* DirectPhotons     = new std::vector<TLorentzVector>();
         auto* FragmentedPhotons = new std::vector<TLorentzVector>();
         auto* FakePhotons       = new std::vector<TLorentzVector>();
         
         // don't use new if it will not be registered or destroyed
         TLorentzVector metWithPhotonLVec;
-        
-        //auto* promptPhotons             = new std::vector<TLorentzVector>(); 
-        //auto* FakePhotons               = new std::vector<TLorentzVector>();
-        //auto* fragmentationQCD          = new std::vector<TLorentzVector>();
-        //auto* loosePhotons              = new std::vector<TLorentzVector>();
-        //auto* mediumPhotons             = new std::vector<TLorentzVector>();
-        //auto* tightPhotons              = new std::vector<TLorentzVector>();
-        //auto* DirectPhotons             = new std::vector<TLorentzVector>();
-        //auto* totalPhotons              = new std::vector<TLorentzVector>();
 
         //NanoAOD Gen Particles Ref: https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html#GenPart
         //Particle Status Codes Ref: http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
         //Particle ID Numbering Ref: http://pdg.lbl.gov/2018/reviews/rpp2018-rev-monte-carlo-numbering.pdf
 
-        //std::cout << "isData: " << isData << std::endl;
-        
         // Determine GenPhotons and GenPartons from GenPart (gen particles) 
         if (! isData)
         {
@@ -159,8 +161,7 @@ namespace plotterFunctions
                 // quarks: +/- (1 to 6)
                 // gluons: + (9 and 21)
                 // outgoing particles of the hardest subprocess: status == 23
-                // fromHardProcess: stautsFlags == 8
-                //if ( ( (abs(pdgId) > 1 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 ) && status == 23 && statusFlags == 8)
+                // stautsFlags is bitwise; do not apply it
                 if ( ( (abs(pdgId) > 1 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 ) && status == 23)
                 {
                     //printf("Found GenParton: pdgId = %d, status = %d, statusFlags = %d\n", pdgId, status, statusFlags);
@@ -169,8 +170,7 @@ namespace plotterFunctions
                 // Particle IDs
                 // photons: +22
                 // stable: status == 1
-                // isPrompt: statusFlags == 0
-                //if (pdgId == 22 && status == 1 && statusFlags == 0)
+                // stautsFlags is bitwise; do not apply it
                 if (pdgId == 22 && status == 1)
                 {
                     //printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d\n", pdgId, status, statusFlags);
@@ -200,6 +200,8 @@ namespace plotterFunctions
 
 
         
+        // toggle debugging print statements
+        bool debug = false;
         // check photon vector lengths
         bool passTest1 = (gammaLVec.size() == Photon_Stop0l.size());
         if (debug || !passTest1) // print debugging statements
@@ -247,7 +249,7 @@ namespace plotterFunctions
                             {
                                 if (verbose) printf("Found PromptPhoton; ");
                                 RecoPhotonTLVEtaPtMatched->push_back(gammaLVec[i]);
-                                promptPhotons->push_back(gammaLVec[i]);
+                                PromptPhotons->push_back(gammaLVec[i]);
                                 if (PhotonFunctions::isFragmentationPhoton(gammaLVec[i], *GenPartonTLV))
                                 {
                                     if (verbose) printf("Found FragmentedPhoton\n");
@@ -314,49 +316,8 @@ namespace plotterFunctions
                 else if (FakePhotons->size() == 1)       passPhotonSelectionFake         = true;
             }                                               
         }
-
-// - Beginning of section not used (as of October 19, 2018)        
-//
-//      //photonMet = met;
-//      //Get TLorentz vector for Loose, Medium and Tight ID photon selection
-//      for(int i = 0; i < RecoPhotonTLVEta->size(); i++){
-//        if ((*RecoPhotonTLVEta)[i].Pt() > photonPtCut){
-//          totalPhotons->push_back((*RecoPhotonTLVEta)[i]);
-//          
-//          if(loosePhotonID[i]) loosePhotons->push_back((*RecoPhotonTLVEta)[i]);
-//          if(tightPhotonID[i]) tightPhotons->push_back((*RecoPhotonTLVEta)[i]);
-//
-//          //add loose photon pt to ptmiss
-//          //if(loosePhotonID[i]) photonMet += (*RecoPhotonTLVEta)[i].Pt();
-//        } 
-//      }
-//
-//      //Gen-Matching Photons (Pt > photonPtCut in GeV)
-//      if(   tr.checkBranch("GenPhotonTLV")  && &GenPhotonTLV != nullptr
-//         && tr.checkBranch("GenPartonTLV") && &GenPartonTLV != nullptr)
-//      {
-//        for(int i = 0; i < RecoPhotonTLVEta->size(); i++)
-//        {
-//          if((*RecoPhotonTLVEta)[i].Pt() > photonPtCut && loosePhotonID[i])
-//          {
-//            if(PhotonFunctions::isGenMatched_Method1((*RecoPhotonTLVEta)[i],GenPhotonTLV))
-//            {
-//              promptPhotons->push_back((*RecoPhotonTLVEta)[i]);
-//              if(PhotonFunctions::isDirectPhoton((*RecoPhotonTLVEta)[i],GenPartonTLV)) DirectPhotons->push_back((*RecoPhotonTLVEta)[i]);
-//              if(PhotonFunctions::isFragmentationPhoton((*RecoPhotonTLVEta)[i],GenPartonTLV)) fragmentationQCD->push_back((*RecoPhotonTLVEta)[i]);
-//            }
-//            else FakePhotons->push_back((*RecoPhotonTLVEta)[i]);
-//          }
-//        }
-//      }
-//
-// - End of section not used (as of October 19, 2018)        
-
+        
         // Register derived variables
-        tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
-        tr.registerDerivedVar("passPhotonSelectionDirect", passPhotonSelectionDirect);
-        tr.registerDerivedVar("passPhotonSelectionFragmented", passPhotonSelectionFragmented);
-        tr.registerDerivedVar("passPhotonSelectionFake", passPhotonSelectionFake);
         tr.registerDerivedVar("cutPhotonPt", cutPhotonPt);
         tr.registerDerivedVar("cutPhotonEta", cutPhotonEta);
         tr.registerDerivedVar("metWithPhoton", metWithPhoton);
@@ -381,42 +342,28 @@ namespace plotterFunctions
         //tr.registerDerivedVec("gammaJetIndexPassMediumID", gammaJetIndexPassMediumID);
         //tr.registerDerivedVec("gammaJetIndexPassTightID", gammaJetIndexPassTightID);
         tr.registerDerivedVec("gammaSFPassLooseID", gammaSFPassLooseID);
-        tr.registerDerivedVec("promptPhotons", promptPhotons);
+        tr.registerDerivedVec("PromptPhotons", PromptPhotons);
         tr.registerDerivedVec("DirectPhotons", DirectPhotons);
         tr.registerDerivedVec("FragmentedPhotons", FragmentedPhotons);
         tr.registerDerivedVec("FakePhotons", FakePhotons);
-        
-        //tr.registerDerivedVar("photonMet", photonMet);
-        //tr.registerDerivedVec("cutPhotons", loosePhotons);
-        //tr.registerDerivedVec("totalPhotons", totalPhotons);
-        //tr.registerDerivedVec("promptPhotons", promptPhotons);
-        //tr.registerDerivedVec("FakePhotons", FakePhotons);
-        //tr.registerDerivedVec("fragmentationQCD", fragmentationQCD);
-        //tr.registerDerivedVec("DirectPhotons", DirectPhotons);
-        //tr.registerDerivedVar("nPhotonNoID", totalPhotons->size());
-        //tr.registerDerivedVar("nPhoton", loosePhotons->size());
-        //tr.registerDerivedVar("nFakes", FakePhotons->size());
-        //tr.registerDerivedVar("nPrompt", promptPhotons->size());
-        //tr.registerDerivedVar("passNphoton", totalPhotons->size() >= 1);
-        //tr.registerDerivedVar("passNloose", loosePhotons->size() >= 1);
-        //tr.registerDerivedVar("passNmedium", mediumPhotons->size() >= 1);
-        //tr.registerDerivedVar("passNtight", tightPhotons->size() >= 1);
-        //tr.registerDerivedVar("passFakes", FakePhotons->size() >= 1);
-        //tr.registerDerivedVar("passPrompt", promptPhotons->size() >= 1);
-        //tr.registerDerivedVar("passDirect", DirectPhotons->size() >= 1);
-        //tr.registerDerivedVar("passFragmentation", fragmentationQCD->size() >= 1);
+        tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
+        tr.registerDerivedVar("passPhotonSelectionDirect", passPhotonSelectionDirect);
+        tr.registerDerivedVar("passPhotonSelectionFragmented", passPhotonSelectionFragmented);
+        tr.registerDerivedVar("passPhotonSelectionFake", passPhotonSelectionFake);
     }
 
     public:
 
-    Gamma(){}
+        Gamma(std::string year = "") : year_(year)
+        {
+        }
 
-    ~Gamma(){}
+        ~Gamma(){}
 
-    void operator()(NTupleReader& tr)
-    {
-        generateGamma(tr);
-    }
+        void operator()(NTupleReader& tr)
+        {
+            generateGamma(tr);
+        }
     };
 }
 
