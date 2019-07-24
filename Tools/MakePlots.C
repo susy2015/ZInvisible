@@ -613,38 +613,38 @@ int main(int argc, char* argv[])
     };
     
     // standard MC
-    //auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
-    //{
-    //    PDS dsGJets(      "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,   weights);
-    //    PDS dsQCD(        "QCD",                    fileMap["QCD_Photon" + yearTag],    cuts,   weights);
-    //    PDS dsWJetsToLNu( "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
-    //    PDS dsTTG(        "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,   weights);
-    //    PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
-    //    PDS dstW(         "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
-    //    PDS dsRare(       "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
-    //    PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
-    //    PDS dsTTZ(        "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
-    //    //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
-    //    std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
-    //    return StackMC;
-    //};
-    // using fake and fragmented photons
     auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
     {
-        PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts + ";passPhotonSelectionDirect",      weights);
-        PDS dsQCDFragmented(    "QCD Fragmented",         fileMap["QCD" + yearTag],           cuts + ";passPhotonSelectionFragmented",  weights);
-        PDS dsQCDFake(          "QCD Fake",               fileMap["QCD" + yearTag],           cuts + ";passPhotonSelectionFake",        weights);
-        PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts + ";passPhotonSelectionDirect",      weights);
-        PDS dsWJetsToLNu(       "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
-        PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
-        PDS dstW(               "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
-        PDS dsRare(             "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
-        PDS dsDiboson(          "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
-        PDS dsTTZ(              "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
+        PDS dsGJets(      "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,   weights);
+        PDS dsQCD(        "QCD",                    fileMap["QCD" + yearTag],           cuts,   weights);
+        PDS dsWJetsToLNu( "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
+        PDS dsTTG(        "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,   weights);
+        PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
+        PDS dstW(         "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
+        PDS dsRare(       "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
+        PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
+        PDS dsTTZ(        "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
         //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
-        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDFragmented}, {dsQCDFake}, {dsTTG}, {dsWJetsToLNu},  {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
+        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
         return StackMC;
     };
+    // using fake and fragmented photons
+    //auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
+    //{
+    //    PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts + ";passPhotonSelectionDirect",      weights);
+    //    PDS dsQCDFragmented(    "QCD Fragmented",         fileMap["QCD" + yearTag],           cuts + ";passPhotonSelectionFragmented",  weights);
+    //    PDS dsQCDFake(          "QCD Fake",               fileMap["QCD" + yearTag],           cuts + ";passPhotonSelectionFake",        weights);
+    //    PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts + ";passPhotonSelectionDirect",      weights);
+    //    PDS dsWJetsToLNu(       "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
+    //    PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
+    //    PDS dstW(               "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
+    //    PDS dsRare(             "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
+    //    PDS dsDiboson(          "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
+    //    PDS dsTTZ(              "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
+    //    //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
+    //    std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDFragmented}, {dsQCDFake}, {dsTTG}, {dsWJetsToLNu},  {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
+    //    return StackMC;
+    //};
     
     // Validation Bins Selection
     std::map<std::string, std::string> validation_cuts_low_dm = {
@@ -2531,12 +2531,6 @@ int main(int argc, char* argv[])
         vh.push_back(PHS("ZNuNu_nValidationBin_LowDM" + eraTag,         {dcMC_ZNuNu_nValidationBin_LowDM},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
         vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET" + eraTag, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
         vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + eraTag,        {dcMC_ZNuNu_nValidationBin_HighDM},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
-        //vh.push_back(PHS("Trigger_",         {trigger_nSearchBin},           {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-        //vh.push_back(PHS("TriggerScl_",      {trigger_nSearchBin_scaled},    {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-        //vh.push_back(PHS("TriggerWgt_",      {trigger_nSearchBin_weighted},  {2, 1}, "passBaseline",     NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-        //vh.push_back(PHS("Trigger_Zinv_",    {trigger_nSearchBin},           {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-        //vh.push_back(PHS("TriggerScl_Zinv_", {trigger_nSearchBin_scaled},    {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
-        //vh.push_back(PHS("TriggerWgt_Zinv_", {trigger_nSearchBin_weighted},  {2, 1}, "passBaselineZinv", NSB,  0, NSB, false, false,  "Search Bin", "Events", true));
     
         // cut flow: name, DataCollection, cutLevels
         // Plotter::CutFlowSummary::CutFlowSummary(std::string n, Plotter::DataCollection ns, std::vector<std::string> cutLevels)
@@ -2545,27 +2539,6 @@ int main(int argc, char* argv[])
         cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_ZNuNu_met_HighDM",        dcMC_ZNuNu_met_HighDM,          CutLevels_MC_ZNuNu_HighDM));
     }
     
-
-    
-    //Generate cutflows 
-    //vector<string> cfsZ = {"",
-    //                       //"passNoiseEventFilterZinv",
-    //                       //"passNoiseEventFilterZinv;passLeptVeto",
-    //                       //"passNoiseEventFilterZinv;passLeptVeto",
-    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv",
-    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv",
-    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv",
-    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passBJetsZinv;passTaggerZinv;passMETZinv",
-    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passTaggerZinv;passMETZinv;passBJetsZinv",
-    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv",
-    //                       //"passNoiseEventFilterZinv;passLeptVeto;passnJetsZinv;passdPhisZinv;passHTZinv;passMETZinv;passBJetsZinv;passTaggerZinv;passMT2Zinv",
-    //                       "passLeptVeto;SAT_Pass_lowDM",
-    //                       "passLeptVeto;SAT_Pass_highDM"};
-    //vector<Plotter::CutFlowSummary> cutFlowSummaries;
-
-    // Plotter::CutFlowSummary::CutFlowSummary(std::string n, Plotter::DataCollection ns, std::vector<std::string> cutLevels)
-    // name, DataCollection, cutLevels
-    //cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("ZtoNuNu",           PDC("", "", {dsDY_nunu}),           cfsZ));
 
     set<AFS> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
