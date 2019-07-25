@@ -63,9 +63,9 @@ def writeSlide(f, runMap, fileString, variable, eras, title):
     writeLine(f, "\\end{frame}")
 
 def main():    
-    path = "../histos_DataMC_2016_27_Jun_2019_3/"
     json_file = "plots.json" 
     eras = ["2016", "2017", "2018_AB", "2018_CD"]
+    #eras = ["2016"]
     regions = ["LowDM", "HighDM"]
     particles = ["Electron", "Muon", "Photon"]
     j = open(json_file)
@@ -73,34 +73,57 @@ def main():
     runMap = json.load(j)
     name = "DataMC_%s_%s_*_%s.pdf"
     variables = ["nj", "ht", "met", "metphi", "dPhi1", "dPhi2", "dPhi3", "dPhi4"]
+    # still using validation selection; update when search seleciton is done for all eras
+    variables_lowdm_leptons  = ["bestRecoZPt", "bestRecoZM_50to250", "bestRecoZM_50to250_NBeq0_NSVeq0", "bestRecoZM_50to250_NBeq0_NSVge1", "bestRecoZM_50to250_NBeq1_NSVeq0", "bestRecoZM_50to250_NBeq1_NSVge1", "bestRecoZM_50to250_NBge1_NSVeq0", "bestRecoZM_50to250_NBge1_NSVge1", "bestRecoZM_50to250_NBge2"]
+    variables_highdm_leptons = ["bestRecoZPt", "bestRecoZM_50to250", "bestRecoZM_50to250_NBeq1", "bestRecoZM_50to250_NBge2"]
+    variables_photon = ["PhotonPt", "PhotonEta"]
+    variable_map = {}
+    variable_map["Electron"] = {}
+    variable_map["Electron"]["LowDM"] = variables + variables_lowdm_leptons
+    variable_map["Electron"]["HighDM"] = variables + variables_highdm_leptons
+    variable_map["Muon"] = {}
+    variable_map["Muon"]["LowDM"] = variables + variables_lowdm_leptons
+    variable_map["Muon"]["HighDM"] = variables + variables_highdm_leptons
+    variable_map["Photon"] = {}
+    variable_map["Photon"]["LowDM"] = variables + variables_photon
+    variable_map["Photon"]["HighDM"] = variables + variables_photon
+    
     # latex versions of variables
     variables_tex = {
-                "nj"        : "$N_{jets}$", 
-                "ht"        : "$H_T$", 
-                "met"       : "$\cancel{E}_T$", 
-                "metphi"    : "$\phi_{MET}$", 
-                "dPhi1"     : "$\Delta\phi_{1}$", 
-                "dPhi2"     : "$\Delta\phi_{2}$", 
-                "dPhi3"     : "$\Delta\phi_{3}$", 
-                "dPhi4"     : "$\Delta\phi_{4}$",
+                "nj"                                : "$N_{jets}$", 
+                "ht"                                : "$H_T$", 
+                "met"                               : "$\cancel{E}_T$", 
+                "metphi"                            : "$\phi_{MET}$", 
+                "dPhi1"                             : "$\Delta\phi_{1}$", 
+                "dPhi2"                             : "$\Delta\phi_{2}$", 
+                "dPhi3"                             : "$\Delta\phi_{3}$", 
+                "dPhi4"                             : "$\Delta\phi_{4}$",
+                "bestRecoZPt"                       : "$p_{T}(LL)$",
+                "PhotonPt"                          : "$p_{T}^{\gamma}$",
+                "PhotonEta"                         : "$\eta^{\gamma}$",
+                "bestRecoZM_50to250"                : "$m_{LL}$",
+                "bestRecoZM_50to250_NBeq0_NSVeq0"   : "$m_{LL}\ \\left(N_{b} = 0, N_{sv} = 0\\right)$",
+                "bestRecoZM_50to250_NBeq0_NSVge1"   : "$m_{LL}\ \\left(N_{b} = 0, N_{sv} \geq 1\\right)$",
+                "bestRecoZM_50to250_NBeq1_NSVeq0"   : "$m_{LL}\ \\left(N_{b} = 1, N_{sv} = 0\\right)$",
+                "bestRecoZM_50to250_NBeq1_NSVge1"   : "$m_{LL}\ \\left(N_{b} = 1, N_{sv} \geq 1\\right)$",
+                "bestRecoZM_50to250_NBge1_NSVeq0"   : "$m_{LL}\ \\left(N_{b} \geq 1, N_{sv} = 0\\right)$",
+                "bestRecoZM_50to250_NBge1_NSVge1"   : "$m_{LL}\ \\left(N_{b} \geq 1, N_{sv} \geq 1\\right)$",
+                "bestRecoZM_50to250_NBeq1"          : "$m_{LL}\ \\left(N_{b} = 1\\right)$",
+                "bestRecoZM_50to250_NBge2"          : "$m_{LL}\ \\left(N_{b} \geq 2\\right)$",
             }
     
     # example: "../histos_DataMC_2016_27_Jun_2019_3/DataMC_Electron_LowDM_dPhi1_2016"
 
     for p in particles:
         for r in regions:
-            for v in variables:
+            variableList = variable_map[p][r]
+            for v in variableList:
                 v_tex = variables_tex[v]
                 writeSlide(f, runMap, "DataMC_%s_%s_%s" % (p, r, v), v_tex, eras, "%s CR %s: %s" % (p, r, v_tex))
     
-    #write(f, path+"*Electron*.pdf",   "Electron CR")
-    #write(f, path+"*Muon*.pdf",       "Muon CR")
-    #write(f, path+"*Photon*.pdf",     "Photon CR")
-
     f.close()
     j.close()
 
 if __name__ == '__main__':
     main()
-
 
