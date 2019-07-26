@@ -26,17 +26,14 @@ def setupHist(hist, labels, title, color, y_min, y_max):
 def makeCutflows(file_name, era, plot_dir, doPhotons):
     eraTag = "_" + era
     h_dir = "CutFlows/"
-    if plot_dir[-1] != "/":
-        plot_dir += "/"
     if h_dir[-1] != "/":
         h_dir += "/"
+    
     # check that the file exists
     if not os.path.isfile(file_name): 
         print "The file {0} does not exist".format(file_name)
         return
-    # make directory for plots if it does not exist
-    if not os.path.exists(plot_dir):
-        os.makedirs(plot_dir)
+    
     # colors
     red_color    = "vermillion"
     blue_color   = "electric blue"
@@ -97,6 +94,23 @@ def makeCutflows(file_name, era, plot_dir, doPhotons):
         "nJets",
         "dPhi",
     ]
+    cutsPhotonLowDMAll = [
+        "preBaseline",
+        "baseline",
+        "nMergedTops",
+        "nResolvedTops",
+        "nWs",
+        "ISR",
+        "Smet",
+        "mtb",
+    ]
+    cutsPhotonHighDMAll = [
+        "preBaseline",
+        "baseline",
+        "dPhi",
+        "nBottoms",
+        "nJets",
+    ]
 
     # copy list instead of pointer to list
     cutsZNuNuLowDM = cutsZNuNu[:]
@@ -134,6 +148,8 @@ def makeCutflows(file_name, era, plot_dir, doPhotons):
     if doPhotons:
         h_map["CutFlow_Photon_LowDM"]  = {"data" : "CutFlow_Data_Photon_LowDM_met",  "mc" : "CutFlow_MC_Photon_LowDM_met",  "cuts" : cutsPhotonLowDM}
         h_map["CutFlow_Photon_HighDM"] = {"data" : "CutFlow_Data_Photon_HighDM_met", "mc" : "CutFlow_MC_Photon_HighDM_met", "cuts" : cutsPhotonHighDM}
+        h_map["CutFlow_Photon_LowDM_All"]  = {"data" : "CutFlow_Data_Photon_LowDM_All_met",  "mc" : "CutFlow_MC_Photon_LowDM_All_met",  "cuts" : cutsPhotonLowDMAll}
+        h_map["CutFlow_Photon_HighDM_All"] = {"data" : "CutFlow_Data_Photon_HighDM_All_met", "mc" : "CutFlow_MC_Photon_HighDM_All_met", "cuts" : cutsPhotonHighDMAll}
     plot_map = {
         "CutFlow_LowDM"  : {"Electron" : "CutFlow_Electron_LowDM",  "Muon" : "CutFlow_Muon_LowDM",  "cuts" :  cutsLeptonLowDM},
         "CutFlow_HighDM" : {"Electron" : "CutFlow_Electron_HighDM", "Muon" : "CutFlow_Muon_HighDM", "cuts" :  cutsLeptonHighDM}
@@ -276,10 +292,10 @@ def makeCutflows(file_name, era, plot_dir, doPhotons):
         c.SaveAs(plot_name + "_DataMCRatios_LogScale" + eraTag + ".png")
 
 def main():
-    plot_dir = "more_plots"
+    plot_dir = "more_plots/"
     # set per version
     doPhotons = True
-    makeCutflows("histoutput.root",    "2016",    plot_dir, doPhotons)
+    makeCutflows("histoutput.root", "2016", plot_dir, doPhotons)
 
 if __name__ == "__main__":
     main()

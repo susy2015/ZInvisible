@@ -35,7 +35,7 @@ fi
 
 if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" && "$year" != "2018_AB" && "$year" != "2018_CD" ]]
 then
-    echo "Please enter 2016, 2017, 2018, 2018_AB or 2018_CD for the year as the first argument."
+    echo "Please enter 2016, 2017, 2018, 2018_AB or 2018_CD for the year as the second argument."
     exit 1
 fi
 

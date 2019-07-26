@@ -128,7 +128,6 @@ namespace PhotonFunctions
   bool isGenMatched_Method1(const TLorentzVector& photon, std::vector<TLorentzVector> genPhotons){
     double RecoPt = photon.Pt();
     bool genMatched = false;
-    
     //std::cout << "genPhotons: " << genPhotons.size() << std::endl;
     for(int i = 0; i < genPhotons.size(); i++){
       double deltaR = ROOT::Math::VectorUtil::DeltaR(genPhotons[i],photon);
@@ -172,14 +171,13 @@ namespace PhotonFunctions
 
   bool isDirectPhoton(const TLorentzVector& photon, std::vector<TLorentzVector> genParton){
 
-    bool isDirect = false;
+    bool isDirect = true;
 
     for(int i = 0; i < genParton.size(); i++){
       double deltaR = ROOT::Math::VectorUtil::DeltaR(photon,genParton[i]);
       //std::cout << "deltaR: " << deltaR << std::endl;
-      if (deltaR > 0.4){
-        isDirect = true;
-        break;
+      if (deltaR < 0.4){
+        isDirect = false;
       }
     }
     //if (isDirect) std::cout << "passDirect" << std::endl << std::endl;

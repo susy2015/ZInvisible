@@ -122,7 +122,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     runTopTagger                 = new RunTopTagger;
     runTopTagger_drLeptonCleaned = new RunTopTagger("TopTagger.cfg","_drLeptonCleaned",true,false);
     runTopTagger_drPhotonCleaned = new RunTopTagger("TopTagger.cfg","_drPhotonCleaned",false,true);
-    gamma                        = new plotterFunctions::Gamma;
+    gamma                        = new plotterFunctions::Gamma(year);
     weights                      = new plotterFunctions::GenerateWeight;
     generatePhotonEfficiency     = new plotterFunctions::GeneratePhotonEfficiency;
     njWeight                     = new plotterFunctions::NJetWeight;
