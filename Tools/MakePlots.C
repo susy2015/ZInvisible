@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
     }
 
     // get year from era
-    // if era is 2018_AB, year is 2018
+    // if era is 2018_PreHEM, year is 2018
     if (era.length() >= 4)
     {
         year = era.substr(0, 4);

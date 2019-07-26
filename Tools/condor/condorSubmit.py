@@ -22,7 +22,7 @@ def main():
     parser.add_option ('-l',  dest='dataCollections',       action='store_true', default = False, help="List all datacollections")
     parser.add_option ('-L',  dest='dataCollectionslong',   action='store_true', default = False, help="List all datacollections and sub collections")
     parser.add_option ('-r',  dest='refLumi',               type='string',       default = None,  help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
-    parser.add_option ('-y',  dest='year',                  type='string',       default = None,  help="Year data or MC to analyze.")
+    parser.add_option ('-y',  dest='year',                  type='string',       default = None,  help="Year of Data or MC to analyze.")
     parser.add_option ('-c',  dest='noSubmit',              action='store_true', default = False, help="Do not submit jobs.  Only create condor_submit.txt.")
     parser.add_option ('-e',  dest='goMakeEff',             action='store_true', default = False, help="Run calcEff instead of makePlots.")
     parser.add_option ('-p',  dest='goMakeEffPhoton',       action='store_true', default = False, help="Run calcEffPhoton instead of makePlots.")

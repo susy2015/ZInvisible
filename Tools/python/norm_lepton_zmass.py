@@ -430,19 +430,17 @@ class Normalization:
             self.writeLine("\end{document}")
 
 def main():
-    json_file = "run_2019-07-17.json"
+    json_file = "runs/run_2019-07-24.json"
     eras = ["2016", "2017", "2018_AB", "2018_CD"]
+    #eras = ["2016", "2017", "2018_PreHEM", "2018_PostHEM"]
     latex_dir = "latex_files"
     # add "/" to directory if not present
     if latex_dir[-1] != "/":
         latex_dir += "/"
-    
     validation = True
     useNbNsvSelection = True
     verbose = False
-    
     N = Normalization(validation, useNbNsvSelection, verbose)
-    
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
         for era in eras:

@@ -29,6 +29,7 @@ def main():
         return
     
     eras = ["2016", "2017", "2018_AB", "2018_CD"]
+    #eras = ["2016", "2017", "2018_PreHEM", "2018_PostHEM"]
     plot_dir  = "more_plots"
     # add "/" to directory if not present
     if plot_dir[-1] != "/":
