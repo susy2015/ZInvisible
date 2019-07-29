@@ -348,12 +348,12 @@ x509userproxy = $ENV(X509_USER_PROXY)
                 print ""
         exit(1)
     
-    
     lumis = sc.sampleCollectionLumiList()
     lumi = sc.getFixedLumi()
     if options.refLumi != None:
         lumi = lumis[options.refLumi]
-        print "Normalizing to %s pb-1" % (lumi)
+        print "Sample for Ref. Lumi: {0}".format(options.refLumi) 
+        print "Normalizing to lumi = %s pb-1" % (lumi)
    
     total_files = 0
     total_events = 0
