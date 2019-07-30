@@ -39,9 +39,9 @@ def main():
         datasets = options.datasets.split(',')
 
     # sample config files
-    years = ["2016", "2017", "2018", "2018_PreHEM", "2018_PostHEM"]
+    years = ["2016", "2017", "2017_BE", "2017_F", "2018", "2018_PreHEM", "2018_PostHEM"]
     if year not in years:
-        print "Please use -y to enter year (2016, 2017, 2018, 2018_PreHEM, or 2018_PostHEM)."
+        print "Please use -y to enter year (2016, 2017, 2017_BE, 2017_F, 2018, 2018_PreHEM, or 2018_PostHEM)."
         exit(1)
 
     yearWithoutPeriod = year[0:4] 

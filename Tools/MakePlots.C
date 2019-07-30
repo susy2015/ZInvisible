@@ -175,8 +175,8 @@ int main(int argc, char* argv[])
     std::string semicolon_HEMVeto_drPhotonCleaned = "";
     // Note: Don't apply Flag_ecalBadCalibFilter to 2016, but apply it to 2017 and 2018
     std::string Flag_ecalBadCalibFilter = "";
-    // PrefireWeight
     std::string PrefireWeight = "";
+    std::string puWeight = ";puWeight";
 
     // lumi for Plotter
     if (era.compare("2016") == 0)
@@ -185,6 +185,18 @@ int main(int argc, char* argv[])
     }
     else if (era.compare("2017") == 0)
     {
+        PrefireWeight           = ";PrefireWeight";
+        Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
+    }
+    else if (era.compare("2017_BE") == 0)
+    {
+        puWeight                = ";17BtoEpuWeight";
+        PrefireWeight           = ";PrefireWeight";
+        Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
+    }
+    else if (era.compare("2017_F") == 0)
+    {
+        puWeight                = ";17FpuWeight";
         PrefireWeight           = ";PrefireWeight";
         Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
     }
@@ -204,20 +216,20 @@ int main(int argc, char* argv[])
     else if (era.compare("2018_PostHEM") == 0)
     {
         // HEM vetos: use ";veto_name" so that it can be appended to cuts
+        periodTag                         = "_PostHEM";
+        ElectronDataset                   = "Data_EGamma";
+        PhotonDataset                     = "Data_EGamma";
+        Flag_ecalBadCalibFilter           = ";Flag_ecalBadCalibFilter";
         HEMVeto                           = "SAT_Pass_HEMVeto30";
         HEMVeto_drLeptonCleaned           = "SAT_Pass_HEMVeto30_drLeptonCleaned";
         HEMVeto_drPhotonCleaned           = "SAT_Pass_HEMVeto30_drPhotonCleaned";
         semicolon_HEMVeto                 = ";" + HEMVeto;
         semicolon_HEMVeto_drLeptonCleaned = ";" + HEMVeto_drLeptonCleaned;
         semicolon_HEMVeto_drPhotonCleaned = ";" + HEMVeto_drPhotonCleaned;
-        periodTag                         = "_PostHEM";
-        ElectronDataset                   = "Data_EGamma";
-        PhotonDataset                     = "Data_EGamma";
-        Flag_ecalBadCalibFilter           = ";Flag_ecalBadCalibFilter";
     }
     else
     {
-        std::cout << "Please enter 2016, 2017, 2018, 2018_PreHEM or 2018_PostHEM for the era using the -Y flag." << std::endl;
+        std::cout << "Please enter 2016, 2017, 2017_BE, 2017_F, 2018, 2018_PreHEM or 2018_PostHEM for the era using the -Y flag." << std::endl;
         exit(1);
     }
 
@@ -1023,7 +1035,7 @@ int main(int argc, char* argv[])
 
         
         // use DiElecTriggerEffPt instead of Stop0l_trigger_eff_Zee_pt because it applies a Z mass cut
-        std::string ElectronWeights = "DiElecTriggerEffPt;DiElecSF;puWeight;BTagWeight" + PrefireWeight;
+        std::string ElectronWeights = "DiElecTriggerEffPt;DiElecSF;BTagWeight" + PrefireWeight + puWeight;
 
         // bestRecoZM used to calculate normalization
         // Validation Bins Selection
@@ -1413,7 +1425,7 @@ int main(int argc, char* argv[])
     {
         
         // Use DiMuTriggerEffPt intead of Stop0l_trigger_eff_Zmumu_pt because it applies a Z mass cut
-        std::string MuonWeights = "DiMuTriggerEffPt;DiMuSF;puWeight;BTagWeight" + PrefireWeight;
+        std::string MuonWeights = "DiMuTriggerEffPt;DiMuSF;BTagWeight" + PrefireWeight + puWeight;
         
         // bestRecoZM used to calculate normalization
         // Validation Bins Selection
@@ -1674,7 +1686,7 @@ int main(int argc, char* argv[])
         PDS dsData_Photon_HighDM("Data", fileMap[PhotonDataset], "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250;passPhotonTrigger;Flag_eeBadScFilter" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
         // MC
         // all weights
-        std::string PhotonWeights = "Stop0l_trigger_eff_Photon_pt;photonSF;puWeight;BTagWeight" + PrefireWeight;
+        std::string PhotonWeights = "Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + PrefireWeight + puWeight;
         std::vector<std::vector<PDS>> StackMC_Photon_LowDM  = makeStackMC_Photon( "SAT_Pass_lowDM_drPhotonCleaned;passPhotonSelection;MET_pt<250"  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
         std::vector<std::vector<PDS>> StackMC_Photon_HighDM = makeStackMC_Photon( "SAT_Pass_highDM_drPhotonCleaned;passPhotonSelection;MET_pt<250" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
         
@@ -2525,15 +2537,15 @@ int main(int argc, char* argv[])
     }
 
     // search bins and validation bins
-    PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM",            {makePDSZnunu("Search Bin Low DM",              "SAT_Pass_lowDM"           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;puWeight;BTagWeight" + PrefireWeight)});
-    PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM",           {makePDSZnunu("Search Bin High DM",             "SAT_Pass_highDM"          + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;puWeight;BTagWeight" + PrefireWeight)});
-    PDC dcMC_ZNuNu_nValidationBin_LowDM("data",         "nValidationBinLowDM",        {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;puWeight;BTagWeight" + PrefireWeight)});
-    PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET", {makePDSZnunu("Validation Bin Low DM High MET", "SAT_Pass_lowDM_mid_dPhi"  + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;puWeight;BTagWeight" + PrefireWeight)});
-    PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM",       {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_highDM_mid_dPhi" + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;puWeight;BTagWeight" + PrefireWeight)});
+    PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM",            {makePDSZnunu("Search Bin Low DM",              "SAT_Pass_lowDM"           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_low_dm;BTagWeight"          + PrefireWeight + puWeight)});
+    PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM",           {makePDSZnunu("Search Bin High DM",             "SAT_Pass_highDM"          + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_high_dm;BTagWeight"         + PrefireWeight + puWeight)});
+    PDC dcMC_ZNuNu_nValidationBin_LowDM("data",         "nValidationBinLowDM",        {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
+    PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET", {makePDSZnunu("Validation Bin Low DM High MET", "SAT_Pass_lowDM_mid_dPhi"  + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
+    PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM",       {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_highDM_mid_dPhi" + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
     // MET using validation bins for cutflow
-    PDC dcMC_ZNuNu_met_LowDM("data",                    "MET_pt",                     {makePDSZnunu("MET Low DM",                     "SAT_Pass_lowDM"           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;puWeight;BTagWeight" + PrefireWeight)});
-    PDC dcMC_ZNuNu_met_LowDM_HighMET("data",            "MET_pt",                     {makePDSZnunu("MET Low DM High MET",            "SAT_Pass_lowDM_mid_dPhi"  + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;puWeight;BTagWeight" + PrefireWeight)});
-    PDC dcMC_ZNuNu_met_HighDM("data",                   "MET_pt",                     {makePDSZnunu("MET High DM",                    "SAT_Pass_highDM_mid_dPhi" + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;puWeight;BTagWeight" + PrefireWeight)});
+    PDC dcMC_ZNuNu_met_LowDM("data",                    "MET_pt",                     {makePDSZnunu("MET Low DM",                     "SAT_Pass_lowDM"           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
+    PDC dcMC_ZNuNu_met_LowDM_HighMET("data",            "MET_pt",                     {makePDSZnunu("MET Low DM High MET",            "SAT_Pass_lowDM_mid_dPhi"  + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
+    PDC dcMC_ZNuNu_met_HighDM("data",                   "MET_pt",                     {makePDSZnunu("MET High DM",                    "SAT_Pass_highDM_mid_dPhi" + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
     
     if (doSearchBins)
     {
