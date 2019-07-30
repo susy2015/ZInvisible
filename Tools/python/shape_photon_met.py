@@ -1,5 +1,5 @@
 # shape_photon_met.py
-
+import json
 import os
 import numpy as np
 import ROOT
@@ -21,8 +21,6 @@ class Shape:
         # variable is also TDirectoryFile that holds histograms 
         self.variable = "metWithPhoton"
         self.plot_dir = plot_dir
-        if self.plot_dir[-1] != "/":
-            self.plot_dir += "/"
         self.ratio_map = {}
         self.shape_map = {}
             
@@ -65,9 +63,6 @@ class Shape:
         if not os.path.isfile(file_name): 
             print "The file {0} does not exist".format(file_name)
             return
-        # make directory for plots if it does not exist
-        if not os.path.exists(self.plot_dir):
-            os.makedirs(self.plot_dir)
         
         f = ROOT.TFile(file_name)
         c = ROOT.TCanvas("c", "c", 800, 800)
@@ -257,14 +252,21 @@ class Shape:
         
 
 def main():
+    json_file = "runs/run_2019-07-17.json"
+    eras = ["2016", "2017", "2018_AB", "2018_CD"]
+    #eras = ["2016", "2017", "2018_PreHEM", "2018_PostHEM"]
     plot_dir = "more_plots"
-    draw = False
+    if plot_dir[-1] != "/":
+        plot_dir += "/"
+    draw = True
     verbose = False
     S = Shape(plot_dir, draw, verbose)
-    S.getShape("condor/DataMC_2016_submission_2019-05-21_13-29-18/result.root", "2016")
-    S.getShape("condor/DataMC_2017_submission_2019-05-21_13-32-05/result.root", "2017")
-    S.getShape("condor/DataMC_2018_AB_submission_2019-05-21_13-32-36/result.root", "2018_AB")
-    S.getShape("condor/DataMC_2018_CD_submission_2019-05-21_13-33-23/result.root", "2018_CD")
+    with open(json_file, "r") as input_file:
+        runMap = json.load(input_file)
+        for era in eras:
+            runDir = runMap[era]
+            result_file = "condor/" + runDir + "/result.root"
+            S.getShape(result_file, era)
 
 
 if __name__ == "__main__":

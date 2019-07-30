@@ -1,6 +1,4 @@
-#!/cvmfs/cms.cern.ch/slc6_amd64_gcc491/cms/cmssw/CMSSW_7_4_8/external/slc6_amd64_gcc491/bin/python
-####!${SRT_CMSSW_RELEASE_BASE_SCRAMRTDEL}/external/${SCRAM_ARCH}/bin/python
-
+#!/usr/bin/env python
 
 import optparse 
 import subprocess
@@ -24,7 +22,7 @@ def main():
     parser.add_option ('-l',  dest='dataCollections',       action='store_true', default = False, help="List all datacollections")
     parser.add_option ('-L',  dest='dataCollectionslong',   action='store_true', default = False, help="List all datacollections and sub collections")
     parser.add_option ('-r',  dest='refLumi',               type='string',       default = None,  help="Data collection to define lumi (uses default lumi if no reference data collection is defined)")
-    parser.add_option ('-y',  dest='year',                  type='string',       default = None,  help="Year data or MC to analyze.")
+    parser.add_option ('-y',  dest='year',                  type='string',       default = None,  help="Year of Data or MC to analyze.")
     parser.add_option ('-c',  dest='noSubmit',              action='store_true', default = False, help="Do not submit jobs.  Only create condor_submit.txt.")
     parser.add_option ('-e',  dest='goMakeEff',             action='store_true', default = False, help="Run calcEff instead of makePlots.")
     parser.add_option ('-p',  dest='goMakeEffPhoton',       action='store_true', default = False, help="Run calcEffPhoton instead of makePlots.")
@@ -39,14 +37,11 @@ def main():
     datasets = []
     if options.datasets:
         datasets = options.datasets.split(',')
-    else:
-        print "Please use -d to specify one or more datasets (separate with commas)."
-        exit(1)
 
     # sample config files
-    years = ["2016", "2017", "2018", "2018_AB", "2018_CD"]
+    years = ["2016", "2017", "2018", "2018_PreHEM", "2018_PostHEM"]
     if year not in years:
-        print "Please use -y to enter year (2016, 2017, 2018, 2018_AB, or 2018_CD)."
+        print "Please use -y to enter year (2016, 2017, 2018, 2018_PreHEM, or 2018_PostHEM)."
         exit(1)
 
     yearWithoutPeriod = year[0:4] 
@@ -353,12 +348,12 @@ x509userproxy = $ENV(X509_USER_PROXY)
                 print ""
         exit(1)
     
-    
     lumis = sc.sampleCollectionLumiList()
     lumi = sc.getFixedLumi()
     if options.refLumi != None:
         lumi = lumis[options.refLumi]
-        print "Normalizing to %s pb-1" % (lumi)
+        print "Sample for Ref. Lumi: {0}".format(options.refLumi) 
+        print "Normalizing to lumi = %s pb-1" % (lumi)
    
     total_files = 0
     total_events = 0
@@ -370,7 +365,7 @@ x509userproxy = $ENV(X509_USER_PROXY)
         #print ds
         print "# --- {0} --- #".format(ds)
         if "Data" in ds:
-            print "Lumi: {0}".format(sc.getFixedLumi())
+            print "Lumi: {0}".format(lumis[ds])
         
         # s: file, n:name, e:nEvts
         for s, n, e in sc.sampleList(ds):

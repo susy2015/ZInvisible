@@ -29,12 +29,13 @@ const int NCOLORS = sizeof(colors)/sizeof(int);
 
 const int stackColors[] = {
     kAzure   + 2,
-    kOrange  - 3,
+    kRed     - 7,
     kSpring  - 5,
+    kOrange  - 3,
     kMagenta - 2,
     kAzure   - 4,
+    kRed     - 3,
     kTeal    - 7,
-    kRed     - 7,
     kAzure   + 0,
     kGreen   + 2,
     kMagenta - 1,
@@ -487,6 +488,8 @@ void Plotter::createHistsFromTuple()
                             }
                         }
                     }
+                    // skip events for testing
+                    //if (tr.getEvtNum() < 350000) continue;
 
                     //If maxEvents_ is set, stop after so many events
                     if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;
@@ -701,9 +704,8 @@ double Plotter::Cut::translateVar(const NTupleReader& tr) const
 
 bool Plotter::Cut::boolReturn(const NTupleReader& tr) const
 {
-    // Functions here
-
-    // Booleans here
+    //for debugging bools
+    //std::cout << "In Plotter::Cut::boolReturn(): name.name = " << name.name << std::endl;
     return tr.getVar<bool>(name.name);
 }
 

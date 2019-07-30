@@ -33,23 +33,23 @@ if [ -z "$dirName" ]; then
     exit 1
 fi
 
-if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" && "$year" != "2018_AB" && "$year" != "2018_CD" ]]
+if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" && "$year" != "2018_PreHEM" && "$year" != "2018_PostHEM" ]]
 then
-    echo "Please enter 2016, 2017, 2018, 2018_AB or 2018_CD for the year as the first argument."
+    echo "Please enter 2016, 2017, 2018, 2018_PreHEM or 2018_PostHEM for the year as the second argument."
     exit 1
 fi
 
 if [ "$executableOption" = "-c" ]; then
-    resultFile="effhists_"$dirName".root"
+    resultFile="effhists_${dirName}.root"
     executable="echo nothing to do"
     dirPrefix="effhists"
 else
     resultFile="result.root"
-    executable="./makePlots -f -I $resultFile -Y $year | grep -v LHAPDF"
+    executable="./makePlots -f -I ${resultFile} -Y ${year} -R Data_MET_${year} | grep -v LHAPDF"
     dirPrefix="histos"
 fi
 
-echo "- Running processResults.sh for the data set $dirName"
+echo "- Running processResults.sh for the data set ${dirName}"
 
 # old version: make new data directory
 #today=$(date '+%d_%b_%Y')
