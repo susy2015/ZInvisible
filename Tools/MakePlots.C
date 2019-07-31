@@ -498,6 +498,9 @@ int main(int argc, char* argv[])
     std::string label_matched_ratio  = "RecoEtaPtMatched / RecoEtaPt";
     std::string label_iso_single = "RecoIso & RecoEtaPtMatched";
     std::string label_iso_ratio  = "RecoIso / RecoEtaPtMatched";
+    std::string label_dR_RecoPhotonGenParton = "#DeltaR(RecoPhoton, GenParton)";
+    std::string label_dR_RecoPhotonGenPhoton = "#DeltaR(RecoPhoton, GenPhoton)";
+    
     // make a map of labels
     // there is no Gen Iso
     //std::vector<std::pair<std::string,std::string>> cutlevels_electrons
@@ -1763,6 +1766,18 @@ int main(int argc, char* argv[])
                 PDC dcMC_Photon_LowDM_PhotonEta(    "stack",  "cutPhotonEta", StackMC_Photon_LowDM);
                 PDC dcMC_Photon_HighDM_PhotonEta(   "stack",  "cutPhotonEta", StackMC_Photon_HighDM);
                 
+                // dR_RecoPhotonGenParton
+                PDC dcData_Photon_LowDM_dR_RecoPhotonGenParton(  "data",   "dR_RecoPhotonGenParton", {dsData_Photon_LowDM});
+                PDC dcData_Photon_HighDM_dR_RecoPhotonGenParton( "data",   "dR_RecoPhotonGenParton", {dsData_Photon_HighDM});
+                PDC dcMC_Photon_LowDM_dR_RecoPhotonGenParton(    "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_LowDM);
+                PDC dcMC_Photon_HighDM_dR_RecoPhotonGenParton(   "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_HighDM);
+                
+                // dR_RecoPhotonGenPhoton
+                PDC dcData_Photon_LowDM_dR_RecoPhotonGenPhoton(  "data",   "dR_RecoPhotonGenPhoton", {dsData_Photon_LowDM});
+                PDC dcData_Photon_HighDM_dR_RecoPhotonGenPhoton( "data",   "dR_RecoPhotonGenPhoton", {dsData_Photon_HighDM});
+                PDC dcMC_Photon_LowDM_dR_RecoPhotonGenPhoton(    "stack",  "dR_RecoPhotonGenPhoton", StackMC_Photon_LowDM);
+                PDC dcMC_Photon_HighDM_dR_RecoPhotonGenPhoton(   "stack",  "dR_RecoPhotonGenPhoton", StackMC_Photon_HighDM);
+                
                 // dphi
                 std::vector<PDC> dcVecData_Photon_LowDM_dPhi;
                 std::vector<PDC> dcVecData_Photon_HighDM_dPhi;
@@ -1789,6 +1804,14 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("DataMC_Photon_HighDM_PhotonPt" + suffix,   {dcData_Photon_HighDM_PhotonPt,  dcMC_Photon_HighDM_PhotonPt}, {1, 2}, "", 36, 220.0, 2020.0, true, false, label_PhotonPt, "Events"));
                 vh.push_back(PHS("DataMC_Photon_LowDM_PhotonEta" + suffix,   {dcData_Photon_LowDM_PhotonEta,  dcMC_Photon_LowDM_PhotonEta},  {1, 2}, "", nBins,  minEta, maxEta, true, false, label_PhotonEta, "Events"));
                 vh.push_back(PHS("DataMC_Photon_HighDM_PhotonEta" + suffix,  {dcData_Photon_HighDM_PhotonEta, dcMC_Photon_HighDM_PhotonEta}, {1, 2}, "", nBins,  minEta, maxEta, true, false, label_PhotonEta, "Events"));
+                vh.push_back(PHS("DataMC_Photon_LowDM_dR_RecoPhotonGenParton_0to2" + suffix,  {dcData_Photon_LowDM_dR_RecoPhotonGenParton,   dcMC_Photon_LowDM_dR_RecoPhotonGenParton},  {1, 2}, "", nBins, 0.0, 2.0,  true, false, label_dR_RecoPhotonGenParton, "Events"));
+                vh.push_back(PHS("DataMC_Photon_HighDM_dR_RecoPhotonGenParton0to2" + suffix,  {dcData_Photon_HighDM_dR_RecoPhotonGenParton,  dcMC_Photon_HighDM_dR_RecoPhotonGenParton}, {1, 2}, "", nBins, 0.0, 2.0,  true, false, label_dR_RecoPhotonGenParton, "Events"));
+                vh.push_back(PHS("DataMC_Photon_LowDM_dR_RecoPhotonGenParton_0to10" + suffix, {dcData_Photon_LowDM_dR_RecoPhotonGenParton,   dcMC_Photon_LowDM_dR_RecoPhotonGenParton},  {1, 2}, "", nBins, 0.0, 10.0, true, false, label_dR_RecoPhotonGenParton, "Events"));
+                vh.push_back(PHS("DataMC_Photon_HighDM_dR_RecoPhotonGenParton0to10" + suffix, {dcData_Photon_HighDM_dR_RecoPhotonGenParton,  dcMC_Photon_HighDM_dR_RecoPhotonGenParton}, {1, 2}, "", nBins, 0.0, 10.0, true, false, label_dR_RecoPhotonGenParton, "Events"));
+                vh.push_back(PHS("DataMC_Photon_LowDM_dR_RecoPhotonGenPhoton_0to2" + suffix,  {dcData_Photon_LowDM_dR_RecoPhotonGenPhoton,   dcMC_Photon_LowDM_dR_RecoPhotonGenPhoton},  {1, 2}, "", nBins, 0.0, 2.0,  true, false, label_dR_RecoPhotonGenPhoton, "Events"));
+                vh.push_back(PHS("DataMC_Photon_HighDM_dR_RecoPhotonGenPhoton0to2" + suffix,  {dcData_Photon_HighDM_dR_RecoPhotonGenPhoton,  dcMC_Photon_HighDM_dR_RecoPhotonGenPhoton}, {1, 2}, "", nBins, 0.0, 2.0,  true, false, label_dR_RecoPhotonGenPhoton, "Events"));
+                vh.push_back(PHS("DataMC_Photon_LowDM_dR_RecoPhotonGenPhoton_0to10" + suffix, {dcData_Photon_LowDM_dR_RecoPhotonGenPhoton,   dcMC_Photon_LowDM_dR_RecoPhotonGenPhoton},  {1, 2}, "", nBins, 0.0, 10.0, true, false, label_dR_RecoPhotonGenPhoton, "Events"));
+                vh.push_back(PHS("DataMC_Photon_HighDM_dR_RecoPhotonGenPhoton0to10" + suffix, {dcData_Photon_HighDM_dR_RecoPhotonGenPhoton,  dcMC_Photon_HighDM_dR_RecoPhotonGenPhoton}, {1, 2}, "", nBins, 0.0, 10.0, true, false, label_dR_RecoPhotonGenPhoton, "Events"));
                 
                 // dphi
                 for (int i = 0; i < 4; i++)

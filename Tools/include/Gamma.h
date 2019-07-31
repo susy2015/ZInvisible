@@ -161,6 +161,8 @@ namespace plotterFunctions
         auto& cutPhotonTLV              = tr.createDerivedVec<TLorentzVector>("cutPhotonTLV");
         auto& cutPhotonJetIndex         = tr.createDerivedVec<int>("cutPhotonJetIndex");
         auto& cutPhotonSF               = tr.createDerivedVec<float>("cutPhotonSF");
+        auto& dR_RecoPhotonGenParton    = tr.createDerivedVec<float>("dR_RecoPhotonGenParton");
+        auto& dR_RecoPhotonGenPhoton    = tr.createDerivedVec<float>("dR_RecoPhotonGenPhoton");
         
         // don't use new if it will not be registered or destroyed
         TLorentzVector metWithPhotonLVec;
@@ -286,6 +288,17 @@ namespace plotterFunctions
                                 FakePhotons.push_back(PhotonTLV[i]);
                             }
                             cutPhotonSF.push_back(Photon_SF[i]);
+                            // calculate dR 
+                            for (const auto& genParton : GenPartonTLV)
+                            {
+                                float dR = ROOT::Math::VectorUtil::DeltaR(PhotonTLV[i], genParton);
+                                dR_RecoPhotonGenParton.push_back(dR);
+                            }
+                            for (const auto& genPhoton : GenPhotonTLV)
+                            {
+                                float dR = ROOT::Math::VectorUtil::DeltaR(PhotonTLV[i], genPhoton);
+                                dR_RecoPhotonGenPhoton.push_back(dR);
+                            }
                         }
                         else
                         {
@@ -296,7 +309,6 @@ namespace plotterFunctions
             }
         }
         if (verbose) fflush(stdout);
-
 
         // all IDs for testing
         bool passPhotonSelectionLoose   = bool(LoosePhotonTLV.size() == 1);
@@ -341,24 +353,6 @@ namespace plotterFunctions
         tr.registerDerivedVar("passPhotonSelectionDirect", passPhotonSelectionDirect);
         tr.registerDerivedVar("passPhotonSelectionFragmented", passPhotonSelectionFragmented);
         tr.registerDerivedVar("passPhotonSelectionFake", passPhotonSelectionFake);
-        // Register derived vectors: not needed if you use createDerivedVec
-        //tr.registerDerivedVec("GenPartonTLV", GenPartonTLV);
-        //tr.registerDerivedVec("GenPhotonTLV", GenPhotonTLV);
-        //tr.registerDerivedVec("GenPhotonTLVEta", GenPhotonTLVEta);
-        //tr.registerDerivedVec("GenPhotonTLVEtaPt", GenPhotonTLVEtaPt);
-        //tr.registerDerivedVec("GenPhotonTLVEtaPtMatched", GenPhotonTLVEtaPtMatched);
-        //tr.registerDerivedVec("RecoPhotonTLV", RecoPhotonTLV);
-        //tr.registerDerivedVec("RecoPhotonTLVEta", RecoPhotonTLVEta);
-        //tr.registerDerivedVec("RecoPhotonTLVEtaPt", RecoPhotonTLVEtaPt);
-        //tr.registerDerivedVec("RecoPhotonTLVEtaPtMatched", RecoPhotonTLVEtaPtMatched);
-        //tr.registerDerivedVec("RecoPhotonTLVIso", RecoPhotonTLVIso);
-        //tr.registerDerivedVec("cutPhotonTLV", cutPhotonTLV);
-        //tr.registerDerivedVec("cutPhotonJetIndex", cutPhotonJetIndex);
-        //tr.registerDerivedVec("cutPhotonSF", cutPhotonSF);
-        //tr.registerDerivedVec("PromptPhotons", PromptPhotons);
-        //tr.registerDerivedVec("DirectPhotons", DirectPhotons);
-        //tr.registerDerivedVec("FragmentedPhotons", FragmentedPhotons);
-        //tr.registerDerivedVec("FakePhotons", FakePhotons);
     }
 
     public:
