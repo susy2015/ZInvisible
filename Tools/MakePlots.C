@@ -270,10 +270,11 @@ int main(int argc, char* argv[])
 
 	std::vector<Plotter::Scanner> scanners;
 
+	string weights = "puWeight;BTagWeight"+PrefireWeight;
 
-	string cuts = "Pass_LeptonVeto;Pass_NJets20;Pass_MET;Pass_HT" + HEMcut;
+	string cuts = "Pass_LeptonVeto;Pass_NJets20;Pass_MET;Pass_HT" + semicolon_HEMVeto;
 
-	std::set<std::string> vars = {"run", "event", "nJets", "nJets30", "PV_npvsGood", "Jet_pt", "Jet_eta", "Jet_phi", "Jet_Stop0l", "Jet_jetId", "Jet_puId", "MET_pt", "MET_phi",
+	std::set<std::string> vars = {"run", "event", "nJets", "PV_npvsGood", "Jet_pt", "Jet_eta", "Jet_phi", "Jet_Stop0l", "Jet_jetId", "Jet_puId", "MET_pt", "MET_phi",
 	   	"Pass_QCDCR_lowDM", "Pass_QCDCR_highDM", "Pass_trigger_MET", "Stop0l_HT", "Pass_CaloMETRatio", "Pass_JetID", "Pass_EventFilter",
 		"Jet_neEmEF", "Jet_neHEF", "Jet_chEmEF", "Jet_chHEF", "Jet_muEF",
 	   	"Flag_BadChargedCandidateFilter", "Flag_BadChargedCandidateSummer16Filter", "Flag_ecalBadCalibFilter",
