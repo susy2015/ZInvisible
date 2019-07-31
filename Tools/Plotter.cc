@@ -403,6 +403,10 @@ void Plotter::createHistsFromTuple()
 
 		std::vector<std::pair<MiniTupleMaker*, Scanner*>> scannersToFill;
 
+		for(Scanner& sc : scanners_)
+			for (const std::string &var : sc.vars)
+				activeBranches.insert(var);
+
         bool keepGoing = true;
         // Do not process files if there are no histograms asking for it
         if(!keepGoing && !histsToFill.size() && !cutFlowsToFill.size())

@@ -12,24 +12,6 @@ void activateBranches(std::set<std::string>& activeBranches)
 {
     for(auto& bn : AnaConsts::activatedBranchNames) activeBranches.insert(bn);
     for(auto& bn : AnaConsts::activatedBranchNames_DataOnly) activeBranches.insert(bn);
-	activeBranches.insert("Jet_corr_JEC");
-	activeBranches.insert("Jet_corr_JER");
-	activeBranches.insert("Jet_pt_jerUp");
-	activeBranches.insert("Jet_pt_jerDown");
-	activeBranches.insert("Jet_jecUncertTotal");
-	activeBranches.insert("Pass_QCDCR_lowDM");
-	activeBranches.insert("Pass_QCDCR_highDM");
-	activeBranches.insert("MET_pt");
-	activeBranches.insert("MET_phi");
-	activeBranches.insert("Pass_trigger_MET");
-	activeBranches.insert("Stop0l_trigger_eff_MET_loose_baseline");
-	activeBranches.insert("Stop0l_trigger_eff_MET_low_dm");
-	activeBranches.insert("Stop0l_trigger_eff_MET_high_dm");
-	activeBranches.insert("Stop0l_trigger_eff_MET_low_dm_QCD");
-	activeBranches.insert("Stop0l_trigger_eff_MET_high_dm_QCD");
-	activeBranches.insert("Jet_Stop0l");
-	activeBranches.insert("PV_npvsGood");
-	activeBranches.insert("PV_npvs");
     activeBranches.insert("ht");
     activeBranches.insert("run");
     activeBranches.insert("lumi");
