@@ -7,6 +7,7 @@
 
 #include <getopt.h>
 #include <iostream>
+#include <algorithm>
 
 void stripRoot(std::string &path)
 {
@@ -124,15 +125,18 @@ int main(int argc, char* argv[])
     // datasets
     // year and periods
     std::string yearTag   = "_" + year; 
+	std::string yearOnly  = "_" + year;
     // HEM veto for 2018 periods C and C
 	std::string HEMcut = "";
     // PrefireWeight
     std::string PrefireWeight = "";
+	std::string ISRWeight = "";
 
     // lumi for Plotter
     if (year.compare("2016") == 0)
     {
         PrefireWeight   = ";PrefireWeight";
+		ISRWeight = ";ISRWeight";
 		HEMcut = "";
     }
     else if (year.compare("2017") == 0)
@@ -147,12 +151,12 @@ int main(int argc, char* argv[])
     else if (year.compare("2018_PreHEM") == 0)
     {
 		HEMcut = "";
-        yearTag         = "_2018"; 
+		yearOnly = "_2018";
     }
     else if (year.compare("2018_PostHEM") == 0)
     {
 		HEMcut = ";Pass_exHEMVeto20";
-        yearTag                 = "_2018"; 
+		yearOnly = "_2018";
     }
     else
     {
@@ -204,6 +208,8 @@ int main(int argc, char* argv[])
     
     map<string, vector<AFS>> fileMap;
 
+	std::cout << "dataSets: " << dataSets << std::endl;
+	std::cout << "yearTag: " << yearTag << std::endl;
 	for (const auto& sample : sampleList)
 	{
 		AnaSamples::SampleSet           ss = sample.sample_set;
@@ -229,35 +235,37 @@ int main(int argc, char* argv[])
     vector<PHS> vh;
 
 
-	std::string basecuts = "Pass_CaloMETRatio;Pass_JetID;";
-
 	std::vector<Plotter::Scanner> scanners;
 
 	string weights = "puWeight;BTagWeight"+PrefireWeight;
 
-	string cuts = basecuts + "Pass_QCDCR" + HEMcut;
+	string cuts = "Pass_LeptonVeto;Pass_NJets20;Pass_MET;Pass_HT" + HEMcut;
 
 	std::set<std::string> vars = {"run", "event", "nJets", "nJets30", "PV_npvsGood", "Jet_pt", "Jet_eta", "Jet_phi", "Jet_Stop0l", "Jet_jetId", "Jet_puId", "MET_pt", "MET_phi",
-	   	"Pass_QCDCR_lowDM", "Pass_QCDCR_highDM", "Pass_trigger_MET",
+	   	"Pass_QCDCR_lowDM", "Pass_QCDCR_highDM", "Pass_trigger_MET", "Stop0l_HT", "Pass_CaloMETRatio", "Pass_JetID", "Pass_EventFilter",
+		"Jet_neEmEF", "Jet_neHEF", "Jet_chEmEF", "Jet_chHEF", "Jet_muEF",
+	   	"Flag_BadChargedCandidateFilter", "Flag_BadChargedCandidateSummer16Filter", "Flag_ecalBadCalibFilter",
+	   	"Stop0l_nTop", "Stop0l_nW", "Stop0l_nResolved", "Stop0l_Mtb", "Stop0l_ISRJetPt", "Stop0l_METSig",
+		"Stop0l_evtWeight", "Flag_goodVertices", "Flag_HBHENoiseFilter", "Flag_HBHENoiseIsoFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter", "Flag_BadPFMuonFilter",
+	   	"Flag_globalSuperTightHalo2016Filter", "Flag_eeBadScFilter", "Pass_LeptonVeto",
 		"Stop0l_trigger_eff_MET_loose_baseline", "Stop0l_trigger_eff_MET_low_dm", "Stop0l_trigger_eff_MET_high_dm",
 		"Stop0l_trigger_eff_MET_low_dm_QCD", "Stop0l_trigger_eff_MET_high_dm_QCD"};
 
-	std::set<std::string> MCvars = {"run", "event", "nJets", "nJets30", "PV_npvsGood", "Jet_pt", "Jet_eta", "Jet_phi", "Jet_Stop0l", "Jet_jetId", "Jet_puId", "MET_pt", "MET_phi",
-	   	"Pass_QCDCR_lowDM", "Pass_QCDCR_highDM", "Pass_trigger_MET",
-		"Stop0l_trigger_eff_MET_loose_baseline", "Stop0l_trigger_eff_MET_low_dm", "Stop0l_trigger_eff_MET_high_dm",
-		"Stop0l_trigger_eff_MET_low_dm_QCD", "Stop0l_trigger_eff_MET_high_dm_QCD",
-		"Jet_corr_JEC", "Jet_jecUncertTotal", "Jet_corr_JER", "Jet_pt_jerUp", "Jet_pt_jerDown"};
+	if (year == "2017")
+	{
+		vars.insert("Flag_ecalBadCalibFilterV2");
+	}
 
 	PDS dsData  = PDS("Data", fileMap["Data_MET"+yearTag], cuts, "");
-	PDS dstt    = PDS("t#bar{t}", fileMap["TTbarAll"+yearTag], cuts, weights + ";ISRWeight");
-	PDS dsWJets = PDS("Wjets", fileMap["WJetsToLNu"+yearTag], cuts, weights);
-	PDS dsZnunu = PDS("Znunu", fileMap["ZJetsToNuNu"+yearTag], cuts, weights);
-	PDS dsrare  = PDS("rare", fileMap["Rare"+yearTag], cuts, weights);
-	PDS dsQCD   = PDS("QCD", fileMap["QCD"+yearTag], cuts, weights);
+	PDS dstt    = PDS("ttbar", fileMap["TTbar"+yearOnly], cuts, weights + ISRWeight);
+	PDS dstt2   = PDS("ttbarnohad", fileMap["TTbarNoHad"+yearOnly], cuts, weights + ISRWeight);
+	PDS dsWJets = PDS("Wjets", fileMap["WJetsToLNu"+yearOnly], cuts, weights);
+	PDS dsZnunu = PDS("Znunu", fileMap["ZJetsToNuNu"+yearOnly], cuts, weights);
+	PDS dsrare  = PDS("rare", fileMap["Rare"+yearOnly], cuts, weights);
+	PDS dsQCD   = PDS("QCD", fileMap["QCD"+yearOnly], cuts, weights);
 
 	string tag = "QCDCR";
-	scanners.push_back(Plotter::Scanner(tag, vars, {dsData}));
-	scanners.push_back(Plotter::Scanner(tag, MCvars, {dstt, dsWJets, dsZnunu, dsrare, dsQCD}));
+	scanners.push_back(Plotter::Scanner(tag, vars, {dsData, dstt, dstt2, dsWJets, dsZnunu, dsrare, dsQCD}));
 
     set<AFS> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
