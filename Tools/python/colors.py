@@ -43,11 +43,11 @@ def main():
 
 if __name__ == "__main__":
     # run main() to create json file
-    #main()
+    main()
     
     # example of getting color index
     #getColorIndex("tomato")
     
     # print colors
-    printColors()
+    #printColors()
 

@@ -8,6 +8,18 @@
 #include "ISRCorrector.h"
 #include "PileupWeights.h"
 
+const std::set<std::string> RegisterFunctions::getMiniTupleSet()
+{
+    //if you want to not fill the minituple return std::set<std::string>({});
+  return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight","bTagSF_EventWeightSimple_Central","isr_Unc_Cent","_PUweightFactor"});
+    //return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger","genHT","genWeight"});
+}
+
+const std::set<std::string> RegisterFunctions::getMiniTupleSetData()
+{
+  return std::set<std::string>({"HTZinv","cleanMetPt","cleanMetPhi","best_had_brJet_MT2Zinv","cntCSVSZinv","nTopCandSortedCntZinv","cntNJetsPt30Eta24Zinv","nSearchBin","cutMuVec","cutElecVec","jetsLVec_forTaggerZinv", "recoJetsBtag_forTaggerZinv","zEffWgt","zAccWgt","cuts","passMuTrigger"});
+}
+
 void activateBranches(std::set<std::string>& activeBranches)
 {
     for(auto& bn : AnaConsts::activatedBranchNames) activeBranches.insert(bn);
@@ -87,7 +99,7 @@ void activateBranches(std::set<std::string>& activeBranches)
 
 ////////////////////////////////
 
-RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra) : RegisterFunctions()
+RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra, std::string year) : RegisterFunctions()
 {            
     // Important: create objects!!
     
@@ -110,14 +122,14 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     runTopTagger                 = new RunTopTagger;
     runTopTagger_drLeptonCleaned = new RunTopTagger("TopTagger.cfg","_drLeptonCleaned",true,false);
     runTopTagger_drPhotonCleaned = new RunTopTagger("TopTagger.cfg","_drPhotonCleaned",false,true);
-    gamma                        = new plotterFunctions::Gamma;
+    gamma                        = new plotterFunctions::Gamma(year);
     weights                      = new plotterFunctions::GenerateWeight;
     generatePhotonEfficiency     = new plotterFunctions::GeneratePhotonEfficiency;
     njWeight                     = new plotterFunctions::NJetWeight;
-    lepInfo                      = new plotterFunctions::LepInfo;
+    lepInfo                      = new plotterFunctions::LepInfo(year);
     basicLepton                  = new plotterFunctions::BasicLepton;
     fakebtagvectors              = new plotterFunctions::Fakebtagvectors;
-    getSearchBin                 = new plotterFunctions::GetSearchBin(sbEra);
+    getSearchBin                 = new plotterFunctions::GetSearchBin;
     triggerInfo                  = new plotterFunctions::TriggerInfo;
     prepareMiniTupleVars         = new plotterFunctions::PrepareMiniTupleVars(true);
     systematicPrep               = new plotterFunctions::SystematicPrep;
@@ -210,21 +222,19 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*getVectors);
     tr.registerFunction(*gamma);
     tr.registerFunction(*basicLepton);
-    tr.registerFunction(*generatePhotonEfficiency);
+    //tr.registerFunction(*generatePhotonEfficiency);
     tr.registerFunction(*cleanedJets);
     tr.registerFunction(*runTopTagger);
     tr.registerFunction(*runTopTagger_drLeptonCleaned);
     tr.registerFunction(*runTopTagger_drPhotonCleaned);
     tr.registerFunction(*myBLV);
-    //tr.registerFunction(*blvZinv);
-    
-    tr.registerFunction(*lepInfo); // TODO: fix lepInfo to use with NanoAOD; it is broken right now
-    
+    tr.registerFunction(*lepInfo);
     tr.registerFunction(*blv_drLeptonCleaned);
     tr.registerFunction(*blv_drPhotonCleaned);
-    
     tr.registerFunction(*getSearchBin);
     
+    // old version including JEC and systematics
+    // here for reference only
     //tr.registerFunction(*weights);
     //tr.registerFunction(*blvZinv);
     //tr.registerFunction(*blvNoVeto);
@@ -241,8 +251,6 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     //tr.registerFunction(*blvZinvJEUDn);
     //tr.registerFunction(*blvZinvMEUUp);
     //tr.registerFunction(*blvZinvMEUDn);
-    
-    
     //tr.registerFunction(*systematicCalc);
     //tr.registerFunction(*triggerInfo);
     //tr.registerFunction(*prepareMiniTupleVars);
@@ -280,8 +288,6 @@ void RegisterFunctionsNTuple::remakeISRreweight(std::string sampleName)
 
 RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()
 {            
-    //AnaFunctions::prepareTopTagger();
-
     njWeight             = new plotterFunctions::NJetWeight;
     triggerInfo          = new plotterFunctions::TriggerInfo(true);
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
@@ -298,8 +304,6 @@ RegisterFunctionsMiniTuple::~RegisterFunctionsMiniTuple()
         
 void RegisterFunctionsMiniTuple::registerFunctions(NTupleReader& tr)
 {
-    //Make some global "constants" here
-
     //register functions with NTupleReader
     tr.registerFunction(*njWeight);
     tr.registerFunction(*triggerInfo);
@@ -342,24 +346,10 @@ RegisterFunctionsCalcEff::~RegisterFunctionsCalcEff()
 void RegisterFunctionsCalcEff::registerFunctions(NTupleReader& tr)
 {
     //register functions with NTupleReader
-    
-    // old version
-    
-    // order matters
-    // get photons and leptons
-    // then do baseline
-    // then do lepinfo
-    //tr.registerFunction(*gamma);
-    //tr.registerFunction(*basicLepton);
-    //tr.registerFunction(*myBLV);
-    //tr.registerFunction(*lepInfo);
-
-
-    // new version
     tr.registerFunction(*getVectors);
     tr.registerFunction(*gamma);
     tr.registerFunction(*basicLepton);
-    tr.registerFunction(*generatePhotonEfficiency);
+    //tr.registerFunction(*generatePhotonEfficiency);
     tr.registerFunction(*cleanedJets);
     tr.registerFunction(*runTopTagger);
     tr.registerFunction(*myBLV);
@@ -427,23 +417,18 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
     myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
-    //prepareTopVars = new plotterFunctions::PrepareTopVars();
     triggerInfo = new plotterFunctions::TriggerInfo(false, true);
 }
 
 RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
 {
     if(myBLV) delete myBLV;
-    //if(prepareTopVars) delete prepareTopVars;
 }
 
 void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
 {
     tr.registerFunction(*myBLV);
-    //tr.registerFunction(*prepareTopVars);
     tr.registerFunction(*triggerInfo);
-//    tr.registerFunction(*taudiv);
-//    tr.registerFunction(*ak8DrMatch);
 }
 
 /////////////////////////////////

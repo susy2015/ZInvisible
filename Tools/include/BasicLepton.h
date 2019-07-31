@@ -2,20 +2,20 @@
 #define BASICLEPTON_H 
 
 #include "TypeDefinitions.h"
-#include "PhotonTools.h"
+#include "ZInvisible/Tools/PhotonTools.h"
 
 #include "SusyAnaTools/Tools/NTupleReader.h"
 #include "SusyAnaTools/Tools/customize.h"
 #include "SusyAnaTools/Tools/searchBins.h"
 #include "TopTagger/Tools/cpp/TaggerUtility.h"
 #include "TopTagger/Tools/cpp/PlotUtility.h"
-#include "ScaleFactors.h"
-#include "ScaleFactorsttBar.h"
+#include "ZInvisible/Tools/ScaleFactors.h"
+#include "ZInvisible/Tools/ScaleFactorsttBar.h"
 
-#include "TopTagger.h"
-#include "TTModule.h"
-#include "TopTaggerUtilities.h"
-#include "TopTaggerResults.h"
+#include "TopTagger/TopTagger/interface/TopTagger.h"
+#include "TopTagger/TopTagger/interface/TTModule.h"
+#include "TopTagger/TopTagger/interface/TopTaggerUtilities.h"
+#include "TopTagger/TopTagger/interface/TopTaggerResults.h"
 #include "TopTagger/Tools/cpp/PlotUtility.h"
 
 #include "TopTagger/TopTagger/interface/TopObject.h"
@@ -51,17 +51,29 @@ namespace plotterFunctions
             const auto& elesCharge       = tr.getVec<int>("Electron_charge");
             const auto& elesJetIndex     = tr.getVec<int>("Electron_jetIdx");
             const auto& elesFlagIDVec    = tr.getVec<int>("Electron_cutBasedNoIso");
+            
+            // the scale factors only exist in MC, not in Data
+            //const auto& muonsScaleFactor = tr.getVec<data_t>("Muon_MediumSF");
+            //const auto& elesScaleFactor  = tr.getVec<data_t>("Electron_MediumSF");
+            bool useMuSF   = tr.checkBranch("Muon_MediumSF");
+            bool useElecSF = tr.checkBranch("Electron_MediumSF");
+            std::vector<data_t> muonsScaleFactor;
+            std::vector<data_t> elesScaleFactor;
+            if (useMuSF)    { muonsScaleFactor = tr.getVec<data_t>("Muon_MediumSF");     }   
+            if (useElecSF)  { elesScaleFactor  = tr.getVec<data_t>("Electron_MediumSF"); }   
 
             //muons
             auto* cutMuVec            = new std::vector<TLorentzVector>();
             auto* cutMuVecRecoOnly    = new std::vector<TLorentzVector>();
             auto* cutMuCharge         = new std::vector<int>();
             auto* cutMuJetIndex       = new std::vector<int>();
+            auto* cutMuSF             = new std::vector<data_t>();
             //electrons
             auto* cutElecVec          = new std::vector<TLorentzVector>();
             auto* cutElecVecRecoOnly  = new std::vector<TLorentzVector>();
             auto* cutElecCharge       = new std::vector<int>();
             auto* cutElecJetIndex     = new std::vector<int>();
+            auto* cutElecSF           = new std::vector<data_t>();
 
             int cutMuSummedCharge = 0;
             int nTriggerMuons = 0;
@@ -69,29 +81,27 @@ namespace plotterFunctions
             //muon selections
             for(int i = 0; i < muonsLVec.size(); ++i)
             {
-                //if(muonsFlagIDVec[i])
-                //if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, true, AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
                 if(AnaFunctions::passMuon( muonsLVec[i], 0.0, 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr)) // emulates muons with pt but no iso requirements (should this be 0.0 or -1, compare to electrons).
                 {
                     cutMuVecRecoOnly->push_back(muonsLVec[i]);
                 }
-                //if(muonsFlagIDVec[i])
-                //if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i] / muonsLVec[i].Pt(), 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
                 if(AnaFunctions::passMuon( muonsLVec[i], muonsMiniIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
                 {
-                    //if(AnaFunctions::passMuon( muonsLVec[i], muonsRelIso[i], 0.0, muonsFlagIDVec[i], AnaConsts::muonsMiniIsoArr))
-                    //{
-                    //    if(nTriggerMuons == 0 && muonsLVec[i].Pt() > 17)  nTriggerMuons++;
-                    //    else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
-                    //}
-                    
                     if(nTriggerMuons == 0 && muonsLVec[i].Pt() > 17)  nTriggerMuons++;
                     else if(muonsLVec[i].Pt() > 8)  nTriggerMuons++;
                     
                     cutMuVec->push_back(muonsLVec[i]);
                     cutMuCharge->push_back(muonsCharge[i]);
                     cutMuJetIndex->push_back(muonsJetIndex[i]);
-                    
+                    if (useMuSF)
+                    {
+                        cutMuSF->push_back(muonsScaleFactor[i]); 
+                    } 
+                    else
+                    {
+                        cutMuSF->push_back(1.0); 
+                    } 
+
                     if(muonsCharge[i] > 0) cutMuSummedCharge++;
                     else                   cutMuSummedCharge--;
                 }
@@ -104,20 +114,24 @@ namespace plotterFunctions
                 // Electron_cutBased    Int_t   cut-based ID Fall17 V2 (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)
                 // Electron_cutBasedNoIso: Removed isolation requirement from eGamma ID;  Int_t  (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)
                 bool passElectonID = (elesFlagIDVec[i] >= 3);
-                //if(elesFlagIDVec[i])
                 if(AnaFunctions::passElectron(elesLVec[i], 0.0, -1, passElectonID, AnaConsts::elesMiniIsoArr)) // emulates electrons with pt but no iso requirements.
                 {
                     cutElecVecRecoOnly->push_back(elesLVec[i]);
                 }
 
-                //if(elesFlagIDVec[i])
-                //if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i] / elesLVec[i].Pt(), -1, passElectonID, AnaConsts::elesMiniIsoArr))
                 if(AnaFunctions::passElectron(elesLVec[i], elesMiniIso[i], -1, passElectonID, AnaConsts::elesMiniIsoArr))
                 {
                     cutElecVec->push_back(elesLVec[i]);
                     cutElecCharge->push_back(elesCharge[i]);
                     cutElecJetIndex->push_back(elesJetIndex[i]);
-                    //cutElecActivity->push_back(elespfActivity[i]);
+                    if (useElecSF)
+                    {
+                        cutElecSF->push_back(elesScaleFactor[i]);
+                    }
+                    else
+                    {
+                        cutElecSF->push_back(1.0);
+                    }
                     if(elesCharge[i] > 0) cutElecSummedCharge++;
                     else                  cutElecSummedCharge--;
                 }
@@ -129,6 +143,7 @@ namespace plotterFunctions
             tr.registerDerivedVec("cutMuCharge",          cutMuCharge);
             tr.registerDerivedVar("cutMuSummedCharge",    cutMuSummedCharge);
             tr.registerDerivedVec("cutMuJetIndex",        cutMuJetIndex);
+            tr.registerDerivedVec("cutMuSF",              cutMuSF);
             tr.registerDerivedVar("nTriggerMuons",        nTriggerMuons);
             //electrons
             tr.registerDerivedVec("cutElecVec",           cutElecVec);
@@ -136,6 +151,7 @@ namespace plotterFunctions
             tr.registerDerivedVec("cutElecCharge",        cutElecCharge);
             tr.registerDerivedVar("cutElecSummedCharge",  cutElecSummedCharge);
             tr.registerDerivedVec("cutElecJetIndex",      cutElecJetIndex);
+            tr.registerDerivedVec("cutElecSF",            cutElecSF);
 
         }
 

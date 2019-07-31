@@ -21,7 +21,6 @@ void stripRoot(std::string &path)
 int main(int argc, char* argv[])
 {
     using namespace std;
-
     int opt;
     int option_index = 0;
     static struct option long_options[] = {
@@ -38,22 +37,28 @@ int main(int argc, char* argv[])
         {"numEvts",    required_argument, 0, 'E'},
         {"plotDir",    required_argument, 0, 'P'},
         {"luminosity", required_argument, 0, 'L'},
-        {"sbEra",      required_argument, 0, 'S'},
-        {"year",       required_argument, 0, 'Y'}
+        {"refLumi",    required_argument, 0, 'R'},
+        {"era",        required_argument, 0, 'Y'}
     };
-
     bool runOnCondor        = false;
     bool doPlots = true;
     bool doSave = true;
     bool doTuple = true;
     bool fromTuple = true;
     bool verbose = false;
-    string filename = "histoutput.root", dataSets = "", sampleloc = AnaSamples::fileDir, plotDir = "plots";
-    int nFiles = -1, startFile = 0, nEvts = -1;
-    double lumi      = -1.0;
+    int startFile   = 0;
+    int nFiles      = -1;
+    int nEvts       = -1;
+    double lumi     = -1.0;
+    std::string refLumi = "";
+    std::string filename = "histoutput.root";
+    std::string dataSets = "";
+    std::string sampleloc = AnaSamples::fileDir;
+    std::string plotDir = "plots";
     std::string sbEra = "SB_v1_2017";
+    std::string era  = "";
     std::string year = "";
-    while((opt = getopt_long(argc, argv, "pstfcvI:D:N:M:E:P:L:S:Y:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "pstfcvI:D:N:M:E:P:L:R:Y:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
@@ -111,59 +116,91 @@ int main(int argc, char* argv[])
         case 'L':
             lumi = atof(optarg);
             break;
-
-        case 'S':
-            sbEra = optarg;
-            break;
         
+        case 'R':
+            refLumi = optarg;
+            break;
+
         case 'Y':
-            year = optarg;
+            era = optarg;
             break;
         }
+    }
+
+    // get year from era
+    // if era is 2018_PreHEM, year is 2018
+    if (era.length() >= 4)
+    {
+        year = era.substr(0, 4);
     }
     
     // datasets
     // year and periods
+    std::string eraTag    = "_" + era; 
     std::string yearTag   = "_" + year; 
-	std::string yearOnly  = "_" + year;
+    std::string periodTag = ""; 
     // HEM veto for 2018 periods C and C
-	std::string HEMcut = "";
+    std::string HEMVeto                 = "";
+    std::string semicolon_HEMVeto                 = "";
+    // Note: Don't apply Flag_ecalBadCalibFilter to 2016, but apply it to 2017 and 2018
+    std::string Flag_ecalBadCalibFilter = "";
     // PrefireWeight
     std::string PrefireWeight = "";
 	std::string ISRWeight = "";
 
     // lumi for Plotter
-    if (year.compare("2016") == 0)
+    if (era.compare("2016") == 0)
     {
         PrefireWeight   = ";PrefireWeight";
 		ISRWeight = ";ISRWeight";
-		HEMcut = "";
     }
-    else if (year.compare("2017") == 0)
+    else if (era.compare("2017") == 0)
     {
-        PrefireWeight   = ";PrefireWeight";
-		HEMcut = "";
+        PrefireWeight           = ";PrefireWeight";
+        Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
     }
-    else if (year.compare("2018") == 0)
+    else if (era.compare("2018") == 0)
     {
-		HEMcut = "";
+        Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
     }
-    else if (year.compare("2018_PreHEM") == 0)
+    else if (era.compare("2018_PreHEM") == 0)
     {
-		HEMcut = "";
-		yearOnly = "_2018";
+        periodTag               = "_PreHEM";
+        Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
     }
-    else if (year.compare("2018_PostHEM") == 0)
+    else if (era.compare("2018_PostHEM") == 0)
     {
-		HEMcut = ";Pass_exHEMVeto20";
-		yearOnly = "_2018";
+        // HEM vetos: use ";veto_name" so that it can be appended to cuts
+        HEMVeto                           = "SAT_Pass_HEMVeto30";
+        semicolon_HEMVeto                 = ";" + HEMVeto;
+        periodTag                         = "_PostHEM";
+        Flag_ecalBadCalibFilter           = ";Flag_ecalBadCalibFilter";
     }
     else
     {
-        std::cout << "Please enter 2016, 2017, 2018, 2018_PreHEM or 2018_PostHEM for the year using the -Y option." << std::endl;
+        std::cout << "Please enter 2016, 2017, 2018, 2018_PreHEM or 2018_PostHEM for the era using the -Y flag." << std::endl;
         exit(1);
     }
 
+    // if luminosity not set with -L flag
+    if (lumi < 0.0)
+    {
+        if (refLumi.empty())
+        {
+            std::cout << "Please enter either a luminosity (-L flag) or a data sample collection name (-R flag) for use as a reference luminosity." << std::endl;
+            exit(1);
+        }
+        else
+        {
+            // Hack to get luminosity from reference
+            AnaSamples::SampleSet        SS_temp("sampleSets_PostProcessed_"+year+".cfg", runOnCondor, lumi);
+            AnaSamples::SampleCollection SC_temp("sampleCollections_"+year+".cfg", SS_temp);
+            lumi = SC_temp.getSampleLumi(refLumi);
+        }
+    }
+    
+    std::cout << "Using luminosity " << lumi << std::endl;
+    
     //if running on condor override all optional settings
     if(runOnCondor)
     {
@@ -177,9 +214,6 @@ int main(int argc, char* argv[])
         fromTuple = true;
         sampleloc = "condor";
     }
-
-    std::cout << "input filename: " << filename << std::endl;
-    std::cout << "Sample location: " << sampleloc << std::endl;
 
     struct sampleStruct
     {
@@ -234,10 +268,8 @@ int main(int argc, char* argv[])
     //vector<Plotter::HistSummary> vh;
     vector<PHS> vh;
 
-
 	std::vector<Plotter::Scanner> scanners;
 
-	string weights = "puWeight;BTagWeight"+PrefireWeight;
 
 	string cuts = "Pass_LeptonVeto;Pass_NJets20;Pass_MET;Pass_HT" + HEMcut;
 
@@ -251,18 +283,18 @@ int main(int argc, char* argv[])
 		"Stop0l_trigger_eff_MET_loose_baseline", "Stop0l_trigger_eff_MET_low_dm", "Stop0l_trigger_eff_MET_high_dm",
 		"Stop0l_trigger_eff_MET_low_dm_QCD", "Stop0l_trigger_eff_MET_high_dm_QCD"};
 
-	if (year == "2017")
+	if (era == "2017")
 	{
 		vars.insert("Flag_ecalBadCalibFilterV2");
 	}
 
-	PDS dsData  = PDS("Data", fileMap["Data_MET"+yearTag], cuts, "");
-	PDS dstt    = PDS("ttbar", fileMap["TTbar"+yearOnly], cuts, weights + ISRWeight);
-	PDS dstt2   = PDS("ttbarnohad", fileMap["TTbarNoHad"+yearOnly], cuts, weights + ISRWeight);
-	PDS dsWJets = PDS("Wjets", fileMap["WJetsToLNu"+yearOnly], cuts, weights);
-	PDS dsZnunu = PDS("Znunu", fileMap["ZJetsToNuNu"+yearOnly], cuts, weights);
-	PDS dsrare  = PDS("rare", fileMap["Rare"+yearOnly], cuts, weights);
-	PDS dsQCD   = PDS("QCD", fileMap["QCD"+yearOnly], cuts, weights);
+	PDS dsData  = PDS("Data", fileMap["Data_MET"+eraTag], cuts, "");
+	PDS dstt    = PDS("ttbar", fileMap["TTbar"+yearTag], cuts, weights + ISRWeight);
+	PDS dstt2   = PDS("ttbarnohad", fileMap["TTbarNoHad"+yearTag], cuts, weights + ISRWeight);
+	PDS dsWJets = PDS("Wjets", fileMap["WJetsToLNu"+yearTag], cuts, weights);
+	PDS dsZnunu = PDS("Znunu", fileMap["ZJetsToNuNu"+yearTag], cuts, weights);
+	PDS dsrare  = PDS("rare", fileMap["Rare"+yearTag], cuts, weights);
+	PDS dsQCD   = PDS("QCD", fileMap["QCD"+yearTag], cuts, weights);
 
 	string tag = "QCDCR";
 	scanners.push_back(Plotter::Scanner(tag, vars, {dsData, dstt, dstt2, dsWJets, dsZnunu, dsrare, dsQCD}));
@@ -270,7 +302,7 @@ int main(int argc, char* argv[])
     set<AFS> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
-    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra);
+    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra, year);
 
     if (verbose)
     {
@@ -284,7 +316,7 @@ int main(int argc, char* argv[])
   
     Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);
 	plotter.setScanners(scanners);
-	//plotter.setCutFlows(cutFlowSummaries);
+    //plotter.setCutFlows(cutFlowSummaries);
     plotter.setLumi(lumi);
     plotter.setPlotDir(plotDir);
     plotter.setDoHists(doSave || doPlots);
