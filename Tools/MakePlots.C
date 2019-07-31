@@ -639,7 +639,7 @@ int main(int argc, char* argv[])
     auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
     {
         PDS dsGJets(      "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,   weights);
-        PDS dsQCD(        "QCD",                    fileMap["QCD" + yearTag],           cuts,   weights);
+        PDS dsQCD(        "QCD",                    fileMap["QCD_Photon" + yearTag],    cuts,   weights);
         PDS dsWJetsToLNu( "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
         PDS dsTTG(        "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,   weights);
         PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
@@ -655,8 +655,8 @@ int main(int argc, char* argv[])
     //auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
     //{
     //    PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts + ";passPhotonSelectionDirect",      weights);
-    //    PDS dsQCDFragmented(    "QCD Fragmented",         fileMap["QCD" + yearTag],           cuts + ";passPhotonSelectionFragmented",  weights);
-    //    PDS dsQCDFake(          "QCD Fake",               fileMap["QCD" + yearTag],           cuts + ";passPhotonSelectionFake",        weights);
+    //    PDS dsQCDFragmented(    "QCD Fragmented",         fileMap["QCD_Photon" + yearTag],    cuts + ";passPhotonSelectionFragmented",  weights);
+    //    PDS dsQCDFake(          "QCD Fake",               fileMap["QCD_Photon" + yearTag],    cuts + ";passPhotonSelectionFake",        weights);
     //    PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts + ";passPhotonSelectionDirect",      weights);
     //    PDS dsWJetsToLNu(       "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
     //    PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);

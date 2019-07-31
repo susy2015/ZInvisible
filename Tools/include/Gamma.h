@@ -59,7 +59,7 @@ namespace plotterFunctions
         //std::vector<unsigned char> Photon_genPartFlav;
         
         // choose ID to use
-        enum ID myID = Medium;
+        enum ID myID = Loose;
         // the scale factors only exist in MC, not in Data
         std::vector<data_t> Photon_SF;
         
@@ -139,24 +139,28 @@ namespace plotterFunctions
         bool passPhotonSelectionFragmented  = false;
         bool passPhotonSelectionFake        = false;
         
-        // if you use new, you need to register it or destroy it yourself to clear memory
-        auto* GenPartonTLV              = new std::vector<TLorentzVector>(); 
-        auto* GenPhotonTLV              = new std::vector<TLorentzVector>(); 
-        auto* GenPhotonTLVEta           = new std::vector<TLorentzVector>(); 
-        auto* GenPhotonTLVEtaPt         = new std::vector<TLorentzVector>(); 
-        auto* GenPhotonTLVEtaPtMatched  = new std::vector<TLorentzVector>(); 
-        auto* RecoPhotonTLV             = new std::vector<TLorentzVector>();
-        auto* RecoPhotonTLVEta          = new std::vector<TLorentzVector>();
-        auto* RecoPhotonTLVEtaPt        = new std::vector<TLorentzVector>();
-        auto* RecoPhotonTLVEtaPtMatched = new std::vector<TLorentzVector>();
-        auto* RecoPhotonTLVIso          = new std::vector<TLorentzVector>(); 
-        auto* cutPhotonTLV              = new std::vector<TLorentzVector>();
-        auto* cutPhotonJetIndex         = new std::vector<int>();
-        auto* cutPhotonSF               = new std::vector<float>();
-        auto* PromptPhotons             = new std::vector<TLorentzVector>();
-        auto* DirectPhotons             = new std::vector<TLorentzVector>();
-        auto* FragmentedPhotons         = new std::vector<TLorentzVector>();
-        auto* FakePhotons               = new std::vector<TLorentzVector>();
+        // if you use new, you need to register it or destroy it yourself to clear memory; otherwise there will be memory leaks
+        // use createDerivedVec to avoid this issue 
+        auto& GenPartonTLV              = tr.createDerivedVec<TLorentzVector>("GenPartonTLV"); 
+        auto& GenPhotonTLV              = tr.createDerivedVec<TLorentzVector>("GenPhotonTLV"); 
+        auto& GenPhotonTLVEta           = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEta"); 
+        auto& GenPhotonTLVEtaPt         = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPt"); 
+        auto& GenPhotonTLVEtaPtMatched  = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPtMatched"); 
+        auto& RecoPhotonTLV             = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLV");
+        auto& RecoPhotonTLVEta          = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEta");
+        auto& RecoPhotonTLVEtaPt        = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEtaPt");
+        auto& RecoPhotonTLVEtaPtMatched = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEtaPtMatched");
+        auto& RecoPhotonTLVIso          = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVIso"); 
+        auto& LoosePhotonTLV            = tr.createDerivedVec<TLorentzVector>("LoosePhotonTLV");
+        auto& MediumPhotonTLV           = tr.createDerivedVec<TLorentzVector>("MediumPhotonTLV");
+        auto& TightPhotonTLV            = tr.createDerivedVec<TLorentzVector>("TightPhotonTLV");
+        auto& PromptPhotons             = tr.createDerivedVec<TLorentzVector>("PromptPhotons");
+        auto& DirectPhotons             = tr.createDerivedVec<TLorentzVector>("DirectPhotons");
+        auto& FragmentedPhotons         = tr.createDerivedVec<TLorentzVector>("FragmentedPhotons");
+        auto& FakePhotons               = tr.createDerivedVec<TLorentzVector>("FakePhotons");
+        auto& cutPhotonTLV              = tr.createDerivedVec<TLorentzVector>("cutPhotonTLV");
+        auto& cutPhotonJetIndex         = tr.createDerivedVec<int>("cutPhotonJetIndex");
+        auto& cutPhotonSF               = tr.createDerivedVec<float>("cutPhotonSF");
         
         // don't use new if it will not be registered or destroyed
         TLorentzVector metWithPhotonLVec;
@@ -181,7 +185,7 @@ namespace plotterFunctions
                 if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21)
                 {
                     //printf("Found GenParton: pdgId = %d, status = %d, statusFlags = %d\n", pdgId, status, statusFlags);
-                    GenPartonTLV->push_back(GenPartTLV[i]);
+                    GenPartonTLV.push_back(GenPartTLV[i]);
                 }
                 // Particle IDs
                 // photons: +22
@@ -190,25 +194,25 @@ namespace plotterFunctions
                 if (pdgId == 22 && status == 1)
                 {
                     //printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d\n", pdgId, status, statusFlags);
-                    GenPhotonTLV->push_back(GenPartTLV[i]);
+                    GenPhotonTLV.push_back(GenPartTLV[i]);
                 }
             }
             //Apply cuts to Gen Photons
-            for(int i = 0; i < GenPhotonTLV->size(); ++i)
+            for(int i = 0; i < GenPhotonTLV.size(); ++i)
             {
                 // ECAL eta cuts
-                if (PhotonFunctions::passPhotonECAL(GenPhotonTLV->at(i)))
+                if (PhotonFunctions::passPhotonECAL(GenPhotonTLV.at(i)))
                 {
-                    GenPhotonTLVEta->push_back(GenPhotonTLV->at(i));
+                    GenPhotonTLVEta.push_back(GenPhotonTLV.at(i));
                 }
                 // passing pt and eta cuts
-                if (PhotonFunctions::passPhotonEtaPt(GenPhotonTLV->at(i)))
+                if (PhotonFunctions::passPhotonEtaPt(GenPhotonTLV.at(i)))
                 {
-                    GenPhotonTLVEtaPt->push_back(GenPhotonTLV->at(i));
+                    GenPhotonTLVEtaPt.push_back(GenPhotonTLV.at(i));
                     // passing ECAL barrel/endcap eta cuts and reco match
-                    if (PhotonFunctions::isRecoMatched(GenPhotonTLV->at(i), PhotonTLV)) 
+                    if (PhotonFunctions::isRecoMatched(GenPhotonTLV.at(i), PhotonTLV)) 
                     {
-                        GenPhotonTLVEtaPtMatched->push_back(GenPhotonTLV->at(i));
+                        GenPhotonTLVEtaPtMatched.push_back(GenPhotonTLV.at(i));
                     }
                 }
             }
@@ -236,52 +240,56 @@ namespace plotterFunctions
         //Select reco photons within the ECAL acceptance region and Pt > 200 GeV 
         for(int i = 0; i < PhotonTLV.size(); ++i)
         {
-            RecoPhotonTLV->push_back(PhotonTLV[i]);
+            RecoPhotonTLV.push_back(PhotonTLV[i]);
             if (PhotonFunctions::passPhotonECAL(PhotonTLV[i])) 
             {
-                RecoPhotonTLVEta->push_back(PhotonTLV[i]);
+                RecoPhotonTLVEta.push_back(PhotonTLV[i]);
                 // pt and eta cuts
                 if (PhotonFunctions::passPhotonEtaPt(PhotonTLV[i])) 
                 {
-                    RecoPhotonTLVEtaPt->push_back(PhotonTLV[i]);
+                    RecoPhotonTLVEtaPt.push_back(PhotonTLV[i]);
+                    // get all IDs for testing
+                    if (Photon_PassLooseID[i])  LoosePhotonTLV.push_back(PhotonTLV[i]);
+                    if (Photon_PassMediumID[i]) MediumPhotonTLV.push_back(PhotonTLV[i]);
+                    if (Photon_PassTightID[i])  TightPhotonTLV.push_back(PhotonTLV[i]);
                     if(Photon_ID[i])  
                     {
                         if (verbose) std::cout << "ID = " << Photon_ID[i];
                         if (verbose) printf(" Found CutPhoton; ");
-                        RecoPhotonTLVIso->push_back(PhotonTLV[i]);
-                        cutPhotonTLV->push_back(PhotonTLV[i]);
-                        cutPhotonJetIndex->push_back(Photon_jetIdx[i]);
+                        RecoPhotonTLVIso.push_back(PhotonTLV[i]);
+                        cutPhotonTLV.push_back(PhotonTLV[i]);
+                        cutPhotonJetIndex.push_back(Photon_jetIdx[i]);
                         // MC Only
                         if (! isData)
                         {
-                            if (PhotonFunctions::isGenMatched_Method1(PhotonTLV[i], *GenPhotonTLV))
+                            if (PhotonFunctions::isGenMatched_Method1(PhotonTLV[i], GenPhotonTLV))
                             {
                                 if (verbose) printf("Found PromptPhoton; ");
-                                RecoPhotonTLVEtaPtMatched->push_back(PhotonTLV[i]);
-                                PromptPhotons->push_back(PhotonTLV[i]);
-                                if (PhotonFunctions::isFragmentationPhoton(PhotonTLV[i], *GenPartonTLV))
+                                RecoPhotonTLVEtaPtMatched.push_back(PhotonTLV[i]);
+                                PromptPhotons.push_back(PhotonTLV[i]);
+                                if (PhotonFunctions::isFragmentationPhoton(PhotonTLV[i], GenPartonTLV))
                                 {
                                     if (verbose) printf("Found FragmentedPhoton\n");
-                                    FragmentedPhotons->push_back(PhotonTLV[i]);
+                                    FragmentedPhotons.push_back(PhotonTLV[i]);
                                 }
                                 // direct photon if not fragmented
                                 else
                                 {
                                     if (verbose) printf("Found DirectPhoton\n");
-                                    DirectPhotons->push_back(PhotonTLV[i]);
+                                    DirectPhotons.push_back(PhotonTLV[i]);
                                 }
                             }
                             // fake photon if not prompt
                             else
                             {
                                 if (verbose) printf("Found FakePhoton\n");
-                                FakePhotons->push_back(PhotonTLV[i]);
+                                FakePhotons.push_back(PhotonTLV[i]);
                             }
-                            cutPhotonSF->push_back(Photon_SF[i]);
+                            cutPhotonSF.push_back(Photon_SF[i]);
                         }
                         else
                         {
-                            cutPhotonSF->push_back(1.0);
+                            cutPhotonSF.push_back(1.0);
                         }
                     }
                 }
@@ -289,28 +297,34 @@ namespace plotterFunctions
         }
         if (verbose) fflush(stdout);
 
+
+        // all IDs for testing
+        bool passPhotonSelectionLoose   = bool(LoosePhotonTLV.size() == 1);
+        bool passPhotonSelectionMedium  = bool(MediumPhotonTLV.size() == 1);
+        bool passPhotonSelectionTight   = bool(TightPhotonTLV.size() == 1);
+
         // set default met LVec using met and metphi
         // Pt, Eta, Phi, M
         metWithPhotonLVec.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
         metWithPhoton     = metWithPhotonLVec.Pt();
         metphiWithPhoton  = metWithPhotonLVec.Phi();
         // pass photon selection and add to MET
-        if (cutPhotonTLV->size() == 1)
+        if (cutPhotonTLV.size() == 1)
         {
-            cutPhotonPt  = (*cutPhotonTLV)[0].Pt();
-            cutPhotonEta = (*cutPhotonTLV)[0].Eta();
+            cutPhotonPt  = cutPhotonTLV[0].Pt();
+            cutPhotonEta = cutPhotonTLV[0].Eta();
             // Add LVecs of MET and Photon
-            metWithPhotonLVec  += (*cutPhotonTLV)[0];
+            metWithPhotonLVec  += cutPhotonTLV[0];
             metWithPhoton       = metWithPhotonLVec.Pt();
             metphiWithPhoton    = metWithPhotonLVec.Phi();
-            photonSF            = (*cutPhotonSF)[0];
+            photonSF            = cutPhotonSF[0];
             passPhotonSelection = true;
             // MC Only
             if (! isData)
             {
-                if      (DirectPhotons->size() == 1)     passPhotonSelectionDirect       = true;
-                else if (FragmentedPhotons->size() == 1) passPhotonSelectionFragmented   = true;
-                else if (FakePhotons->size() == 1)       passPhotonSelectionFake         = true;
+                if      (DirectPhotons.size() == 1)     passPhotonSelectionDirect       = true;
+                else if (FragmentedPhotons.size() == 1) passPhotonSelectionFragmented   = true;
+                else if (FakePhotons.size() == 1)       passPhotonSelectionFake         = true;
             }                                               
         }
         
@@ -318,29 +332,33 @@ namespace plotterFunctions
         tr.registerDerivedVar("metWithPhoton", metWithPhoton);
         tr.registerDerivedVar("metphiWithPhoton", metphiWithPhoton);
         tr.registerDerivedVar("photonSF", photonSF);
-        tr.registerDerivedVec("GenPartonTLV", GenPartonTLV);
-        tr.registerDerivedVec("GenPhotonTLV", GenPhotonTLV);
-        tr.registerDerivedVec("GenPhotonTLVEta", GenPhotonTLVEta);
-        tr.registerDerivedVec("GenPhotonTLVEtaPt", GenPhotonTLVEtaPt);
-        tr.registerDerivedVec("GenPhotonTLVEtaPtMatched", GenPhotonTLVEtaPtMatched);
-        tr.registerDerivedVec("RecoPhotonTLV", RecoPhotonTLV);
-        tr.registerDerivedVec("RecoPhotonTLVEta", RecoPhotonTLVEta);
-        tr.registerDerivedVec("RecoPhotonTLVEtaPt", RecoPhotonTLVEtaPt);
-        tr.registerDerivedVec("RecoPhotonTLVEtaPtMatched", RecoPhotonTLVEtaPtMatched);
-        tr.registerDerivedVec("RecoPhotonTLVIso", RecoPhotonTLVIso);
         tr.registerDerivedVar("cutPhotonPt", cutPhotonPt);
         tr.registerDerivedVar("cutPhotonEta", cutPhotonEta);
-        tr.registerDerivedVec("cutPhotonTLV", cutPhotonTLV);
-        tr.registerDerivedVec("cutPhotonJetIndex", cutPhotonJetIndex);
-        tr.registerDerivedVec("cutPhotonSF", cutPhotonSF);
-        tr.registerDerivedVec("PromptPhotons", PromptPhotons);
-        tr.registerDerivedVec("DirectPhotons", DirectPhotons);
-        tr.registerDerivedVec("FragmentedPhotons", FragmentedPhotons);
-        tr.registerDerivedVec("FakePhotons", FakePhotons);
+        tr.registerDerivedVar("passPhotonSelectionLoose", passPhotonSelectionLoose);
+        tr.registerDerivedVar("passPhotonSelectionMedium", passPhotonSelectionMedium);
+        tr.registerDerivedVar("passPhotonSelectionTight", passPhotonSelectionTight);
         tr.registerDerivedVar("passPhotonSelection", passPhotonSelection);
         tr.registerDerivedVar("passPhotonSelectionDirect", passPhotonSelectionDirect);
         tr.registerDerivedVar("passPhotonSelectionFragmented", passPhotonSelectionFragmented);
         tr.registerDerivedVar("passPhotonSelectionFake", passPhotonSelectionFake);
+        // Register derived vectors: not needed if you use createDerivedVec
+        //tr.registerDerivedVec("GenPartonTLV", GenPartonTLV);
+        //tr.registerDerivedVec("GenPhotonTLV", GenPhotonTLV);
+        //tr.registerDerivedVec("GenPhotonTLVEta", GenPhotonTLVEta);
+        //tr.registerDerivedVec("GenPhotonTLVEtaPt", GenPhotonTLVEtaPt);
+        //tr.registerDerivedVec("GenPhotonTLVEtaPtMatched", GenPhotonTLVEtaPtMatched);
+        //tr.registerDerivedVec("RecoPhotonTLV", RecoPhotonTLV);
+        //tr.registerDerivedVec("RecoPhotonTLVEta", RecoPhotonTLVEta);
+        //tr.registerDerivedVec("RecoPhotonTLVEtaPt", RecoPhotonTLVEtaPt);
+        //tr.registerDerivedVec("RecoPhotonTLVEtaPtMatched", RecoPhotonTLVEtaPtMatched);
+        //tr.registerDerivedVec("RecoPhotonTLVIso", RecoPhotonTLVIso);
+        //tr.registerDerivedVec("cutPhotonTLV", cutPhotonTLV);
+        //tr.registerDerivedVec("cutPhotonJetIndex", cutPhotonJetIndex);
+        //tr.registerDerivedVec("cutPhotonSF", cutPhotonSF);
+        //tr.registerDerivedVec("PromptPhotons", PromptPhotons);
+        //tr.registerDerivedVec("DirectPhotons", DirectPhotons);
+        //tr.registerDerivedVec("FragmentedPhotons", FragmentedPhotons);
+        //tr.registerDerivedVec("FakePhotons", FakePhotons);
     }
 
     public:
