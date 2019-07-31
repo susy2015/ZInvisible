@@ -55,7 +55,6 @@ int main(int argc, char* argv[])
     std::string dataSets = "";
     std::string sampleloc = AnaSamples::fileDir;
     std::string plotDir = "plots";
-    std::string sbEra = "SB_v1_2017";
     std::string era  = "";
     std::string year = "";
     while((opt = getopt_long(argc, argv, "pstfcvI:D:N:M:E:P:L:R:Y:", long_options, &option_index)) != -1)
@@ -249,6 +248,7 @@ int main(int argc, char* argv[])
 		AnaSamples::SampleSet           ss = sample.sample_set;
 		AnaSamples::SampleCollection    sc = sample.sample_collection;
 		std::string                     sy = sample.sample_year; 
+		sc.getSampleLabels(dataSets); // This is a weird hack, but it prevents a strange but inconsequential bug -- JSW
 		if(ss[dataSets] != ss.null())
 		{
 			fileMap[dataSets] = {ss[dataSets]};
@@ -303,7 +303,7 @@ int main(int argc, char* argv[])
     set<AFS> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
-    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra, year);
+    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, year);
 
     if (verbose)
     {
