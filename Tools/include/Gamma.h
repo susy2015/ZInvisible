@@ -59,7 +59,7 @@ namespace plotterFunctions
         //std::vector<unsigned char> Photon_genPartFlav;
         
         // choose ID to use
-        enum ID myID = Loose;
+        enum ID myID = Medium;
         // the scale factors only exist in MC, not in Data
         std::vector<data_t> Photon_SF;
         
@@ -80,7 +80,6 @@ namespace plotterFunctions
             else               Photon_SF = tr.getVec<data_t>("Photon_MediumSF");
         }
 
-        
         // --- Photon ID --- //
         // 2016:      Use Photon_cutBased       : Int_t cut-based Spring16-V2p2 ID (0:fail, 1: :loose, 2:medium, 3:tight)
         // 2017,2018: Use Photon_cutBasedBitmap : Int_t cut-based ID bitmap, 2^(0:loose, 1: medium, 2:tight); should be 2017 V2
@@ -141,28 +140,29 @@ namespace plotterFunctions
         
         // if you use new, you need to register it or destroy it yourself to clear memory; otherwise there will be memory leaks
         // use createDerivedVec to avoid this issue 
-        auto& GenPartonTLV              = tr.createDerivedVec<TLorentzVector>("GenPartonTLV"); 
-        auto& GenPhotonTLV              = tr.createDerivedVec<TLorentzVector>("GenPhotonTLV"); 
-        auto& GenPhotonTLVEta           = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEta"); 
-        auto& GenPhotonTLVEtaPt         = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPt"); 
-        auto& GenPhotonTLVEtaPtMatched  = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPtMatched"); 
-        auto& RecoPhotonTLV             = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLV");
-        auto& RecoPhotonTLVEta          = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEta");
-        auto& RecoPhotonTLVEtaPt        = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEtaPt");
-        auto& RecoPhotonTLVEtaPtMatched = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEtaPtMatched");
-        auto& RecoPhotonTLVIso          = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVIso"); 
-        auto& LoosePhotonTLV            = tr.createDerivedVec<TLorentzVector>("LoosePhotonTLV");
-        auto& MediumPhotonTLV           = tr.createDerivedVec<TLorentzVector>("MediumPhotonTLV");
-        auto& TightPhotonTLV            = tr.createDerivedVec<TLorentzVector>("TightPhotonTLV");
-        auto& PromptPhotons             = tr.createDerivedVec<TLorentzVector>("PromptPhotons");
-        auto& DirectPhotons             = tr.createDerivedVec<TLorentzVector>("DirectPhotons");
-        auto& FragmentedPhotons         = tr.createDerivedVec<TLorentzVector>("FragmentedPhotons");
-        auto& FakePhotons               = tr.createDerivedVec<TLorentzVector>("FakePhotons");
-        auto& cutPhotonTLV              = tr.createDerivedVec<TLorentzVector>("cutPhotonTLV");
-        auto& cutPhotonJetIndex         = tr.createDerivedVec<int>("cutPhotonJetIndex");
-        auto& cutPhotonSF               = tr.createDerivedVec<float>("cutPhotonSF");
-        auto& dR_RecoPhotonGenParton    = tr.createDerivedVec<float>("dR_RecoPhotonGenParton");
-        auto& dR_RecoPhotonGenPhoton    = tr.createDerivedVec<float>("dR_RecoPhotonGenPhoton");
+        auto& GenPartonTLV                  = tr.createDerivedVec<TLorentzVector>("GenPartonTLV"); 
+        auto& GenPhotonTLV                  = tr.createDerivedVec<TLorentzVector>("GenPhotonTLV"); 
+        auto& GenPhotonTLVEta               = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEta"); 
+        auto& GenPhotonTLVEtaPt             = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPt"); 
+        auto& GenPhotonTLVEtaPtMatched      = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPtMatched"); 
+        auto& RecoPhotonTLV                 = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLV");
+        auto& RecoPhotonTLVEta              = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEta");
+        auto& RecoPhotonTLVEtaPt            = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEtaPt");
+        auto& RecoPhotonTLVEtaPtMatched     = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEtaPtMatched");
+        auto& RecoPhotonTLVIso              = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVIso"); 
+        auto& LoosePhotonTLV                = tr.createDerivedVec<TLorentzVector>("LoosePhotonTLV");
+        auto& MediumPhotonTLV               = tr.createDerivedVec<TLorentzVector>("MediumPhotonTLV");
+        auto& TightPhotonTLV                = tr.createDerivedVec<TLorentzVector>("TightPhotonTLV");
+        auto& PromptPhotons                 = tr.createDerivedVec<TLorentzVector>("PromptPhotons");
+        auto& DirectPhotons                 = tr.createDerivedVec<TLorentzVector>("DirectPhotons");
+        auto& FragmentedPhotons             = tr.createDerivedVec<TLorentzVector>("FragmentedPhotons");
+        auto& FakePhotons                   = tr.createDerivedVec<TLorentzVector>("FakePhotons");
+        auto& cutPhotonTLV                  = tr.createDerivedVec<TLorentzVector>("cutPhotonTLV");
+        auto& cutPhotonJetIndex             = tr.createDerivedVec<int>("cutPhotonJetIndex");
+        auto& cutPhotonSF                   = tr.createDerivedVec<float>("cutPhotonSF");
+        auto& dR_GenPhotonGenParton         = tr.createDerivedVec<float>("dR_GenPhotonGenParton");
+        auto& dR_RecoPhotonGenParton        = tr.createDerivedVec<float>("dR_RecoPhotonGenParton");
+        auto& dR_RecoPhotonGenPhoton        = tr.createDerivedVec<float>("dR_RecoPhotonGenPhoton");
         
         // don't use new if it will not be registered or destroyed
         TLorentzVector metWithPhotonLVec;
@@ -203,24 +203,28 @@ namespace plotterFunctions
             for(int i = 0; i < GenPhotonTLV.size(); ++i)
             {
                 // ECAL eta cuts
-                if (PhotonFunctions::passPhotonECAL(GenPhotonTLV.at(i)))
+                if (PhotonFunctions::passPhotonECAL(GenPhotonTLV[i]))
                 {
-                    GenPhotonTLVEta.push_back(GenPhotonTLV.at(i));
+                    GenPhotonTLVEta.push_back(GenPhotonTLV[i]);
                 }
                 // passing pt and eta cuts
-                if (PhotonFunctions::passPhotonEtaPt(GenPhotonTLV.at(i)))
+                if (PhotonFunctions::passPhotonEtaPt(GenPhotonTLV[i]))
                 {
-                    GenPhotonTLVEtaPt.push_back(GenPhotonTLV.at(i));
+                    GenPhotonTLVEtaPt.push_back(GenPhotonTLV[i]);
                     // passing ECAL barrel/endcap eta cuts and reco match
-                    if (PhotonFunctions::isRecoMatched(GenPhotonTLV.at(i), PhotonTLV)) 
+                    if (PhotonFunctions::isRecoMatched(GenPhotonTLV[i], PhotonTLV)) 
                     {
-                        GenPhotonTLVEtaPtMatched.push_back(GenPhotonTLV.at(i));
+                        GenPhotonTLVEtaPtMatched.push_back(GenPhotonTLV[i]);
                     }
+                }
+                // calculate dR
+                for (const auto& genParton : GenPartonTLV)
+                {
+                    float dR = ROOT::Math::VectorUtil::DeltaR(GenPhotonTLV[i], genParton);
+                    dR_GenPhotonGenParton.push_back(dR);
                 }
             }
         }
-
-
         
         // toggle debugging print statements
         bool debug = false;
@@ -264,6 +268,20 @@ namespace plotterFunctions
                         // MC Only
                         if (! isData)
                         {
+                            // get scale factor for MC
+                            cutPhotonSF.push_back(Photon_SF[i]);
+                            // calculate dR 
+                            for (const auto& genParton : GenPartonTLV)
+                            {
+                                float dR = ROOT::Math::VectorUtil::DeltaR(PhotonTLV[i], genParton);
+                                dR_RecoPhotonGenParton.push_back(dR);
+                            }
+                            for (const auto& genPhoton : GenPhotonTLV)
+                            {
+                                float dR = ROOT::Math::VectorUtil::DeltaR(PhotonTLV[i], genPhoton);
+                                dR_RecoPhotonGenPhoton.push_back(dR);
+                            }
+                            // -- specify different types of photons --- //
                             if (PhotonFunctions::isGenMatched_Method1(PhotonTLV[i], GenPhotonTLV))
                             {
                                 if (verbose) printf("Found PromptPhoton; ");
@@ -287,27 +305,29 @@ namespace plotterFunctions
                                 if (verbose) printf("Found FakePhoton\n");
                                 FakePhotons.push_back(PhotonTLV[i]);
                             }
-                            cutPhotonSF.push_back(Photon_SF[i]);
-                            // calculate dR 
-                            for (const auto& genParton : GenPartonTLV)
-                            {
-                                float dR = ROOT::Math::VectorUtil::DeltaR(PhotonTLV[i], genParton);
-                                dR_RecoPhotonGenParton.push_back(dR);
-                            }
-                            for (const auto& genPhoton : GenPhotonTLV)
-                            {
-                                float dR = ROOT::Math::VectorUtil::DeltaR(PhotonTLV[i], genPhoton);
-                                dR_RecoPhotonGenPhoton.push_back(dR);
-                            }
                         }
                         else
                         {
+                            // set scale factor to 1.0 for data
                             cutPhotonSF.push_back(1.0);
                         }
                     }
                 }
             }
         }
+
+        // calculate min dR
+        float min_dR_GenPhotonGenParton     = -999.0;  
+        float min_dR_RecoPhotonGenParton    = -999.0; 
+        float min_dR_RecoPhotonGenPhoton    = -999.0;  
+        // MC Only
+        if (! isData)
+        {
+            if (!dR_GenPhotonGenParton.empty())  min_dR_GenPhotonGenParton  = *std::min_element(dR_GenPhotonGenParton.begin(), dR_GenPhotonGenParton.end());
+            if (!dR_RecoPhotonGenParton.empty()) min_dR_RecoPhotonGenParton = *std::min_element(dR_RecoPhotonGenParton.begin(), dR_RecoPhotonGenParton.end());
+            if (!dR_RecoPhotonGenPhoton.empty()) min_dR_RecoPhotonGenPhoton = *std::min_element(dR_RecoPhotonGenPhoton.begin(), dR_RecoPhotonGenPhoton.end());
+        }
+
         if (verbose) fflush(stdout);
 
         // all IDs for testing
@@ -353,6 +373,9 @@ namespace plotterFunctions
         tr.registerDerivedVar("passPhotonSelectionDirect", passPhotonSelectionDirect);
         tr.registerDerivedVar("passPhotonSelectionFragmented", passPhotonSelectionFragmented);
         tr.registerDerivedVar("passPhotonSelectionFake", passPhotonSelectionFake);
+        tr.registerDerivedVar("min_dR_GenPhotonGenParton", min_dR_GenPhotonGenParton);
+        tr.registerDerivedVar("min_dR_RecoPhotonGenParton", min_dR_RecoPhotonGenParton);
+        tr.registerDerivedVar("min_dR_RecoPhotonGenPhoton", min_dR_RecoPhotonGenPhoton);
     }
 
     public:
