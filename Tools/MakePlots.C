@@ -272,17 +272,43 @@ int main(int argc, char* argv[])
 
 	string weights = "puWeight;BTagWeight"+PrefireWeight;
 
-	string cuts = "Pass_LeptonVeto;Pass_NJets20;Pass_MET;Pass_HT" + semicolon_HEMVeto;
+	string cuts = "Pass_CaloMETRatio;Pass_LeptonVeto;Pass_NJets20;Pass_MET;Pass_HT" + semicolon_HEMVeto;
 
-	std::set<std::string> vars = {"run", "event", "nJets", "PV_npvsGood", "Jet_pt", "Jet_eta", "Jet_phi", "Jet_Stop0l", "Jet_jetId", "Jet_puId", "MET_pt", "MET_phi",
-	   	"Pass_QCDCR_lowDM", "Pass_QCDCR_highDM", "Pass_trigger_MET", "Stop0l_HT", "Pass_CaloMETRatio", "Pass_JetID", "Pass_EventFilter",
+	//float mtb_cut, float mtb, int njets, int ntop, int nw, int nres, int nb, float met, float ht
+	//int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met
+	//
+	//mtb	Stop0l_Mtb
+	//njets	jet counting
+	//ntop	Stop0l_nTop
+	//nw	Stop0l_nW
+	//nres	Stop0l_nResolved
+	//nb	Stop0l_nbtags
+	//met	MET_pt
+	//ht	HT calculation with updated jet definition
+	//nSV	Stop0l_nSoftb
+	//ISRpt	Stop0l_ISRJetPt
+	//bottompt_scalar_sum	Stop0l_Ptb
+	//
+	std::set<std::string> vars = {"run", "event",
+	   	"PV_npvsGood",
+	   	"Jet_pt", "Jet_eta", "Jet_phi", "Jet_jetId", "Jet_puId",
+	   	"MET_pt", "MET_phi",
+	   	"Pass_QCDCR", "Pass_QCDCR_lowDM", "Pass_QCDCR_highDM",
+		"Pass_LeptonVeto", "Pass_CaloMETRatio", "Pass_JetID", "Pass_EventFilter",
+	   	"Pass_trigger_MET",
 		"Jet_neEmEF", "Jet_neHEF", "Jet_chEmEF", "Jet_chHEF", "Jet_muEF",
-	   	"Flag_BadChargedCandidateFilter", "Flag_BadChargedCandidateSummer16Filter", "Flag_ecalBadCalibFilter",
-	   	"Stop0l_nTop", "Stop0l_nW", "Stop0l_nResolved", "Stop0l_Mtb", "Stop0l_ISRJetPt", "Stop0l_METSig",
-		"Stop0l_evtWeight", "Flag_goodVertices", "Flag_HBHENoiseFilter", "Flag_HBHENoiseIsoFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter", "Flag_BadPFMuonFilter",
-	   	"Flag_globalSuperTightHalo2016Filter", "Flag_eeBadScFilter", "Pass_LeptonVeto",
+	   	"Stop0l_HT", "Stop0l_Mtb", "Stop0l_Ptb", "Stop0l_ISRJetPt", "Stop0l_METSig",
+	   	"Stop0l_nTop", "Stop0l_nW", "Stop0l_nResolved", "Stop0l_nbtags", "Stop0l_nSoftb",
+		"Stop0l_evtWeight",
+		"nSearchBinLowDM", "nSearchBinHighDM",          
+		"nValidationBinLowDM", "nValidationBinLowDMHighMET", "nValidationBinHighDM",      
+		"nBottoms", "nSoftBottoms", "nMergedTops", "nJets", "nWs", "nResolvedTops", "HT", "ptb", "mtb", "ISRJetPt",
+		"Flag_BadChargedCandidateFilter", "Flag_BadChargedCandidateSummer16Filter", "Flag_ecalBadCalibFilter",
+		"Flag_goodVertices", "Flag_HBHENoiseFilter", "Flag_HBHENoiseIsoFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter",
+		"Flag_BadPFMuonFilter", "Flag_globalSuperTightHalo2016Filter", "Flag_eeBadScFilter",
 		"Stop0l_trigger_eff_MET_loose_baseline", "Stop0l_trigger_eff_MET_low_dm", "Stop0l_trigger_eff_MET_high_dm",
-		"Stop0l_trigger_eff_MET_low_dm_QCD", "Stop0l_trigger_eff_MET_high_dm_QCD"};
+		"Stop0l_trigger_eff_MET_low_dm_QCD", "Stop0l_trigger_eff_MET_high_dm_QCD"
+	};
 
 	if (era == "2017")
 	{
