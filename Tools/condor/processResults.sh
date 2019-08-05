@@ -127,13 +127,14 @@ fi
 # go to zinv area
 cd $zinvDir
 
+# --- don't remove plots here if you put plots from all eras in one directory --- #
 # remove old plots if they exist 
-if [ -z "$(ls -A plots)" ]; then
-    echo "- There are no old plots to remove"
-else
-    echo "- Removing old plots"
-    rm plots/*
-fi
+#if [ -z "$(ls -A plots)" ]; then
+#    echo "- There are no old plots to remove"
+#else
+#    echo "- Removing old plots"
+#    rm plots/*
+#fi
 
 echo "- Compiling Exacutable"
 make -j8
