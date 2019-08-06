@@ -59,6 +59,9 @@ class RegisterFunctionsNTuple : public RegisterFunctions
 {
 private:
     BaselineVessel *myBLV;
+    BaselineVessel *myBLV_jetpt20;
+    BaselineVessel *myBLV_jetpt30;
+    BaselineVessel *myBLV_jetpt40;
     BaselineVessel *blv_drLeptonCleaned;
     BaselineVessel *blv_drLeptonCleaned_jetpt20;
     BaselineVessel *blv_drLeptonCleaned_jetpt30;

@@ -103,6 +103,9 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 {            
     // Important: create objects!!
     myBLV                       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "");
+    myBLV_jetpt20               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_jetpt20");
+    myBLV_jetpt30               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_jetpt30");
+    myBLV_jetpt40               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_jetpt40");
     blv_drLeptonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drLeptonCleaned");
     blv_drLeptonCleaned_jetpt20 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drLeptonCleaned_jetpt20");
     blv_drLeptonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drLeptonCleaned_jetpt30");
@@ -181,6 +184,9 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(runTopTagger_drLeptonCleaned) delete runTopTagger_drLeptonCleaned;
     if(runTopTagger_drPhotonCleaned) delete runTopTagger_drPhotonCleaned;
     if(myBLV)                        delete myBLV;
+    if(myBLV_jetpt20)                delete myBLV_jetpt20;
+    if(myBLV_jetpt30)                delete myBLV_jetpt30;
+    if(myBLV_jetpt40)                delete myBLV_jetpt40;
     if(blv_drLeptonCleaned)          delete blv_drLeptonCleaned;
     if(blv_drLeptonCleaned_jetpt20)  delete blv_drLeptonCleaned_jetpt20;
     if(blv_drLeptonCleaned_jetpt30)  delete blv_drLeptonCleaned_jetpt30;
@@ -231,6 +237,9 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*runTopTagger_drLeptonCleaned);
     tr.registerFunction(*runTopTagger_drPhotonCleaned);
     tr.registerFunction(*myBLV);
+    tr.registerFunction(*myBLV_jetpt20);
+    tr.registerFunction(*myBLV_jetpt30);
+    tr.registerFunction(*myBLV_jetpt40);
     tr.registerFunction(*lepInfo);
     tr.registerFunction(*blv_drLeptonCleaned);
     tr.registerFunction(*blv_drLeptonCleaned_jetpt20);
