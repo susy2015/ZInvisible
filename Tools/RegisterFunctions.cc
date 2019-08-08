@@ -105,15 +105,12 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     myBLV                       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "");
     myBLV_jetpt20               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt20");
     myBLV_jetpt30               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30");
-    myBLV_jetpt40               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt40");
     blv_drLeptonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned");
     blv_drLeptonCleaned_jetpt20 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt20");
     blv_drLeptonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30");
-    blv_drLeptonCleaned_jetpt40 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt40");
     blv_drPhotonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned");
     blv_drPhotonCleaned_jetpt20 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt20");
     blv_drPhotonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30");
-    blv_drPhotonCleaned_jetpt40 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt40");
     //blvZinv      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
     //blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
     //blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
@@ -186,15 +183,12 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(myBLV)                        delete myBLV;
     if(myBLV_jetpt20)                delete myBLV_jetpt20;
     if(myBLV_jetpt30)                delete myBLV_jetpt30;
-    if(myBLV_jetpt40)                delete myBLV_jetpt40;
     if(blv_drLeptonCleaned)          delete blv_drLeptonCleaned;
     if(blv_drLeptonCleaned_jetpt20)  delete blv_drLeptonCleaned_jetpt20;
     if(blv_drLeptonCleaned_jetpt30)  delete blv_drLeptonCleaned_jetpt30;
-    if(blv_drLeptonCleaned_jetpt40)  delete blv_drLeptonCleaned_jetpt40;
     if(blv_drPhotonCleaned)          delete blv_drPhotonCleaned;
     if(blv_drPhotonCleaned_jetpt20)  delete blv_drPhotonCleaned_jetpt20;
     if(blv_drPhotonCleaned_jetpt30)  delete blv_drPhotonCleaned_jetpt30;
-    if(blv_drPhotonCleaned_jetpt40)  delete blv_drPhotonCleaned_jetpt40;
     //if(blvZinv)                      delete blvZinv;
     //if(blvZinv1b)                  delete blvZinv1b;
     //if(blvZinv2b)                  delete blvZinv2b;
@@ -239,16 +233,13 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*myBLV);
     tr.registerFunction(*myBLV_jetpt20);
     tr.registerFunction(*myBLV_jetpt30);
-    tr.registerFunction(*myBLV_jetpt40);
     tr.registerFunction(*lepInfo);
     tr.registerFunction(*blv_drLeptonCleaned);
     tr.registerFunction(*blv_drLeptonCleaned_jetpt20);
     tr.registerFunction(*blv_drLeptonCleaned_jetpt30);
-    tr.registerFunction(*blv_drLeptonCleaned_jetpt40);
     tr.registerFunction(*blv_drPhotonCleaned);
     tr.registerFunction(*blv_drPhotonCleaned_jetpt20);
     tr.registerFunction(*blv_drPhotonCleaned_jetpt30);
-    tr.registerFunction(*blv_drPhotonCleaned_jetpt40);
     tr.registerFunction(*getSearchBin);
     
     // old version including JEC and systematics

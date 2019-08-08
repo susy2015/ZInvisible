@@ -61,15 +61,12 @@ private:
     BaselineVessel *myBLV;
     BaselineVessel *myBLV_jetpt20;
     BaselineVessel *myBLV_jetpt30;
-    BaselineVessel *myBLV_jetpt40;
     BaselineVessel *blv_drLeptonCleaned;
     BaselineVessel *blv_drLeptonCleaned_jetpt20;
     BaselineVessel *blv_drLeptonCleaned_jetpt30;
-    BaselineVessel *blv_drLeptonCleaned_jetpt40;
     BaselineVessel *blv_drPhotonCleaned;
     BaselineVessel *blv_drPhotonCleaned_jetpt20;
     BaselineVessel *blv_drPhotonCleaned_jetpt30;
-    BaselineVessel *blv_drPhotonCleaned_jetpt40;
     BaselineVessel *blvZinv;
     //BaselineVessel *blvZinv1b;
     //BaselineVessel *blvZinv2b;
