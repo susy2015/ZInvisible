@@ -1029,7 +1029,7 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("MC_HighDM_bestRecoZM" + eraTag, {dcMC_HighDM_bestRecoZM, dcMC_HighDM_Electron_bestRecoZM, dcMC_HighDM_Muon_bestRecoZM}, {2, 3}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
     
     // Jet pt cuts
-    std::vector<std::string> JetPtCuts = {"_jetpt20", "_jetpt30", "_jetpt40"};
+    std::vector<std::string> JetPtCuts = {"_jetpt20", "_jetpt30"};
     // Photon ID Selections
     std::vector<std::string> PhotonIDSelections = {"passPhotonSelection"};
     
@@ -1317,7 +1317,7 @@ int main(int argc, char* argv[])
                 dcVecMC_Electron_HighDM_dPhi.push_back(     PDC("stack", var, StackMC_Electron_HighDM));
             }
             
-            const bool doNorm = true;
+            const bool doNorm = false;
 
             // Standard selection
             vh.push_back(PHS("DataMC_Electron_LowDM_nj" + histSuffix,                                  {dcData_Electron_LowDM_nj,                           dcMC_Electron_LowDM_nj},                           {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
@@ -1593,7 +1593,7 @@ int main(int argc, char* argv[])
                 dcVecMC_Muon_HighDM_dPhi.push_back(     PDC("stack", var, StackMC_Muon_HighDM));
             }
 
-            const bool doNorm = true;
+            const bool doNorm = false;
                     
             // Standard selection
             vh.push_back(PHS("DataMC_Muon_LowDM_nj" + histSuffix,                                  {dcData_Muon_LowDM_nj,           dcMC_Muon_LowDM_nj},                        {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
@@ -1779,7 +1779,7 @@ int main(int argc, char* argv[])
                     dcVecMC_Photon_HighDM_dPhi.push_back(       PDC("stack", var, StackMC_Photon_HighDM));
                 }
 
-                const bool doNorm = true;
+                const bool doNorm = false;
                 
                 vh.push_back(PHS("DataMC_Photon_LowDM_nj" + histSuffix,                          {dcData_Photon_LowDM_nj,                          dcMC_Photon_LowDM_nj},                          {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
                 vh.push_back(PHS("DataMC_Photon_HighDM_nj" + histSuffix,                         {dcData_Photon_HighDM_nj,                         dcMC_Photon_HighDM_nj},                         {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));

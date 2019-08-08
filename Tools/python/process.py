@@ -52,7 +52,9 @@ def process():
                 # WARNING: running processResults.sh will move result.root
                 # DO NOT run processResults.sh if result.root exists
                 if file_exists:
-                    print "WARNING: The file {0} exists. DO NOT run processResults.sh if result.root exists because processResults.sh will move result.root!".format(resultFile)
+                    print "WARNING: The file {0} exists.".format(resultFile)
+                    print "DO NOT run processResults.sh if result.root exists because processResults.sh will move result.root!"
+                    print "Please use the -p option to only run makePlots instead of processResults.sh."
                     exit(1)
                 else:
                     command = "./condor/processResults.sh {0} {1}".format(directory, era) 
