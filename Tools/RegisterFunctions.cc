@@ -102,18 +102,18 @@ void activateBranches(std::set<std::string>& activeBranches)
 RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra, std::string year) : RegisterFunctions()
 {            
     // Important: create objects!!
-    myBLV                       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "");
-    myBLV_jetpt20               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_jetpt20");
-    myBLV_jetpt30               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_jetpt30");
-    myBLV_jetpt40               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_jetpt40");
-    blv_drLeptonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drLeptonCleaned");
-    blv_drLeptonCleaned_jetpt20 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drLeptonCleaned_jetpt20");
-    blv_drLeptonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drLeptonCleaned_jetpt30");
-    blv_drLeptonCleaned_jetpt40 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drLeptonCleaned_jetpt40");
-    blv_drPhotonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drPhotonCleaned");
-    blv_drPhotonCleaned_jetpt20 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drPhotonCleaned_jetpt20");
-    blv_drPhotonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drPhotonCleaned_jetpt30");
-    blv_drPhotonCleaned_jetpt40 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drPhotonCleaned_jetpt40");
+    myBLV                       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "");
+    myBLV_jetpt20               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt20");
+    myBLV_jetpt30               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30");
+    myBLV_jetpt40               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt40");
+    blv_drLeptonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned");
+    blv_drLeptonCleaned_jetpt20 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt20");
+    blv_drLeptonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30");
+    blv_drLeptonCleaned_jetpt40 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt40");
+    blv_drPhotonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned");
+    blv_drPhotonCleaned_jetpt20 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt20");
+    blv_drPhotonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30");
+    blv_drPhotonCleaned_jetpt40 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt40");
     //blvZinv      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
     //blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
     //blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
@@ -334,8 +334,8 @@ void RegisterFunctionsMiniTuple::activateBranches(std::set<std::string>& activeB
 
 RegisterFunctionsCalcEff::RegisterFunctionsCalcEff() : RegisterFunctions()
 {
-    myBLV   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
-    blvZinv = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    myBLV   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "2016");
+    blvZinv = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "2016", "Zinv");
     getVectors                = new GetVectors;
     cleanedJets               = new CleanedJets;
     runTopTagger              = new RunTopTagger;
@@ -429,7 +429,7 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 
 RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
-    myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
+    myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "2016", "TopTag", "");
     triggerInfo = new plotterFunctions::TriggerInfo(false, true);
 }
 
