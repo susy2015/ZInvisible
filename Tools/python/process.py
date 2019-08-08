@@ -22,6 +22,7 @@ def process():
         return
 
     # remove plots if they exist
+    print "Removing plots"
     folder = "plots"
     for f in os.listdir(folder):
         path = os.path.join(folder, f)
@@ -37,11 +38,24 @@ def process():
         for era in runMap:
             directory = runMap[era]
             print "Processing Era {0}, directory {1}".format(era, directory)
+            resultFile = "condor/{0}/result.root".format(directory)
+            file_exists = os.path.exists(resultFile)
+            command = ""
             if plot_only:
-                resultFile = "condor/{0}/result.root".format(directory)
-                command = "./makePlots -f -I {0} -Y {1} -R Data_MET_{1} | grep -v LHAPDF".format(resultFile, era) 
+                # Only run if file exists
+                if file_exists:
+                    command = "./makePlots -f -I {0} -Y {1} -R Data_MET_{1} | grep -v LHAPDF".format(resultFile, era) 
+                else:
+                    print "The file {0} does not exist".format(resultFile)
+                    exit(1)
             else:
-                command = "./condor/processResults.sh {0} {1}".format(directory, era) 
+                # WARNING: running processResults.sh will move result.root
+                # DO NOT run processResults.sh if result.root exists
+                if file_exists:
+                    print "WARNING: The file {0} exists. DO NOT run processResults.sh if result.root exists because processResults.sh will move result.root!".format(resultFile)
+                    exit(1)
+                else:
+                    command = "./condor/processResults.sh {0} {1}".format(directory, era) 
             returncode = subprocess.check_call(command, shell=True)
 
 if __name__ == "__main__":
