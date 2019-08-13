@@ -33,9 +33,9 @@ if [ -z "$dirName" ]; then
     exit 1
 fi
 
-if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2018" && "$year" != "2018_PreHEM" && "$year" != "2018_PostHEM" ]]
+if [[ "$year" != "2016" && "$year" != "2017" && "$year" != "2017_BE" && "$year" != "2017_F" && "$year" != "2018" && "$year" != "2018_PreHEM" && "$year" != "2018_PostHEM" ]]
 then
-    echo "Please enter 2016, 2017, 2018, 2018_PreHEM or 2018_PostHEM for the year as the second argument."
+    echo "Please enter 2016, 2017, 2017_BE, 2017_F, 2018, 2018_PreHEM or 2018_PostHEM for the year as the second argument."
     exit 1
 fi
 
@@ -127,13 +127,14 @@ fi
 # go to zinv area
 cd $zinvDir
 
+# --- don't remove plots here if you put plots from all eras in one directory --- #
 # remove old plots if they exist 
-if [ -z "$(ls -A plots)" ]; then
-    echo "- There are no old plots to remove"
-else
-    echo "- Removing old plots"
-    rm plots/*
-fi
+#if [ -z "$(ls -A plots)" ]; then
+#    echo "- There are no old plots to remove"
+#else
+#    echo "- Removing old plots"
+#    rm plots/*
+#fi
 
 echo "- Compiling Exacutable"
 make -j8

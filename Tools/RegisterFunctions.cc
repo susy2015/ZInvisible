@@ -102,19 +102,20 @@ void activateBranches(std::set<std::string>& activeBranches)
 RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra, std::string year) : RegisterFunctions()
 {            
     // Important: create objects!!
-    
-    //AnaFunctions::prepareTopTagger();
-    myBLV               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "");
-    blvZinv             = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
-    blvNoVeto           = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "NoVeto");
-    blvPFLeptonCleaned  = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "PFLeptonCleaned");
-    blv_drLeptonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drLeptonCleaned");
-    blv_drPhotonCleaned = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "_drPhotonCleaned");
+    myBLV                       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "");
+    myBLV_jetpt20               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt20");
+    myBLV_jetpt30               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30");
+    blv_drLeptonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned");
+    blv_drLeptonCleaned_jetpt20 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt20");
+    blv_drLeptonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30");
+    blv_drPhotonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned");
+    blv_drPhotonCleaned_jetpt20 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt20");
+    blv_drPhotonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30");
+    //blvZinv      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
     //blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
     //blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
     //blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
     //blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
-
 
     getVectors                   = new GetVectors;
     cleanedJets                  = new CleanedJets;
@@ -135,8 +136,6 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     systematicPrep               = new plotterFunctions::SystematicPrep;
     systematicCalc               = new plotterFunctions::SystematicCalc(sbEra);
 
-    //taudiv                    = new plotterFunctions::Taudiv;
-    taudiv                       = new plotterFunctions::Taudiv(blvZinv->GetTopTaggerPtr());
     nJetAk8                      = new plotterFunctions::NJetAk8;
     ak8DrMatch                   = new plotterFunctions::Ak8DrMatch;
 
@@ -182,11 +181,15 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(runTopTagger_drLeptonCleaned) delete runTopTagger_drLeptonCleaned;
     if(runTopTagger_drPhotonCleaned) delete runTopTagger_drPhotonCleaned;
     if(myBLV)                        delete myBLV;
-    if(blvZinv)                      delete blvZinv;
-    if(blvNoVeto)                    delete blvNoVeto;
-    if(blvPFLeptonCleaned)           delete blvPFLeptonCleaned;
+    if(myBLV_jetpt20)                delete myBLV_jetpt20;
+    if(myBLV_jetpt30)                delete myBLV_jetpt30;
     if(blv_drLeptonCleaned)          delete blv_drLeptonCleaned;
+    if(blv_drLeptonCleaned_jetpt20)  delete blv_drLeptonCleaned_jetpt20;
+    if(blv_drLeptonCleaned_jetpt30)  delete blv_drLeptonCleaned_jetpt30;
     if(blv_drPhotonCleaned)          delete blv_drPhotonCleaned;
+    if(blv_drPhotonCleaned_jetpt20)  delete blv_drPhotonCleaned_jetpt20;
+    if(blv_drPhotonCleaned_jetpt30)  delete blv_drPhotonCleaned_jetpt30;
+    //if(blvZinv)                      delete blvZinv;
     //if(blvZinv1b)                  delete blvZinv1b;
     //if(blvZinv2b)                  delete blvZinv2b;
     //if(blvZinv3b)                  delete blvZinv3b;
@@ -228,17 +231,21 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*runTopTagger_drLeptonCleaned);
     tr.registerFunction(*runTopTagger_drPhotonCleaned);
     tr.registerFunction(*myBLV);
+    tr.registerFunction(*myBLV_jetpt20);
+    tr.registerFunction(*myBLV_jetpt30);
     tr.registerFunction(*lepInfo);
     tr.registerFunction(*blv_drLeptonCleaned);
+    tr.registerFunction(*blv_drLeptonCleaned_jetpt20);
+    tr.registerFunction(*blv_drLeptonCleaned_jetpt30);
     tr.registerFunction(*blv_drPhotonCleaned);
+    tr.registerFunction(*blv_drPhotonCleaned_jetpt20);
+    tr.registerFunction(*blv_drPhotonCleaned_jetpt30);
     tr.registerFunction(*getSearchBin);
     
     // old version including JEC and systematics
     // here for reference only
     //tr.registerFunction(*weights);
     //tr.registerFunction(*blvZinv);
-    //tr.registerFunction(*blvNoVeto);
-    //tr.registerFunction(*blvPFLeptonCleaned);
     //tr.registerFunction(*blv_drLeptonCleaned);
     //tr.registerFunction(*blv_drPhotonCleaned);
     //tr.registerFunction(*njWeight);
@@ -258,7 +265,6 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     //tr.registerFunction(*myPDFUnc);
     //tr.registerFunction(*bTagCorrector);
     //tr.registerFunction(*nJetAk8);
-    //tr.registerFunction(*taudiv);
     //tr.registerFunction(*ak8DrMatch);
     //tr.registerFunction(*ISRcorrector);
     //tr.registerFunction(*pileup);
@@ -319,10 +325,8 @@ void RegisterFunctionsMiniTuple::activateBranches(std::set<std::string>& activeB
 
 RegisterFunctionsCalcEff::RegisterFunctionsCalcEff() : RegisterFunctions()
 {
-    //AnaFunctions::prepareTopTagger();
-
-    myBLV   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr));
-    blvZinv = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
+    myBLV   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "2016");
+    blvZinv = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "2016", "Zinv");
     getVectors                = new GetVectors;
     cleanedJets               = new CleanedJets;
     runTopTagger              = new RunTopTagger;
@@ -416,7 +420,7 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 
 RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
-    myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "TopTag", "");
+    myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "2016", "TopTag", "");
     triggerInfo = new plotterFunctions::TriggerInfo(false, true);
 }
 

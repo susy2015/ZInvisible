@@ -191,29 +191,17 @@ Your condor jobs should produce log, stdout, and stderr files for each job in th
 
 ### Submitting Data and MC Samples
 
-- All Data and MC for Run 2
-- Electron, Muon, and Photon Control Regions
+- All Data and MC for Run 2: Electron, Muon, and Photon Control Regions
+- Use TTbarNoHad (leptonic ttabr) for the lepton control region and TTbar (inclusive ttbar) for the photon control region. 
+- 2017 is split into Periods B-E and F
+- 2018 is split into PreHem and PostHEM
 
-Note: If you use both the lepton and photon control regions, do not run over both TTbarNoHad and TTbarAll, as TTbarNoHad is a subset of TTbarAll. Just use TTbarAll.
-
-Submit 2016 Electron, Muon and Photon Data and MC:
 ```
-python condorSubmit.py -d Data_SingleElectron_2016,Data_SingleMuon_2016,Data_SinglePhoton_2016,DYJetsToLL_2016,SingleTopZinv_2016,Rare_2016,TTZ_2016,Diboson_2016,GJets_2016,QCD_Photon_2016,WJetsToLNu_2016,TTbarAll_2016,tW_2016,ZJetsToNuNu_2016 -n 2 -y 2016
-```
-
-Submit 2017 Electron, Muon and Photon Data and MC:
-```
-python condorSubmit.py -d Data_SingleElectron_2017,Data_SingleMuon_2017,Data_SinglePhoton_2017,DYJetsToLL_2017,SingleTopZinv_2017,Rare_2017,TTZ_2017,Diboson_2017,GJets_2017,QCD_Photon_2017,WJetsToLNu_2017,TTbarAll_2017,tW_2017,ZJetsToNuNu_2017 -n 2 -y 2017
-```
-
-Submit 2018_AB Electron, Muon and Photon Data and MC:
-```
-python condorSubmit.py -d Data_EGamma_2018_PeriodsAB,Data_SingleMuon_2018_PeriodsAB,DYJetsToLL_2018,SingleTopZinv_2018,Rare_2018,TTZ_2018,Diboson_2018,GJets_2018,QCD_Photon_2018,WJetsToLNu_2018,TTbarAll_2018,tW_2018,ZJetsToNuNu_2018 -n 2 -y 2018_AB
-```
-
-Submit 2018_CD Electron, Muon and Photon Data and MC:
-```
-python condorSubmit.py -d Data_EGamma_2018_PeriodsCD,Data_SingleMuon_2018_PeriodsCD,DYJetsToLL_2018,SingleTopZinv_2018,Rare_2018,TTZ_2018,Diboson_2018,GJets_2018,QCD_Photon_2018,WJetsToLNu_2018,TTbarAll_2018,tW_2018,ZJetsToNuNu_2018 -n 2 -y 2018_CD
+year="2016"; period="";         python condorSubmit.py -d Data_SingleElectron_${year}${period},Data_SingleMuon_${year}${period},Data_SinglePhoton_${year}${period},DYJetsToLL_${year},TTbarNoHad_${year},SingleTopZinv_${year},Rare_${year},TTZ_${year},Diboson_${year},GJets_${year},QCD_Photon_${year},WJetsToLNu_${year},TTbar_${year},tW_${year},ZJetsToNuNu_${year} -n 2 -y ${year}${period} -r Data_MET_${year}${period}
+year="2017"; period="_BE";      python condorSubmit.py -d Data_SingleElectron_${year}${period},Data_SingleMuon_${year}${period},Data_SinglePhoton_${year}${period},DYJetsToLL_${year},TTbarNoHad_${year},SingleTopZinv_${year},Rare_${year},TTZ_${year},Diboson_${year},GJets_${year},QCD_Photon_${year},WJetsToLNu_${year},TTbar_${year},tW_${year},ZJetsToNuNu_${year} -n 2 -y ${year}${period} -r Data_MET_${year}${period}
+year="2017"; period="_F";       python condorSubmit.py -d Data_SingleElectron_${year}${period},Data_SingleMuon_${year}${period},Data_SinglePhoton_${year}${period},DYJetsToLL_${year},TTbarNoHad_${year},SingleTopZinv_${year},Rare_${year},TTZ_${year},Diboson_${year},GJets_${year},QCD_Photon_${year},WJetsToLNu_${year},TTbar_${year},tW_${year},ZJetsToNuNu_${year} -n 2 -y ${year}${period} -r Data_MET_${year}${period}
+year="2018"; period="_PreHEM";  python condorSubmit.py -d Data_EGamma_${year}${period},Data_SingleMuon_${year}${period},DYJetsToLL_${year},TTbarNoHad_${year},SingleTopZinv_${year},Rare_${year},TTZ_${year},Diboson_${year},GJets_${year},QCD_Photon_${year},WJetsToLNu_${year},TTbar_${year},tW_${year},ZJetsToNuNu_${year} -n 2 -y ${year}${period} -r Data_MET_${year}${period}
+year="2018"; period="_PostHEM"; python condorSubmit.py -d Data_EGamma_${year}${period},Data_SingleMuon_${year}${period},DYJetsToLL_${year},TTbarNoHad_${year},SingleTopZinv_${year},Rare_${year},TTZ_${year},Diboson_${year},GJets_${year},QCD_Photon_${year},WJetsToLNu_${year},TTbar_${year},tW_${year},ZJetsToNuNu_${year} -n 2 -y ${year}${period} -r Data_MET_${year}${period}
 ```
 
 
