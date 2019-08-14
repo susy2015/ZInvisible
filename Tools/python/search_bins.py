@@ -18,8 +18,8 @@ class SearchBins:
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
-        self.low_dm_bins  = range( 0, 1)
-        self.high_dm_bins = range( 1, 2)
+        self.low_dm_bins  = range( 0,  53)
+        self.high_dm_bins = range(53, 204)
         self.all_bins     = self.low_dm_bins + self.high_dm_bins
         self.binValues = {}
         self.eras = []
@@ -110,56 +110,16 @@ class ValidationBins:
         self.binValues[era] = {}
         
         for b in self.all_bins:
-            self.binValues[era][b] = {}
-        
-        for b in self.bins:
             region      = self.bins[b]["region"]
             selection   = self.bins[b]["selection"]
             met         = self.bins[b]["met"]
+            self.binValues[era][b] = {}
             self.binValues[era][b]["norm"]        = self.N.norm_map[era]["Combined"][region][selection]["R_Z"]
             self.binValues[era][b]["norm_error"]  = self.N.norm_map[era]["Combined"][region][selection]["R_Z_error"]
             self.binValues[era][b]["shape"]       = self.S.shape_map[era][region][met]
             self.binValues[era][b]["shape_error"] = self.S.shape_map[era][region][met + "_error"]
-        
-        # # normalization
-        # for b in self.low_dm_bins:
-        #     self.binValues[era][b]["norm"]       = self.N.norm_map[era]["Combined"]["LowDM"]["R_Z"]
-        #     self.binValues[era][b]["norm_error"] = self.N.norm_map[era]["Combined"]["LowDM"]["R_Z_error"]
-        # for b in self.high_dm_bins:
-        #     self.binValues[era][b]["norm"]       = self.N.norm_map[era]["Combined"]["HighDM"]["R_Z"]
-        #     self.binValues[era][b]["norm_error"] = self.N.norm_map[era]["Combined"]["HighDM"]["R_Z_error"]
-        # # shape
-        # # LowDM
-        # for b in self.low_dm_bins_met_250to300: 
-        #     self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_250to300"]
-        #     self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_250to300_error"]
-        # #for b in self.low_dm_bins_met_300toINF: 
-        # #    self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_300toINF"]
-        # #    self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_300toINF_error"]
-        # for b in self.low_dm_bins_met_250to400: 
-        #     self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_250to400"]
-        #     self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_250to400_error"]
-        # #for b in self.low_dm_bins_met_400toINF: 
-        # #    self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_400toINF"]
-        # #    self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_400toINF_error"]
-        # for b in self.low_dm_bins_met_250toINF: 
-        #     self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_250toINF"]
-        #     self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_250toINF_error"]
-        # # HighDM
-        # for b in self.high_dm_bins_met_250to400: 
-        #     self.binValues[era][b]["shape"]       = self.S.shape_map[era]["HighDM"]["met_250to400"]
-        #     self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["HighDM"]["met_250to400_error"]
-        # for b in self.high_dm_bins_met_400toINF: 
-        #     self.binValues[era][b]["shape"]       = self.S.shape_map[era]["HighDM"]["met_400toINF"]
-        #     self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["HighDM"]["met_400toINF_error"]
 
-        # Z to NuNu MC histograms v1
-        # nValidationBinLowDM: ZNuNu_nValidationBinLowDM_2016nValidationBinLowDMnValidationBinLowDMZJetsToNuNu Validation Bin Low DMdata
-        # nValidationBinLowDMHighMET: ZNuNu_nValidationBinLowDMHighMET_2016nValidationBinLowDMHighMETnValidationBinLowDMHighMETZJetsToNuNu Validation Bin Low DM High METdata
-        # nValidationBinHighDM: ZNuNu_nValidationBinHighDM_2016nValidationBinHighDMnValidationBinHighDMZJetsToNuNu Validation Bin High DMdata
-        # Z to NuNu MC histograms v2
-        # nValidationBinLowDM: ZNuNu_nValidationBin_LowDM_2016nValidationBinLowDMnValidationBinLowDMZJetsToNuNu Validation Bin Low DMdata 
-        # Z to NuNu MC histograms v3
+        # Z to NuNu MC histograms
         #TDirectoryFile*: nValidationBinLowDM_jetpt20
         #TH1D:  ZNuNu_nValidationBin_LowDM_jetpt20_2016nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata
         #TDirectoryFile*: nValidationBinLowDMHighMET_jetpt20 
@@ -266,7 +226,6 @@ class ValidationBins:
         ###################
 
         for region in h_map:
-            print region
             h_mc   = h_map[region]["mc"]
             h_pred = h_map[region]["pred"]
             h_ratio = h_pred.Clone("h_ratio")

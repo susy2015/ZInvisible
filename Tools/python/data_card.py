@@ -1,11 +1,13 @@
 # data_card.py
 
+from tools import isclose
+
 def writeLine(f, line):
     f.write(line + "\n")
 
 def makeDataCard(BinObject, directory, era):
     
-    print ">>> Good day, old chap! Making data card for {0} now, sir.".format(era)
+    print ">>> Good day, sir! Making data card for {0}.".format(era)
     
     out_name = "{0}zinv_dataCard_{1}.txt".format(directory, era)
     # open file
@@ -49,7 +51,7 @@ def makeDataCard(BinObject, directory, era):
         avg_weight  += "{0} ".format(avg_w_final)
         x = pred
         y = n_eff_final * avg_w_final
-        if (x != y):
+        if (not isclose(x, y)):
             print "ERROR: bin {0}, pred = {1} and Neff * avgW = {2}".format(b, x, y)
    
     writeLine(out_file, channel)
