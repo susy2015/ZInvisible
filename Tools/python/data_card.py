@@ -30,7 +30,7 @@ def makeDataCard(BinObject, directory, era):
     for bin_i in BinObject.all_bins:
         # bin_i starts from 0
         # for datacard, use b starting from 1
-        b = bin_i + 1
+        b = str(int(bin_i) + 1)
         pred    = float(BinObject.binValues[era][bin_i]["pred"])
         sigma   = float(BinObject.binValues[era][bin_i]["pred_error"])
         if pred == 0:

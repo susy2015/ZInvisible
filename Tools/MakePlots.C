@@ -1031,9 +1031,8 @@ int main(int argc, char* argv[])
     
     // Jet pt cuts
     std::vector<std::string> JetPtCuts = {"_jetpt20", "_jetpt30"};
-    
-    // Validation Bins Selection
-    std::map<std::string, std::string> validation_cuts_low_dm = {
+    // All cuts for validation and search bins
+    std::map<std::string, std::string> cuts_low_dm = {
         {"NBeq0_NSVeq0",     ";nBottoms_drLeptonCleaned=0;nSoftBottoms_drLeptonCleaned=0"},
         {"NBeq0_NSVge1",     ";nBottoms_drLeptonCleaned=0;nSoftBottoms_drLeptonCleaned>=1"},
         {"NBeq1_NSVeq0",     ";nBottoms_drLeptonCleaned=1;nSoftBottoms_drLeptonCleaned=0"},
@@ -1042,9 +1041,11 @@ int main(int argc, char* argv[])
         {"NBge1_NSVge1",     ";nBottoms_drLeptonCleaned>=1;nSoftBottoms_drLeptonCleaned>=1"},
         {"NBge2",            ";nBottoms_drLeptonCleaned>=2"},
     };
-    std::map<std::string, std::string> validation_cuts_high = {
+    std::map<std::string, std::string> cuts_high_dm = {
         {"NBeq1",     ";nBottoms_drLeptonCleaned=1"},
+        {"NBeq2",     ";nBottoms_drLeptonCleaned=2"},
         {"NBge2",     ";nBottoms_drLeptonCleaned>=2"},
+        {"NBge3",     ";nBottoms_drLeptonCleaned>=3"},
     };
 
 
@@ -1070,7 +1071,7 @@ int main(int argc, char* argv[])
             std::string ElectronWeights = "DiElecTriggerEffPt;DiElecSF;BTagWeight" + PrefireWeight + puWeight;
             // bestRecoZM used to calculate normalization
             // Validation Bins Selection
-            for (const auto& cut : validation_cuts_low_dm)
+            for (const auto& cut : cuts_low_dm)
             {
                 PDS dsData_Electron_LowDM_noZMassCut("Data",  fileMap[ElectronDataset],        "Flag_eeBadScFilter;passElecZinvSel;passElectronTrigger" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
                 std::vector<std::vector<PDS>> StackMC_Electron_LowDM_noZMassCut                = makeStackMC_DiLepton(                "passElecZinvSel" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, ElectronWeights);
@@ -1084,7 +1085,7 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("DataMC_Electron_LowDM_Normalization_bestRecoZM_50to250_" + cut.first + histSuffix,    {dcData_Electron_LowDM_bestRecoZM,   dcMC_Electron_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
                 vh.push_back(PHS("DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_" + cut.first + histSuffix,     {dcData_Electron_LowDM_bestRecoZM,   dcMC_Electron_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
             }
-            for (const auto& cut : validation_cuts_high)
+            for (const auto& cut : cuts_high_dm)
             {
                 PDS dsData_Electron_HighDM_noZMassCut("Data",  fileMap[ElectronDataset],        "Flag_eeBadScFilter;passElecZinvSel;passElectronTrigger" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
                 std::vector<std::vector<PDS>> StackMC_Electron_HighDM_noZMassCut                = makeStackMC_DiLepton(                "passElecZinvSel" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, ElectronWeights);
@@ -1413,7 +1414,7 @@ int main(int argc, char* argv[])
             std::string MuonWeights = "DiMuTriggerEffPt;DiMuSF;BTagWeight" + PrefireWeight + puWeight;
             // bestRecoZM used to calculate normalization
             // Validation Bins Selection
-            for (const auto& cut : validation_cuts_low_dm)
+            for (const auto& cut : cuts_low_dm)
             {
                 PDS dsData_Muon_LowDM_noZMassCut("Data",  fileMap[MuonDataset],                "Flag_eeBadScFilter;passMuZinvSel;passMuonTrigger"      + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
                 std::vector<std::vector<PDS>> StackMC_Muon_LowDM_noZMassCut                = makeStackMC_DiLepton(                "passMuZinvSel"      + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, MuonWeights);
@@ -1427,7 +1428,7 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("DataMC_Muon_LowDM_Normalization_bestRecoZM_50to250_" + cut.first + histSuffix,    {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
                 vh.push_back(PHS("DataMC_Muon_LowDM_Normalization_bestRecoZM_0to400_" + cut.first + histSuffix,     {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
             }
-            for (const auto& cut : validation_cuts_high)
+            for (const auto& cut : cuts_high_dm)
             {
                 PDS dsData_Muon_HighDM_noZMassCut("Data",  fileMap[MuonDataset],                "Flag_eeBadScFilter;passMuZinvSel;passMuonTrigger"   + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
                 std::vector<std::vector<PDS>> StackMC_Muon_HighDM_noZMassCut                = makeStackMC_DiLepton(                "passMuZinvSel"   + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, MuonWeights);
