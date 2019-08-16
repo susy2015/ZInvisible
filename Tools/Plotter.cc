@@ -180,6 +180,8 @@ void Plotter::parseSingleVar(const std::string& name, VarName& var)
     size_t a2 = name.find("]");
     size_t b1 = name.find("(");
     size_t b2 = name.find(")");
+    size_t c1 = name.find("{");
+    size_t c2 = name.find("}");
 
     if(a1 != std::string::npos && a2 != std::string::npos)
     {
@@ -189,9 +191,13 @@ void Plotter::parseSingleVar(const std::string& name, VarName& var)
     {
         var.var = name.substr(b1+1, b2 - b1 - 1);
     }
-    if(a1 != std::string::npos || b1 != std::string::npos)
+    if(c1 != std::string::npos && c2 != std::string::npos)
     {
-        var.name = name.substr(0, std::min(a1, b1));
+        var.cuts.reset(new Cuttable(name.substr(c1+1, c2 - c1 - 1)));
+    }
+    if(a1 != std::string::npos || b1 != std::string::npos || c1 != std::string::npos)
+    {
+        var.name = name.substr(0, std::min(a1, std::min(b1, c1)));
     }
     else
     {
@@ -308,10 +314,8 @@ Plotter::DataCollection::DataCollection(std::string type, std::string var, std::
 
 void Plotter::createHistsFromTuple()
 {
-    //std::cout << "Running createHistsFromTuple()" << std::endl;
     for(const AnaSamples::FileSummary& file : trees_)
     {
-        //std::cout << "FileSummary tag from trees_: " << file.tag << std::endl;
         std::set<std::string> activeBranches;
 
         //get file list 
@@ -321,7 +325,6 @@ void Plotter::createHistsFromTuple()
         std::map<std::pair<std::string, const DatasetSummary*>, std::pair<const HistSummary*, std::vector<std::shared_ptr<HistCutSummary>>>> histsToFill;
         for(HistSummary& hs : hists_)
         {
-            //std::cout << "HistSummary name = " << hs.name << std::endl;
             for(HistVecAndType& histvec : hs.hists)
             {
                 for(std::shared_ptr<HistCutSummary>& hist : histvec.hcsVec)
@@ -339,21 +342,10 @@ void Plotter::createHistsFromTuple()
                         hist->h->GetYaxis()->SetTitle(hs.yAxisLabel.c_str());
                     }
 
-                    //hist->dss.extractCuts(activeBranches);
-                    //for(const auto& dss : hist->dss)
-                    //{
-                    //    std::set<std::string> weights;
-                    //    dss.extractWeightNames(weights);
-                    //    for(const auto& weight : weights) std::cout << "Weight: " << weight << std::endl;
-                    //}
-                    //hist->hs->extractCuts(activeBranches);
-
                     for(const DatasetSummary& ds : hist->dss)
                     {
-                        //std::cout << "DatasetSummary label: " << ds.label << std::endl;
                         for(const AnaSamples::FileSummary& fileToComp : ds.files)
                         {
-                            //std::cout << "FileSummary tag from DatasetSummary: " << fileToComp.tag << std::endl;
                             if(file == fileToComp)
                             {
                                 hist->dssp = &ds;
@@ -646,16 +638,16 @@ void Plotter::Cuttable::parseCutString()
     }
 }
 
-bool Plotter::Cut::passCut(const NTupleReader& tr) const
+bool Plotter::Cut::passCut(const NTupleReader& tr, const int index) const
 {
     switch(type)
     {
-    case '<': return translateVar(tr) < val;
-    case '>': return translateVar(tr) > val;
-    case '=': return translateVar(tr) == val;
-    case 'G': return translateVar(tr) >= val;
-    case 'L': return translateVar(tr) <= val;
-    case '-': return translateVar(tr) > val && translateVar(tr) < val2;
+    case '<': return translateVar(tr, index) < val;
+    case '>': return translateVar(tr, index) > val;
+    case '=': return translateVar(tr, index) == val;
+    case 'G': return translateVar(tr, index) >= val;
+    case 'L': return translateVar(tr, index) <= val;
+    case '-': return translateVar(tr, index) > val && translateVar(tr, index) < val2;
     case 'B': return boolReturn(tr);
     default:
         printf("Unrecognized cut type, %c\n", type);
@@ -663,32 +655,39 @@ bool Plotter::Cut::passCut(const NTupleReader& tr) const
     }
 }
 
-template<> const double& Plotter::getVarFromVec<TLorentzVector, double>(const VarName& name, const NTupleReader& tr)
+template<> const double& Plotter::getVarFromVec<TLorentzVector, double>(const VarName& name, const NTupleReader& tr, const int index)
 {
+    //if (name.name.find("JetTLV") != std::string::npos) std::cout << "Running getVarFromVec for " << name.name << std::endl;
     const auto& vec = tr.getVec<TLorentzVector>(name.name);
 
     if(&vec != nullptr)
     {
-        const int& i = name.index;
+        int i;
+        // testing
+        //if(index >= 0) std::cout << "name: " << name.name << " var: " << name.var << " index: " << index << std::endl;
+        //else           std::cout << "name: " << name.name << " var: " << name.var << "index: " << index << " name.index: " << name.index << std::endl;
+        if(index >= 0) i = index;
+        else           i = name.index;
         if(i < vec.size()) return tlvGetValue(name.var, vec.at(i));
         else return *static_cast<double*>(nullptr);
     }
     return *static_cast<double*>(nullptr);
 }
 
-double Plotter::Cut::translateVar(const NTupleReader& tr) const
+double Plotter::Cut::translateVar(const NTupleReader& tr, const int index) const
 {
     std::string type;
     tr.getType(name.name, type);
 
     if(type.find("vector") != std::string::npos)
     {
-        if     (type.find("pair")           != std::string::npos) return Plotter::getVarFromVec<std::pair<double, double>>(name, tr).first;
-        else if(type.find("double")         != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<double>(name, tr));
-        else if(type.find("float")         != std::string::npos) return static_cast<float>(Plotter::getVarFromVec<float>(name, tr));
-        else if(type.find("unsigned int")   != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<unsigned int>(name, tr));
-        else if(type.find("int")            != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<int>(name, tr));
-        else if(type.find("TLorentzVector") != std::string::npos) return Plotter::getVarFromVec<TLorentzVector, double>(name, tr);
+        //if (name.name.find("JetTLV") != std::string::npos) std::cout << "Running translateVar for " << name.name << std::endl;
+        if     (type.find("pair")           != std::string::npos) return Plotter::getVarFromVec<std::pair<double, double>>(name, tr, index).first;
+        else if(type.find("double")         != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<double>(name, tr, index));
+        else if(type.find("float")          != std::string::npos) return static_cast<float>(Plotter::getVarFromVec<float>(name, tr, index));
+        else if(type.find("unsigned int")   != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<unsigned int>(name, tr, index));
+        else if(type.find("int")            != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<int>(name, tr, index));
+        else if(type.find("TLorentzVector") != std::string::npos) return Plotter::getVarFromVec<TLorentzVector, double>(name, tr, index);
     }
     else
     {
@@ -704,20 +703,21 @@ double Plotter::Cut::translateVar(const NTupleReader& tr) const
 
 bool Plotter::Cut::boolReturn(const NTupleReader& tr) const
 {
-    //for debugging bools
-    //std::cout << "In Plotter::Cut::boolReturn(): name.name = " << name.name << std::endl;
     return tr.getVar<bool>(name.name);
 }
 
-bool Plotter::Cuttable::passCuts(const NTupleReader& tr) const
+bool Plotter::Cuttable::passCuts(const NTupleReader& tr, const int index) const
 {
     bool passCut = true;
     for(const Cut& cut : cutVec_)
     {
-        if(cut.name.var.size() == 0)
-        {
-            passCut = passCut && ((cut.inverted)?(!cut.passCut(tr)):(cut.passCut(tr)));
-        }
+        //if (cut.name.name.find("JetTLV") != std::string::npos) std::cout << "Running passCuts for name: " << cut.name.name << " var: " << cut.name.var << " values: " << cut.val << " " << cut.val2 << std::endl;
+        // maybe necessary for using var:
+        passCut = passCut && ((cut.inverted)?(!cut.passCut(tr, index)):(cut.passCut(tr, index)));
+        //if(cut.name.var.size() == 0)
+        //{
+        //    passCut = passCut && ((cut.inverted)?(!cut.passCut(tr, index)):(cut.passCut(tr, index)));
+        //}
     }
     return passCut;
 }
@@ -1304,6 +1304,7 @@ void Plotter::plot()
 
 void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& tr, const double weight)
 {
+    //if (name.name.find("JetTLV") != std::string::npos) std::cout << "Running fillHist for " << name.name << std::endl;
     std::string type;
     tr.getType(name.name, type);
 

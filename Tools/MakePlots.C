@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
         {"era",        required_argument, 0, 'Y'}
     };
     bool runOnCondor        = false;
+    bool doLooseAndMid      = false;
     bool doDataMCElectron   = true;
     bool doDataMCMuon       = true;
     bool doDataMCPhoton     = true;
@@ -416,8 +417,8 @@ int main(int argc, char* argv[])
     double maxMassMu = 0.2;
     double minMassPhoton = -2.0 * TMath::Power(10.0, -4);
     double maxMassPhoton =  2.0 * TMath::Power(10.0, -4);
-    double minEta = -5.0;
-    double maxEta = 5.0;
+    double minEta = -3.0;
+    double maxEta = 3.0;
     double minPhi = -1.0 * TMath::Pi();
     double maxPhi = TMath::Pi();
 
@@ -1191,54 +1192,54 @@ int main(int argc, char* argv[])
             PDC dcMC_Electron_LowDM_metphi(    "stack",  "metphiWithLL", StackMC_Electron_LowDM);
             PDC dcMC_Electron_HighDM_metphi(   "stack",  "metphiWithLL", StackMC_Electron_HighDM);
             
-            // we do not have jet pt, eta plots using different jet pt cuts
             // jetpt
-            PDC dcData_Electron_LowDM_jetpt(  "data",   "JetTLV(pt)", {dsData_Electron_LowDM});
-            PDC dcData_Electron_HighDM_jetpt( "data",   "JetTLV(pt)", {dsData_Electron_HighDM});
-            PDC dcMC_Electron_LowDM_jetpt(    "stack",  "JetTLV(pt)", StackMC_Electron_LowDM);
-            PDC dcMC_Electron_HighDM_jetpt(   "stack",  "JetTLV(pt)", StackMC_Electron_HighDM);
+            PDC dcData_Electron_LowDM_jetpt(  "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_jetpt( "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_jetpt(    "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_LowDM);
+            PDC dcMC_Electron_HighDM_jetpt(   "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_HighDM);
 
             // jetpt_Loose
-            PDC dcData_Electron_LowDM_Loose_jetpt(  "data",   "JetTLV(pt)", {dsData_Electron_LowDM_Loose});
-            PDC dcData_Electron_HighDM_Loose_jetpt( "data",   "JetTLV(pt)", {dsData_Electron_HighDM_Loose});
-            PDC dcMC_Electron_LowDM_Loose_jetpt(    "stack",  "JetTLV(pt)", StackMC_Electron_LowDM_Loose);
-            PDC dcMC_Electron_HighDM_Loose_jetpt(   "stack",  "JetTLV(pt)", StackMC_Electron_HighDM_Loose);
+            PDC dcData_Electron_LowDM_Loose_jetpt(  "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_jetpt( "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_jetpt(    "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_LowDM_Loose);
+            PDC dcMC_Electron_HighDM_Loose_jetpt(   "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_HighDM_Loose);
 
             // jetpt_Mid
-            PDC dcData_Electron_LowDM_Mid_jetpt(  "data",   "JetTLV(pt)", {dsData_Electron_LowDM_Mid});
-            PDC dcData_Electron_HighDM_Mid_jetpt( "data",   "JetTLV(pt)", {dsData_Electron_HighDM_Mid});
-            PDC dcMC_Electron_LowDM_Mid_jetpt(    "stack",  "JetTLV(pt)", StackMC_Electron_LowDM_Mid);
-            PDC dcMC_Electron_HighDM_Mid_jetpt(   "stack",  "JetTLV(pt)", StackMC_Electron_HighDM_Mid);
-
-            // jetpt_drLeptonCleaned
-            PDC dcData_Electron_LowDM_jetpt_drLeptonCleaned(  "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_LowDM});
-            PDC dcData_Electron_HighDM_jetpt_drLeptonCleaned( "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_HighDM});
-            PDC dcMC_Electron_LowDM_jetpt_drLeptonCleaned(    "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_LowDM);
-            PDC dcMC_Electron_HighDM_jetpt_drLeptonCleaned(   "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_HighDM);
-
-            // jetpt_drLeptonCleaned_Loose
-            PDC dcData_Electron_LowDM_Loose_jetpt_drLeptonCleaned(  "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_LowDM_Loose});
-            PDC dcData_Electron_HighDM_Loose_jetpt_drLeptonCleaned( "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_HighDM_Loose});
-            PDC dcMC_Electron_LowDM_Loose_jetpt_drLeptonCleaned(    "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_LowDM_Loose);
-            PDC dcMC_Electron_HighDM_Loose_jetpt_drLeptonCleaned(   "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_HighDM_Loose);
-
-            // jetpt_drLeptonCleaned_Mid
-            PDC dcData_Electron_LowDM_Mid_jetpt_drLeptonCleaned(  "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_LowDM_Mid});
-            PDC dcData_Electron_HighDM_Mid_jetpt_drLeptonCleaned( "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_HighDM_Mid});
-            PDC dcMC_Electron_LowDM_Mid_jetpt_drLeptonCleaned(    "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_LowDM_Mid);
-            PDC dcMC_Electron_HighDM_Mid_jetpt_drLeptonCleaned(   "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_HighDM_Mid);
-
+            PDC dcData_Electron_LowDM_Mid_jetpt(  "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_LowDM_Mid});
+            PDC dcData_Electron_HighDM_Mid_jetpt( "data",   "JetTLV_drLeptonCleaned(pt)", {dsData_Electron_HighDM_Mid});
+            PDC dcMC_Electron_LowDM_Mid_jetpt(    "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_LowDM_Mid);
+            PDC dcMC_Electron_HighDM_Mid_jetpt(   "stack",  "JetTLV_drLeptonCleaned(pt)", StackMC_Electron_HighDM_Mid);
+            
+            // make jet pt, eta plots using different jet pt cuts
+            // jetpt_pt20to40
+            PDC dcData_Electron_LowDM_jetpt_pt20to40(  "data",   "JetTLV_drLeptonCleaned(pt){JetTLV_drLeptonCleaned(pt)>20;JetTLV_drLeptonCleaned(pt)<40}", {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_jetpt_pt20to40( "data",   "JetTLV_drLeptonCleaned(pt){JetTLV_drLeptonCleaned(pt)>20;JetTLV_drLeptonCleaned(pt)<40}", {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_jetpt_pt20to40(    "stack",  "JetTLV_drLeptonCleaned(pt){JetTLV_drLeptonCleaned(pt)>20;JetTLV_drLeptonCleaned(pt)<40}", StackMC_Electron_LowDM);
+            PDC dcMC_Electron_HighDM_jetpt_pt20to40(   "stack",  "JetTLV_drLeptonCleaned(pt){JetTLV_drLeptonCleaned(pt)>20;JetTLV_drLeptonCleaned(pt)<40}", StackMC_Electron_HighDM);
+            
+            // jetpt_pt40
+            PDC dcData_Electron_LowDM_jetpt_pt40(  "data",   "JetTLV_drLeptonCleaned(pt){JetTLV_drLeptonCleaned(pt)>40}", {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_jetpt_pt40( "data",   "JetTLV_drLeptonCleaned(pt){JetTLV_drLeptonCleaned(pt)>40}", {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_jetpt_pt40(    "stack",  "JetTLV_drLeptonCleaned(pt){JetTLV_drLeptonCleaned(pt)>40}", StackMC_Electron_LowDM);
+            PDC dcMC_Electron_HighDM_jetpt_pt40(   "stack",  "JetTLV_drLeptonCleaned(pt){JetTLV_drLeptonCleaned(pt)>40}", StackMC_Electron_HighDM);
+            
             // jeteta
-            PDC dcData_Electron_LowDM_jeteta(  "data",   "JetTLV(eta)", {dsData_Electron_LowDM});
-            PDC dcData_Electron_HighDM_jeteta( "data",   "JetTLV(eta)", {dsData_Electron_HighDM});
-            PDC dcMC_Electron_LowDM_jeteta(    "stack",  "JetTLV(eta)", StackMC_Electron_LowDM);
-            PDC dcMC_Electron_HighDM_jeteta(   "stack",  "JetTLV(eta)", StackMC_Electron_HighDM);
+            PDC dcData_Electron_LowDM_jeteta(  "data",   "JetTLV_drLeptonCleaned(eta)", {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_jeteta( "data",   "JetTLV_drLeptonCleaned(eta)", {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_jeteta(    "stack",  "JetTLV_drLeptonCleaned(eta)", StackMC_Electron_LowDM);
+            PDC dcMC_Electron_HighDM_jeteta(   "stack",  "JetTLV_drLeptonCleaned(eta)", StackMC_Electron_HighDM);
 
-            // jeteta_drLeptonCleaned
-            PDC dcData_Electron_LowDM_jeteta_drLeptonCleaned(  "data",   "JetTLV_drLeptonCleaned(eta)", {dsData_Electron_LowDM});
-            PDC dcData_Electron_HighDM_jeteta_drLeptonCleaned( "data",   "JetTLV_drLeptonCleaned(eta)", {dsData_Electron_HighDM});
-            PDC dcMC_Electron_LowDM_jeteta_drLeptonCleaned(    "stack",  "JetTLV_drLeptonCleaned(eta)", StackMC_Electron_LowDM);
-            PDC dcMC_Electron_HighDM_jeteta_drLeptonCleaned(   "stack",  "JetTLV_drLeptonCleaned(eta)", StackMC_Electron_HighDM);
+            // jeteta_pt20to40
+            PDC dcData_Electron_LowDM_jeteta_pt20to40(  "data",   "JetTLV_drLeptonCleaned(eta){JetTLV_drLeptonCleaned(pt)>20;JetTLV_drLeptonCleaned(pt)<40}", {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_jeteta_pt20to40( "data",   "JetTLV_drLeptonCleaned(eta){JetTLV_drLeptonCleaned(pt)>20;JetTLV_drLeptonCleaned(pt)<40}", {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_jeteta_pt20to40(    "stack",  "JetTLV_drLeptonCleaned(eta){JetTLV_drLeptonCleaned(pt)>20;JetTLV_drLeptonCleaned(pt)<40}", StackMC_Electron_LowDM);
+            PDC dcMC_Electron_HighDM_jeteta_pt20to40(   "stack",  "JetTLV_drLeptonCleaned(eta){JetTLV_drLeptonCleaned(pt)>20;JetTLV_drLeptonCleaned(pt)<40}", StackMC_Electron_HighDM);
+
+            // jeteta_pt40
+            PDC dcData_Electron_LowDM_jeteta_pt40(  "data",   "JetTLV_drLeptonCleaned(eta){JetTLV_drLeptonCleaned(pt)>40}", {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_jeteta_pt40( "data",   "JetTLV_drLeptonCleaned(eta){JetTLV_drLeptonCleaned(pt)>40}", {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_jeteta_pt40(    "stack",  "JetTLV_drLeptonCleaned(eta){JetTLV_drLeptonCleaned(pt)>40}", StackMC_Electron_LowDM);
+            PDC dcMC_Electron_HighDM_jeteta_pt40(   "stack",  "JetTLV_drLeptonCleaned(eta){JetTLV_drLeptonCleaned(pt)>40}", StackMC_Electron_HighDM);
 
             // electron pt
             PDC dcData_Electron_LowDM_ElecPt1(  "data",   "cutElecPt1", {dsData_Electron_LowDM});
@@ -1329,14 +1330,18 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Electron_HighDM_met" + histSuffix,                                {dcData_Electron_HighDM_met,                         dcMC_Electron_HighDM_met},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
             vh.push_back(PHS("DataMC_Electron_LowDM_metphi" + histSuffix,                              {dcData_Electron_LowDM_metphi,                       dcMC_Electron_LowDM_metphi},                       {1, 2}, "", nBins,  minPhi, maxPhi,      true, doNorm, label_metphiWithLL, "Events"));
             vh.push_back(PHS("DataMC_Electron_HighDM_metphi" + histSuffix,                             {dcData_Electron_HighDM_metphi,                      dcMC_Electron_HighDM_metphi},                      {1, 2}, "", nBins,  minPhi, maxPhi,      true, doNorm, label_metphiWithLL, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_jetpt" + histSuffix,                               {dcData_Electron_LowDM_jetpt,                        dcMC_Electron_LowDM_jetpt},                        {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_jetpt, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_jetpt" + histSuffix,                              {dcData_Electron_HighDM_jetpt,                       dcMC_Electron_HighDM_jetpt},                       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_jetpt, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_jetpt_drLeptonCleaned" + histSuffix,               {dcData_Electron_LowDM_jetpt_drLeptonCleaned,        dcMC_Electron_LowDM_jetpt_drLeptonCleaned},        {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_jetpt_drLeptonCleaned" + histSuffix,              {dcData_Electron_HighDM_jetpt_drLeptonCleaned,       dcMC_Electron_HighDM_jetpt_drLeptonCleaned},       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_jeteta" + histSuffix,                              {dcData_Electron_LowDM_jeteta,                       dcMC_Electron_LowDM_jeteta},                       {1, 2}, "", nBins,  minEta, maxEta,      true, doNorm, label_jeteta, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_jeteta" + histSuffix,                             {dcData_Electron_HighDM_jeteta,                      dcMC_Electron_HighDM_jeteta},                      {1, 2}, "", nBins,  minEta, maxEta,      true, doNorm, label_jeteta, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_jeteta_drLeptonCleaned" + histSuffix,              {dcData_Electron_LowDM_jeteta_drLeptonCleaned,       dcMC_Electron_LowDM_jeteta_drLeptonCleaned},       {1, 2}, "", nBins,  minEta, maxEta,      true, doNorm, "lepton cleaned "+label_jeteta, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_jeteta_drLeptonCleaned" + histSuffix,             {dcData_Electron_HighDM_jeteta_drLeptonCleaned,      dcMC_Electron_HighDM_jeteta_drLeptonCleaned},      {1, 2}, "", nBins,  minEta, maxEta,      true, doNorm, "lepton cleaned "+label_jeteta, "Events"));
+            vh.push_back(PHS("DataMC_Electron_LowDM_jetpt" + histSuffix,                               {dcData_Electron_LowDM_jetpt,                        dcMC_Electron_LowDM_jetpt},                        {1, 2}, "", nBins,  minPt, 200.0,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
+            vh.push_back(PHS("DataMC_Electron_HighDM_jetpt" + histSuffix,                              {dcData_Electron_HighDM_jetpt,                       dcMC_Electron_HighDM_jetpt},                       {1, 2}, "", nBins,  minPt, 200.0,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
+            vh.push_back(PHS("DataMC_Electron_LowDM_jetpt_pt20to40" + histSuffix,                      {dcData_Electron_LowDM_jetpt_pt20to40,               dcMC_Electron_LowDM_jetpt_pt20to40},               {1, 2}, "", nBins,  minPt, 200.0,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
+            vh.push_back(PHS("DataMC_Electron_HighDM_jetpt_pt20to40" + histSuffix,                     {dcData_Electron_HighDM_jetpt_pt20to40,              dcMC_Electron_HighDM_jetpt_pt20to40},              {1, 2}, "", nBins,  minPt, 200.0,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
+            vh.push_back(PHS("DataMC_Electron_LowDM_jetpt_pt40" + histSuffix,                          {dcData_Electron_LowDM_jetpt_pt40,                   dcMC_Electron_LowDM_jetpt_pt40},                   {1, 2}, "", nBins,  minPt, 200.0,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
+            vh.push_back(PHS("DataMC_Electron_HighDM_jetpt_pt40" + histSuffix,                         {dcData_Electron_HighDM_jetpt_pt40,                  dcMC_Electron_HighDM_jetpt_pt40},                  {1, 2}, "", nBins,  minPt, 200.0,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
+            vh.push_back(PHS("DataMC_Electron_LowDM_jeteta" + histSuffix,                              {dcData_Electron_LowDM_jeteta,                       dcMC_Electron_LowDM_jeteta},                       {1, 2}, "", nBins,  minEta, maxEta,      true, doNorm, "lepton cleaned "+label_jeteta, "Events"));
+            vh.push_back(PHS("DataMC_Electron_HighDM_jeteta" + histSuffix,                             {dcData_Electron_HighDM_jeteta,                      dcMC_Electron_HighDM_jeteta},                      {1, 2}, "", nBins,  minEta, maxEta,      true, doNorm, "lepton cleaned "+label_jeteta, "Events"));
+            vh.push_back(PHS("DataMC_Electron_LowDM_jeteta_pt20to40" + histSuffix,                     {dcData_Electron_LowDM_jeteta_pt20to40,              dcMC_Electron_LowDM_jeteta_pt20to40},              {1, 2}, "", nBins,  minEta, maxEta,      true, doNorm, "lepton cleaned "+label_jeteta, "Events"));
+            vh.push_back(PHS("DataMC_Electron_HighDM_jeteta_pt20to40" + histSuffix,                    {dcData_Electron_HighDM_jeteta_pt20to40,             dcMC_Electron_HighDM_jeteta_pt20to40},             {1, 2}, "", nBins,  minEta, maxEta,      true, doNorm, "lepton cleaned "+label_jeteta, "Events"));
+            vh.push_back(PHS("DataMC_Electron_LowDM_jeteta_pt40" + histSuffix,                         {dcData_Electron_LowDM_jeteta_pt40,                  dcMC_Electron_LowDM_jeteta_pt40},                  {1, 2}, "", nBins,  minEta, maxEta,      true, doNorm, "lepton cleaned "+label_jeteta, "Events"));
+            vh.push_back(PHS("DataMC_Electron_HighDM_jeteta_pt40" + histSuffix,                        {dcData_Electron_HighDM_jeteta_pt40,                 dcMC_Electron_HighDM_jeteta_pt40},                 {1, 2}, "", nBins,  minEta, maxEta,      true, doNorm, "lepton cleaned "+label_jeteta, "Events"));
             vh.push_back(PHS("DataMC_Electron_LowDM_ElecPt1" + histSuffix,                             {dcData_Electron_LowDM_ElecPt1,                      dcMC_Electron_LowDM_ElecPt1},                      {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ElecPt1, "Events"));
             vh.push_back(PHS("DataMC_Electron_HighDM_ElecPt1" + histSuffix,                            {dcData_Electron_HighDM_ElecPt1,                     dcMC_Electron_HighDM_ElecPt1},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ElecPt1, "Events"));
             vh.push_back(PHS("DataMC_Electron_LowDM_ElecPt2" + histSuffix,                             {dcData_Electron_LowDM_ElecPt2,                      dcMC_Electron_LowDM_ElecPt2},                      {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ElecPt2, "Events"));
@@ -1366,29 +1371,28 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Electron_LowDM_Stop0l_ISRJetPt" + histSuffix,                     {dcData_Electron_LowDM_Stop0l_ISRJetPt,              dcMC_Electron_LowDM_Stop0l_ISRJetPt},              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, "Stop0l "+label_ISRJetPt, "Events"));
             vh.push_back(PHS("DataMC_Electron_HighDM_Stop0l_ISRJetPt" + histSuffix,                    {dcData_Electron_HighDM_Stop0l_ISRJetPt,             dcMC_Electron_HighDM_Stop0l_ISRJetPt},             {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, "Stop0l "+label_ISRJetPt, "Events"));
             
-            // Loose selection
-            vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nj" + histSuffix,                            {dcData_Electron_LowDM_Loose_nj,                     dcMC_Electron_LowDM_Loose_nj},                     {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nj" + histSuffix,                           {dcData_Electron_HighDM_Loose_nj,                    dcMC_Electron_HighDM_Loose_nj},                    {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_Loose_ht" + histSuffix,                            {dcData_Electron_LowDM_Loose_ht,                     dcMC_Electron_LowDM_Loose_ht},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_Loose_ht" + histSuffix,                           {dcData_Electron_HighDM_Loose_ht,                    dcMC_Electron_HighDM_Loose_ht},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_Loose_met" + histSuffix,                           {dcData_Electron_LowDM_Loose_met,                    dcMC_Electron_LowDM_Loose_met},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_Loose_met" + histSuffix,                          {dcData_Electron_HighDM_Loose_met,                   dcMC_Electron_HighDM_Loose_met},                   {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_Loose_jetpt" + histSuffix,                         {dcData_Electron_LowDM_Loose_jetpt,                  dcMC_Electron_LowDM_Loose_jetpt},                  {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_jetpt, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_Loose_jetpt" + histSuffix,                        {dcData_Electron_HighDM_Loose_jetpt,                 dcMC_Electron_HighDM_Loose_jetpt},                 {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_jetpt, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_Loose_jetpt_drLeptonCleaned" + histSuffix,         {dcData_Electron_LowDM_Loose_jetpt_drLeptonCleaned,  dcMC_Electron_LowDM_Loose_jetpt_drLeptonCleaned},  {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_Loose_jetpt_drLeptonCleaned" + histSuffix,        {dcData_Electron_HighDM_Loose_jetpt_drLeptonCleaned, dcMC_Electron_HighDM_Loose_jetpt_drLeptonCleaned}, {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
+            if (doLooseAndMid)
+            {
+                // Loose selection
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nj" + histSuffix,                            {dcData_Electron_LowDM_Loose_nj,                     dcMC_Electron_LowDM_Loose_nj},                     {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nj" + histSuffix,                           {dcData_Electron_HighDM_Loose_nj,                    dcMC_Electron_HighDM_Loose_nj},                    {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_ht" + histSuffix,                            {dcData_Electron_LowDM_Loose_ht,                     dcMC_Electron_LowDM_Loose_ht},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_ht" + histSuffix,                           {dcData_Electron_HighDM_Loose_ht,                    dcMC_Electron_HighDM_Loose_ht},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_met" + histSuffix,                           {dcData_Electron_LowDM_Loose_met,                    dcMC_Electron_LowDM_Loose_met},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_met" + histSuffix,                          {dcData_Electron_HighDM_Loose_met,                   dcMC_Electron_HighDM_Loose_met},                   {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_jetpt" + histSuffix,                         {dcData_Electron_LowDM_Loose_jetpt,                  dcMC_Electron_LowDM_Loose_jetpt},                  {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_jetpt" + histSuffix,                        {dcData_Electron_HighDM_Loose_jetpt,                 dcMC_Electron_HighDM_Loose_jetpt},                 {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
 
-            // Mid selection
-            vh.push_back(PHS("DataMC_Electron_LowDM_Mid_nj" + histSuffix,                              {dcData_Electron_LowDM_Mid_nj,                       dcMC_Electron_LowDM_Mid_nj},                       {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_Mid_nj" + histSuffix,                             {dcData_Electron_HighDM_Mid_nj,                      dcMC_Electron_HighDM_Mid_nj},                      {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_Mid_ht" + histSuffix,                              {dcData_Electron_LowDM_Mid_ht,                       dcMC_Electron_LowDM_Mid_ht},                       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_Mid_ht" + histSuffix,                             {dcData_Electron_HighDM_Mid_ht,                      dcMC_Electron_HighDM_Mid_ht},                      {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_Mid_met" + histSuffix,                             {dcData_Electron_LowDM_Mid_met,                      dcMC_Electron_LowDM_Mid_met},                      {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_Mid_met" + histSuffix,                            {dcData_Electron_HighDM_Mid_met,                     dcMC_Electron_HighDM_Mid_met},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_Mid_jetpt" + histSuffix,                           {dcData_Electron_LowDM_Mid_jetpt,                    dcMC_Electron_LowDM_Mid_jetpt},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_jetpt, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_Mid_jetpt" + histSuffix,                          {dcData_Electron_HighDM_Mid_jetpt,                   dcMC_Electron_HighDM_Mid_jetpt},                   {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_jetpt, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_Mid_jetpt_drLeptonCleaned" + histSuffix,           {dcData_Electron_LowDM_Mid_jetpt_drLeptonCleaned,    dcMC_Electron_LowDM_Mid_jetpt_drLeptonCleaned},    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_Mid_jetpt_drLeptonCleaned" + histSuffix,          {dcData_Electron_HighDM_Mid_jetpt_drLeptonCleaned,   dcMC_Electron_HighDM_Mid_jetpt_drLeptonCleaned},   {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
+                // Mid selection
+                vh.push_back(PHS("DataMC_Electron_LowDM_Mid_nj" + histSuffix,                              {dcData_Electron_LowDM_Mid_nj,                       dcMC_Electron_LowDM_Mid_nj},                       {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Mid_nj" + histSuffix,                             {dcData_Electron_HighDM_Mid_nj,                      dcMC_Electron_HighDM_Mid_nj},                      {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Mid_ht" + histSuffix,                              {dcData_Electron_LowDM_Mid_ht,                       dcMC_Electron_LowDM_Mid_ht},                       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Mid_ht" + histSuffix,                             {dcData_Electron_HighDM_Mid_ht,                      dcMC_Electron_HighDM_Mid_ht},                      {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Mid_met" + histSuffix,                             {dcData_Electron_LowDM_Mid_met,                      dcMC_Electron_LowDM_Mid_met},                      {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Mid_met" + histSuffix,                            {dcData_Electron_HighDM_Mid_met,                     dcMC_Electron_HighDM_Mid_met},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Mid_jetpt" + histSuffix,                           {dcData_Electron_LowDM_Mid_jetpt,                    dcMC_Electron_LowDM_Mid_jetpt},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Mid_jetpt" + histSuffix,                          {dcData_Electron_HighDM_Mid_jetpt,                   dcMC_Electron_HighDM_Mid_jetpt},                   {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, "lepton cleaned "+label_jetpt, "Events"));
+            }
 
             // dphi
             for (int i = 0; i < 4; i++)
@@ -1628,22 +1632,24 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Muon_LowDM_ptb" + histSuffix,                                 {dcData_Muon_LowDM_ptb,          dcMC_Muon_LowDM_ptb},                       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
             vh.push_back(PHS("DataMC_Muon_HighDM_ptb" + histSuffix,                                {dcData_Muon_HighDM_ptb,         dcMC_Muon_HighDM_ptb},                      {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
             
-            // Loose selection
-            vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nj" + histSuffix,                            {dcData_Muon_LowDM_Loose_nj,     dcMC_Muon_LowDM_Loose_nj},                  {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
-            vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nj" + histSuffix,                           {dcData_Muon_HighDM_Loose_nj,    dcMC_Muon_HighDM_Loose_nj},                 {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
-            vh.push_back(PHS("DataMC_Muon_LowDM_Loose_ht" + histSuffix,                            {dcData_Muon_LowDM_Loose_ht,     dcMC_Muon_LowDM_Loose_ht},                  {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
-            vh.push_back(PHS("DataMC_Muon_HighDM_Loose_ht" + histSuffix,                           {dcData_Muon_HighDM_Loose_ht,    dcMC_Muon_HighDM_Loose_ht},                 {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
-            vh.push_back(PHS("DataMC_Muon_LowDM_Loose_met" + histSuffix,                           {dcData_Muon_LowDM_Loose_met,    dcMC_Muon_LowDM_Loose_met},                 {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
-            vh.push_back(PHS("DataMC_Muon_HighDM_Loose_met" + histSuffix,                          {dcData_Muon_HighDM_Loose_met,   dcMC_Muon_HighDM_Loose_met},                {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
-            
+            if (doLooseAndMid)
+            {
+                // Loose selection
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nj" + histSuffix,                            {dcData_Muon_LowDM_Loose_nj,     dcMC_Muon_LowDM_Loose_nj},                  {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nj" + histSuffix,                           {dcData_Muon_HighDM_Loose_nj,    dcMC_Muon_HighDM_Loose_nj},                 {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_ht" + histSuffix,                            {dcData_Muon_LowDM_Loose_ht,     dcMC_Muon_LowDM_Loose_ht},                  {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_ht" + histSuffix,                           {dcData_Muon_HighDM_Loose_ht,    dcMC_Muon_HighDM_Loose_ht},                 {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_met" + histSuffix,                           {dcData_Muon_LowDM_Loose_met,    dcMC_Muon_LowDM_Loose_met},                 {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_met" + histSuffix,                          {dcData_Muon_HighDM_Loose_met,   dcMC_Muon_HighDM_Loose_met},                {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
 
-            // Mid selection
-            vh.push_back(PHS("DataMC_Muon_LowDM_Mid_nj" + histSuffix,                              {dcData_Muon_LowDM_Mid_nj,       dcMC_Muon_LowDM_Mid_nj},                    {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
-            vh.push_back(PHS("DataMC_Muon_HighDM_Mid_nj" + histSuffix,                             {dcData_Muon_HighDM_Mid_nj,      dcMC_Muon_HighDM_Mid_nj},                   {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
-            vh.push_back(PHS("DataMC_Muon_LowDM_Mid_ht" + histSuffix,                              {dcData_Muon_LowDM_Mid_ht,       dcMC_Muon_LowDM_Mid_ht},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
-            vh.push_back(PHS("DataMC_Muon_HighDM_Mid_ht" + histSuffix,                             {dcData_Muon_HighDM_Mid_ht,      dcMC_Muon_HighDM_Mid_ht},                   {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
-            vh.push_back(PHS("DataMC_Muon_LowDM_Mid_met" + histSuffix,                             {dcData_Muon_LowDM_Mid_met,      dcMC_Muon_LowDM_Mid_met},                   {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
-            vh.push_back(PHS("DataMC_Muon_HighDM_Mid_met" + histSuffix,                            {dcData_Muon_HighDM_Mid_met,     dcMC_Muon_HighDM_Mid_met},                  {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                // Mid selection
+                vh.push_back(PHS("DataMC_Muon_LowDM_Mid_nj" + histSuffix,                              {dcData_Muon_LowDM_Mid_nj,       dcMC_Muon_LowDM_Mid_nj},                    {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Mid_nj" + histSuffix,                             {dcData_Muon_HighDM_Mid_nj,      dcMC_Muon_HighDM_Mid_nj},                   {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Mid_ht" + histSuffix,                              {dcData_Muon_LowDM_Mid_ht,       dcMC_Muon_LowDM_Mid_ht},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Mid_ht" + histSuffix,                             {dcData_Muon_HighDM_Mid_ht,      dcMC_Muon_HighDM_Mid_ht},                   {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Mid_met" + histSuffix,                             {dcData_Muon_LowDM_Mid_met,      dcMC_Muon_LowDM_Mid_met},                   {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Mid_met" + histSuffix,                            {dcData_Muon_HighDM_Mid_met,     dcMC_Muon_HighDM_Mid_met},                  {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+            }
 
             // dphi
             for (int i = 0; i < 4; i++)
