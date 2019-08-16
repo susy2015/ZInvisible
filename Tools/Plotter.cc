@@ -2,16 +2,13 @@
 #include "tdrstyle.h"
 #include "MiniTupleMaker.h"
 #include "RegisterFunctions.h"
-
 #include "TypeDefinitions.h"
 #include "TROOT.h"
 #include "TCanvas.h"
 #include "TTree.h"
-//#include "TChain.h"
 #include "TF1.h"
 #include "THStack.h"
 #include "TLatex.h"
-
 #include <sstream>
 
 const int colors[] = {
@@ -165,7 +162,6 @@ void Plotter::HistSummary::parseName(std::vector<Plotter::DataCollection>& ns)
             VarName var;
             Plotter::parseSingleVar(dataset.first, var);
 
-           //std::string histname = name + "__" + var.name + "__" + ((var.index >= 0)?(std::to_string(var.index)):("")) + "__" + var.var + "__" + dataset.first + "__" + dataset.second.front().label + "__" + n.type;
             std::string histname = name +  var.name + ((var.index >= 0)?(std::to_string(var.index)):("")) + var.var + dataset.first + dataset.second.front().label + n.type;
 
             tmphtp.push_back(std::shared_ptr<HistCutSummary>(new HistCutSummary(dataset.second.front().label, histname, var, nullptr, dataset.second)));
@@ -367,7 +363,6 @@ void Plotter::createHistsFromTuple()
         }
 
         //make vector of cutflows to fill
-        //std::vector<std::shared_ptr<CutFlowSummary>> cutFlowsToFill;
         std::vector<CutFlowSummary*> cutFlowsToFill;
         for(CutFlowSummary& cfs : cutFlows_)
         {
@@ -379,7 +374,6 @@ void Plotter::createHistsFromTuple()
                     {
                         if(file == fileToComp)
                         {
-                            //cutFlowsToFill.push_back(std::shared_ptr<CutFlowSummary>(&cfs));
                             cutFlowsToFill.push_back(&cfs);
                             cutFlowsToFill.back()->setDSS(&ds);
                             cutFlowsToFill.back()->generateHist();
@@ -398,8 +392,6 @@ void Plotter::createHistsFromTuple()
             continue;
         }
 
-        //TChain *t = new TChain(file.treePath.c_str());
-        //file.addFilesToChain(t);
         std::cout << "Processing file(s): " << file.filePath << std::endl;
 
         //Set up mini tuple maker
@@ -480,8 +472,6 @@ void Plotter::createHistsFromTuple()
                             }
                         }
                     }
-                    // skip events for testing
-                    //if (tr.getEvtNum() < 350000) continue;
 
                     //If maxEvents_ is set, stop after so many events
                     if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;
@@ -491,7 +481,6 @@ void Plotter::createHistsFromTuple()
                     if(doHists_)
                     {
                         double fileWgt = file.getWeight();
-                        //printf("In Plotter.cc: %s --- weight = %f; lumi = %f\n", file.tag.c_str(), fileWgt, file.lumi);
 
                         for(auto& histsToFillVec : histsToFill)
                         {
@@ -508,8 +497,6 @@ void Plotter::createHistsFromTuple()
 
                             // get the weight associated with the dataset
                             double weight = fileWgt * dss.getWeight(tr) * dss.kfactor;
-                            
-                            //printf("In Plotter.cc: %s final weight = %f\n", file.tag.c_str(), weight);
 
                             for(auto& hist : histsToFillVec.second.second)
                             {
@@ -657,15 +644,11 @@ bool Plotter::Cut::passCut(const NTupleReader& tr, const int index) const
 
 template<> const double& Plotter::getVarFromVec<TLorentzVector, double>(const VarName& name, const NTupleReader& tr, const int index)
 {
-    //if (name.name.find("JetTLV") != std::string::npos) std::cout << "Running getVarFromVec for " << name.name << std::endl;
     const auto& vec = tr.getVec<TLorentzVector>(name.name);
 
     if(&vec != nullptr)
     {
         int i;
-        // testing
-        //if(index >= 0) std::cout << "name: " << name.name << " var: " << name.var << " index: " << index << std::endl;
-        //else           std::cout << "name: " << name.name << " var: " << name.var << "index: " << index << " name.index: " << name.index << std::endl;
         if(index >= 0) i = index;
         else           i = name.index;
         if(i < vec.size()) return tlvGetValue(name.var, vec.at(i));
@@ -681,7 +664,6 @@ double Plotter::Cut::translateVar(const NTupleReader& tr, const int index) const
 
     if(type.find("vector") != std::string::npos)
     {
-        //if (name.name.find("JetTLV") != std::string::npos) std::cout << "Running translateVar for " << name.name << std::endl;
         if     (type.find("pair")           != std::string::npos) return Plotter::getVarFromVec<std::pair<double, double>>(name, tr, index).first;
         else if(type.find("double")         != std::string::npos) return static_cast<double>(Plotter::getVarFromVec<double>(name, tr, index));
         else if(type.find("float")          != std::string::npos) return static_cast<float>(Plotter::getVarFromVec<float>(name, tr, index));
@@ -711,13 +693,7 @@ bool Plotter::Cuttable::passCuts(const NTupleReader& tr, const int index) const
     bool passCut = true;
     for(const Cut& cut : cutVec_)
     {
-        //if (cut.name.name.find("JetTLV") != std::string::npos) std::cout << "Running passCuts for name: " << cut.name.name << " var: " << cut.name.var << " values: " << cut.val << " " << cut.val2 << std::endl;
-        // maybe necessary for using var:
         passCut = passCut && ((cut.inverted)?(!cut.passCut(tr, index)):(cut.passCut(tr, index)));
-        //if(cut.name.var.size() == 0)
-        //{
-        //    passCut = passCut && ((cut.inverted)?(!cut.passCut(tr, index)):(cut.passCut(tr, index)));
-        //}
     }
     return passCut;
 }
@@ -740,7 +716,6 @@ void Plotter::saveHists()
                     TDirectory* mydir = fout_->GetDirectory(dirname.c_str());
                     if(mydir == 0)
                     {
-                        //std::cout << "Creating directory " << dirname << " in the root file" << std::endl;
                         mydir = fout_->mkdir(dirname.c_str(),dirname.c_str());
                     }
                     mydir->cd();
@@ -1011,7 +986,6 @@ void Plotter::plot()
         {
             if (hist.ymin_ > 0 && hist.ymax_ > 0)
             {
-                //std::cout << "In Plotter.cc: " << hist.name << " ymin, ymax = " << hist.ymin_ << ", " << hist.ymax_ << std::endl;
                 dummy->GetYaxis()->SetRangeUser(hist.ymin_, hist.ymax_);
             }
             else
@@ -1044,11 +1018,6 @@ void Plotter::plot()
             if(hist.hists.front().type.compare("ratio") == 0) 
             {
                 dummy->GetYaxis()->SetRangeUser(ratioMin, 2.0);
-                //dummy->GetYaxis()->SetRangeUser(ratioMin, max*1.2);
-                //if (max > 5)
-                //{
-                //    dummy->GetYaxis()->SetRangeUser(ratioMin, 5*1.2);
-                //}
             }
         }
         dummy->Draw();
@@ -1172,7 +1141,6 @@ void Plotter::plot()
                     drawOptions = "same PE1";
 
                     h1->Divide(h2);
-                    //h1->SetLineColor(kBlack);
                     h1->SetMarkerStyle(20);
                     h1->SetMarkerColor(h1->GetLineColor());
                     double d2ymin = 0.0;
@@ -1184,7 +1152,6 @@ void Plotter::plot()
                             d2ymax = std::max(d2ymax, h1->GetBinContent(iBin));
                         }
                     }
-                    //dummy2->GetYaxis()->SetRangeUser(d2ymin, 1.5*d2ymax);
                     dummy2->GetYaxis()->SetRangeUser(0.0, 2.1);
                 }
                 else // pull distribution
@@ -1196,7 +1163,6 @@ void Plotter::plot()
                     h1->SetMarkerStyle(20);
                     h1->SetMarkerColor(h1->GetLineColor());
 
-                    //h1->Add(h2, -1.0);
                     const double absoluteMaxPull = 10.0;
                     double maxPull = 2.0;
                     double sumW2_1 = 0.0, sumW_1 = 0.0;
@@ -1210,8 +1176,6 @@ void Plotter::plot()
                     }
                     for(int iBin = 1; iBin <= h1->GetNbinsX(); ++iBin)
                     {
-                        //if(h1->GetBinError(iBin) > 0.00001) h1->SetBinContent(iBin, h1->GetBinContent(iBin)/h1->GetBinError(iBin));
-                        //else h1->SetBinContent(iBin, -999.9);
                         double binVal = binVal = h1->GetBinContent(iBin) - h2->GetBinContent(iBin);
                         double binErr = -999.9;
                         if(h1->GetBinContent(iBin) > 1e-10 && h2->GetBinContent(iBin) > 1e-10)
@@ -1259,7 +1223,6 @@ void Plotter::plot()
         c->cd(1);
         char lumistamp[128];
         sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", getLumi() / 1000.0);
-        //printf("Luminosity Label: %.1f fb^{-1} (13 TeV)\n", getLumi() / 1000.0);
 
         TLatex mark;
         mark.SetNDC(true);
@@ -1304,7 +1267,6 @@ void Plotter::plot()
 
 void Plotter::fillHist(TH1 * const h, const VarName& name, const NTupleReader& tr, const double weight)
 {
-    //if (name.name.find("JetTLV") != std::string::npos) std::cout << "Running fillHist for " << name.name << std::endl;
     std::string type;
     tr.getType(name.name, type);
 

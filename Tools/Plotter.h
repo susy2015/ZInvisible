@@ -96,7 +96,6 @@ public:
         double kfactor;
 
         DatasetSummary() {}
-//        DatasetSummary(std::string lab, std::string nam, std::string tree, std::string cuts, double xs, double l, double k, double n);
         DatasetSummary(std::string lab, std::vector<AnaSamples::FileSummary>& f, std::string cuts = "", std::string weights = "", double k = 1.0);
 
         double getWeight(const NTupleReader& tr) const;
@@ -271,7 +270,6 @@ private:
 
     template<typename T> void fillHistFromVec(TH1* const h, const VarName& name, const NTupleReader& tr, const double weight)
     {
-        //if (name.name.find("JetTLV") != std::string::npos) std::cout << "Running fillHistFromVec for " << name.name << std::endl;
         if(name.var.compare("size") == 0)
         {
             const auto& vec = tr.getVec<T>(name.name);
