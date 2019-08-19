@@ -593,10 +593,8 @@ void Plotter::Cuttable::parseCutString()
             tmp = tmp.substr(sepPos + 1, size_t(-1));
         }
         sepPos = 0;
-        if(     (sepPos = tmp.find('>'))  != std::string::npos) cutType = '>';
-        else if((sepPos = tmp.find('<'))  != std::string::npos) cutType = '<';
-        else if((sepPos = tmp.find('='))  != std::string::npos) cutType = '=';
-        else if((sepPos = tmp.find(">=")) != std::string::npos)
+        // important: check for ">=" and "<=" first 
+        if((sepPos = tmp.find(">=")) != std::string::npos)
         {
             cutType = 'G';
             sepLen = 2;
@@ -606,6 +604,10 @@ void Plotter::Cuttable::parseCutString()
             cutType = 'L';
             sepLen = 2;
         }
+        // important: check for ">" and "<" next
+        else if((sepPos = tmp.find(">"))  != std::string::npos) cutType = '>';
+        else if((sepPos = tmp.find("<"))  != std::string::npos) cutType = '<';
+        else if((sepPos = tmp.find("="))  != std::string::npos) cutType = '=';
         else
         {
             cutType = 'B';
