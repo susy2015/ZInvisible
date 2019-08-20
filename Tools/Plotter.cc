@@ -1141,20 +1141,26 @@ void Plotter::plot()
                 {
                     fline->SetParameter(0, 1);
                     drawOptions = "same PE1";
+                    bool autoScale = false;
 
                     h1->Divide(h2);
                     h1->SetMarkerStyle(20);
                     h1->SetMarkerColor(h1->GetLineColor());
-                    double d2ymin = 0.0;
-                    double d2ymax = 1.5;
-                    for(int iBin = 1; iBin <= h1->GetNbinsX(); ++iBin)
+                    double d2ymin = 0.4;
+                    double d2ymax = 1.6;
+                    if (autoScale)
                     {
-                        if(h1->GetBinContent(iBin) < 2.1)
+                        d2ymin = -0.1;
+                        d2ymax =  1.1;
+                        for(int iBin = 1; iBin <= h1->GetNbinsX(); ++iBin)
                         {
-                            d2ymax = std::max(d2ymax, h1->GetBinContent(iBin));
+                            if(h1->GetBinContent(iBin) < 2.1)
+                            {
+                                d2ymax = std::max(d2ymax, h1->GetBinContent(iBin));
+                            }
                         }
                     }
-                    dummy2->GetYaxis()->SetRangeUser(0.0, 2.1);
+                    dummy2->GetYaxis()->SetRangeUser(d2ymin, d2ymax);
                 }
                 else // pull distribution
                 {
