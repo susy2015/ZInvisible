@@ -1066,6 +1066,7 @@ void Plotter::plot()
             gPad->SetRightMargin(0.06);
             gPad->SetTopMargin(0.01);
             gPad->SetBottomMargin(0.37);
+            gPad->SetGridy();
 
             dummy2 = new TH1F("dummy2", "dummy2", 1000, hist.fhist()->GetBinLowEdge(1), hist.fhist()->GetBinLowEdge(hist.fhist()->GetNbinsX()) + hist.fhist()->GetBinWidth(hist.fhist()->GetNbinsX()));
             dummy2->GetXaxis()->SetTitle(hist.xAxisLabel.c_str());
