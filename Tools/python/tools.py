@@ -11,6 +11,12 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 ERROR_CODE = -999
 
+# https://stackoverflow.com/questions/5595425/what-is-the-best-way-to-compare-floats-for-almost-equality-in-python
+# https://docs.python.org/3/whatsnew/3.5.html#pep-485-a-function-for-testing-approximate-equality
+# isclose(): used to compare floats up to some relative tolerance and absolute tolerance
+def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
 def setupHist(hist, title, x_title, y_title, color, y_min, y_max):
     x_axis = hist.GetXaxis()
     y_axis = hist.GetYaxis()

@@ -1,5 +1,5 @@
 # search_bins.py
-
+import json
 import ROOT
 from tools import setupHist, getMultiplicationErrorList
 
@@ -18,11 +18,13 @@ class SearchBins:
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
-        self.low_dm_bins  = range( 0, 1)
-        self.high_dm_bins = range( 1, 2)
+        self.low_dm_bins  = range( 0,  53)
+        self.high_dm_bins = range(53, 204)
         self.all_bins     = self.low_dm_bins + self.high_dm_bins
         self.binValues = {}
         self.eras = []
+        with open("search_bins.json", "r") as j:
+            self.bins = json.load(j)
 
 # vadliation bins
 class ValidationBins:
@@ -35,72 +37,23 @@ class ValidationBins:
         self.binValues = {}
         self.values = ["norm", "shape", "mc", "pred"]
         # bins 0 to 45; bins 19, 20, and 21 are not included
-        self.low_dm_bins_normal     = range( 0, 15)
-        self.low_dm_bins_highmet    = range(15, 19)
-        self.low_dm_bins            = range( 0, 19)
-        self.high_dm_bins           = range(22, 46)
+        #self.low_dm_bins_normal     = range( 0, 15)
+        #self.low_dm_bins_highmet    = range(15, 19)
+        #self.low_dm_bins            = range( 0, 19)
+        #self.high_dm_bins           = range(22, 46)
+        self.low_dm_bins_normal     = list(str(b) for b in range( 0, 15)) 
+        self.low_dm_bins_highmet    = list(str(b) for b in range(15, 19))
+        self.low_dm_bins            = list(str(b) for b in range( 0, 19))
+        self.high_dm_bins           = list(str(b) for b in range(22, 46))
         self.all_bins     = self.low_dm_bins + self.high_dm_bins
-        self.low_dm_bins_met_250to300  = [4, 5, 8, 9, 10, 11]
-        self.low_dm_bins_met_300toINF  = [17, 18]
-        self.low_dm_bins_met_250to400  = [0, 1, 2, 3, 6, 7, 12, 13, 14]
-        self.low_dm_bins_met_400toINF  = [15, 16]
-        self.low_dm_bins_met_250toINF  = [15, 16, 17, 18]
-        self.high_dm_bins_met_250to400 = range(22, 46, 2)
-        self.high_dm_bins_met_400toINF = range(23, 46, 2)
         # colors
         self.color_red    = "vermillion"
         self.color_blue   = "electric blue"
         self.color_green  = "irish green" 
         self.color_purple = "violet"
         self.color_black  = "black"
-        self.setupBins()
-
-    def setupBins(self):
-        self.bins = {
-             0 : {"region" : "LowDM",  "selection" : "NBeq0_NSVeq0", "met" : "met_250to400"},
-             1 : {"region" : "LowDM",  "selection" : "NBeq0_NSVeq0", "met" : "met_250to400"},
-             2 : {"region" : "LowDM",  "selection" : "NBeq0_NSVge1", "met" : "met_250to400"},
-             3 : {"region" : "LowDM",  "selection" : "NBeq0_NSVge1", "met" : "met_250to400"},
-             4 : {"region" : "LowDM",  "selection" : "NBeq1_NSVeq0", "met" : "met_250to300"},
-             5 : {"region" : "LowDM",  "selection" : "NBeq1_NSVeq0", "met" : "met_250to300"},
-             6 : {"region" : "LowDM",  "selection" : "NBeq1_NSVeq0", "met" : "met_250to400"},
-             7 : {"region" : "LowDM",  "selection" : "NBeq1_NSVeq0", "met" : "met_250to400"},
-             8 : {"region" : "LowDM",  "selection" : "NBeq1_NSVge1", "met" : "met_250to300"},
-             9 : {"region" : "LowDM",  "selection" : "NBge2",        "met" : "met_250to300"},
-            10 : {"region" : "LowDM",  "selection" : "NBge2",        "met" : "met_250to300"},
-            11 : {"region" : "LowDM",  "selection" : "NBge2",        "met" : "met_250to300"},
-            12 : {"region" : "LowDM",  "selection" : "NBge2",        "met" : "met_250to400"},
-            13 : {"region" : "LowDM",  "selection" : "NBge2",        "met" : "met_250to400"},
-            14 : {"region" : "LowDM",  "selection" : "NBge2",        "met" : "met_250to400"},
-            15 : {"region" : "LowDM",  "selection" : "NBeq0_NSVeq0", "met" : "met_250toINF"},
-            16 : {"region" : "LowDM",  "selection" : "NBeq0_NSVge1", "met" : "met_250toINF"},
-            17 : {"region" : "LowDM",  "selection" : "NBge1_NSVeq0", "met" : "met_250toINF"},
-            18 : {"region" : "LowDM",  "selection" : "NBge1_NSVge1", "met" : "met_250toINF"},
-            22 : {"region" : "HighDM", "selection" : "NBeq1",        "met" : "met_250to400"},
-            23 : {"region" : "HighDM", "selection" : "NBeq1",        "met" : "met_400toINF"},
-            24 : {"region" : "HighDM", "selection" : "NBge2",        "met" : "met_250to400"},
-            25 : {"region" : "HighDM", "selection" : "NBge2",        "met" : "met_400toINF"},
-            26 : {"region" : "HighDM", "selection" : "NBeq1",        "met" : "met_250to400"},
-            27 : {"region" : "HighDM", "selection" : "NBeq1",        "met" : "met_400toINF"},
-            28 : {"region" : "HighDM", "selection" : "NBge2",        "met" : "met_250to400"},
-            29 : {"region" : "HighDM", "selection" : "NBge2",        "met" : "met_400toINF"},
-            30 : {"region" : "HighDM", "selection" : "NBeq1",        "met" : "met_250to400"},
-            31 : {"region" : "HighDM", "selection" : "NBeq1",        "met" : "met_400toINF"},
-            32 : {"region" : "HighDM", "selection" : "NBeq1",        "met" : "met_250to400"},
-            33 : {"region" : "HighDM", "selection" : "NBeq1",        "met" : "met_400toINF"},
-            34 : {"region" : "HighDM", "selection" : "NBeq1",        "met" : "met_250to400"},
-            35 : {"region" : "HighDM", "selection" : "NBeq1",        "met" : "met_400toINF"},
-            36 : {"region" : "HighDM", "selection" : "NBeq1",        "met" : "met_250to400"},
-            37 : {"region" : "HighDM", "selection" : "NBeq1",        "met" : "met_400toINF"},
-            38 : {"region" : "HighDM", "selection" : "NBge2",        "met" : "met_250to400"},
-            39 : {"region" : "HighDM", "selection" : "NBge2",        "met" : "met_400toINF"},
-            40 : {"region" : "HighDM", "selection" : "NBge2",        "met" : "met_250to400"},
-            41 : {"region" : "HighDM", "selection" : "NBge2",        "met" : "met_400toINF"},
-            42 : {"region" : "HighDM", "selection" : "NBge2",        "met" : "met_250to400"},
-            43 : {"region" : "HighDM", "selection" : "NBge2",        "met" : "met_400toINF"},
-            44 : {"region" : "HighDM", "selection" : "NBge2",        "met" : "met_250to400"},
-            45 : {"region" : "HighDM", "selection" : "NBge2",        "met" : "met_400toINF"},
-        }
+        with open("validation_bins.json", "r") as j:
+            self.bins = json.load(j)
 
     def getValues(self, file_name, era):
         # new root file to save validation bin histograms
@@ -110,59 +63,25 @@ class ValidationBins:
         self.binValues[era] = {}
         
         for b in self.all_bins:
-            self.binValues[era][b] = {}
-        
-        for b in self.bins:
             region      = self.bins[b]["region"]
             selection   = self.bins[b]["selection"]
             met         = self.bins[b]["met"]
+            self.binValues[era][b] = {}
             self.binValues[era][b]["norm"]        = self.N.norm_map[era]["Combined"][region][selection]["R_Z"]
             self.binValues[era][b]["norm_error"]  = self.N.norm_map[era]["Combined"][region][selection]["R_Z_error"]
             self.binValues[era][b]["shape"]       = self.S.shape_map[era][region][met]
             self.binValues[era][b]["shape_error"] = self.S.shape_map[era][region][met + "_error"]
-        
-        # # normalization
-        # for b in self.low_dm_bins:
-        #     self.binValues[era][b]["norm"]       = self.N.norm_map[era]["Combined"]["LowDM"]["R_Z"]
-        #     self.binValues[era][b]["norm_error"] = self.N.norm_map[era]["Combined"]["LowDM"]["R_Z_error"]
-        # for b in self.high_dm_bins:
-        #     self.binValues[era][b]["norm"]       = self.N.norm_map[era]["Combined"]["HighDM"]["R_Z"]
-        #     self.binValues[era][b]["norm_error"] = self.N.norm_map[era]["Combined"]["HighDM"]["R_Z_error"]
-        # # shape
-        # # LowDM
-        # for b in self.low_dm_bins_met_250to300: 
-        #     self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_250to300"]
-        #     self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_250to300_error"]
-        # #for b in self.low_dm_bins_met_300toINF: 
-        # #    self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_300toINF"]
-        # #    self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_300toINF_error"]
-        # for b in self.low_dm_bins_met_250to400: 
-        #     self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_250to400"]
-        #     self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_250to400_error"]
-        # #for b in self.low_dm_bins_met_400toINF: 
-        # #    self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_400toINF"]
-        # #    self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_400toINF_error"]
-        # for b in self.low_dm_bins_met_250toINF: 
-        #     self.binValues[era][b]["shape"]       = self.S.shape_map[era]["LowDM"]["met_250toINF"]
-        #     self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["LowDM"]["met_250toINF_error"]
-        # # HighDM
-        # for b in self.high_dm_bins_met_250to400: 
-        #     self.binValues[era][b]["shape"]       = self.S.shape_map[era]["HighDM"]["met_250to400"]
-        #     self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["HighDM"]["met_250to400_error"]
-        # for b in self.high_dm_bins_met_400toINF: 
-        #     self.binValues[era][b]["shape"]       = self.S.shape_map[era]["HighDM"]["met_400toINF"]
-        #     self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["HighDM"]["met_400toINF_error"]
 
-        # Z to NuNu MC histograms v1
-        # nValidationBinLowDM: ZNuNu_nValidationBinLowDM_2016nValidationBinLowDMnValidationBinLowDMZJetsToNuNu Validation Bin Low DMdata
-        # nValidationBinLowDMHighMET: ZNuNu_nValidationBinLowDMHighMET_2016nValidationBinLowDMHighMETnValidationBinLowDMHighMETZJetsToNuNu Validation Bin Low DM High METdata
-        # nValidationBinHighDM: ZNuNu_nValidationBinHighDM_2016nValidationBinHighDMnValidationBinHighDMZJetsToNuNu Validation Bin High DMdata
-        # Z to NuNu MC histograms v2
-        # nValidationBinLowDM: ZNuNu_nValidationBin_LowDM_2016nValidationBinLowDMnValidationBinLowDMZJetsToNuNu Validation Bin Low DMdata 
+        # Z to NuNu MC histograms
+        #TDirectoryFile*: nValidationBinLowDM_jetpt20
+        #TH1D:  ZNuNu_nValidationBin_LowDM_jetpt20_2016nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata
+        #TDirectoryFile*: nValidationBinLowDMHighMET_jetpt20 
+        #ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_2016nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata
+        
         f = ROOT.TFile(file_name)
-        h_validation_lowdm          = f.Get("nValidationBinLowDM/ZNuNu_nValidationBin_LowDM_" + era + "nValidationBinLowDMnValidationBinLowDMZJetsToNuNu Validation Bin Low DMdata")
-        h_validation_lowdm_highmet  = f.Get("nValidationBinLowDMHighMET/ZNuNu_nValidationBin_LowDM_HighMET_" + era + "nValidationBinLowDMHighMETnValidationBinLowDMHighMETZJetsToNuNu Validation Bin Low DM High METdata")
-        h_validation_highdm         = f.Get("nValidationBinHighDM/ZNuNu_nValidationBin_HighDM_" + era + "nValidationBinHighDMnValidationBinHighDMZJetsToNuNu Validation Bin High DMdata")
+        h_validation_lowdm          = f.Get("nValidationBinLowDM_jetpt20/ZNuNu_nValidationBin_LowDM_jetpt20_" + era + "nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata")
+        h_validation_lowdm_highmet  = f.Get("nValidationBinLowDMHighMET_jetpt20/ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_" + era + "nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata")
+        h_validation_highdm         = f.Get("nValidationBinHighDM_jetpt20/ZNuNu_nValidationBin_HighDM_jetpt20_" + era + "nValidationBinHighDM_jetpt20nValidationBinHighDM_jetpt20ZJetsToNuNu Validation Bin High DMdata")
         
         # Note: bin_i and b are different
         # bin_i is histogram bin number
@@ -260,7 +179,6 @@ class ValidationBins:
         ###################
 
         for region in h_map:
-            print region
             h_mc   = h_map[region]["mc"]
             h_pred = h_map[region]["pred"]
             h_ratio = h_pred.Clone("h_ratio")

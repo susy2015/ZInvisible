@@ -22,79 +22,7 @@ const std::set<std::string> RegisterFunctions::getMiniTupleSetData()
 
 void activateBranches(std::set<std::string>& activeBranches)
 {
-    for(auto& bn : AnaConsts::activatedBranchNames) activeBranches.insert(bn);
-    for(auto& bn : AnaConsts::activatedBranchNames_DataOnly) activeBranches.insert(bn);
-    activeBranches.insert("ht");
     activeBranches.insert("run");
-    activeBranches.insert("lumi");
-    activeBranches.insert("event");
-    activeBranches.insert("mht");
-    activeBranches.insert("mhtphi");
-    activeBranches.insert("genDecayPdgIdVec");
-    activeBranches.insert("genDecayLVec");
-    activeBranches.insert("muonsLVec");
-    activeBranches.insert("muonsRelIso");
-    activeBranches.insert("muonsMiniIso");
-    activeBranches.insert("W_emuVec");
-    activeBranches.insert("muonsCharge");
-    activeBranches.insert("muonsMtw");
-    activeBranches.insert("met");
-    activeBranches.insert("metphi");
-    activeBranches.insert("jetsLVec");
-    activeBranches.insert("elesLVec");
-    activeBranches.insert("elesRelIso");
-    activeBranches.insert("recoJetsCSVv2");
-    activeBranches.insert("loose_isoTrks_mtw");
-    activeBranches.insert("elesMtw");
-    activeBranches.insert("loose_isoTrks_iso");
-    activeBranches.insert("loose_isoTrksLVec");
-    activeBranches.insert("muMatchedJetIdx");
-    activeBranches.insert("eleMatchedJetIdx");
-    activeBranches.insert("recoJetschargedEmEnergyFraction");
-    activeBranches.insert("recoJetsneutralEmEnergyFraction");
-    activeBranches.insert("recoJetschargedHadronEnergyFraction");
-    activeBranches.insert("prodJetsNoMu_recoJetschargedEmEnergyFraction");
-    activeBranches.insert("prodJetsNoMu_recoJetsneutralEmEnergyFraction");
-    activeBranches.insert("prodJetsNoMu_recoJetschargedHadronEnergyFraction");
-    activeBranches.insert("elesisEB");
-    activeBranches.insert("elesMiniIso");
-    activeBranches.insert("elesCharge");
-    activeBranches.insert("tau1");
-    activeBranches.insert("tau2");
-    activeBranches.insert("tau3");
-    activeBranches.insert("subjetBdisc");
-    activeBranches.insert("puppiJetsLVec");
-    activeBranches.insert("ak8mass");
-    activeBranches.insert("ak8rapidity");
-    activeBranches.insert("softDropMass");
-    activeBranches.insert("prunedMass");
-    activeBranches.insert("slimmedJetsAK8");
-    activeBranches.insert("ak8pt");
-    activeBranches.insert("nJetsAk8");
-    activeBranches.insert("ak82dRMin");
-    activeBranches.insert("ak81dRMin");
-    activeBranches.insert("tru_npv");
-    activeBranches.insert("vtxSize");
-    //Photon branches Andres                                                                                                              
-    activeBranches.insert("isEB");
-    activeBranches.insert("genMatched");
-    activeBranches.insert("hadTowOverEM");
-    activeBranches.insert("sigmaIetaIeta");
-    activeBranches.insert("pfChargedIso");
-    activeBranches.insert("pfNeutralIso");
-    activeBranches.insert("pfGammaIso");
-    activeBranches.insert("pfChargedIsoRhoCorr");
-    activeBranches.insert("pfNeutralIsoRhoCorr");
-    activeBranches.insert("pfGammaIsoRhoCorr");
-    activeBranches.insert("hasPixelSeed");
-    activeBranches.insert("passElectronVeto");
-    activeBranches.insert("nonPrompt");
-    activeBranches.insert("fullID");
-    activeBranches.insert("photonPt");
-    activeBranches.insert("photonEta");
-    activeBranches.insert("photonPhi");
-    activeBranches.insert("totalPhotons");
-    activeBranches.insert("gammaLVec");
 }
 
 ////////////////////////////////
@@ -111,6 +39,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     blv_drPhotonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned");
     blv_drPhotonCleaned_jetpt20 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt20");
     blv_drPhotonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30");
+    
     //blvZinv      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
     //blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
     //blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
@@ -232,14 +161,14 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*runTopTagger_drPhotonCleaned);
     tr.registerFunction(*myBLV);
     tr.registerFunction(*myBLV_jetpt20);
-    tr.registerFunction(*myBLV_jetpt30);
+    //tr.registerFunction(*myBLV_jetpt30);
     tr.registerFunction(*lepInfo);
     tr.registerFunction(*blv_drLeptonCleaned);
     tr.registerFunction(*blv_drLeptonCleaned_jetpt20);
-    tr.registerFunction(*blv_drLeptonCleaned_jetpt30);
+    //tr.registerFunction(*blv_drLeptonCleaned_jetpt30);
     tr.registerFunction(*blv_drPhotonCleaned);
     tr.registerFunction(*blv_drPhotonCleaned_jetpt20);
-    tr.registerFunction(*blv_drPhotonCleaned_jetpt30);
+    //tr.registerFunction(*blv_drPhotonCleaned_jetpt30);
     tr.registerFunction(*getSearchBin);
     
     // old version including JEC and systematics

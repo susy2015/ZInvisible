@@ -8,6 +8,7 @@ from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from search_bins import SearchBins
 from search_bins import ValidationBins
+from data_card import makeDataCard
 
 def main():
     # options
@@ -18,60 +19,58 @@ def main():
     options     = parser.parse_args()
     json_file   = options.json_file
     verbose     = options.verbose
-    
-    doCutflows = True
+
+    validation = True
+    doCutflows = False
     doPhotons = True
     useNbNsvSelection = True
-    draw = True
+    draw = False
 
     if not os.path.exists(json_file):
         print "The json file \"{0}\" containing runs does not exist.".format(json_file)
         return
     
-    eras = ["2016", "2017", "2018_AB", "2018_CD"]
-    #eras = ["2016", "2017", "2018_PreHEM", "2018_PostHEM"]
-    plot_dir  = "more_plots"
+    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
+    dirList = []
+    plot_dir        = "more_plots"
+    latex_dir       = "latex_files"
+    dataCard_dir    = "data_cards"
+    dirList.append(plot_dir)
+    dirList.append(latex_dir)
+    dirList.append(dataCard_dir)
     # add "/" to directory if not present
-    if plot_dir[-1] != "/":
-        plot_dir += "/"
-    # make directory if it does not exist
-    if not os.path.exists(plot_dir):
-        os.makedirs(plot_dir)
+    if plot_dir[-1]  != "/":    plot_dir     += "/"
+    if latex_dir[-1] != "/":    latex_dir    += "/"
+    if dataCard_dir[-1] != "/": dataCard_dir += "/"
     
-    latex_dir = "latex_files"
-    # add "/" to directory if not present
-    if latex_dir[-1] != "/":
-        latex_dir += "/"
-    # make directory if it does not exist
-    if not os.path.exists(latex_dir):
-        os.makedirs(latex_dir)
-    
+    for d in dirList:
+        # make directory if it does not exist
+        if not os.path.exists(d):
+            os.makedirs(d)
 
-    N = Normalization(useNbNsvSelection, verbose)
+    N = Normalization(validation, useNbNsvSelection, verbose)
     S = Shape(plot_dir, draw, verbose)
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
+        # search bins
+        SB = SearchBins(N, S, eras, plot_dir, verbose)
+        # validation bins
+        VB = ValidationBins(N, S, eras, plot_dir, verbose)
+        # loop over eras
         for era in eras:
+            print "|---------- Era: {0} ----------|".format(era)
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
             if doCutflows:
                 makeCutflows(result_file, era, plot_dir, doPhotons)
             N.getNormAndError(result_file, era)
             S.getShape(result_file, era)
-
-        N.makeTexFile(latex_dir + "normalization_Zmass.tex")
-        
-        # search bins
-        SB = SearchBins(N, S, eras, plot_dir, verbose)
-        # validation bins
-        VB = ValidationBins(N, S, eras, plot_dir, verbose)
-        for era in eras:
-            runDir = runMap[era]
-            result_file = "condor/" + runDir + "/result.root"
             VB.getValues(result_file, era)
-        
-        VB.makeTexFile(latex_dir + "zinv_prediction.tex")
+            makeDataCard(VB, dataCard_dir, era)
+
+    N.makeTexFile(latex_dir + "normalization_Zmass.tex")
+    VB.makeTexFile(latex_dir + "zinv_prediction.tex")
 
 
 if __name__ == "__main__":

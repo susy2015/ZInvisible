@@ -60,6 +60,7 @@ class Normalization:
     def setupHistoMap(self, era):
         # histograms
         # examples (all MC)
+        # DataMC_Electron_LowDM_bestRecoZM_50to250_NBeq0_NSVeq0_jetpt20_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMZToLLstack
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMNoZToLLstack 
@@ -72,7 +73,7 @@ class Normalization:
                 if self.useNbNsvSelection:
                     self.histos[era][particle][region] = {}
                     for selection in self.selections[region]: 
-                        selectionTag = "_" + selection
+                        selectionTag = "_" + selection + "_jetpt20"
                         # using Nb and Nsv selection
                         self.histos[era][particle][region][selection] = { 
                             "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + eraTag + "bestRecoZMbestRecoZMDatadata",

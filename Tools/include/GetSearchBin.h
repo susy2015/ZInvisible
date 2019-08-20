@@ -43,16 +43,16 @@ namespace plotterFunctions
 
         void getSearchBin(NTupleReader& tr)
         {
-            std::vector<std::string> JetPtCuts = {"_jetpt20", "_jetpt30"};
+            std::vector<std::string> JetPtCuts = {"_jetpt20"};
             // begin loop over jet pt cuts 
             for (const auto& suffix : JetPtCuts) 
             {
                 // Note: Only HT, s_met, nJets, and dPhi are calculated with different jet pt cuts
-                const auto& nBottoms            = tr.getVar<int>("nBottoms");
-                const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottoms");
                 const auto& nMergedTops         = tr.getVar<int>("nMergedTops");
                 const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops");
                 const auto& nWs                 = tr.getVar<int>("nWs");
+                const auto& nBottoms            = tr.getVar<int>("nBottoms");
+                const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottoms");
                 const auto& nJets               = tr.getVar<int>("nJets" + suffix);
                 const auto& ht                  = tr.getVar<data_t>("HT" + suffix);
                 const auto& met                 = tr.getVar<data_t>("MET_pt");
