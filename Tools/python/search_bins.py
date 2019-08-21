@@ -18,8 +18,8 @@ class SearchBins:
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
-        self.low_dm_bins  = range( 0,  53)
-        self.high_dm_bins = range(53, 204)
+        self.low_dm_bins  = list(str(b) for b in range( 0,  53)) 
+        self.high_dm_bins = list(str(b) for b in range(53, 204))
         self.all_bins     = self.low_dm_bins + self.high_dm_bins
         self.binValues = {}
         self.eras = []
