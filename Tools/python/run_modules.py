@@ -9,6 +9,7 @@ from shape_photon_met import Shape
 from search_bins import SearchBins
 from search_bins import ValidationBins
 from data_card import makeDataCard
+from make_table import Table
 
 def main():
     # options
@@ -50,6 +51,9 @@ def main():
 
     N = Normalization(validation, useNbNsvSelection, verbose)
     S = Shape(plot_dir, draw, verbose)
+
+    table_file = open("njets_table.txt", "w+") 
+    T = Table(table_file)
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
@@ -68,10 +72,12 @@ def main():
             S.getShape(result_file, era)
             VB.getValues(result_file, era)
             makeDataCard(VB, dataCard_dir, era)
+            T.makeTable(result_file, era)
 
     N.makeTexFile(latex_dir + "normalization_Zmass.tex")
     VB.makeTexFile(latex_dir + "zinv_prediction.tex")
 
+    table_file.close()
 
 if __name__ == "__main__":
     main()

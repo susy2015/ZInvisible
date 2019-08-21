@@ -7,7 +7,7 @@ def writeLine(f, line):
 
 def makeDataCard(BinObject, directory, era):
     
-    print ">>> Good day, sir! Making data card for {0}.".format(era)
+    print ">>> Making data card for {0}.".format(era)
     
     out_name = "{0}zinv_dataCard_{1}.txt".format(directory, era)
     # open file

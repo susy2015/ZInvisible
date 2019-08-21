@@ -37,7 +37,7 @@ class Shape:
 
     def setupHistoMap(self, era):
         # histograms
-        # example
+        # example; note that the variable is written twice
         # DataMC_Photon_LowDM_met_jetpt20_2016metWithPhotonmetWithPhotonDatadata
         # DataMC_Photon_LowDM_met_2016metWithPhotonmetWithPhotonDatadata
         # DataMC_Photon_LowDM_met_2016metWithPhotonmetWithPhoton#gamma+jetsstack
@@ -45,14 +45,14 @@ class Shape:
         self.histos[era] = {}
         for region in self.regions:
             self.histos[era][region] = {
-                    "Data"  : "DataMC_Photon_" + region + "_met_jetpt20_" + era + "metWithPhotonmetWithPhotonDatadata",
-                    "GJets" : "DataMC_Photon_" + region + "_met_jetpt20_" + era + "metWithPhotonmetWithPhoton#gamma+jetsstack",
-                    "QCD"   : "DataMC_Photon_" + region + "_met_jetpt20_" + era + "metWithPhotonmetWithPhotonQCDstack",
-                    "WJets" : "DataMC_Photon_" + region + "_met_jetpt20_" + era + "metWithPhotonmetWithPhotonW(l#nu)+jetsstack",
-                    "TTG"   : "DataMC_Photon_" + region + "_met_jetpt20_" + era + "metWithPhotonmetWithPhotont#bar{t}#gamma+jetsstack",
-                    "TTbar" : "DataMC_Photon_" + region + "_met_jetpt20_" + era + "metWithPhotonmetWithPhotont#bar{t}stack",
-                    "tW"    : "DataMC_Photon_" + region + "_met_jetpt20_" + era + "metWithPhotonmetWithPhotontWstack",
-                    "Rare"  : "DataMC_Photon_" + region + "_met_jetpt20_" + era + "metWithPhotonmetWithPhotonRarestack",
+                    "Data"  : "DataMC_Photon_" + region + "_met_jetpt20_" + era + 2 * self.variable + "Datadata",
+                    "GJets" : "DataMC_Photon_" + region + "_met_jetpt20_" + era + 2 * self.variable + "#gamma+jetsstack",
+                    "QCD"   : "DataMC_Photon_" + region + "_met_jetpt20_" + era + 2 * self.variable + "QCDstack",
+                    "WJets" : "DataMC_Photon_" + region + "_met_jetpt20_" + era + 2 * self.variable + "W(l#nu)+jetsstack",
+                    "TTG"   : "DataMC_Photon_" + region + "_met_jetpt20_" + era + 2 * self.variable + "t#bar{t}#gamma+jetsstack",
+                    "TTbar" : "DataMC_Photon_" + region + "_met_jetpt20_" + era + 2 * self.variable + "t#bar{t}stack",
+                    "tW"    : "DataMC_Photon_" + region + "_met_jetpt20_" + era + 2 * self.variable + "tWstack",
+                    "Rare"  : "DataMC_Photon_" + region + "_met_jetpt20_" + era + 2 * self.variable + "Rarestack",
             }
     
     def getShape(self, file_name, era): 
