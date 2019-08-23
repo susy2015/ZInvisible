@@ -1733,14 +1733,20 @@ int main(int argc, char* argv[])
             PDS dsData_Photon_LowDM_nb1(    "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned>=1"    + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             PDS dsData_Photon_LowDM_Tight(  "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                + PhotonIDSelection + SAT_Pass_lowDM_Tight   + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             PDS dsData_Photon_HighDM(       "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_HighDM_nb1(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned=1"     + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_HighDM_nb2(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned=2"     + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_HighDM_nb3(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned>=3"    + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             // MC
             // all weights
             std::string PhotonWeights = "Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + PrefireWeight + puWeight;
-            std::vector<std::vector<PDS>> StackMC_Photon_LowDM          = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
-            std::vector<std::vector<PDS>> StackMC_Photon_LowDM_nb0      = makeStackMC_Photon( "MET_pt<250;nBottoms_drLeptonCleaned=0" + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
-            std::vector<std::vector<PDS>> StackMC_Photon_LowDM_nb1      = makeStackMC_Photon( "MET_pt<250;nBottoms_drLeptonCleaned>=1" + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
-            std::vector<std::vector<PDS>> StackMC_Photon_LowDM_Tight    = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_lowDM_Tight   + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
-            std::vector<std::vector<PDS>> StackMC_Photon_HighDM         = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_LowDM          = makeStackMC_Photon( "MET_pt<250"                              + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_LowDM_nb0      = makeStackMC_Photon( "MET_pt<250;nBottoms_drLeptonCleaned=0"   + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_LowDM_nb1      = makeStackMC_Photon( "MET_pt<250;nBottoms_drLeptonCleaned>=1"  + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_LowDM_Tight    = makeStackMC_Photon( "MET_pt<250"                              + PhotonIDSelection + SAT_Pass_lowDM_Tight   + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_HighDM         = makeStackMC_Photon( "MET_pt<250"                              + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_HighDM_nb1     = makeStackMC_Photon( "MET_pt<250;nBottoms_drLeptonCleaned=1"   + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_HighDM_nb2     = makeStackMC_Photon( "MET_pt<250;nBottoms_drLeptonCleaned=2"   + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_HighDM_nb3     = makeStackMC_Photon( "MET_pt<250;nBottoms_drLeptonCleaned>=3"  + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
             
             // n_jets
             PDC dcData_Photon_LowDM_nj(                              "data",   "nJets" + varSuffix, {dsData_Photon_LowDM});
@@ -1748,11 +1754,17 @@ int main(int argc, char* argv[])
             PDC dcData_Photon_LowDM_nj_nb1(                          "data",   "nJets" + varSuffix, {dsData_Photon_LowDM_nb1});
             PDC dcData_Photon_LowDM_Tight_nj(                        "data",   "nJets" + varSuffix, {dsData_Photon_LowDM_Tight});
             PDC dcData_Photon_HighDM_nj(                             "data",   "nJets" + varSuffix, {dsData_Photon_HighDM});
+            PDC dcData_Photon_HighDM_nj_nb1(                         "data",   "nJets" + varSuffix, {dsData_Photon_HighDM_nb1});
+            PDC dcData_Photon_HighDM_nj_nb2(                         "data",   "nJets" + varSuffix, {dsData_Photon_HighDM_nb2});
+            PDC dcData_Photon_HighDM_nj_nb3(                         "data",   "nJets" + varSuffix, {dsData_Photon_HighDM_nb3});
             PDC dcMC_Photon_LowDM_nj(                                "stack",  "nJets" + varSuffix, StackMC_Photon_LowDM);
             PDC dcMC_Photon_LowDM_nj_nb0(                            "stack",  "nJets" + varSuffix, StackMC_Photon_LowDM_nb0);
             PDC dcMC_Photon_LowDM_nj_nb1(                            "stack",  "nJets" + varSuffix, StackMC_Photon_LowDM_nb1);
             PDC dcMC_Photon_LowDM_Tight_nj(                          "stack",  "nJets" + varSuffix, StackMC_Photon_LowDM_Tight);
             PDC dcMC_Photon_HighDM_nj(                               "stack",  "nJets" + varSuffix, StackMC_Photon_HighDM);
+            PDC dcMC_Photon_HighDM_nj_nb1(                           "stack",  "nJets" + varSuffix, StackMC_Photon_HighDM_nb1);
+            PDC dcMC_Photon_HighDM_nj_nb2(                           "stack",  "nJets" + varSuffix, StackMC_Photon_HighDM_nb2);
+            PDC dcMC_Photon_HighDM_nj_nb3(                           "stack",  "nJets" + varSuffix, StackMC_Photon_HighDM_nb3);
             
             // HT
             PDC dcData_Photon_LowDM_ht(                              "data",   "HT" + varSuffix, {dsData_Photon_LowDM});
@@ -1873,6 +1885,9 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_LowDM_nj_nb1_rebin" + histSuffix,                     {dcData_Photon_LowDM_nj_nb1,                           dcMC_Photon_LowDM_nj_nb1},                           {1, 2}, "", xbins_nj_nb1, true, doNorm, label_nj, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_nj" + histSuffix,                         {dcData_Photon_LowDM_Tight_nj,                         dcMC_Photon_LowDM_Tight_nj},                         {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_nj" + histSuffix,                              {dcData_Photon_HighDM_nj,                              dcMC_Photon_HighDM_nj},                              {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nj_nb1" + histSuffix,                          {dcData_Photon_HighDM_nj_nb1,                          dcMC_Photon_HighDM_nj_nb1},                          {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nj_nb2" + histSuffix,                          {dcData_Photon_HighDM_nj_nb2,                          dcMC_Photon_HighDM_nj_nb2},                          {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nj_nb3" + histSuffix,                          {dcData_Photon_HighDM_nj_nb3,                          dcMC_Photon_HighDM_nj_nb3},                          {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_ht" + histSuffix,                               {dcData_Photon_LowDM_ht,                               dcMC_Photon_LowDM_ht},                               {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_ht" + histSuffix,                         {dcData_Photon_LowDM_Tight_ht,                         dcMC_Photon_LowDM_Tight_ht},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_ht" + histSuffix,                              {dcData_Photon_HighDM_ht,                              dcMC_Photon_HighDM_ht},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
