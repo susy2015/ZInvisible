@@ -162,7 +162,12 @@ void Plotter::HistSummary::parseName(std::vector<Plotter::DataCollection>& ns)
             VarName var;
             Plotter::parseSingleVar(dataset.first, var);
 
+            // WARNING: semicolons ";" should not be used in histogram names
+            // TH1* hist = static_cast<TH1*>(file->Get("h_the;name")); 
+            // does not work when semicolons ";" are in the histogram name... in those cases hist will be nullptr.
+            // https://stackoverflow.com/questions/2896600/how-to-replace-all-occurrences-of-a-character-in-string
             std::string histname = name +  var.name + ((var.index >= 0)?(std::to_string(var.index)):("")) + var.var + dataset.first + dataset.second.front().label + n.type;
+            std::replace(histname.begin(), histname.end(), ';', '_');
 
             tmphtp.push_back(std::shared_ptr<HistCutSummary>(new HistCutSummary(dataset.second.front().label, histname, var, nullptr, dataset.second)));
         }
@@ -564,7 +569,7 @@ void Plotter::createHistsFromFile()
 
                 if(fout_) hist->h = static_cast<TH1*>(fout_->Get( (dirname+"/"+histName).c_str() ) );
                 else std::cout << "Input file \"" << fout_ << "\" not found!!!!" << std::endl;
-                if(!hist->h) std::cout << "Histogram not found: \"" << hist->name << "\"!!!!!!" << "dirname/histname " << dirname+"/"+hist->name << std::endl;
+                if(!hist->h) std::cout << "Histogram not found: \"" << hist->name << "\"!!!!!! dirname/histname: " << dirname+"/"+hist->name << std::endl;
             }
         }
     }

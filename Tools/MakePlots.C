@@ -1072,7 +1072,7 @@ int main(int argc, char* argv[])
             // use DiElecTriggerEffPt instead of Stop0l_trigger_eff_Zee_pt because it applies a Z mass cut
             std::string ElectronWeights = "DiElecTriggerEffPt;DiElecSF;BTagWeight" + PrefireWeight + puWeight;
             // bestRecoZM used to calculate normalization
-            // Validation Bins Selection
+            // Search and Validation Bins Selection
             for (const auto& cut : norm_cuts_low_dm)
             {
                 PDS dsData_Electron_LowDM_noZMassCut("Data",  fileMap[ElectronDataset],        "Flag_eeBadScFilter;passElecZinvSel;Pass_trigger_electron" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
@@ -1418,7 +1418,7 @@ int main(int argc, char* argv[])
             // Use DiMuTriggerEffPt intead of Stop0l_trigger_eff_Zmumu_pt because it applies a Z mass cut
             std::string MuonWeights = "DiMuTriggerEffPt;DiMuSF;BTagWeight" + PrefireWeight + puWeight;
             // bestRecoZM used to calculate normalization
-            // Validation Bins Selection
+            // Search and Validation Bins Selection
             for (const auto& cut : norm_cuts_low_dm)
             {
                 PDS dsData_Muon_LowDM_noZMassCut("Data",  fileMap[MuonDataset],                "Flag_eeBadScFilter;passMuZinvSel;Pass_trigger_muon"      + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
@@ -1683,31 +1683,56 @@ int main(int argc, char* argv[])
         // --- Shape: bin in NB and NJ --- //
         // All cuts for validation and search bins
         std::map<std::string, std::string> shape_cuts_low_dm = {
-            {"NBeq0",           ";nBottoms" + varSuffix +"=0"},
-            {"NBeq1",           ";nBottoms" + varSuffix +"=1"},
-            {"NBge1",           ";nBottoms" + varSuffix +">=1"},
-            {"NBge2",           ";nBottoms" + varSuffix +">=2"},
+            {"NBeq0_NJle5",     ";nBottoms" + varSuffix + "=0;nJets" + varSuffix + "<=5"},
+            {"NBeq0_NJge6",     ";nBottoms" + varSuffix + "=0;nJets" + varSuffix + ">=6"},
+            {"NBeq1",           ";nBottoms" + varSuffix + "=1"},
+            {"NBge2",           ";nBottoms" + varSuffix + ">=2"},
+            {"NBge2_NJge7",     ";nBottoms" + varSuffix + ">=2;nJets" + varSuffix + ">=7"},
         };
         std::map<std::string, std::string> shape_cuts_high_dm = {
-            {"NBeq1",     ";nBottoms" + varSuffix +"=1"},
-            {"NBeq2",     ";nBottoms" + varSuffix +"=2"},
-            {"NBge2",     ";nBottoms" + varSuffix +">=2"},
-            {"NBge3",     ";nBottoms" + varSuffix +">=3"},
+            {"NBeq1",       ";nBottoms" + varSuffix + "=1"},
+            {"NBeq1_NJge7", ";nBottoms" + varSuffix + "=1;nJets" + varSuffix + ">=7"},
+            {"NBeq2",       ";nBottoms" + varSuffix + "=2"},
+            {"NBge2",       ";nBottoms" + varSuffix + ">=2"},
+            {"NBge2_NJge7", ";nBottoms" + varSuffix + ">=2;nJets" + varSuffix + ">=7"},
+            {"NBge3",       ";nBottoms" + varSuffix + ">=3"},
         };
 
         if (doDataMCPhoton)
         {
             // Photon 
+            // nJets binning
             std::vector<double> xbins_nj_nb0 = {2.0, 6.0, 10.0}; // njets = 2 - 5, >=6
             std::vector<double> xbins_nj_nb1 = {2.0, 7.0, 10.0}; // njets = 2 - 6, >=7
+            // Search and Validation Bins Selection
+            for (const auto& cut : shape_cuts_low_dm)
+            {
+                const bool doNorm = true;
+                std::string PhotonWeights = "Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + PrefireWeight + puWeight;
+                PDS dsData_Photon_LowDM(        "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"    + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned + cut.second,  "");
+                std::vector<std::vector<PDS>> StackMC_Photon_LowDM          = makeStackMC_Photon( "MET_pt<250"                          + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned + cut.second, PhotonWeights);
+                PDC dcData_Photon_LowDM_met(                             "data",   "metWithPhoton", {dsData_Photon_LowDM});
+                PDC dcMC_Photon_LowDM_met(                               "stack",  "metWithPhoton", StackMC_Photon_LowDM);
+                vh.push_back(PHS("DataMC_Photon_LowDM_met_" + cut.first + histSuffix,                              {dcData_Photon_LowDM_met,                              dcMC_Photon_LowDM_met},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
+            }
+            for (const auto& cut : shape_cuts_high_dm)
+            {
+                const bool doNorm = true;
+                std::string PhotonWeights = "Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + PrefireWeight + puWeight;
+                PDS dsData_Photon_HighDM(        "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"   + PhotonIDSelection + SAT_Pass_highDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned + cut.second,  "");
+                std::vector<std::vector<PDS>> StackMC_Photon_HighDM          = makeStackMC_Photon( "MET_pt<250"                         + PhotonIDSelection + SAT_Pass_highDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned + cut.second, PhotonWeights);
+                PDC dcData_Photon_HighDM_met(                             "data",   "metWithPhoton", {dsData_Photon_HighDM});
+                PDC dcMC_Photon_HighDM_met(                               "stack",  "metWithPhoton", StackMC_Photon_HighDM);
+                vh.push_back(PHS("DataMC_Photon_HighDM_met_" + cut.first + histSuffix,                              {dcData_Photon_HighDM_met,                              dcMC_Photon_HighDM_met},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
+            }
             
             // Data
             // Note: Apply Pass_trigger_photon and Flag_eeBadScFilter to Data but not MC
-            PDS dsData_Photon_LowDM(        "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter" + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-            PDS dsData_Photon_LowDM_nb0(    "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned=0" + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-            PDS dsData_Photon_LowDM_nb1(    "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned>=1" + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-            PDS dsData_Photon_LowDM_Tight(  "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter" + PhotonIDSelection + SAT_Pass_lowDM_Tight   + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-            PDS dsData_Photon_HighDM(       "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter" + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_LowDM(        "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_LowDM_nb0(    "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned=0"     + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_LowDM_nb1(    "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned>=1"    + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_LowDM_Tight(  "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                + PhotonIDSelection + SAT_Pass_lowDM_Tight   + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_HighDM(       "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             // MC
             // all weights
             std::string PhotonWeights = "Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + PrefireWeight + puWeight;
