@@ -1685,6 +1685,7 @@ int main(int argc, char* argv[])
         std::map<std::string, std::string> shape_cuts_low_dm = {
             {"NBeq0_NJle5",     ";nBottoms" + varSuffix + "=0;nJets" + varSuffix + "<=5"},
             {"NBeq0_NJge6",     ";nBottoms" + varSuffix + "=0;nJets" + varSuffix + ">=6"},
+            {"NBeq0",           ";nBottoms" + varSuffix + "=0"},
             {"NBeq1",           ";nBottoms" + varSuffix + "=1"},
             {"NBge2",           ";nBottoms" + varSuffix + ">=2"},
             {"NBge2_NJge7",     ";nBottoms" + varSuffix + ">=2;nJets" + varSuffix + ">=7"},
