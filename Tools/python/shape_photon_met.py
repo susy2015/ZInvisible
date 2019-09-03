@@ -4,7 +4,7 @@ import os
 import numpy as np
 import ROOT
 from colors import getColorIndex
-from tools import setupHist, getMETBinEdges, getSelections, removeCuts
+from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringifyMap
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -26,9 +26,9 @@ class Shape:
         self.regions    = ["LowDM", "HighDM"]
         self.bin_maps = {}
         with open("validation_bins.json", "r") as j:
-            self.bin_maps["validation"] = json.load(j)
+            self.bin_maps["validation"] = stringifyMap(json.load(j))
         with open("search_bins.json", "r") as j:
-            self.bin_maps["search"] = json.load(j)
+            self.bin_maps["search"] = stringifyMap(json.load(j))
         
         # TODO: get selections from json file
         # Note: some selections are repeated, and there can be different MET binning for the same selection

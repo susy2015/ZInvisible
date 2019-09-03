@@ -18,6 +18,15 @@ tex_map = {
             "NJ"    : "N_{j}"
           }
 
+# when loading json files, strings are loaded as unicode
+# unicode can cause problems when using ROOT or Latex
+# return map with string values
+def stringifyMap(rawMap):
+    returnMap = rawMap
+    for key1 in returnMap:
+        for key2 in returnMap[key1]:
+            returnMap[key1][key2] = str(returnMap[key1][key2])
+    return returnMap
 
 # https://stackoverflow.com/questions/5595425/what-is-the-best-way-to-compare-floats-for-almost-equality-in-python
 # https://docs.python.org/3/whatsnew/3.5.html#pep-485-a-function-for-testing-approximate-equality
@@ -36,9 +45,6 @@ def takeFirst(elem):
 # - list of list of bin names
 # - list of numpy arrarys of bin edges
 def getMETBinEdges(binMap, selection):
-    # TODO: debug NBeq1_NJge7
-    # before loop over MET names: 2016 search HighDM NBeq1_NJge7, number of met names = 0
-    # there are 0 names for some reason
     verbose = False
     max_met = 1000.0
     current_met = -999.0
@@ -75,7 +81,7 @@ def getMETBinEdges(binMap, selection):
             if selection == "NBeq1_NJge7":
                 print "DEBUG: value = {0} greater than current_met = {1}".format(value, current_met)
         # new MET binning starts
-        # TODO: there is a problem; right now you are only appending to names and result if you have moved to new binning (which is not the case for the final set)
+        # be careful to append if we have moved to a new binning or if this is the last set
         if value <= current_met or i == len(temp_array) - 1:
             met_bins.append(max_met)
             met_array = np.array(met_bins)
@@ -144,7 +150,7 @@ def getTexSelection(selection):
         result[i] = r
     
     expression = "$" + ", ".join(result) + "$"
-    return result
+    return expression
 
 # remove cuts if pattern in cuts
 def removeCuts(cutString, pattern, delim = "_"):

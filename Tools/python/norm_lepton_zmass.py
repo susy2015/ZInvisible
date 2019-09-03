@@ -21,7 +21,6 @@ class Normalization:
         self.output_file = 0 
         self.root_file   = 0
         self.eras = []
-        
         # variable is also TDirectoryFile that holds histograms 
         self.variable = "bestRecoZM"
         self.bin_types  = ["validation", "search"]
@@ -34,12 +33,11 @@ class Normalization:
                              "HighDM" : "High $\Delta m$"
                            }
        
-        
         self.bin_maps = {}
         with open("validation_bins.json", "r") as j:
-            self.bin_maps["validation"] = json.load(j)
+            self.bin_maps["validation"] = tools.stringifyMap(json.load(j))
         with open("search_bins.json", "r") as j:
-            self.bin_maps["search"] = json.load(j)
+            self.bin_maps["search"] = tools.stringifyMap(json.load(j))
         
         # get selections from json file
         self.selections = {}
@@ -54,7 +52,6 @@ class Normalization:
                     self.selections_tex[bin_type][region][selection] = tools.getTexSelection(selection) 
                     print "For Normalization: {0} {1} {2}".format(bin_type, selection, self.selections_tex[bin_type][region][selection])
          
-
         #TODO: delete once json file method works
         #self.selections  = {
         #                      "LowDM"  : ["NBeq0_NSVeq0", "NBeq0_NSVge1", "NBeq1_NSVeq0", "NBeq1_NSVge1", "NBge1_NSVeq0", "NBge1_NSVge1", "NBge2"],
@@ -379,6 +376,7 @@ class Normalization:
                             selections_tex = self.selections_tex[bin_type][region][selection]
                             era_tex = era.replace("_", " ")
                             self.writeLine("\hline {0} & {1} & {2} & {3} & {4} & {5} \\\\".format(region_tex, selections_tex, era_tex, channel, R_Z, R_T))
+                            print "{0} {1} {2} {3} {4}".format(region, selection, era, channel, selections_tex)
             self.writeLine("\hline")
             # end table
             #self.writeLine("\end{tabular}")
