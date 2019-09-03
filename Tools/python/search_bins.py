@@ -22,7 +22,7 @@ class Common:
     def writeLine(self, line):
         self.output_file.write(line + "\n")
 
-    def makeTexFile(self, output_name):
+    def makeTexFile(self, caption, output_name):
         # write latex file with table
         with open(output_name, "w+") as f:
             self.output_file = f
@@ -38,7 +38,7 @@ class Common:
                 era_tex = era.replace("_", " ")
                 # begin table
                 self.writeLine("\\begin{table}[ht]")
-                self.writeLine("\\caption{{Z Invisible Predition for Validation Bins ({0})}}".format(era_tex))
+                self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
                 self.writeLine("\\vspace{2mm}")
                 self.writeLine("\\centering")
                 self.writeLine("\\begin{tabular}{|c|c|c|c|c|}")
@@ -73,7 +73,6 @@ class SearchBins(Common):
         self.high_dm_bins = list(str(b) for b in range(53, 204))
         self.all_bins     = self.low_dm_bins + self.high_dm_bins
         self.binValues = {}
-        self.eras = []
         self.values = ["norm", "shape", "mc", "pred"]
         with open("search_bins.json", "r") as j:
             self.bins = json.load(j)
