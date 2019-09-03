@@ -59,12 +59,8 @@ def getMETBinEdges(binMap, selection):
             print "b: {0}, selection: {1}, cut: {2}".format(b, selection, cut)
         if selection == cut:
             temp_array.append((int(b), binMap[b]["met"]))
-            if selection == "NBeq1_NJge7":
-                print "DEBUG: {0}, {1}".format(selection, cut)
     # sort by bin number; assume MET bins increase with bin number (unless new binning starts)
     temp_array.sort(key = takeFirst) 
-    if selection == "NBeq1_NJge7":
-        print "DEBUG: {0}".format(temp_array)
     for i, elem in enumerate(temp_array):
         # use regex to get values
         # example: met_450to550
@@ -72,14 +68,10 @@ def getMETBinEdges(binMap, selection):
         name = elem[1]
         m = re.search("met_(.*)to(.*)", name)
         value = float(m.group(1))
-        if selection == "NBeq1_NJge7":
-            print "DEBUG: {0}, {1}".format(name, value)
         # keep adding MET bins as they increase
         if value > current_met:
             temp_names.append(name)
             met_bins.append(value)
-            if selection == "NBeq1_NJge7":
-                print "DEBUG: value = {0} greater than current_met = {1}".format(value, current_met)
         # new MET binning starts
         # be careful to append if we have moved to a new binning or if this is the last set
         if value <= current_met or i == len(temp_array) - 1:
@@ -91,16 +83,12 @@ def getMETBinEdges(binMap, selection):
         if value <= current_met:
             temp_names = [name]
             met_bins = [value]
-            if selection == "NBeq1_NJge7":
-                print "DEBUG: value = {0} NOT greater than current_met = {1}".format(value, current_met)
 
         current_met = value
     
     d = {"names": names, "xbins": result}
     if verbose:
         print "{0}: {1}".format(names, result)
-    if selection == "NBeq1_NJge7":
-        print "DEBUG: {0}, {1}".format(names, result)
     return d
 
 # get selections from json file

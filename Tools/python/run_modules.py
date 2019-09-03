@@ -84,7 +84,7 @@ def main():
     N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
     VB.makeTexFile("Z Invisible Predition for Validation Bins", latex_dir + "zinv_prediction_validation_bins.tex")
-    SB.makeTexFile("Z Invisible Predition for Search Bins", latex_dir + "zinv_prediction_search_bins.tex")
+    SB.makeTexFile("Z Invisible Predition for Search Bins",     latex_dir + "zinv_prediction_search_bins.tex")
 
     table_file.close()
 

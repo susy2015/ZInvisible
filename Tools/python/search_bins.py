@@ -89,7 +89,6 @@ class SearchBins(Common):
             selection   = self.bins[b]["selection"]
             met         = self.bins[b]["met"]
             # remove cuts from selection for norm and shape
-            # TODO: save different shape factors based on selections
             selection_norm  = removeCuts(selection, "NJ")
             selection_shape = removeCuts(selection, "NSV")
             if self.verbose:
@@ -132,7 +131,6 @@ class SearchBins(Common):
         setupHist(h_pred_lowdm,  "pred_lowdm"  + eraTag, "Search Bin", "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
         setupHist(h_pred_highdm, "pred_highdm" + eraTag, "Search Bin", "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
 
-        # print values 
         if self.verbose:
             print era
         for b in self.all_bins:
@@ -175,13 +173,6 @@ class ValidationBins(Common):
         self.low_dm_bins            = list(str(b) for b in range( 0, 19))
         self.high_dm_bins           = list(str(b) for b in range(22, 46))
         self.all_bins               = self.low_dm_bins + self.high_dm_bins
-        #TODO: put in Common and remove
-        # # colors
-        # self.color_red    = "vermillion"
-        # self.color_blue   = "electric blue"
-        # self.color_green  = "irish green" 
-        # self.color_purple = "violet"
-        # self.color_black  = "black"
         with open("validation_bins.json", "r") as j:
             self.bins = json.load(j)
 
@@ -192,22 +183,11 @@ class ValidationBins(Common):
         eraTag = "_" + era
         self.binValues[era] = {}
         
-        # TODO: delete
-        #for b in self.all_bins:
-        #    region      = self.bins[b]["region"]
-        #    selection   = self.bins[b]["selection"]
-        #    met         = self.bins[b]["met"]
-        #    self.binValues[era][b] = {}
-        #    self.binValues[era][b]["norm"]        = self.N.norm_map[era]["Combined"][region][selection]["R_Z"]
-        #    self.binValues[era][b]["norm_error"]  = self.N.norm_map[era]["Combined"][region][selection]["R_Z_error"]
-        #    self.binValues[era][b]["shape"]       = self.S.shape_map[era]["validation"][region][met]
-        #    self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["validation"][region][met + "_error"]
         for b in self.all_bins:
             region      = self.bins[b]["region"]
             selection   = self.bins[b]["selection"]
             met         = self.bins[b]["met"]
             # remove cuts from selection for norm and shape
-            # TODO: save different shape factors based on selections
             selection_norm  = removeCuts(selection, "NJ")
             selection_shape = removeCuts(selection, "NSV")
             self.binValues[era][b] = {}
@@ -221,7 +201,6 @@ class ValidationBins(Common):
         #TH1D:  ZNuNu_nValidationBin_LowDM_jetpt20_2016nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata
         #TDirectoryFile*: nValidationBinLowDMHighMET_jetpt20 
         #ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_2016nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata
-        
         f = ROOT.TFile(file_name)
         h_lowdm          = f.Get("nValidationBinLowDM_jetpt20/ZNuNu_nValidationBin_LowDM_jetpt20_" + era + "nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata")
         h_lowdm_highmet  = f.Get("nValidationBinLowDMHighMET_jetpt20/ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_" + era + "nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata")
@@ -260,7 +239,6 @@ class ValidationBins(Common):
         setupHist(h_pred_lowdm,  "pred_lowdm"  + eraTag, "Validation Bin", "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
         setupHist(h_pred_highdm, "pred_highdm" + eraTag, "Validation Bin", "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
 
-        # print values 
         if self.verbose:
             print era
         for b in self.all_bins:
@@ -358,5 +336,3 @@ class ValidationBins(Common):
         
         f.Close()
    
-
-

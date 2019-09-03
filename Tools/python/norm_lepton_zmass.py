@@ -50,23 +50,8 @@ class Normalization:
                 self.selections_tex[bin_type][region] = {}
                 for selection in self.selections[bin_type][region]:
                     self.selections_tex[bin_type][region][selection] = tools.getTexSelection(selection) 
-                    print "For Normalization: {0} {1} {2}".format(bin_type, selection, self.selections_tex[bin_type][region][selection])
-         
-        #TODO: delete once json file method works
-        #self.selections  = {
-        #                      "LowDM"  : ["NBeq0_NSVeq0", "NBeq0_NSVge1", "NBeq1_NSVeq0", "NBeq1_NSVge1", "NBge1_NSVeq0", "NBge1_NSVge1", "NBge2"],
-        #                      "HighDM" : ["NBeq1", "NBge2"]
-        #                   }
-        #self.selections_tex = {
-        #                         "NBeq0_NSVeq0" : "$N_{b} = 0, N_{sv} = 0$",
-        #                         "NBeq0_NSVge1" : "$N_{b} = 0, N_{sv} \geq 1$",
-        #                         "NBeq1_NSVeq0" : "$N_{b} = 1, N_{sv} = 0$",
-        #                         "NBeq1_NSVge1" : "$N_{b} = 1, N_{sv} \geq 1$",
-        #                         "NBge1_NSVeq0" : "$N_{b} \geq 1, N_{sv} = 0$",
-        #                         "NBge1_NSVge1" : "$N_{b} \geq 1, N_{sv} \geq 1$",
-        #                         "NBeq1"        : "$N_{b} = 1$",
-        #                         "NBge2"        : "$N_{b} \geq 2$"
-        #                      }
+                    if self.verbose:
+                        print "For Normalization: {0} {1} {2}".format(bin_type, selection, self.selections_tex[bin_type][region][selection])
     
     def setupHistoMap(self, era):
         # histogram examples
