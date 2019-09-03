@@ -12,9 +12,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 class Normalization:
-    def __init__(self, validation, useNbNsvSelection, verbose):
-        self.validation = validation
-        self.useNbNsvSelection = useNbNsvSelection
+    def __init__(self, verbose):
         self.verbose = verbose
         self.ERROR_CODE = tools.ERROR_CODE
         self.norm_map = {}
@@ -23,70 +21,79 @@ class Normalization:
         self.output_file = 0 
         self.root_file   = 0
         self.eras = []
-        self.particles = ["Electron", "Muon"]
-        self.channels = self.particles + ["Combined"]
-        if self.validation:
-            # for validation bins
-            self.regions   = ["LowDM", "HighDM"]
-            self.regions_tex = {
-                                 "LowDM"  : "Low $\Delta m$",
-                                 "HighDM" : "High $\Delta m$"
-                               }
-            self.selections  = {
-                                  "LowDM"  : ["NBeq0_NSVeq0", "NBeq0_NSVge1", "NBeq1_NSVeq0", "NBeq1_NSVge1", "NBge1_NSVeq0", "NBge1_NSVge1", "NBge2"],
-                                  "HighDM" : ["NBeq1", "NBge2"]
-                               }
-            self.selections_tex = {
-                                     "NBeq0_NSVeq0" : "$N_{b} = 0, N_{sv} = 0$",
-                                     "NBeq0_NSVge1" : "$N_{b} = 0, N_{sv} \geq 1$",
-                                     "NBeq1_NSVeq0" : "$N_{b} = 1, N_{sv} = 0$",
-                                     "NBeq1_NSVge1" : "$N_{b} = 1, N_{sv} \geq 1$",
-                                     "NBge1_NSVeq0" : "$N_{b} \geq 1, N_{sv} = 0$",
-                                     "NBge1_NSVge1" : "$N_{b} \geq 1, N_{sv} \geq 1$",
-                                     "NBeq1"        : "$N_{b} = 1$",
-                                     "NBge2"        : "$N_{b} \geq 2$"
-                                  }
-        else:
-            # for search bins
-            self.regions   = ["LowDM", "HighDM"]
-            self.regions_tex = {
-                                 "LowDM"  : "Low $\Delta m$",
-                                 "HighDM" : "High $\Delta m$"
-                               }
-        self.factors = ["R_Z", "R_T"]
+        
         # variable is also TDirectoryFile that holds histograms 
         self.variable = "bestRecoZM"
+        self.bin_types  = ["validation", "search"]
+        self.particles = ["Electron", "Muon"]
+        self.channels = self.particles + ["Combined"]
+        self.factors = ["R_Z", "R_T"]
+        self.regions   = ["LowDM", "HighDM"]
+        self.regions_tex = {
+                             "LowDM"  : "Low $\Delta m$",
+                             "HighDM" : "High $\Delta m$"
+                           }
+       
+        
+        self.bin_maps = {}
+        with open("validation_bins.json", "r") as j:
+            self.bin_maps["validation"] = json.load(j)
+        with open("search_bins.json", "r") as j:
+            self.bin_maps["search"] = json.load(j)
+        
+        # get selections from json file
+        self.selections = {}
+        self.selections_tex = {}
+        for bin_type in self.bin_types:
+            # selections per region
+            self.selections[bin_type] = tools.getSelections(self.bin_maps[bin_type], bin_type, "NJ")
+            self.selections_tex[bin_type] = {}
+            for region in self.regions:
+                self.selections_tex[bin_type][region] = {}
+                for selection in self.selections[bin_type][region]:
+                    self.selections_tex[bin_type][region][selection] = tools.getTexSelection(selection) 
+                    print "For Normalization: {0} {1} {2}".format(bin_type, selection, self.selections_tex[bin_type][region][selection])
+         
+
+        #TODO: delete once json file method works
+        #self.selections  = {
+        #                      "LowDM"  : ["NBeq0_NSVeq0", "NBeq0_NSVge1", "NBeq1_NSVeq0", "NBeq1_NSVge1", "NBge1_NSVeq0", "NBge1_NSVge1", "NBge2"],
+        #                      "HighDM" : ["NBeq1", "NBge2"]
+        #                   }
+        #self.selections_tex = {
+        #                         "NBeq0_NSVeq0" : "$N_{b} = 0, N_{sv} = 0$",
+        #                         "NBeq0_NSVge1" : "$N_{b} = 0, N_{sv} \geq 1$",
+        #                         "NBeq1_NSVeq0" : "$N_{b} = 1, N_{sv} = 0$",
+        #                         "NBeq1_NSVge1" : "$N_{b} = 1, N_{sv} \geq 1$",
+        #                         "NBge1_NSVeq0" : "$N_{b} \geq 1, N_{sv} = 0$",
+        #                         "NBge1_NSVge1" : "$N_{b} \geq 1, N_{sv} \geq 1$",
+        #                         "NBeq1"        : "$N_{b} = 1$",
+        #                         "NBge2"        : "$N_{b} \geq 2$"
+        #                      }
     
     def setupHistoMap(self, era):
-        # histograms
-        # examples (all MC)
+        # histogram examples
         # DataMC_Electron_LowDM_bestRecoZM_50to250_NBeq0_NSVeq0_jetpt20_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMZToLLstack
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMNoZToLLstack 
         eraTag = "_" + era
         self.histos[era] = {}
-        for particle in self.particles:
-            self.histos[era][particle] = {}
-            for region in self.regions:
-                # using ZToLL and NoZToLL MC for normalization 
-                if self.useNbNsvSelection:
-                    self.histos[era][particle][region] = {}
-                    for selection in self.selections[region]: 
+        for bin_type in self.bin_types:
+            self.histos[era][bin_type] = {}
+            for particle in self.particles:
+                self.histos[era][bin_type][particle] = {}
+                for region in self.regions:
+                    # using ZToLL and NoZToLL MC for normalization 
+                    self.histos[era][bin_type][particle][region] = {}
+                    for selection in self.selections[bin_type][region]: 
                         selectionTag = "_" + selection + "_jetpt20"
                         # using Nb and Nsv selection
-                        self.histos[era][particle][region][selection] = { 
-                            "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + eraTag + "bestRecoZMbestRecoZMDatadata",
-                            "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + eraTag + "bestRecoZMbestRecoZMZToLLstack",
-                            "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + eraTag + "bestRecoZMbestRecoZMNoZToLLstack",
+                        self.histos[era][bin_type][particle][region][selection] = { 
+                            "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + eraTag + 2 * self.variable + "Datadata",
+                            "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + eraTag + 2 * self.variable + "ZToLLstack",
+                            "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + eraTag + 2 * self.variable + "NoZToLLstack",
                         }
-                else:
-                    # no Nb or Nsv selection
-                    self.histos[era][particle][region] = { 
-                        "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + eraTag + "bestRecoZMbestRecoZMDatadata",
-                        "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + eraTag + "bestRecoZMbestRecoZMZToLLstack",
-                        "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + eraTag + "bestRecoZMbestRecoZMNoZToLLstack",
-                    }
 
     def calcNorm(self, A, x):
         # --- Solve for b --- #
@@ -158,16 +165,18 @@ class Normalization:
         # define maps for every channel (not just particles)
         self.norm_map[era] = {}
         self.norm_map_tex[era] = {}
-        for channel in self.channels:
-            self.norm_map[era][channel] = {}
-            self.norm_map_tex[era][channel] = {}
-            for region in self.regions:
-                self.norm_map[era][channel][region] = {}
-                self.norm_map_tex[era][channel][region] = {}
-                if self.useNbNsvSelection:
-                    for selection in self.selections[region]:
-                        self.norm_map[era][channel][region][selection] = {}
-                        self.norm_map_tex[era][channel][region][selection] = {}
+        for bin_type in self.bin_types:
+            self.norm_map[era][bin_type] = {}
+            self.norm_map_tex[era][bin_type] = {}
+            for channel in self.channels:
+                self.norm_map[era][bin_type][channel] = {}
+                self.norm_map_tex[era][bin_type][channel] = {}
+                for region in self.regions:
+                    self.norm_map[era][bin_type][channel][region] = {}
+                    self.norm_map_tex[era][bin_type][channel][region] = {}
+                    for selection in self.selections[bin_type][region]:
+                        self.norm_map[era][bin_type][channel][region][selection] = {}
+                        self.norm_map_tex[era][bin_type][channel][region][selection] = {}
         
         if self.verbose:
             print "------------------------------------------------------------------------------"
@@ -184,53 +193,32 @@ class Normalization:
         self.setupHistoMap(era)
         
         # calculate normalizations
-        for particle in self.particles:
-            if self.verbose:
-                print particle
-            for region in self.regions:
-                if self.verbose:
-                    print region
-                if self.useNbNsvSelection:
-                    for selection in self.selections[region]:
-                        if self.verbose:
-                            print selection
-                        self.runCalculation(era, particle, region, selection)
-                else:
-                    self.runCalculation(era, particle, region)
+        for bin_type in self.bin_types:
+            for particle in self.particles:
+                for region in self.regions:
+                    for selection in self.selections[bin_type][region]:
+                        self.runCalculation(era, bin_type, particle, region, selection)
                 
         # weighted average: combine channels
-        if self.verbose:
-            print "Combined"
-        for region in self.regions:
-            if self.verbose:
-                print region
-
-            if self.useNbNsvSelection:
-                for selection in self.selections[region]:
-                    if self.verbose:
-                        print selection
+        for bin_type in self.bin_types:
+            for region in self.regions:
+                for selection in self.selections[bin_type][region]:
                     for factor in self.factors:
-                        self.calcCombined(factor, era, region, selection)
-            else:
-                for factor in self.factors:
-                    self.calcCombined(factor, era, region)
+                        self.calcCombined(factor, era, bin_type, region, selection)
 
         if self.verbose:
             print "------------------------------------------------------------------------------"
    
 
-    def runCalculation(self, era, particle, region, selection = ""): 
-        if selection:
-            h_Data    = self.root_file.Get(self.variable + "/" + self.histos[era][particle][region][selection]["Data"])
-            h_ZToLL   = self.root_file.Get(self.variable + "/" + self.histos[era][particle][region][selection]["ZToLL"])
-            h_NoZToLL = self.root_file.Get(self.variable + "/" + self.histos[era][particle][region][selection]["NoZToLL"])
-        else:
-            h_Data    = self.root_file.Get(self.variable + "/" + self.histos[era][particle][region]["Data"])
-            h_ZToLL   = self.root_file.Get(self.variable + "/" + self.histos[era][particle][region]["ZToLL"])
-            h_NoZToLL = self.root_file.Get(self.variable + "/" + self.histos[era][particle][region]["NoZToLL"])
+    def runCalculation(self, era, bin_type, particle, region, selection): 
+        #WARNING: strings loaded from json file have type 'unicode'
+        # ROOT cannot load histograms using unicode input: use type 'str'
+        h_Data    = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["Data"]    ) )
+        h_ZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["ZToLL"]   ) )
+        h_NoZToLL = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["NoZToLL"] ) )
     
         if not h_Data:
-            print "ERROR: Unable to load Data histogram {0}".format(self.variable + "/" + self.histos[era][particle][region][selection]["Data"])
+            print "ERROR: Unable to load Data histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["Data"])
 
         #############################
         # Calculating Normalization #
@@ -319,32 +307,22 @@ class Normalization:
         for factor in self.factors:
             value       = values[factor]
             value_error = values[factor + "_error"]
+            # can be used to print if needed
             factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
             factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
-            if self.verbose:
-                print factor_print 
-            if selection: 
-                self.norm_map[era][particle][region][selection][factor] = value
-                self.norm_map[era][particle][region][selection][factor + "_error"] = value_error
-                self.norm_map_tex[era][particle][region][selection][factor] = factor_tex
-            else:
-                self.norm_map[era][particle][region][factor] = value
-                self.norm_map[era][particle][region][factor + "_error"] = value_error
-                self.norm_map_tex[era][particle][region][factor] = factor_tex
+            self.norm_map[era][bin_type][particle][region][selection][factor] = value
+            self.norm_map[era][bin_type][particle][region][selection][factor + "_error"] = value_error
+            self.norm_map_tex[era][bin_type][particle][region][selection][factor] = factor_tex
 
-    def calcCombined(self, factor, era, region, selection = ""):
+    def calcCombined(self, factor, era, bin_type, region, selection):
         # take the weighted average over particles
         weighted_average_numerator = 0.0
         weighted_average_denominator = 0.0
         errors_numerator = {}
         error_numerator = 0.0
         for particle in self.particles:
-            if selection:
-                value       = self.norm_map[era][particle][region][selection][factor]
-                value_error = self.norm_map[era][particle][region][selection][factor + "_error"]
-            else:
-                value       = self.norm_map[era][particle][region][factor]
-                value_error = self.norm_map[era][particle][region][factor + "_error"]
+            value       = self.norm_map[era][bin_type][particle][region][selection][factor]
+            value_error = self.norm_map[era][bin_type][particle][region][selection][factor + "_error"]
             weight = 1.0 / (value_error ** 2)
             weighted_average_numerator   += weight * value
             weighted_average_denominator += weight
@@ -356,23 +334,17 @@ class Normalization:
                 error_numerator = tools.getAdditionError(error_numerator, errors_numerator[particle])
         value       = weighted_average_numerator / weighted_average_denominator
         value_error = tools.getConstantMultiplicationError(1.0 / weighted_average_denominator, error_numerator)
+        # can be used to print if needed
         factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
         factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
-        if self.verbose:
-            print factor_print 
-        if selection:
-            self.norm_map[era]["Combined"][region][selection][factor] = value
-            self.norm_map[era]["Combined"][region][selection][factor + "_error"] = value_error
-            self.norm_map_tex[era]["Combined"][region][selection][factor] = factor_tex
-        else:
-            self.norm_map[era]["Combined"][region][factor] = value
-            self.norm_map[era]["Combined"][region][factor + "_error"] = value_error
-            self.norm_map_tex[era]["Combined"][region][factor] = factor_tex
+        self.norm_map[era][bin_type]["Combined"][region][selection][factor] = value
+        self.norm_map[era][bin_type]["Combined"][region][selection][factor + "_error"] = value_error
+        self.norm_map_tex[era][bin_type]["Combined"][region][selection][factor] = factor_tex
 
     def writeLine(self, line):
         self.output_file.write(line + "\n")
 
-    def makeTexFile(self, output_name):
+    def makeTexFile(self, bin_type, output_name):
         # write latex file with table
         with open(output_name, "w+") as f:
             self.output_file = f
@@ -393,34 +365,20 @@ class Normalization:
             
             # begin long table
             self.writeLine("\\centering")
-            if self.useNbNsvSelection:
-                #self.writeLine("\\begin{tabular}{|c|c|c|c|c|c|}")
-                self.writeLine("\\begin{longtable}{| p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} |}")
-                self.writeLine("\hline Region & Selection & Era & CR & $R_Z$ & $R_T$ \\\\")
-            else:
-                #self.writeLine("\\begin{tabular}{|c|c|c|c|c|}")
-                self.writeLine("\\begin{longtable}{| p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} |}")
-                self.writeLine("\hline Region & Era & CR & $R_Z$ & $R_T$ \\\\")
+            #self.writeLine("\\begin{tabular}{|c|c|c|c|c|c|}")
+            self.writeLine("\\begin{longtable}{| p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} |}")
+            self.writeLine("\hline Region & Selection & Era & CR & $R_Z$ & $R_T$ \\\\")
             # write values to table
             for region in self.regions:
-                if self.useNbNsvSelection:
-                    for selection in self.selections[region]:
-                        for era in self.eras:
-                            for channel in self.channels:
-                                R_Z = self.norm_map_tex[era][channel][region][selection]["R_Z"] 
-                                R_T = self.norm_map_tex[era][channel][region][selection]["R_T"] 
-                                region_tex     = self.regions_tex[region]
-                                selections_tex = self.selections_tex[selection]
-                                era_tex = era.replace("_", " ")
-                                self.writeLine("\hline {0} & {1} & {2} & {3} & {4} & {5} \\\\".format(region_tex, selections_tex, era_tex, channel, R_Z, R_T))
-                else:
+                for selection in self.selections[bin_type][region]:
                     for era in self.eras:
                         for channel in self.channels:
-                            R_Z = self.norm_map_tex[era][channel][region]["R_Z"] 
-                            R_T = self.norm_map_tex[era][channel][region]["R_T"] 
-                            region_tex = self.regions_tex[region]
+                            R_Z = self.norm_map_tex[era][bin_type][channel][region][selection]["R_Z"] 
+                            R_T = self.norm_map_tex[era][bin_type][channel][region][selection]["R_T"] 
+                            region_tex     = self.regions_tex[region]
+                            selections_tex = self.selections_tex[bin_type][region][selection]
                             era_tex = era.replace("_", " ")
-                            self.writeLine("\hline {0} & {1} & {2} & {3} & {4} \\\\".format(region_tex, era_tex, channel, R_Z, R_T))
+                            self.writeLine("\hline {0} & {1} & {2} & {3} & {4} & {5} \\\\".format(region_tex, selections_tex, era_tex, channel, R_Z, R_T))
             self.writeLine("\hline")
             # end table
             #self.writeLine("\end{tabular}")
@@ -438,10 +396,8 @@ def main():
     # add "/" to directory if not present
     if latex_dir[-1] != "/":
         latex_dir += "/"
-    validation = True
-    useNbNsvSelection = True
     verbose = False
-    N = Normalization(validation, useNbNsvSelection, verbose)
+    N = Normalization(verbose)
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
         for era in eras:
@@ -449,7 +405,8 @@ def main():
             result_file = "condor/" + runDir + "/result.root"
             N.getNormAndError(result_file, era)
     
-        N.makeTexFile(latex_dir + "normalization_Zmass.tex")
+        N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
+        N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
 
 
 if __name__ == "__main__":
