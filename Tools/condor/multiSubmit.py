@@ -36,7 +36,8 @@ def main():
             "2018_PreHEM"   : 1,
             "2018_PostHEM"  : 1
     }
-    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
+    #eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
+    eras = ["2016"]
     dirMap = {}
     # submit jobs for each era 
     for era in eras:

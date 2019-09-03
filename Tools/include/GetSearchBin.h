@@ -62,24 +62,19 @@ namespace plotterFunctions
                 
                 float mtb_cut = 175.0;
                 
-                //------------------------------------------//
-                //--- Updated Search Bins (January 2019) ---//
-                //------------------------------------------//
-                //================================SUS-16-049 (team_A) search bin low dm================================
-                // int SB_team_A_lowdm(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
-                //================================search bin v2 high dm================================================
-                // int SBv2_highdm(float mtb_cut, float mtb, int njets, int ntop, int nw, int nres, int nb, float met, float ht)
-                int nSearchBinLowDM  = SBv2_lowdm(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nSearchBinHighDM = SBv2_highdm(mtb_cut, mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met, ht);
+                //-----------------------------------------//
+                //--- Updated Search Bins (August 2019) ---//
+                //-----------------------------------------//
+                // int SBv3_lowdm(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
+                // int SBv3_highdm(float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met) 
+                int nSearchBinLowDM  = SBv3_lowdm(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                int nSearchBinHighDM = SBv3_highdm(mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
                 
                 //-------------------------------------------//
                 //--- Updated Validation Bins (June 2019) ---//
                 //-------------------------------------------//
-                //================================SUS-16-049 (team_A) low dm validation=================================================
                 // int SBv2_lowdm_validation(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
-                //================================low dm validation high MET=================================================
                 // int SBv2_lowdm_validation_high_MET(int nb, int nSV, float ISRpt, float met)
-                //================================SBv2 high dm validation=================================================
                 // int SBv2_highdm_validation(float mtb, int njets, int ntop, int nw, int nres, int nb, float met)
                 int nValidationBinLowDM        = SBv2_lowdm_validation(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
                 int nValidationBinLowDMHighMET = SBv2_lowdm_validation_high_MET(nBottoms, nSoftBottoms, ISRJetPt, met);
