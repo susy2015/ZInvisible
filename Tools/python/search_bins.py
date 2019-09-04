@@ -10,6 +10,8 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 # classes for search bins and validation bins
 
+# Common class is parent class
+# SearchBins and ValidationBins inherit from Common
 class Common:
     def __init__(self):
         # colors
@@ -56,8 +58,9 @@ class Common:
             # end document
             self.writeLine("\end{document}")
 
-    def makeHistos(self, output_file, title, plot_name, era):
+    def makeHistos(self, output_file, x_title, name, era):
         eraTag = "_" + era
+        draw_option = "hist error"
         f = ROOT.TFile(output_file, "recreate")
         # define histograms 
         h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
@@ -67,10 +70,10 @@ class Common:
 
         # setup histograms
         #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-        setupHist(h_mc_lowdm,    "mc_lowdm"    + eraTag, title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
-        setupHist(h_mc_highdm,   "mc_highdm"   + eraTag, title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
-        setupHist(h_pred_lowdm,  "pred_lowdm"  + eraTag, title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
-        setupHist(h_pred_highdm, "pred_highdm" + eraTag, title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
+        setupHist(h_mc_lowdm,    "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
+        setupHist(h_mc_highdm,   "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
+        setupHist(h_pred_lowdm,  "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
+        setupHist(h_pred_highdm, "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
 
         if self.verbose:
             print era
@@ -95,6 +98,79 @@ class Common:
                 print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
                             b, n, n_error, s, s_error, m, m_error, p, p_error 
                         )
+        # set histogram content and error
+        bin_i = 1
+        for b in self.low_dm_bins:
+            h_mc_lowdm.SetBinContent(bin_i, self.binValues[era][b]["mc"])
+            h_mc_lowdm.SetBinError(bin_i, self.binValues[era][b]["mc_error"])
+            h_pred_lowdm.SetBinContent(bin_i, self.binValues[era][b]["pred"])
+            h_pred_lowdm.SetBinError(bin_i, self.binValues[era][b]["pred_error"])
+            bin_i += 1
+        bin_i = 1
+        for b in self.high_dm_bins:
+            h_mc_highdm.SetBinContent(bin_i, self.binValues[era][b]["mc"])
+            h_mc_highdm.SetBinError(bin_i, self.binValues[era][b]["mc_error"])
+            h_pred_highdm.SetBinContent(bin_i, self.binValues[era][b]["pred"])
+            h_pred_highdm.SetBinError(bin_i, self.binValues[era][b]["pred_error"])
+            bin_i += 1
+
+        h_map = {}
+        h_map["lowdm"] = {}
+        h_map["lowdm"]["mc"]   = h_mc_lowdm
+        h_map["lowdm"]["pred"] = h_pred_lowdm
+        h_map["highdm"] = {}
+        h_map["highdm"]["mc"]   = h_mc_highdm
+        h_map["highdm"]["pred"] = h_pred_highdm
+
+        # draw histograms
+        c = ROOT.TCanvas("c", "c", 800, 800)
+        c.Divide(1, 2)
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.5
+        legend_x2 = 0.9 
+        legend_y1 = 0.7 
+        legend_y2 = 0.9 
+
+        ###################
+        # Draw Histograms #
+        ###################
+
+        for region in h_map:
+            h_mc   = h_map[region]["mc"]
+            h_pred = h_map[region]["pred"]
+            h_ratio = h_pred.Clone("h_ratio")
+            h_ratio.Divide(h_mc)
+        
+            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+            setupHist(h_ratio, "Z to Invisible Prediction / MC", x_title, "Pred / MC", self.color_black, 0.5, 1.5)
+
+            # histograms
+            c.cd(1)
+            ROOT.gPad.SetLogy(1) # set log y
+            # ZInv MC and Prediction
+            h_mc.Draw(draw_option)
+            h_pred.Draw("error same")
+            # legend: TLegend(x1,y1,x2,y2)
+            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend.AddEntry(h_mc,   "MC",   "l")
+            legend.AddEntry(h_pred, "Pred", "l")
+            legend.Draw()
+           
+            # ratios
+            c.cd(2)
+            h_ratio.Draw(draw_option)
+                
+            # save histograms
+            plot_name = self.plot_dir + name + "_" + region
+            c.Update()
+            c.SaveAs(plot_name + eraTag + ".pdf")
+            c.SaveAs(plot_name + eraTag + ".png")
+            # write histograms to file
+            h_mc.Write()
+            h_pred.Write()
+        
+        f.Close()
 
 
 # search bins 
@@ -335,8 +411,6 @@ class ValidationBins(Common):
         h_map["highdm"] = {}
         h_map["highdm"]["mc"]   = h_mc_highdm
         h_map["highdm"]["pred"] = h_pred_highdm
-
-        self.h_map = h_map
 
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
