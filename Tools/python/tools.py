@@ -3,7 +3,7 @@
 from colors import getColorIndex
 import numpy as np
 import ROOT
-
+import re
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
@@ -11,11 +11,142 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 ERROR_CODE = -999
 
+# Important: be careful with order of replacing characters if keys match values
+tex_map = {
+            "NB"    : "N_{b}",
+            "NSV"   : "N_{sv}",
+            "NJ"    : "N_{j}"
+          }
+
+# when loading json files, strings are loaded as unicode
+# unicode can cause problems when using ROOT or Latex
+# return map with string values
+def stringifyMap(rawMap):
+    returnMap = rawMap
+    for key1 in returnMap:
+        for key2 in returnMap[key1]:
+            returnMap[key1][key2] = str(returnMap[key1][key2])
+    return returnMap
+
 # https://stackoverflow.com/questions/5595425/what-is-the-best-way-to-compare-floats-for-almost-equality-in-python
 # https://docs.python.org/3/whatsnew/3.5.html#pep-485-a-function-for-testing-approximate-equality
 # isclose(): used to compare floats up to some relative tolerance and absolute tolerance
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+# used for sorting by first element
+def takeFirst(elem):
+    return elem[0]
+
+# function to get met binning from map based on selection
+# one selection can have mutliple MET binnings
+# return list of numpy arrays 
+# return dictionary that has
+# - list of list of bin names
+# - list of numpy arrarys of bin edges
+def getMETBinEdges(binMap, selection):
+    verbose = False
+    max_met = 1000.0
+    current_met = -999.0
+    temp_names = []
+    names = []
+    met_bins = []
+    temp_array = []
+    result = []
+    for b in binMap:
+        cut = removeCuts(binMap[b]["selection"], "NSV")
+        if verbose:
+            print "b: {0}, selection: {1}, cut: {2}".format(b, selection, cut)
+        if selection == cut:
+            temp_array.append((int(b), binMap[b]["met"]))
+    # sort by bin number; assume MET bins increase with bin number (unless new binning starts)
+    temp_array.sort(key = takeFirst) 
+    for i, elem in enumerate(temp_array):
+        # use regex to get values
+        # example: met_450to550
+        # only use first value (e.g. use 450, but not 550)
+        name = elem[1]
+        m = re.search("met_(.*)to(.*)", name)
+        value = float(m.group(1))
+        # keep adding MET bins as they increase
+        if value > current_met:
+            temp_names.append(name)
+            met_bins.append(value)
+        # new MET binning starts
+        # be careful to append if we have moved to a new binning or if this is the last set
+        if value <= current_met or i == len(temp_array) - 1:
+            met_bins.append(max_met)
+            met_array = np.array(met_bins)
+            names.append(temp_names)
+            result.append(met_array)
+        # reset lists
+        if value <= current_met:
+            temp_names = [name]
+            met_bins = [value]
+
+        current_met = value
+    
+    d = {"names": names, "xbins": result}
+    if verbose:
+        print "{0}: {1}".format(names, result)
+    return d
+
+# get selections from json file
+def getSelections(bin_map, bin_type, remove_cut="", verbose=False): 
+    lowdm_cuts  = []
+    highdm_cuts = []
+    for b in bin_map:
+        r = bin_map[b]["region"]
+        cut = bin_map[b]["selection"]
+        # only remove cut if remove_cut is given
+        if remove_cut:
+            cut = removeCuts(cut, remove_cut)
+        if r == "LowDM":
+            lowdm_cuts.append(cut)
+        elif r == "HighDM":
+            highdm_cuts.append(cut)
+
+    # remove duplicates from list
+    lowdm_cuts  = list(dict.fromkeys(lowdm_cuts))
+    highdm_cuts = list(dict.fromkeys(highdm_cuts))
+    if verbose:
+        print "{0} Low DM cuts: {1}".format(bin_type,  lowdm_cuts)
+        print "{0} High DM cuts: {1}".format(bin_type, highdm_cuts)
+    result = {}
+    result["LowDM"]  = lowdm_cuts
+    result["HighDM"] = highdm_cuts
+    return result
+
+# get latex expression of selection
+def getTexSelection(selection):
+    # be careful with order of search and replace
+    result = selection.split("_") 
+    for i in xrange(len(result)):
+        r = result[i]
+        for key in tex_map:
+            r = r.replace(key, tex_map[key])
+        if "eq" in r:
+            r = r.replace("eq", " = ")
+        elif "ge" in r:
+            r = r.replace("ge", " \geq ")
+        elif "le" in r:
+            r = r.replace("le", " \leq ")
+        elif "gt" in r:
+            r = r.replace("gt", " > ")
+        elif "lt" in r:
+            r = r.replace("lt", " < ")
+        result[i] = r
+    
+    expression = "$" + ", ".join(result) + "$"
+    return expression
+
+# remove cuts if pattern in cuts
+def removeCuts(cutString, pattern, delim = "_"):
+    cutList = cutString.split(delim)
+    #print "cutString: {0}, cutList: {1}".format(cutString, cutList)
+    newList = list(c for c in cutList if pattern not in c)
+    newString = delim.join(newList)
+    return newString
 
 def setupHist(hist, title, x_title, y_title, color, y_min, y_max):
     x_axis = hist.GetXaxis()

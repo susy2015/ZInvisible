@@ -40,7 +40,7 @@ namespace plotterFunctions
 
     private:
         std::string year_;
-        bool verbose = false;
+        bool verbose = true;
         enum ID{Loose, Medium, Tight};
 
     void generateGamma(NTupleReader& tr) {
@@ -195,7 +195,7 @@ namespace plotterFunctions
                 // stautsFlags is bitwise and already applied in post-processing
                 if (pdgId == 22 && status == 1)
                 {
-                    //printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d\n", pdgId, status, statusFlags);
+                    //if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d\n", pdgId, status, statusFlags);
                     GenPhotonTLV.push_back(GenPartTLV[i]);
                 }
             }

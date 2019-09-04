@@ -204,6 +204,12 @@ year="2018"; period="_PreHEM";  python condorSubmit.py -d Data_EGamma_${year}${p
 year="2018"; period="_PostHEM"; python condorSubmit.py -d Data_EGamma_${year}${period},Data_SingleMuon_${year}${period},DYJetsToLL_${year},TTbarNoHad_${year},SingleTopZinv_${year},Rare_${year},TTZ_${year},Diboson_${year},GJets_${year},QCD_Photon_${year},WJetsToLNu_${year},TTbar_${year},tW_${year},ZJetsToNuNu_${year} -n 2 -y ${year}${period} -r Data_MET_${year}${period}
 ```
 
+There is now a script to submit all Run 2 Data and MC with one command.
+```
+python multiSubmit.py
+```
+
+The script multiSubmit.py will create a json file in the runs directory that lists the condor submission directories. This json file will be used again to process the output of the condor jobs.
 
 ### Process Output from Condor
 
@@ -257,6 +263,18 @@ Process 2016 results:
 Process 2017 results:
 ```
 ./processResults.sh PhotonAndMuonControlRegionSelection_2017 2017
+```
+
+There is now a script to process all Run 2 output from condor. It accepts a json file containing the condor submission directories (and created by multiSubmit.py) as an input.
+
+```
+python python/process.py -j runs/submission_2019-08-28_14-24-48.json
+```
+
+## Running Prediction Modules
+Use the run_modules.py script to run modules to calculate the normalization and shape factors, as well as the Z to invisible prediction in the validation and search bins.
+```
+python python/run_modules.py -j runs/submission_2019-08-28_14-24-48.json
 ```
 
 ## La Fin
