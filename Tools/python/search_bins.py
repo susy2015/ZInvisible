@@ -56,21 +56,66 @@ class Common:
             # end document
             self.writeLine("\end{document}")
 
+    def makeHistos(self, output_file, title, plot_name, era):
+        eraTag = "_" + era
+        f = ROOT.TFile(output_file, "recreate")
+        # define histograms 
+        h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
+        h_mc_highdm   = ROOT.TH1F("mc_highdm",   "mc_highdm",   self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
+        h_pred_lowdm  = ROOT.TH1F("pred_lowdm",  "pred_lowdm",  self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
+        h_pred_highdm = ROOT.TH1F("pred_highdm", "pred_highdm", self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
+
+        # setup histograms
+        #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+        setupHist(h_mc_lowdm,    "mc_lowdm"    + eraTag, title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
+        setupHist(h_mc_highdm,   "mc_highdm"   + eraTag, title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
+        setupHist(h_pred_lowdm,  "pred_lowdm"  + eraTag, title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
+        setupHist(h_pred_highdm, "pred_highdm" + eraTag, title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
+
+        if self.verbose:
+            print era
+        for b in self.all_bins:
+            n       = self.binValues[era][b]["norm"]
+            n_error = self.binValues[era][b]["norm_error"]
+            s       = self.binValues[era][b]["shape"]
+            s_error = self.binValues[era][b]["shape_error"]
+            m       = self.binValues[era][b]["mc"]
+            m_error = self.binValues[era][b]["mc_error"]
+            p       = n * s * m
+            x_list = [n, s, m]
+            dx_list = [n_error, s_error, m_error]
+            p_error = getMultiplicationErrorList(p, x_list, dx_list)
+            self.binValues[era][b]["pred"] = p
+            self.binValues[era][b]["pred_error"] = p_error
+            
+            for value in self.values:
+                self.binValues[era][b][value + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(self.binValues[era][b][value], self.binValues[era][b][value + "_error"])
+
+            if self.verbose:
+                print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
+                            b, n, n_error, s, s_error, m, m_error, p, p_error 
+                        )
 
 
 # search bins 
 class SearchBins(Common):
     def __init__(self, normalization, shape, eras, plot_dir, verbose):
-        # inherit all methods and properties from parent class
+        # run parent init function
         Common.__init__(self)
         self.N = normalization
         self.S = shape
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
-        self.low_dm_bins  = list(str(b) for b in range( 0,  53)) 
-        self.high_dm_bins = list(str(b) for b in range(53, 204))
-        self.all_bins     = self.low_dm_bins + self.high_dm_bins
+        self.low_dm_start   = 0
+        self.low_dm_end     = 52
+        self.high_dm_start  = 53
+        self.high_dm_end    = 203
+        self.low_dm_nbins   = self.low_dm_end - self.low_dm_start + 1 
+        self.high_dm_nbins  = self.high_dm_end - self.high_dm_start + 1 
+        self.low_dm_bins    = list(str(b) for b in range( self.low_dm_start,  self.low_dm_end + 1)) 
+        self.high_dm_bins   = list(str(b) for b in range( self.high_dm_start, self.high_dm_end + 1)) 
+        self.all_bins       = self.low_dm_bins + self.high_dm_bins
         self.binValues = {}
         self.values = ["norm", "shape", "mc", "pred"]
         with open("search_bins.json", "r") as j:
@@ -80,7 +125,7 @@ class SearchBins(Common):
         # new root file to save search bin histograms
         new_file = "searchBinsZinv_" + era + ".root"
         draw_option = "hist error"
-        eraTag = "_" + era
+        #eraTag = "_" + era
         self.binValues[era] = {}
         
         for b in self.all_bins:
@@ -115,49 +160,55 @@ class SearchBins(Common):
             self.binValues[era][b]["mc"]       = h_highdm.GetBinContent(bin_i)
             self.binValues[era][b]["mc_error"] = h_highdm.GetBinError(bin_i)
             bin_i += 1
-        
-        f = ROOT.TFile(new_file, "recreate")
-        # define histograms 
-        h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    19,  0, 19) 
-        h_mc_highdm   = ROOT.TH1F("mc_highdm",   "mc_highdm",   24, 22, 46) 
-        h_pred_lowdm  = ROOT.TH1F("pred_lowdm",  "pred_lowdm",  19,  0, 19) 
-        h_pred_highdm = ROOT.TH1F("pred_highdm", "pred_highdm", 24, 22, 46) 
 
-        # setup histograms
-        #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-        setupHist(h_mc_lowdm,    "mc_lowdm"    + eraTag, "Search Bin", "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
-        setupHist(h_mc_highdm,   "mc_highdm"   + eraTag, "Search Bin", "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
-        setupHist(h_pred_lowdm,  "pred_lowdm"  + eraTag, "Search Bin", "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
-        setupHist(h_pred_highdm, "pred_highdm" + eraTag, "Search Bin", "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
+        # ------------------------------------------------------- #
+        # TODO: put into function (including plotting histograms) #
+        # ------------------------------------------------------- #
+        #Common.makeHistos(self, new_file, "Search Bin", "search")
+        self.makeHistos(new_file, "Search Bin", "search", era)
 
-        if self.verbose:
-            print era
-        for b in self.all_bins:
-            n       = self.binValues[era][b]["norm"]
-            n_error = self.binValues[era][b]["norm_error"]
-            s       = self.binValues[era][b]["shape"]
-            s_error = self.binValues[era][b]["shape_error"]
-            m       = self.binValues[era][b]["mc"]
-            m_error = self.binValues[era][b]["mc_error"]
-            p       = n * s * m
-            x_list = [n, s, m]
-            dx_list = [n_error, s_error, m_error]
-            p_error = getMultiplicationErrorList(p, x_list, dx_list)
-            self.binValues[era][b]["pred"] = p
-            self.binValues[era][b]["pred_error"] = p_error
-            
-            for value in self.values:
-                self.binValues[era][b][value + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(self.binValues[era][b][value], self.binValues[era][b][value + "_error"])
+        #f = ROOT.TFile(new_file, "recreate")
+        ## define histograms 
+        #h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
+        #h_mc_highdm   = ROOT.TH1F("mc_highdm",   "mc_highdm",   self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
+        #h_pred_lowdm  = ROOT.TH1F("pred_lowdm",  "pred_lowdm",  self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
+        #h_pred_highdm = ROOT.TH1F("pred_highdm", "pred_highdm", self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
 
-            if self.verbose:
-                print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
-                            b, n, n_error, s, s_error, m, m_error, p, p_error 
-                        )
+        ## setup histograms
+        ##setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+        #setupHist(h_mc_lowdm,    "mc_lowdm"    + eraTag, "Search Bin", "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
+        #setupHist(h_mc_highdm,   "mc_highdm"   + eraTag, "Search Bin", "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
+        #setupHist(h_pred_lowdm,  "pred_lowdm"  + eraTag, "Search Bin", "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
+        #setupHist(h_pred_highdm, "pred_highdm" + eraTag, "Search Bin", "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
+
+        #if self.verbose:
+        #    print era
+        #for b in self.all_bins:
+        #    n       = self.binValues[era][b]["norm"]
+        #    n_error = self.binValues[era][b]["norm_error"]
+        #    s       = self.binValues[era][b]["shape"]
+        #    s_error = self.binValues[era][b]["shape_error"]
+        #    m       = self.binValues[era][b]["mc"]
+        #    m_error = self.binValues[era][b]["mc_error"]
+        #    p       = n * s * m
+        #    x_list = [n, s, m]
+        #    dx_list = [n_error, s_error, m_error]
+        #    p_error = getMultiplicationErrorList(p, x_list, dx_list)
+        #    self.binValues[era][b]["pred"] = p
+        #    self.binValues[era][b]["pred_error"] = p_error
+        #    
+        #    for value in self.values:
+        #        self.binValues[era][b][value + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(self.binValues[era][b][value], self.binValues[era][b][value + "_error"])
+
+        #    if self.verbose:
+        #        print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
+        #                    b, n, n_error, s, s_error, m, m_error, p, p_error 
+        #                )
 
 # vadliation bins
 class ValidationBins(Common):
     def __init__(self, normalization, shape, eras, plot_dir, verbose):
-        # inherit all methods and properties from parent class
+        # run parent init function
         Common.__init__(self)
         self.N = normalization
         self.S = shape
@@ -284,6 +335,8 @@ class ValidationBins(Common):
         h_map["highdm"] = {}
         h_map["highdm"]["mc"]   = h_mc_highdm
         h_map["highdm"]["pred"] = h_pred_highdm
+
+        self.h_map = h_map
 
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
