@@ -339,16 +339,8 @@ class Normalization:
             self.writeLine("")
             self.writeLine("\\begin{document}")
             
-            # begin table
-            #self.writeLine("\\begin{table}[ht]")
-            #self.writeLine("\\caption{Normalization}")
-            #self.writeLine("\\vspace{2mm}")
-            #self.writeLine("\\centering")
-            
             # begin long table
             self.writeLine("\\centering")
-            #self.writeLine("\\begin{tabular}{|c|c|c|c|c|c|}")
-            #self.writeLine("\\begin{longtable}{| p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} |}")
             self.writeLine("\\begin{longtable}{|*6{p{0.16\\textwidth}|}}")
             self.writeLine("\hline Region & Selection & Era & CR & $R_Z$ & $R_T$ \\\\")
             # write values to table
@@ -365,8 +357,6 @@ class Normalization:
                             print "{0} {1} {2} {3} {4}".format(region, selection, era, channel, selections_tex)
             self.writeLine("\hline")
             # end table
-            #self.writeLine("\end{tabular}")
-            #self.writeLine("\end{table}")
             self.writeLine("\\caption{Normalization}")
             self.writeLine("\end{longtable}")
             # end document

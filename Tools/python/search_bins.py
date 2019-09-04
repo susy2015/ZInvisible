@@ -38,14 +38,8 @@ class Common:
                 era_tex = era.replace("_", " ")
                 # begin table
                 self.writeLine("\\centering")
-                # try to use *5 syntax with vertical lines
-                #self.writeLine("\\begin{longtable}{|p{0.16\\textwidth}|p{0.16\\textwidth}|p{0.16\\textwidth}|p{0.16\\textwidth}|p{0.16\\textwidth}|}")
+                # *5{} syntax with vertical lines; put last | in expression *5{|}
                 self.writeLine("\\begin{longtable}{|*5{p{0.16\\textwidth}|}}")
-                #self.writeLine("\\begin{table}[ht]")
-                #self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
-                #self.writeLine("\\vspace{2mm}")
-                #self.writeLine("\\centering")
-                #self.writeLine("\\begin{tabular}{|c|c|c|c|c|}")
                 self.writeLine("\hline Bin & $R_{Z}$ & $S_{\gamma}$ & $N_{MC}$ & $N_{p}$ \\\\")
                 # write values to table
                 for b in self.all_bins:
@@ -58,8 +52,6 @@ class Common:
                 # for longtable, caption must go at the bottom of the table... it is not working at the top
                 self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
                 # end table
-                #self.writeLine("\end{tabular}")
-                #self.writeLine("\end{table}")
                 self.writeLine("\end{longtable}")
             # end document
             self.writeLine("\end{document}")
