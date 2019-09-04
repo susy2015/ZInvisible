@@ -37,12 +37,16 @@ class Common:
             for era in self.eras:
                 era_tex = era.replace("_", " ")
                 # begin table
-                self.writeLine("\\begin{table}[ht]")
-                self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
-                self.writeLine("\\vspace{2mm}")
                 self.writeLine("\\centering")
-                self.writeLine("\\begin{tabular}{|c|c|c|c|c|}")
-                self.writeLine("\hline Bin & $R_Z$ & $S_\gamma$ & MC & Pred. \\\\")
+                # try to use *5 syntax with vertical lines
+                #self.writeLine("\\begin{longtable}{|p{0.16\\textwidth}|p{0.16\\textwidth}|p{0.16\\textwidth}|p{0.16\\textwidth}|p{0.16\\textwidth}|}")
+                self.writeLine("\\begin{longtable}{|*5{p{0.16\\textwidth}|}}")
+                #self.writeLine("\\begin{table}[ht]")
+                #self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
+                #self.writeLine("\\vspace{2mm}")
+                #self.writeLine("\\centering")
+                #self.writeLine("\\begin{tabular}{|c|c|c|c|c|}")
+                self.writeLine("\hline Bin & $R_{Z}$ & $S_{\gamma}$ & $N_{MC}$ & $N_{p}$ \\\\")
                 # write values to table
                 for b in self.all_bins:
                     norm  = self.binValues[era][b]["norm_tex"]
@@ -51,9 +55,12 @@ class Common:
                     pred  = self.binValues[era][b]["pred_tex"]
                     self.writeLine("\hline {0} & {1} & {2} & {3} & {4} \\\\".format(b, norm, shape, mc, pred))
                 self.writeLine("\hline")
-                self.writeLine("\end{tabular}")
+                # for longtable, caption must go at the bottom of the table... it is not working at the top
+                self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
                 # end table
-                self.writeLine("\end{table}")
+                #self.writeLine("\end{tabular}")
+                #self.writeLine("\end{table}")
+                self.writeLine("\end{longtable}")
             # end document
             self.writeLine("\end{document}")
 

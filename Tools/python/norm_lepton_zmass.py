@@ -348,7 +348,8 @@ class Normalization:
             # begin long table
             self.writeLine("\\centering")
             #self.writeLine("\\begin{tabular}{|c|c|c|c|c|c|}")
-            self.writeLine("\\begin{longtable}{| p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} |}")
+            #self.writeLine("\\begin{longtable}{| p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} | p{0.16\\textwidth} |}")
+            self.writeLine("\\begin{longtable}{|*6{p{0.16\\textwidth}|}}")
             self.writeLine("\hline Region & Selection & Era & CR & $R_Z$ & $R_T$ \\\\")
             # write values to table
             for region in self.regions:
