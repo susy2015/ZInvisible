@@ -40,7 +40,7 @@ namespace plotterFunctions
 
     private:
         std::string year_;
-        bool verbose = true;
+        bool verbose = false;
         enum ID{Loose, Medium, Tight};
 
     void generateGamma(NTupleReader& tr) {
