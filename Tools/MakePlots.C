@@ -1033,26 +1033,6 @@ int main(int argc, char* argv[])
     // Jet pt cuts
     std::vector<std::string> JetPtCuts = {"_jetpt20"};
     
-    
-    // TODO: remove if vec/map parseCuts() version works
-    // All cuts for validation and search bins
-    //std::map<std::string, std::string> norm_cuts_low_dm = {
-    //    {"NBeq0_NSVeq0",     ";nBottoms_drLeptonCleaned=0;nSoftBottoms_drLeptonCleaned=0"},
-    //    {"NBeq0_NSVge1",     ";nBottoms_drLeptonCleaned=0;nSoftBottoms_drLeptonCleaned>=1"},
-    //    {"NBeq1_NSVeq0",     ";nBottoms_drLeptonCleaned=1;nSoftBottoms_drLeptonCleaned=0"},
-    //    {"NBeq1_NSVge1",     ";nBottoms_drLeptonCleaned=1;nSoftBottoms_drLeptonCleaned>=1"},
-    //    {"NBge1_NSVeq0",     ";nBottoms_drLeptonCleaned>=1;nSoftBottoms_drLeptonCleaned=0"},
-    //    {"NBge1_NSVge1",     ";nBottoms_drLeptonCleaned>=1;nSoftBottoms_drLeptonCleaned>=1"},
-    //    {"NBge2",            ";nBottoms_drLeptonCleaned>=2"},
-    //};
-    //std::map<std::string, std::string> norm_cuts_high_dm = {
-    //    {"NBeq1",     ";nBottoms_drLeptonCleaned=1"},
-    //    {"NBeq2",     ";nBottoms_drLeptonCleaned=2"},
-    //    {"NBge2",     ";nBottoms_drLeptonCleaned>=2"},
-    //    {"NBge3",     ";nBottoms_drLeptonCleaned>=3"},
-    //};
-
-
     // begin loop over jet pt cuts 
     for (const auto& JetPtCut : JetPtCuts) 
     {
@@ -1720,26 +1700,6 @@ int main(int argc, char* argv[])
         {
             map_shape_cuts_high_dm[cut] = ";" + SusyUtility::parseCuts(cut, photon_var_map);
         }
-        
-        // TODO: remove if vec/map parseCuts() version works
-        // All cuts for validation and search bins
-        //std::map<std::string, std::string> shape_cuts_low_dm = {
-        //    {"NBeq0_NJle5",     ";nBottoms" + varSuffix + "=0;nJets" + varSuffix + "<=5"},
-        //    {"NBeq0_NJge6",     ";nBottoms" + varSuffix + "=0;nJets" + varSuffix + ">=6"},
-        //    {"NBeq0",           ";nBottoms" + varSuffix + "=0"},
-        //    {"NBeq1",           ";nBottoms" + varSuffix + "=1"},
-        //    {"NBge1",           ";nBottoms" + varSuffix + ">=1"},
-        //    {"NBge2",           ";nBottoms" + varSuffix + ">=2"},
-        //    {"NBge2_NJge7",     ";nBottoms" + varSuffix + ">=2;nJets" + varSuffix + ">=7"},
-        //};
-        //std::map<std::string, std::string> shape_cuts_high_dm = {
-        //    {"NBeq1",       ";nBottoms" + varSuffix + "=1"},
-        //    {"NBeq1_NJge7", ";nBottoms" + varSuffix + "=1;nJets" + varSuffix + ">=7"},
-        //    {"NBeq2",       ";nBottoms" + varSuffix + "=2"},
-        //    {"NBge2",       ";nBottoms" + varSuffix + ">=2"},
-        //    {"NBge2_NJge7", ";nBottoms" + varSuffix + ">=2;nJets" + varSuffix + ">=7"},
-        //    {"NBge3",       ";nBottoms" + varSuffix + ">=3"},
-        //};
 
         if (doDataMCPhoton)
         {
