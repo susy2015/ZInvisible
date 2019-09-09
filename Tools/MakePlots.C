@@ -1032,25 +1032,7 @@ int main(int argc, char* argv[])
     
     // Jet pt cuts
     std::vector<std::string> JetPtCuts = {"_jetpt20"};
-    // --- Normalization: bin in NB and NSV --- //
-    // All cuts for validation and search bins
-    std::map<std::string, std::string> norm_cuts_low_dm = {
-        {"NBeq0_NSVeq0",     ";nBottoms_drLeptonCleaned=0;nSoftBottoms_drLeptonCleaned=0"},
-        {"NBeq0_NSVge1",     ";nBottoms_drLeptonCleaned=0;nSoftBottoms_drLeptonCleaned>=1"},
-        {"NBeq1_NSVeq0",     ";nBottoms_drLeptonCleaned=1;nSoftBottoms_drLeptonCleaned=0"},
-        {"NBeq1_NSVge1",     ";nBottoms_drLeptonCleaned=1;nSoftBottoms_drLeptonCleaned>=1"},
-        {"NBge1_NSVeq0",     ";nBottoms_drLeptonCleaned>=1;nSoftBottoms_drLeptonCleaned=0"},
-        {"NBge1_NSVge1",     ";nBottoms_drLeptonCleaned>=1;nSoftBottoms_drLeptonCleaned>=1"},
-        {"NBge2",            ";nBottoms_drLeptonCleaned>=2"},
-    };
-    std::map<std::string, std::string> norm_cuts_high_dm = {
-        {"NBeq1",     ";nBottoms_drLeptonCleaned=1"},
-        {"NBeq2",     ";nBottoms_drLeptonCleaned=2"},
-        {"NBge2",     ";nBottoms_drLeptonCleaned>=2"},
-        {"NBge3",     ";nBottoms_drLeptonCleaned>=3"},
-    };
-
-
+    
     // begin loop over jet pt cuts 
     for (const auto& JetPtCut : JetPtCuts) 
     {
@@ -1066,6 +1048,26 @@ int main(int argc, char* argv[])
         SAT_Pass_lowDM_Mid    = ";SAT_Pass_lowDM_Mid"       + varSuffix;
         SAT_Pass_highDM_Mid   = ";SAT_Pass_highDM_Mid"      + varSuffix;
         SAT_Pass_lowDM_Tight  = ";SAT_Pass_lowDM_Tight"     + varSuffix;
+    
+        // --- Normalization: bin in NB and NSV --- //
+        std::map<std::string, std::string> lepton_var_map = {
+            {"NB",  "nBottoms"     + varSuffix},
+            {"NSV", "nSoftBottoms" + varSuffix},
+            {"NJ",  "nJets"        + varSuffix},
+        };
+        std::vector<std::string> vec_norm_cuts_low_dm  = {"NBeq0_NSVeq0", "NBeq0_NSVge1", "NBeq1_NSVeq0", "NBeq1_NSVge1", "NBge1_NSVeq0", "NBge1_NSVge1", "NBge2"};
+        std::vector<std::string> vec_norm_cuts_high_dm = {"NBeq1", "NBeq2", "NBge2", "NBge3"};
+        std::map<std::string, std::string> map_norm_cuts_low_dm;
+        std::map<std::string, std::string> map_norm_cuts_high_dm;
+        for (auto& cut : vec_norm_cuts_low_dm)
+        {
+            map_norm_cuts_low_dm[cut] = ";" + SusyUtility::parseCuts(cut, lepton_var_map);
+        }
+        for (auto& cut : vec_norm_cuts_high_dm)
+        {
+            map_norm_cuts_high_dm[cut] = ";" + SusyUtility::parseCuts(cut, lepton_var_map);
+        }
+        
         // di-electron
         if (doDataMCElectron)
         {
@@ -1073,7 +1075,7 @@ int main(int argc, char* argv[])
             std::string ElectronWeights = "DiElecTriggerEffPt;DiElecSF;BTagWeight" + PrefireWeight + puWeight;
             // bestRecoZM used to calculate normalization
             // Search and Validation Bins Selection
-            for (const auto& cut : norm_cuts_low_dm)
+            for (const auto& cut : map_norm_cuts_low_dm)
             {
                 PDS dsData_Electron_LowDM_noZMassCut("Data",  fileMap[ElectronDataset],        "Flag_eeBadScFilter;passElecZinvSel;Pass_trigger_electron" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
                 std::vector<std::vector<PDS>> StackMC_Electron_LowDM_noZMassCut                = makeStackMC_DiLepton(                "passElecZinvSel" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, ElectronWeights);
@@ -1087,7 +1089,7 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("DataMC_Electron_LowDM_Normalization_bestRecoZM_50to250_" + cut.first + histSuffix,    {dcData_Electron_LowDM_bestRecoZM,   dcMC_Electron_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
                 vh.push_back(PHS("DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_" + cut.first + histSuffix,     {dcData_Electron_LowDM_bestRecoZM,   dcMC_Electron_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
             }
-            for (const auto& cut : norm_cuts_high_dm)
+            for (const auto& cut : map_norm_cuts_high_dm)
             {
                 PDS dsData_Electron_HighDM_noZMassCut("Data",  fileMap[ElectronDataset],        "Flag_eeBadScFilter;passElecZinvSel;Pass_trigger_electron" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
                 std::vector<std::vector<PDS>> StackMC_Electron_HighDM_noZMassCut                = makeStackMC_DiLepton(                "passElecZinvSel" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, ElectronWeights);
@@ -1419,7 +1421,7 @@ int main(int argc, char* argv[])
             std::string MuonWeights = "DiMuTriggerEffPt;DiMuSF;BTagWeight" + PrefireWeight + puWeight;
             // bestRecoZM used to calculate normalization
             // Search and Validation Bins Selection
-            for (const auto& cut : norm_cuts_low_dm)
+            for (const auto& cut : map_norm_cuts_low_dm)
             {
                 PDS dsData_Muon_LowDM_noZMassCut("Data",  fileMap[MuonDataset],                "Flag_eeBadScFilter;passMuZinvSel;Pass_trigger_muon"      + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
                 std::vector<std::vector<PDS>> StackMC_Muon_LowDM_noZMassCut                = makeStackMC_DiLepton(                "passMuZinvSel"      + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, MuonWeights);
@@ -1433,7 +1435,7 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("DataMC_Muon_LowDM_Normalization_bestRecoZM_50to250_" + cut.first + histSuffix,    {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
                 vh.push_back(PHS("DataMC_Muon_LowDM_Normalization_bestRecoZM_0to400_" + cut.first + histSuffix,     {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
             }
-            for (const auto& cut : norm_cuts_high_dm)
+            for (const auto& cut : map_norm_cuts_high_dm)
             {
                 PDS dsData_Muon_HighDM_noZMassCut("Data",  fileMap[MuonDataset],                "Flag_eeBadScFilter;passMuZinvSel;Pass_trigger_muon"   + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
                 std::vector<std::vector<PDS>> StackMC_Muon_HighDM_noZMassCut                = makeStackMC_DiLepton(                "passMuZinvSel"   + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, MuonWeights);
@@ -1681,24 +1683,23 @@ int main(int argc, char* argv[])
         std::string PhotonIDSelection = ";passPhotonSelection";
         
         // --- Shape: bin in NB and NJ --- //
-        // All cuts for validation and search bins
-        std::map<std::string, std::string> shape_cuts_low_dm = {
-            {"NBeq0_NJle5",     ";nBottoms" + varSuffix + "=0;nJets" + varSuffix + "<=5"},
-            {"NBeq0_NJge6",     ";nBottoms" + varSuffix + "=0;nJets" + varSuffix + ">=6"},
-            {"NBeq0",           ";nBottoms" + varSuffix + "=0"},
-            {"NBeq1",           ";nBottoms" + varSuffix + "=1"},
-            {"NBge1",           ";nBottoms" + varSuffix + ">=1"},
-            {"NBge2",           ";nBottoms" + varSuffix + ">=2"},
-            {"NBge2_NJge7",     ";nBottoms" + varSuffix + ">=2;nJets" + varSuffix + ">=7"},
+        std::map<std::string, std::string> photon_var_map = {
+            {"NB",  "nBottoms"     + varSuffix},
+            {"NSV", "nSoftBottoms" + varSuffix},
+            {"NJ",  "nJets"        + varSuffix},
         };
-        std::map<std::string, std::string> shape_cuts_high_dm = {
-            {"NBeq1",       ";nBottoms" + varSuffix + "=1"},
-            {"NBeq1_NJge7", ";nBottoms" + varSuffix + "=1;nJets" + varSuffix + ">=7"},
-            {"NBeq2",       ";nBottoms" + varSuffix + "=2"},
-            {"NBge2",       ";nBottoms" + varSuffix + ">=2"},
-            {"NBge2_NJge7", ";nBottoms" + varSuffix + ">=2;nJets" + varSuffix + ">=7"},
-            {"NBge3",       ";nBottoms" + varSuffix + ">=3"},
-        };
+        std::vector<std::string> vec_shape_cuts_low_dm  = {"NBeq0_NJle5", "NBeq0_NJge6", "NBeq0", "NBeq1", "NBge1", "NBge2", "NBge2_NJge7"};
+        std::vector<std::string> vec_shape_cuts_high_dm = {"NBeq1", "NBeq1_NJge7", "NBeq2", "NBge2", "NBge2_NJge7", "NBge3"};
+        std::map<std::string, std::string> map_shape_cuts_low_dm;
+        std::map<std::string, std::string> map_shape_cuts_high_dm;
+        for (auto& cut : vec_shape_cuts_low_dm)
+        {
+            map_shape_cuts_low_dm[cut] = ";" + SusyUtility::parseCuts(cut, photon_var_map);
+        }
+        for (auto& cut : vec_shape_cuts_high_dm)
+        {
+            map_shape_cuts_high_dm[cut] = ";" + SusyUtility::parseCuts(cut, photon_var_map);
+        }
 
         if (doDataMCPhoton)
         {
@@ -1707,7 +1708,7 @@ int main(int argc, char* argv[])
             std::vector<double> xbins_nj_nb0 = {2.0, 6.0, 10.0}; // njets = 2 - 5, >=6
             std::vector<double> xbins_nj_nb1 = {2.0, 7.0, 10.0}; // njets = 2 - 6, >=7
             // Search and Validation Bins Selection
-            for (const auto& cut : shape_cuts_low_dm)
+            for (const auto& cut : map_shape_cuts_low_dm)
             {
                 const bool doNorm = true;
                 std::string PhotonWeights = "Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + PrefireWeight + puWeight;
@@ -1717,7 +1718,7 @@ int main(int argc, char* argv[])
                 PDC dcMC_Photon_LowDM_met(                               "stack",  "metWithPhoton", StackMC_Photon_LowDM);
                 vh.push_back(PHS("DataMC_Photon_LowDM_met_" + cut.first + histSuffix,                              {dcData_Photon_LowDM_met,                              dcMC_Photon_LowDM_met},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
             }
-            for (const auto& cut : shape_cuts_high_dm)
+            for (const auto& cut : map_shape_cuts_high_dm)
             {
                 const bool doNorm = true;
                 std::string PhotonWeights = "Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + PrefireWeight + puWeight;
