@@ -189,6 +189,7 @@ class SearchBins(Common):
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
+        # SBv3
         self.low_dm_start   = 0
         self.low_dm_end     = 52
         self.high_dm_start  = 53
@@ -257,24 +258,19 @@ class ValidationBins(Common):
         self.verbose = verbose
         self.binValues = {}
         self.values = ["norm", "shape", "mc", "pred"]
-        # bins 0 to 45; bins 19, 20, and 21 are not included
-        # old version
-        #self.low_dm_bins_normal     = list(str(b) for b in range( 0, 15)) 
-        #self.low_dm_bins_highmet    = list(str(b) for b in range(15, 19))
-        #self.low_dm_bins            = list(str(b) for b in range( 0, 19))
-        #self.high_dm_bins           = list(str(b) for b in range(22, 46))
-        #self.all_bins               = self.low_dm_bins + self.high_dm_bins
-        # new version
+        # SBv3
         self.low_dm_start           = 0
+        self.low_dm_normal_end      = 14
+        self.low_dm_highmet_start   = 15
         self.low_dm_end             = 18
-        self.high_dm_start          = 22
-        self.high_dm_end            = 45
+        self.high_dm_start          = 19
+        self.high_dm_end            = 42
         self.low_dm_nbins           = self.low_dm_end - self.low_dm_start + 1 
         self.high_dm_nbins          = self.high_dm_end - self.high_dm_start + 1 
-        self.low_dm_bins            = list(str(b) for b in range( self.low_dm_start,  self.low_dm_end + 1)) 
-        self.high_dm_bins           = list(str(b) for b in range( self.high_dm_start, self.high_dm_end + 1)) 
-        self.low_dm_bins_normal     = list(str(b) for b in range( 0, 15)) 
-        self.low_dm_bins_highmet    = list(str(b) for b in range(15, 19))
+        self.low_dm_bins            = list(str(b) for b in range( self.low_dm_start,         self.low_dm_end + 1)) 
+        self.high_dm_bins           = list(str(b) for b in range( self.high_dm_start,        self.high_dm_end + 1)) 
+        self.low_dm_bins_normal     = list(str(b) for b in range( self.low_dm_start,         self.low_dm_normal_end + 1)) 
+        self.low_dm_bins_highmet    = list(str(b) for b in range( self.low_dm_highmet_start, self.low_dm_end))
         self.all_bins               = self.low_dm_bins + self.high_dm_bins
         with open("validation_bins.json", "r") as j:
             self.bins = json.load(j)
