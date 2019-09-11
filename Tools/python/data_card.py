@@ -26,6 +26,10 @@ def makeDataCard(BinObject, directory, era):
     cs_event = "cs_event = "
     # weighted average of the weights
     avg_weight = "avg_weight = "
+    # prediction:                   p     = bin value
+    # uncertainty:                  sigma = bin error
+    # average weight:               avg_w = sigma^2 / p 
+    # effective number of events:   N_eff = p / avg_w
     
     for bin_i in BinObject.all_bins:
         # bin_i starts from 0

@@ -36,20 +36,24 @@ class Common:
             self.writeLine("\geometry{margin=1in}")
             self.writeLine("")
             self.writeLine("\\begin{document}")
+            self.writeLine("\\footnotesize")
+            self.writeLine("\\tabcolsep=0.01cm")
             for era in self.eras:
                 era_tex = era.replace("_", " ")
                 # begin table
                 self.writeLine("\\centering")
-                # *5{} syntax with vertical lines; put last | in expression *5{|}
-                self.writeLine("\\begin{longtable}{|*5{p{0.16\\textwidth}|}}")
-                self.writeLine("\hline Bin & $R_{Z}$ & $S_{\gamma}$ & $N_{MC}$ & $N_{p}$ \\\\")
+                # *n{} syntax with vertical lines for n columns; put last | in expression *5{|}
+                self.writeLine("\\begin{longtable}{|*7{p{0.16\\textwidth}|}}")
+                self.writeLine("\hline Bin & $R_{Z}$ & $S_{\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $N_{eff}$ \\\\")
                 # write values to table
                 for b in self.all_bins:
                     norm  = self.binValues[era][b]["norm_tex"]
                     shape = self.binValues[era][b]["shape_tex"]
                     mc    = self.binValues[era][b]["mc_tex"]
                     pred  = self.binValues[era][b]["pred_tex"]
-                    self.writeLine("\hline {0} & {1} & {2} & {3} & {4} \\\\".format(b, norm, shape, mc, pred))
+                    avg_w = self.binValues[era][b]["avg_w_tex"]
+                    n_eff = self.binValues[era][b]["n_eff_tex"]
+                    self.writeLine("\hline {0} & {1} & {2} & {3} & {4} & {5} & {6}\\\\".format(b, norm, shape, mc, pred, avg_w, n_eff))
                 self.writeLine("\hline")
                 # for longtable, caption must go at the bottom of the table... it is not working at the top
                 self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
@@ -90,15 +94,40 @@ class Common:
             s_error = self.binValues[era][b]["shape_error"]
             m       = self.binValues[era][b]["mc"]
             m_error = self.binValues[era][b]["mc_error"]
+            
+            # prediction:                   p     = bin value
+            # uncertainty:                  sigma = bin error
+            # average weight:               avg_w = sigma^2 / p 
+            # effective number of events:   N_eff = p / avg_w
+            
             p       = n * s * m
             x_list = [n, s, m]
             dx_list = [n_error, s_error, m_error]
             p_error = getMultiplicationErrorList(p, x_list, dx_list)
-            self.binValues[era][b]["pred"] = p
-            self.binValues[era][b]["pred_error"] = p_error
+            avg_w = (p_error ** 2) / p
+            if p == 0:
+                print "ERROR: bin {0}, pred = {1}; seting avg weight to 1.0".format(b, p)
+                avg_w   = 1.0
+            else:
+                avg_w   = (p_error ** 2) / p
+            n_eff = p / avg_w
+            n_eff_final = int(n_eff)
+            if n_eff_final == 0:
+                print "ERROR: bin {0}, n_eff_final = {1}; leaving avg weight unchanged".format(b, n_eff_final)
+                avg_w_final = avg_w
+            else:
+                avg_w_final = p / n_eff_final
+
+            self.binValues[era][b]["pred"]          = p
+            self.binValues[era][b]["pred_error"]    = p_error
+            self.binValues[era][b]["avg_w"]         = avg_w_final
+            self.binValues[era][b]["n_eff"]         = n_eff_final
             
             for value in self.values:
                 self.binValues[era][b][value + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(self.binValues[era][b][value], self.binValues[era][b][value + "_error"])
+                
+            for value in ["avg_w", "n_eff"]:
+                self.binValues[era][b][value + "_tex"] = "${0:.3f}$".format(self.binValues[era][b][value])
 
             if self.verbose:
                 print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
