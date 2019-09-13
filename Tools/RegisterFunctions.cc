@@ -104,13 +104,13 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     // Important: create objects!!
     myBLV                       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "");
     myBLV_jetpt20               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt20");
-    myBLV_jetpt30               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30");
+    // myBLV_jetpt30               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30");
     blv_drLeptonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned");
     blv_drLeptonCleaned_jetpt20 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt20");
-    blv_drLeptonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30");
+    // blv_drLeptonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30");
     blv_drPhotonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned");
     blv_drPhotonCleaned_jetpt20 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt20");
-    blv_drPhotonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30");
+    // blv_drPhotonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30");
     //blvZinv      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
     //blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
     //blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
@@ -138,6 +138,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
 
     nJetAk8                      = new plotterFunctions::NJetAk8;
     ak8DrMatch                   = new plotterFunctions::Ak8DrMatch;
+    shapeNJets                   = new plotterFunctions::ShapeNJets;
 
     myPDFUnc = new PDFUncertainty();
     bTagCorrector = nullptr;
@@ -182,13 +183,13 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(runTopTagger_drPhotonCleaned) delete runTopTagger_drPhotonCleaned;
     if(myBLV)                        delete myBLV;
     if(myBLV_jetpt20)                delete myBLV_jetpt20;
-    if(myBLV_jetpt30)                delete myBLV_jetpt30;
+    // if(myBLV_jetpt30)                delete myBLV_jetpt30;
     if(blv_drLeptonCleaned)          delete blv_drLeptonCleaned;
     if(blv_drLeptonCleaned_jetpt20)  delete blv_drLeptonCleaned_jetpt20;
-    if(blv_drLeptonCleaned_jetpt30)  delete blv_drLeptonCleaned_jetpt30;
+    // if(blv_drLeptonCleaned_jetpt30)  delete blv_drLeptonCleaned_jetpt30;
     if(blv_drPhotonCleaned)          delete blv_drPhotonCleaned;
     if(blv_drPhotonCleaned_jetpt20)  delete blv_drPhotonCleaned_jetpt20;
-    if(blv_drPhotonCleaned_jetpt30)  delete blv_drPhotonCleaned_jetpt30;
+    // if(blv_drPhotonCleaned_jetpt30)  delete blv_drPhotonCleaned_jetpt30;
     //if(blvZinv)                      delete blvZinv;
     //if(blvZinv1b)                  delete blvZinv1b;
     //if(blvZinv2b)                  delete blvZinv2b;
@@ -213,6 +214,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(ISRcorrector)                 delete ISRcorrector;
     if(pileup)                       delete pileup;
     if(gamma)                        delete gamma;
+    if(shapeNJets)                   delete shapeNJets;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -232,14 +234,15 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*runTopTagger_drPhotonCleaned);
     tr.registerFunction(*myBLV);
     tr.registerFunction(*myBLV_jetpt20);
-    tr.registerFunction(*myBLV_jetpt30);
+    // tr.registerFunction(*myBLV_jetpt30);
     tr.registerFunction(*lepInfo);
     tr.registerFunction(*blv_drLeptonCleaned);
     tr.registerFunction(*blv_drLeptonCleaned_jetpt20);
-    tr.registerFunction(*blv_drLeptonCleaned_jetpt30);
+    // tr.registerFunction(*blv_drLeptonCleaned_jetpt30);
     tr.registerFunction(*blv_drPhotonCleaned);
     tr.registerFunction(*blv_drPhotonCleaned_jetpt20);
-    tr.registerFunction(*blv_drPhotonCleaned_jetpt30);
+    // tr.registerFunction(*blv_drPhotonCleaned_jetpt30);
+    tr.registerFunction(*shapeNJets);
     tr.registerFunction(*getSearchBin);
     
     // old version including JEC and systematics
