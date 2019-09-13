@@ -34,6 +34,14 @@ def stringifyMap(rawMap):
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
+# get bin error
+# return given error for bins with value 0.0
+def getBinError(value, value_error, error_for_zero):
+    if value == 0 and value_error == 0:
+        return error_for_zero
+    else:
+        return value_error
+
 # used for sorting by first element
 def takeFirst(elem):
     return elem[0]
