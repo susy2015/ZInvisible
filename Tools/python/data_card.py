@@ -1,6 +1,6 @@
 # data_card.py
 
-from tools import isclose
+from tools import isclose, ERROR_ZERO
 
 def writeLine(f, line):
     f.write(line + "\n")
@@ -30,7 +30,6 @@ def makeDataCard(BinObject, directory, era):
     # uncertainty:                  sigma = bin error
     # average weight:               avg_w = sigma^2 / p 
     # effective number of events:   N_eff = p / avg_w
-    error_for_zero = 2.0
     
     for bin_i in BinObject.all_bins:
         # bin_i starts from 0
@@ -39,8 +38,8 @@ def makeDataCard(BinObject, directory, era):
         pred    = float(BinObject.binValues[era][bin_i]["pred"])
         sigma   = float(BinObject.binValues[era][bin_i]["pred_error"])
         if pred == 0:
-            print "ERROR: bin {0}, pred = {1}; seting avg weight to {2}".format(b, pred, error_for_zero)
-            avg_w   = error_for_zero
+            print "ERROR: bin {0}, pred = {1}; seting avg weight to {2}".format(b, pred, ERROR_ZERO)
+            avg_w   = ERROR_ZERO
         else:
             avg_w   = (sigma ** 2) / pred
         n_eff   = pred / avg_w

@@ -9,6 +9,13 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
+# CMS Poisson Errors
+# https://twiki.cern.ch/twiki/bin/viewauth/CMS/StatisticsCommittee
+# https://twiki.cern.ch/twiki/bin/view/CMS/PoissonErrorBars
+
+# poisson error for 0 
+ERROR_ZERO = 1.841022
+# general error code
 ERROR_CODE = -999
 
 # Important: be careful with order of replacing characters if keys match values

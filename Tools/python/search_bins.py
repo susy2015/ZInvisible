@@ -1,7 +1,7 @@
 # search_bins.py
 import json
 import ROOT
-from tools import setupHist, getMultiplicationErrorList, removeCuts, getBinError
+from tools import setupHist, getMultiplicationErrorList, removeCuts, getBinError, ERROR_ZERO
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -20,10 +20,6 @@ class Common:
         self.color_green  = "irish green" 
         self.color_purple = "violet"
         self.color_black  = "black"
-        # CMS Poisson Errors
-        # https://twiki.cern.ch/twiki/bin/viewauth/CMS/StatisticsCommittee
-        # https://twiki.cern.ch/twiki/bin/view/CMS/PoissonErrorBars
-        self.error_for_zero = 1.841022
     
     def writeLine(self, line):
         self.output_file.write(line + "\n")
@@ -110,11 +106,11 @@ class Common:
             p_error = getMultiplicationErrorList(p, x_list, dx_list)
             # error < 0.0 due to error code
             if p_error < 0.0:
-                p_error = self.error_for_zero 
+                p_error = ERROR_ZERO 
             avg_w = (p_error ** 2) / p
             if p == 0:
-                print "ERROR: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, self.error_for_zero)
-                avg_w   = self.error_for_zero
+                print "ERROR: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
+                avg_w   = ERROR_ZERO
             else:
                 avg_w   = (p_error ** 2) / p
             n_eff = p / avg_w
@@ -270,14 +266,14 @@ class SearchBins(Common):
             value       = h_lowdm.GetBinContent(bin_i)
             value_error = h_lowdm.GetBinError(bin_i)
             self.binValues[era][b]["mc"]       = value
-            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, self.error_for_zero)
+            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
             bin_i += 1
         bin_i = 1
         for b in self.high_dm_bins:
             value       = h_highdm.GetBinContent(bin_i)
             value_error = h_highdm.GetBinError(bin_i)
             self.binValues[era][b]["mc"]       = value
-            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, self.error_for_zero)
+            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
             bin_i += 1
 
         # new root file to save search bin histograms
@@ -349,21 +345,21 @@ class ValidationBins(Common):
             value       = h_lowdm.GetBinContent(bin_i)
             value_error = h_lowdm.GetBinError(bin_i)
             self.binValues[era][b]["mc"]       = value
-            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, self.error_for_zero)
+            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
             bin_i += 1
         bin_i = 1
         for b in self.low_dm_bins_highmet:
             value       = h_lowdm_highmet.GetBinContent(bin_i)
             value_error = h_lowdm_highmet.GetBinError(bin_i)
             self.binValues[era][b]["mc"]       = value
-            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, self.error_for_zero)
+            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
             bin_i += 1
         bin_i = 1
         for b in self.high_dm_bins:
             value       = h_highdm.GetBinContent(bin_i)
             value_error = h_highdm.GetBinError(bin_i)
             self.binValues[era][b]["mc"]       = value
-            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, self.error_for_zero)
+            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
             bin_i += 1
 
         # new root file to save validation bin histograms
