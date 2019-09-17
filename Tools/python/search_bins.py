@@ -33,7 +33,7 @@ class Common:
             self.writeLine("\usepackage[utf8]{inputenc}")
             self.writeLine("\usepackage{geometry}")
             self.writeLine("\usepackage{longtable}")
-            self.writeLine("\geometry{margin=1in}")
+            self.writeLine("\geometry{margin=0.1cm}")
             self.writeLine("")
             self.writeLine("\\begin{document}")
             self.writeLine("\\footnotesize")
@@ -42,18 +42,22 @@ class Common:
                 era_tex = era.replace("_", " ")
                 # begin table
                 self.writeLine("\\centering")
-                # *n{} syntax with vertical lines for n columns; put last | in expression *5{|}
-                self.writeLine("\\begin{longtable}{|*7{p{0.16\\textwidth}|}}")
-                self.writeLine("\hline Bin & $R_{Z}$ & $S_{\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $N_{eff}$ \\\\")
+                # *n{} syntax with vertical lines for n columns; put last | in expression: *n{...|}
+                # make first column for bin numbers small
+                self.writeLine("\\begin{longtable}{|p{0.05\\textwidth}|*8{p{0.1\\textwidth}|}}")
+                # column headers
+                self.writeLine("\hline Bin & $R_{Z}$ & $S_{\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $\\langle w \\rangle'$ & $N_{eff}$ & $N_{eff}'$ \\\\")
                 # write values to table
                 for b in self.all_bins:
-                    norm  = self.binValues[era][b]["norm_tex"]
-                    shape = self.binValues[era][b]["shape_tex"]
-                    mc    = self.binValues[era][b]["mc_tex"]
-                    pred  = self.binValues[era][b]["pred_tex"]
-                    avg_w = self.binValues[era][b]["avg_w_tex"]
-                    n_eff = self.binValues[era][b]["n_eff_tex"]
-                    self.writeLine("\hline {0} & {1} & {2} & {3} & {4} & {5} & {6}\\\\".format(b, norm, shape, mc, pred, avg_w, n_eff))
+                    norm        = self.binValues[era][b]["norm_tex"]
+                    shape       = self.binValues[era][b]["shape_tex"]
+                    mc          = self.binValues[era][b]["mc_tex"]
+                    pred        = self.binValues[era][b]["pred_tex"]
+                    avg_w       = self.binValues[era][b]["avg_w_tex"]
+                    n_eff       = self.binValues[era][b]["n_eff_tex"]
+                    avg_w_final = self.binValues[era][b]["avg_w_final_tex"]
+                    n_eff_final = self.binValues[era][b]["n_eff_final_tex"]
+                    self.writeLine("\hline {0} & {1} & {2} & {3} & {4} & {5} & {6} & {7} & {8} \\\\".format(b, norm, shape, mc, pred, avg_w, avg_w_final, n_eff, n_eff_final))
                 self.writeLine("\hline")
                 # for longtable, caption must go at the bottom of the table... it is not working at the top
                 self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))

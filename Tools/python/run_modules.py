@@ -56,9 +56,6 @@ def main():
 
     N = Normalization(verbose)
     S = Shape(plot_dir, draw, verbose)
-
-    table_file = open("njets_table.txt", "w+") 
-    T = Table(table_file)
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
@@ -79,17 +76,12 @@ def main():
             SB.getValues(result_file, era)
             makeDataCard(VB, dataCardValidation_dir, era)
             makeDataCard(SB, dataCardSearch_dir,     era)
-            T.makeTable(result_file, era)
 
     N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
     VB.makeTexFile("Z Invisible Prediction for Validation Bins", latex_dir + "zinv_prediction_validation_bins.tex")
     SB.makeTexFile("Z Invisible Prediction for Search Bins",     latex_dir + "zinv_prediction_search_bins.tex")
 
-    table_file.close()
-
 if __name__ == "__main__":
     main()
-
-
 
