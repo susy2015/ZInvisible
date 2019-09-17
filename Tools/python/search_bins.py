@@ -107,7 +107,6 @@ class Common:
             # error < 0.0 due to error code
             if p_error < 0.0:
                 p_error = ERROR_ZERO 
-            avg_w = (p_error ** 2) / p
             if p == 0:
                 print "ERROR: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
                 avg_w   = ERROR_ZERO
@@ -123,13 +122,15 @@ class Common:
 
             self.binValues[era][b]["pred"]          = p
             self.binValues[era][b]["pred_error"]    = p_error
-            self.binValues[era][b]["avg_w"]         = avg_w_final
-            self.binValues[era][b]["n_eff"]         = n_eff_final
+            self.binValues[era][b]["avg_w"]         = avg_w
+            self.binValues[era][b]["n_eff"]         = n_eff
+            self.binValues[era][b]["avg_w_final"]   = avg_w_final
+            self.binValues[era][b]["n_eff_final"]   = n_eff_final
             
             for value in self.values:
                 self.binValues[era][b][value + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(self.binValues[era][b][value], self.binValues[era][b][value + "_error"])
                 
-            for value in ["avg_w", "n_eff"]:
+            for value in ["avg_w", "n_eff", "avg_w_final", "n_eff_final"]:
                 self.binValues[era][b][value + "_tex"] = "${0:.3f}$".format(self.binValues[era][b][value])
 
             if self.verbose:

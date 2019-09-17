@@ -1,6 +1,6 @@
 # data_card.py
 
-from tools import isclose, ERROR_ZERO
+from tools import isclose
 
 def writeLine(f, line):
     f.write(line + "\n")
@@ -34,21 +34,11 @@ def makeDataCard(BinObject, directory, era):
     for bin_i in BinObject.all_bins:
         # bin_i starts from 0
         # for datacard, use b starting from 1
-        b       = str(int(bin_i) + 1)
-        pred    = float(BinObject.binValues[era][bin_i]["pred"])
-        sigma   = float(BinObject.binValues[era][bin_i]["pred_error"])
-        if pred == 0:
-            print "ERROR: bin {0}, pred = {1}; seting avg weight to {2}".format(b, pred, ERROR_ZERO)
-            avg_w   = ERROR_ZERO
-        else:
-            avg_w   = (sigma ** 2) / pred
-        n_eff   = pred / avg_w
-        n_eff_final = int(n_eff)
-        if n_eff_final == 0:
-            print "ERROR: bin {0}, n_eff_final = {1}; leaving avg weight unchanged".format(b, n_eff_final)
-            avg_w_final = avg_w
-        else:
-            avg_w_final = pred / n_eff_final
+        b           = str(int(bin_i) + 1)
+        pred        = float(BinObject.binValues[era][bin_i]["pred"])
+        sigma       = float(BinObject.binValues[era][bin_i]["pred_error"])
+        n_eff_final = float(BinObject.binValues[era][bin_i]["n_eff_final"])
+        avg_w_final = float(BinObject.binValues[era][bin_i]["avg_w_final"])
         channel     += "bin{0} ".format(b)
         rate        += "{0} ".format(pred)
         cs_event    += "{0} ".format(n_eff_final)
@@ -56,7 +46,7 @@ def makeDataCard(BinObject, directory, era):
         x = pred
         y = n_eff_final * avg_w_final
         if (not isclose(x, y)):
-            print "ERROR: bin {0}, pred = {1} and Neff * avgW = {2}".format(b, x, y)
+            print "ERROR: bin {0}, pred = {1} and Neff * avgW = {2} are not equal".format(b, x, y)
    
     writeLine(out_file, channel)
     writeLine(out_file, rate)
