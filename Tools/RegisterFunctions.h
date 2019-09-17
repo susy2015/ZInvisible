@@ -35,6 +35,7 @@ namespace plotterFunctions
     class NJetAk8;
     class Ak8DrMatch; 
     class Gamma;
+    class ShapeNJets;
 }
 
 class SystWeights;
@@ -60,13 +61,13 @@ class RegisterFunctionsNTuple : public RegisterFunctions
 private:
     BaselineVessel *myBLV;
     BaselineVessel *myBLV_jetpt20;
-    BaselineVessel *myBLV_jetpt30;
+    // BaselineVessel *myBLV_jetpt30;
     BaselineVessel *blv_drLeptonCleaned;
     BaselineVessel *blv_drLeptonCleaned_jetpt20;
-    BaselineVessel *blv_drLeptonCleaned_jetpt30;
+    // BaselineVessel *blv_drLeptonCleaned_jetpt30;
     BaselineVessel *blv_drPhotonCleaned;
     BaselineVessel *blv_drPhotonCleaned_jetpt20;
-    BaselineVessel *blv_drPhotonCleaned_jetpt30;
+    // BaselineVessel *blv_drPhotonCleaned_jetpt30;
     BaselineVessel *blvZinv;
     //BaselineVessel *blvZinv1b;
     //BaselineVessel *blvZinv2b;
@@ -98,6 +99,7 @@ private:
     plotterFunctions::SystematicCalc            *systematicCalc;
     plotterFunctions::NJetAk8                   *nJetAk8;
     plotterFunctions::Ak8DrMatch                *ak8DrMatch;
+    plotterFunctions::ShapeNJets                *shapeNJets;
 
 public:
     RegisterFunctionsNTuple(bool isCondor, std::string sbEra, std::string year);
