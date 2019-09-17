@@ -9,6 +9,13 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
+# CMS Poisson Errors
+# https://twiki.cern.ch/twiki/bin/viewauth/CMS/StatisticsCommittee
+# https://twiki.cern.ch/twiki/bin/view/CMS/PoissonErrorBars
+
+# poisson error for 0 
+ERROR_ZERO = 1.841022
+# general error code
 ERROR_CODE = -999
 
 # Important: be careful with order of replacing characters if keys match values
@@ -33,6 +40,14 @@ def stringifyMap(rawMap):
 # isclose(): used to compare floats up to some relative tolerance and absolute tolerance
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+# get bin error
+# return given error for bins with value 0.0
+def getBinError(value, value_error, error_for_zero):
+    if value == 0 and value_error == 0:
+        return error_for_zero
+    else:
+        return value_error
 
 # used for sorting by first element
 def takeFirst(elem):

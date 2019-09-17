@@ -1,7 +1,7 @@
 # search_bins.py
 import json
 import ROOT
-from tools import setupHist, getMultiplicationErrorList, removeCuts
+from tools import setupHist, getMultiplicationErrorList, removeCuts, getBinError, ERROR_ZERO
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -36,20 +36,24 @@ class Common:
             self.writeLine("\geometry{margin=1in}")
             self.writeLine("")
             self.writeLine("\\begin{document}")
+            self.writeLine("\\footnotesize")
+            self.writeLine("\\tabcolsep=0.01cm")
             for era in self.eras:
                 era_tex = era.replace("_", " ")
                 # begin table
                 self.writeLine("\\centering")
-                # *5{} syntax with vertical lines; put last | in expression *5{|}
-                self.writeLine("\\begin{longtable}{|*5{p{0.16\\textwidth}|}}")
-                self.writeLine("\hline Bin & $R_{Z}$ & $S_{\gamma}$ & $N_{MC}$ & $N_{p}$ \\\\")
+                # *n{} syntax with vertical lines for n columns; put last | in expression *5{|}
+                self.writeLine("\\begin{longtable}{|*7{p{0.16\\textwidth}|}}")
+                self.writeLine("\hline Bin & $R_{Z}$ & $S_{\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $N_{eff}$ \\\\")
                 # write values to table
                 for b in self.all_bins:
                     norm  = self.binValues[era][b]["norm_tex"]
                     shape = self.binValues[era][b]["shape_tex"]
                     mc    = self.binValues[era][b]["mc_tex"]
                     pred  = self.binValues[era][b]["pred_tex"]
-                    self.writeLine("\hline {0} & {1} & {2} & {3} & {4} \\\\".format(b, norm, shape, mc, pred))
+                    avg_w = self.binValues[era][b]["avg_w_tex"]
+                    n_eff = self.binValues[era][b]["n_eff_tex"]
+                    self.writeLine("\hline {0} & {1} & {2} & {3} & {4} & {5} & {6}\\\\".format(b, norm, shape, mc, pred, avg_w, n_eff))
                 self.writeLine("\hline")
                 # for longtable, caption must go at the bottom of the table... it is not working at the top
                 self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
@@ -90,15 +94,43 @@ class Common:
             s_error = self.binValues[era][b]["shape_error"]
             m       = self.binValues[era][b]["mc"]
             m_error = self.binValues[era][b]["mc_error"]
+            
+            # prediction:                   p     = bin value
+            # uncertainty:                  sigma = bin error
+            # average weight:               avg_w = sigma^2 / p 
+            # effective number of events:   N_eff = p / avg_w
+            
             p       = n * s * m
             x_list = [n, s, m]
             dx_list = [n_error, s_error, m_error]
             p_error = getMultiplicationErrorList(p, x_list, dx_list)
-            self.binValues[era][b]["pred"] = p
-            self.binValues[era][b]["pred_error"] = p_error
+            # error < 0.0 due to error code
+            if p_error < 0.0:
+                p_error = ERROR_ZERO 
+            avg_w = (p_error ** 2) / p
+            if p == 0:
+                print "ERROR: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
+                avg_w   = ERROR_ZERO
+            else:
+                avg_w   = (p_error ** 2) / p
+            n_eff = p / avg_w
+            n_eff_final = int(n_eff)
+            if n_eff_final == 0:
+                print "ERROR: bin {0}, n_eff_final = {1}; leaving avg weight unchanged".format(b, n_eff_final)
+                avg_w_final = avg_w
+            else:
+                avg_w_final = p / n_eff_final
+
+            self.binValues[era][b]["pred"]          = p
+            self.binValues[era][b]["pred_error"]    = p_error
+            self.binValues[era][b]["avg_w"]         = avg_w_final
+            self.binValues[era][b]["n_eff"]         = n_eff_final
             
             for value in self.values:
                 self.binValues[era][b][value + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(self.binValues[era][b][value], self.binValues[era][b][value + "_error"])
+                
+            for value in ["avg_w", "n_eff"]:
+                self.binValues[era][b][value + "_tex"] = "${0:.3f}$".format(self.binValues[era][b][value])
 
             if self.verbose:
                 print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
@@ -189,6 +221,7 @@ class SearchBins(Common):
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
+        # SBv3
         self.low_dm_start   = 0
         self.low_dm_end     = 52
         self.high_dm_start  = 53
@@ -230,13 +263,17 @@ class SearchBins(Common):
         # b is search bin number
         bin_i = 1
         for b in self.low_dm_bins:
-            self.binValues[era][b]["mc"]       = h_lowdm.GetBinContent(bin_i)
-            self.binValues[era][b]["mc_error"] = h_lowdm.GetBinError(bin_i)
+            value       = h_lowdm.GetBinContent(bin_i)
+            value_error = h_lowdm.GetBinError(bin_i)
+            self.binValues[era][b]["mc"]       = value
+            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
             bin_i += 1
         bin_i = 1
         for b in self.high_dm_bins:
-            self.binValues[era][b]["mc"]       = h_highdm.GetBinContent(bin_i)
-            self.binValues[era][b]["mc_error"] = h_highdm.GetBinError(bin_i)
+            value       = h_highdm.GetBinContent(bin_i)
+            value_error = h_highdm.GetBinError(bin_i)
+            self.binValues[era][b]["mc"]       = value
+            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
             bin_i += 1
 
         # new root file to save search bin histograms
@@ -257,24 +294,19 @@ class ValidationBins(Common):
         self.verbose = verbose
         self.binValues = {}
         self.values = ["norm", "shape", "mc", "pred"]
-        # bins 0 to 45; bins 19, 20, and 21 are not included
-        # old version
-        #self.low_dm_bins_normal     = list(str(b) for b in range( 0, 15)) 
-        #self.low_dm_bins_highmet    = list(str(b) for b in range(15, 19))
-        #self.low_dm_bins            = list(str(b) for b in range( 0, 19))
-        #self.high_dm_bins           = list(str(b) for b in range(22, 46))
-        #self.all_bins               = self.low_dm_bins + self.high_dm_bins
-        # new version
+        # SBv3
         self.low_dm_start           = 0
+        self.low_dm_normal_end      = 14
+        self.low_dm_highmet_start   = 15
         self.low_dm_end             = 18
-        self.high_dm_start          = 22
-        self.high_dm_end            = 45
+        self.high_dm_start          = 19
+        self.high_dm_end            = 42
         self.low_dm_nbins           = self.low_dm_end - self.low_dm_start + 1 
         self.high_dm_nbins          = self.high_dm_end - self.high_dm_start + 1 
-        self.low_dm_bins            = list(str(b) for b in range( self.low_dm_start,  self.low_dm_end + 1)) 
-        self.high_dm_bins           = list(str(b) for b in range( self.high_dm_start, self.high_dm_end + 1)) 
-        self.low_dm_bins_normal     = list(str(b) for b in range( 0, 15)) 
-        self.low_dm_bins_highmet    = list(str(b) for b in range(15, 19))
+        self.low_dm_bins            = list(str(b) for b in range( self.low_dm_start,         self.low_dm_end + 1)) 
+        self.high_dm_bins           = list(str(b) for b in range( self.high_dm_start,        self.high_dm_end + 1)) 
+        self.low_dm_bins_normal     = list(str(b) for b in range( self.low_dm_start,         self.low_dm_normal_end + 1)) 
+        self.low_dm_bins_highmet    = list(str(b) for b in range( self.low_dm_highmet_start, self.low_dm_end + 1))
         self.all_bins               = self.low_dm_bins + self.high_dm_bins
         with open("validation_bins.json", "r") as j:
             self.bins = json.load(j)
@@ -310,18 +342,24 @@ class ValidationBins(Common):
         # b is validation bin number
         bin_i = 1
         for b in self.low_dm_bins_normal:
-            self.binValues[era][b]["mc"]       = h_lowdm.GetBinContent(bin_i)
-            self.binValues[era][b]["mc_error"] = h_lowdm.GetBinError(bin_i)
+            value       = h_lowdm.GetBinContent(bin_i)
+            value_error = h_lowdm.GetBinError(bin_i)
+            self.binValues[era][b]["mc"]       = value
+            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
             bin_i += 1
         bin_i = 1
         for b in self.low_dm_bins_highmet:
-            self.binValues[era][b]["mc"]       = h_lowdm_highmet.GetBinContent(bin_i)
-            self.binValues[era][b]["mc_error"] = h_lowdm_highmet.GetBinError(bin_i)
+            value       = h_lowdm_highmet.GetBinContent(bin_i)
+            value_error = h_lowdm_highmet.GetBinError(bin_i)
+            self.binValues[era][b]["mc"]       = value
+            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
             bin_i += 1
         bin_i = 1
         for b in self.high_dm_bins:
-            self.binValues[era][b]["mc"]       = h_highdm.GetBinContent(bin_i)
-            self.binValues[era][b]["mc_error"] = h_highdm.GetBinError(bin_i)
+            value       = h_highdm.GetBinContent(bin_i)
+            value_error = h_highdm.GetBinError(bin_i)
+            self.binValues[era][b]["mc"]       = value
+            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
             bin_i += 1
 
         # new root file to save validation bin histograms

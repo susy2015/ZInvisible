@@ -70,15 +70,15 @@ namespace plotterFunctions
                 int nSearchBinLowDM  = SBv3_lowdm(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
                 int nSearchBinHighDM = SBv3_highdm(mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
                 
-                //-------------------------------------------//
-                //--- Updated Validation Bins (June 2019) ---//
-                //-------------------------------------------//
-                // int SBv2_lowdm_validation(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
-                // int SBv2_lowdm_validation_high_MET(int nb, int nSV, float ISRpt, float met)
-                // int SBv2_highdm_validation(float mtb, int njets, int ntop, int nw, int nres, int nb, float met)
-                int nValidationBinLowDM        = SBv2_lowdm_validation(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nValidationBinLowDMHighMET = SBv2_lowdm_validation_high_MET(nBottoms, nSoftBottoms, ISRJetPt, met);
-                int nValidationBinHighDM       = SBv2_highdm_validation(mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met); 
+                //------------------------------------------------//
+                //--- Updated Validation Bins (September 2019) ---//
+                //------------------------------------------------//
+                // int SBv3_lowdm_validation(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
+                // int SBv3_lowdm_validation_high_MET(int nb, int nSV, float ISRpt, float met)
+                // int SBv3_highdm_validation(float mtb, int njets, int ntop, int nw, int nres, int nb, float met)
+                int nValidationBinLowDM        = SBv3_lowdm_validation(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                int nValidationBinLowDMHighMET = SBv3_lowdm_validation_high_MET(nBottoms, nSoftBottoms, ISRJetPt, met);
+                int nValidationBinHighDM       = SBv3_highdm_validation(mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met); 
                 
                 tr.registerDerivedVar("nSearchBinLowDM"             + suffix, nSearchBinLowDM);
                 tr.registerDerivedVar("nSearchBinHighDM"            + suffix, nSearchBinHighDM);

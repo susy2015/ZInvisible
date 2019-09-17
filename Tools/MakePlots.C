@@ -388,14 +388,14 @@ int main(int argc, char* argv[])
     //Validation Bins
     // Low DM, 15 bins: 0 - 14
     // Low DM High MET, 4 bins: 15 - 18
-    // High DM, 24 bins: 22 - 45
-    // Total 43 bins: 0 - 18 and 22 - 45
+    // High DM, 24 bins: 19 - 42
+    // Total 43 bins: 0 - 18 and 19 - 42
     int min_vb_low_dm = 0;
     int max_vb_low_dm = 15;
     int min_vb_low_dm_high_met = 15;
     int max_vb_low_dm_high_met = 19;
-    int min_vb_high_dm = 22;
-    int max_vb_high_dm = 46;
+    int min_vb_high_dm = 19;
+    int max_vb_high_dm = 43;
 
     // min and max values for histos
     int nBins = 40;
