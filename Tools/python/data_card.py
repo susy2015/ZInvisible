@@ -37,6 +37,8 @@ def makeDataCard(BinObject, directory, era):
         b           = str(int(bin_i) + 1)
         pred        = float(BinObject.binValues[era][bin_i]["pred"])
         sigma       = float(BinObject.binValues[era][bin_i]["pred_error"])
+        n_eff       = float(BinObject.binValues[era][bin_i]["n_eff"])
+        avg_w       = float(BinObject.binValues[era][bin_i]["avg_w"])
         n_eff_final = float(BinObject.binValues[era][bin_i]["n_eff_final"])
         avg_w_final = float(BinObject.binValues[era][bin_i]["avg_w_final"])
         channel     += "bin{0} ".format(b)
@@ -44,7 +46,7 @@ def makeDataCard(BinObject, directory, era):
         cs_event    += "{0} ".format(n_eff_final)
         avg_weight  += "{0} ".format(avg_w_final)
         x = pred
-        y = n_eff_final * avg_w_final
+        y = n_eff * avg_w
         if (not isclose(x, y)):
             print "ERROR: bin {0}, pred = {1} and Neff * avgW = {2} are not equal".format(b, x, y)
    
