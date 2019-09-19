@@ -17,5 +17,6 @@
 #include "SystematicPrep.h"
 #include "Taudiv.h"
 #include "TriggerInfo.h"
+#include "ShapeNJets.h"
 
 #endif
