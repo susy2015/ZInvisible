@@ -354,7 +354,6 @@ class Normalization:
                             selections_tex = self.selections_tex[bin_type][region][selection]
                             era_tex = era.replace("_", " ")
                             self.writeLine("\hline {0} & {1} & {2} & {3} & {4} & {5} \\\\".format(region_tex, selections_tex, era_tex, channel, R_Z, R_T))
-                            print "{0} {1} {2} {3} {4}".format(region, selection, era, channel, selections_tex)
             self.writeLine("\hline")
             # end table
             self.writeLine("\\caption{Normalization}")

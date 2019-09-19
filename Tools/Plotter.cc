@@ -263,6 +263,8 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
     double retval = 1.0;
     for(auto& weightName : weightVec_)
     {
+        // for testing
+        //std::cout << "weight name: " << weightName << std::endl;
         const double& weight = static_cast<double>(tr.getVar<data_t>(weightName));
         if(weight == weight)
         {
