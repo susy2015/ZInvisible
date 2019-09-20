@@ -356,6 +356,7 @@ x509userproxy = $ENV(X509_USER_PROXY)
             lumi = lumis[refLumi]
             print "Sample for Ref. Lumi: {0}; normalizing to lumi = {1} pb-1".format(refLumi, lumi) 
    
+        debug = False
         total_files = 0
         total_events = 0
         jobMap = {}
@@ -370,6 +371,8 @@ x509userproxy = $ENV(X509_USER_PROXY)
             
             # s: file, n:name, e:nEvts
             for s, n, e in sc.sampleList(ds):
+                if debug:
+                    print "s={0}, n={1}, e={2}".format(s, n, e)
                 n_files = sum(1 for line in open(s))
                 sample_files += n_files
                 sample_events += e
