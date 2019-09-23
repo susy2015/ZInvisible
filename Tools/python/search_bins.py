@@ -68,6 +68,28 @@ class Common:
             self.writeLine("\end{document}")
 
     # ---------------------------------------------------------------------- #
+    # fillHistos():                                                          #
+    #    - set bin content and errors for histograms                         #
+    # ---------------------------------------------------------------------- #
+    def fillHistos(self, b_map, h_map, era):
+        debug = False
+        # Note: bin_i and b are different
+        # bin_i is histogram bin number
+        # b is validation bin number
+        for h_type in h_map:
+            for region in h_map[h_type]:
+                bin_i = 1
+                for b in b_map[region]:
+                    h = h_map[h_type][region]
+                    if debug:
+                        print "b={0} b_i={1} {2} {3}".format(b, bin_i, h_type, region)
+                    value       = h.GetBinContent(bin_i)
+                    value_error = h.GetBinError(bin_i)
+                    self.binValues[era][b][h_type]            = value
+                    self.binValues[era][b][h_type + "_error"] = getBinError(value, value_error, ERROR_ZERO)
+                    bin_i += 1
+    
+    # ---------------------------------------------------------------------- #
     # makeHistos():                                                          #
     #    - make, plot, and save histograms                                   #
     #    - save relevant values to map                                       #
@@ -263,7 +285,6 @@ class ValidationBins(Common):
             self.bins = json.load(j)
 
     def getValues(self, file_name, era):
-        debug = True
         self.binValues[era] = {}
         
         for b in self.all_bins:
@@ -309,23 +330,26 @@ class ValidationBins(Common):
         h_map["mc"]["lowdm"]            = h_mc_lowdm
         h_map["mc"]["lowdm_highmet"]    = h_mc_lowdm_highmet
         h_map["mc"]["highdm"]           = h_mc_highdm
+
+        # fill histograms
+        self.fillHistos(b_map, h_map, era)
         
-        # Note: bin_i and b are different
-        # bin_i is histogram bin number
-        # b is validation bin number
-        
-        for h_type in h_map:
-            for region in h_map[h_type]:
-                bin_i = 1
-                for b in b_map[region]:
-                    h = h_map[h_type][region]
-                    if debug:
-                        print "b={0} b_i={1} {2} {3}".format(b, bin_i, h_type, region)
-                    value       = h.GetBinContent(bin_i)
-                    value_error = h.GetBinError(bin_i)
-                    self.binValues[era][b][h_type]            = value
-                    self.binValues[era][b][h_type + "_error"] = getBinError(value, value_error, ERROR_ZERO)
-                    bin_i += 1
+        #TODO: delete    
+        ## Note: bin_i and b are different
+        ## bin_i is histogram bin number
+        ## b is validation bin number
+        #for h_type in h_map:
+        #    for region in h_map[h_type]:
+        #        bin_i = 1
+        #        for b in b_map[region]:
+        #            h = h_map[h_type][region]
+        #            if debug:
+        #                print "b={0} b_i={1} {2} {3}".format(b, bin_i, h_type, region)
+        #            value       = h.GetBinContent(bin_i)
+        #            value_error = h.GetBinError(bin_i)
+        #            self.binValues[era][b][h_type]            = value
+        #            self.binValues[era][b][h_type + "_error"] = getBinError(value, value_error, ERROR_ZERO)
+        #            bin_i += 1
         
         #TODO: delete    
         #bin_i = 1
@@ -365,6 +389,7 @@ class SearchBins(Common):
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
+        self.unblind = False
         # SBv3
         self.low_dm_start   = 0
         self.low_dm_end     = 52
@@ -399,26 +424,63 @@ class SearchBins(Common):
             self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["search"][region][selection_shape][met + "_error"]
         
         # Z to NuNu MC histograms
-        f_in        = ROOT.TFile(file_name, "read")
-        h_lowdm     = f_in.Get("nSearchBinLowDM_jetpt20/ZNuNu_nSearchBin_LowDM_jetpt20_" + era + "nSearchBinLowDM_jetpt20nSearchBinLowDM_jetpt20ZJetsToNuNu Search Bin Low DMdata")
-        h_highdm    = f_in.Get("nSearchBinHighDM_jetpt20/ZNuNu_nSearchBin_HighDM_jetpt20_" + era + "nSearchBinHighDM_jetpt20nSearchBinHighDM_jetpt20ZJetsToNuNu Search Bin High DMdata")
-        # Note: bin_i and b are different
-        # bin_i is histogram bin number
-        # b is search bin number
-        bin_i = 1
-        for b in self.low_dm_bins:
-            value       = h_lowdm.GetBinContent(bin_i)
-            value_error = h_lowdm.GetBinError(bin_i)
-            self.binValues[era][b]["mc"]       = value
-            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
-            bin_i += 1
-        bin_i = 1
-        for b in self.high_dm_bins:
-            value       = h_highdm.GetBinContent(bin_i)
-            value_error = h_highdm.GetBinError(bin_i)
-            self.binValues[era][b]["mc"]       = value
-            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
-            bin_i += 1
+        f_in            = ROOT.TFile(file_name, "read")
+        if (self.unblind):
+            h_data_lowdm    = f_in.Get("nSearchBinLowDM_jetpt20/MET_nSearchBin_LowDM_jetpt20_"      + era + "nSearchBinLowDM_jetpt20nSearchBinLowDM_jetpt20Data MET Search Bin Low DMdata") 
+            h_data_highdm   = f_in.Get("nSearchBinHighDM_jetpt20/MET_nSearchBin_HighDM_jetpt20_"    + era + "nSearchBinHighDM_jetpt20nSearchBinHighDM_jetpt20Data MET Search Bin High DMdata")
+        h_mc_lowdm      = f_in.Get("nSearchBinLowDM_jetpt20/ZNuNu_nSearchBin_LowDM_jetpt20_"    + era + "nSearchBinLowDM_jetpt20nSearchBinLowDM_jetpt20ZJetsToNuNu Search Bin Low DMdata")
+        h_mc_highdm     = f_in.Get("nSearchBinHighDM_jetpt20/ZNuNu_nSearchBin_HighDM_jetpt20_"  + era + "nSearchBinHighDM_jetpt20nSearchBinHighDM_jetpt20ZJetsToNuNu Search Bin High DMdata")
+        
+        # bin map
+        b_map = {}
+        b_map["lowdm"]   = self.low_dm_bins
+        b_map["highdm"]  = self.high_dm_bins
+        # histogram map
+        h_map = {}
+        if (self.unblind):
+            h_map["data"] = {}
+            h_map["data"]["lowdm"]   = h_data_lowdm
+            h_map["data"]["highdm"]  = h_data_highdm
+        h_map["mc"] = {}
+        h_map["mc"]["lowdm"]     = h_mc_lowdm
+        h_map["mc"]["highdm"]    = h_mc_highdm
+        
+        # fill histograms
+        self.fillHistos(b_map, h_map, era)
+        
+        #TODO: delete    
+        ## Note: bin_i and b are different
+        ## bin_i is histogram bin number
+        ## b is search bin number
+        #for h_type in h_map:
+        #    for region in h_map[h_type]:
+        #        bin_i = 1
+        #        for b in b_map[region]:
+        #            h = h_map[h_type][region]
+        #            if debug:
+        #                print "b={0} b_i={1} {2} {3}".format(b, bin_i, h_type, region)
+        #            value       = h.GetBinContent(bin_i)
+        #            value_error = h.GetBinError(bin_i)
+        #            self.binValues[era][b][h_type]            = value
+        #            self.binValues[era][b][h_type + "_error"] = getBinError(value, value_error, ERROR_ZERO)
+        #            bin_i += 1
+        
+        
+        #TODO: delete    
+        #bin_i = 1
+        #for b in self.low_dm_bins:
+        #    value       = h_lowdm.GetBinContent(bin_i)
+        #    value_error = h_lowdm.GetBinError(bin_i)
+        #    self.binValues[era][b]["mc"]       = value
+        #    self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
+        #    bin_i += 1
+        #bin_i = 1
+        #for b in self.high_dm_bins:
+        #    value       = h_highdm.GetBinContent(bin_i)
+        #    value_error = h_highdm.GetBinError(bin_i)
+        #    self.binValues[era][b]["mc"]       = value
+        #    self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
+        #    bin_i += 1
 
         # new root file to save search bin histograms
         new_file = "searchBinsZinv_" + era + ".root"
