@@ -11,7 +11,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # classes for search bins and validation bins
 
 # Common class is parent class
-# SearchBins and ValidationBins inherit from Common
+# ValidationBins and SearchBins inherit from Common
 class Common:
     def __init__(self):
         # colors
@@ -141,6 +141,10 @@ class Common:
                         )
 
                 
+        ###################
+        # Make Histograms #
+        ###################
+        
         # define histograms 
         h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
         h_mc_highdm   = ROOT.TH1F("mc_highdm",   "mc_highdm",   self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
@@ -229,6 +233,128 @@ class Common:
         f_out.Close()
 
 
+# vadliation bins
+class ValidationBins(Common):
+    def __init__(self, normalization, shape, eras, plot_dir, verbose):
+        # run parent init function
+        Common.__init__(self)
+        self.N = normalization
+        self.S = shape
+        self.eras = eras
+        self.plot_dir = plot_dir
+        self.verbose = verbose
+        self.binValues = {}
+        self.values = ["norm", "shape", "mc", "pred"]
+        # SBv3
+        self.low_dm_start           = 0
+        self.low_dm_normal_end      = 14
+        self.low_dm_highmet_start   = 15
+        self.low_dm_end             = 18
+        self.high_dm_start          = 19
+        self.high_dm_end            = 42
+        self.low_dm_nbins           = self.low_dm_end - self.low_dm_start + 1 
+        self.high_dm_nbins          = self.high_dm_end - self.high_dm_start + 1 
+        self.low_dm_bins            = list(str(b) for b in range( self.low_dm_start,         self.low_dm_end + 1)) 
+        self.high_dm_bins           = list(str(b) for b in range( self.high_dm_start,        self.high_dm_end + 1)) 
+        self.low_dm_bins_normal     = list(str(b) for b in range( self.low_dm_start,         self.low_dm_normal_end + 1)) 
+        self.low_dm_bins_highmet    = list(str(b) for b in range( self.low_dm_highmet_start, self.low_dm_end + 1))
+        self.all_bins               = self.low_dm_bins + self.high_dm_bins
+        with open("validation_bins.json", "r") as j:
+            self.bins = json.load(j)
+
+    def getValues(self, file_name, era):
+        debug = True
+        self.binValues[era] = {}
+        
+        for b in self.all_bins:
+            region      = self.bins[b]["region"]
+            selection   = self.bins[b]["selection"]
+            met         = self.bins[b]["met"]
+            # remove cuts from selection for norm and shape
+            selection_norm  = removeCuts(selection, "NJ")
+            selection_shape = removeCuts(selection, "NSV")
+            self.binValues[era][b] = {}
+            self.binValues[era][b]["norm"]        = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z"]
+            self.binValues[era][b]["norm_error"]  = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z_error"]
+            self.binValues[era][b]["shape"]       = self.S.shape_map[era]["validation"][region][selection_shape][met]
+            self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["validation"][region][selection_shape][met + "_error"]
+
+        # Z to NuNu histograms
+        #TDirectoryFile*: nValidationBinLowDM_jetpt20
+        #TH1D   MET_nValidationBin_LowDM_jetpt20_2018_PostHEMnValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20Data MET Validation Bin Low DMdata
+        #TH1D   ZNuNu_nValidationBin_LowDM_jetpt20_2016nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata
+        #TDirectoryFile*: nValidationBinLowDMHighMET_jetpt20 
+        #TH1D   MET_nValidationBin_LowDM_HighMET_jetpt20_2018_PostHEMnValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20Data MET Validation Bin Low DM High METdata
+        #TH1D   ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_2016nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata
+        f_in                   = ROOT.TFile(file_name, "read")
+        h_data_lowdm           = f_in.Get("nValidationBinLowDM_jetpt20/MET_nValidationBin_LowDM_jetpt20_"                   + era + "nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20Data MET Validation Bin Low DMdata") 
+        h_data_lowdm_highmet   = f_in.Get("nValidationBinLowDMHighMET_jetpt20/MET_nValidationBin_LowDM_HighMET_jetpt20_"    + era + "nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20Data MET Validation Bin Low DM High METdata")
+        h_data_highdm          = f_in.Get("nValidationBinHighDM_jetpt20/MET_nValidationBin_HighDM_jetpt20_"                 + era + "nValidationBinHighDM_jetpt20nValidationBinHighDM_jetpt20Data MET Validation Bin High DMdata")
+        h_mc_lowdm             = f_in.Get("nValidationBinLowDM_jetpt20/ZNuNu_nValidationBin_LowDM_jetpt20_"                 + era + "nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata")
+        h_mc_lowdm_highmet     = f_in.Get("nValidationBinLowDMHighMET_jetpt20/ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_"  + era + "nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata")
+        h_mc_highdm            = f_in.Get("nValidationBinHighDM_jetpt20/ZNuNu_nValidationBin_HighDM_jetpt20_"               + era + "nValidationBinHighDM_jetpt20nValidationBinHighDM_jetpt20ZJetsToNuNu Validation Bin High DMdata")
+        
+        # bin map
+        b_map = {}
+        b_map["lowdm"]          = self.low_dm_bins_normal
+        b_map["lowdm_highmet"]  = self.low_dm_bins_highmet
+        b_map["highdm"]         = self.high_dm_bins
+        # histogram map
+        h_map = {}
+        h_map["data"] = {}
+        h_map["data"]["lowdm"]          = h_data_lowdm
+        h_map["data"]["lowdm_highmet"]  = h_data_lowdm_highmet
+        h_map["data"]["highdm"]         = h_data_highdm
+        h_map["mc"] = {}
+        h_map["mc"]["lowdm"]            = h_mc_lowdm
+        h_map["mc"]["lowdm_highmet"]    = h_mc_lowdm_highmet
+        h_map["mc"]["highdm"]           = h_mc_highdm
+        
+        # Note: bin_i and b are different
+        # bin_i is histogram bin number
+        # b is validation bin number
+        
+        for h_type in h_map:
+            for region in h_map[h_type]:
+                bin_i = 1
+                for b in b_map[region]:
+                    h = h_map[h_type][region]
+                    if debug:
+                        print "b={0} b_i={1} {2} {3}".format(b, bin_i, h_type, region)
+                    value       = h.GetBinContent(bin_i)
+                    value_error = h.GetBinError(bin_i)
+                    self.binValues[era][b][h_type]            = value
+                    self.binValues[era][b][h_type + "_error"] = getBinError(value, value_error, ERROR_ZERO)
+                    bin_i += 1
+        
+        #TODO: delete    
+        #bin_i = 1
+        #for b in self.low_dm_bins_normal:
+        #    value       = h_mc_lowdm.GetBinContent(bin_i)
+        #    value_error = h_mc_lowdm.GetBinError(bin_i)
+        #    self.binValues[era][b]["mc"]       = value
+        #    self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
+        #    bin_i += 1
+        #bin_i = 1
+        #for b in self.low_dm_bins_highmet:
+        #    value       = h_mc_lowdm_highmet.GetBinContent(bin_i)
+        #    value_error = h_mc_lowdm_highmet.GetBinError(bin_i)
+        #    self.binValues[era][b]["mc"]       = value
+        #    self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
+        #    bin_i += 1
+        #bin_i = 1
+        #for b in self.high_dm_bins:
+        #    value       = h_mc_highdm.GetBinContent(bin_i)
+        #    value_error = h_mc_highdm.GetBinError(bin_i)
+        #    self.binValues[era][b]["mc"]       = value
+        #    self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
+        #    bin_i += 1
+
+        # new root file to save validation bin histograms
+        new_file = "validationBinsZinv_" + era + ".root"
+        self.makeHistos(new_file, "Validation Bin", "validation", era)
+        f_in.Close()
+  
 # search bins 
 class SearchBins(Common):
     def __init__(self, normalization, shape, eras, plot_dir, verbose):
@@ -298,93 +424,4 @@ class SearchBins(Common):
         new_file = "searchBinsZinv_" + era + ".root"
         self.makeHistos(new_file, "Search Bin", "search", era)
         f_in.Close()
-
-
-# vadliation bins
-class ValidationBins(Common):
-    def __init__(self, normalization, shape, eras, plot_dir, verbose):
-        # run parent init function
-        Common.__init__(self)
-        self.N = normalization
-        self.S = shape
-        self.eras = eras
-        self.plot_dir = plot_dir
-        self.verbose = verbose
-        self.binValues = {}
-        self.values = ["norm", "shape", "mc", "pred"]
-        # SBv3
-        self.low_dm_start           = 0
-        self.low_dm_normal_end      = 14
-        self.low_dm_highmet_start   = 15
-        self.low_dm_end             = 18
-        self.high_dm_start          = 19
-        self.high_dm_end            = 42
-        self.low_dm_nbins           = self.low_dm_end - self.low_dm_start + 1 
-        self.high_dm_nbins          = self.high_dm_end - self.high_dm_start + 1 
-        self.low_dm_bins            = list(str(b) for b in range( self.low_dm_start,         self.low_dm_end + 1)) 
-        self.high_dm_bins           = list(str(b) for b in range( self.high_dm_start,        self.high_dm_end + 1)) 
-        self.low_dm_bins_normal     = list(str(b) for b in range( self.low_dm_start,         self.low_dm_normal_end + 1)) 
-        self.low_dm_bins_highmet    = list(str(b) for b in range( self.low_dm_highmet_start, self.low_dm_end + 1))
-        self.all_bins               = self.low_dm_bins + self.high_dm_bins
-        with open("validation_bins.json", "r") as j:
-            self.bins = json.load(j)
-
-    def getValues(self, file_name, era):
-        self.binValues[era] = {}
-        
-        for b in self.all_bins:
-            region      = self.bins[b]["region"]
-            selection   = self.bins[b]["selection"]
-            met         = self.bins[b]["met"]
-            # remove cuts from selection for norm and shape
-            selection_norm  = removeCuts(selection, "NJ")
-            selection_shape = removeCuts(selection, "NSV")
-            self.binValues[era][b] = {}
-            self.binValues[era][b]["norm"]        = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z"]
-            self.binValues[era][b]["norm_error"]  = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z_error"]
-            self.binValues[era][b]["shape"]       = self.S.shape_map[era]["validation"][region][selection_shape][met]
-            self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["validation"][region][selection_shape][met + "_error"]
-
-        # Z to NuNu MC histograms
-        #TDirectoryFile*: nValidationBinLowDM_jetpt20
-        #TH1D:  ZNuNu_nValidationBin_LowDM_jetpt20_2016nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata
-        #TDirectoryFile*: nValidationBinLowDMHighMET_jetpt20 
-        #ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_2016nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata
-        f_in                = ROOT.TFile(file_name, "read")
-        h_lowdm             = f_in.Get("nValidationBinLowDM_jetpt20/ZNuNu_nValidationBin_LowDM_jetpt20_" + era + "nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata")
-        h_lowdm_highmet     = f_in.Get("nValidationBinLowDMHighMET_jetpt20/ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_" + era + "nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata")
-        h_highdm            = f_in.Get("nValidationBinHighDM_jetpt20/ZNuNu_nValidationBin_HighDM_jetpt20_" + era + "nValidationBinHighDM_jetpt20nValidationBinHighDM_jetpt20ZJetsToNuNu Validation Bin High DMdata")
-        
-        # Note: bin_i and b are different
-        # bin_i is histogram bin number
-        # b is validation bin number
-        bin_i = 1
-        for b in self.low_dm_bins_normal:
-            value       = h_lowdm.GetBinContent(bin_i)
-            value_error = h_lowdm.GetBinError(bin_i)
-            self.binValues[era][b]["mc"]       = value
-            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
-            bin_i += 1
-        bin_i = 1
-        for b in self.low_dm_bins_highmet:
-            value       = h_lowdm_highmet.GetBinContent(bin_i)
-            value_error = h_lowdm_highmet.GetBinError(bin_i)
-            self.binValues[era][b]["mc"]       = value
-            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
-            bin_i += 1
-        bin_i = 1
-        for b in self.high_dm_bins:
-            value       = h_highdm.GetBinContent(bin_i)
-            value_error = h_highdm.GetBinError(bin_i)
-            self.binValues[era][b]["mc"]       = value
-            self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
-            bin_i += 1
-
-        # new root file to save validation bin histograms
-        new_file = "validationBinsZinv_" + era + ".root"
-        self.makeHistos(new_file, "Validation Bin", "validation", era)
-        f_in.Close()
-  
-
-
 
