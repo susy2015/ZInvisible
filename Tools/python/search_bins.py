@@ -25,8 +25,6 @@ class Common:
         self.output_file.write(line + "\n")
 
     def makeTexFile(self, caption, output_name):
-        # show final values after rounding
-        showFinal = False
         # write latex file with table
         with open(output_name, "w+") as f:
             self.output_file = f
@@ -46,29 +44,21 @@ class Common:
                 self.writeLine("\\centering")
                 # *n{} syntax with vertical lines for n columns; put last | in expression: *n{...|}
                 # make first column for bin numbers small
-                if showFinal:
-                    self.writeLine("\\begin{longtable}{|p{0.04\\textwidth}|*8{p{0.1\\textwidth}|}}")
-                else:
-                    self.writeLine("\\begin{longtable}{|p{0.04\\textwidth}|*6{p{0.15\\textwidth}|}}")
+                self.writeLine("\\begin{longtable}{|p{0.03\\textwidth}|p{0.3\\textwidth}|*6{p{0.1\\textwidth}|}}")
                 # column headers
-                if showFinal:
-                    self.writeLine("\hline Bin & $R_{Z}$ & $S_{\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $\\langle w \\rangle'$ & $N_{eff}$ & $N_{eff}'$ \\\\")
-                else:
-                    self.writeLine("\hline Bin & $R_{Z}$ & $S_{\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $N_{eff}$ \\\\")
+                self.writeLine("\hline Bin & Selection & $R_{Z}$ & $S_{\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $N_{eff}$ \\\\")
                 # write values to table
                 for b in self.all_bins:
-                    norm        = self.binValues[era][b]["norm_tex"]
-                    shape       = self.binValues[era][b]["shape_tex"]
-                    mc          = self.binValues[era][b]["mc_tex"]
-                    pred        = self.binValues[era][b]["pred_tex"]
-                    avg_w       = self.binValues[era][b]["avg_w_tex"]
-                    n_eff       = self.binValues[era][b]["n_eff_tex"]
-                    avg_w_final = self.binValues[era][b]["avg_w_final_tex"]
-                    n_eff_final = self.binValues[era][b]["n_eff_final_tex"]
-                    if showFinal:
-                        self.writeLine("\hline {0} & {1} & {2} & {3} & {4} & {5} & {6} & {7} & {8} \\\\".format(b, norm, shape, mc, pred, avg_w, avg_w_final, n_eff, n_eff_final))
-                    else:
-                        self.writeLine("\hline {0} & {1} & {2} & {3} & {4} & {5} & {6} \\\\".format(b, norm, shape, mc, pred, avg_w, n_eff))
+                    total_selection = self.binValues[era][b]["total_selection"]
+                    norm            = self.binValues[era][b]["norm_tex"]
+                    shape           = self.binValues[era][b]["shape_tex"]
+                    mc              = self.binValues[era][b]["mc_tex"]
+                    pred            = self.binValues[era][b]["pred_tex"]
+                    avg_w           = self.binValues[era][b]["avg_w_tex"]
+                    n_eff           = self.binValues[era][b]["n_eff_tex"]
+                    avg_w_final     = self.binValues[era][b]["avg_w_final_tex"]
+                    n_eff_final     = self.binValues[era][b]["n_eff_final_tex"]
+                    self.writeLine("\hline {0} & {1} & {2} & {3} & {4} & {5} & {6} & {7} \\\\".format(b, total_selection, norm, shape, mc, pred, avg_w, n_eff))
                 self.writeLine("\hline")
                 # for longtable, caption must go at the bottom of the table... it is not working at the top
                 self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
@@ -86,23 +76,19 @@ class Common:
         eraTag = "_" + era
         draw_option = "hist error"
         f_out = ROOT.TFile(output_file, "recreate")
-        # define histograms 
-        h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
-        h_mc_highdm   = ROOT.TH1F("mc_highdm",   "mc_highdm",   self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
-        h_pred_lowdm  = ROOT.TH1F("pred_lowdm",  "pred_lowdm",  self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
-        h_pred_highdm = ROOT.TH1F("pred_highdm", "pred_highdm", self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
-
-        # setup histograms
-        #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-        setupHist(h_mc_lowdm,    "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
-        setupHist(h_mc_highdm,   "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
-        setupHist(h_pred_lowdm,  "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
-        setupHist(h_pred_highdm, "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
 
         # save values in map
         if self.verbose:
             print era
         for b in self.all_bins:
+            region          = self.bins[b]["region"]
+            selection       = self.bins[b]["selection"]
+            met             = self.bins[b]["met"]
+            region_tex      = region.replace("_", ", ")
+            selection_tex   = selection.replace("_", ", ")
+            met_tex         = met.replace("_", ", ")
+            total_selection = "{0} {1} {2}".format(region_tex, selection_tex, met_tex) 
+            
             n       = self.binValues[era][b]["norm"]
             n_error = self.binValues[era][b]["norm_error"]
             s       = self.binValues[era][b]["shape"]
@@ -135,12 +121,13 @@ class Common:
             else:
                 avg_w_final = p / n_eff_final
 
-            self.binValues[era][b]["pred"]          = p
-            self.binValues[era][b]["pred_error"]    = p_error
-            self.binValues[era][b]["avg_w"]         = avg_w
-            self.binValues[era][b]["n_eff"]         = n_eff
-            self.binValues[era][b]["avg_w_final"]   = avg_w_final
-            self.binValues[era][b]["n_eff_final"]   = n_eff_final
+            self.binValues[era][b]["total_selection"]   = total_selection
+            self.binValues[era][b]["pred"]              = p
+            self.binValues[era][b]["pred_error"]        = p_error
+            self.binValues[era][b]["avg_w"]             = avg_w
+            self.binValues[era][b]["n_eff"]             = n_eff
+            self.binValues[era][b]["avg_w_final"]       = avg_w_final
+            self.binValues[era][b]["n_eff_final"]       = n_eff_final
             
             for value in self.values:
                 self.binValues[era][b][value + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(self.binValues[era][b][value], self.binValues[era][b][value + "_error"])
@@ -152,6 +139,21 @@ class Common:
                 print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
                             b, n, n_error, s, s_error, m, m_error, p, p_error 
                         )
+
+                
+        # define histograms 
+        h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
+        h_mc_highdm   = ROOT.TH1F("mc_highdm",   "mc_highdm",   self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
+        h_pred_lowdm  = ROOT.TH1F("pred_lowdm",  "pred_lowdm",  self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
+        h_pred_highdm = ROOT.TH1F("pred_highdm", "pred_highdm", self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
+
+        # setup histograms
+        #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+        setupHist(h_mc_lowdm,    "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
+        setupHist(h_mc_highdm,   "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
+        setupHist(h_pred_lowdm,  "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
+        setupHist(h_pred_highdm, "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
+                
         # set histogram content and error
         bin_i = 1
         for b in self.low_dm_bins:
