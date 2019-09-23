@@ -68,10 +68,10 @@ class Common:
             self.writeLine("\end{document}")
 
     # ---------------------------------------------------------------------- #
-    # fillHistos():                                                          #
+    # setBinValues():                                                        #
     #    - set bin content and errors for histograms                         #
     # ---------------------------------------------------------------------- #
-    def fillHistos(self, b_map, h_map, era):
+    def setBinValues(self, b_map, h_map, era):
         debug = False
         # Note: bin_i and b are different
         # bin_i is histogram bin number
@@ -168,6 +168,9 @@ class Common:
         ###################
         
         # define histograms 
+        if (self.unblind):
+            h_data_lowdm    = ROOT.TH1F("data_lowdm",    "data_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
+            h_data_highdm   = ROOT.TH1F("data_highdm",   "data_highdm",   self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
         h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
         h_mc_highdm   = ROOT.TH1F("mc_highdm",   "mc_highdm",   self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
         h_pred_lowdm  = ROOT.TH1F("pred_lowdm",  "pred_lowdm",  self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
@@ -175,6 +178,9 @@ class Common:
 
         # setup histograms
         #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+        if (self.unblind):
+            setupHist(h_data_lowdm,    "Z to Invisible MC and Pblackiction " + era, x_title, "Events", self.color_black,  10.0 ** -2, 10.0 ** 4)
+            setupHist(h_data_highdm,   "Z to Invisible MC and Pblackiction " + era, x_title, "Events", self.color_black,  10.0 ** -2, 10.0 ** 4)
         setupHist(h_mc_lowdm,    "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
         setupHist(h_mc_highdm,   "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
         setupHist(h_pred_lowdm,  "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
@@ -183,6 +189,9 @@ class Common:
         # set histogram content and error
         bin_i = 1
         for b in self.low_dm_bins:
+            if (self.unblind):
+                h_data_lowdm.SetBinContent(bin_i, self.binValues[era][b]["data"])
+                h_data_lowdm.SetBinError(bin_i, self.binValues[era][b]["data_error"])
             h_mc_lowdm.SetBinContent(bin_i, self.binValues[era][b]["mc"])
             h_mc_lowdm.SetBinError(bin_i, self.binValues[era][b]["mc_error"])
             h_pred_lowdm.SetBinContent(bin_i, self.binValues[era][b]["pred"])
@@ -190,6 +199,9 @@ class Common:
             bin_i += 1
         bin_i = 1
         for b in self.high_dm_bins:
+            if (self.unblind):
+                h_data_highdm.SetBinContent(bin_i, self.binValues[era][b]["data"])
+                h_data_highdm.SetBinError(bin_i, self.binValues[era][b]["data_error"])
             h_mc_highdm.SetBinContent(bin_i, self.binValues[era][b]["mc"])
             h_mc_highdm.SetBinError(bin_i, self.binValues[era][b]["mc_error"])
             h_pred_highdm.SetBinContent(bin_i, self.binValues[era][b]["pred"])
@@ -197,12 +209,18 @@ class Common:
             bin_i += 1
 
         h_map = {}
+        
         h_map["lowdm"] = {}
         h_map["lowdm"]["mc"]   = h_mc_lowdm
         h_map["lowdm"]["pred"] = h_pred_lowdm
+        
         h_map["highdm"] = {}
         h_map["highdm"]["mc"]   = h_mc_highdm
         h_map["highdm"]["pred"] = h_pred_highdm
+        
+        if (self.unblind):
+            h_map["lowdm"]["data"]   = h_data_lowdm
+            h_map["highdm"]["data"]  = h_data_highdm
 
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
@@ -219,6 +237,8 @@ class Common:
         ###################
 
         for region in h_map:
+            if (self.unblind):
+                h_data   = h_map[region]["data"]
             h_mc   = h_map[region]["mc"]
             h_pred = h_map[region]["pred"]
             h_ratio = h_pred.Clone("h_ratio")
@@ -233,8 +253,13 @@ class Common:
             # ZInv MC and Prediction
             h_mc.Draw(draw_option)
             h_pred.Draw("error same")
+            if (self.unblind):
+                h_data.Draw("error same")
+            
             # legend: TLegend(x1,y1,x2,y2)
             legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            if (self.unblind):
+                legend.AddEntry(h_data,   "Data",   "l")
             legend.AddEntry(h_mc,   "MC",   "l")
             legend.AddEntry(h_pred, "Pred", "l")
             legend.Draw()
@@ -267,6 +292,7 @@ class ValidationBins(Common):
         self.verbose = verbose
         self.binValues = {}
         self.values = ["norm", "shape", "mc", "pred"]
+        self.unblind = True
         # SBv3
         self.low_dm_start           = 0
         self.low_dm_normal_end      = 14
@@ -308,9 +334,10 @@ class ValidationBins(Common):
         #TH1D   MET_nValidationBin_LowDM_HighMET_jetpt20_2018_PostHEMnValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20Data MET Validation Bin Low DM High METdata
         #TH1D   ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_2016nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata
         f_in                   = ROOT.TFile(file_name, "read")
-        h_data_lowdm           = f_in.Get("nValidationBinLowDM_jetpt20/MET_nValidationBin_LowDM_jetpt20_"                   + era + "nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20Data MET Validation Bin Low DMdata") 
-        h_data_lowdm_highmet   = f_in.Get("nValidationBinLowDMHighMET_jetpt20/MET_nValidationBin_LowDM_HighMET_jetpt20_"    + era + "nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20Data MET Validation Bin Low DM High METdata")
-        h_data_highdm          = f_in.Get("nValidationBinHighDM_jetpt20/MET_nValidationBin_HighDM_jetpt20_"                 + era + "nValidationBinHighDM_jetpt20nValidationBinHighDM_jetpt20Data MET Validation Bin High DMdata")
+        if (self.unblind):
+            h_data_lowdm           = f_in.Get("nValidationBinLowDM_jetpt20/MET_nValidationBin_LowDM_jetpt20_"                   + era + "nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20Data MET Validation Bin Low DMdata") 
+            h_data_lowdm_highmet   = f_in.Get("nValidationBinLowDMHighMET_jetpt20/MET_nValidationBin_LowDM_HighMET_jetpt20_"    + era + "nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20Data MET Validation Bin Low DM High METdata")
+            h_data_highdm          = f_in.Get("nValidationBinHighDM_jetpt20/MET_nValidationBin_HighDM_jetpt20_"                 + era + "nValidationBinHighDM_jetpt20nValidationBinHighDM_jetpt20Data MET Validation Bin High DMdata")
         h_mc_lowdm             = f_in.Get("nValidationBinLowDM_jetpt20/ZNuNu_nValidationBin_LowDM_jetpt20_"                 + era + "nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata")
         h_mc_lowdm_highmet     = f_in.Get("nValidationBinLowDMHighMET_jetpt20/ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_"  + era + "nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata")
         h_mc_highdm            = f_in.Get("nValidationBinHighDM_jetpt20/ZNuNu_nValidationBin_HighDM_jetpt20_"               + era + "nValidationBinHighDM_jetpt20nValidationBinHighDM_jetpt20ZJetsToNuNu Validation Bin High DMdata")
@@ -322,17 +349,18 @@ class ValidationBins(Common):
         b_map["highdm"]         = self.high_dm_bins
         # histogram map
         h_map = {}
-        h_map["data"] = {}
-        h_map["data"]["lowdm"]          = h_data_lowdm
-        h_map["data"]["lowdm_highmet"]  = h_data_lowdm_highmet
-        h_map["data"]["highdm"]         = h_data_highdm
+        if (self.unblind):
+            h_map["data"] = {}
+            h_map["data"]["lowdm"]          = h_data_lowdm
+            h_map["data"]["lowdm_highmet"]  = h_data_lowdm_highmet
+            h_map["data"]["highdm"]         = h_data_highdm
         h_map["mc"] = {}
         h_map["mc"]["lowdm"]            = h_mc_lowdm
         h_map["mc"]["lowdm_highmet"]    = h_mc_lowdm_highmet
         h_map["mc"]["highdm"]           = h_mc_highdm
 
         # fill histograms
-        self.fillHistos(b_map, h_map, era)
+        self.setBinValues(b_map, h_map, era)
         
         #TODO: delete    
         ## Note: bin_i and b are different
@@ -446,7 +474,7 @@ class SearchBins(Common):
         h_map["mc"]["highdm"]    = h_mc_highdm
         
         # fill histograms
-        self.fillHistos(b_map, h_map, era)
+        self.setBinValues(b_map, h_map, era)
         
         #TODO: delete    
         ## Note: bin_i and b are different
