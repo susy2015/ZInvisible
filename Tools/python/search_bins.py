@@ -69,7 +69,7 @@ class Common:
 
     # ---------------------------------------------------------------------- #
     # setBinValues():                                                        #
-    #    - set bin content and errors for histograms                         #
+    #    - set bin values and errors                                         #
     # ---------------------------------------------------------------------- #
     def setBinValues(self, b_map, h_map, era):
         debug = False
@@ -178,13 +178,14 @@ class Common:
 
         # setup histograms
         #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+        title = "Z to Invisible Data, MC and Prediction for " + era
         if (self.unblind):
-            setupHist(h_data_lowdm,    "Z to Invisible MC and Pblackiction " + era, x_title, "Events", self.color_black,  10.0 ** -2, 10.0 ** 4)
-            setupHist(h_data_highdm,   "Z to Invisible MC and Pblackiction " + era, x_title, "Events", self.color_black,  10.0 ** -2, 10.0 ** 4)
-        setupHist(h_mc_lowdm,    "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
-        setupHist(h_mc_highdm,   "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
-        setupHist(h_pred_lowdm,  "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
-        setupHist(h_pred_highdm, "Z to Invisible MC and Prediction " + era, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
+            setupHist(h_data_lowdm,    title, x_title, "Events", self.color_black,  10.0 ** -2, 10.0 ** 4)
+            setupHist(h_data_highdm,   title, x_title, "Events", self.color_black,  10.0 ** -2, 10.0 ** 4)
+        setupHist(h_mc_lowdm,    title, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
+        setupHist(h_mc_highdm,   title, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
+        setupHist(h_pred_lowdm,  title, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
+        setupHist(h_pred_highdm, title, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
                 
         # set histogram content and error
         bin_i = 1
@@ -227,7 +228,7 @@ class Common:
         c.Divide(1, 2)
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.5
+        legend_x1 = 0.7
         legend_x2 = 0.9 
         legend_y1 = 0.7 
         legend_y2 = 0.9 
@@ -245,7 +246,7 @@ class Common:
             h_ratio.Divide(h_mc)
         
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_ratio, "Z to Invisible Prediction / MC", x_title, "Pred / MC", self.color_black, 0.5, 1.5)
+            setupHist(h_ratio, "Z to Invisible Prediction / MC", x_title, "Pred / MC", self.color_blue, 0.5, 1.5)
 
             # histograms
             c.cd(1)
@@ -259,9 +260,9 @@ class Common:
             # legend: TLegend(x1,y1,x2,y2)
             legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
             if (self.unblind):
-                legend.AddEntry(h_data,   "Data",   "l")
-            legend.AddEntry(h_mc,   "MC",   "l")
-            legend.AddEntry(h_pred, "Pred", "l")
+                legend.AddEntry(h_data,   "MET Data",   "l")
+            legend.AddEntry(h_mc,   "Z#rightarrow#nu#nu MC",   "l")
+            legend.AddEntry(h_pred, "Z#rightarrow#nu#nu Pred", "l")
             legend.Draw()
            
             # ratios
@@ -274,6 +275,8 @@ class Common:
             c.SaveAs(plot_name + eraTag + ".pdf")
             c.SaveAs(plot_name + eraTag + ".png")
             # write histograms to file
+            if (self.unblind):
+                h_data.Write()
             h_mc.Write()
             h_pred.Write()
         
@@ -361,46 +364,6 @@ class ValidationBins(Common):
 
         # fill histograms
         self.setBinValues(b_map, h_map, era)
-        
-        #TODO: delete    
-        ## Note: bin_i and b are different
-        ## bin_i is histogram bin number
-        ## b is validation bin number
-        #for h_type in h_map:
-        #    for region in h_map[h_type]:
-        #        bin_i = 1
-        #        for b in b_map[region]:
-        #            h = h_map[h_type][region]
-        #            if debug:
-        #                print "b={0} b_i={1} {2} {3}".format(b, bin_i, h_type, region)
-        #            value       = h.GetBinContent(bin_i)
-        #            value_error = h.GetBinError(bin_i)
-        #            self.binValues[era][b][h_type]            = value
-        #            self.binValues[era][b][h_type + "_error"] = getBinError(value, value_error, ERROR_ZERO)
-        #            bin_i += 1
-        
-        #TODO: delete    
-        #bin_i = 1
-        #for b in self.low_dm_bins_normal:
-        #    value       = h_mc_lowdm.GetBinContent(bin_i)
-        #    value_error = h_mc_lowdm.GetBinError(bin_i)
-        #    self.binValues[era][b]["mc"]       = value
-        #    self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
-        #    bin_i += 1
-        #bin_i = 1
-        #for b in self.low_dm_bins_highmet:
-        #    value       = h_mc_lowdm_highmet.GetBinContent(bin_i)
-        #    value_error = h_mc_lowdm_highmet.GetBinError(bin_i)
-        #    self.binValues[era][b]["mc"]       = value
-        #    self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
-        #    bin_i += 1
-        #bin_i = 1
-        #for b in self.high_dm_bins:
-        #    value       = h_mc_highdm.GetBinContent(bin_i)
-        #    value_error = h_mc_highdm.GetBinError(bin_i)
-        #    self.binValues[era][b]["mc"]       = value
-        #    self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
-        #    bin_i += 1
 
         # new root file to save validation bin histograms
         new_file = "validationBinsZinv_" + era + ".root"
@@ -475,40 +438,6 @@ class SearchBins(Common):
         
         # fill histograms
         self.setBinValues(b_map, h_map, era)
-        
-        #TODO: delete    
-        ## Note: bin_i and b are different
-        ## bin_i is histogram bin number
-        ## b is search bin number
-        #for h_type in h_map:
-        #    for region in h_map[h_type]:
-        #        bin_i = 1
-        #        for b in b_map[region]:
-        #            h = h_map[h_type][region]
-        #            if debug:
-        #                print "b={0} b_i={1} {2} {3}".format(b, bin_i, h_type, region)
-        #            value       = h.GetBinContent(bin_i)
-        #            value_error = h.GetBinError(bin_i)
-        #            self.binValues[era][b][h_type]            = value
-        #            self.binValues[era][b][h_type + "_error"] = getBinError(value, value_error, ERROR_ZERO)
-        #            bin_i += 1
-        
-        
-        #TODO: delete    
-        #bin_i = 1
-        #for b in self.low_dm_bins:
-        #    value       = h_lowdm.GetBinContent(bin_i)
-        #    value_error = h_lowdm.GetBinError(bin_i)
-        #    self.binValues[era][b]["mc"]       = value
-        #    self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
-        #    bin_i += 1
-        #bin_i = 1
-        #for b in self.high_dm_bins:
-        #    value       = h_highdm.GetBinContent(bin_i)
-        #    value_error = h_highdm.GetBinError(bin_i)
-        #    self.binValues[era][b]["mc"]       = value
-        #    self.binValues[era][b]["mc_error"] = getBinError(value, value_error, ERROR_ZERO)
-        #    bin_i += 1
 
         # new root file to save search bin histograms
         new_file = "searchBinsZinv_" + era + ".root"
