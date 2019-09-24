@@ -81,7 +81,17 @@ def main():
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
     VB.makeTexFile("Z Invisible Prediction for Validation Bins", latex_dir + "zinv_prediction_validation_bins.tex")
     SB.makeTexFile("Z Invisible Prediction for Search Bins",     latex_dir + "zinv_prediction_search_bins.tex")
+    
+    # total Run2 prediction
+    # root files to save histograms
+    total_era = "Run2"
+    validation_file = "validationBinsZinv_" + total_era + ".root"
+    search_file     = "searchBinsZinv_"     + total_era + ".root"
+    VB.makeTotalPred( validation_file,  "Validation Bin",   "validation", total_era   )
+    SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
+
 
 if __name__ == "__main__":
     main()
+
 
