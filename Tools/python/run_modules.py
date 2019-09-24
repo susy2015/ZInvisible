@@ -90,6 +90,12 @@ def main():
     VB.makeTotalPred( validation_file,  "Validation Bin",   "validation", total_era   )
     SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
 
+    # TODO: making data card for Run 2 does not work because we have not run calcPrediction() for Run 2
+    #       calcPrediction() depends on norm and shape (which we calculate per era, not for all of Run 2)
+    #       make a way (possibly another function) to calculate values for Run 2 data card  
+    #makeDataCard(VB, dataCardValidation_dir, total_era)
+    #makeDataCard(SB, dataCardSearch_dir,     total_era)
+
 
 if __name__ == "__main__":
     main()

@@ -32,21 +32,17 @@ class Common:
     #    - set bin values and errors                                         #
     # ---------------------------------------------------------------------- #
     def setBinValues(self, b_map, h_map, era):
-        debug = True
+        debug = False
         # Note: h_map should have regions (lowdm, highdm) and h_type (mc, data)
         # h_map[region][h_type]
         
         # Note: bin_i and b are different
         # bin_i is histogram bin number
         # b is validation bin number
-        #TODO: delete
-        #for h_type in h_map:
-        #    for region in h_map[h_type]:
         for region in h_map:
             for h_type in h_map[region]:
                 bin_i = 1
                 for b in b_map[region]:
-                    #h = h_map[h_type][region]
                     h = h_map[region][h_type]
                     if debug:
                         print "b={0} b_i={1} {2} {3}".format(b, bin_i, region, h_type)
@@ -109,7 +105,7 @@ class Common:
     #    - save relevant values to map                                       #
     # ---------------------------------------------------------------------- #
     def makeTotalPred(self, output_file, x_title, name, total_era):
-        debug = True
+        debug = False
         
         # bin map
         b_map = {}
@@ -183,7 +179,6 @@ class Common:
         # set histogram content and error
         bin_i = 1
         for b in self.low_dm_bins:
-            print "DEBUG: {0} {1}".format(era, b)
             if (self.unblind):
                 h_data_lowdm.SetBinContent(bin_i,   self.binValues[era][b]["data"])
                 h_data_lowdm.SetBinError(bin_i,     self.binValues[era][b]["data_error"])
@@ -280,17 +275,7 @@ class Common:
             h_mc.Write()
             h_pred.Write()
         
-        # testing
-        h_1 = self.histograms[era]["lowdm"]["pred"]
-        h_2 = self.histograms[era]["lowdm"]["pred"].Clone()
-        h_3 = copy.copy(h_1)
-        print "DEBUG: (1) h_1 = {0}".format(h_1) 
-        print "DEBUG: (1) h_2 = {0}".format(h_2) 
-        print "DEBUG: (1) h_3 = {0}".format(h_3) 
         f_out.Close()
-        print "DEBUG: (2) h_1 = {0}".format(h_1) 
-        print "DEBUG: (2) h_2 = {0}".format(h_2) 
-        print "DEBUG: (2) h_3 = {0}".format(h_3) 
     
     # ---------------------------------------------------------------------- #
     # calcPrediction():                                                      #
@@ -361,133 +346,6 @@ class Common:
                             b, n, n_error, s, s_error, m, m_error, p, p_error 
                         )
 
-        
-        # TODO: delete when makeHistos() works
-                
-        ###################
-        # Make Histograms #
-        ###################
-        
-        #eraTag = "_" + era
-        #draw_option = "hist error"
-        #f_out = ROOT.TFile(output_file, "recreate")
-        #
-        ## define histograms 
-        #if (self.unblind):
-        #    h_data_lowdm    = ROOT.TH1F("data_lowdm",    "data_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
-        #    h_data_highdm   = ROOT.TH1F("data_highdm",   "data_highdm",   self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
-        #h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
-        #h_mc_highdm   = ROOT.TH1F("mc_highdm",   "mc_highdm",   self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
-        #h_pred_lowdm  = ROOT.TH1F("pred_lowdm",  "pred_lowdm",  self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
-        #h_pred_highdm = ROOT.TH1F("pred_highdm", "pred_highdm", self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
-
-        ## setup histograms
-        ##setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-        #title = "Z to Invisible Data, MC and Prediction for " + era
-        #if (self.unblind):
-        #    setupHist(h_data_lowdm,    title, x_title, "Events", self.color_black,  10.0 ** -2, 10.0 ** 4)
-        #    setupHist(h_data_highdm,   title, x_title, "Events", self.color_black,  10.0 ** -2, 10.0 ** 4)
-        #setupHist(h_mc_lowdm,    title, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
-        #setupHist(h_mc_highdm,   title, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 4)
-        #setupHist(h_pred_lowdm,  title, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
-        #setupHist(h_pred_highdm, title, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 4)
-        #        
-        ## set histogram content and error
-        #bin_i = 1
-        #for b in self.low_dm_bins:
-        #    if (self.unblind):
-        #        h_data_lowdm.SetBinContent(bin_i, self.binValues[era][b]["data"])
-        #        h_data_lowdm.SetBinError(bin_i, self.binValues[era][b]["data_error"])
-        #    h_mc_lowdm.SetBinContent(bin_i, self.binValues[era][b]["mc"])
-        #    h_mc_lowdm.SetBinError(bin_i, self.binValues[era][b]["mc_error"])
-        #    h_pred_lowdm.SetBinContent(bin_i, self.binValues[era][b]["pred"])
-        #    h_pred_lowdm.SetBinError(bin_i, self.binValues[era][b]["pred_error"])
-        #    bin_i += 1
-        #bin_i = 1
-        #for b in self.high_dm_bins:
-        #    if (self.unblind):
-        #        h_data_highdm.SetBinContent(bin_i, self.binValues[era][b]["data"])
-        #        h_data_highdm.SetBinError(bin_i, self.binValues[era][b]["data_error"])
-        #    h_mc_highdm.SetBinContent(bin_i, self.binValues[era][b]["mc"])
-        #    h_mc_highdm.SetBinError(bin_i, self.binValues[era][b]["mc_error"])
-        #    h_pred_highdm.SetBinContent(bin_i, self.binValues[era][b]["pred"])
-        #    h_pred_highdm.SetBinError(bin_i, self.binValues[era][b]["pred_error"])
-        #    bin_i += 1
-
-        #h_map = {}
-        #
-        #h_map["lowdm"] = {}
-        #h_map["lowdm"]["mc"]   = h_mc_lowdm
-        #h_map["lowdm"]["pred"] = h_pred_lowdm
-        #
-        #h_map["highdm"] = {}
-        #h_map["highdm"]["mc"]   = h_mc_highdm
-        #h_map["highdm"]["pred"] = h_pred_highdm
-        #
-        #if (self.unblind):
-        #    h_map["lowdm"]["data"]   = h_data_lowdm
-        #    h_map["highdm"]["data"]  = h_data_highdm
-
-        ## draw histograms
-        #c = ROOT.TCanvas("c", "c", 800, 800)
-        #c.Divide(1, 2)
-        #
-        ## legend: TLegend(x1,y1,x2,y2)
-        #legend_x1 = 0.7
-        #legend_x2 = 0.9 
-        #legend_y1 = 0.7 
-        #legend_y2 = 0.9 
-
-        ####################
-        ## Draw Histograms #
-        ####################
-
-        #for region in h_map:
-        #    if (self.unblind):
-        #        h_data   = h_map[region]["data"]
-        #    h_mc   = h_map[region]["mc"]
-        #    h_pred = h_map[region]["pred"]
-        #    h_ratio = h_pred.Clone("h_ratio")
-        #    h_ratio.Divide(h_mc)
-        #
-        #    #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-        #    setupHist(h_ratio, "Z to Invisible Prediction / MC", x_title, "Pred / MC", self.color_blue, 0.5, 1.5)
-
-        #    # histograms
-        #    c.cd(1)
-        #    ROOT.gPad.SetLogy(1) # set log y
-        #    # ZInv MC and Prediction
-        #    h_mc.Draw(draw_option)
-        #    h_pred.Draw("error same")
-        #    if (self.unblind):
-        #        h_data.Draw("error same")
-        #    
-        #    # legend: TLegend(x1,y1,x2,y2)
-        #    legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-        #    if (self.unblind):
-        #        legend.AddEntry(h_data,   "MET Data",   "l")
-        #    legend.AddEntry(h_mc,   "Z#rightarrow#nu#nu MC",   "l")
-        #    legend.AddEntry(h_pred, "Z#rightarrow#nu#nu Pred", "l")
-        #    legend.Draw()
-        #   
-        #    # ratios
-        #    c.cd(2)
-        #    h_ratio.Draw(draw_option)
-        #        
-        #    # save histograms
-        #    plot_name = self.plot_dir + name + "_" + region
-        #    c.Update()
-        #    c.SaveAs(plot_name + eraTag + ".pdf")
-        #    c.SaveAs(plot_name + eraTag + ".png")
-        #    # write histograms to file
-        #    if (self.unblind):
-        #        h_data.Write()
-        #    h_mc.Write()
-        #    h_pred.Write()
-        #
-        #f_out.Close()
-
-
 # vadliation bins
 class ValidationBins(Common):
     def __init__(self, normalization, shape, eras, plot_dir, verbose):
@@ -549,19 +407,6 @@ class ValidationBins(Common):
         h_mc_lowdm             = f_in.Get("nValidationBinLowDM_jetpt20/ZNuNu_nValidationBin_LowDM_jetpt20_"                 + era + "nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata")
         h_mc_lowdm_highmet     = f_in.Get("nValidationBinLowDMHighMET_jetpt20/ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_"  + era + "nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata")
         h_mc_highdm            = f_in.Get("nValidationBinHighDM_jetpt20/ZNuNu_nValidationBin_HighDM_jetpt20_"               + era + "nValidationBinHighDM_jetpt20nValidationBinHighDM_jetpt20ZJetsToNuNu Validation Bin High DMdata")
-        
-        #TODO: delete
-        # histogram map
-        #h_map = {}
-        #if (self.unblind):
-        #    h_map["data"] = {}
-        #    h_map["data"]["lowdm"]          = h_data_lowdm
-        #    h_map["data"]["lowdm_highmet"]  = h_data_lowdm_highmet
-        #    h_map["data"]["highdm"]         = h_data_highdm
-        #h_map["mc"] = {}
-        #h_map["mc"]["lowdm"]            = h_mc_lowdm
-        #h_map["mc"]["lowdm_highmet"]    = h_mc_lowdm_highmet
-        #h_map["mc"]["highdm"]           = h_mc_highdm
         
         # bin map
         b_map = {}
@@ -642,17 +487,6 @@ class SearchBins(Common):
             h_data_highdm   = f_in.Get("nSearchBinHighDM_jetpt20/MET_nSearchBin_HighDM_jetpt20_"    + era + "nSearchBinHighDM_jetpt20nSearchBinHighDM_jetpt20Data MET Search Bin High DMdata")
         h_mc_lowdm      = f_in.Get("nSearchBinLowDM_jetpt20/ZNuNu_nSearchBin_LowDM_jetpt20_"    + era + "nSearchBinLowDM_jetpt20nSearchBinLowDM_jetpt20ZJetsToNuNu Search Bin Low DMdata")
         h_mc_highdm     = f_in.Get("nSearchBinHighDM_jetpt20/ZNuNu_nSearchBin_HighDM_jetpt20_"  + era + "nSearchBinHighDM_jetpt20nSearchBinHighDM_jetpt20ZJetsToNuNu Search Bin High DMdata")
-        
-        #TODO: delete
-        # histogram map
-        #h_map = {}
-        #if (self.unblind):
-        #    h_map["data"] = {}
-        #    h_map["data"]["lowdm"]   = h_data_lowdm
-        #    h_map["data"]["highdm"]  = h_data_highdm
-        #h_map["mc"] = {}
-        #h_map["mc"]["lowdm"]     = h_mc_lowdm
-        #h_map["mc"]["highdm"]    = h_mc_highdm
         
         # bin map
         b_map = {}
