@@ -2,7 +2,7 @@
 import copy
 import json
 import ROOT
-from tools import setupHist, getMultiplicationErrorList, removeCuts, getBinError, ERROR_ZERO
+from tools import setupHist, getMultiplicationErrorList, removeCuts, getBinError, ERROR_ZERO, getTexSelection, getTexMultiCut
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -60,11 +60,12 @@ class Common:
         with open(output_name, "w+") as f:
             self.output_file = f
             # begin document
-            self.writeLine("\documentclass{article}")
-            self.writeLine("\usepackage[utf8]{inputenc}")
-            self.writeLine("\usepackage{geometry}")
-            self.writeLine("\usepackage{longtable}")
-            self.writeLine("\geometry{margin=0.1cm}")
+            self.writeLine("\\documentclass{article}")
+            self.writeLine("\\usepackage[utf8]{inputenc}")
+            self.writeLine("\\usepackage{geometry}")
+            self.writeLine("\\usepackage{longtable}")
+            self.writeLine("\\usepackage{cancel}")
+            self.writeLine("\\geometry{margin=0.1cm}")
             self.writeLine("")
             self.writeLine("\\begin{document}")
             self.writeLine("\\footnotesize")
@@ -77,7 +78,7 @@ class Common:
                 # make first column for bin numbers small
                 self.writeLine("\\begin{longtable}{|p{0.03\\textwidth}|p{0.3\\textwidth}|*6{p{0.1\\textwidth}|}}")
                 # column headers
-                self.writeLine("\hline Bin & Selection & $R_{Z}$ & $S_{\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $N_{eff}$ \\\\")
+                self.writeLine("\\hline Bin & Selection & $R_{Z}$ & $S_{\\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $N_{eff}$ \\\\")
                 # write values to table
                 for b in self.all_bins:
                     total_selection = self.binValues[era][b]["total_selection"]
@@ -89,14 +90,14 @@ class Common:
                     n_eff           = self.binValues[era][b]["n_eff_tex"]
                     avg_w_final     = self.binValues[era][b]["avg_w_final_tex"]
                     n_eff_final     = self.binValues[era][b]["n_eff_final_tex"]
-                    self.writeLine("\hline {0} & {1} & {2} & {3} & {4} & {5} & {6} & {7} \\\\".format(b, total_selection, norm, shape, mc, pred, avg_w, n_eff))
-                self.writeLine("\hline")
+                    self.writeLine("\\hline {0} & {1} & {2} & {3} & {4} & {5} & {6} & {7} \\\\".format(b, total_selection, norm, shape, mc, pred, avg_w, n_eff))
+                self.writeLine("\\hline")
                 # for longtable, caption must go at the bottom of the table... it is not working at the top
                 self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
                 # end table
-                self.writeLine("\end{longtable}")
+                self.writeLine("\\end{longtable}")
             # end document
-            self.writeLine("\end{document}")
+            self.writeLine("\\end{document}")
 
     # ---------------------------------------------------------------------- #
     # makeTotalPred():                                                       #
@@ -290,10 +291,9 @@ class Common:
             region          = self.bins[b]["region"]
             selection       = self.bins[b]["selection"]
             met             = self.bins[b]["met"]
-            region_tex      = region.replace("_", ", ")
-            selection_tex   = selection.replace("_", ", ")
-            met_tex         = met.replace("_", ", ")
-            total_selection = "{0} {1} {2}".format(region_tex, selection_tex, met_tex) 
+            selection_tex   = getTexSelection(region + "_" + selection)
+            met_tex         = getTexMultiCut(met)
+            total_selection = "{0}, {1}".format(selection_tex, met_tex)
             
             n       = self.binValues[era][b]["norm"]
             n_error = self.binValues[era][b]["norm_error"]
