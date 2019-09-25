@@ -29,8 +29,8 @@ def main():
         print "The json file \"{0}\" containing runs does not exist.".format(json_file)
         return
     
-    #eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
-    eras = ["2016"]
+    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
+    #eras = ["2016"]
     dirList = []
     plot_dir                = "more_plots"
     latex_dir               = "latex_files"
@@ -81,7 +81,23 @@ def main():
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
     VB.makeTexFile("Z Invisible Prediction for Validation Bins", latex_dir + "zinv_prediction_validation_bins.tex")
     SB.makeTexFile("Z Invisible Prediction for Search Bins",     latex_dir + "zinv_prediction_search_bins.tex")
+    
+    # total Run2 prediction
+    # root files to save histograms
+    total_era = "Run2"
+    validation_file = "validationBinsZinv_" + total_era + ".root"
+    search_file     = "searchBinsZinv_"     + total_era + ".root"
+    VB.makeTotalPred( validation_file,  "Validation Bin",   "validation", total_era   )
+    SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
+
+    # TODO: making data card for Run 2 does not work because we have not run calcPrediction() for Run 2
+    #       calcPrediction() depends on norm and shape (which we calculate per era, not for all of Run 2)
+    #       make a way (possibly another function) to calculate values for Run 2 data card  
+    #makeDataCard(VB, dataCardValidation_dir, total_era)
+    #makeDataCard(SB, dataCardSearch_dir,     total_era)
+
 
 if __name__ == "__main__":
     main()
+
 
