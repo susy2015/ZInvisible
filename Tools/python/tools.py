@@ -14,7 +14,9 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # https://twiki.cern.ch/twiki/bin/view/CMS/PoissonErrorBars
 
 # poisson error for 0 
-ERROR_ZERO = 1.841022
+#ERROR_ZERO = 1.841022
+# small error for 0
+ERROR_ZERO = 0.001
 # general error code
 ERROR_CODE = -999
 
