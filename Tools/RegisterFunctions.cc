@@ -42,12 +42,13 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     //blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
     //blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
 
+    std::string TopTaggerCfg     = "TopTaggerCfg_dev_" + year + "/TopTagger.cfg";
     getVectors                   = new GetVectors;
     cleanedJets                  = new CleanedJets;
     // RunTopTagger(std::string taggerCfg = "TopTagger.cfg", std::string suffix = "", bool doLeptonCleaning = false, bool doPhotonCleaning = false)
-    runTopTagger                 = new RunTopTagger;
-    runTopTagger_drLeptonCleaned = new RunTopTagger("TopTagger.cfg","_drLeptonCleaned",true,false);
-    runTopTagger_drPhotonCleaned = new RunTopTagger("TopTagger.cfg","_drPhotonCleaned",false,true);
+    runTopTagger                 = new RunTopTagger(TopTaggerCfg);
+    runTopTagger_drLeptonCleaned = new RunTopTagger(TopTaggerCfg,"_drLeptonCleaned",true,false);
+    runTopTagger_drPhotonCleaned = new RunTopTagger(TopTaggerCfg,"_drPhotonCleaned",false,true);
     gamma                        = new plotterFunctions::Gamma(year);
     weights                      = new plotterFunctions::GenerateWeight;
     generatePhotonEfficiency     = new plotterFunctions::GeneratePhotonEfficiency;
