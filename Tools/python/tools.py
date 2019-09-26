@@ -14,15 +14,21 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # https://twiki.cern.ch/twiki/bin/view/CMS/PoissonErrorBars
 
 # poisson error for 0 
-ERROR_ZERO = 1.841022
+#ERROR_ZERO = 1.841022
+# small error for 0
+ERROR_ZERO = 0.001
 # general error code
 ERROR_CODE = -999
 
 # Important: be careful with order of replacing characters if keys match values
 tex_map = {
-            "NB"    : "N_{b}",
-            "NSV"   : "N_{sv}",
-            "NJ"    : "N_{j}"
+            "LowDM"     : "\\mathrm{Low}~\\Delta m",
+            "HighDM"    : "\\mathrm{High}~\\Delta m",
+            "met"       : "\\cancel{E}_{T}",
+            "ht"        : "H_{T}",
+            "NB"        : "N_{b}",
+            "NSV"       : "N_{sv}",
+            "NJ"        : "N_{j}"
           }
 
 # when loading json files, strings are loaded as unicode
@@ -132,6 +138,23 @@ def getSelections(bin_map, bin_type, remove_cut="", verbose=False):
     result["HighDM"] = highdm_cuts
     return result
 
+
+# special selection with multiple cuts (say met, ht...)
+# e.g. met_250to400, met_400toINF
+def getTexMultiCut(selection):
+    # be careful with order of search and replace
+    result = selection.split("_") 
+    var  = result[0]
+    cuts = result[1]
+    cuts = cuts.split("to")
+    for key in tex_map:
+        var = var.replace(key, tex_map[key])
+    if cuts[1] == "INF":
+        expression = "${0} \geq {1}$".format(var, cuts[0])
+    else:
+        expression = "${0} \leq {1} < {2}$".format(cuts[0], var, cuts[1])
+    return expression
+
 # get latex expression of selection
 def getTexSelection(selection):
     # be careful with order of search and replace
@@ -140,16 +163,18 @@ def getTexSelection(selection):
         r = result[i]
         for key in tex_map:
             r = r.replace(key, tex_map[key])
-        if "eq" in r:
-            r = r.replace("eq", " = ")
-        elif "ge" in r:
-            r = r.replace("ge", " \geq ")
-        elif "le" in r:
-            r = r.replace("le", " \leq ")
-        elif "gt" in r:
-            r = r.replace("gt", " > ")
-        elif "lt" in r:
-            r = r.replace("lt", " < ")
+        # some keywords contain these strings... be careful
+        if "delta" not in r and "Delta" not in r:
+            if "eq" in r:
+                r = r.replace("eq", " = ")
+            elif "ge" in r:
+                r = r.replace("ge", " \geq ")
+            elif "le" in r:
+                r = r.replace("le", " \leq ")
+            elif "gt" in r:
+                r = r.replace("gt", " > ")
+            elif "lt" in r:
+                r = r.replace("lt", " < ")
         result[i] = r
     
     expression = "$" + ", ".join(result) + "$"

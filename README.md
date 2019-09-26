@@ -46,7 +46,7 @@ git checkout NanoAOD
 Checkout the NanoSUSY-tools repository and make softlinks of the trigger efficiency root files.
 ```
 cd $CMSSW_BASE/src
-git clone -b postpro_v2.7 git@github.com:susy2015/NanoSUSY-tools.git PhysicsTools/NanoSUSYTools
+git clone -b postpro_v3.0 git@github.com:susy2015/NanoSUSY-tools.git PhysicsTools/NanoSUSYTools
 cd $CMSSW_BASE/src/ZInvisible/Tools
 ln -s $CMSSW_BASE/src/PhysicsTools/NanoSUSYTools/data/trigger_eff/*.root .
 ```
@@ -59,7 +59,7 @@ cd $CMSSW_BASE/src/ZInvisible/Tools
 mkdir ../../myTopTaggerCfgs
 mkdir ../../myStopCfgs
 getTaggerCfg.sh -t DeepCombined_fromNanoAOD_RES_T_DeepAK8_T_v1.0.1 -d ../../myTopTaggerCfgs -o
-getStopCfg.sh -t PostProcessed_StopTuple_V2.9.0 -d ../../myStopCfgs -o
+getStopCfg.sh -t PostProcessed_StopNtuple_v3.0.3 -d ../../myStopCfgs -o
 ```
 
 There are more detailed instructions that you can reference [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files).
@@ -105,16 +105,14 @@ cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/syst
 
 Now try running makePlots.
 ```
-./makePlots -D ZJetsToNuNu_2016 -Y 2016 -E 1000 | grep -v LHAPDF
+time ./makePlots -D DYJetsToLL_HT_400to600_2016 -Y 2016 -E 1000 -R Data_MET_2016 | grep -v LHAPDF
 ```
+The `-D` option is for the dataset. The `-E` option is for number of events to process.
 
-The `-D` option is for the dataset (ZJetsToNuNu). The `-E` option is for number of events to process (1000).
+This script should output some pdf/png plots. The `-st` options can be used for only saving the root file and not making pdf/png files.
 
-This script should output some pdf/png plots. The `-s` option can be used for only saving the root file and not making pdf/png files.
-
-You can also run over a specific HT sample range.
 ```
-./makePlots -D ZJetsToNuNu_HT_100to200_2016 -E 1000 -Y 2016
+time ./makePlots -st -D DYJetsToLL_HT_400to600_2016 -Y 2016 -E 1000 -R Data_MET_2016 | grep -v LHAPDF
 ```
 
 If `makePlots` succeeds it will create a file named `histoutput.root`. You can open this file with a TBrowser either on cmslpc or by copying it to your machine.
@@ -141,10 +139,11 @@ The "-l" option will make lepton plots, and the "-g" option will make photon plo
 ./makePlots -D GJets -E 1000 -g
 ```
 
-There is also a script for running over multiple samples and a small number of events without using condor. The year is the only argument. Here are the commands for 2016 and 2017.
+There is also a script for running over multiple samples and a small number of events without using condor. The year is the only argument.
 ```
 ./quickPlot.sh 2016
 ./quickPlot.sh 2017
+./quickPlot.sh 2018
 ```
 
 Different samples and number of events can be specified by editing quickPlot.sh.
