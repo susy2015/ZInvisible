@@ -219,6 +219,10 @@ class Common:
         # - histograms need to be copied to use them later on 
         self.histograms[era] = copy.deepcopy(h_map)
         
+        ###################
+        # Draw Histograms #
+        ###################
+
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
         c.Divide(1, 2)
@@ -228,10 +232,6 @@ class Common:
         legend_x2 = 0.9 
         legend_y1 = 0.7 
         legend_y2 = 0.9 
-
-        ###################
-        # Draw Histograms #
-        ###################
 
         for region in h_map:
             if (self.unblind):
