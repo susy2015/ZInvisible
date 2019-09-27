@@ -42,7 +42,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     //blvZinvMEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUUp");
     //blvZinvMEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvMEUDn");
 
-    std::string TopTaggerCfg     = "TopTaggerCfg_dev_" + year + "/TopTagger.cfg";
+    std::string TopTaggerCfg     = "TopTagger_" + year +".cfg";
     getVectors                   = new GetVectors;
     cleanedJets                  = new CleanedJets;
     // RunTopTagger(std::string taggerCfg = "TopTagger.cfg", std::string suffix = "", bool doLeptonCleaning = false, bool doPhotonCleaning = false)
