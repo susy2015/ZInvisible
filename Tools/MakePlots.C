@@ -690,8 +690,9 @@ int main(int argc, char* argv[])
     std::vector<Plotter::CutFlowSummary> cutFlowSummaries;
     
     // Z to NuNu
-    std::vector<std::string> Cuts_MC_ZNuNu = {
+    std::vector<std::string> Cuts_Data_MET = {
                               "",
+                              "Pass_trigger_MET",
                               "Pass_LeptonVeto",
                               HEMVeto,
                               "SAT_Pass_JetID",
@@ -839,15 +840,29 @@ int main(int argc, char* argv[])
     
     
     // Z to NuNu in validation bins
-    std::vector<std::string> Cuts_MC_ZNuNu_LowDM          = Cuts_MC_ZNuNu;
-    std::vector<std::string> Cuts_MC_ZNuNu_LowDM_HighMET  = Cuts_MC_ZNuNu;
-    std::vector<std::string> Cuts_MC_ZNuNu_HighDM         = Cuts_MC_ZNuNu;
-    Cuts_MC_ZNuNu_LowDM.push_back("SAT_Pass_dPhiMETLowDM");
-    Cuts_MC_ZNuNu_LowDM.push_back("SAT_Pass_lowDM");
-    Cuts_MC_ZNuNu_LowDM_HighMET.push_back("SAT_Pass_mid_dPhiMETLowDM");
-    Cuts_MC_ZNuNu_LowDM_HighMET.push_back("SAT_Pass_lowDM_mid_dPhi");
-    Cuts_MC_ZNuNu_HighDM.push_back("SAT_Pass_mid_dPhiMETHighDM");
-    Cuts_MC_ZNuNu_HighDM.push_back("SAT_Pass_highDM_mid_dPhi");
+    std::vector<std::string> Cuts_Data_MET_LowDM          = Cuts_Data_MET;
+    std::vector<std::string> Cuts_Data_MET_LowDM_HighMET  = Cuts_Data_MET;
+    std::vector<std::string> Cuts_Data_MET_HighDM         = Cuts_Data_MET;
+    Cuts_Data_MET_LowDM.push_back("SAT_Pass_dPhiMETLowDM");
+    Cuts_Data_MET_LowDM.push_back("SAT_Pass_lowDM");
+    Cuts_Data_MET_LowDM_HighMET.push_back("SAT_Pass_mid_dPhiMETLowDM");
+    Cuts_Data_MET_LowDM_HighMET.push_back("SAT_Pass_lowDM_mid_dPhi");
+    Cuts_Data_MET_HighDM.push_back("SAT_Pass_mid_dPhiMETHighDM");
+    Cuts_Data_MET_HighDM.push_back("SAT_Pass_highDM_mid_dPhi");
+    std::vector<std::string> Cuts_MC_ZNuNu_LowDM          = Cuts_Data_MET_LowDM;
+    std::vector<std::string> Cuts_MC_ZNuNu_LowDM_HighMET  = Cuts_Data_MET_LowDM_HighMET;
+    std::vector<std::string> Cuts_MC_ZNuNu_HighDM         = Cuts_Data_MET_HighDM;
+    // Note: Apply Flag_eeBadScFilter to Data but not MC
+    Cuts_Data_MET_LowDM[5]          += ";Flag_eeBadScFilter";
+    Cuts_Data_MET_LowDM_HighMET[5]  += ";Flag_eeBadScFilter";
+    Cuts_Data_MET_HighDM[5]         += ";Flag_eeBadScFilter";
+    // no trigger cut for MC; placeholder so that bins match data
+    Cuts_MC_ZNuNu_LowDM[1]          = "";
+    Cuts_MC_ZNuNu_LowDM_HighMET[1]  = "";
+    Cuts_MC_ZNuNu_HighDM[1]         = "";
+    std::vector<std::string> CutLevels_Data_MET_LowDM         = SusyUtility::getCutLevels(Cuts_Data_MET_LowDM);
+    std::vector<std::string> CutLevels_Data_MET_LowDM_HighMET = SusyUtility::getCutLevels(Cuts_Data_MET_LowDM_HighMET);
+    std::vector<std::string> CutLevels_Data_MET_HighDM        = SusyUtility::getCutLevels(Cuts_Data_MET_HighDM);
     std::vector<std::string> CutLevels_MC_ZNuNu_LowDM         = SusyUtility::getCutLevels(Cuts_MC_ZNuNu_LowDM);
     std::vector<std::string> CutLevels_MC_ZNuNu_LowDM_HighMET = SusyUtility::getCutLevels(Cuts_MC_ZNuNu_LowDM_HighMET);
     std::vector<std::string> CutLevels_MC_ZNuNu_HighDM        = SusyUtility::getCutLevels(Cuts_MC_ZNuNu_HighDM);
@@ -2897,9 +2912,9 @@ int main(int argc, char* argv[])
             // ---------------------------------- // 
             
             // MET Data in validation bins
-            PDC dcData_MET_nValidationBin_LowDM("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSMET("Validation Bin Low DM",            "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
-            PDC dcData_MET_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSMET("Validation Bin Low DM High MET",   "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
-            PDC dcData_MET_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSMET("Validation Bin High DM",           "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+            PDC dcData_MET_nValidationBin_LowDM("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSMET("Validation Bin Low DM",            "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+            PDC dcData_MET_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSMET("Validation Bin Low DM High MET",   "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+            PDC dcData_MET_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSMET("Validation Bin High DM",           "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
 
             // ZNuNu MC in validation and search bins
             PDC dcMC_ZNuNu_nValidationBin_LowDM("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
@@ -2933,18 +2948,24 @@ int main(int argc, char* argv[])
             if (unblind)
             {
                 // MET Data in search bins
-                PDC dcData_MET_nSearchBin_LowDM("data",             "nSearchBinLowDM"               + JetPtCut, {makePDSMET("Search Bin Low DM",                "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
-                PDC dcData_MET_nSearchBin_HighDM("data",            "nSearchBinHighDM"              + JetPtCut, {makePDSMET("Search Bin High DM",               "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+                PDC dcData_MET_nSearchBin_LowDM("data",             "nSearchBinLowDM"               + JetPtCut, {makePDSMET("Search Bin Low DM",                "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+                PDC dcData_MET_nSearchBin_HighDM("data",            "nSearchBinHighDM"              + JetPtCut, {makePDSMET("Search Bin High DM",               "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
                 vh.push_back(PHS("MET_nSearchBin_LowDM" + histSuffix,               {dcData_MET_nSearchBin_LowDM},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
                 vh.push_back(PHS("MET_nSearchBin_HighDM" + histSuffix,              {dcData_MET_nSearchBin_HighDM},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
             }
             
             // MET using validation bins for cutflow
-            PDC dcMC_ZNuNu_met_LowDM("data",                    "MET_pt",                     {makePDSZnunu("MET Low DM",                     "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
-            PDC dcMC_ZNuNu_met_LowDM_HighMET("data",            "MET_pt",                     {makePDSZnunu("MET Low DM High MET",            "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
-            PDC dcMC_ZNuNu_met_HighDM("data",                   "MET_pt",                     {makePDSZnunu("MET High DM",                    "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
+            PDC dcData_MET_met_LowDM("data",                    "MET_pt",                     {makePDSMET("MET Low DM",                     "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+            PDC dcData_MET_met_LowDM_HighMET("data",            "MET_pt",                     {makePDSMET("MET Low DM High MET",            "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+            PDC dcData_MET_met_HighDM("data",                   "MET_pt",                     {makePDSMET("MET High DM",                    "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+            PDC dcMC_ZNuNu_met_LowDM("data",                    "MET_pt",                     {makePDSZnunu("MET Low DM",                   "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_met_LowDM_HighMET("data",            "MET_pt",                     {makePDSZnunu("MET Low DM High MET",          "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_met_HighDM("data",                   "MET_pt",                     {makePDSZnunu("MET High DM",                  "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
             // cut flow: name, DataCollection, cutLevels
             // Plotter::CutFlowSummary::CutFlowSummary(std::string n, Plotter::DataCollection ns, std::vector<std::string> cutLevels)
+            cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_MET_met_LowDM",         dcData_MET_met_LowDM,           CutLevels_Data_MET_LowDM));
+            cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_MET_met_LowDM_HighMET", dcData_MET_met_LowDM_HighMET,   CutLevels_Data_MET_LowDM_HighMET));
+            cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_MET_met_HighDM",        dcData_MET_met_HighDM,          CutLevels_Data_MET_HighDM));
             cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_ZNuNu_met_LowDM",         dcMC_ZNuNu_met_LowDM,           CutLevels_MC_ZNuNu_LowDM));
             cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_ZNuNu_met_LowDM_HighMET", dcMC_ZNuNu_met_LowDM_HighMET,   CutLevels_MC_ZNuNu_LowDM_HighMET));
             cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_ZNuNu_met_HighDM",        dcMC_ZNuNu_met_HighDM,          CutLevels_MC_ZNuNu_HighDM));
