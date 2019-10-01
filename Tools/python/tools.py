@@ -19,6 +19,8 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 ERROR_ZERO = 0.001
 # general error code
 ERROR_CODE = -999
+# infinity
+INF = float("inf")
 
 # Important: be careful with order of replacing characters if keys match values
 tex_map = {
@@ -68,7 +70,8 @@ def takeFirst(elem):
 def getMETBinEdges(binMap, selection):
     verbose = False
     max_met = 1000.0
-    current_met = -999.0
+    previous_met_1 = -1.0 * INF
+    previous_met_2 = -1.0 * INF
     temp_names = []
     names = []
     met_bins = []
@@ -78,6 +81,7 @@ def getMETBinEdges(binMap, selection):
         cut = removeCuts(binMap[b]["selection"], "NSV")
         if verbose:
             print "b: {0}, selection: {1}, cut: {2}".format(b, selection, cut)
+        # get array of bins matching selection used for shape factor
         if selection == cut:
             temp_array.append((int(b), binMap[b]["met"]))
     # sort by bin number; assume MET bins increase with bin number (unless new binning starts)
@@ -85,27 +89,40 @@ def getMETBinEdges(binMap, selection):
     for i, elem in enumerate(temp_array):
         # use regex to get values
         # example: met_450to550
-        # only use first value (e.g. use 450, but not 550)
+        # use first value for MET array (e.g. 450)
+        # use second value to check for INF (e.g. 550)
         name = elem[1]
         m = re.search("met_(.*)to(.*)", name)
-        value = float(m.group(1))
+        value_1 = float(m.group(1))
+        value_2 = float(m.group(2))
         # keep adding MET bins as they increase
-        if value > current_met:
+        if value_1 > previous_met_1:
             temp_names.append(name)
-            met_bins.append(value)
+            met_bins.append(value_1)
         # new MET binning starts
-        # be careful to append if we have moved to a new binning or if this is the last set
-        if value <= current_met or i == len(temp_array) - 1:
+        # be careful to append if we have moved to a new binning or if this is the last bin
+        # also append previous value 2 if it is not INF
+        isNewBinning = bool(value_1 <= previous_met_1)
+        isLastBin    = bool(i == len(temp_array) - 1)
+        
+        if isNewBinning or isLastBin:
+            if isNewBinning and (previous_met_2 != INF):
+                met_bins.append(previous_met_2)
+            if isLastBin and (value_2 != INF):
+                met_bins.append(value_2)
             met_bins.append(max_met)
             met_array = np.array(met_bins)
-            names.append(temp_names)
-            result.append(met_array)
-        # reset lists
-        if value <= current_met:
-            temp_names = [name]
-            met_bins = [value]
+            # avoid duplicate entries: only append if this binning is not already in names 
+            if temp_names not in names: 
+                names.append(temp_names)
+                result.append(met_array)
+            # reset lists
+            if isNewBinning:
+                temp_names = [name]
+                met_bins = [value_1]
 
-        current_met = value
+        previous_met_1 = value_1
+        previous_met_2 = value_2
     
     d = {"names": names, "xbins": result}
     if verbose:

@@ -23,14 +23,14 @@ def main():
 
     doCutflows = False
     doPhotons = True
-    draw = False
+    draw = True
 
     if not os.path.exists(json_file):
         print "The json file \"{0}\" containing runs does not exist.".format(json_file)
         return
     
-    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
-    #eras = ["2016"]
+    #eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
+    eras = ["2016"]
     dirList = []
     plot_dir                = "more_plots"
     latex_dir               = "latex_files"
@@ -55,7 +55,8 @@ def main():
             os.makedirs(d)
 
     N = Normalization(verbose)
-    S = Shape(plot_dir, draw, verbose)
+    #S = Shape(plot_dir, draw, verbose)
+    S = Shape(plot_dir, draw, True)
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
