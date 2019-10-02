@@ -22,7 +22,7 @@ def main():
     verbose     = options.verbose
 
     doCutflows = False
-    doPhotons = True
+    doPhotons = False
     draw = False
 
     if not os.path.exists(json_file):
