@@ -156,8 +156,8 @@ def validation(file_map, era):
 
 if __name__ == "__main__":
     f_map = {
-               "Caleb" : "predictions/23_Sep_2019/validationBinsZinv_2016.root",
-               "Angel" : "angel_result_2019-09-25_14-10-46.root"
+               "Caleb" : "/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/predictions/caleb/2019-09-23/validationBinsZinv_2016.root",
+               "Angel" : "/uscms/home/arosado/nobackup/YOURWORKINGAREA/CMSSW_10_2_9/src/ZInvisible/Tools/condor/2016/result.root"
     }
     validation(f_map, "2016")
 
