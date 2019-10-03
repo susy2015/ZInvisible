@@ -153,6 +153,8 @@ class Common:
     #    - make, plot, and save histograms                                   #
     # ---------------------------------------------------------------------- #
     def makeHistos(self, output_file, x_title, name, era):
+        debug = False
+        print "Running makeHistos() to make {0}".format(output_file)
         eraTag = "_" + era
         draw_option = "hist error"
         f_out = ROOT.TFile(output_file, "recreate")
@@ -270,6 +272,14 @@ class Common:
             c.Update()
             c.SaveAs(plot_name + eraTag + ".pdf")
             c.SaveAs(plot_name + eraTag + ".png")
+            # debug
+            if debug:
+                print "region: {0}".format(region)
+                if (self.unblind):
+                    print "h_data[1] = {0}".format(h_data.GetBinContent(1))
+                print "h_mc[1] = {0}".format(h_mc.GetBinContent(1))
+                print "h_pred[1] = {0}".format(h_pred.GetBinContent(1))
+            
             # write histograms to file
             if (self.unblind):
                 h_data.Write()
