@@ -20,18 +20,12 @@ TSDIR      = $(TAGGERDIR)/Tools/cpp
 RSDIR      = $(SUSYANATOOLSDIR)/Tools/
 RIDIR      = $(SUSYANATOOLSDIR)/Tools
 
-INCLUDESDIRS += -I$(SUSYANATOOLSDIR)/.. -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) -I$(TTTIDIR) -I$(IDIR) -I$(IDIR)/include -I$(TAGGERDIR)/TopTagger/interface 
-
-#manual configuration
-CXXFLAGS += -I. -std=c++0x 
+INCLUDESDIRS += -I$(SUSYANATOOLSDIR)/.. -I$(RSDIR) -I$(TIDIR) -I$(IDIR) -I$(IDIR)/include -I$(TAGGERDIR)/TopTagger/interface 
 
 ## Optimization flag
 CXXFLAGS += -g -fPIC -O3
 ## Enable the maximun warning
 #CXXFLAGS += -Wall -Wextra -Weffc++ -g
-
-## Include ROOT
-CXXFLAGS  += $(shell root-config --cflags)
 
 CXXDEPFLAGS = -MMD -MP
 
@@ -40,10 +34,10 @@ CXXDEPFLAGS = -MMD -MP
 ## Include ROOT
 INCLUDESDIRS += $(shell root-config --cflags)
 # ROOT libraries
-LIBS         += $(shell root-config --glibs)
+LIBS         += $(shell root-config --libs)
 
 # top tagger includes
-INCLUDESDIRS  += -I. -I$(TAGGERDIR)/..
+#INCLUDESDIRS  += -I$(TAGGERDIR)/..
 # top tagger libraries
 LIBS += -L$(TAGGERDIR)/TopTagger/test -lTopTagger
 
@@ -82,6 +76,8 @@ $(ODIR)/rootdict.cc : $(SDIR)/rootdict.h
 	rootcint -f $@ $^ -inlineInputHeade
 	mv $(ODIR)/rootdict_rdict.pcm $(SDIR)
 
+$(ODIR)/rootdict.o : $(ODIR)/rootdict.cc
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) $(INCLUDESDIRS) -o $@ -c $<
 
 $(ODIR)/%.o : $(SDIR)/%.C
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) $(INCLUDESDIRS) -o $@ -c $<
@@ -101,22 +97,13 @@ $(ODIR)/%.o : $(RSDIR)/%.cc
 $(ODIR)/%.o : $(RSDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) $(INCLUDESDIRS) -o $@ -c $<
 
-$(ODIR)/%.o : $(TTSDIR)/%.C
+$(ODIR)/%.o : $(TSDIR)/%.C
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) $(INCLUDESDIRS) -o $@ -c $<
 
-$(ODIR)/%.o : $(TTSDIR)/%.cc
+$(ODIR)/%.o : $(TSDIR)/%.cc
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) $(INCLUDESDIRS) -o $@ -c $<
 
-$(ODIR)/%.o : $(TTSDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) $(INCLUDESDIRS) -o $@ -c $<
-
-$(ODIR)/%.o : $(TTTSDIR)/%.C
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) $(INCLUDESDIRS) -o $@ -c $<
-
-$(ODIR)/%.o : $(TTTSDIR)/%.cc
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) $(INCLUDESDIRS) -o $@ -c $<
-
-$(ODIR)/%.o : $(TTTSDIR)/%.cpp
+$(ODIR)/%.o : $(TSDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) $(INCLUDESDIRS) -o $@ -c $<
 
 
