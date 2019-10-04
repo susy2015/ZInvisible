@@ -422,6 +422,8 @@ void Plotter::createHistsFromTuple()
         int NEvtsTotal = 0;
         for(const std::string& fname : file.filelist_)
         {
+			scannersToFill.clear();
+
             if(startCount++ < startFile_) continue;
             if(nFile_ > 0 && fileCount++ >= nFile_) break;
 
@@ -574,13 +576,13 @@ void Plotter::createHistsFromTuple()
             delete t;
             f->Close();
             delete f;
-        }
 
-		for(auto & scpair : scannersToFill)
-		{
-			scpair.first->GetTree()->GetDirectory()->cd();
-			scpair.first->GetTree()->Write();
-		}
+			for(auto & scpair : scannersToFill)
+			{
+				scpair.first->GetTree()->GetDirectory()->cd();
+				scpair.first->GetTree()->Write();
+			}
+        }
     }
 }
 

@@ -139,8 +139,8 @@ int main(int argc, char* argv[])
     std::string yearTag   = "_" + year; 
     std::string periodTag = ""; 
     // HEM veto for 2018 periods C and C
-    std::string HEMVeto                 = "";
-    std::string semicolon_HEMVeto                 = "";
+    std::string HEMVeto = "";
+    std::string semicolon_HEMVeto = "";
     // Note: Don't apply Flag_ecalBadCalibFilter to 2016, but apply it to 2017 and 2018
     std::string Flag_ecalBadCalibFilter = "";
     // PrefireWeight
@@ -270,28 +270,13 @@ int main(int argc, char* argv[])
 
 	std::vector<Plotter::Scanner> scanners;
 
-	string weights = "puWeight;BTagWeight"+PrefireWeight;
+	string weights = "puWeight;BTagWeight;genWeight"+PrefireWeight;
 
-	string cuts = "Pass_CaloMETRatio;Pass_LeptonVeto;Pass_NJets20;Pass_MET;Pass_HT" + semicolon_HEMVeto;
+	string cuts = "Pass_CaloMETRatio;Pass_LeptonVeto;Flag_goodVertices;Flag_HBHENoiseFilter;Flag_HBHENoiseIsoFilter;Flag_BadPFMuonFilter;Flag_globalSuperTightHalo2016Filter;Flag_eeBadScFilter;Pass_JetID;Pass_NJets20;Pass_MET;Pass_HT" + semicolon_HEMVeto;
 
-	//float mtb_cut, float mtb, int njets, int ntop, int nw, int nres, int nb, float met, float ht
-	//int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met
-	//
-	//mtb	Stop0l_Mtb
-	//njets	jet counting
-	//ntop	Stop0l_nTop
-	//nw	Stop0l_nW
-	//nres	Stop0l_nResolved
-	//nb	Stop0l_nbtags
-	//met	MET_pt
-	//ht	HT calculation with updated jet definition
-	//nSV	Stop0l_nSoftb
-	//ISRpt	Stop0l_ISRJetPt
-	//bottompt_scalar_sum	Stop0l_Ptb
-	//
 	std::set<std::string> vars = {"run", "event",
 	   	"PV_npvsGood",
-	   	"Jet_pt", "Jet_eta", "Jet_phi", "Jet_jetId", "Jet_puId",
+	   	"Jet_pt", "Jet_eta", "Jet_phi", "Jet_jetId", "Jet_puId", "Jet_dPhiMET", "Jet_order",
 	   	"MET_pt", "MET_phi",
 	   	"Pass_QCDCR", "Pass_QCDCR_lowDM", "Pass_QCDCR_highDM",
 		"Pass_LeptonVeto", "Pass_CaloMETRatio", "Pass_JetID", "Pass_EventFilter",
@@ -300,14 +285,16 @@ int main(int argc, char* argv[])
 	   	"Stop0l_HT", "Stop0l_Mtb", "Stop0l_Ptb", "Stop0l_ISRJetPt", "Stop0l_METSig",
 	   	"Stop0l_nTop", "Stop0l_nW", "Stop0l_nResolved", "Stop0l_nbtags", "Stop0l_nSoftb",
 		"Stop0l_evtWeight",
-		"nSearchBinLowDM", "nSearchBinHighDM",          
+		"SAT_Pass_HEMVeto20", "SAT_Pass_HEMVeto30", "Pass_HEMVeto20", "Pass_HEMVeto30", "Pass_exHEMVeto20", "Pass_exHEMVeto30",
+		"nSearchBinLowDM", "nSearchBinHighDM", "nSearchBinHighDMLoose",
 		"nValidationBinLowDM", "nValidationBinLowDMHighMET", "nValidationBinHighDM",      
 		"nBottoms", "nSoftBottoms", "nMergedTops", "nJets", "nWs", "nResolvedTops", "HT", "ptb", "mtb", "ISRJetPt",
 		"Flag_BadChargedCandidateFilter", "Flag_BadChargedCandidateSummer16Filter", "Flag_ecalBadCalibFilter",
 		"Flag_goodVertices", "Flag_HBHENoiseFilter", "Flag_HBHENoiseIsoFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter",
 		"Flag_BadPFMuonFilter", "Flag_globalSuperTightHalo2016Filter", "Flag_eeBadScFilter",
 		"Stop0l_trigger_eff_MET_loose_baseline", "Stop0l_trigger_eff_MET_low_dm", "Stop0l_trigger_eff_MET_high_dm",
-		"Stop0l_trigger_eff_MET_low_dm_QCD", "Stop0l_trigger_eff_MET_high_dm_QCD"
+		"Stop0l_trigger_eff_MET_low_dm_QCD", "Stop0l_trigger_eff_MET_high_dm_QCD",
+		"Pass_Baseline", "Pass_highDM", "Pass_lowDM"
 	};
 
 	if (era == "2017")
@@ -315,16 +302,32 @@ int main(int argc, char* argv[])
 		vars.insert("Flag_ecalBadCalibFilterV2");
 	}
 
-	PDS dsData  = PDS("Data", fileMap["Data_MET"+eraTag], cuts, "");
+	std::string datacuts = cuts + ";!Pass_Baseline"; // Do this to keep the signal region blinded
+
+	PDS dsData  = PDS("Data", fileMap["Data_MET"+eraTag], datacuts, "");
 	PDS dstt    = PDS("ttbar", fileMap["TTbar"+yearTag], cuts, weights + ISRWeight);
 	PDS dstt2   = PDS("ttbarnohad", fileMap["TTbarNoHad"+yearTag], cuts, weights + ISRWeight);
 	PDS dsWJets = PDS("Wjets", fileMap["WJetsToLNu"+yearTag], cuts, weights);
 	PDS dsZnunu = PDS("Znunu", fileMap["ZJetsToNuNu"+yearTag], cuts, weights);
 	PDS dsrare  = PDS("rare", fileMap["Rare"+yearTag], cuts, weights);
 	PDS dsQCD   = PDS("QCD", fileMap["QCD"+yearTag], cuts, weights);
+	PDS dsQCD_s = PDS("QCD_smear", fileMap["QCD_smear"+yearTag], cuts, weights + ";Stop0l_evtWeight");
+	// This weight is a dirty hack for the smeared QCD.  The smearing process alters the effective cross section, and this is
+	// encoded in "Stop0l_evtWeight", which normally only includes the cross section divided by the number of generated events
+	// Because the Plotter framework gets the cross section and number of generated events (and luminosity) from the config files,
+	// I usually don't use "Stop0l_evtWeight", but in this case I need to.  In order to avoid double-counting the cross section
+	// and number of generated events, I set those to 1 in the config file
 
 	string tag = "QCDCR";
-	scanners.push_back(Plotter::Scanner(tag, vars, {dsData, dstt, dstt2, dsWJets, dsZnunu, dsrare, dsQCD}));
+	scanners.push_back(Plotter::Scanner(tag, vars, {dsData, dstt, dstt2, dsWJets, dsZnunu, dsrare, dsQCD, dsQCD_s}));
+
+	/*
+	std::string SRcuts = "Pass_Baseline" + semicolon_HEMVeto;
+
+	PDS srQCD   = PDS("QCD", fileMap["QCD"+yearTag], SRcuts, weights);
+
+	scanners.push_back(Plotter::Scanner("SR", vars, {srQCD}));
+	*/
 
     set<AFS> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+year=$1
+period=$2
+
+if [ ${period} ]
+then
+	period="_"${period}
+fi
+
+echo ${year}
+
+echo ${period}
+
+python condorSubmit.py -d QCD_${year} -n 1 -y ${year}${period} -r Data_MET_${year}${period}

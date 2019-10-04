@@ -35,6 +35,9 @@ namespace plotterFunctions
             // int SBv2_highdm(float mtb_cut, float mtb, int njets, int ntop, int nw, int nres, int nb, float met, float ht)
             int nSearchBinLowDM  = SBv2_lowdm(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
             int nSearchBinHighDM = SBv2_highdm(mtb_cut, mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met, ht);
+			std::vector<int> *nSearchBinHighDMLoose = new std::vector<int>;
+			for(int bin : SBv2_highdm_loose_bin(mtb_cut, mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met, ht))
+				nSearchBinHighDMLoose->push_back(bin);
             
             //-------------------------------------------//
             //--- Updated Validation Bins (June 2019) ---//
@@ -51,6 +54,7 @@ namespace plotterFunctions
             
             tr.registerDerivedVar("nSearchBinLowDM",              nSearchBinLowDM);
             tr.registerDerivedVar("nSearchBinHighDM",             nSearchBinHighDM);
+			tr.registerDerivedVec("nSearchBinHighDMLoose",        nSearchBinHighDMLoose);
             tr.registerDerivedVar("nValidationBinLowDM",          nValidationBinLowDM);
             tr.registerDerivedVar("nValidationBinLowDMHighMET",   nValidationBinLowDMHighMET);
             tr.registerDerivedVar("nValidationBinHighDM",         nValidationBinHighDM);

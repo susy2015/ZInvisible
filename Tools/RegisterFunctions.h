@@ -16,6 +16,7 @@ namespace plotterFunctions
     class BasicLepton;
     class GetSearchBin;
     class Gamma;
+	class JetSort;
 }
 
 class SystWeights;
@@ -41,6 +42,7 @@ private:
     plotterFunctions::Gamma        *gamma;
     plotterFunctions::BasicLepton  *basicLepton;
     plotterFunctions::GetSearchBin *getSearchBin;
+	plotterFunctions::JetSort      *jetSort;
 
 public:
     RegisterFunctionsNTuple(bool isCondor, std::string year);

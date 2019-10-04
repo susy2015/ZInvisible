@@ -12,4 +12,4 @@ echo ${year}
 
 echo ${period}
 
-python condorSubmit.py -d Data_MET_${year}${period},TTbar_${year},TTbarNoHad_${year},WJetsToLNu_${year},ZJetsToNuNu_${year},Rare_${year},QCD_${year} -n 1 -y ${year}${period} -r Data_MET_${year}${period}
+python condorSubmit.py -d Data_MET_${year}${period},TTbar_${year},TTbarNoHad_${year},WJetsToLNu_${year},ZJetsToNuNu_${year},Rare_${year},QCD_${year},QCD_smear_${year} -n 16 -y ${year}${period} -r Data_MET_${year}${period}

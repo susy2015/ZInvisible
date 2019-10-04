@@ -4,6 +4,7 @@
 #include "GetSearchBin.h"
 #include "BasicLepton.h"
 #include "baselineDef.h"
+#include "JetSort.h"
 
 void activateBranches(std::set<std::string>& activeBranches)
 {
@@ -23,6 +24,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string year
     gamma        = new plotterFunctions::Gamma(year);
     basicLepton  = new plotterFunctions::BasicLepton;
     getSearchBin = new plotterFunctions::GetSearchBin;
+	jetSort      = new plotterFunctions::JetSort;
 }
 
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
@@ -33,6 +35,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(basicLepton)  delete basicLepton;
     if(getSearchBin) delete getSearchBin;
     if(gamma)        delete gamma;
+	if(jetSort)      delete jetSort;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -45,6 +48,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*runTopTagger);
     tr.registerFunction(*myBLV);
     tr.registerFunction(*getSearchBin);
+	tr.registerFunction(*jetSort);
 }
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
