@@ -3,23 +3,11 @@
 
 #include "TypeDefinitions.h"
 #include "PhotonTools.h"
-
 #include "SusyAnaTools/Tools/NTupleReader.h"
 #include "SusyAnaTools/Tools/customize.h"
 #include "SusyAnaTools/Tools/searchBins.h"
-#include "TopTagger/Tools/cpp/TaggerUtility.h"
-#include "TopTagger/Tools/cpp/PlotUtility.h"
 #include "ScaleFactors.h"
 #include "ScaleFactorsttBar.h"
-
-#include "TopTagger.h"
-#include "TTModule.h"
-#include "TopTaggerUtilities.h"
-#include "TopTaggerResults.h"
-#include "TopTagger/Tools/cpp/PlotUtility.h"
-
-#include "TopTagger/TopTagger/interface/TopObject.h"
-
 #include "TH1.h"
 #include "TH2.h"
 #include "TFile.h"
@@ -28,7 +16,6 @@
 #include "Math/VectorUtil.h"
 #include "TRandom3.h"
 #include "TVector2.h"
-
 #include <vector>
 #include <iostream>
 #include <string>
@@ -80,9 +67,9 @@ namespace plotterFunctions
             if(file_exists && f)
             {
                hmap["Electron_HighDM"]  = static_cast<TH1D*>(f->Get("njets_shape_2016_Electron_HighDM_Loose"));
-               hmap["Electron_LowDM"]  = static_cast<TH1D*>(f->Get("njets_shape_2016_Electron_LowDM_Loose"));
-               hmap["Muon_HighDM"]  = static_cast<TH1D*>(f->Get("njets_shape_2016_Muon_HighDM_Loose"));
-               hmap["Muon_LowDM"]  = static_cast<TH1D*>(f->Get("njets_shape_2016_Muon_LowDM_Loose"));
+               hmap["Electron_LowDM"]   = static_cast<TH1D*>(f->Get("njets_shape_2016_Electron_LowDM_Loose"));
+               hmap["Muon_HighDM"]      = static_cast<TH1D*>(f->Get("njets_shape_2016_Muon_HighDM_Loose"));
+               hmap["Muon_LowDM"]       = static_cast<TH1D*>(f->Get("njets_shape_2016_Muon_LowDM_Loose"));
                 f->Close();
                 delete f;
             }
