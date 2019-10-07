@@ -146,6 +146,7 @@ int main(int argc, char* argv[])
     // PrefireWeight
     std::string PrefireWeight = "";
 	std::string ISRWeight = "";
+    std::string puWeight                = ";puWeight";
 
     // lumi for Plotter
     if (era.compare("2016") == 0)
@@ -155,6 +156,18 @@ int main(int argc, char* argv[])
     }
     else if (era.compare("2017") == 0)
     {
+        PrefireWeight           = ";PrefireWeight";
+        Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
+    }
+    else if (era.compare("2017_BE") == 0)
+    {
+        puWeight                = ";17BtoEpuWeight";
+        PrefireWeight           = ";PrefireWeight";
+        Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
+    }
+    else if (era.compare("2017_F") == 0)
+    {
+        puWeight                = ";17FpuWeight";
         PrefireWeight           = ";PrefireWeight";
         Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
     }
@@ -170,14 +183,14 @@ int main(int argc, char* argv[])
     else if (era.compare("2018_PostHEM") == 0)
     {
         // HEM vetos: use ";veto_name" so that it can be appended to cuts
-        HEMVeto                           = "SAT_Pass_HEMVeto30";
+        HEMVeto                           = "SAT_Pass_HEMVeto";
         semicolon_HEMVeto                 = ";" + HEMVeto;
         periodTag                         = "_PostHEM";
         Flag_ecalBadCalibFilter           = ";Flag_ecalBadCalibFilter";
     }
     else
     {
-        std::cout << "Please enter 2016, 2017, 2018, 2018_PreHEM or 2018_PostHEM for the era using the -Y flag." << std::endl;
+        std::cout << "Please enter 2016, 2017, 2017_BE, 2017_F, 2018, 2018_PreHEM or 2018_PostHEM for the era using the -Y flag." << std::endl;
         exit(1);
     }
 
@@ -264,13 +277,14 @@ int main(int argc, char* argv[])
 		}
 	}
 
+<<<<<<< HEAD
 
     //vector<Plotter::HistSummary> vh;
     vector<PHS> vh;
 
 	std::vector<Plotter::Scanner> scanners;
 
-	string weights = "puWeight;BTagWeight;genWeight"+PrefireWeight;
+	string weights = "BTagWeight;genWeight" + PrefireWeight + puWeight;
 
 	string cuts = "Pass_CaloMETRatio;Pass_LeptonVeto;Flag_goodVertices;Flag_HBHENoiseFilter;Flag_HBHENoiseIsoFilter;Flag_BadPFMuonFilter;Flag_globalSuperTightHalo2016Filter;Flag_eeBadScFilter;Pass_JetID;Pass_NJets20;Pass_MET;Pass_HT" + semicolon_HEMVeto;
 

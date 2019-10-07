@@ -46,7 +46,7 @@ git checkout NanoAOD
 Checkout the NanoSUSY-tools repository and make softlinks of the trigger efficiency root files.
 ```
 cd $CMSSW_BASE/src
-git clone -b postpro_v2.7 git@github.com:susy2015/NanoSUSY-tools.git PhysicsTools/NanoSUSYTools
+git clone -b postpro_v3.0 git@github.com:susy2015/NanoSUSY-tools.git PhysicsTools/NanoSUSYTools
 cd $CMSSW_BASE/src/ZInvisible/Tools
 ln -s $CMSSW_BASE/src/PhysicsTools/NanoSUSYTools/data/trigger_eff/*.root .
 ```
@@ -58,8 +58,10 @@ Go to the `ZInvisible/Tools` directory and checkout the config files using getTa
 cd $CMSSW_BASE/src/ZInvisible/Tools
 mkdir ../../myTopTaggerCfgs
 mkdir ../../myStopCfgs
-getTaggerCfg.sh -t DeepCombined_fromNanoAOD_RES_T_DeepAK8_T_v1.0.1 -d ../../myTopTaggerCfgs -o
-getStopCfg.sh -t PostProcessed_StopTuple_V2.9.0 -d ../../myStopCfgs -o
+getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2016_v1.0.0 -f TopTagger_2016.cfg -d ../../myTopTaggerCfgs/ -o
+getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2017_v1.0.0 -f TopTagger_2017.cfg -d ../../myTopTaggerCfgs/ -o
+getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2018_v1.0.0 -f TopTagger_2018.cfg -d ../../myTopTaggerCfgs/ -o
+getStopCfg.sh -t PostProcessed_StopNtuple_v3.0.3 -d ../../myStopCfgs -o
 ```
 
 There are more detailed instructions that you can reference [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files).
@@ -105,16 +107,14 @@ cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/syst
 
 Now try running makePlots.
 ```
-./makePlots -D ZJetsToNuNu_2016 -Y 2016 -E 1000 | grep -v LHAPDF
+time ./makePlots -D DYJetsToLL_HT_400to600_2016 -Y 2016 -E 1000 -R Data_MET_2016 | grep -v LHAPDF
 ```
+The `-D` option is for the dataset. The `-E` option is for number of events to process.
 
-The `-D` option is for the dataset (ZJetsToNuNu). The `-E` option is for number of events to process (1000).
+This script should output some pdf/png plots. The `-st` options can be used for only saving the root file and not making pdf/png files.
 
-This script should output some pdf/png plots. The `-s` option can be used for only saving the root file and not making pdf/png files.
-
-You can also run over a specific HT sample range.
 ```
-./makePlots -D ZJetsToNuNu_HT_100to200_2016 -E 1000 -Y 2016
+time ./makePlots -st -D DYJetsToLL_HT_400to600_2016 -Y 2016 -E 1000 -R Data_MET_2016 | grep -v LHAPDF
 ```
 
 If `makePlots` succeeds it will create a file named `histoutput.root`. You can open this file with a TBrowser either on cmslpc or by copying it to your machine.
@@ -141,10 +141,11 @@ The "-l" option will make lepton plots, and the "-g" option will make photon plo
 ./makePlots -D GJets -E 1000 -g
 ```
 
-There is also a script for running over multiple samples and a small number of events without using condor. The year is the only argument. Here are the commands for 2016 and 2017.
+There is also a script for running over multiple samples and a small number of events without using condor. The year is the only argument.
 ```
 ./quickPlot.sh 2016
 ./quickPlot.sh 2017
+./quickPlot.sh 2018
 ```
 
 Different samples and number of events can be specified by editing quickPlot.sh.
@@ -191,31 +192,25 @@ Your condor jobs should produce log, stdout, and stderr files for each job in th
 
 ### Submitting Data and MC Samples
 
-- All Data and MC for Run 2
-- Electron, Muon, and Photon Control Regions
+- All Data and MC for Run 2: Electron, Muon, and Photon Control Regions
+- Use TTbarNoHad (leptonic ttabr) for the lepton control region and TTbar (inclusive ttbar) for the photon control region. 
+- 2017 is split into Periods B-E and F
+- 2018 is split into PreHem and PostHEM
 
-Note: If you use both the lepton and photon control regions, do not run over both TTbarNoHad and TTbarAll, as TTbarNoHad is a subset of TTbarAll. Just use TTbarAll.
-
-Submit 2016 Electron, Muon and Photon Data and MC:
 ```
-python condorSubmit.py -d Data_SingleElectron_2016,Data_SingleMuon_2016,Data_SinglePhoton_2016,DYJetsToLL_2016,SingleTopZinv_2016,Rare_2016,TTZ_2016,Diboson_2016,GJets_2016,QCD_Photon_2016,WJetsToLNu_2016,TTbarAll_2016,tW_2016,ZJetsToNuNu_2016 -n 2 -y 2016
-```
-
-Submit 2017 Electron, Muon and Photon Data and MC:
-```
-python condorSubmit.py -d Data_SingleElectron_2017,Data_SingleMuon_2017,Data_SinglePhoton_2017,DYJetsToLL_2017,SingleTopZinv_2017,Rare_2017,TTZ_2017,Diboson_2017,GJets_2017,QCD_Photon_2017,WJetsToLNu_2017,TTbarAll_2017,tW_2017,ZJetsToNuNu_2017 -n 2 -y 2017
+year="2016"; period="";         python condorSubmit.py -d Data_SingleElectron_${year}${period},Data_SingleMuon_${year}${period},Data_SinglePhoton_${year}${period},DYJetsToLL_${year},TTbarNoHad_${year},SingleTopZinv_${year},Rare_${year},TTZ_${year},Diboson_${year},GJets_${year},QCD_Photon_${year},WJetsToLNu_${year},TTbar_${year},tW_${year},ZJetsToNuNu_${year} -n 2 -y ${year}${period} -r Data_MET_${year}${period}
+year="2017"; period="_BE";      python condorSubmit.py -d Data_SingleElectron_${year}${period},Data_SingleMuon_${year}${period},Data_SinglePhoton_${year}${period},DYJetsToLL_${year},TTbarNoHad_${year},SingleTopZinv_${year},Rare_${year},TTZ_${year},Diboson_${year},GJets_${year},QCD_Photon_${year},WJetsToLNu_${year},TTbar_${year},tW_${year},ZJetsToNuNu_${year} -n 2 -y ${year}${period} -r Data_MET_${year}${period}
+year="2017"; period="_F";       python condorSubmit.py -d Data_SingleElectron_${year}${period},Data_SingleMuon_${year}${period},Data_SinglePhoton_${year}${period},DYJetsToLL_${year},TTbarNoHad_${year},SingleTopZinv_${year},Rare_${year},TTZ_${year},Diboson_${year},GJets_${year},QCD_Photon_${year},WJetsToLNu_${year},TTbar_${year},tW_${year},ZJetsToNuNu_${year} -n 2 -y ${year}${period} -r Data_MET_${year}${period}
+year="2018"; period="_PreHEM";  python condorSubmit.py -d Data_EGamma_${year}${period},Data_SingleMuon_${year}${period},DYJetsToLL_${year},TTbarNoHad_${year},SingleTopZinv_${year},Rare_${year},TTZ_${year},Diboson_${year},GJets_${year},QCD_Photon_${year},WJetsToLNu_${year},TTbar_${year},tW_${year},ZJetsToNuNu_${year} -n 2 -y ${year}${period} -r Data_MET_${year}${period}
+year="2018"; period="_PostHEM"; python condorSubmit.py -d Data_EGamma_${year}${period},Data_SingleMuon_${year}${period},DYJetsToLL_${year},TTbarNoHad_${year},SingleTopZinv_${year},Rare_${year},TTZ_${year},Diboson_${year},GJets_${year},QCD_Photon_${year},WJetsToLNu_${year},TTbar_${year},tW_${year},ZJetsToNuNu_${year} -n 2 -y ${year}${period} -r Data_MET_${year}${period}
 ```
 
-Submit 2018_AB Electron, Muon and Photon Data and MC:
+There is now a script to submit all Run 2 Data and MC with one command.
 ```
-python condorSubmit.py -d Data_EGamma_2018_PeriodsAB,Data_SingleMuon_2018_PeriodsAB,DYJetsToLL_2018,SingleTopZinv_2018,Rare_2018,TTZ_2018,Diboson_2018,GJets_2018,QCD_Photon_2018,WJetsToLNu_2018,TTbarAll_2018,tW_2018,ZJetsToNuNu_2018 -n 2 -y 2018_AB
-```
-
-Submit 2018_CD Electron, Muon and Photon Data and MC:
-```
-python condorSubmit.py -d Data_EGamma_2018_PeriodsCD,Data_SingleMuon_2018_PeriodsCD,DYJetsToLL_2018,SingleTopZinv_2018,Rare_2018,TTZ_2018,Diboson_2018,GJets_2018,QCD_Photon_2018,WJetsToLNu_2018,TTbarAll_2018,tW_2018,ZJetsToNuNu_2018 -n 2 -y 2018_CD
+python multiSubmit.py
 ```
 
+The script multiSubmit.py will create a json file in the runs directory that lists the condor submission directories. This json file will be used again to process the output of the condor jobs.
 
 ### Process Output from Condor
 
@@ -269,6 +264,18 @@ Process 2016 results:
 Process 2017 results:
 ```
 ./processResults.sh PhotonAndMuonControlRegionSelection_2017 2017
+```
+
+There is now a script to process all Run 2 output from condor. It accepts a json file containing the condor submission directories (and created by multiSubmit.py) as an input.
+
+```
+python python/process.py -j runs/submission_2019-08-28_14-24-48.json
+```
+
+## Running Prediction Modules
+Use the run_modules.py script to run modules to calculate the normalization and shape factors, as well as the Z to invisible prediction in the validation and search bins.
+```
+python python/run_modules.py -j runs/submission_2019-08-28_14-24-48.json
 ```
 
 ## La Fin
