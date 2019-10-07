@@ -46,7 +46,10 @@ INCLUDESDIRS += -I$(LHAPDFDIR)/../../include
 LHAPDFLIB  = -L$(LHAPDFDIR)/../../lib -lLHAPDF
 
 
-PROGRAMS = calcEff calcEffPhoton harvestHists makePlots moneyplot scalefactorplot systplot makeTopPlots makeDataMCplots makeDYPlots makePhotonPlots simpleAnalyzer
+# all programs
+#PROGRAMS = calcEff calcEffPhoton harvestHists makePlots moneyplot scalefactorplot systplot makeTopPlots makeDataMCplots makeDYPlots makePhotonPlots simpleAnalyzer
+# selected programs
+PROGRAMS = makePlots
 
 all: mkobj PyWraps $(PROGRAMS)
 
