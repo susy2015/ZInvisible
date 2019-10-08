@@ -30,7 +30,7 @@ namespace plotterFunctions
 
         void getSearchBin(NTupleReader& tr)
         {
-            std::vector<std::string> JetPtCuts = {"_jetpt20"};
+            std::vector<std::string> JetPtCuts = {"_jetpt30"};
             // begin loop over jet pt cuts 
             for (const auto& suffix : JetPtCuts) 
             {
