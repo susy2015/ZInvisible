@@ -218,31 +218,37 @@ private:
     void fillHist(TH1 * const h, const VarName& name, const NTupleReader& tr, const double weight);
     void smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, double& gmin, double& gmax, double& gpThreshMax, const bool error = false) const;
 
-    template<typename T> static const double tlvGetValue(const std::string& name, const T& v)
+    template<typename T> static const double& tlvGetValue(const std::string& name, const T& v)
     {
         if     (name.find("pt")  != std::string::npos)
         {
-            return v.Pt();
+            const auto& retval = v.Pt();
+            return retval;
         }
         else if(name.find("eta") != std::string::npos)
         {
-            return v.Eta();
+            const auto& retval = v.Eta();
+            return retval;
         }
         else if(name.find("phi") != std::string::npos)
         {
-            return v.Phi();
+            const auto& retval = v.Phi();
+            return retval;
         }
         else if(name.find("E")   != std::string::npos)
         {
-            return v.E();
+            const auto& retval = v.E();
+            return retval;
         }
         else if(name.find("M")   != std::string::npos)
         {
-            return v.M();
+            const auto& retval = v.M();
+            return retval;
         }
         else if(name.find("Mt")  != std::string::npos)
         {
-            return v.Mt();
+            const auto& retval = v.Mt();
+            return retval;
         }
         else
         {
