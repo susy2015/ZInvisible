@@ -52,10 +52,10 @@ namespace plotterFunctions
                 //-----------------------------------------//
                 //--- Updated Search Bins (August 2019) ---//
                 //-----------------------------------------//
-                // int SBv3_lowdm(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
-                // int SBv3_highdm(float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met) 
-                int nSearchBinLowDM  = SBv3_lowdm(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nSearchBinHighDM = SBv3_highdm(mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                // int SBv4_lowdm(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
+                // int SBv4_highdm(float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
+                int nSearchBinLowDM  = SBv4_lowdm(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                int nSearchBinHighDM = SBv4_highdm(mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
                 
                 //------------------------------------------------//
                 //--- Updated Validation Bins (September 2019) ---//
