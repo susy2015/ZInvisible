@@ -1051,7 +1051,7 @@ int main(int argc, char* argv[])
     vh.push_back(PHS("MC_HighDM_bestRecoZM" + eraTag, {dcMC_HighDM_bestRecoZM, dcMC_HighDM_Electron_bestRecoZM, dcMC_HighDM_Muon_bestRecoZM}, {2, 3}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
     
     // Jet pt cuts
-    std::vector<std::string> JetPtCuts = {"_jetpt20"};
+    std::vector<std::string> JetPtCuts = {"_jetpt30"};
     
     // begin loop over jet pt cuts 
     for (const auto& JetPtCut : JetPtCuts) 
