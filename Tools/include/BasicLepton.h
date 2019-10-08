@@ -3,23 +3,11 @@
 
 #include "TypeDefinitions.h"
 #include "ZInvisible/Tools/PhotonTools.h"
-
 #include "SusyAnaTools/Tools/NTupleReader.h"
 #include "SusyAnaTools/Tools/customize.h"
 #include "SusyAnaTools/Tools/searchBins.h"
-#include "TopTagger/Tools/cpp/TaggerUtility.h"
-#include "TopTagger/Tools/cpp/PlotUtility.h"
 #include "ZInvisible/Tools/ScaleFactors.h"
 #include "ZInvisible/Tools/ScaleFactorsttBar.h"
-
-#include "TopTagger/TopTagger/interface/TopTagger.h"
-#include "TopTagger/TopTagger/interface/TTModule.h"
-#include "TopTagger/TopTagger/interface/TopTaggerUtilities.h"
-#include "TopTagger/TopTagger/interface/TopTaggerResults.h"
-#include "TopTagger/Tools/cpp/PlotUtility.h"
-
-#include "TopTagger/TopTagger/interface/TopObject.h"
-
 #include "TH1.h"
 #include "TH2.h"
 #include "TFile.h"
@@ -28,7 +16,6 @@
 #include "Math/VectorUtil.h"
 #include "TRandom3.h"
 #include "TVector2.h"
-
 #include <vector>
 #include <iostream>
 #include <string>
