@@ -377,16 +377,20 @@ int main(int argc, char* argv[])
 
     //SearchBins sb(sbEra);
     // Number of searchbins
-    int NSB = 204;
-    // search bins for low and high dm
+    int NSB = 183;
+    // SBv3 search bins for low and high dm
     // Low DM, 53 bins: 0 - 52
     // High DM, 151 bins: 53 - 203
     // Total 204 bins: 0 - 203
+    // SBv4 search bins for low and high dm
+    // Low DM, 53 bins: 0 - 52
+    // High DM, 130 bins: 53 - 182
+    // Total 183 bins: 0 - 182
     int min_sb_low_dm = 0;
     int max_sb_low_dm = 53;
     int min_sb_high_dm = 53;
-    int max_sb_high_dm = 204;
-    //Validation Bins
+    int max_sb_high_dm = 183;
+    // SBv3 Validation Bins
     // Low DM, 15 bins: 0 - 14
     // Low DM High MET, 4 bins: 15 - 18
     // High DM, 24 bins: 19 - 42
