@@ -383,7 +383,7 @@ class ValidationBins(Common):
         self.low_dm_bins_normal     = list(str(b) for b in range( self.low_dm_start,         self.low_dm_normal_end + 1)) 
         self.low_dm_bins_highmet    = list(str(b) for b in range( self.low_dm_highmet_start, self.low_dm_end + 1))
         self.all_bins               = self.low_dm_bins + self.high_dm_bins
-        with open("validation_bins.json", "r") as j:
+        with open("validation_bins_v3.json", "r") as j:
             self.bins = json.load(j)
 
     def getValues(self, file_name, era):
@@ -403,20 +403,20 @@ class ValidationBins(Common):
             self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["validation"][region][selection_shape][met + "_error"]
 
         # Z to NuNu histograms
-        #TDirectoryFile*: nValidationBinLowDM_jetpt20
-        #TH1D   MET_nValidationBin_LowDM_jetpt20_2018_PostHEMnValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20Data MET Validation Bin Low DMdata
-        #TH1D   ZNuNu_nValidationBin_LowDM_jetpt20_2016nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata
-        #TDirectoryFile*: nValidationBinLowDMHighMET_jetpt20 
-        #TH1D   MET_nValidationBin_LowDM_HighMET_jetpt20_2018_PostHEMnValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20Data MET Validation Bin Low DM High METdata
-        #TH1D   ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_2016nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata
+        #TDirectoryFile*: nValidationBinLowDM_jetpt30
+        #TH1D   MET_nValidationBin_LowDM_jetpt30_2018_PostHEMnValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30Data MET Validation Bin Low DMdata
+        #TH1D   ZNuNu_nValidationBin_LowDM_jetpt30_2016nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata
+        #TDirectoryFile*: nValidationBinLowDMHighMET_jetpt30 
+        #TH1D   MET_nValidationBin_LowDM_HighMET_jetpt30_2018_PostHEMnValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30Data MET Validation Bin Low DM High METdata
+        #TH1D   ZNuNu_nValidationBin_LowDM_HighMET_jetpt30_2016nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata
         f_in                   = ROOT.TFile(file_name, "read")
         if (self.unblind):
-            h_data_lowdm           = f_in.Get("nValidationBinLowDM_jetpt20/MET_nValidationBin_LowDM_jetpt20_"                   + era + "nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20Data MET Validation Bin Low DMdata") 
-            h_data_lowdm_highmet   = f_in.Get("nValidationBinLowDMHighMET_jetpt20/MET_nValidationBin_LowDM_HighMET_jetpt20_"    + era + "nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20Data MET Validation Bin Low DM High METdata")
-            h_data_highdm          = f_in.Get("nValidationBinHighDM_jetpt20/MET_nValidationBin_HighDM_jetpt20_"                 + era + "nValidationBinHighDM_jetpt20nValidationBinHighDM_jetpt20Data MET Validation Bin High DMdata")
-        h_mc_lowdm             = f_in.Get("nValidationBinLowDM_jetpt20/ZNuNu_nValidationBin_LowDM_jetpt20_"                 + era + "nValidationBinLowDM_jetpt20nValidationBinLowDM_jetpt20ZJetsToNuNu Validation Bin Low DMdata")
-        h_mc_lowdm_highmet     = f_in.Get("nValidationBinLowDMHighMET_jetpt20/ZNuNu_nValidationBin_LowDM_HighMET_jetpt20_"  + era + "nValidationBinLowDMHighMET_jetpt20nValidationBinLowDMHighMET_jetpt20ZJetsToNuNu Validation Bin Low DM High METdata")
-        h_mc_highdm            = f_in.Get("nValidationBinHighDM_jetpt20/ZNuNu_nValidationBin_HighDM_jetpt20_"               + era + "nValidationBinHighDM_jetpt20nValidationBinHighDM_jetpt20ZJetsToNuNu Validation Bin High DMdata")
+            h_data_lowdm           = f_in.Get("nValidationBinLowDM_jetpt30/MET_nValidationBin_LowDM_jetpt30_"                   + era + "nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30Data MET Validation Bin Low DMdata") 
+            h_data_lowdm_highmet   = f_in.Get("nValidationBinLowDMHighMET_jetpt30/MET_nValidationBin_LowDM_HighMET_jetpt30_"    + era + "nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30Data MET Validation Bin Low DM High METdata")
+            h_data_highdm          = f_in.Get("nValidationBinHighDM_jetpt30/MET_nValidationBin_HighDM_jetpt30_"                 + era + "nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30Data MET Validation Bin High DMdata")
+        h_mc_lowdm             = f_in.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM_jetpt30_"                 + era + "nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
+        h_mc_lowdm_highmet     = f_in.Get("nValidationBinLowDMHighMET_jetpt30/ZNuNu_nValidationBin_LowDM_HighMET_jetpt30_"  + era + "nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata")
+        h_mc_highdm            = f_in.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM_jetpt30_"               + era + "nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
         
         # bin map
         b_map = {}
@@ -461,15 +461,15 @@ class SearchBins(Common):
         self.low_dm_start   = 0
         self.low_dm_end     = 52
         self.high_dm_start  = 53
-        self.high_dm_end    = 203
+        self.high_dm_end    = 182
         self.low_dm_nbins   = self.low_dm_end - self.low_dm_start + 1 
         self.high_dm_nbins  = self.high_dm_end - self.high_dm_start + 1 
         self.low_dm_bins    = list(str(b) for b in range( self.low_dm_start,  self.low_dm_end + 1)) 
         self.high_dm_bins   = list(str(b) for b in range( self.high_dm_start, self.high_dm_end + 1)) 
         self.all_bins       = self.low_dm_bins + self.high_dm_bins
-        self.binValues = {}
-        self.histograms = {}
-        with open("search_bins.json", "r") as j:
+        self.binValues      = {}
+        self.histograms     = {}
+        with open("search_bins_v4.json", "r") as j:
             self.bins = json.load(j)
     
     def getValues(self, file_name, era):
@@ -493,10 +493,10 @@ class SearchBins(Common):
         # Z to NuNu MC histograms
         f_in            = ROOT.TFile(file_name, "read")
         if (self.unblind):
-            h_data_lowdm    = f_in.Get("nSearchBinLowDM_jetpt20/MET_nSearchBin_LowDM_jetpt20_"      + era + "nSearchBinLowDM_jetpt20nSearchBinLowDM_jetpt20Data MET Search Bin Low DMdata") 
-            h_data_highdm   = f_in.Get("nSearchBinHighDM_jetpt20/MET_nSearchBin_HighDM_jetpt20_"    + era + "nSearchBinHighDM_jetpt20nSearchBinHighDM_jetpt20Data MET Search Bin High DMdata")
-        h_mc_lowdm      = f_in.Get("nSearchBinLowDM_jetpt20/ZNuNu_nSearchBin_LowDM_jetpt20_"    + era + "nSearchBinLowDM_jetpt20nSearchBinLowDM_jetpt20ZJetsToNuNu Search Bin Low DMdata")
-        h_mc_highdm     = f_in.Get("nSearchBinHighDM_jetpt20/ZNuNu_nSearchBin_HighDM_jetpt20_"  + era + "nSearchBinHighDM_jetpt20nSearchBinHighDM_jetpt20ZJetsToNuNu Search Bin High DMdata")
+            h_data_lowdm    = f_in.Get("nSearchBinLowDM_jetpt30/MET_nSearchBin_LowDM_jetpt30_"      + era + "nSearchBinLowDM_jetpt30nSearchBinLowDM_jetpt30Data MET Search Bin Low DMdata") 
+            h_data_highdm   = f_in.Get("nSearchBinHighDM_jetpt30/MET_nSearchBin_HighDM_jetpt30_"    + era + "nSearchBinHighDM_jetpt30nSearchBinHighDM_jetpt30Data MET Search Bin High DMdata")
+        h_mc_lowdm      = f_in.Get("nSearchBinLowDM_jetpt30/ZNuNu_nSearchBin_LowDM_jetpt30_"    + era + "nSearchBinLowDM_jetpt30nSearchBinLowDM_jetpt30ZJetsToNuNu Search Bin Low DMdata")
+        h_mc_highdm     = f_in.Get("nSearchBinHighDM_jetpt30/ZNuNu_nSearchBin_HighDM_jetpt30_"  + era + "nSearchBinHighDM_jetpt30nSearchBinHighDM_jetpt30ZJetsToNuNu Search Bin High DMdata")
         
         # bin map
         b_map = {}

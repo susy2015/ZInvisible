@@ -1056,10 +1056,18 @@ int main(int argc, char* argv[])
     // begin loop over jet pt cuts 
     for (const auto& JetPtCut : JetPtCuts) 
     {
+        // jet cleaning tag 
+        std::string cleanTag   = "_drLeptonCleaned";
         // suffix for variables
-        std::string varSuffix  = "_drLeptonCleaned" + JetPtCut;
+        std::string varSuffix  = cleanTag + JetPtCut;
         // suffix for histograms
         std::string histSuffix = JetPtCut + eraTag;
+        // top, W, and soft bottom weights
+        std::string MergedTopTotalSF    = ";MergedTopTotalSF"    + cleanTag;
+        std::string WTotalSF            = ";WTotalSF"            + cleanTag;
+        std::string ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + cleanTag;
+        std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + cleanTag;
+        std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
         // baseline selections for lepton control regions
         SAT_Pass_lowDM        = ";SAT_Pass_lowDM"           + varSuffix;
         SAT_Pass_highDM       = ";SAT_Pass_highDM"          + varSuffix;
@@ -1092,7 +1100,7 @@ int main(int argc, char* argv[])
         if (doDataMCElectron)
         {
             // use DiElecTriggerEffPt instead of Stop0l_trigger_eff_Zee_pt because it applies a Z mass cut
-            std::string ElectronWeights = "genWeightNormalized;DiElecTriggerEffPt;DiElecSF;BTagWeight" + PrefireWeight + puWeight;
+            std::string ElectronWeights = "genWeightNormalized;DiElecTriggerEffPt;DiElecSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
             // bestRecoZM used to calculate normalization
             // Search and Validation Bins Selection
             for (const auto& cut : map_norm_cuts_low_dm)
@@ -1523,7 +1531,7 @@ int main(int argc, char* argv[])
         if (doDataMCMuon)
         {
             // Use DiMuTriggerEffPt intead of Stop0l_trigger_eff_Zmumu_pt because it applies a Z mass cut
-            std::string MuonWeights = "genWeightNormalized;DiMuTriggerEffPt;DiMuSF;BTagWeight" + PrefireWeight + puWeight;
+            std::string MuonWeights = "genWeightNormalized;DiMuTriggerEffPt;DiMuSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
             // bestRecoZM used to calculate normalization
             // Search and Validation Bins Selection
             for (const auto& cut : map_norm_cuts_low_dm)
@@ -1860,18 +1868,27 @@ int main(int argc, char* argv[])
             cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Muon_LowDM_met"    + histSuffix, dcMC_Muon_LowDM_met,    CutLevels_MC_Muon_LowDM));
             cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_MC_Muon_HighDM_met"   + histSuffix, dcMC_Muon_HighDM_met,   CutLevels_MC_Muon_HighDM));
         }
+       
+        // ---------------------------- //
+        // --- begin photon section --- //
+        // ---------------------------- //
         
-        // begin photon section
-        
+        // jet cleaning tag 
+        cleanTag   = "_drPhotonCleaned";
         // suffix for variables
-        varSuffix  = "_drPhotonCleaned" + JetPtCut;
+        varSuffix  = cleanTag + JetPtCut;
+        // top, W, and soft bottom weights
+        MergedTopTotalSF    = ";MergedTopTotalSF"    + cleanTag;
+        WTotalSF            = ";WTotalSF"            + cleanTag;
+        ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + cleanTag;
+        SoftBottomTotalSF   = ";SoftBottomTotalSF"   + cleanTag;
+        TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
         // baseline selections for photon control region
         SAT_Pass_lowDM        = ";SAT_Pass_lowDM"       + varSuffix;
         SAT_Pass_lowDM_Tight  = ";SAT_Pass_lowDM_Tight" + varSuffix;
         SAT_Pass_highDM       = ";SAT_Pass_highDM"      + varSuffix;
         // Photon ID Selection
         std::string PhotonIDSelection = ";passPhotonSelection";
-        
         // --- Shape: bin in NB and NJ --- //
         std::map<std::string, std::string> photon_var_map = {
             {"NB",  "nBottoms"     + varSuffix},
@@ -1898,7 +1915,7 @@ int main(int argc, char* argv[])
             std::vector<double> xbins_nj_nb0 = {2.0, 6.0, 10.0}; // njets = 2 - 5, >=6
             std::vector<double> xbins_nj_nb1 = {2.0, 7.0, 10.0}; // njets = 2 - 6, >=7
             // all weights
-            std::string PhotonWeights = "genWeightNormalized;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + PrefireWeight + puWeight;
+            std::string PhotonWeights = "genWeightNormalized;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
             // Search and Validation Bins Selection
             for (const auto& cut : map_shape_cuts_low_dm)
             {
@@ -2908,6 +2925,12 @@ int main(int argc, char* argv[])
         {
             // suffix for histograms
             std::string histSuffix = JetPtCut + eraTag;
+            // top, W, and soft bottom weights
+            std::string MergedTopTotalSF    = ";MergedTopTotalSF";
+            std::string WTotalSF            = ";WTotalSF";
+            std::string ResolvedTopTotalSF  = ";ResolvedTopTotalSF";
+            std::string SoftBottomTotalSF   = ";SoftBottomTotalSF";
+            std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
             
             // ---------------------------------- // 
             // --- validation and search bins --- //
@@ -2919,16 +2942,16 @@ int main(int argc, char* argv[])
             PDC dcData_MET_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSMET("Validation Bin High DM",           "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
 
             // ZNuNu MC in validation and search bins
-            PDC dcMC_ZNuNu_nValidationBin_LowDM("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
-            PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET", "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
-            PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
-            PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",              "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_low_dm;BTagWeight"          + PrefireWeight + puWeight)});
-            PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",             "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_high_dm;BTagWeight"         + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_nValidationBin_LowDM("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET", "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",              "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_low_dm;BTagWeight"          + TotalSFs + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",             "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_high_dm;BTagWeight"         + TotalSFs + PrefireWeight + puWeight)});
         
             // Validation with njetWeight applied 
-            PDC dcMC_ZNuNu_nValidationBin_LowDM_njetWeight("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight + ";njetWeight_Electron_LowDM")});
-            PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET_njetWeight("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET", "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight + ";njetWeight_Electron_LowDM")});
-            PDC dcMC_ZNuNu_nValidationBin_HighDM_njetWeight("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight + ";njetWeight_Electron_HighDM")});
+            PDC dcMC_ZNuNu_nValidationBin_LowDM_njetWeight("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight + ";njetWeight_Electron_LowDM")});
+            PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET_njetWeight("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET", "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight + ";njetWeight_Electron_LowDM")});
+            PDC dcMC_ZNuNu_nValidationBin_HighDM_njetWeight("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight + ";njetWeight_Electron_HighDM")});
 
             // MET Data in validation bins
             vh.push_back(PHS("MET_nValidationBin_LowDM" + histSuffix,           {dcData_MET_nValidationBin_LowDM},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
@@ -2960,9 +2983,9 @@ int main(int argc, char* argv[])
             PDC dcData_MET_met_LowDM("data",                    "MET_pt",                     {makePDSMET("MET Low DM",                     "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
             PDC dcData_MET_met_LowDM_HighMET("data",            "MET_pt",                     {makePDSMET("MET Low DM High MET",            "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
             PDC dcData_MET_met_HighDM("data",                   "MET_pt",                     {makePDSMET("MET High DM",                    "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
-            PDC dcMC_ZNuNu_met_LowDM("data",                    "MET_pt",                     {makePDSZnunu("MET Low DM",                   "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
-            PDC dcMC_ZNuNu_met_LowDM_HighMET("data",            "MET_pt",                     {makePDSZnunu("MET Low DM High MET",          "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
-            PDC dcMC_ZNuNu_met_HighDM("data",                   "MET_pt",                     {makePDSZnunu("MET High DM",                  "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_met_LowDM("data",                    "MET_pt",                     {makePDSZnunu("MET Low DM",                   "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_met_LowDM_HighMET("data",            "MET_pt",                     {makePDSZnunu("MET Low DM High MET",          "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_met_HighDM("data",                   "MET_pt",                     {makePDSZnunu("MET High DM",                  "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight)});
             // cut flow: name, DataCollection, cutLevels
             // Plotter::CutFlowSummary::CutFlowSummary(std::string n, Plotter::DataCollection ns, std::vector<std::string> cutLevels)
             cutFlowSummaries.emplace_back(Plotter::CutFlowSummary("CutFlow_Data_MET_met_LowDM",         dcData_MET_met_LowDM,           CutLevels_Data_MET_LowDM));

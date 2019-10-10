@@ -24,9 +24,9 @@ class Shape:
         self.bin_types  = ["validation", "search"]
         self.regions    = ["LowDM", "HighDM"]
         self.bin_maps = {}
-        with open("validation_bins.json", "r") as j:
+        with open("validation_bins_v3.json", "r") as j:
             self.bin_maps["validation"] = stringifyMap(json.load(j))
-        with open("search_bins.json", "r") as j:
+        with open("search_bins_v4.json", "r") as j:
             self.bin_maps["search"] = stringifyMap(json.load(j))
         
         # Note: some selections are repeated, and there can be different MET binning for the same selection
@@ -50,9 +50,9 @@ class Shape:
         # histogram examples
         # example; note that the variable is written twice
         # with selection
-        # DataMC_Photon_LowDM_met_NBeq0_NJge6_jetpt20_2016metWithPhotonmetWithPhotonDatadata
+        # DataMC_Photon_LowDM_met_NBeq0_NJge6_jetpt30_2016metWithPhotonmetWithPhotonDatadata
         # without selection
-        # DataMC_Photon_LowDM_met_jetpt20_2016metWithPhotonmetWithPhotonDatadata
+        # DataMC_Photon_LowDM_met_jetpt30_2016metWithPhotonmetWithPhotonDatadata
         eraTag = "_" + era
         self.histos[era] = {}
         for bin_type in self.bin_types:
@@ -60,7 +60,7 @@ class Shape:
             for region in self.regions:
                 self.histos[era][bin_type][region] = {}
                 for selection in self.selections[bin_type][region]: 
-                    selectionTag = "_" + selection + "_jetpt20"
+                    selectionTag = "_" + selection + "_jetpt30"
                     self.histos[era][bin_type][region][selection] = {
                             "Data"  : "DataMC_Photon_" + region + "_met" + selectionTag + eraTag + 2 * self.variable + "Datadata",
                             "GJets" : "DataMC_Photon_" + region + "_met" + selectionTag + eraTag + 2 * self.variable + "#gamma+jetsstack",

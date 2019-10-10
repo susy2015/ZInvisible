@@ -34,9 +34,9 @@ class Normalization:
                            }
        
         self.bin_maps = {}
-        with open("validation_bins.json", "r") as j:
+        with open("validation_bins_v3.json", "r") as j:
             self.bin_maps["validation"] = tools.stringifyMap(json.load(j))
-        with open("search_bins.json", "r") as j:
+        with open("search_bins_v4.json", "r") as j:
             self.bin_maps["search"] = tools.stringifyMap(json.load(j))
         
         # get selections from json file
@@ -55,7 +55,7 @@ class Normalization:
     
     def setupHistoMap(self, era):
         # histogram examples
-        # DataMC_Electron_LowDM_bestRecoZM_50to250_NBeq0_NSVeq0_jetpt20_2016bestRecoZMbestRecoZMDatadata
+        # DataMC_Electron_LowDM_bestRecoZM_50to250_NBeq0_NSVeq0_jetpt30_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMZToLLstack
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMNoZToLLstack 
@@ -69,7 +69,7 @@ class Normalization:
                     # using ZToLL and NoZToLL MC for normalization 
                     self.histos[era][bin_type][particle][region] = {}
                     for selection in self.selections[bin_type][region]: 
-                        selectionTag = "_" + selection + "_jetpt20"
+                        selectionTag = "_" + selection + "_jetpt30"
                         # using Nb and Nsv selection
                         self.histos[era][bin_type][particle][region][selection] = { 
                             "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + eraTag + 2 * self.variable + "Datadata",
