@@ -694,6 +694,7 @@ double Plotter::Cut::translateVar(const NTupleReader& tr, const int index) const
 
 bool Plotter::Cut::boolReturn(const NTupleReader& tr) const
 {
+    //std::cout << "DEBUG: " << name.name << std::endl;
     return tr.getVar<bool>(name.name);
 }
 
