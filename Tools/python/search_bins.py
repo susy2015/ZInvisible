@@ -81,7 +81,7 @@ class Common:
                 # make first column for bin numbers small
                 self.writeLine("\\begin{longtable}{|p{0.03\\textwidth}|p{0.3\\textwidth}|*6{p{0.1\\textwidth}|}}")
                 # column headers
-                self.writeLine("\\hline Bin & Selection &  & $N_{MC}$ & $N_{p}$ \\\\")
+                self.writeLine("\\hline Bin & Selection & $N_{MC}$ & $N_{p}$ \\\\")
                 # write values to table
                 for b in self.all_bins:
                     total_selection = self.bins[b]["total_selection"]
