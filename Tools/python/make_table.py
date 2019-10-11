@@ -10,28 +10,29 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 class Table:
     def __init__(self, out_file):
         self.out_file = out_file
+        self.jetpt_cut  - "jetpt30"
         self.regions    = ["LowDM"]
         self.selections = ["nb0", "nb1"]
-        self.variable   = "nJets_drPhotonCleaned_jetpt20"
+        self.variable   = "nJets_drPhotonCleaned_" + self.jetpt_cut
         self.histos = {}
 
     def setupHistoMap(self, era):
         # histogram examples
-        # DataMC_Photon_LowDM_nj_nb0_rebin_jetpt20_2016nJets_drPhotonCleaned_jetpt20nJets_drPhotonCleaned_jetpt20Datadata
-        # DataMC_Photon_LowDM_nj_nb1_rebin_jetpt20_2016nJets_drPhotonCleaned_jetpt20nJets_drPhotonCleaned_jetpt20Datadata
+        # DataMC_Photon_LowDM_nj_nb0_rebin_jetpt30_2016nJets_drPhotonCleaned_jetpt30nJets_drPhotonCleaned_jetpt30Datadata
+        # DataMC_Photon_LowDM_nj_nb1_rebin_jetpt30_2016nJets_drPhotonCleaned_jetpt30nJets_drPhotonCleaned_jetpt30Datadata
         self.histos[era] = {}
         for region in self.regions:
             self.histos[era][region] = {}
             for selection in self.selections:
                 self.histos[era][region][selection] = {
-                        "Data"  : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_jetpt20_" + era + 2 * self.variable + "Datadata",
-                        "GJets" : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_jetpt20_" + era + 2 * self.variable + "#gamma+jetsstack",
-                        "QCD"   : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_jetpt20_" + era + 2 * self.variable + "QCDstack",
-                        "WJets" : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_jetpt20_" + era + 2 * self.variable + "W(l#nu)+jetsstack",
-                        "TTG"   : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_jetpt20_" + era + 2 * self.variable + "t#bar{t}#gamma+jetsstack",
-                        "TTbar" : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_jetpt20_" + era + 2 * self.variable + "t#bar{t}stack",
-                        "tW"    : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_jetpt20_" + era + 2 * self.variable + "tWstack",
-                        "Rare"  : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_jetpt20_" + era + 2 * self.variable + "Rarestack",
+                        "Data"  : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_" + self.jetpt_cut + "_" + era + 2 * self.variable + "Datadata",
+                        "GJets" : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_" + self.jetpt_cut + "_" + era + 2 * self.variable + "#gamma+jetsstack",
+                        "QCD"   : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_" + self.jetpt_cut + "_" + era + 2 * self.variable + "QCDstack",
+                        "WJets" : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_" + self.jetpt_cut + "_" + era + 2 * self.variable + "W(l#nu)+jetsstack",
+                        "TTG"   : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_" + self.jetpt_cut + "_" + era + 2 * self.variable + "t#bar{t}#gamma+jetsstack",
+                        "TTbar" : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_" + self.jetpt_cut + "_" + era + 2 * self.variable + "t#bar{t}stack",
+                        "tW"    : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_" + self.jetpt_cut + "_" + era + 2 * self.variable + "tWstack",
+                        "Rare"  : "DataMC_Photon_" + region + "_nj_" + selection + "_rebin_" + self.jetpt_cut + "_" + era + 2 * self.variable + "Rarestack",
                 }
 
     def makeTable(self, in_file, era):
