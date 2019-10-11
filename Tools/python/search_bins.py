@@ -48,14 +48,16 @@ class Common:
                         print "b={0} b_i={1} {2} {3}".format(b, bin_i, region, h_type)
                     value       = h.GetBinContent(bin_i)
                     value_error = h.GetBinError(bin_i)
+                    final_error = getBinError(value, value_error, ERROR_ZERO) 
                     self.binValues[era][b][h_type]            = value
-                    self.binValues[era][b][h_type + "_error"] = getBinError(value, value_error, ERROR_ZERO)
+                    self.binValues[era][b][h_type + "_error"] = final_error
+                    self.binValues[era][b][h_type + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(value, final_error)
                     bin_i += 1
     
     def writeLine(self, line):
         self.output_file.write(line + "\n")
 
-    def makeTexFile(self, caption, output_name):
+    def makeTexFile(self, caption, output_name, total_era=""):
         # write latex file with table
         with open(output_name, "w+") as f:
             self.output_file = f
@@ -70,32 +72,55 @@ class Common:
             self.writeLine("\\begin{document}")
             self.writeLine("\\footnotesize")
             self.writeLine("\\tabcolsep=0.01cm")
-            for era in self.eras:
-                era_tex = era.replace("_", " ")
+            # make one table will total Run 2 predictions
+            if total_era:
+                total_era_tex = total_era.replace("_", " ")
                 # begin table
                 self.writeLine("\\centering")
                 # *n{} syntax with vertical lines for n columns; put last | in expression: *n{...|}
                 # make first column for bin numbers small
                 self.writeLine("\\begin{longtable}{|p{0.03\\textwidth}|p{0.3\\textwidth}|*6{p{0.1\\textwidth}|}}")
                 # column headers
-                self.writeLine("\\hline Bin & Selection & $R_{Z}$ & $S_{\\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $N_{eff}$ \\\\")
+                self.writeLine("\\hline Bin & Selection &  & $N_{MC}$ & $N_{p}$ \\\\")
                 # write values to table
                 for b in self.all_bins:
-                    total_selection = self.binValues[era][b]["total_selection"]
-                    norm            = self.binValues[era][b]["norm_tex"]
-                    shape           = self.binValues[era][b]["shape_tex"]
-                    mc              = self.binValues[era][b]["mc_tex"]
-                    pred            = self.binValues[era][b]["pred_tex"]
-                    avg_w           = self.binValues[era][b]["avg_w_tex"]
-                    n_eff           = self.binValues[era][b]["n_eff_tex"]
-                    avg_w_final     = self.binValues[era][b]["avg_w_final_tex"]
-                    n_eff_final     = self.binValues[era][b]["n_eff_final_tex"]
-                    self.writeLine("\\hline {0} & {1} & {2} & {3} & {4} & {5} & {6} & {7} \\\\".format(b, total_selection, norm, shape, mc, pred, avg_w, n_eff))
+                    total_selection = self.bins[b]["total_selection"]
+                    mc              = self.binValues[total_era][b]["mc_tex"]
+                    pred            = self.binValues[total_era][b]["pred_tex"]
+                    self.writeLine("\\hline {0} & {1} & {2} & {3} \\\\".format(b, total_selection, mc, pred))
                 self.writeLine("\\hline")
                 # for longtable, caption must go at the bottom of the table... it is not working at the top
-                self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
+                self.writeLine("\\caption{{{0} ({1})}}".format(caption, total_era_tex))
                 # end table
                 self.writeLine("\\end{longtable}")
+            # make a table for each era
+            else:
+                for era in self.eras:
+                    era_tex = era.replace("_", " ")
+                    # begin table
+                    self.writeLine("\\centering")
+                    # *n{} syntax with vertical lines for n columns; put last | in expression: *n{...|}
+                    # make first column for bin numbers small
+                    self.writeLine("\\begin{longtable}{|p{0.03\\textwidth}|p{0.3\\textwidth}|*6{p{0.1\\textwidth}|}}")
+                    # column headers
+                    self.writeLine("\\hline Bin & Selection & $R_{Z}$ & $S_{\\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $N_{eff}$ \\\\")
+                    # write values to table
+                    for b in self.all_bins:
+                        total_selection = self.bins[b]["total_selection"]
+                        norm            = self.binValues[era][b]["norm_tex"]
+                        shape           = self.binValues[era][b]["shape_tex"]
+                        mc              = self.binValues[era][b]["mc_tex"]
+                        pred            = self.binValues[era][b]["pred_tex"]
+                        avg_w           = self.binValues[era][b]["avg_w_tex"]
+                        n_eff           = self.binValues[era][b]["n_eff_tex"]
+                        avg_w_final     = self.binValues[era][b]["avg_w_final_tex"]
+                        n_eff_final     = self.binValues[era][b]["n_eff_final_tex"]
+                        self.writeLine("\\hline {0} & {1} & {2} & {3} & {4} & {5} & {6} & {7} \\\\".format(b, total_selection, norm, shape, mc, pred, avg_w, n_eff))
+                    self.writeLine("\\hline")
+                    # for longtable, caption must go at the bottom of the table... it is not working at the top
+                    self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
+                    # end table
+                    self.writeLine("\\end{longtable}")
             # end document
             self.writeLine("\\end{document}")
 
@@ -124,9 +149,11 @@ class Common:
         # histogram map
         h_map = {}
         for i, era in enumerate(self.eras):
+            # region: lowdm, highdm
             for region in self.histograms[era]:
                 if i == 0:
                     h_map[region] = {}
+                # h_type: mc, pred, data
                 for h_type in self.histograms[era][region]:
                     h = self.histograms[era][region][h_type]
                     if debug:
@@ -304,6 +331,7 @@ class Common:
             selection_tex   = getTexSelection(region + "_" + selection)
             met_tex         = getTexMultiCut(met)
             total_selection = "{0}, {1}".format(selection_tex, met_tex)
+            self.bins[b]["total_selection"] = total_selection
             
             n       = self.binValues[era][b]["norm"]
             n_error = self.binValues[era][b]["norm_error"]
@@ -337,7 +365,6 @@ class Common:
             else:
                 avg_w_final = p / n_eff_final
 
-            self.binValues[era][b]["total_selection"]   = total_selection
             self.binValues[era][b]["pred"]              = p
             self.binValues[era][b]["pred_error"]        = p_error
             self.binValues[era][b]["avg_w"]             = avg_w

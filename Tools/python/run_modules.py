@@ -79,8 +79,8 @@ def main():
 
     N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
-    VB.makeTexFile("Z Invisible Prediction for Validation Bins", latex_dir + "zinv_prediction_validation_bins.tex")
-    SB.makeTexFile("Z Invisible Prediction for Search Bins",     latex_dir + "zinv_prediction_search_bins.tex")
+    VB.makeTexFile("Z Invisible Per Era Prediction for Validation Bins", latex_dir + "zinv_per_era_prediction_validation_bins.tex")
+    SB.makeTexFile("Z Invisible Per Era Prediction for Search Bins",     latex_dir + "zinv_per_era_prediction_search_bins.tex")
     
     # total Run2 prediction
     # root files to save histograms
@@ -89,6 +89,8 @@ def main():
     search_file     = "searchBinsZinv_"     + total_era + ".root"
     VB.makeTotalPred( validation_file,  "Validation Bin",   "validation", total_era   )
     SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
+    VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
+    SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
 
     # TODO: making data card for Run 2 does not work because we have not run calcPrediction() for Run 2
     #       calcPrediction() depends on norm and shape (which we calculate per era, not for all of Run 2)
