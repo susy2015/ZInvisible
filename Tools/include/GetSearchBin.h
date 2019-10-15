@@ -82,7 +82,9 @@ namespace plotterFunctions
         {
             // void printJson(const std::string& fileName, const std::string& key, const std::string& title)
             const std::string fileName = "dc_BkgPred_BinMaps_master.json";
-            SusyUtility::printJson(fileName, "binNum", "Search Bins");
+            SusyUtility::printJson(fileName, "binNum",      "Search Bins");
+            SusyUtility::printJson(fileName, "unitCRNum",   "Control Region Units");
+            SusyUtility::printJson(fileName, "unitSRNum",   "Search Region Units");
         }
         
         ~GetSearchBin(){}
