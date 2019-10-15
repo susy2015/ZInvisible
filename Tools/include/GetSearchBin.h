@@ -7,6 +7,7 @@
 #include "SusyAnaTools/Tools/customize.h"
 #include "SusyAnaTools/Tools/searchBins.h"
 #include "SusyAnaTools/Tools/SB2018.h"
+#include "SusyAnaTools/Tools/SusyUtility.h"
 #include "ScaleFactors.h"
 #include "ScaleFactorsttBar.h"
 #include "TH1.h"
@@ -77,7 +78,12 @@ namespace plotterFunctions
 
     public:
 
-        GetSearchBin(){}
+        GetSearchBin()
+        {
+            // void printJson(const std::string& fileName, const std::string& key, const std::string& title)
+            const std::string fileName = "dc_BkgPred_BinMaps_master.json";
+            SusyUtility::printJson(fileName, "binNum", "Search Bins");
+        }
         
         ~GetSearchBin(){}
 
