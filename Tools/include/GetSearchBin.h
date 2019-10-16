@@ -124,29 +124,69 @@ namespace plotterFunctions
             i >> json_;
         }
 
+        // See this link for cut definitions
+        // https://github.com/mkilpatr/EstToolsSUSY/blob/SBv4/SUSYNano19/SRParameters_dc.hh#L122
         // 11 variables: 11 pass fuctions
+        // also 1 function for using combined number of top/W 
         bool pass_njets(const std::string& cut, int value)
         {
+            if      (cut.compare("nj2to5")  == 0)   return bool(value >= 2 && value <= 5);
+            else if (cut.compare("nj6")     == 0)   return bool(value >= 6);
+            else if (cut.compare("nj7")     == 0)   return bool(value >= 7);
+            else    std::cout << "ERROR: No string match found for pass_njets()." << std::endl;
             return false;
         }
         bool pass_nb(const std::string& cut, int value)
         {
+            if      (cut.compare("nb0")     == 0)   return bool(value == 0);
+            else if (cut.compare("nb1")     == 0)   return bool(value == 1);
+            else if (cut.compare("nbgeq1")  == 0)   return bool(value >= 1);
+            else if (cut.compare("nb2")     == 0)   return bool(value >= 2);
+            else if (cut.compare("nbeq2")   == 0)   return bool(value == 2);
+            else if (cut.compare("nb3")     == 0)   return bool(value >= 3);
+            else    std::cout << "ERROR: No string match found for pass_nb()." << std::endl;
             return false;
         }
         bool pass_nsv(const std::string& cut, int value)
         {
+            if      (cut.compare("nivf0")   == 0)   return bool(value == 0);
+            else if (cut.compare("nivf1")   == 0)   return bool(value >= 1);
+            else    std::cout << "ERROR: No string match found for pass_nsv()." << std::endl;
             return false;
         }
         bool pass_ntop(const std::string& cut, int value)
         {
+            if      (cut.compare("nt0")     == 0)   return bool(value == 0);
+            else if (cut.compare("nt1")     == 0)   return bool(value == 1);
+            else if (cut.compare("nt2")     == 0)   return bool(value == 2);
+            else if (cut.compare("ntgeq1")  == 0)   return bool(value >= 1);
+            else    std::cout << "ERROR: No string match found for pass_ntop()." << std::endl;
             return false;
         }
         bool pass_nw(const std::string& cut, int value)
         {
+            if      (cut.compare("nw0")     == 0)   return bool(value == 0);
+            else if (cut.compare("nw1")     == 0)   return bool(value == 1);
+            else if (cut.compare("nw2")     == 0)   return bool(value == 2);
+            else if (cut.compare("nwgeq1")  == 0)   return bool(value >= 1);
+            else    std::cout << "ERROR: No string match found for pass_nw()." << std::endl;
             return false;
         }
         bool pass_nres(const std::string& cut, int value)
         {
+            if      (cut.compare("nrt0")     == 0)   return bool(value == 0);
+            else if (cut.compare("nrt1")     == 0)   return bool(value == 1);
+            else if (cut.compare("nrt2")     == 0)   return bool(value == 2);
+            else if (cut.compare("nrtgeq1")  == 0)   return bool(value >= 1);
+            else    std::cout << "ERROR: No string match found for pass_nres()." << std::endl;
+            return false;
+        }
+        // note: nrt2 and nrtntnwgeq2 both start with nrt; be careful about this case
+        bool pass_ntotaltopw(const std::string& cut, int value)
+        {
+            if      (cut.compare("nrtntnwgeq2")     == 0)   return bool(value >= 2);
+            else if (cut.compare("nrtntnwgeq3")     == 0)   return bool(value >= 3);
+            else    std::cout << "ERROR: No string match found for pass_ntotaltopw()." << std::endl;
             return false;
         }
         bool pass_ISRpt(const std::string& cut, int value)
