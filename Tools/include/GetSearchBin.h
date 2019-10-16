@@ -128,6 +128,8 @@ namespace plotterFunctions
         bool passUnitLowDM(const std::string& unit, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
         {
             bool pass = false;
+            std::vector<std::string> cuts;
+            const char delim = '_';
             std::string start = "bin_lm_";
             std::string met_name = "MET_pt";
             int start_len = start.length();
@@ -138,7 +140,15 @@ namespace plotterFunctions
                 int final_len = met_pos - start_len - 1;
                 std::string parsedUnit = unit.substr(start_len, final_len);
                 std::string met_cut = unit.substr(met_pos);
-                printf("unit: %s, %s, %s\n", unit.c_str(), parsedUnit.c_str(), met_cut.c_str());
+                SusyUtility::splitString(parsedUnit, delim, cuts); 
+                cuts.push_back(met_cut);
+                //printf("unit: %s, %s, %s\n", unit.c_str(), parsedUnit.c_str(), met_cut.c_str());
+                printf("%s: ", unit.c_str());
+                for (const auto& c : cuts)
+                {
+                    printf("%s, ", c.c_str());
+                }
+                printf("\n");
             }
             return pass;
         }
