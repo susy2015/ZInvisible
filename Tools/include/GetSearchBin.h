@@ -79,14 +79,21 @@ namespace plotterFunctions
                 //----------------------------------------//
                 //--- Updated Unit Bins (October 2019) ---//
                 //----------------------------------------//
-                int nCRUnit = getUnitNum("unitCRNum");
+                //int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
+                //int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
+                int nSearchbinUnitLowDM  = getUnitNumLowDM("binNum", nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                int nSearchbinUnitHighDM = getUnitNumHighDM("binNum", mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
                 
+                // search bins
                 tr.registerDerivedVar("nSearchBinLowDM"             + suffix, nSearchBinLowDM);
                 tr.registerDerivedVar("nSearchBinHighDM"            + suffix, nSearchBinHighDM);
+                // validation bins
                 tr.registerDerivedVar("nValidationBinLowDM"         + suffix, nValidationBinLowDM);
                 tr.registerDerivedVar("nValidationBinLowDMHighMET"  + suffix, nValidationBinLowDMHighMET);
                 tr.registerDerivedVar("nValidationBinHighDM"        + suffix, nValidationBinHighDM);
-                tr.registerDerivedVar("nCRUnit"                     + suffix, nCRUnit);
+                // unit bins
+                tr.registerDerivedVar("nSearchbinUnitLowDM"         + suffix, nSearchbinUnitLowDM);
+                tr.registerDerivedVar("nSearchbinUnitHighDM"        + suffix, nSearchbinUnitHighDM);
             }
         }
 
@@ -118,18 +125,59 @@ namespace plotterFunctions
         }
         
         // return true if event passes unit selection, otherwise return false 
-        bool passUnit(const std::string& unit)
+        bool passUnitLowDM(const std::string& unit, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
+        {
+            bool pass = false;
+            std::string start = "bin_lm_";
+            std::string met_name = "MET_pt";
+            int start_len = start.length();
+            int met_name_len = met_name.length();
+            if (unit.find(start) == 0)
+            {
+                int met_pos = unit.find(met_name); 
+                int final_len = met_pos - start_len - 1;
+                std::string parsedUnit = unit.substr(start_len, final_len);
+                std::string met_cut = unit.substr(met_pos);
+                printf("unit: %s, %s, %s\n", unit.c_str(), parsedUnit.c_str(), met_cut.c_str());
+            }
+            return pass;
+        }
+        
+        // return true if event passes unit selection, otherwise return false 
+        bool passUnitHighDM(const std::string& unit, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
         {
             return false;
         }
         
         // return unit number: can be used for search bins, CR units and SR units
-        int getUnitNum(const std::string& key)
+        int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
+        {
+            printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, pt = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
+            for (const auto& element : json_[key].items())
+            {
+                bool pass = passUnitLowDM(element.key(), njets, nb, nsv, ISRpt, ptb, met);
+                if (pass)
+                {
+                    int bin = std::stoi(std::string(element.value()));
+                    return bin;
+                }
+                //std::cout << element.key() << " : " << element.value() << std::endl;
+            }
+            return -1;
+        }
+        
+        // return unit number: can be used for search bins, CR units and SR units
+        int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
         {
             for (const auto& element : json_[key].items())
             {
+                bool pass = passUnitHighDM(element.key(), mtb, njets, nb, ntop, nw, nres, ht, met);
+                if (pass)
+                {
+                    int bin = std::stoi(std::string(element.value()));
+                    return bin;
+                }
                 //std::cout << element.key() << " : " << element.value() << std::endl;
-                passUnit(element.key());
             }
             return -1;
         }
