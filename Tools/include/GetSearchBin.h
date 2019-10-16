@@ -123,26 +123,79 @@ namespace plotterFunctions
             std::ifstream i(fileName);
             i >> json_;
         }
+
+        // 11 variables: 11 pass fuctions
+        bool pass_njets(const std::string& cut, int value)
+        {
+            return false;
+        }
+        bool pass_nb(const std::string& cut, int value)
+        {
+            return false;
+        }
+        bool pass_nsv(const std::string& cut, int value)
+        {
+            return false;
+        }
+        bool pass_ntop(const std::string& cut, int value)
+        {
+            return false;
+        }
+        bool pass_nw(const std::string& cut, int value)
+        {
+            return false;
+        }
+        bool pass_nres(const std::string& cut, int value)
+        {
+            return false;
+        }
+        bool pass_ISRpt(const std::string& cut, int value)
+        {
+            return false;
+        }
+        bool pass_mtb(const std::string& cut, float value)
+        {
+            return false;
+        }
+        bool pass_ptb(const std::string& cut, float value)
+        {
+            return false;
+        }
+        bool pass_ht(const std::string& cut, float value)
+        {
+            return false;
+        }
+        bool pass_met(const std::string& cut, float value)
+        {
+            return false;
+        }
+
+        // return vector of strings of cuts from unit string 
+        // split out beginning of unit name
+        // note that MET_pt has '_' in name
+        std::vector<std::string> getCutVec(const std::string& unit, const std::string& start)
+        {
+            std::vector<std::string> cuts;
+            const char delim = '_';
+            std::string met_name = "MET_pt";
+            int start_len = start.length();
+            int met_pos = unit.find(met_name); 
+            int final_len = met_pos - start_len - 1;
+            std::string parsedUnit = unit.substr(start_len, final_len);
+            std::string met_cut = unit.substr(met_pos);
+            SusyUtility::splitString(parsedUnit, delim, cuts); 
+            cuts.push_back(met_cut);
+            return cuts;
+        }
         
         // return true if event passes unit selection, otherwise return false 
         bool passUnitLowDM(const std::string& unit, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
         {
             bool pass = false;
-            std::vector<std::string> cuts;
-            const char delim = '_';
             std::string start = "bin_lm_";
-            std::string met_name = "MET_pt";
-            int start_len = start.length();
-            int met_name_len = met_name.length();
             if (unit.find(start) == 0)
             {
-                int met_pos = unit.find(met_name); 
-                int final_len = met_pos - start_len - 1;
-                std::string parsedUnit = unit.substr(start_len, final_len);
-                std::string met_cut = unit.substr(met_pos);
-                SusyUtility::splitString(parsedUnit, delim, cuts); 
-                cuts.push_back(met_cut);
-                //printf("unit: %s, %s, %s\n", unit.c_str(), parsedUnit.c_str(), met_cut.c_str());
+                std::vector<std::string> cuts = getCutVec(unit, start);
                 printf("%s: ", unit.c_str());
                 for (const auto& c : cuts)
                 {
