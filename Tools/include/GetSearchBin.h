@@ -133,7 +133,7 @@ namespace plotterFunctions
             if      (cut.compare("nj2to5")  == 0)   return bool(value >= 2 && value <= 5);
             else if (cut.compare("nj6")     == 0)   return bool(value >= 6);
             else if (cut.compare("nj7")     == 0)   return bool(value >= 7);
-            else    std::cout << "ERROR: No string match found for pass_njets()." << std::endl;
+            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
         bool pass_nb(const std::string& cut, int value)
@@ -144,14 +144,14 @@ namespace plotterFunctions
             else if (cut.compare("nb2")     == 0)   return bool(value >= 2);
             else if (cut.compare("nbeq2")   == 0)   return bool(value == 2);
             else if (cut.compare("nb3")     == 0)   return bool(value >= 3);
-            else    std::cout << "ERROR: No string match found for pass_nb()." << std::endl;
+            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
         bool pass_nsv(const std::string& cut, int value)
         {
             if      (cut.compare("nivf0")   == 0)   return bool(value == 0);
             else if (cut.compare("nivf1")   == 0)   return bool(value >= 1);
-            else    std::cout << "ERROR: No string match found for pass_nsv()." << std::endl;
+            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
         bool pass_ntop(const std::string& cut, int value)
@@ -160,7 +160,7 @@ namespace plotterFunctions
             else if (cut.compare("nt1")     == 0)   return bool(value == 1);
             else if (cut.compare("nt2")     == 0)   return bool(value == 2);
             else if (cut.compare("ntgeq1")  == 0)   return bool(value >= 1);
-            else    std::cout << "ERROR: No string match found for pass_ntop()." << std::endl;
+            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
         bool pass_nw(const std::string& cut, int value)
@@ -169,7 +169,7 @@ namespace plotterFunctions
             else if (cut.compare("nw1")     == 0)   return bool(value == 1);
             else if (cut.compare("nw2")     == 0)   return bool(value == 2);
             else if (cut.compare("nwgeq1")  == 0)   return bool(value >= 1);
-            else    std::cout << "ERROR: No string match found for pass_nw()." << std::endl;
+            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
         bool pass_nres(const std::string& cut, int value)
@@ -178,7 +178,7 @@ namespace plotterFunctions
             else if (cut.compare("nrt1")     == 0)   return bool(value == 1);
             else if (cut.compare("nrt2")     == 0)   return bool(value == 2);
             else if (cut.compare("nrtgeq1")  == 0)   return bool(value >= 1);
-            else    std::cout << "ERROR: No string match found for pass_nres()." << std::endl;
+            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
         // note: nrt2 and nrtntnwgeq2 both start with nrt; be careful about this case
@@ -186,23 +186,46 @@ namespace plotterFunctions
         {
             if      (cut.compare("nrtntnwgeq2")     == 0)   return bool(value >= 2);
             else if (cut.compare("nrtntnwgeq3")     == 0)   return bool(value >= 3);
-            else    std::cout << "ERROR: No string match found for pass_ntotaltopw()." << std::endl;
+            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
-        bool pass_ISRpt(const std::string& cut, int value)
+        bool pass_ISRpt(const std::string& cut, float value)
         {
+            if      (cut.compare("lowptisr")     == 0)   return bool(value >= 300 && value < 500);
+            else if (cut.compare("medptisr")     == 0)   return bool(value >= 300);
+            else if (cut.compare("highptisr")    == 0)   return bool(value >= 500);
+            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
         bool pass_mtb(const std::string& cut, float value)
         {
+            if      (cut.compare("lowmtb")     == 0)   return bool(value <  175);
+            else if (cut.compare("highmtb")    == 0)   return bool(value >= 175);
+            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
         bool pass_ptb(const std::string& cut, float value)
         {
+            if      (cut.compare("lowptb")       == 0)   return bool(value <  40);
+            else if (cut.compare("medptb")       == 0)   return bool(value >= 40 && value < 70);
+            else if (cut.compare("highptb")      == 0)   return bool(value >= 70);
+            else if (cut.compare("lowptb12")     == 0)   return bool(value <  80);
+            else if (cut.compare("medptb12")     == 0)   return bool(value >= 80 && value < 140);
+            else if (cut.compare("highptb12")    == 0)   return bool(value >= 140);
+            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
         bool pass_ht(const std::string& cut, float value)
         {
+            if      (cut.compare("htlt1000")      == 0)   return bool(value <  1000);
+            else if (cut.compare("htgt1000")      == 0)   return bool(value >= 1000);
+            else if (cut.compare("ht1000to1500")  == 0)   return bool(value >= 1000 && value < 1500);
+            else if (cut.compare("htgt1500")      == 0)   return bool(value >= 1500);
+            else if (cut.compare("htlt1300")      == 0)   return bool(value <  1300);
+            else if (cut.compare("htgt1300")      == 0)   return bool(value >= 1300);
+            else if (cut.compare("ht1000to1300")  == 0)   return bool(value >= 1000 && value < 1300);
+            else if (cut.compare("ht1300to1500")  == 0)   return bool(value >= 1300 && value < 1500);
+            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
         bool pass_met(const std::string& cut, float value)
