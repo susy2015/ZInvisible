@@ -36,6 +36,7 @@ namespace plotterFunctions
         
         // json file containing unit mapping
         json json_;
+        std::string met_name_  = "MET_pt";
 
         void getSearchBin(NTupleReader& tr)
         {
@@ -127,7 +128,8 @@ namespace plotterFunctions
         // See this link for cut definitions
         // https://github.com/mkilpatr/EstToolsSUSY/blob/SBv4/SUSYNano19/SRParameters_dc.hh#L122
         // 11 variables: 11 pass fuctions
-        // also 1 function for using combined number of top/W 
+        // also 1 function for using total number of top/W 
+        // 12 pass functions in total
         bool pass_njets(const std::string& cut, int value)
         {
             if      (cut.compare("nj2to5")  == 0)   return bool(value >= 2 && value <= 5);
@@ -151,6 +153,15 @@ namespace plotterFunctions
         {
             if      (cut.compare("nivf0")   == 0)   return bool(value == 0);
             else if (cut.compare("nivf1")   == 0)   return bool(value >= 1);
+            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
+            return false;
+        }
+        // note: nrtntnw* and nrt* both start with nrt; be careful about this case
+        //       check for nrtntnw* before nrt*
+        bool pass_nTotalTopW(const std::string& cut, int value)
+        {
+            if      (cut.compare("nrtntnwgeq2")     == 0)   return bool(value >= 2);
+            else if (cut.compare("nrtntnwgeq3")     == 0)   return bool(value >= 3);
             else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
@@ -178,14 +189,6 @@ namespace plotterFunctions
             else if (cut.compare("nrt1")     == 0)   return bool(value == 1);
             else if (cut.compare("nrt2")     == 0)   return bool(value == 2);
             else if (cut.compare("nrtgeq1")  == 0)   return bool(value >= 1);
-            else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
-            return false;
-        }
-        // note: nrt2 and nrtntnwgeq2 both start with nrt; be careful about this case
-        bool pass_ntotaltopw(const std::string& cut, int value)
-        {
-            if      (cut.compare("nrtntnwgeq2")     == 0)   return bool(value >= 2);
-            else if (cut.compare("nrtntnwgeq3")     == 0)   return bool(value >= 3);
             else    std::cout << "ERROR in " << __func__ << ": No string match found for " << cut << std::endl;
             return false;
         }
@@ -231,22 +234,34 @@ namespace plotterFunctions
         bool pass_met(const std::string& cut, float value)
         {
             // example: MET_pt450to550, MET_pt550to650, MET_pt650to750, MET_pt750toinf 
-            std::string met_name  = "MET_pt";
+            //std::string met_name  = "MET_pt";
             std::string separator = "to";
             // check that string begins with met name
-            if (cut.find(met_name) != 0)
+            if (cut.find(met_name_) != 0)
             {
-                std::cout << "ERROR in " << __func__ << ": The cut " << cut << " does not being with " << met_name << std::endl;
+                std::cout << "ERROR in " << __func__ << ": The cut " << cut << " does not being with " << met_name_ << std::endl;
                 return false;
             }
-            int met_len = met_name.length();
+            int met_len = met_name_.length();
             int sep_len = separator.length();
             int sep_pos = cut.find(separator);
             int min_len = sep_pos - met_len;
             std::string min = cut.substr(met_len, min_len);
             std::string max = cut.substr(sep_pos + sep_len);
-            printf("%s: [%s, %s]\n", cut.c_str(), min.c_str(), max.c_str());
-            return false;
+            //printf("%s: [%s, %s]\n", cut.c_str(), min.c_str(), max.c_str());
+            // if max in inf, only apply min cut
+            if (max.compare("inf") == 0)
+            {
+                float min_val = std::stoi(min);
+                return bool(value >= min_val);
+            }
+            // otherwise, apply both min and max cuts
+            else
+            {
+                float min_val = std::stoi(min);
+                float max_val = std::stoi(max);
+                return bool(value >= min_val && value < max_val);
+            }
         }
 
         // return vector of strings of cuts from unit string 
@@ -256,9 +271,9 @@ namespace plotterFunctions
         {
             std::vector<std::string> cuts;
             const char delim     = '_';
-            std::string met_name = "MET_pt";
+            //std::string met_name = "MET_pt";
             int start_len = start.length();
-            int met_pos = unit.find(met_name); 
+            int met_pos = unit.find(met_name_); 
             int final_len = met_pos - start_len - 1;
             std::string parsedUnit = unit.substr(start_len, final_len);
             std::string met_cut = unit.substr(met_pos);
@@ -271,24 +286,73 @@ namespace plotterFunctions
         bool passUnitLowDM(const std::string& unit, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
         {
             //printf("%s: %s\n", __func__, unit.c_str());
+            //printf("%s: ", unit.c_str());
             std::string start = "bin_lm_";
             // check if unit is low dm
             if (unit.find(start) == 0)
             {
                 std::vector<std::string> cuts = getCutVec(unit, start);
-                printf("%s: ", unit.c_str());
+                //printf("%s: ", unit.c_str());
                 for (const auto& c : cuts)
                 {
+                    // note; be careful about order as some cuts may begin with the same string
                     // optimization: if we do not pass a cut, return false
                     //printf("%s, ", c.c_str());
-                    if (c.find("MET_pt") == 0)
+                    if (c.find("nj") == 0)
+                    {
+                        if (! pass_njets(c, njets))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("nb") == 0)
+                    {
+                        if (! pass_nb(c, nb))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("nivf") == 0)
+                    {
+                        if (! pass_nsv(c, nsv))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("isr") != std::string::npos)
+                    {
+                        if (! pass_ISRpt(c, ISRpt))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("ptb") != std::string::npos)
+                    {
+                        if (! pass_ptb(c, ptb))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("MET_pt") == 0)
                     {
                         if (! pass_met(c, met))
                         {
                             return false; 
                         }
                     }
+                    // skip lowmtb
+                    // - lowmtb appears in some, but not all low dm search bins 
+                    // - lowmtb does not need to be applied for low dm search bins as it is included in low dm baseline
+                    else if (c.compare("lowmtb") == 0)
+                    {
+                        ;//null statement, similar to pass in python; no operation required
+                    }
                     // if cut is not matched to any variable, print error and return false
+                    else
+                    {
+                        std::cout << "ERROR in " << __func__ << ": No string match found for " << c << std::endl;
+                        return false;
+                    }
                 }
                 // if we reach the end then no cut is false; return true
                 //printf("\n");
@@ -310,13 +374,17 @@ namespace plotterFunctions
         // return unit number: can be used for search bins, CR units and SR units
         int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
         {
-            printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
+            //printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
             for (const auto& element : json_[key].items())
             {
                 bool pass = passUnitLowDM(element.key(), njets, nb, nsv, ISRpt, ptb, met);
+                //printf("pass = %s\n", pass ? "true" : "false");
                 if (pass)
                 {
                     int bin = std::stoi(std::string(element.value()));
+                    //printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
+                    //printf("event passes unit selection; %d : %s\n", bin, element.key().c_str());
+                    printf("pass selection for unit %d, %s; njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", bin, element.key().c_str(), njets, nb, nsv, ISRpt, ptb, met);
                     return bin;
                 }
                 //std::cout << element.key() << " : " << element.value() << std::endl;
