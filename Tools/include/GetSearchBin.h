@@ -230,6 +230,22 @@ namespace plotterFunctions
         }
         bool pass_met(const std::string& cut, float value)
         {
+            // example: MET_pt450to550, MET_pt550to650, MET_pt650to750, MET_pt750toinf 
+            std::string met_name  = "MET_pt";
+            std::string separator = "to";
+            // check that string begins with met name
+            if (cut.find(met_name) != 0)
+            {
+                std::cout << "ERROR in " << __func__ << ": The cut " << cut << " does not being with " << met_name << std::endl;
+                return false;
+            }
+            int met_len = met_name.length();
+            int sep_len = separator.length();
+            int sep_pos = cut.find(separator);
+            int min_len = sep_pos - met_len;
+            std::string min = cut.substr(met_len, min_len);
+            std::string max = cut.substr(sep_pos + sep_len);
+            printf("%s: [%s, %s]\n", cut.c_str(), min.c_str(), max.c_str());
             return false;
         }
 
@@ -239,7 +255,7 @@ namespace plotterFunctions
         std::vector<std::string> getCutVec(const std::string& unit, const std::string& start)
         {
             std::vector<std::string> cuts;
-            const char delim = '_';
+            const char delim     = '_';
             std::string met_name = "MET_pt";
             int start_len = start.length();
             int met_pos = unit.find(met_name); 
@@ -254,19 +270,35 @@ namespace plotterFunctions
         // return true if event passes unit selection, otherwise return false 
         bool passUnitLowDM(const std::string& unit, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
         {
-            bool pass = false;
+            //printf("%s: %s\n", __func__, unit.c_str());
             std::string start = "bin_lm_";
+            // check if unit is low dm
             if (unit.find(start) == 0)
             {
                 std::vector<std::string> cuts = getCutVec(unit, start);
                 printf("%s: ", unit.c_str());
                 for (const auto& c : cuts)
                 {
-                    printf("%s, ", c.c_str());
+                    // optimization: if we do not pass a cut, return false
+                    //printf("%s, ", c.c_str());
+                    if (c.find("MET_pt") == 0)
+                    {
+                        if (! pass_met(c, met))
+                        {
+                            return false; 
+                        }
+                    }
+                    // if cut is not matched to any variable, print error and return false
                 }
-                printf("\n");
+                // if we reach the end then no cut is false; return true
+                //printf("\n");
+                return true;
             }
-            return pass;
+            // if unit is not low dm, return false
+            else 
+            {
+                return false;
+            }
         }
         
         // return true if event passes unit selection, otherwise return false 
@@ -278,7 +310,7 @@ namespace plotterFunctions
         // return unit number: can be used for search bins, CR units and SR units
         int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
         {
-            printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, pt = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
+            printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
             for (const auto& element : json_[key].items())
             {
                 bool pass = passUnitLowDM(element.key(), njets, nb, nsv, ISRpt, ptb, met);
