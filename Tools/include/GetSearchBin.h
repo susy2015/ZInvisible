@@ -45,6 +45,7 @@ namespace plotterFunctions
             for (const auto& suffix : JetPtCuts) 
             {
                 // Note: Only HT, s_met, nJets, and dPhi are calculated with different jet pt cuts
+                const auto& SAT_Pass_lowDM      = tr.getVar<bool>("SAT_Pass_lowDM" + suffix);
                 const auto& nMergedTops         = tr.getVar<int>("nMergedTops");
                 const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops");
                 const auto& nWs                 = tr.getVar<int>("nWs");
@@ -84,6 +85,12 @@ namespace plotterFunctions
                 //int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
                 int nSearchbinUnitLowDM  = getUnitNumLowDM("binNum", nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
                 int nSearchbinUnitHighDM = getUnitNumHighDM("binNum", mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                
+                // compare search bins (hui) vs. search bin units (matt) 
+                if (SAT_Pass_lowDM && ! (nSearchBinLowDM < 0 && nSearchbinUnitLowDM < 0))
+                {
+                    printf("nSB_hui = %d; nSB_matt = %d\n", nSearchBinLowDM, nSearchbinUnitLowDM);
+                }
                 
                 // search bins
                 tr.registerDerivedVar("nSearchBinLowDM"             + suffix, nSearchBinLowDM);
