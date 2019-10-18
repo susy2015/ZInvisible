@@ -37,6 +37,11 @@ namespace plotterFunctions
         // json file containing unit mapping
         json json_;
         std::string met_name_  = "MET_pt";
+        std::map<std::string, std::string> prefixMap = {
+            {"binNum",      "bin_"},
+            {"unitCRNum",   "bin_lepcr_"},
+            {"unitSRNum",   "bin_"},
+        };
 
         void getSearchBin(NTupleReader& tr)
         {
@@ -294,15 +299,15 @@ namespace plotterFunctions
         }
         
         // return true if event passes unit selection, otherwise return false 
-        bool passUnitLowDM(const std::string& unit, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
+        bool passUnitLowDM(const std::string& unit, const std::string& prefix, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
         {
             //printf("%s: %s\n", __func__, unit.c_str());
             //printf("%s: ", unit.c_str());
-            std::string start = "bin_lm_";
+            //std::string start = "bin_lm_";
             // check if unit is low dm
-            if (unit.find(start) == 0)
+            if (unit.find(prefix) == 0)
             {
-                std::vector<std::string> cuts = getCutVec(unit, start);
+                std::vector<std::string> cuts = getCutVec(unit, prefix);
                 //printf("%s: ", unit.c_str());
                 for (const auto& c : cuts)
                 {
@@ -386,23 +391,30 @@ namespace plotterFunctions
         int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
         {
             bool verbose = false;
+            std::string prefix = prefixMap[key];
+            prefix = prefix + "lm_";
             //printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
             for (const auto& element : json_[key].items())
             {
-                bool pass = passUnitLowDM(element.key(), njets, nb, nsv, ISRpt, ptb, met);
-                //printf("pass = %s\n", pass ? "true" : "false");
-                if (pass)
+                std::string unit = element.key();
+                // only check units with low dm previx
+                if (unit.find(prefix) == 0)
                 {
-                    int bin = std::stoi(std::string(element.value()));
-                    if (verbose)
+                    bool pass = passUnitLowDM(unit, prefix, njets, nb, nsv, ISRpt, ptb, met);
+                    //std::cout << unit << " : " << element.value() << std::endl;
+                    printf("%s: pass = %s\n", unit.c_str(), pass ? "true" : "false");
+                    if (pass)
                     {
-                        //printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
-                        //printf("event passes unit selection; %d : %s\n", bin, element.key().c_str());
-                        printf("pass selection for unit %d, %s; njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", bin, element.key().c_str(), njets, nb, nsv, ISRpt, ptb, met);
+                        int bin = std::stoi(std::string(element.value()));
+                        if (verbose)
+                        {
+                            //printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
+                            //printf("event passes unit selection; %d : %s\n", bin, unit.c_str());
+                            printf("pass selection for unit %d, %s; njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", bin, unit.c_str(), njets, nb, nsv, ISRpt, ptb, met);
+                        }
+                        return bin;
                     }
-                    return bin;
                 }
-                //std::cout << element.key() << " : " << element.value() << std::endl;
             }
             return -1;
         }

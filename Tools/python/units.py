@@ -11,7 +11,7 @@ def show(jsonFile, key, title):
         binMap = {v: k for k, v in unitMap[key].iteritems()}
         nBins = len(binMap)
         bins = list(str(x) for x in xrange(nBins))
-        print "{0} : {1} bins".format(title, nBins)
+        print "{0} ({1}) : {2} bins".format(title, key, nBins)
         for b in bins: 
             print "{0} : {1}".format(b, binMap[b])
 
