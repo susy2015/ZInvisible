@@ -51,6 +51,7 @@ namespace plotterFunctions
             {
                 // Note: Only HT, s_met, nJets, and dPhi are calculated with different jet pt cuts
                 const auto& SAT_Pass_lowDM      = tr.getVar<bool>("SAT_Pass_lowDM" + suffix);
+                const auto& SAT_Pass_highDM     = tr.getVar<bool>("SAT_Pass_highDM" + suffix);
                 const auto& nMergedTops         = tr.getVar<int>("nMergedTops");
                 const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops");
                 const auto& nWs                 = tr.getVar<int>("nWs");
@@ -92,14 +93,27 @@ namespace plotterFunctions
                 int nSearchbinUnitHighDM = getUnitNumHighDM("binNum", mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
                 
                 // compare search bins (hui) vs. search bin units (matt) 
-                //if (SAT_Pass_lowDM && ! (nSearchBinLowDM < 0 && nSearchbinUnitLowDM < 0))
-                //{
-                //    printf("nSB_hui = %d; nSB_matt = %d\n", nSearchBinLowDM, nSearchbinUnitLowDM);
-                //}
-                if (SAT_Pass_lowDM && (nSearchBinLowDM != nSearchbinUnitLowDM))
+                if (SAT_Pass_lowDM && ! (nSearchBinLowDM < 0 && nSearchbinUnitLowDM < 0))
                 {
-                    printf("nSB_hui = %d; nSB_matt = %d\n", nSearchBinLowDM, nSearchbinUnitLowDM);
+                    printf("LowDM; nSB_hui = %d; nSB_matt = %d", nSearchBinLowDM, nSearchbinUnitLowDM);
+                    if(nSearchBinLowDM != nSearchbinUnitLowDM) printf(" --- nSB are different --- ");
+                    printf("\n");
                 }
+                if (SAT_Pass_highDM && ! (nSearchBinHighDM < 0 && nSearchbinUnitHighDM < 0))
+                {
+                    printf("HighDM; nSB_hui = %d; nSB_matt = %d", nSearchBinHighDM, nSearchbinUnitHighDM);
+                    if(nSearchBinHighDM != nSearchbinUnitHighDM) printf(" --- nSB are different --- ");
+                    printf("\n");
+                }
+                
+                //if (SAT_Pass_lowDM && (nSearchBinLowDM != nSearchbinUnitLowDM))
+                //{
+                //    printf("LowDM; nSB_hui = %d; nSB_matt = %d\n", nSearchBinLowDM, nSearchbinUnitLowDM);
+                //}
+                //if (SAT_Pass_highDM && (nSearchBinHighDM != nSearchbinUnitHighDM))
+                //{
+                //    printf("HighDM; nSB_hui = %d; nSB_matt = %d\n", nSearchBinHighDM, nSearchbinUnitHighDM);
+                //}
                 
                 // search bins
                 tr.registerDerivedVar("nSearchBinLowDM"             + suffix, nSearchBinLowDM);
@@ -250,7 +264,6 @@ namespace plotterFunctions
         bool pass_met(const std::string& cut, float value)
         {
             // example: MET_pt450to550, MET_pt550to650, MET_pt650to750, MET_pt750toinf 
-            //std::string met_name  = "MET_pt";
             std::string separator = "to";
             // check that string begins with met name
             if (cut.find(met_name_) != 0)
@@ -264,7 +277,7 @@ namespace plotterFunctions
             int min_len = sep_pos - met_len;
             std::string min = cut.substr(met_len, min_len);
             std::string max = cut.substr(sep_pos + sep_len);
-            //printf("%s: [%s, %s]\n", cut.c_str(), min.c_str(), max.c_str());
+            //printf("%s: [%s, %s]\n", cut.c_str(), min.c_str(), max.c_str()); 
             // if max in inf, only apply min cut
             if (max.compare("inf") == 0)
             {
@@ -287,7 +300,6 @@ namespace plotterFunctions
         {
             std::vector<std::string> cuts;
             const char delim     = '_';
-            //std::string met_name = "MET_pt";
             int start_len = start.length();
             int met_pos = unit.find(met_name_); 
             int final_len = met_pos - start_len - 1;
@@ -302,13 +314,16 @@ namespace plotterFunctions
         bool passUnitLowDM(const std::string& unit, const std::string& prefix, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
         {
             //printf("%s: %s\n", __func__, unit.c_str());
-            //printf("%s: ", unit.c_str());
-            //std::string start = "bin_lm_";
             // check if unit is low dm
             if (unit.find(prefix) == 0)
             {
                 std::vector<std::string> cuts = getCutVec(unit, prefix);
                 //printf("%s: ", unit.c_str());
+                //for (const auto& c : cuts)
+                //{
+                //    printf("%s, ", c.c_str());
+                //}
+                //printf("\n");
                 for (const auto& c : cuts)
                 {
                     // note; be careful about order as some cuts may begin with the same string
@@ -382,9 +397,106 @@ namespace plotterFunctions
         }
         
         // return true if event passes unit selection, otherwise return false 
-        bool passUnitHighDM(const std::string& unit, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
+        bool passUnitHighDM(const std::string& unit, const std::string& prefix, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
         {
-            return false;
+            //printf("%s: %s\n", __func__, unit.c_str());
+            // check if unit is low dm
+            if (unit.find(prefix) == 0)
+            {
+                int nTotalTopW = ntop + nw + nres;
+                std::vector<std::string> cuts = getCutVec(unit, prefix);
+                //printf("%s: ", unit.c_str());
+                //for (const auto& c : cuts)
+                //{
+                //    printf("%s, ", c.c_str());
+                //}
+                //printf("\n");
+                for (const auto& c : cuts)
+                {
+                    // note; be careful about order as some cuts may begin with the same string
+                    // optimization: if we do not pass a cut, return false
+                    //printf("%s, ", c.c_str());
+                    // note: nrtntnw* and nrt* both start with nrt; be careful about this case
+                    //       check for nrtntnw* before nrt*
+                    if (c.find("nrtntnw") == 0)
+                    {
+                        if (! pass_nTotalTopW(c, nTotalTopW))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("mtb") != std::string::npos)
+                    {
+                        if (! pass_mtb(c, mtb))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("nj") == 0)
+                    {
+                        if (! pass_njets(c, njets))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("nb") == 0)
+                    {
+                        if (! pass_nb(c, nb))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("nt") == 0)
+                    {
+                        if (! pass_ntop(c, ntop))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("nw") == 0)
+                    {
+                        if (! pass_nw(c, nw))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("nrt") == 0)
+                    {
+                        if (! pass_nres(c, nres))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("ht") == 0)
+                    {
+                        if (! pass_ht(c, ht))
+                        {
+                            return false; 
+                        }
+                    }
+                    else if (c.find("MET_pt") == 0)
+                    {
+                        if (! pass_met(c, met))
+                        {
+                            return false; 
+                        }
+                    }
+                    // if cut is not matched to any variable, print error and return false
+                    else
+                    {
+                        std::cout << "ERROR in " << __func__ << ": No string match found for " << c << std::endl;
+                        return false;
+                    }
+                }
+                // if we reach the end then no cut is false; return true
+                //printf("\n");
+                return true;
+            }
+            // if unit is not low dm, return false
+            else 
+            {
+                return false;
+            }
         }
         
         // return unit number: can be used for search bins, CR units and SR units
@@ -397,19 +509,16 @@ namespace plotterFunctions
             for (const auto& element : json_[key].items())
             {
                 std::string unit = element.key();
-                // only check units with low dm previx
+                // only check units with prefix
                 if (unit.find(prefix) == 0)
                 {
                     bool pass = passUnitLowDM(unit, prefix, njets, nb, nsv, ISRpt, ptb, met);
-                    //std::cout << unit << " : " << element.value() << std::endl;
-                    printf("%s: pass = %s\n", unit.c_str(), pass ? "true" : "false");
+                    //printf("%s: pass = %s\n", unit.c_str(), pass ? "true" : "false");
                     if (pass)
                     {
                         int bin = std::stoi(std::string(element.value()));
                         if (verbose)
                         {
-                            //printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
-                            //printf("event passes unit selection; %d : %s\n", bin, unit.c_str());
                             printf("pass selection for unit %d, %s; njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", bin, unit.c_str(), njets, nb, nsv, ISRpt, ptb, met);
                         }
                         return bin;
@@ -422,15 +531,28 @@ namespace plotterFunctions
         // return unit number: can be used for search bins, CR units and SR units
         int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
         {
+            bool verbose = false;
+            std::string prefix = prefixMap[key];
+            prefix = prefix + "hm_";
+            //printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
             for (const auto& element : json_[key].items())
             {
-                bool pass = passUnitHighDM(element.key(), mtb, njets, nb, ntop, nw, nres, ht, met);
-                if (pass)
+                std::string unit = element.key();
+                // only check units with prefix
+                if (unit.find(prefix) == 0)
                 {
-                    int bin = std::stoi(std::string(element.value()));
-                    return bin;
+                    bool pass = passUnitHighDM(unit, prefix, mtb, njets, nb, ntop, nw, nres, ht, met);
+                    //printf("%s: pass = %s\n", unit.c_str(), pass ? "true" : "false");
+                    if (pass)
+                    {
+                        int bin = std::stoi(std::string(element.value()));
+                        if (verbose)
+                        {
+                            printf("pass selection for unit %d, %s; mtb = %f, njets = %d, nb = %d, ntop = %d, nw = %d, nres = %d, ht = %f, met = %f\n", bin, unit.c_str(), mtb, njets, nb, ntop, nw, nres, ht, met);
+                        }
+                        return bin;
+                    }
                 }
-                //std::cout << element.key() << " : " << element.value() << std::endl;
             }
             return -1;
         }
