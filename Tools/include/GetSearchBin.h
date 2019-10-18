@@ -87,7 +87,11 @@ namespace plotterFunctions
                 int nSearchbinUnitHighDM = getUnitNumHighDM("binNum", mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
                 
                 // compare search bins (hui) vs. search bin units (matt) 
-                if (SAT_Pass_lowDM && ! (nSearchBinLowDM < 0 && nSearchbinUnitLowDM < 0))
+                //if (SAT_Pass_lowDM && ! (nSearchBinLowDM < 0 && nSearchbinUnitLowDM < 0))
+                //{
+                //    printf("nSB_hui = %d; nSB_matt = %d\n", nSearchBinLowDM, nSearchbinUnitLowDM);
+                //}
+                if (SAT_Pass_lowDM && (nSearchBinLowDM != nSearchbinUnitLowDM))
                 {
                     printf("nSB_hui = %d; nSB_matt = %d\n", nSearchBinLowDM, nSearchbinUnitLowDM);
                 }
@@ -381,6 +385,7 @@ namespace plotterFunctions
         // return unit number: can be used for search bins, CR units and SR units
         int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
         {
+            bool verbose = false;
             //printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
             for (const auto& element : json_[key].items())
             {
@@ -389,9 +394,12 @@ namespace plotterFunctions
                 if (pass)
                 {
                     int bin = std::stoi(std::string(element.value()));
-                    //printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
-                    //printf("event passes unit selection; %d : %s\n", bin, element.key().c_str());
-                    printf("pass selection for unit %d, %s; njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", bin, element.key().c_str(), njets, nb, nsv, ISRpt, ptb, met);
+                    if (verbose)
+                    {
+                        //printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
+                        //printf("event passes unit selection; %d : %s\n", bin, element.key().c_str());
+                        printf("pass selection for unit %d, %s; njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", bin, element.key().c_str(), njets, nb, nsv, ISRpt, ptb, met);
+                    }
                     return bin;
                 }
                 //std::cout << element.key() << " : " << element.value() << std::endl;
