@@ -89,31 +89,42 @@ namespace plotterFunctions
                 //----------------------------------------//
                 //int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
                 //int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
-                int nSearchbinUnitLowDM  = getUnitNumLowDM("binNum", nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nSearchbinUnitHighDM = getUnitNumHighDM("binNum", mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                int nSBLowDM      = getUnitNumLowDM(  "binNum",     nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                int nSBHighDM     = getUnitNumHighDM( "binNum",     mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                int nCRUnitLowDM  = getUnitNumLowDM(  "unitCRNum",  nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                int nCRUnitHighDM = getUnitNumHighDM( "unitCRNum",  mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                int nSRUnitLowDM  = getUnitNumLowDM(  "unitSRNum",  nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                int nSRUnitHighDM = getUnitNumHighDM( "unitSRNum",  mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
                 
                 // compare search bins (hui) vs. search bin units (matt) 
-                if (SAT_Pass_lowDM && ! (nSearchBinLowDM < 0 && nSearchbinUnitLowDM < 0))
-                {
-                    printf("LowDM; nSB_hui = %d; nSB_matt = %d", nSearchBinLowDM, nSearchbinUnitLowDM);
-                    if(nSearchBinLowDM != nSearchbinUnitLowDM) printf(" --- nSB are different --- ");
-                    printf("\n");
-                }
-                if (SAT_Pass_highDM && ! (nSearchBinHighDM < 0 && nSearchbinUnitHighDM < 0))
-                {
-                    printf("HighDM; nSB_hui = %d; nSB_matt = %d", nSearchBinHighDM, nSearchbinUnitHighDM);
-                    if(nSearchBinHighDM != nSearchbinUnitHighDM) printf(" --- nSB are different --- ");
-                    printf("\n");
-                }
+                //if (SAT_Pass_lowDM)
+                //{
+                //    if (! (nSearchBinLowDM < 0 && nSBLowDM < 0))
+                //    {
+                //        printf("LowDM; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", nSearchBinLowDM, nSBLowDM, nCRUnitLowDM, nSRUnitLowDM);
+                //        if(nSearchBinLowDM != nSBLowDM) printf(" --- nSB are different --- ");
+                //        printf("\n");
+                //    }
+                //}
+                //if (SAT_Pass_highDM)
+                //{
+                //    if (! (nSearchBinHighDM < 0 && nSBHighDM < 0))
+                //    {
+                //        printf("HighDM; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", nSearchBinHighDM, nSBHighDM, nCRUnitHighDM, nSRUnitHighDM);
+                //        if(nSearchBinHighDM != nSBHighDM) printf(" --- nSB are different --- ");
+                //        printf("\n");
+                //    }
+                //}
                 
-                //if (SAT_Pass_lowDM && (nSearchBinLowDM != nSearchbinUnitLowDM))
-                //{
-                //    printf("LowDM; nSB_hui = %d; nSB_matt = %d\n", nSearchBinLowDM, nSearchbinUnitLowDM);
-                //}
-                //if (SAT_Pass_highDM && (nSearchBinHighDM != nSearchbinUnitHighDM))
-                //{
-                //    printf("HighDM; nSB_hui = %d; nSB_matt = %d\n", nSearchBinHighDM, nSearchbinUnitHighDM);
-                //}
+                // print if search bin numbers calculated using different methods are not equal
+                if (SAT_Pass_lowDM && (nSearchBinLowDM != nSBLowDM))
+                {
+                    printf("LowDM; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", nSearchBinLowDM, nSBLowDM);
+                }
+                if (SAT_Pass_highDM && (nSearchBinHighDM != nSBHighDM))
+                {
+                    printf("HighDM; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", nSearchBinHighDM, nSBHighDM);
+                }
                 
                 // search bins
                 tr.registerDerivedVar("nSearchBinLowDM"             + suffix, nSearchBinLowDM);
@@ -123,8 +134,12 @@ namespace plotterFunctions
                 tr.registerDerivedVar("nValidationBinLowDMHighMET"  + suffix, nValidationBinLowDMHighMET);
                 tr.registerDerivedVar("nValidationBinHighDM"        + suffix, nValidationBinHighDM);
                 // unit bins
-                tr.registerDerivedVar("nSearchbinUnitLowDM"         + suffix, nSearchbinUnitLowDM);
-                tr.registerDerivedVar("nSearchbinUnitHighDM"        + suffix, nSearchbinUnitHighDM);
+                tr.registerDerivedVar("nSBLowDM"         + suffix, nSBLowDM);
+                tr.registerDerivedVar("nSBHighDM"        + suffix, nSBHighDM);
+                tr.registerDerivedVar("nCRUnitLowDM"     + suffix, nCRUnitLowDM);
+                tr.registerDerivedVar("nCRUnitHighDM"    + suffix, nCRUnitHighDM);
+                tr.registerDerivedVar("nSRUnitLowDM"     + suffix, nSRUnitLowDM);
+                tr.registerDerivedVar("nSRUnitHighDM"    + suffix, nSRUnitHighDM);
             }
         }
 

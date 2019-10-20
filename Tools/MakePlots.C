@@ -375,32 +375,43 @@ int main(int argc, char* argv[])
     }
 
 
-    //SearchBins sb(sbEra);
+    // SBv3 Validation Bins
+    // Low DM,          15 bins:  0 - 14
+    // Low DM High MET,  4 bins: 15 - 18
+    // High DM,         24 bins: 19 - 42
+    // Total,           43 bins:  0 - 42
+    int min_vb_low_dm           = 0;
+    int max_vb_low_dm           = 15;
+    int min_vb_low_dm_high_met  = 15;
+    int max_vb_low_dm_high_met  = 19;
+    int min_vb_high_dm          = 19;
+    int max_vb_high_dm          = 43;
     // Number of searchbins
     int NSB = 183;
-    // SBv3 search bins for low and high dm
-    // Low DM, 53 bins: 0 - 52
-    // High DM, 151 bins: 53 - 203
-    // Total 204 bins: 0 - 203
     // SBv4 search bins for low and high dm
-    // Low DM, 53 bins: 0 - 52
-    // High DM, 130 bins: 53 - 182
-    // Total 183 bins: 0 - 182
-    int min_sb_low_dm = 0;
-    int max_sb_low_dm = 53;
+    // Low DM,       53 bins:  0 - 52
+    // High DM,     130 bins: 53 - 182
+    // Total,       183 bins:  0 - 182
+    int min_sb_low_dm  = 0;
+    int max_sb_low_dm  = 53;
     int min_sb_high_dm = 53;
     int max_sb_high_dm = 183;
-    // SBv3 Validation Bins
-    // Low DM, 15 bins: 0 - 14
-    // Low DM High MET, 4 bins: 15 - 18
-    // High DM, 24 bins: 19 - 42
-    // Total 43 bins: 0 - 18 and 19 - 42
-    int min_vb_low_dm = 0;
-    int max_vb_low_dm = 15;
-    int min_vb_low_dm_high_met = 15;
-    int max_vb_low_dm_high_met = 19;
-    int min_vb_high_dm = 19;
-    int max_vb_high_dm = 43;
+    // SBv4 control region unit bins
+    // Low DM,       53 bins:  0 - 52
+    // High DM,      59 bins: 53 - 111
+    // Total        112 bins:  0 - 111
+    int min_crunit_low_dm  = 0;
+    int max_crunit_low_dm  = 53;
+    int min_crunit_high_dm = 53;
+    int max_crunit_high_dm = 112;
+    // SBv4 search region unit bins
+    // Low DM,       53 bins:  0 - 52
+    // High DM,     476 bins: 53 - 528
+    // Total,       529 bins:  0 - 528
+    int min_srunit_low_dm  = 0;
+    int max_srunit_low_dm  = 53;
+    int min_srunit_high_dm = 53;
+    int max_srunit_high_dm = 529;
 
     // min and max values for histos
     int nBins = 40;
@@ -2947,6 +2958,8 @@ int main(int argc, char* argv[])
             PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight)});
             PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",              "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_low_dm;BTagWeight"          + TotalSFs + PrefireWeight + puWeight)});
             PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",             "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_high_dm;BTagWeight"         + TotalSFs + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_nSRUnit_LowDM("data",                "nSRUnitLowDM"                  + JetPtCut, {makePDSZnunu("Search Region Unit Low DM",      "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_low_dm;BTagWeight"          + TotalSFs + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_nSRUnit_HighDM("data",               "nSRUnitHighDM"                 + JetPtCut, {makePDSZnunu("Search Region Unit High DM",     "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_high_dm;BTagWeight"         + TotalSFs + PrefireWeight + puWeight)});
         
             // Validation with njetWeight applied 
             PDC dcMC_ZNuNu_nValidationBin_LowDM_njetWeight("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight + ";njetWeight_Electron_LowDM")});
@@ -2963,6 +2976,8 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + histSuffix,        {dcMC_ZNuNu_nValidationBin_HighDM},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
             vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + histSuffix,             {dcMC_ZNuNu_nSearchBin_LowDM},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
             vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffix,            {dcMC_ZNuNu_nSearchBin_HighDM},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffix,                {dcMC_ZNuNu_nSRUnit_LowDM},                {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,      max_srunit_low_dm,      false, false,  "Search Region Unit Low DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffix,               {dcMC_ZNuNu_nSRUnit_HighDM},               {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,     max_srunit_high_dm,     false, false,  "Search Region Unit High DM", "Events", true));
 
             // nValidation with njetWeights applied 
             vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_njetWeight" + histSuffix,         {dcMC_ZNuNu_nValidationBin_LowDM_njetWeight},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
