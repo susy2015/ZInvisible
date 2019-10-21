@@ -44,7 +44,7 @@ def main():
         year = era[0:4] 
         datasets = dataSetsList[dataSetsMap[era]].format(era, year)
         refLumi = "Data_MET_{0}".format(era)
-        dirMap[era] = submit(datasets, refLumi, era, numfile=2, noSubmit=False, verbose=False)
+        dirMap[era] = submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False)
     
     # write directory map to json file 
     with open (jsonName, "w") as j:
