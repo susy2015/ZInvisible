@@ -45,9 +45,9 @@ namespace plotterFunctions
 
         void getSearchBin(NTupleReader& tr)
         {
-            std::vector<std::string> JetPtCuts = {"_jetpt30"};
+            std::vector<std::string> tags = {"_jetpt30", "_drPhotonCleaned_jetpt30"};
             // begin loop over jet pt cuts 
-            for (const auto& suffix : JetPtCuts) 
+            for (const auto& suffix : tags) 
             {
                 // Note: Only HT, s_met, nJets, and dPhi are calculated with different jet pt cuts
                 const auto& SAT_Pass_lowDM      = tr.getVar<bool>("SAT_Pass_lowDM" + suffix);
@@ -165,9 +165,19 @@ namespace plotterFunctions
         // load json file
         void loadJson(const std::string& fileName)
         {
-            // read json file
-            std::ifstream i(fileName);
-            i >> json_;
+            // check if file exists
+            struct stat buffer;  
+            bool file_exists = bool(stat(fileName.c_str(), &buffer) == 0);
+            if(file_exists)
+            {
+                // read json file
+                std::ifstream i(fileName);
+                i >> json_;
+            }
+            else
+            {
+                std::cout << "Failed to open the file " << fileName << ". This file is needed in GetSearchBin.h to apply unit bin selection." << std::endl;
+            }
         }
 
         // See this link for cut definitions

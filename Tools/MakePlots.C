@@ -1172,8 +1172,7 @@ int main(int argc, char* argv[])
             std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Normalization  = makeStackMC_DiLepton_Normalization(   "passElecZinvSelOnZMassPeak" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
             std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Normalization = makeStackMC_DiLepton_Normalization(   "passElecZinvSelOnZMassPeak" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
 
-//With shape weight            
-
+            // with shape weight            
             std::vector<std::vector<PDS>> StackMC_Electron_LowDM_njetWeight                = makeStackMC_DiLepton(                 "passElecZinvSelOnZMassPeak" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_LowDM");
             std::vector<std::vector<PDS>> StackMC_Electron_HighDM_njetWeight               = makeStackMC_DiLepton(                 "passElecZinvSelOnZMassPeak" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_HighDM");
             std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Loose_njetWeight          = makeStackMC_DiLepton(                 "passElecZinvSelOnZMassPeak" + SAT_Pass_lowDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_LowDM");
@@ -1602,8 +1601,7 @@ int main(int argc, char* argv[])
             std::vector<std::vector<PDS>> StackMC_Muon_LowDM_Normalization  = makeStackMC_DiLepton_Normalization(   "passMuZinvSelOnZMassPeak" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
             std::vector<std::vector<PDS>> StackMC_Muon_HighDM_Normalization = makeStackMC_DiLepton_Normalization(   "passMuZinvSelOnZMassPeak" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
 
-//With shape weight
-
+            // with shape weight
             std::vector<std::vector<PDS>> StackMC_Muon_LowDM_njetWeight  = makeStackMC_DiLepton(                               "passMuZinvSelOnZMassPeak" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights, ";njetWeight_Muon_LowDM");
             std::vector<std::vector<PDS>> StackMC_Muon_HighDM_njetWeight = makeStackMC_DiLepton(                               "passMuZinvSelOnZMassPeak" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights, ";njetWeight_Muon_HighDM");
             std::vector<std::vector<PDS>> StackMC_Muon_LowDM_Loose_njetWeight  = makeStackMC_DiLepton(                         "passMuZinvSelOnZMassPeak" + SAT_Pass_lowDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights, ";njetWeight_Muon_LowDM");
@@ -2077,6 +2075,12 @@ int main(int argc, char* argv[])
             PDC dcMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenPhoton(   "stack",  "min_dR_RecoPhotonGenPhoton", StackMC_Photon_LowDM_Tight);
             PDC dcMC_Photon_HighDM_min_dR_RecoPhotonGenPhoton(        "stack",  "min_dR_RecoPhotonGenPhoton", StackMC_Photon_HighDM);
             
+            // Control Region Units: nCRUnitLowDM and nCRUnitHighDM
+            PDC dcData_Photon_LowDM_nCRUnitLowDM(       "data",   "nCRUnitLowDM" + varSuffix,    {dsData_Photon_LowDM});
+            PDC dcData_Photon_HighDM_nCRUnitHighDM(     "data",   "nCRUnitHighDM" + varSuffix,   {dsData_Photon_HighDM});
+            PDC dcMC_Photon_LowDM_nCRUnitLowDM(         "stack",  "nCRUnitLowDM" + varSuffix,    StackMC_Photon_LowDM);
+            PDC dcMC_Photon_HighDM_nCRUnitHighDM(       "stack",  "nCRUnitHighDM" + varSuffix,   StackMC_Photon_HighDM);
+            
             // dphi
             std::vector<PDC> dcVecData_Photon_LowDM_dPhi;
             std::vector<PDC> dcVecData_Photon_LowDM_Tight_dPhi;
@@ -2140,6 +2144,8 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_LowDM_min_dR_RecoPhotonGenPhoton" + histSuffix,       {dcData_Photon_LowDM_min_dR_RecoPhotonGenPhoton,       dcMC_Photon_LowDM_min_dR_RecoPhotonGenPhoton},       {1, 2}, "", nBins, 0.0, 0.2,             true, doNorm, label_min_dR_RecoPhotonGenPhoton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenPhoton" + histSuffix, {dcData_Photon_LowDM_Tight_min_dR_RecoPhotonGenPhoton, dcMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenPhoton}, {1, 2}, "", nBins, 0.0, 0.2,             true, doNorm, label_min_dR_RecoPhotonGenPhoton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_min_dR_RecoPhotonGenPhoton" + histSuffix,      {dcData_Photon_HighDM_min_dR_RecoPhotonGenPhoton,      dcMC_Photon_HighDM_min_dR_RecoPhotonGenPhoton},      {1, 2}, "", nBins, 0.0, 0.2,             true, doNorm, label_min_dR_RecoPhotonGenPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_LowDM_nCRUnitLowDM" + histSuffix,                     {dcData_Photon_LowDM_nCRUnitLowDM,                     dcMC_Photon_LowDM_nCRUnitLowDM},                     {1, 2}, "", max_crunit_low_dm - min_crunit_low_dm,    min_crunit_low_dm,  max_crunit_low_dm,   false, false, "Control Region Unit Low DM",  "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nCRUnitHighDM" + histSuffix,                   {dcData_Photon_HighDM_nCRUnitHighDM,                   dcMC_Photon_HighDM_nCRUnitHighDM},                   {1, 2}, "", max_crunit_high_dm - min_crunit_high_dm,  min_crunit_high_dm, max_crunit_high_dm,  false, false, "Control Region Unit High DM", "Events"));
             
             // dphi
             for (int i = 0; i < 4; i++)
