@@ -6,8 +6,7 @@ import os
 from cutflow_plot import makeCutflows 
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
-from search_bins import SearchBins
-from search_bins import ValidationBins
+from search_bins import SearchBins, ValidationBins, CRUnitBins
 from data_card import makeDataCard
 from make_table import Table
 
@@ -29,25 +28,28 @@ def main():
         print "The json file \"{0}\" containing runs does not exist.".format(json_file)
         return
     
-    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
-    #eras = ["2016"]
+    #eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
+    eras = ["2016"]
     dirList = []
     plot_dir                = "more_plots"
     latex_dir               = "latex_files"
+    results_dir             = "results"
     dataCard_dir            = "data_cards"
     dataCardValidation_dir  = dataCard_dir + "/validation"
     dataCardSearch_dir      = dataCard_dir + "/search"
     dirList.append(plot_dir)
     dirList.append(latex_dir)
+    dirList.append(results_dir)
     dirList.append(dataCard_dir)
     dirList.append(dataCardValidation_dir)
     dirList.append(dataCardSearch_dir)
     # add "/" to directory if not present
-    if plot_dir[-1]  != "/":                plot_dir     += "/"
-    if latex_dir[-1] != "/":                latex_dir    += "/"
-    if dataCard_dir[-1] != "/":             dataCard_dir += "/"
-    if dataCardValidation_dir[-1] != "/":   dataCardValidation_dir += "/"
-    if dataCardSearch_dir[-1] != "/":       dataCardSearch_dir += "/"
+    if plot_dir[-1]  != "/":                plot_dir                += "/"
+    if latex_dir[-1] != "/":                latex_dir               += "/"
+    if results_dir[-1] != "/":              results_dir             += "/"
+    if dataCard_dir[-1] != "/":             dataCard_dir            += "/"
+    if dataCardValidation_dir[-1] != "/":   dataCardValidation_dir  += "/"
+    if dataCardSearch_dir[-1] != "/":       dataCardSearch_dir      += "/"
     
     for d in dirList:
         # make directory if it does not exist
@@ -63,6 +65,8 @@ def main():
         VB = ValidationBins(N, S, eras, plot_dir, verbose)
         # search bins
         SB = SearchBins(N, S, eras, plot_dir, verbose)
+        # control region unit bins  
+        CRunits = CRUnitBins(N, S, eras, plot_dir, verbose) 
         # loop over eras
         for era in eras:
             print "|---------- Era: {0} ----------|".format(era)
@@ -74,6 +78,7 @@ def main():
             S.getShape(result_file, era)
             VB.getValues(result_file, era)
             SB.getValues(result_file, era)
+            CRunits.getValues(result_file, era)
             makeDataCard(VB, dataCardValidation_dir, era)
             makeDataCard(SB, dataCardSearch_dir,     era)
 
@@ -81,6 +86,7 @@ def main():
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
     VB.makeTexFile("Z Invisible Per Era Prediction for Validation Bins", latex_dir + "zinv_per_era_prediction_validation_bins.tex")
     SB.makeTexFile("Z Invisible Per Era Prediction for Search Bins",     latex_dir + "zinv_per_era_prediction_search_bins.tex")
+    
     
     # total Run2 prediction
     # root files to save histograms
@@ -91,6 +97,11 @@ def main():
     SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
     SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
+
+    # make json files
+    VB.makeJson(VB.binValues,           results_dir + "ValidationBinResults.json")
+    SB.makeJson(SB.binValues,           results_dir + "SearchBinResults.json")
+    CRunits.makeJson(CRunits.binValues, results_dir + "CRUnitsResults.json")
 
     # TODO: making data card for Run 2 does not work because we have not run calcPrediction() for Run 2
     #       calcPrediction() depends on norm and shape (which we calculate per era, not for all of Run 2)
