@@ -45,26 +45,33 @@ namespace plotterFunctions
 
         void getSearchBin(NTupleReader& tr)
         {
-            std::vector<std::string> tags = {"_jetpt30", "_drPhotonCleaned_jetpt30"};
+            std::vector<std::string> tags = {"", "_drPhotonCleaned"};
             // begin loop over jet pt cuts 
-            for (const auto& suffix : tags) 
+            for (const auto& tag : tags) 
             {
-                // Note: Only HT, s_met, nJets, and dPhi are calculated with different jet pt cuts
-                const auto& SAT_Pass_lowDM      = tr.getVar<bool>("SAT_Pass_lowDM" + suffix);
-                const auto& SAT_Pass_highDM     = tr.getVar<bool>("SAT_Pass_highDM" + suffix);
-                const auto& nMergedTops         = tr.getVar<int>("nMergedTops");
-                const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops");
-                const auto& nWs                 = tr.getVar<int>("nWs");
-                const auto& nBottoms            = tr.getVar<int>("nBottoms");
-                const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottoms");
-                const auto& nJets               = tr.getVar<int>("nJets" + suffix);
-                const auto& ht                  = tr.getVar<data_t>("HT" + suffix);
-                const auto& met                 = tr.getVar<data_t>("MET_pt");
-                const auto& ptb                 = tr.getVar<data_t>("ptb");
-                const auto& mtb                 = tr.getVar<data_t>("mtb");
-                const auto& ISRJetPt            = tr.getVar<data_t>("ISRJetPt");
+                std::string suffix = "_jetpt30";
+                std::string tag_suffix = tag + suffix;
+                std::string met_label = "MET_pt";
+                if (tag.compare("_drPhotonCleaned") == 0)
+                {
+                    met_label = "metWithPhoton";
+                }
                 
-                float mtb_cut = 175.0;
+                // For photon CR, we need to use _drPhotonCleaned for all variables and metWithPhoton
+                // the top tagger variables do not use the _jetpt30 suffix
+                const auto& SAT_Pass_lowDM      = tr.getVar<bool>("SAT_Pass_lowDM"  + tag_suffix);
+                const auto& SAT_Pass_highDM     = tr.getVar<bool>("SAT_Pass_highDM" + tag_suffix);
+                const auto& nJets               = tr.getVar<int>("nJets"            + tag_suffix);
+                const auto& nBottoms            = tr.getVar<int>("nBottoms"         + tag_suffix);
+                const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottoms"     + tag_suffix);
+                const auto& nMergedTops         = tr.getVar<int>("nMergedTops"      + tag);
+                const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops"    + tag);
+                const auto& nWs                 = tr.getVar<int>("nWs"              + tag);
+                const auto& ht                  = tr.getVar<data_t>("HT"            + tag_suffix);
+                const auto& ptb                 = tr.getVar<data_t>("ptb"           + tag_suffix);
+                const auto& mtb                 = tr.getVar<data_t>("mtb"           + tag_suffix);
+                const auto& ISRJetPt            = tr.getVar<data_t>("ISRJetPt"      + tag_suffix);
+                const auto& met                 = tr.getVar<data_t>(met_label);
                 
                 //------------------------------------------------//
                 //--- Updated Search Bins: SBv4 (October 2019) ---//
@@ -101,7 +108,7 @@ namespace plotterFunctions
                 //{
                 //    if (! (nSearchBinLowDM < 0 && nSBLowDM < 0))
                 //    {
-                //        printf("LowDM; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", nSearchBinLowDM, nSBLowDM, nCRUnitLowDM, nSRUnitLowDM);
+                //        printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", tag_suffix.c_str(), nSearchBinLowDM, nSBLowDM, nCRUnitLowDM, nSRUnitLowDM);
                 //        if(nSearchBinLowDM != nSBLowDM) printf(" --- nSB are different --- ");
                 //        printf("\n");
                 //    }
@@ -110,7 +117,7 @@ namespace plotterFunctions
                 //{
                 //    if (! (nSearchBinHighDM < 0 && nSBHighDM < 0))
                 //    {
-                //        printf("HighDM; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", nSearchBinHighDM, nSBHighDM, nCRUnitHighDM, nSRUnitHighDM);
+                //        printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", tag_suffix.c_str(), nSearchBinHighDM, nSBHighDM, nCRUnitHighDM, nSRUnitHighDM);
                 //        if(nSearchBinHighDM != nSBHighDM) printf(" --- nSB are different --- ");
                 //        printf("\n");
                 //    }
@@ -119,27 +126,27 @@ namespace plotterFunctions
                 // print if search bin numbers calculated using different methods are not equal
                 if (SAT_Pass_lowDM && (nSearchBinLowDM != nSBLowDM))
                 {
-                    printf("LowDM; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", nSearchBinLowDM, nSBLowDM);
+                    printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", tag_suffix.c_str(), nSearchBinLowDM, nSBLowDM);
                 }
                 if (SAT_Pass_highDM && (nSearchBinHighDM != nSBHighDM))
                 {
-                    printf("HighDM; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", nSearchBinHighDM, nSBHighDM);
+                    printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", tag_suffix.c_str(), nSearchBinHighDM, nSBHighDM);
                 }
                 
                 // search bins
-                tr.registerDerivedVar("nSearchBinLowDM"             + suffix, nSearchBinLowDM);
-                tr.registerDerivedVar("nSearchBinHighDM"            + suffix, nSearchBinHighDM);
+                tr.registerDerivedVar("nSearchBinLowDM"             + tag_suffix, nSearchBinLowDM);
+                tr.registerDerivedVar("nSearchBinHighDM"            + tag_suffix, nSearchBinHighDM);
                 // validation bins
-                tr.registerDerivedVar("nValidationBinLowDM"         + suffix, nValidationBinLowDM);
-                tr.registerDerivedVar("nValidationBinLowDMHighMET"  + suffix, nValidationBinLowDMHighMET);
-                tr.registerDerivedVar("nValidationBinHighDM"        + suffix, nValidationBinHighDM);
+                tr.registerDerivedVar("nValidationBinLowDM"         + tag_suffix, nValidationBinLowDM);
+                tr.registerDerivedVar("nValidationBinLowDMHighMET"  + tag_suffix, nValidationBinLowDMHighMET);
+                tr.registerDerivedVar("nValidationBinHighDM"        + tag_suffix, nValidationBinHighDM);
                 // unit bins
-                tr.registerDerivedVar("nSBLowDM"         + suffix, nSBLowDM);
-                tr.registerDerivedVar("nSBHighDM"        + suffix, nSBHighDM);
-                tr.registerDerivedVar("nCRUnitLowDM"     + suffix, nCRUnitLowDM);
-                tr.registerDerivedVar("nCRUnitHighDM"    + suffix, nCRUnitHighDM);
-                tr.registerDerivedVar("nSRUnitLowDM"     + suffix, nSRUnitLowDM);
-                tr.registerDerivedVar("nSRUnitHighDM"    + suffix, nSRUnitHighDM);
+                tr.registerDerivedVar("nSBLowDM"                    + tag_suffix, nSBLowDM);
+                tr.registerDerivedVar("nSBHighDM"                   + tag_suffix, nSBHighDM);
+                tr.registerDerivedVar("nCRUnitLowDM"                + tag_suffix, nCRUnitLowDM);
+                tr.registerDerivedVar("nCRUnitHighDM"               + tag_suffix, nCRUnitHighDM);
+                tr.registerDerivedVar("nSRUnitLowDM"                + tag_suffix, nSRUnitLowDM);
+                tr.registerDerivedVar("nSRUnitHighDM"               + tag_suffix, nSRUnitHighDM);
             }
         }
 

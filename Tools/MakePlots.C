@@ -2076,9 +2076,9 @@ int main(int argc, char* argv[])
             PDC dcMC_Photon_HighDM_min_dR_RecoPhotonGenPhoton(        "stack",  "min_dR_RecoPhotonGenPhoton", StackMC_Photon_HighDM);
             
             // Control Region Units: nCRUnitLowDM and nCRUnitHighDM
-            PDC dcData_Photon_LowDM_nCRUnitLowDM(       "data",   "nCRUnitLowDM" + varSuffix,    {dsData_Photon_LowDM});
+            PDC dcData_Photon_LowDM_nCRUnitLowDM(       "data",   "nCRUnitLowDM"  + varSuffix,   {dsData_Photon_LowDM});
             PDC dcData_Photon_HighDM_nCRUnitHighDM(     "data",   "nCRUnitHighDM" + varSuffix,   {dsData_Photon_HighDM});
-            PDC dcMC_Photon_LowDM_nCRUnitLowDM(         "stack",  "nCRUnitLowDM" + varSuffix,    StackMC_Photon_LowDM);
+            PDC dcMC_Photon_LowDM_nCRUnitLowDM(         "stack",  "nCRUnitLowDM"  + varSuffix,   StackMC_Photon_LowDM);
             PDC dcMC_Photon_HighDM_nCRUnitHighDM(       "stack",  "nCRUnitHighDM" + varSuffix,   StackMC_Photon_HighDM);
             
             // dphi
