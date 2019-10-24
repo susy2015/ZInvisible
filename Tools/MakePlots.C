@@ -375,32 +375,43 @@ int main(int argc, char* argv[])
     }
 
 
-    //SearchBins sb(sbEra);
+    // SBv3 Validation Bins
+    // Low DM,          15 bins:  0 - 14
+    // Low DM High MET,  4 bins: 15 - 18
+    // High DM,         24 bins: 19 - 42
+    // Total,           43 bins:  0 - 42
+    int min_vb_low_dm           = 0;
+    int max_vb_low_dm           = 15;
+    int min_vb_low_dm_high_met  = 15;
+    int max_vb_low_dm_high_met  = 19;
+    int min_vb_high_dm          = 19;
+    int max_vb_high_dm          = 43;
     // Number of searchbins
     int NSB = 183;
-    // SBv3 search bins for low and high dm
-    // Low DM, 53 bins: 0 - 52
-    // High DM, 151 bins: 53 - 203
-    // Total 204 bins: 0 - 203
     // SBv4 search bins for low and high dm
-    // Low DM, 53 bins: 0 - 52
-    // High DM, 130 bins: 53 - 182
-    // Total 183 bins: 0 - 182
-    int min_sb_low_dm = 0;
-    int max_sb_low_dm = 53;
+    // Low DM,       53 bins:  0 - 52
+    // High DM,     130 bins: 53 - 182
+    // Total,       183 bins:  0 - 182
+    int min_sb_low_dm  = 0;
+    int max_sb_low_dm  = 53;
     int min_sb_high_dm = 53;
     int max_sb_high_dm = 183;
-    // SBv3 Validation Bins
-    // Low DM, 15 bins: 0 - 14
-    // Low DM High MET, 4 bins: 15 - 18
-    // High DM, 24 bins: 19 - 42
-    // Total 43 bins: 0 - 18 and 19 - 42
-    int min_vb_low_dm = 0;
-    int max_vb_low_dm = 15;
-    int min_vb_low_dm_high_met = 15;
-    int max_vb_low_dm_high_met = 19;
-    int min_vb_high_dm = 19;
-    int max_vb_high_dm = 43;
+    // SBv4 control region unit bins
+    // Low DM,       53 bins:  0 - 52
+    // High DM,      59 bins: 53 - 111
+    // Total        112 bins:  0 - 111
+    int min_crunit_low_dm  = 0;
+    int max_crunit_low_dm  = 53;
+    int min_crunit_high_dm = 53;
+    int max_crunit_high_dm = 112;
+    // SBv4 search region unit bins
+    // Low DM,       53 bins:  0 - 52
+    // High DM,     476 bins: 53 - 528
+    // Total,       529 bins:  0 - 528
+    int min_srunit_low_dm  = 0;
+    int max_srunit_low_dm  = 53;
+    int min_srunit_high_dm = 53;
+    int max_srunit_high_dm = 529;
 
     // min and max values for histos
     int nBins = 40;
@@ -658,38 +669,38 @@ int main(int argc, char* argv[])
     };
     
     // standard MC
-    auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
-    {
-        PDS dsGJets(      "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,   weights);
-        PDS dsQCD(        "QCD",                    fileMap["QCD_Photon" + yearTag],    cuts,   weights);
-        PDS dsWJetsToLNu( "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
-        PDS dsTTG(        "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,   weights);
-        PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
-        PDS dstW(         "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
-        PDS dsRare(       "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
-        PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
-        PDS dsTTZ(        "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
-        //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
-        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
-        return StackMC;
-    };
-    // using fake and fragmented photons
     //auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
     //{
-    //    PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts + ";passPhotonSelectionDirect",      weights);
-    //    PDS dsQCDFragmented(    "QCD Fragmented",         fileMap["QCD_Photon" + yearTag],    cuts + ";passPhotonSelectionFragmented",  weights);
-    //    PDS dsQCDFake(          "QCD Fake",               fileMap["QCD_Photon" + yearTag],    cuts + ";passPhotonSelectionFake",        weights);
-    //    PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts + ";passPhotonSelectionDirect",      weights);
-    //    PDS dsWJetsToLNu(       "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
-    //    PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
-    //    PDS dstW(               "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
-    //    PDS dsRare(             "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
-    //    PDS dsDiboson(          "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
-    //    PDS dsTTZ(              "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
+    //    PDS dsGJets(      "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,   weights);
+    //    PDS dsQCD(        "QCD",                    fileMap["QCD_Photon" + yearTag],    cuts,   weights);
+    //    PDS dsWJetsToLNu( "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
+    //    PDS dsTTG(        "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,   weights);
+    //    PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
+    //    PDS dstW(         "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
+    //    PDS dsRare(       "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
+    //    PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
+    //    PDS dsTTZ(        "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
     //    //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
-    //    std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDFragmented}, {dsQCDFake}, {dsTTG}, {dsWJetsToLNu},  {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
+    //    std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
     //    return StackMC;
     //};
+    // using fake and fragmented photons
+    auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
+    {
+        PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts + ";passPhotonSelectionDirect",      weights);
+        PDS dsQCDFragmented(    "QCD Fragmented",         fileMap["QCD_Photon" + yearTag],    cuts + ";passPhotonSelectionFragmented",  weights);
+        PDS dsQCDFake(          "QCD Fake",               fileMap["QCD_Photon" + yearTag],    cuts + ";passPhotonSelectionFake",        weights);
+        PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts + ";passPhotonSelectionDirect",      weights);
+        PDS dsWJetsToLNu(       "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
+        PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
+        PDS dstW(               "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
+        PDS dsRare(             "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
+        PDS dsDiboson(          "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
+        PDS dsTTZ(              "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
+        //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
+        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDFragmented}, {dsQCDFake}, {dsTTG}, {dsWJetsToLNu},  {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
+        return StackMC;
+    };
 
     std::vector<Plotter::CutFlowSummary> cutFlowSummaries;
     
@@ -1161,8 +1172,7 @@ int main(int argc, char* argv[])
             std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Normalization  = makeStackMC_DiLepton_Normalization(   "passElecZinvSelOnZMassPeak" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
             std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Normalization = makeStackMC_DiLepton_Normalization(   "passElecZinvSelOnZMassPeak" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
 
-//With shape weight            
-
+            // with shape weight            
             std::vector<std::vector<PDS>> StackMC_Electron_LowDM_njetWeight                = makeStackMC_DiLepton(                 "passElecZinvSelOnZMassPeak" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_LowDM");
             std::vector<std::vector<PDS>> StackMC_Electron_HighDM_njetWeight               = makeStackMC_DiLepton(                 "passElecZinvSelOnZMassPeak" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_HighDM");
             std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Loose_njetWeight          = makeStackMC_DiLepton(                 "passElecZinvSelOnZMassPeak" + SAT_Pass_lowDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_LowDM");
@@ -1591,8 +1601,7 @@ int main(int argc, char* argv[])
             std::vector<std::vector<PDS>> StackMC_Muon_LowDM_Normalization  = makeStackMC_DiLepton_Normalization(   "passMuZinvSelOnZMassPeak" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
             std::vector<std::vector<PDS>> StackMC_Muon_HighDM_Normalization = makeStackMC_DiLepton_Normalization(   "passMuZinvSelOnZMassPeak" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
 
-//With shape weight
-
+            // with shape weight
             std::vector<std::vector<PDS>> StackMC_Muon_LowDM_njetWeight  = makeStackMC_DiLepton(                               "passMuZinvSelOnZMassPeak" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights, ";njetWeight_Muon_LowDM");
             std::vector<std::vector<PDS>> StackMC_Muon_HighDM_njetWeight = makeStackMC_DiLepton(                               "passMuZinvSelOnZMassPeak" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights, ";njetWeight_Muon_HighDM");
             std::vector<std::vector<PDS>> StackMC_Muon_LowDM_Loose_njetWeight  = makeStackMC_DiLepton(                         "passMuZinvSelOnZMassPeak" + SAT_Pass_lowDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights, ";njetWeight_Muon_LowDM");
@@ -2066,6 +2075,12 @@ int main(int argc, char* argv[])
             PDC dcMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenPhoton(   "stack",  "min_dR_RecoPhotonGenPhoton", StackMC_Photon_LowDM_Tight);
             PDC dcMC_Photon_HighDM_min_dR_RecoPhotonGenPhoton(        "stack",  "min_dR_RecoPhotonGenPhoton", StackMC_Photon_HighDM);
             
+            // Control Region Units: nCRUnitLowDM and nCRUnitHighDM
+            PDC dcData_Photon_LowDM_nCRUnitLowDM(       "data",   "nCRUnitLowDM"  + varSuffix,   {dsData_Photon_LowDM});
+            PDC dcData_Photon_HighDM_nCRUnitHighDM(     "data",   "nCRUnitHighDM" + varSuffix,   {dsData_Photon_HighDM});
+            PDC dcMC_Photon_LowDM_nCRUnitLowDM(         "stack",  "nCRUnitLowDM"  + varSuffix,   StackMC_Photon_LowDM);
+            PDC dcMC_Photon_HighDM_nCRUnitHighDM(       "stack",  "nCRUnitHighDM" + varSuffix,   StackMC_Photon_HighDM);
+            
             // dphi
             std::vector<PDC> dcVecData_Photon_LowDM_dPhi;
             std::vector<PDC> dcVecData_Photon_LowDM_Tight_dPhi;
@@ -2129,6 +2144,8 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_LowDM_min_dR_RecoPhotonGenPhoton" + histSuffix,       {dcData_Photon_LowDM_min_dR_RecoPhotonGenPhoton,       dcMC_Photon_LowDM_min_dR_RecoPhotonGenPhoton},       {1, 2}, "", nBins, 0.0, 0.2,             true, doNorm, label_min_dR_RecoPhotonGenPhoton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenPhoton" + histSuffix, {dcData_Photon_LowDM_Tight_min_dR_RecoPhotonGenPhoton, dcMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenPhoton}, {1, 2}, "", nBins, 0.0, 0.2,             true, doNorm, label_min_dR_RecoPhotonGenPhoton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_min_dR_RecoPhotonGenPhoton" + histSuffix,      {dcData_Photon_HighDM_min_dR_RecoPhotonGenPhoton,      dcMC_Photon_HighDM_min_dR_RecoPhotonGenPhoton},      {1, 2}, "", nBins, 0.0, 0.2,             true, doNorm, label_min_dR_RecoPhotonGenPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_LowDM_nCRUnitLowDM" + histSuffix,                     {dcData_Photon_LowDM_nCRUnitLowDM,                     dcMC_Photon_LowDM_nCRUnitLowDM},                     {1, 2}, "", max_crunit_low_dm - min_crunit_low_dm,    min_crunit_low_dm,  max_crunit_low_dm,   false, false, "Control Region Unit Low DM",  "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nCRUnitHighDM" + histSuffix,                   {dcData_Photon_HighDM_nCRUnitHighDM,                   dcMC_Photon_HighDM_nCRUnitHighDM},                   {1, 2}, "", max_crunit_high_dm - min_crunit_high_dm,  min_crunit_high_dm, max_crunit_high_dm,  false, false, "Control Region Unit High DM", "Events"));
             
             // dphi
             for (int i = 0; i < 4; i++)
@@ -2947,6 +2964,8 @@ int main(int argc, char* argv[])
             PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight)});
             PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",              "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_low_dm;BTagWeight"          + TotalSFs + PrefireWeight + puWeight)});
             PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",             "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_high_dm;BTagWeight"         + TotalSFs + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_nSRUnit_LowDM("data",                "nSRUnitLowDM"                  + JetPtCut, {makePDSZnunu("Search Region Unit Low DM",      "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_low_dm;BTagWeight"          + TotalSFs + PrefireWeight + puWeight)});
+            PDC dcMC_ZNuNu_nSRUnit_HighDM("data",               "nSRUnitHighDM"                 + JetPtCut, {makePDSZnunu("Search Region Unit High DM",     "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_high_dm;BTagWeight"         + TotalSFs + PrefireWeight + puWeight)});
         
             // Validation with njetWeight applied 
             PDC dcMC_ZNuNu_nValidationBin_LowDM_njetWeight("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight + ";njetWeight_Electron_LowDM")});
@@ -2963,6 +2982,8 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + histSuffix,        {dcMC_ZNuNu_nValidationBin_HighDM},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
             vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + histSuffix,             {dcMC_ZNuNu_nSearchBin_LowDM},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
             vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffix,            {dcMC_ZNuNu_nSearchBin_HighDM},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffix,                {dcMC_ZNuNu_nSRUnit_LowDM},                {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,      max_srunit_low_dm,      false, false,  "Search Region Unit Low DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffix,               {dcMC_ZNuNu_nSRUnit_HighDM},               {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,     max_srunit_high_dm,     false, false,  "Search Region Unit High DM", "Events", true));
 
             // nValidation with njetWeights applied 
             vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_njetWeight" + histSuffix,         {dcMC_ZNuNu_nValidationBin_LowDM_njetWeight},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));

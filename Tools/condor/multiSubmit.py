@@ -36,15 +36,15 @@ def main():
             "2018_PreHEM"   : 1,
             "2018_PostHEM"  : 1
     }
-    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
-    #eras = ["2016"]
+    #eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
+    eras = ["2016"]
     dirMap = {}
     # submit jobs for each era 
     for era in eras:
         year = era[0:4] 
         datasets = dataSetsList[dataSetsMap[era]].format(era, year)
         refLumi = "Data_MET_{0}".format(era)
-        dirMap[era] = submit(datasets, refLumi, era, numfile=2, noSubmit=False, verbose=False)
+        dirMap[era] = submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False)
     
     # write directory map to json file 
     with open (jsonName, "w") as j:

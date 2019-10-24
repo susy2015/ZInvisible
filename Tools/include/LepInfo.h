@@ -659,7 +659,7 @@ namespace plotterFunctions
                 }
                 else
                 {
-                    std::cout << "Failed to open the file " << trigger_eff_file_name << ". The lepton trigger efficiencies will not be used."<< std::endl;
+                    std::cout << "Failed to open the file " << trigger_eff_file_name << ". The lepton trigger efficiencies will not be used." << std::endl;
                 }
             }
             else
