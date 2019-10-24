@@ -61,6 +61,7 @@ def saveResults(inFile, outFile, CRunits, SRunits, eras):
     print "Control Region Units"
     for b in CRunits.binValues[era]:
         name                = CRunit_map[b]
+        name                = name.replace("lepcr", "phocr")
         data                = CRunits.binValues[era][b]["data"]
         data_error          = CRunits.binValues[era][b]["data_error"]
         mc_gjets            = CRunits.binValues[era][b]["mc_gjets"]
