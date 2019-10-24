@@ -32,7 +32,7 @@ class Common:
     #    - set bin values and errors                                         #
     # ---------------------------------------------------------------------- #
     def setBinValues(self, b_map, h_map, era):
-        debug = True
+        debug = False
         # Note: h_map should have regions (lowdm, highdm) and h_type (mc, data)
         # h_map[region][h_type]
         

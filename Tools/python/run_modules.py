@@ -8,6 +8,7 @@ from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
 from data_card import makeDataCard
+from units import saveResults
 from make_table import Table
 
 def main():
@@ -106,6 +107,8 @@ def main():
     SB.makeJson(SB.binValues,           results_dir + "SearchBinResults.json")
     CRunits.makeJson(CRunits.binValues, results_dir + "CRUnitsResults.json")
     SRunits.makeJson(SRunits.binValues, results_dir + "SRUnitsResults.json")
+    # saveResults(inFile, outFile, CRunits, SRunits, eras)
+    saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields.json", CRunits, SRunits, eras)
 
     # TODO: making data card for Run 2 does not work because we have not run calcPrediction() for Run 2
     #       calcPrediction() depends on norm and shape (which we calculate per era, not for all of Run 2)
