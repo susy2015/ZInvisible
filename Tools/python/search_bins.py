@@ -552,68 +552,6 @@ class SearchBins(Common):
         self.makeHistos(        new_file, "Search Bin", "search", era   )
         f_in.Close()
 
-
-# control region unit bins
-class CRUnitBins(Common):
-    def __init__(self, normalization, shape, eras, plot_dir, verbose):
-        # run parent init function
-        Common.__init__(self)
-        self.N = normalization
-        self.S = shape
-        self.eras = eras
-        self.plot_dir = plot_dir
-        self.verbose = verbose
-        self.unblind = False
-        # SBv4
-        self.low_dm_start   = 0
-        self.low_dm_end     = 52
-        self.high_dm_start  = 53
-        self.high_dm_end    = 111 
-        self.low_dm_nbins   = self.low_dm_end - self.low_dm_start + 1 
-        self.high_dm_nbins  = self.high_dm_end - self.high_dm_start + 1 
-        self.low_dm_bins    = list(str(b) for b in range( self.low_dm_start,  self.low_dm_end + 1)) 
-        self.high_dm_bins   = list(str(b) for b in range( self.high_dm_start, self.high_dm_end + 1)) 
-        self.all_bins       = self.low_dm_bins + self.high_dm_bins
-        self.binValues      = {}
-        self.histograms     = {}
-    
-    def getValues(self, file_name, era):
-        self.binValues[era] = {}
-        
-        for b in self.all_bins:
-            self.binValues[era][b] = {}
-
-        h_data_lowdm        = self.S.cr_unit_histos_summed[era]["LowDM"]["data"]
-        h_data_highdm       = self.S.cr_unit_histos_summed[era]["HighDM"]["data"] 
-        h_mc_back_lowdm     = self.S.cr_unit_histos_summed[era]["LowDM"]["mc_back"] 
-        h_mc_back_highdm    = self.S.cr_unit_histos_summed[era]["HighDM"]["mc_back"] 
-        h_mc_gjets_lowdm    = self.S.cr_unit_histos_summed[era]["LowDM"]["mc_gjets"] 
-        h_mc_gjets_highdm   = self.S.cr_unit_histos_summed[era]["HighDM"]["mc_gjets"] 
-        
-        # bin map
-        b_map                           = {}
-        b_map["lowdm"]                  = self.low_dm_bins
-        b_map["highdm"]                 = self.high_dm_bins
-        # histogram map
-        h_map                           = {}
-        h_map["lowdm"]                  = {}
-        h_map["highdm"]                 = {}
-        h_map["lowdm"]["data"]          = h_data_lowdm
-        h_map["highdm"]["data"]         = h_data_highdm
-        h_map["lowdm"]["mc_back"]       = h_mc_back_lowdm
-        h_map["highdm"]["mc_back"]      = h_mc_back_highdm
-        h_map["lowdm"]["mc_gjets"]      = h_mc_gjets_lowdm
-        h_map["highdm"]["mc_gjets"]     = h_mc_gjets_highdm
-        
-        # set bin values 
-        self.setBinValues(b_map, h_map, era)
-
-        # new root file to save search bin histograms
-        #new_file = "CRUnitBinsZinv_" + era + ".root"
-        #self.calcPrediction(    new_file, "CR Unit Bins", "CRUnit", era   )
-        #self.makeHistos(        new_file, "CR Unit Bins", "CRUnit", era   )
-
-
 # search region unit bins
 class SRUnitBins(Common):
     def __init__(self, normalization, shape, eras, plot_dir, verbose):
@@ -670,5 +608,66 @@ class SRUnitBins(Common):
         #self.calcPrediction(    new_file, "SR Unit Bins", "SRUnit", era   )
         #self.makeHistos(        new_file, "SR Unit Bins", "SRUnit", era   )
         f_in.Close()
+
+# control region unit bins
+class CRUnitBins(Common):
+    def __init__(self, normalization, shape, eras, plot_dir, verbose):
+        # run parent init function
+        Common.__init__(self)
+        self.N = normalization
+        self.S = shape
+        self.eras = eras
+        self.plot_dir = plot_dir
+        self.verbose = verbose
+        self.unblind = False
+        # SBv4
+        self.low_dm_start   = 0
+        self.low_dm_end     = 52
+        self.high_dm_start  = 53
+        self.high_dm_end    = 111 
+        self.low_dm_nbins   = self.low_dm_end - self.low_dm_start + 1 
+        self.high_dm_nbins  = self.high_dm_end - self.high_dm_start + 1 
+        self.low_dm_bins    = list(str(b) for b in range( self.low_dm_start,  self.low_dm_end + 1)) 
+        self.high_dm_bins   = list(str(b) for b in range( self.high_dm_start, self.high_dm_end + 1)) 
+        self.all_bins       = self.low_dm_bins + self.high_dm_bins
+        self.binValues      = {}
+        self.histograms     = {}
+    
+    def getValues(self, file_name, era):
+        self.binValues[era] = {}
+        
+        for b in self.all_bins:
+            self.binValues[era][b] = {}
+
+        h_data_lowdm        = self.S.cr_unit_histos_summed[era]["LowDM"]["data"]
+        h_data_highdm       = self.S.cr_unit_histos_summed[era]["HighDM"]["data"] 
+        h_mc_back_lowdm     = self.S.cr_unit_histos_summed[era]["LowDM"]["mc_back"] 
+        h_mc_back_highdm    = self.S.cr_unit_histos_summed[era]["HighDM"]["mc_back"] 
+        h_mc_gjets_lowdm    = self.S.cr_unit_histos_summed[era]["LowDM"]["mc_gjets"] 
+        h_mc_gjets_highdm   = self.S.cr_unit_histos_summed[era]["HighDM"]["mc_gjets"] 
+        
+        # bin map
+        b_map                           = {}
+        b_map["lowdm"]                  = self.low_dm_bins
+        b_map["highdm"]                 = self.high_dm_bins
+        # histogram map
+        h_map                           = {}
+        h_map["lowdm"]                  = {}
+        h_map["highdm"]                 = {}
+        h_map["lowdm"]["data"]          = h_data_lowdm
+        h_map["highdm"]["data"]         = h_data_highdm
+        h_map["lowdm"]["mc_gjets"]      = h_mc_gjets_lowdm
+        h_map["highdm"]["mc_gjets"]     = h_mc_gjets_highdm
+        h_map["lowdm"]["mc_back"]       = h_mc_back_lowdm
+        h_map["highdm"]["mc_back"]      = h_mc_back_highdm
+        
+        # set bin values 
+        self.setBinValues(b_map, h_map, era)
+
+        # new root file to save search bin histograms
+        #new_file = "CRUnitBinsZinv_" + era + ".root"
+        #self.calcPrediction(    new_file, "CR Unit Bins", "CRUnit", era   )
+        #self.makeHistos(        new_file, "CR Unit Bins", "CRUnit", era   )
+
 
 
