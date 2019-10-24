@@ -15,13 +15,13 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 class Shape:
     def __init__(self, plot_dir, draw, verbose):
-        self.draw = draw
-        self.verbose = verbose
-        self.plot_dir = plot_dir
-        self.histos = {}
-        self.cr_unit_histos ={}
-        self.cr_unit_histos_summed ={}
-        self.shape_map = {}
+        self.draw       = draw
+        self.verbose    = verbose
+        self.plot_dir   = plot_dir
+        self.histos                 = {}
+        self.cr_unit_histos         = {}
+        self.cr_unit_histos_summed  = {}
+        self.shape_map              = {}
         # variable is also TDirectoryFile that holds histograms 
         self.variable   = "metWithPhoton"
         self.bin_types  = ["validation", "search"]

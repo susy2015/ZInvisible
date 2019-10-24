@@ -6,7 +6,7 @@ import os
 from cutflow_plot import makeCutflows 
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
-from search_bins import SearchBins, ValidationBins, CRUnitBins
+from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
 from data_card import makeDataCard
 from make_table import Table
 
@@ -67,6 +67,8 @@ def main():
         SB = SearchBins(N, S, eras, plot_dir, verbose)
         # control region unit bins  
         CRunits = CRUnitBins(N, S, eras, plot_dir, verbose) 
+        # search region unit bins  
+        SRunits = SRUnitBins(N, S, eras, plot_dir, verbose) 
         # loop over eras
         for era in eras:
             print "|---------- Era: {0} ----------|".format(era)
@@ -79,6 +81,7 @@ def main():
             VB.getValues(result_file, era)
             SB.getValues(result_file, era)
             CRunits.getValues(result_file, era)
+            SRunits.getValues(result_file, era)
             makeDataCard(VB, dataCardValidation_dir, era)
             makeDataCard(SB, dataCardSearch_dir,     era)
 
@@ -102,6 +105,7 @@ def main():
     VB.makeJson(VB.binValues,           results_dir + "ValidationBinResults.json")
     SB.makeJson(SB.binValues,           results_dir + "SearchBinResults.json")
     CRunits.makeJson(CRunits.binValues, results_dir + "CRUnitsResults.json")
+    SRunits.makeJson(SRunits.binValues, results_dir + "SRUnitsResults.json")
 
     # TODO: making data card for Run 2 does not work because we have not run calcPrediction() for Run 2
     #       calcPrediction() depends on norm and shape (which we calculate per era, not for all of Run 2)
