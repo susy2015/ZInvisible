@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
     bool doLooseAndMid      = true;
     bool doDataMCElectron   = true;
     bool doDataMCMuon       = true;
-    bool doDataMCPhoton     = true;
+    bool doDataMCPhoton     = false;
     bool doWeights = false;
     bool doLeptons = false;
     bool doPhotons = false;
