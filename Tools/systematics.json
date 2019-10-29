@@ -1,0 +1,38 @@
+{
+    "pdf" : { 
+              "name"    : "PDF_Weight",
+              "nominal" : "",
+              "up"      : "pdfWeight_Up",
+              "down"    : "pdfWeight_Down"
+    }, 
+    "pileup" : { 
+              "name"    : "PU_Weight",
+              "nominal" : "puWeight",
+              "up"      : "puWeight_Up",
+              "down"    : "puWeight_Down"
+    }, 
+    "example" : { 
+              "name"    : "",
+              "nominal" : "",
+              "up"      : "",
+              "down"    : ""
+    }, 
+    "example" : { 
+              "name"    : "",
+              "nominal" : "",
+              "up"      : "",
+              "down"    : ""
+    }, 
+    "example" : { 
+              "name"    : "",
+              "nominal" : "",
+              "up"      : "",
+              "down"    : ""
+    }, 
+    "example" : { 
+              "name"    : "",
+              "nominal" : "",
+              "up"      : "",
+              "down"    : ""
+    }
+}
