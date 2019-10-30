@@ -360,7 +360,7 @@ x509userproxy = $ENV(X509_USER_PROXY)
             lumi = lumis[refLumi]
             print "Sample for Ref. Lumi: {0}; normalizing to lumi = {1} pb-1".format(refLumi, lumi) 
    
-        debug = True
+        debug = False
         total_files = 0
         total_events = 0
         jobMap = {}
