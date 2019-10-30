@@ -63,6 +63,7 @@ def submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False, dat
     
     filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/shapes_njets.root",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/2016_trigger_eff.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/2017_trigger_eff.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/2018_trigger_eff.root", 
@@ -88,7 +89,7 @@ def submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False, dat
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2016.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2017.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2018.cfg",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/shapes_njets.root"
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dc_BkgPred_BinMaps_master.json"
                          ]
     
     if mvaFileName:                 filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
@@ -359,7 +360,7 @@ x509userproxy = $ENV(X509_USER_PROXY)
             lumi = lumis[refLumi]
             print "Sample for Ref. Lumi: {0}; normalizing to lumi = {1} pb-1".format(refLumi, lumi) 
    
-        debug = False
+        debug = True
         total_files = 0
         total_events = 0
         jobMap = {}

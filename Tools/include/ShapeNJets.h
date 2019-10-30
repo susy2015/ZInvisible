@@ -66,10 +66,10 @@ namespace plotterFunctions
             TFile *f = new TFile(histFile.c_str());
             if(file_exists && f)
             { 
-               hmap["Electron_HighDM"]  = static_cast<TH1D*>(f->Get("njets_shape_2018_PostHEM_Electron_HighDM_Loose"));
-               hmap["Electron_LowDM"]  = static_cast<TH1D*>(f->Get("njets_shape_2018_PostHEM_Electron_LowDM_Loose"));
-               hmap["Muon_HighDM"]  = static_cast<TH1D*>(f->Get("njets_shape_2018_PostHEM_Muon_HighDM_Loose"));
-               hmap["Muon_LowDM"]  = static_cast<TH1D*>(f->Get("njets_shape_2018_PostHEM_Muon_LowDM_Loose"));
+               hmap["Electron_HighDM"]  = static_cast<TH1D*>(f->Get("njets_shape_2016_Electron_HighDM_Loose"));
+               hmap["Electron_LowDM"]  = static_cast<TH1D*>(f->Get("njets_shape_2016_Electron_LowDM_Loose"));
+               hmap["Muon_HighDM"]  = static_cast<TH1D*>(f->Get("njets_shape_2016_Muon_HighDM_Loose"));
+               hmap["Muon_LowDM"]  = static_cast<TH1D*>(f->Get("njets_shape_2016_Muon_LowDM_Loose"));
                 f->Close();
                 delete f;
             }

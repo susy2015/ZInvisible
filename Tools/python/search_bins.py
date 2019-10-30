@@ -1,7 +1,7 @@
 # search_bins.py
+import ROOT
 import copy
 import json
-import ROOT
 from tools import setupHist, getMultiplicationErrorList, removeCuts, getBinError, ERROR_ZERO, getTexSelection, getTexMultiCut
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
@@ -45,17 +45,23 @@ class Common:
                 for b in b_map[region]:
                     h = h_map[region][h_type]
                     if debug:
-                        print "b={0} b_i={1} {2} {3}".format(b, bin_i, region, h_type)
+                        print "b={0} b_i={1} {2} {3}, types {4}, {5}, {6}, {7}".format(b, bin_i, region, h_type, type(b), type(bin_i), type(region), type(h_type))
                     value       = h.GetBinContent(bin_i)
                     value_error = h.GetBinError(bin_i)
+                    final_error = getBinError(value, value_error, ERROR_ZERO) 
                     self.binValues[era][b][h_type]            = value
-                    self.binValues[era][b][h_type + "_error"] = getBinError(value, value_error, ERROR_ZERO)
+                    self.binValues[era][b][h_type + "_error"] = final_error
+                    self.binValues[era][b][h_type + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(value, final_error)
                     bin_i += 1
-    
+
+    def makeJson(self, map_, file_):
+        with open(file_, "w") as output:
+            json.dump(map_, output, sort_keys=True, indent=4, separators=(',', ' : '))
+
     def writeLine(self, line):
         self.output_file.write(line + "\n")
 
-    def makeTexFile(self, caption, output_name):
+    def makeTexFile(self, caption, output_name, total_era=""):
         # write latex file with table
         with open(output_name, "w+") as f:
             self.output_file = f
@@ -70,32 +76,55 @@ class Common:
             self.writeLine("\\begin{document}")
             self.writeLine("\\footnotesize")
             self.writeLine("\\tabcolsep=0.01cm")
-            for era in self.eras:
-                era_tex = era.replace("_", " ")
+            # make one table will total Run 2 predictions
+            if total_era:
+                total_era_tex = total_era.replace("_", " ")
                 # begin table
                 self.writeLine("\\centering")
                 # *n{} syntax with vertical lines for n columns; put last | in expression: *n{...|}
                 # make first column for bin numbers small
-                self.writeLine("\\begin{longtable}{|p{0.03\\textwidth}|p{0.3\\textwidth}|*6{p{0.1\\textwidth}|}}")
+                self.writeLine("\\begin{longtable}{|p{0.05\\textwidth}|p{0.5\\textwidth}|*2{p{0.2\\textwidth}|}}")
                 # column headers
-                self.writeLine("\\hline Bin & Selection & $R_{Z}$ & $S_{\\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $N_{eff}$ \\\\")
+                self.writeLine("\\hline Bin & Selection & $N_{MC}$ & $N_{p}$ \\\\")
                 # write values to table
                 for b in self.all_bins:
-                    total_selection = self.binValues[era][b]["total_selection"]
-                    norm            = self.binValues[era][b]["norm_tex"]
-                    shape           = self.binValues[era][b]["shape_tex"]
-                    mc              = self.binValues[era][b]["mc_tex"]
-                    pred            = self.binValues[era][b]["pred_tex"]
-                    avg_w           = self.binValues[era][b]["avg_w_tex"]
-                    n_eff           = self.binValues[era][b]["n_eff_tex"]
-                    avg_w_final     = self.binValues[era][b]["avg_w_final_tex"]
-                    n_eff_final     = self.binValues[era][b]["n_eff_final_tex"]
-                    self.writeLine("\\hline {0} & {1} & {2} & {3} & {4} & {5} & {6} & {7} \\\\".format(b, total_selection, norm, shape, mc, pred, avg_w, n_eff))
+                    total_selection = self.bins[b]["total_selection"]
+                    mc              = self.binValues[total_era][b]["mc_tex"]
+                    pred            = self.binValues[total_era][b]["pred_tex"]
+                    self.writeLine("\\hline {0} & {1} & {2} & {3} \\\\".format(b, total_selection, mc, pred))
                 self.writeLine("\\hline")
                 # for longtable, caption must go at the bottom of the table... it is not working at the top
-                self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
+                self.writeLine("\\caption{{{0} ({1})}}".format(caption, total_era_tex))
                 # end table
                 self.writeLine("\\end{longtable}")
+            # make a table for each era
+            else:
+                for era in self.eras:
+                    era_tex = era.replace("_", " ")
+                    # begin table
+                    self.writeLine("\\centering")
+                    # *n{} syntax with vertical lines for n columns; put last | in expression: *n{...|}
+                    # make first column for bin numbers small
+                    self.writeLine("\\begin{longtable}{|p{0.03\\textwidth}|p{0.3\\textwidth}|*6{p{0.1\\textwidth}|}}")
+                    # column headers
+                    self.writeLine("\\hline Bin & Selection & $R_{Z}$ & $S_{\\gamma}$ & $N_{MC}$ & $N_{p}$ & $\\langle w \\rangle$ & $N_{eff}$ \\\\")
+                    # write values to table
+                    for b in self.all_bins:
+                        total_selection = self.bins[b]["total_selection"]
+                        norm            = self.binValues[era][b]["norm_tex"]
+                        shape           = self.binValues[era][b]["shape_tex"]
+                        mc              = self.binValues[era][b]["mc_tex"]
+                        pred            = self.binValues[era][b]["pred_tex"]
+                        avg_w           = self.binValues[era][b]["avg_w_tex"]
+                        n_eff           = self.binValues[era][b]["n_eff_tex"]
+                        avg_w_final     = self.binValues[era][b]["avg_w_final_tex"]
+                        n_eff_final     = self.binValues[era][b]["n_eff_final_tex"]
+                        self.writeLine("\\hline {0} & {1} & {2} & {3} & {4} & {5} & {6} & {7} \\\\".format(b, total_selection, norm, shape, mc, pred, avg_w, n_eff))
+                    self.writeLine("\\hline")
+                    # for longtable, caption must go at the bottom of the table... it is not working at the top
+                    self.writeLine("\\caption{{{0} ({1})}}".format(caption, era_tex))
+                    # end table
+                    self.writeLine("\\end{longtable}")
             # end document
             self.writeLine("\\end{document}")
 
@@ -124,9 +153,11 @@ class Common:
         # histogram map
         h_map = {}
         for i, era in enumerate(self.eras):
+            # region: lowdm, highdm
             for region in self.histograms[era]:
                 if i == 0:
                     h_map[region] = {}
+                # h_type: mc, pred, data
                 for h_type in self.histograms[era][region]:
                     h = self.histograms[era][region][h_type]
                     if debug:
@@ -304,6 +335,7 @@ class Common:
             selection_tex   = getTexSelection(region + "_" + selection)
             met_tex         = getTexMultiCut(met)
             total_selection = "{0}, {1}".format(selection_tex, met_tex)
+            self.bins[b]["total_selection"] = total_selection
             
             n       = self.binValues[era][b]["norm"]
             n_error = self.binValues[era][b]["norm_error"]
@@ -337,7 +369,6 @@ class Common:
             else:
                 avg_w_final = p / n_eff_final
 
-            self.binValues[era][b]["total_selection"]   = total_selection
             self.binValues[era][b]["pred"]              = p
             self.binValues[era][b]["pred_error"]        = p_error
             self.binValues[era][b]["avg_w"]             = avg_w
@@ -457,7 +488,7 @@ class SearchBins(Common):
         self.plot_dir = plot_dir
         self.verbose = verbose
         self.unblind = False
-        # SBv3
+        # SBv4
         self.low_dm_start   = 0
         self.low_dm_end     = 52
         self.high_dm_start  = 53
@@ -520,4 +551,123 @@ class SearchBins(Common):
         self.calcPrediction(    new_file, "Search Bin", "search", era   )
         self.makeHistos(        new_file, "Search Bin", "search", era   )
         f_in.Close()
+
+# search region unit bins
+class SRUnitBins(Common):
+    def __init__(self, normalization, shape, eras, plot_dir, verbose):
+        # run parent init function
+        Common.__init__(self)
+        self.N = normalization
+        self.S = shape
+        self.eras = eras
+        self.plot_dir = plot_dir
+        self.verbose = verbose
+        self.unblind = False
+        # SBv4
+        self.low_dm_start   = 0
+        self.low_dm_end     = 52
+        self.high_dm_start  = 53
+        self.high_dm_end    = 528
+        self.low_dm_nbins   = self.low_dm_end - self.low_dm_start + 1 
+        self.high_dm_nbins  = self.high_dm_end - self.high_dm_start + 1 
+        self.low_dm_bins    = list(str(b) for b in range( self.low_dm_start,  self.low_dm_end + 1)) 
+        self.high_dm_bins   = list(str(b) for b in range( self.high_dm_start, self.high_dm_end + 1)) 
+        self.all_bins       = self.low_dm_bins + self.high_dm_bins
+        self.binValues      = {}
+        self.histograms     = {}
+    
+    def getValues(self, file_name, era):
+        self.binValues[era] = {}
+        
+        for b in self.all_bins:
+            self.binValues[era][b] = {}
+
+        # Z to NuNu MC histograms
+        # nSRUnitLowDM_jetpt30/ZNuNu_nSRUnit_LowDM_jetpt30_2016nSRUnitLowDM_jetpt30nSRUnitLowDM_jetpt30ZJetsToNuNu Search Region Unit Low DMdata 
+        # nSRUnitHighDM_jetpt30/ZNuNu_nSRUnit_HighDM_jetpt30_2016nSRUnitHighDM_jetpt30nSRUnitHighDM_jetpt30ZJetsToNuNu Search Region Unit High DMdata
+        f_in            = ROOT.TFile(file_name, "read")
+        h_mc_lowdm      = f_in.Get("nSRUnitLowDM_jetpt30/ZNuNu_nSRUnit_LowDM_jetpt30_"      + era + "nSRUnitLowDM_jetpt30nSRUnitLowDM_jetpt30ZJetsToNuNu Search Region Unit Low DMdata")  
+        h_mc_highdm     = f_in.Get("nSRUnitHighDM_jetpt30/ZNuNu_nSRUnit_HighDM_jetpt30_"    + era + "nSRUnitHighDM_jetpt30nSRUnitHighDM_jetpt30ZJetsToNuNu Search Region Unit High DMdata")
+         
+        # bin map
+        b_map                       = {}
+        b_map["lowdm"]              = self.low_dm_bins
+        b_map["highdm"]             = self.high_dm_bins
+        # histogram map
+        h_map                       = {}
+        h_map["lowdm"]              = {}
+        h_map["highdm"]             = {}
+        h_map["lowdm"]["mc"]        = h_mc_lowdm
+        h_map["highdm"]["mc"]       = h_mc_highdm
+        
+        # set bin values 
+        self.setBinValues(b_map, h_map, era)
+
+        # new root file to save search bin histograms
+        #new_file = "SRUnitBinsZinv_" + era + ".root"
+        #self.calcPrediction(    new_file, "SR Unit Bins", "SRUnit", era   )
+        #self.makeHistos(        new_file, "SR Unit Bins", "SRUnit", era   )
+        f_in.Close()
+
+# control region unit bins
+class CRUnitBins(Common):
+    def __init__(self, normalization, shape, eras, plot_dir, verbose):
+        # run parent init function
+        Common.__init__(self)
+        self.N = normalization
+        self.S = shape
+        self.eras = eras
+        self.plot_dir = plot_dir
+        self.verbose = verbose
+        self.unblind = False
+        # SBv4
+        self.low_dm_start   = 0
+        self.low_dm_end     = 52
+        self.high_dm_start  = 53
+        self.high_dm_end    = 111 
+        self.low_dm_nbins   = self.low_dm_end - self.low_dm_start + 1 
+        self.high_dm_nbins  = self.high_dm_end - self.high_dm_start + 1 
+        self.low_dm_bins    = list(str(b) for b in range( self.low_dm_start,  self.low_dm_end + 1)) 
+        self.high_dm_bins   = list(str(b) for b in range( self.high_dm_start, self.high_dm_end + 1)) 
+        self.all_bins       = self.low_dm_bins + self.high_dm_bins
+        self.binValues      = {}
+        self.histograms     = {}
+    
+    def getValues(self, file_name, era):
+        self.binValues[era] = {}
+        
+        for b in self.all_bins:
+            self.binValues[era][b] = {}
+
+        h_data_lowdm        = self.S.cr_unit_histos_summed[era]["LowDM"]["data"]
+        h_data_highdm       = self.S.cr_unit_histos_summed[era]["HighDM"]["data"] 
+        h_mc_back_lowdm     = self.S.cr_unit_histos_summed[era]["LowDM"]["mc_back"] 
+        h_mc_back_highdm    = self.S.cr_unit_histos_summed[era]["HighDM"]["mc_back"] 
+        h_mc_gjets_lowdm    = self.S.cr_unit_histos_summed[era]["LowDM"]["mc_gjets"] 
+        h_mc_gjets_highdm   = self.S.cr_unit_histos_summed[era]["HighDM"]["mc_gjets"] 
+        
+        # bin map
+        b_map                           = {}
+        b_map["lowdm"]                  = self.low_dm_bins
+        b_map["highdm"]                 = self.high_dm_bins
+        # histogram map
+        h_map                           = {}
+        h_map["lowdm"]                  = {}
+        h_map["highdm"]                 = {}
+        h_map["lowdm"]["data"]          = h_data_lowdm
+        h_map["highdm"]["data"]         = h_data_highdm
+        h_map["lowdm"]["mc_gjets"]      = h_mc_gjets_lowdm
+        h_map["highdm"]["mc_gjets"]     = h_mc_gjets_highdm
+        h_map["lowdm"]["mc_back"]       = h_mc_back_lowdm
+        h_map["highdm"]["mc_back"]      = h_mc_back_highdm
+        
+        # set bin values 
+        self.setBinValues(b_map, h_map, era)
+
+        # new root file to save search bin histograms
+        #new_file = "CRUnitBinsZinv_" + era + ".root"
+        #self.calcPrediction(    new_file, "CR Unit Bins", "CRUnit", era   )
+        #self.makeHistos(        new_file, "CR Unit Bins", "CRUnit", era   )
+
+
 
