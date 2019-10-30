@@ -14,10 +14,12 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 
 class Shape:
-    def __init__(self, plot_dir, draw, verbose):
-        self.draw       = draw
-        self.verbose    = verbose
+    def __init__(self, plot_dir, draw, doUnits, verbose):
         self.plot_dir   = plot_dir
+        self.draw       = draw
+        self.doUnits    = doUnits
+        self.verbose    = verbose
+        self.splitQCD   = False
         self.histos                 = {}
         self.cr_unit_histos         = {}
         self.cr_unit_histos_summed  = {}
@@ -51,17 +53,29 @@ class Shape:
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
     def getSimpleMap(self, region, nameTag, selectionTag, eraTag, variable):
-        temp_map = {
-                        "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "Datadata",
-                        "GJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "#gamma+jetsstack",
-                        "QCD_Fragmented"    : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "QCD Fragmentedstack",
-                        "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "QCD Fakestack",
-                        "WJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "W(l#nu)+jetsstack",
-                        "TTG"               : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "t#bar{t}#gamma+jetsstack",
-                        "TTbar"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "t#bar{t}stack",
-                        "tW"                : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "tWstack",
-                        "Rare"              : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "Rarestack",
-        }
+        if self.splitQCD:
+            temp_map = {
+                            "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "Datadata",
+                            "GJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "#gamma+jetsstack",
+                            "QCD_Fragmented"    : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "QCD Fragmentedstack",
+                            "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "QCD Fakestack",
+                            "WJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "W(l#nu)+jetsstack",
+                            "TTG"               : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "t#bar{t}#gamma+jetsstack",
+                            "TTbar"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "t#bar{t}stack",
+                            "tW"                : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "tWstack",
+                            "Rare"              : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "Rarestack",
+            }
+        else:
+            temp_map = {
+                            "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "Datadata",
+                            "GJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "#gamma+jetsstack",
+                            "QCD"               : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "QCDstack",
+                            "WJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "W(l#nu)+jetsstack",
+                            "TTG"               : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "t#bar{t}#gamma+jetsstack",
+                            "TTbar"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "t#bar{t}stack",
+                            "tW"                : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "tWstack",
+                            "Rare"              : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "Rarestack",
+            }
         return temp_map
 
     def getHistoMap(self, name, variable, era):
@@ -118,12 +132,13 @@ class Shape:
         # setup histogram map (standard shape histograms)
         self.histos[era] = self.getHistoMap("met", self.variable, era)
         
-        # CR units
-        # nCRUnitLowDM_drPhotonCleaned_jetpt30
-        # nCRUnitHighDM_drPhotonCleaned_jetpt30 
-        self.cr_unit_histos[era] = {}
-        self.cr_unit_histos[era]["LowDM"]  = self.getCRUnitMap("LowDM",  "nCRUnitLowDM",  "nCRUnitLowDM_drPhotonCleaned_jetpt30",  era)
-        self.cr_unit_histos[era]["HighDM"] = self.getCRUnitMap("HighDM", "nCRUnitHighDM", "nCRUnitHighDM_drPhotonCleaned_jetpt30", era)
+        if self.doUnits:
+            # CR units
+            # nCRUnitLowDM_drPhotonCleaned_jetpt30
+            # nCRUnitHighDM_drPhotonCleaned_jetpt30 
+            self.cr_unit_histos[era] = {}
+            self.cr_unit_histos[era]["LowDM"]  = self.getCRUnitMap("LowDM",  "nCRUnitLowDM",  "nCRUnitLowDM_drPhotonCleaned_jetpt30",  era)
+            self.cr_unit_histos[era]["HighDM"] = self.getCRUnitMap("HighDM", "nCRUnitHighDM", "nCRUnitHighDM_drPhotonCleaned_jetpt30", era)
         
         self.shape_map[era] = {}
         
@@ -137,15 +152,21 @@ class Shape:
                     plot_name = self.plot_dir + self.variable + "_" + region
                     if self.verbose:
                         print self.variable + "/" + self.histos[era][bin_type][region][selection]["Data"]
-                        print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fragmented"]
-                        print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fake"]
+                        if self.splitQCD:
+                            print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fragmented"]
+                            print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fake"]
+                        else:
+                            print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD"]
                     
                     #WARNING: strings loaded from json file have type 'unicode'
                     # ROOT cannot load histograms using unicode input: use type 'str'
                     h_Data              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Data"]            ) )
                     h_GJets             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["GJets"]           ) )
-                    h_QCD_Fragmented    = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fragmented"]  ) )
-                    h_QCD_Fake          = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fake"]        ) )
+                    if self.splitQCD:
+                        h_QCD_Fragmented    = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fragmented"]  ) )
+                        h_QCD_Fake          = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fake"]        ) )
+                    else:
+                        h_QCD               = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD"]             ) )
                     h_WJets             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["WJets"]           ) )
                     h_TTG               = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTG"]             ) )
                     h_TTbar             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTbar"]           ) )
@@ -155,14 +176,21 @@ class Shape:
                     # check if histograms load
                     if not h_Data:
                         print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["Data"])
-                    if not h_QCD_Fragmented:
-                        print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fragmented"])
-                    if not h_QCD_Fake:
-                        print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fake"])
+                    if self.splitQCD:
+                        if not h_QCD_Fragmented:
+                            print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fragmented"])
+                        if not h_QCD_Fake:
+                            print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fake"])
+                    else:
+                        if not h_QCD:
+                            print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD"])
                     
                     # MC_background
-                    h_back = h_QCD_Fragmented.Clone("h_back")
-                    h_back.Add(h_QCD_Fake)
+                    if self.splitQCD:
+                        h_back = h_QCD_Fragmented.Clone("h_back")
+                        h_back.Add(h_QCD_Fake)
+                    else:
+                        h_back = h_QCD.Clone("h_back")
                     h_back.Add(h_WJets)
                     h_back.Add(h_TTG)
                     h_back.Add(h_TTbar)
@@ -319,49 +347,59 @@ class Shape:
 
         h_map = {}
         
-        # CR unit shape histograms
-        for region in self.regions:
-            h_map[region] = {}
+        if self.doUnits:
+            # CR unit shape histograms
+            for region in self.regions:
+                h_map[region] = {}
 
-            # nCRUnitLowDM_drPhotonCleaned_jetpt30
-            # nCRUnitHighDM_drPhotonCleaned_jetpt30 
-            variable = "nCRUnit" + region + "_drPhotonCleaned_jetpt30"
-            #WARNING: strings loaded from json file have type 'unicode'
-            # ROOT cannot load histograms using unicode input: use type 'str'
-            samples = ["Data", "GJets", "QCD_Fragmented", "QCD_Fake", "WJets", "TTG", "TTbar", "tW", "Rare"]
-            print "Shape factor CR units; Loading {0} histograms".format(region)
-            for sample in samples:
-                hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
-                print "\t{0}".format(hist_name) 
-            
-            h_Data              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Data"]              ) )
-            h_GJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["GJets"]             ) )
-            h_QCD_Fragmented    = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["QCD_Fragmented"]    ) )
-            h_QCD_Fake          = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["QCD_Fake"]          ) )
-            h_WJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["WJets"]             ) )
-            h_TTG               = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["TTG"]               ) )
-            h_TTbar             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["TTbar"]             ) )
-            h_tW                = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["tW"]                ) )
-            h_Rare              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Rare"]              ) )
-            
-            # MC_background
-            h_back = h_QCD_Fragmented.Clone("h_back")
-            h_back.Add(h_QCD_Fake)
-            h_back.Add(h_WJets)
-            h_back.Add(h_TTG)
-            h_back.Add(h_TTbar)
-            h_back.Add(h_tW)
-            h_back.Add(h_Rare)
+                # nCRUnitLowDM_drPhotonCleaned_jetpt30
+                # nCRUnitHighDM_drPhotonCleaned_jetpt30 
+                variable = "nCRUnit" + region + "_drPhotonCleaned_jetpt30"
+                #WARNING: strings loaded from json file have type 'unicode'
+                # ROOT cannot load histograms using unicode input: use type 'str'
+                if self.splitQCD:
+                    samples = ["Data", "GJets", "QCD_Fragmented", "QCD_Fake", "WJets", "TTG", "TTbar", "tW", "Rare"]
+                else:
+                    samples = ["Data", "GJets", "QCD", "WJets", "TTG", "TTbar", "tW", "Rare"]
+                print "Shape factor CR units; Loading {0} histograms".format(region)
+                for sample in samples:
+                    hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
+                    print "\t{0}".format(hist_name) 
+                
+                h_Data              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Data"]              ) )
+                h_GJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["GJets"]             ) )
+                if self.splitQCD:
+                    h_QCD_Fragmented    = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["QCD_Fragmented"]    ) )
+                    h_QCD_Fake          = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["QCD_Fake"]          ) )
+                else:
+                    h_QCD               = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["QCD"]               ) )
+                h_WJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["WJets"]             ) )
+                h_TTG               = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["TTG"]               ) )
+                h_TTbar             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["TTbar"]             ) )
+                h_tW                = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["tW"]                ) )
+                h_Rare              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Rare"]              ) )
+                
+                # MC_background
+                if self.splitQCD:
+                    h_back = h_QCD_Fragmented.Clone("h_back")
+                    h_back.Add(h_QCD_Fake)
+                else:
+                    h_back = h_QCD.Clone("h_back")
+                h_back.Add(h_WJets)
+                h_back.Add(h_TTG)
+                h_back.Add(h_TTbar)
+                h_back.Add(h_tW)
+                h_back.Add(h_Rare)
 
-            # Data, MC_background, MC_gjets
-            h_map[region]["data"]         = h_Data
-            h_map[region]["mc_back"]      = h_back
-            h_map[region]["mc_gjets"]     = h_GJets
-        
-        # WARNING
-        # - histograms will be deleted when TFile is closed
-        # - histograms need to be copied to use them later on 
-        self.cr_unit_histos_summed[era] = copy.deepcopy(h_map)
+                # Data, MC_background, MC_gjets
+                h_map[region]["data"]         = h_Data
+                h_map[region]["mc_back"]      = h_back
+                h_map[region]["mc_gjets"]     = h_GJets
+            
+            # WARNING
+            # - histograms will be deleted when TFile is closed
+            # - histograms need to be copied to use them later on 
+            self.cr_unit_histos_summed[era] = copy.deepcopy(h_map)
 
 
 

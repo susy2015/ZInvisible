@@ -21,16 +21,18 @@ def main():
     json_file   = options.json_file
     verbose     = options.verbose
 
-    doCutflows = False
-    doPhotons = False
-    draw = False
+    doUnits     = False
+    doCutflows  = False
+    doPhotons   = False
+    draw        = False
+    
 
     if not os.path.exists(json_file):
         print "The json file \"{0}\" containing runs does not exist.".format(json_file)
         return
     
-    #eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
-    eras = ["2016"]
+    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
+    #eras = ["2016"]
     dirList = []
     plot_dir                = "more_plots"
     latex_dir               = "latex_files"
@@ -58,7 +60,7 @@ def main():
             os.makedirs(d)
 
     N = Normalization(verbose)
-    S = Shape(plot_dir, draw, verbose)
+    S = Shape(plot_dir, draw, doUnits, verbose)
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
@@ -66,10 +68,11 @@ def main():
         VB = ValidationBins(N, S, eras, plot_dir, verbose)
         # search bins
         SB = SearchBins(N, S, eras, plot_dir, verbose)
-        # control region unit bins  
-        CRunits = CRUnitBins(N, S, eras, plot_dir, verbose) 
-        # search region unit bins  
-        SRunits = SRUnitBins(N, S, eras, plot_dir, verbose) 
+        if doUnits:
+            # control region unit bins  
+            CRunits = CRUnitBins(N, S, eras, plot_dir, verbose) 
+            # search region unit bins  
+            SRunits = SRUnitBins(N, S, eras, plot_dir, verbose) 
         # loop over eras
         for era in eras:
             print "|---------- Era: {0} ----------|".format(era)
@@ -81,8 +84,9 @@ def main():
             S.getShape(result_file, era)
             VB.getValues(result_file, era)
             SB.getValues(result_file, era)
-            CRunits.getValues(result_file, era)
-            SRunits.getValues(result_file, era)
+            if doUnits:
+                CRunits.getValues(result_file, era)
+                SRunits.getValues(result_file, era)
             makeDataCard(VB, dataCardValidation_dir, era)
             makeDataCard(SB, dataCardSearch_dir,     era)
 
@@ -105,10 +109,11 @@ def main():
     # make json files
     VB.makeJson(VB.binValues,           results_dir + "ValidationBinResults.json")
     SB.makeJson(SB.binValues,           results_dir + "SearchBinResults.json")
-    CRunits.makeJson(CRunits.binValues, results_dir + "CRUnitsResults.json")
-    SRunits.makeJson(SRunits.binValues, results_dir + "SRUnitsResults.json")
-    # saveResults(inFile, outFile, CRunits, SRunits, eras)
-    saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields.json", CRunits, SRunits, eras)
+    if doUnits:
+        CRunits.makeJson(CRunits.binValues, results_dir + "CRUnitsResults.json")
+        SRunits.makeJson(SRunits.binValues, results_dir + "SRUnitsResults.json")
+        # saveResults(inFile, outFile, CRunits, SRunits, eras)
+        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields.json", CRunits, SRunits, eras)
 
     # TODO: making data card for Run 2 does not work because we have not run calcPrediction() for Run 2
     #       calcPrediction() depends on norm and shape (which we calculate per era, not for all of Run 2)
