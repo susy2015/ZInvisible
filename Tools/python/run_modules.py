@@ -59,7 +59,7 @@ def main():
         if not os.path.exists(d):
             os.makedirs(d)
 
-    N = Normalization(verbose)
+    N = Normalization(plot_dir, verbose)
     S = Shape(plot_dir, draw, doUnits, verbose)
     
     with open(json_file, "r") as input_file:
@@ -92,6 +92,8 @@ def main():
 
     N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
+    N.makeComparison("validation")
+    N.makeComparison("search")
     VB.makeTexFile("Z Invisible Per Era Prediction for Validation Bins", latex_dir + "zinv_per_era_prediction_validation_bins.tex")
     SB.makeTexFile("Z Invisible Per Era Prediction for Search Bins",     latex_dir + "zinv_per_era_prediction_search_bins.tex")
     

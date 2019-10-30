@@ -5,6 +5,7 @@ import os
 import numpy as np
 import ROOT
 import tools
+from tools import setupHist 
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -12,8 +13,9 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 class Normalization:
-    def __init__(self, verbose):
-        self.verbose = verbose
+    def __init__(self, plot_dir, verbose):
+        self.plot_dir   = plot_dir
+        self.verbose    = verbose
         self.ERROR_CODE = tools.ERROR_CODE
         self.norm_map = {}
         self.norm_map_tex = {}
@@ -38,6 +40,13 @@ class Normalization:
             self.bin_maps["validation"] = tools.stringifyMap(json.load(j))
         with open("search_bins_v4.json", "r") as j:
             self.bin_maps["search"] = tools.stringifyMap(json.load(j))
+        
+        # colors
+        self.color_red    = "vermillion"
+        self.color_blue   = "electric blue"
+        self.color_green  = "irish green" 
+        self.color_purple = "violet"
+        self.color_black  = "black"
         
         # get selections from json file
         self.selections = {}
@@ -360,6 +369,81 @@ class Normalization:
             self.writeLine("\end{longtable}")
             # end document
             self.writeLine("\end{document}")
+
+
+    # make a plot of nomralization (y-axis) vs. era (x-axis) for different selections
+    def makeComparison(self, bin_type):
+        draw_option = "hist error"
+        nBins = len(self.eras)
+        
+        ###################
+        # Draw Histograms #
+        ###################
+
+        # draw histograms
+        c = ROOT.TCanvas("c", "c", 800, 800)
+        c.SetGrid()
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.5
+        legend_x2 = 0.9 
+        legend_y1 = 0.7 
+        legend_y2 = 0.9 
+        
+        for region in self.regions:
+            for selection in self.selections[bin_type][region]:
+                region_tex     = self.regions_tex[region]
+                selections_tex = self.selections_tex[bin_type][region][selection]
+                #h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
+                h_Electron  = ROOT.TH1F("h_Electron",   "h_Electron",   nBins, 0, nBins)
+                h_Muon      = ROOT.TH1F("h_Muon",       "h_Muon",       nBins, 0, nBins)
+                h_Combined  = ROOT.TH1F("h_Combined",   "h_Combined",   nBins, 0, nBins)
+                title = "Norm. for {0} bins; {1}, {2}".format(bin_type, region_tex, selections_tex)
+                x_title = "Era" 
+                y_title = "Norm. $\\left(R_Z\\right)$"
+                y_min = -1.0
+                y_max = 4.0
+                #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+                setupHist(h_Electron,   title, x_title, y_title, self.color_red,    y_min, y_max)
+                setupHist(h_Muon,       title, x_title, y_title, self.color_blue,   y_min, y_max)
+                setupHist(h_Combined,   title, x_title, y_title, self.color_black,  y_min, y_max)
+
+                for i in xrange(nBins):
+                    era = self.eras[i]
+                    # set bin contents and error
+                    h_Electron.SetBinContent(   i + 1,      self.norm_map[era][bin_type]["Electron"][region][selection]["R_Z"])
+                    h_Electron.SetBinError(     i + 1,      self.norm_map[era][bin_type]["Electron"][region][selection]["R_Z_error"])
+                    h_Muon.SetBinContent(       i + 1,      self.norm_map[era][bin_type]["Muon"][region][selection]["R_Z"])
+                    h_Muon.SetBinError(         i + 1,      self.norm_map[era][bin_type]["Muon"][region][selection]["R_Z_error"])
+                    h_Combined.SetBinContent(   i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z"])
+                    h_Combined.SetBinError(     i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z_error"])
+                    # set bin labels
+                    h_Electron.GetXaxis().SetBinLabel(  i + 1, era)
+                    h_Muon.GetXaxis().SetBinLabel(      i + 1, era)
+                    h_Combined.GetXaxis().SetBinLabel(  i + 1, era)
+                            
+                h_Combined.Draw(draw_option)        
+                h_Electron.Draw(draw_option + "same")        
+                h_Muon.Draw(draw_option + "same")        
+                # legend: TLegend(x1,y1,x2,y2)
+                legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+                legend.AddEntry(h_Electron,     "Electron",     "l")
+                legend.AddEntry(h_Muon,         "Muon",         "l")
+                legend.AddEntry(h_Combined,     "Combined",     "l")
+                legend.Draw()
+
+                # save histograms
+                plot_name = "{0}Normalization_{1}_{2}_{3}".format(self.plot_dir, bin_type, region, selection)
+                c.Update()
+                c.SaveAs(plot_name + ".pdf")
+                c.SaveAs(plot_name + ".png")
+               
+                # delete histograms to avoid memory leak
+                del h_Electron
+                del h_Muon
+                del h_Combined
+
+
 
 def main():
     json_file = "runs/run_2019-07-24.json"
