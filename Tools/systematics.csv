@@ -1,4 +1,4 @@
-key,name,nominal,up,down,
+key,name,nominal,up,down
 pdf,PDF_Weight,pdfWeight,pdfWeight_Up,pdfWeight_Down
 pu,PU_Weight,puWeight,puWeight_Up,puWeight_Down
 isr,ISR_Weight,ISRWeight,ISRWeight_Up,ISRWeight_Down
