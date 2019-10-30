@@ -392,13 +392,19 @@ class Normalization:
         
         for region in self.regions:
             for selection in self.selections[bin_type][region]:
-                region_tex     = self.regions_tex[region]
-                selections_tex = self.selections_tex[bin_type][region][selection]
+                region_tex              = self.regions_tex[region]
+                selections_tex          = self.selections_tex[bin_type][region][selection]
+                region_root_tex         = region_tex.replace("\\", "#")
+                selections_root_tex     = selections_tex.replace("\\", "#")
+                region_root_tex         = region_root_tex.replace("$", "")
+                selections_root_tex     = selections_root_tex.replace("$", "")
+                print "{0} : {1}".format(region_tex, region_root_tex)
+                print "{0} : {1}".format(selections_tex, selections_root_tex)
                 #h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
                 h_Electron  = ROOT.TH1F("h_Electron",   "h_Electron",   nBins, 0, nBins)
                 h_Muon      = ROOT.TH1F("h_Muon",       "h_Muon",       nBins, 0, nBins)
                 h_Combined  = ROOT.TH1F("h_Combined",   "h_Combined",   nBins, 0, nBins)
-                title = "Norm. for {0} bins; {1}, {2}".format(bin_type, region_tex, selections_tex)
+                title = "Norm. for {0} bins, {1}, {2}".format(bin_type, region_root_tex, selections_root_tex)
                 x_title = "Era" 
                 y_title = "Norm. $\\left(R_Z\\right)$"
                 y_min = -1.0
@@ -421,6 +427,11 @@ class Normalization:
                     h_Electron.GetXaxis().SetBinLabel(  i + 1, era)
                     h_Muon.GetXaxis().SetBinLabel(      i + 1, era)
                     h_Combined.GetXaxis().SetBinLabel(  i + 1, era)
+                
+                # title font size
+                h_Electron.SetTitleSize(0.1)
+                h_Muon.SetTitleSize(0.1)
+                h_Combined.SetTitleSize(0.1)
                             
                 h_Combined.Draw(draw_option)        
                 h_Electron.Draw(draw_option + "same")        
