@@ -24,7 +24,7 @@ def main():
     doUnits     = False
     doCutflows  = False
     doPhotons   = False
-    draw        = True
+    draw        = False
     
 
     if not os.path.exists(json_file):
