@@ -1,38 +1,80 @@
 {
-    "pdf" : { 
-              "name"    : "PDF_Weight",
-              "nominal" : "",
-              "up"      : "pdfWeight_Up",
-              "down"    : "pdfWeight_Down"
-    }, 
-    "pileup" : { 
-              "name"    : "PU_Weight",
-              "nominal" : "puWeight",
-              "up"      : "puWeight_Up",
-              "down"    : "puWeight_Down"
-    }, 
-    "example" : { 
-              "name"    : "",
-              "nominal" : "",
-              "up"      : "",
-              "down"    : ""
-    }, 
-    "example" : { 
-              "name"    : "",
-              "nominal" : "",
-              "up"      : "",
-              "down"    : ""
-    }, 
-    "example" : { 
-              "name"    : "",
-              "nominal" : "",
-              "up"      : "",
-              "down"    : ""
-    }, 
-    "example" : { 
-              "name"    : "",
-              "nominal" : "",
-              "up"      : "",
-              "down"    : ""
+    "btag": {
+        "down": "BTagWeight_Down",
+        "name": "b",
+        "nominal": "BTagWeight",
+        "up": "BTagWeight_Up"
+    },
+    "dielec_sf": {
+        "down": "DiElecSF_Down",
+        "name": "dielec_sf",
+        "nominal": "DiElecSF",
+        "up": "DiElecSF_Up"
+    },
+    "dielec_trig": {
+        "down": "DiElecTriggerEffPt_Down",
+        "name": "dielec_trig",
+        "nominal": "DiElecTriggerEffPt",
+        "up": "DiElecTriggerEffPt_Up"
+    },
+    "dimu_sf": {
+        "down": "DiMuSF_Down",
+        "name": "dimu_sf",
+        "nominal": "DiMuSF",
+        "up": "DiMuSF_Up"
+    },
+    "dimu_trig": {
+        "down": "DiMuTriggerEffPt_Down",
+        "name": "dimu_trig",
+        "nominal": "DiMuTriggerEffPt",
+        "up": "DiMuTriggerEffPt_Up"
+    },
+    "isr": {
+        "down": "ISRWeight_Down",
+        "name": "ISR_Weight",
+        "nominal": "ISRWeight",
+        "up": "ISRWeight_Up"
+    },
+    "met_trig_highdm": {
+        "down": "Stop0l_trigger_eff_MET_high_dm_down",
+        "name": "trigger_err_highdm",
+        "nominal": "Stop0l_trigger_eff_MET_high_dm",
+        "up": "Stop0l_trigger_eff_MET_high_dm_up"
+    },
+    "met_trig_lowdm": {
+        "down": "Stop0l_trigger_eff_MET_low_dm_down",
+        "name": "trigger_err_lowdm",
+        "nominal": "Stop0l_trigger_eff_MET_low_dm",
+        "up": "Stop0l_trigger_eff_MET_low_dm_up"
+    },
+    "pdf": {
+        "down": "pdfWeight_Down",
+        "name": "PDF_Weight",
+        "nominal": "pdfWeight",
+        "up": "pdfWeight_Up"
+    },
+    "photon_sf": {
+        "down": "photonSF_Up",
+        "name": "photon_sf",
+        "nominal": "photonSF",
+        "up": "photonSF_Up"
+    },
+    "photon_trig": {
+        "down": "Stop0l_trigger_eff_Photon_pt_down",
+        "name": "photon_trig",
+        "nominal": "Stop0l_trigger_eff_Photon_pt",
+        "up": "Stop0l_trigger_eff_Photon_pt_up"
+    },
+    "prefire": {
+        "down": "PrefireWeight_Down",
+        "name": "Prefire_Weight",
+        "nominal": "PrefireWeight",
+        "up": "PrefireWeight_Up"
+    },
+    "pu": {
+        "down": "puWeight_Down",
+        "name": "PU_Weight",
+        "nominal": "puWeight",
+        "up": "puWeight_Up"
     }
 }
