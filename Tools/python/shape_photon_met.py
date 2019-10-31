@@ -24,6 +24,7 @@ class Shape:
         self.cr_unit_histos         = {}
         self.cr_unit_histos_summed  = {}
         self.shape_map              = {}
+        self.eras = []
         # variable is also TDirectoryFile that holds histograms 
         self.variable   = "metWithPhoton"
         self.bin_types  = ["validation", "search"]
@@ -111,6 +112,7 @@ class Shape:
         return temp_map
     
     def getShape(self, file_name, era): 
+        self.eras.append(era)
         draw_option = "hist error"
         eraTag = "_" + era
         # check that the file exists
@@ -263,7 +265,10 @@ class Shape:
                         h_ratio_rebinned_normalized = h_num_rebinned.Clone("h_ratio_rebinned_normalized")
                         h_ratio_rebinned_normalized.Divide(h_den_rebinned_normalized)
                         
-                        # save shape factors to map
+                        #############################
+                        # Save shape factors to map #
+                        #############################
+                        
                         for j in xrange(n_bins):
                             name = names[j]
                             self.shape_map[era][bin_type][region][selection][name]            = h_ratio_rebinned_normalized.GetBinContent(j + 1)
@@ -274,6 +279,7 @@ class Shape:
                         ###################
                         # Draw Histograms #
                         ###################
+                        
                         if self.draw:
                             selectionTag = "_{0}_rebin{1}".format(selection, i + 1)
                             # setup histograms
