@@ -407,9 +407,9 @@ class Normalization:
                 h_Combined  = ROOT.TH1F("h_Combined",   "h_Combined",   nBins, 0, nBins)
                 title = "Norm. for {0} bins, {1}, {2}".format(bin_type, region_root_tex, selections_root_tex)
                 x_title = "Era" 
-                y_title = "Norm. R_Z"
+                y_title = "Norm. #left(R_{Z}#right)"
                 y_min = -1.0
-                y_max = 4.0
+                y_max = 5.0
                 #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
                 setupHist(h_Electron,   title, x_title, y_title, self.color_red,    y_min, y_max)
                 setupHist(h_Muon,       title, x_title, y_title, self.color_blue,   y_min, y_max)
@@ -434,6 +434,11 @@ class Normalization:
                 h_Combined.Fit(f_Combined,  "", "", 0, 5)
                 f_Combined.SetLineColor(getColorIndex("violet"))
                 f_Combined.SetLineWidth(5)
+                chisq = f_Combined.GetChisquare()
+                fit_value = f_Combined.GetParameter(0)
+                fit_error = f_Combined.GetParError(0)
+                mark = ROOT.TLatex()
+                mark.SetTextSize(0.04)
                 
                 # title font size
                 h_Electron.SetTitleSize(0.1)
@@ -453,6 +458,12 @@ class Normalization:
                 legend.AddEntry(h_Combined,     "Combined",         "l")
                 legend.AddEntry(f_Combined,     "Fit to Combined",  "l")
                 legend.Draw()
+
+                # write chisq
+                # give x, y coordinates (same as plot coordinates)
+                #print "fit = %.2f #pm %.2f" % (fit_value, fit_error)
+                mark.DrawLatex(0.2, y_max - 0.4, "R_{Z} = %.2f #pm %.2f" % (fit_value, fit_error))
+                mark.DrawLatex(0.2, y_max - 0.9, "#chi^{2} = %.2f" % chisq)
 
                 # save histograms
                 plot_name = "{0}Normalization_{1}_{2}_{3}".format(self.plot_dir, bin_type, region, selection)
