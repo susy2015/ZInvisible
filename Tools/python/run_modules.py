@@ -94,9 +94,10 @@ def main():
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
     N.makeComparison("validation")
     N.makeComparison("search")
+    S.makeComparison("validation")
+    S.makeComparison("search")
     VB.makeTexFile("Z Invisible Per Era Prediction for Validation Bins", latex_dir + "zinv_per_era_prediction_validation_bins.tex")
     SB.makeTexFile("Z Invisible Per Era Prediction for Search Bins",     latex_dir + "zinv_per_era_prediction_search_bins.tex")
-    
     
     # total Run2 prediction
     # root files to save histograms
