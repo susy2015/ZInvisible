@@ -35,17 +35,17 @@
         "nominal": "ISRWeight",
         "up": "ISRWeight_Up"
     },
-    "met_trig_highdm": {
-        "down": "Stop0l_trigger_eff_MET_high_dm_down",
-        "name": "trigger_err_highdm",
-        "nominal": "Stop0l_trigger_eff_MET_high_dm",
-        "up": "Stop0l_trigger_eff_MET_high_dm_up"
+    "key": {
+        "down": "down",
+        "name": "name",
+        "nominal": "nominal",
+        "up": "up"
     },
-    "met_trig_lowdm": {
-        "down": "Stop0l_trigger_eff_MET_low_dm_down",
-        "name": "trigger_err_lowdm",
-        "nominal": "Stop0l_trigger_eff_MET_low_dm",
-        "up": "Stop0l_trigger_eff_MET_low_dm_up"
+    "met_trig": {
+        "down": "Stop0l_trigger_eff_MET_loose_baseline_down",
+        "name": "trigger_err",
+        "nominal": "Stop0l_trigger_eff_MET_loose_baseline",
+        "up": "Stop0l_trigger_eff_MET_loose_baseline_up"
     },
     "pdf": {
         "down": "pdfWeight_Down",
@@ -65,16 +65,16 @@
         "nominal": "Stop0l_trigger_eff_Photon_pt",
         "up": "Stop0l_trigger_eff_Photon_pt_up"
     },
+    "pileup": {
+        "down": "puWeight_Down",
+        "name": "PU_Weight",
+        "nominal": "puWeight",
+        "up": "puWeight_Up"
+    },
     "prefire": {
         "down": "PrefireWeight_Down",
         "name": "Prefire_Weight",
         "nominal": "PrefireWeight",
         "up": "PrefireWeight_Up"
-    },
-    "pu": {
-        "down": "puWeight_Down",
-        "name": "PU_Weight",
-        "nominal": "puWeight",
-        "up": "puWeight_Up"
     }
 }
