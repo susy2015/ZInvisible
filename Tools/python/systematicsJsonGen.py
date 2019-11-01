@@ -9,14 +9,13 @@ with open("systematics.csv", "r") as csvFile:
     jsonDict = {} 
 
     for row in csvObject:
+        # keys are in row starting with key
         if (row[0] == "key"):
-            continue
-        jsonDict[row[0]]= {
-            "name"    : row[1],
-            "nominal" : row[2],
-            "up"      : row[3],
-            "down"    : row[4]
-        }
+            keys = row
+        jsonDict[row[0]] = {}
+        # loop over columns to match keys to values
+        for i in xrange(1, len(keys)):
+            jsonDict[row[0]][keys[i]] = row[i]
 
     with open("systematics.json", "w") as jsonFile:
         json.dump(jsonDict,jsonFile, sort_keys=True, indent=4, separators=(',', ': '))

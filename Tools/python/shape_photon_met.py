@@ -24,6 +24,8 @@ class Shape:
         self.cr_unit_histos         = {}
         self.cr_unit_histos_summed  = {}
         self.shape_map              = {}
+        self.ratio_map              = {}
+        self.ratio_rebinned_map     = {}
         self.eras = []
         # variable is also TDirectoryFile that holds histograms 
         self.variable   = "metWithPhoton"
@@ -143,14 +145,21 @@ class Shape:
             self.cr_unit_histos[era]["HighDM"] = self.getCRUnitMap("HighDM", "nCRUnitHighDM", "nCRUnitHighDM_drPhotonCleaned_jetpt30", era)
         
         self.shape_map[era] = {}
+        ratio_map           = {}
+        ratio_rebinned_map  = {}
         
         # standard shape histograms
         for bin_type in self.bin_types:
             self.shape_map[era][bin_type] = {}
+            ratio_map[bin_type] = {}
+            ratio_rebinned_map[bin_type] = {}
             for region in self.regions:
                 self.shape_map[era][bin_type][region] = {}
+                ratio_map[bin_type][region] = {}
+                ratio_rebinned_map[bin_type][region] = {}
                 for selection in self.selections[bin_type][region]: 
                     self.shape_map[era][bin_type][region][selection] = {}
+                    ratio_rebinned_map[bin_type][region][selection] = {}
                     plot_name = self.plot_dir + self.variable + "_" + region
                     if self.verbose:
                         print self.variable + "/" + self.histos[era][bin_type][region][selection]["Data"]
@@ -233,6 +242,12 @@ class Shape:
                     h_ratio.Divide(h_den)
                     h_ratio_normalized = h_num.Clone("h_ratio_normalized")
                     h_ratio_normalized.Divide(h_den_normalized)
+
+
+                    ################################
+                    # Save shape histograms to map #
+                    ################################
+                    ratio_map[bin_type][region][selection] = h_ratio_normalized
                          
                     met_dict  = getMETBinEdges(self.bin_maps[bin_type], selection)
                     #list of list of bin labels
@@ -245,6 +260,7 @@ class Shape:
                         return
                     
                     for i in xrange(len(met_names)):
+                        rebinKey = "rebin{0}".format(i + 1)
                         # list of bin labels
                         names   = met_names[i]
                         # list of bin edges
@@ -265,6 +281,11 @@ class Shape:
                         h_ratio_rebinned_normalized = h_num_rebinned.Clone("h_ratio_rebinned_normalized")
                         h_ratio_rebinned_normalized.Divide(h_den_rebinned_normalized)
                         
+                        ################################
+                        # Save shape histograms to map #
+                        ################################
+                        ratio_rebinned_map[bin_type][region][selection][rebinKey] = h_ratio_rebinned_normalized
+                        
                         #############################
                         # Save shape factors to map #
                         #############################
@@ -281,7 +302,8 @@ class Shape:
                         ###################
                         
                         if self.draw:
-                            selectionTag = "_{0}_rebin{1}".format(selection, i + 1)
+                            # put rebin number in name to distinguish different binnings
+                            selectionTag = "_{0}_{1}".format(selection, rebinKey)
                             # setup histograms
                             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
                             setupHist(h_num_rebinned,               self.variable + "_" + region + eraTag, self.label_met, "Events",  self.color_red,   10.0 ** -1, 10.0 ** 6)
@@ -350,10 +372,16 @@ class Shape:
                             c.SaveAs(plot_name + "_ratio_normalized" + selectionTag + eraTag + ".pdf")
                             c.SaveAs(plot_name + "_ratio_normalized" + selectionTag + eraTag + ".png")
 
+        # WARNING
+        # - histograms will be deleted when TFile is closed
+        # - histograms need to be copied to use them later on 
+        self.ratio_map[era]             = copy.deepcopy(ratio_map)
+        self.ratio_rebinned_map[era]    = copy.deepcopy(ratio_rebinned_map)
 
-        h_map = {}
+        # Unit bins
         
         if self.doUnits:
+            h_map = {}
             # CR unit shape histograms
             for region in self.regions:
                 h_map[region] = {}
@@ -408,7 +436,70 @@ class Shape:
             self.cr_unit_histos_summed[era] = copy.deepcopy(h_map)
 
 
+    def makeComparison(self, bin_type):
+        draw_option = "hist error"
+        h_map = self.ratio_rebinned_map
+        
+        ###################
+        # Draw Histograms #
+        ###################
 
+        # draw histograms
+        c = ROOT.TCanvas("c", "c", 800, 800)
+        c.SetGrid()
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.5
+        legend_x2 = 0.9 
+        legend_y1 = 0.7 
+        legend_y2 = 0.9 
+
+        for region in self.regions:
+            for selection in self.selections[bin_type][region]:
+                for rebin in self.ratio_rebinned_map["2016"][bin_type][region][selection]: 
+                    h1 = self.ratio_rebinned_map["2016"][bin_type][region][selection][rebin]
+                    h2 = self.ratio_rebinned_map["2017_BE"][bin_type][region][selection][rebin]
+                    h3 = self.ratio_rebinned_map["2017_F"][bin_type][region][selection][rebin]
+                    h4 = self.ratio_rebinned_map["2018_PreHEM"][bin_type][region][selection][rebin]
+                    h5 = self.ratio_rebinned_map["2018_PostHEM"][bin_type][region][selection][rebin]
+                    title = "Shape for {0} bins, {1}, {2}, {3}".format(bin_type, region, selection, rebin)
+                    x_title = "MET (GeV)" 
+                    y_title = "Shape #left(S_{#gamma}#right)"
+                    y_min = -1.0
+                    y_max = 3.0
+                    #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+                    setupHist(h1,   title, x_title, y_title, "pinkish red",     y_min, y_max)
+                    setupHist(h2,   title, x_title, y_title, "tangerine",       y_min, y_max)
+                    setupHist(h3,   title, x_title, y_title, "emerald",         y_min, y_max)
+                    setupHist(h4,   title, x_title, y_title, "dark sky blue",   y_min, y_max)
+                    setupHist(h5,   title, x_title, y_title, "pinky purple",    y_min, y_max)
+                    # draw
+                    h1.Draw(draw_option)
+                    h2.Draw(draw_option + " same")
+                    h3.Draw(draw_option + " same")
+                    h4.Draw(draw_option + " same")
+                    h5.Draw(draw_option + " same")
+                    # legend: TLegend(x1,y1,x2,y2)
+                    legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+                    legend.AddEntry(h1,     "2016",             "l")
+                    legend.AddEntry(h2,     "2017_BE",          "l")
+                    legend.AddEntry(h3,     "2017_F",           "l")
+                    legend.AddEntry(h4,     "2018_PreHEM",      "l")
+                    legend.AddEntry(h5,     "2018_PostHEM",     "l")
+                    legend.Draw()
+                    # save histograms
+                    plot_name = "{0}Shape_{1}_{2}_{3}_{4}".format(self.plot_dir, bin_type, region, selection, rebin)
+                    c.Update()
+                    c.SaveAs(plot_name + ".pdf")
+                    c.SaveAs(plot_name + ".png")
+               
+                    # delete histograms to avoid memory leak
+                    del h1
+                    del h2
+                    del h3
+                    del h4
+                    del h5
+                
 
 def main():
     json_file = "runs/run_2019-07-17.json"
