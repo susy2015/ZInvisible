@@ -34,7 +34,7 @@ namespace plotterFunctions
         {
             // don't run module if file does not exist
             if (! file_exists) return;
-            const auto& njets  = tr.getVar<int>("nJets_drLeptonCleaned");
+            const auto& njets  = tr.getVar<int>("nJets_drLeptonCleaned_jetpt30");
             // check that histogram is exists
             
             for (auto const& h : hmap){
@@ -43,13 +43,15 @@ namespace plotterFunctions
                 {
                     int bin_n = h.second->GetXaxis()->FindBin(njets);
                     njetWeight = h.second->GetBinContent(bin_n); 
-                    // std::cout<<"The key: "<<h.first<<std::endl;
-                    // std::cout<<"bin number: " <<bin_n<<" ,njets: "<<njets <<" ,bin value: "<<njetWeight<<std::endl;
+                    // std::cout<<"The key: "<<h.first<<std::endl;  //debug
+                    // std::cout<<"bin number: " <<bin_n<<" ,njets: "<<njets <<" ,bin value: "<<njetWeight<<std::endl; //debug
                 } 
                 if (njetWeight==0.0){
                     njetWeight = 1.0;
-                    // std::cout<<"values changed from 0.0 to "<<njetWeight<<std::endl;
+                    // std::cout<<"values changed from 0.0 to "<<njetWeight;
                 }
+                // std::cout<<"The key: "<<h.first;  //debug
+                // std::cout<<"njets: "<<njets <<" ,bin value: "<<njetWeight<<std::endl; //debug
 
                 tr.registerDerivedVar("njetWeight_" + h.first,  njetWeight);
             }
