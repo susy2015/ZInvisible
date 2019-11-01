@@ -1,80 +1,74 @@
 {
-    "pdf" : {
-          "name"    : "PDF_Weight",
-          "nominal" : "pdfWeight",
-          "up"      : "pdfWeight_Up",
-          "down"    : "pdfWeight_Down"
+    "btag": {
+        "down": "BTagWeight_Down",
+        "name": "b",
+        "nominal": "BTagWeight",
+        "up": "BTagWeight_Up"
     },
-    "pu" : {
-          "name"    : "PU_Weight",
-          "nominal" : "puWeight",
-          "up"      : "puWeight_Up",
-          "down"    : "puWeight_Down"
+    "dielec_sf": {
+        "down": "DiElecSF_Down",
+        "name": "dielec_sf",
+        "nominal": "DiElecSF",
+        "up": "DiElecSF_Up"
     },
-    "isr" : {
-          "name"    : "ISR_Weight",
-          "nominal" : "ISRWeight",
-          "up"      : "ISRWeight_Up",
-          "down"    : "ISRWeight_Down"
+    "dielec_trig": {
+        "down": "DiElecTriggerEffPt_Down",
+        "name": "dielec_trig",
+        "nominal": "DiElecTriggerEffPt",
+        "up": "DiElecTriggerEffPt_Up"
     },
-    "prefire" : {
-          "name"    : "Prefire_Weight",
-          "nominal" : "PrefireWeight",
-          "up"      : "PrefireWeight_Up",
-          "down"    : "PrefireWeight_Down"
+    "dimu_sf": {
+        "down": "DiMuSF_Down",
+        "name": "dimu_sf",
+        "nominal": "DiMuSF",
+        "up": "DiMuSF_Up"
     },
-    "btag" : {
-          "name"    : "b",
-          "nominal" : "BTagWeight",
-          "up"      : "BTagWeight_Up",
-          "down"    : "BTagWeight_Down"
+    "dimu_trig": {
+        "down": "DiMuTriggerEffPt_Down",
+        "name": "dimu_trig",
+        "nominal": "DiMuTriggerEffPt",
+        "up": "DiMuTriggerEffPt_Up"
     },
-    "dielec_sf" : {
-          "name"    : "dielec_sf",
-          "nominal" : "DiElecSF",
-          "up"      : "DiElecSF_Up",
-          "down"    : "DiElecSF_Down"
+    "isr": {
+        "down": "ISRWeight_Down",
+        "name": "ISR_Weight",
+        "nominal": "ISRWeight",
+        "up": "ISRWeight_Up"
     },
-    "dimu_sf" : {
-          "name"    : "dimu_sf",
-          "nominal" : "DiMuSF",
-          "up"      : "DiMuSF_Up",
-          "down"    : "DiMuSF_Down"
+    "met_trig": {
+        "down": "Stop0l_trigger_eff_MET_loose_baseline_down",
+        "name": "trigger_err",
+        "nominal": "Stop0l_trigger_eff_MET_loose_baseline",
+        "up": "Stop0l_trigger_eff_MET_loose_baseline_up"
     },
-    "photon_sf" : {
-          "name"    : "photon_sf",
-          "nominal" : "photonSF",
-          "up"      : "photonSF_Up",
-          "down"    : "photonSF_Up"
+    "pdf": {
+        "down": "pdfWeight_Down",
+        "name": "PDF_Weight",
+        "nominal": "pdfWeight",
+        "up": "pdfWeight_Up"
     },
-    "dielec_trig" : {
-          "name"    : "dielec_trig",
-          "nominal" : "DiElecTriggerEffPt",
-          "up"      : "DiElecTriggerEffPt_Up",
-          "down"    : "DiElecTriggerEffPt_Down"
+    "photon_sf": {
+        "down": "photonSF_Up",
+        "name": "photon_sf",
+        "nominal": "photonSF",
+        "up": "photonSF_Up"
     },
-    "dimu_trig" : {
-          "name"    : "dimu_trig",
-          "nominal" : "DiMuTriggerEffPt",
-          "up"      : "DiMuTriggerEffPt_Up",
-          "down"    : "DiMuTriggerEffPt_Down"
+    "photon_trig": {
+        "down": "Stop0l_trigger_eff_Photon_pt_down",
+        "name": "photon_trig",
+        "nominal": "Stop0l_trigger_eff_Photon_pt",
+        "up": "Stop0l_trigger_eff_Photon_pt_up"
     },
-    "photon_trig" : {
-          "name"    : "photon_trig",
-          "nominal" : "Stop0l_trigger_eff_Photon_pt",
-          "up"      : "Stop0l_trigger_eff_Photon_pt_up",
-          "down"    : "Stop0l_trigger_eff_Photon_pt_down"
+    "pileup": {
+        "down": "puWeight_Down",
+        "name": "PU_Weight",
+        "nominal": "puWeight",
+        "up": "puWeight_Up"
     },
-    "met_trig_lowdm" : {
-          "name"    : "trigger_err_lowdm",
-          "nominal" : "Stop0l_trigger_eff_MET_low_dm",
-          "up"      : "Stop0l_trigger_eff_MET_low_dm_up",
-          "down"    : "Stop0l_trigger_eff_MET_low_dm_down"
-    },
-    "met_trig_highdm" : {
-          "name"    : "trigger_err_highdm",
-          "nominal" : "Stop0l_trigger_eff_MET_high_dm",
-          "up"      : "Stop0l_trigger_eff_MET_high_dm_up",
-          "down"    : "Stop0l_trigger_eff_MET_high_dm_down"
-    },
+    "prefire": {
+        "down": "PrefireWeight_Down",
+        "name": "Prefire_Weight",
+        "nominal": "PrefireWeight",
+        "up": "PrefireWeight_Up"
+    }
 }

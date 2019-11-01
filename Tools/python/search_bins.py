@@ -299,10 +299,10 @@ class Common:
             h_ratio.Draw(draw_option)
                 
             # save histograms
-            plot_name = self.plot_dir + name + "_" + region
+            plot_name = self.plot_dir + name + "_" + region + eraTag
             c.Update()
-            c.SaveAs(plot_name + eraTag + ".pdf")
-            c.SaveAs(plot_name + eraTag + ".png")
+            c.SaveAs(plot_name + ".pdf")
+            c.SaveAs(plot_name + ".png")
             # debug
             if debug:
                 print "region: {0}".format(region)
