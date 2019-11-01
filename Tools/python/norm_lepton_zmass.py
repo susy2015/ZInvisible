@@ -447,9 +447,9 @@ class Normalization:
                 
                 # draw
                 h_Combined.Draw(draw_option)        
-                h_Electron.Draw(draw_option + "same")        
-                h_Muon.Draw(draw_option + "same")        
-                f_Combined.Draw("same")
+                h_Electron.Draw(draw_option + " same")        
+                h_Muon.Draw(draw_option + " same")        
+                f_Combined.Draw(" same")
 
                 # legend: TLegend(x1,y1,x2,y2)
                 legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
