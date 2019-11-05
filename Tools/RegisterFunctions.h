@@ -22,18 +22,12 @@ namespace plotterFunctions
     class GeneratePhotonEfficiency;
     class LepInfo;
     class BasicLepton;
-    class Fakebtagvectors;
     class GetSearchBin;
-    class TriggerInfo;
     class PrepareMiniTupleVars;
     class NJetWeight;
     class SystematicPrep;
     class SystematicCalc;
-    class MetSmear;
     class PrepareTopVars;
-    class Taudiv;
-    class NJetAk8;
-    class Ak8DrMatch; 
     class Gamma;
     class ShapeNJets;
 }
@@ -88,14 +82,10 @@ private:
     plotterFunctions::NJetWeight                *njWeight;
     plotterFunctions::BasicLepton               *basicLepton;
     plotterFunctions::LepInfo                   *lepInfo;
-    plotterFunctions::Fakebtagvectors           *fakebtagvectors;
     plotterFunctions::GetSearchBin              *getSearchBin;
-    plotterFunctions::TriggerInfo               *triggerInfo;
     plotterFunctions::PrepareMiniTupleVars      *prepareMiniTupleVars;
     plotterFunctions::SystematicPrep            *systematicPrep;
     plotterFunctions::SystematicCalc            *systematicCalc;
-    plotterFunctions::NJetAk8                   *nJetAk8;
-    plotterFunctions::Ak8DrMatch                *ak8DrMatch;
     plotterFunctions::ShapeNJets                *shapeNJets;
 
 public:
@@ -111,9 +101,7 @@ class RegisterFunctionsMiniTuple : public RegisterFunctions
 {
 private:
     plotterFunctions::NJetWeight *njWeight;
-    plotterFunctions::TriggerInfo *triggerInfo;
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
-    plotterFunctions::MetSmear *metSmear;
 
 public:
     RegisterFunctionsMiniTuple();
@@ -147,7 +135,6 @@ private:
     std::vector<std::function<void(NTupleReader&)> > funcs_;
     plotterFunctions::PrepareMiniTupleVars *prepareMiniTupleVars;
     plotterFunctions::NJetWeight *njWeight;
-    plotterFunctions::TriggerInfo *triggerInfo;
     SystWeights *systWeights;
 public:
     RegisterFunctionsSyst();
@@ -171,8 +158,6 @@ class RegisterFunctionsTopStudy : public RegisterFunctions
 private:
     BaselineVessel *myBLV;
     plotterFunctions::PrepareTopVars *prepareTopVars;
-    plotterFunctions::Ak8DrMatch *ak8DrMatch;
-    plotterFunctions::TriggerInfo *triggerInfo;
 
 public:
     RegisterFunctionsTopStudy();
