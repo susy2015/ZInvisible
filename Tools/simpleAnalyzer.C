@@ -223,7 +223,6 @@ int main(int argc, char* argv[])
             plotterFunctions::GenerateWeight weights;
             plotterFunctions::LepInfo lepInfo;
             plotterFunctions::BasicLepton basicLepton;
-            plotterFunctions::TriggerInfo triggerInfo(false, false);
             BTagCorrector bTagCorrector("allINone_bTagEff.root", "", false, fs.tag);
             TTbarCorrector ttbarCorrector(false, "");
             ISRCorrector ISRcorrector("allINone_ISRJets.root","","");
