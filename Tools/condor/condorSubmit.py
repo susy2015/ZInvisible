@@ -49,7 +49,7 @@ def submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False, dat
     
     # TopTagger.cfg
     mvaFileName = ""
-    with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2016.cfg") as meowttcfgFile:
+    with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg") as meowttcfgFile:
         for line in meowttcfgFile:
             line = line.split("#")[0]
             if "modelFile" in line:
@@ -79,9 +79,7 @@ def submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False, dat
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
                           environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagSF_AltTWP.root",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2016.cfg",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2017.cfg",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2018.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2016.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2017.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2018.cfg",
