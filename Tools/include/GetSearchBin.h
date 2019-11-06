@@ -12,49 +12,36 @@ namespace plotterFunctions
 
         void getSearchBin(NTupleReader& tr)
         {
-            std::vector<std::string> JetPtCuts = {"_jetpt20"};
-            // begin loop over jet pt cuts 
-            for (const auto& suffix : JetPtCuts) 
-            {
-                // Note: Only HT, s_met, nJets, and dPhi are calculated with different jet pt cuts
-                const auto& nMergedTops         = tr.getVar<int>("nMergedTops");
-                const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops");
-                const auto& nWs                 = tr.getVar<int>("nWs");
-                const auto& nBottoms            = tr.getVar<int>("nBottoms");
-                const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottoms");
-                const auto& nJets               = tr.getVar<int>("nJets" + suffix);
-                const auto& ht                  = tr.getVar<data_t>("HT" + suffix);
-                const auto& met                 = tr.getVar<data_t>("MET_pt");
-                const auto& ptb                 = tr.getVar<data_t>("ptb");
-                const auto& mtb                 = tr.getVar<data_t>("mtb");
-                const auto& ISRJetPt            = tr.getVar<data_t>("ISRJetPt");
-                
-                float mtb_cut = 175.0;
-                
-                //-----------------------------------------//
-                //--- Updated Search Bins (August 2019) ---//
-                //-----------------------------------------//
-                // int SBv3_lowdm(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
-                // int SBv3_highdm(float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met) 
-                int nSearchBinLowDM  = SBv3_lowdm(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nSearchBinHighDM = SBv3_highdm(mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                
-                //------------------------------------------------//
-                //--- Updated Validation Bins (September 2019) ---//
-                //------------------------------------------------//
-                // int SBv3_lowdm_validation(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
-                // int SBv3_lowdm_validation_high_MET(int nb, int nSV, float ISRpt, float met)
-                // int SBv3_highdm_validation(float mtb, int njets, int ntop, int nw, int nres, int nb, float met)
-                int nValidationBinLowDM        = SBv3_lowdm_validation(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nValidationBinLowDMHighMET = SBv3_lowdm_validation_high_MET(nBottoms, nSoftBottoms, ISRJetPt, met);
-                int nValidationBinHighDM       = SBv3_highdm_validation(mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met); 
-                
-                tr.registerDerivedVar("nSearchBinLowDM"             + suffix, nSearchBinLowDM);
-                tr.registerDerivedVar("nSearchBinHighDM"            + suffix, nSearchBinHighDM);
-                tr.registerDerivedVar("nValidationBinLowDM"         + suffix, nValidationBinLowDM);
-                tr.registerDerivedVar("nValidationBinLowDMHighMET"  + suffix, nValidationBinLowDMHighMET);
-                tr.registerDerivedVar("nValidationBinHighDM"        + suffix, nValidationBinHighDM);
-            }
+            const auto& nBottoms            = tr.getVar<int>("nBottoms");
+            const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottoms");
+            const auto& nMergedTops         = tr.getVar<int>("nMergedTops");
+            const auto& nJets               = tr.getVar<int>("nJets");
+            const auto& nWs                 = tr.getVar<int>("nWs");
+            const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops");
+            const auto& met                 = tr.getVar<data_t>("MET_pt");
+            const auto& ht                  = tr.getVar<data_t>("HT");
+            const auto& ptb                 = tr.getVar<data_t>("ptb");
+            const auto& mtb                 = tr.getVar<data_t>("mtb");
+            const auto& ISRJetPt            = tr.getVar<data_t>("ISRJetPt");
+
+			double mtb_cut = 175.0;
+            
+            int nSearchBinLowDM  = SBv4_lowdm(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+            int nSearchBinHighDM = SBv4_highdm(mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+			std::vector<int> *nSearchBinHighDMLoose = new std::vector<int>;
+			for(int bin : SBv2_highdm_loose_bin(mtb_cut, mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met, ht))
+				nSearchBinHighDMLoose->push_back(bin);
+            
+            int nValidationBinLowDM        = SBv3_lowdm_validation(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+            int nValidationBinLowDMHighMET = SBv3_lowdm_validation_high_MET(nBottoms, nSoftBottoms, ISRJetPt, met);
+            int nValidationBinHighDM       = SBv3_highdm_validation(mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met); 
+            
+            tr.registerDerivedVar("nSearchBinLowDM",              nSearchBinLowDM);
+            tr.registerDerivedVar("nSearchBinHighDM",             nSearchBinHighDM);
+			tr.registerDerivedVec("nSearchBinHighDMLoose",        nSearchBinHighDMLoose);
+            tr.registerDerivedVar("nValidationBinLowDM",          nValidationBinLowDM);
+            tr.registerDerivedVar("nValidationBinLowDMHighMET",   nValidationBinLowDMHighMET);
+            tr.registerDerivedVar("nValidationBinHighDM",         nValidationBinHighDM);
         }
 
     public:
