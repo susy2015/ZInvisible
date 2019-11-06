@@ -173,8 +173,7 @@ namespace plotterFunctions
         void loadJson(const std::string& fileName)
         {
             // check if file exists
-            struct stat buffer;  
-            bool file_exists = bool(stat(fileName.c_str(), &buffer) == 0);
+            bool file_exists = SusyUtility::fileExists(fileName);
             if(file_exists)
             {
                 // read json file

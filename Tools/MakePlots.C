@@ -8,6 +8,12 @@
 
 #include <getopt.h>
 #include <iostream>
+#include <fstream>
+#include <sys/stat.h>
+
+// Repo for json.hpp: https://github.com/nlohmann/json/tree/master
+#include "../../json/single_include/nlohmann/json.hpp"
+using json = nlohmann::json;
 
 void stripRoot(std::string &path)
 {
@@ -151,6 +157,27 @@ int main(int argc, char* argv[])
             era = optarg;
             break;
         }
+    }
+    // ---------------------------------------- //
+    // --- json file containing systematics --- //
+    // ---------------------------------------- //
+    const std::string systematics_file = "systematics.json";
+    
+    // load json file
+    json systematics_json;
+    
+    // check if file exists
+    bool file_exists = SusyUtility::fileExists(systematics_file); 
+    
+    if(file_exists)
+    {
+        // read json file
+        std::ifstream i(systematics_file);
+        i >> systematics_json;
+    }
+    else
+    {
+        std::cout << "Failed to load the json file " << systematics_file << std::endl;
     }
 
     // get year from era
