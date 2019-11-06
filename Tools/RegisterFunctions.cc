@@ -18,7 +18,7 @@ void activateBranches(std::set<std::string>& activeBranches)
 RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string year) : RegisterFunctions()
 {            
     // Important: create objects!!
-    myBLV        = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "");
+    myBLV        = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year);
     getVectors   = new GetVectors;
     runTopTagger = new RunTopTagger;
     gamma        = new plotterFunctions::Gamma(year);
