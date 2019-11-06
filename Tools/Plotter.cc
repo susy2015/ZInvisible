@@ -463,20 +463,6 @@ void Plotter::createHistsFromTuple()
 								}
 								tupledir->cd();
 
-								TTree *tupletree = (TTree*) tupledir->Get(ds.label.c_str());
-								if(tupletree == NULL)
-									tupletree = new TTree(ds.label.c_str(), ds.label.c_str(), 99, tupledir);
-
-								TBranch *weightbranch = tupletree->GetBranch("weight");
-								if(weightbranch == NULL)
-									tupletree->Branch("weight", &(sc.weight));
-								else
-									weightbranch->SetAddress(&(sc.weight));
-
-								MiniTupleMaker * mtm = new MiniTupleMaker(tupletree);
-								mtm->setTupleVars(sc.vars);
-								mtm->initBranches(tr);
-
 								bool tofill = false;
 								for(const AnaSamples::FileSummary& fileToComp : ds.files)
 								{
@@ -488,14 +474,22 @@ void Plotter::createHistsFromTuple()
 								
 								if(tofill)
 								{
+									TTree *tupletree = (TTree*) tupledir->Get(ds.label.c_str());
+									if(tupletree == NULL)
+										tupletree = new TTree(ds.label.c_str(), ds.label.c_str(), 99, tupledir);
+
+									TBranch *weightbranch = tupletree->GetBranch("weight");
+									if(weightbranch == NULL)
+										tupletree->Branch("weight", &(sc.weight));
+									else
+										weightbranch->SetAddress(&(sc.weight));
+
+									MiniTupleMaker * mtm = new MiniTupleMaker(tupletree);
+
+									mtm->setTupleVars(sc.vars);
+									mtm->initBranches(tr);
 									sc.currentDS = ds;
 									scannersToFill.push_back(std::make_pair(mtm, &sc));
-								}
-								else
-								{
-									// Go ahead and write the empty TTree now because we won't write it later
-									tupledir->cd();
-									tupletree->Write();
 								}
 							}
 						}
@@ -524,7 +518,7 @@ void Plotter::createHistsFromTuple()
                             if(!hs.passCuts(tr)) continue;
 
                             // get the weight associated with the dataset
-                            double weight = fileWgt * dss.getWeight(tr) * dss.kfactor;
+                            double weight = dss.getWeight(tr);
 
                             for(auto& hist : histsToFillVec.second.second)
                             {
@@ -538,7 +532,7 @@ void Plotter::createHistsFromTuple()
                     for(auto& cutFlow : cutFlowsToFill)
                     {
                         //get event weight here
-                        double weight = file.getWeight() * cutFlow->dssp->getWeight(tr) * cutFlow->dssp->kfactor;
+                        double weight = cutFlow->dssp->getWeight(tr);
 
                         cutFlow->fillHist(tr, weight);
                     }
@@ -548,7 +542,7 @@ void Plotter::createHistsFromTuple()
 					{
 						if(scpair.second->currentDS.passCuts(tr))
 						{
-							scpair.second->weight = fileWgt * scpair.second->currentDS.getWeight(tr) * scpair.second->currentDS.kfactor;
+							scpair.second->weight = scpair.second->currentDS.getWeight(tr);
 							scpair.first->fill();
 						}
 					}
@@ -569,6 +563,7 @@ void Plotter::createHistsFromTuple()
 			{
 				scpair.first->GetTree()->GetDirectory()->cd();
 				scpair.first->GetTree()->Write();
+				std::cout << "Writing " << scpair.first->GetTree()->GetName() << std::endl;
 			}
         }
     }
