@@ -15,6 +15,8 @@ TTTIDIR    = $(CMSSW_BASE)/src/TopTaggerTools/Tools/include
 
 ZINVISIBLE = $(CMSSW_BASE)/src/ZInvisible
 
+JSONDIR    = ${CMSSW_BASE}/src/json
+
 # TODO for the brave: use Makefile.in, configure.ac, and configure script to create Makefile from Makefile.in
 # Then you can use sytax like this:
 # ZINVISIBLE = @ZINVISIBLE@ 
@@ -40,7 +42,7 @@ LDFLAGS    =
 INCLUDES += $(shell $(PYTHONCFG) --includes)
 
 # include "include" directory
-INCLUDES += -I$(ZINVISIBLE)/Tools/include
+INCLUDES += -I$(ZINVISIBLE)/Tools/include -I$(JSONDIR)/include
 
 CXXFLAGS += -DDOTENSORFLOWPYBIND
 
