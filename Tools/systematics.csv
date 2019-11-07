@@ -6,7 +6,7 @@ prefire,Prefire_Weight,PrefireWeight,PrefireWeight_Up,PrefireWeight_Down
 btag,b,BTagWeight,BTagWeight_Up,BTagWeight_Down
 dielec_sf,dielec_sf,DiElecSF,DiElecSF_Up,DiElecSF_Down
 dimu_sf,dimu_sf,DiMuSF,DiMuSF_Up,DiMuSF_Down
-photon_sf,photon_sf,photonSF,photonSF_Up,photonSF_Up
+photon_sf,photon_sf,photonSF,photonSF_Up,photonSF_Down
 dielec_trig,dielec_trig,DiElecTriggerEffPt,DiElecTriggerEffPt_Up,DiElecTriggerEffPt_Down
 dimu_trig,dimu_trig,DiMuTriggerEffPt,DiMuTriggerEffPt_Up,DiMuTriggerEffPt_Down
 photon_trig,photon_trig,Stop0l_trigger_eff_Photon_pt,Stop0l_trigger_eff_Photon_pt_up,Stop0l_trigger_eff_Photon_pt_down

@@ -60,11 +60,15 @@ namespace plotterFunctions
             const auto& cutMuVec                            = tr.getVec<TLorentzVector>("cutMuVec"); 
             const auto& cutMuVecRecoOnly                    = tr.getVec<TLorentzVector>("cutMuVecRecoOnly"); 
             const auto& cutMuSF                             = tr.getVec<data_t>("cutMuSF"); 
+            const auto& cutMuSF_Up                          = tr.getVec<data_t>("cutMuSF_Up"); 
+            const auto& cutMuSF_Down                        = tr.getVec<data_t>("cutMuSF_Down"); 
             const auto& cutMuSummedCharge                   = tr.getVar<int>("cutMuSummedCharge"); 
             const auto& nTriggerMuons                       = tr.getVar<int>("nTriggerMuons"); 
             const auto& cutElecVec                          = tr.getVec<TLorentzVector>("cutElecVec"); 
             const auto& cutElecVecRecoOnly                  = tr.getVec<TLorentzVector>("cutElecVecRecoOnly"); 
             const auto& cutElecSF                           = tr.getVec<data_t>("cutElecSF"); 
+            const auto& cutElecSF_Up                        = tr.getVec<data_t>("cutElecSF_Up"); 
+            const auto& cutElecSF_Down                      = tr.getVec<data_t>("cutElecSF_Down"); 
             const auto& cutElecSummedCharge                 = tr.getVar<int>("cutElecSummedCharge"); 
             const auto& met                                 = tr.getVar<data_t>("MET_pt");
             const auto& metphi                              = tr.getVar<data_t>("MET_phi");
@@ -441,27 +445,51 @@ namespace plotterFunctions
             data_t metphiWithLL = cleanMet.Phi();
             
             // di-lepton trigger efficiencies and scale factors
-            data_t DiMuTriggerEffPt    = 1.0;
-            data_t DiMuTriggerEffEta   = 1.0;
-            data_t DiMuSF              = 1.0;
-            data_t DiElecTriggerEffPt  = 1.0;
-            data_t DiElecTriggerEffEta = 1.0;
-            data_t DiElecSF            = 1.0;
+            data_t DiMuTriggerEffPt         = 1.0;
+            data_t DiMuTriggerEffPt_Up      = 1.0;
+            data_t DiMuTriggerEffPt_Down    = 1.0;
+            data_t DiMuTriggerEffEta        = 1.0;
+            data_t DiMuTriggerEffEta_Up     = 1.0;
+            data_t DiMuTriggerEffEta_Down   = 1.0;
+            data_t DiMuSF                   = 1.0;
+            data_t DiMuSF_Up                = 1.0;
+            data_t DiMuSF_Down              = 1.0;
+            data_t DiElecTriggerEffPt       = 1.0;
+            data_t DiElecTriggerEffPt_Up    = 1.0;
+            data_t DiElecTriggerEffPt_Down  = 1.0;
+            data_t DiElecTriggerEffEta      = 1.0;
+            data_t DiElecTriggerEffEta_Up   = 1.0;
+            data_t DiElecTriggerEffEta_Down = 1.0;
+            data_t DiElecSF                 = 1.0;
+            data_t DiElecSF_Up              = 1.0;
+            data_t DiElecSF_Down            = 1.0;
             if (cutMuVec.size() == 2)
             {
                 std::vector<double> leptonPts  = {cutMuPt1, cutMuPt2};
                 std::vector<double> leptonEtas = {cutMuEta1, cutMuEta2};
-                DiMuTriggerEffPt  = getEfficiency("Muon_pt", leptonPts);
-                DiMuTriggerEffEta = getEfficiency("Muon_eta", leptonEtas);
-                DiMuSF = cutMuSF[0] * cutMuSF[1];
+                DiMuTriggerEffPt        = getEfficiency("Muon_pt",      "nominal",  leptonPts);
+                DiMuTriggerEffPt_Up     = getEfficiency("Muon_pt",      "up",       leptonPts);
+                DiMuTriggerEffPt_Down   = getEfficiency("Muon_pt",      "down",     leptonPts);
+                DiMuTriggerEffEta       = getEfficiency("Muon_eta",     "nominal",  leptonEtas);
+                DiMuTriggerEffEta_Up    = getEfficiency("Muon_eta",     "up",       leptonEtas);
+                DiMuTriggerEffEta_Down  = getEfficiency("Muon_eta",     "down",     leptonEtas);
+                DiMuSF          = cutMuSF[0]        * cutMuSF[1];
+                DiMuSF_Up       = cutMuSF_Up[0]     * cutMuSF_Up[1];
+                DiMuSF_Down     = cutMuSF_Down[0]   * cutMuSF_Down[1];
             }
             if (cutElecVec.size() == 2)
             {
                 std::vector<double> leptonPts  = {cutElecPt1, cutElecPt2};
                 std::vector<double> leptonEtas = {cutElecEta1, cutElecEta2};
-                DiElecTriggerEffPt  = getEfficiency("Electron_pt", leptonPts);
-                DiElecTriggerEffEta = getEfficiency("Electron_eta", leptonEtas);
-                DiElecSF = cutElecSF[0] * cutElecSF[1];
+                DiElecTriggerEffPt          = getEfficiency("Electron_pt",      "nominal",   leptonPts);
+                DiElecTriggerEffPt_Up       = getEfficiency("Electron_pt",      "up",        leptonPts);
+                DiElecTriggerEffPt_Down     = getEfficiency("Electron_pt",      "down",      leptonPts);
+                DiElecTriggerEffEta         = getEfficiency("Electron_eta",     "nominal",   leptonEtas);
+                DiElecTriggerEffEta_Up      = getEfficiency("Electron_eta",     "up",        leptonEtas);
+                DiElecTriggerEffEta_Down    = getEfficiency("Electron_eta",     "down",      leptonEtas);
+                DiElecSF        = cutElecSF[0]      * cutElecSF[1];
+                DiElecSF_Up     = cutElecSF_Up[0]   * cutElecSF_Up[1];
+                DiElecSF_Down   = cutElecSF_Down[0] * cutElecSF_Down[1];
             }
             
             // print passMuZinvSelOnZMassPeak conditions
@@ -499,8 +527,12 @@ namespace plotterFunctions
                     printf("cutMuPt2 = %f ",  cutMuPt2);
                     printf("cutMuEta1 = %f ", cutMuEta1);
                     printf("cutMuEta2 = %f ", cutMuEta2);
-                    printf("DiMuTriggerEffPt = %f ",  DiMuTriggerEffPt);
-                    printf("DiMuTriggerEffEta = %f ", DiMuTriggerEffEta);
+                    printf("DiMuTriggerEffPt = %f ",        DiMuTriggerEffPt);
+                    printf("DiMuTriggerEffPt_Up = %f ",     DiMuTriggerEffPt_Up);
+                    printf("DiMuTriggerEffPt_Down = %f ",   DiMuTriggerEffPt_Down);
+                    printf("DiMuTriggerEffEta = %f ",       DiMuTriggerEffEta);
+                    printf("DiMuTriggerEffEta_Up = %f ",    DiMuTriggerEffEta_Up);
+                    printf("DiMuTriggerEffEta_Down = %f ",  DiMuTriggerEffEta_Down);
                     printf("\n");
                 }
                 if (cutElecVec.size() == 2)
@@ -509,8 +541,12 @@ namespace plotterFunctions
                     printf("cutElecPt2 = %f ",  cutElecPt2);
                     printf("cutElecEta1 = %f ", cutElecEta1);
                     printf("cutElecEta2 = %f ", cutElecEta2);
-                    printf("DiElecTriggerEffPt = %f ",  DiElecTriggerEffPt);
-                    printf("DiElecTriggerEffEta = %f ", DiElecTriggerEffEta);
+                    printf("DiElecTriggerEffPt = %f ",          DiElecTriggerEffPt);
+                    printf("DiElecTriggerEffPt_Up = %f ",       DiElecTriggerEffPt_Up);
+                    printf("DiElecTriggerEffPt_Down = %f ",     DiElecTriggerEffPt_Down);
+                    printf("DiElecTriggerEffEta = %f ",         DiElecTriggerEffEta);
+                    printf("DiElecTriggerEffEta_Up = %f ",      DiElecTriggerEffEta_Up);
+                    printf("DiElecTriggerEffEta_Down = %f ",    DiElecTriggerEffEta_Down);
                     printf("\n");
                 }
             }
@@ -527,12 +563,24 @@ namespace plotterFunctions
             tr.registerDerivedVar("cutElecPt2",  cutElecPt2);
             tr.registerDerivedVar("cutElecEta1", cutElecEta1);
             tr.registerDerivedVar("cutElecEta2", cutElecEta2);
-            tr.registerDerivedVar("DiMuTriggerEffPt",    DiMuTriggerEffPt);
-            tr.registerDerivedVar("DiMuTriggerEffEta",   DiMuTriggerEffEta);
-            tr.registerDerivedVar("DiMuSF",              DiMuSF);
-            tr.registerDerivedVar("DiElecTriggerEffPt",  DiElecTriggerEffPt);
-            tr.registerDerivedVar("DiElecTriggerEffEta", DiElecTriggerEffEta);
-            tr.registerDerivedVar("DiElecSF",            DiElecSF);
+            tr.registerDerivedVar("DiMuTriggerEffPt",           DiMuTriggerEffPt);
+            tr.registerDerivedVar("DiMuTriggerEffPt_Up",        DiMuTriggerEffPt_Up);
+            tr.registerDerivedVar("DiMuTriggerEffPt_Down",      DiMuTriggerEffPt_Down);
+            tr.registerDerivedVar("DiMuTriggerEffEta",          DiMuTriggerEffEta);
+            tr.registerDerivedVar("DiMuTriggerEffEta_Up",       DiMuTriggerEffEta_Up);
+            tr.registerDerivedVar("DiMuTriggerEffEta_Down",     DiMuTriggerEffEta_Down);
+            tr.registerDerivedVar("DiMuSF",                     DiMuSF);
+            tr.registerDerivedVar("DiMuSF_Up",                  DiMuSF_Up);
+            tr.registerDerivedVar("DiMuSF_Down",                DiMuSF_Down);
+            tr.registerDerivedVar("DiElecTriggerEffPt",         DiElecTriggerEffPt);
+            tr.registerDerivedVar("DiElecTriggerEffPt_Up",      DiElecTriggerEffPt_Up);
+            tr.registerDerivedVar("DiElecTriggerEffPt_Down",    DiElecTriggerEffPt_Down);
+            tr.registerDerivedVar("DiElecTriggerEffEta",        DiElecTriggerEffEta);
+            tr.registerDerivedVar("DiElecTriggerEffEta_Up",     DiElecTriggerEffEta_Up);
+            tr.registerDerivedVar("DiElecTriggerEffEta_Down",   DiElecTriggerEffEta_Down);
+            tr.registerDerivedVar("DiElecSF",                   DiElecSF);
+            tr.registerDerivedVar("DiElecSF_Up",                DiElecSF_Up);
+            tr.registerDerivedVar("DiElecSF_Down",              DiElecSF_Down);
             tr.registerDerivedVar("mindPhiMetJ", mindPhiMetJ);
             tr.registerDerivedVar("ZPtRes", (bestRecoZPt - genZPt)/genZPt);
             tr.registerDerivedVar("ZEtaRes", bestRecoZ.Eta() - genZEta);
@@ -579,7 +627,7 @@ namespace plotterFunctions
             tr.registerDerivedVar("Zrecopt", Zrecoptpt);
         }
 
-        double getEfficiency(std::string kinematic, std::vector<double> values)
+        double getEfficiency(std::string kinematic, std::string syst, std::vector<double> values)
         {
             bool verbose = false;
             bool kinematic_valid = trigger_eff_obj_map.find(kinematic) != trigger_eff_obj_map.end();
@@ -594,7 +642,25 @@ namespace plotterFunctions
                     {
                          ++x_i;
                     }
-                    efficiencies.push_back(eff->GetY()[x_i]);
+                    if (syst.compare("nominal") == 0)
+                    {
+                        efficiencies.push_back(eff->GetY()[x_i]);
+                    }
+                    else if (syst.compare("up") == 0)
+                    {
+                        efficiencies.push_back(eff->GetY()[x_i] + eff->GetErrorYhigh(x_i));
+                    }
+                    else if (syst.compare("down") == 0)
+                    {
+                        efficiencies.push_back(eff->GetY()[x_i] - eff->GetErrorYlow(x_i));
+                    }
+                    else
+                    {
+                        // option is not valid
+                        printf("ERROR in %s; the option \"%s\" is not valid.\n", __func__, syst.c_str());
+                        printf("Setting trigger efficiency to 1.0.\n");
+                        return 1.0;
+                    }
                 }
                 if (verbose)
                 {
