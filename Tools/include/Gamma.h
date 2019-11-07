@@ -365,6 +365,17 @@ namespace plotterFunctions
                 else if (FakePhotons.size() == 1)       passPhotonSelectionFake         = true;
             }                                               
         }
+        bool printEff = false;
+        if (printEff && passPhotonSelection)
+        {
+            printf("cutPhotonPt = %f ",             cutPhotonPt);
+            printf("cutPhotonEta = %f ",            cutPhotonEta);
+            printf("photonSF = %f ",                photonSF);
+            printf("photonSF_Up = %f ",             photonSF_Up);
+            printf("photonSF_Down = %f ",           photonSF_Down);
+            printf("passPhotonSelection = %i ",     passPhotonSelection);
+            printf("\n");
+        }
         
         // Register derived variables
         tr.registerDerivedVar("metWithPhoton", metWithPhoton);

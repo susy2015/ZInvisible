@@ -523,10 +523,10 @@ namespace plotterFunctions
             {
                 if (cutMuVec.size() == 2)
                 {
-                    printf("cutMuPt1 = %f ",  cutMuPt1);
-                    printf("cutMuPt2 = %f ",  cutMuPt2);
-                    printf("cutMuEta1 = %f ", cutMuEta1);
-                    printf("cutMuEta2 = %f ", cutMuEta2);
+                    //printf("cutMuPt1 = %f ",  cutMuPt1);
+                    //printf("cutMuPt2 = %f ",  cutMuPt2);
+                    //printf("cutMuEta1 = %f ", cutMuEta1);
+                    //printf("cutMuEta2 = %f ", cutMuEta2);
                     printf("DiMuTriggerEffPt = %f ",        DiMuTriggerEffPt);
                     printf("DiMuTriggerEffPt_Up = %f ",     DiMuTriggerEffPt_Up);
                     printf("DiMuTriggerEffPt_Down = %f ",   DiMuTriggerEffPt_Down);
@@ -537,10 +537,10 @@ namespace plotterFunctions
                 }
                 if (cutElecVec.size() == 2)
                 {
-                    printf("cutElecPt1 = %f ",  cutElecPt1);
-                    printf("cutElecPt2 = %f ",  cutElecPt2);
-                    printf("cutElecEta1 = %f ", cutElecEta1);
-                    printf("cutElecEta2 = %f ", cutElecEta2);
+                    //printf("cutElecPt1 = %f ",  cutElecPt1);
+                    //printf("cutElecPt2 = %f ",  cutElecPt2);
+                    //printf("cutElecEta1 = %f ", cutElecEta1);
+                    //printf("cutElecEta2 = %f ", cutElecEta2);
                     printf("DiElecTriggerEffPt = %f ",          DiElecTriggerEffPt);
                     printf("DiElecTriggerEffPt_Up = %f ",       DiElecTriggerEffPt_Up);
                     printf("DiElecTriggerEffPt_Down = %f ",     DiElecTriggerEffPt_Down);
