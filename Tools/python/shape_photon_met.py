@@ -317,7 +317,7 @@ class Shape:
                             
                             # draw histograms
                             h_den_rebinned.Draw(draw_option)
-                            h_num_rebinned.Draw(draw_option + "same")
+                            h_num_rebinned.Draw(draw_option + " same")
                             # legend: TLegend(x1,y1,x2,y2)
                             legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
                             legend.AddEntry(h_num_rebinned, "Data - Background", "l")
@@ -333,7 +333,7 @@ class Shape:
                             
                             # draw histograms
                             h_den_rebinned_normalized.Draw(draw_option)
-                            h_num_rebinned.Draw(draw_option + "same")
+                            h_num_rebinned.Draw(draw_option + " same")
                             # legend: TLegend(x1,y1,x2,y2)
                             legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
                             legend.AddEntry(h_num_rebinned,            "Data - Background", "l")

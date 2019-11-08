@@ -85,8 +85,8 @@ class Systematic:
         # denominator = MC
         h_den = h_mc.Clone("h_den")
         # contstant binning for plots
-        h_num.Rebin(2)
-        h_den.Rebin(2)
+        h_num.Rebin(4)
+        h_den.Rebin(4)
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
@@ -129,8 +129,8 @@ class Systematic:
         h_den = h_mc.Clone("h_den") 
         
         # contstant binning for plots
-        h_num.Rebin(2)
-        h_den.Rebin(2)
+        h_num.Rebin(4)
+        h_den.Rebin(4)
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
@@ -164,18 +164,31 @@ class Systematic:
             h_ratio_ZoverPhoton = h_ratio_lepton.Clone("h_ratio_ZoverPhoton")
             h_ratio_ZoverPhoton.Divide(h_ratio_photon)    
 
-            title = "Z vs. Photon, {0}".format(region)
+            title = "Z vs. Photon, {0}, {1}".format(region, era)
             x_title = "MET (GeV)" 
             y_title = "Data / MC"
-            y_min = -1.0
-            y_max = 3.0
+            y_min = 0.0
+            y_max = 2.0
+            
+            # TODO: fix plotting range problems that are happening when rebin is used
+            # rebin 
+            #xbins = np.array([250, 350, 450, 550, 650, 1000])
+            #n_bins = len(xbins) - 1
+            #h_ratio_lepton          = h_ratio_lepton.Rebin(n_bins, "", xbins)
+            #h_ratio_photon          = h_ratio_photon.Rebin(n_bins, "", xbins)
+            #h_ratio_ZoverPhoton     = h_ratio_ZoverPhoton.Rebin(n_bins, "", xbins)
+            
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
             setupHist(h_ratio_lepton,       title, x_title, y_title,                "vermillion",      y_min, y_max)
             setupHist(h_ratio_photon,       title, x_title, y_title,                "electric blue",   y_min, y_max)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
+        
             
             # histograms
-            c.cd(1)
+            pad = c.cd(1)
+            pad.SetGrid()
+           
+            # draw
             h_ratio_lepton.Draw(draw_option)
             h_ratio_photon.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
@@ -183,18 +196,19 @@ class Systematic:
             legend.AddEntry(h_ratio_lepton,     "Z to LL",       "l")
             legend.AddEntry(h_ratio_photon,     "Photon",        "l")
             legend.Draw()
+            
             # ratio
-            c.cd(2)
+            pad = c.cd(2)
+            pad.SetGrid()
+            
+            # draw
             h_ratio_ZoverPhoton.Draw(draw_option)
             
             # save histograms
-            plot_name = "{0}ZvsPhoton_{1}".format(self.plot_dir, region)
+            plot_name = "{0}ZvsPhoton_{1}_{2}".format(self.plot_dir, region, era)
             c.Update()
             c.SaveAs(plot_name + ".pdf")
             c.SaveAs(plot_name + ".png")
-
-
-
 
 
 
