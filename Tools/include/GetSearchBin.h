@@ -10,14 +10,6 @@
 #include "SusyAnaTools/Tools/SusyUtility.h"
 #include "ScaleFactors.h"
 #include "ScaleFactorsttBar.h"
-#include "TH1.h"
-#include "TH2.h"
-#include "TFile.h"
-#include "TMath.h"
-#include "TLorentzVector.h"
-#include "Math/VectorUtil.h"
-#include "TRandom3.h"
-#include "TVector2.h"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -25,7 +17,7 @@
 #include <fstream>
 
 // Repo for json.hpp: https://github.com/nlohmann/json/tree/master
-#include "../../json/single_include/nlohmann/json.hpp"
+#include "nlohmann/json.hpp"
 using json = nlohmann::json;
 
 namespace plotterFunctions
@@ -38,9 +30,11 @@ namespace plotterFunctions
         json json_;
         std::string met_name_  = "MET_pt";
         std::map<std::string, std::string> prefixMap = {
-            {"binNum",      "bin_"},
-            {"unitCRNum",   "bin_lepcr_"},
-            {"unitSRNum",   "bin_"},
+            {"/binNum",      "bin_"},
+            {"/unitCRNum/qcdcr",   "bin_qcdcr_"},
+            {"/unitCRNum/lepcr",   "bin_lepcr_"},
+            {"/unitCRNum/phocr",   "bin_phocr_"},
+            {"/unitSRNum",   "bin_"},
         };
 
         void getSearchBin(NTupleReader& tr)
@@ -96,12 +90,12 @@ namespace plotterFunctions
                 //----------------------------------------//
                 //int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
                 //int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
-                int nSBLowDM      = getUnitNumLowDM(  "binNum",     nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nSBHighDM     = getUnitNumHighDM( "binNum",     mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                int nCRUnitLowDM  = getUnitNumLowDM(  "unitCRNum",  nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nCRUnitHighDM = getUnitNumHighDM( "unitCRNum",  mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                int nSRUnitLowDM  = getUnitNumLowDM(  "unitSRNum",  nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nSRUnitHighDM = getUnitNumHighDM( "unitSRNum",  mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                int nSBLowDM      = getUnitNumLowDM(  "/binNum",     nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                int nSBHighDM     = getUnitNumHighDM( "/binNum",     mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                int nCRUnitLowDM  = getUnitNumLowDM(  "/unitCRNum/lepcr",  nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                int nCRUnitHighDM = getUnitNumHighDM( "/unitCRNum/lepcr",  mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                int nSRUnitLowDM  = getUnitNumLowDM(  "/unitSRNum",  nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                int nSRUnitHighDM = getUnitNumHighDM( "/unitSRNum",  mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
                 
                 // compare search bins (hui) vs. search bin units (matt) 
                 //if (SAT_Pass_lowDM)
@@ -537,7 +531,7 @@ namespace plotterFunctions
             std::string prefix = prefixMap[key];
             prefix = prefix + "lm_";
             //printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
-            for (const auto& element : json_[key].items())
+            for (const auto& element : json_[json::json_pointer(key)].items())
             {
                 std::string unit = element.key();
                 // only check units with prefix
@@ -566,7 +560,7 @@ namespace plotterFunctions
             std::string prefix = prefixMap[key];
             prefix = prefix + "hm_";
             //printf("njets = %d, nb = %d, nsv = %d, ISRpt = %f, ptb = %f, met = %f\n", njets, nb, nsv, ISRpt, ptb, met);
-            for (const auto& element : json_[key].items())
+            for (const auto& element : json_[json::json_pointer(key)].items())
             {
                 std::string unit = element.key();
                 // only check units with prefix
