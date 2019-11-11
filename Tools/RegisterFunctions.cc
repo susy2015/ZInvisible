@@ -55,15 +55,11 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     njWeight                     = new plotterFunctions::NJetWeight;
     lepInfo                      = new plotterFunctions::LepInfo(year);
     basicLepton                  = new plotterFunctions::BasicLepton;
-    fakebtagvectors              = new plotterFunctions::Fakebtagvectors;
     getSearchBin                 = new plotterFunctions::GetSearchBin;
-    triggerInfo                  = new plotterFunctions::TriggerInfo;
     prepareMiniTupleVars         = new plotterFunctions::PrepareMiniTupleVars(true);
     systematicPrep               = new plotterFunctions::SystematicPrep;
     systematicCalc               = new plotterFunctions::SystematicCalc(sbEra);
 
-    nJetAk8                      = new plotterFunctions::NJetAk8;
-    ak8DrMatch                   = new plotterFunctions::Ak8DrMatch;
     shapeNJets                   = new plotterFunctions::ShapeNJets;
 
     myPDFUnc = new PDFUncertainty();
@@ -126,9 +122,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(njWeight)                     delete njWeight;
     if(lepInfo)                      delete lepInfo;
     if(basicLepton)                  delete basicLepton;
-    if(fakebtagvectors)              delete fakebtagvectors;
     if(getSearchBin)                 delete getSearchBin;
-    if(triggerInfo)                  delete triggerInfo;
     if(prepareMiniTupleVars)         delete prepareMiniTupleVars;
     if(myPDFUnc)                     delete myPDFUnc;
     if(systematicPrep)               delete systematicPrep;
@@ -172,7 +166,6 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     //tr.registerFunction(*blv_drLeptonCleaned);
     //tr.registerFunction(*blv_drPhotonCleaned);
     //tr.registerFunction(*njWeight);
-    //tr.registerFunction(*fakebtagvectors);
     //tr.registerFunction(*blvZinv1b);
     //tr.registerFunction(*blvZinv2b);
     //tr.registerFunction(*blvZinv3b);
@@ -182,13 +175,10 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     //tr.registerFunction(*blvZinvMEUUp);
     //tr.registerFunction(*blvZinvMEUDn);
     //tr.registerFunction(*systematicCalc);
-    //tr.registerFunction(*triggerInfo);
     //tr.registerFunction(*prepareMiniTupleVars);
     //tr.registerFunction(&printInterestingEvents);
     //tr.registerFunction(*myPDFUnc);
     //tr.registerFunction(*bTagCorrector);
-    //tr.registerFunction(*nJetAk8);
-    //tr.registerFunction(*ak8DrMatch);
     //tr.registerFunction(*ISRcorrector);
     //tr.registerFunction(*pileup);
 }
@@ -218,26 +208,20 @@ void RegisterFunctionsNTuple::remakeISRreweight(std::string sampleName)
 RegisterFunctionsMiniTuple::RegisterFunctionsMiniTuple() : RegisterFunctions()
 {            
     njWeight             = new plotterFunctions::NJetWeight;
-    triggerInfo          = new plotterFunctions::TriggerInfo(true);
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
-    metSmear             = new plotterFunctions::MetSmear;
 }
 
 RegisterFunctionsMiniTuple::~RegisterFunctionsMiniTuple()
 {
     if(njWeight) delete njWeight;
-    if(triggerInfo) delete triggerInfo;
     if(prepareMiniTupleVars) delete prepareMiniTupleVars;
-    if(metSmear) delete metSmear;
 }
         
 void RegisterFunctionsMiniTuple::registerFunctions(NTupleReader& tr)
 {
     //register functions with NTupleReader
     tr.registerFunction(*njWeight);
-    tr.registerFunction(*triggerInfo);
     tr.registerFunction(*prepareMiniTupleVars);
-    tr.registerFunction(*metSmear);
 }
 
 void RegisterFunctionsMiniTuple::activateBranches(std::set<std::string>& activeBranches)
@@ -300,7 +284,6 @@ RegisterFunctionsSyst::RegisterFunctionsSyst() : RegisterFunctions()
 {
     njWeight             = new plotterFunctions::NJetWeight;
     prepareMiniTupleVars = new plotterFunctions::PrepareMiniTupleVars(false);
-    triggerInfo          = new plotterFunctions::TriggerInfo(true);
     systWeights          = new SystWeights;
 }
 
@@ -308,7 +291,6 @@ RegisterFunctionsSyst::~RegisterFunctionsSyst()
 {
     if(njWeight) delete njWeight;
     if(prepareMiniTupleVars) delete prepareMiniTupleVars;
-    if(triggerInfo) delete triggerInfo;
     if(systWeights) delete systWeights;
 }
 
@@ -318,7 +300,6 @@ void RegisterFunctionsSyst::registerFunctions(NTupleReader& tr)
 
     tr.registerFunction(*njWeight);
     tr.registerFunction(*prepareMiniTupleVars);
-    tr.registerFunction(*triggerInfo);
     //tr.registerFunction(*systWeights);
 }
 
@@ -344,7 +325,6 @@ void RegisterFunctions2Dplot::registerFunctions(NTupleReader& tr)
 RegisterFunctionsTopStudy::RegisterFunctionsTopStudy()
 {
     myBLV = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "2016", "TopTag", "");
-    triggerInfo = new plotterFunctions::TriggerInfo(false, true);
 }
 
 RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
@@ -355,7 +335,6 @@ RegisterFunctionsTopStudy::~RegisterFunctionsTopStudy()
 void RegisterFunctionsTopStudy::registerFunctions(NTupleReader& tr)
 {
     tr.registerFunction(*myBLV);
-    tr.registerFunction(*triggerInfo);
 }
 
 /////////////////////////////////
