@@ -172,11 +172,14 @@ class Systematic:
             
             # TODO: fix plotting range problems that are happening when rebin is used
             # rebin 
-            #xbins = np.array([250, 350, 450, 550, 650, 1000])
+            #xbins = np.array([0, 250, 350, 450, 550, 650, 1000])
             #n_bins = len(xbins) - 1
-            #h_ratio_lepton          = h_ratio_lepton.Rebin(n_bins, "", xbins)
-            #h_ratio_photon          = h_ratio_photon.Rebin(n_bins, "", xbins)
-            #h_ratio_ZoverPhoton     = h_ratio_ZoverPhoton.Rebin(n_bins, "", xbins)
+            #h_ratio_lepton_rebinned          = h_ratio_lepton.Rebin(n_bins,         "h_ratio_lepton_rebinned", xbins)
+            #h_ratio_photon_rebinned          = h_ratio_photon.Rebin(n_bins,         "h_ratio_photon_rebinned", xbins)
+            #h_ratio_ZoverPhoton_rebinned     = h_ratio_ZoverPhoton.Rebin(n_bins,    "h_ratio_ZoverPhoton_rebinned", xbins)
+            #h_ratio_lepton_rebinned.GetXaxis().SetRangeUser(0, 1000)
+            #h_ratio_photon_rebinned.GetXaxis().SetRangeUser(0, 1000)
+            #h_ratio_ZoverPhoton_rebinned.GetXaxis().SetRangeUser(0, 1000)
             
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
             setupHist(h_ratio_lepton,       title, x_title, y_title,                "vermillion",      y_min, y_max)
