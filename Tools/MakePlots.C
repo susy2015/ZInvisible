@@ -45,10 +45,10 @@ int main(int argc, char* argv[])
     };
     bool runOnCondor        = false;
     bool unblind            = false;
-    bool doLooseAndMid      = false;
+    bool doLooseAndMid      = true;    //  git, don't touch
     bool doDataMCElectron   = true;
     bool doDataMCMuon       = true;
-    bool doDataMCPhoton     = true;
+    bool doDataMCPhoton     = false;   //  git, don't touch
     bool doWeights = false;
     bool doLeptons = false;
     bool doPhotons = false;
