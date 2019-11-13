@@ -1178,7 +1178,7 @@ int main(int argc, char* argv[])
             // ------------------- //
             if (doSystematics)
             {
-                printf("# Systematics for Electron histograms\n");
+                //printf("# Systematics for Electron histograms\n");
                 for (const auto& element : systematics_json.items())
                 {
                     std::string syst            = element.key();
@@ -1194,7 +1194,7 @@ int main(int argc, char* argv[])
                         std::string ElectronWeights_down   = ElectronWeights;
                         ElectronWeights_up.replace(    pos, len, syst_up);
                         ElectronWeights_down.replace(  pos, len, syst_down);
-                        printf("- %s, %s: (%s, %s, %s)\n", syst.c_str(), syst_name.c_str(), syst_nominal.c_str(), syst_up.c_str(), syst_down.c_str());
+                        //printf("- %s, %s: (%s, %s, %s)\n", syst.c_str(), syst_name.c_str(), syst_nominal.c_str(), syst_up.c_str(), syst_down.c_str());
                         //printf("\tnominal weights: %s\n",   ElectronWeights.c_str());
                         //printf("\tsyst_up weights: %s\n",   ElectronWeights_up.c_str());
                         //printf("\tsyst_down weights: %s\n", ElectronWeights_down.c_str());
@@ -1674,7 +1674,7 @@ int main(int argc, char* argv[])
             // ------------------- //
             if (doSystematics)
             {
-                printf("# Systematics for Muon histograms\n");
+                //printf("# Systematics for Muon histograms\n");
                 for (const auto& element : systematics_json.items())
                 {
                     std::string syst            = element.key();
@@ -1690,7 +1690,7 @@ int main(int argc, char* argv[])
                         std::string MuonWeights_down   = MuonWeights;
                         MuonWeights_up.replace(    pos, len, syst_up);
                         MuonWeights_down.replace(  pos, len, syst_down);
-                        printf("- %s, %s: (%s, %s, %s)\n", syst.c_str(), syst_name.c_str(), syst_nominal.c_str(), syst_up.c_str(), syst_down.c_str());
+                        //printf("- %s, %s: (%s, %s, %s)\n", syst.c_str(), syst_name.c_str(), syst_nominal.c_str(), syst_up.c_str(), syst_down.c_str());
                         //printf("\tnominal weights: %s\n",   MuonWeights.c_str());
                         //printf("\tsyst_up weights: %s\n",   MuonWeights_up.c_str());
                         //printf("\tsyst_down weights: %s\n", MuonWeights_down.c_str());
@@ -2110,7 +2110,7 @@ int main(int argc, char* argv[])
             // ------------------- //
             if (doSystematics)
             {
-                printf("# Systematics for Photon histograms\n");
+                //printf("# Systematics for Photon histograms\n");
                 for (const auto& element : systematics_json.items())
                 {
                     std::string syst            = element.key();
@@ -2126,7 +2126,7 @@ int main(int argc, char* argv[])
                         std::string PhotonWeights_down   = PhotonWeights;
                         PhotonWeights_up.replace(    pos, len, syst_up);
                         PhotonWeights_down.replace(  pos, len, syst_down);
-                        printf("- %s, %s: (%s, %s, %s)\n", syst.c_str(), syst_name.c_str(), syst_nominal.c_str(), syst_up.c_str(), syst_down.c_str());
+                        //printf("- %s, %s: (%s, %s, %s)\n", syst.c_str(), syst_name.c_str(), syst_nominal.c_str(), syst_up.c_str(), syst_down.c_str());
                         //printf("\tnominal weights: %s\n",   PhotonWeights.c_str());
                         //printf("\tsyst_up weights: %s\n",   PhotonWeights_up.c_str());
                         //printf("\tsyst_down weights: %s\n", PhotonWeights_down.c_str());
@@ -3236,7 +3236,7 @@ int main(int argc, char* argv[])
             // ------------------- //
             if (doSystematics)
             {
-                printf("# Systematics for Z nu nu histograms\n");
+                //printf("# Systematics for Z nu nu histograms\n");
                 for (const auto& element : systematics_json.items())
                 {
                     std::string syst            = element.key();
@@ -3252,7 +3252,7 @@ int main(int argc, char* argv[])
                         std::string ZNuNuWeights_down   = ZNuNuWeights;
                         ZNuNuWeights_up.replace(    pos, len, syst_up);
                         ZNuNuWeights_down.replace(  pos, len, syst_down);
-                        printf("- %s, %s: (%s, %s, %s)\n", syst.c_str(), syst_name.c_str(), syst_nominal.c_str(), syst_up.c_str(), syst_down.c_str());
+                        //printf("- %s, %s: (%s, %s, %s)\n", syst.c_str(), syst_name.c_str(), syst_nominal.c_str(), syst_up.c_str(), syst_down.c_str());
                         //printf("\tnominal weights: %s\n",   ZNuNuWeights.c_str());
                         //printf("\tsyst_up weights: %s\n",   ZNuNuWeights_up.c_str());
                         //printf("\tsyst_down weights: %s\n", ZNuNuWeights_down.c_str());
