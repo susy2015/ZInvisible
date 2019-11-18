@@ -88,14 +88,21 @@ namespace plotterFunctions
                 //----------------------------------------//
                 //--- Updated Unit Bins (October 2019) ---//
                 //----------------------------------------//
+                // TODO: This function is very slow! Speed this up.
                 //int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
                 //int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
-                int nSBLowDM      = getUnitNumLowDM(  "/binNum",     nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nSBHighDM     = getUnitNumHighDM( "/binNum",     mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                int nCRUnitLowDM  = getUnitNumLowDM(  "/unitCRNum/lepcr",  nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nCRUnitHighDM = getUnitNumHighDM( "/unitCRNum/lepcr",  mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                int nSRUnitLowDM  = getUnitNumLowDM(  "/unitSRNum",  nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nSRUnitHighDM = getUnitNumHighDM( "/unitSRNum",  mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                //int nSBLowDM      = getUnitNumLowDM(  "/binNum",     nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                //int nSBHighDM     = getUnitNumHighDM( "/binNum",     mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                //int nCRUnitLowDM  = getUnitNumLowDM(  "/unitCRNum/lepcr",  nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                //int nCRUnitHighDM = getUnitNumHighDM( "/unitCRNum/lepcr",  mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                //int nSRUnitLowDM  = getUnitNumLowDM(  "/unitSRNum",  nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                //int nSRUnitHighDM = getUnitNumHighDM( "/unitSRNum",  mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                int nSBLowDM      = -1;    
+                int nSBHighDM     = -1; 
+                int nCRUnitLowDM  = -1; 
+                int nCRUnitHighDM = -1; 
+                int nSRUnitLowDM  = -1; 
+                int nSRUnitHighDM = -1; 
                 
                 // compare search bins (hui) vs. search bin units (matt) 
                 //if (SAT_Pass_lowDM)
@@ -118,14 +125,14 @@ namespace plotterFunctions
                 //}
                 
                 // print if search bin numbers calculated using different methods are not equal
-                if (SAT_Pass_lowDM && (nSearchBinLowDM != nSBLowDM))
-                {
-                    printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", tag_suffix.c_str(), nSearchBinLowDM, nSBLowDM);
-                }
-                if (SAT_Pass_highDM && (nSearchBinHighDM != nSBHighDM))
-                {
-                    printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", tag_suffix.c_str(), nSearchBinHighDM, nSBHighDM);
-                }
+                //if (SAT_Pass_lowDM && (nSearchBinLowDM != nSBLowDM))
+                //{
+                //    printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", tag_suffix.c_str(), nSearchBinLowDM, nSBLowDM);
+                //}
+                //if (SAT_Pass_highDM && (nSearchBinHighDM != nSBHighDM))
+                //{
+                //    printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", tag_suffix.c_str(), nSearchBinHighDM, nSBHighDM);
+                //}
                 
                 // search bins
                 tr.registerDerivedVar("nSearchBinLowDM"             + tag_suffix, nSearchBinLowDM);
