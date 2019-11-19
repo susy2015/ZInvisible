@@ -205,6 +205,22 @@ def removeCuts(cutString, pattern, delim = "_"):
     newString = delim.join(newList)
     return newString
 
+# get ratio
+def getNormalizedRatio(h_num, h_den):
+    # number of events for normalization
+    nNum  = h_num.Integral(0, h_num.GetNbinsX() + 1)
+    nDen  = h_den.Integral(0, h_den.GetNbinsX() + 1)
+    ratio = float(nNum) / float(nDen)
+    
+    h_den_normalized = h_den.Clone("h_den_normalized")
+    h_den_normalized.Scale(ratio)
+    
+    # normalized ratio
+    h_ratio_normalized = h_num.Clone("h_ratio_normalized")
+    h_ratio_normalized.Divide(h_den_normalized)
+    return h_ratio_normalized
+
+# setup histogram
 def setupHist(hist, title, x_title, y_title, color, y_min, y_max):
     x_axis = hist.GetXaxis()
     y_axis = hist.GetYaxis()

@@ -15,11 +15,11 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 class Shape:
     def __init__(self, plot_dir, draw, doUnits, verbose):
-        self.plot_dir   = plot_dir
-        self.draw       = draw
-        self.doUnits    = doUnits
-        self.verbose    = verbose
-        self.splitQCD   = False
+        self.plot_dir               = plot_dir
+        self.draw                   = draw
+        self.doUnits                = doUnits
+        self.verbose                = verbose
+        self.splitQCD               = False
         self.histos                 = {}
         self.cr_unit_histos         = {}
         self.cr_unit_histos_summed  = {}
@@ -197,23 +197,24 @@ class Shape:
                             print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD"])
                     
                     # MC_background
+                    # combine all MC in denominator
+                    h_mc = h_GJets.Clone("h_mc") 
                     if self.splitQCD:
-                        h_back = h_QCD_Fragmented.Clone("h_back")
-                        h_back.Add(h_QCD_Fake)
+                        h_mc.Add(h_QCD_Fragmented)
+                        h_mc.Add(h_QCD_Fake)
                     else:
-                        h_back = h_QCD.Clone("h_back")
-                    h_back.Add(h_WJets)
-                    h_back.Add(h_TTG)
-                    h_back.Add(h_TTbar)
-                    h_back.Add(h_tW)
-                    h_back.Add(h_Rare)
+                        h_mc.Add(h_QCD)
+                    h_mc.Add(h_WJets)
+                    h_mc.Add(h_TTG)
+                    h_mc.Add(h_TTbar)
+                    h_mc.Add(h_tW)
+                    h_mc.Add(h_Rare)
 
-                    # numerator = Data - MC_background
+                    # numerator = Data
                     h_num = h_Data.Clone("h_num")
-                    h_num.Add(h_back, -1)
                      
-                    # denominator = MC_signal
-                    h_den = h_GJets.Clone("h_den") 
+                    # denominator = MC
+                    h_den = h_mc.Clone("h_den") 
                     
                     # number of events for normalization
                     nNum  = h_num.Integral(0, h_num.GetNbinsX() + 1)
@@ -316,7 +317,7 @@ class Shape:
                             
                             # draw histograms
                             h_den_rebinned.Draw(draw_option)
-                            h_num_rebinned.Draw(draw_option + "same")
+                            h_num_rebinned.Draw(draw_option + " same")
                             # legend: TLegend(x1,y1,x2,y2)
                             legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
                             legend.AddEntry(h_num_rebinned, "Data - Background", "l")
@@ -332,7 +333,7 @@ class Shape:
                             
                             # draw histograms
                             h_den_rebinned_normalized.Draw(draw_option)
-                            h_num_rebinned.Draw(draw_option + "same")
+                            h_num_rebinned.Draw(draw_option + " same")
                             # legend: TLegend(x1,y1,x2,y2)
                             legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
                             legend.AddEntry(h_num_rebinned,            "Data - Background", "l")

@@ -49,6 +49,7 @@ namespace plotterFunctions
         enum ID myID = Medium;
         // the scale factors only exist in MC, not in Data
         std::vector<data_t> Photon_SF;
+        std::vector<data_t> Photon_SF_Err;
         
         // get gen variables if they exist (MC only)
         bool isData = ! tr.checkBranch("GenPart_pt");
@@ -63,8 +64,16 @@ namespace plotterFunctions
             
             // scale factor
             // Loose and Medium SF available; use Medium SF for Medium and Tight ID
-            if (myID == Loose) Photon_SF = tr.getVec<data_t>("Photon_LooseSF"); 
-            else               Photon_SF = tr.getVec<data_t>("Photon_MediumSF");
+            if (myID == Loose)
+            {
+                Photon_SF       = tr.getVec<data_t>("Photon_LooseSF"); 
+                Photon_SF_Err   = tr.getVec<data_t>("Photon_LooseSFErr"); 
+            }
+            else               
+            {
+                Photon_SF       = tr.getVec<data_t>("Photon_MediumSF");
+                Photon_SF_Err   = tr.getVec<data_t>("Photon_MediumSFErr");
+            }
         }
 
         // --- Photon ID --- //
@@ -119,7 +128,9 @@ namespace plotterFunctions
         float metphiWithPhoton = -999.9;
         float cutPhotonPt = -999.9;
         float cutPhotonEta = -999.9;
-        float photonSF = 1.0;
+        float photonSF      = 1.0;
+        float photonSF_Up   = 1.0;
+        float photonSF_Down = 1.0;
         bool passPhotonSelection            = false;
         bool passPhotonSelectionDirect      = false;
         bool passPhotonSelectionFragmented  = false;
@@ -147,6 +158,8 @@ namespace plotterFunctions
         auto& cutPhotonTLV                  = tr.createDerivedVec<TLorentzVector>("cutPhotonTLV");
         auto& cutPhotonJetIndex             = tr.createDerivedVec<int>("cutPhotonJetIndex");
         auto& cutPhotonSF                   = tr.createDerivedVec<float>("cutPhotonSF");
+        auto& cutPhotonSF_Up                = tr.createDerivedVec<float>("cutPhotonSF_Up");
+        auto& cutPhotonSF_Down              = tr.createDerivedVec<float>("cutPhotonSF_Down");
         auto& dR_GenPhotonGenParton         = tr.createDerivedVec<float>("dR_GenPhotonGenParton");
         auto& dR_RecoPhotonGenParton        = tr.createDerivedVec<float>("dR_RecoPhotonGenParton");
         auto& dR_RecoPhotonGenPhoton        = tr.createDerivedVec<float>("dR_RecoPhotonGenPhoton");
@@ -257,6 +270,8 @@ namespace plotterFunctions
                         {
                             // get scale factor for MC
                             cutPhotonSF.push_back(Photon_SF[i]);
+                            cutPhotonSF_Up.push_back(Photon_SF[i] + Photon_SF_Err[i]);
+                            cutPhotonSF_Down.push_back(Photon_SF[i] - Photon_SF_Err[i]);
                             // calculate dR 
                             for (const auto& genParton : GenPartonTLV)
                             {
@@ -297,6 +312,8 @@ namespace plotterFunctions
                         {
                             // set scale factor to 1.0 for data
                             cutPhotonSF.push_back(1.0);
+                            cutPhotonSF_Up.push_back(1.0);
+                            cutPhotonSF_Down.push_back(1.0);
                         }
                     }
                 }
@@ -337,6 +354,8 @@ namespace plotterFunctions
             metWithPhoton       = metWithPhotonLVec.Pt();
             metphiWithPhoton    = metWithPhotonLVec.Phi();
             photonSF            = cutPhotonSF[0];
+            photonSF_Up         = cutPhotonSF_Up[0];
+            photonSF_Down       = cutPhotonSF_Down[0];
             passPhotonSelection = true;
             // MC Only
             if (! isData)
@@ -346,11 +365,24 @@ namespace plotterFunctions
                 else if (FakePhotons.size() == 1)       passPhotonSelectionFake         = true;
             }                                               
         }
+        bool printEff = false;
+        if (printEff && passPhotonSelection)
+        {
+            printf("cutPhotonPt = %f ",             cutPhotonPt);
+            printf("cutPhotonEta = %f ",            cutPhotonEta);
+            printf("photonSF = %f ",                photonSF);
+            printf("photonSF_Up = %f ",             photonSF_Up);
+            printf("photonSF_Down = %f ",           photonSF_Down);
+            printf("passPhotonSelection = %i ",     passPhotonSelection);
+            printf("\n");
+        }
         
         // Register derived variables
         tr.registerDerivedVar("metWithPhoton", metWithPhoton);
         tr.registerDerivedVar("metphiWithPhoton", metphiWithPhoton);
         tr.registerDerivedVar("photonSF", photonSF);
+        tr.registerDerivedVar("photonSF_Up", photonSF_Up);
+        tr.registerDerivedVar("photonSF_Down", photonSF_Down);
         tr.registerDerivedVar("cutPhotonPt", cutPhotonPt);
         tr.registerDerivedVar("cutPhotonEta", cutPhotonEta);
         tr.registerDerivedVar("passPhotonSelectionLoose", passPhotonSelectionLoose);

@@ -265,6 +265,8 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
     {
         // for testing
         //std::cout << "weight name: " << weightName << std::endl;
+        bool exists = tr.checkBranch(weightName);
+        if (! exists) std::cout << "ERROR in " << __func__ <<  ": The weight " << weightName << " does not exist; this will probably seg fault, my friend." << std::endl;
         const double& weight = static_cast<double>(tr.getVar<data_t>(weightName));
         if(weight == weight)
         {

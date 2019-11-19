@@ -48,7 +48,7 @@
         "up": "pdfWeight_Up"
     },
     "photon_sf": {
-        "down": "photonSF_Up",
+        "down": "photonSF_Down",
         "name": "photon_sf",
         "nominal": "photonSF",
         "up": "photonSF_Up"

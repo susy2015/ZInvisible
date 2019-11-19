@@ -6,6 +6,7 @@ import os
 from cutflow_plot import makeCutflows 
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
+from systematics import Systematic
 from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
 from data_card import makeDataCard
 from units import saveResults
@@ -73,6 +74,8 @@ def main():
             CRunits = CRUnitBins(N, S, eras, plot_dir, verbose) 
             # search region unit bins  
             SRunits = SRUnitBins(N, S, eras, plot_dir, verbose) 
+        # systematics
+        Syst = Systematic(plot_dir, N, S)
         # loop over eras
         for era in eras:
             print "|---------- Era: {0} ----------|".format(era)
@@ -87,6 +90,7 @@ def main():
             if doUnits:
                 CRunits.getValues(result_file, era)
                 SRunits.getValues(result_file, era)
+            Syst.makeZvsPhoton(result_file, era)
             makeDataCard(VB, dataCardValidation_dir, era)
             makeDataCard(SB, dataCardSearch_dir,     era)
 
