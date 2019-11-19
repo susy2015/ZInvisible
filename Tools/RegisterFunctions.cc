@@ -25,6 +25,7 @@ void activateBranches(std::set<std::string>& activeBranches)
     activeBranches.insert("run");
 }
 
+
 ////////////////////////////////
 
 RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra, std::string year) : RegisterFunctions()

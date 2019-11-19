@@ -27,7 +27,7 @@ namespace plotterFunctions
 
     private:
         std::string year_;
-        bool verbose = true;
+        bool verbose = false;
         enum ID{Loose, Medium, Tight};
 
     void generateGamma(NTupleReader& tr) {
@@ -217,10 +217,18 @@ namespace plotterFunctions
                 // stautsFlags is bitwise and already applied in post-processing
                 
                 // check pdgId and status
-                if (pdgId == 22 && status == 1)
+                if (pdgId == 22)
                 {
                     // check mother_pdgId
-                    if (mother_pdgId != 0)
+                    if (mother_pdgId == 0)
+                    {
+                        if (status == 1)
+                        {
+                            if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                            GenPhotonTLV.push_back(GenPartTLV[i]);
+                        }
+                    }
+                    else
                     {
                         if ( abs(mother_pdgId) <= 22 || mother_pdgId == 2212 )
                         {
