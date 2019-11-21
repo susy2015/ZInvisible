@@ -169,11 +169,10 @@ class Systematic:
             x_title = "MET (GeV)" 
             y_title = "Data / MC"
             y_min = 0.0
-            y_max = 100.0
+            y_max = 30.0
             
-            # TODO: fix plotting range problems that are happening when rebin is used
+            # WARNING: for rebinning, xbins need to be a numpy array of floats
             # rebinned
-            #xbins = np.array([0.0, 500.0, 1000.0])
             xbins = np.array([0.0, 250.0, 350.0, 450.0, 550.0, 650.0, 1000.0])
             n_bins = len(xbins) - 1
             print "REBIN: xbins = {0}, n_bins = {1}".format(xbins, n_bins)
