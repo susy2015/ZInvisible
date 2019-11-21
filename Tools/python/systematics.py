@@ -150,6 +150,7 @@ class Systematic:
         return h_ratio_normalized
 
     def makeZvsPhoton(self, file_name, era, rebin):
+        doFit = True
         draw_option = "hist error"
         # check that the file exists
         if not os.path.isfile(file_name): 
@@ -178,7 +179,22 @@ class Systematic:
             # Double Ratio for MET: Z / photon
             h_ratio_ZoverPhoton = h_ratio_lepton.Clone("h_ratio_ZoverPhoton")
             h_ratio_ZoverPhoton.Divide(h_ratio_photon)    
-
+                
+            # fit the Z over Photon ratio
+            if doFit:
+                fit  = ROOT.TF1("f1", "pol1", 0.0, 1000.0)
+                h_ratio_ZoverPhoton.Fit(fit,  "N", "", 0.0,  1000.0)
+                fit.SetLineColor(getColorIndex("violet"))
+                fit.SetLineWidth(5)
+                chisq  = fit.GetChisquare()
+                p0     = fit.GetParameter(0)
+                p1     = fit.GetParameter(1)
+                p0_err = fit.GetParError(0)
+                p1_err = fit.GetParError(1)
+                mark = ROOT.TLatex()
+                mark.SetTextSize(0.05)
+            
+            
             title = "Z vs. Photon, {0}, {1}".format(region, era)
             x_title = "MET (GeV)" 
             y_title = "Data / MC"
@@ -190,7 +206,7 @@ class Systematic:
             setupHist(h_ratio_photon,       title, x_title, y_title,                "electric blue",   y_min, y_max)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
             
-            # histograms
+            # pad for histograms
             pad = c.cd(1)
             pad.SetGrid()
             
@@ -198,16 +214,31 @@ class Systematic:
             h_ratio_lepton.Draw(draw_option)
             h_ratio_photon.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
-            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            legend.AddEntry(h_ratio_lepton,     "Z to LL",       "l")
-            legend.AddEntry(h_ratio_photon,     "Photon",        "l")
-            legend.Draw()
+            legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend1.AddEntry(h_ratio_lepton,         "Z to LL Data/MC",              "l")
+            legend1.AddEntry(h_ratio_photon,         "Photon Data/MC",               "l")
+            legend1.Draw()
             
-            # ratio
+            # pad for ratio
             pad = c.cd(2)
             pad.SetGrid()
             
+            # draw
             h_ratio_ZoverPhoton.Draw(draw_option)
+            if doFit:
+                fit.Draw("same")
+                # write chisq
+                # give x, y coordinates (same as plot coordinates)
+                print "Fit: f(x) = (%.6f #pm %.6f) * x + (%.6f #pm %.6f)" % (p1, p1_err, p0, p0_err)
+                mark.DrawLatex(50.0, y_max - 0.2, "Fit: f(x) = %.6f + %.6f * x" % (p0, p1))
+                mark.DrawLatex(50.0, y_max - 0.4, "#chi^{2} = %.2f" % chisq)
+            
+            # legend: TLegend(x1,y1,x2,y2)
+            legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend2.AddEntry(h_ratio_ZoverPhoton,    "(Z to LL) / Photon",           "l")
+            if doFit:
+                legend2.AddEntry(fit,                    "Fit to (Z to LL) / Photon",    "l")
+            legend2.Draw()
             
             # save histograms
             if rebin:
