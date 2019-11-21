@@ -21,9 +21,13 @@ class Systematic:
         self.S          = shape
         self.regions    = ["LowDM", "HighDM"]
         self.particles  = ["Electron", "Muon"]
+        # WARNING: for rebinning, xbins need to be a numpy array of floats
+        # rebinned
+        self.xbins  = np.array([0.0, 250.0, 350.0, 450.0, 550.0, 650.0, 1000.0])
+        self.n_bins = len(self.xbins) - 1
 
-    def getZRatio(self, root_file, region, selection, era, variable):
-        debug = True
+    def getZRatio(self, root_file, region, selection, era, variable, rebin):
+        debug = False
         eraTag = "_" + era
         selectionTag = "_" + selection
         
@@ -80,17 +84,23 @@ class Systematic:
         h_Data = h_Data_Electron.Clone("h_Data") 
         h_Data.Add(h_Data_Muon)
         
+        # WARNING: do not rebin ratios; first rebin, then get ratio
         # numerator = Data
-        h_num = h_Data.Clone("h_num") 
         # denominator = MC
-        h_den = h_mc.Clone("h_den")
-        # contstant binning for plots
-        #h_num.Rebin(4)
-        #h_den.Rebin(4)
+        if rebin:
+            # variable binning
+            h_num = h_Data.Rebin(self.n_bins, "h_num", self.xbins)
+            h_den = h_mc.Rebin(self.n_bins, "h_den", self.xbins)
+        else:
+            h_num = h_Data.Clone("h_num") 
+            h_den = h_mc.Clone("h_den")
+            # contstant binning for plots
+            h_num.Rebin(2)
+            h_den.Rebin(2)
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
-    def getPhotonRatio(self, root_file, region, selection, era, variable):
+    def getPhotonRatio(self, root_file, region, selection, era, variable, rebin):
         eraTag = "_" + era
         selectionTag = "_" + selection
         # getSimpleMap(self, region, nameTag, selectionTag, eraTag, variable)
@@ -123,20 +133,24 @@ class Systematic:
         h_mc.Add(h_tW)
         h_mc.Add(h_Rare)
 
+        # WARNING: do not rebin ratios; first rebin, then get ratio
         # numerator = Data
-        h_num = h_Data.Clone("h_num")
         # denominator = MC
-        h_den = h_mc.Clone("h_den") 
-        
-        # contstant binning for plots
-        #h_num.Rebin(4)
-        #h_den.Rebin(4)
+        if rebin:
+            # variable binning
+            h_num = h_Data.Rebin(self.n_bins, "h_num", self.xbins)
+            h_den = h_mc.Rebin(self.n_bins, "h_den", self.xbins)
+        else:
+            h_num = h_Data.Clone("h_num") 
+            h_den = h_mc.Clone("h_den")
+            # contstant binning for plots
+            h_num.Rebin(2)
+            h_den.Rebin(2)
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
-    def makeZvsPhoton(self, file_name, era):
+    def makeZvsPhoton(self, file_name, era, rebin):
         draw_option = "hist error"
-        rebin = True
         # check that the file exists
         if not os.path.isfile(file_name): 
             print "The file {0} does not exist".format(file_name)
@@ -156,10 +170,10 @@ class Systematic:
         for region in self.regions:
             # MET with Z
             # getZRatio(region, selection, era, variable)
-            h_ratio_lepton = self.getZRatio(f, region, selection, era, metLepton)
+            h_ratio_lepton = self.getZRatio(f, region, selection, era, metLepton, rebin)
             # MET with photon
             # getPhotonRatio(self, region, selection, era, variable)
-            h_ratio_photon = self.getPhotonRatio(f, region, selection, era, metPhoton)
+            h_ratio_photon = self.getPhotonRatio(f, region, selection, era, metPhoton, rebin)
             
             # Double Ratio for MET: Z / photon
             h_ratio_ZoverPhoton = h_ratio_lepton.Clone("h_ratio_ZoverPhoton")
@@ -169,70 +183,37 @@ class Systematic:
             x_title = "MET (GeV)" 
             y_title = "Data / MC"
             y_min = 0.0
-            y_max = 30.0
+            y_max = 2.0
             
-            # WARNING: for rebinning, xbins need to be a numpy array of floats
-            # rebinned
-            xbins = np.array([0.0, 250.0, 350.0, 450.0, 550.0, 650.0, 1000.0])
-            n_bins = len(xbins) - 1
-            print "REBIN: xbins = {0}, n_bins = {1}".format(xbins, n_bins)
-            h_ratio_lepton_rebinned          = h_ratio_lepton.Rebin(n_bins,         "h_ratio_lepton_rebinned", xbins)
-            h_ratio_photon_rebinned          = h_ratio_photon.Rebin(n_bins,         "h_ratio_photon_rebinned", xbins)
-            h_ratio_ZoverPhoton_rebinned     = h_ratio_ZoverPhoton.Rebin(n_bins,    "h_ratio_ZoverPhoton_rebinned", xbins)
-            h_ratio_lepton_rebinned.GetXaxis().SetRangeUser(0, 1000)
-            h_ratio_photon_rebinned.GetXaxis().SetRangeUser(0, 1000)
-            h_ratio_ZoverPhoton_rebinned.GetXaxis().SetRangeUser(0, 1000)
-            
-            # rebinned
-            if rebin:
-                #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-                setupHist(h_ratio_lepton_rebinned,       title, x_title, y_title,                "vermillion",      y_min, y_max)
-                setupHist(h_ratio_photon_rebinned,       title, x_title, y_title,                "electric blue",   y_min, y_max)
-                setupHist(h_ratio_ZoverPhoton_rebinned,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
-            # standard
-            else:
-                #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-                setupHist(h_ratio_lepton,       title, x_title, y_title,                "vermillion",      y_min, y_max)
-                setupHist(h_ratio_photon,       title, x_title, y_title,                "electric blue",   y_min, y_max)
-                setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
+            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+            setupHist(h_ratio_lepton,       title, x_title, y_title,                "vermillion",      y_min, y_max)
+            setupHist(h_ratio_photon,       title, x_title, y_title,                "electric blue",   y_min, y_max)
+            setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
             
             # histograms
             pad = c.cd(1)
             pad.SetGrid()
             
-            # rebinned
-            if rebin:
-                # draw
-                h_ratio_lepton_rebinned.Draw(draw_option)
-                h_ratio_photon_rebinned.Draw(draw_option + " same")
-                # legend: TLegend(x1,y1,x2,y2)
-                legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                legend.AddEntry(h_ratio_lepton_rebinned,     "Z to LL",       "l")
-                legend.AddEntry(h_ratio_photon_rebinned,     "Photon",        "l")
-                legend.Draw()
-            # standard
-            else:
-                # draw
-                h_ratio_lepton.Draw(draw_option)
-                h_ratio_photon.Draw(draw_option + " same")
-                # legend: TLegend(x1,y1,x2,y2)
-                legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                legend.AddEntry(h_ratio_lepton,     "Z to LL",       "l")
-                legend.AddEntry(h_ratio_photon,     "Photon",        "l")
-                legend.Draw()
+            # draw
+            h_ratio_lepton.Draw(draw_option)
+            h_ratio_photon.Draw(draw_option + " same")
+            # legend: TLegend(x1,y1,x2,y2)
+            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend.AddEntry(h_ratio_lepton,     "Z to LL",       "l")
+            legend.AddEntry(h_ratio_photon,     "Photon",        "l")
+            legend.Draw()
             
             # ratio
             pad = c.cd(2)
             pad.SetGrid()
             
-            # draw
-            if rebin:
-                h_ratio_ZoverPhoton_rebinned.Draw(draw_option)
-            else:
-                h_ratio_ZoverPhoton.Draw(draw_option)
+            h_ratio_ZoverPhoton.Draw(draw_option)
             
             # save histograms
-            plot_name = "{0}ZvsPhoton_{1}_{2}".format(self.plot_dir, region, era)
+            if rebin:
+                plot_name = "{0}ZvsPhoton_{1}_rebinned_{2}".format(self.plot_dir, region, era)
+            else:
+                plot_name = "{0}ZvsPhoton_{1}_{2}".format(self.plot_dir, region, era)
             c.Update()
             c.SaveAs(plot_name + ".pdf")
             c.SaveAs(plot_name + ".png")
