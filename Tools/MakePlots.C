@@ -51,8 +51,8 @@ int main(int argc, char* argv[])
     };
     bool runOnCondor        = false;
     bool unblind            = false;
-    bool doSystematics      = true;
-    bool doLooseAndMid      = true;
+    bool doSystematics      = false;
+    bool doLooseAndMid      = false;
     bool doDataMCElectron   = true;
     bool doDataMCMuon       = true;
     bool doDataMCPhoton     = true;
@@ -697,38 +697,38 @@ int main(int argc, char* argv[])
     };
     
     // standard MC
-    auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
-    {
-        PDS dsGJets(      "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,   weights);
-        PDS dsQCD(        "QCD",                    fileMap["QCD_Photon" + yearTag],    cuts,   weights);
-        PDS dsWJetsToLNu( "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
-        PDS dsTTG(        "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,   weights);
-        PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
-        PDS dstW(         "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
-        PDS dsRare(       "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
-        PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
-        PDS dsTTZ(        "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
-        //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
-        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
-        return StackMC;
-    };
-    // using direct, fake and fragmented photons
     //auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
     //{
-    //    PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts + ";passPhotonSelectionDirect",      weights);
-    //    PDS dsQCDFragmented(    "QCD Fragmented",         fileMap["QCD_Photon" + yearTag],    cuts + ";passPhotonSelectionFragmented",  weights);
-    //    PDS dsQCDFake(          "QCD Fake",               fileMap["QCD_Photon" + yearTag],    cuts + ";passPhotonSelectionFake",        weights);
-    //    PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts + ";passPhotonSelectionDirect",      weights);
-    //    PDS dsWJetsToLNu(       "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
-    //    PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
-    //    PDS dstW(               "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
-    //    PDS dsRare(             "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
-    //    PDS dsDiboson(          "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
-    //    PDS dsTTZ(              "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
+    //    PDS dsGJets(      "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,   weights);
+    //    PDS dsQCD(        "QCD",                    fileMap["QCD_Photon" + yearTag],    cuts,   weights);
+    //    PDS dsWJetsToLNu( "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
+    //    PDS dsTTG(        "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,   weights);
+    //    PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
+    //    PDS dstW(         "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
+    //    PDS dsRare(       "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
+    //    PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
+    //    PDS dsTTZ(        "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
     //    //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
-    //    std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDFragmented}, {dsQCDFake}, {dsTTG}, {dsWJetsToLNu},  {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
+    //    std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
     //    return StackMC;
     //};
+    // using direct, fake and fragmented photons
+    auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
+    {
+        PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts + ";passPhotonSelectionDirect",      weights);
+        PDS dsQCDFragmented(    "QCD Fragmented",         fileMap["QCD_Photon" + yearTag],    cuts + ";passPhotonSelectionFragmented",  weights);
+        PDS dsQCDFake(          "QCD Fake",               fileMap["QCD_Photon" + yearTag],    cuts + ";passPhotonSelectionFake",        weights);
+        PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts + ";passPhotonSelectionDirect",      weights);
+        PDS dsWJetsToLNu(       "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
+        PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
+        PDS dstW(               "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
+        PDS dsRare(             "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
+        PDS dsDiboson(          "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
+        PDS dsTTZ(              "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
+        //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
+        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDFragmented}, {dsQCDFake}, {dsTTG}, {dsWJetsToLNu},  {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
+        return StackMC;
+    };
 
     std::vector<Plotter::CutFlowSummary> cutFlowSummaries;
     
@@ -1203,7 +1203,7 @@ int main(int argc, char* argv[])
                         weightMap["down"]   = ElectronWeights_down;
                         for (const auto& w : weightMap)
                         {
-                            std::string histSuffixSyst = syst + "_syst_" + w.first + JetPtCut + eraTag;
+                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut + eraTag;
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             for (const auto& cut : map_norm_cuts_low_dm)
                             {
@@ -1699,7 +1699,7 @@ int main(int argc, char* argv[])
                         weightMap["down"]   = MuonWeights_down;
                         for (const auto& w : weightMap)
                         {
-                            std::string histSuffixSyst = syst + "_syst_" + w.first + JetPtCut + eraTag;
+                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut + eraTag;
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             for (const auto& cut : map_norm_cuts_low_dm)
                             {
@@ -2135,7 +2135,7 @@ int main(int argc, char* argv[])
                         weightMap["down"]   = PhotonWeights_down;
                         for (const auto& w : weightMap)
                         {
-                            std::string histSuffixSyst = syst + "_syst_" + w.first + JetPtCut + eraTag;
+                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut + eraTag;
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             // Search and Validation Bins Selection
                             for (const auto& cut : map_shape_cuts_low_dm)
@@ -2326,7 +2326,7 @@ int main(int argc, char* argv[])
                 dcVecMC_Photon_HighDM_dPhi.push_back(        PDC("stack", var, StackMC_Photon_HighDM));
             }
 
-            const bool doNorm = true;
+            const bool doNorm = false;
             
             vh.push_back(PHS("DataMC_Photon_LowDM_nj" + histSuffix,                               {dcData_Photon_LowDM_nj,                               dcMC_Photon_LowDM_nj},                               {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_nj_nb0" + histSuffix,                           {dcData_Photon_LowDM_nj_nb0,                           dcMC_Photon_LowDM_nj_nb0},                           {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
@@ -3262,7 +3262,7 @@ int main(int argc, char* argv[])
                         
                         for (const auto& w : weightMap)
                         {
-                            std::string histSuffixSyst = syst + "_syst_" + w.first + JetPtCut + eraTag;
+                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut + eraTag;
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             
                             // ZNuNu MC in validation and search bins

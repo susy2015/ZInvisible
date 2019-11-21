@@ -85,8 +85,8 @@ class Systematic:
         # denominator = MC
         h_den = h_mc.Clone("h_den")
         # contstant binning for plots
-        h_num.Rebin(4)
-        h_den.Rebin(4)
+        #h_num.Rebin(4)
+        #h_den.Rebin(4)
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
@@ -129,13 +129,14 @@ class Systematic:
         h_den = h_mc.Clone("h_den") 
         
         # contstant binning for plots
-        h_num.Rebin(4)
-        h_den.Rebin(4)
+        #h_num.Rebin(4)
+        #h_den.Rebin(4)
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
     def makeZvsPhoton(self, file_name, era):
         draw_option = "hist error"
+        rebin = True
         # check that the file exists
         if not os.path.isfile(file_name): 
             print "The file {0} does not exist".format(file_name)
@@ -168,44 +169,68 @@ class Systematic:
             x_title = "MET (GeV)" 
             y_title = "Data / MC"
             y_min = 0.0
-            y_max = 2.0
+            y_max = 100.0
             
             # TODO: fix plotting range problems that are happening when rebin is used
-            # rebin 
-            #xbins = np.array([0, 250, 350, 450, 550, 650, 1000])
-            #n_bins = len(xbins) - 1
-            #h_ratio_lepton_rebinned          = h_ratio_lepton.Rebin(n_bins,         "h_ratio_lepton_rebinned", xbins)
-            #h_ratio_photon_rebinned          = h_ratio_photon.Rebin(n_bins,         "h_ratio_photon_rebinned", xbins)
-            #h_ratio_ZoverPhoton_rebinned     = h_ratio_ZoverPhoton.Rebin(n_bins,    "h_ratio_ZoverPhoton_rebinned", xbins)
-            #h_ratio_lepton_rebinned.GetXaxis().SetRangeUser(0, 1000)
-            #h_ratio_photon_rebinned.GetXaxis().SetRangeUser(0, 1000)
-            #h_ratio_ZoverPhoton_rebinned.GetXaxis().SetRangeUser(0, 1000)
+            # rebinned
+            #xbins = np.array([0.0, 500.0, 1000.0])
+            xbins = np.array([0.0, 250.0, 350.0, 450.0, 550.0, 650.0, 1000.0])
+            n_bins = len(xbins) - 1
+            print "REBIN: xbins = {0}, n_bins = {1}".format(xbins, n_bins)
+            h_ratio_lepton_rebinned          = h_ratio_lepton.Rebin(n_bins,         "h_ratio_lepton_rebinned", xbins)
+            h_ratio_photon_rebinned          = h_ratio_photon.Rebin(n_bins,         "h_ratio_photon_rebinned", xbins)
+            h_ratio_ZoverPhoton_rebinned     = h_ratio_ZoverPhoton.Rebin(n_bins,    "h_ratio_ZoverPhoton_rebinned", xbins)
+            h_ratio_lepton_rebinned.GetXaxis().SetRangeUser(0, 1000)
+            h_ratio_photon_rebinned.GetXaxis().SetRangeUser(0, 1000)
+            h_ratio_ZoverPhoton_rebinned.GetXaxis().SetRangeUser(0, 1000)
             
-            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_ratio_lepton,       title, x_title, y_title,                "vermillion",      y_min, y_max)
-            setupHist(h_ratio_photon,       title, x_title, y_title,                "electric blue",   y_min, y_max)
-            setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
-        
+            # rebinned
+            if rebin:
+                #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+                setupHist(h_ratio_lepton_rebinned,       title, x_title, y_title,                "vermillion",      y_min, y_max)
+                setupHist(h_ratio_photon_rebinned,       title, x_title, y_title,                "electric blue",   y_min, y_max)
+                setupHist(h_ratio_ZoverPhoton_rebinned,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
+            # standard
+            else:
+                #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+                setupHist(h_ratio_lepton,       title, x_title, y_title,                "vermillion",      y_min, y_max)
+                setupHist(h_ratio_photon,       title, x_title, y_title,                "electric blue",   y_min, y_max)
+                setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
             
             # histograms
             pad = c.cd(1)
             pad.SetGrid()
-           
-            # draw
-            h_ratio_lepton.Draw(draw_option)
-            h_ratio_photon.Draw(draw_option + " same")
-            # legend: TLegend(x1,y1,x2,y2)
-            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            legend.AddEntry(h_ratio_lepton,     "Z to LL",       "l")
-            legend.AddEntry(h_ratio_photon,     "Photon",        "l")
-            legend.Draw()
+            
+            # rebinned
+            if rebin:
+                # draw
+                h_ratio_lepton_rebinned.Draw(draw_option)
+                h_ratio_photon_rebinned.Draw(draw_option + " same")
+                # legend: TLegend(x1,y1,x2,y2)
+                legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+                legend.AddEntry(h_ratio_lepton_rebinned,     "Z to LL",       "l")
+                legend.AddEntry(h_ratio_photon_rebinned,     "Photon",        "l")
+                legend.Draw()
+            # standard
+            else:
+                # draw
+                h_ratio_lepton.Draw(draw_option)
+                h_ratio_photon.Draw(draw_option + " same")
+                # legend: TLegend(x1,y1,x2,y2)
+                legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+                legend.AddEntry(h_ratio_lepton,     "Z to LL",       "l")
+                legend.AddEntry(h_ratio_photon,     "Photon",        "l")
+                legend.Draw()
             
             # ratio
             pad = c.cd(2)
             pad.SetGrid()
             
             # draw
-            h_ratio_ZoverPhoton.Draw(draw_option)
+            if rebin:
+                h_ratio_ZoverPhoton_rebinned.Draw(draw_option)
+            else:
+                h_ratio_ZoverPhoton.Draw(draw_option)
             
             # save histograms
             plot_name = "{0}ZvsPhoton_{1}_{2}".format(self.plot_dir, region, era)
