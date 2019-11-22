@@ -38,6 +38,7 @@ namespace plotterFunctions
         const auto& metphi                 = tr.getVar<data_t>("MET_phi");
         
         std::vector<TLorentzVector> GenPartTLV;
+        std::vector<int> GenPart_genPartIdxMother;
         std::vector<int> GenPart_pdgId;
         std::vector<int> GenPart_status;
         std::vector<int> GenPart_statusFlags;
@@ -55,10 +56,11 @@ namespace plotterFunctions
         bool isData = ! tr.checkBranch("GenPart_pt");
         if (! isData)
         {
-            GenPartTLV            = tr.getVec<TLorentzVector>("GenPartTLV"); // gen particles
-            GenPart_pdgId         = tr.getVec<int>("GenPart_pdgId");
-            GenPart_status        = tr.getVec<int>("GenPart_status");
-            GenPart_statusFlags   = tr.getVec<int>("GenPart_statusFlags");
+            GenPartTLV                  = tr.getVec<TLorentzVector>("GenPartTLV");
+            GenPart_genPartIdxMother    = tr.getVec<int>("GenPart_genPartIdxMother");
+            GenPart_pdgId               = tr.getVec<int>("GenPart_pdgId");
+            GenPart_status              = tr.getVec<int>("GenPart_status");
+            GenPart_statusFlags         = tr.getVec<int>("GenPart_statusFlags");
             //Photon_genPartIdx     = tr.getVec<int>("Photon_genPartIdx");
             //Photon_genPartFlav    = tr.getVec<unsigned char>("Photon_genPartFlav");
             
@@ -176,27 +178,66 @@ namespace plotterFunctions
         {
             for (int i = 0; i < GenPartTLV.size(); ++i)
             {
-                int pdgId       = GenPart_pdgId[i];
-                int status      = GenPart_status[i];
-                int statusFlags = GenPart_statusFlags[i];
+                int genPartIdxMother    = GenPart_genPartIdxMother[i];
+                int pdgId               = GenPart_pdgId[i];
+                int status              = GenPart_status[i];
+                int statusFlags         = GenPart_statusFlags[i];
+                
+
+                // mother particle: default pdgId is 0 which means no mother particle found
+                int mother_pdgId        = 0;
+                // check that index is in range
+                if (genPartIdxMother >= 0 && genPartIdxMother < GenPart_pdgId.size())
+                {
+                    mother_pdgId        = GenPart_pdgId[genPartIdxMother];
+                }
+                
+                // testing
+                //printf("INFO: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                
                 // Particle IDs
                 // quarks: +/- (1 to 6)
                 // gluons: + (9 and 21)
-                // outgoing particles of the hardest subprocess: status == 23
-                // stautsFlags is bitwise and already applied in post-processing
-                if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21)
+                // outgoing particles of the hardest subprocess: GenPart_status = 23
+                // isHardProcess: GenPart_statusFlags & (0x80) == (0x80)
+                
+                // check pdgId
+                if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
                 {
-                    //printf("Found GenParton: pdgId = %d, status = %d, statusFlags = %d\n", pdgId, status, statusFlags);
-                    GenPartonTLV.push_back(GenPartTLV[i]);
+                    // check status and statusFlags
+                    if (status == 23 && (statusFlags & 0x80 == 0x80) )
+                    {
+                        if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                        GenPartonTLV.push_back(GenPartTLV[i]);
+                    }
                 }
                 // Particle IDs
                 // photons: +22
                 // stable: status == 1
                 // stautsFlags is bitwise and already applied in post-processing
-                if (pdgId == 22 && status == 1)
+                
+                // check pdgId and status
+                if (pdgId == 22 && status == 23)
                 {
-                    //if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d\n", pdgId, status, statusFlags);
-                    GenPhotonTLV.push_back(GenPartTLV[i]);
+                    // check mother_pdgId
+                    //if (mother_pdgId == 0)
+                    //{
+                    //    if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                    //    GenPhotonTLV.push_back(GenPartTLV[i]);
+                    //}
+                    //else
+                    if (mother_pdgId != 0)
+                    {
+                        if ( abs(mother_pdgId) <= 22 || mother_pdgId == 2212 )
+                        {
+                            if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                            GenPhotonTLV.push_back(GenPartTLV[i]);
+                        }
+                    }
+                    //else
+                    //{
+                    //    printf("WARNING: No mother particle found for gen partile with pdgId = %d\n", pdgId);
+                    //}
                 }
             }
             //Apply cuts to Gen Photons
