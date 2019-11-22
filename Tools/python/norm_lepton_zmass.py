@@ -449,7 +449,7 @@ class Normalization:
                 h_Combined.Draw(draw_option)        
                 h_Electron.Draw(draw_option + " same")        
                 h_Muon.Draw(draw_option + " same")        
-                f_Combined.Draw(" same")
+                f_Combined.Draw("same")
 
                 # legend: TLegend(x1,y1,x2,y2)
                 legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
@@ -462,7 +462,7 @@ class Normalization:
                 # write chisq
                 # give x, y coordinates (same as plot coordinates)
                 #print "fit = %.2f #pm %.2f" % (fit_value, fit_error)
-                mark.DrawLatex(0.2, y_max - 0.4, "R_{Z} = %.2f #pm %.2f" % (fit_value, fit_error))
+                mark.DrawLatex(0.2, y_max - 0.4, "Fit: f(x) = %.2f #pm %.2f" % (fit_value, fit_error))
                 mark.DrawLatex(0.2, y_max - 0.9, "#chi^{2} = %.2f" % chisq)
 
                 # save histograms

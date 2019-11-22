@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     };
     bool runOnCondor        = false;
     bool unblind            = false;
-    bool doSystematics      = true;
+    bool doSystematics      = false;
     bool doLooseAndMid      = false;
     bool doDataMCElectron   = true;
     bool doDataMCMuon       = true;
@@ -696,7 +696,7 @@ int main(int argc, char* argv[])
         }
     };
     
-    // standard MC
+    // standard MC, single photon selection
     auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
     {
         PDS dsGJets(      "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,   weights);
@@ -1203,7 +1203,7 @@ int main(int argc, char* argv[])
                         weightMap["down"]   = ElectronWeights_down;
                         for (const auto& w : weightMap)
                         {
-                            std::string histSuffixSyst = syst + "_syst_" + w.first + JetPtCut + eraTag;
+                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut + eraTag;
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             for (const auto& cut : map_norm_cuts_low_dm)
                             {
@@ -1699,7 +1699,7 @@ int main(int argc, char* argv[])
                         weightMap["down"]   = MuonWeights_down;
                         for (const auto& w : weightMap)
                         {
-                            std::string histSuffixSyst = syst + "_syst_" + w.first + JetPtCut + eraTag;
+                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut + eraTag;
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             for (const auto& cut : map_norm_cuts_low_dm)
                             {
@@ -2135,7 +2135,7 @@ int main(int argc, char* argv[])
                         weightMap["down"]   = PhotonWeights_down;
                         for (const auto& w : weightMap)
                         {
-                            std::string histSuffixSyst = syst + "_syst_" + w.first + JetPtCut + eraTag;
+                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut + eraTag;
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             // Search and Validation Bins Selection
                             for (const auto& cut : map_shape_cuts_low_dm)
@@ -2326,7 +2326,7 @@ int main(int argc, char* argv[])
                 dcVecMC_Photon_HighDM_dPhi.push_back(        PDC("stack", var, StackMC_Photon_HighDM));
             }
 
-            const bool doNorm = true;
+            const bool doNorm = false;
             
             vh.push_back(PHS("DataMC_Photon_LowDM_nj" + histSuffix,                               {dcData_Photon_LowDM_nj,                               dcMC_Photon_LowDM_nj},                               {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_nj_nb0" + histSuffix,                           {dcData_Photon_LowDM_nj_nb0,                           dcMC_Photon_LowDM_nj_nb0},                           {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
@@ -3262,7 +3262,7 @@ int main(int argc, char* argv[])
                         
                         for (const auto& w : weightMap)
                         {
-                            std::string histSuffixSyst = syst + "_syst_" + w.first + JetPtCut + eraTag;
+                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut + eraTag;
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             
                             // ZNuNu MC in validation and search bins

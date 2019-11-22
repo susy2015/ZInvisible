@@ -462,6 +462,11 @@ void Plotter::createHistsFromTuple()
                 tr.setReThrow(false);
 
                 registerfunc_->registerFunctions(tr);
+                // skip to event
+                //int myEvent = 550000;
+                //std::cout << "Before go to event " << myEvent << std::endl;
+                //tr.goToEvent(myEvent);
+                //std::cout << "After go to event " << myEvent << std::endl;
 
                 while(tr.getNextEvent())
                 {
