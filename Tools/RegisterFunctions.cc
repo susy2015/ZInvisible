@@ -28,15 +28,21 @@ void activateBranches(std::set<std::string>& activeBranches)
 
 ////////////////////////////////
 
-RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEra, std::string year) : RegisterFunctions()
+RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool doSystematics, std::string sbEra, std::string year) : RegisterFunctions()
 {            
     // Important: create objects!!
-    myBLV                       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "");
-    myBLV_jetpt30               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30");
-    blv_drLeptonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned");
-    blv_drLeptonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30");
-    blv_drPhotonCleaned         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned");
-    blv_drPhotonCleaned_jetpt30 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30");
+    myBLV                                       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "");
+    myBLV_jetpt30                               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30");
+    myBLV_jetpt30_jesTotalUp                    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_jesTotalUp");
+    myBLV_jetpt30_jesTotalDown                  = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_jesTotalDown");
+    blv_drLeptonCleaned                         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned");
+    blv_drLeptonCleaned_jetpt30                 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30");
+    blv_drLeptonCleaned_jetpt30_jesTotalUp      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30_jesTotalUp");
+    blv_drLeptonCleaned_jetpt30_jesTotalDown    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30_jesTotalDown");
+    blv_drPhotonCleaned                         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned");
+    blv_drPhotonCleaned_jetpt30                 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30");
+    blv_drPhotonCleaned_jetpt30_jesTotalUp      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30_jesTotalUp");
+    blv_drPhotonCleaned_jetpt30_jesTotalDown    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30_jesTotalDown");
     //blvZinv      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "Zinv");
     //blvZinvJEUUp = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUUp");
     //blvZinvJEUDn = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), "ZinvJEUDn");
@@ -60,57 +66,35 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string sbEr
     prepareMiniTupleVars         = new plotterFunctions::PrepareMiniTupleVars(true);
     systematicPrep               = new plotterFunctions::SystematicPrep;
     systematicCalc               = new plotterFunctions::SystematicCalc(sbEra);
-
     shapeNJets                   = new plotterFunctions::ShapeNJets;
 
+    doSystematics_ = doSystematics;
     myPDFUnc = new PDFUncertainty();
     bTagCorrector = nullptr;
     ISRcorrector = nullptr;
     pileup = nullptr;
-
-    // bTagCorrector not used anymore
-    //if(isCondor)
-    //{
-    //    bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "", false);
-    //}
-    //else
-    //{
-    //    bTagCorrector = new BTagCorrector("allINone_bTagEff.root", "/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools", false);
-    //}
-
-    //if(isCondor)
-    //{
-    //   ISRcorrector = new ISRCorrector("allINone_ISRJets.root","","");   
-    //}
-    //else
-    //{  
-    //    ISRcorrector = new ISRCorrector("allINone_ISRJets.root","/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools","");
-    //}
-    //
-    //if(isCondor)
-    //{
-    //    pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
-    //}
-    //else
-    //{
-    //    pileup = new Pileup_Sys("PileupHistograms_0121_69p2mb_pm4p6.root");
-    //} 
     
 }
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {
-    if(getVectors)                   delete getVectors;
-    if(cleanedJets)                  delete cleanedJets;
-    if(runTopTagger)                 delete runTopTagger;
-    if(runTopTagger_drLeptonCleaned) delete runTopTagger_drLeptonCleaned;
-    if(runTopTagger_drPhotonCleaned) delete runTopTagger_drPhotonCleaned;
-    if(myBLV)                        delete myBLV;
-    if(myBLV_jetpt30)                delete myBLV_jetpt30;
-    if(blv_drLeptonCleaned)          delete blv_drLeptonCleaned;
-    if(blv_drLeptonCleaned_jetpt30)  delete blv_drLeptonCleaned_jetpt30;
-    if(blv_drPhotonCleaned)          delete blv_drPhotonCleaned;
-    if(blv_drPhotonCleaned_jetpt30)  delete blv_drPhotonCleaned_jetpt30;
-    //if(blvZinv)                      delete blvZinv;
+    if(getVectors)                                  delete getVectors;
+    if(cleanedJets)                                 delete cleanedJets;
+    if(runTopTagger)                                delete runTopTagger;
+    if(runTopTagger_drLeptonCleaned)                delete runTopTagger_drLeptonCleaned;
+    if(runTopTagger_drPhotonCleaned)                delete runTopTagger_drPhotonCleaned;
+    if(myBLV)                                       delete myBLV;
+    if(myBLV_jetpt30)                               delete myBLV_jetpt30;
+    if(myBLV_jetpt30_jesTotalUp)                    delete myBLV_jetpt30_jesTotalUp;
+    if(myBLV_jetpt30_jesTotalDown)                  delete myBLV_jetpt30_jesTotalDown;
+    if(blv_drLeptonCleaned)                         delete blv_drLeptonCleaned;
+    if(blv_drLeptonCleaned_jetpt30)                 delete blv_drLeptonCleaned_jetpt30;
+    if(blv_drLeptonCleaned_jetpt30_jesTotalUp)      delete blv_drLeptonCleaned_jetpt30_jesTotalUp;
+    if(blv_drLeptonCleaned_jetpt30_jesTotalDown)    delete blv_drLeptonCleaned_jetpt30_jesTotalDown;
+    if(blv_drPhotonCleaned)                         delete blv_drPhotonCleaned;
+    if(blv_drPhotonCleaned_jetpt30)                 delete blv_drPhotonCleaned_jetpt30;
+    if(blv_drPhotonCleaned_jetpt30_jesTotalUp)      delete blv_drPhotonCleaned_jetpt30_jesTotalUp;
+    if(blv_drPhotonCleaned_jetpt30_jesTotalDown)    delete blv_drPhotonCleaned_jetpt30_jesTotalDown;
+    //if(blvZinv)                    delete blvZinv;
     //if(blvZinv1b)                  delete blvZinv1b;
     //if(blvZinv2b)                  delete blvZinv2b;
     //if(blvZinv3b)                  delete blvZinv3b;
@@ -157,6 +141,16 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*blv_drLeptonCleaned_jetpt30);
     tr.registerFunction(*blv_drPhotonCleaned);
     tr.registerFunction(*blv_drPhotonCleaned_jetpt30);
+    // apply JEC to MC only
+    if (doSystematics_ && tr.checkBranch("GenJet_pt"))
+    {
+        tr.registerFunction(*myBLV_jetpt30_jesTotalUp);
+        tr.registerFunction(*myBLV_jetpt30_jesTotalDown);
+        tr.registerFunction(*blv_drLeptonCleaned_jetpt30_jesTotalUp);
+        tr.registerFunction(*blv_drLeptonCleaned_jetpt30_jesTotalDown);
+        tr.registerFunction(*blv_drPhotonCleaned_jetpt30_jesTotalUp);
+        tr.registerFunction(*blv_drPhotonCleaned_jetpt30_jesTotalDown);
+    }
     tr.registerFunction(*shapeNJets);
     tr.registerFunction(*getSearchBin);
     

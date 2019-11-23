@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     };
     bool runOnCondor        = false;
     bool unblind            = false;
-    bool doSystematics      = false;
+    bool doSystematics      = true;
     bool doLooseAndMid      = false;
     bool doDataMCElectron   = true;
     bool doDataMCMuon       = true;
@@ -3323,7 +3323,7 @@ int main(int argc, char* argv[])
     set<AFS> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
-    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, sbEra, year);
+    RegisterFunctions* rf = new RegisterFunctionsNTuple(doSystematics, sbEra, year);
 
     if (verbose)
     {

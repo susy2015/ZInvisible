@@ -53,12 +53,19 @@ public:
 class RegisterFunctionsNTuple : public RegisterFunctions
 {
 private:
+    bool doSystematics_; 
     BaselineVessel *myBLV;
     BaselineVessel *myBLV_jetpt30;
+    BaselineVessel *myBLV_jetpt30_jesTotalUp;
+    BaselineVessel *myBLV_jetpt30_jesTotalDown;
     BaselineVessel *blv_drLeptonCleaned;
     BaselineVessel *blv_drLeptonCleaned_jetpt30;
+    BaselineVessel *blv_drLeptonCleaned_jetpt30_jesTotalUp;
+    BaselineVessel *blv_drLeptonCleaned_jetpt30_jesTotalDown;
     BaselineVessel *blv_drPhotonCleaned;
     BaselineVessel *blv_drPhotonCleaned_jetpt30;
+    BaselineVessel *blv_drPhotonCleaned_jetpt30_jesTotalUp;
+    BaselineVessel *blv_drPhotonCleaned_jetpt30_jesTotalDown;
     BaselineVessel *blvZinv;
     //BaselineVessel *blvZinv1b;
     //BaselineVessel *blvZinv2b;
@@ -89,7 +96,7 @@ private:
     plotterFunctions::ShapeNJets                *shapeNJets;
 
 public:
-    RegisterFunctionsNTuple(bool isCondor, std::string sbEra, std::string year);
+    RegisterFunctionsNTuple(bool doSystematics, std::string sbEra, std::string year);
     ~RegisterFunctionsNTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);
