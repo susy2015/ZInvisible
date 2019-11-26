@@ -66,19 +66,17 @@ private:
     BaselineVessel *blv_drPhotonCleaned_jetpt30;
     BaselineVessel *blv_drPhotonCleaned_jetpt30_jesTotalUp;
     BaselineVessel *blv_drPhotonCleaned_jetpt30_jesTotalDown;
-    BaselineVessel *blvZinv;
-    //BaselineVessel *blvZinv1b;
-    //BaselineVessel *blvZinv2b;
-    //BaselineVessel *blvZinv3b;
-    BaselineVessel *blvZinvJEUUp;
-    BaselineVessel *blvZinvJEUDn;
-    BaselineVessel *blvZinvMEUUp;
-    BaselineVessel *blvZinvMEUDn;
     GetVectors                                  *getVectors;
     CleanedJets                                 *cleanedJets;
     RunTopTagger                                *runTopTagger;
+    RunTopTagger                                *runTopTagger_jesTotalUp;
+    RunTopTagger                                *runTopTagger_jesTotalDown;
     RunTopTagger                                *runTopTagger_drLeptonCleaned;
+    RunTopTagger                                *runTopTagger_drLeptonCleaned_jesTotalUp;
+    RunTopTagger                                *runTopTagger_drLeptonCleaned_jesTotalDown;
     RunTopTagger                                *runTopTagger_drPhotonCleaned;
+    RunTopTagger                                *runTopTagger_drPhotonCleaned_jesTotalUp;
+    RunTopTagger                                *runTopTagger_drPhotonCleaned_jesTotalDown;
     plotterFunctions::Gamma                     *gamma;
     PDFUncertainty                              *myPDFUnc;
     BTagCorrector                               *bTagCorrector;
@@ -90,6 +88,8 @@ private:
     plotterFunctions::BasicLepton               *basicLepton;
     plotterFunctions::LepInfo                   *lepInfo;
     plotterFunctions::GetSearchBin              *getSearchBin;
+    plotterFunctions::GetSearchBin              *getSearchBin_jesTotalUp;
+    plotterFunctions::GetSearchBin              *getSearchBin_jesTotalDown;
     plotterFunctions::PrepareMiniTupleVars      *prepareMiniTupleVars;
     plotterFunctions::SystematicPrep            *systematicPrep;
     plotterFunctions::SystematicCalc            *systematicCalc;
@@ -121,7 +121,6 @@ class RegisterFunctionsCalcEff : public RegisterFunctions
 {
 private:
     BaselineVessel                              *myBLV;
-    BaselineVessel                              *blvZinv;
     GetVectors                                  *getVectors;
     CleanedJets                                 *cleanedJets;
     RunTopTagger                                *runTopTagger;

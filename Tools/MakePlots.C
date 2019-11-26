@@ -258,9 +258,9 @@ int main(int argc, char* argv[])
         ElectronDataset                   = "Data_EGamma";
         PhotonDataset                     = "Data_EGamma";
         Flag_ecalBadCalibFilter           = ";Flag_ecalBadCalibFilter";
-        HEMVeto                           = "SAT_Pass_HEMVeto";
-        HEMVeto_drLeptonCleaned           = "SAT_Pass_HEMVeto_drLeptonCleaned";
-        HEMVeto_drPhotonCleaned           = "SAT_Pass_HEMVeto_drPhotonCleaned";
+        HEMVeto                           = "SAT_Pass_HEMVeto_jetpt30";
+        HEMVeto_drLeptonCleaned           = "SAT_Pass_HEMVeto_drLeptonCleaned_jetpt30";
+        HEMVeto_drPhotonCleaned           = "SAT_Pass_HEMVeto_drPhotonCleaned_jetpt30";
         semicolon_HEMVeto                 = ";" + HEMVeto;
         semicolon_HEMVeto_drLeptonCleaned = ";" + HEMVeto_drLeptonCleaned;
         semicolon_HEMVeto_drPhotonCleaned = ";" + HEMVeto_drPhotonCleaned;
@@ -738,11 +738,11 @@ int main(int argc, char* argv[])
                               "Pass_trigger_MET",
                               "Pass_LeptonVeto",
                               HEMVeto,
-                              "SAT_Pass_JetID",
-                              "SAT_Pass_EventFilter" + Flag_ecalBadCalibFilter,
-                              "SAT_Pass_MET",
-                              "SAT_Pass_HT",
-                              "SAT_Pass_NJets",
+                              "SAT_Pass_JetID_jetpt30",
+                              "SAT_Pass_EventFilter_jetpt30" + Flag_ecalBadCalibFilter,
+                              "SAT_Pass_MET_jetpt30",
+                              "SAT_Pass_HT_jetpt30",
+                              "SAT_Pass_NJets_jetpt30",
                              };
 
     // Electron
@@ -754,12 +754,12 @@ int main(int argc, char* argv[])
                               "passDiElecSel",
                               "passElecZinvSel",
                               HEMVeto_drLeptonCleaned,
-                              "SAT_Pass_JetID_drLeptonCleaned",
-                              "SAT_Pass_EventFilter_drLeptonCleaned" + Flag_ecalBadCalibFilter,
-                              "SAT_Pass_MET_drLeptonCleaned",
-                              "SAT_Pass_HT_drLeptonCleaned",
-                              "SAT_Pass_NJets_drLeptonCleaned",
-                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
+                              "SAT_Pass_JetID_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_EventFilter_drLeptonCleaned_jetpt30" + Flag_ecalBadCalibFilter,
+                              "SAT_Pass_MET_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_HT_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_NJets_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned_jetpt30",
                              };
     // Electron_Loose
     std::vector<std::string> Cuts_Data_Electron_Loose = {
@@ -770,12 +770,12 @@ int main(int argc, char* argv[])
                               "passDiElecSel",
                               "passElecZinvSel",
                               HEMVeto_drLeptonCleaned,
-                              "SAT_Pass_JetID_drLeptonCleaned",
-                              "SAT_Pass_EventFilter_drLeptonCleaned" + Flag_ecalBadCalibFilter,
-                              "SAT_Pass_MET_Loose_drLeptonCleaned",
-                              "SAT_Pass_HT_drLeptonCleaned",
-                              "SAT_Pass_NJets_drLeptonCleaned",
-                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
+                              "SAT_Pass_JetID_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_EventFilter_drLeptonCleaned_jetpt30" + Flag_ecalBadCalibFilter,
+                              "SAT_Pass_MET_Loose_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_HT_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_NJets_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned_jetpt30",
                              };
     // Electron_Mid
     std::vector<std::string> Cuts_Data_Electron_Mid = {
@@ -786,12 +786,12 @@ int main(int argc, char* argv[])
                               "passDiElecSel",
                               "passElecZinvSel",
                               HEMVeto_drLeptonCleaned,
-                              "SAT_Pass_JetID_drLeptonCleaned",
-                              "SAT_Pass_EventFilter_drLeptonCleaned" + Flag_ecalBadCalibFilter,
-                              "SAT_Pass_MET_Mid_drLeptonCleaned",
-                              "SAT_Pass_HT_drLeptonCleaned",
-                              "SAT_Pass_NJets_drLeptonCleaned",
-                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
+                              "SAT_Pass_JetID_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_EventFilter_drLeptonCleaned_jetpt30" + Flag_ecalBadCalibFilter,
+                              "SAT_Pass_MET_Mid_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_HT_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_NJets_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned_jetpt30",
                              };
     // Muon
     std::vector<std::string> Cuts_Data_Muon = {
@@ -802,12 +802,12 @@ int main(int argc, char* argv[])
                               "passDiMuSel",
                               "passMuZinvSel",
                               HEMVeto_drLeptonCleaned,
-                              "SAT_Pass_JetID_drLeptonCleaned",
-                              "SAT_Pass_EventFilter_drLeptonCleaned" + Flag_ecalBadCalibFilter,
-                              "SAT_Pass_MET_drLeptonCleaned",
-                              "SAT_Pass_HT_drLeptonCleaned",
-                              "SAT_Pass_NJets_drLeptonCleaned",
-                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
+                              "SAT_Pass_JetID_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_EventFilter_drLeptonCleaned_jetpt30" + Flag_ecalBadCalibFilter,
+                              "SAT_Pass_MET_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_HT_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_NJets_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned_jetpt30",
                              };
     // Muon_Loose
     std::vector<std::string> Cuts_Data_Muon_Loose = {
@@ -818,12 +818,12 @@ int main(int argc, char* argv[])
                               "passDiMuSel",
                               "passMuZinvSel",
                               HEMVeto_drLeptonCleaned,
-                              "SAT_Pass_JetID_drLeptonCleaned",
-                              "SAT_Pass_EventFilter_drLeptonCleaned" + Flag_ecalBadCalibFilter,
-                              "SAT_Pass_MET_Loose_drLeptonCleaned",
-                              "SAT_Pass_HT_drLeptonCleaned",
-                              "SAT_Pass_NJets_drLeptonCleaned",
-                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
+                              "SAT_Pass_JetID_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_EventFilter_drLeptonCleaned_jetpt30" + Flag_ecalBadCalibFilter,
+                              "SAT_Pass_MET_Loose_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_HT_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_NJets_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned_jetpt30",
                              };
     // Muon_Mid
     std::vector<std::string> Cuts_Data_Muon_Mid = {
@@ -834,18 +834,18 @@ int main(int argc, char* argv[])
                               "passDiMuSel",
                               "passMuZinvSel",
                               HEMVeto_drLeptonCleaned,
-                              "SAT_Pass_JetID_drLeptonCleaned",
-                              "SAT_Pass_EventFilter_drLeptonCleaned" + Flag_ecalBadCalibFilter,
-                              "SAT_Pass_MET_Mid_drLeptonCleaned",
-                              "SAT_Pass_HT_drLeptonCleaned",
-                              "SAT_Pass_NJets_drLeptonCleaned",
-                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned",
+                              "SAT_Pass_JetID_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_EventFilter_drLeptonCleaned_jetpt30" + Flag_ecalBadCalibFilter,
+                              "SAT_Pass_MET_Mid_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_HT_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_NJets_drLeptonCleaned_jetpt30",
+                              "SAT_Pass_dPhiMETLowDM_drLeptonCleaned_jetpt30",
                              };
     // Photon
     // pre-baseline cuts for Data and MC
     // apply Pass_trigger_photon and Flag_eeBadScFilter to Data but not to MC
-    std::string preBaselineCutsPhotonData = "Pass_trigger_photon;Pass_LeptonVeto;passPhotonSelection;SAT_Pass_JetID_drPhotonCleaned;SAT_Pass_EventFilter_drPhotonCleaned;Flag_eeBadScFilter;MET_pt<250" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned;
-    std::string preBaselineCutsPhotonMC   = "Pass_LeptonVeto;passPhotonSelection;SAT_Pass_JetID_drPhotonCleaned;SAT_Pass_EventFilter_drPhotonCleaned;MET_pt<250" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned;
+    std::string preBaselineCutsPhotonData = "Pass_trigger_photon;Pass_LeptonVeto;passPhotonSelection;SAT_Pass_JetID_drPhotonCleaned_jetpt30;SAT_Pass_EventFilter_drPhotonCleaned_jetpt30;Flag_eeBadScFilter;MET_pt<250" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned;
+    std::string preBaselineCutsPhotonMC   = "Pass_LeptonVeto;passPhotonSelection;SAT_Pass_JetID_drPhotonCleaned_jetpt30;SAT_Pass_EventFilter_drPhotonCleaned_jetpt30;MET_pt<250" + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned;
     //standard baseline
     std::vector<std::string> Cuts_Data_Photon = {
                               "",
@@ -853,31 +853,31 @@ int main(int argc, char* argv[])
                               "Pass_LeptonVeto",
                               "passPhotonSelection",
                               HEMVeto_drPhotonCleaned,
-                              "SAT_Pass_JetID_drPhotonCleaned",
-                              "SAT_Pass_EventFilter_drPhotonCleaned" + Flag_ecalBadCalibFilter,
+                              "SAT_Pass_JetID_drPhotonCleaned_jetpt30",
+                              "SAT_Pass_EventFilter_drPhotonCleaned_jetpt30" + Flag_ecalBadCalibFilter,
                               "MET_pt<250",
-                              "SAT_Pass_MET_drPhotonCleaned",
-                              "SAT_Pass_HT_drPhotonCleaned",
-                              "SAT_Pass_NJets_drPhotonCleaned",
-                              "SAT_Pass_dPhiMETLowDM_drPhotonCleaned",
+                              "SAT_Pass_MET_drPhotonCleaned_jetpt30",
+                              "SAT_Pass_HT_drPhotonCleaned_jetpt30",
+                              "SAT_Pass_NJets_drPhotonCleaned_jetpt30",
+                              "SAT_Pass_dPhiMETLowDM_drPhotonCleaned_jetpt30",
                              };
     // all low dm and high dm cuts
     std::vector<std::string> Cuts_Data_Photon_LowDM_All = {
                               preBaselineCutsPhotonData,
-                              "SAT_Pass_Baseline_drPhotonCleaned",
-                              "nMergedTops_drPhotonCleaned=0",
-                              "nResolvedTops_drPhotonCleaned=0",
-                              "nWs_drPhotonCleaned=0",
-                              "SAT_Pass_ISR_drPhotonCleaned",
-                              "SAT_Pass_S_MET_drPhotonCleaned",
-                              "SAT_Pass_MTB_LowDM_drPhotonCleaned",
+                              "SAT_Pass_Baseline_drPhotonCleaned_jetpt30",
+                              "nMergedTops_drPhotonCleaned_jetpt30=0",
+                              "nResolvedTops_drPhotonCleaned_jetpt30=0",
+                              "nWs_drPhotonCleaned_jetpt30=0",
+                              "SAT_Pass_ISR_drPhotonCleaned_jetpt30",
+                              "SAT_Pass_S_MET_drPhotonCleaned_jetpt30",
+                              "SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30",
                              };
     std::vector<std::string> Cuts_Data_Photon_HighDM_All = {
                               preBaselineCutsPhotonData,
-                              "SAT_Pass_Baseline_drPhotonCleaned",
-                              "SAT_Pass_dPhiMETHighDM_drPhotonCleaned",
-                              "nBottoms_drPhotonCleaned>=1",
-                              "nJets_drPhotonCleaned>=5",
+                              "SAT_Pass_Baseline_drPhotonCleaned_jetpt30",
+                              "SAT_Pass_dPhiMETHighDM_drPhotonCleaned_jetpt30",
+                              "nBottoms_drPhotonCleaned_jetpt30>=1",
+                              "nJets_drPhotonCleaned_jetpt30>=5",
                              };
     
     
@@ -886,12 +886,12 @@ int main(int argc, char* argv[])
     std::vector<std::string> Cuts_Data_MET_LowDM          = Cuts_Data_MET;
     std::vector<std::string> Cuts_Data_MET_LowDM_HighMET  = Cuts_Data_MET;
     std::vector<std::string> Cuts_Data_MET_HighDM         = Cuts_Data_MET;
-    Cuts_Data_MET_LowDM.push_back("SAT_Pass_dPhiMETLowDM");
-    Cuts_Data_MET_LowDM.push_back("SAT_Pass_lowDM");
-    Cuts_Data_MET_LowDM_HighMET.push_back("SAT_Pass_mid_dPhiMETLowDM");
-    Cuts_Data_MET_LowDM_HighMET.push_back("SAT_Pass_lowDM_mid_dPhi");
-    Cuts_Data_MET_HighDM.push_back("SAT_Pass_mid_dPhiMETHighDM");
-    Cuts_Data_MET_HighDM.push_back("SAT_Pass_highDM_mid_dPhi");
+    Cuts_Data_MET_LowDM.push_back("SAT_Pass_dPhiMETLowDM_jetpt30");
+    Cuts_Data_MET_LowDM.push_back("SAT_Pass_lowDM_jetpt30");
+    Cuts_Data_MET_LowDM_HighMET.push_back("SAT_Pass_mid_dPhiMETLowDM_jetpt30");
+    Cuts_Data_MET_LowDM_HighMET.push_back("SAT_Pass_lowDM_mid_dPhi_jetpt30");
+    Cuts_Data_MET_HighDM.push_back("SAT_Pass_mid_dPhiMETHighDM_jetpt30");
+    Cuts_Data_MET_HighDM.push_back("SAT_Pass_highDM_mid_dPhi_jetpt30");
     std::vector<std::string> Cuts_MC_ZNuNu_LowDM          = Cuts_Data_MET_LowDM;
     std::vector<std::string> Cuts_MC_ZNuNu_LowDM_HighMET  = Cuts_Data_MET_LowDM_HighMET;
     std::vector<std::string> Cuts_MC_ZNuNu_HighDM         = Cuts_Data_MET_HighDM;
@@ -913,8 +913,8 @@ int main(int argc, char* argv[])
     // Electron
     std::vector<std::string> Cuts_Data_Electron_LowDM  = Cuts_Data_Electron;
     std::vector<std::string> Cuts_Data_Electron_HighDM = Cuts_Data_Electron;
-    Cuts_Data_Electron_LowDM.push_back("SAT_Pass_lowDM_drLeptonCleaned");
-    Cuts_Data_Electron_HighDM.push_back("SAT_Pass_highDM_drLeptonCleaned");
+    Cuts_Data_Electron_LowDM.push_back("SAT_Pass_lowDM_drLeptonCleaned_jetpt30");
+    Cuts_Data_Electron_HighDM.push_back("SAT_Pass_highDM_drLeptonCleaned_jetpt30");
     std::vector<std::string> Cuts_MC_Electron_LowDM   = Cuts_Data_Electron_LowDM;
     std::vector<std::string> Cuts_MC_Electron_HighDM  = Cuts_Data_Electron_HighDM;
     // Note: Apply Flag_eeBadScFilter to Data but not MC
@@ -931,8 +931,8 @@ int main(int argc, char* argv[])
     // Electron_Loose
     std::vector<std::string> Cuts_Data_Electron_LowDM_Loose  = Cuts_Data_Electron_Loose;
     std::vector<std::string> Cuts_Data_Electron_HighDM_Loose = Cuts_Data_Electron_Loose;
-    Cuts_Data_Electron_LowDM_Loose.push_back("SAT_Pass_lowDM_Loose_drLeptonCleaned");
-    Cuts_Data_Electron_HighDM_Loose.push_back("SAT_Pass_highDM_Loose_drLeptonCleaned");
+    Cuts_Data_Electron_LowDM_Loose.push_back("SAT_Pass_lowDM_Loose_drLeptonCleaned_jetpt30");
+    Cuts_Data_Electron_HighDM_Loose.push_back("SAT_Pass_highDM_Loose_drLeptonCleaned_jetpt30");
     std::vector<std::string> Cuts_MC_Electron_LowDM_Loose   = Cuts_Data_Electron_LowDM_Loose;
     std::vector<std::string> Cuts_MC_Electron_HighDM_Loose  = Cuts_Data_Electron_HighDM_Loose;
     // Note: Apply Flag_eeBadScFilter to Data but not MC
@@ -949,8 +949,8 @@ int main(int argc, char* argv[])
     // Electron_Mid
     std::vector<std::string> Cuts_Data_Electron_LowDM_Mid  = Cuts_Data_Electron_Mid;
     std::vector<std::string> Cuts_Data_Electron_HighDM_Mid = Cuts_Data_Electron_Mid;
-    Cuts_Data_Electron_LowDM_Mid.push_back("SAT_Pass_lowDM_Mid_drLeptonCleaned");
-    Cuts_Data_Electron_HighDM_Mid.push_back("SAT_Pass_highDM_Mid_drLeptonCleaned");
+    Cuts_Data_Electron_LowDM_Mid.push_back("SAT_Pass_lowDM_Mid_drLeptonCleaned_jetpt30");
+    Cuts_Data_Electron_HighDM_Mid.push_back("SAT_Pass_highDM_Mid_drLeptonCleaned_jetpt30");
     std::vector<std::string> Cuts_MC_Electron_LowDM_Mid   = Cuts_Data_Electron_LowDM_Mid;
     std::vector<std::string> Cuts_MC_Electron_HighDM_Mid  = Cuts_Data_Electron_HighDM_Mid;
     // Note: Apply Flag_eeBadScFilter to Data but not MC
@@ -967,8 +967,8 @@ int main(int argc, char* argv[])
     // Muon
     std::vector<std::string> Cuts_Data_Muon_LowDM  = Cuts_Data_Muon;
     std::vector<std::string> Cuts_Data_Muon_HighDM = Cuts_Data_Muon;
-    Cuts_Data_Muon_LowDM.push_back("SAT_Pass_lowDM_drLeptonCleaned");
-    Cuts_Data_Muon_HighDM.push_back("SAT_Pass_highDM_drLeptonCleaned");
+    Cuts_Data_Muon_LowDM.push_back("SAT_Pass_lowDM_drLeptonCleaned_jetpt30");
+    Cuts_Data_Muon_HighDM.push_back("SAT_Pass_highDM_drLeptonCleaned_jetpt30");
     std::vector<std::string> Cuts_MC_Muon_LowDM   = Cuts_Data_Muon_LowDM;
     std::vector<std::string> Cuts_MC_Muon_HighDM  = Cuts_Data_Muon_HighDM;
     // Note: Apply Flag_eeBadScFilter to Data but not MC
@@ -985,8 +985,8 @@ int main(int argc, char* argv[])
     // Muon_Loose
     std::vector<std::string> Cuts_Data_Muon_LowDM_Loose  = Cuts_Data_Muon_Loose;
     std::vector<std::string> Cuts_Data_Muon_HighDM_Loose = Cuts_Data_Muon_Loose;
-    Cuts_Data_Muon_LowDM_Loose.push_back("SAT_Pass_lowDM_Loose_drLeptonCleaned");
-    Cuts_Data_Muon_HighDM_Loose.push_back("SAT_Pass_highDM_Loose_drLeptonCleaned");
+    Cuts_Data_Muon_LowDM_Loose.push_back("SAT_Pass_lowDM_Loose_drLeptonCleaned_jetpt30");
+    Cuts_Data_Muon_HighDM_Loose.push_back("SAT_Pass_highDM_Loose_drLeptonCleaned_jetpt30");
     std::vector<std::string> Cuts_MC_Muon_LowDM_Loose   = Cuts_Data_Muon_LowDM_Loose;
     std::vector<std::string> Cuts_MC_Muon_HighDM_Loose  = Cuts_Data_Muon_HighDM_Loose;
     // Note: Apply Flag_eeBadScFilter to Data but not MC
@@ -1003,8 +1003,8 @@ int main(int argc, char* argv[])
     // Muon_Mid
     std::vector<std::string> Cuts_Data_Muon_LowDM_Mid  = Cuts_Data_Muon_Mid;
     std::vector<std::string> Cuts_Data_Muon_HighDM_Mid = Cuts_Data_Muon_Mid;
-    Cuts_Data_Muon_LowDM_Mid.push_back("SAT_Pass_lowDM_Mid_drLeptonCleaned");
-    Cuts_Data_Muon_HighDM_Mid.push_back("SAT_Pass_highDM_Mid_drLeptonCleaned");
+    Cuts_Data_Muon_LowDM_Mid.push_back("SAT_Pass_lowDM_Mid_drLeptonCleaned_jetpt30");
+    Cuts_Data_Muon_HighDM_Mid.push_back("SAT_Pass_highDM_Mid_drLeptonCleaned_jetpt30");
     std::vector<std::string> Cuts_MC_Muon_LowDM_Mid   = Cuts_Data_Muon_LowDM_Mid;
     std::vector<std::string> Cuts_MC_Muon_HighDM_Mid  = Cuts_Data_Muon_HighDM_Mid;
     // Note: Apply Flag_eeBadScFilter to Data but not MC
@@ -1021,8 +1021,8 @@ int main(int argc, char* argv[])
     // Photon
     std::vector<std::string> Cuts_Data_Photon_LowDM  = Cuts_Data_Photon;
     std::vector<std::string> Cuts_Data_Photon_HighDM = Cuts_Data_Photon;
-    Cuts_Data_Photon_LowDM.push_back("SAT_Pass_lowDM_drPhotonCleaned");
-    Cuts_Data_Photon_HighDM.push_back("SAT_Pass_highDM_drPhotonCleaned");
+    Cuts_Data_Photon_LowDM.push_back("SAT_Pass_lowDM_drPhotonCleaned_jetpt30");
+    Cuts_Data_Photon_HighDM.push_back("SAT_Pass_highDM_drPhotonCleaned_jetpt30");
     std::vector<std::string> Cuts_MC_Photon_LowDM   = Cuts_Data_Photon_LowDM;
     std::vector<std::string> Cuts_MC_Photon_HighDM  = Cuts_Data_Photon_HighDM;
     // Note: Apply Flag_eeBadScFilter to Data but not MC
@@ -1102,10 +1102,10 @@ int main(int argc, char* argv[])
         // suffix for histograms
         std::string histSuffix = JetPtCut + eraTag;
         // top, W, and soft bottom weights
-        std::string MergedTopTotalSF    = ";MergedTopTotalSF"    + cleanTag;
-        std::string WTotalSF            = ";WTotalSF"            + cleanTag;
-        std::string ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + cleanTag;
-        std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + cleanTag;
+        std::string MergedTopTotalSF    = ";MergedTopTotalSF"    + varSuffix;
+        std::string WTotalSF            = ";WTotalSF"            + varSuffix;
+        std::string ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + varSuffix;
+        std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
         std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
         // baseline selections for lepton control regions
         SAT_Pass_lowDM        = ";SAT_Pass_lowDM"           + varSuffix;
@@ -1139,7 +1139,7 @@ int main(int argc, char* argv[])
         if (doDataMCElectron)
         {
             // use DiElecTriggerEffPt instead of Stop0l_trigger_eff_Zee_pt because it applies a Z mass cut
-            std::string ElectronWeights = "genWeightNormalized;DiElecTriggerEffPt;DiElecSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
+            std::string ElectronWeights = "genWeightNormalized_jetpt30;DiElecTriggerEffPt;DiElecSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
             
             // ------------------------------------------------ //
             // bestRecoZM used to calculate normalization
@@ -1636,7 +1636,7 @@ int main(int argc, char* argv[])
         if (doDataMCMuon)
         {
             // Use DiMuTriggerEffPt intead of Stop0l_trigger_eff_Zmumu_pt because it applies a Z mass cut
-            std::string MuonWeights = "genWeightNormalized;DiMuTriggerEffPt;DiMuSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
+            std::string MuonWeights = "genWeightNormalized_jetpt30;DiMuTriggerEffPt;DiMuSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
             // ------------------------------------------------ //
             // bestRecoZM used to calculate normalization
             // Search and Validation Bins Selection
@@ -2048,10 +2048,10 @@ int main(int argc, char* argv[])
         // suffix for variables
         varSuffix  = cleanTag + JetPtCut;
         // top, W, and soft bottom weights
-        MergedTopTotalSF    = ";MergedTopTotalSF"    + cleanTag;
-        WTotalSF            = ";WTotalSF"            + cleanTag;
-        ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + cleanTag;
-        SoftBottomTotalSF   = ";SoftBottomTotalSF"   + cleanTag;
+        MergedTopTotalSF    = ";MergedTopTotalSF"    + varSuffix;
+        WTotalSF            = ";WTotalSF"            + varSuffix;
+        ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + varSuffix;
+        SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
         TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
         // baseline selections for photon control region
         SAT_Pass_lowDM        = ";SAT_Pass_lowDM"       + varSuffix;
@@ -2085,7 +2085,7 @@ int main(int argc, char* argv[])
             std::vector<double> xbins_nj_nb0 = {2.0, 6.0, 10.0}; // njets = 2 - 5, >=6
             std::vector<double> xbins_nj_nb1 = {2.0, 7.0, 10.0}; // njets = 2 - 6, >=7
             // all weights
-            std::string PhotonWeights = "genWeightNormalized;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
+            std::string PhotonWeights = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
             // Search and Validation Bins Selection
             for (const auto& cut : map_shape_cuts_low_dm)
             {
@@ -2174,23 +2174,23 @@ int main(int argc, char* argv[])
             
             // Data
             // Note: Apply Pass_trigger_photon and Flag_eeBadScFilter to Data but not MC
-            PDS dsData_Photon_LowDM(        "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-            PDS dsData_Photon_LowDM_nb0(    "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned=0"     + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-            PDS dsData_Photon_LowDM_nb1(    "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned>=1"    + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-            PDS dsData_Photon_LowDM_Tight(  "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                + PhotonIDSelection + SAT_Pass_lowDM_Tight   + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-            PDS dsData_Photon_HighDM(       "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-            PDS dsData_Photon_HighDM_nb1(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned=1"     + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-            PDS dsData_Photon_HighDM_nb2(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned=2"     + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-            PDS dsData_Photon_HighDM_nb3(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drLeptonCleaned>=3"    + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_LowDM(        "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                        + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_LowDM_nb0(    "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30=0"     + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_LowDM_nb1(    "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30>=1"    + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_LowDM_Tight(  "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                        + PhotonIDSelection + SAT_Pass_lowDM_Tight   + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_HighDM(       "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                        + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_HighDM_nb1(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30=1"     + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_HighDM_nb2(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30=2"     + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_HighDM_nb3(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30>=3"    + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             // MC
-            std::vector<std::vector<PDS>> StackMC_Photon_LowDM          = makeStackMC_Photon( "MET_pt<250"                              + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
-            std::vector<std::vector<PDS>> StackMC_Photon_LowDM_nb0      = makeStackMC_Photon( "MET_pt<250;nBottoms_drLeptonCleaned=0"   + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
-            std::vector<std::vector<PDS>> StackMC_Photon_LowDM_nb1      = makeStackMC_Photon( "MET_pt<250;nBottoms_drLeptonCleaned>=1"  + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
-            std::vector<std::vector<PDS>> StackMC_Photon_LowDM_Tight    = makeStackMC_Photon( "MET_pt<250"                              + PhotonIDSelection + SAT_Pass_lowDM_Tight   + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
-            std::vector<std::vector<PDS>> StackMC_Photon_HighDM         = makeStackMC_Photon( "MET_pt<250"                              + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
-            std::vector<std::vector<PDS>> StackMC_Photon_HighDM_nb1     = makeStackMC_Photon( "MET_pt<250;nBottoms_drLeptonCleaned=1"   + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
-            std::vector<std::vector<PDS>> StackMC_Photon_HighDM_nb2     = makeStackMC_Photon( "MET_pt<250;nBottoms_drLeptonCleaned=2"   + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
-            std::vector<std::vector<PDS>> StackMC_Photon_HighDM_nb3     = makeStackMC_Photon( "MET_pt<250;nBottoms_drLeptonCleaned>=3"  + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_LowDM          = makeStackMC_Photon( "MET_pt<250"                                      + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_LowDM_nb0      = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30=0"   + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_LowDM_nb1      = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30>=1"  + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_LowDM_Tight    = makeStackMC_Photon( "MET_pt<250"                                      + PhotonIDSelection + SAT_Pass_lowDM_Tight   + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_HighDM         = makeStackMC_Photon( "MET_pt<250"                                      + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_HighDM_nb1     = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30=1"   + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_HighDM_nb2     = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30=2"   + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_HighDM_nb3     = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30>=3"  + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
             
             // n_jets
             PDC dcData_Photon_LowDM_nj(                              "data",   "nJets" + varSuffix, {dsData_Photon_LowDM});
@@ -3164,18 +3164,20 @@ int main(int argc, char* argv[])
     }
     if (doSearchBins)
     {
-        // top, W, and soft bottom weights
-        std::string MergedTopTotalSF    = ";MergedTopTotalSF";
-        std::string WTotalSF            = ";WTotalSF";
-        std::string ResolvedTopTotalSF  = ";ResolvedTopTotalSF";
-        std::string SoftBottomTotalSF   = ";SoftBottomTotalSF";
-        std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
-        std::string ZNuNuWeights        = "genWeightNormalized;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight;
         // begin loop over jet pt cuts 
         for (const auto& JetPtCut : JetPtCuts) 
         {
+            // suffix for variables
+            std::string varSuffix  = JetPtCut;
             // suffix for histograms
             std::string histSuffix = JetPtCut + eraTag;
+            // top, W, and soft bottom weights
+            std::string MergedTopTotalSF    = ";MergedTopTotalSF"    + varSuffix;
+            std::string WTotalSF            = ";WTotalSF"            + varSuffix;
+            std::string ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + varSuffix;
+            std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
+            std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
+            std::string ZNuNuWeights        = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight;
             
             // ---------------------------------- // 
             // --- validation and search bins --- //
