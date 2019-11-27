@@ -1203,7 +1203,7 @@ int main(int argc, char* argv[])
                         weightMap["down"]   = ElectronWeights_down;
                         for (const auto& w : weightMap)
                         {
-                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut + eraTag;
+                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut;
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             for (const auto& cut : map_norm_cuts_low_dm)
                             {
@@ -1699,7 +1699,7 @@ int main(int argc, char* argv[])
                         weightMap["down"]   = MuonWeights_down;
                         for (const auto& w : weightMap)
                         {
-                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut + eraTag;
+                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut;
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             for (const auto& cut : map_norm_cuts_low_dm)
                             {
@@ -2135,7 +2135,7 @@ int main(int argc, char* argv[])
                         weightMap["down"]   = PhotonWeights_down;
                         for (const auto& w : weightMap)
                         {
-                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut + eraTag;
+                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut;
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             // Search and Validation Bins Selection
                             for (const auto& cut : map_shape_cuts_low_dm)
@@ -3264,7 +3264,7 @@ int main(int argc, char* argv[])
                         
                         for (const auto& w : weightMap)
                         {
-                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut + eraTag;
+                            std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut;
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             
                             // ZNuNu MC in validation and search bins
