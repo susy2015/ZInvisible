@@ -700,7 +700,7 @@ int main(int argc, char* argv[])
     auto makeStackMC_Photon = [&](const std::string& cuts, const std::string& weights)
     {
         PDS dsGJets(      "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,   weights);
-        PDS dsQCD(        "QCD",                    fileMap["QCD_Photon" + yearTag],    cuts,   weights);
+        PDS dsQCD(        "QCD",                    fileMap["QCD_Photon" + yearTag],    cuts + ";passQCDSelection",   weights);
         PDS dsWJetsToLNu( "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
         PDS dsTTG(        "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,   weights);
         PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);

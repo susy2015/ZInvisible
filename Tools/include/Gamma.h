@@ -149,6 +149,7 @@ namespace plotterFunctions
         bool passPhotonSelectionDirect      = false;
         bool passPhotonSelectionFragmented  = false;
         bool passPhotonSelectionFake        = false;
+        bool passQCDSelection               = true;  // default should be true
         
         // if you use new, you need to register it or destroy it yourself to clear memory; otherwise there will be memory leaks
         // use createDerivedVec to avoid this issue 
@@ -205,49 +206,43 @@ namespace plotterFunctions
                 // testing
                 //printf("INFO: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                 
+                
+                // --- old version for gen partons --- //
+                //if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
+                //{
+                //    // old version
+                //    if (status == 23 && (statusFlags & 0x80 == 0x80) )
+                //    {
+                //        if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                //        GenPartonTLV.push_back(GenPartTLV[i]);
+                //    }
+                //}
+                
                 // Particle IDs
                 // quarks: +/- (1 to 6)
                 // gluons: + (9 and 21)
+                // statusFlag: isPrompt; statusFlag & 1 == 1
                 // outgoing particles of the hardest subprocess: GenPart_status = 23
                 // isHardProcess: GenPart_statusFlags & (0x80) == (0x80)
                 
-                // check pdgId
                 if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
                 {
-                    // check status and statusFlags
-                    if (status == 23 && (statusFlags & 0x80 == 0x80) )
+                    if (statusFlags & 1 == 1)
                     {
                         if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPartonTLV.push_back(GenPartTLV[i]);
                     }
                 }
+
                 // Particle IDs
                 // photons: +22
                 // stable: status == 1
-                // stautsFlags is bitwise and already applied in post-processing
+                // statusFlag: isPrompt; statusFlag & 1 == 1
                 
-                // check pdgId and status
-                if (pdgId == 22 && status == 23)
+                if (pdgId == 22 && status == 1 && (statusFlags & 1 == 1) )
                 {
-                    // check mother_pdgId
-                    //if (mother_pdgId == 0)
-                    //{
-                    //    if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
-                    //    GenPhotonTLV.push_back(GenPartTLV[i]);
-                    //}
-                    //else
-                    if (mother_pdgId != 0)
-                    {
-                        if ( abs(mother_pdgId) <= 22 || mother_pdgId == 2212 )
-                        {
-                            if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
-                            GenPhotonTLV.push_back(GenPartTLV[i]);
-                        }
-                    }
-                    //else
-                    //{
-                    //    printf("WARNING: No mother particle found for gen partile with pdgId = %d\n", pdgId);
-                    //}
+                    if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                    GenPhotonTLV.push_back(GenPartTLV[i]);
                 }
             }
             //Apply cuts to Gen Photons
@@ -273,6 +268,11 @@ namespace plotterFunctions
                 {
                     float dR = ROOT::Math::VectorUtil::DeltaR(GenPhotonTLV[i], genParton);
                     dR_GenPhotonGenParton.push_back(dR);
+                    if (dR > 0.4)
+                    {
+                        if (verbose) printf("Rejecting QCD event: DR(gen photon, gen parton) = %f\n", dR);
+                        passQCDSelection = false;
+                    }
                 }
             }
         }
@@ -468,6 +468,7 @@ namespace plotterFunctions
         tr.registerDerivedVar("passPhotonSelectionDirect",      passPhotonSelectionDirect);
         tr.registerDerivedVar("passPhotonSelectionFragmented",  passPhotonSelectionFragmented);
         tr.registerDerivedVar("passPhotonSelectionFake",        passPhotonSelectionFake);
+        tr.registerDerivedVar("passQCDSelection",               passQCDSelection);
         tr.registerDerivedVar("min_dR_GenPhotonGenParton",      min_dR_GenPhotonGenParton);
         tr.registerDerivedVar("min_dR_RecoPhotonGenParton",     min_dR_RecoPhotonGenParton);
         tr.registerDerivedVar("min_dR_RecoPhotonGenPhoton",     min_dR_RecoPhotonGenPhoton);
