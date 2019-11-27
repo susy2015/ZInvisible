@@ -142,8 +142,10 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*shapeNJets);
     tr.registerFunction(*getSearchBin);
     
+    // TODO: create JES histograms in MakePlots.C
     // apply JEC to MC only
-    if (doSystematics_ && tr.checkBranch("GenJet_pt"))
+    //if (doSystematics_ && tr.checkBranch("GenJet_pt"))
+    if (false)
     {
         tr.registerFunction(*runTopTagger_jesTotalUp);
         tr.registerFunction(*runTopTagger_jesTotalDown);
