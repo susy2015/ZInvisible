@@ -266,7 +266,7 @@ double Plotter::DatasetSummary::getWeight(const NTupleReader& tr) const
         // for testing
         //std::cout << "weight name: " << weightName << std::endl;
         bool exists = tr.checkBranch(weightName);
-        if (! exists) std::cout << "ERROR in " << __func__ <<  ": The weight " << weightName << " does not exist; this will probably seg fault, my friend." << std::endl;
+        if (! exists) std::cout << std::endl << "ERROR in " << __func__ <<  ": The branch " << weightName << " does not exist; this will probably seg fault, my friend." << std::endl << std::endl;
         const double& weight = static_cast<double>(tr.getVar<data_t>(weightName));
         if(weight == weight)
         {
@@ -702,6 +702,8 @@ double Plotter::Cut::translateVar(const NTupleReader& tr, const int index) const
 bool Plotter::Cut::boolReturn(const NTupleReader& tr) const
 {
     //std::cout << "DEBUG: " << name.name << std::endl;
+    bool exists = tr.checkBranch(name.name);
+    if (! exists) std::cout << std::endl << "ERROR in " << __func__ <<  ": The branch " << name.name << " does not exist; this will probably seg fault, my friend." << std::endl << std::endl;
     return tr.getVar<bool>(name.name);
 }
 
