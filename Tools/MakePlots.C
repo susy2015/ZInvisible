@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        std::cout << "Failed to load the json file " << systematics_file << std::endl;
+        std::cout << "ERROR: Failed to load the json file " << systematics_file << std::endl;
     }
 
     // get year from era
@@ -193,9 +193,10 @@ int main(int argc, char* argv[])
     std::string MuonDataset     = "Data_SingleMuon";
     std::string PhotonDataset   = "Data_SinglePhoton";
     // year and periods
-    std::string eraTag    = "_" + era; 
-    std::string yearTag   = "_" + year; 
-    std::string periodTag = ""; 
+    std::string eraTag      = "_" + era; 
+    std::string yearTag     = "_" + year; 
+    std::string periodTag   = ""; 
+    std::string yearForLumi = year;
     // HEM veto for 2018 PostHEM
     bool doHEMVeto = false;
     std::string HEMVeto                 = "";
@@ -266,9 +267,18 @@ int main(int argc, char* argv[])
         semicolon_HEMVeto_drPhotonCleaned = ";" + HEMVeto_drPhotonCleaned;
         doHEMVeto                         = true;
     }
+    else if (era.compare("Run2") == 0)
+    {
+        // Hack to treat Run2 as 2016 for all but luminosity
+        era  = "2016";
+        year = "2016";
+        std::string eraTag      = "_" + era; 
+        std::string yearTag     = "_" + year; 
+        std::string periodTag   = ""; 
+    }
     else
     {
-        std::cout << "Please enter 2016, 2017, 2017_BE, 2017_F, 2018, 2018_PreHEM or 2018_PostHEM for the era using the -Y flag." << std::endl;
+        std::cout << "Please enter 2016, 2017, 2017_BE, 2017_F, 2018, 2018_PreHEM, 2018_PostHEM, or Run2 for the era using the -Y flag." << std::endl;
         exit(1);
     }
 
@@ -283,8 +293,8 @@ int main(int argc, char* argv[])
         else
         {
             // Hack to get luminosity from reference
-            AnaSamples::SampleSet        SS_temp("sampleSets_PostProcessed_"+year+".cfg", runOnCondor, lumi);
-            AnaSamples::SampleCollection SC_temp("sampleCollections_"+year+".cfg", SS_temp);
+            AnaSamples::SampleSet        SS_temp("sampleSets_PostProcessed_"+yearForLumi+".cfg", runOnCondor, lumi);
+            AnaSamples::SampleCollection SC_temp("sampleCollections_"+yearForLumi+".cfg", SS_temp);
             lumi = SC_temp.getSampleLumi(refLumi);
         }
     }
