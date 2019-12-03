@@ -31,11 +31,11 @@ namespace plotterFunctions
         std::string suffix_;
         std::string met_name_  = "MET_pt";
         std::map<std::string, std::string> prefixMap = {
-            {"/binNum",             "bin_"},
+            {"/binNum",            "bin_"},
             {"/unitCRNum/qcdcr",   "bin_qcdcr_"},
             {"/unitCRNum/lepcr",   "bin_lepcr_"},
             {"/unitCRNum/phocr",   "bin_phocr_"},
-            {"/unitSRNum",          "bin_"},
+            {"/unitSRNum",         "bin_"},
         };
 
         void getSearchBin(NTupleReader& tr)
