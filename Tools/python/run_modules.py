@@ -109,8 +109,8 @@ def main():
     total_era = "Run2"
     validation_file = "validationBinsZinv_" + total_era + ".root"
     search_file     = "searchBinsZinv_"     + total_era + ".root"
-    VB.makeTotalPred( validation_file,  "Validation Bin",   "validation", total_era   )
-    SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
+    #VB.makeTotalPred( validation_file,  "Validation Bin",   "validation", total_era   )
+    #SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
     SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
 
