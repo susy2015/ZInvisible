@@ -82,9 +82,9 @@ class Normalization:
                         selectionTag = "_" + selection + "_jetpt30"
                         # using Nb and Nsv selection
                         self.histos[era][bin_type][particle][region][selection] = { 
-                            "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + eraTag + 2 * self.variable + "Datadata",
-                            "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + eraTag + 2 * self.variable + "ZToLLstack",
-                            "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + eraTag + 2 * self.variable + "NoZToLLstack",
+                            "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "Datadata",
+                            "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "ZToLLstack",
+                            "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "NoZToLLstack",
                         }
 
     def calcNorm(self, A, x):
