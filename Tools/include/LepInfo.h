@@ -48,11 +48,20 @@ namespace plotterFunctions
             std::vector<int> genDecayPdgIdVec;
             std::vector<int> GenPart_statusFlags;
             std::vector<TLorentzVector> genDecayLVec;
+            data_t met_jesTotalUp       = 0.0;
+            data_t met_jesTotalDown     = 0.0;
+            data_t metphi_jesTotalUp    = 0.0;
+            data_t metphi_jesTotalDown  = 0.0;
+            // MC only
             if (tr.checkBranch("GenPartTLV"))
             {
                 genDecayPdgIdVec                    = tr.getVec<int>("GenPart_pdgId");
                 GenPart_statusFlags                 = tr.getVec<int>("GenPart_statusFlags");
                 genDecayLVec                        = tr.getVec<TLorentzVector>("GenPartTLV");
+                met_jesTotalUp                      = tr.getVar<data_t>("MET_pt_jesTotalUp");
+                met_jesTotalDown                    = tr.getVar<data_t>("MET_pt_jesTotalDown");
+                metphi_jesTotalUp                   = tr.getVar<data_t>("MET_phi_jesTotalUp");
+                metphi_jesTotalDown                 = tr.getVar<data_t>("MET_phi_jesTotalDown");
             }
             const auto& muonsLVec                           = tr.getVec<TLorentzVector>("MuonTLV");
             const auto& muonsCharge                         = tr.getVec<int>("Muon_charge");
@@ -328,9 +337,18 @@ namespace plotterFunctions
                     }
                 }
             }
+        
+            // -------------------- //
+            // --- Modified MET --- //
+            // -------------------- //
 
-            TLorentzVector metV, metZ;
-            metV.SetPtEtaPhiM(met, 0.0, metphi, 0.0);
+            TLorentzVector metZ;
+            TLorentzVector metV;
+            TLorentzVector metV_jesTotalUp;
+            TLorentzVector metV_jesTotalDown;
+            metV.SetPtEtaPhiM(                  met,                0.0, metphi,                0.0);
+            metV_jesTotalUp.SetPtEtaPhiM(       met_jesTotalUp,     0.0, metphi_jesTotalUp,     0.0);
+            metV_jesTotalDown.SetPtEtaPhiM(     met_jesTotalDown,   0.0, metphi_jesTotalDown,   0.0);
 
             // initialized by (0., 0., 0., 0.)
             TLorentzVector bestRecoZ;
@@ -361,7 +379,9 @@ namespace plotterFunctions
             }
             
             metZ.SetPtEtaPhiM(bestRecoZ.Pt(), 0.0, bestRecoZ.Phi(), 0.0);
-            TLorentzVector cleanMet = metV + metZ;
+            TLorentzVector cleanMet                 = metV              + metZ;
+            TLorentzVector cleanMet_jesTotalUp      = metV_jesTotalUp   + metZ;
+            TLorentzVector cleanMet_jesTotalDown    = metV_jesTotalDown + metZ;
             
             // di-lepton selections
             bool passMuPt      = (cutMuVec.size() == 2   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt);
@@ -438,11 +458,15 @@ namespace plotterFunctions
             }
 
             // Z values
-            data_t bestRecoZPt  = bestRecoZ.Pt();
-            data_t bestRecoZM   = bestRecoZ.M();
-            data_t Zrecoptpt    = Zrecopt.Pt();
-            data_t metWithLL    = cleanMet.Pt();
-            data_t metphiWithLL = cleanMet.Phi();
+            data_t bestRecoZPt                  = bestRecoZ.Pt();
+            data_t bestRecoZM                   = bestRecoZ.M();
+            data_t Zrecoptpt                    = Zrecopt.Pt();
+            data_t metWithLL                    = cleanMet.Pt();
+            data_t metWithLL_jesTotalUp         = cleanMet_jesTotalUp.Pt();
+            data_t metWithLL_jesTotalDown       = cleanMet_jesTotalDown.Pt();
+            data_t metphiWithLL                 = cleanMet.Phi();
+            data_t metphiWithLL_jesTotalUp      = cleanMet_jesTotalUp.Phi();
+            data_t metphiWithLL_jesTotalDown    = cleanMet_jesTotalDown.Phi();
             
             // di-lepton trigger efficiencies and scale factors
             data_t DiMuTriggerEffPt         = 1.0;
@@ -551,80 +575,84 @@ namespace plotterFunctions
                 }
             }
             
-            tr.registerDerivedVar("bestRecoZPt", bestRecoZPt);
-            tr.registerDerivedVar("bestRecoZM", bestRecoZM);
-            tr.registerDerivedVar("metWithLL", metWithLL);
-            tr.registerDerivedVar("metphiWithLL", metphiWithLL);
-            tr.registerDerivedVar("cutMuPt1",    cutMuPt1);
-            tr.registerDerivedVar("cutMuPt2",    cutMuPt2);
-            tr.registerDerivedVar("cutMuEta1",   cutMuEta1);
-            tr.registerDerivedVar("cutMuEta2",   cutMuEta2);
-            tr.registerDerivedVar("cutElecPt1",  cutElecPt1);
-            tr.registerDerivedVar("cutElecPt2",  cutElecPt2);
-            tr.registerDerivedVar("cutElecEta1", cutElecEta1);
-            tr.registerDerivedVar("cutElecEta2", cutElecEta2);
-            tr.registerDerivedVar("DiMuTriggerEffPt",           DiMuTriggerEffPt);
-            tr.registerDerivedVar("DiMuTriggerEffPt_Up",        DiMuTriggerEffPt_Up);
-            tr.registerDerivedVar("DiMuTriggerEffPt_Down",      DiMuTriggerEffPt_Down);
-            tr.registerDerivedVar("DiMuTriggerEffEta",          DiMuTriggerEffEta);
-            tr.registerDerivedVar("DiMuTriggerEffEta_Up",       DiMuTriggerEffEta_Up);
-            tr.registerDerivedVar("DiMuTriggerEffEta_Down",     DiMuTriggerEffEta_Down);
-            tr.registerDerivedVar("DiMuSF",                     DiMuSF);
-            tr.registerDerivedVar("DiMuSF_Up",                  DiMuSF_Up);
-            tr.registerDerivedVar("DiMuSF_Down",                DiMuSF_Down);
-            tr.registerDerivedVar("DiElecTriggerEffPt",         DiElecTriggerEffPt);
-            tr.registerDerivedVar("DiElecTriggerEffPt_Up",      DiElecTriggerEffPt_Up);
-            tr.registerDerivedVar("DiElecTriggerEffPt_Down",    DiElecTriggerEffPt_Down);
-            tr.registerDerivedVar("DiElecTriggerEffEta",        DiElecTriggerEffEta);
-            tr.registerDerivedVar("DiElecTriggerEffEta_Up",     DiElecTriggerEffEta_Up);
-            tr.registerDerivedVar("DiElecTriggerEffEta_Down",   DiElecTriggerEffEta_Down);
-            tr.registerDerivedVar("DiElecSF",                   DiElecSF);
-            tr.registerDerivedVar("DiElecSF_Up",                DiElecSF_Up);
-            tr.registerDerivedVar("DiElecSF_Down",              DiElecSF_Down);
-            tr.registerDerivedVar("mindPhiMetJ", mindPhiMetJ);
-            tr.registerDerivedVar("ZPtRes", (bestRecoZPt - genZPt)/genZPt);
-            tr.registerDerivedVar("ZEtaRes", bestRecoZ.Eta() - genZEta);
-            tr.registerDerivedVar("ZPhiRes", bestRecoZ.Phi() - genZPhi);
-            tr.registerDerivedVar("ZMRes", (bestRecoZ.M() - genZmass)/genZmass);
-            tr.registerDerivedVec("genMu", genMu);
-            const auto& genMu_test = tr.getVec<const TLorentzVector*>("genMu");
-            tr.registerDerivedVar("ngenMu", static_cast<data_t>(genMu->size()));
-            tr.registerDerivedVec("genMuInAcc", genMuInAcc);
-            tr.registerDerivedVar("ngenMuInAcc", static_cast<data_t>(genMuInAcc->size()));
-            tr.registerDerivedVec("genMatchMuInAcc", genMatchMuInAcc);
-            tr.registerDerivedVec("genMatchMuInAccRes", genMatchMuInAccRes);
-            tr.registerDerivedVec("genMatchIsoMuInAcc", genMatchIsoMuInAcc);
-            tr.registerDerivedVar("ngenMatchMuInAcc", static_cast<data_t>(genMatchMuInAcc->size()));
-            tr.registerDerivedVec("genElec", genElec);
-            tr.registerDerivedVar("ngenElec", static_cast<data_t>(genElec->size()));
-            tr.registerDerivedVec("genElecInAcc", genElecInAcc);
-            tr.registerDerivedVar("ngenElecInAcc", static_cast<data_t>(genElecInAcc->size()));
-            tr.registerDerivedVec("genMatchElecInAcc", genMatchElecInAcc);
-            tr.registerDerivedVec("genMatchElecInAccRes", genMatchElecInAccRes);
-            tr.registerDerivedVec("genMatchIsoElecInAcc", genMatchIsoElecInAcc);
-            tr.registerDerivedVar("ngenMatchElecInAcc", static_cast<data_t>(genMatchElecInAcc->size()));
-            tr.registerDerivedVar("genZPt", genZPt);
-            tr.registerDerivedVar("genZEta", genZEta);
-            tr.registerDerivedVar("genZPhi", genZPhi);
-            tr.registerDerivedVar("genZmass", genZmass);
-            tr.registerDerivedVar("pdgIdZDec", pdgIdZDec);
-            tr.registerDerivedVar("passDiMuIsoTrig", passDiMuTrig);
-            tr.registerDerivedVar("passSingleMu45", muTrigMu45);
-            tr.registerDerivedVar("passMuPt",                    passMuPt);
-            tr.registerDerivedVar("passElecPt",                  passElecPt);
-            tr.registerDerivedVar("passDiMuSel",                 passDiMuSel);
-            tr.registerDerivedVar("passDiElecSel",               passDiElecSel);
-            tr.registerDerivedVar("passElMuSel",                 passElMuSel);
-            tr.registerDerivedVar("passMuZinvSel",               passMuZinvSel);
-            tr.registerDerivedVar("passMuZinvSelOnZMassPeak",    passMuZinvSelOnZMassPeak);
-            tr.registerDerivedVar("passMuZinvSelOffZMassPeak",   passMuZinvSelOffZMassPeak);
-            tr.registerDerivedVar("passElecZinvSel",             passElecZinvSel);
-            tr.registerDerivedVar("passElecZinvSelOnZMassPeak",  passElecZinvSelOnZMassPeak);
-            tr.registerDerivedVar("passElecZinvSelOffZMassPeak", passElecZinvSelOffZMassPeak);
-            tr.registerDerivedVar("passElMuZinvSel",             passElMuZinvSel);
-            tr.registerDerivedVar("passElMuZinvSelOnZMassPeak",  passElMuZinvSelOnZMassPeak);
-            tr.registerDerivedVar("passElMuZinvSelOffZMassPeak", passElMuZinvSelOffZMassPeak);
-            tr.registerDerivedVar("Zrecopt", Zrecoptpt);
+            tr.registerDerivedVar("bestRecoZPt",                    bestRecoZPt);
+            tr.registerDerivedVar("bestRecoZM",                     bestRecoZM);
+            tr.registerDerivedVar("metWithLL",                      metWithLL);
+            tr.registerDerivedVar("metWithLL_jesTotalUp",           metWithLL_jesTotalUp);
+            tr.registerDerivedVar("metWithLL_jesTotalDown",         metWithLL_jesTotalDown);
+            tr.registerDerivedVar("metphiWithLL",                   metphiWithLL);
+            tr.registerDerivedVar("metphiWithLL_jesTotalUp",        metphiWithLL_jesTotalUp);
+            tr.registerDerivedVar("metphiWithLL_jesTotalDown",      metphiWithLL_jesTotalDown);
+            tr.registerDerivedVar("cutMuPt1",                       cutMuPt1);
+            tr.registerDerivedVar("cutMuPt2",                       cutMuPt2);
+            tr.registerDerivedVar("cutMuEta1",                      cutMuEta1);
+            tr.registerDerivedVar("cutMuEta2",                      cutMuEta2);
+            tr.registerDerivedVar("cutElecPt1",                     cutElecPt1);
+            tr.registerDerivedVar("cutElecPt2",                     cutElecPt2);
+            tr.registerDerivedVar("cutElecEta1",                    cutElecEta1);
+            tr.registerDerivedVar("cutElecEta2",                    cutElecEta2);
+            tr.registerDerivedVar("DiMuTriggerEffPt",               DiMuTriggerEffPt);
+            tr.registerDerivedVar("DiMuTriggerEffPt_Up",            DiMuTriggerEffPt_Up);
+            tr.registerDerivedVar("DiMuTriggerEffPt_Down",          DiMuTriggerEffPt_Down);
+            tr.registerDerivedVar("DiMuTriggerEffEta",              DiMuTriggerEffEta);
+            tr.registerDerivedVar("DiMuTriggerEffEta_Up",           DiMuTriggerEffEta_Up);
+            tr.registerDerivedVar("DiMuTriggerEffEta_Down",         DiMuTriggerEffEta_Down);
+            tr.registerDerivedVar("DiMuSF",                         DiMuSF);
+            tr.registerDerivedVar("DiMuSF_Up",                      DiMuSF_Up);
+            tr.registerDerivedVar("DiMuSF_Down",                    DiMuSF_Down);
+            tr.registerDerivedVar("DiElecTriggerEffPt",             DiElecTriggerEffPt);
+            tr.registerDerivedVar("DiElecTriggerEffPt_Up",          DiElecTriggerEffPt_Up);
+            tr.registerDerivedVar("DiElecTriggerEffPt_Down",        DiElecTriggerEffPt_Down);
+            tr.registerDerivedVar("DiElecTriggerEffEta",            DiElecTriggerEffEta);
+            tr.registerDerivedVar("DiElecTriggerEffEta_Up",         DiElecTriggerEffEta_Up);
+            tr.registerDerivedVar("DiElecTriggerEffEta_Down",       DiElecTriggerEffEta_Down);
+            tr.registerDerivedVar("DiElecSF",                       DiElecSF);
+            tr.registerDerivedVar("DiElecSF_Up",                    DiElecSF_Up);
+            tr.registerDerivedVar("DiElecSF_Down",                  DiElecSF_Down);
+            tr.registerDerivedVar("mindPhiMetJ",                    mindPhiMetJ);
+            tr.registerDerivedVar("ZPtRes",                         (bestRecoZPt - genZPt)/genZPt);
+            tr.registerDerivedVar("ZEtaRes",                        bestRecoZ.Eta() - genZEta);
+            tr.registerDerivedVar("ZPhiRes",                        bestRecoZ.Phi() - genZPhi);
+            tr.registerDerivedVar("ZMRes",                          (bestRecoZ.M() - genZmass)/genZmass);
+            tr.registerDerivedVec("genMu",                          genMu);
+            const auto& genMu_test                                  = tr.getVec<const TLorentzVector*>("genMu");
+            tr.registerDerivedVar("ngenMu",                         static_cast<data_t>(genMu->size()));
+            tr.registerDerivedVec("genMuInAcc",                     genMuInAcc);
+            tr.registerDerivedVar("ngenMuInAcc",                    static_cast<data_t>(genMuInAcc->size()));
+            tr.registerDerivedVec("genMatchMuInAcc",                genMatchMuInAcc);
+            tr.registerDerivedVec("genMatchMuInAccRes",             genMatchMuInAccRes);
+            tr.registerDerivedVec("genMatchIsoMuInAcc",             genMatchIsoMuInAcc);
+            tr.registerDerivedVar("ngenMatchMuInAcc",               static_cast<data_t>(genMatchMuInAcc->size()));
+            tr.registerDerivedVec("genElec",                        genElec);
+            tr.registerDerivedVar("ngenElec",                       static_cast<data_t>(genElec->size()));
+            tr.registerDerivedVec("genElecInAcc",                   genElecInAcc);
+            tr.registerDerivedVar("ngenElecInAcc",                  static_cast<data_t>(genElecInAcc->size()));
+            tr.registerDerivedVec("genMatchElecInAcc",              genMatchElecInAcc);
+            tr.registerDerivedVec("genMatchElecInAccRes",           genMatchElecInAccRes);
+            tr.registerDerivedVec("genMatchIsoElecInAcc",           genMatchIsoElecInAcc);
+            tr.registerDerivedVar("ngenMatchElecInAcc",             static_cast<data_t>(genMatchElecInAcc->size()));
+            tr.registerDerivedVar("genZPt",                         genZPt);
+            tr.registerDerivedVar("genZEta",                        genZEta);
+            tr.registerDerivedVar("genZPhi",                        genZPhi);
+            tr.registerDerivedVar("genZmass",                       genZmass);
+            tr.registerDerivedVar("pdgIdZDec",                      pdgIdZDec);
+            tr.registerDerivedVar("passDiMuIsoTrig",                passDiMuTrig);
+            tr.registerDerivedVar("passSingleMu45",                 muTrigMu45);
+            tr.registerDerivedVar("passMuPt",                       passMuPt);
+            tr.registerDerivedVar("passElecPt",                     passElecPt);
+            tr.registerDerivedVar("passDiMuSel",                    passDiMuSel);
+            tr.registerDerivedVar("passDiElecSel",                  passDiElecSel);
+            tr.registerDerivedVar("passElMuSel",                    passElMuSel);
+            tr.registerDerivedVar("passMuZinvSel",                  passMuZinvSel);
+            tr.registerDerivedVar("passMuZinvSelOnZMassPeak",       passMuZinvSelOnZMassPeak);
+            tr.registerDerivedVar("passMuZinvSelOffZMassPeak",      passMuZinvSelOffZMassPeak);
+            tr.registerDerivedVar("passElecZinvSel",                passElecZinvSel);
+            tr.registerDerivedVar("passElecZinvSelOnZMassPeak",     passElecZinvSelOnZMassPeak);
+            tr.registerDerivedVar("passElecZinvSelOffZMassPeak",    passElecZinvSelOffZMassPeak);
+            tr.registerDerivedVar("passElMuZinvSel",                passElMuZinvSel);
+            tr.registerDerivedVar("passElMuZinvSelOnZMassPeak",     passElMuZinvSelOnZMassPeak);
+            tr.registerDerivedVar("passElMuZinvSelOffZMassPeak",    passElMuZinvSelOffZMassPeak);
+            tr.registerDerivedVar("Zrecopt",                        Zrecoptpt);
         }
 
         double getEfficiency(std::string kinematic, std::string syst, std::vector<double> values)

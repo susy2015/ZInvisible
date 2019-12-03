@@ -28,132 +28,147 @@ namespace plotterFunctions
         
         // json file containing unit mapping
         json json_;
+        std::string suffix_;
         std::string met_name_  = "MET_pt";
         std::map<std::string, std::string> prefixMap = {
-            {"/binNum",      "bin_"},
+            {"/binNum",             "bin_"},
             {"/unitCRNum/qcdcr",   "bin_qcdcr_"},
             {"/unitCRNum/lepcr",   "bin_lepcr_"},
             {"/unitCRNum/phocr",   "bin_phocr_"},
-            {"/unitSRNum",   "bin_"},
+            {"/unitSRNum",          "bin_"},
         };
 
         void getSearchBin(NTupleReader& tr)
         {
-            std::vector<std::string> tags = {"", "_drPhotonCleaned"};
-            // begin loop over jet pt cuts 
-            for (const auto& tag : tags) 
+            bool doUnits = false;
+            // TODO: calculate photon Data and MC yields in photon CR unit bins
+            // TODO: calculate Z nu nu MC yields in SR unit bins
+            std::string met_label = "MET_pt";
+            if (suffix_.compare("_drPhotonCleaned") == 0)
             {
-                std::string suffix = "_jetpt30";
-                std::string tag_suffix = tag + suffix;
-                std::string met_label = "MET_pt";
-                if (tag.compare("_drPhotonCleaned") == 0)
-                {
-                    met_label = "metWithPhoton";
-                }
-                
-                // For photon CR, we need to use _drPhotonCleaned for all variables and metWithPhoton
-                // the top tagger variables do not use the _jetpt30 suffix
-                const auto& SAT_Pass_lowDM      = tr.getVar<bool>("SAT_Pass_lowDM"  + tag_suffix);
-                const auto& SAT_Pass_highDM     = tr.getVar<bool>("SAT_Pass_highDM" + tag_suffix);
-                const auto& nJets               = tr.getVar<int>("nJets"            + tag_suffix);
-                const auto& nBottoms            = tr.getVar<int>("nBottoms"         + tag_suffix);
-                const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottoms"     + tag_suffix);
-                const auto& nMergedTops         = tr.getVar<int>("nMergedTops"      + tag);
-                const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops"    + tag);
-                const auto& nWs                 = tr.getVar<int>("nWs"              + tag);
-                const auto& ht                  = tr.getVar<data_t>("HT"            + tag_suffix);
-                const auto& ptb                 = tr.getVar<data_t>("ptb"           + tag_suffix);
-                const auto& mtb                 = tr.getVar<data_t>("mtb"           + tag_suffix);
-                const auto& ISRJetPt            = tr.getVar<data_t>("ISRJetPt"      + tag_suffix);
-                const auto& met                 = tr.getVar<data_t>(met_label);
-                
-                //------------------------------------------------//
-                //--- Updated Search Bins: SBv4 (October 2019) ---//
-                //------------------------------------------------//
-                // int SBv4_lowdm(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
-                // int SBv4_highdm(float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
-                int nSearchBinLowDM  = SBv4_lowdm(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nSearchBinHighDM = SBv4_highdm(mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                
-                //------------------------------------------------------//
-                //--- Updated Validation Bins: SBv3 (September 2019) ---//
-                //------------------------------------------------------//
-                // int SBv3_lowdm_validation(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
-                // int SBv3_lowdm_validation_high_MET(int nb, int nSV, float ISRpt, float met)
-                // int SBv3_highdm_validation(float mtb, int njets, int ntop, int nw, int nres, int nb, float met)
-                int nValidationBinLowDM        = SBv3_lowdm_validation(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                int nValidationBinLowDMHighMET = SBv3_lowdm_validation_high_MET(nBottoms, nSoftBottoms, ISRJetPt, met);
-                int nValidationBinHighDM       = SBv3_highdm_validation(mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met); 
-
-                //----------------------------------------//
-                //--- Updated Unit Bins (October 2019) ---//
-                //----------------------------------------//
-                // TODO: This function is very slow! Speed this up.
-                //int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
-                //int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
-                //int nSBLowDM      = getUnitNumLowDM(  "/binNum",     nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                //int nSBHighDM     = getUnitNumHighDM( "/binNum",     mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                //int nCRUnitLowDM  = getUnitNumLowDM(  "/unitCRNum/lepcr",  nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                //int nCRUnitHighDM = getUnitNumHighDM( "/unitCRNum/lepcr",  mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                //int nSRUnitLowDM  = getUnitNumLowDM(  "/unitSRNum",  nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                //int nSRUnitHighDM = getUnitNumHighDM( "/unitSRNum",  mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                int nSBLowDM      = -1;    
-                int nSBHighDM     = -1; 
-                int nCRUnitLowDM  = -1; 
-                int nCRUnitHighDM = -1; 
-                int nSRUnitLowDM  = -1; 
-                int nSRUnitHighDM = -1; 
-                
-                // compare search bins (hui) vs. search bin units (matt) 
-                //if (SAT_Pass_lowDM)
-                //{
-                //    if (! (nSearchBinLowDM < 0 && nSBLowDM < 0))
-                //    {
-                //        printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", tag_suffix.c_str(), nSearchBinLowDM, nSBLowDM, nCRUnitLowDM, nSRUnitLowDM);
-                //        if(nSearchBinLowDM != nSBLowDM) printf(" --- nSB are different --- ");
-                //        printf("\n");
-                //    }
-                //}
-                //if (SAT_Pass_highDM)
-                //{
-                //    if (! (nSearchBinHighDM < 0 && nSBHighDM < 0))
-                //    {
-                //        printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", tag_suffix.c_str(), nSearchBinHighDM, nSBHighDM, nCRUnitHighDM, nSRUnitHighDM);
-                //        if(nSearchBinHighDM != nSBHighDM) printf(" --- nSB are different --- ");
-                //        printf("\n");
-                //    }
-                //}
-                
-                // print if search bin numbers calculated using different methods are not equal
-                //if (SAT_Pass_lowDM && (nSearchBinLowDM != nSBLowDM))
-                //{
-                //    printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", tag_suffix.c_str(), nSearchBinLowDM, nSBLowDM);
-                //}
-                //if (SAT_Pass_highDM && (nSearchBinHighDM != nSBHighDM))
-                //{
-                //    printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", tag_suffix.c_str(), nSearchBinHighDM, nSBHighDM);
-                //}
-                
-                // search bins
-                tr.registerDerivedVar("nSearchBinLowDM"             + tag_suffix, nSearchBinLowDM);
-                tr.registerDerivedVar("nSearchBinHighDM"            + tag_suffix, nSearchBinHighDM);
-                // validation bins
-                tr.registerDerivedVar("nValidationBinLowDM"         + tag_suffix, nValidationBinLowDM);
-                tr.registerDerivedVar("nValidationBinLowDMHighMET"  + tag_suffix, nValidationBinLowDMHighMET);
-                tr.registerDerivedVar("nValidationBinHighDM"        + tag_suffix, nValidationBinHighDM);
-                // unit bins
-                tr.registerDerivedVar("nSBLowDM"                    + tag_suffix, nSBLowDM);
-                tr.registerDerivedVar("nSBHighDM"                   + tag_suffix, nSBHighDM);
-                tr.registerDerivedVar("nCRUnitLowDM"                + tag_suffix, nCRUnitLowDM);
-                tr.registerDerivedVar("nCRUnitHighDM"               + tag_suffix, nCRUnitHighDM);
-                tr.registerDerivedVar("nSRUnitLowDM"                + tag_suffix, nSRUnitLowDM);
-                tr.registerDerivedVar("nSRUnitHighDM"               + tag_suffix, nSRUnitHighDM);
+                met_label = "metWithPhoton";
             }
+            if (suffix_.find("jesTotalUp") != std::string::npos)
+            {
+                met_label = met_label + "_jesTotalUp";
+            }
+            else if (suffix_.find("jesTotalDown") != std::string::npos)
+            {
+                met_label = met_label + "_jesTotalUp";
+            }
+            
+            // For photon CR, we need to use _drPhotonCleaned for all variables and metWithPhoton
+            const auto& met                 = tr.getVar<data_t>(met_label);
+            const auto& SAT_Pass_lowDM      = tr.getVar<bool>("SAT_Pass_lowDM"  + suffix_);
+            const auto& SAT_Pass_highDM     = tr.getVar<bool>("SAT_Pass_highDM" + suffix_);
+            const auto& nJets               = tr.getVar<int>("nJets"            + suffix_);
+            const auto& nBottoms            = tr.getVar<int>("nBottoms"         + suffix_);
+            const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottoms"     + suffix_);
+            const auto& nMergedTops         = tr.getVar<int>("nMergedTops"      + suffix_);
+            const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops"    + suffix_);
+            const auto& nWs                 = tr.getVar<int>("nWs"              + suffix_);
+            const auto& ht                  = tr.getVar<data_t>("HT"            + suffix_);
+            const auto& ptb                 = tr.getVar<data_t>("ptb"           + suffix_);
+            const auto& mtb                 = tr.getVar<data_t>("mtb"           + suffix_);
+            const auto& ISRJetPt            = tr.getVar<data_t>("ISRJetPt"      + suffix_);
+            
+            //------------------------------------------------//
+            //--- Updated Search Bins: SBv4 (October 2019) ---//
+            //------------------------------------------------//
+            // int SBv4_lowdm(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
+            // int SBv4_highdm(float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
+            int nSearchBinLowDM  = SBv4_lowdm(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+            int nSearchBinHighDM = SBv4_highdm(mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+            
+            //------------------------------------------------------//
+            //--- Updated Validation Bins: SBv3 (September 2019) ---//
+            //------------------------------------------------------//
+            // int SBv3_lowdm_validation(int njets, int nb, int nSV, float ISRpt, float bottompt_scalar_sum, float met)
+            // int SBv3_lowdm_validation_high_MET(int nb, int nSV, float ISRpt, float met)
+            // int SBv3_highdm_validation(float mtb, int njets, int ntop, int nw, int nres, int nb, float met)
+            int nValidationBinLowDM        = SBv3_lowdm_validation(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+            int nValidationBinLowDMHighMET = SBv3_lowdm_validation_high_MET(nBottoms, nSoftBottoms, ISRJetPt, met);
+            int nValidationBinHighDM       = SBv3_highdm_validation(mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met); 
+
+            //----------------------------------------//
+            //--- Updated Unit Bins (October 2019) ---//
+            //----------------------------------------//
+            int nSBLowDM      = -1;    
+            int nSBHighDM     = -1; 
+            int nCRUnitLowDM  = -1; 
+            int nCRUnitHighDM = -1; 
+            int nSRUnitLowDM  = -1; 
+            int nSRUnitHighDM = -1; 
+            // TODO: This function is very slow! Speed this up.
+            // To save time, only run functions if passing baseline (and ISR pt cut for low dm)
+            if (doUnits)
+            {
+                if (SAT_Pass_lowDM && ISRJetPt >= 300)
+                {
+                    //int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
+                    nSBLowDM      = getUnitNumLowDM(  "/binNum",            nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                    nCRUnitLowDM  = getUnitNumLowDM(  "/unitCRNum/phocr",   nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                    nSRUnitLowDM  = getUnitNumLowDM(  "/unitSRNum",         nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                }
+                else if (SAT_Pass_highDM)
+                {
+                    //int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
+                    nSBHighDM     = getUnitNumHighDM( "/binNum",            mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                    nCRUnitHighDM = getUnitNumHighDM( "/unitCRNum/phocr",   mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                    nSRUnitHighDM = getUnitNumHighDM( "/unitSRNum",         mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                }
+            }
+
+            
+            // compare search bins (hui) vs. search bin units (matt) 
+            //if (SAT_Pass_lowDM)
+            //{
+            //    if (! (nSearchBinLowDM < 0 && nSBLowDM < 0))
+            //    {
+            //        printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", suffix_.c_str(), nSearchBinLowDM, nSBLowDM, nCRUnitLowDM, nSRUnitLowDM);
+            //        if(nSearchBinLowDM != nSBLowDM) printf(" --- nSB are different --- ");
+            //        printf("\n");
+            //    }
+            //}
+            //if (SAT_Pass_highDM)
+            //{
+            //    if (! (nSearchBinHighDM < 0 && nSBHighDM < 0))
+            //    {
+            //        printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", suffix_.c_str(), nSearchBinHighDM, nSBHighDM, nCRUnitHighDM, nSRUnitHighDM);
+            //        if(nSearchBinHighDM != nSBHighDM) printf(" --- nSB are different --- ");
+            //        printf("\n");
+            //    }
+            //}
+            
+            // print if search bin numbers calculated using different methods are not equal
+            //if (SAT_Pass_lowDM && (nSearchBinLowDM != nSBLowDM))
+            //{
+            //    printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", suffix_.c_str(), nSearchBinLowDM, nSBLowDM);
+            //}
+            //if (SAT_Pass_highDM && (nSearchBinHighDM != nSBHighDM))
+            //{
+            //    printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", suffix_.c_str(), nSearchBinHighDM, nSBHighDM);
+            //}
+            
+            // search bins
+            tr.registerDerivedVar("nSearchBinLowDM"             + suffix_, nSearchBinLowDM);
+            tr.registerDerivedVar("nSearchBinHighDM"            + suffix_, nSearchBinHighDM);
+            // validation bins
+            tr.registerDerivedVar("nValidationBinLowDM"         + suffix_, nValidationBinLowDM);
+            tr.registerDerivedVar("nValidationBinLowDMHighMET"  + suffix_, nValidationBinLowDMHighMET);
+            tr.registerDerivedVar("nValidationBinHighDM"        + suffix_, nValidationBinHighDM);
+            // unit bins
+            tr.registerDerivedVar("nSBLowDM"                    + suffix_, nSBLowDM);
+            tr.registerDerivedVar("nSBHighDM"                   + suffix_, nSBHighDM);
+            tr.registerDerivedVar("nCRUnitLowDM"                + suffix_, nCRUnitLowDM);
+            tr.registerDerivedVar("nCRUnitHighDM"               + suffix_, nCRUnitHighDM);
+            tr.registerDerivedVar("nSRUnitLowDM"                + suffix_, nSRUnitLowDM);
+            tr.registerDerivedVar("nSRUnitHighDM"               + suffix_, nSRUnitHighDM);
         }
 
     public:
 
-        GetSearchBin()
+        GetSearchBin(std::string suffix = "") : suffix_(suffix)
         {
             bool print = false;
             const std::string fileName = "dc_BkgPred_BinMaps_master.json";

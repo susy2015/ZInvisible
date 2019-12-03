@@ -45,7 +45,7 @@ class Common:
                 for b in b_map[region]:
                     h = h_map[region][h_type]
                     if debug:
-                        print "b={0} b_i={1} {2} {3}, types {4}, {5}, {6}, {7}".format(b, bin_i, region, h_type, type(b), type(bin_i), type(region), type(h_type))
+                        print "era {0}; b={1} b_i={2} {3} {4}, types {5}, {6}, {7}, {8}".format(era, b, bin_i, region, h_type, type(b), type(bin_i), type(region), type(h_type))
                     value       = h.GetBinContent(bin_i)
                     value_error = h.GetBinError(bin_i)
                     final_error = getBinError(value, value_error, ERROR_ZERO) 
@@ -434,20 +434,19 @@ class ValidationBins(Common):
             self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["validation"][region][selection_shape][met + "_error"]
 
         # Z to NuNu histograms
-        #TDirectoryFile*: nValidationBinLowDM_jetpt30
-        #TH1D   MET_nValidationBin_LowDM_jetpt30_2018_PostHEMnValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30Data MET Validation Bin Low DMdata
-        #TH1D   ZNuNu_nValidationBin_LowDM_jetpt30_2016nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata
-        #TDirectoryFile*: nValidationBinLowDMHighMET_jetpt30 
-        #TH1D   MET_nValidationBin_LowDM_HighMET_jetpt30_2018_PostHEMnValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30Data MET Validation Bin Low DM High METdata
-        #TH1D   ZNuNu_nValidationBin_LowDM_HighMET_jetpt30_2016nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata
+        # TDirectoryFile*     nValidationBinLowDM_jetpt30 nValidationBinLowDM_jetpt30
+        # KEY: TH1D MET_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30Data MET Validation Bin Low DMdata;1  nValidationBinLowDM_jetpt30
+        # KEY: TH1D ZNuNu_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1 nValidationBinLowDM_jetpt30
+        # KEY: TH1D ZNuNu_nValidationBin_LowDM_njetWeight_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1  nValidationBinLowDM_jetpt30
+        
         f_in                   = ROOT.TFile(file_name, "read")
         if (self.unblind):
-            h_data_lowdm           = f_in.Get("nValidationBinLowDM_jetpt30/MET_nValidationBin_LowDM_jetpt30_"                   + era + "nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30Data MET Validation Bin Low DMdata") 
-            h_data_lowdm_highmet   = f_in.Get("nValidationBinLowDMHighMET_jetpt30/MET_nValidationBin_LowDM_HighMET_jetpt30_"    + era + "nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30Data MET Validation Bin Low DM High METdata")
-            h_data_highdm          = f_in.Get("nValidationBinHighDM_jetpt30/MET_nValidationBin_HighDM_jetpt30_"                 + era + "nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30Data MET Validation Bin High DMdata")
-        h_mc_lowdm             = f_in.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM_jetpt30_"                 + era + "nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
-        h_mc_lowdm_highmet     = f_in.Get("nValidationBinLowDMHighMET_jetpt30/ZNuNu_nValidationBin_LowDM_HighMET_jetpt30_"  + era + "nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata")
-        h_mc_highdm            = f_in.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM_jetpt30_"               + era + "nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
+            h_data_lowdm           = f_in.Get("nValidationBinLowDM_jetpt30/MET_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30Data MET Validation Bin Low DMdata") 
+            h_data_lowdm_highmet   = f_in.Get("nValidationBinLowDMHighMET_jetpt30/MET_nValidationBin_LowDM_HighMET_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30Data MET Validation Bin Low DM High METdata")
+            h_data_highdm          = f_in.Get("nValidationBinHighDM_jetpt30/MET_nValidationBin_HighDM_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30Data MET Validation Bin High DMdata")
+        h_mc_lowdm             = f_in.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
+        h_mc_lowdm_highmet     = f_in.Get("nValidationBinLowDMHighMET_jetpt30/ZNuNu_nValidationBin_LowDM_HighMET_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata")
+        h_mc_highdm            = f_in.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
         
         # bin map
         b_map = {}
@@ -524,10 +523,10 @@ class SearchBins(Common):
         # Z to NuNu MC histograms
         f_in            = ROOT.TFile(file_name, "read")
         if (self.unblind):
-            h_data_lowdm    = f_in.Get("nSearchBinLowDM_jetpt30/MET_nSearchBin_LowDM_jetpt30_"      + era + "nSearchBinLowDM_jetpt30nSearchBinLowDM_jetpt30Data MET Search Bin Low DMdata") 
-            h_data_highdm   = f_in.Get("nSearchBinHighDM_jetpt30/MET_nSearchBin_HighDM_jetpt30_"    + era + "nSearchBinHighDM_jetpt30nSearchBinHighDM_jetpt30Data MET Search Bin High DMdata")
-        h_mc_lowdm      = f_in.Get("nSearchBinLowDM_jetpt30/ZNuNu_nSearchBin_LowDM_jetpt30_"    + era + "nSearchBinLowDM_jetpt30nSearchBinLowDM_jetpt30ZJetsToNuNu Search Bin Low DMdata")
-        h_mc_highdm     = f_in.Get("nSearchBinHighDM_jetpt30/ZNuNu_nSearchBin_HighDM_jetpt30_"  + era + "nSearchBinHighDM_jetpt30nSearchBinHighDM_jetpt30ZJetsToNuNu Search Bin High DMdata")
+            h_data_lowdm    = f_in.Get("nSearchBinLowDM_jetpt30/MET_nSearchBin_LowDM_jetpt30nSearchBinLowDM_jetpt30nSearchBinLowDM_jetpt30Data MET Search Bin Low DMdata") 
+            h_data_highdm   = f_in.Get("nSearchBinHighDM_jetpt30/MET_nSearchBin_HighDM_jetpt30nSearchBinHighDM_jetpt30nSearchBinHighDM_jetpt30Data MET Search Bin High DMdata")
+        h_mc_lowdm      = f_in.Get("nSearchBinLowDM_jetpt30/ZNuNu_nSearchBin_LowDM_jetpt30nSearchBinLowDM_jetpt30nSearchBinLowDM_jetpt30ZJetsToNuNu Search Bin Low DMdata")
+        h_mc_highdm     = f_in.Get("nSearchBinHighDM_jetpt30/ZNuNu_nSearchBin_HighDM_jetpt30nSearchBinHighDM_jetpt30nSearchBinHighDM_jetpt30ZJetsToNuNu Search Bin High DMdata")
         
         # bin map
         b_map = {}
@@ -562,7 +561,6 @@ class SRUnitBins(Common):
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
-        self.unblind = False
         # SBv4
         self.low_dm_start   = 0
         self.low_dm_end     = 52
@@ -583,11 +581,9 @@ class SRUnitBins(Common):
             self.binValues[era][b] = {}
 
         # Z to NuNu MC histograms
-        # nSRUnitLowDM_jetpt30/ZNuNu_nSRUnit_LowDM_jetpt30_2016nSRUnitLowDM_jetpt30nSRUnitLowDM_jetpt30ZJetsToNuNu Search Region Unit Low DMdata 
-        # nSRUnitHighDM_jetpt30/ZNuNu_nSRUnit_HighDM_jetpt30_2016nSRUnitHighDM_jetpt30nSRUnitHighDM_jetpt30ZJetsToNuNu Search Region Unit High DMdata
         f_in            = ROOT.TFile(file_name, "read")
-        h_mc_lowdm      = f_in.Get("nSRUnitLowDM_jetpt30/ZNuNu_nSRUnit_LowDM_jetpt30_"      + era + "nSRUnitLowDM_jetpt30nSRUnitLowDM_jetpt30ZJetsToNuNu Search Region Unit Low DMdata")  
-        h_mc_highdm     = f_in.Get("nSRUnitHighDM_jetpt30/ZNuNu_nSRUnit_HighDM_jetpt30_"    + era + "nSRUnitHighDM_jetpt30nSRUnitHighDM_jetpt30ZJetsToNuNu Search Region Unit High DMdata")
+        h_mc_lowdm      = f_in.Get("nSRUnitLowDM_jetpt30/ZNuNu_nSRUnit_LowDM_jetpt30nSRUnitLowDM_jetpt30nSRUnitLowDM_jetpt30ZJetsToNuNu Search Region Unit Low DMdata")  
+        h_mc_highdm     = f_in.Get("nSRUnitHighDM_jetpt30/ZNuNu_nSRUnit_HighDM_jetpt30nSRUnitHighDM_jetpt30nSRUnitHighDM_jetpt30ZJetsToNuNu Search Region Unit High DMdata")
          
         # bin map
         b_map                       = {}
@@ -619,7 +615,6 @@ class CRUnitBins(Common):
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
-        self.unblind = False
         # SBv4
         self.low_dm_start   = 0
         self.low_dm_end     = 52

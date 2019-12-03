@@ -32,7 +32,7 @@ def main():
         print "The json file \"{0}\" containing runs does not exist.".format(json_file)
         return
     
-    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
+    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
     #eras = ["2016"]
     dirList = []
     plot_dir                = "more_plots"
@@ -109,8 +109,8 @@ def main():
     total_era = "Run2"
     validation_file = "validationBinsZinv_" + total_era + ".root"
     search_file     = "searchBinsZinv_"     + total_era + ".root"
-    VB.makeTotalPred( validation_file,  "Validation Bin",   "validation", total_era   )
-    SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
+    #VB.makeTotalPred( validation_file,  "Validation Bin",   "validation", total_era   )
+    #SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
     SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
 

@@ -27,7 +27,7 @@ class Systematic:
         self.n_bins = len(self.xbins) - 1
 
     def getZRatio(self, root_file, region, selection, era, variable, rebin):
-        debug = False
+        debug = True
         eraTag = "_" + era
         selectionTag = "_" + selection
         
@@ -41,11 +41,11 @@ class Systematic:
         h_map_norm = {}
         for particle in self.particles:
             h_map_norm[particle] = { 
-                "Data"      : "DataMC_" + particle + "_" + region + "_met" + selectionTag + eraTag + 2 * variable + "Datadata",
-                "DY"        : "DataMC_" + particle + "_" + region + "_met" + selectionTag + eraTag + 2 * variable + "DYstack",
-                "TTbar"     : "DataMC_" + particle + "_" + region + "_met" + selectionTag + eraTag + 2 * variable + "t#bar{t}stack",
-                "SingleT"   : "DataMC_" + particle + "_" + region + "_met" + selectionTag + eraTag + 2 * variable + "Single tstack",
-                "Rare"      : "DataMC_" + particle + "_" + region + "_met" + selectionTag + eraTag + 2 * variable + "Rarestack"
+                "Data"      : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "Datadata",
+                "DY"        : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "DYstack",
+                "TTbar"     : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "t#bar{t}stack",
+                "SingleT"   : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "Single tstack",
+                "Rare"      : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "Rarestack"
             }
         
             if debug:
