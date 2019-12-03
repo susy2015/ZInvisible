@@ -44,7 +44,8 @@ def saveResults(inFile, outFile, CRunits, SRunits, eras):
     
     # combine results over all eras
     # try only 2016 now for development
-    era = "2016"
+    # try Run 2 now
+    era = "Run2"
     
     print "Search Region Units"
     for b in SRunits.binValues[era]:

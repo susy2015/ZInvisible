@@ -58,26 +58,26 @@ class Shape:
     def getSimpleMap(self, region, nameTag, selectionTag, eraTag, variable):
         if self.splitQCD:
             temp_map = {
-                            "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "Datadata",
-                            "GJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "#gamma+jetsstack",
-                            "QCD_Fragmented"    : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "QCD Fragmentedstack",
-                            "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "QCD Fakestack",
-                            "WJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "W(l#nu)+jetsstack",
-                            "TTG"               : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "t#bar{t}#gamma+jetsstack",
-                            "TTbar"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "t#bar{t}stack",
-                            "tW"                : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "tWstack",
-                            "Rare"              : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "Rarestack",
+                            "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Datadata",
+                            "GJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "#gamma+jetsstack",
+                            "QCD_Fragmented"    : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "QCD Fragmentedstack",
+                            "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "QCD Fakestack",
+                            "WJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "W(l#nu)+jetsstack",
+                            "TTG"               : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "t#bar{t}#gamma+jetsstack",
+                            "TTbar"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "t#bar{t}stack",
+                            "tW"                : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "tWstack",
+                            "Rare"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Rarestack",
             }
         else:
             temp_map = {
-                            "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "Datadata",
-                            "GJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "#gamma+jetsstack",
-                            "QCD"               : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "QCDstack",
-                            "WJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "W(l#nu)+jetsstack",
-                            "TTG"               : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "t#bar{t}#gamma+jetsstack",
-                            "TTbar"             : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "t#bar{t}stack",
-                            "tW"                : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "tWstack",
-                            "Rare"              : "DataMC_Photon_" + region + nameTag + selectionTag + eraTag + 2 * variable + "Rarestack",
+                            "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Datadata",
+                            "GJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "#gamma+jetsstack",
+                            "QCD"               : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "QCDstack",
+                            "WJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "W(l#nu)+jetsstack",
+                            "TTG"               : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "t#bar{t}#gamma+jetsstack",
+                            "TTbar"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "t#bar{t}stack",
+                            "tW"                : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "tWstack",
+                            "Rare"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Rarestack",
             }
         return temp_map
 
