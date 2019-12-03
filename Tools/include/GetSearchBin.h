@@ -1,6 +1,7 @@
 #ifndef GETSEARCHBIN_H
 #define GETSEARCHBIN_H
 
+//#include "units.h"
 #include "TypeDefinitions.h"
 #include "PhotonTools.h"
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -91,7 +92,7 @@ namespace plotterFunctions
             int nValidationBinHighDM       = SBv3_highdm_validation(mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met); 
 
             //----------------------------------------//
-            //--- Updated Unit Bins (October 2019) ---//
+            //--- Updated Unit Bins (December 2019) ---//
             //----------------------------------------//
             int nSBLowDM      = -1;    
             int nSBHighDM     = -1; 
@@ -99,25 +100,53 @@ namespace plotterFunctions
             int nCRUnitHighDM = -1; 
             int nSRUnitLowDM  = -1; 
             int nSRUnitHighDM = -1; 
-            // TODO: This function is very slow! Speed this up.
+            
             // To save time, only run functions if passing baseline (and ISR pt cut for low dm)
-            if (doUnits)
-            {
-                if (SAT_Pass_lowDM && ISRJetPt >= 300)
-                {
-                    //int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
-                    nSBLowDM      = getUnitNumLowDM(  "/binNum",            nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                    nCRUnitLowDM  = getUnitNumLowDM(  "/unitCRNum/phocr",   nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                    nSRUnitLowDM  = getUnitNumLowDM(  "/unitSRNum",         nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                }
-                else if (SAT_Pass_highDM)
-                {
-                    //int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
-                    nSBHighDM     = getUnitNumHighDM( "/binNum",            mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                    nCRUnitHighDM = getUnitNumHighDM( "/unitCRNum/phocr",   mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                    nSRUnitHighDM = getUnitNumHighDM( "/unitSRNum",         mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                }
-            }
+            
+            // TODO: This function is very slow! Speed this up.
+            // -------------------- Slow version from Caleb
+            //if (doUnits)
+            //{
+            //    if (SAT_Pass_lowDM && ISRJetPt >= 300)
+            //    {
+            //        //int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
+            //        nSBLowDM      = getUnitNumLowDM(  "/binNum",            nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+            //        nCRUnitLowDM  = getUnitNumLowDM(  "/unitCRNum/phocr",   nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+            //        nSRUnitLowDM  = getUnitNumLowDM(  "/unitSRNum",         nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+            //    }
+            //    else if (SAT_Pass_highDM)
+            //    {
+            //        //int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
+            //        nSBHighDM     = getUnitNumHighDM( "/binNum",            mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+            //        nCRUnitHighDM = getUnitNumHighDM( "/unitCRNum/phocr",   mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+            //        nSRUnitHighDM = getUnitNumHighDM( "/unitSRNum",         mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+            //    }
+            //}
+            
+            // ---------------------------- Fast version from Jon
+            // syntax
+            //int SRbin(Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, HighDM, LowDM, nb, mtb, ptb, MET, nSoftB, njets, ISRpt, HT, nres, ntop, nw);
+            //int SRunit(Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, HighDM, LowDM, nb, mtb, ptb, MET, nSoftB, njets, ISRpt, HT, nres, ntop, nw);
+            //int QCDCRunit(Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, HighDM, LowDM, nb, mtb, ptb, MET, nSoftB, njets, ISRpt, HT, nres, ntop, nw);
+            //int lepCRunit(Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, HighDM, LowDM, nb, mtb, ptb, MET, nSoftB, njets, ISRpt, HT, nres, ntop, nw);
+            //int phoCRunit(Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, HighDM, LowDM, nb, mtb, ptb, MET, nSoftB, njets, ISRpt, HT, nres, ntop, nw);
+            //if (doUnits)
+            //{
+            //    if (SAT_Pass_lowDM && ISRJetPt >= 300)
+            //    {
+            //        //int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
+            //        nSBLowDM      = SRbin(      Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM, nBottoms, mtb, ptb, MET, nSoftBottoms, nJets, ISRJetPt, HT, nResolvedTops, nMergedTops, nWs);
+            //        nCRUnitLowDM  = phoCRunit(  Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM, nBottoms, mtb, ptb, MET, nSoftBottoms, nJets, ISRJetPt, HT, nResolvedTops, nMergedTops, nWs);
+            //        nSRUnitLowDM  = SRunit(     Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM, nBottoms, mtb, ptb, MET, nSoftBottoms, nJets, ISRJetPt, HT, nResolvedTops, nMergedTops, nWs);
+            //    }
+            //    else if (SAT_Pass_highDM)
+            //    {
+            //        //int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
+            //        nSBHighDM     = ;
+            //        nCRUnitHighDM = ;
+            //        nSRUnitHighDM = ;
+            //    }
+            //}
 
             
             // compare search bins (hui) vs. search bin units (matt) 
