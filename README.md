@@ -3,8 +3,8 @@
 ## Overview
 
 These instructions will walk through downloading and setting up the following repositories that are required to run the ZInvisible framework.
-- [ZInvisible](https://github.com/susy2015/ZInvisible/tree/NanoAOD)
-- [SusyAnaTools](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD)
+- [ZInvisible](https://github.com/susy2015/ZInvisible)
+- [SusyAnaTools](https://github.com/susy2015/SusyAnaTools)
 - [TopTagger](https://github.com/susy2015/TopTagger)
 - [TopTaggerTools](https://github.com/susy2015/TopTaggerTools)
 
@@ -14,7 +14,7 @@ The ZInvisible framework also uses configuration files from the StopCfg and TopT
 
 ## Setup TopTagger and SusyAnaTools 
 
-First follow the instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#instructions). Once you are done, you should have a CMSSW area setup that contains the TopTagger, TopTaggerTools, and SusyAnaTools repositories.
+First follow the instructions [here](https://github.com/susy2015/SusyAnaTools#instructions). Once you are done, you should have a CMSSW area setup that contains the TopTagger, TopTaggerTools, and SusyAnaTools repositories.
 
 <details> 
 
@@ -26,7 +26,7 @@ If you want to install the TopTagger for Standalone (edm free), follow the instr
 
 ## Setup ZInvisible
 
-Go your CMSSW area which you should have already setup (see instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#instructions). We recommend using CMSSW_10_2_9, which has support for uproot. The command cmsenv will need to be run during every new terminal session.
+Go your CMSSW area which you should have already setup (see instructions [here](https://github.com/susy2015/SusyAnaTools#instructions). We recommend using CMSSW_10_2_9, which has support for uproot. The command cmsenv will need to be run during every new terminal session.
 ```
 cd CMSSW_10_2_9
 cmsenv
@@ -40,7 +40,6 @@ Checkout the ZInvisible repository.
 cd $CMSSW_BASE/src
 git clone git@github.com:susy2015/ZInvisible.git
 cd ZInvisible/Tools
-git checkout NanoAOD
 ```
 
 Checkout the NanoSUSY-tools repository and make softlinks of the trigger efficiency root files.
@@ -64,7 +63,7 @@ getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2018_v1.0.1 -f Top
 getStopCfg.sh -t PostProcessed_StopNtuple_v3.0.3 -d ../../myStopCfgs -o
 ```
 
-There are more detailed instructions that you can reference [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files).
+There are more detailed instructions that you can reference [here](https://github.com/susy2015/SusyAnaTools#get-configuration-files).
 
 Make sure that you checkout the configuration files in the `$CMSSW_BASE/src/ZInvisible/Tools` directory (with softlinks if you use getTaggerCfg.sh and getStopCfg.sh). You may specify a different directory for the area where the release is downloaded, as the softlinks will point to that location.
 
