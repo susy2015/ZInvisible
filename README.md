@@ -80,11 +80,18 @@ cd json
 git checkout v3.7.3
 ```
 
-Get EstToolsSUSY repository which has the unit bin json file.
+Get EstToolsSUSY repository which has the unit bin json file dc_BkgPred_BinMaps_master.json.
 ```
+cd $CMSSW_BASE/src
 git clone git@github.com:mkilpatr/EstToolsSUSY.git
 cd EstToolsSUSY
 git checkout SBv4
+```
+
+Make a softlink to dc_BkgPred_BinMaps_master.json.
+```
+cd $CMSSW_BASE/src/ZInvisible/Tools
+ln -s $CMSSW_BASE/src/EstToolsSUSY/SUSYNano19/dc_BkgPred_BinMaps_master.json .
 ```
 
 ## Setup
