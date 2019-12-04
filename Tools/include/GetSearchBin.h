@@ -59,6 +59,7 @@ namespace plotterFunctions
             }
             
             // For photon CR, we need to use _drPhotonCleaned for all variables and metWithPhoton
+            const auto& event               = tr.getVar<unsigned long long>("event");
             const auto& met                 = tr.getVar<data_t>(met_label);
             const auto& Pass_PhoCR          = tr.getVar<bool>("passPhotonSelection");
             const auto& SAT_Pass_Baseline   = tr.getVar<bool>("SAT_Pass_Baseline"       + suffix_);
@@ -103,28 +104,6 @@ namespace plotterFunctions
             int nSRUnitLowDM  = -1; 
             int nSRUnitHighDM = -1; 
             
-            // To save time, only run functions if passing baseline (and ISR pt cut for low dm)
-            
-            // TODO: This function is very slow! Speed this up.
-            // -------------------- Slow version from Caleb
-            //if (doUnits)
-            //{
-            //    if (SAT_Pass_lowDM && ISRJetPt >= 300)
-            //    {
-            //        //int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
-            //        nSBLowDM      = getUnitNumLowDM(  "/binNum",            nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-            //        nCRUnitLowDM  = getUnitNumLowDM(  "/unitCRNum/phocr",   nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-            //        nSRUnitLowDM  = getUnitNumLowDM(  "/unitSRNum",         nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-            //    }
-            //    else if (SAT_Pass_highDM)
-            //    {
-            //        //int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
-            //        nSBHighDM     = getUnitNumHighDM( "/binNum",            mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-            //        nCRUnitHighDM = getUnitNumHighDM( "/unitCRNum/phocr",   mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-            //        nSRUnitHighDM = getUnitNumHighDM( "/unitSRNum",         mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-            //    }
-            //}
-            
             // ---------------------------- Fast version from Jon
             // syntax
             //int SRbin(Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, HighDM, LowDM, nb, mtb, ptb, MET, nSoftB, njets, ISRpt, HT, nres, ntop, nw);
@@ -134,19 +113,24 @@ namespace plotterFunctions
             //int phoCRunit(Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, HighDM, LowDM, nb, mtb, ptb, MET, nSoftB, njets, ISRpt, HT, nres, ntop, nw);
             if (doUnits)
             {
+                bool SAT_Pass_lowDM_local = SAT_Pass_lowDM && (ISRJetPt >= 300);
                 const bool Pass_QCDCR = false; 
                 const bool Pass_LepCR = false;
-                if (SAT_Pass_lowDM && ISRJetPt >= 300)
+                int nSB      = SRbin(      SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM_local, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
+                int nCRUnit  = phoCRunit(  SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM_local, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
+                int nSRUnit  = SRunit(     SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM_local, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
+                
+                if (SAT_Pass_lowDM_local)
                 {
-                    nSBLowDM      = SRbin(      SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
-                    nCRUnitLowDM  = phoCRunit(  SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
-                    nSRUnitLowDM  = SRunit(     SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
+                    nSBLowDM      = nSB;
+                    nCRUnitLowDM  = nCRUnit;
+                    nSRUnitLowDM  = nSRUnit;
                 }
                 else if (SAT_Pass_highDM)
                 {
-                    nSBHighDM      = SRbin(      SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
-                    nCRUnitHighDM  = phoCRunit(  SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
-                    nSRUnitHighDM  = SRunit(     SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
+                    nSBHighDM      = nSB;
+                    nCRUnitHighDM  = nCRUnit;
+                    nSRUnitHighDM  = nSRUnit;
                 }
             }
 
@@ -177,11 +161,11 @@ namespace plotterFunctions
                 // print if search bin numbers calculated using different methods are not equal
                 if (SAT_Pass_lowDM && (nSearchBinLowDM != nSBLowDM))
                 {
-                    printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", suffix_.c_str(), nSearchBinLowDM, nSBLowDM);
+                    printf("CMS_event=%d; LowDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", event, suffix_.c_str(), nSearchBinLowDM, nSBLowDM);
                 }
                 if (SAT_Pass_highDM && (nSearchBinHighDM != nSBHighDM))
                 {
-                    printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", suffix_.c_str(), nSearchBinHighDM, nSBHighDM);
+                    printf("CMS_event=%d; HighDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", event, suffix_.c_str(), nSearchBinHighDM, nSBHighDM);
                 }
 
             }
