@@ -658,7 +658,7 @@ bool Plotter::Cut::passCut(const NTupleReader& tr, const int index) const
     }
 }
 
-template<> const double& Plotter::getVarFromVec<TLorentzVector, double>(const VarName& name, const NTupleReader& tr, const int index)
+template<> const double Plotter::getVarFromVec<TLorentzVector, double>(const VarName& name, const NTupleReader& tr, const int index)
 {
     const auto& vec = tr.getVec<TLorentzVector>(name.name);
 

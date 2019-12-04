@@ -218,7 +218,7 @@ private:
     void fillHist(TH1 * const h, const VarName& name, const NTupleReader& tr, const double weight);
     void smartMax(const TH1* const h, const TLegend* const l, const TPad* const p, double& gmin, double& gmax, double& gpThreshMax, const bool error = false) const;
 
-    template<typename T> static const double& tlvGetValue(const std::string& name, const T& v)
+    template<typename T> static const double tlvGetValue(const std::string& name, const T& v)
     {
         if     (name.find("pt")  != std::string::npos)
         {
@@ -279,7 +279,7 @@ private:
         {
             if(name.index >= 0)
             {
-                auto& var = getVarFromVec<T>(name, tr);
+                auto var = getVarFromVec<T>(name, tr);
                 if(&var != nullptr) vectorFill(h, name, pointerDeref(var), weight);
             }
             else
@@ -302,7 +302,7 @@ private:
         }
     }
 
-    template<typename T, typename R = T> static const R& getVarFromVec(const VarName& name, const NTupleReader& tr, const int index = -999)
+    template<typename T, typename R = T> static const R getVarFromVec(const VarName& name, const NTupleReader& tr, const int index = -999)
     {
         const auto& vec = tr.getVec<T>(name.name);
 
@@ -311,10 +311,14 @@ private:
             int i;
             if(index >= 0) i = index;
             else           i = name.index;
-            if(i < vec.size()) return vec[i];
-            else return *static_cast<R*>(nullptr);
+            if(i < vec.size()) 
+            {
+                T retval = vec[i];
+                return retval;
+            }
+            else return *static_cast<typename std::remove_reference<R>::type *>(nullptr);
         }
-        return *static_cast<R*>(nullptr);
+        return *static_cast<typename std::remove_reference<R>::type *>(nullptr);
     }
 
     template<typename T> inline void vectorFill(TH1 * const h, const VarName& name, const T& obj, const double weight)
