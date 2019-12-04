@@ -65,7 +65,6 @@ class Normalization:
     
     def setupHistoMap(self, era):
         # histogram examples
-        # DataMC_Electron_LowDM_bestRecoZM_50to250_NBeq0_NSVeq0_jetpt30_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMZToLLstack
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMNoZToLLstack 

@@ -1218,29 +1218,19 @@ int main(int argc, char* argv[])
                             for (const auto& cut : map_norm_cuts_low_dm)
                             {
                                 PDS dsData_Electron_LowDM_noZMassCut("Data",  fileMap[ElectronDataset],        "Flag_eeBadScFilter;passElecZinvSel;Pass_trigger_electron" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
-                                std::vector<std::vector<PDS>> StackMC_Electron_LowDM_noZMassCut                = makeStackMC_DiLepton(                "passElecZinvSel" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, w.second);
                                 std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Normalization_noZMassCut  = makeStackMC_DiLepton_Normalization(  "passElecZinvSel" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, w.second);
                                 // bestRecoZM
                                 PDC dcData_Electron_LowDM_bestRecoZM(  "data",   "bestRecoZM", {dsData_Electron_LowDM_noZMassCut});
-                                PDC dcMC_Electron_LowDM_bestRecoZM(    "stack",  "bestRecoZM", StackMC_Electron_LowDM_noZMassCut);
                                 PDC dcMC_Electron_LowDM_Normalization_bestRecoZM(    "stack",  "bestRecoZM", StackMC_Electron_LowDM_Normalization_noZMassCut);
-                                vh.push_back(PHS("DataMC_Electron_LowDM_bestRecoZM_50to250_" + cut.first + histSuffixSyst,                  {dcData_Electron_LowDM_bestRecoZM,   dcMC_Electron_LowDM_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
-                                vh.push_back(PHS("DataMC_Electron_LowDM_bestRecoZM_0to400_" + cut.first + histSuffixSyst,                   {dcData_Electron_LowDM_bestRecoZM,   dcMC_Electron_LowDM_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
-                                vh.push_back(PHS("DataMC_Electron_LowDM_Normalization_bestRecoZM_50to250_" + cut.first + histSuffixSyst,    {dcData_Electron_LowDM_bestRecoZM,   dcMC_Electron_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
                                 vh.push_back(PHS("DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_" + cut.first + histSuffixSyst,     {dcData_Electron_LowDM_bestRecoZM,   dcMC_Electron_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
                             }
                             for (const auto& cut : map_norm_cuts_high_dm)
                             {
                                 PDS dsData_Electron_HighDM_noZMassCut("Data",  fileMap[ElectronDataset],        "Flag_eeBadScFilter;passElecZinvSel;Pass_trigger_electron" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
-                                std::vector<std::vector<PDS>> StackMC_Electron_HighDM_noZMassCut                = makeStackMC_DiLepton(                "passElecZinvSel" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, w.second);
                                 std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Normalization_noZMassCut  = makeStackMC_DiLepton_Normalization(  "passElecZinvSel" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, w.second);
                                 // bestRecoZM
                                 PDC dcData_Electron_HighDM_bestRecoZM(  "data",   "bestRecoZM", {dsData_Electron_HighDM_noZMassCut});
-                                PDC dcMC_Electron_HighDM_bestRecoZM(    "stack",  "bestRecoZM", StackMC_Electron_HighDM_noZMassCut);
                                 PDC dcMC_Electron_HighDM_Normalization_bestRecoZM(    "stack",  "bestRecoZM", StackMC_Electron_HighDM_Normalization_noZMassCut);
-                                vh.push_back(PHS("DataMC_Electron_HighDM_bestRecoZM_50to250_" + cut.first + histSuffixSyst,                  {dcData_Electron_HighDM_bestRecoZM,   dcMC_Electron_HighDM_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
-                                vh.push_back(PHS("DataMC_Electron_HighDM_bestRecoZM_0to400_" + cut.first + histSuffixSyst,                   {dcData_Electron_HighDM_bestRecoZM,   dcMC_Electron_HighDM_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
-                                vh.push_back(PHS("DataMC_Electron_HighDM_Normalization_bestRecoZM_50to250_" + cut.first + histSuffixSyst,    {dcData_Electron_HighDM_bestRecoZM,   dcMC_Electron_HighDM_Normalization_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
                                 vh.push_back(PHS("DataMC_Electron_HighDM_Normalization_bestRecoZM_0to400_" + cut.first + histSuffixSyst,     {dcData_Electron_HighDM_bestRecoZM,   dcMC_Electron_HighDM_Normalization_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
                             }
                         }
@@ -1714,29 +1704,19 @@ int main(int argc, char* argv[])
                             for (const auto& cut : map_norm_cuts_low_dm)
                             {
                                 PDS dsData_Muon_LowDM_noZMassCut("Data",  fileMap[MuonDataset],                "Flag_eeBadScFilter;passMuZinvSel;Pass_trigger_muon"    + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
-                                std::vector<std::vector<PDS>> StackMC_Muon_LowDM_noZMassCut                = makeStackMC_DiLepton(                "passMuZinvSel"      + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, w.second);
                                 std::vector<std::vector<PDS>> StackMC_Muon_LowDM_Normalization_noZMassCut  = makeStackMC_DiLepton_Normalization(  "passMuZinvSel"      + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, w.second);
                                 // bestRecoZM
                                 PDC dcData_Muon_LowDM_bestRecoZM(  "data",   "bestRecoZM", {dsData_Muon_LowDM_noZMassCut});
-                                PDC dcMC_Muon_LowDM_bestRecoZM(    "stack",  "bestRecoZM", StackMC_Muon_LowDM_noZMassCut);
                                 PDC dcMC_Muon_LowDM_Normalization_bestRecoZM(    "stack",  "bestRecoZM", StackMC_Muon_LowDM_Normalization_noZMassCut);
-                                vh.push_back(PHS("DataMC_Muon_LowDM_bestRecoZM_50to250_" + cut.first + histSuffixSyst,                  {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
-                                vh.push_back(PHS("DataMC_Muon_LowDM_bestRecoZM_0to400_" + cut.first + histSuffixSyst,                   {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
-                                vh.push_back(PHS("DataMC_Muon_LowDM_Normalization_bestRecoZM_50to250_" + cut.first + histSuffixSyst,    {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
                                 vh.push_back(PHS("DataMC_Muon_LowDM_Normalization_bestRecoZM_0to400_" + cut.first + histSuffixSyst,     {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
                             }
                             for (const auto& cut : map_norm_cuts_high_dm)
                             {
                                 PDS dsData_Muon_HighDM_noZMassCut("Data",  fileMap[MuonDataset],                "Flag_eeBadScFilter;passMuZinvSel;Pass_trigger_muon" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, "");
-                                std::vector<std::vector<PDS>> StackMC_Muon_HighDM_noZMassCut                = makeStackMC_DiLepton(                "passMuZinvSel"   + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, w.second);
                                 std::vector<std::vector<PDS>> StackMC_Muon_HighDM_Normalization_noZMassCut  = makeStackMC_DiLepton_Normalization(  "passMuZinvSel"   + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, w.second);
                                 // bestRecoZM
                                 PDC dcData_Muon_HighDM_bestRecoZM(  "data",   "bestRecoZM", {dsData_Muon_HighDM_noZMassCut});
-                                PDC dcMC_Muon_HighDM_bestRecoZM(    "stack",  "bestRecoZM", StackMC_Muon_HighDM_noZMassCut);
                                 PDC dcMC_Muon_HighDM_Normalization_bestRecoZM(    "stack",  "bestRecoZM", StackMC_Muon_HighDM_Normalization_noZMassCut);
-                                vh.push_back(PHS("DataMC_Muon_HighDM_bestRecoZM_50to250_" + cut.first + histSuffixSyst,                  {dcData_Muon_HighDM_bestRecoZM,   dcMC_Muon_HighDM_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
-                                vh.push_back(PHS("DataMC_Muon_HighDM_bestRecoZM_0to400_" + cut.first + histSuffixSyst,                   {dcData_Muon_HighDM_bestRecoZM,   dcMC_Muon_HighDM_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
-                                vh.push_back(PHS("DataMC_Muon_HighDM_Normalization_bestRecoZM_50to250_" + cut.first + histSuffixSyst,    {dcData_Muon_HighDM_bestRecoZM,   dcMC_Muon_HighDM_Normalization_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
                                 vh.push_back(PHS("DataMC_Muon_HighDM_Normalization_bestRecoZM_0to400_" + cut.first + histSuffixSyst,     {dcData_Muon_HighDM_bestRecoZM,   dcMC_Muon_HighDM_Normalization_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
                             }
                         }
