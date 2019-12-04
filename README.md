@@ -57,7 +57,7 @@ Go to the `ZInvisible/Tools` directory and checkout the config files using getTa
 cd $CMSSW_BASE/src/ZInvisible/Tools
 mkdir ../../myTopTaggerCfgs
 mkdir ../../myStopCfgs
-getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2016_v1.0.2 -f TopTagger_2016.cfg -d ../../myTopTaggerCfgs/ -o
+getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2016_v1.0.7 -f TopTagger_2016.cfg -d ../../myTopTaggerCfgs/ -o
 getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2017_v1.0.1 -f TopTagger_2017.cfg -d ../../myTopTaggerCfgs/ -o
 getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2018_v1.0.1 -f TopTagger_2018.cfg -d ../../myTopTaggerCfgs/ -o
 getStopCfg.sh -t PostProcessed_StopNtuple_v4.1.0 -d ../../myStopCfgs -o
