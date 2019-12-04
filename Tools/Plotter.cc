@@ -502,8 +502,6 @@ void Plotter::createHistsFromTuple()
                     //fill histograms
                     if(doHists_)
                     {
-                        double fileWgt = file.getWeight();
-
                         for(auto& histsToFillVec : histsToFill)
                         {
                             // get the dataset summary
@@ -518,7 +516,7 @@ void Plotter::createHistsFromTuple()
                             if(!hs.passCuts(tr)) continue;
 
                             // get the weight associated with the dataset
-                            double weight = dss.getWeight(tr);
+                            double weight = dss.getWeight(tr) * lumi_;
 
                             for(auto& hist : histsToFillVec.second.second)
                             {
@@ -532,17 +530,16 @@ void Plotter::createHistsFromTuple()
                     for(auto& cutFlow : cutFlowsToFill)
                     {
                         //get event weight here
-                        double weight = cutFlow->dssp->getWeight(tr);
+                        double weight = cutFlow->dssp->getWeight(tr) * lumi_;
 
                         cutFlow->fillHist(tr, weight);
                     }
 
-					double fileWgt = file.getWeight();
 					for (auto &scpair : scannersToFill)
 					{
 						if(scpair.second->currentDS.passCuts(tr))
 						{
-							scpair.second->weight = scpair.second->currentDS.getWeight(tr);
+							scpair.second->weight = scpair.second->currentDS.getWeight(tr) * lumi_;
 							scpair.first->fill();
 						}
 					}
