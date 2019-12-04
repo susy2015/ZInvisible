@@ -79,6 +79,7 @@ def submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False, dat
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
                           environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagSF_AltTWP.root",
+						  environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dc_BkgPred_BinMaps_master.json",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2016.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2017.cfg",
@@ -102,6 +103,7 @@ def submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False, dat
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/allINone_ISRJets.root", 
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
                            environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+						   environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dc_BkgPred_BinMaps_master.json",
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2016.cfg",
                            environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2017.cfg",
@@ -157,6 +159,7 @@ x509userproxy = $ENV(X509_USER_PROXY)
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                           environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
                           environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+						  environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dc_BkgPred_BinMaps_master.json",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2016.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2017.cfg",
@@ -193,10 +196,11 @@ x509userproxy = $ENV(X509_USER_PROXY)
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                           environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/data/PileupHistograms_0121_69p2mb_pm4p6.root", 
                           environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+						  environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/dc_BkgPred_BinMaps_master.json",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg"
                           ]
     
-    if mvaFileName: filestoTransferTT += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
+    if mvaFileName: filestoTransferGTP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
     
     submitFileGTP = """universe = vanilla
     Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakeTopPlots.sh
@@ -286,19 +290,19 @@ x509userproxy = $ENV(X509_USER_PROXY)
     
         def makeExeAndFriendsTarrball(filestoTransfer, fname):
             if not dataCollections and not dataCollectionslong:
-                #WORLDSWORSESOLUTIONTOAPROBLEM
-                system("mkdir -p WORLDSWORSESOLUTIONTOAPROBLEM")
+                #WORLDSWORSTSOLUTIONTOAPROBLEM
+                system("mkdir -p WORLDSWORSTSOLUTIONTOAPROBLEM")
                 for fn in filestoTransfer:
-                    system("cd WORLDSWORSESOLUTIONTOAPROBLEM; ln -s %s" % fn)
+                    system("cd WORLDSWORSTSOLUTIONTOAPROBLEM; ln -s %s" % fn)
                 
-                tarallinputs = "tar czf %s.tar.gz WORLDSWORSESOLUTIONTOAPROBLEM --dereference" % fname
+                tarallinputs = "tar czf %s.tar.gz WORLDSWORSTSOLUTIONTOAPROBLEM --dereference" % fname
                 if verbose:
                     # Use v option if verbose is set
-                    tarallinputs = "tar czvf %s.tar.gz WORLDSWORSESOLUTIONTOAPROBLEM --dereference" % fname
+                    tarallinputs = "tar czvf %s.tar.gz WORLDSWORSTSOLUTIONTOAPROBLEM --dereference" % fname
                     print "Create tarball {0}.tag.gz".format(fname)
                     print tarallinputs
                 system(tarallinputs)
-                system("rm -r WORLDSWORSESOLUTIONTOAPROBLEM")
+                system("rm -r WORLDSWORSTSOLUTIONTOAPROBLEM")
         
         
         if not dataCollections and not dataCollectionslong:
@@ -306,7 +310,7 @@ x509userproxy = $ENV(X509_USER_PROXY)
                 print "Create tarball ${CMSSW_VERSION}.tar.gz"
             system("tar --exclude-caches-all --exclude-vcs -zcf ${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION} --exclude=src --exclude=tmp")
         
-        # makeExeAndFriendsTarrball() is necessary now to apply WORLDSWORSESOLUTIONTOAPROBLEM 
+        # makeExeAndFriendsTarrball() is necessary now to apply WORLDSWORSTSOLUTIONTOAPROBLEM 
         
         if goMakeEff:
             exeName = "calcEff"
