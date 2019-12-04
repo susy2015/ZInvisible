@@ -71,11 +71,20 @@ Make sure that you checkout the configuration files in the `$CMSSW_BASE/src/ZInv
 
 Run the following commands to get additional dependencies.
 These allow you to use json files in C++ and to load the unit bin json file.
+
+Get json library to use json files in C++.
+```
+cd $CMSSW_BASE/src
+git clone git@github.com:nlohmann/json.git
+cd json
+git checkout v3.7.3
 ```
 
+Get EstToolsSUSY repository which has the unit bin json file.
+```
 git clone git@github.com:mkilpatr/EstToolsSUSY.git
+cd EstToolsSUSY
 git checkout SBv4
-
 ```
 
 ## Setup
