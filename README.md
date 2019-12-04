@@ -3,8 +3,8 @@
 ## Overview
 
 These instructions will walk through downloading and setting up the following repositories that are required to run the ZInvisible framework.
-- [ZInvisible](https://github.com/susy2015/ZInvisible/tree/NanoAOD)
-- [SusyAnaTools](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD)
+- [ZInvisible](https://github.com/susy2015/ZInvisible)
+- [SusyAnaTools](https://github.com/susy2015/SusyAnaTools)
 - [TopTagger](https://github.com/susy2015/TopTagger)
 - [TopTaggerTools](https://github.com/susy2015/TopTaggerTools)
 
@@ -14,7 +14,7 @@ The ZInvisible framework also uses configuration files from the StopCfg and TopT
 
 ## Setup TopTagger and SusyAnaTools 
 
-First follow the instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#instructions). Once you are done, you should have a CMSSW area setup that contains the TopTagger, TopTaggerTools, and SusyAnaTools repositories.
+First follow the instructions [here](https://github.com/susy2015/SusyAnaTools#instructions). Once you are done, you should have a CMSSW area setup that contains the TopTagger, TopTaggerTools, and SusyAnaTools repositories.
 
 <details> 
 
@@ -26,7 +26,7 @@ If you want to install the TopTagger for Standalone (edm free), follow the instr
 
 ## Setup ZInvisible
 
-Go your CMSSW area which you should have already setup (see instructions [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#instructions). We recommend using CMSSW_10_2_9, which has support for uproot. The command cmsenv will need to be run during every new terminal session.
+Go your CMSSW area which you should have already setup (see instructions [here](https://github.com/susy2015/SusyAnaTools#instructions). We recommend using CMSSW_10_2_9, which has support for uproot. The command cmsenv will need to be run during every new terminal session.
 ```
 cd CMSSW_10_2_9
 cmsenv
@@ -40,7 +40,6 @@ Checkout the ZInvisible repository.
 cd $CMSSW_BASE/src
 git clone git@github.com:susy2015/ZInvisible.git
 cd ZInvisible/Tools
-git checkout NanoAOD
 ```
 
 Checkout the NanoSUSY-tools repository and make softlinks of the trigger efficiency root files.
@@ -58,15 +57,51 @@ Go to the `ZInvisible/Tools` directory and checkout the config files using getTa
 cd $CMSSW_BASE/src/ZInvisible/Tools
 mkdir ../../myTopTaggerCfgs
 mkdir ../../myStopCfgs
-getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2016_v1.0.1 -f TopTagger_2016.cfg -d ../../myTopTaggerCfgs/ -o
+getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2016_v1.0.7 -f TopTagger_2016.cfg -d ../../myTopTaggerCfgs/ -o
 getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2017_v1.0.1 -f TopTagger_2017.cfg -d ../../myTopTaggerCfgs/ -o
 getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2018_v1.0.1 -f TopTagger_2018.cfg -d ../../myTopTaggerCfgs/ -o
-getStopCfg.sh -t PostProcessed_StopNtuple_v3.0.3 -d ../../myStopCfgs -o
+getStopCfg.sh -t PostProcessed_StopNtuple_v4.1.0 -d ../../myStopCfgs -o
 ```
 
-There are more detailed instructions that you can reference [here](https://github.com/susy2015/SusyAnaTools/tree/NanoAOD#get-configuration-files).
+There are more detailed instructions that you can reference [here](https://github.com/susy2015/SusyAnaTools#get-configuration-files).
 
 Make sure that you checkout the configuration files in the `$CMSSW_BASE/src/ZInvisible/Tools` directory (with softlinks if you use getTaggerCfg.sh and getStopCfg.sh). You may specify a different directory for the area where the release is downloaded, as the softlinks will point to that location.
+
+## Get More Dependencies
+
+Run the following commands to get additional dependencies.
+These allow you to use json files in C++ and to load the unit bin json file.
+
+Get json library to use json files in C++.
+```
+cd $CMSSW_BASE/src
+git clone git@github.com:nlohmann/json.git
+cd json
+git checkout v3.7.3
+```
+
+Get EstToolsSUSY repository which has the unit bin json file dc_BkgPred_BinMaps_master.json.
+```
+cd $CMSSW_BASE/src
+git clone git@github.com:mkilpatr/EstToolsSUSY.git
+cd EstToolsSUSY
+git checkout SBv4
+```
+
+Make a softlink to dc_BkgPred_BinMaps_master.json.
+```
+cd $CMSSW_BASE/src/ZInvisible/Tools
+ln -s $CMSSW_BASE/src/EstToolsSUSY/SUSYNano19/dc_BkgPred_BinMaps_master.json .
+```
+
+Copy these root files.
+```
+cd $CMSSW_BASE/src/ZInvisible/Tools
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/2016_trigger_eff.root .
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/2017_trigger_eff.root .
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/2018_trigger_eff.root .
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/shapes_njets.root .
+```
 
 ## Setup
 
