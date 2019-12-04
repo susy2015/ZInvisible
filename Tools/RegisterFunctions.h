@@ -90,6 +90,9 @@ private:
     plotterFunctions::GetSearchBin              *getSearchBin;
     plotterFunctions::GetSearchBin              *getSearchBin_jesTotalUp;
     plotterFunctions::GetSearchBin              *getSearchBin_jesTotalDown;
+    plotterFunctions::GetSearchBin              *getSearchBin_drPhotonCleaned;
+    plotterFunctions::GetSearchBin              *getSearchBin_drPhotonCleaned_jesTotalUp;
+    plotterFunctions::GetSearchBin              *getSearchBin_drPhotonCleaned_jesTotalDown;
     plotterFunctions::PrepareMiniTupleVars      *prepareMiniTupleVars;
     plotterFunctions::SystematicPrep            *systematicPrep;
     plotterFunctions::SystematicCalc            *systematicCalc;

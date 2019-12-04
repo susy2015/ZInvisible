@@ -1,6 +1,7 @@
 #ifndef GETSEARCHBIN_H
 #define GETSEARCHBIN_H
 
+#include "units.hh"
 #include "TypeDefinitions.h"
 #include "PhotonTools.h"
 #include "SusyAnaTools/Tools/NTupleReader.h"
@@ -31,16 +32,16 @@ namespace plotterFunctions
         std::string suffix_;
         std::string met_name_  = "MET_pt";
         std::map<std::string, std::string> prefixMap = {
-            {"/binNum",             "bin_"},
+            {"/binNum",            "bin_"},
             {"/unitCRNum/qcdcr",   "bin_qcdcr_"},
             {"/unitCRNum/lepcr",   "bin_lepcr_"},
             {"/unitCRNum/phocr",   "bin_phocr_"},
-            {"/unitSRNum",          "bin_"},
+            {"/unitSRNum",         "bin_"},
         };
 
         void getSearchBin(NTupleReader& tr)
         {
-            bool doUnits = false;
+            bool doUnits = true;
             // TODO: calculate photon Data and MC yields in photon CR unit bins
             // TODO: calculate Z nu nu MC yields in SR unit bins
             std::string met_label = "MET_pt";
@@ -58,19 +59,22 @@ namespace plotterFunctions
             }
             
             // For photon CR, we need to use _drPhotonCleaned for all variables and metWithPhoton
+            const auto& event               = tr.getVar<unsigned long long>("event");
             const auto& met                 = tr.getVar<data_t>(met_label);
-            const auto& SAT_Pass_lowDM      = tr.getVar<bool>("SAT_Pass_lowDM"  + suffix_);
-            const auto& SAT_Pass_highDM     = tr.getVar<bool>("SAT_Pass_highDM" + suffix_);
-            const auto& nJets               = tr.getVar<int>("nJets"            + suffix_);
-            const auto& nBottoms            = tr.getVar<int>("nBottoms"         + suffix_);
-            const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottoms"     + suffix_);
-            const auto& nMergedTops         = tr.getVar<int>("nMergedTops"      + suffix_);
-            const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops"    + suffix_);
-            const auto& nWs                 = tr.getVar<int>("nWs"              + suffix_);
-            const auto& ht                  = tr.getVar<data_t>("HT"            + suffix_);
-            const auto& ptb                 = tr.getVar<data_t>("ptb"           + suffix_);
-            const auto& mtb                 = tr.getVar<data_t>("mtb"           + suffix_);
-            const auto& ISRJetPt            = tr.getVar<data_t>("ISRJetPt"      + suffix_);
+            const auto& Pass_PhoCR          = tr.getVar<bool>("passPhotonSelection");
+            const auto& SAT_Pass_Baseline   = tr.getVar<bool>("SAT_Pass_Baseline"       + suffix_);
+            const auto& SAT_Pass_lowDM      = tr.getVar<bool>("SAT_Pass_lowDM"          + suffix_);
+            const auto& SAT_Pass_highDM     = tr.getVar<bool>("SAT_Pass_highDM"         + suffix_);
+            const auto& nJets               = tr.getVar<int>("nJets"                    + suffix_);
+            const auto& nBottoms            = tr.getVar<int>("nBottoms"                 + suffix_);
+            const auto& nSoftBottoms        = tr.getVar<int>("nSoftBottoms"             + suffix_);
+            const auto& nMergedTops         = tr.getVar<int>("nMergedTops"              + suffix_);
+            const auto& nResolvedTops       = tr.getVar<int>("nResolvedTops"            + suffix_);
+            const auto& nWs                 = tr.getVar<int>("nWs"                      + suffix_);
+            const auto& ht                  = tr.getVar<data_t>("HT"                    + suffix_);
+            const auto& ptb                 = tr.getVar<data_t>("ptb"                   + suffix_);
+            const auto& mtb                 = tr.getVar<data_t>("mtb"                   + suffix_);
+            const auto& ISRJetPt            = tr.getVar<data_t>("ISRJetPt"              + suffix_);
             
             //------------------------------------------------//
             //--- Updated Search Bins: SBv4 (October 2019) ---//
@@ -91,7 +95,7 @@ namespace plotterFunctions
             int nValidationBinHighDM       = SBv3_highdm_validation(mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met); 
 
             //----------------------------------------//
-            //--- Updated Unit Bins (October 2019) ---//
+            //--- Updated Unit Bins (December 2019) ---//
             //----------------------------------------//
             int nSBLowDM      = -1;    
             int nSBHighDM     = -1; 
@@ -99,56 +103,72 @@ namespace plotterFunctions
             int nCRUnitHighDM = -1; 
             int nSRUnitLowDM  = -1; 
             int nSRUnitHighDM = -1; 
-            // TODO: This function is very slow! Speed this up.
-            // To save time, only run functions if passing baseline (and ISR pt cut for low dm)
+            
+            // ---------------------------- Fast version from Jon
+            // syntax
+            //int SRbin(Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, HighDM, LowDM, nb, mtb, ptb, MET, nSoftB, njets, ISRpt, HT, nres, ntop, nw);
+            //int SRunit(Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, HighDM, LowDM, nb, mtb, ptb, MET, nSoftB, njets, ISRpt, HT, nres, ntop, nw);
+            //int QCDCRunit(Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, HighDM, LowDM, nb, mtb, ptb, MET, nSoftB, njets, ISRpt, HT, nres, ntop, nw);
+            //int lepCRunit(Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, HighDM, LowDM, nb, mtb, ptb, MET, nSoftB, njets, ISRpt, HT, nres, ntop, nw);
+            //int phoCRunit(Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, HighDM, LowDM, nb, mtb, ptb, MET, nSoftB, njets, ISRpt, HT, nres, ntop, nw);
             if (doUnits)
             {
-                if (SAT_Pass_lowDM && ISRJetPt >= 300)
+                bool SAT_Pass_lowDM_local = SAT_Pass_lowDM && (ISRJetPt >= 300);
+                const bool Pass_QCDCR = false; 
+                const bool Pass_LepCR = false;
+                int nSB      = SRbin(      SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM_local, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
+                int nCRUnit  = phoCRunit(  SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM_local, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
+                int nSRUnit  = SRunit(     SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM_local, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
+                
+                if (SAT_Pass_lowDM_local)
                 {
-                    //int getUnitNumLowDM(const std::string& key, int njets, int nb, int nsv, float ISRpt, float ptb, float met)
-                    nSBLowDM      = getUnitNumLowDM(  "/binNum",            nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                    nCRUnitLowDM  = getUnitNumLowDM(  "/unitCRNum/phocr",   nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
-                    nSRUnitLowDM  = getUnitNumLowDM(  "/unitSRNum",         nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
+                    nSBLowDM      = nSB;
+                    nCRUnitLowDM  = nCRUnit;
+                    nSRUnitLowDM  = nSRUnit;
                 }
                 else if (SAT_Pass_highDM)
                 {
-                    //int getUnitNumHighDM(const std::string& key, float mtb, int njets, int nb, int ntop, int nw, int nres, float ht, float met)
-                    nSBHighDM     = getUnitNumHighDM( "/binNum",            mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                    nCRUnitHighDM = getUnitNumHighDM( "/unitCRNum/phocr",   mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
-                    nSRUnitHighDM = getUnitNumHighDM( "/unitSRNum",         mtb, nJets, nBottoms, nMergedTops, nWs, nResolvedTops, ht, met);
+                    nSBHighDM      = nSB;
+                    nCRUnitHighDM  = nCRUnit;
+                    nSRUnitHighDM  = nSRUnit;
                 }
             }
 
+            // check selection in search region
+            if (suffix_.compare("_jetpt30") == 0)
+            {
             
-            // compare search bins (hui) vs. search bin units (matt) 
-            //if (SAT_Pass_lowDM)
-            //{
-            //    if (! (nSearchBinLowDM < 0 && nSBLowDM < 0))
-            //    {
-            //        printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", suffix_.c_str(), nSearchBinLowDM, nSBLowDM, nCRUnitLowDM, nSRUnitLowDM);
-            //        if(nSearchBinLowDM != nSBLowDM) printf(" --- nSB are different --- ");
-            //        printf("\n");
-            //    }
-            //}
-            //if (SAT_Pass_highDM)
-            //{
-            //    if (! (nSearchBinHighDM < 0 && nSBHighDM < 0))
-            //    {
-            //        printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", suffix_.c_str(), nSearchBinHighDM, nSBHighDM, nCRUnitHighDM, nSRUnitHighDM);
-            //        if(nSearchBinHighDM != nSBHighDM) printf(" --- nSB are different --- ");
-            //        printf("\n");
-            //    }
-            //}
-            
-            // print if search bin numbers calculated using different methods are not equal
-            //if (SAT_Pass_lowDM && (nSearchBinLowDM != nSBLowDM))
-            //{
-            //    printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", suffix_.c_str(), nSearchBinLowDM, nSBLowDM);
-            //}
-            //if (SAT_Pass_highDM && (nSearchBinHighDM != nSBHighDM))
-            //{
-            //    printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", suffix_.c_str(), nSearchBinHighDM, nSBHighDM);
-            //}
+                // compare search bins (hui) vs. search bin units (matt) 
+                //if (SAT_Pass_lowDM)
+                //{
+                //    if (! (nSearchBinLowDM < 0 && nSBLowDM < 0))
+                //    {
+                //        printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", suffix_.c_str(), nSearchBinLowDM, nSBLowDM, nCRUnitLowDM, nSRUnitLowDM);
+                //        if(nSearchBinLowDM != nSBLowDM) printf(" --- nSB are different --- ");
+                //        printf("\n");
+                //    }
+                //}
+                //if (SAT_Pass_highDM)
+                //{
+                //    if (! (nSearchBinHighDM < 0 && nSBHighDM < 0))
+                //    {
+                //        printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", suffix_.c_str(), nSearchBinHighDM, nSBHighDM, nCRUnitHighDM, nSRUnitHighDM);
+                //        if(nSearchBinHighDM != nSBHighDM) printf(" --- nSB are different --- ");
+                //        printf("\n");
+                //    }
+                //}
+                
+                // print if search bin numbers calculated using different methods are not equal
+                if (SAT_Pass_lowDM && (nSearchBinLowDM != nSBLowDM))
+                {
+                    printf("CMS_event=%d; LowDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", event, suffix_.c_str(), nSearchBinLowDM, nSBLowDM);
+                }
+                if (SAT_Pass_highDM && (nSearchBinHighDM != nSBHighDM))
+                {
+                    printf("CMS_event=%d; HighDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", event, suffix_.c_str(), nSearchBinHighDM, nSBHighDM);
+                }
+
+            }
             
             // search bins
             tr.registerDerivedVar("nSearchBinLowDM"             + suffix_, nSearchBinLowDM);

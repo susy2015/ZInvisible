@@ -463,7 +463,7 @@ void Plotter::createHistsFromTuple()
 
                 registerfunc_->registerFunctions(tr);
                 // skip to event
-                //int myEvent = 550000;
+                //int myEvent = 635000;
                 //std::cout << "Before go to event " << myEvent << std::endl;
                 //tr.goToEvent(myEvent);
                 //std::cout << "After go to event " << myEvent << std::endl;
@@ -658,7 +658,7 @@ bool Plotter::Cut::passCut(const NTupleReader& tr, const int index) const
     }
 }
 
-template<> const double& Plotter::getVarFromVec<TLorentzVector, double>(const VarName& name, const NTupleReader& tr, const int index)
+template<> const double Plotter::getVarFromVec<TLorentzVector, double>(const VarName& name, const NTupleReader& tr, const int index)
 {
     const auto& vec = tr.getVec<TLorentzVector>(name.name);
 
