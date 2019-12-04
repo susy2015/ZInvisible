@@ -67,6 +67,42 @@ There are more detailed instructions that you can reference [here](https://githu
 
 Make sure that you checkout the configuration files in the `$CMSSW_BASE/src/ZInvisible/Tools` directory (with softlinks if you use getTaggerCfg.sh and getStopCfg.sh). You may specify a different directory for the area where the release is downloaded, as the softlinks will point to that location.
 
+## Get More Dependencies
+
+Run the following commands to get additional dependencies.
+These allow you to use json files in C++ and to load the unit bin json file.
+
+Get json library to use json files in C++.
+```
+cd $CMSSW_BASE/src
+git clone git@github.com:nlohmann/json.git
+cd json
+git checkout v3.7.3
+```
+
+Get EstToolsSUSY repository which has the unit bin json file dc_BkgPred_BinMaps_master.json.
+```
+cd $CMSSW_BASE/src
+git clone git@github.com:mkilpatr/EstToolsSUSY.git
+cd EstToolsSUSY
+git checkout SBv4
+```
+
+Make a softlink to dc_BkgPred_BinMaps_master.json.
+```
+cd $CMSSW_BASE/src/ZInvisible/Tools
+ln -s $CMSSW_BASE/src/EstToolsSUSY/SUSYNano19/dc_BkgPred_BinMaps_master.json .
+```
+
+Copy these root files.
+```
+cd $CMSSW_BASE/src/ZInvisible/Tools
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/2016_trigger_eff.root .
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/2017_trigger_eff.root .
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/2018_trigger_eff.root .
+cp /uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/shapes_njets.root .
+```
+
 ## Setup
 
 Go to your working area and then setup the TopTagger environment. This will need to be run after running `cmsenv` in every new terminal session. Use the command for your shell (bash or tcsh). Type "echo $SHELL" to check your shell if you don't know it.
