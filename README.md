@@ -67,6 +67,12 @@ There are more detailed instructions that you can reference [here](https://githu
 
 Make sure that you checkout the configuration files in the `$CMSSW_BASE/src/ZInvisible/Tools` directory (with softlinks if you use getTaggerCfg.sh and getStopCfg.sh). You may specify a different directory for the area where the release is downloaded, as the softlinks will point to that location.
 
+## Get more stuff
+
+Run the following commands to get additional dependencies.
+```
+```
+
 ## Setup
 
 Go to your working area and then setup the TopTagger environment. This will need to be run after running `cmsenv` in every new terminal session. Use the command for your shell (bash or tcsh). Type "echo $SHELL" to check your shell if you don't know it.
