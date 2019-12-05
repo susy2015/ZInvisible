@@ -24,7 +24,7 @@ JSONDIR    = ${CMSSW_BASE}/src/json
 CXX        = g++
 
 CXXFLAGS  += -I. -I$(CMSSW_BASE)/src -std=c++0x -I$(LHAPDF_DATA_PATH)/../../include
-## Optimization flag: O3
+## Optimization flag: -O3
 ## Debug flag: -g
 #CXXFLAGS += -g -O3
 CXXFLAGS += -O3
