@@ -1690,6 +1690,20 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("DataMC_Muon_LowDM_bestRecoZM_0to400_" + cut.first + histSuffix,                   {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
                 vh.push_back(PHS("DataMC_Muon_LowDM_Normalization_bestRecoZM_50to250_" + cut.first + histSuffix,    {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
                 vh.push_back(PHS("DataMC_Muon_LowDM_Normalization_bestRecoZM_0to400_" + cut.first + histSuffix,     {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_Normalization_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
+                
+                // --- JEC systematic --- //
+                // only apply JEC to MC, not Data
+                if (doSystematics)
+                {
+                    for (const auto& jec : jesMap)
+                    {
+                        std::string histSuffixSyst = "_jes_syst_" + jec.first + JetPtCut;
+                        std::string SAT_Pass_lowDM_jec = SAT_Pass_lowDM + jec.second;
+                        std::vector<std::vector<PDS>> StackMC_Muon_LowDM_Normalization_noZMassCut_jec  = makeStackMC_DiLepton_Normalization(  "passMuZinvSel" + SAT_Pass_lowDM_jec + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, MuonWeights);
+                        PDC dcMC_Muon_LowDM_Normalization_bestRecoZM_jec(    "stack",  "bestRecoZM", StackMC_Muon_LowDM_Normalization_noZMassCut_jec);
+                        vh.push_back(PHS("DataMC_Muon_LowDM_Normalization_bestRecoZM_0to400_" + cut.first + histSuffixSyst,     {dcData_Muon_LowDM_bestRecoZM,   dcMC_Muon_LowDM_Normalization_bestRecoZM_jec},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
+                    }
+                }
             }
             for (const auto& cut : map_norm_cuts_high_dm)
             {
@@ -1704,6 +1718,20 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("DataMC_Muon_HighDM_bestRecoZM_0to400_" + cut.first + histSuffix,                   {dcData_Muon_HighDM_bestRecoZM,   dcMC_Muon_HighDM_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
                 vh.push_back(PHS("DataMC_Muon_HighDM_Normalization_bestRecoZM_50to250_" + cut.first + histSuffix,    {dcData_Muon_HighDM_bestRecoZM,   dcMC_Muon_HighDM_Normalization_bestRecoZM},  {1, 2}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
                 vh.push_back(PHS("DataMC_Muon_HighDM_Normalization_bestRecoZM_0to400_" + cut.first + histSuffix,     {dcData_Muon_HighDM_bestRecoZM,   dcMC_Muon_HighDM_Normalization_bestRecoZM},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
+                
+                // --- JEC systematic --- //
+                // only apply JEC to MC, not Data
+                if (doSystematics)
+                {
+                    for (const auto& jec : jesMap)
+                    {
+                        std::string histSuffixSyst = "_jes_syst_" + jec.first + JetPtCut;
+                        std::string SAT_Pass_highDM_jec = SAT_Pass_highDM + jec.second;
+                        std::vector<std::vector<PDS>> StackMC_Muon_HighDM_Normalization_noZMassCut_jec  = makeStackMC_DiLepton_Normalization(  "passMuZinvSel" + SAT_Pass_highDM_jec + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned + cut.second, MuonWeights);
+                        PDC dcMC_Muon_HighDM_Normalization_bestRecoZM_jec(    "stack",  "bestRecoZM", StackMC_Muon_HighDM_Normalization_noZMassCut_jec);
+                        vh.push_back(PHS("DataMC_Muon_HighDM_Normalization_bestRecoZM_0to400_" + cut.first + histSuffixSyst,     {dcData_Muon_HighDM_bestRecoZM,   dcMC_Muon_HighDM_Normalization_bestRecoZM_jec},  {1, 2}, "", 400, 0.0, 400.0, true, false, label_bestRecoZM, "Events"));
+                    }
+                }
             }
             // ------------------- //
             // --- Systematics --- //
