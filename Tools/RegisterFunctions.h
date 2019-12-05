@@ -58,11 +58,9 @@ private:
     BaselineVessel *myBLV_jetpt30;
     BaselineVessel *myBLV_jetpt30_jesTotalUp;
     BaselineVessel *myBLV_jetpt30_jesTotalDown;
-    BaselineVessel *blv_drLeptonCleaned;
     BaselineVessel *blv_drLeptonCleaned_jetpt30;
     BaselineVessel *blv_drLeptonCleaned_jetpt30_jesTotalUp;
     BaselineVessel *blv_drLeptonCleaned_jetpt30_jesTotalDown;
-    BaselineVessel *blv_drPhotonCleaned;
     BaselineVessel *blv_drPhotonCleaned_jetpt30;
     BaselineVessel *blv_drPhotonCleaned_jetpt30_jesTotalUp;
     BaselineVessel *blv_drPhotonCleaned_jetpt30_jesTotalDown;

@@ -20,7 +20,6 @@ executableOption=$3
 
 executable=
 resultFile=
-dirPrefix=
 
 dataDir="output"
 brokenDir="broken_files" # directory for broken root files
@@ -42,11 +41,12 @@ fi
 if [ "$executableOption" = "-c" ]; then
     resultFile="effhists_${dirName}.root"
     executable="echo nothing to do"
-    dirPrefix="effhists"
+elif [ "$executableOption" = "-n" ]; then
+    resultFile="result.root"
+    executable="echo nothing to do"
 else
     resultFile="result.root"
     executable="./makePlots -f -I ${resultFile} -Y ${year} -R Data_MET_${year} | grep -v LHAPDF"
-    dirPrefix="histos"
 fi
 
 echo "- Running processResults.sh for the data set ${dirName}"
