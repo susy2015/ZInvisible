@@ -34,11 +34,9 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool doSystematics, std::string
     myBLV_jetpt30                               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30");
     myBLV_jetpt30_jesTotalUp                    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_jesTotalUp");
     myBLV_jetpt30_jesTotalDown                  = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_jesTotalDown");
-    blv_drLeptonCleaned                         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned");
     blv_drLeptonCleaned_jetpt30                 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30");
     blv_drLeptonCleaned_jetpt30_jesTotalUp      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30_jesTotalUp");
     blv_drLeptonCleaned_jetpt30_jesTotalDown    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30_jesTotalDown");
-    blv_drPhotonCleaned                         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned");
     blv_drPhotonCleaned_jetpt30                 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30");
     blv_drPhotonCleaned_jetpt30_jesTotalUp      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30_jesTotalUp");
     blv_drPhotonCleaned_jetpt30_jesTotalDown    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30_jesTotalDown");
@@ -97,11 +95,9 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(myBLV_jetpt30)                               delete myBLV_jetpt30;
     if(myBLV_jetpt30_jesTotalUp)                    delete myBLV_jetpt30_jesTotalUp;
     if(myBLV_jetpt30_jesTotalDown)                  delete myBLV_jetpt30_jesTotalDown;
-    if(blv_drLeptonCleaned)                         delete blv_drLeptonCleaned;
     if(blv_drLeptonCleaned_jetpt30)                 delete blv_drLeptonCleaned_jetpt30;
     if(blv_drLeptonCleaned_jetpt30_jesTotalUp)      delete blv_drLeptonCleaned_jetpt30_jesTotalUp;
     if(blv_drLeptonCleaned_jetpt30_jesTotalDown)    delete blv_drLeptonCleaned_jetpt30_jesTotalDown;
-    if(blv_drPhotonCleaned)                         delete blv_drPhotonCleaned;
     if(blv_drPhotonCleaned_jetpt30)                 delete blv_drPhotonCleaned_jetpt30;
     if(blv_drPhotonCleaned_jetpt30_jesTotalUp)      delete blv_drPhotonCleaned_jetpt30_jesTotalUp;
     if(blv_drPhotonCleaned_jetpt30_jesTotalDown)    delete blv_drPhotonCleaned_jetpt30_jesTotalDown;
@@ -174,32 +170,6 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     }
     
 }
-    
-// ------------------------------------------ //
-// old version including JEC and systematics
-// here for reference only
-// ------------------------------------------ //
-//tr.registerFunction(*weights);
-//tr.registerFunction(*blvZinv);
-//tr.registerFunction(*blv_drLeptonCleaned);
-//tr.registerFunction(*blv_drPhotonCleaned);
-//tr.registerFunction(*njWeight);
-//tr.registerFunction(*blvZinv1b);
-//tr.registerFunction(*blvZinv2b);
-//tr.registerFunction(*blvZinv3b);
-//tr.registerFunction(*systematicPrep);
-//tr.registerFunction(*blvZinvJEUUp);
-//tr.registerFunction(*blvZinvJEUDn);
-//tr.registerFunction(*blvZinvMEUUp);
-//tr.registerFunction(*blvZinvMEUDn);
-//tr.registerFunction(*systematicCalc);
-//tr.registerFunction(*prepareMiniTupleVars);
-//tr.registerFunction(&printInterestingEvents);
-//tr.registerFunction(*myPDFUnc);
-//tr.registerFunction(*bTagCorrector);
-//tr.registerFunction(*ISRcorrector);
-//tr.registerFunction(*pileup);
-// ------------------------------------------ //
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
 {

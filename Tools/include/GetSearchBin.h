@@ -45,7 +45,7 @@ namespace plotterFunctions
             // TODO: calculate photon Data and MC yields in photon CR unit bins
             // TODO: calculate Z nu nu MC yields in SR unit bins
             std::string met_label = "MET_pt";
-            if (suffix_.compare("_drPhotonCleaned") == 0)
+            if (suffix_.find("drPhotonCleaned") != std::string::npos)
             {
                 met_label = "metWithPhoton";
             }
@@ -135,28 +135,29 @@ namespace plotterFunctions
             }
 
             // check selection in search region
-            if (suffix_.compare("_jetpt30") == 0)
+            //if (suffix_.compare("_jetpt30") == 0)
+            if (suffix_.compare("_drPhotonCleaned_jetpt30") == 0)
             {
             
                 // compare search bins (hui) vs. search bin units (matt) 
-                //if (SAT_Pass_lowDM)
-                //{
-                //    if (! (nSearchBinLowDM < 0 && nSBLowDM < 0))
-                //    {
-                //        printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", suffix_.c_str(), nSearchBinLowDM, nSBLowDM, nCRUnitLowDM, nSRUnitLowDM);
-                //        if(nSearchBinLowDM != nSBLowDM) printf(" --- nSB are different --- ");
-                //        printf("\n");
-                //    }
-                //}
-                //if (SAT_Pass_highDM)
-                //{
-                //    if (! (nSearchBinHighDM < 0 && nSBHighDM < 0))
-                //    {
-                //        printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", suffix_.c_str(), nSearchBinHighDM, nSBHighDM, nCRUnitHighDM, nSRUnitHighDM);
-                //        if(nSearchBinHighDM != nSBHighDM) printf(" --- nSB are different --- ");
-                //        printf("\n");
-                //    }
-                //}
+                if (SAT_Pass_lowDM)
+                {
+                    if (! (nSearchBinLowDM < 0 && nSBLowDM < 0))
+                    {
+                        printf("LowDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", suffix_.c_str(), nSearchBinLowDM, nSBLowDM, nCRUnitLowDM, nSRUnitLowDM);
+                        if(nSearchBinLowDM != nSBLowDM) printf(" --- nSB are different --- ");
+                        printf("\n");
+                    }
+                }
+                if (SAT_Pass_highDM)
+                {
+                    if (! (nSearchBinHighDM < 0 && nSBHighDM < 0))
+                    {
+                        printf("HighDM; %s; nSB_hui = %d; nSB_matt = %d, nCRUnit = %d, nSRUnit = %d", suffix_.c_str(), nSearchBinHighDM, nSBHighDM, nCRUnitHighDM, nSRUnitHighDM);
+                        if(nSearchBinHighDM != nSBHighDM) printf(" --- nSB are different --- ");
+                        printf("\n");
+                    }
+                }
                 
                 // print if search bin numbers calculated using different methods are not equal
                 if (SAT_Pass_lowDM && (nSearchBinLowDM != nSBLowDM))

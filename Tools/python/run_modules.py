@@ -22,7 +22,7 @@ def main():
     json_file   = options.json_file
     verbose     = options.verbose
 
-    doUnits     = False
+    doUnits     = True
     doCutflows  = False
     doPhotons   = False
     draw        = False
@@ -109,6 +109,7 @@ def main():
     total_era = "Run2"
     validation_file = "validationBinsZinv_" + total_era + ".root"
     search_file     = "searchBinsZinv_"     + total_era + ".root"
+    # WARNING: only run makeTotalPred() if you do not already have Run2 combined histograms; otherwise you will double count!
     #VB.makeTotalPred( validation_file,  "Validation Bin",   "validation", total_era   )
     #SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
@@ -120,8 +121,9 @@ def main():
     if doUnits:
         CRunits.makeJson(CRunits.binValues, results_dir + "CRUnitsResults.json")
         SRunits.makeJson(SRunits.binValues, results_dir + "SRUnitsResults.json")
-        # saveResults(inFile, outFile, CRunits, SRunits, eras)
-        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields.json", CRunits, SRunits, eras)
+        # saveResults(inFile, outFile, CRunits, SRunits, era)
+        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + "2016" + ".json", CRunits, SRunits, "2016")
+        #saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + total_era + ".json", CRunits, SRunits, total_era)
 
     # TODO: making data card for Run 2 does not work because we have not run calcPrediction() for Run 2
     #       calcPrediction() depends on norm and shape (which we calculate per era, not for all of Run 2)
