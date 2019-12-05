@@ -2190,6 +2190,27 @@ int main(int argc, char* argv[])
             // ------------------- //
             if (doSystematics)
             {
+                // Data: no syst. applied to Data
+                PDS dsData_Photon_LowDM(        "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+                PDS dsData_Photon_HighDM(       "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+                PDC dcData_Photon_LowDM_nCRUnitLowDM(       "data",   "nCRUnitLowDM"  + varSuffix,   {dsData_Photon_LowDM});
+                PDC dcData_Photon_HighDM_nCRUnitHighDM(     "data",   "nCRUnitHighDM" + varSuffix,   {dsData_Photon_HighDM});
+                // --- JEC systematic --- //
+                // only apply JEC to MC, not Data
+                for (const auto& jec : jesMap)
+                {
+                    std::string histSuffixSyst = "_jes_syst_" + jec.first + JetPtCut;
+                    std::string SAT_Pass_lowDM_jec  = SAT_Pass_lowDM  + jec.second;
+                    std::string SAT_Pass_highDM_jec = SAT_Pass_highDM + jec.second;
+                    std::vector<std::vector<PDS>> StackMC_Photon_LowDM   = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_lowDM_jec  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+                    std::vector<std::vector<PDS>> StackMC_Photon_HighDM  = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_highDM_jec + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+                    // Control Region Units: nCRUnitLowDM and nCRUnitHighDM
+                    PDC dcMC_Photon_LowDM_nCRUnitLowDM(         "stack",  "nCRUnitLowDM"  + varSuffix,   StackMC_Photon_LowDM);
+                    PDC dcMC_Photon_HighDM_nCRUnitHighDM(       "stack",  "nCRUnitHighDM" + varSuffix,   StackMC_Photon_HighDM);
+                    vh.push_back(PHS("DataMC_Photon_LowDM_nCRUnitLowDM" + histSuffixSyst,                {dcData_Photon_LowDM_nCRUnitLowDM,                     dcMC_Photon_LowDM_nCRUnitLowDM},                     {1, 2}, "", max_crunit_low_dm - min_crunit_low_dm,    min_crunit_low_dm,  max_crunit_low_dm,   false, false, "Control Region Unit Low DM",  "Events"));
+                    vh.push_back(PHS("DataMC_Photon_HighDM_nCRUnitHighDM" + histSuffixSyst,              {dcData_Photon_HighDM_nCRUnitHighDM,                   dcMC_Photon_HighDM_nCRUnitHighDM},                   {1, 2}, "", max_crunit_high_dm - min_crunit_high_dm,  min_crunit_high_dm, max_crunit_high_dm,  false, false, "Control Region Unit High DM", "Events"));
+                }
+                
                 //printf("# Systematics for Photon histograms\n");
                 for (const auto& element : systematics_json.items())
                 {
@@ -2221,7 +2242,6 @@ int main(int argc, char* argv[])
                             for (const auto& cut : map_shape_cuts_low_dm)
                             {
                                 const bool doNorm = true;
-                                PDS dsData_Photon_LowDM(        "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"    + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned + cut.second,  "");
                                 std::vector<std::vector<PDS>> StackMC_Photon_LowDM          = makeStackMC_Photon( "MET_pt<250"                          + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned + cut.second, w.second);
                                 PDC dcData_Photon_LowDM_met(                             "data",   "metWithPhoton", {dsData_Photon_LowDM});
                                 PDC dcMC_Photon_LowDM_met(                               "stack",  "metWithPhoton", StackMC_Photon_LowDM);
@@ -2230,19 +2250,14 @@ int main(int argc, char* argv[])
                             for (const auto& cut : map_shape_cuts_high_dm)
                             {
                                 const bool doNorm = true;
-                                PDS dsData_Photon_HighDM(        "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"   + PhotonIDSelection + SAT_Pass_highDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned + cut.second,  "");
                                 std::vector<std::vector<PDS>> StackMC_Photon_HighDM          = makeStackMC_Photon( "MET_pt<250"                         + PhotonIDSelection + SAT_Pass_highDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned + cut.second, w.second);
                                 PDC dcData_Photon_HighDM_met(                             "data",   "metWithPhoton", {dsData_Photon_HighDM});
                                 PDC dcMC_Photon_HighDM_met(                               "stack",  "metWithPhoton", StackMC_Photon_HighDM);
                                 vh.push_back(PHS("DataMC_Photon_HighDM_met_" + cut.first + histSuffixSyst,                              {dcData_Photon_HighDM_met,                              dcMC_Photon_HighDM_met},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
                             }
                             // Control Region Units: nCRUnitLowDM and nCRUnitHighDM
-                            PDS dsData_Photon_LowDM(        "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
-                            PDS dsData_Photon_HighDM(       "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
                             std::vector<std::vector<PDS>> StackMC_Photon_LowDM          = makeStackMC_Photon( "MET_pt<250"                              + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, w.second);
                             std::vector<std::vector<PDS>> StackMC_Photon_HighDM         = makeStackMC_Photon( "MET_pt<250"                              + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, w.second);
-                            PDC dcData_Photon_LowDM_nCRUnitLowDM(       "data",   "nCRUnitLowDM"  + varSuffix,   {dsData_Photon_LowDM});
-                            PDC dcData_Photon_HighDM_nCRUnitHighDM(     "data",   "nCRUnitHighDM" + varSuffix,   {dsData_Photon_HighDM});
                             PDC dcMC_Photon_LowDM_nCRUnitLowDM(         "stack",  "nCRUnitLowDM"  + varSuffix,   StackMC_Photon_LowDM);
                             PDC dcMC_Photon_HighDM_nCRUnitHighDM(       "stack",  "nCRUnitHighDM" + varSuffix,   StackMC_Photon_HighDM);
                             vh.push_back(PHS("DataMC_Photon_LowDM_nCRUnitLowDM" + histSuffixSyst,                    {dcData_Photon_LowDM_nCRUnitLowDM,                     dcMC_Photon_LowDM_nCRUnitLowDM},                     {1, 2}, "", max_crunit_low_dm - min_crunit_low_dm,    min_crunit_low_dm,  max_crunit_low_dm,   false, false, "Control Region Unit Low DM",  "Events"));
