@@ -123,8 +123,8 @@ def main():
         CRunits.makeJson(CRunits.binValues, results_dir + "CRUnitsResults.json")
         SRunits.makeJson(SRunits.binValues, results_dir + "SRUnitsResults.json")
         # saveResults(inFile, outFile, CRunits, SRunits, era)
-        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + "2016" + ".json", CRunits, SRunits, "2016")
-        #saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + total_era + ".json", CRunits, SRunits, total_era)
+        #saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + "2016" + ".json", CRunits, SRunits, "2016")
+        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + total_era + ".json", CRunits, SRunits, total_era)
 
     # TODO: making data card for Run 2 does not work because we have not run calcPrediction() for Run 2
     #       calcPrediction() depends on norm and shape (which we calculate per era, not for all of Run 2)
