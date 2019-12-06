@@ -15,6 +15,10 @@ from make_table import Table
 from tools import setupHist
 import ROOT
 
+# make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
+ROOT.PyConfig.IgnoreCommandLineOptions = True
+# make plots faster without displaying them
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 def plot(h, h_up, h_down, mySyst, region, era, plot_dir):
     eraTag = "_" + era
@@ -145,7 +149,7 @@ def main():
             # central prediction
             for region in VB.histograms[era]:
                 histMap[era][region] = {}
-                histMap[era][region]["pred"] = VB.histograms[era][region]["pred"]
+                histMap[era][region]["pred"] = VB.histograms[era][region]["pred"].Clone()
                 
                 # print for testing
                 # nBins = h.GetNbinsX()
@@ -172,7 +176,7 @@ def main():
                         S.getShape(        result_file, era, systTag )
                         VB.getValues(      result_file, era, systTag )
                         SB.getValues(      result_file, era, systTag )
-                        histMap[era][region]["syst_" + mySyst][direction] = VB.histograms[era][region]["pred"]
+                        histMap[era][region]["syst_" + mySyst][direction] = VB.histograms[era][region]["pred"].Clone()
                         
                         # print for testing
                         # nBins = h.GetNbinsX()
