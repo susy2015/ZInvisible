@@ -81,8 +81,25 @@ def main():
                 # print for testing
                 nBins = h.GetNbinsX()
                 for i in xrange(1, nBins + 1):
-                    print "{0}, {1}, bin {2}: {3}".format(era, region, i, h.GetBinContent(i))
-            # syst up/down predictions
+                    print "{0}, {1}, bin {2}: pred = {3}".format(era, region, i, h.GetBinContent(i))
+                # syst up/down predictions
+                mySyst = "btag"
+                histMap[era][region]["syst_" + mySyst] = {}
+                for direction in ["up", "down"]:
+                    # hist name format for reference
+                    # std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut;
+                    # _name_syst_direction
+                    systTag = "_{0}_syst_{1}".format(mySyst, direction)
+                    N.getNormAndError( result_file, era, systTag )
+                    S.getShape(        result_file, era, systTag )
+                    VB.getValues(      result_file, era, systTag )
+                    SB.getValues(      result_file, era, systTag )
+                    h = VB.histograms[era][region]["pred"]
+                    histMap[era][region]["syst_" + mySyst][direction] = h
+                    # print for testing
+                    nBins = h.GetNbinsX()
+                    for i in xrange(1, nBins + 1):
+                        print "{0}, {1}, bin {2}: {3} = {4}".format(era, region, i, mySyst + "_" + direction, h.GetBinContent(i))
 
 
 if __name__ == "__main__":

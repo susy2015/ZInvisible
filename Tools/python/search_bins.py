@@ -424,7 +424,7 @@ class ValidationBins(Common):
         with open("validation_bins_v3.json", "r") as j:
             self.bins = json.load(j)
 
-    def getValues(self, file_name, era):
+    def getValues(self, file_name, era, systTag=""):
         self.binValues[era] = {}
         
         for b in self.all_bins:
@@ -441,19 +441,27 @@ class ValidationBins(Common):
             self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["validation"][region][selection_shape][met + "_error"]
 
         # Z to NuNu histograms
+        # central value
         # TDirectoryFile*     nValidationBinLowDM_jetpt30 nValidationBinLowDM_jetpt30
         # KEY: TH1D MET_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30Data MET Validation Bin Low DMdata;1  nValidationBinLowDM_jetpt30
         # KEY: TH1D ZNuNu_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1 nValidationBinLowDM_jetpt30
         # KEY: TH1D ZNuNu_nValidationBin_LowDM_njetWeight_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1  nValidationBinLowDM_jetpt30
+        # systematics
+        # KEY: TH1D ZNuNu_nValidationBin_LowDM_jes_syst_down_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1   nValidationBinLowDM_jetpt30
+        # KEY: TH1D ZNuNu_nValidationBin_LowDM_jes_syst_up_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1 nValidationBinLowDM_jetpt30
+        # KEY: TH1D ZNuNu_nValidationBin_LowDM_btag_syst_down_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1  nValidationBinLowDM_jetpt30
+        # KEY: TH1D ZNuNu_nValidationBin_LowDM_btag_syst_up_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1    nValidationBinLowDM_jetpt30
+
+        # WARNING: only apply systematics to MC, not Data
         
         f_in                   = ROOT.TFile(file_name, "read")
         if (self.unblind):
             h_data_lowdm           = f_in.Get("nValidationBinLowDM_jetpt30/MET_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30Data MET Validation Bin Low DMdata") 
             h_data_lowdm_highmet   = f_in.Get("nValidationBinLowDMHighMET_jetpt30/MET_nValidationBin_LowDM_HighMET_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30Data MET Validation Bin Low DM High METdata")
             h_data_highdm          = f_in.Get("nValidationBinHighDM_jetpt30/MET_nValidationBin_HighDM_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30Data MET Validation Bin High DMdata")
-        h_mc_lowdm             = f_in.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
-        h_mc_lowdm_highmet     = f_in.Get("nValidationBinLowDMHighMET_jetpt30/ZNuNu_nValidationBin_LowDM_HighMET_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata")
-        h_mc_highdm            = f_in.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
+        h_mc_lowdm             = f_in.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM"                + systTag + "_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
+        h_mc_lowdm_highmet     = f_in.Get("nValidationBinLowDMHighMET_jetpt30/ZNuNu_nValidationBin_LowDM_HighMET" + systTag + "_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata")
+        h_mc_highdm            = f_in.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM"              + systTag + "_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
         
         # bin map
         b_map = {}
@@ -511,7 +519,7 @@ class SearchBins(Common):
         with open("search_bins_v4.json", "r") as j:
             self.bins = json.load(j)
     
-    def getValues(self, file_name, era):
+    def getValues(self, file_name, era, systTag=""):
         self.binValues[era] = {}
         
         for b in self.all_bins:
@@ -534,8 +542,8 @@ class SearchBins(Common):
         if (self.unblind):
             h_data_lowdm    = f_in.Get("nSearchBinLowDM_jetpt30/MET_nSearchBin_LowDM_jetpt30nSearchBinLowDM_jetpt30nSearchBinLowDM_jetpt30Data MET Search Bin Low DMdata") 
             h_data_highdm   = f_in.Get("nSearchBinHighDM_jetpt30/MET_nSearchBin_HighDM_jetpt30nSearchBinHighDM_jetpt30nSearchBinHighDM_jetpt30Data MET Search Bin High DMdata")
-        h_mc_lowdm      = f_in.Get("nSearchBinLowDM_jetpt30/ZNuNu_nSearchBin_LowDM_jetpt30nSearchBinLowDM_jetpt30nSearchBinLowDM_jetpt30ZJetsToNuNu Search Bin Low DMdata")
-        h_mc_highdm     = f_in.Get("nSearchBinHighDM_jetpt30/ZNuNu_nSearchBin_HighDM_jetpt30nSearchBinHighDM_jetpt30nSearchBinHighDM_jetpt30ZJetsToNuNu Search Bin High DMdata")
+        h_mc_lowdm      = f_in.Get("nSearchBinLowDM_jetpt30/ZNuNu_nSearchBin_LowDM"    + systTag + "_jetpt30nSearchBinLowDM_jetpt30nSearchBinLowDM_jetpt30ZJetsToNuNu Search Bin Low DMdata")
+        h_mc_highdm     = f_in.Get("nSearchBinHighDM_jetpt30/ZNuNu_nSearchBin_HighDM"  + systTag + "_jetpt30nSearchBinHighDM_jetpt30nSearchBinHighDM_jetpt30ZJetsToNuNu Search Bin High DMdata")
         
         # bin map
         b_map = {}
