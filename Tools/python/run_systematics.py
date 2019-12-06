@@ -76,9 +76,9 @@ def main():
         color_black  = "black"
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.5
+        legend_x1 = 0.6
         legend_x2 = 0.9 
-        legend_y1 = 0.5
+        legend_y1 = 0.7
         legend_y2 = 0.9 
 
         for era in eras:
@@ -154,11 +154,9 @@ def main():
                 
                 # legend: TLegend(x1,y1,x2,y2)
                 legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                legend.AddEntry(h,              "Z#rightarrow#nu#nu pred",                  "l")
-                legend.AddEntry(h_up,           "Z#rightarrow#nu#nu syst up",               "l")
-                legend.AddEntry(h_down,         "Z#rightarrow#nu#nu syst down",             "l")
-                legend.AddEntry(h_ratio_up,     "Z#rightarrow#nu#nu (syst up)  / pred",     "l")
-                legend.AddEntry(h_ratio_down,   "Z#rightarrow#nu#nu (syst down)  / pred",   "l")
+                legend.AddEntry(h,              "Z#rightarrow#nu#nu pred",  "l")
+                legend.AddEntry(h_up,           "syst up",                  "l")
+                legend.AddEntry(h_down,         "syst down",                "l")
                 legend.Draw()
                 
                 # ratios
