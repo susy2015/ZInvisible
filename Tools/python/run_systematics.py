@@ -1,5 +1,6 @@
 # run_systematics.py
 
+import copy
 import argparse
 import json
 import os
@@ -144,44 +145,50 @@ def main():
             # central prediction
             for region in VB.histograms[era]:
                 histMap[era][region] = {}
-                h = VB.histograms[era][region]["pred"]
-                histMap[era][region]["pred"] = h
+                histMap[era][region]["pred"] = VB.histograms[era][region]["pred"]
+                
                 # print for testing
-                nBins = h.GetNbinsX()
-                for i in xrange(1, nBins + 1):
-                    print "{0}, {1}, bin {2}: pred = {3}".format(era, region, i, h.GetBinContent(i))
+                # nBins = h.GetNbinsX()
+                # for i in xrange(1, nBins + 1):
+                #     print "{0}, {1}, bin {2}: pred = {3}".format(era, region, i, h.GetBinContent(i))
+                
                 # syst up/down predictions
                 #mySyst = "jes"
-                mySyst = "btag"
-                histMap[era][region]["syst_" + mySyst] = {}
-                for direction in ["up", "down"]:
-                    # hist name format for reference
-                    # std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut;
-                    # _name_syst_direction
-                    systTag = "_{0}_syst_{1}".format(mySyst, direction)
-                    N.getNormAndError( result_file, era, systTag )
-                    S.getShape(        result_file, era, systTag )
-                    VB.getValues(      result_file, era, systTag )
-                    SB.getValues(      result_file, era, systTag )
-                    h = VB.histograms[era][region]["pred"]
-                    histMap[era][region]["syst_" + mySyst][direction] = h
-                    # print for testing
-                    nBins = h.GetNbinsX()
-                    for i in xrange(1, nBins + 1):
-                        print "{0}, {1}, bin {2}: {3} = {4}".format(era, region, i, mySyst + "_" + direction, h.GetBinContent(i))
-                
-                # ---------------------- #
-                # --- Draw Histogram --- #
-                # ---------------------- #
-                h       = histMap[era][region]["pred"]
-                h_up    = histMap[era][region]["syst_" + mySyst]["up"]
-                h_down  = histMap[era][region]["syst_" + mySyst]["down"]
-                plot(h, h_up, h_down, mySyst, region, era, plot_dir)
+                #mySyst = "btag"
+                #for mySyst in systMap: 
+                # TODO: fix eff_restoptag_syst, isr_syst, pdf_syst
+                systematics = ["jes", "btag", "pileup", "prefire"]
+                for mySyst in systematics: 
+                    histMap[era][region]["syst_" + mySyst] = {}
+                    # TODO: fix bug; final histogram plotted is wrong, e.g. last systematic, high dm, down
+                    #for direction in ["down", "up"]:
+                    for direction in ["up", "down"]:
+                        # hist name format for reference
+                        # std::string histSuffixSyst = "_" + syst + "_syst_" + w.first + JetPtCut;
+                        # _name_syst_direction
+                        systTag = "_{0}_syst_{1}".format(mySyst, direction)
+                        print "region: {0}, systTag: {1}".format(region, systTag)
+                        N.getNormAndError( result_file, era, systTag )
+                        S.getShape(        result_file, era, systTag )
+                        VB.getValues(      result_file, era, systTag )
+                        SB.getValues(      result_file, era, systTag )
+                        histMap[era][region]["syst_" + mySyst][direction] = VB.histograms[era][region]["pred"]
+                        
+                        # print for testing
+                        # nBins = h.GetNbinsX()
+                        # for i in xrange(1, nBins + 1):
+                        #     print "{0}, {1}, bin {2}: {3} = {4}".format(era, region, i, mySyst + "_" + direction, h.GetBinContent(i))
+                    
+                    # ---------------------- #
+                    # --- Draw Histogram --- #
+                    # ---------------------- #
+                    h       = histMap[era][region]["pred"]
+                    h_up    = histMap[era][region]["syst_" + mySyst]["up"]
+                    h_down  = histMap[era][region]["syst_" + mySyst]["down"]
+                    plot(h, h_up, h_down, mySyst, region, era, plot_dir)
 
 
 if __name__ == "__main__":
     main()
-
-
 
 
