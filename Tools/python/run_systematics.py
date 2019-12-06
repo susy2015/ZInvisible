@@ -1,4 +1,4 @@
-# run_modules.py
+# run_systematics.py
 
 import argparse
 import json
@@ -13,6 +13,70 @@ from units import saveResults
 from make_table import Table
 from tools import setupHist
 import ROOT
+
+
+def plot(h, h_up, h_down, mySyst, region, era, plot_dir):
+    eraTag = "_" + era
+    draw_option = "hist"
+            
+    # colors
+    color_red    = "vermillion"
+    color_blue   = "electric blue"
+    color_green  = "irish green" 
+    color_purple = "violet"
+    color_black  = "black"
+    
+    # legend: TLegend(x1,y1,x2,y2)
+    legend_x1 = 0.6
+    legend_x2 = 0.9 
+    legend_y1 = 0.7
+    legend_y2 = 0.9 
+    
+    c = ROOT.TCanvas("c", "c", 800, 800)
+    c.Divide(1, 2)
+    
+    name = "{0}_syst".format(mySyst)
+    
+    # draw histograms
+    h_ratio_up      = h_up.Clone("h_ratio_up") 
+    h_ratio_down    = h_down.Clone("h_ratio_down") 
+    h_ratio_up.Divide(h)
+    h_ratio_down.Divide(h)
+    
+    title = "Z to Invisible: " + name + " in " + region + " for " + era
+    x_title = "Validation Bins"
+    setupHist(h,                title, x_title, "Events",       color_black,  10.0 ** -2, 10.0 ** 5)
+    setupHist(h_up,             title, x_title, "Events",       color_red,    10.0 ** -2, 10.0 ** 5)
+    setupHist(h_down,           title, x_title, "Events",       color_blue,   10.0 ** -2, 10.0 ** 5)
+    setupHist(h_ratio_up,       title, x_title, "syst / pred",  color_red,    0.0, 3.0)
+    setupHist(h_ratio_down,     title, x_title, "syst / pred",  color_blue,   0.0, 3.0)
+    
+    # histograms
+    c.cd(1)
+    ROOT.gPad.SetLogy(1) # set log y
+    h.Draw(draw_option)
+    h_up.Draw(draw_option + " same")
+    h_down.Draw(draw_option + " same")
+    
+    # legend: TLegend(x1,y1,x2,y2)
+    legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+    legend.AddEntry(h,              "Z#rightarrow#nu#nu pred",  "l")
+    legend.AddEntry(h_up,           "syst up",                  "l")
+    legend.AddEntry(h_down,         "syst down",                "l")
+    legend.Draw()
+    
+    # ratios
+    c.cd(2)
+    h_ratio_up.Draw(draw_option)
+    h_ratio_down.Draw(draw_option + " same")
+    
+    # save histograms
+    plot_name = plot_dir + name + "_" + region + eraTag
+    c.Update()
+    c.SaveAs(plot_name + ".pdf")
+    c.SaveAs(plot_name + ".png")
+
+
 
 def main():
     # options
@@ -45,6 +109,7 @@ def main():
         systMap = json.load(input_file)
     
     #eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
+    #eras        = ["2018_PreHEM"]
     eras        = ["Run2"]
     dirList     = []
     plot_dir    = "syst_plots"
@@ -66,23 +131,7 @@ def main():
         runMap = json.load(input_file)
         # loop over eras
                 
-        draw_option = "hist"
-                
-        # colors
-        color_red    = "vermillion"
-        color_blue   = "electric blue"
-        color_green  = "irish green" 
-        color_purple = "violet"
-        color_black  = "black"
-        
-        # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.6
-        legend_x2 = 0.9 
-        legend_y1 = 0.7
-        legend_y2 = 0.9 
-
         for era in eras:
-            eraTag = "_" + era
             histMap[era] = {}
             print "|---------- Era: {0} ----------|".format(era)
             runDir = runMap[era]
@@ -102,6 +151,7 @@ def main():
                 for i in xrange(1, nBins + 1):
                     print "{0}, {1}, bin {2}: pred = {3}".format(era, region, i, h.GetBinContent(i))
                 # syst up/down predictions
+                #mySyst = "jes"
                 mySyst = "btag"
                 histMap[era][region]["syst_" + mySyst] = {}
                 for direction in ["up", "down"]:
@@ -123,53 +173,10 @@ def main():
                 # ---------------------- #
                 # --- Draw Histogram --- #
                 # ---------------------- #
-                c = ROOT.TCanvas("c", "c", 800, 800)
-                c.Divide(1, 2)
-                
-                name = "{0}_syst".format(mySyst)
-                
-                # draw histograms
-                h               = histMap[era][region]["pred"]
-                h_up            = histMap[era][region]["syst_" + mySyst]["up"]
-                h_down          = histMap[era][region]["syst_" + mySyst]["down"]
-                h_ratio_up      = h_up.Clone("h_ratio_up") 
-                h_ratio_down    = h_down.Clone("h_ratio_down") 
-                h_ratio_up.Divide(h)
-                h_ratio_down.Divide(h)
-                
-                title = "Z to Invisible Prediction: " + name + " in " + region
-                x_title = "Validation Bins"
-                setupHist(h,                title, x_title, "Events",       color_black,  10.0 ** -2, 10.0 ** 5)
-                setupHist(h_up,             title, x_title, "Events",       color_red,    10.0 ** -2, 10.0 ** 5)
-                setupHist(h_down,           title, x_title, "Events",       color_blue,   10.0 ** -2, 10.0 ** 5)
-                setupHist(h_ratio_up,       title, x_title, "syst / pred",  color_red,    0.0, 3.0)
-                setupHist(h_ratio_down,     title, x_title, "syst / pred",  color_blue,   0.0, 3.0)
-                
-                # histograms
-                c.cd(1)
-                ROOT.gPad.SetLogy(1) # set log y
-                h.Draw(draw_option)
-                h_up.Draw(draw_option + " same")
-                h_down.Draw(draw_option + " same")
-                
-                # legend: TLegend(x1,y1,x2,y2)
-                legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                legend.AddEntry(h,              "Z#rightarrow#nu#nu pred",  "l")
-                legend.AddEntry(h_up,           "syst up",                  "l")
-                legend.AddEntry(h_down,         "syst down",                "l")
-                legend.Draw()
-                
-                # ratios
-                c.cd(2)
-                h_ratio_up.Draw(draw_option)
-                h_ratio_down.Draw(draw_option + " same")
-                
-                # save histograms
-                plot_name = plot_dir + name + "_" + region + eraTag
-                c.Update()
-                c.SaveAs(plot_name + ".pdf")
-                c.SaveAs(plot_name + ".png")
-
+                h       = histMap[era][region]["pred"]
+                h_up    = histMap[era][region]["syst_" + mySyst]["up"]
+                h_down  = histMap[era][region]["syst_" + mySyst]["down"]
+                plot(h, h_up, h_down, mySyst, region, era, plot_dir)
 
 
 if __name__ == "__main__":
