@@ -61,7 +61,7 @@ class Normalization:
                 for selection in self.selections[bin_type][region]:
                     self.selections_tex[bin_type][region][selection] = tools.getTexSelection(selection) 
                     if self.verbose:
-                        print "For Normalization: {0} {1} {2}".format(bin_type, selection, self.selections_tex[bin_type][region][selection])
+                       print "For Normalization: {0} {1} {2}".format(bin_type, selection, self.selections_tex[bin_type][region][selection])
     
     def setupHistoMap(self, era):
         # histogram examples
@@ -81,12 +81,15 @@ class Normalization:
                     for selection in self.selections[bin_type][region]: 
 
                         err = "{}".format("" if not self.syst else "_")
-                        selectionTag = "_" + selection + err + self.syst +"_jetpt30"
+                        systag = "_" + selection + err + self.syst + "_jetpt30"
+                        selectionTag = "_" + selection + "_jetpt30"
                         # using Nb and Nsv selection
                         self.histos[era][bin_type][particle][region][selection] = { 
-                            "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400_" + selection + err + self.syst + "_jetpt30"+ 2 * self.variable + "Datadata",
-                            "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "ZToLLstack",
-                            "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "NoZToLLstack",
+                            "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "Datadata",
+                            "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + systag + 2 * self.variable + "ZToLLstack",
+                            "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + systag + 2 * self.variable + "NoZToLLstack",
+                            "ZToLL_0"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "ZToLLstack",
+                            "NoZToLL_0"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "NoZToLLstack",
                         }
 
     def calcNorm(self, A, x):
@@ -216,6 +219,12 @@ class Normalization:
     
         if not h_Data:
             print "ERROR: Unable to load Data histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["Data"])
+        if not h_ZToLL:
+            print self.histos[era][bin_type][particle][region][selection]["ZToLL"]  + " replaced with -------->  " + self.histos[era][bin_type][particle][region][selection]["ZToLL_0"]
+            h_ZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["ZToLL_0"]   ) )
+        if not h_NoZToLL:
+            print self.histos[era][bin_type][particle][region][selection]["NoZToLL"]  + " replaced with -------->  " + self.histos[era][bin_type][particle][region][selection]["ZToLL_0"]
+            h_ZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["NoZToLL_0"]   ) )
 
         #############################
         # Calculating Normalization #
