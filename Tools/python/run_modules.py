@@ -59,23 +59,24 @@ def main():
         # make directory if it does not exist
         if not os.path.exists(d):
             os.makedirs(d)
-
+    # normalization
     N = Normalization(plot_dir, verbose)
+    # shape
     S = Shape(plot_dir, draw, doUnits, verbose)
+    # validation bins
+    VB = ValidationBins(    N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
+    # search bins
+    SB = SearchBins(        N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
+    if doUnits:
+        # control region unit bins  
+        CRunits = CRUnitBins(N, S, eras, plot_dir, verbose) 
+        # search region unit bins  
+        SRunits = SRUnitBins(N, S, eras, plot_dir, verbose) 
+    # systematics
+    Syst = Systematic(plot_dir, N, S)
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
-        # validation bins
-        VB = ValidationBins(N, S, eras, plot_dir, verbose)
-        # search bins
-        SB = SearchBins(N, S, eras, plot_dir, verbose)
-        if doUnits:
-            # control region unit bins  
-            CRunits = CRUnitBins(N, S, eras, plot_dir, verbose) 
-            # search region unit bins  
-            SRunits = SRUnitBins(N, S, eras, plot_dir, verbose) 
-        # systematics
-        Syst = Systematic(plot_dir, N, S)
         # loop over eras
         for era in eras:
             print "|---------- Era: {0} ----------|".format(era)

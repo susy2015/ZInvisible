@@ -185,10 +185,13 @@ class Common:
     # ---------------------------------------------------------------------- #
     def makeHistos(self, output_file, x_title, name, era):
         debug = False
-        print "Running makeHistos() to make {0}".format(output_file)
         eraTag = "_" + era
         draw_option = "hist error"
-        f_out = ROOT.TFile(output_file, "recreate")
+        if self.saveRootFile:
+            print "Running makeHistos(). Saving output to {0}".format(output_file)
+            f_out = ROOT.TFile(output_file, "recreate")
+        else:
+            print "Running makeHistos()."
         
         # define histograms 
         if (self.unblind):
@@ -255,69 +258,71 @@ class Common:
         ###################
         # Draw Histograms #
         ###################
-
-        # draw histograms
-        c = ROOT.TCanvas("c", "c", 800, 800)
-        c.Divide(1, 2)
-        
-        # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.7
-        legend_x2 = 0.9 
-        legend_y1 = 0.7 
-        legend_y2 = 0.9 
-
-        for region in h_map:
-            if (self.unblind):
-                h_data   = h_map[region]["data"]
-            h_mc   = h_map[region]["mc"]
-            h_pred = h_map[region]["pred"]
-            h_ratio = h_pred.Clone("h_ratio")
-            h_ratio.Divide(h_mc)
-        
-            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_ratio, "Z to Invisible Prediction / MC", x_title, "Pred / MC", self.color_blue, 0.0, 2.0)
-
-            # histograms
-            c.cd(1)
-            ROOT.gPad.SetLogy(1) # set log y
-            # ZInv MC and Prediction
-            h_mc.Draw(draw_option)
-            h_pred.Draw("error same")
-            if (self.unblind):
-                h_data.Draw("error same")
+        if self.draw:
+            
+            # draw histograms
+            c = ROOT.TCanvas("c", "c", 800, 800)
+            c.Divide(1, 2)
             
             # legend: TLegend(x1,y1,x2,y2)
-            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            if (self.unblind):
-                legend.AddEntry(h_data,   "MET Data",   "l")
-            legend.AddEntry(h_mc,   "Z#rightarrow#nu#nu MC",   "l")
-            legend.AddEntry(h_pred, "Z#rightarrow#nu#nu Pred", "l")
-            legend.Draw()
-           
-            # ratios
-            c.cd(2)
-            h_ratio.Draw(draw_option)
-                
-            # save histograms
-            plot_name = self.plot_dir + name + "_" + region + eraTag
-            c.Update()
-            c.SaveAs(plot_name + ".pdf")
-            c.SaveAs(plot_name + ".png")
-            # debug
-            if debug:
-                print "region: {0}".format(region)
+            legend_x1 = 0.7
+            legend_x2 = 0.9 
+            legend_y1 = 0.7 
+            legend_y2 = 0.9 
+
+            for region in h_map:
                 if (self.unblind):
-                    print "h_data[1] = {0}".format(h_data.GetBinContent(1))
-                print "h_mc[1] = {0}".format(h_mc.GetBinContent(1))
-                print "h_pred[1] = {0}".format(h_pred.GetBinContent(1))
+                    h_data   = h_map[region]["data"]
+                h_mc   = h_map[region]["mc"]
+                h_pred = h_map[region]["pred"]
+                h_ratio = h_pred.Clone("h_ratio")
+                h_ratio.Divide(h_mc)
             
-            # write histograms to file
-            if (self.unblind):
-                h_data.Write()
-            h_mc.Write()
-            h_pred.Write()
+                #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+                setupHist(h_ratio, "Z to Invisible Prediction / MC", x_title, "Pred / MC", self.color_blue, 0.0, 2.0)
+
+                # histograms
+                c.cd(1)
+                ROOT.gPad.SetLogy(1) # set log y
+                # ZInv MC and Prediction
+                h_mc.Draw(draw_option)
+                h_pred.Draw("error same")
+                if (self.unblind):
+                    h_data.Draw("error same")
+                
+                # legend: TLegend(x1,y1,x2,y2)
+                legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+                if (self.unblind):
+                    legend.AddEntry(h_data,   "MET Data",   "l")
+                legend.AddEntry(h_mc,   "Z#rightarrow#nu#nu MC",   "l")
+                legend.AddEntry(h_pred, "Z#rightarrow#nu#nu Pred", "l")
+                legend.Draw()
+               
+                # ratios
+                c.cd(2)
+                h_ratio.Draw(draw_option)
+                    
+                # save histograms
+                plot_name = self.plot_dir + name + "_" + region + eraTag
+                c.Update()
+                c.SaveAs(plot_name + ".pdf")
+                c.SaveAs(plot_name + ".png")
+                # debug
+                if debug:
+                    print "region: {0}".format(region)
+                    if (self.unblind):
+                        print "h_data[1] = {0}".format(h_data.GetBinContent(1))
+                    print "h_mc[1] = {0}".format(h_mc.GetBinContent(1))
+                    print "h_pred[1] = {0}".format(h_pred.GetBinContent(1))
+                
+                # write histograms to file
+                if (self.unblind):
+                    h_data.Write()
+                h_mc.Write()
+                h_pred.Write()
         
-        f_out.Close()
+        if self.saveRootFile:
+            f_out.Close()
     
     # ---------------------------------------------------------------------- #
     # calcPrediction():                                                      #
@@ -389,7 +394,7 @@ class Common:
 
 # vadliation bins
 class ValidationBins(Common):
-    def __init__(self, normalization, shape, eras, plot_dir, verbose):
+    def __init__(self, normalization, shape, eras, plot_dir, verbose, draw, saveRootFile):
         # run parent init function
         Common.__init__(self)
         self.N = normalization
@@ -397,6 +402,8 @@ class ValidationBins(Common):
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
+        self.draw = draw
+        self.saveRootFile = saveRootFile
         self.binValues = {}
         self.histograms = {}
         self.unblind = True
@@ -478,7 +485,7 @@ class ValidationBins(Common):
   
 # search bins 
 class SearchBins(Common):
-    def __init__(self, normalization, shape, eras, plot_dir, verbose):
+    def __init__(self, normalization, shape, eras, plot_dir, verbose, draw, saveRootFile):
         # run parent init function
         Common.__init__(self)
         self.N = normalization
@@ -487,6 +494,8 @@ class SearchBins(Common):
         self.plot_dir = plot_dir
         self.verbose = verbose
         self.unblind = False
+        self.draw = draw
+        self.saveRootFile = saveRootFile
         # SBv4
         self.low_dm_start   = 0
         self.low_dm_end     = 52
@@ -574,6 +583,7 @@ class SRUnitBins(Common):
         self.binValues      = {}
         self.histograms     = {}
     
+    # TODO: apply Z to LL normalization to SR unit bins
     def getValues(self, file_name, era):
         self.binValues[era] = {}
         
@@ -628,6 +638,7 @@ class CRUnitBins(Common):
         self.binValues      = {}
         self.histograms     = {}
     
+    # TODO: normalize MC to Data in CR unit bins
     def getValues(self, file_name, era):
         self.binValues[era] = {}
         
