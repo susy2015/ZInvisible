@@ -44,8 +44,8 @@ histo["highdm"][""]  =  VB.histograms[era]["highdm"]["mc"].Clone()
 # Calculate normalization and shape factors
 #-------------------------------------------------------
 
-#syst = "btag"
-syst = "eff_sb_photon"
+syst = "btag"
+#syst = "eff_sb_photon"
 
 N.getNormAndError(result_file, syst + "_syst_up", era)
 S.getShape(result_file, syst + "_syst_up", era)
@@ -67,7 +67,21 @@ histo["lowdm"]["down"]   =  VB.histograms[era]["lowdm"]["mc"].Clone()
 
 for region in regions:
 
+    ratio_up = histo[region]["up"].Clone()
+    ratio_up.Divide(histo[region][""])
+    ratio_down = histo[region]["down"].Clone()
+    ratio_down.Divide(histo[region][""])
+
+    # legend: TLegend(x1,y1,x2,y2)
+    legend_x1 = 0.7 
+    legend_x2 = 0.9 
+    legend_y1 = 0.7 
+    legend_y2 = 0.9 
+    legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+
     c = ROOT.TCanvas("c", "c", 800, 800)
+    c.Divide(1, 2)
+    c.cd(1)
     
     histo[region][""].Draw("hist")
     histo[region][""].SetLineColor(ROOT.kBlue)
@@ -80,16 +94,16 @@ for region in regions:
     
     ROOT.gPad.SetLogy(1) # set log y
     
-    # legend: TLegend(x1,y1,x2,y2)
-    legend_x1 = 0.7 
-    legend_x2 = 0.9 
-    legend_y1 = 0.7 
-    legend_y2 = 0.9 
-    legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
     legend.AddEntry(histo[region]["up"]   , "up"      , "l")
     legend.AddEntry(histo[region][""]     , "nominal" , "l")
     legend.AddEntry(histo[region]["down"] , "down"    , "l")
     
+    c.cd(2)
+
+    ratio_up.GetYaxis().SetRangeUser(0,4)
+    ratio_up.Draw("hist")
+    ratio_down.Draw("hist same")
+
     legend.Draw()
     
     c.Update()
