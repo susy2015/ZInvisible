@@ -449,6 +449,12 @@ class ValidationBins(Common):
         h_mc_lowdm             = f_in.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM" + err + self.syst + "_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
         h_mc_lowdm_highmet     = f_in.Get("nValidationBinLowDMHighMET_jetpt30/ZNuNu_nValidationBin_LowDM_HighMET" + err + self.syst + "_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata")
         h_mc_highdm            = f_in.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM" + err + self.syst + "_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
+        if not h_mc_lowdm:
+            print("something wrong with h_mc_lowdm")
+        if not h_mc_lowdm_highmet:
+            print("something wrong with h_mc_lowdm_highmet")
+        if not h_mc_highdm:
+            print("something wrong with h_mc_highdm")
         
         # bin map
         b_map = {}

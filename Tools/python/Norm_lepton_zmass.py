@@ -217,6 +217,7 @@ class Normalization:
         h_ZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["ZToLL"]   ) )
         h_NoZToLL = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["NoZToLL"] ) )
     
+        # if no systematic version exist, load nominal
         if not h_Data:
             print "ERROR: Unable to load Data histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["Data"])
         if not h_ZToLL:

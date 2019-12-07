@@ -9,25 +9,24 @@ import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
     
-era     = "2018_PreHEM"
-verbose  = False 
-doUnits  = False
-draw     = False
-
-out_dir     = "validation/" 
-result_file = "result.root"
-regions = ["lowdm", "highdm"]
-directions = ['up', '', 'down']
+era          =  "2018_PreHEM"
+verbose      =  False 
+doUnits      =  False
+draw         =  False
+out_dir      =  "validation/" 
+result_file  =  "result.root"
+regions      =  ["lowdm", "highdm"]
+directions   =  ['up', '', 'down']
 
 histo = {region:dict.fromkeys(directions) for region in regions} # histo[regioin][direction]
 
 #-------------------------------------------------------
-# Class instanceses construction
+# Class instanceses summoning 
 #-------------------------------------------------------
 
 N = Normalization(out_dir, verbose)
 S = Shape(out_dir, draw, doUnits, verbose)
-VB = ValidationBins(N, S, era, out_dir, verbose)
+VB = ValidationBins(N, S, era, out_dir, True)
 
 #-------------------------------------------------------
 # Normal predictions (no systematics) 
@@ -44,11 +43,16 @@ histo["highdm"][""]  =  VB.histograms[era]["highdm"]["mc"].Clone()
 # Calculate normalization and shape factors
 #-------------------------------------------------------
 
-syst = "btag"
+#syst = "btag"
 #syst = "eff_sb_photon"
+#syst = "eff_sb"
+#syst = "pileup"
+#syst = "met_trig"
+syst = "eff_toptag"
 
 N.getNormAndError(result_file, syst + "_syst_up", era)
 S.getShape(result_file, syst + "_syst_up", era)
+print("Everything is fine so far")
 VB.getValues(result_file, syst + "_syst_up", era)
 
 histo["highdm"]["up"]  =  VB.histograms[era]["highdm"]["mc"].Clone()
@@ -67,11 +71,6 @@ histo["lowdm"]["down"]   =  VB.histograms[era]["lowdm"]["mc"].Clone()
 
 for region in regions:
 
-    ratio_up = histo[region]["up"].Clone()
-    ratio_up.Divide(histo[region][""])
-    ratio_down = histo[region]["down"].Clone()
-    ratio_down.Divide(histo[region][""])
-
     # legend: TLegend(x1,y1,x2,y2)
     legend_x1 = 0.7 
     legend_x2 = 0.9 
@@ -81,6 +80,7 @@ for region in regions:
 
     c = ROOT.TCanvas("c", "c", 800, 800)
     c.Divide(1, 2)
+
     c.cd(1)
     
     histo[region][""].Draw("hist")
@@ -97,14 +97,22 @@ for region in regions:
     legend.AddEntry(histo[region]["up"]   , "up"      , "l")
     legend.AddEntry(histo[region][""]     , "nominal" , "l")
     legend.AddEntry(histo[region]["down"] , "down"    , "l")
+    legend.Draw()
     
     c.cd(2)
 
-    ratio_up.GetYaxis().SetRangeUser(0,4)
+    ratio_up = histo[region]["up"].Clone()
+    ratio_up.Divide(histo[region][""])
+    ratio_up.SetLineColor(ROOT.kRed)
+
+    ratio_down = histo[region]["down"].Clone()
+    ratio_down.Divide(histo[region][""])
+    ratio_down.SetLineColor(ROOT.kViolet)
+
+    ratio_up.GetYaxis().SetRangeUser(0,1.5)
+
     ratio_up.Draw("hist")
     ratio_down.Draw("hist same")
-
-    legend.Draw()
     
     c.Update()
     
