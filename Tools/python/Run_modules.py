@@ -9,7 +9,7 @@ import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
     
-era          =  "2018_PreHEM"
+era          =  "Run2"
 verbose      =  False 
 doUnits      =  False
 draw         =  False
@@ -37,8 +37,8 @@ N.getNormAndError(result_file, "", era)
 S.getShape(result_file, "", era)
 VB.getValues(result_file, "", era)
 
-histo["lowdm"][""]   =  VB.histograms[era]["lowdm"]["mc"].Clone()
-histo["highdm"][""]  =  VB.histograms[era]["highdm"]["mc"].Clone()
+histo["lowdm"][""]   =  VB.histograms[era]["lowdm"]["pred"].Clone()
+histo["highdm"][""]  =  VB.histograms[era]["highdm"]["pred"].Clone()
 
 #-------------------------------------------------------
 # Calculate normalization and shape factors
@@ -51,15 +51,15 @@ for syst in systematics:
     print("Everything is fine so far")
     VB.getValues(result_file, syst + "_syst_up", era)
     
-    histo["highdm"]["up"]  =  VB.histograms[era]["highdm"]["mc"].Clone()
-    histo["lowdm"]["up"]   =  VB.histograms[era]["lowdm"]["mc"].Clone()
+    histo["highdm"]["up"]  =  VB.histograms[era]["highdm"]["pred"].Clone()
+    histo["lowdm"]["up"]   =  VB.histograms[era]["lowdm"]["pred"].Clone()
     
     N.getNormAndError(result_file, syst + "_syst_down", era)
     S.getShape(result_file, syst + "_syst_down", era)
     VB.getValues(result_file, syst + "_syst_down", era)
     
-    histo["highdm"]["down"]  =  VB.histograms[era]["highdm"]["mc"].Clone()
-    histo["lowdm"]["down"]   =  VB.histograms[era]["lowdm"]["mc"].Clone()
+    histo["highdm"]["down"]  =  VB.histograms[era]["highdm"]["pred"].Clone()
+    histo["lowdm"]["down"]   =  VB.histograms[era]["lowdm"]["pred"].Clone()
     
     #-------------------------------------------------------
     # Canvas 
@@ -105,10 +105,17 @@ for syst in systematics:
         ratio_down.Divide(histo[region][""])
         ratio_down.SetLineColor(ROOT.kViolet)
     
+        # horizontal line at 1
+        ratio_1 = histo[region]["down"].Clone()
+        ratio_1.SetLineColor(ROOT.kBlack)
+        for k in range(0,45):
+            ratio_1.SetBinContent(k, 1)
+
         ratio_up.GetYaxis().SetRangeUser(0,1.5)
     
         ratio_up.Draw("hist")
         ratio_down.Draw("hist same")
+        ratio_1.Draw("hist same")
         
         c.Update()
         
