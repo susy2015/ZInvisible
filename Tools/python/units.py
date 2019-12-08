@@ -4,10 +4,7 @@
 
 import json
 from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
-
-def invert(map_):
-    inv_map = {v: k for k, v in map_.iteritems()} 
-    return inv_map
+from tools import invert
 
 
 def show(jsonFile, key, title):

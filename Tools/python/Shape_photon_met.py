@@ -197,30 +197,31 @@ class Shape:
                     h_Rare              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Rare"]            ) )
                     
                     # if no systematic version exist, load nominal
+                    #TODO: do not use Data_0; do not apply systematic to data
                     if not h_Data:
                         h_Data              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Data_0"]            ) )
-                        print self.histos[era][bin_type][region][selection]["Data"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["Data_0"]
+                        #print self.histos[era][bin_type][region][selection]["Data"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["Data_0"]
                     if not h_GJets:
                         h_GJets              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["GJets_0"]            ) )
-                        print self.histos[era][bin_type][region][selection]["GJets"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["GJets_0"]
+                        #print self.histos[era][bin_type][region][selection]["GJets"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["GJets_0"]
                     if not h_QCD:
                         h_QCD              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_0"]            ) )
-                        print self.histos[era][bin_type][region][selection]["QCD"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["QCD_0"]
+                        #print self.histos[era][bin_type][region][selection]["QCD"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["QCD_0"]
                     if not h_WJets:
                         h_WJets              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["WJets_0"]            ) )
-                        print self.histos[era][bin_type][region][selection]["WJets"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["WJets_0"]
+                        #print self.histos[era][bin_type][region][selection]["WJets"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["WJets_0"]
                     if not h_TTG:
                         h_TTG              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTG_0"]            ) )
-                        print self.histos[era][bin_type][region][selection]["TTG"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["TTG_0"]
+                        #print self.histos[era][bin_type][region][selection]["TTG"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["TTG_0"]
                     if not h_TTbar:
                         h_TTbar              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTbar_0"]            ) )
-                        print self.histos[era][bin_type][region][selection]["TTbar"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["TTbar_0"]
+                        #print self.histos[era][bin_type][region][selection]["TTbar"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["TTbar_0"]
                     if not h_tW:
                         h_tW              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["tW_0"]            ) )
-                        print self.histos[era][bin_type][region][selection]["tW"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["tW_0"]
+                        #print self.histos[era][bin_type][region][selection]["tW"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["tW_0"]
                     if not h_Rare:
                         h_Rare              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Rare_0"]            ) )
-                        print self.histos[era][bin_type][region][selection]["Rare"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["Rare_0"]
+                        #print self.histos[era][bin_type][region][selection]["Rare"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["Rare_0"]
 
                     # check if histograms load
                     if not h_Data:
