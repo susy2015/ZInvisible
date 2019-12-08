@@ -9,15 +9,20 @@ import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
     
-era          =  "2018_PreHEM"
-verbose      =  False 
-doUnits      =  False
-draw         =  False
-out_dir      =  "validation/" 
-result_file  =  "result.root"
-regions      =  ["lowdm", "highdm"]
-directions   =  ['up', '', 'down']
-systematics  =  ['btag','eff_restoptag','eff_sb','eff_toptag','eff_wtag','met_trig','pileup'] # all systematics available from Znunu_nValidationBin
+#era          = "2018_PreHEM"
+era          = "Run2"
+verbose      = False 
+doUnits      = False
+draw         = False
+out_dir      = "validation/" 
+syst_dir     = "angel_syst_plots/"
+#result_file  = "condor/DataMC_2018_PreHEM_submission_2019-12-05_01-59-19/result.root"
+#result_file  = "condor/DataMC_2018_PreHEM_submission_2019-12-05_16-52-47/result.root"
+result_file  = "condor/DataMC_Run2_submission_2019-12-05_16-51-58/result.root"
+variable     = "mc"
+regions      = ["lowdm", "highdm"]
+directions   = ['up', '', 'down']
+systematics  = ['btag','eff_restoptag','eff_sb','eff_toptag','eff_wtag','met_trig','pileup'] # all systematics available from Znunu_nValidationBin
 
 histo = {region:dict.fromkeys(directions) for region in regions} # histo[regioin][direction]
 
@@ -37,8 +42,8 @@ N.getNormAndError(result_file, "", era)
 S.getShape(result_file, "", era)
 VB.getValues(result_file, "", era)
 
-histo["lowdm"][""]   =  VB.histograms[era]["lowdm"]["mc"].Clone()
-histo["highdm"][""]  =  VB.histograms[era]["highdm"]["mc"].Clone()
+histo["lowdm"][""]   =  VB.histograms[era]["lowdm"][variable].Clone()
+histo["highdm"][""]  =  VB.histograms[era]["highdm"][variable].Clone()
 
 #-------------------------------------------------------
 # Calculate normalization and shape factors
@@ -51,15 +56,15 @@ for syst in systematics:
     print("Everything is fine so far")
     VB.getValues(result_file, syst + "_syst_up", era)
     
-    histo["highdm"]["up"]  =  VB.histograms[era]["highdm"]["mc"].Clone()
-    histo["lowdm"]["up"]   =  VB.histograms[era]["lowdm"]["mc"].Clone()
+    histo["highdm"]["up"]  =  VB.histograms[era]["highdm"][variable].Clone()
+    histo["lowdm"]["up"]   =  VB.histograms[era]["lowdm"][variable].Clone()
     
     N.getNormAndError(result_file, syst + "_syst_down", era)
     S.getShape(result_file, syst + "_syst_down", era)
     VB.getValues(result_file, syst + "_syst_down", era)
     
-    histo["highdm"]["down"]  =  VB.histograms[era]["highdm"]["mc"].Clone()
-    histo["lowdm"]["down"]   =  VB.histograms[era]["lowdm"]["mc"].Clone()
+    histo["highdm"]["down"]  =  VB.histograms[era]["highdm"][variable].Clone()
+    histo["lowdm"]["down"]   =  VB.histograms[era]["lowdm"][variable].Clone()
     
     #-------------------------------------------------------
     # Canvas 
@@ -112,6 +117,6 @@ for syst in systematics:
         
         c.Update()
         
-        file_name = "Syst_" + syst + "_" + region
+        file_name = syst_dir + "Syst_" + syst + "_" + region
         c.SaveAs(file_name + ".png")
 
