@@ -29,7 +29,7 @@ def writeToConf(outFile, searchBinMap, syst, h, h_up, h_down, offset):
     nBins = h.GetNbinsX()
     for i in xrange(1, nBins + 1):
         sb_i = i - 1 + offset
-        sb_name = searchBinMap[str(i)]
+        sb_name = searchBinMap[str(sb_i)]
         p       = h.GetBinContent(i)
         p_up    = h_up.GetBinContent(i)
         p_down  = h_down.GetBinContent(i)
