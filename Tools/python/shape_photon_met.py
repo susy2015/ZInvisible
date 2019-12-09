@@ -20,6 +20,7 @@ class Shape:
         self.doUnits                = doUnits
         self.verbose                = verbose
         self.splitQCD               = False
+        self.systTag                = ""
         self.histos                 = {}
         self.cr_unit_histos         = {}
         self.cr_unit_histos_summed  = {}
@@ -56,6 +57,8 @@ class Shape:
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
     def getSimpleMap(self, region, nameTag, selectionTag, eraTag, variable):
+        # testing
+        #print "In getSimpleMap(): DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "#gamma+jetsstack" 
         if self.splitQCD:
             temp_map = {
                             "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Datadata",
@@ -88,6 +91,9 @@ class Shape:
         # DataMC_Photon_LowDM_met_NBeq0_NJge6_jetpt30_2016metWithPhotonmetWithPhotonDatadata
         # without selection
         # DataMC_Photon_LowDM_met_jetpt30_2016metWithPhotonmetWithPhotonDatadata
+        # systematics
+        # KEY: TH1D    DataMC_Photon_LowDM_met_NBge2_NJge7_prefire_syst_up_jetpt30metWithPhotonmetWithPhoton#gamma+jetsstack;1 metWithPhoton
+        # KEY: TH1D    DataMC_Photon_HighDM_met_NBge2_NJge7_pileup_syst_up_jetpt30metWithPhotonmetWithPhoton#gamma+jetsstack;1 metWithPhoton
         nameTag = "_" + name
         eraTag = "_" + era
         temp_map = {}
@@ -96,7 +102,7 @@ class Shape:
             for region in self.regions:
                 temp_map[bin_type][region] = {}
                 for selection in self.selections[bin_type][region]: 
-                    selectionTag = "_" + selection + "_jetpt30"
+                    selectionTag = "_" + selection + self.systTag + "_jetpt30"
                     temp_map[bin_type][region][selection] = self.getSimpleMap(region, nameTag, selectionTag, eraTag, variable)
 
         return temp_map
@@ -113,7 +119,8 @@ class Shape:
         temp_map = self.getSimpleMap(region, nameTag, selectionTag, eraTag, variable)
         return temp_map
     
-    def getShape(self, file_name, era): 
+    def getShape(self, file_name, era, systTag = ""): 
+        self.systTag = systTag
         self.eras.append(era)
         draw_option = "hist error"
         eraTag = "_" + era

@@ -19,7 +19,7 @@ def show(jsonFile, key, title):
             print "{0} : {1}".format(b, binMap[b])
 
 # save final results in json file
-def saveResults(inFile, outFile, CRunits, SRunits, eras):
+def saveResults(inFile, outFile, CRunits, SRunits, era):
     map_out                                 = {}
     map_out["yieldsMap"]                    = {}
     map_out["yieldsMap"]["znunu"]           = {}
@@ -30,7 +30,7 @@ def saveResults(inFile, outFile, CRunits, SRunits, eras):
         map_in = json.load(f_in)
         # invert maps
         SearchBin_map   = invert(map_in["binNum"])
-        CRunit_map      = invert(map_in["unitCRNum"])
+        CRunit_map      = invert(map_in["unitCRNum"]["phocr"])
         SRunit_map      = invert(map_in["unitSRNum"])
 
     # final yields for json file
@@ -38,11 +38,6 @@ def saveResults(inFile, outFile, CRunits, SRunits, eras):
     # phocr_data:   Photon Data in photon CR 
     # phocr_gjets:  GJets MC in photon CR
     # phocr_back:   Other MC (QCD, TTGJets, etc) in photon CR
-    
-    # combine results over all eras
-    # try only 2016 now for development
-    # try Run 2 now
-    era = "Run2"
     
     print "Search Region Units"
     for b in SRunits.binValues[era]:
@@ -59,7 +54,7 @@ def saveResults(inFile, outFile, CRunits, SRunits, eras):
     print "Control Region Units"
     for b in CRunits.binValues[era]:
         name                = CRunit_map[b]
-        name                = name.replace("lepcr", "phocr")
+        #name                = name.replace("lepcr", "phocr")
         data                = CRunits.binValues[era][b]["data"]
         data_error          = CRunits.binValues[era][b]["data_error"]
         mc_gjets            = CRunits.binValues[era][b]["mc_gjets"]
