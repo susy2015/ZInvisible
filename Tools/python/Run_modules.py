@@ -1,5 +1,5 @@
 # run_modules.py
-
+import copy
 import numpy as np
 import json
 import argparse
@@ -22,9 +22,6 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # syst_down_i     = (p - p_down) / p
 # syst_up_total   = sqrt ( sum ( syst_up_i ^2 ) ) 
 # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
-
-def calcTotalSyst(h_pred, systHistoMap):
-    pass
 
 def writeToConf(outFile, searchBinMap, syst, h, h_up, h_down, offset):
     zinv = "znunu"
@@ -245,9 +242,23 @@ def main():
     # syst_up_total   = sqrt ( sum ( syst_up_i ^2 ) ) 
     # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
     
+    # --- validation bins ---
+    f_out = ROOT.TFile("validationBinsZinv_syst_" + era + ".root", "recreate")
+    h_syst_up_lowdm     = ROOT.TH1F("syst_up_lowdm",    "syst_up_lowdm",    VB.low_dm_nbins,  VB.low_dm_start,  VB.low_dm_end  + 1)
+    h_syst_up_highdm    = ROOT.TH1F("syst_up_highdm",   "syst_up_highdm",   VB.high_dm_nbins, VB.high_dm_start, VB.high_dm_end + 1)
+    h_syst_down_lowdm   = ROOT.TH1F("syst_down_lowdm",  "syst_down_lowdm",  VB.low_dm_nbins,  VB.low_dm_start,  VB.low_dm_end  + 1)
+    h_syst_down_highdm  = ROOT.TH1F("syst_down_highdm", "syst_down_highdm", VB.high_dm_nbins, VB.high_dm_start, VB.high_dm_end + 1)
+    
     validationBinMap = {}
     validationBinMap["lowdm"]   = VB.low_dm_bins
     validationBinMap["highdm"]  = VB.high_dm_bins
+    # use copy.deepcopy() to avoid modifying original
+    # histo_tmp[region][direction]
+    validationHistoMap = copy.deepcopy(histo_tmp)
+    validationHistoMap["lowdm"]["up"]       = h_syst_up_lowdm
+    validationHistoMap["lowdm"]["down"]     = h_syst_down_lowdm
+    validationHistoMap["highdm"]["up"]      = h_syst_up_highdm
+    validationHistoMap["highdm"]["down"]    = h_syst_down_highdm
     
     h_pred_lowdm    = histo["validation"]["lowdm"][""]
     h_pred_highdm   = histo["validation"]["highdm"][""]
@@ -279,7 +290,14 @@ def main():
             final_up   = 1.0 + syst_up_total
             final_down = 1.0 - syst_down_total
             print "bin {0}, pred={1}, syst_up={2}, syst_down={3}".format(b_i, p, final_up, final_down)
+            validationHistoMap[region]["up"].SetBinContent(     b_i, final_up   )
+            validationHistoMap[region]["down"].SetBinContent(   b_i, final_down )
+        
+        # write histograms to file
+        validationHistoMap[region]["up"].Write()
+        validationHistoMap[region]["down"].Write()
 
+    f_out.Close()
 
 
 if __name__ == "__main__":
