@@ -95,7 +95,7 @@ def main():
     conf_file    = "zinv_syst_" + era + ".conf"
     out_dir      = "angel_syst_plots/" 
     syst_dir     = "angel_syst_plots/"
-    variable     = "pred"
+    variable     = "mc"
     regions      = ["lowdm", "highdm"]
     directions   = ["up", "", "down"]
     bintypes     = ["validation", "search"]
