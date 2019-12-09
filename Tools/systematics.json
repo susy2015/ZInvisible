@@ -107,6 +107,12 @@
         "nominal": "ISRWeight",
         "up": "ISRWeight_Up"
     },
+    "jes": {
+        "down": "NONE",
+        "name": "JES",
+        "nominal": "NONE",
+        "up": "NONE"
+    },
     "met_trig": {
         "down": "Stop0l_trigger_eff_MET_loose_baseline_down",
         "name": "trigger_err",

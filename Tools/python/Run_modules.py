@@ -99,7 +99,7 @@ def main():
     regions      = ["lowdm", "highdm"]
     directions   = ["up", "", "down"]
     bintypes     = ["validation", "search"]
-    systematics  = ["btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup"] # all systematics available from Znunu_nValidationBin
+    systematics  = ["jes", "btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup"] # all systematics available from Znunu_nValidationBin
     
     histo_tmp  = {region:dict.fromkeys(directions) for region in regions} # histo_tmp[region][direction]
     histo      = {bintype:histo_tmp for bintype in bintypes}              # histo[bintype][region][direction]
