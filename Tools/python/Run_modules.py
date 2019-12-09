@@ -23,7 +23,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # syst_up_total   = sqrt ( sum ( syst_up_i ^2 ) ) 
 # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
 
-def writeToConf(outFile, searchBinMap, syst, h, h_up, h_down, offset):
+def writeToConf(outFile, searchBinMap, syst, h, h_up, h_down, region, offset):
     zinv = "znunu"
     # sb_i = bin_i - 1 + offset
     nBins = h.GetNbinsX()
@@ -39,11 +39,14 @@ def writeToConf(outFile, searchBinMap, syst, h, h_up, h_down, offset):
         # The error is a deviation from 1.
         r_up   = 1
         r_down = 1
-        if p != 0:
-            r_up   = p_up   / p
-            r_down = p_down / p
-        else:
-            print "WARNING: pred = 0 for search bin {0}".format(sb_i)
+        # do not apply SB syst in high dm
+        # here syst is already systForConf (systForConf = systMap[syst]["name"])
+        if not (region == "highdm" and syst == "ivfunc"):
+            if p != 0:
+                r_up   = p_up   / p
+                r_down = p_down / p
+            else:
+                print "WARNING: pred = 0 for search bin {0}".format(sb_i)
         outFile.write("{0}  {1}_Up  {2}  {3}\n".format(   sb_name, syst, zinv, r_up))
         outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, zinv, r_down))
 
@@ -168,10 +171,10 @@ def main():
             #-------------------------------------------------------
             # Write to conf
             #-------------------------------------------------------
-            #writeToConf(outFile, searchBinMap, syst, h, h_up, h_down, offset)
+            #writeToConf(outFile, searchBinMap, syst, h, h_up, h_down, region, offset)
             systForConf = systMap[syst]["name"]  
-            writeToConf(outFile, searchBinMap, systForConf, histo["search"]["lowdm"][""],  histo["search"]["lowdm"]["up"],  histo["search"]["lowdm"]["down"],  0)
-            writeToConf(outFile, searchBinMap, systForConf, histo["search"]["highdm"][""], histo["search"]["highdm"]["up"], histo["search"]["highdm"]["down"], SB.high_dm_start)
+            writeToConf(outFile, searchBinMap, systForConf, histo["search"]["lowdm"][""],  histo["search"]["lowdm"]["up"],  histo["search"]["lowdm"]["down"],  "lowdm",  0)
+            writeToConf(outFile, searchBinMap, systForConf, histo["search"]["highdm"][""], histo["search"]["highdm"]["up"], histo["search"]["highdm"]["down"], "highdm", SB.high_dm_start)
             
             #-------------------------------------------------------
             # Plot
@@ -212,6 +215,7 @@ def main():
                     ratio_up = histo[bintype][region]["up"].Clone()
                     ratio_up.Divide(histo[bintype][region][""])
                     ratio_up.SetLineColor(ROOT.kRed)
+                    ratio_up.SetTitle(bintype + " bins, " + syst + " systematic, " + era)
                 
                     ratio_down = histo[bintype][region]["down"].Clone()
                     ratio_down.Divide(histo[bintype][region][""])
@@ -279,6 +283,9 @@ def main():
             syst_down_sum = 0.0
             if p != 0:
                 for syst in systematics:
+                    # do not apply SB syst in high dm
+                    if region == "highdm" and syst == "eff_sb":
+                        continue
                     # syst_histo[systemaitc][bintype][region][direction]
                     h_up    = syst_histo[syst]["validation"][region]["up"]
                     h_down  = syst_histo[syst]["validation"][region]["down"]
