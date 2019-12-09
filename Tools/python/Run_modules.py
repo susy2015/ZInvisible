@@ -270,7 +270,10 @@ def main():
     for region in regions:
         print "--- {0} ---".format(region)
         for b in validationBinMap[region]:
-            b_i = int(b) + 1 - VB.low_dm_nbins
+            # be careful with bin index, which needs to start at 1 in both lowdm and highdm
+            b_i = int(b) + 1 
+            if region == "highdm":
+                b_i = b_i - VB.low_dm_nbins
             p = histo["validation"][region][""].GetBinContent(b_i)
             syst_up_sum   = 0.0
             syst_down_sum = 0.0
