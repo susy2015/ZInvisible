@@ -12,11 +12,6 @@ from data_card import makeDataCard
 from units import saveResults
 from make_table import Table
 
-# make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
-ROOT.PyConfig.IgnoreCommandLineOptions = True
-# make plots faster without displaying them
-ROOT.gROOT.SetBatch(ROOT.kTRUE)
-
 def main():
     # options
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)

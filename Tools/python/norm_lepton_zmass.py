@@ -379,7 +379,11 @@ class Normalization:
     # make a plot of nomralization (y-axis) vs. era (x-axis) for different selections
     def makeComparison(self, bin_type):
         draw_option = "hist error"
-        nBins = len(self.eras)
+        # treat Run2 era differentley
+        eras = self.eras
+        if self.eras[-1] == "Run2":
+            eras  = self.eras[:-1]
+        nBins = len(eras)
         
         ###################
         # Draw Histograms #
@@ -406,32 +410,37 @@ class Normalization:
                 print "{0} : {1}".format(region_tex, region_root_tex)
                 print "{0} : {1}".format(selections_tex, selections_root_tex)
                 #h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
-                h_Electron  = ROOT.TH1F("h_Electron",   "h_Electron",   nBins, 0, nBins)
-                h_Muon      = ROOT.TH1F("h_Muon",       "h_Muon",       nBins, 0, nBins)
-                h_Combined  = ROOT.TH1F("h_Combined",   "h_Combined",   nBins, 0, nBins)
+                h_Electron       = ROOT.TH1F("h_Electron",        "h_Electron",        nBins, 0, nBins)
+                h_Muon           = ROOT.TH1F("h_Muon",            "h_Muon",            nBins, 0, nBins)
+                h_Combined       = ROOT.TH1F("h_Combined",        "h_Combined",        nBins, 0, nBins)
+                h_Combined_Run2  = ROOT.TH1F("h_Combined_Run2",   "h_Combined_Run2",   nBins, 0, nBins)
                 title = "Norm. for {0} bins, {1}, {2}".format(bin_type, region_root_tex, selections_root_tex)
                 x_title = "Era" 
                 y_title = "Norm. #left(R_{Z}#right)"
                 y_min = -1.0
                 y_max = 5.0
                 #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-                setupHist(h_Electron,   title, x_title, y_title, self.color_red,    y_min, y_max)
-                setupHist(h_Muon,       title, x_title, y_title, self.color_blue,   y_min, y_max)
-                setupHist(h_Combined,   title, x_title, y_title, self.color_black,  y_min, y_max)
+                setupHist(h_Electron,       title, x_title, y_title, self.color_red,    y_min, y_max)
+                setupHist(h_Muon,           title, x_title, y_title, self.color_blue,   y_min, y_max)
+                setupHist(h_Combined,       title, x_title, y_title, self.color_black,  y_min, y_max)
+                setupHist(h_Combined_Run2,  title, x_title, y_title, self.color_green,  y_min, y_max)
 
                 for i in xrange(nBins):
-                    era = self.eras[i]
+                    era = eras[i]
                     # set bin contents and error
-                    h_Electron.SetBinContent(   i + 1,      self.norm_map[era][bin_type]["Electron"][region][selection]["R_Z"])
-                    h_Electron.SetBinError(     i + 1,      self.norm_map[era][bin_type]["Electron"][region][selection]["R_Z_error"])
-                    h_Muon.SetBinContent(       i + 1,      self.norm_map[era][bin_type]["Muon"][region][selection]["R_Z"])
-                    h_Muon.SetBinError(         i + 1,      self.norm_map[era][bin_type]["Muon"][region][selection]["R_Z_error"])
-                    h_Combined.SetBinContent(   i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z"])
-                    h_Combined.SetBinError(     i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z_error"])
+                    h_Electron.SetBinContent(           i + 1,      self.norm_map[era][bin_type]["Electron"][region][selection]["R_Z"])
+                    h_Electron.SetBinError(             i + 1,      self.norm_map[era][bin_type]["Electron"][region][selection]["R_Z_error"])
+                    h_Muon.SetBinContent(               i + 1,      self.norm_map[era][bin_type]["Muon"][region][selection]["R_Z"])
+                    h_Muon.SetBinError(                 i + 1,      self.norm_map[era][bin_type]["Muon"][region][selection]["R_Z_error"])
+                    h_Combined.SetBinContent(           i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z"])
+                    h_Combined.SetBinError(             i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z_error"])
+                    h_Combined_Run2.SetBinContent(      i + 1,      self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z"])
+                    h_Combined_Run2.SetBinError(        i + 1,      self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z_error"])
                     # set bin labels
-                    h_Electron.GetXaxis().SetBinLabel(  i + 1, era)
-                    h_Muon.GetXaxis().SetBinLabel(      i + 1, era)
-                    h_Combined.GetXaxis().SetBinLabel(  i + 1, era)
+                    h_Electron.GetXaxis().SetBinLabel(      i + 1, era)
+                    h_Muon.GetXaxis().SetBinLabel(          i + 1, era)
+                    h_Combined.GetXaxis().SetBinLabel(      i + 1, era)
+                    h_Combined_Run2.GetXaxis().SetBinLabel( i + 1, era)
                 
                 # do some fits
                 f_Combined  = ROOT.TF1("f1", "pol0", 0, 5)
@@ -448,19 +457,22 @@ class Normalization:
                 h_Electron.SetTitleSize(0.1)
                 h_Muon.SetTitleSize(0.1)
                 h_Combined.SetTitleSize(0.1)
+                h_Combined_Run2.SetTitleSize(0.1)
                 
                 # draw
                 h_Combined.Draw(draw_option)        
                 h_Electron.Draw(draw_option + " same")        
                 h_Muon.Draw(draw_option + " same")        
                 f_Combined.Draw("same")
+                h_Combined_Run2.Draw("same")
 
                 # legend: TLegend(x1,y1,x2,y2)
                 legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                legend.AddEntry(h_Electron,     "Electron",         "l")
-                legend.AddEntry(h_Muon,         "Muon",             "l")
-                legend.AddEntry(h_Combined,     "Combined",         "l")
-                legend.AddEntry(f_Combined,     "Fit to Combined",  "l")
+                legend.AddEntry(h_Electron,         "Electron",                  "l")
+                legend.AddEntry(h_Muon,             "Muon",                      "l")
+                legend.AddEntry(h_Combined,         "Combined e, #mu",           "l")
+                legend.AddEntry(h_Combined_Run2,    "Run2",                      "l")
+                legend.AddEntry(f_Combined,         "Fit to Combined e, #mu",    "l")
                 legend.Draw()
 
                 # write chisq

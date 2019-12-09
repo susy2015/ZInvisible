@@ -226,15 +226,17 @@ def getNormalizedRatio(h_num, h_den):
     return h_ratio_normalized
 
 # setup histogram
-def setupHist(hist, title, x_title, y_title, color, y_min, y_max):
+def setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False):
     x_axis = hist.GetXaxis()
     y_axis = hist.GetYaxis()
     y_axis.SetRangeUser(y_min, y_max)
     hist.SetTitle(title)
-    x_axis.SetTitleSize(0.06)
-    y_axis.SetTitleSize(0.06)
-    x_axis.SetTitleOffset(0.75)
-    y_axis.SetTitleOffset(0.75)
+    # adjust font sizes only for some plots
+    if adjust:
+        x_axis.SetTitleSize(0.06)
+        y_axis.SetTitleSize(0.06)
+        x_axis.SetTitleOffset(0.75)
+        y_axis.SetTitleOffset(0.75)
     x_axis.SetTitle(x_title)
     y_axis.SetTitle(y_title)
     hist.SetStats(ROOT.kFALSE)
