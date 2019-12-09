@@ -435,7 +435,9 @@ class Normalization:
                     h_Combined.SetBinContent(           i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z"])
                     h_Combined.SetBinError(             i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z_error"])
                     h_Combined_Run2.SetBinContent(      i + 1,      self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z"])
-                    h_Combined_Run2.SetBinError(        i + 1,      self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z_error"])
+                    #h_Combined_Run2.SetBinError(        i + 1,      self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z_error"])
+                    # set the Run2 error in order to tune the reduced chisq
+                    h_Combined_Run2.SetBinError(        i + 1,      0.1)
                     # set bin labels
                     h_Electron.GetXaxis().SetBinLabel(      i + 1, era)
                     h_Muon.GetXaxis().SetBinLabel(          i + 1, era)
@@ -447,11 +449,19 @@ class Normalization:
                 h_Combined.Fit(f_Combined,  "", "", 0, 5)
                 f_Combined.SetLineColor(getColorIndex("violet"))
                 f_Combined.SetLineWidth(5)
-                chisq = f_Combined.GetChisquare()
+                # for Chi2Test()
+                # "WW" = MC MC comparison (weighted-weighted)
+                # "CHI2" = returns chi2 instead of p-value
+                chisq      = f_Combined.GetChisquare()
+                chisq_Run2 = h_Combined_Run2.Chi2Test(h_Combined, "WW CHI2")
+                # nDegFree = nBins - 1 for chisq_r
+                # nDegFree = nBins for chisq_Run2_r 
+                chisq_r      = chisq / (nBins - 1)
+                chisq_Run2_r = chisq_Run2 / nBins
                 fit_value = f_Combined.GetParameter(0)
                 fit_error = f_Combined.GetParError(0)
                 mark = ROOT.TLatex()
-                mark.SetTextSize(0.04)
+                mark.SetTextSize(0.03)
                 
                 # title font size
                 h_Electron.SetTitleSize(0.1)
@@ -478,8 +488,9 @@ class Normalization:
                 # write chisq
                 # give x, y coordinates (same as plot coordinates)
                 #print "fit = %.2f #pm %.2f" % (fit_value, fit_error)
-                mark.DrawLatex(0.2, y_max - 0.4, "Fit: f(x) = %.2f #pm %.2f" % (fit_value, fit_error))
-                mark.DrawLatex(0.2, y_max - 0.9, "#chi^{2} = %.2f" % chisq)
+                mark.DrawLatex(0.2, y_max - 0.5, "Fit: f(x) = %.3f #pm %.3f" % (fit_value, fit_error))
+                mark.DrawLatex(0.2, y_max - 1.0, "Comb. e/#mu #chi_{r}^{2} = %.3f" % chisq_r)
+                mark.DrawLatex(0.2, y_max - 1.5, "Run 2 #chi_{r}^{2} = %.3f" % chisq_Run2_r)
 
                 # save histograms
                 plot_name = "{0}Normalization_{1}_{2}_{3}".format(self.plot_dir, bin_type, region, selection)
