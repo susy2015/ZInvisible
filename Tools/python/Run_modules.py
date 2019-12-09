@@ -1,5 +1,6 @@
 # run_modules.py
 
+import numpy as np
 import json
 import argparse
 import os
@@ -13,6 +14,18 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 
+#TODO: combined all systematics to get total syst up/down
+# first combined syst in validation bins and give to Hui
+# loop over validation bins
+# loop over systematics
+# syst_up_i       = (p_up - p)   / p
+# syst_down_i     = (p - p_down) / p
+# syst_up_total   = sqrt ( sum ( syst_up_i ^2 ) ) 
+# syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
+
+def calcTotalSyst(h_pred, systHistoMap):
+    pass
+
 def writeToConf(outFile, searchBinMap, syst, h, h_up, h_down, offset):
     zinv = "znunu"
     # sb_i = bin_i - 1 + offset
@@ -25,8 +38,10 @@ def writeToConf(outFile, searchBinMap, syst, h, h_up, h_down, offset):
         p_down  = h_down.GetBinContent(i)
         #s_up   = (p_up - p)   / p
         #s_down = (p - p_down) / p
-        r_up   = 0
-        r_down = 0
+        # If there is a zero prediction for nominal, up, and down can you set the systematic to 1.
+        # The error is a deviation from 1.
+        r_up   = 1
+        r_down = 1
         if p != 0:
             r_up   = p_up   / p
             r_down = p_down / p
@@ -89,8 +104,9 @@ def main():
     bintypes     = ["validation", "search"]
     systematics  = ["btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup"] # all systematics available from Znunu_nValidationBin
     
-    histo_tmp = {region:dict.fromkeys(directions) for region in regions} # histo_tmp[region][direction]
-    histo     = {bintype:histo_tmp for bintype in bintypes}              # histo[bintype][region][direction]
+    histo_tmp  = {region:dict.fromkeys(directions) for region in regions} # histo_tmp[region][direction]
+    histo      = {bintype:histo_tmp for bintype in bintypes}              # histo[bintype][region][direction]
+    syst_histo = {syst:histo for syst in systematics}                     # syst_histo[systemaitc][bintype][region][direction]
     
     #-------------------------------------------------------
     # Class instanceses summoning 
@@ -132,6 +148,10 @@ def main():
             histo["validation"]["lowdm"]["up"]   = VB.histograms[era]["lowdm"][variable].Clone()
             histo["search"]["highdm"]["up"]      = SB.histograms[era]["highdm"][variable].Clone()
             histo["search"]["lowdm"]["up"]       = SB.histograms[era]["lowdm"][variable].Clone()
+            syst_histo[syst]["validation"]["lowdm"]["up"]  = histo["validation"]["lowdm"]["up"]
+            syst_histo[syst]["validation"]["highdm"]["up"] = histo["validation"]["highdm"]["up"]
+            syst_histo[syst]["search"]["lowdm"]["up"]      = histo["search"]["lowdm"]["up"]
+            syst_histo[syst]["search"]["highdm"]["up"]     = histo["search"]["highdm"]["up"]
             
             # --- syst down --- #
             N.getNormAndError(result_file, syst + "_syst_down", era)
@@ -143,6 +163,10 @@ def main():
             histo["validation"]["lowdm"]["down"]    = VB.histograms[era]["lowdm"][variable].Clone()
             histo["search"]["highdm"]["down"]       = SB.histograms[era]["highdm"][variable].Clone()
             histo["search"]["lowdm"]["down"]        = SB.histograms[era]["lowdm"][variable].Clone()
+            syst_histo[syst]["validation"]["lowdm"]["down"]  = histo["validation"]["lowdm"]["down"]
+            syst_histo[syst]["validation"]["highdm"]["down"] = histo["validation"]["highdm"]["down"]
+            syst_histo[syst]["search"]["lowdm"]["down"]      = histo["search"]["lowdm"]["down"]
+            syst_histo[syst]["search"]["highdm"]["down"]     = histo["search"]["highdm"]["down"]
             
             #-------------------------------------------------------
             # Write to conf
@@ -207,6 +231,55 @@ def main():
                     c.SaveAs(file_name + ".png")
 
                     del c
+    
+    #-------------------------------------------------------
+    # Calculate total systematic up/down
+    #-------------------------------------------------------
+
+    #TODO: combined all systematics to get total syst up/down
+    # first combined syst in validation bins and give to Hui
+    # loop over validation bins
+    # loop over systematics
+    # syst_up_i       = (p_up - p)   / p
+    # syst_down_i     = (p - p_down) / p
+    # syst_up_total   = sqrt ( sum ( syst_up_i ^2 ) ) 
+    # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
+    
+    validationBinMap = {}
+    validationBinMap["lowdm"]   = VB.low_dm_bins
+    validationBinMap["highdm"]  = VB.high_dm_bins
+    
+    h_pred_lowdm    = histo["validation"]["lowdm"][""]
+    h_pred_highdm   = histo["validation"]["highdm"][""]
+
+    # validation bins
+    # bins are list of strings starting at 0
+    # loop over regions (lowdm and highdm)
+    print "# validation bin systematics"
+    for region in regions:
+        print "--- {0} ---".format(region)
+        for b in validationBinMap[region]:
+            b_i = int(b) + 1
+            p = histo["validation"][region][""].GetBinContent(b_i)
+            syst_up_sum   = 0.0
+            syst_down_sum = 0.0
+            if p != 0:
+                for syst in systematics:
+                    # syst_histo[systemaitc][bintype][region][direction]
+                    h_up    = syst_histo[syst]["validation"][region]["up"]
+                    h_down  = syst_histo[syst]["validation"][region]["down"]
+                    p_up    = h_up.GetBinContent(b_i)
+                    p_down  = h_down.GetBinContent(b_i)
+                    syst_up   = (p_up - p  ) / p
+                    syst_down = (p - p_down) / p
+                    syst_up_sum     += syst_up**2
+                    syst_down_sum   += syst_down**2
+            syst_up_total   = np.sqrt(syst_up_sum)
+            syst_down_total = np.sqrt(syst_down_sum)
+            final_up   = 1.0 + syst_up_total
+            final_down = 1.0 - syst_down_total
+            print "bin {0}, pred={1}, syst_up={2}, syst_down={3}".format(b_i, p, final_up, final_down)
+
 
 
 if __name__ == "__main__":
