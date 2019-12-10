@@ -539,7 +539,7 @@ class Normalization:
                 
                 # save final Rz syst.
                 # WARNING: this needs to be saved separately for validaiton and search bins, otherwise it will be overwritten
-                print "----------------- DEBUG: {0}, {1}, Rz syst = {2}".format(region, selection, final_Run2_syst_err)
+                #print "----------------- DEBUG: {0}, {1}, Rz syst = {2}".format(region, selection, final_Run2_syst_err)
                 self.rz_syst_map[bin_type][region][selection] = final_Run2_syst_err
 
                 # save histograms
@@ -552,7 +552,6 @@ class Normalization:
                 del h_Electron
                 del h_Muon
                 del h_Combined
-        print "DEBUG: in N.makeComparison(): Rz syst for {0} low dm keys = {1}".format(bin_type, self.rz_syst_map[bin_type]["LowDM"].keys())
 
 
 

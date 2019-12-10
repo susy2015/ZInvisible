@@ -1,4 +1,5 @@
 # search_bins.py
+import re
 import ROOT
 import copy
 import json
@@ -401,9 +402,9 @@ class Common:
         # output root file
         f_out = ROOT.TFile(output_file, "recreate")
         
-        # rz_syst_map[bin_type][region][selection]
         rz_syst_low_dm  = ROOT.TH1F("rz_syst_low_dm",  "rz_syst_low_dm",  self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1)
         rz_syst_high_dm = ROOT.TH1F("rz_syst_high_dm", "rz_syst_high_dm", self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1)
+        
         regions = ["LowDM", "HighDM"]
         systMap = {}
         systMap["LowDM"]  = {}
@@ -412,18 +413,24 @@ class Common:
         systMap["HighDM"]["bins"]  = self.high_dm_bins
         systMap["LowDM"]["hist"]   = rz_syst_low_dm
         systMap["HighDM"]["hist"]  = rz_syst_high_dm
+       
         for region in regions:
             i = 1
             for b in systMap[region]["bins"]:
                 selection = self.bins[b]["selection"]
                 selection_norm = removeCuts(selection, "NJ")
-                print "DEBUG: b={0}, selection={1}, selection_norm={2}, type={3}".format(b, selection, selection_norm, type(selection_norm))
-                print "DEBUG: rz_syst_map[{0}] keys = {1}".format(region, rz_syst_map[bin_type][region].keys())
+                
+                #print "DEBUG: b={0}, selection={1}, selection_norm={2}, type={3}".format(b, selection, selection_norm, type(selection_norm))
+                #print "DEBUG: rz_syst_map[{0}] keys = {1}".format(region, rz_syst_map[bin_type][region].keys())
+                
+                # rz_syst_map[bin_type][region][selection]
                 syst = rz_syst_map[bin_type][region][selection_norm]
-                print "--- syst = {0}".format(syst)
+                
+                #print "--- syst = {0}".format(syst)
                 systMap[region]["hist"].SetBinContent(i, syst)
                 systMap[region]["hist"].SetBinError(i, 0)
                 i += 1
+            # write histo to file
             systMap[region]["hist"].Write()
         
         f_out.Close()
@@ -435,8 +442,41 @@ class Common:
     #    - TODO: also get this syst. in CR unit bins                         #
     # ---------------------------------------------------------------------- #
     def getZvsPhotonSyst(self, h_map_syst, output_file):
-        # h_map_syst[region]
-        pass
+        # output root file
+        f_out = ROOT.TFile(output_file, "recreate")
+        ZvsPhoton_syst_low_dm  = ROOT.TH1F("ZvsPhoton_syst_low_dm",  "ZvsPhoton_syst_low_dm",  self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1)
+        ZvsPhoton_syst_high_dm = ROOT.TH1F("ZvsPhoton_syst_high_dm", "ZvsPhoton_syst_high_dm", self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1)
+        
+        regions = ["LowDM", "HighDM"]
+        systMap = {}
+        systMap["LowDM"]  = {}
+        systMap["HighDM"] = {}
+        systMap["LowDM"]["bins"]   = self.low_dm_bins
+        systMap["HighDM"]["bins"]  = self.high_dm_bins
+        systMap["LowDM"]["hist"]   = ZvsPhoton_syst_low_dm
+        systMap["HighDM"]["hist"]  = ZvsPhoton_syst_high_dm
+        
+        for region in regions:
+            i = 1
+            for b in systMap[region]["bins"]:
+                # get MET bin edges
+                met_cut = self.bins[b]["met"]
+                m = re.search("met_(.*)to(.*)", met_cut)
+                value_1 = float(m.group(1))
+                value_2 = float(m.group(2))
+                # use same systematic for validation and search bins
+                # find correct MET bin to use
+                # h_map_syst[region]
+                met_bin_num = h_map_syst[region].FindBin(value_1)
+                syst = h_map_syst[region].GetBinContent(met_bin_num)
+                
+                systMap[region]["hist"].SetBinContent(i, syst)
+                systMap[region]["hist"].SetBinError(i, 0)
+                i += 1
+            # write histo to file
+            systMap[region]["hist"].Write()
+        
+        f_out.Close()
 
 # vadliation bins
 class ValidationBins(Common):

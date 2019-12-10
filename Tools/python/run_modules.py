@@ -116,8 +116,6 @@ def main():
     # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics
     # must be done after N.makeComparison()
     # must be done after Syst.makeZvsPhoton()
-    print "DEBUG: In run_modules.py: Rz for validation low dm keys = {0}".format(N.rz_syst_map["validation"]["LowDM"].keys())
-    print "DEBUG: In run_modules.py: Rz for search low dm keys = {0}".format(N.rz_syst_map["search"]["LowDM"].keys())
     VB.getRzSyst(N.rz_syst_map, "validation",  "RzSyst_ValidationBins.root")
     SB.getRzSyst(N.rz_syst_map, "search",      "RzSyst_SearchBins.root")
     VB.getZvsPhotonSyst(Syst.h_map_syst, "ZvsPhotonSyst_ValidationBins.root")
