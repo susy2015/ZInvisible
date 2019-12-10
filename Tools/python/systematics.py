@@ -184,15 +184,20 @@ class Systematic:
                 
             # fit the Z over Photon ratio
             if doFit:
+                # the first MET bin is not fit
+                # we use a linear 2 parameter fit
+                nBinsFit = self.n_bins - 1
+                nDegFree = nBinsFit - 2
                 fit = ROOT.TF1("f1", "pol1", self.met_min, self.met_max)
                 h_ratio_ZoverPhoton.Fit(fit, "N", "", self.met_min, self.met_max)
                 fit.SetLineColor(getColorIndex("violet"))
                 fit.SetLineWidth(5)
-                chisq  = fit.GetChisquare()
-                p0     = fit.GetParameter(0)
-                p1     = fit.GetParameter(1)
-                p0_err = fit.GetParError(0)
-                p1_err = fit.GetParError(1)
+                p0      = fit.GetParameter(0)
+                p1      = fit.GetParameter(1)
+                p0_err  = fit.GetParError(0)
+                p1_err  = fit.GetParError(1)
+                chisq   = fit.GetChisquare()
+                chisq_r = chisq / nDegFree
                 mark = ROOT.TLatex()
                 mark.SetTextSize(0.05)
             
@@ -248,11 +253,11 @@ class Systematic:
             h_ratio_ZoverPhoton.Draw(draw_option)
             if doFit:
                 fit.Draw("same")
-                # write chisq
+                # write chisq_r
                 # give x, y coordinates (same as plot coordinates)
-                print "Fit: f(x) = (%.6f #pm %.6f) * x + (%.6f #pm %.6f)" % (p1, p1_err, p0, p0_err)
-                mark.DrawLatex(300.0, y_max - 0.2, "Fit: f(x) = %.6f + %.6f * x" % (p0, p1))
-                mark.DrawLatex(300.0, y_max - 0.4, "#chi^{2} = %.2f" % chisq)
+                #print "Fit: f(x) = (%.5f #pm %.5f) * x + (%.5f #pm %.5f)" % (p1, p1_err, p0, p0_err)
+                mark.DrawLatex(300.0, y_max - 0.2, "Fit: f(x) = %.5f + %.5f * x" % (p0, p1))
+                mark.DrawLatex(300.0, y_max - 0.4, "#chi_{r}^{2} = %.3f" % chisq_r)
             if era == "Run2" and rebin:
                 h_syst.Draw(draw_option + " same")
             
