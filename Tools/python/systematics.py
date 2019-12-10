@@ -196,19 +196,8 @@ class Systematic:
                 mark = ROOT.TLatex()
                 mark.SetTextSize(0.05)
             
-            # do Run 2 systematic
-            if era == "Run2" and rebin:
-                h_syst = ROOT.TH1F("h_syst", "h_syst", self.n_bins, self.xbins)
-                for i in xrange(1, self.n_bins + 1):
-                    # syst = max(stat uncertainty in double ratio, |(double ratio) - 1|)
-                    value    = h_ratio_ZoverPhoton.GetBinContent(i)
-                    stat_err = h_ratio_ZoverPhoton.GetBinError(i)
-                    diff     = abs(value - 1)
-                    syst_err = max(stat_err, diff) 
-                    h_syst.SetBinContent(i, syst_err)
-                    h_syst.SetBinError(i, 0)
             
-            
+            # histogram info 
             title = "Z vs. Photon, {0}, {1}".format(region, era)
             x_title = "MET (GeV)" 
             y_title = "Data / MC"
@@ -223,6 +212,20 @@ class Systematic:
             h_ratio_lepton.GetXaxis().SetRangeUser(self.met_min, self.met_max)
             h_ratio_photon.GetXaxis().SetRangeUser(self.met_min, self.met_max)
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.met_min, self.met_max)
+            
+            # do Run 2 systematic
+            if era == "Run2" and rebin:
+                h_syst = ROOT.TH1F("h_syst", "h_syst", self.n_bins, self.xbins)
+                for i in xrange(1, self.n_bins + 1):
+                    # syst = max(stat uncertainty in double ratio, |(double ratio) - 1|)
+                    value    = h_ratio_ZoverPhoton.GetBinContent(i)
+                    stat_err = h_ratio_ZoverPhoton.GetBinError(i)
+                    diff     = abs(value - 1)
+                    syst_err = max(stat_err, diff) 
+                    h_syst.SetBinContent(i, syst_err)
+                    h_syst.SetBinError(i, 0)
+                setupHist(h_syst,       title, x_title, "syst.",   "irish green",      y_min, y_max)
+                h_syst.GetXaxis().SetRangeUser(self.met_min, self.met_max)
             
             # pad for histograms
             pad = c.cd(1)
@@ -250,12 +253,16 @@ class Systematic:
                 print "Fit: f(x) = (%.6f #pm %.6f) * x + (%.6f #pm %.6f)" % (p1, p1_err, p0, p0_err)
                 mark.DrawLatex(300.0, y_max - 0.2, "Fit: f(x) = %.6f + %.6f * x" % (p0, p1))
                 mark.DrawLatex(300.0, y_max - 0.4, "#chi^{2} = %.2f" % chisq)
+            if era == "Run2" and rebin:
+                h_syst.Draw(draw_option + " same")
             
             # legend: TLegend(x1,y1,x2,y2)
             legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
             legend2.AddEntry(h_ratio_ZoverPhoton,    "(Z to LL) / Photon",           "l")
             if doFit:
-                legend2.AddEntry(fit,                    "Fit to (Z to LL) / Photon",    "l")
+                legend2.AddEntry(fit,                "Fit to (Z to LL) / Photon",    "l")
+            if era == "Run2" and rebin:
+                legend2.AddEntry(h_syst,             "syst. unc.",    "l")
             legend2.Draw()
             
             # save histograms
