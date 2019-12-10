@@ -424,8 +424,10 @@ class Normalization:
                 setupHist(h_Muon,           title, x_title, y_title, self.color_blue,   y_min, y_max)
                 setupHist(h_Combined,       title, x_title, y_title, self.color_black,  y_min, y_max)
                 setupHist(h_Combined_Run2,  title, x_title, y_title, self.color_green,  y_min, y_max)
-                final_Run2_error   = -1
-                final_Run2_chisq_r = -1
+                Run2_norm     = self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z"]
+                Run2_stat_err = self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z_error"]
+                final_Run2_syst_err   = -1
+                final_Run2_chisq_r    = -1
                 for i in xrange(nBins):
                     era = eras[i]
                     # set bin contents and error
@@ -435,7 +437,7 @@ class Normalization:
                     h_Muon.SetBinError(                 i + 1,      self.norm_map[era][bin_type]["Muon"][region][selection]["R_Z_error"])
                     h_Combined.SetBinContent(           i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z"])
                     h_Combined.SetBinError(             i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z_error"])
-                    h_Combined_Run2.SetBinContent(      i + 1,      self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z"])
+                    h_Combined_Run2.SetBinContent(      i + 1,      Run2_norm)
                     #h_Combined_Run2.SetBinError(        i + 1,      self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z_error"])
                     # set bin labels
                     h_Electron.GetXaxis().SetBinLabel(      i + 1, era)
@@ -449,13 +451,13 @@ class Normalization:
                     chisq_tmp = h_Combined_Run2.Chi2Test(h_Combined, "WW CHI2")
                     chisq_tmp_r = chisq_tmp / nBins 
                     if chisq_tmp_r >= 1.0:
-                        final_Run2_error   = error_tmp
+                        final_Run2_syst_err   = error_tmp
                         final_Run2_chisq_r = chisq_tmp_r
                     else:
                         # chisq_r < 1.0
                         if error_tmp == 0.0:
                             # this is the first error value, but chisq < 1.0 already
-                            final_Run2_error   = error_tmp
+                            final_Run2_syst_err   = error_tmp
                             final_Run2_chisq_r = chisq_tmp_r
                         break
 
@@ -512,7 +514,8 @@ class Normalization:
                 #print "fit = %.2f #pm %.2f" % (fit_value, fit_error)
                 mark.DrawLatex(0.2, y_max - 0.5, "Fit: f(x) = %.3f #pm %.3f"        % (fit_value, fit_error))
                 mark.DrawLatex(0.2, y_max - 1.0, "Comb. e/#mu #chi_{r}^{2} = %.3f"  % chisq_r)
-                mark.DrawLatex(0.2, y_max - 1.5, "Run 2 error = %.3f"               % final_Run2_error)
+                mark.DrawLatex(0.2, y_max - 1.5, "Run 2 norm = %.3f #pm %.3f"       % (Run2_norm, Run2_stat_err))
+                #mark.DrawLatex(0.2, y_max - 1.5, "Run 2 error = %.3f"               % final_Run2_syst_err)
                 mark.DrawLatex(0.2, y_max - 2.0, "Run 2 #chi_{r}^{2} = %.3f"        % final_Run2_chisq_r)
 
                 # save histograms
