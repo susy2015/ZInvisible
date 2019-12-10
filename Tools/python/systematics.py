@@ -23,11 +23,13 @@ class Systematic:
         self.particles  = ["Electron", "Muon"]
         # WARNING: for rebinning, xbins need to be a numpy array of floats
         # rebinned
-        self.xbins  = np.array([0.0, 250.0, 350.0, 450.0, 550.0, 650.0, 1000.0])
-        self.n_bins = len(self.xbins) - 1
+        self.xbins   = np.array([0.0, 250.0, 350.0, 450.0, 550.0, 650.0, 1000.0])
+        self.n_bins  = len(self.xbins) - 1
+        self.met_min = 250.0
+        self.met_max = 1000.0
 
     def getZRatio(self, root_file, region, selection, era, variable, rebin):
-        debug = True
+        debug = False
         eraTag = "_" + era
         selectionTag = "_" + selection
         
@@ -182,8 +184,8 @@ class Systematic:
                 
             # fit the Z over Photon ratio
             if doFit:
-                fit  = ROOT.TF1("f1", "pol1", 0.0, 1000.0)
-                h_ratio_ZoverPhoton.Fit(fit,  "N", "", 0.0,  1000.0)
+                fit = ROOT.TF1("f1", "pol1", self.met_min, self.met_max)
+                h_ratio_ZoverPhoton.Fit(fit, "N", "", self.met_min, self.met_max)
                 fit.SetLineColor(getColorIndex("violet"))
                 fit.SetLineWidth(5)
                 chisq  = fit.GetChisquare()
@@ -193,6 +195,18 @@ class Systematic:
                 p1_err = fit.GetParError(1)
                 mark = ROOT.TLatex()
                 mark.SetTextSize(0.05)
+            
+            # do Run 2 systematic
+            if era == "Run2" and rebin:
+                h_syst = ROOT.TH1F("h_syst", "h_syst", self.n_bins, self.xbins)
+                for i in xrange(1, self.n_bins + 1):
+                    # syst = max(stat uncertainty in double ratio, |(double ratio) - 1|)
+                    value    = h_ratio_ZoverPhoton.GetBinContent(i)
+                    stat_err = h_ratio_ZoverPhoton.GetBinError(i)
+                    diff     = abs(value - 1)
+                    syst_err = max(stat_err, diff) 
+                    h_syst.SetBinContent(i, syst_err)
+                    h_syst.SetBinError(i, 0)
             
             
             title = "Z vs. Photon, {0}, {1}".format(region, era)
@@ -205,6 +219,10 @@ class Systematic:
             setupHist(h_ratio_lepton,       title, x_title, y_title,                "vermillion",      y_min, y_max)
             setupHist(h_ratio_photon,       title, x_title, y_title,                "electric blue",   y_min, y_max)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
+            # set x axis range
+            h_ratio_lepton.GetXaxis().SetRangeUser(self.met_min, self.met_max)
+            h_ratio_photon.GetXaxis().SetRangeUser(self.met_min, self.met_max)
+            h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.met_min, self.met_max)
             
             # pad for histograms
             pad = c.cd(1)
@@ -230,8 +248,8 @@ class Systematic:
                 # write chisq
                 # give x, y coordinates (same as plot coordinates)
                 print "Fit: f(x) = (%.6f #pm %.6f) * x + (%.6f #pm %.6f)" % (p1, p1_err, p0, p0_err)
-                mark.DrawLatex(50.0, y_max - 0.2, "Fit: f(x) = %.6f + %.6f * x" % (p0, p1))
-                mark.DrawLatex(50.0, y_max - 0.4, "#chi^{2} = %.2f" % chisq)
+                mark.DrawLatex(300.0, y_max - 0.2, "Fit: f(x) = %.6f + %.6f * x" % (p0, p1))
+                mark.DrawLatex(300.0, y_max - 0.4, "#chi^{2} = %.2f" % chisq)
             
             # legend: TLegend(x1,y1,x2,y2)
             legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)

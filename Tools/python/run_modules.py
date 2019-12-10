@@ -91,7 +91,6 @@ def main():
             if doUnits:
                 CRunits.getValues(result_file, era)
                 SRunits.getValues(result_file, era)
-            Syst.makeZvsPhoton(result_file, era, False)
             Syst.makeZvsPhoton(result_file, era, True)
             makeDataCard(VB, dataCardValidation_dir, era)
             makeDataCard(SB, dataCardSearch_dir,     era)

@@ -20,6 +20,7 @@ def show(jsonFile, key, title):
 
 # save final results in json file
 def saveResults(inFile, outFile, CRunits, SRunits, era):
+    verbose = False
     map_out                                 = {}
     map_out["yieldsMap"]                    = {}
     map_out["yieldsMap"]["znunu"]           = {}
@@ -39,7 +40,8 @@ def saveResults(inFile, outFile, CRunits, SRunits, era):
     # phocr_gjets:  GJets MC in photon CR
     # phocr_back:   Other MC (QCD, TTGJets, etc) in photon CR
     
-    print "Search Region Units"
+    if verbose:
+        print "Search Region Units"
     for b in SRunits.binValues[era]:
         name        = SRunit_map[b]
         mc          = SRunits.binValues[era][b]["mc"]
@@ -48,10 +50,11 @@ def saveResults(inFile, outFile, CRunits, SRunits, era):
         # save value and error
         map_out["yieldsMap"]["znunu"][name] = [mc, mc_error]
         
-        # print for testing
-        print "{0}: mc = [{1}, {2}]".format(name, mc, mc_error)
+        if verbose:
+            print "{0}: mc = [{1}, {2}]".format(name, mc, mc_error)
 
-    print "Control Region Units"
+    if verbose:
+        print "Control Region Units"
     for b in CRunits.binValues[era]:
         name                = CRunit_map[b]
         #name                = name.replace("lepcr", "phocr")
@@ -67,8 +70,8 @@ def saveResults(inFile, outFile, CRunits, SRunits, era):
         map_out["yieldsMap"]["phocr_gjets"][name]   = [mc_gjets, mc_gjets_error]
         map_out["yieldsMap"]["phocr_back"][name]    = [mc_back, mc_back_error]
         
-        # print for testing
-        print "{0}: data = [{1}, {2}], mc_gjets = [{3}, {4}], mc_back = [{5}, {6}]".format(name, data, data_error, mc_gjets, mc_gjets_error, mc_back, mc_back_error)
+        if verbose:
+            print "{0}: data = [{1}, {2}], mc_gjets = [{3}, {4}], mc_back = [{5}, {6}]".format(name, data, data_error, mc_gjets, mc_gjets_error, mc_back, mc_back_error)
 
 
     with open (outFile, "w") as f_out:
