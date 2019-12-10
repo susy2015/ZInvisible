@@ -470,6 +470,7 @@ class Shape:
                     h3 = self.ratio_rebinned_map["2017_F"][bin_type][region][selection][rebin]
                     h4 = self.ratio_rebinned_map["2018_PreHEM"][bin_type][region][selection][rebin]
                     h5 = self.ratio_rebinned_map["2018_PostHEM"][bin_type][region][selection][rebin]
+                    h6 = self.ratio_rebinned_map["Run2"][bin_type][region][selection][rebin]
                     title = "Shape for {0} bins, {1}, {2}, {3}".format(bin_type, region, selection, rebin)
                     x_title = "MET (GeV)" 
                     y_title = "Shape #left(S_{#gamma}#right)"
@@ -481,12 +482,14 @@ class Shape:
                     setupHist(h3,   title, x_title, y_title, "emerald",         y_min, y_max)
                     setupHist(h4,   title, x_title, y_title, "dark sky blue",   y_min, y_max)
                     setupHist(h5,   title, x_title, y_title, "pinky purple",    y_min, y_max)
+                    setupHist(h6,   title, x_title, y_title, "black",           y_min, y_max)
                     # draw
                     h1.Draw(draw_option)
                     h2.Draw(draw_option + " same")
                     h3.Draw(draw_option + " same")
                     h4.Draw(draw_option + " same")
                     h5.Draw(draw_option + " same")
+                    h6.Draw(draw_option + " same")
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
                     legend.AddEntry(h1,     "2016",             "l")
@@ -494,6 +497,7 @@ class Shape:
                     legend.AddEntry(h3,     "2017_F",           "l")
                     legend.AddEntry(h4,     "2018_PreHEM",      "l")
                     legend.AddEntry(h5,     "2018_PostHEM",     "l")
+                    legend.AddEntry(h6,     "Run2",             "l")
                     legend.Draw()
                     # save histograms
                     plot_name = "{0}Shape_{1}_{2}_{3}_{4}".format(self.plot_dir, bin_type, region, selection, rebin)
