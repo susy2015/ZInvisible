@@ -18,9 +18,10 @@ class Normalization:
         self.plot_dir   = plot_dir
         self.verbose    = verbose
         self.ERROR_CODE = tools.ERROR_CODE
-        self.norm_map = {}
-        self.norm_map_tex = {}
-        self.histos = {}
+        self.norm_map       = {}
+        self.norm_map_tex   = {}
+        self.rz_syst_map    = {}
+        self.histos         = {}
         self.output_file = 0 
         self.root_file   = 0
         self.eras = []
@@ -399,7 +400,9 @@ class Normalization:
         legend_y1 = 0.7 
         legend_y2 = 0.9 
         
+        self.rz_syst_map[bin_type] = {}
         for region in self.regions:
+            self.rz_syst_map[bin_type][region] = {}
             for selection in self.selections[bin_type][region]:
                 region_tex              = self.regions_tex[region]
                 selections_tex          = self.selections_tex[bin_type][region][selection]
@@ -489,6 +492,7 @@ class Normalization:
                     final_Run2_total_err = scale * Run2_stat_err
                 else:
                     final_Run2_total_err = Run2_stat_err
+                final_Run2_syst_err  = np.sqrt(final_Run2_total_err**2 - Run2_stat_err**2)
                 # set total Run 2 errror
                 for i in xrange(nBins):
                     h_Combined_Run2.SetBinError(        i + 1,      final_Run2_total_err)
@@ -523,12 +527,20 @@ class Normalization:
                 # write chisq
                 # give x, y coordinates (same as plot coordinates)
                 #print "fit = %.2f #pm %.2f" % (fit_value, fit_error)
-                mark.DrawLatex(0.2, y_max - 0.5, "Fit: f(x) = %.3f #pm %.3f"                % (fit_value, fit_error))
-                mark.DrawLatex(0.2, y_max - 1.0, "Comb. e/#mu #chi_{r}^{2} = %.3f"          % chisq_r)
-                mark.DrawLatex(0.2, y_max - 1.5, "S = %.3f"                                 % scale)
-                mark.DrawLatex(0.2, y_max - 2.0, "R_{Z} #pm #sigma_{stat} = %.3f #pm %.3f"  % (Run2_norm, Run2_stat_err))
-                mark.DrawLatex(0.2, y_max - 2.5, "Run 2 #sigma_{total} = %.3f"              % final_Run2_total_err)
+                # y list is for positioning the text
+                y_list = np.arange(y_max, 0.0, -0.3)
+                mark.DrawLatex(0.2, y_list[1], "Fit: f(x) = %.3f #pm %.3f"                % (fit_value, fit_error))
+                mark.DrawLatex(0.2, y_list[2], "Comb. e/#mu #chi_{r}^{3} = %.3f"          % chisq_r)
+                mark.DrawLatex(0.2, y_list[3], "S = %.3f"                                 % scale)
+                mark.DrawLatex(0.2, y_list[4], "R_{Z} #pm #sigma_{stat} = %.3f #pm %.3f"  % (Run2_norm, Run2_stat_err))
+                mark.DrawLatex(0.2, y_list[5], "Run 2 #sigma_{total} = %.3f"              % final_Run2_total_err)
+                mark.DrawLatex(0.2, y_list[6], "Run 2 #sigma_{syst} = %.3f"               % final_Run2_syst_err)
                 #mark.DrawLatex(0.2, y_max - 2.0, "Run 2 #chi_{r}^{2} = %.3f"        % final_Run2_chisq_r)
+                
+                # save final Rz syst.
+                # WARNING: this needs to be saved separately for validaiton and search bins, otherwise it will be overwritten
+                print "----------------- DEBUG: {0}, {1}, Rz syst = {2}".format(region, selection, final_Run2_syst_err)
+                self.rz_syst_map[bin_type][region][selection] = final_Run2_syst_err
 
                 # save histograms
                 plot_name = "{0}Normalization_{1}_{2}_{3}".format(self.plot_dir, bin_type, region, selection)
@@ -540,6 +552,7 @@ class Normalization:
                 del h_Electron
                 del h_Muon
                 del h_Combined
+        print "DEBUG: in N.makeComparison(): Rz syst for {0} low dm keys = {1}".format(bin_type, self.rz_syst_map[bin_type]["LowDM"].keys())
 
 
 

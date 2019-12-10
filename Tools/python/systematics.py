@@ -1,5 +1,6 @@
 # systematics.py
 
+import copy
 from colors import getColorIndex
 import json
 import os
@@ -27,6 +28,7 @@ class Systematic:
         self.n_bins  = len(self.xbins) - 1
         self.met_min = 250.0
         self.met_max = 1000.0
+        self.h_map_syst = {}
 
     def getZRatio(self, root_file, region, selection, era, variable, rebin):
         debug = False
@@ -231,6 +233,7 @@ class Systematic:
                     h_syst.SetBinError(i, 0)
                 setupHist(h_syst,       title, x_title, "syst.",   "irish green",      y_min, y_max)
                 h_syst.GetXaxis().SetRangeUser(self.met_min, self.met_max)
+                self.h_map_syst[region] = copy.deepcopy(h_syst)
             
             # pad for histograms
             pad = c.cd(1)
