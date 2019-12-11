@@ -107,6 +107,12 @@
         "nominal": "ISRWeight",
         "up": "ISRWeight_Up"
     },
+    "jes": {
+        "down": "NONE",
+        "name": "JES",
+        "nominal": "NONE",
+        "up": "NONE"
+    },
     "met_trig": {
         "down": "Stop0l_trigger_eff_MET_loose_baseline_down",
         "name": "trigger_err",
@@ -142,5 +148,17 @@
         "name": "Prefire_Weight",
         "nominal": "PrefireWeight",
         "up": "PrefireWeight_Up"
+    },
+    "znunu_rzunc": {
+        "down": "NONE",
+        "name": "znunu_rzunc",
+        "nominal": "NONE",
+        "up": "NONE"
+    },
+    "znunu_zgammdiff": {
+        "down": "NONE",
+        "name": "znunu_zgammdiff",
+        "nominal": "NONE",
+        "up": "NONE"
     }
 }

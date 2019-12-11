@@ -221,10 +221,10 @@ class Normalization:
         if not h_Data:
             print "ERROR: Unable to load Data histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["Data"])
         if not h_ZToLL:
-            print self.histos[era][bin_type][particle][region][selection]["ZToLL"]  + "\n replaced with --------> \n " + self.histos[era][bin_type][particle][region][selection]["ZToLL_0"]
+            #print self.histos[era][bin_type][particle][region][selection]["ZToLL"]  + "\n replaced with --------> \n " + self.histos[era][bin_type][particle][region][selection]["ZToLL_0"]
             h_ZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["ZToLL_0"]   ) )
         if not h_NoZToLL:
-            print self.histos[era][bin_type][particle][region][selection]["NoZToLL"]  + "\n replaced with --------> \n " + self.histos[era][bin_type][particle][region][selection]["ZToLL_0"]
+            #print self.histos[era][bin_type][particle][region][selection]["NoZToLL"]  + "\n replaced with --------> \n " + self.histos[era][bin_type][particle][region][selection]["ZToLL_0"]
             h_NoZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["NoZToLL_0"]   ) )
 
         #############################

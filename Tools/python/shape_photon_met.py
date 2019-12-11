@@ -20,6 +20,7 @@ class Shape:
         self.doUnits                = doUnits
         self.verbose                = verbose
         self.splitQCD               = False
+        self.systTag                = ""
         self.histos                 = {}
         self.cr_unit_histos         = {}
         self.cr_unit_histos_summed  = {}
@@ -56,6 +57,8 @@ class Shape:
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
     def getSimpleMap(self, region, nameTag, selectionTag, eraTag, variable):
+        # testing
+        #print "In getSimpleMap(): DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "#gamma+jetsstack" 
         if self.splitQCD:
             temp_map = {
                             "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Datadata",
@@ -88,6 +91,9 @@ class Shape:
         # DataMC_Photon_LowDM_met_NBeq0_NJge6_jetpt30_2016metWithPhotonmetWithPhotonDatadata
         # without selection
         # DataMC_Photon_LowDM_met_jetpt30_2016metWithPhotonmetWithPhotonDatadata
+        # systematics
+        # KEY: TH1D    DataMC_Photon_LowDM_met_NBge2_NJge7_prefire_syst_up_jetpt30metWithPhotonmetWithPhoton#gamma+jetsstack;1 metWithPhoton
+        # KEY: TH1D    DataMC_Photon_HighDM_met_NBge2_NJge7_pileup_syst_up_jetpt30metWithPhotonmetWithPhoton#gamma+jetsstack;1 metWithPhoton
         nameTag = "_" + name
         eraTag = "_" + era
         temp_map = {}
@@ -96,7 +102,7 @@ class Shape:
             for region in self.regions:
                 temp_map[bin_type][region] = {}
                 for selection in self.selections[bin_type][region]: 
-                    selectionTag = "_" + selection + "_jetpt30"
+                    selectionTag = "_" + selection + self.systTag + "_jetpt30"
                     temp_map[bin_type][region][selection] = self.getSimpleMap(region, nameTag, selectionTag, eraTag, variable)
 
         return temp_map
@@ -113,7 +119,8 @@ class Shape:
         temp_map = self.getSimpleMap(region, nameTag, selectionTag, eraTag, variable)
         return temp_map
     
-    def getShape(self, file_name, era): 
+    def getShape(self, file_name, era, systTag = ""): 
+        self.systTag = systTag
         self.eras.append(era)
         draw_option = "hist error"
         eraTag = "_" + era
@@ -396,10 +403,10 @@ class Shape:
                     samples = ["Data", "GJets", "QCD_Fragmented", "QCD_Fake", "WJets", "TTG", "TTbar", "tW", "Rare"]
                 else:
                     samples = ["Data", "GJets", "QCD", "WJets", "TTG", "TTbar", "tW", "Rare"]
-                print "Shape factor CR units; Loading {0} histograms".format(region)
+                #print "Shape factor CR units; Loading {0} histograms".format(region)
                 for sample in samples:
                     hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
-                    print "\t{0}".format(hist_name) 
+                    #print "\t{0}".format(hist_name) 
                 
                 h_Data              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Data"]              ) )
                 h_GJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["GJets"]             ) )
@@ -463,6 +470,7 @@ class Shape:
                     h3 = self.ratio_rebinned_map["2017_F"][bin_type][region][selection][rebin]
                     h4 = self.ratio_rebinned_map["2018_PreHEM"][bin_type][region][selection][rebin]
                     h5 = self.ratio_rebinned_map["2018_PostHEM"][bin_type][region][selection][rebin]
+                    h6 = self.ratio_rebinned_map["Run2"][bin_type][region][selection][rebin]
                     title = "Shape for {0} bins, {1}, {2}, {3}".format(bin_type, region, selection, rebin)
                     x_title = "MET (GeV)" 
                     y_title = "Shape #left(S_{#gamma}#right)"
@@ -474,12 +482,14 @@ class Shape:
                     setupHist(h3,   title, x_title, y_title, "emerald",         y_min, y_max)
                     setupHist(h4,   title, x_title, y_title, "dark sky blue",   y_min, y_max)
                     setupHist(h5,   title, x_title, y_title, "pinky purple",    y_min, y_max)
+                    setupHist(h6,   title, x_title, y_title, "black",           y_min, y_max)
                     # draw
                     h1.Draw(draw_option)
                     h2.Draw(draw_option + " same")
                     h3.Draw(draw_option + " same")
                     h4.Draw(draw_option + " same")
                     h5.Draw(draw_option + " same")
+                    h6.Draw(draw_option + " same")
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
                     legend.AddEntry(h1,     "2016",             "l")
@@ -487,6 +497,7 @@ class Shape:
                     legend.AddEntry(h3,     "2017_F",           "l")
                     legend.AddEntry(h4,     "2018_PreHEM",      "l")
                     legend.AddEntry(h5,     "2018_PostHEM",     "l")
+                    legend.AddEntry(h6,     "Run2",             "l")
                     legend.Draw()
                     # save histograms
                     plot_name = "{0}Shape_{1}_{2}_{3}_{4}".format(self.plot_dir, bin_type, region, selection, rebin)

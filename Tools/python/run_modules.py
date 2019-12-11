@@ -22,11 +22,10 @@ def main():
     json_file   = options.json_file
     verbose     = options.verbose
 
-    doUnits     = False
+    doUnits     = True
     doCutflows  = False
     doPhotons   = False
     draw        = False
-    
 
     if not os.path.exists(json_file):
         print "The json file \"{0}\" containing runs does not exist.".format(json_file)
@@ -59,23 +58,24 @@ def main():
         # make directory if it does not exist
         if not os.path.exists(d):
             os.makedirs(d)
-
+    # normalization
     N = Normalization(plot_dir, verbose)
+    # shape
     S = Shape(plot_dir, draw, doUnits, verbose)
+    # validation bins
+    VB = ValidationBins(    N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
+    # search bins
+    SB = SearchBins(        N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
+    if doUnits:
+        # control region unit bins  
+        CRunits = CRUnitBins(N, S, eras, plot_dir, verbose) 
+        # search region unit bins  
+        SRunits = SRUnitBins(N, S, eras, plot_dir, verbose) 
+    # systematics
+    Syst = Systematic(plot_dir, N, S)
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
-        # validation bins
-        VB = ValidationBins(N, S, eras, plot_dir, verbose)
-        # search bins
-        SB = SearchBins(N, S, eras, plot_dir, verbose)
-        if doUnits:
-            # control region unit bins  
-            CRunits = CRUnitBins(N, S, eras, plot_dir, verbose) 
-            # search region unit bins  
-            SRunits = SRUnitBins(N, S, eras, plot_dir, verbose) 
-        # systematics
-        Syst = Systematic(plot_dir, N, S)
         # loop over eras
         for era in eras:
             print "|---------- Era: {0} ----------|".format(era)
@@ -90,10 +90,9 @@ def main():
             if doUnits:
                 CRunits.getValues(result_file, era)
                 SRunits.getValues(result_file, era)
-            Syst.makeZvsPhoton(result_file, era, False)
             Syst.makeZvsPhoton(result_file, era, True)
-            makeDataCard(VB, dataCardValidation_dir, era)
-            makeDataCard(SB, dataCardSearch_dir,     era)
+            #makeDataCard(VB, dataCardValidation_dir, era)
+            #makeDataCard(SB, dataCardSearch_dir,     era)
 
     N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
@@ -109,10 +108,18 @@ def main():
     total_era = "Run2"
     validation_file = "validationBinsZinv_" + total_era + ".root"
     search_file     = "searchBinsZinv_"     + total_era + ".root"
+    # WARNING: only run makeTotalPred() if you do not already have Run2 combined histograms; otherwise you will double count!
     #VB.makeTotalPred( validation_file,  "Validation Bin",   "validation", total_era   )
     #SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
     SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
+    # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics
+    # must be done after N.makeComparison()
+    # must be done after Syst.makeZvsPhoton()
+    VB.getRzSyst(N.rz_syst_map, "validation",  "RzSyst_ValidationBins.root")
+    SB.getRzSyst(N.rz_syst_map, "search",      "RzSyst_SearchBins.root")
+    VB.getZvsPhotonSyst(Syst.h_map_syst, "ZvsPhotonSyst_ValidationBins.root")
+    SB.getZvsPhotonSyst(Syst.h_map_syst, "ZvsPhotonSyst_SearchBins.root")
 
     # make json files
     VB.makeJson(VB.binValues,           results_dir + "ValidationBinResults.json")
@@ -120,14 +127,8 @@ def main():
     if doUnits:
         CRunits.makeJson(CRunits.binValues, results_dir + "CRUnitsResults.json")
         SRunits.makeJson(SRunits.binValues, results_dir + "SRUnitsResults.json")
-        # saveResults(inFile, outFile, CRunits, SRunits, eras)
-        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields.json", CRunits, SRunits, eras)
-
-    # TODO: making data card for Run 2 does not work because we have not run calcPrediction() for Run 2
-    #       calcPrediction() depends on norm and shape (which we calculate per era, not for all of Run 2)
-    #       make a way (possibly another function) to calculate values for Run 2 data card  
-    #makeDataCard(VB, dataCardValidation_dir, total_era)
-    #makeDataCard(SB, dataCardSearch_dir,     total_era)
+        # saveResults(inFile, outFile, CRunits, SRunits, era)
+        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + total_era + ".json", CRunits, SRunits, total_era)
 
 
 if __name__ == "__main__":

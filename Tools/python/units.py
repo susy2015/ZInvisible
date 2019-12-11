@@ -4,10 +4,7 @@
 
 import json
 from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
-
-def invert(map_):
-    inv_map = {v: k for k, v in map_.iteritems()} 
-    return inv_map
+from tools import invert
 
 
 def show(jsonFile, key, title):
@@ -22,7 +19,8 @@ def show(jsonFile, key, title):
             print "{0} : {1}".format(b, binMap[b])
 
 # save final results in json file
-def saveResults(inFile, outFile, CRunits, SRunits, eras):
+def saveResults(inFile, outFile, CRunits, SRunits, era):
+    verbose = False
     map_out                                 = {}
     map_out["yieldsMap"]                    = {}
     map_out["yieldsMap"]["znunu"]           = {}
@@ -33,7 +31,7 @@ def saveResults(inFile, outFile, CRunits, SRunits, eras):
         map_in = json.load(f_in)
         # invert maps
         SearchBin_map   = invert(map_in["binNum"])
-        CRunit_map      = invert(map_in["unitCRNum"])
+        CRunit_map      = invert(map_in["unitCRNum"]["phocr"])
         SRunit_map      = invert(map_in["unitSRNum"])
 
     # final yields for json file
@@ -42,12 +40,8 @@ def saveResults(inFile, outFile, CRunits, SRunits, eras):
     # phocr_gjets:  GJets MC in photon CR
     # phocr_back:   Other MC (QCD, TTGJets, etc) in photon CR
     
-    # combine results over all eras
-    # try only 2016 now for development
-    # try Run 2 now
-    era = "Run2"
-    
-    print "Search Region Units"
+    if verbose:
+        print "Search Region Units"
     for b in SRunits.binValues[era]:
         name        = SRunit_map[b]
         mc          = SRunits.binValues[era][b]["mc"]
@@ -56,13 +50,14 @@ def saveResults(inFile, outFile, CRunits, SRunits, eras):
         # save value and error
         map_out["yieldsMap"]["znunu"][name] = [mc, mc_error]
         
-        # print for testing
-        print "{0}: mc = [{1}, {2}]".format(name, mc, mc_error)
+        if verbose:
+            print "{0}: mc = [{1}, {2}]".format(name, mc, mc_error)
 
-    print "Control Region Units"
+    if verbose:
+        print "Control Region Units"
     for b in CRunits.binValues[era]:
         name                = CRunit_map[b]
-        name                = name.replace("lepcr", "phocr")
+        #name                = name.replace("lepcr", "phocr")
         data                = CRunits.binValues[era][b]["data"]
         data_error          = CRunits.binValues[era][b]["data_error"]
         mc_gjets            = CRunits.binValues[era][b]["mc_gjets"]
@@ -75,8 +70,8 @@ def saveResults(inFile, outFile, CRunits, SRunits, eras):
         map_out["yieldsMap"]["phocr_gjets"][name]   = [mc_gjets, mc_gjets_error]
         map_out["yieldsMap"]["phocr_back"][name]    = [mc_back, mc_back_error]
         
-        # print for testing
-        print "{0}: data = [{1}, {2}], mc_gjets = [{3}, {4}], mc_back = [{5}, {6}]".format(name, data, data_error, mc_gjets, mc_gjets_error, mc_back, mc_back_error)
+        if verbose:
+            print "{0}: data = [{1}, {2}], mc_gjets = [{3}, {4}], mc_back = [{5}, {6}]".format(name, data, data_error, mc_gjets, mc_gjets_error, mc_back, mc_back_error)
 
 
     with open (outFile, "w") as f_out:
