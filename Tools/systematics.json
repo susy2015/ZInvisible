@@ -148,5 +148,17 @@
         "name": "Prefire_Weight",
         "nominal": "PrefireWeight",
         "up": "PrefireWeight_Up"
+    },
+    "znunu_rzunc": {
+        "down": "NONE",
+        "name": "znunu_rzunc",
+        "nominal": "NONE",
+        "up": "NONE"
+    },
+    "znunu_zgammdiff": {
+        "down": "NONE",
+        "name": "znunu_zgammdiff",
+        "nominal": "NONE",
+        "up": "NONE"
     }
 }
