@@ -94,6 +94,7 @@ def main():
     runMap       = {}
     systMap      = {}
     unitMap      = {}
+    systHistoMap = {}
 
     # list required files to check if they exist
     file_list = [] 
@@ -284,32 +285,58 @@ def main():
         #-------------------------------------------------------
         
         # systematics from syst. histos stored in root files 
+        # be careful about using bin_type = validation, search as needed
+        # also, you may need to copy histos if they are deleted when file is closed
+        
+        #systHistoMap[bintype][region][syst]
+        # put these histos in a map for later use
+        for bintype in bintypes:
+            systHistoMap[bintype] = {}
+            systHistoMap[bintype]["lowdm"] = {}
+            systHistoMap[bintype]["highdm"] = {}
+            # --- Rz syst --- #
+            f_in = ROOT.TFile(rz_syst_files[bintype], "read")
+            # histogram names
+            # rz_syst_low_dm
+            # rz_syst_high_dm
+            systHistoMap[bintype]["lowdm"]["znunu_rzunc"]  = copy.deepcopy(f_in.Get("rz_syst_low_dm"))
+            systHistoMap[bintype]["highdm"]["znunu_rzunc"] = copy.deepcopy(f_in.Get("rz_syst_high_dm"))
+            # --- Z vs Photon syst --- #
+            f_in = ROOT.TFile(ZvPhoton_syst_files[bintype], "read")
+            # histogram names
+            # ZvsPhoton_syst_low_dm
+            # ZvsPhoton_syst_high_dm
+            systHistoMap[bintype]["lowdm"]["znunu_zgammdiff"]   = copy.deepcopy(f_in.Get("ZvsPhoton_syst_low_dm"))
+            systHistoMap[bintype]["highdm"]["znunu_zgammdiff"]  = copy.deepcopy(f_in.Get("ZvsPhoton_syst_high_dm"))
+
+        # systHistoMap["znunu_rzunc"] = {}
+        # systHistoMap["znunu_zgammdiff"] = {}
         
         # --- Rz syst --- #
-        f_in = ROOT.TFile(rz_syst_files["search"], "read")
-        # histogram names
-        # rz_syst_low_dm
-        # rz_syst_high_dm
-        h_lowdm  = f_in.Get("rz_syst_low_dm")
-        h_highdm = f_in.Get("rz_syst_high_dm")
+        # f_in = ROOT.TFile(rz_syst_files["search"], "read")
+        # # histogram names
+        # # rz_syst_low_dm
+        # # rz_syst_high_dm
+        # systHistoMap["znunu_rzunc"]["lowdm"]  = f_in.Get("rz_syst_low_dm")
+        # systHistoMap["znunu_rzunc"]["highdm"] = f_in.Get("rz_syst_high_dm")
         
         # writeToConfFromSyst(outFile, searchBinMap, syst, h, region, offset)
         systForConf = systMap["znunu_rzunc"]["name"]  
-        writeToConfFromSyst(outFile, searchBinMap, systForConf, h_lowdm,  "lowdm",  SB.low_dm_start)
-        writeToConfFromSyst(outFile, searchBinMap, systForConf, h_highdm, "highdm", SB.high_dm_start)
+        writeToConfFromSyst(outFile, searchBinMap, systForConf, systHistoMap["search"]["lowdm"]["znunu_rzunc"],  "lowdm",  SB.low_dm_start)
+        writeToConfFromSyst(outFile, searchBinMap, systForConf, systHistoMap["search"]["highdm"]["znunu_rzunc"], "highdm", SB.high_dm_start)
         
         # --- Z vs Photon syst --- #
-        f_in = ROOT.TFile(ZvPhoton_syst_files["search"], "read")
-        # histogram names
-        # ZvsPhoton_syst_low_dm
-        # ZvsPhoton_syst_high_dm
-        h_lowdm  = f_in.Get("ZvsPhoton_syst_low_dm")
-        h_highdm = f_in.Get("ZvsPhoton_syst_high_dm")
+        # f_in = ROOT.TFile(ZvPhoton_syst_files["search"], "read")
+        # # histogram names
+        # # ZvsPhoton_syst_low_dm
+        # # ZvsPhoton_syst_high_dm
+        # systHistoMap["znunu_zgammdiff"]["lowdm"]  = f_in.Get("ZvsPhoton_syst_low_dm")
+        # systHistoMap["znunu_zgammdiff"]["highdm"] = f_in.Get("ZvsPhoton_syst_high_dm")
         
         # writeToConfFromSyst(outFile, searchBinMap, syst, h, region, offset)
         systForConf = systMap["znunu_zgammdiff"]["name"]  
-        writeToConfFromSyst(outFile, searchBinMap, systForConf, h_lowdm,  "lowdm",  SB.low_dm_start)
-        writeToConfFromSyst(outFile, searchBinMap, systForConf, h_highdm, "highdm", SB.high_dm_start)
+        writeToConfFromSyst(outFile, searchBinMap, systForConf, systHistoMap["search"]["lowdm"]["znunu_zgammdiff"],  "lowdm",  SB.low_dm_start)
+        writeToConfFromSyst(outFile, searchBinMap, systForConf, systHistoMap["search"]["highdm"]["znunu_zgammdiff"], "highdm", SB.high_dm_start)
 
     #-------------------------------------------------------
     # Calculate total systematic up/down
@@ -351,15 +378,25 @@ def main():
     print "# validation bin systematics"
     for region in regions:
         print "--- {0} ---".format(region)
+        # DEBUG
+        #systHistoMap[bintype][region][syst]
+        for syst in systHistoMap["validation"][region]:
+            nBins = systHistoMap["validation"][region][syst].GetNbinsX()
+            error = systHistoMap["validation"][region][syst].GetBinContent(1)
+            print "{0}, {1}: nBins = {2}, bin 1 error = {3}".format(region, syst, nBins, error)
+        
+        # be careful with bin index, which needs to start at 1 in both lowdm and highdm
+        b_i = 1
         for b in validationBinMap[region]:
             # be careful with bin index, which needs to start at 1 in both lowdm and highdm
-            b_i = int(b) + 1 
-            if region == "highdm":
-                b_i = b_i - VB.low_dm_nbins
+            #b_i = int(b) + 1 
+            #if region == "highdm":
+            #    b_i = b_i - VB.low_dm_nbins
             p = histo["validation"][region][""].GetBinContent(b_i)
             syst_up_sum   = 0.0
             syst_down_sum = 0.0
             if p != 0:
+                # syst from p, p_up, p_down
                 for syst in systematics:
                     # do not apply SB syst in high dm
                     if region == "highdm" and syst == "eff_sb":
@@ -373,6 +410,15 @@ def main():
                     syst_down = (p - p_down) / p
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
+                # syst from root file
+                # symmetric error with up = down
+                #systHistoMap[bintype][region][syst]
+                for syst in systHistoMap["validation"][region]:
+                    error = systHistoMap["validation"][region][syst].GetBinContent(b_i)
+                    syst_up   = error  
+                    syst_down = error  
+                    syst_up_sum     += syst_up**2
+                    syst_down_sum   += syst_down**2
             syst_up_total   = np.sqrt(syst_up_sum)
             syst_down_total = np.sqrt(syst_down_sum)
             final_up   = 1.0 + syst_up_total
@@ -380,6 +426,7 @@ def main():
             print "bin {0}, pred={1}, syst_up={2}, syst_down={3}".format(b_i, p, final_up, final_down)
             validationHistoMap[region]["up"].SetBinContent(     b_i, final_up   )
             validationHistoMap[region]["down"].SetBinContent(   b_i, final_down )
+            b_i += 1
         
         # write histograms to file
         validationHistoMap[region]["up"].Write()
