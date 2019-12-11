@@ -19,13 +19,20 @@ def process():
     # options
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--json_file",    "-j", default="",                             help="json file containing runs")
+    parser.add_argument("--no_plots",     "-n", default = False, action = "store_true", help="do not make plots; only move and hadd root files, etc.")
     parser.add_argument("--plot_only",    "-p", default = False, action = "store_true", help="only make plots; do not move and hadd root files, etc.")
     parser.add_argument("--verbose",      "-v", default = False, action = "store_true", help="verbose flag to print more things")
 
     options     = parser.parse_args()
     json_file   = options.json_file
+    no_plots    = options.no_plots
     plot_only   = options.plot_only
     verbose     = options.verbose
+    
+    # flag for not making plots
+    noPlotFlag  = ""
+    if no_plots:
+        noPlotFlag  = "-n"
 
     resultFiles = []
     runMap = {}
@@ -64,13 +71,14 @@ def process():
                     print "Please use the -p option to only run makePlots instead of processResults.sh."
                     exit(1)
                 else:
-                    command = "./condor/processResults.sh {0} {1}".format(directory, era) 
+                    command = "./condor/processResults.sh {0} {1} {2}".format(directory, era, noPlotFlag) 
             returncode = subprocess.check_call(command, shell=True)
 
-            # Move plots to directory for each era
-            returncode = subprocess.check_call("mkdir -p {0}/{1}".format(folder, era),     shell=True)
-            returncode = subprocess.check_call("mv {0}/*.pdf {0}/{1}".format(folder, era), shell=True)
-            returncode = subprocess.check_call("mv {0}/*.png {0}/{1}".format(folder, era), shell=True)
+            if not no_plots:
+                # Move plots to directory for each era
+                returncode = subprocess.check_call("mkdir -p {0}/{1}".format(folder, era),     shell=True)
+                returncode = subprocess.check_call("mv {0}/*.pdf {0}/{1}".format(folder, era), shell=True)
+                returncode = subprocess.check_call("mv {0}/*.png {0}/{1}".format(folder, era), shell=True)
     
     # ---------------------- # 
     # --- Combined Run 2 --- #
@@ -91,14 +99,15 @@ def process():
         command = "time ahadd.py {0} {1}".format(resultFile, files)
         returncode = subprocess.check_call(command, shell=True)
 
-    # run make plots 
-    command = "./makePlots -f -I {0} -Y {1} -R Data_MET_{1} | grep -v LHAPDF".format(resultFile, era) 
-    returncode = subprocess.check_call(command, shell=True)
-    
-    # Move plots to directory for each era
-    returncode = subprocess.check_call("mkdir -p {0}/{1}".format(folder, era),     shell=True)
-    returncode = subprocess.check_call("mv {0}/*.pdf {0}/{1}".format(folder, era), shell=True)
-    returncode = subprocess.check_call("mv {0}/*.png {0}/{1}".format(folder, era), shell=True)
+    if not no_plots:
+        # run make plots 
+        command = "./makePlots -f -I {0} -Y {1} -R Data_MET_{1} | grep -v LHAPDF".format(resultFile, era) 
+        returncode = subprocess.check_call(command, shell=True)
+        
+        # Move plots to directory for each era
+        returncode = subprocess.check_call("mkdir -p {0}/{1}".format(folder, era),     shell=True)
+        returncode = subprocess.check_call("mv {0}/*.pdf {0}/{1}".format(folder, era), shell=True)
+        returncode = subprocess.check_call("mv {0}/*.png {0}/{1}".format(folder, era), shell=True)
 
     # make Run 2 json file
     runMap[era]   = directory

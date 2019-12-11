@@ -34,11 +34,9 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool doSystematics, std::string
     myBLV_jetpt30                               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30");
     myBLV_jetpt30_jesTotalUp                    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_jesTotalUp");
     myBLV_jetpt30_jesTotalDown                  = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_jesTotalDown");
-    blv_drLeptonCleaned                         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned");
     blv_drLeptonCleaned_jetpt30                 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30");
     blv_drLeptonCleaned_jetpt30_jesTotalUp      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30_jesTotalUp");
     blv_drLeptonCleaned_jetpt30_jesTotalDown    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30_jesTotalDown");
-    blv_drPhotonCleaned                         = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned");
     blv_drPhotonCleaned_jetpt30                 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30");
     blv_drPhotonCleaned_jetpt30_jesTotalUp      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30_jesTotalUp");
     blv_drPhotonCleaned_jetpt30_jesTotalDown    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30_jesTotalDown");
@@ -65,6 +63,9 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool doSystematics, std::string
     getSearchBin                                = new plotterFunctions::GetSearchBin("_jetpt30");
     getSearchBin_jesTotalUp                     = new plotterFunctions::GetSearchBin("_jetpt30_jesTotalUp");
     getSearchBin_jesTotalDown                   = new plotterFunctions::GetSearchBin("_jetpt30_jesTotalDown");
+    getSearchBin_drPhotonCleaned                = new plotterFunctions::GetSearchBin("_drPhotonCleaned_jetpt30");
+    getSearchBin_drPhotonCleaned_jesTotalUp     = new plotterFunctions::GetSearchBin("_drPhotonCleaned_jetpt30_jesTotalUp");
+    getSearchBin_drPhotonCleaned_jesTotalDown   = new plotterFunctions::GetSearchBin("_drPhotonCleaned_jetpt30_jesTotalDown");
     prepareMiniTupleVars                        = new plotterFunctions::PrepareMiniTupleVars(true);
     systematicPrep                              = new plotterFunctions::SystematicPrep;
     systematicCalc                              = new plotterFunctions::SystematicCalc(sbEra);
@@ -94,31 +95,32 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(myBLV_jetpt30)                               delete myBLV_jetpt30;
     if(myBLV_jetpt30_jesTotalUp)                    delete myBLV_jetpt30_jesTotalUp;
     if(myBLV_jetpt30_jesTotalDown)                  delete myBLV_jetpt30_jesTotalDown;
-    if(blv_drLeptonCleaned)                         delete blv_drLeptonCleaned;
     if(blv_drLeptonCleaned_jetpt30)                 delete blv_drLeptonCleaned_jetpt30;
     if(blv_drLeptonCleaned_jetpt30_jesTotalUp)      delete blv_drLeptonCleaned_jetpt30_jesTotalUp;
     if(blv_drLeptonCleaned_jetpt30_jesTotalDown)    delete blv_drLeptonCleaned_jetpt30_jesTotalDown;
-    if(blv_drPhotonCleaned)                         delete blv_drPhotonCleaned;
     if(blv_drPhotonCleaned_jetpt30)                 delete blv_drPhotonCleaned_jetpt30;
     if(blv_drPhotonCleaned_jetpt30_jesTotalUp)      delete blv_drPhotonCleaned_jetpt30_jesTotalUp;
     if(blv_drPhotonCleaned_jetpt30_jesTotalDown)    delete blv_drPhotonCleaned_jetpt30_jesTotalDown;
-    if(weights)                      delete weights;
-    if(generatePhotonEfficiency)     delete generatePhotonEfficiency;
-    if(njWeight)                     delete njWeight;
-    if(lepInfo)                      delete lepInfo;
-    if(basicLepton)                  delete basicLepton;
-    if(getSearchBin)                 delete getSearchBin;
-    if(getSearchBin_jesTotalUp)      delete getSearchBin_jesTotalUp;
-    if(getSearchBin_jesTotalDown)    delete getSearchBin_jesTotalDown;
-    if(prepareMiniTupleVars)         delete prepareMiniTupleVars;
-    if(myPDFUnc)                     delete myPDFUnc;
-    if(systematicPrep)               delete systematicPrep;
-    if(systematicCalc)               delete systematicCalc;
-    if(bTagCorrector)                delete bTagCorrector;
-    if(ISRcorrector)                 delete ISRcorrector;
-    if(pileup)                       delete pileup;
-    if(gamma)                        delete gamma;
-    if(shapeNJets)                   delete shapeNJets;
+    if(weights)                                     delete weights;
+    if(generatePhotonEfficiency)                    delete generatePhotonEfficiency;
+    if(njWeight)                                    delete njWeight;
+    if(lepInfo)                                     delete lepInfo;
+    if(basicLepton)                                 delete basicLepton;
+    if(getSearchBin)                                delete getSearchBin;
+    if(getSearchBin_jesTotalUp)                     delete getSearchBin_jesTotalUp;
+    if(getSearchBin_jesTotalDown)                   delete getSearchBin_jesTotalDown;
+    if(getSearchBin_drPhotonCleaned)                delete getSearchBin_drPhotonCleaned;
+    if(getSearchBin_drPhotonCleaned_jesTotalUp)     delete getSearchBin_drPhotonCleaned_jesTotalUp;
+    if(getSearchBin_drPhotonCleaned_jesTotalDown)   delete getSearchBin_drPhotonCleaned_jesTotalDown;
+    if(prepareMiniTupleVars)                        delete prepareMiniTupleVars;
+    if(myPDFUnc)                                    delete myPDFUnc;
+    if(systematicPrep)                              delete systematicPrep;
+    if(systematicCalc)                              delete systematicCalc;
+    if(bTagCorrector)                               delete bTagCorrector;
+    if(ISRcorrector)                                delete ISRcorrector;
+    if(pileup)                                      delete pileup;
+    if(gamma)                                       delete gamma;
+    if(shapeNJets)                                  delete shapeNJets;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -140,12 +142,14 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*blv_drLeptonCleaned_jetpt30);
     tr.registerFunction(*blv_drPhotonCleaned_jetpt30);
     tr.registerFunction(*shapeNJets);
+    // run getSearchBin for both Z nu nu MC (search region) and photon Data and MC (control region)
     tr.registerFunction(*getSearchBin);
+    tr.registerFunction(*getSearchBin_drPhotonCleaned);
     
     // TODO: create JES histograms in MakePlots.C
     // apply JEC to MC only
-    //if (doSystematics_ && tr.checkBranch("GenJet_pt"))
-    if (false)
+    //if (false)
+    if (doSystematics_ && tr.checkBranch("GenJet_pt"))
     {
         tr.registerFunction(*runTopTagger_jesTotalUp);
         tr.registerFunction(*runTopTagger_jesTotalDown);
@@ -161,35 +165,11 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
         tr.registerFunction(*blv_drPhotonCleaned_jetpt30_jesTotalDown);
         tr.registerFunction(*getSearchBin_jesTotalUp);
         tr.registerFunction(*getSearchBin_jesTotalDown);
+        tr.registerFunction(*getSearchBin_drPhotonCleaned_jesTotalUp);
+        tr.registerFunction(*getSearchBin_drPhotonCleaned_jesTotalDown);
     }
     
 }
-    
-// ------------------------------------------ //
-// old version including JEC and systematics
-// here for reference only
-// ------------------------------------------ //
-//tr.registerFunction(*weights);
-//tr.registerFunction(*blvZinv);
-//tr.registerFunction(*blv_drLeptonCleaned);
-//tr.registerFunction(*blv_drPhotonCleaned);
-//tr.registerFunction(*njWeight);
-//tr.registerFunction(*blvZinv1b);
-//tr.registerFunction(*blvZinv2b);
-//tr.registerFunction(*blvZinv3b);
-//tr.registerFunction(*systematicPrep);
-//tr.registerFunction(*blvZinvJEUUp);
-//tr.registerFunction(*blvZinvJEUDn);
-//tr.registerFunction(*blvZinvMEUUp);
-//tr.registerFunction(*blvZinvMEUDn);
-//tr.registerFunction(*systematicCalc);
-//tr.registerFunction(*prepareMiniTupleVars);
-//tr.registerFunction(&printInterestingEvents);
-//tr.registerFunction(*myPDFUnc);
-//tr.registerFunction(*bTagCorrector);
-//tr.registerFunction(*ISRcorrector);
-//tr.registerFunction(*pileup);
-// ------------------------------------------ //
 
 void RegisterFunctionsNTuple::activateBranches(std::set<std::string>& activeBranches)
 {

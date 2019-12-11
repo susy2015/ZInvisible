@@ -12,6 +12,11 @@ from data_card import makeDataCard
 from units import saveResults
 from make_table import Table
 
+# make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
+ROOT.PyConfig.IgnoreCommandLineOptions = True
+# make plots faster without displaying them
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
+
 def main():
     # options
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -22,7 +27,7 @@ def main():
     json_file   = options.json_file
     verbose     = options.verbose
 
-    doUnits     = False
+    doUnits     = True
     doCutflows  = False
     doPhotons   = False
     draw        = False
@@ -59,23 +64,24 @@ def main():
         # make directory if it does not exist
         if not os.path.exists(d):
             os.makedirs(d)
-
+    # normalization
     N = Normalization(plot_dir, verbose)
+    # shape
     S = Shape(plot_dir, draw, doUnits, verbose)
+    # validation bins
+    VB = ValidationBins(    N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
+    # search bins
+    SB = SearchBins(        N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
+    if doUnits:
+        # control region unit bins  
+        CRunits = CRUnitBins(N, S, eras, plot_dir, verbose) 
+        # search region unit bins  
+        SRunits = SRUnitBins(N, S, eras, plot_dir, verbose) 
+    # systematics
+    Syst = Systematic(plot_dir, N, S)
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
-        # validation bins
-        VB = ValidationBins(N, S, eras, plot_dir, verbose)
-        # search bins
-        SB = SearchBins(N, S, eras, plot_dir, verbose)
-        if doUnits:
-            # control region unit bins  
-            CRunits = CRUnitBins(N, S, eras, plot_dir, verbose) 
-            # search region unit bins  
-            SRunits = SRUnitBins(N, S, eras, plot_dir, verbose) 
-        # systematics
-        Syst = Systematic(plot_dir, N, S)
         # loop over eras
         for era in eras:
             print "|---------- Era: {0} ----------|".format(era)
@@ -109,6 +115,7 @@ def main():
     total_era = "Run2"
     validation_file = "validationBinsZinv_" + total_era + ".root"
     search_file     = "searchBinsZinv_"     + total_era + ".root"
+    # WARNING: only run makeTotalPred() if you do not already have Run2 combined histograms; otherwise you will double count!
     #VB.makeTotalPred( validation_file,  "Validation Bin",   "validation", total_era   )
     #SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
@@ -120,8 +127,8 @@ def main():
     if doUnits:
         CRunits.makeJson(CRunits.binValues, results_dir + "CRUnitsResults.json")
         SRunits.makeJson(SRunits.binValues, results_dir + "SRUnitsResults.json")
-        # saveResults(inFile, outFile, CRunits, SRunits, eras)
-        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields.json", CRunits, SRunits, eras)
+        # saveResults(inFile, outFile, CRunits, SRunits, era)
+        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + total_era + ".json", CRunits, SRunits, total_era)
 
     # TODO: making data card for Run 2 does not work because we have not run calcPrediction() for Run 2
     #       calcPrediction() depends on norm and shape (which we calculate per era, not for all of Run 2)

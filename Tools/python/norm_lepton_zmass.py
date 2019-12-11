@@ -24,6 +24,7 @@ class Normalization:
         self.output_file = 0 
         self.root_file   = 0
         self.eras = []
+        self.systTag = ""
         # variable is also TDirectoryFile that holds histograms 
         self.variable = "bestRecoZM"
         self.bin_types  = ["validation", "search"]
@@ -65,10 +66,12 @@ class Normalization:
     
     def setupHistoMap(self, era):
         # histogram examples
-        # DataMC_Electron_LowDM_bestRecoZM_50to250_NBeq0_NSVeq0_jetpt30_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMZToLLstack
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMNoZToLLstack 
+        # systematics
+        # KEY: TH1D    DataMC_Muon_LowDM_Normalization_bestRecoZM_0to400_NBeq0_NSVeq0_pileup_syst_up_jetpt30bestRecoZMbestRecoZMZToLLstack;1   bestRecoZM
+        # KEY: TH1D    DataMC_Muon_HighDM_Normalization_bestRecoZM_0to400_NBeq1_pileup_syst_down_jetpt30bestRecoZMbestRecoZMZToLLstack;1   bestRecoZM
         eraTag = "_" + era
         self.histos[era] = {}
         for bin_type in self.bin_types:
@@ -79,7 +82,7 @@ class Normalization:
                     # using ZToLL and NoZToLL MC for normalization 
                     self.histos[era][bin_type][particle][region] = {}
                     for selection in self.selections[bin_type][region]: 
-                        selectionTag = "_" + selection + "_jetpt30"
+                        selectionTag = "_" + selection + self.systTag + "_jetpt30"
                         # using Nb and Nsv selection
                         self.histos[era][bin_type][particle][region][selection] = { 
                             "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "Datadata",
@@ -151,7 +154,8 @@ class Normalization:
         return b_error 
     
     
-    def getNormAndError(self, file_name, era):
+    def getNormAndError(self, file_name, era, systTag = ""):
+        self.systTag = systTag
         self.eras.append(era)
         
         # define maps for every channel (not just particles)
