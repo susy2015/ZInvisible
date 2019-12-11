@@ -534,13 +534,13 @@ class Normalization:
                 mark.DrawLatex(0.2, y_list[3], "S = %.3f"                                 % scale)
                 mark.DrawLatex(0.2, y_list[4], "R_{Z} #pm #sigma_{stat} = %.3f #pm %.3f"  % (Run2_norm, Run2_stat_err))
                 mark.DrawLatex(0.2, y_list[5], "Run 2 #sigma_{total} = %.3f"              % final_Run2_total_err)
-                mark.DrawLatex(0.2, y_list[6], "Run 2 #sigma_{syst} = %.3f"               % final_Run2_syst_err)
+                #mark.DrawLatex(0.2, y_list[6], "Run 2 #sigma_{syst} = %.3f"               % final_Run2_syst_err)
                 #mark.DrawLatex(0.2, y_max - 2.0, "Run 2 #chi_{r}^{2} = %.3f"        % final_Run2_chisq_r)
                 
                 # save final Rz syst.
                 # WARNING: this needs to be saved separately for validaiton and search bins, otherwise it will be overwritten
                 #print "----------------- DEBUG: {0}, {1}, Rz syst = {2}".format(region, selection, final_Run2_syst_err)
-                self.rz_syst_map[bin_type][region][selection] = final_Run2_syst_err
+                self.rz_syst_map[bin_type][region][selection] = final_Run2_total_err
 
                 # save histograms
                 plot_name = "{0}Normalization_{1}_{2}_{3}".format(self.plot_dir, bin_type, region, selection)
