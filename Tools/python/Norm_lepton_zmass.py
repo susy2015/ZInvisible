@@ -1,4 +1,4 @@
-# norm_lepton_zmass.py
+# Norm_lepton_zmass.py (modified for systematics)
 
 from colors import getColorIndex
 import json
@@ -18,14 +18,12 @@ class Normalization:
         self.plot_dir   = plot_dir
         self.verbose    = verbose
         self.ERROR_CODE = tools.ERROR_CODE
-        self.norm_map       = {}
-        self.norm_map_tex   = {}
-        self.rz_syst_map    = {}
-        self.histos         = {}
+        self.norm_map = {}
+        self.norm_map_tex = {}
+        self.histos = {}
         self.output_file = 0 
         self.root_file   = 0
         self.eras = []
-        self.systTag = ""
         # variable is also TDirectoryFile that holds histograms 
         self.variable = "bestRecoZM"
         self.bin_types  = ["validation", "search"]
@@ -63,16 +61,14 @@ class Normalization:
                 for selection in self.selections[bin_type][region]:
                     self.selections_tex[bin_type][region][selection] = tools.getTexSelection(selection) 
                     if self.verbose:
-                        print "For Normalization: {0} {1} {2}".format(bin_type, selection, self.selections_tex[bin_type][region][selection])
+                       print "For Normalization: {0} {1} {2}".format(bin_type, selection, self.selections_tex[bin_type][region][selection])
     
     def setupHistoMap(self, era):
         # histogram examples
+        # DataMC_Electron_LowDM_bestRecoZM_50to250_NBeq0_NSVeq0_jetpt30_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMDatadata
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMZToLLstack
         # DataMC_Electron_LowDM_Normalization_bestRecoZM_0to400_2016bestRecoZMbestRecoZMNoZToLLstack 
-        # systematics
-        # KEY: TH1D    DataMC_Muon_LowDM_Normalization_bestRecoZM_0to400_NBeq0_NSVeq0_pileup_syst_up_jetpt30bestRecoZMbestRecoZMZToLLstack;1   bestRecoZM
-        # KEY: TH1D    DataMC_Muon_HighDM_Normalization_bestRecoZM_0to400_NBeq1_pileup_syst_down_jetpt30bestRecoZMbestRecoZMZToLLstack;1   bestRecoZM
         eraTag = "_" + era
         self.histos[era] = {}
         for bin_type in self.bin_types:
@@ -83,12 +79,17 @@ class Normalization:
                     # using ZToLL and NoZToLL MC for normalization 
                     self.histos[era][bin_type][particle][region] = {}
                     for selection in self.selections[bin_type][region]: 
-                        selectionTag = "_" + selection + self.systTag + "_jetpt30"
+
+                        err = "{}".format("" if not self.syst else "_")
+                        systag = "_" + selection + err + self.syst + "_jetpt30"
+                        selectionTag = "_" + selection + "_jetpt30"
                         # using Nb and Nsv selection
                         self.histos[era][bin_type][particle][region][selection] = { 
                             "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "Datadata",
-                            "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "ZToLLstack",
-                            "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "NoZToLLstack",
+                            "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + systag + 2 * self.variable + "ZToLLstack",
+                            "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + systag + 2 * self.variable + "NoZToLLstack",
+                            "ZToLL_0"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "ZToLLstack",
+                            "NoZToLL_0"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "NoZToLLstack",
                         }
 
     def calcNorm(self, A, x):
@@ -155,10 +156,9 @@ class Normalization:
         return b_error 
     
     
-    def getNormAndError(self, file_name, era, systTag = ""):
-        self.systTag = systTag
+    def getNormAndError(self, file_name, syst, era):
         self.eras.append(era)
-        
+        self.syst = syst
         # define maps for every channel (not just particles)
         self.norm_map[era] = {}
         self.norm_map_tex[era] = {}
@@ -210,12 +210,22 @@ class Normalization:
     def runCalculation(self, era, bin_type, particle, region, selection): 
         #WARNING: strings loaded from json file have type 'unicode'
         # ROOT cannot load histograms using unicode input: use type 'str'
+        print(self.histos[era][bin_type][particle][region][selection]["Data"])
+        print(self.histos[era][bin_type][particle][region][selection]["ZToLL"])
+        print(self.histos[era][bin_type][particle][region][selection]["NoZToLL"])
         h_Data    = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["Data"]    ) )
         h_ZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["ZToLL"]   ) )
         h_NoZToLL = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["NoZToLL"] ) )
     
+        # if no systematic version exist, load nominal
         if not h_Data:
             print "ERROR: Unable to load Data histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["Data"])
+        if not h_ZToLL:
+            #print self.histos[era][bin_type][particle][region][selection]["ZToLL"]  + "\n replaced with --------> \n " + self.histos[era][bin_type][particle][region][selection]["ZToLL_0"]
+            h_ZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["ZToLL_0"]   ) )
+        if not h_NoZToLL:
+            #print self.histos[era][bin_type][particle][region][selection]["NoZToLL"]  + "\n replaced with --------> \n " + self.histos[era][bin_type][particle][region][selection]["ZToLL_0"]
+            h_NoZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["NoZToLL_0"]   ) )
 
         #############################
         # Calculating Normalization #
@@ -380,11 +390,7 @@ class Normalization:
     # make a plot of nomralization (y-axis) vs. era (x-axis) for different selections
     def makeComparison(self, bin_type):
         draw_option = "hist error"
-        # treat Run2 era differentley
-        eras = self.eras
-        if self.eras[-1] == "Run2":
-            eras  = self.eras[:-1]
-        nBins = len(eras)
+        nBins = len(self.eras)
         
         ###################
         # Draw Histograms #
@@ -400,9 +406,7 @@ class Normalization:
         legend_y1 = 0.7 
         legend_y2 = 0.9 
         
-        self.rz_syst_map[bin_type] = {}
         for region in self.regions:
-            self.rz_syst_map[bin_type][region] = {}
             for selection in self.selections[bin_type][region]:
                 region_tex              = self.regions_tex[region]
                 selections_tex          = self.selections_tex[bin_type][region][selection]
@@ -413,134 +417,68 @@ class Normalization:
                 print "{0} : {1}".format(region_tex, region_root_tex)
                 print "{0} : {1}".format(selections_tex, selections_root_tex)
                 #h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
-                h_Electron       = ROOT.TH1F("h_Electron",        "h_Electron",        nBins, 0, nBins)
-                h_Muon           = ROOT.TH1F("h_Muon",            "h_Muon",            nBins, 0, nBins)
-                h_Combined       = ROOT.TH1F("h_Combined",        "h_Combined",        nBins, 0, nBins)
-                h_Combined_Run2  = ROOT.TH1F("h_Combined_Run2",   "h_Combined_Run2",   nBins, 0, nBins)
+                h_Electron  = ROOT.TH1F("h_Electron",   "h_Electron",   nBins, 0, nBins)
+                h_Muon      = ROOT.TH1F("h_Muon",       "h_Muon",       nBins, 0, nBins)
+                h_Combined  = ROOT.TH1F("h_Combined",   "h_Combined",   nBins, 0, nBins)
                 title = "Norm. for {0} bins, {1}, {2}".format(bin_type, region_root_tex, selections_root_tex)
                 x_title = "Era" 
                 y_title = "Norm. #left(R_{Z}#right)"
                 y_min = -1.0
                 y_max = 5.0
                 #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-                setupHist(h_Electron,       title, x_title, y_title, self.color_red,    y_min, y_max)
-                setupHist(h_Muon,           title, x_title, y_title, self.color_blue,   y_min, y_max)
-                setupHist(h_Combined,       title, x_title, y_title, self.color_black,  y_min, y_max)
-                setupHist(h_Combined_Run2,  title, x_title, y_title, self.color_green,  y_min, y_max)
-                Run2_norm     = self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z"]
-                Run2_stat_err = self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z_error"]
-                final_Run2_syst_err   = -1
-                final_Run2_total_err  = -1
-                #final_Run2_chisq_r    = -1
+                setupHist(h_Electron,   title, x_title, y_title, self.color_red,    y_min, y_max)
+                setupHist(h_Muon,       title, x_title, y_title, self.color_blue,   y_min, y_max)
+                setupHist(h_Combined,   title, x_title, y_title, self.color_black,  y_min, y_max)
+
                 for i in xrange(nBins):
-                    era = eras[i]
+                    era = self.eras[i]
                     # set bin contents and error
-                    h_Electron.SetBinContent(           i + 1,      self.norm_map[era][bin_type]["Electron"][region][selection]["R_Z"])
-                    h_Electron.SetBinError(             i + 1,      self.norm_map[era][bin_type]["Electron"][region][selection]["R_Z_error"])
-                    h_Muon.SetBinContent(               i + 1,      self.norm_map[era][bin_type]["Muon"][region][selection]["R_Z"])
-                    h_Muon.SetBinError(                 i + 1,      self.norm_map[era][bin_type]["Muon"][region][selection]["R_Z_error"])
-                    h_Combined.SetBinContent(           i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z"])
-                    h_Combined.SetBinError(             i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z_error"])
-                    h_Combined_Run2.SetBinContent(      i + 1,      Run2_norm)
-                    #h_Combined_Run2.SetBinError(        i + 1,      self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z_error"])
+                    h_Electron.SetBinContent(   i + 1,      self.norm_map[era][bin_type]["Electron"][region][selection]["R_Z"])
+                    h_Electron.SetBinError(     i + 1,      self.norm_map[era][bin_type]["Electron"][region][selection]["R_Z_error"])
+                    h_Muon.SetBinContent(       i + 1,      self.norm_map[era][bin_type]["Muon"][region][selection]["R_Z"])
+                    h_Muon.SetBinError(         i + 1,      self.norm_map[era][bin_type]["Muon"][region][selection]["R_Z_error"])
+                    h_Combined.SetBinContent(   i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z"])
+                    h_Combined.SetBinError(     i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z_error"])
                     # set bin labels
-                    h_Electron.GetXaxis().SetBinLabel(      i + 1, era)
-                    h_Muon.GetXaxis().SetBinLabel(          i + 1, era)
-                    h_Combined.GetXaxis().SetBinLabel(      i + 1, era)
-                    h_Combined_Run2.GetXaxis().SetBinLabel( i + 1, era)
-                # --- previous method --- #
-                # scan over error to tune reduced chisq to 1.0 
-                #for error_tmp in np.arange(0.0, 1.01, 0.01):
-                #    # set the Run2 error in order to tune the reduced chisq to 1.0
-                #    for i in xrange(nBins):
-                #        h_Combined_Run2.SetBinError(        i + 1,      error_tmp)
-                #    chisq_tmp = h_Combined_Run2.Chi2Test(h_Combined, "WW CHI2")
-                #    chisq_tmp_r = chisq_tmp / nBins 
-                #    if chisq_tmp_r >= 1.0:
-                #        final_Run2_syst_err   = error_tmp
-                #        final_Run2_chisq_r = chisq_tmp_r
-                #    else:
-                #        # chisq_r < 1.0
-                #        if error_tmp == 0.0:
-                #            # this is the first error value, but chisq < 1.0 already
-                #            final_Run2_syst_err   = error_tmp
-                #            final_Run2_chisq_r = chisq_tmp_r
-                #        break
-
-
-
-                # loop over a range of Run 2 error
-                # set Run 2 error
-                # calculate chi sq
-                # find Run 2 error such that reduced chi sq is 1.0
+                    h_Electron.GetXaxis().SetBinLabel(  i + 1, era)
+                    h_Muon.GetXaxis().SetBinLabel(      i + 1, era)
+                    h_Combined.GetXaxis().SetBinLabel(  i + 1, era)
                 
                 # do some fits
                 f_Combined  = ROOT.TF1("f1", "pol0", 0, 5)
                 h_Combined.Fit(f_Combined,  "", "", 0, 5)
                 f_Combined.SetLineColor(getColorIndex("violet"))
                 f_Combined.SetLineWidth(5)
-                # for Chi2Test()
-                # "WW" = MC MC comparison (weighted-weighted)
-                # "CHI2" = returns chi2 instead of p-value
-                chisq      = f_Combined.GetChisquare()
-                #chisq_Run2 = h_Combined_Run2.Chi2Test(h_Combined, "WW CHI2")
-                # nDegFree = nBins - 1 for chisq_r
-                # nDegFree = nBins for chisq_Run2_r 
-                chisq_r      = chisq / (nBins - 1)
-                scale        = np.sqrt(chisq_r)
-                if scale >= 1.0:
-                    final_Run2_total_err = scale * Run2_stat_err
-                else:
-                    final_Run2_total_err = Run2_stat_err
-                final_Run2_syst_err  = np.sqrt(final_Run2_total_err**2 - Run2_stat_err**2)
-                # set total Run 2 errror
-                for i in xrange(nBins):
-                    h_Combined_Run2.SetBinError(        i + 1,      final_Run2_total_err)
-                #chisq_Run2_r = chisq_Run2 / nBins
+                chisq = f_Combined.GetChisquare()
                 fit_value = f_Combined.GetParameter(0)
                 fit_error = f_Combined.GetParError(0)
                 mark = ROOT.TLatex()
-                mark.SetTextSize(0.03)
+                mark.SetTextSize(0.04)
                 
                 # title font size
                 h_Electron.SetTitleSize(0.1)
                 h_Muon.SetTitleSize(0.1)
                 h_Combined.SetTitleSize(0.1)
-                h_Combined_Run2.SetTitleSize(0.1)
                 
                 # draw
                 h_Combined.Draw(draw_option)        
                 h_Electron.Draw(draw_option + " same")        
                 h_Muon.Draw(draw_option + " same")        
                 f_Combined.Draw("same")
-                h_Combined_Run2.Draw("same")
 
                 # legend: TLegend(x1,y1,x2,y2)
                 legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                legend.AddEntry(h_Electron,         "Electron",                  "l")
-                legend.AddEntry(h_Muon,             "Muon",                      "l")
-                legend.AddEntry(h_Combined,         "Combined e, #mu",           "l")
-                legend.AddEntry(h_Combined_Run2,    "Run2",                      "l")
-                legend.AddEntry(f_Combined,         "Fit to Combined e, #mu",    "l")
+                legend.AddEntry(h_Electron,     "Electron",         "l")
+                legend.AddEntry(h_Muon,         "Muon",             "l")
+                legend.AddEntry(h_Combined,     "Combined",         "l")
+                legend.AddEntry(f_Combined,     "Fit to Combined",  "l")
                 legend.Draw()
 
                 # write chisq
                 # give x, y coordinates (same as plot coordinates)
                 #print "fit = %.2f #pm %.2f" % (fit_value, fit_error)
-                # y list is for positioning the text
-                y_list = np.arange(y_max, 0.0, -0.3)
-                mark.DrawLatex(0.2, y_list[1], "Fit: f(x) = %.3f #pm %.3f"                % (fit_value, fit_error))
-                mark.DrawLatex(0.2, y_list[2], "Comb. e/#mu #chi_{r}^{3} = %.3f"          % chisq_r)
-                mark.DrawLatex(0.2, y_list[3], "S = %.3f"                                 % scale)
-                mark.DrawLatex(0.2, y_list[4], "R_{Z} #pm #sigma_{stat} = %.3f #pm %.3f"  % (Run2_norm, Run2_stat_err))
-                mark.DrawLatex(0.2, y_list[5], "Run 2 #sigma_{total} = %.3f"              % final_Run2_total_err)
-                #mark.DrawLatex(0.2, y_list[6], "Run 2 #sigma_{syst} = %.3f"               % final_Run2_syst_err)
-                #mark.DrawLatex(0.2, y_max - 2.0, "Run 2 #chi_{r}^{2} = %.3f"        % final_Run2_chisq_r)
-                
-                # save final Rz syst.
-                # WARNING: this needs to be saved separately for validaiton and search bins, otherwise it will be overwritten
-                #print "----------------- DEBUG: {0}, {1}, Rz syst = {2}".format(region, selection, final_Run2_syst_err)
-                self.rz_syst_map[bin_type][region][selection] = final_Run2_total_err
+                mark.DrawLatex(0.2, y_max - 0.4, "Fit: f(x) = %.2f #pm %.2f" % (fit_value, fit_error))
+                mark.DrawLatex(0.2, y_max - 0.9, "#chi^{2} = %.2f" % chisq)
 
                 # save histograms
                 plot_name = "{0}Normalization_{1}_{2}_{3}".format(self.plot_dir, bin_type, region, selection)

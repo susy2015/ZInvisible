@@ -1,4 +1,4 @@
-# shape_photon_met.py
+# Shape_photon_met.py (modified for systematics)
 import ROOT
 import copy
 import json
@@ -20,7 +20,6 @@ class Shape:
         self.doUnits                = doUnits
         self.verbose                = verbose
         self.splitQCD               = False
-        self.systTag                = ""
         self.histos                 = {}
         self.cr_unit_histos         = {}
         self.cr_unit_histos_summed  = {}
@@ -56,13 +55,11 @@ class Shape:
         self.color_black  = "black"
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
-    def getSimpleMap(self, region, nameTag, selectionTag, eraTag, variable):
-        # testing
-        #print "In getSimpleMap(): DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "#gamma+jetsstack" 
+    def getSimpleMap(self, region, nameTag, selectionTag, eraTag, variable):  # hack, use eraTag as a nominal tag 
         if self.splitQCD:
             temp_map = {
                             "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Datadata",
-                            "GJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "#gamma+jetsstack",
+                            "GJets"             : "ataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "#gamma+jetsstack",
                             "QCD_Fragmented"    : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "QCD Fragmentedstack",
                             "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "QCD Fakestack",
                             "WJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "W(l#nu)+jetsstack",
@@ -81,6 +78,15 @@ class Shape:
                             "TTbar"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "t#bar{t}stack",
                             "tW"                : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "tWstack",
                             "Rare"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Rarestack",
+
+                            "Data_0"              : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "Datadata",
+                            "GJets_0"             : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "#gamma+jetsstack",
+                            "QCD_0"               : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "QCDstack",
+                            "WJets_0"             : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "W(l#nu)+jetsstack",
+                            "TTG_0"               : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "t#bar{t}#gamma+jetsstack",
+                            "TTbar_0"             : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "t#bar{t}stack",
+                            "tW_0"                : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "tWstack",
+                            "Rare_0"              : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "Rarestack",
             }
         return temp_map
 
@@ -91,9 +97,6 @@ class Shape:
         # DataMC_Photon_LowDM_met_NBeq0_NJge6_jetpt30_2016metWithPhotonmetWithPhotonDatadata
         # without selection
         # DataMC_Photon_LowDM_met_jetpt30_2016metWithPhotonmetWithPhotonDatadata
-        # systematics
-        # KEY: TH1D    DataMC_Photon_LowDM_met_NBge2_NJge7_prefire_syst_up_jetpt30metWithPhotonmetWithPhoton#gamma+jetsstack;1 metWithPhoton
-        # KEY: TH1D    DataMC_Photon_HighDM_met_NBge2_NJge7_pileup_syst_up_jetpt30metWithPhotonmetWithPhoton#gamma+jetsstack;1 metWithPhoton
         nameTag = "_" + name
         eraTag = "_" + era
         temp_map = {}
@@ -102,7 +105,9 @@ class Shape:
             for region in self.regions:
                 temp_map[bin_type][region] = {}
                 for selection in self.selections[bin_type][region]: 
-                    selectionTag = "_" + selection + self.systTag + "_jetpt30"
+                    err = "{}".format("" if not self.syst else "_")
+                    selectionTag = "_" + selection + err + self.syst + "_jetpt30"
+                    eraTag       = "_" + selection + "_jetpt30"
                     temp_map[bin_type][region][selection] = self.getSimpleMap(region, nameTag, selectionTag, eraTag, variable)
 
         return temp_map
@@ -119,8 +124,8 @@ class Shape:
         temp_map = self.getSimpleMap(region, nameTag, selectionTag, eraTag, variable)
         return temp_map
     
-    def getShape(self, file_name, era, systTag = ""): 
-        self.systTag = systTag
+    def getShape(self, file_name, syst, era): 
+        self.syst = syst
         self.eras.append(era)
         draw_option = "hist error"
         eraTag = "_" + era
@@ -191,6 +196,33 @@ class Shape:
                     h_tW                = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["tW"]              ) )
                     h_Rare              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Rare"]            ) )
                     
+                    # if no systematic version exist, load nominal
+                    #TODO: do not use Data_0; do not apply systematic to data
+                    if not h_Data:
+                        h_Data              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Data_0"]            ) )
+                        #print self.histos[era][bin_type][region][selection]["Data"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["Data_0"]
+                    if not h_GJets:
+                        h_GJets              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["GJets_0"]            ) )
+                        #print self.histos[era][bin_type][region][selection]["GJets"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["GJets_0"]
+                    if not h_QCD:
+                        h_QCD              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_0"]            ) )
+                        #print self.histos[era][bin_type][region][selection]["QCD"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["QCD_0"]
+                    if not h_WJets:
+                        h_WJets              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["WJets_0"]            ) )
+                        #print self.histos[era][bin_type][region][selection]["WJets"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["WJets_0"]
+                    if not h_TTG:
+                        h_TTG              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTG_0"]            ) )
+                        #print self.histos[era][bin_type][region][selection]["TTG"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["TTG_0"]
+                    if not h_TTbar:
+                        h_TTbar              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTbar_0"]            ) )
+                        #print self.histos[era][bin_type][region][selection]["TTbar"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["TTbar_0"]
+                    if not h_tW:
+                        h_tW              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["tW_0"]            ) )
+                        #print self.histos[era][bin_type][region][selection]["tW"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["tW_0"]
+                    if not h_Rare:
+                        h_Rare              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Rare_0"]            ) )
+                        #print self.histos[era][bin_type][region][selection]["Rare"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["Rare_0"]
+
                     # check if histograms load
                     if not h_Data:
                         print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["Data"])
@@ -403,10 +435,10 @@ class Shape:
                     samples = ["Data", "GJets", "QCD_Fragmented", "QCD_Fake", "WJets", "TTG", "TTbar", "tW", "Rare"]
                 else:
                     samples = ["Data", "GJets", "QCD", "WJets", "TTG", "TTbar", "tW", "Rare"]
-                #print "Shape factor CR units; Loading {0} histograms".format(region)
+                print "Shape factor CR units; Loading {0} histograms".format(region)
                 for sample in samples:
                     hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
-                    #print "\t{0}".format(hist_name) 
+                    print "\t{0}".format(hist_name) 
                 
                 h_Data              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Data"]              ) )
                 h_GJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["GJets"]             ) )
@@ -470,7 +502,6 @@ class Shape:
                     h3 = self.ratio_rebinned_map["2017_F"][bin_type][region][selection][rebin]
                     h4 = self.ratio_rebinned_map["2018_PreHEM"][bin_type][region][selection][rebin]
                     h5 = self.ratio_rebinned_map["2018_PostHEM"][bin_type][region][selection][rebin]
-                    h6 = self.ratio_rebinned_map["Run2"][bin_type][region][selection][rebin]
                     title = "Shape for {0} bins, {1}, {2}, {3}".format(bin_type, region, selection, rebin)
                     x_title = "MET (GeV)" 
                     y_title = "Shape #left(S_{#gamma}#right)"
@@ -482,14 +513,12 @@ class Shape:
                     setupHist(h3,   title, x_title, y_title, "emerald",         y_min, y_max)
                     setupHist(h4,   title, x_title, y_title, "dark sky blue",   y_min, y_max)
                     setupHist(h5,   title, x_title, y_title, "pinky purple",    y_min, y_max)
-                    setupHist(h6,   title, x_title, y_title, "black",           y_min, y_max)
                     # draw
                     h1.Draw(draw_option)
                     h2.Draw(draw_option + " same")
                     h3.Draw(draw_option + " same")
                     h4.Draw(draw_option + " same")
                     h5.Draw(draw_option + " same")
-                    h6.Draw(draw_option + " same")
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
                     legend.AddEntry(h1,     "2016",             "l")
@@ -497,7 +526,6 @@ class Shape:
                     legend.AddEntry(h3,     "2017_F",           "l")
                     legend.AddEntry(h4,     "2018_PreHEM",      "l")
                     legend.AddEntry(h5,     "2018_PostHEM",     "l")
-                    legend.AddEntry(h6,     "Run2",             "l")
                     legend.Draw()
                     # save histograms
                     plot_name = "{0}Shape_{1}_{2}_{3}_{4}".format(self.plot_dir, bin_type, region, selection, rebin)
