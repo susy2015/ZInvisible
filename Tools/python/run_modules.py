@@ -12,11 +12,6 @@ from data_card import makeDataCard
 from units import saveResults
 from make_table import Table
 
-# make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
-ROOT.PyConfig.IgnoreCommandLineOptions = True
-# make plots faster without displaying them
-ROOT.gROOT.SetBatch(ROOT.kTRUE)
-
 def main():
     # options
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -31,7 +26,6 @@ def main():
     doCutflows  = False
     doPhotons   = False
     draw        = False
-    
 
     if not os.path.exists(json_file):
         print "The json file \"{0}\" containing runs does not exist.".format(json_file)
@@ -96,10 +90,9 @@ def main():
             if doUnits:
                 CRunits.getValues(result_file, era)
                 SRunits.getValues(result_file, era)
-            Syst.makeZvsPhoton(result_file, era, False)
             Syst.makeZvsPhoton(result_file, era, True)
-            makeDataCard(VB, dataCardValidation_dir, era)
-            makeDataCard(SB, dataCardSearch_dir,     era)
+            #makeDataCard(VB, dataCardValidation_dir, era)
+            #makeDataCard(SB, dataCardSearch_dir,     era)
 
     N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
@@ -120,6 +113,13 @@ def main():
     #SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
     SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
+    # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics
+    # must be done after N.makeComparison()
+    # must be done after Syst.makeZvsPhoton()
+    VB.getRzSyst(N.rz_syst_map, "validation",  "RzSyst_ValidationBins.root")
+    SB.getRzSyst(N.rz_syst_map, "search",      "RzSyst_SearchBins.root")
+    VB.getZvsPhotonSyst(Syst.h_map_syst, "ZvsPhotonSyst_ValidationBins.root")
+    SB.getZvsPhotonSyst(Syst.h_map_syst, "ZvsPhotonSyst_SearchBins.root")
 
     # make json files
     VB.makeJson(VB.binValues,           results_dir + "ValidationBinResults.json")
@@ -129,12 +129,6 @@ def main():
         SRunits.makeJson(SRunits.binValues, results_dir + "SRUnitsResults.json")
         # saveResults(inFile, outFile, CRunits, SRunits, era)
         saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + total_era + ".json", CRunits, SRunits, total_era)
-
-    # TODO: making data card for Run 2 does not work because we have not run calcPrediction() for Run 2
-    #       calcPrediction() depends on norm and shape (which we calculate per era, not for all of Run 2)
-    #       make a way (possibly another function) to calculate values for Run 2 data card  
-    #makeDataCard(VB, dataCardValidation_dir, total_era)
-    #makeDataCard(SB, dataCardSearch_dir,     total_era)
 
 
 if __name__ == "__main__":
