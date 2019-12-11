@@ -23,7 +23,26 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # syst_up_total   = sqrt ( sum ( syst_up_i ^2 ) ) 
 # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
 
-def writeToConf(outFile, searchBinMap, syst, h, h_up, h_down, region, offset):
+
+# use histogram which stores systematic errors
+def writeToConfFromSyst(outFile, searchBinMap, syst, h, region, offset):
+    zinv = "znunu"
+    # sb_i = bin_i - 1 + offset
+    nBins = h.GetNbinsX()
+    for i in xrange(1, nBins + 1):
+        sb_i = i - 1 + offset
+        sb_name = searchBinMap[str(sb_i)]
+        # systematic error is stored in bin content
+        # treat error as symmetric
+        error   = h.GetBinContent(i)
+        r_up   = 1 + error 
+        r_down = 1 - error 
+
+        outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, zinv, r_up   ) )
+        outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, zinv, r_down ) )
+
+# use prediction, syst up/down histograms
+def writeToConfFromPred(outFile, searchBinMap, syst, h, h_up, h_down, region, offset):
     zinv = "znunu"
     # sb_i = bin_i - 1 + offset
     nBins = h.GetNbinsX()
@@ -47,8 +66,8 @@ def writeToConf(outFile, searchBinMap, syst, h, h_up, h_down, region, offset):
                 r_down = p_down / p
             else:
                 print "WARNING: pred = 0 for search bin {0}".format(sb_i)
-        outFile.write("{0}  {1}_Up  {2}  {3}\n".format(   sb_name, syst, zinv, r_up))
-        outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, zinv, r_down))
+        outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, zinv, r_up   ) )
+        outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, zinv, r_down ) )
 
 
 def main():
@@ -63,6 +82,12 @@ def main():
     syst_json       = options.syst_json
     verbose         = options.verbose
     units_json      = "dc_BkgPred_BinMaps_master.json"
+    rz_syst_files   = {}
+    rz_syst_files["validation"] = "RzSyst_ValidationBins.root"
+    rz_syst_files["search"]     = "RzSyst_SearchBins.root"
+    ZvPhoton_syst_files = {}
+    ZvPhoton_syst_files["validation"]   = "ZvsPhotonSyst_ValidationBins.root"
+    ZvPhoton_syst_files["search"]       = "ZvsPhotonSyst_SearchBins.root" 
    
     doUnits      = False
     draw         = False
@@ -70,16 +95,32 @@ def main():
     systMap      = {}
     unitMap      = {}
 
+    # list required files to check if they exist
+    file_list = [] 
+    file_list.append(runs_json)
+    file_list.append(syst_json)
+    file_list.append(units_json)
+    for key in rz_syst_files:
+        file_list.append(rz_syst_files[key])
+    for key in ZvPhoton_syst_files:
+        file_list.append(ZvPhoton_syst_files[key])
+
     # check if files exist
-    if not os.path.exists(runs_json):
-        print "The json file \"{0}\" containing runs does not exist.".format(runs_json)
-        return
-    if not os.path.exists(syst_json):
-        print "The json file \"{0}\" containing systematics does not exist.".format(syst_json)
-        return
-    if not os.path.exists(units_json):
-        print "The json file \"{0}\" containing systematics does not exist.".format(units_json)
-        return
+    for file_name in file_list:
+        if not os.path.exists(file_name):
+            print "ERROR: The required file \"{0}\" does not exist.".format(file_name)
+            return
+    
+    # old version
+    #if not os.path.exists(runs_json):
+    #    print "The json file \"{0}\" containing runs does not exist.".format(runs_json)
+    #    return
+    #if not os.path.exists(syst_json):
+    #    print "The json file \"{0}\" containing systematics does not exist.".format(syst_json)
+    #    return
+    #if not os.path.exists(units_json):
+    #    print "The json file \"{0}\" containing systematics does not exist.".format(units_json)
+    #    return
     
     # load json files
     with open(runs_json, "r") as input_file:
@@ -136,6 +177,7 @@ def main():
     #-------------------------------------------------------
     with open(conf_file, "w") as outFile:
            
+        # --- begin loop over systematics
         for syst in systematics:
         
             # --- syst up --- #
@@ -171,10 +213,12 @@ def main():
             #-------------------------------------------------------
             # Write to conf
             #-------------------------------------------------------
-            #writeToConf(outFile, searchBinMap, syst, h, h_up, h_down, region, offset)
+            # only write search bin systematics to conf
+            # TODO: write CR unit systematics to conf
+            #writeToConfFromPred(outFile, searchBinMap, syst, h, h_up, h_down, region, offset)
             systForConf = systMap[syst]["name"]  
-            writeToConf(outFile, searchBinMap, systForConf, histo["search"]["lowdm"][""],  histo["search"]["lowdm"]["up"],  histo["search"]["lowdm"]["down"],  "lowdm",  0)
-            writeToConf(outFile, searchBinMap, systForConf, histo["search"]["highdm"][""], histo["search"]["highdm"]["up"], histo["search"]["highdm"]["down"], "highdm", SB.high_dm_start)
+            writeToConfFromPred(outFile, searchBinMap, systForConf, histo["search"]["lowdm"][""],  histo["search"]["lowdm"]["up"],  histo["search"]["lowdm"]["down"],  "lowdm",  SB.low_dm_start)
+            writeToConfFromPred(outFile, searchBinMap, systForConf, histo["search"]["highdm"][""], histo["search"]["highdm"]["up"], histo["search"]["highdm"]["down"], "highdm", SB.high_dm_start)
             
             #-------------------------------------------------------
             # Plot
@@ -233,6 +277,40 @@ def main():
 
                     del c
     
+        # --- end loop over systematics
+            
+        #-------------------------------------------------------
+        # Write to conf (for syst. stored in root files)
+        #-------------------------------------------------------
+        
+        # systematics from syst. histos stored in root files 
+        
+        # --- Rz syst --- #
+        f_in = ROOT.TFile(rz_syst_files["search"], "read")
+        # histogram names
+        # rz_syst_low_dm
+        # rz_syst_high_dm
+        h_lowdm  = f_in.Get("rz_syst_low_dm")
+        h_highdm = f_in.Get("rz_syst_high_dm")
+        
+        # writeToConfFromSyst(outFile, searchBinMap, syst, h, region, offset)
+        systForConf = systMap["znunu_rzunc"]["name"]  
+        writeToConfFromSyst(outFile, searchBinMap, systForConf, h_lowdm,  "lowdm",  SB.low_dm_start)
+        writeToConfFromSyst(outFile, searchBinMap, systForConf, h_highdm, "highdm", SB.high_dm_start)
+        
+        # --- Z vs Photon syst --- #
+        f_in = ROOT.TFile(ZvPhoton_syst_files["search"], "read")
+        # histogram names
+        # ZvsPhoton_syst_low_dm
+        # ZvsPhoton_syst_high_dm
+        h_lowdm  = f_in.Get("ZvsPhoton_syst_low_dm")
+        h_highdm = f_in.Get("ZvsPhoton_syst_high_dm")
+        
+        # writeToConfFromSyst(outFile, searchBinMap, syst, h, region, offset)
+        systForConf = systMap["znunu_zgammdiff"]["name"]  
+        writeToConfFromSyst(outFile, searchBinMap, systForConf, h_lowdm,  "lowdm",  SB.low_dm_start)
+        writeToConfFromSyst(outFile, searchBinMap, systForConf, h_highdm, "highdm", SB.high_dm_start)
+
     #-------------------------------------------------------
     # Calculate total systematic up/down
     #-------------------------------------------------------
