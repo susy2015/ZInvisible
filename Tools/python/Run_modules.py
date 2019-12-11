@@ -309,30 +309,13 @@ def main():
             systHistoMap[bintype]["lowdm"]["znunu_zgammdiff"]   = copy.deepcopy(f_in.Get("ZvsPhoton_syst_low_dm"))
             systHistoMap[bintype]["highdm"]["znunu_zgammdiff"]  = copy.deepcopy(f_in.Get("ZvsPhoton_syst_high_dm"))
 
-        # systHistoMap["znunu_rzunc"] = {}
-        # systHistoMap["znunu_zgammdiff"] = {}
-        
         # --- Rz syst --- #
-        # f_in = ROOT.TFile(rz_syst_files["search"], "read")
-        # # histogram names
-        # # rz_syst_low_dm
-        # # rz_syst_high_dm
-        # systHistoMap["znunu_rzunc"]["lowdm"]  = f_in.Get("rz_syst_low_dm")
-        # systHistoMap["znunu_rzunc"]["highdm"] = f_in.Get("rz_syst_high_dm")
-        
         # writeToConfFromSyst(outFile, searchBinMap, syst, h, region, offset)
         systForConf = systMap["znunu_rzunc"]["name"]  
         writeToConfFromSyst(outFile, searchBinMap, systForConf, systHistoMap["search"]["lowdm"]["znunu_rzunc"],  "lowdm",  SB.low_dm_start)
         writeToConfFromSyst(outFile, searchBinMap, systForConf, systHistoMap["search"]["highdm"]["znunu_rzunc"], "highdm", SB.high_dm_start)
         
         # --- Z vs Photon syst --- #
-        # f_in = ROOT.TFile(ZvPhoton_syst_files["search"], "read")
-        # # histogram names
-        # # ZvsPhoton_syst_low_dm
-        # # ZvsPhoton_syst_high_dm
-        # systHistoMap["znunu_zgammdiff"]["lowdm"]  = f_in.Get("ZvsPhoton_syst_low_dm")
-        # systHistoMap["znunu_zgammdiff"]["highdm"] = f_in.Get("ZvsPhoton_syst_high_dm")
-        
         # writeToConfFromSyst(outFile, searchBinMap, syst, h, region, offset)
         systForConf = systMap["znunu_zgammdiff"]["name"]  
         writeToConfFromSyst(outFile, searchBinMap, systForConf, systHistoMap["search"]["lowdm"]["znunu_zgammdiff"],  "lowdm",  SB.low_dm_start)
@@ -376,14 +359,16 @@ def main():
     # bins are list of strings starting at 0
     # loop over regions (lowdm and highdm)
     print "# validation bin systematics"
+    debug = False
     for region in regions:
         print "--- {0} ---".format(region)
         # DEBUG
-        #systHistoMap[bintype][region][syst]
-        for syst in systHistoMap["validation"][region]:
-            nBins = systHistoMap["validation"][region][syst].GetNbinsX()
-            error = systHistoMap["validation"][region][syst].GetBinContent(1)
-            print "{0}, {1}: nBins = {2}, bin 1 error = {3}".format(region, syst, nBins, error)
+        if debug:
+            #systHistoMap[bintype][region][syst]
+            for syst in systHistoMap["validation"][region]:
+                nBins = systHistoMap["validation"][region][syst].GetNbinsX()
+                error = systHistoMap["validation"][region][syst].GetBinContent(1)
+                print "DEBUG: {0}, {1}: nBins = {2}, bin 1 error = {3}".format(region, syst, nBins, error)
         
         # be careful with bin index, which needs to start at 1 in both lowdm and highdm
         b_i = 1
