@@ -530,7 +530,7 @@ class Normalization:
                 # y list is for positioning the text
                 y_list = np.arange(y_max, 0.0, -0.3)
                 mark.DrawLatex(0.2, y_list[1], "Fit: f(x) = %.3f #pm %.3f"                % (fit_value, fit_error))
-                mark.DrawLatex(0.2, y_list[2], "Comb. e/#mu #chi_{r}^{3} = %.3f"          % chisq_r)
+                mark.DrawLatex(0.2, y_list[2], "Comb. e/#mu #chi_{r}^{2} = %.3f"          % chisq_r)
                 mark.DrawLatex(0.2, y_list[3], "S = %.3f"                                 % scale)
                 mark.DrawLatex(0.2, y_list[4], "R_{Z} #pm #sigma_{stat} = %.3f #pm %.3f"  % (Run2_norm, Run2_stat_err))
                 mark.DrawLatex(0.2, y_list[5], "Run 2 #sigma_{total} = %.3f"              % final_Run2_total_err)

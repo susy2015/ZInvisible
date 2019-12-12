@@ -19,7 +19,7 @@ def show(jsonFile, key, title):
             print "{0} : {1}".format(b, binMap[b])
 
 # save final results in json file
-def saveResults(inFile, outFile, CRunits, SRunits, era):
+def saveResults(inFile, outFile, CRunits, SRunits, SB, era):
     verbose = False
     map_out                                 = {}
     map_out["yieldsMap"]                    = {}
@@ -27,6 +27,8 @@ def saveResults(inFile, outFile, CRunits, SRunits, era):
     map_out["yieldsMap"]["phocr_data"]      = {}
     map_out["yieldsMap"]["phocr_gjets"]     = {}
     map_out["yieldsMap"]["phocr_back"]      = {}
+    unitMap                                 = {}
+    normForSRunits                          = {}
     with open (inFile, "r") as f_in:
         map_in = json.load(f_in)
         # invert maps
@@ -34,11 +36,25 @@ def saveResults(inFile, outFile, CRunits, SRunits, era):
         CRunit_map      = invert(map_in["unitCRNum"]["phocr"])
         SRunit_map      = invert(map_in["unitSRNum"])
 
+    with open("units.json", "r") as input_file:
+        unitMap = json.load(input_file)
+    
     # final yields for json file
-    # znunu:        Z nunu MC in SR unit bins
+    # znunu:        (Z nunu MC in SR unit bins) * Rz
     # phocr_data:   Photon Data in photon CR 
-    # phocr_gjets:  GJets MC in photon CR
-    # phocr_back:   Other MC (QCD, TTGJets, etc) in photon CR
+    # phocr_gjets:  GJets MC in photon CR normalized to Data
+    # phocr_back:   Other MC (QCD, TTGJets, etc) in photon CR normalized to Data
+
+    # get Rz values in search bins and apply to SR unit bins
+    # norm in search bins:
+    # SB.binValues[era][b]["norm"] 
+    for b in SB.binValues[era]:
+        norm = SB.binValues[era][b]["norm"]
+        sr_units = unitMap["unitBinMapSR"][b]
+        for sr in sr_units:
+            normForSRunits[sr] = {}
+            normForSRunits[sr]["norm"] = norm
+
     
     if verbose:
         print "Search Region Units"
@@ -46,9 +62,15 @@ def saveResults(inFile, outFile, CRunits, SRunits, era):
         name        = SRunit_map[b]
         mc          = SRunits.binValues[era][b]["mc"]
         mc_error    = SRunits.binValues[era][b]["mc_error"]
+        norm = -999
+        try:
+            norm = normForSRunits[b]["norm"]
+        except:
+            print "ERROR: No normalization value found for SR unit bin {0}".format(b)
 
+        mc_with_norm = norm * mc
         # save value and error
-        map_out["yieldsMap"]["znunu"][name] = [mc, mc_error]
+        map_out["yieldsMap"]["znunu"][name] = [mc_with_norm, mc_error]
         
         if verbose:
             print "{0}: mc = [{1}, {2}]".format(name, mc, mc_error)

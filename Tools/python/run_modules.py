@@ -127,8 +127,8 @@ def main():
     if doUnits:
         CRunits.makeJson(CRunits.binValues, results_dir + "CRUnitsResults.json")
         SRunits.makeJson(SRunits.binValues, results_dir + "SRUnitsResults.json")
-        # saveResults(inFile, outFile, CRunits, SRunits, era)
-        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + total_era + ".json", CRunits, SRunits, total_era)
+        # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
+        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + total_era + ".json", CRunits, SRunits, SB, total_era)
 
 
 if __name__ == "__main__":
