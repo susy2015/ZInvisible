@@ -146,11 +146,16 @@ def main():
     bintypes     = ["validation", "search"]
     systematics  = ["jes", "btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup"] # all systematics available from Znunu_nValidationBin
     # missing syst: prefire weight (2016, 2017), pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
-    
-    histo_tmp  = {region:dict.fromkeys(directions) for region in regions} # histo_tmp[region][direction]
-    histo      = {bintype:histo_tmp for bintype in bintypes}              # histo[bintype][region][direction]
-    syst_histo = {syst:histo for syst in systematics}                     # syst_histo[systemaitc][bintype][region][direction]
-    
+
+    # histo_tmp[region][direction]
+    histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
+
+    # histo[bintype][region][direction]
+    histo      = {bintype:{region:dict.fromkeys(directions) for region in regions} for bintype in bintypes} 
+
+    # syst_histo[systemaitc][bintype][region][direction]
+    syst_histo = {syst:{bintype:{region:dict.fromkeys(directions) for region in regions} for bintype in bintypes} for syst in systematics} 
+
     #-------------------------------------------------------
     # Class instanceses summoning 
     #-------------------------------------------------------
