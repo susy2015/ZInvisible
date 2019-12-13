@@ -137,7 +137,7 @@ def main():
     era          = "Run2"
     runDir = runMap[era]
     result_file  = "condor/" + runDir + "/result.root"
-    conf_file    = "zinv_syst_" + era + ".conf"
+    conf_file    = "results/zinv_syst_" + era + ".conf"
     out_dir      = "angel_syst_plots/" 
     syst_dir     = "angel_syst_plots/"
     variable     = "mc"
