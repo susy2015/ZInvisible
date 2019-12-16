@@ -20,7 +20,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-def plot(h, h_up, h_down, mySyst, region, era, plot_dir):
+def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
     eraTag = "_" + era
     draw_option = "hist"
             
@@ -40,7 +40,7 @@ def plot(h, h_up, h_down, mySyst, region, era, plot_dir):
     c = ROOT.TCanvas("c", "c", 800, 800)
     c.Divide(1, 2)
     
-    name = "{0}_syst".format(mySyst)
+    name = "{0}_{1}_syst".format(bintype, mySyst)
     
     # draw histograms
     h_ratio_up      = h_up.Clone("h_ratio_up") 
@@ -78,7 +78,6 @@ def plot(h, h_up, h_down, mySyst, region, era, plot_dir):
     # save histograms
     plot_name = plot_dir + name + "_" + region + eraTag
     c.Update()
-    c.SaveAs(plot_name + ".pdf")
     c.SaveAs(plot_name + ".png")
 
 
@@ -100,7 +99,7 @@ def main():
     saveRootFile    = False
     runMap          = {}
     systMap         = {}
-    histMap         = {}
+    validationHistMap         = {}
 
     if not os.path.exists(runs_json):
         print "The json file \"{0}\" containing runs does not exist.".format(runs_json)
@@ -137,7 +136,7 @@ def main():
         # loop over eras
                 
         for era in eras:
-            histMap[era] = {}
+            validationHistMap[era] = {}
             print "|---------- Era: {0} ----------|".format(era)
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
@@ -148,8 +147,8 @@ def main():
             # get histograms
             # central prediction
             for region in VB.histograms[era]:
-                histMap[era][region] = {}
-                histMap[era][region]["pred"] = VB.histograms[era][region]["pred"].Clone()
+                validationHistMap[era][region] = {}
+                validationHistMap[era][region]["pred"] = VB.histograms[era][region]["pred"].Clone()
                 
                 # print for testing
                 # nBins = h.GetNbinsX()
@@ -163,7 +162,7 @@ def main():
                 # TODO: fix eff_restoptag_syst, isr_syst, pdf_syst
                 systematics = ["jes", "btag", "pileup", "prefire"]
                 for mySyst in systematics: 
-                    histMap[era][region]["syst_" + mySyst] = {}
+                    validationHistMap[era][region]["syst_" + mySyst] = {}
                     # TODO: fix bug; final histogram plotted is wrong, e.g. last systematic, high dm, down
                     #for direction in ["down", "up"]:
                     for direction in ["up", "down"]:
@@ -176,7 +175,7 @@ def main():
                         S.getShape(        result_file, era, systTag )
                         VB.getValues(      result_file, era, systTag )
                         SB.getValues(      result_file, era, systTag )
-                        histMap[era][region]["syst_" + mySyst][direction] = VB.histograms[era][region]["pred"].Clone()
+                        validationHistMap[era][region]["syst_" + mySyst][direction] = VB.histograms[era][region]["pred"].Clone()
                         
                         # print for testing
                         # nBins = h.GetNbinsX()
@@ -186,10 +185,10 @@ def main():
                     # ---------------------- #
                     # --- Draw Histogram --- #
                     # ---------------------- #
-                    h       = histMap[era][region]["pred"]
-                    h_up    = histMap[era][region]["syst_" + mySyst]["up"]
-                    h_down  = histMap[era][region]["syst_" + mySyst]["down"]
-                    plot(h, h_up, h_down, mySyst, region, era, plot_dir)
+                    h       = validationHistMap[era][region]["pred"]
+                    h_up    = validationHistMap[era][region]["syst_" + mySyst]["up"]
+                    h_down  = validationHistMap[era][region]["syst_" + mySyst]["down"]
+                    plot(h, h_up, h_down, mySyst, "validation", region, era, plot_dir)
 
 
 if __name__ == "__main__":
