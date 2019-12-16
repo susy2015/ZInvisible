@@ -50,11 +50,11 @@ def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
     
     title = "Z to Invisible: " + name + " in " + region + " for " + era
     x_title = "Validation Bins"
-    setupHist(h,                title, x_title, "Events",       color_black,  10.0 ** -2, 10.0 ** 5)
-    setupHist(h_up,             title, x_title, "Events",       color_red,    10.0 ** -2, 10.0 ** 5)
-    setupHist(h_down,           title, x_title, "Events",       color_blue,   10.0 ** -2, 10.0 ** 5)
-    setupHist(h_ratio_up,       title, x_title, "syst / pred",  color_red,    0.5, 1.5)
-    setupHist(h_ratio_down,     title, x_title, "syst / pred",  color_blue,   0.5, 1.5)
+    setupHist(h,                title, x_title, "Events",               color_black,  10.0 ** -2, 10.0 ** 5)
+    setupHist(h_up,             title, x_title, "Events",               color_red,    10.0 ** -2, 10.0 ** 5)
+    setupHist(h_down,           title, x_title, "Events",               color_blue,   10.0 ** -2, 10.0 ** 5)
+    setupHist(h_ratio_up,       title, x_title, "variation / nominal",  color_red,    0.5, 1.5)
+    setupHist(h_ratio_down,     title, x_title, "variation / nominal",  color_blue,   0.5, 1.5)
     
     # histograms
     c.cd(1)
@@ -65,7 +65,7 @@ def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
     
     # legend: TLegend(x1,y1,x2,y2)
     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-    legend.AddEntry(h,              "Z#rightarrow#nu#nu pred",  "l")
+    legend.AddEntry(h,              "Z#rightarrow#nu#nu MC",  "l")
     legend.AddEntry(h_up,           "syst up",                  "l")
     legend.AddEntry(h_down,         "syst down",                "l")
     legend.Draw()

@@ -222,7 +222,7 @@ def main():
             
             for bintype in bintypes:
                 for region in regions:
-                    # plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
+                    # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
                     run_systematics.plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, syst_dir)
                 
         # --- end loop over systematics
@@ -288,6 +288,7 @@ def main():
     h_syst_down_lowdm   = ROOT.TH1F("syst_down_lowdm",  "syst_down_lowdm",  VB.low_dm_nbins,  VB.low_dm_start,  VB.low_dm_end  + 1)
     h_syst_down_highdm  = ROOT.TH1F("syst_down_highdm", "syst_down_highdm", VB.high_dm_nbins, VB.high_dm_start, VB.high_dm_end + 1)
     
+    # TODO: remove old code; use grid instead
     # Draw nice ratio at 1
     #    # horizontal line at 1
     #    ratio_1 = histo[region]["down"].Clone()
@@ -368,9 +369,15 @@ def main():
             validationHistoMap[region]["down"].SetBinContent(   b_i, final_down )
             b_i += 1
         
-        # write histograms to file
+        # --- write histograms to file
         validationHistoMap[region]["up"].Write()
         validationHistoMap[region]["down"].Write()
+
+        # --- plot histograms
+                    
+        # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
+        mySyst = "total"
+        run_systematics.plot(histo["validation"][region][""], histo["validation"][region]["up"], histo["validation"][region]["down"], mySyst, "validation", region, era, syst_dir)
 
     f_out.Close()
 
