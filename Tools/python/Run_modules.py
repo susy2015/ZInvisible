@@ -1,4 +1,4 @@
-# run_modules.py
+# Run_modules.py (modified for systematics)
 import copy
 import numpy as np
 import json
@@ -7,7 +7,7 @@ import os
 import ROOT
 from Norm_lepton_zmass import Normalization
 from Shape_photon_met import Shape
-from Search_bins import  ValidationBins, SearchBins
+from Search_bins import  ValidationBins, SearchBins, CRUnitBins
 from tools import invert
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -83,13 +83,15 @@ def main():
     verbose         = options.verbose
     units_json      = "dc_BkgPred_BinMaps_master.json"
     rz_syst_files   = {}
-    rz_syst_files["validation"] = "RzSyst_ValidationBins.root"
-    rz_syst_files["search"]     = "RzSyst_SearchBins.root"
+    rz_syst_files["validation"]   = "RzSyst_ValidationBins.root"
+    rz_syst_files["search"]       = "RzSyst_SearchBins.root"
+    rz_syst_files["controlUnit"]  = "RzSyst_SearchBins.root" # "RzSyst_ControlUnitBins.root" ?????
     ZvPhoton_syst_files = {}
     ZvPhoton_syst_files["validation"]   = "ZvsPhotonSyst_ValidationBins.root"
     ZvPhoton_syst_files["search"]       = "ZvsPhotonSyst_SearchBins.root" 
+    ZvPhoton_syst_files["controlUnit"]  = "ZvsPhotonSyst_SearchBins.root" #"ZvsPhotonSyst_ControlUnitBins.root" ????
    
-    doUnits      = False
+    doUnits      = True
     draw         = False
     runMap       = {}
     systMap      = {}
@@ -143,8 +145,8 @@ def main():
     variable     = "mc"
     regions      = ["lowdm", "highdm"]
     directions   = ["up", "", "down"]
-    bintypes     = ["validation", "search"]
-    systematics  = ["jes", "btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup"] # all systematics available from Znunu_nValidationBin
+    bintypes     = ["validation", "search", "controlUnit"]
+    systematics  = ["jes","eff_restoptag_photon","eff_sb_photon","btag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup"] # all systematics available from Znunu_nValidationBin
     # missing syst: prefire weight (2016, 2017), pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
 
     # histo_tmp[region][direction]
@@ -160,10 +162,11 @@ def main():
     # Class instanceses summoning 
     #-------------------------------------------------------
     
-    N = Normalization(out_dir, verbose)
-    S = Shape(out_dir, draw, doUnits, verbose)
-    VB = ValidationBins(N, S, era, out_dir, verbose)
-    SB = SearchBins(N, S, era, out_dir, verbose)
+    N   =  Normalization(out_dir, verbose)
+    S   =  Shape(out_dir, draw, doUnits, verbose)
+    VB  =  ValidationBins(N, S, era, out_dir, verbose)
+    SB  =  SearchBins(N, S, era, out_dir, verbose)
+    CRU =  CRUnitBins(N, S, era, out_dir, verbose)
     
     #-------------------------------------------------------
     # Normal predictions (no systematics) 
@@ -173,11 +176,16 @@ def main():
     S.getShape(result_file, "", era)
     VB.getValues(result_file, "", era)
     SB.getValues(result_file, "", era)
+    CRU.getValues(result_file, "", era)
     
-    histo["validation"]["lowdm"][""]   =  VB.histograms[era]["lowdm"][variable].Clone()
-    histo["validation"]["highdm"][""]  =  VB.histograms[era]["highdm"][variable].Clone()
-    histo["search"]["lowdm"][""]       =  SB.histograms[era]["lowdm"][variable].Clone()
-    histo["search"]["highdm"][""]      =  SB.histograms[era]["highdm"][variable].Clone()
+    histo["validation"]["lowdm"][""]     =  VB.histograms[era]["lowdm"][variable].Clone()
+    histo["validation"]["highdm"][""]    =  VB.histograms[era]["highdm"][variable].Clone()
+    histo["search"]["lowdm"][""]         =  SB.histograms[era]["lowdm"][variable].Clone()
+    histo["search"]["highdm"][""]        =  SB.histograms[era]["highdm"][variable].Clone()
+    print("debbuging ")
+    print(CRU.histograms.keys())
+    histo["controlUnit"]["highdm"][""]   =  CRU.histograms[era]["highdm"]["mc_gjets"].Clone()
+    histo["controlUnit"]["lowdm"][""]    =  CRU.histograms[era]["lowdm"]["mc_gjets"].Clone()
     
     #-------------------------------------------------------
     # Calculate normalization and shape factors
@@ -192,30 +200,40 @@ def main():
             S.getShape(result_file, syst + "_syst_up", era)
             VB.getValues(result_file, syst + "_syst_up", era)
             SB.getValues(result_file, syst + "_syst_up", era)
+            CRU.getValues(result_file, syst + "_syst_up", era)
             
-            histo["validation"]["highdm"]["up"]  = VB.histograms[era]["highdm"][variable].Clone()
-            histo["validation"]["lowdm"]["up"]   = VB.histograms[era]["lowdm"][variable].Clone()
-            histo["search"]["highdm"]["up"]      = SB.histograms[era]["highdm"][variable].Clone()
-            histo["search"]["lowdm"]["up"]       = SB.histograms[era]["lowdm"][variable].Clone()
-            syst_histo[syst]["validation"]["lowdm"]["up"]  = histo["validation"]["lowdm"]["up"]
-            syst_histo[syst]["validation"]["highdm"]["up"] = histo["validation"]["highdm"]["up"]
-            syst_histo[syst]["search"]["lowdm"]["up"]      = histo["search"]["lowdm"]["up"]
-            syst_histo[syst]["search"]["highdm"]["up"]     = histo["search"]["highdm"]["up"]
+            histo["validation"]["highdm"]["up"]   =  VB.histograms[era]["highdm"][variable].Clone()
+            histo["validation"]["lowdm"]["up"]    =  VB.histograms[era]["lowdm"][variable].Clone()
+            histo["search"]["highdm"]["up"]       =  SB.histograms[era]["highdm"][variable].Clone()
+            histo["search"]["lowdm"]["up"]        =  SB.histograms[era]["lowdm"][variable].Clone()
+            histo["controlUnit"]["highdm"]["up"]  =  CRU.histograms[era]["highdm"]["mc_gjets"].Clone()
+            histo["controlUnit"]["lowdm"]["up"]   =  CRU.histograms[era]["lowdm"]["mc_gjets"].Clone()
+            syst_histo[syst]["validation"]["lowdm"]["up"]    = histo["validation"]["lowdm"]["up"]
+            syst_histo[syst]["validation"]["highdm"]["up"]   = histo["validation"]["highdm"]["up"]
+            syst_histo[syst]["search"]["lowdm"]["up"]        = histo["search"]["lowdm"]["up"]
+            syst_histo[syst]["search"]["highdm"]["up"]       = histo["search"]["highdm"]["up"]
+            syst_histo[syst]["controlUnit"]["lowdm"]["up"]   = histo["controlUnit"]["lowdm"]["up"]
+            syst_histo[syst]["controlUnit"]["highdm"]["up"]  = histo["controlUnit"]["highdm"]["up"]
             
             # --- syst down --- #
             N.getNormAndError(result_file, syst + "_syst_down", era)
             S.getShape(result_file, syst + "_syst_down", era)
             VB.getValues(result_file, syst + "_syst_down", era)
             SB.getValues(result_file, syst + "_syst_down", era)
+            CRU.getValues(result_file, syst + "_syst_down", era)
             
-            histo["validation"]["highdm"]["down"]   = VB.histograms[era]["highdm"][variable].Clone()
-            histo["validation"]["lowdm"]["down"]    = VB.histograms[era]["lowdm"][variable].Clone()
-            histo["search"]["highdm"]["down"]       = SB.histograms[era]["highdm"][variable].Clone()
-            histo["search"]["lowdm"]["down"]        = SB.histograms[era]["lowdm"][variable].Clone()
-            syst_histo[syst]["validation"]["lowdm"]["down"]  = histo["validation"]["lowdm"]["down"]
-            syst_histo[syst]["validation"]["highdm"]["down"] = histo["validation"]["highdm"]["down"]
-            syst_histo[syst]["search"]["lowdm"]["down"]      = histo["search"]["lowdm"]["down"]
-            syst_histo[syst]["search"]["highdm"]["down"]     = histo["search"]["highdm"]["down"]
+            histo["validation"]["highdm"]["down"]   =  VB.histograms[era]["highdm"][variable].Clone()
+            histo["validation"]["lowdm"]["down"]    =  VB.histograms[era]["lowdm"][variable].Clone()
+            histo["search"]["highdm"]["down"]       =  SB.histograms[era]["highdm"][variable].Clone()
+            histo["search"]["lowdm"]["down"]        =  SB.histograms[era]["lowdm"][variable].Clone()
+            histo["controlUnit"]["highdm"]["down"]  =  CRU.histograms[era]["highdm"]["mc_gjets"].Clone()
+            histo["controlUnit"]["lowdm"]["down"]   =  CRU.histograms[era]["lowdm"]["mc_gjets"].Clone()
+            syst_histo[syst]["validation"]["lowdm"]["down"]    =  histo["validation"]["lowdm"]["down"]
+            syst_histo[syst]["validation"]["highdm"]["down"]   =  histo["validation"]["highdm"]["down"]
+            syst_histo[syst]["search"]["lowdm"]["down"]        =  histo["search"]["lowdm"]["down"]
+            syst_histo[syst]["search"]["highdm"]["down"]       =  histo["search"]["highdm"]["down"]
+            syst_histo[syst]["controlUnit"]["lowdm"]["down"]   =  histo["controlUnit"]["lowdm"]["down"]
+            syst_histo[syst]["controlUnit"]["highdm"]["down"]  =  histo["controlUnit"]["highdm"]["down"]
             
             #-------------------------------------------------------
             # Write to conf

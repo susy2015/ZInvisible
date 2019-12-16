@@ -1,4 +1,4 @@
-# search_bins.py
+# Search_bins.py (modified for systematics)
 import ROOT
 import copy
 import json
@@ -449,6 +449,15 @@ class ValidationBins(Common):
         h_mc_lowdm             = f_in.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM" + err + self.syst + "_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
         h_mc_lowdm_highmet     = f_in.Get("nValidationBinLowDMHighMET_jetpt30/ZNuNu_nValidationBin_LowDM_HighMET" + err + self.syst + "_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata")
         h_mc_highdm            = f_in.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM" + err + self.syst + "_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
+
+        # if no systematic version exist, load nominal
+        if not h_mc_lowdm:
+            h_mc_lowdm   =  f_in.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
+        if not h_mc_lowdm_highmet:
+            h_mc_lowdm_highmet  =  f_in.Get("nValidationBinLowDMHighMET_jetpt30/ZNuNu_nValidationBin_LowDM_HighMET_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata")
+        if not h_mc_highdm:
+            h_mc_highdm  =  f_in.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
+
         if not h_mc_lowdm:
             print("something wrong with h_mc_lowdm")
         if not h_mc_lowdm_highmet:
@@ -538,6 +547,13 @@ class SearchBins(Common):
         h_mc_lowdm      = f_in.Get("nSearchBinLowDM_jetpt30/ZNuNu_nSearchBin_LowDM" + err + self.syst + "_jetpt30nSearchBinLowDM_jetpt30nSearchBinLowDM_jetpt30ZJetsToNuNu Search Bin Low DMdata")
         h_mc_highdm     = f_in.Get("nSearchBinHighDM_jetpt30/ZNuNu_nSearchBin_HighDM" + err + self.syst + "_jetpt30nSearchBinHighDM_jetpt30nSearchBinHighDM_jetpt30ZJetsToNuNu Search Bin High DMdata")
         
+        # if no systematic version exist, load nominal
+        if not h_mc_lowdm:
+            h_mc_lowdm  =  f_in.Get("nSearchBinLowDM_jetpt30/ZNuNu_nSearchBin_LowDM_jetpt30nSearchBinLowDM_jetpt30nSearchBinLowDM_jetpt30ZJetsToNuNu Search Bin Low DMdata")
+        if not h_mc_highdm:
+            h_mc_highdm  =  f_in.Get("nSearchBinHighDM_jetpt30/ZNuNu_nSearchBin_HighDM_jetpt30nSearchBinHighDM_jetpt30nSearchBinHighDM_jetpt30ZJetsToNuNu Search Bin High DMdata")
+
+
         # bin map
         b_map = {}
         b_map["lowdm"]   = self.low_dm_bins
@@ -638,12 +654,14 @@ class CRUnitBins(Common):
         self.binValues      = {}
         self.histograms     = {}
     
-    def getValues(self, file_name, era):
+    def getValues(self, file_name, syst, era):
+        self.syst = syst
         self.binValues[era] = {}
         
         for b in self.all_bins:
             self.binValues[era][b] = {}
 
+        print("debbuging: era = " + era)
         h_data_lowdm        = self.S.cr_unit_histos_summed[era]["LowDM"]["data"]
         h_data_highdm       = self.S.cr_unit_histos_summed[era]["HighDM"]["data"] 
         h_mc_back_lowdm     = self.S.cr_unit_histos_summed[era]["LowDM"]["mc_back"] 
@@ -666,6 +684,12 @@ class CRUnitBins(Common):
         h_map["lowdm"]["mc_back"]       = h_mc_back_lowdm
         h_map["highdm"]["mc_back"]      = h_mc_back_highdm
         
+        # A temporal solution by Angel
+        self.histograms[era] = h_map 
+
+        #-------------------------------
+        #-------------------------------
+
         # set bin values 
         self.setBinValues(b_map, h_map, era)
 
