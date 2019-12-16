@@ -146,7 +146,7 @@ def main():
     regions      = ["lowdm", "highdm"]
     directions   = ["up", "", "down"]
     bintypes     = ["validation", "search", "controlUnit"]
-    systematics  = ["jes","eff_restoptag_photon","eff_sb_photon","btag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup"] # all systematics available from Znunu_nValidationBin
+    systematics  = ["jes","eff_restoptag_photon","eff_sb_photon","btag","eff_sb","eff_toptag","eff_toptag_photon","eff_wtag","met_trig","pileup","photon_trig","prefire","photon_sf","eff_wtag_photon"] # all systematics available from Znunu_nValidationBin and nCRUnits
     # missing syst: prefire weight (2016, 2017), pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
 
     # histo_tmp[region][direction]
