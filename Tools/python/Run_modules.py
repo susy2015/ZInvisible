@@ -24,7 +24,6 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # syst_up_total   = sqrt ( sum ( syst_up_i ^2 ) ) 
 # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
 
-
 # use histogram which stores systematic errors
 def writeToConfFromSyst(outFile, searchBinMap, syst, h, region, offset):
     zinv = "znunu"
@@ -112,17 +111,6 @@ def main():
         if not os.path.exists(file_name):
             print "ERROR: The required file \"{0}\" does not exist.".format(file_name)
             return
-    
-    # old version
-    #if not os.path.exists(runs_json):
-    #    print "The json file \"{0}\" containing runs does not exist.".format(runs_json)
-    #    return
-    #if not os.path.exists(syst_json):
-    #    print "The json file \"{0}\" containing systematics does not exist.".format(syst_json)
-    #    return
-    #if not os.path.exists(units_json):
-    #    print "The json file \"{0}\" containing systematics does not exist.".format(units_json)
-    #    return
     
     # load json files
     with open(runs_json, "r") as input_file:
@@ -344,10 +332,6 @@ def main():
         # be careful with bin index, which needs to start at 1 in both lowdm and highdm
         b_i = 1
         for b in validationBinMap[region]:
-            # be careful with bin index, which needs to start at 1 in both lowdm and highdm
-            #b_i = int(b) + 1 
-            #if region == "highdm":
-            #    b_i = b_i - VB.low_dm_nbins
             p = histo["validation"][region][""].GetBinContent(b_i)
             syst_up_sum   = 0.0
             syst_down_sum = 0.0

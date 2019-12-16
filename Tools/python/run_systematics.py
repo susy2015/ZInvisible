@@ -53,8 +53,8 @@ def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
     setupHist(h,                title, x_title, "Events",       color_black,  10.0 ** -2, 10.0 ** 5)
     setupHist(h_up,             title, x_title, "Events",       color_red,    10.0 ** -2, 10.0 ** 5)
     setupHist(h_down,           title, x_title, "Events",       color_blue,   10.0 ** -2, 10.0 ** 5)
-    setupHist(h_ratio_up,       title, x_title, "syst / pred",  color_red,    0.0, 3.0)
-    setupHist(h_ratio_down,     title, x_title, "syst / pred",  color_blue,   0.0, 3.0)
+    setupHist(h_ratio_up,       title, x_title, "syst / pred",  color_red,    0.5, 1.5)
+    setupHist(h_ratio_down,     title, x_title, "syst / pred",  color_blue,   0.5, 1.5)
     
     # histograms
     c.cd(1)
@@ -71,7 +71,8 @@ def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
     legend.Draw()
     
     # ratios
-    c.cd(2)
+    pad = c.cd(2)
+    pad.SetGrid()
     h_ratio_up.Draw(draw_option)
     h_ratio_down.Draw(draw_option + " same")
     
