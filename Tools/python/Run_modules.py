@@ -5,6 +5,7 @@ import json
 import argparse
 import os
 import ROOT
+import run_systematics
 from Norm_lepton_zmass import Normalization
 from Shape_photon_met import Shape
 from Search_bins import  ValidationBins, SearchBins
@@ -22,7 +23,6 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # syst_down_i     = (p - p_down) / p
 # syst_up_total   = sqrt ( sum ( syst_up_i ^2 ) ) 
 # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
-
 
 # use histogram which stores systematic errors
 def writeToConfFromSyst(outFile, searchBinMap, syst, h, region, offset):
@@ -88,7 +88,7 @@ def main():
     ZvPhoton_syst_files = {}
     ZvPhoton_syst_files["validation"]   = "ZvsPhotonSyst_ValidationBins.root"
     ZvPhoton_syst_files["search"]       = "ZvsPhotonSyst_SearchBins.root" 
-   
+                    
     doUnits      = False
     draw         = False
     runMap       = {}
@@ -112,17 +112,6 @@ def main():
             print "ERROR: The required file \"{0}\" does not exist.".format(file_name)
             return
     
-    # old version
-    #if not os.path.exists(runs_json):
-    #    print "The json file \"{0}\" containing runs does not exist.".format(runs_json)
-    #    return
-    #if not os.path.exists(syst_json):
-    #    print "The json file \"{0}\" containing systematics does not exist.".format(syst_json)
-    #    return
-    #if not os.path.exists(units_json):
-    #    print "The json file \"{0}\" containing systematics does not exist.".format(units_json)
-    #    return
-    
     # load json files
     with open(runs_json, "r") as input_file:
         runMap  = json.load(input_file)
@@ -138,8 +127,8 @@ def main():
     runDir = runMap[era]
     result_file  = "condor/" + runDir + "/result.root"
     conf_file    = "results/zinv_syst_" + era + ".conf"
-    out_dir      = "angel_syst_plots/" 
-    syst_dir     = "angel_syst_plots/"
+    out_dir      = "caleb_syst_plots/" 
+    syst_dir     = "caleb_syst_plots/"
     variable     = "mc"
     regions      = ["lowdm", "highdm"]
     directions   = ["up", "", "down"]
@@ -233,57 +222,9 @@ def main():
             
             for bintype in bintypes:
                 for region in regions:
+                    # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
+                    run_systematics.plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, syst_dir)
                 
-                    # legend: TLegend(x1,y1,x2,y2)
-                    legend_x1 = 0.7 
-                    legend_x2 = 0.9 
-                    legend_y1 = 0.7 
-                    legend_y2 = 0.9 
-                    legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                
-                    c = ROOT.TCanvas("c", "c", 800, 800)
-                    c.Divide(1, 2)
-                
-                    c.cd(1)
-                    
-                    histo[bintype][region][""].SetLineColor(ROOT.kBlue)
-                    histo[bintype][region][""].SetTitle(bintype + " bins, " + syst + " systematic, " + era)
-                    histo[bintype][region][""].Draw("hist")
-                    histo[bintype][region]["up"].SetLineColor(ROOT.kRed)
-                    histo[bintype][region]["up"].Draw("same")
-                    histo[bintype][region]["down"].SetLineColor(ROOT.kViolet)
-                    histo[bintype][region]["down"].Draw("same")
-                    
-                    ROOT.gPad.SetLogy(1) # set log y
-                    
-                    legend.AddEntry(histo[bintype][region]["up"]   , "up"      , "l")
-                    legend.AddEntry(histo[bintype][region][""]     , "nominal" , "l")
-                    legend.AddEntry(histo[bintype][region]["down"] , "down"    , "l")
-                    legend.Draw()
-                    
-                    c.cd(2)
-                
-                    ratio_up = histo[bintype][region]["up"].Clone()
-                    ratio_up.Divide(histo[bintype][region][""])
-                    ratio_up.SetLineColor(ROOT.kRed)
-                    ratio_up.SetTitle(bintype + " bins, " + syst + " systematic, " + era)
-                
-                    ratio_down = histo[bintype][region]["down"].Clone()
-                    ratio_down.Divide(histo[bintype][region][""])
-                    ratio_down.SetLineColor(ROOT.kViolet)
-                
-                    ratio_up.GetYaxis().SetRangeUser(0,1.5)
-                
-                    ratio_up.Draw("hist")
-                    ratio_down.Draw("hist same")
-                    
-                    c.Update()
-                    
-                    file_name = syst_dir + bintype + "_syst_" + syst + "_" + region
-                    c.SaveAs(file_name + ".png")
-
-                    del c
-    
         # --- end loop over systematics
             
         #-------------------------------------------------------
@@ -347,6 +288,7 @@ def main():
     h_syst_down_lowdm   = ROOT.TH1F("syst_down_lowdm",  "syst_down_lowdm",  VB.low_dm_nbins,  VB.low_dm_start,  VB.low_dm_end  + 1)
     h_syst_down_highdm  = ROOT.TH1F("syst_down_highdm", "syst_down_highdm", VB.high_dm_nbins, VB.high_dm_start, VB.high_dm_end + 1)
     
+    # TODO: remove old code; use grid instead
     # Draw nice ratio at 1
     #    # horizontal line at 1
     #    ratio_1 = histo[region]["down"].Clone()
@@ -391,10 +333,6 @@ def main():
         # be careful with bin index, which needs to start at 1 in both lowdm and highdm
         b_i = 1
         for b in validationBinMap[region]:
-            # be careful with bin index, which needs to start at 1 in both lowdm and highdm
-            #b_i = int(b) + 1 
-            #if region == "highdm":
-            #    b_i = b_i - VB.low_dm_nbins
             p = histo["validation"][region][""].GetBinContent(b_i)
             syst_up_sum   = 0.0
             syst_down_sum = 0.0
@@ -431,9 +369,15 @@ def main():
             validationHistoMap[region]["down"].SetBinContent(   b_i, final_down )
             b_i += 1
         
-        # write histograms to file
+        # --- write histograms to file
         validationHistoMap[region]["up"].Write()
         validationHistoMap[region]["down"].Write()
+
+        # --- plot histograms
+                    
+        # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
+        mySyst = "total"
+        run_systematics.plot(histo["validation"][region][""], histo["validation"][region]["up"], histo["validation"][region]["down"], mySyst, "validation", region, era, syst_dir)
 
     f_out.Close()
 
