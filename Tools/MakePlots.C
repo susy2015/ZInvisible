@@ -1136,8 +1136,21 @@ int main(int argc, char* argv[])
             {"NB",  "nBottoms"     + varSuffix},
             {"NSV", "nSoftBottoms" + varSuffix},
             {"NJ",  "nJets"        + varSuffix},
+            {"MET", "metWithLL"               },
         };
-        std::vector<std::string> vec_norm_cuts_low_dm  = {"NBeq0_NSVeq0", "NBeq0_NSVge1", "NBeq1_NSVeq0", "NBeq1_NSVge1", "NBge1_NSVeq0", "NBge1_NSVge1", "NBge2"};
+        //std::vector<std::string> vec_norm_cuts_low_dm  = {"NBeq0_NSVeq0", "NBeq0_NSVge1", "NBeq1_NSVeq0", "NBeq1_NSVge1", "NBge1_NSVeq0", "NBge1_NSVge1", "NBge2"};
+        //search bins cuts
+        //std::vector<std::string> vec_norm_cuts_low_dm_search  = {"NBeq0_NSVeq0_METge450", "NBeq0_NSVge1_METge450", "NBeq1_NSVeq0_METge300", "NBeq1_NSVeq0_METge450", "NBeq1_NSVge1_METge300", "NBge2_METge300", "NBge2_METge450"}; 
+        // validation bins cuts 
+        //std::vector<std::string> vec_norm_cuts_low_dm_validation  = {"NBeq0_NSVeq0", "NBeq0_NSVge1", "NBeq1_NSVeq0", "NBeq1_NSVge1", "NBge1_NSVeq0", "NBge1_NSVge1", "NBge2"};
+
+        std::vector<std::string> vec_norm_cuts_low_dm = {
+            "NBeq0_NSVeq0_METge450", "NBeq0_NSVge1_METge450", "NBeq1_NSVeq0_METge300", "NBeq1_NSVeq0_METge450",      // search bins cuts
+            "NBeq1_NSVge1_METge300", "NBge2_METge300", "NBge2_METge450",                                             // search bins cuts
+            "NBeq0_NSVeq0_METge250", "NBeq0_NSVge1_METge250", "NBeq1_NSVeq0_METge250", "NBeq1_NSVge1_METge250",      // validation bin cuts
+            "NBge1_NSVeq0_METge250", "NBge1_NSVge1_METge250", "NBge2_METge250"                                       // validation bin cuts
+        };
+
         std::vector<std::string> vec_norm_cuts_high_dm = {"NBeq1", "NBeq2", "NBge2", "NBge3"};
         std::map<std::string, std::string> map_norm_cuts_low_dm;
         std::map<std::string, std::string> map_norm_cuts_high_dm;
