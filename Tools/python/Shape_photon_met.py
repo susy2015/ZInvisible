@@ -55,7 +55,7 @@ class Shape:
         self.color_black  = "black"
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
-    def getSimpleMap(self, region, nameTag, selectionTag, eraTag, variable):  # hack, use eraTag as a nominal tag 
+    def getSimpleMap(self, region, nameTag, selectionTag, eraTag, variable): # hack, eraTag is going to play the roll of nominal selectionTag
         if self.splitQCD:
             temp_map = {
                             "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Datadata",
@@ -79,14 +79,14 @@ class Shape:
                             "tW"                : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "tWstack",
                             "Rare"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Rarestack",
 
-                            "Data_0"              : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "Datadata",
-                            "GJets_0"             : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "#gamma+jetsstack",
-                            "QCD_0"               : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "QCDstack",
-                            "WJets_0"             : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "W(l#nu)+jetsstack",
-                            "TTG_0"               : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "t#bar{t}#gamma+jetsstack",
-                            "TTbar_0"             : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "t#bar{t}stack",
-                            "tW_0"                : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "tWstack",
-                            "Rare_0"              : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "Rarestack",
+                            "Data_0"            : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "Datadata",
+                            "GJets_0"           : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "#gamma+jetsstack",
+                            "QCD_0"             : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "QCDstack",
+                            "WJets_0"           : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "W(l#nu)+jetsstack",
+                            "TTG_0"             : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "t#bar{t}#gamma+jetsstack",
+                            "TTbar_0"           : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "t#bar{t}stack",
+                            "tW_0"              : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "tWstack",
+                            "Rare_0"            : "DataMC_Photon_" + region + nameTag + eraTag + 2 * variable + "Rarestack",
             }
         return temp_map
 
@@ -107,7 +107,7 @@ class Shape:
                 for selection in self.selections[bin_type][region]: 
                     err = "{}".format("" if not self.syst else "_")
                     selectionTag = "_" + selection + err + self.syst + "_jetpt30"
-                    eraTag       = "_" + selection + "_jetpt30"
+                    eraTag       = "_" + selection + "_jetpt30" # hack, eraTag is going to play the roll of nominal selectionTag
                     temp_map[bin_type][region][selection] = self.getSimpleMap(region, nameTag, selectionTag, eraTag, variable)
 
         return temp_map
@@ -118,9 +118,11 @@ class Shape:
         # CR units: different variable, no selections
         # DataMC_Photon_LowDM_nCRUnitLowDM_jetpt30_2016nCRUnitLowDM_drPhotonCleaned_jetpt30nCRUnitLowDM_drPhotonCleaned_jetpt30Datadata
         # DataMC_Photon_LowDM_nCRUnitLowDM_jetpt30_2016nCRUnitLowDM_drPhotonCleaned_jetpt30nCRUnitLowDM_drPhotonCleaned_jetpt30#gamma+jetsstack
+        # DataMC_Photon_LowDM_nCRUnitLowDM_btag_syst_up_jetpt30_2016nCRUnitLowDM_drPhotonCleaned_jetpt30nCRUnitLowDM_drPhotonCleaned_jetpt30#gamma+jetsstack
+        err = "{}".format("" if not self.syst else "_")
         nameTag = "_" + name
-        eraTag = "_" + era
-        selectionTag = "_jetpt30"
+        eraTag = "_jetpt30" # hack, eraTag is going to play the roll of nominal selectionTag
+        selectionTag = err + self.syst + "_jetpt30"
         temp_map = self.getSimpleMap(region, nameTag, selectionTag, eraTag, variable)
         return temp_map
     
@@ -453,6 +455,33 @@ class Shape:
                 h_tW                = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["tW"]                ) )
                 h_Rare              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Rare"]              ) )
                 
+                # if no systematic version exist, load nominal
+                #TODO: do not use Data_0; do not apply systematic to data
+                if not h_Data:
+                    h_Data              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Data_0"]            ) )
+                    #print self.histos[era][bin_type][region][selection]["Data"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["Data_0"]
+                if not h_GJets:
+                    h_GJets              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["GJets_0"]            ) )
+                    #print self.histos[era][bin_type][region][selection]["GJets"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["GJets_0"]
+                if not h_QCD:
+                    h_QCD              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_0"]            ) )
+                    #print self.histos[era][bin_type][region][selection]["QCD"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["QCD_0"]
+                if not h_WJets:
+                    h_WJets              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["WJets_0"]            ) )
+                    #print self.histos[era][bin_type][region][selection]["WJets"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["WJets_0"]
+                if not h_TTG:
+                    h_TTG              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTG_0"]            ) )
+                    #print self.histos[era][bin_type][region][selection]["TTG"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["TTG_0"]
+                if not h_TTbar:
+                    h_TTbar              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTbar_0"]            ) )
+                    #print self.histos[era][bin_type][region][selection]["TTbar"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["TTbar_0"]
+                if not h_tW:
+                    h_tW              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["tW_0"]            ) )
+                    #print self.histos[era][bin_type][region][selection]["tW"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["tW_0"]
+                if not h_Rare:
+                    h_Rare              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Rare_0"]            ) )
+                        #print self.histos[era][bin_type][region][selection]["Rare"] + "\n replaced with --------> \n " + self.histos[era][bin_type][region][selection]["Rare_0"]
+
                 # MC_background
                 if self.splitQCD:
                     h_back = h_QCD_Fragmented.Clone("h_back")
@@ -473,6 +502,9 @@ class Shape:
             # WARNING
             # - histograms will be deleted when TFile is closed
             # - histograms need to be copied to use them later on 
+            print("\n\n\n\n")
+            print("debbuging in Shape...py: era = " + era)
+            print("\n\n\n\n")
             self.cr_unit_histos_summed[era] = copy.deepcopy(h_map)
 
 
