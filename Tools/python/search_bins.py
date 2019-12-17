@@ -355,10 +355,13 @@ class Common:
             # average weight:               avg_w = sigma^2 / p 
             # effective number of events:   N_eff = p / avg_w
             
-            p      = n * s * m
-            x_list = [n, s, m]
-            dx_list = [n_error, s_error, m_error]
-            p_error = getMultiplicationErrorList(p, x_list, dx_list)
+            # do not propagate Rz statistical error because total Rz uncertainty will be included in Rz systematic histogram
+            # do not propagate Sgamma statistical error because Higgs Combine will do shape factor for us
+            p       = n * s * m
+            #x_list  = [n, s, m]
+            #dx_list = [n_error, s_error, m_error]
+            #p_error = getMultiplicationErrorList(p, x_list, dx_list)
+            p_error = m_error
             # error < 0.0 due to error code
             if p_error < 0.0:
                 p_error = ERROR_ZERO 
