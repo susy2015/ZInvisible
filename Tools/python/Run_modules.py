@@ -9,7 +9,7 @@ import run_systematics
 from Norm_lepton_zmass import Normalization
 from Shape_photon_met import Shape
 from Search_bins import  ValidationBins, SearchBins, CRUnitBins
-from tools import invert
+from tools import invert, setupHist
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
@@ -130,7 +130,6 @@ def main():
     result_file  = "condor/" + runDir + "/result.root"
     conf_file    = "results/zinv_syst_" + era + ".conf"
     out_dir      = "caleb_syst_plots/" 
-    syst_dir     = "caleb_syst_plots/"
     variable     = "mc"
     regions      = ["lowdm", "highdm"]
     directions   = ["up", "", "down"]
@@ -173,8 +172,6 @@ def main():
     histo["validation"]["highdm"][""]    =  VB.histograms[era]["highdm"][variable].Clone()
     histo["search"]["lowdm"][""]         =  SB.histograms[era]["lowdm"][variable].Clone()
     histo["search"]["highdm"][""]        =  SB.histograms[era]["highdm"][variable].Clone()
-    print("debbuging ")
-    print(CRU.histograms.keys())
     histo["controlUnit"]["highdm"][""]   =  CRU.histograms[era]["highdm"]["mc_gjets"].Clone()
     histo["controlUnit"]["lowdm"][""]    =  CRU.histograms[era]["lowdm"]["mc_gjets"].Clone()
     
@@ -243,7 +240,7 @@ def main():
             for bintype in bintypes:
                 for region in regions:
                     # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
-                    run_systematics.plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, syst_dir)
+                    run_systematics.plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir)
                 
         # --- end loop over systematics
             
@@ -341,6 +338,11 @@ def main():
     print "# validation bin systematics"
     debug = False
     for region in regions:
+        # get histograms for this region
+        h_total_syst_up   = validationHistoMap[region]["up"]
+        h_total_syst_down = validationHistoMap[region]["down"]
+
+
         print "--- {0} ---".format(region)
         # DEBUG
         if debug:
@@ -385,19 +387,64 @@ def main():
             final_up   = 1.0 + syst_up_total
             final_down = 1.0 - syst_down_total
             print "bin {0}, pred={1}, syst_up={2}, syst_down={3}".format(b_i, p, final_up, final_down)
-            validationHistoMap[region]["up"].SetBinContent(     b_i, final_up   )
-            validationHistoMap[region]["down"].SetBinContent(   b_i, final_down )
+            h_total_syst_up.SetBinContent(     b_i, final_up   )
+            h_total_syst_down.SetBinContent(   b_i, final_down )
             b_i += 1
         
         # --- write histograms to file
-        validationHistoMap[region]["up"].Write()
-        validationHistoMap[region]["down"].Write()
+        h_total_syst_up.Write()
+        h_total_syst_down.Write()
 
         # --- plot histograms
                     
+        # THIS IS NOT THE PLOT YOU ARE LOOKING FOR
         # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
+        #mySyst = "total"
+        #run_systematics.plot(histo["validation"][region][""], histo["validation"][region]["up"], histo["validation"][region]["down"], mySyst, "validation", region, era, out_dir)
+
+        # correct plot
+        bintype = "validation"
         mySyst = "total"
-        run_systematics.plot(histo["validation"][region][""], histo["validation"][region]["up"], histo["validation"][region]["down"], mySyst, "validation", region, era, syst_dir)
+        
+        eraTag = "_" + era
+        draw_option = "hist"
+        # colors
+        color_red    = "vermillion"
+        color_blue   = "electric blue"
+        color_green  = "irish green" 
+        color_purple = "violet"
+        color_black  = "black"
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.6
+        legend_x2 = 0.9 
+        legend_y1 = 0.7
+        legend_y2 = 0.9 
+    
+        c = ROOT.TCanvas("c", "c", 800, 800)
+        name = "{0}_{1}_syst".format(bintype, mySyst)
+        
+        title = "Z to Invisible: " + name + " in " + region + " for " + era
+        x_title = "Validation Bins"
+        setupHist(h_total_syst_up,       title, x_title, "total systematic",  color_red,    0.0, 2.0)
+        setupHist(h_total_syst_down,   title, x_title, "total systematic",  color_blue,   0.0, 2.0)
+        
+        # draw histograms
+        h_total_syst_up.Draw(draw_option)
+        h_total_syst_down.Draw(draw_option + " same")
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        legend.AddEntry(h_total_syst_up,           "syst up",                  "l")
+        legend.AddEntry(h_total_syst_down,         "syst down",                "l")
+        legend.Draw()
+        
+        
+        # save histograms
+        plot_name = out_dir + name + "_" + region + eraTag
+        c.Update()
+        c.SaveAs(plot_name + ".png")
+        del c
 
     f_out.Close()
 
