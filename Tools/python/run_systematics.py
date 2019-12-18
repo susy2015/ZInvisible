@@ -42,7 +42,6 @@ def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
     
     name = "{0}_{1}_syst".format(bintype, mySyst)
     
-    # draw histograms
     h_ratio_up      = h_up.Clone("h_ratio_up") 
     h_ratio_down    = h_down.Clone("h_ratio_down") 
     h_ratio_up.Divide(h)
@@ -59,6 +58,7 @@ def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
     # histograms
     c.cd(1)
     ROOT.gPad.SetLogy(1) # set log y
+    # draw
     h.Draw(draw_option)
     h_up.Draw(draw_option + " same")
     h_down.Draw(draw_option + " same")
@@ -66,13 +66,14 @@ def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
     # legend: TLegend(x1,y1,x2,y2)
     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
     legend.AddEntry(h,              "Z#rightarrow#nu#nu MC",  "l")
-    legend.AddEntry(h_up,           "syst up",                  "l")
-    legend.AddEntry(h_down,         "syst down",                "l")
+    legend.AddEntry(h_up,           "syst up",                "l")
+    legend.AddEntry(h_down,         "syst down",              "l")
     legend.Draw()
     
     # ratios
     pad = c.cd(2)
     pad.SetGrid()
+    # draw
     h_ratio_up.Draw(draw_option)
     h_ratio_down.Draw(draw_option + " same")
     

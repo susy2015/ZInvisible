@@ -125,8 +125,9 @@ def main():
     # map search bin numbers to string names
     searchBinMap = invert(unitMap["binNum"])
 
+    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
     era          = "Run2"
-    runDir = runMap[era]
+    runDir       = runMap[era]
     result_file  = "condor/" + runDir + "/result.root"
     conf_file    = "results/zinv_syst_" + era + ".conf"
     out_dir      = "caleb_syst_plots/" 
@@ -135,10 +136,11 @@ def main():
     directions   = ["up", "", "down"]
     bintypes     = ["validation", "search", "controlUnit"]
     # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
-    #systematics_search  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
-    #systematics_cru  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
-    systematics_search  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup"]
-    systematics_cru  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","photon_sf"]
+    systematics_search  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
+    systematics_cru  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
+    # without prefire;
+    #systematics_search  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup"]
+    #systematics_cru  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","photon_sf"]
     systematics = list(set(systematics_search)| set(systematics_cru))
     # missing syst: prefire weight (2016, 2017), pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
 
@@ -154,22 +156,43 @@ def main():
     #-------------------------------------------------------
     # Class instanceses summoning 
     #-------------------------------------------------------
-    
+    # 2018 only
+    # used to fix prefire because it does not have a weight or syst. in 2018
+    #N                = Normalization(out_dir, verbose)
+    #S                = Shape(out_dir, draw, doUnits, verbose)
+    #VB_2018_PreHEM   = ValidationBins(N, S, "2018_PreHEM", out_dir, verbose)
+    #SB_2018_PreHEM   = SearchBins(N, S, "2018_PreHEM", out_dir, verbose)
+    #CRU_2018_PreHEM  = CRUnitBins(N, S, "2018_PreHEM", out_dir, verbose)
+    #N                = Normalization(out_dir, verbose)
+    #S                = Shape(out_dir, draw, doUnits, verbose)
+    #VB_2018_PostHEM  = ValidationBins(N, S, "2018_PostHEM", out_dir, verbose)
+    #SB_2018_PostHEM  = SearchBins(N, S, "2018_PostHEM", out_dir, verbose)
+    #CRU_2018_PostHEM = CRUnitBins(N, S, "2018_PostHEM", out_dir, verbose)
+
+
+    # total syst. calculate for Run 2
+    # however, loop over all eras to fix syst. not present in all eras
+
+
     N   =  Normalization(out_dir, verbose)
     S   =  Shape(out_dir, draw, doUnits, verbose)
-    VB  =  ValidationBins(N, S, era, out_dir, verbose)
-    SB  =  SearchBins(N, S, era, out_dir, verbose)
-    CRU =  CRUnitBins(N, S, era, out_dir, verbose)
+    VB  =  ValidationBins(N, S, eras, out_dir, verbose)
+    SB  =  SearchBins(N, S, eras, out_dir, verbose)
+    CRU =  CRUnitBins(N, S, eras, out_dir, verbose)
     
     #-------------------------------------------------------
     # Normal predictions (no systematics) 
     #-------------------------------------------------------
     
-    N.getNormAndError(result_file, "", era)
-    S.getShape(result_file, "", era)
-    VB.getValues(result_file, "", era)
-    SB.getValues(result_file, "", era)
-    CRU.getValues(result_file, "", era)
+    # warning; be careful to not use era and result_file (those are only for total era)
+    for e in eras:
+        d = runMap[e]
+        r  = "condor/" + d + "/result.root"
+        N.getNormAndError(r, "", e)
+        S.getShape(r, "", e)
+        VB.getValues(r, "", e)
+        SB.getValues(r, "", e)
+        CRU.getValues(r, "", e)
     
     histo["validation"]["lowdm"][""]     =  VB.histograms[era]["lowdm"][variable].Clone()
     histo["validation"]["highdm"][""]    =  VB.histograms[era]["highdm"][variable].Clone()
@@ -199,6 +222,22 @@ def main():
             histo["search"]["lowdm"]["up"]        =  SB.histograms[era]["lowdm"][variable].Clone()
             histo["controlUnit"]["highdm"]["up"]  =  CRU.histograms[era]["highdm"]["mc_gjets"].Clone()
             histo["controlUnit"]["lowdm"]["up"]   =  CRU.histograms[era]["lowdm"]["mc_gjets"].Clone()
+            
+            # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
+            if syst == "prefire":
+                histo["validation"]["highdm"]["up"].Add(    VB.histograms["2018_PreHEM"]["highdm"][variable]        )
+                histo["validation"]["lowdm"]["up"].Add(     VB.histograms["2018_PreHEM"]["lowdm"][variable]         )
+                histo["search"]["highdm"]["up"].Add(        SB.histograms["2018_PreHEM"]["highdm"][variable]        )
+                histo["search"]["lowdm"]["up"].Add(         SB.histograms["2018_PreHEM"]["lowdm"][variable]         )
+                histo["controlUnit"]["highdm"]["up"].Add(   CRU.histograms["2018_PreHEM"]["highdm"]["mc_gjets"]     )
+                histo["controlUnit"]["lowdm"]["up"].Add(    CRU.histograms["2018_PreHEM"]["lowdm"]["mc_gjets"]      )
+                histo["validation"]["highdm"]["up"].Add(    VB.histograms["2018_PostHEM"]["highdm"][variable]       )
+                histo["validation"]["lowdm"]["up"].Add(     VB.histograms["2018_PostHEM"]["lowdm"][variable]        )
+                histo["search"]["highdm"]["up"].Add(        SB.histograms["2018_PostHEM"]["highdm"][variable]       )
+                histo["search"]["lowdm"]["up"].Add(         SB.histograms["2018_PostHEM"]["lowdm"][variable]        )
+                histo["controlUnit"]["highdm"]["up"].Add(   CRU.histograms["2018_PostHEM"]["highdm"]["mc_gjets"]    )
+                histo["controlUnit"]["lowdm"]["up"].Add(    CRU.histograms["2018_PostHEM"]["lowdm"]["mc_gjets"]     )
+            
             syst_histo[syst]["validation"]["lowdm"]["up"]    = histo["validation"]["lowdm"]["up"]
             syst_histo[syst]["validation"]["highdm"]["up"]   = histo["validation"]["highdm"]["up"]
             syst_histo[syst]["search"]["lowdm"]["up"]        = histo["search"]["lowdm"]["up"]
@@ -219,6 +258,22 @@ def main():
             histo["search"]["lowdm"]["down"]        =  SB.histograms[era]["lowdm"][variable].Clone()
             histo["controlUnit"]["highdm"]["down"]  =  CRU.histograms[era]["highdm"]["mc_gjets"].Clone()
             histo["controlUnit"]["lowdm"]["down"]   =  CRU.histograms[era]["lowdm"]["mc_gjets"].Clone()
+            
+            # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
+            if syst == "prefire":
+                histo["validation"]["highdm"]["down"].Add(  VB.histograms["2018_PreHEM"]["highdm"][variable]        )
+                histo["validation"]["lowdm"]["down"].Add(   VB.histograms["2018_PreHEM"]["lowdm"][variable]         )
+                histo["search"]["highdm"]["down"].Add(      SB.histograms["2018_PreHEM"]["highdm"][variable]        )
+                histo["search"]["lowdm"]["down"].Add(       SB.histograms["2018_PreHEM"]["lowdm"][variable]         )
+                histo["controlUnit"]["highdm"]["down"].Add( CRU.histograms["2018_PreHEM"]["highdm"]["mc_gjets"]     )
+                histo["controlUnit"]["lowdm"]["down"].Add(  CRU.histograms["2018_PreHEM"]["lowdm"]["mc_gjets"]      )
+                histo["validation"]["highdm"]["down"].Add(  VB.histograms["2018_PostHEM"]["highdm"][variable]       )
+                histo["validation"]["lowdm"]["down"].Add(   VB.histograms["2018_PostHEM"]["lowdm"][variable]        )
+                histo["search"]["highdm"]["down"].Add(      SB.histograms["2018_PostHEM"]["highdm"][variable]       )
+                histo["search"]["lowdm"]["down"].Add(       SB.histograms["2018_PostHEM"]["lowdm"][variable]        )
+                histo["controlUnit"]["highdm"]["down"].Add( CRU.histograms["2018_PostHEM"]["highdm"]["mc_gjets"]    )
+                histo["controlUnit"]["lowdm"]["down"].Add(  CRU.histograms["2018_PostHEM"]["lowdm"]["mc_gjets"]     )
+            
             syst_histo[syst]["validation"]["lowdm"]["down"]    =  histo["validation"]["lowdm"]["down"]
             syst_histo[syst]["validation"]["highdm"]["down"]   =  histo["validation"]["highdm"]["down"]
             syst_histo[syst]["search"]["lowdm"]["down"]        =  histo["search"]["lowdm"]["down"]
