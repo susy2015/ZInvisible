@@ -134,8 +134,11 @@ def main():
     regions      = ["lowdm", "highdm"]
     directions   = ["up", "", "down"]
     bintypes     = ["validation", "search", "controlUnit"]
-    systematics_search  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
-    systematics_cru  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
+    # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
+    #systematics_search  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
+    #systematics_cru  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
+    systematics_search  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup"]
+    systematics_cru  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","photon_sf"]
     systematics = list(set(systematics_search)| set(systematics_cru))
     # missing syst: prefire weight (2016, 2017), pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
 
