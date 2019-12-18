@@ -366,14 +366,16 @@ class Common:
             if p_error < 0.0:
                 p_error = ERROR_ZERO 
             if p == 0:
-                print "WARNING: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
+                if self.verbose:
+                    print "WARNING: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
                 avg_w   = ERROR_ZERO
             else:
                 avg_w   = (p_error ** 2) / p
             n_eff = p / avg_w
             n_eff_final = int(n_eff)
             if n_eff_final == 0:
-                print "WARNING: bin {0}, n_eff_final = {1}; leaving avg weight unchanged".format(b, n_eff_final)
+                if self.verbose:
+                    print "WARNING: bin {0}, n_eff_final = {1}; leaving avg weight unchanged".format(b, n_eff_final)
                 avg_w_final = avg_w
             else:
                 avg_w_final = p / n_eff_final
