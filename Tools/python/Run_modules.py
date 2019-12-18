@@ -9,7 +9,7 @@ import run_systematics
 from Norm_lepton_zmass import Normalization
 from Shape_photon_met import Shape
 from Search_bins import  ValidationBins, SearchBins, CRUnitBins
-from tools import invert
+from tools import invert, setupHist
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
@@ -125,20 +125,21 @@ def main():
     # map search bin numbers to string names
     searchBinMap = invert(unitMap["binNum"])
 
+    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
     era          = "Run2"
-    runDir = runMap[era]
+    runDir       = runMap[era]
     result_file  = "condor/" + runDir + "/result.root"
     conf_file    = "results/zinv_syst_" + era + ".conf"
     out_dir      = "caleb_syst_plots/" 
-    syst_dir     = "caleb_syst_plots/"
     variable     = "mc"
     regions      = ["lowdm", "highdm"]
     directions   = ["up", "", "down"]
     bintypes     = ["validation", "search", "controlUnit"]
+    # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
     systematics_search  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
     systematics_cru  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
     systematics = list(set(systematics_search)| set(systematics_cru))
-    # missing syst: prefire weight (2016, 2017), pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
+    # missing syst: pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
 
     # histo_tmp[region][direction]
     histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
@@ -152,29 +153,33 @@ def main():
     #-------------------------------------------------------
     # Class instanceses summoning 
     #-------------------------------------------------------
-    
+
     N   =  Normalization(out_dir, verbose)
     S   =  Shape(out_dir, draw, doUnits, verbose)
-    VB  =  ValidationBins(N, S, era, out_dir, verbose)
-    SB  =  SearchBins(N, S, era, out_dir, verbose)
-    CRU =  CRUnitBins(N, S, era, out_dir, verbose)
+    VB  =  ValidationBins(N, S, eras, out_dir, verbose)
+    SB  =  SearchBins(N, S, eras, out_dir, verbose)
+    CRU =  CRUnitBins(N, S, eras, out_dir, verbose)
     
     #-------------------------------------------------------
     # Normal predictions (no systematics) 
     #-------------------------------------------------------
     
-    N.getNormAndError(result_file, "", era)
-    S.getShape(result_file, "", era)
-    VB.getValues(result_file, "", era)
-    SB.getValues(result_file, "", era)
-    CRU.getValues(result_file, "", era)
+    # total syst. calculated for Run 2
+    # however, loop over all eras to fix syst. not present in all eras (e.g. prefire)
+    # warning; be careful to not use era and result_file (those are only for total era)
+    for e in eras:
+        d = runMap[e]
+        r  = "condor/" + d + "/result.root"
+        N.getNormAndError(r, "", e)
+        S.getShape(r, "", e)
+        VB.getValues(r, "", e)
+        SB.getValues(r, "", e)
+        CRU.getValues(r, "", e)
     
     histo["validation"]["lowdm"][""]     =  VB.histograms[era]["lowdm"][variable].Clone()
     histo["validation"]["highdm"][""]    =  VB.histograms[era]["highdm"][variable].Clone()
     histo["search"]["lowdm"][""]         =  SB.histograms[era]["lowdm"][variable].Clone()
     histo["search"]["highdm"][""]        =  SB.histograms[era]["highdm"][variable].Clone()
-    print("debbuging ")
-    print(CRU.histograms.keys())
     histo["controlUnit"]["highdm"][""]   =  CRU.histograms[era]["highdm"]["mc_gjets"].Clone()
     histo["controlUnit"]["lowdm"][""]    =  CRU.histograms[era]["lowdm"]["mc_gjets"].Clone()
     
@@ -199,6 +204,22 @@ def main():
             histo["search"]["lowdm"]["up"]        =  SB.histograms[era]["lowdm"][variable].Clone()
             histo["controlUnit"]["highdm"]["up"]  =  CRU.histograms[era]["highdm"]["mc_gjets"].Clone()
             histo["controlUnit"]["lowdm"]["up"]   =  CRU.histograms[era]["lowdm"]["mc_gjets"].Clone()
+            
+            # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
+            if syst == "prefire":
+                histo["validation"]["highdm"]["up"].Add(    VB.histograms["2018_PreHEM"]["highdm"][variable]        )
+                histo["validation"]["lowdm"]["up"].Add(     VB.histograms["2018_PreHEM"]["lowdm"][variable]         )
+                histo["search"]["highdm"]["up"].Add(        SB.histograms["2018_PreHEM"]["highdm"][variable]        )
+                histo["search"]["lowdm"]["up"].Add(         SB.histograms["2018_PreHEM"]["lowdm"][variable]         )
+                histo["controlUnit"]["highdm"]["up"].Add(   CRU.histograms["2018_PreHEM"]["highdm"]["mc_gjets"]     )
+                histo["controlUnit"]["lowdm"]["up"].Add(    CRU.histograms["2018_PreHEM"]["lowdm"]["mc_gjets"]      )
+                histo["validation"]["highdm"]["up"].Add(    VB.histograms["2018_PostHEM"]["highdm"][variable]       )
+                histo["validation"]["lowdm"]["up"].Add(     VB.histograms["2018_PostHEM"]["lowdm"][variable]        )
+                histo["search"]["highdm"]["up"].Add(        SB.histograms["2018_PostHEM"]["highdm"][variable]       )
+                histo["search"]["lowdm"]["up"].Add(         SB.histograms["2018_PostHEM"]["lowdm"][variable]        )
+                histo["controlUnit"]["highdm"]["up"].Add(   CRU.histograms["2018_PostHEM"]["highdm"]["mc_gjets"]    )
+                histo["controlUnit"]["lowdm"]["up"].Add(    CRU.histograms["2018_PostHEM"]["lowdm"]["mc_gjets"]     )
+            
             syst_histo[syst]["validation"]["lowdm"]["up"]    = histo["validation"]["lowdm"]["up"]
             syst_histo[syst]["validation"]["highdm"]["up"]   = histo["validation"]["highdm"]["up"]
             syst_histo[syst]["search"]["lowdm"]["up"]        = histo["search"]["lowdm"]["up"]
@@ -219,6 +240,22 @@ def main():
             histo["search"]["lowdm"]["down"]        =  SB.histograms[era]["lowdm"][variable].Clone()
             histo["controlUnit"]["highdm"]["down"]  =  CRU.histograms[era]["highdm"]["mc_gjets"].Clone()
             histo["controlUnit"]["lowdm"]["down"]   =  CRU.histograms[era]["lowdm"]["mc_gjets"].Clone()
+            
+            # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
+            if syst == "prefire":
+                histo["validation"]["highdm"]["down"].Add(  VB.histograms["2018_PreHEM"]["highdm"][variable]        )
+                histo["validation"]["lowdm"]["down"].Add(   VB.histograms["2018_PreHEM"]["lowdm"][variable]         )
+                histo["search"]["highdm"]["down"].Add(      SB.histograms["2018_PreHEM"]["highdm"][variable]        )
+                histo["search"]["lowdm"]["down"].Add(       SB.histograms["2018_PreHEM"]["lowdm"][variable]         )
+                histo["controlUnit"]["highdm"]["down"].Add( CRU.histograms["2018_PreHEM"]["highdm"]["mc_gjets"]     )
+                histo["controlUnit"]["lowdm"]["down"].Add(  CRU.histograms["2018_PreHEM"]["lowdm"]["mc_gjets"]      )
+                histo["validation"]["highdm"]["down"].Add(  VB.histograms["2018_PostHEM"]["highdm"][variable]       )
+                histo["validation"]["lowdm"]["down"].Add(   VB.histograms["2018_PostHEM"]["lowdm"][variable]        )
+                histo["search"]["highdm"]["down"].Add(      SB.histograms["2018_PostHEM"]["highdm"][variable]       )
+                histo["search"]["lowdm"]["down"].Add(       SB.histograms["2018_PostHEM"]["lowdm"][variable]        )
+                histo["controlUnit"]["highdm"]["down"].Add( CRU.histograms["2018_PostHEM"]["highdm"]["mc_gjets"]    )
+                histo["controlUnit"]["lowdm"]["down"].Add(  CRU.histograms["2018_PostHEM"]["lowdm"]["mc_gjets"]     )
+            
             syst_histo[syst]["validation"]["lowdm"]["down"]    =  histo["validation"]["lowdm"]["down"]
             syst_histo[syst]["validation"]["highdm"]["down"]   =  histo["validation"]["highdm"]["down"]
             syst_histo[syst]["search"]["lowdm"]["down"]        =  histo["search"]["lowdm"]["down"]
@@ -243,7 +280,7 @@ def main():
             for bintype in bintypes:
                 for region in regions:
                     # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
-                    run_systematics.plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, syst_dir)
+                    run_systematics.plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir)
                 
         # --- end loop over systematics
             
@@ -292,8 +329,6 @@ def main():
     # Calculate total systematic up/down
     #-------------------------------------------------------
 
-    #TODO: combined all systematics to get total syst up/down
-    # first combined syst in validation bins and give to Hui
     # loop over validation bins
     # loop over systematics
     # syst_up_i       = (p_up - p)   / p
@@ -308,19 +343,6 @@ def main():
     h_syst_down_lowdm   = ROOT.TH1F("syst_down_lowdm",  "syst_down_lowdm",  VB.low_dm_nbins,  VB.low_dm_start,  VB.low_dm_end  + 1)
     h_syst_down_highdm  = ROOT.TH1F("syst_down_highdm", "syst_down_highdm", VB.high_dm_nbins, VB.high_dm_start, VB.high_dm_end + 1)
     
-    # TODO: remove old code; use grid instead
-    # Draw nice ratio at 1
-    #    # horizontal line at 1
-    #    ratio_1 = histo[region]["down"].Clone()
-    #    ratio_1.SetLineColor(ROOT.kBlack)
-    #    for k in range(0,45):
-    #        ratio_1.SetBinContent(k, 1)
-
-    #    ratio_up.GetYaxis().SetRangeUser(0,1.5)
-    #
-    #    ratio_up.Draw("hist")
-    #    ratio_down.Draw("hist same")
-    #    ratio_1.Draw("hist same")
     validationBinMap = {}
     validationBinMap["lowdm"]   = VB.low_dm_bins
     validationBinMap["highdm"]  = VB.high_dm_bins
@@ -341,7 +363,12 @@ def main():
     print "# validation bin systematics"
     debug = False
     for region in regions:
-        print "--- {0} ---".format(region)
+        # get histograms for this region
+        h_total_syst_up   = validationHistoMap[region]["up"]
+        h_total_syst_down = validationHistoMap[region]["down"]
+
+
+        #print "--- {0} ---".format(region)
         # DEBUG
         if debug:
             #systHistoMap[bintype][region][syst]
@@ -372,10 +399,10 @@ def main():
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
                 # syst from root file
-                # symmetric error with up = down
                 #systHistoMap[bintype][region][syst]
                 for syst in systHistoMap["validation"][region]:
                     error = systHistoMap["validation"][region][syst].GetBinContent(b_i)
+                    # symmetric error with up = down
                     syst_up   = error  
                     syst_down = error  
                     syst_up_sum     += syst_up**2
@@ -384,20 +411,60 @@ def main():
             syst_down_total = np.sqrt(syst_down_sum)
             final_up   = 1.0 + syst_up_total
             final_down = 1.0 - syst_down_total
-            print "bin {0}, pred={1}, syst_up={2}, syst_down={3}".format(b_i, p, final_up, final_down)
-            validationHistoMap[region]["up"].SetBinContent(     b_i, final_up   )
-            validationHistoMap[region]["down"].SetBinContent(   b_i, final_down )
+            #print "bin {0}, pred={1}, syst_up={2}, syst_down={3}".format(b_i, p, final_up, final_down)
+            h_total_syst_up.SetBinContent(     b_i, final_up   )
+            h_total_syst_down.SetBinContent(   b_i, final_down )
             b_i += 1
         
         # --- write histograms to file
-        validationHistoMap[region]["up"].Write()
-        validationHistoMap[region]["down"].Write()
+        h_total_syst_up.Write()
+        h_total_syst_down.Write()
 
         # --- plot histograms
                     
-        # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
+        # correct plot
+        bintype = "validation"
         mySyst = "total"
-        run_systematics.plot(histo["validation"][region][""], histo["validation"][region]["up"], histo["validation"][region]["down"], mySyst, "validation", region, era, syst_dir)
+        
+        eraTag = "_" + era
+        draw_option = "hist"
+        # colors
+        color_red    = "vermillion"
+        color_blue   = "electric blue"
+        color_green  = "irish green" 
+        color_purple = "violet"
+        color_black  = "black"
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.6
+        legend_x2 = 0.9 
+        legend_y1 = 0.7
+        legend_y2 = 0.9 
+    
+        c = ROOT.TCanvas("c", "c", 800, 800)
+        name = "{0}_{1}_syst".format(bintype, mySyst)
+        
+        title = "Z to Invisible: " + name + " in " + region + " for " + era
+        x_title = "Validation Bins"
+        setupHist(h_total_syst_up,       title, x_title, "total systematic",  color_red,    0.0, 2.0)
+        setupHist(h_total_syst_down,   title, x_title, "total systematic",  color_blue,   0.0, 2.0)
+        
+        # draw histograms
+        h_total_syst_up.Draw(draw_option)
+        h_total_syst_down.Draw(draw_option + " same")
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        legend.AddEntry(h_total_syst_up,           "syst up",                  "l")
+        legend.AddEntry(h_total_syst_down,         "syst down",                "l")
+        legend.Draw()
+        
+        
+        # save histograms
+        plot_name = out_dir + name + "_" + region + eraTag
+        c.Update()
+        c.SaveAs(plot_name + ".png")
+        del c
 
     f_out.Close()
 

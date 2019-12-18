@@ -185,7 +185,7 @@ class Common:
     # ---------------------------------------------------------------------- #
     def makeHistos(self, output_file, x_title, name, era):
         debug = False
-        print "Running makeHistos() to make {0}".format(output_file)
+        #print "Running makeHistos() to make {0}".format(output_file)
         eraTag = "_" + era
         draw_option = "hist error"
         f_out = ROOT.TFile(output_file, "recreate")
@@ -357,14 +357,16 @@ class Common:
             if p_error < 0.0:
                 p_error = ERROR_ZERO 
             if p == 0:
-                print "WARNING: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
+                if self.verbose:
+                    print "WARNING: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
                 avg_w   = ERROR_ZERO
             else:
                 avg_w   = (p_error ** 2) / p
             n_eff = p / avg_w
             n_eff_final = int(n_eff)
             if n_eff_final == 0:
-                print "WARNING: bin {0}, n_eff_final = {1}; leaving avg weight unchanged".format(b, n_eff_final)
+                if self.verbose:
+                    print "WARNING: bin {0}, n_eff_final = {1}; leaving avg weight unchanged".format(b, n_eff_final)
                 avg_w_final = avg_w
             else:
                 avg_w_final = p / n_eff_final
@@ -661,7 +663,6 @@ class CRUnitBins(Common):
         for b in self.all_bins:
             self.binValues[era][b] = {}
 
-        print("debbuging: era = " + era)
         h_data_lowdm        = self.S.cr_unit_histos_summed[era]["LowDM"]["data"]
         h_data_highdm       = self.S.cr_unit_histos_summed[era]["HighDM"]["data"] 
         h_mc_back_lowdm     = self.S.cr_unit_histos_summed[era]["LowDM"]["mc_back"] 
