@@ -371,6 +371,13 @@ def main():
                     syst_down = (p - p_down) / p
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
+                    if syst == "jes":
+                        print("JES line: " + "\n    b = " +  str(b) + "\n    b_i = " + str(b_i) + "\n    syst_up = " + str(syst_up) + "\n    syst_down = " + str(syst_down))
+                        print("\n    syst_up_sum = " + str(syst_up_sum))
+                        print("\n    syst_down_sum = " + str(syst_down_sum))
+                    #if b == str(11):
+                    #    print(syst)
+                    #    print(str(syst_up) + " ----> " + str(syst_up_sum) + "\n\n")
                 # syst from root file
                 # symmetric error with up = down
                 #systHistoMap[bintype][region][syst]
@@ -382,9 +389,12 @@ def main():
                     syst_down_sum   += syst_down**2
             syst_up_total   = np.sqrt(syst_up_sum)
             syst_down_total = np.sqrt(syst_down_sum)
+            print("Printing total")
+            print("    syst_up_total = " + str(syst_up_total))
+            print("    syst_down_total = " + str(syst_down_total))
             final_up   = 1.0 + syst_up_total
             final_down = 1.0 - syst_down_total
-            print "bin {0}, pred={1}, syst_up={2}, syst_down={3}".format(b_i, p, final_up, final_down)
+            #print "bin {0}, pred={1}, syst_up={2}, syst_down={3}".format(b_i, p, final_up, final_down)
             validationHistoMap[region]["up"].SetBinContent(     b_i, final_up   )
             validationHistoMap[region]["down"].SetBinContent(   b_i, final_down )
             b_i += 1

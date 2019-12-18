@@ -440,7 +440,7 @@ class Shape:
                 print "Shape factor CR units; Loading {0} histograms".format(region)
                 for sample in samples:
                     hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
-                    print "\t{0}".format(hist_name) 
+                    #print "\t{0}".format(hist_name) 
                 
                 h_Data              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Data"]              ) )
                 h_GJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["GJets"]             ) )
