@@ -138,11 +138,8 @@ def main():
     # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
     systematics_search  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
     systematics_cru  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
-    # without prefire;
-    #systematics_search  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup"]
-    #systematics_cru  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","photon_sf"]
     systematics = list(set(systematics_search)| set(systematics_cru))
-    # missing syst: prefire weight (2016, 2017), pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
+    # missing syst: pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
 
     # histo_tmp[region][direction]
     histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
@@ -156,23 +153,6 @@ def main():
     #-------------------------------------------------------
     # Class instanceses summoning 
     #-------------------------------------------------------
-    # 2018 only
-    # used to fix prefire because it does not have a weight or syst. in 2018
-    #N                = Normalization(out_dir, verbose)
-    #S                = Shape(out_dir, draw, doUnits, verbose)
-    #VB_2018_PreHEM   = ValidationBins(N, S, "2018_PreHEM", out_dir, verbose)
-    #SB_2018_PreHEM   = SearchBins(N, S, "2018_PreHEM", out_dir, verbose)
-    #CRU_2018_PreHEM  = CRUnitBins(N, S, "2018_PreHEM", out_dir, verbose)
-    #N                = Normalization(out_dir, verbose)
-    #S                = Shape(out_dir, draw, doUnits, verbose)
-    #VB_2018_PostHEM  = ValidationBins(N, S, "2018_PostHEM", out_dir, verbose)
-    #SB_2018_PostHEM  = SearchBins(N, S, "2018_PostHEM", out_dir, verbose)
-    #CRU_2018_PostHEM = CRUnitBins(N, S, "2018_PostHEM", out_dir, verbose)
-
-
-    # total syst. calculate for Run 2
-    # however, loop over all eras to fix syst. not present in all eras
-
 
     N   =  Normalization(out_dir, verbose)
     S   =  Shape(out_dir, draw, doUnits, verbose)
@@ -184,6 +164,8 @@ def main():
     # Normal predictions (no systematics) 
     #-------------------------------------------------------
     
+    # total syst. calculated for Run 2
+    # however, loop over all eras to fix syst. not present in all eras (e.g. prefire)
     # warning; be careful to not use era and result_file (those are only for total era)
     for e in eras:
         d = runMap[e]
@@ -347,8 +329,6 @@ def main():
     # Calculate total systematic up/down
     #-------------------------------------------------------
 
-    #TODO: combined all systematics to get total syst up/down
-    # first combined syst in validation bins and give to Hui
     # loop over validation bins
     # loop over systematics
     # syst_up_i       = (p_up - p)   / p
@@ -363,19 +343,6 @@ def main():
     h_syst_down_lowdm   = ROOT.TH1F("syst_down_lowdm",  "syst_down_lowdm",  VB.low_dm_nbins,  VB.low_dm_start,  VB.low_dm_end  + 1)
     h_syst_down_highdm  = ROOT.TH1F("syst_down_highdm", "syst_down_highdm", VB.high_dm_nbins, VB.high_dm_start, VB.high_dm_end + 1)
     
-    # TODO: remove old code; use grid instead
-    # Draw nice ratio at 1
-    #    # horizontal line at 1
-    #    ratio_1 = histo[region]["down"].Clone()
-    #    ratio_1.SetLineColor(ROOT.kBlack)
-    #    for k in range(0,45):
-    #        ratio_1.SetBinContent(k, 1)
-
-    #    ratio_up.GetYaxis().SetRangeUser(0,1.5)
-    #
-    #    ratio_up.Draw("hist")
-    #    ratio_down.Draw("hist same")
-    #    ratio_1.Draw("hist same")
     validationBinMap = {}
     validationBinMap["lowdm"]   = VB.low_dm_bins
     validationBinMap["highdm"]  = VB.high_dm_bins
@@ -432,10 +399,10 @@ def main():
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
                 # syst from root file
-                # symmetric error with up = down
                 #systHistoMap[bintype][region][syst]
                 for syst in systHistoMap["validation"][region]:
                     error = systHistoMap["validation"][region][syst].GetBinContent(b_i)
+                    # symmetric error with up = down
                     syst_up   = error  
                     syst_down = error  
                     syst_up_sum     += syst_up**2
@@ -455,11 +422,6 @@ def main():
 
         # --- plot histograms
                     
-        # THIS IS NOT THE PLOT YOU ARE LOOKING FOR
-        # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
-        #mySyst = "total"
-        #run_systematics.plot(histo["validation"][region][""], histo["validation"][region]["up"], histo["validation"][region]["down"], mySyst, "validation", region, era, out_dir)
-
         # correct plot
         bintype = "validation"
         mySyst = "total"
