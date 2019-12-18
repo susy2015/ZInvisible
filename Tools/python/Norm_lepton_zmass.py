@@ -185,7 +185,6 @@ class Normalization:
             return
         
         self.root_file = ROOT.TFile(file_name)
-        print "File: {0}".format(file_name)
         # setup histogram map
         self.setupHistoMap(era)
         
@@ -210,9 +209,6 @@ class Normalization:
     def runCalculation(self, era, bin_type, particle, region, selection): 
         #WARNING: strings loaded from json file have type 'unicode'
         # ROOT cannot load histograms using unicode input: use type 'str'
-        print(self.histos[era][bin_type][particle][region][selection]["Data"])
-        print(self.histos[era][bin_type][particle][region][selection]["ZToLL"])
-        print(self.histos[era][bin_type][particle][region][selection]["NoZToLL"])
         h_Data    = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["Data"]    ) )
         h_ZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["ZToLL"]   ) )
         h_NoZToLL = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["NoZToLL"] ) )
@@ -314,8 +310,6 @@ class Normalization:
         for factor in self.factors:
             value       = values[factor]
             value_error = values[factor + "_error"]
-            # can be used to print if needed
-            factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
             factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
             self.norm_map[era][bin_type][particle][region][selection][factor] = value
             self.norm_map[era][bin_type][particle][region][selection][factor + "_error"] = value_error
@@ -341,8 +335,6 @@ class Normalization:
                 error_numerator = tools.getAdditionError(error_numerator, errors_numerator[particle])
         value       = weighted_average_numerator / weighted_average_denominator
         value_error = tools.getConstantMultiplicationError(1.0 / weighted_average_denominator, error_numerator)
-        # can be used to print if needed
-        factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
         factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
         self.norm_map[era][bin_type]["Combined"][region][selection][factor] = value
         self.norm_map[era][bin_type]["Combined"][region][selection][factor + "_error"] = value_error
@@ -414,8 +406,6 @@ class Normalization:
                 selections_root_tex     = selections_tex.replace("\\", "#")
                 region_root_tex         = region_root_tex.replace("$", "")
                 selections_root_tex     = selections_root_tex.replace("$", "")
-                print "{0} : {1}".format(region_tex, region_root_tex)
-                print "{0} : {1}".format(selections_tex, selections_root_tex)
                 #h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
                 h_Electron  = ROOT.TH1F("h_Electron",   "h_Electron",   nBins, 0, nBins)
                 h_Muon      = ROOT.TH1F("h_Muon",       "h_Muon",       nBins, 0, nBins)

@@ -368,7 +368,7 @@ def main():
         h_total_syst_down = validationHistoMap[region]["down"]
 
 
-        print "--- {0} ---".format(region)
+        #print "--- {0} ---".format(region)
         # DEBUG
         if debug:
             #systHistoMap[bintype][region][syst]
@@ -411,7 +411,7 @@ def main():
             syst_down_total = np.sqrt(syst_down_sum)
             final_up   = 1.0 + syst_up_total
             final_down = 1.0 - syst_down_total
-            print "bin {0}, pred={1}, syst_up={2}, syst_down={3}".format(b_i, p, final_up, final_down)
+            #print "bin {0}, pred={1}, syst_up={2}, syst_down={3}".format(b_i, p, final_up, final_down)
             h_total_syst_up.SetBinContent(     b_i, final_up   )
             h_total_syst_down.SetBinContent(   b_i, final_down )
             b_i += 1
