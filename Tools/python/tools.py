@@ -88,7 +88,13 @@ def getMETBinEdges(binMap, selection):
             print "b: {0}, selection: {1}, cut: {2}".format(b, selection, cut)
         # get array of bins matching selection used for shape factor
         if selection == cut:
-            temp_array.append((int(b), binMap[b]["met"]))
+            if temp_array:
+                # if temp_array as elements, don't append if previous element is the same
+                if binMap[b]["met"] != temp_array[-1][1]:
+                    temp_array.append((int(b), binMap[b]["met"]))
+            else:
+                # append to temp_array if it is empty
+                temp_array.append((int(b), binMap[b]["met"]))
     # sort by bin number; assume MET bins increase with bin number (unless new binning starts)
     temp_array.sort(key = takeFirst) 
     for i, elem in enumerate(temp_array):
