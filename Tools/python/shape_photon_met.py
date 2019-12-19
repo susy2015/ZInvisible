@@ -275,9 +275,10 @@ class Shape:
                         xbins   = met_xbins[i]
                         if self.verbose:
                             print "Rebin shape factor: selection = {0}, rebin index = {1}, names = {2}, xbins = {3}".format(selection, i + 1, names, xbins)
-                        if len(names) != len(xbins) - 1:
-                            print "ERROR: length of names should be 1 less than length of xbins, but it is not"
-                            #return
+                        #if len(names) != len(xbins) - 1:
+                        #    print "ERROR: length of names should be 1 less than length of xbins, but it is not"
+                        #    print "bin_type: {0}, selection: {1}, n_names: {2}, n_xbins: {3}, names: {4}, xbins:= {5}".format(bin_type, selection, len(names), len(xbins), names, xbins)
+                        #    #return
                         n_bins  = len(names)
                         h_num_rebinned              = h_num.Rebin(n_bins, "h_num_rebinned", xbins)
                         h_den_rebinned              = h_den.Rebin(n_bins, "h_den_rebinned", xbins)
