@@ -176,12 +176,10 @@ def main():
         SB.getValues(r, "", e)
         CRU.getValues(r, "", e)
     
-    histo["validation"]["lowdm"][""]     =  VB.histograms[era]["lowdm"][variable].Clone()
-    histo["validation"]["highdm"][""]    =  VB.histograms[era]["highdm"][variable].Clone()
-    histo["search"]["lowdm"][""]         =  SB.histograms[era]["lowdm"][variable].Clone()
-    histo["search"]["highdm"][""]        =  SB.histograms[era]["highdm"][variable].Clone()
-    histo["controlUnit"]["highdm"][""]   =  CRU.histograms[era]["highdm"]["mc_gjets"].Clone()
-    histo["controlUnit"]["lowdm"][""]    =  CRU.histograms[era]["lowdm"]["mc_gjets"].Clone()
+    for region in regions:
+        histo["validation"][region][""]     =  VB.histograms[era][region][variable].Clone()
+        histo["search"][region][""]         =  SB.histograms[era][region][variable].Clone()
+        histo["controlUnit"][region][""]    =  CRU.histograms[era][region]["mc_gjets"].Clone()
     
     #-------------------------------------------------------
     # Calculate normalization and shape factors
@@ -198,34 +196,23 @@ def main():
             SB.getValues(result_file, syst + "_syst_up", era)
             CRU.getValues(result_file, syst + "_syst_up", era)
             
-            histo["validation"]["highdm"]["up"]   =  VB.histograms[era]["highdm"][variable].Clone()
-            histo["validation"]["lowdm"]["up"]    =  VB.histograms[era]["lowdm"][variable].Clone()
-            histo["search"]["highdm"]["up"]       =  SB.histograms[era]["highdm"][variable].Clone()
-            histo["search"]["lowdm"]["up"]        =  SB.histograms[era]["lowdm"][variable].Clone()
-            histo["controlUnit"]["highdm"]["up"]  =  CRU.histograms[era]["highdm"]["mc_gjets"].Clone()
-            histo["controlUnit"]["lowdm"]["up"]   =  CRU.histograms[era]["lowdm"]["mc_gjets"].Clone()
-            
-            # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
-            if syst == "prefire":
-                histo["validation"]["highdm"]["up"].Add(    VB.histograms["2018_PreHEM"]["highdm"][variable]        )
-                histo["validation"]["lowdm"]["up"].Add(     VB.histograms["2018_PreHEM"]["lowdm"][variable]         )
-                histo["search"]["highdm"]["up"].Add(        SB.histograms["2018_PreHEM"]["highdm"][variable]        )
-                histo["search"]["lowdm"]["up"].Add(         SB.histograms["2018_PreHEM"]["lowdm"][variable]         )
-                histo["controlUnit"]["highdm"]["up"].Add(   CRU.histograms["2018_PreHEM"]["highdm"]["mc_gjets"]     )
-                histo["controlUnit"]["lowdm"]["up"].Add(    CRU.histograms["2018_PreHEM"]["lowdm"]["mc_gjets"]      )
-                histo["validation"]["highdm"]["up"].Add(    VB.histograms["2018_PostHEM"]["highdm"][variable]       )
-                histo["validation"]["lowdm"]["up"].Add(     VB.histograms["2018_PostHEM"]["lowdm"][variable]        )
-                histo["search"]["highdm"]["up"].Add(        SB.histograms["2018_PostHEM"]["highdm"][variable]       )
-                histo["search"]["lowdm"]["up"].Add(         SB.histograms["2018_PostHEM"]["lowdm"][variable]        )
-                histo["controlUnit"]["highdm"]["up"].Add(   CRU.histograms["2018_PostHEM"]["highdm"]["mc_gjets"]    )
-                histo["controlUnit"]["lowdm"]["up"].Add(    CRU.histograms["2018_PostHEM"]["lowdm"]["mc_gjets"]     )
-            
-            syst_histo[syst]["validation"]["lowdm"]["up"]    = histo["validation"]["lowdm"]["up"]
-            syst_histo[syst]["validation"]["highdm"]["up"]   = histo["validation"]["highdm"]["up"]
-            syst_histo[syst]["search"]["lowdm"]["up"]        = histo["search"]["lowdm"]["up"]
-            syst_histo[syst]["search"]["highdm"]["up"]       = histo["search"]["highdm"]["up"]
-            syst_histo[syst]["controlUnit"]["lowdm"]["up"]   = histo["controlUnit"]["lowdm"]["up"]
-            syst_histo[syst]["controlUnit"]["highdm"]["up"]  = histo["controlUnit"]["highdm"]["up"]
+            for region in regions:
+                histo["validation"][region]["up"]    =  VB.histograms[era][region][variable].Clone()
+                histo["search"][region]["up"]        =  SB.histograms[era][region][variable].Clone()
+                histo["controlUnit"][region]["up"]   =  CRU.histograms[era][region]["mc_gjets"].Clone()
+                
+                # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
+                if syst == "prefire":
+                    histo["validation"][region]["up"].Add(     VB.histograms["2018_PreHEM"][region][variable]         )
+                    histo["search"][region]["up"].Add(         SB.histograms["2018_PreHEM"][region][variable]         )
+                    histo["controlUnit"][region]["up"].Add(    CRU.histograms["2018_PreHEM"][region]["mc_gjets"]      )
+                    histo["validation"][region]["up"].Add(     VB.histograms["2018_PostHEM"][region][variable]        )
+                    histo["search"][region]["up"].Add(         SB.histograms["2018_PostHEM"][region][variable]        )
+                    histo["controlUnit"][region]["up"].Add(    CRU.histograms["2018_PostHEM"][region]["mc_gjets"]     )
+                
+                syst_histo[syst]["validation"][region]["up"]    = histo["validation"][region]["up"]
+                syst_histo[syst]["search"][region]["up"]        = histo["search"][region]["up"]
+                syst_histo[syst]["controlUnit"][region]["up"]   = histo["controlUnit"][region]["up"]
             
             # --- syst down --- #
             N.getNormAndError(result_file, syst + "_syst_down", era)
@@ -234,34 +221,23 @@ def main():
             SB.getValues(result_file, syst + "_syst_down", era)
             CRU.getValues(result_file, syst + "_syst_down", era)
             
-            histo["validation"]["highdm"]["down"]   =  VB.histograms[era]["highdm"][variable].Clone()
-            histo["validation"]["lowdm"]["down"]    =  VB.histograms[era]["lowdm"][variable].Clone()
-            histo["search"]["highdm"]["down"]       =  SB.histograms[era]["highdm"][variable].Clone()
-            histo["search"]["lowdm"]["down"]        =  SB.histograms[era]["lowdm"][variable].Clone()
-            histo["controlUnit"]["highdm"]["down"]  =  CRU.histograms[era]["highdm"]["mc_gjets"].Clone()
-            histo["controlUnit"]["lowdm"]["down"]   =  CRU.histograms[era]["lowdm"]["mc_gjets"].Clone()
-            
-            # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
-            if syst == "prefire":
-                histo["validation"]["highdm"]["down"].Add(  VB.histograms["2018_PreHEM"]["highdm"][variable]        )
-                histo["validation"]["lowdm"]["down"].Add(   VB.histograms["2018_PreHEM"]["lowdm"][variable]         )
-                histo["search"]["highdm"]["down"].Add(      SB.histograms["2018_PreHEM"]["highdm"][variable]        )
-                histo["search"]["lowdm"]["down"].Add(       SB.histograms["2018_PreHEM"]["lowdm"][variable]         )
-                histo["controlUnit"]["highdm"]["down"].Add( CRU.histograms["2018_PreHEM"]["highdm"]["mc_gjets"]     )
-                histo["controlUnit"]["lowdm"]["down"].Add(  CRU.histograms["2018_PreHEM"]["lowdm"]["mc_gjets"]      )
-                histo["validation"]["highdm"]["down"].Add(  VB.histograms["2018_PostHEM"]["highdm"][variable]       )
-                histo["validation"]["lowdm"]["down"].Add(   VB.histograms["2018_PostHEM"]["lowdm"][variable]        )
-                histo["search"]["highdm"]["down"].Add(      SB.histograms["2018_PostHEM"]["highdm"][variable]       )
-                histo["search"]["lowdm"]["down"].Add(       SB.histograms["2018_PostHEM"]["lowdm"][variable]        )
-                histo["controlUnit"]["highdm"]["down"].Add( CRU.histograms["2018_PostHEM"]["highdm"]["mc_gjets"]    )
-                histo["controlUnit"]["lowdm"]["down"].Add(  CRU.histograms["2018_PostHEM"]["lowdm"]["mc_gjets"]     )
-            
-            syst_histo[syst]["validation"]["lowdm"]["down"]    =  histo["validation"]["lowdm"]["down"]
-            syst_histo[syst]["validation"]["highdm"]["down"]   =  histo["validation"]["highdm"]["down"]
-            syst_histo[syst]["search"]["lowdm"]["down"]        =  histo["search"]["lowdm"]["down"]
-            syst_histo[syst]["search"]["highdm"]["down"]       =  histo["search"]["highdm"]["down"]
-            syst_histo[syst]["controlUnit"]["lowdm"]["down"]   =  histo["controlUnit"]["lowdm"]["down"]
-            syst_histo[syst]["controlUnit"]["highdm"]["down"]  =  histo["controlUnit"]["highdm"]["down"]
+            for region in regions:
+                histo["validation"][region]["down"]    =  VB.histograms[era][region][variable].Clone()
+                histo["search"][region]["down"]        =  SB.histograms[era][region][variable].Clone()
+                histo["controlUnit"][region]["down"]   =  CRU.histograms[era][region]["mc_gjets"].Clone()
+                
+                # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
+                if syst == "prefire":
+                    histo["validation"][region]["down"].Add(   VB.histograms["2018_PreHEM"][region][variable]         )
+                    histo["search"][region]["down"].Add(       SB.histograms["2018_PreHEM"][region][variable]         )
+                    histo["controlUnit"][region]["down"].Add(  CRU.histograms["2018_PreHEM"][region]["mc_gjets"]      )
+                    histo["validation"][region]["down"].Add(   VB.histograms["2018_PostHEM"][region][variable]        )
+                    histo["search"][region]["down"].Add(       SB.histograms["2018_PostHEM"][region][variable]        )
+                    histo["controlUnit"][region]["down"].Add(  CRU.histograms["2018_PostHEM"][region]["mc_gjets"]     )
+                
+                syst_histo[syst]["validation"][region]["down"]    =  histo["validation"][region]["down"]
+                syst_histo[syst]["search"][region]["down"]        =  histo["search"][region]["down"]
+                syst_histo[syst]["controlUnit"][region]["down"]   =  histo["controlUnit"][region]["down"]
             
             #-------------------------------------------------------
             # Write to conf
@@ -270,8 +246,8 @@ def main():
             # TODO: write CR unit systematics to conf
             #writeToConfFromPred(outFile, searchBinMap, syst, h, h_up, h_down, region, offset)
             systForConf = systMap[syst]["name"]  
-            writeToConfFromPred(outFile, searchBinMap, systForConf, histo["search"]["lowdm"][""],  histo["search"]["lowdm"]["up"],  histo["search"]["lowdm"]["down"],  "lowdm",  SB.low_dm_start)
-            writeToConfFromPred(outFile, searchBinMap, systForConf, histo["search"]["highdm"][""], histo["search"]["highdm"]["up"], histo["search"]["highdm"]["down"], "highdm", SB.high_dm_start)
+            for region in regions:
+                writeToConfFromPred(outFile, searchBinMap, systForConf, histo["search"][region][""],  histo["search"][region]["up"],  histo["search"][region]["down"],  region,  SB.low_dm_start)
             
             #-------------------------------------------------------
             # Plot
