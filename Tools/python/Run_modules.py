@@ -244,10 +244,14 @@ def main():
             #-------------------------------------------------------
             # only write search bin systematics to conf
             # TODO: write CR unit systematics to conf
+
+            # WARNING: offset is starting point for low/high dm bins, use with care
             #writeToConfFromPred(outFile, searchBinMap, syst, h, h_up, h_down, region, offset)
             systForConf = systMap[syst]["name"]  
-            for region in regions:
-                writeToConfFromPred(outFile, searchBinMap, systForConf, histo["search"][region][""],  histo["search"][region]["up"],  histo["search"][region]["down"],  region,  SB.low_dm_start)
+            writeToConfFromPred(outFile, searchBinMap, systForConf, histo["search"]["lowdm"][""],  histo["search"]["lowdm"]["up"],  histo["search"]["lowdm"]["down"],  "lowdm",  SB.low_dm_start)
+            writeToConfFromPred(outFile, searchBinMap, systForConf, histo["search"]["highdm"][""], histo["search"]["highdm"]["up"], histo["search"]["highdm"]["down"], "highdm", SB.high_dm_start)
+            #for region in regions:
+            #    writeToConfFromPred(outFile, searchBinMap, systForConf, histo["search"][region][""],  histo["search"][region]["up"],  histo["search"][region]["down"],  region,  SB.low_dm_start)
             
             #-------------------------------------------------------
             # Plot
