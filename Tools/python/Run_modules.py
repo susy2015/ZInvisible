@@ -14,20 +14,19 @@ from tools import invert, setupHist
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-
-#TODO: combined all systematics to get total syst up/down
-# first combined syst in validation bins and give to Hui
-# loop over validation bins
+# -------------------------------------------------------------
+# Combine all systematics to get total syst up/down
+# -------------------------------------------------------------
+# loop over search or validation bins
 # loop over systematics
 # syst_up_i       = (p_up - p)   / p
 # syst_down_i     = (p - p_down) / p
 # syst_up_total   = sqrt ( sum ( syst_up_i ^2 ) ) 
 # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
+# -------------------------------------------------------------
 
 # use histogram which stores systematic errors
 def writeToConfFromSyst(outFile, binMap, binTag, syst, h, region, offset):
-    #binTag = "znunu"
-    # sb_i = bin_i - 1 + offset
     nBins = h.GetNbinsX()
     for i in xrange(1, nBins + 1):
         sb_i = i - 1 + offset
@@ -43,8 +42,6 @@ def writeToConfFromSyst(outFile, binMap, binTag, syst, h, region, offset):
 
 # use prediction, syst up/down histograms
 def writeToConfFromPred(outFile, binMap, binTag, syst, h, h_up, h_down, region, offset):
-    #binTag = "znunu"
-    # sb_i = bin_i - 1 + offset
     nBins = h.GetNbinsX()
     for i in xrange(1, nBins + 1):
         sb_i = i - 1 + offset
@@ -52,20 +49,18 @@ def writeToConfFromPred(outFile, binMap, binTag, syst, h, h_up, h_down, region, 
         p       = h.GetBinContent(i)
         p_up    = h_up.GetBinContent(i)
         p_down  = h_down.GetBinContent(i)
-        #s_up   = (p_up - p)   / p
-        #s_down = (p - p_down) / p
         # If there is a zero prediction for nominal, up, and down can you set the systematic to 1.
         # The error is a deviation from 1.
         r_up   = 1
         r_down = 1
         # do not apply SB syst in high dm
-        # here syst is already systForConf (systForConf = systMap[syst]["name"])
         if not (region == "highdm" and syst == "ivfunc"):
             if p != 0:
                 r_up   = p_up   / p
                 r_down = p_down / p
             else:
                 print "WARNING: pred = 0 for search bin {0}".format(sb_i)
+        # syst is already systForConf (systForConf = systMap[syst]["name"])
         outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, binTag, r_up   ) )
         outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, binTag, r_down ) )
 
@@ -81,9 +76,6 @@ def symmetrizeSyst(h, h_up, h_down):
         diff_up   = p_up - p
         diff_down = p_down - p
         same_dir   = diff_up * diff_down > 0
-        #both_up   = p_up > p and p_down > p
-        #both_down = p_up < p and p_down < p
-        #same_dir = both_up or both_down
         if same_dir:
             diff_symm = np.mean([abs(diff_up), abs(diff_down)])
             h_up.SetBinContent(   i, p + diff_symm)
