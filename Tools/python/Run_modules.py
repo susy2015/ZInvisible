@@ -69,6 +69,26 @@ def writeToConfFromPred(outFile, searchBinMap, syst, h, h_up, h_down, region, of
         outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, zinv, r_up   ) )
         outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, zinv, r_down ) )
 
+# symmetrize systematic if up/down variation is in the same direction compared to nominal
+# modify histograms passed to function
+def symmetrizeSyst(h, h_up, h_down):
+    nBins = h.GetNbinsX()
+    for i in xrange(1, nBins + 1):
+        # symmetrize systematic if up/down variation is in the same direction compared to nominal
+        p       = h.GetBinContent(i)
+        p_up    = h_up.GetBinContent(i)
+        p_down  = h_down.GetBinContent(i)
+        diff_up   = p_up - p
+        diff_down = p_down - p
+        same_dir   = diff_up * diff_down > 0
+        #both_up   = p_up > p and p_down > p
+        #both_down = p_up < p and p_down < p
+        #same_dir = both_up or both_down
+        if same_dir:
+            diff_symm = np.mean([abs(diff_up), abs(diff_down)])
+            h_up.SetBinContent(   i, p + diff_symm)
+            h_down.SetBinContent( i, p - diff_symm)
+
 
 def main():
     # options
@@ -91,6 +111,7 @@ def main():
     ZvPhoton_syst_files["search"]       = "ZvsPhotonSyst_SearchBins.root" 
     ZvPhoton_syst_files["controlUnit"]  = "ZvsPhotonSyst_SearchBins.root" #"ZvsPhotonSyst_ControlUnitBins.root" ????
    
+    doSymmetrize = True
     doUnits      = True
     draw         = False
     runMap       = {}
@@ -240,9 +261,24 @@ def main():
                 syst_histo[syst]["controlUnit"][region]["down"]   =  histo["controlUnit"][region]["down"]
             
             #-------------------------------------------------------
+            # Symmetrize systematics which are in the same direction
+            #-------------------------------------------------------
+
+            if doSymmetrize:
+                for region in regions:
+                    # symmetrize systematic if up/down variation is in the same direction compared to nominal
+                    # modify histograms passed to function
+                    # symmetrizeSyst(h, h_up, h_down)
+                    symmetrizeSyst(histo["validation"][region][""],     syst_histo[syst]["validation"][region]["up"],   syst_histo[syst]["validation"][region]["down"])
+                    symmetrizeSyst(histo["search"][region][""],         syst_histo[syst]["search"][region]["up"],       syst_histo[syst]["search"][region]["down"])
+                    symmetrizeSyst(histo["controlUnit"][region][""],    syst_histo[syst]["controlUnit"][region]["up"],  syst_histo[syst]["controlUnit"][region]["down"])
+            
+            
+            
+            #-------------------------------------------------------
             # Write to conf
             #-------------------------------------------------------
-            # only write search bin systematics to conf
+            # DONE: write search bin systematics to conf
             # TODO: write CR unit systematics to conf
 
             # WARNING: offset is starting point for low/high dm bins, use with care
@@ -250,8 +286,6 @@ def main():
             systForConf = systMap[syst]["name"]  
             writeToConfFromPred(outFile, searchBinMap, systForConf, histo["search"]["lowdm"][""],  histo["search"]["lowdm"]["up"],  histo["search"]["lowdm"]["down"],  "lowdm",  SB.low_dm_start)
             writeToConfFromPred(outFile, searchBinMap, systForConf, histo["search"]["highdm"][""], histo["search"]["highdm"]["up"], histo["search"]["highdm"]["down"], "highdm", SB.high_dm_start)
-            #for region in regions:
-            #    writeToConfFromPred(outFile, searchBinMap, systForConf, histo["search"][region][""],  histo["search"][region]["up"],  histo["search"][region]["down"],  region,  SB.low_dm_start)
             
             #-------------------------------------------------------
             # Plot
