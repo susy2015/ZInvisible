@@ -110,5 +110,5 @@
     "108" : {"region" : "HighDM", "selection" : "NBge2",                "met" : "met_550toINF"},
     "109" : {"region" : "HighDM", "selection" : "NBge2",                "met" : "met_250to350"},
     "110" : {"region" : "HighDM", "selection" : "NBge2",                "met" : "met_350to550"},
-    "111" : {"region" : "HighDM", "selection" : "NBge2",                "met" : "met_550toINF"},
+    "111" : {"region" : "HighDM", "selection" : "NBge2",                "met" : "met_550toINF"}
 }
