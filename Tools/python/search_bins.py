@@ -442,9 +442,8 @@ class Common:
     
     # ---------------------------------------------------------------------- #
     # getZvsPhotonSyst():                                                    #
-    #    - get Z vs Photon systematic in validation or search bins           #
+    #    - get Z vs Photon systematic in validation, search, or CR unit bins #
     #    - save systematic to root file                                      #
-    #    - TODO: also get this syst. in CR unit bins                         #
     # ---------------------------------------------------------------------- #
     def getZvsPhotonSyst(self, h_map_syst, output_file):
         # output root file
@@ -736,6 +735,8 @@ class CRUnitBins(Common):
         self.all_bins       = self.low_dm_bins + self.high_dm_bins
         self.binValues      = {}
         self.histograms     = {}
+        with open("control_region_unit_bins_v4.json", "r") as j:
+            self.bins = stringifyMap(json.load(j))
     
     # TODO: normalize MC to Data in CR unit bins
     def getValues(self, file_name, era):

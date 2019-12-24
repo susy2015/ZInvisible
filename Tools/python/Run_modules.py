@@ -94,14 +94,15 @@ def main():
     syst_json       = options.syst_json
     verbose         = options.verbose
     units_json      = "dc_BkgPred_BinMaps_master.json"
+    # Note: DO NOT apply Rz syst. in CR unit bins
     rz_syst_files   = {}
     rz_syst_files["validation"]   = "RzSyst_ValidationBins.root"
     rz_syst_files["search"]       = "RzSyst_SearchBins.root"
-    rz_syst_files["controlUnit"]  = "RzSyst_SearchBins.root" # "RzSyst_ControlUnitBins.root" ?????
+    # Note: apply Z vs. Photon syst. in CR unit bins
     ZvPhoton_syst_files = {}
     ZvPhoton_syst_files["validation"]   = "ZvsPhotonSyst_ValidationBins.root"
     ZvPhoton_syst_files["search"]       = "ZvsPhotonSyst_SearchBins.root" 
-    ZvPhoton_syst_files["controlUnit"]  = "ZvsPhotonSyst_SearchBins.root" #"ZvsPhotonSyst_ControlUnitBins.root" ????
+    ZvPhoton_syst_files["controlUnit"]  = "ZvsPhotonSyst_CRUnitBins.root"
    
     doSymmetrize = True
     doUnits      = True
@@ -180,7 +181,7 @@ def main():
     
     # total syst. calculated for Run 2
     # however, loop over all eras to fix syst. not present in all eras (e.g. prefire)
-    # warning; be careful to not use era and result_file (those are only for total era)
+    # warning; be careful to not use variables "era" and "result_file" as those are only for total era
     for e in eras:
         d = runMap[e]
         r  = "condor/" + d + "/result.root"
@@ -279,8 +280,8 @@ def main():
             systForConf = systMap[syst]["name"]  
             writeToConfFromPred(outFile, searchBinMap, "znunu", systForConf, histo["search"]["lowdm"][""],  histo["search"]["lowdm"]["up"],  histo["search"]["lowdm"]["down"],  "lowdm",  SB.low_dm_start)
             writeToConfFromPred(outFile, searchBinMap, "znunu", systForConf, histo["search"]["highdm"][""], histo["search"]["highdm"]["up"], histo["search"]["highdm"]["down"], "highdm", SB.high_dm_start)
-            writeToConfFromPred(outFile, unitBinMap,   "phocr", systForConf, histo["controlUnit"]["lowdm"][""],  histo["controlUnit"]["lowdm"]["up"],  histo["controlUnit"]["lowdm"]["down"],  "lowdm",  SB.low_dm_start)
-            writeToConfFromPred(outFile, unitBinMap,   "phocr", systForConf, histo["controlUnit"]["highdm"][""], histo["controlUnit"]["highdm"]["up"], histo["controlUnit"]["highdm"]["down"], "highdm", SB.high_dm_start)
+            writeToConfFromPred(outFile, unitBinMap,   "phocr", systForConf, histo["controlUnit"]["lowdm"][""],  histo["controlUnit"]["lowdm"]["up"],  histo["controlUnit"]["lowdm"]["down"],  "lowdm",  CRU.low_dm_start)
+            writeToConfFromPred(outFile, unitBinMap,   "phocr", systForConf, histo["controlUnit"]["highdm"][""], histo["controlUnit"]["highdm"]["up"], histo["controlUnit"]["highdm"]["down"], "highdm", CRU.high_dm_start)
             
             #-------------------------------------------------------
             # Plot
@@ -308,12 +309,14 @@ def main():
             systHistoMap[bintype]["lowdm"] = {}
             systHistoMap[bintype]["highdm"] = {}
             # --- Rz syst --- #
-            f_in = ROOT.TFile(rz_syst_files[bintype], "read")
-            # histogram names
-            # rz_syst_low_dm
-            # rz_syst_high_dm
-            systHistoMap[bintype]["lowdm"]["znunu_rzunc"]  = copy.deepcopy(f_in.Get("rz_syst_low_dm"))
-            systHistoMap[bintype]["highdm"]["znunu_rzunc"] = copy.deepcopy(f_in.Get("rz_syst_high_dm"))
+            # Note: DO NOT apply Rz syst. in CR unit bins
+            if bintype != "controlUnit":
+                f_in = ROOT.TFile(rz_syst_files[bintype], "read")
+                # histogram names
+                # rz_syst_low_dm
+                # rz_syst_high_dm
+                systHistoMap[bintype]["lowdm"]["znunu_rzunc"]  = copy.deepcopy(f_in.Get("rz_syst_low_dm"))
+                systHistoMap[bintype]["highdm"]["znunu_rzunc"] = copy.deepcopy(f_in.Get("rz_syst_high_dm"))
             # --- Z vs Photon syst --- #
             f_in = ROOT.TFile(ZvPhoton_syst_files[bintype], "read")
             # histogram names
@@ -331,8 +334,8 @@ def main():
         # --- Z vs Photon syst --- #
         # writeToConfFromSyst(outFile, binMap, binTag, syst, h, region, offset):
         systForConf = systMap["znunu_zgammdiff"]["name"]  
-        writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["lowdm"]["znunu_zgammdiff"],  "lowdm",  SB.low_dm_start)
-        writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["highdm"]["znunu_zgammdiff"], "highdm", SB.high_dm_start)
+        writeToConfFromSyst(outFile, unitBinMap, "phocr", systForConf, systHistoMap["controlUnit"]["lowdm"]["znunu_zgammdiff"],  "lowdm",  CRU.low_dm_start)
+        writeToConfFromSyst(outFile, unitBinMap, "phocr", systForConf, systHistoMap["controlUnit"]["highdm"]["znunu_zgammdiff"], "highdm", CRU.high_dm_start)
 
     #-------------------------------------------------------
     # Calculate total systematic up/down
