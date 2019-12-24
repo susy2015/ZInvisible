@@ -151,10 +151,10 @@ def main():
     directions   = ["up", "", "down"]
     bintypes     = ["validation", "search", "controlUnit"]
     # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
-    systematics_search  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
-    systematics_cru  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
-    systematics = list(set(systematics_search)| set(systematics_cru))
-    # missing syst: pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
+    systematics_znunu  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
+    systematics_phocr  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
+    systematics = list(set(systematics_znunu)| set(systematics_phocr))
+    # TODO. missing systematics: pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
 
     # histo_tmp[region][direction]
     histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
@@ -200,59 +200,53 @@ def main():
     # Calculate normalization and shape factors
     #-------------------------------------------------------
     with open(conf_file, "w") as outFile:
+        
+        #-------------------------------------------------------
+        # Systematics for znunu
+        #-------------------------------------------------------
            
         # --- begin loop over systematics
-        for syst in systematics:
+        for syst in systematics_znunu:
         
             # --- syst up --- #
             N.getNormAndError(result_file, syst + "_syst_up", era)
             S.getShape(result_file, syst + "_syst_up", era)
             VB.getValues(result_file, syst + "_syst_up", era)
             SB.getValues(result_file, syst + "_syst_up", era)
-            CRU.getValues(result_file, syst + "_syst_up", era)
             
             for region in regions:
                 histo["validation"][region]["up"]    =  VB.histograms[era][region][variable].Clone()
                 histo["search"][region]["up"]        =  SB.histograms[era][region][variable].Clone()
-                histo["controlUnit"][region]["up"]   =  CRU.histograms[era][region]["mc_gjets"].Clone()
                 
                 # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
                 if syst == "prefire":
                     histo["validation"][region]["up"].Add(     VB.histograms["2018_PreHEM"][region][variable]         )
                     histo["search"][region]["up"].Add(         SB.histograms["2018_PreHEM"][region][variable]         )
-                    histo["controlUnit"][region]["up"].Add(    CRU.histograms["2018_PreHEM"][region]["mc_gjets"]      )
                     histo["validation"][region]["up"].Add(     VB.histograms["2018_PostHEM"][region][variable]        )
                     histo["search"][region]["up"].Add(         SB.histograms["2018_PostHEM"][region][variable]        )
-                    histo["controlUnit"][region]["up"].Add(    CRU.histograms["2018_PostHEM"][region]["mc_gjets"]     )
                 
                 syst_histo[syst]["validation"][region]["up"]    = histo["validation"][region]["up"]
                 syst_histo[syst]["search"][region]["up"]        = histo["search"][region]["up"]
-                syst_histo[syst]["controlUnit"][region]["up"]   = histo["controlUnit"][region]["up"]
             
             # --- syst down --- #
             N.getNormAndError(result_file, syst + "_syst_down", era)
             S.getShape(result_file, syst + "_syst_down", era)
             VB.getValues(result_file, syst + "_syst_down", era)
             SB.getValues(result_file, syst + "_syst_down", era)
-            CRU.getValues(result_file, syst + "_syst_down", era)
             
             for region in regions:
                 histo["validation"][region]["down"]    =  VB.histograms[era][region][variable].Clone()
                 histo["search"][region]["down"]        =  SB.histograms[era][region][variable].Clone()
-                histo["controlUnit"][region]["down"]   =  CRU.histograms[era][region]["mc_gjets"].Clone()
                 
                 # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
                 if syst == "prefire":
                     histo["validation"][region]["down"].Add(   VB.histograms["2018_PreHEM"][region][variable]         )
                     histo["search"][region]["down"].Add(       SB.histograms["2018_PreHEM"][region][variable]         )
-                    histo["controlUnit"][region]["down"].Add(  CRU.histograms["2018_PreHEM"][region]["mc_gjets"]      )
                     histo["validation"][region]["down"].Add(   VB.histograms["2018_PostHEM"][region][variable]        )
                     histo["search"][region]["down"].Add(       SB.histograms["2018_PostHEM"][region][variable]        )
-                    histo["controlUnit"][region]["down"].Add(  CRU.histograms["2018_PostHEM"][region]["mc_gjets"]     )
                 
                 syst_histo[syst]["validation"][region]["down"]    =  histo["validation"][region]["down"]
                 syst_histo[syst]["search"][region]["down"]        =  histo["search"][region]["down"]
-                syst_histo[syst]["controlUnit"][region]["down"]   =  histo["controlUnit"][region]["down"]
             
             #-------------------------------------------------------
             # Symmetrize systematics which are in the same direction
@@ -265,21 +259,83 @@ def main():
                     # symmetrizeSyst(h, h_up, h_down)
                     symmetrizeSyst(histo["validation"][region][""],     syst_histo[syst]["validation"][region]["up"],   syst_histo[syst]["validation"][region]["down"])
                     symmetrizeSyst(histo["search"][region][""],         syst_histo[syst]["search"][region]["up"],       syst_histo[syst]["search"][region]["down"])
-                    symmetrizeSyst(histo["controlUnit"][region][""],    syst_histo[syst]["controlUnit"][region]["up"],  syst_histo[syst]["controlUnit"][region]["down"])
-            
-            
             
             #-------------------------------------------------------
             # Write to conf
             #-------------------------------------------------------
-            # DONE: write search bin systematics to conf
-            # TODO: write CR unit systematics to conf
 
             # WARNING: offset is starting point for low/high dm bins, use with care
             #writeToConfFromPred(outFile, binMap, binTag, syst, h, h_up, h_down, region, offset):
             systForConf = systMap[syst]["name"]  
             writeToConfFromPred(outFile, searchBinMap, "znunu", systForConf, histo["search"]["lowdm"][""],  histo["search"]["lowdm"]["up"],  histo["search"]["lowdm"]["down"],  "lowdm",  SB.low_dm_start)
             writeToConfFromPred(outFile, searchBinMap, "znunu", systForConf, histo["search"]["highdm"][""], histo["search"]["highdm"]["up"], histo["search"]["highdm"]["down"], "highdm", SB.high_dm_start)
+            
+            #-------------------------------------------------------
+            # Plot
+            #-------------------------------------------------------
+            
+            for bintype in ["validation", "search"]:
+                for region in regions:
+                    # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
+                    run_systematics.plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir)
+                
+        # --- end loop over systematics
+        
+        #-------------------------------------------------------
+        # Systematics for phocr
+        #-------------------------------------------------------
+        
+        # --- begin loop over systematics
+        for syst in systematics_phocr:
+        
+            # --- syst up --- #
+            N.getNormAndError(result_file, syst + "_syst_up", era)
+            S.getShape(result_file, syst + "_syst_up", era)
+            CRU.getValues(result_file, syst + "_syst_up", era)
+            
+            for region in regions:
+                histo["controlUnit"][region]["up"]   =  CRU.histograms[era][region]["mc_gjets"].Clone()
+                
+                # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
+                if syst == "prefire":
+                    histo["controlUnit"][region]["up"].Add(    CRU.histograms["2018_PreHEM"][region]["mc_gjets"]      )
+                    histo["controlUnit"][region]["up"].Add(    CRU.histograms["2018_PostHEM"][region]["mc_gjets"]     )
+                
+                syst_histo[syst]["controlUnit"][region]["up"]   = histo["controlUnit"][region]["up"]
+            
+            # --- syst down --- #
+            N.getNormAndError(result_file, syst + "_syst_down", era)
+            S.getShape(result_file, syst + "_syst_down", era)
+            CRU.getValues(result_file, syst + "_syst_down", era)
+            
+            for region in regions:
+                histo["controlUnit"][region]["down"]   =  CRU.histograms[era][region]["mc_gjets"].Clone()
+                
+                # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
+                if syst == "prefire":
+                    histo["controlUnit"][region]["down"].Add(  CRU.histograms["2018_PreHEM"][region]["mc_gjets"]      )
+                    histo["controlUnit"][region]["down"].Add(  CRU.histograms["2018_PostHEM"][region]["mc_gjets"]     )
+                
+                syst_histo[syst]["controlUnit"][region]["down"]   =  histo["controlUnit"][region]["down"]
+            
+            #-------------------------------------------------------
+            # Symmetrize systematics which are in the same direction
+            #-------------------------------------------------------
+
+            if doSymmetrize:
+                for region in regions:
+                    # symmetrize systematic if up/down variation is in the same direction compared to nominal
+                    # modify histograms passed to function
+                    # symmetrizeSyst(h, h_up, h_down)
+                    symmetrizeSyst(histo["controlUnit"][region][""],    syst_histo[syst]["controlUnit"][region]["up"],  syst_histo[syst]["controlUnit"][region]["down"])
+            
+            #-------------------------------------------------------
+            # Write to conf
+            #-------------------------------------------------------
+
+            # WARNING: offset is starting point for low/high dm bins, use with care
+            #writeToConfFromPred(outFile, binMap, binTag, syst, h, h_up, h_down, region, offset):
+            systForConf = systMap[syst]["name"]  
             writeToConfFromPred(outFile, unitBinMap,   "phocr", systForConf, histo["controlUnit"]["lowdm"][""],  histo["controlUnit"]["lowdm"]["up"],  histo["controlUnit"]["lowdm"]["down"],  "lowdm",  CRU.low_dm_start)
             writeToConfFromPred(outFile, unitBinMap,   "phocr", systForConf, histo["controlUnit"]["highdm"][""], histo["controlUnit"]["highdm"]["up"], histo["controlUnit"]["highdm"]["down"], "highdm", CRU.high_dm_start)
             
@@ -287,13 +343,15 @@ def main():
             # Plot
             #-------------------------------------------------------
             
-            for bintype in bintypes:
+            for bintype in ["controlUnit"]:
                 for region in regions:
                     # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
                     run_systematics.plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir)
                 
         # --- end loop over systematics
             
+        
+        
         #-------------------------------------------------------
         # Write to conf (for syst. stored in root files)
         #-------------------------------------------------------
@@ -397,7 +455,7 @@ def main():
             syst_down_sum = 0.0
             if p != 0:
                 # syst from p, p_up, p_down
-                for syst in systematics:
+                for syst in systematics_znunu:
                     # do not apply SB syst in high dm
                     if region == "highdm" and syst == "eff_sb":
                         continue

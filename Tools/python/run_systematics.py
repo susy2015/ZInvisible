@@ -42,13 +42,14 @@ def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
     
     name = "{0}_{1}_syst".format(bintype, mySyst)
     
+    print "plot(): {0}".format(name)
     h_ratio_up      = h_up.Clone("h_ratio_up") 
     h_ratio_down    = h_down.Clone("h_ratio_down") 
     h_ratio_up.Divide(h)
     h_ratio_down.Divide(h)
     
     title = "Z to Invisible: " + name + " in " + region + " for " + era
-    x_title = "Validation Bins"
+    x_title = bintype + " bins"
     setupHist(h,                title, x_title, "Events",               color_black,  10.0 ** -2, 10.0 ** 5)
     setupHist(h_up,             title, x_title, "Events",               color_red,    10.0 ** -2, 10.0 ** 5)
     setupHist(h_down,           title, x_title, "Events",               color_blue,   10.0 ** -2, 10.0 ** 5)
