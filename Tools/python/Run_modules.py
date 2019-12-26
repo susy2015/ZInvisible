@@ -269,36 +269,23 @@ def main():
         
         # --- begin loop over systematics
         for syst in systematics_phocr:
+            for direction in ["up", "down"]:
+                systTag = syst + "_syst_" + direction 
         
-            # --- syst up --- #
-            N.getNormAndError(result_file, syst + "_syst_up", era)
-            S.getShape(result_file, syst + "_syst_up", era)
-            CRU.getValues(result_file, syst + "_syst_up", era)
-            
-            for region in regions:
-                histo["controlUnit"][region]["up"]   =  CRU.histograms[era][region]["mc_gjets"].Clone()
+                # --- calculate variation for this systematic
+                N.getNormAndError(result_file,  systTag, era)
+                S.getShape(result_file,         systTag, era)
+                CRU.getValues(result_file,      systTag, era)
                 
-                # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
-                if syst == "prefire":
-                    histo["controlUnit"][region]["up"].Add(    CRU.histograms["2018_PreHEM"][region]["mc_gjets"]      )
-                    histo["controlUnit"][region]["up"].Add(    CRU.histograms["2018_PostHEM"][region]["mc_gjets"]     )
-                
-                syst_histo[syst]["controlUnit"][region]["up"]   = histo["controlUnit"][region]["up"]
-            
-            # --- syst down --- #
-            N.getNormAndError(result_file, syst + "_syst_down", era)
-            S.getShape(result_file, syst + "_syst_down", era)
-            CRU.getValues(result_file, syst + "_syst_down", era)
-            
-            for region in regions:
-                histo["controlUnit"][region]["down"]   =  CRU.histograms[era][region]["mc_gjets"].Clone()
-                
-                # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
-                if syst == "prefire":
-                    histo["controlUnit"][region]["down"].Add(  CRU.histograms["2018_PreHEM"][region]["mc_gjets"]      )
-                    histo["controlUnit"][region]["down"].Add(  CRU.histograms["2018_PostHEM"][region]["mc_gjets"]     )
-                
-                syst_histo[syst]["controlUnit"][region]["down"]   =  histo["controlUnit"][region]["down"]
+                for region in regions:
+                    histo["controlUnit"][region][direction]   =  CRU.histograms[era][region]["mc_gjets"].Clone()
+                    
+                    # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
+                    if syst == "prefire":
+                        for e in ["2018_PreHEM", "2018_PostHEM"]:
+                            histo["controlUnit"][region][direction].Add(    CRU.histograms[e][region]["mc_gjets"]      )
+                    
+                    syst_histo[syst]["controlUnit"][region][direction]   = histo["controlUnit"][region][direction]
             
             #-------------------------------------------------------
             # Symmetrize systematics which are in the same direction
