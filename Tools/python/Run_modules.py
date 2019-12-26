@@ -146,6 +146,7 @@ def main():
     result_file  = "condor/" + runDir + "/result.root"
     conf_file    = "results/zinv_syst_" + era + ".conf"
     out_dir      = "caleb_syst_plots/" 
+    tmp_dir      = "tmp_plots/"
     variable     = "mc"
     regions      = ["lowdm", "highdm"]
     directions   = ["up", "", "down"]
@@ -169,11 +170,11 @@ def main():
     # Class instanceses summoning 
     #-------------------------------------------------------
 
-    N   =  Normalization(out_dir, verbose)
-    S   =  Shape(out_dir, draw, doUnits, verbose)
-    VB  =  ValidationBins(N, S, eras, out_dir, verbose)
-    SB  =  SearchBins(N, S, eras, out_dir, verbose)
-    CRU =  CRUnitBins(N, S, eras, out_dir, verbose)
+    N   =  Normalization(tmp_dir, verbose)
+    S   =  Shape(tmp_dir, draw, doUnits, verbose)
+    VB  =  ValidationBins(N, S, eras, tmp_dir, verbose)
+    SB  =  SearchBins(N, S, eras, tmp_dir, verbose)
+    CRU =  CRUnitBins(N, S, eras, tmp_dir, verbose)
     
     #-------------------------------------------------------
     # Normal predictions (no systematics) 
