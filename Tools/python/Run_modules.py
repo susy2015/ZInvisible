@@ -26,7 +26,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # -------------------------------------------------------------
 
 # use histogram which stores systematic errors
-def writeToConfFromSyst(outFile, binMap, binTag, syst, h, region, offset):
+def writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset):
     nBins = h.GetNbinsX()
     for i in xrange(1, nBins + 1):
         sb_i = i - 1 + offset
@@ -37,11 +37,11 @@ def writeToConfFromSyst(outFile, binMap, binTag, syst, h, region, offset):
         r_up   = 1 + error 
         r_down = 1 - error 
 
-        outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, binTag, r_up   ) )
-        outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, binTag, r_down ) )
+        outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, process, r_up   ) )
+        outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, process, r_down ) )
 
 # use prediction, syst up/down histograms
-def writeToConfFromPred(outFile, binMap, binTag, syst, h, h_up, h_down, region, offset):
+def writeToConfFromPred(outFile, binMap, process, syst, h, h_up, h_down, region, offset):
     nBins = h.GetNbinsX()
     for i in xrange(1, nBins + 1):
         sb_i = i - 1 + offset
@@ -61,8 +61,8 @@ def writeToConfFromPred(outFile, binMap, binTag, syst, h, h_up, h_down, region, 
             else:
                 print "WARNING: pred = 0 for search bin {0}".format(sb_i)
         # syst is already systForConf (systForConf = systMap[syst]["name"])
-        outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, binTag, r_up   ) )
-        outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, binTag, r_down ) )
+        outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, process, r_up   ) )
+        outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, process, r_down ) )
 
 # symmetrize systematic if up/down variation is in the same direction compared to nominal
 # modify histograms passed to function
@@ -247,7 +247,7 @@ def main():
             #-------------------------------------------------------
 
             # WARNING: offset is starting point for low/high dm bins, use with care
-            #writeToConfFromPred(outFile, binMap, binTag, syst, h, h_up, h_down, region, offset):
+            #writeToConfFromPred(outFile, binMap, process, syst, h, h_up, h_down, region, offset):
             systForConf = systMap[syst]["name"]  
             writeToConfFromPred(outFile, searchBinMap, "znunu", systForConf, histo["search"]["lowdm"][""],  histo["search"]["lowdm"]["up"],  histo["search"]["lowdm"]["down"],  "lowdm",  SB.low_dm_start)
             writeToConfFromPred(outFile, searchBinMap, "znunu", systForConf, histo["search"]["highdm"][""], histo["search"]["highdm"]["up"], histo["search"]["highdm"]["down"], "highdm", SB.high_dm_start)
@@ -303,10 +303,10 @@ def main():
             #-------------------------------------------------------
 
             # WARNING: offset is starting point for low/high dm bins, use with care
-            #writeToConfFromPred(outFile, binMap, binTag, syst, h, h_up, h_down, region, offset):
+            #writeToConfFromPred(outFile, binMap, process, syst, h, h_up, h_down, region, offset):
             systForConf = systMap[syst]["name"]  
-            writeToConfFromPred(outFile, unitBinMap,   "phocr", systForConf, histo["controlUnit"]["lowdm"][""],  histo["controlUnit"]["lowdm"]["up"],  histo["controlUnit"]["lowdm"]["down"],  "lowdm",  CRU.low_dm_start)
-            writeToConfFromPred(outFile, unitBinMap,   "phocr", systForConf, histo["controlUnit"]["highdm"][""], histo["controlUnit"]["highdm"]["up"], histo["controlUnit"]["highdm"]["down"], "highdm", CRU.high_dm_start)
+            writeToConfFromPred(outFile, unitBinMap,   "phocr_gjets", systForConf, histo["controlUnit"]["lowdm"][""],  histo["controlUnit"]["lowdm"]["up"],  histo["controlUnit"]["lowdm"]["down"],  "lowdm",  CRU.low_dm_start)
+            writeToConfFromPred(outFile, unitBinMap,   "phocr_gjets", systForConf, histo["controlUnit"]["highdm"][""], histo["controlUnit"]["highdm"]["up"], histo["controlUnit"]["highdm"]["down"], "highdm", CRU.high_dm_start)
             
             #-------------------------------------------------------
             # Plot
@@ -353,16 +353,16 @@ def main():
             systHistoMap[bintype]["highdm"]["znunu_zgammdiff"]  = copy.deepcopy(f_in.Get("ZvsPhoton_syst_high_dm"))
 
         # --- Rz syst --- #
-        # writeToConfFromSyst(outFile, binMap, binTag, syst, h, region, offset):
+        # writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset):
         systForConf = systMap["znunu_rzunc"]["name"]  
         writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["lowdm"]["znunu_rzunc"],  "lowdm",  SB.low_dm_start)
         writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["highdm"]["znunu_rzunc"], "highdm", SB.high_dm_start)
         
         # --- Z vs Photon syst --- #
-        # writeToConfFromSyst(outFile, binMap, binTag, syst, h, region, offset):
+        # writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset):
         systForConf = systMap["znunu_zgammdiff"]["name"]  
-        writeToConfFromSyst(outFile, unitBinMap, "phocr", systForConf, systHistoMap["controlUnit"]["lowdm"]["znunu_zgammdiff"],  "lowdm",  CRU.low_dm_start)
-        writeToConfFromSyst(outFile, unitBinMap, "phocr", systForConf, systHistoMap["controlUnit"]["highdm"]["znunu_zgammdiff"], "highdm", CRU.high_dm_start)
+        writeToConfFromSyst(outFile, unitBinMap, "phocr_gjets", systForConf, systHistoMap["controlUnit"]["lowdm"]["znunu_zgammdiff"],  "lowdm",  CRU.low_dm_start)
+        writeToConfFromSyst(outFile, unitBinMap, "phocr_gjets", systForConf, systHistoMap["controlUnit"]["highdm"]["znunu_zgammdiff"], "highdm", CRU.high_dm_start)
 
     #-------------------------------------------------------
     # Calculate total systematic up/down
