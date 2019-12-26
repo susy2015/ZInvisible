@@ -208,46 +208,27 @@ def main():
            
         # --- begin loop over systematics
         for syst in systematics_znunu:
+            for direction in ["up", "down"]:
+                systTag = syst + "_syst_" + direction 
         
-            # --- syst up --- #
-            N.getNormAndError(result_file, syst + "_syst_up", era)
-            S.getShape(result_file, syst + "_syst_up", era)
-            VB.getValues(result_file, syst + "_syst_up", era)
-            SB.getValues(result_file, syst + "_syst_up", era)
-            
-            for region in regions:
-                histo["validation"][region]["up"]    =  VB.histograms[era][region][variable].Clone()
-                histo["search"][region]["up"]        =  SB.histograms[era][region][variable].Clone()
+                # --- calculate variation for this systematic
+                N.getNormAndError(result_file,  systTag, era)
+                S.getShape(result_file,         systTag, era)
+                VB.getValues(result_file,       systTag, era)
+                SB.getValues(result_file,       systTag, era)
                 
-                # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
-                if syst == "prefire":
-                    histo["validation"][region]["up"].Add(     VB.histograms["2018_PreHEM"][region][variable]         )
-                    histo["search"][region]["up"].Add(         SB.histograms["2018_PreHEM"][region][variable]         )
-                    histo["validation"][region]["up"].Add(     VB.histograms["2018_PostHEM"][region][variable]        )
-                    histo["search"][region]["up"].Add(         SB.histograms["2018_PostHEM"][region][variable]        )
-                
-                syst_histo[syst]["validation"][region]["up"]    = histo["validation"][region]["up"]
-                syst_histo[syst]["search"][region]["up"]        = histo["search"][region]["up"]
-            
-            # --- syst down --- #
-            N.getNormAndError(result_file, syst + "_syst_down", era)
-            S.getShape(result_file, syst + "_syst_down", era)
-            VB.getValues(result_file, syst + "_syst_down", era)
-            SB.getValues(result_file, syst + "_syst_down", era)
-            
-            for region in regions:
-                histo["validation"][region]["down"]    =  VB.histograms[era][region][variable].Clone()
-                histo["search"][region]["down"]        =  SB.histograms[era][region][variable].Clone()
-                
-                # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
-                if syst == "prefire":
-                    histo["validation"][region]["down"].Add(   VB.histograms["2018_PreHEM"][region][variable]         )
-                    histo["search"][region]["down"].Add(       SB.histograms["2018_PreHEM"][region][variable]         )
-                    histo["validation"][region]["down"].Add(   VB.histograms["2018_PostHEM"][region][variable]        )
-                    histo["search"][region]["down"].Add(       SB.histograms["2018_PostHEM"][region][variable]        )
-                
-                syst_histo[syst]["validation"][region]["down"]    =  histo["validation"][region]["down"]
-                syst_histo[syst]["search"][region]["down"]        =  histo["search"][region]["down"]
+                for region in regions:
+                    histo["validation"][region][direction]    =  VB.histograms[era][region][variable].Clone()
+                    histo["search"][region][direction]        =  SB.histograms[era][region][variable].Clone()
+                    
+                    # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
+                    if syst == "prefire":
+                        for e in ["2018_PreHEM", "2018_PostHEM"]:
+                            histo["validation"][region][direction].Add(     VB.histograms[e][region][variable]         )
+                            histo["search"][region][direction].Add(         SB.histograms[e][region][variable]         )
+                    
+                    syst_histo[syst]["validation"][region][direction]    = histo["validation"][region][direction]
+                    syst_histo[syst]["search"][region][direction]        = histo["search"][region][direction]
             
             #-------------------------------------------------------
             # Symmetrize systematics which are in the same direction

@@ -42,7 +42,6 @@ def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
     
     name = "{0}_{1}_syst".format(bintype, mySyst)
     
-    print "plot(): {0}".format(name)
     h_ratio_up      = h_up.Clone("h_ratio_up") 
     h_ratio_down    = h_down.Clone("h_ratio_down") 
     h_ratio_up.Divide(h)
