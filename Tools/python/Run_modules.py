@@ -6,9 +6,6 @@ import argparse
 import os
 import ROOT
 import run_systematics
-#from Norm_lepton_zmass import Normalization
-#from Shape_photon_met import Shape
-#from Search_bins import  ValidationBins, SearchBins, CRUnitBins
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from search_bins import  ValidationBins, SearchBins, CRUnitBins
