@@ -83,12 +83,18 @@ class Normalization:
                     # using ZToLL and NoZToLL MC for normalization 
                     self.histos[era][bin_type][particle][region] = {}
                     for selection in self.selections[bin_type][region]: 
-                        selectionTag = "_" + selection + self.systTag + "_jetpt30"
+                        # apply syst. to MC only
+                        dataSelectionTag    = "_" + selection + "_jetpt30"
+                        mcSelectionTag      = "_" + selection + self.systTag + "_jetpt30"
                         # using Nb and Nsv selection
+                        # testing
+                        print "In setupHistoMap(): " + "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + dataSelectionTag + 2 * self.variable + "Datadata"
+                        print "In setupHistoMap(): " + "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "ZToLLstack"
+                        print "In setupHistoMap(): " + "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "NoZToLLstack"
                         self.histos[era][bin_type][particle][region][selection] = { 
-                            "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "Datadata",
-                            "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "ZToLLstack",
-                            "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + selectionTag + 2 * self.variable + "NoZToLLstack",
+                            "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + dataSelectionTag + 2 * self.variable + "Datadata",
+                            "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "ZToLLstack",
+                            "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "NoZToLLstack",
                         }
 
     def calcNorm(self, A, x):

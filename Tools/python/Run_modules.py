@@ -6,9 +6,12 @@ import argparse
 import os
 import ROOT
 import run_systematics
-from Norm_lepton_zmass import Normalization
-from Shape_photon_met import Shape
-from Search_bins import  ValidationBins, SearchBins, CRUnitBins
+#from Norm_lepton_zmass import Normalization
+#from Shape_photon_met import Shape
+#from Search_bins import  ValidationBins, SearchBins, CRUnitBins
+from norm_lepton_zmass import Normalization
+from shape_photon_met import Shape
+from search_bins import  ValidationBins, SearchBins, CRUnitBins
 from tools import invert, setupHist
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -107,6 +110,7 @@ def main():
     doSymmetrize = True
     doUnits      = True
     draw         = False
+    saveRootFile = False
     runMap       = {}
     systMap      = {}
     masterBinMap = {}
@@ -172,9 +176,9 @@ def main():
 
     N   =  Normalization(tmp_dir, verbose)
     S   =  Shape(tmp_dir, draw, doUnits, verbose)
-    VB  =  ValidationBins(N, S, eras, tmp_dir, verbose)
-    SB  =  SearchBins(N, S, eras, tmp_dir, verbose)
-    CRU =  CRUnitBins(N, S, eras, tmp_dir, verbose)
+    VB  =  ValidationBins(  N, S, eras, tmp_dir, verbose, draw, saveRootFile)
+    SB  =  SearchBins(      N, S, eras, tmp_dir, verbose, draw, saveRootFile)
+    CRU =  CRUnitBins(      N, S, eras, tmp_dir, verbose)
     
     #-------------------------------------------------------
     # Normal predictions (no systematics) 
@@ -186,11 +190,11 @@ def main():
     for e in eras:
         d = runMap[e]
         r  = "condor/" + d + "/result.root"
-        N.getNormAndError(r, "", e)
-        S.getShape(r, "", e)
-        VB.getValues(r, "", e)
-        SB.getValues(r, "", e)
-        CRU.getValues(r, "", e)
+        N.getNormAndError(r, e)
+        S.getShape(r, e)
+        VB.getValues(r, e)
+        SB.getValues(r, e)
+        CRU.getValues(r, e)
     
     for region in regions:
         histo["validation"][region][""]     =  VB.histograms[era][region][variable].Clone()
@@ -209,13 +213,14 @@ def main():
         # --- begin loop over systematics
         for syst in systematics_znunu:
             for direction in ["up", "down"]:
-                systTag = syst + "_syst_" + direction 
+                #systTag = syst + "_syst_" + direction 
+                systTag = "_{0}_syst_{1}".format(syst, direction)
         
                 # --- calculate variation for this systematic
-                N.getNormAndError(result_file,  systTag, era)
-                S.getShape(result_file,         systTag, era)
-                VB.getValues(result_file,       systTag, era)
-                SB.getValues(result_file,       systTag, era)
+                #N.getNormAndError(  result_file,  era, systTag)
+                #S.getShape(         result_file,  era, systTag)
+                VB.getValues(       result_file,  era, systTag)
+                SB.getValues(       result_file,  era, systTag)
                 
                 for region in regions:
                     histo["validation"][region][direction]    =  VB.histograms[era][region][variable].Clone()
@@ -270,12 +275,13 @@ def main():
         # --- begin loop over systematics
         for syst in systematics_phocr:
             for direction in ["up", "down"]:
-                systTag = syst + "_syst_" + direction 
+                #systTag = syst + "_syst_" + direction 
+                systTag = "_{0}_syst_{1}".format(syst, direction)
         
                 # --- calculate variation for this systematic
-                N.getNormAndError(result_file,  systTag, era)
-                S.getShape(result_file,         systTag, era)
-                CRU.getValues(result_file,      systTag, era)
+                #N.getNormAndError(  result_file,  era, systTag)
+                S.getShape(         result_file,  era, systTag)
+                CRU.getValues(      result_file,  era)
                 
                 for region in regions:
                     histo["controlUnit"][region][direction]   =  CRU.histograms[era][region]["mc_gjets"].Clone()

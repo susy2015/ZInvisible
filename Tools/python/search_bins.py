@@ -317,10 +317,11 @@ class Common:
                     print "h_pred[1] = {0}".format(h_pred.GetBinContent(1))
                 
                 # write histograms to file
-                if (self.unblind):
-                    h_data.Write()
-                h_mc.Write()
-                h_pred.Write()
+                if self.saveRootFile:
+                    if (self.unblind):
+                        h_data.Write()
+                    h_mc.Write()
+                    h_pred.Write()
         
         if self.saveRootFile:
             f_out.Close()
@@ -766,6 +767,9 @@ class CRUnitBins(Common):
         h_map["highdm"]["mc_gjets"]     = h_mc_gjets_highdm
         h_map["lowdm"]["mc_back"]       = h_mc_back_lowdm
         h_map["highdm"]["mc_back"]      = h_mc_back_highdm
+        
+        # A temporary solution from Angel to Caleb
+        self.histograms[era] = copy.deepcopy(h_map)
         
         # set bin values 
         self.setBinValues(b_map, h_map, era)
