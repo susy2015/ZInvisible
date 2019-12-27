@@ -107,8 +107,8 @@ class Systematic:
     def getPhotonRatio(self, root_file, region, selection, era, variable, rebin):
         eraTag = "_" + era
         selectionTag = "_" + selection
-        # getSimpleMap(self, region, nameTag, selectionTag, eraTag, variable)
-        h_map_shape = self.S.getSimpleMap(region, "_met", selectionTag, eraTag, variable)
+        # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable):
+        h_map_shape = self.S.getSimpleMap(region, "_met", selectionTag, selectionTag, eraTag, variable)
         #WARNING: strings loaded from json file have type 'unicode'
         # ROOT cannot load histograms using unicode input: use type 'str'
         h_Data              = root_file.Get( str(variable + "/" + h_map_shape["Data"]            ) )

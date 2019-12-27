@@ -56,31 +56,32 @@ class Shape:
         self.color_black  = "black"
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
-    def getSimpleMap(self, region, nameTag, selectionTag, eraTag, variable):
+    def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable):
         # testing
-        #print "In getSimpleMap(): DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "#gamma+jetsstack" 
+        #print "In getSimpleMap():" + "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata"
+        #print "In getSimpleMap():" + "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "#gamma+jetsstack"
         if self.splitQCD:
             temp_map = {
-                            "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Datadata",
-                            "GJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "#gamma+jetsstack",
-                            "QCD_Fragmented"    : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "QCD Fragmentedstack",
-                            "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "QCD Fakestack",
-                            "WJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "W(l#nu)+jetsstack",
-                            "TTG"               : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "t#bar{t}#gamma+jetsstack",
-                            "TTbar"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "t#bar{t}stack",
-                            "tW"                : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "tWstack",
-                            "Rare"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Rarestack",
+                            "Data"              : "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata",
+                            "GJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "#gamma+jetsstack",
+                            "QCD_Fragmented"    : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "QCD Fragmentedstack",
+                            "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "QCD Fakestack",
+                            "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "W(l#nu)+jetsstack",
+                            "TTG"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}#gamma+jetsstack",
+                            "TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}stack",
+                            "tW"                : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "tWstack",
+                            "Rare"              : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "Rarestack",
             }
         else:
             temp_map = {
-                            "Data"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Datadata",
-                            "GJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "#gamma+jetsstack",
-                            "QCD"               : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "QCDstack",
-                            "WJets"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "W(l#nu)+jetsstack",
-                            "TTG"               : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "t#bar{t}#gamma+jetsstack",
-                            "TTbar"             : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "t#bar{t}stack",
-                            "tW"                : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "tWstack",
-                            "Rare"              : "DataMC_Photon_" + region + nameTag + selectionTag + 2 * variable + "Rarestack",
+                            "Data"              : "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata",
+                            "GJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "#gamma+jetsstack",
+                            "QCD"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "QCDstack",
+                            "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "W(l#nu)+jetsstack",
+                            "TTG"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}#gamma+jetsstack",
+                            "TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}stack",
+                            "tW"                : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "tWstack",
+                            "Rare"              : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "Rarestack",
             }
         return temp_map
 
@@ -102,8 +103,10 @@ class Shape:
             for region in self.regions:
                 temp_map[bin_type][region] = {}
                 for selection in self.selections[bin_type][region]: 
-                    selectionTag = "_" + selection + self.systTag + "_jetpt30"
-                    temp_map[bin_type][region][selection] = self.getSimpleMap(region, nameTag, selectionTag, eraTag, variable)
+                    # apply syst to MC only
+                    dataSelectionTag = "_" + selection + "_jetpt30"
+                    mcSelectionTag   = "_" + selection + self.systTag + "_jetpt30"
+                    temp_map[bin_type][region][selection] = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable)
 
         return temp_map
     
@@ -115,8 +118,10 @@ class Shape:
         # DataMC_Photon_LowDM_nCRUnitLowDM_jetpt30_2016nCRUnitLowDM_drPhotonCleaned_jetpt30nCRUnitLowDM_drPhotonCleaned_jetpt30#gamma+jetsstack
         nameTag = "_" + name
         eraTag = "_" + era
-        selectionTag = "_jetpt30"
-        temp_map = self.getSimpleMap(region, nameTag, selectionTag, eraTag, variable)
+        # apply syst to MC only
+        dataSelectionTag = "_jetpt30"
+        mcSelectionTag   = self.systTag + "_jetpt30"
+        temp_map = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable)
         return temp_map
     
     def getShape(self, file_name, era, systTag = ""): 

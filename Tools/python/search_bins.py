@@ -27,6 +27,8 @@ class Common:
         # WARNING: be careful
         # it is safest to only put constant general attributes here
         self.values = ["norm", "shape", "mc", "pred"]
+
+        self.results_dir = "prediction_histos/"
     
     # ---------------------------------------------------------------------- #
     # setBinValues():                                                        #
@@ -189,10 +191,8 @@ class Common:
         eraTag = "_" + era
         draw_option = "hist error"
         if self.saveRootFile:
-            print "Running makeHistos(). Saving output to {0}".format(output_file)
+            #print "Running makeHistos(). Saving output to {0}".format(output_file)
             f_out = ROOT.TFile(output_file, "recreate")
-        else:
-            print "Running makeHistos()."
         
         # define histograms 
         if (self.unblind):
@@ -317,10 +317,11 @@ class Common:
                     print "h_pred[1] = {0}".format(h_pred.GetBinContent(1))
                 
                 # write histograms to file
-                if (self.unblind):
-                    h_data.Write()
-                h_mc.Write()
-                h_pred.Write()
+                if self.saveRootFile:
+                    if (self.unblind):
+                        h_data.Write()
+                    h_mc.Write()
+                    h_pred.Write()
         
         if self.saveRootFile:
             f_out.Close()
@@ -575,10 +576,9 @@ class ValidationBins(Common):
         self.setBinValues(b_map, h_map, era)
 
         # new root file to save validation bin histograms
-        new_file = "validationBinsZinv_" + era + ".root"
+        new_file = self.results_dir + "validationBinsZinv_" + era + ".root"
         self.calcPrediction(    new_file, "Validation Bin", "validation", era   )
         self.makeHistos(        new_file, "Validation Bin", "validation", era   )
-
         f_in.Close()
   
 # search bins 
@@ -653,7 +653,7 @@ class SearchBins(Common):
         self.setBinValues(b_map, h_map, era)
 
         # new root file to save search bin histograms
-        new_file = "searchBinsZinv_" + era + ".root"
+        new_file = self.results_dir + "searchBinsZinv_" + era + ".root"
         self.calcPrediction(    new_file, "Search Bin", "search", era   )
         self.makeHistos(        new_file, "Search Bin", "search", era   )
         f_in.Close()
@@ -707,10 +707,6 @@ class SRUnitBins(Common):
         # set bin values 
         self.setBinValues(b_map, h_map, era)
 
-        # new root file to save search bin histograms
-        #new_file = "SRUnitBinsZinv_" + era + ".root"
-        #self.calcPrediction(    new_file, "SR Unit Bins", "SRUnit", era   )
-        #self.makeHistos(        new_file, "SR Unit Bins", "SRUnit", era   )
         f_in.Close()
 
 # control region unit bins
@@ -767,13 +763,10 @@ class CRUnitBins(Common):
         h_map["lowdm"]["mc_back"]       = h_mc_back_lowdm
         h_map["highdm"]["mc_back"]      = h_mc_back_highdm
         
+        # A temporary solution from Angel to Caleb
+        self.histograms[era] = copy.deepcopy(h_map)
+        
         # set bin values 
         self.setBinValues(b_map, h_map, era)
-
-        # new root file to save search bin histograms
-        #new_file = "CRUnitBinsZinv_" + era + ".root"
-        #self.calcPrediction(    new_file, "CR Unit Bins", "CRUnit", era   )
-        #self.makeHistos(        new_file, "CR Unit Bins", "CRUnit", era   )
-
 
 

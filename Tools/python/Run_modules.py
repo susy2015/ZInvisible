@@ -6,9 +6,9 @@ import argparse
 import os
 import ROOT
 import run_systematics
-from Norm_lepton_zmass import Normalization
-from Shape_photon_met import Shape
-from Search_bins import  ValidationBins, SearchBins, CRUnitBins
+from norm_lepton_zmass import Normalization
+from shape_photon_met import Shape
+from search_bins import  ValidationBins, SearchBins, CRUnitBins
 from tools import invert, setupHist
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -107,6 +107,7 @@ def main():
     doSymmetrize = True
     doUnits      = True
     draw         = False
+    saveRootFile = False
     runMap       = {}
     systMap      = {}
     masterBinMap = {}
@@ -140,17 +141,18 @@ def main():
     searchBinMap = invert(masterBinMap["binNum"])
     unitBinMap   = invert(masterBinMap["unitCRNum"]["phocr"])
 
-    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
-    era          = "Run2"
-    runDir       = runMap[era]
-    result_file  = "condor/" + runDir + "/result.root"
-    conf_file    = "results/zinv_syst_" + era + ".conf"
-    out_dir      = "caleb_syst_plots/" 
-    tmp_dir      = "tmp_plots/"
-    variable     = "mc"
-    regions      = ["lowdm", "highdm"]
-    directions   = ["up", "", "down"]
-    bintypes     = ["validation", "search", "controlUnit"]
+    eras            = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
+    era             = "Run2"
+    runDir          = runMap[era]
+    result_file     = "condor/" + runDir + "/result.root"
+    conf_file       = "datacard_inputs/zinv_syst_" + era + ".conf"
+    total_syst_dir  = "prediction_histos/"
+    out_dir         = "caleb_syst_plots/" 
+    tmp_dir         = "tmp_plots/"
+    variable        = "mc"
+    regions         = ["lowdm", "highdm"]
+    directions      = ["up", "", "down"]
+    bintypes        = ["validation", "search", "controlUnit"]
     # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
     systematics_znunu  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
     systematics_phocr  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
@@ -172,9 +174,9 @@ def main():
 
     N   =  Normalization(tmp_dir, verbose)
     S   =  Shape(tmp_dir, draw, doUnits, verbose)
-    VB  =  ValidationBins(N, S, eras, tmp_dir, verbose)
-    SB  =  SearchBins(N, S, eras, tmp_dir, verbose)
-    CRU =  CRUnitBins(N, S, eras, tmp_dir, verbose)
+    VB  =  ValidationBins(  N, S, eras, tmp_dir, verbose, draw, saveRootFile)
+    SB  =  SearchBins(      N, S, eras, tmp_dir, verbose, draw, saveRootFile)
+    CRU =  CRUnitBins(      N, S, eras, tmp_dir, verbose)
     
     #-------------------------------------------------------
     # Normal predictions (no systematics) 
@@ -186,11 +188,11 @@ def main():
     for e in eras:
         d = runMap[e]
         r  = "condor/" + d + "/result.root"
-        N.getNormAndError(r, "", e)
-        S.getShape(r, "", e)
-        VB.getValues(r, "", e)
-        SB.getValues(r, "", e)
-        CRU.getValues(r, "", e)
+        N.getNormAndError(r, e)
+        S.getShape(r, e)
+        VB.getValues(r, e)
+        SB.getValues(r, e)
+        CRU.getValues(r, e)
     
     for region in regions:
         histo["validation"][region][""]     =  VB.histograms[era][region][variable].Clone()
@@ -209,13 +211,12 @@ def main():
         # --- begin loop over systematics
         for syst in systematics_znunu:
             for direction in ["up", "down"]:
-                systTag = syst + "_syst_" + direction 
+                systTag = "_{0}_syst_{1}".format(syst, direction)
         
                 # --- calculate variation for this systematic
-                N.getNormAndError(result_file,  systTag, era)
-                S.getShape(result_file,         systTag, era)
-                VB.getValues(result_file,       systTag, era)
-                SB.getValues(result_file,       systTag, era)
+                # only vary Z nu nu; do not vary Normalization or Shape
+                VB.getValues(       result_file,  era, systTag)
+                SB.getValues(       result_file,  era, systTag)
                 
                 for region in regions:
                     histo["validation"][region][direction]    =  VB.histograms[era][region][variable].Clone()
@@ -270,12 +271,13 @@ def main():
         # --- begin loop over systematics
         for syst in systematics_phocr:
             for direction in ["up", "down"]:
-                systTag = syst + "_syst_" + direction 
+                systTag = "_{0}_syst_{1}".format(syst, direction)
         
                 # --- calculate variation for this systematic
-                N.getNormAndError(result_file,  systTag, era)
-                S.getShape(result_file,         systTag, era)
-                CRU.getValues(result_file,      systTag, era)
+                # Do not vary Normalization
+                # Vary shape to get GJets MC variation
+                S.getShape(         result_file,  era, systTag)
+                CRU.getValues(      result_file,  era)
                 
                 for region in regions:
                     histo["controlUnit"][region][direction]   =  CRU.histograms[era][region]["mc_gjets"].Clone()
@@ -376,7 +378,7 @@ def main():
     # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
     
     # --- validation bins ---
-    f_out = ROOT.TFile("validationBinsZinv_syst_" + era + ".root", "recreate")
+    f_out = ROOT.TFile(total_syst_dir + "validationBinsZinv_syst_" + era + ".root", "recreate")
     h_syst_up_lowdm     = ROOT.TH1F("syst_up_lowdm",    "syst_up_lowdm",    VB.low_dm_nbins,  VB.low_dm_start,  VB.low_dm_end  + 1)
     h_syst_up_highdm    = ROOT.TH1F("syst_up_highdm",   "syst_up_highdm",   VB.high_dm_nbins, VB.high_dm_start, VB.high_dm_end + 1)
     h_syst_down_lowdm   = ROOT.TH1F("syst_down_lowdm",  "syst_down_lowdm",  VB.low_dm_nbins,  VB.low_dm_start,  VB.low_dm_end  + 1)
@@ -406,8 +408,6 @@ def main():
         h_total_syst_up   = validationHistoMap[region]["up"]
         h_total_syst_down = validationHistoMap[region]["down"]
 
-
-        #print "--- {0} ---".format(region)
         # DEBUG
         if debug:
             #systHistoMap[bintype][region][syst]
