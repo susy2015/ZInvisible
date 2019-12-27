@@ -36,23 +36,14 @@ def main():
     dirList = []
     plot_dir                = "more_plots"
     latex_dir               = "latex_files"
-    results_dir             = "results"
-    dataCard_dir            = "data_cards"
-    dataCardValidation_dir  = dataCard_dir + "/validation"
-    dataCardSearch_dir      = dataCard_dir + "/search"
+    results_dir             = "datacard_inputs"
     dirList.append(plot_dir)
     dirList.append(latex_dir)
     dirList.append(results_dir)
-    dirList.append(dataCard_dir)
-    dirList.append(dataCardValidation_dir)
-    dirList.append(dataCardSearch_dir)
     # add "/" to directory if not present
     if plot_dir[-1]  != "/":                plot_dir                += "/"
     if latex_dir[-1] != "/":                latex_dir               += "/"
     if results_dir[-1] != "/":              results_dir             += "/"
-    if dataCard_dir[-1] != "/":             dataCard_dir            += "/"
-    if dataCardValidation_dir[-1] != "/":   dataCardValidation_dir  += "/"
-    if dataCardSearch_dir[-1] != "/":       dataCardSearch_dir      += "/"
     
     for d in dirList:
         # make directory if it does not exist
@@ -115,12 +106,7 @@ def main():
     SB.getZvsPhotonSyst(Syst.h_map_syst,        "ZvsPhotonSyst_SearchBins.root")
     CRunits.getZvsPhotonSyst(Syst.h_map_syst,   "ZvsPhotonSyst_CRUnitBins.root")
 
-    # make json files
-    VB.makeJson(VB.binValues,           results_dir + "ValidationBinResults.json")
-    SB.makeJson(SB.binValues,           results_dir + "SearchBinResults.json")
     if doUnits:
-        CRunits.makeJson(CRunits.binValues, results_dir + "CRUnitsResults.json")
-        SRunits.makeJson(SRunits.binValues, results_dir + "SRUnitsResults.json")
         # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
         saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + total_era + ".json", CRunits, SRunits, SB, total_era)
 
