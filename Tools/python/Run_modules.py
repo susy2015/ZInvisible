@@ -147,7 +147,7 @@ def main():
     result_file     = "condor/" + runDir + "/result.root"
     conf_file       = "datacard_inputs/zinv_syst_" + era + ".conf"
     total_syst_dir  = "prediction_histos/"
-    out_dir         = "caleb_syst_plots/" 
+    out_dir         = "syst_plots/" 
     tmp_dir         = "tmp_plots/"
     variable        = "mc"
     regions         = ["lowdm", "highdm"]
