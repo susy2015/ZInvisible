@@ -214,12 +214,10 @@ def main():
         # --- begin loop over systematics
         for syst in systematics_znunu:
             for direction in ["up", "down"]:
-                #systTag = syst + "_syst_" + direction 
                 systTag = "_{0}_syst_{1}".format(syst, direction)
         
                 # --- calculate variation for this systematic
-                #N.getNormAndError(  result_file,  era, systTag)
-                #S.getShape(         result_file,  era, systTag)
+                # only vary Z nu nu; do not vary Normalization or Shape
                 VB.getValues(       result_file,  era, systTag)
                 SB.getValues(       result_file,  era, systTag)
                 
@@ -276,11 +274,11 @@ def main():
         # --- begin loop over systematics
         for syst in systematics_phocr:
             for direction in ["up", "down"]:
-                #systTag = syst + "_syst_" + direction 
                 systTag = "_{0}_syst_{1}".format(syst, direction)
         
                 # --- calculate variation for this systematic
-                #N.getNormAndError(  result_file,  era, systTag)
+                # Do not vary Normalization
+                # Vary shape to get GJets MC variation
                 S.getShape(         result_file,  era, systTag)
                 CRU.getValues(      result_file,  era)
                 
@@ -413,8 +411,6 @@ def main():
         h_total_syst_up   = validationHistoMap[region]["up"]
         h_total_syst_down = validationHistoMap[region]["down"]
 
-
-        #print "--- {0} ---".format(region)
         # DEBUG
         if debug:
             #systHistoMap[bintype][region][syst]
