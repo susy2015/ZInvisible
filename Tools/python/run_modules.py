@@ -78,7 +78,7 @@ def main():
         runMap = json.load(input_file)
         # loop over eras
         for era in eras:
-            print "|---------- Era: {0} ----------|".format(era)
+            print "|---------------------------------------------------- Era: {0} ----------------------------------------------------|".format(era)
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
             if doCutflows:

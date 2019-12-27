@@ -88,9 +88,9 @@ class Normalization:
                         mcSelectionTag      = "_" + selection + self.systTag + "_jetpt30"
                         # using Nb and Nsv selection
                         # testing
-                        print "In setupHistoMap(): " + "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + dataSelectionTag + 2 * self.variable + "Datadata"
-                        print "In setupHistoMap(): " + "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "ZToLLstack"
-                        print "In setupHistoMap(): " + "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "NoZToLLstack"
+                        #print "In setupHistoMap(): " + "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + dataSelectionTag + 2 * self.variable + "Datadata"
+                        #print "In setupHistoMap(): " + "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "ZToLLstack"
+                        #print "In setupHistoMap(): " + "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "NoZToLLstack"
                         self.histos[era][bin_type][particle][region][selection] = { 
                             "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + dataSelectionTag + 2 * self.variable + "Datadata",
                             "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "ZToLLstack",
@@ -191,7 +191,6 @@ class Normalization:
             return
         
         self.root_file = ROOT.TFile(file_name)
-        print "File: {0}".format(file_name)
         # setup histogram map
         self.setupHistoMap(era)
         

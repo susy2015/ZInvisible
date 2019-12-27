@@ -189,10 +189,8 @@ class Common:
         eraTag = "_" + era
         draw_option = "hist error"
         if self.saveRootFile:
-            print "Running makeHistos(). Saving output to {0}".format(output_file)
+            #print "Running makeHistos(). Saving output to {0}".format(output_file)
             f_out = ROOT.TFile(output_file, "recreate")
-        else:
-            print "Running makeHistos()."
         
         # define histograms 
         if (self.unblind):

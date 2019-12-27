@@ -58,8 +58,8 @@ class Shape:
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
     def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable):
         # testing
-        print "In getSimpleMap():" + "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata"
-        print "In getSimpleMap():" + "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "#gamma+jetsstack"
+        #print "In getSimpleMap():" + "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata"
+        #print "In getSimpleMap():" + "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "#gamma+jetsstack"
         if self.splitQCD:
             temp_map = {
                             "Data"              : "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata",
