@@ -91,8 +91,6 @@ def main():
                 CRunits.getValues(result_file, era)
                 SRunits.getValues(result_file, era)
             Syst.makeZvsPhoton(result_file, era, True)
-            #makeDataCard(VB, dataCardValidation_dir, era)
-            #makeDataCard(SB, dataCardSearch_dir,     era)
 
     N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")

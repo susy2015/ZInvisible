@@ -27,6 +27,8 @@ class Common:
         # WARNING: be careful
         # it is safest to only put constant general attributes here
         self.values = ["norm", "shape", "mc", "pred"]
+
+        self.results_dir = "prediction_histos/"
     
     # ---------------------------------------------------------------------- #
     # setBinValues():                                                        #
@@ -574,10 +576,9 @@ class ValidationBins(Common):
         self.setBinValues(b_map, h_map, era)
 
         # new root file to save validation bin histograms
-        new_file = "validationBinsZinv_" + era + ".root"
+        new_file = self.results_dir + "validationBinsZinv_" + era + ".root"
         self.calcPrediction(    new_file, "Validation Bin", "validation", era   )
         self.makeHistos(        new_file, "Validation Bin", "validation", era   )
-
         f_in.Close()
   
 # search bins 
@@ -652,7 +653,7 @@ class SearchBins(Common):
         self.setBinValues(b_map, h_map, era)
 
         # new root file to save search bin histograms
-        new_file = "searchBinsZinv_" + era + ".root"
+        new_file = self.results_dir + "searchBinsZinv_" + era + ".root"
         self.calcPrediction(    new_file, "Search Bin", "search", era   )
         self.makeHistos(        new_file, "Search Bin", "search", era   )
         f_in.Close()
@@ -706,10 +707,6 @@ class SRUnitBins(Common):
         # set bin values 
         self.setBinValues(b_map, h_map, era)
 
-        # new root file to save search bin histograms
-        #new_file = "SRUnitBinsZinv_" + era + ".root"
-        #self.calcPrediction(    new_file, "SR Unit Bins", "SRUnit", era   )
-        #self.makeHistos(        new_file, "SR Unit Bins", "SRUnit", era   )
         f_in.Close()
 
 # control region unit bins
@@ -771,11 +768,5 @@ class CRUnitBins(Common):
         
         # set bin values 
         self.setBinValues(b_map, h_map, era)
-
-        # new root file to save search bin histograms
-        #new_file = "CRUnitBinsZinv_" + era + ".root"
-        #self.calcPrediction(    new_file, "CR Unit Bins", "CRUnit", era   )
-        #self.makeHistos(        new_file, "CR Unit Bins", "CRUnit", era   )
-
 
 

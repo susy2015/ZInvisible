@@ -144,17 +144,18 @@ def main():
     searchBinMap = invert(masterBinMap["binNum"])
     unitBinMap   = invert(masterBinMap["unitCRNum"]["phocr"])
 
-    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
-    era          = "Run2"
-    runDir       = runMap[era]
-    result_file  = "condor/" + runDir + "/result.root"
-    conf_file    = "results/zinv_syst_" + era + ".conf"
-    out_dir      = "caleb_syst_plots/" 
-    tmp_dir      = "tmp_plots/"
-    variable     = "mc"
-    regions      = ["lowdm", "highdm"]
-    directions   = ["up", "", "down"]
-    bintypes     = ["validation", "search", "controlUnit"]
+    eras            = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
+    era             = "Run2"
+    runDir          = runMap[era]
+    result_file     = "condor/" + runDir + "/result.root"
+    conf_file       = "results/zinv_syst_" + era + ".conf"
+    total_syst_dir  = "prediction_histos/"
+    out_dir         = "caleb_syst_plots/" 
+    tmp_dir         = "tmp_plots/"
+    variable        = "mc"
+    regions         = ["lowdm", "highdm"]
+    directions      = ["up", "", "down"]
+    bintypes        = ["validation", "search", "controlUnit"]
     # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
     systematics_znunu  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
     systematics_phocr  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
@@ -382,7 +383,7 @@ def main():
     # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
     
     # --- validation bins ---
-    f_out = ROOT.TFile("validationBinsZinv_syst_" + era + ".root", "recreate")
+    f_out = ROOT.TFile(total_syst_dir + "validationBinsZinv_syst_" + era + ".root", "recreate")
     h_syst_up_lowdm     = ROOT.TH1F("syst_up_lowdm",    "syst_up_lowdm",    VB.low_dm_nbins,  VB.low_dm_start,  VB.low_dm_end  + 1)
     h_syst_up_highdm    = ROOT.TH1F("syst_up_highdm",   "syst_up_highdm",   VB.high_dm_nbins, VB.high_dm_start, VB.high_dm_end + 1)
     h_syst_down_lowdm   = ROOT.TH1F("syst_down_lowdm",  "syst_down_lowdm",  VB.low_dm_nbins,  VB.low_dm_start,  VB.low_dm_end  + 1)
