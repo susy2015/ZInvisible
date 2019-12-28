@@ -25,8 +25,8 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
 # -------------------------------------------------------------
 
-# use histogram which stores systematic errors
-# TODO: add functionality to write multiple Rz syst. nuisances according to selection
+# Use histogram which stores systematic errors
+# Includes functionality to write multiple syst. nuisances (e.g. Rz syst.) according to selection (e.g. Nb, Nsv)
 def writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selectionMap = {}, removeCut = ""):
     nBins = h.GetNbinsX()
     for i in xrange(1, nBins + 1):
