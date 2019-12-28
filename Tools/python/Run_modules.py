@@ -9,7 +9,7 @@ import run_systematics
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from search_bins import  ValidationBins, SearchBins, CRUnitBins
-from tools import invert, setupHist
+from tools import invert, setupHist, stringifyMap, removeCuts
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
@@ -26,19 +26,30 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # -------------------------------------------------------------
 
 # use histogram which stores systematic errors
-def writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset):
+# TODO: add functionality to write multiple Rz syst. nuisances according to selection
+def writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selectionMap = {}, removeCut = ""):
     nBins = h.GetNbinsX()
     for i in xrange(1, nBins + 1):
         sb_i = i - 1 + offset
         sb_name = binMap[str(sb_i)]
+        # add selection to systematic name if selection map given
+        final_syst = syst 
+        if selectionMap:
+            selection = selectionMap[str(sb_i)]["selection"]
+            if removeCut:
+                # remove cut only if removeCut is given
+                # removeCuts(cutString, pattern, delim = "_"):
+                selection = removeCuts(selection, removeCut)
+            final_syst += "_" + selection
+        
         # systematic error is stored in bin content
         # treat error as symmetric
         error   = h.GetBinContent(i)
         r_up   = 1 + error 
         r_down = 1 - error 
 
-        outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, process, r_up   ) )
-        outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, process, r_down ) )
+        outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, final_syst, process, r_up   ) )
+        outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, final_syst, process, r_down ) )
 
 # use prediction, syst up/down histograms
 def writeToConfFromPred(outFile, binMap, process, syst, h, h_up, h_down, region, offset):
@@ -89,11 +100,12 @@ def main():
     parser.add_argument("--syst_json",    "-s", default="",                             help="json file containing systematics")
     parser.add_argument("--verbose",      "-v", default = False, action = "store_true", help="verbose flag to print more things")
     
-    options         = parser.parse_args()
-    runs_json       = options.runs_json
-    syst_json       = options.syst_json
-    verbose         = options.verbose
-    units_json      = "dc_BkgPred_BinMaps_master.json"
+    options                     = parser.parse_args()
+    units_json                  = "dc_BkgPred_BinMaps_master.json"
+    searchbin_selection_json    = "search_bins_v4.json"
+    runs_json                   = options.runs_json
+    syst_json                   = options.syst_json
+    verbose                     = options.verbose
     # Note: DO NOT apply Rz syst. in CR unit bins
     rz_syst_files   = {}
     rz_syst_files["validation"]   = "RzSyst_ValidationBins.root"
@@ -104,20 +116,22 @@ def main():
     ZvPhoton_syst_files["search"]       = "ZvsPhotonSyst_SearchBins.root" 
     ZvPhoton_syst_files["controlUnit"]  = "ZvsPhotonSyst_CRUnitBins.root"
    
-    doSymmetrize = True
-    doUnits      = True
-    draw         = False
-    saveRootFile = False
-    runMap       = {}
-    systMap      = {}
-    masterBinMap = {}
-    systHistoMap = {}
+    doSymmetrize            = True
+    doUnits                 = True
+    draw                    = False
+    saveRootFile            = False
+    masterBinMap            = {}
+    searchBinSelectionMap   = {}
+    runMap                  = {}
+    systMap                 = {}
+    systHistoMap            = {}
 
     # list required files to check if they exist
     file_list = [] 
+    file_list.append(units_json)
+    file_list.append(searchbin_selection_json)
     file_list.append(runs_json)
     file_list.append(syst_json)
-    file_list.append(units_json)
     for key in rz_syst_files:
         file_list.append(rz_syst_files[key])
     for key in ZvPhoton_syst_files:
@@ -130,12 +144,14 @@ def main():
             return
     
     # load json files
+    with open(units_json, "r") as input_file:
+        masterBinMap = json.load(input_file) 
+    with open(searchbin_selection_json, "r") as input_file:
+        searchBinSelectionMap = stringifyMap(json.load(input_file))
     with open(runs_json, "r") as input_file:
         runMap  = json.load(input_file)
     with open(syst_json, "r") as input_file:
         systMap = json.load(input_file) 
-    with open(units_json, "r") as input_file:
-        masterBinMap = json.load(input_file) 
     
     # map search bin numbers to string names
     searchBinMap = invert(masterBinMap["binNum"])
@@ -355,13 +371,13 @@ def main():
             systHistoMap[bintype]["highdm"]["znunu_zgammdiff"]  = copy.deepcopy(f_in.Get("ZvsPhoton_syst_high_dm"))
 
         # --- Rz syst --- #
-        # writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset):
+        # writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selectionMap = {}, removeCut = "")
         systForConf = systMap["znunu_rzunc"]["name"]  
-        writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["lowdm"]["znunu_rzunc"],  "lowdm",  SB.low_dm_start)
-        writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["highdm"]["znunu_rzunc"], "highdm", SB.high_dm_start)
+        writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["lowdm"]["znunu_rzunc"],  "lowdm",  SB.low_dm_start,  searchBinSelectionMap, "NJ")
+        writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["highdm"]["znunu_rzunc"], "highdm", SB.high_dm_start, searchBinSelectionMap, "NJ")
         
         # --- Z vs Photon syst --- #
-        # writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset):
+        # writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selectionMap = {}, removeCut = "")
         systForConf = systMap["znunu_zgammdiff"]["name"]  
         writeToConfFromSyst(outFile, unitBinMap, "phocr_gjets", systForConf, systHistoMap["controlUnit"]["lowdm"]["znunu_zgammdiff"],  "lowdm",  CRU.low_dm_start)
         writeToConfFromSyst(outFile, unitBinMap, "phocr_gjets", systForConf, systHistoMap["controlUnit"]["highdm"]["znunu_zgammdiff"], "highdm", CRU.high_dm_start)
