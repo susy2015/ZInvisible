@@ -449,23 +449,42 @@ def main():
                     h_down  = syst_histo[syst]["validation"][region]["down"]
                     p_up    = h_up.GetBinContent(b_i)
                     p_down  = h_down.GetBinContent(b_i)
-                    syst_up   = (p_up - p  ) / p
-                    syst_down = (p - p_down) / p
-                    syst_up_sum     += syst_up**2
-                    syst_down_sum   += syst_down**2
+                    syst_up   = p_up / p
+                    syst_down = p_down / p
+                    # If both systematics go the same direction, need to symmetrize
+                    # Because all the nuisance parameters are log-normal, symmetrize by dividing by the geometric mean
+                    if ((syst_up > 1) and (syst_down > 1)) or ((syst_up < 1) and (syst_down < 1)):
+                        geometric_mean = np.sqrt(syst_up * syst_down)
+                        syst_up /= geometric_mean
+                        syst_down /= geometric_mean
+                    # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
+                    # Sum (the square of the log of) all the ratios that are greater than 1
+                    # Sum (the square of the log of) all the ratios that are less than 1
+                    # Then at the end, take the exponential of the square root of each sum to get the total systematic ratio
+                    if syst_up > 1 or syst_down < 1:
+                        log_syst_up_sum += np.log(syst_up)**2
+                        log_syst_down_sum += np.log(syst_down)**2
+                    else:
+                        log_syst_up_sum += np.log(syst_down)**2
+                        log_syst_down_sum += np.log(syst_up)**2
                 # syst from root file
                 #systHistoMap[bintype][region][syst]
                 for syst in systHistoMap["validation"][region]:
                     error = systHistoMap["validation"][region][syst].GetBinContent(b_i)
-                    # symmetric error with up = down
-                    syst_up   = error  
-                    syst_down = error  
-                    syst_up_sum     += syst_up**2
-                    syst_down_sum   += syst_down**2
-            syst_up_total   = np.sqrt(syst_up_sum)
-            syst_down_total = np.sqrt(syst_down_sum)
-            final_up   = 1.0 + syst_up_total
-            final_down = 1.0 - syst_down_total
+                    # symmetric error
+                    syst_up   = error 
+                    syst_down = 1/error
+                    if syst_up > 1 or syst_down < 1:
+                        log_syst_up_sum     += np.log(syst_up)**2
+                        log_syst_down_sum   += np.log(syst_down)**2
+                    else:
+                        log_syst_up_sum     += np.log(syst_down)**2
+                        log_syst_down_sum   += np.log(syst_up)**2
+                        
+            syst_up_total   = np.exp( np.sqrt(log_syst_up_sum))
+            syst_down_total = np.exp(-np.sqrt(log_syst_down_sum)) # Minus sign is needed because this is the *down* ratio
+            final_up   = syst_up_total
+            final_down = syst_down_total
             #print "bin {0}, pred={1}, syst_up={2}, syst_down={3}".format(b_i, p, final_up, final_down)
             h_total_syst_up.SetBinContent(     b_i, final_up   )
             h_total_syst_down.SetBinContent(   b_i, final_down )
