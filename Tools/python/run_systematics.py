@@ -1,11 +1,10 @@
-# Run_modules.py (modified for systematics)
+# run_systematics.py (modified for systematics)
 import copy
 import numpy as np
 import json
 import argparse
 import os
 import ROOT
-import run_systematics
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from search_bins import  ValidationBins, SearchBins, CRUnitBins
@@ -13,6 +12,77 @@ from tools import invert, setupHist, stringifyMap, removeCuts
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
+
+# ----------------
+# Plot
+# ----------------
+
+def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
+    eraTag = "_" + era
+    draw_option = "hist"
+            
+    # colors
+    color_red    = "vermillion"
+    color_blue   = "electric blue"
+    color_green  = "irish green" 
+    color_purple = "violet"
+    color_black  = "black"
+    
+    # legend: TLegend(x1,y1,x2,y2)
+    legend_x1 = 0.6
+    legend_x2 = 0.9 
+    legend_y1 = 0.7
+    legend_y2 = 0.9 
+    
+    c = ROOT.TCanvas("c", "c", 800, 800)
+    c.Divide(1, 2)
+    
+    name = "{0}_{1}_syst".format(bintype, mySyst)
+    
+    h_ratio_up      = h_up.Clone("h_ratio_up") 
+    h_ratio_down    = h_down.Clone("h_ratio_down") 
+    h_ratio_up.Divide(h)
+    h_ratio_down.Divide(h)
+    
+    title = "Z to Invisible: " + name + " in " + region + " for " + era
+    x_title = bintype + " bins"
+    setupHist(h,                title, x_title, "Events",               color_black,  10.0 ** -2, 10.0 ** 5)
+    setupHist(h_up,             title, x_title, "Events",               color_red,    10.0 ** -2, 10.0 ** 5)
+    setupHist(h_down,           title, x_title, "Events",               color_blue,   10.0 ** -2, 10.0 ** 5)
+    setupHist(h_ratio_up,       title, x_title, "variation / nominal",  color_red,    0.5, 1.5)
+    setupHist(h_ratio_down,     title, x_title, "variation / nominal",  color_blue,   0.5, 1.5)
+    
+    # histograms
+    c.cd(1)
+    ROOT.gPad.SetLogy(1) # set log y
+    # draw
+    h.Draw(draw_option)
+    h_up.Draw(draw_option + " same")
+    h_down.Draw(draw_option + " same")
+    
+    # legend: TLegend(x1,y1,x2,y2)
+    legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+    legend.AddEntry(h,              "Z#rightarrow#nu#nu MC",  "l")
+    legend.AddEntry(h_up,           "syst up",                "l")
+    legend.AddEntry(h_down,         "syst down",              "l")
+    legend.Draw()
+    
+    # ratios
+    pad = c.cd(2)
+    pad.SetGrid()
+    # draw
+    h_ratio_up.Draw(draw_option)
+    h_ratio_down.Draw(draw_option + " same")
+    
+    # save histograms
+    plot_name = plot_dir + name + "_" + region + eraTag
+    c.Update()
+    c.SaveAs(plot_name + ".png")
+
+
+
+
+
 
 # -------------------------------------------------------------
 # Combine all systematics to get total syst up/down
@@ -170,7 +240,7 @@ def main():
     directions      = ["up", "", "down"]
     bintypes        = ["validation", "search", "controlUnit"]
     # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
-    systematics_znunu  = ["jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
+    systematics_znunu  = ["pdf", "metres", "jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
     systematics_phocr  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
     systematics = list(set(systematics_znunu)| set(systematics_phocr))
     # TODO. missing systematics: pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
@@ -276,7 +346,7 @@ def main():
             for bintype in ["validation", "search"]:
                 for region in regions:
                     # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
-                    run_systematics.plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir)
+                    plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir)
                 
         # --- end loop over systematics
         
@@ -333,7 +403,7 @@ def main():
             for bintype in ["controlUnit"]:
                 for region in regions:
                     # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
-                    run_systematics.plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir)
+                    plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir)
                 
         # --- end loop over systematics
             
