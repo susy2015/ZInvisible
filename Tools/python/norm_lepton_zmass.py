@@ -56,7 +56,7 @@ class Normalization:
         self.selections_tex = {}
         for bin_type in self.bin_types:
             # selections per region
-            self.selections[bin_type] = tools.getSelections(self.bin_maps[bin_type], bin_type, "NJ")
+            self.selections[bin_type] = tools.getSelections(self.bin_maps[bin_type], bin_type, ["NJ"])
             self.selections_tex[bin_type] = {}
             for region in self.regions:
                 self.selections_tex[bin_type][region] = {}

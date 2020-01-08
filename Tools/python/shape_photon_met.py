@@ -42,7 +42,7 @@ class Shape:
         # get selections from json file
         self.selections = {}
         for bin_type in self.bin_types:
-            self.selections[bin_type] = getSelections(self.bin_maps[bin_type], bin_type, "NSV")
+            self.selections[bin_type] = getSelections(self.bin_maps[bin_type], bin_type, ["NSV", "MET"])
         
         # labels
         self.label_met    = "#slash{E}_{T}^{#gamma} [GeV]"

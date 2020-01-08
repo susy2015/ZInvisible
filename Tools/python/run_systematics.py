@@ -27,7 +27,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 # Use histogram which stores systematic errors
 # Includes functionality to write multiple syst. nuisances (e.g. Rz syst.) according to selection (e.g. Nb, Nsv)
-def writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selectionMap = {}, removeCut = ""):
+def writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selectionMap = {}, removeCut = []):
     nBins = h.GetNbinsX()
     for i in xrange(1, nBins + 1):
         sb_i = i - 1 + offset
@@ -373,8 +373,8 @@ def main():
         # --- Rz syst --- #
         # writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selectionMap = {}, removeCut = "")
         systForConf = systMap["znunu_rzunc"]["name"]  
-        writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["lowdm"]["znunu_rzunc"],  "lowdm",  SB.low_dm_start,  searchBinSelectionMap, "NJ")
-        writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["highdm"]["znunu_rzunc"], "highdm", SB.high_dm_start, searchBinSelectionMap, "NJ")
+        writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["lowdm"]["znunu_rzunc"],  "lowdm",  SB.low_dm_start,  searchBinSelectionMap, ["NJ"])
+        writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["highdm"]["znunu_rzunc"], "highdm", SB.high_dm_start, searchBinSelectionMap, ["NJ"])
         
         # --- Z vs Photon syst --- #
         # writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selectionMap = {}, removeCut = "")

@@ -83,7 +83,7 @@ def getMETBinEdges(binMap, selection):
     temp_array = []
     result = []
     for b in binMap:
-        cut = removeCuts(binMap[b]["selection"], "NSV")
+        cut = removeCuts(binMap[b]["selection"], ["NSV", "MET"])
         if verbose:
             print "b: {0}, selection: {1}, cut: {2}".format(b, selection, cut)
         # get array of bins matching selection used for shape factor
@@ -141,15 +141,15 @@ def getMETBinEdges(binMap, selection):
     return d
 
 # get selections from json file
-def getSelections(bin_map, bin_type, remove_cut="", verbose=False): 
+def getSelections(bin_map, bin_type, remove_cut_list=[], verbose=False): 
     lowdm_cuts  = []
     highdm_cuts = []
     for b in bin_map:
         r = bin_map[b]["region"]
         cut = bin_map[b]["selection"]
-        # only remove cut if remove_cut is given
-        if remove_cut:
-            cut = removeCuts(cut, remove_cut)
+        # only remove cut if remove_cut_list is given
+        if remove_cut_list:
+            cut = removeCuts(cut, remove_cut_list)
         if r == "LowDM":
             lowdm_cuts.append(cut)
         elif r == "HighDM":
@@ -209,11 +209,13 @@ def getTexSelection(selection):
     return expression
 
 # remove cuts if pattern in cuts
-def removeCuts(cutString, pattern, delim = "_"):
-    cutList = cutString.split(delim)
-    #print "cutString: {0}, cutList: {1}".format(cutString, cutList)
-    newList = list(c for c in cutList if pattern not in c)
-    newString = delim.join(newList)
+def removeCuts(cutString, pattern_list, delim = "_"):
+    newString = cutString
+    for pattern in pattern_list:
+        cutList = newString.split(delim)
+        #print "cutString: {0}, newString: {1}, cutList: {2}".format(cutString, newString, cutList)
+        newList = list(c for c in cutList if pattern not in c)
+        newString = delim.join(newList)
     return newString
 
 # get ratio
