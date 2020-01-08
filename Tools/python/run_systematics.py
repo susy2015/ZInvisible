@@ -159,8 +159,12 @@ def symmetrizeSyst(h, h_up, h_down):
         same_dir   = diff_up * diff_down > 0
         if same_dir:
             diff_symm = np.mean([abs(diff_up), abs(diff_down)])
-            h_up.SetBinContent(   i, p + diff_symm)
-            h_down.SetBinContent( i, p - diff_symm)
+            if p_up >= p_down:
+                h_up.SetBinContent(   i, p + diff_symm)
+                h_down.SetBinContent( i, p - diff_symm)
+            else:
+                h_up.SetBinContent(   i, p - diff_symm)
+                h_down.SetBinContent( i, p + diff_symm)
 
 
 def main():
