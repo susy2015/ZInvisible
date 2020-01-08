@@ -18,6 +18,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # ----------------
 
 def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
+
     eraTag = "_" + era
     draw_option = "hist"
             
@@ -43,6 +44,8 @@ def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
     h_ratio_down    = h_down.Clone("h_ratio_down") 
     h_ratio_up.Divide(h)
     h_ratio_down.Divide(h)
+
+    fixSystForZeroPred(h, h_ratio_up, h_ratio_down)
     
     title = "Z to Invisible: " + name + " in " + region + " for " + era
     x_title = bintype + " bins"
@@ -145,15 +148,28 @@ def writeToConfFromPred(outFile, binMap, process, syst, h, h_up, h_down, region,
         outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, process, r_up   ) )
         outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, process, r_down ) )
 
+# set p_up and p_down to 1.0 if p is 0.0
+# modify histograms passed to function
+def fixSystForZeroPred(h, h_up, h_down):
+    nBins = h.GetNbinsX()
+    for i in xrange(1, nBins + 1):
+        p       = h.GetBinContent(i)
+        p_up    = h_up.GetBinContent(i)
+        p_down  = h_down.GetBinContent(i)
+        # set p_up and p_down to 1.0 if p is 0.0
+        if p == 0:
+            h_up.SetBinContent(   i, 1.0)
+            h_down.SetBinContent( i, 1.0)
+
 # symmetrize systematic if up/down variation is in the same direction compared to nominal
 # modify histograms passed to function
 def symmetrizeSyst(h, h_up, h_down):
     nBins = h.GetNbinsX()
     for i in xrange(1, nBins + 1):
-        # symmetrize systematic if up/down variation is in the same direction compared to nominal
         p       = h.GetBinContent(i)
         p_up    = h_up.GetBinContent(i)
         p_down  = h_down.GetBinContent(i)
+        # symmetrize systematic if up/down variation is in the same direction compared to nominal
         diff_up   = p_up - p
         diff_down = p_down - p
         same_dir   = diff_up * diff_down > 0
@@ -165,7 +181,6 @@ def symmetrizeSyst(h, h_up, h_down):
             else:
                 h_up.SetBinContent(   i, p - diff_symm)
                 h_down.SetBinContent( i, p + diff_symm)
-
 
 def main():
     # options
