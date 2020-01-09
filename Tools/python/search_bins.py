@@ -424,7 +424,7 @@ class Common:
             i = 1
             for b in systMap[region]["bins"]:
                 selection = self.bins[b]["selection"]
-                selection_norm = removeCuts(selection, "NJ")
+                selection_norm = removeCuts(selection, ["NJ"])
                 
                 #print "DEBUG: b={0}, selection={1}, selection_norm={2}, type={3}".format(b, selection, selection_norm, type(selection_norm))
                 #print "DEBUG: rz_syst_map[{0}] keys = {1}".format(region, rz_syst_map[bin_type][region].keys())
@@ -523,8 +523,8 @@ class ValidationBins(Common):
             selection   = self.bins[b]["selection"]
             met         = self.bins[b]["met"]
             # remove cuts from selection for norm and shape
-            selection_norm  = removeCuts(selection, "NJ")
-            selection_shape = removeCuts(selection, "NSV")
+            selection_norm  = removeCuts(selection, ["NJ"])
+            selection_shape = removeCuts(selection, ["NSV", "MET"])
             self.binValues[era][b] = {}
             self.binValues[era][b]["norm"]        = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z"]
             self.binValues[era][b]["norm_error"]  = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z_error"]
@@ -617,8 +617,8 @@ class SearchBins(Common):
             selection   = self.bins[b]["selection"]
             met         = self.bins[b]["met"]
             # remove cuts from selection for norm and shape
-            selection_norm  = removeCuts(selection, "NJ")
-            selection_shape = removeCuts(selection, "NSV")
+            selection_norm  = removeCuts(selection, ["NJ"])
+            selection_shape = removeCuts(selection, ["NSV", "MET"])
             if self.verbose:
                 print "{0}: {1} {2} {3} {4}".format(b, region, selection_norm, selection_shape, met)
             self.binValues[era][b] = {}
