@@ -447,7 +447,7 @@ class Normalization:
                     h_Combined.SetBinContent(           i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z"])
                     h_Combined.SetBinError(             i + 1,      self.norm_map[era][bin_type]["Combined"][region][selection]["R_Z_error"])
                     h_Combined_Run2.SetBinContent(      i + 1,      Run2_norm)
-                    #h_Combined_Run2.SetBinError(        i + 1,      self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z_error"])
+                    h_Combined_Run2.SetBinError(        i + 1,      self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z_error"])
                     # set bin labels
                     h_Electron.GetXaxis().SetBinLabel(      i + 1, era)
                     h_Muon.GetXaxis().SetBinLabel(          i + 1, era)
@@ -488,7 +488,7 @@ class Normalization:
                 # "WW" = MC MC comparison (weighted-weighted)
                 # "CHI2" = returns chi2 instead of p-value
                 chisq      = f_Combined.GetChisquare()
-                #chisq_Run2 = h_Combined_Run2.Chi2Test(h_Combined, "WW CHI2")
+                chisq_Run2 = h_Combined_Run2.Chi2Test(h_Combined, "WW CHI2")
                 # nDegFree = nBins - 1 for chisq_r
                 # nDegFree = nBins for chisq_Run2_r 
                 chisq_r      = chisq / (nBins - 1)
@@ -501,7 +501,7 @@ class Normalization:
                 # set total Run 2 errror
                 for i in xrange(nBins):
                     h_Combined_Run2.SetBinError(        i + 1,      final_Run2_total_err)
-                #chisq_Run2_r = chisq_Run2 / nBins
+                chisq_Run2_r = chisq_Run2 / nBins
                 fit_value = f_Combined.GetParameter(0)
                 fit_error = f_Combined.GetParError(0)
                 mark = ROOT.TLatex()
@@ -535,10 +535,12 @@ class Normalization:
                 # y list is for positioning the text
                 y_list = np.arange(y_max, 0.0, -0.3)
                 mark.DrawLatex(0.2, y_list[1], "Fit: f(x) = %.3f #pm %.3f"                % (fit_value, fit_error))
-                mark.DrawLatex(0.2, y_list[2], "Comb. e/#mu #chi_{r}^{2} = %.3f"          % chisq_r)
-                mark.DrawLatex(0.2, y_list[3], "S = %.3f"                                 % scale)
-                mark.DrawLatex(0.2, y_list[4], "R_{Z} #pm #sigma_{stat} = %.3f #pm %.3f"  % (Run2_norm, Run2_stat_err))
-                mark.DrawLatex(0.2, y_list[5], "Run 2 #sigma_{total} = %.3f"              % final_Run2_total_err)
+                mark.DrawLatex(0.2, y_list[2], "Fit #chi_{r}^{2} = %.3f"                  % chisq_r)
+                mark.DrawLatex(0.2, y_list[3], "Run 2 #chi_{r}^{2} = %.3f"                % chisq_Run2_r)
+                mark.DrawLatex(0.2, y_list[4], "S = %.3f"                                 % scale)
+                mark.DrawLatex(0.2, y_list[5], "R_{Z} #pm #sigma_{stat} = %.3f #pm %.3f"  % (Run2_norm, Run2_stat_err))
+                mark.DrawLatex(0.2, y_list[6], "Run 2 #sigma_{total} = %.3f"              % final_Run2_total_err)
+                # old method
                 #mark.DrawLatex(0.2, y_list[6], "Run 2 #sigma_{syst} = %.3f"               % final_Run2_syst_err)
                 #mark.DrawLatex(0.2, y_max - 2.0, "Run 2 #chi_{r}^{2} = %.3f"        % final_Run2_chisq_r)
                 
