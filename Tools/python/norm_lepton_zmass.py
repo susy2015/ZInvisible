@@ -384,6 +384,7 @@ class Normalization:
 
     # make a plot of nomralization (y-axis) vs. era (x-axis) for different selections
     def makeComparison(self, bin_type):
+        doFit = False
         draw_option = "hist error"
         # treat Run2 era differentley
         eras = self.eras
@@ -417,7 +418,6 @@ class Normalization:
                 selections_root_tex     = selections_root_tex.replace("$", "")
                 print "{0} : {1}".format(region_tex, region_root_tex)
                 print "{0} : {1}".format(selections_tex, selections_root_tex)
-                #h_mc_lowdm    = ROOT.TH1F("mc_lowdm",    "mc_lowdm",    self.low_dm_nbins,  self.low_dm_start,  self.low_dm_end + 1) 
                 h_Electron       = ROOT.TH1F("h_Electron",        "h_Electron",        nBins, 0, nBins)
                 h_Muon           = ROOT.TH1F("h_Muon",            "h_Muon",            nBins, 0, nBins)
                 h_Combined       = ROOT.TH1F("h_Combined",        "h_Combined",        nBins, 0, nBins)
@@ -434,9 +434,7 @@ class Normalization:
                 setupHist(h_Combined_Run2,  title, x_title, y_title, self.color_green,  y_min, y_max)
                 Run2_norm     = self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z"]
                 Run2_stat_err = self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z_error"]
-                final_Run2_syst_err   = -1
                 final_Run2_total_err  = -1
-                #final_Run2_chisq_r    = -1
                 for i in xrange(nBins):
                     era = eras[i]
                     # set bin contents and error
@@ -453,57 +451,45 @@ class Normalization:
                     h_Muon.GetXaxis().SetBinLabel(          i + 1, era)
                     h_Combined.GetXaxis().SetBinLabel(      i + 1, era)
                     h_Combined_Run2.GetXaxis().SetBinLabel( i + 1, era)
-                # --- previous method --- #
-                # scan over error to tune reduced chisq to 1.0 
-                #for error_tmp in np.arange(0.0, 1.01, 0.01):
-                #    # set the Run2 error in order to tune the reduced chisq to 1.0
-                #    for i in xrange(nBins):
-                #        h_Combined_Run2.SetBinError(        i + 1,      error_tmp)
-                #    chisq_tmp = h_Combined_Run2.Chi2Test(h_Combined, "WW CHI2")
-                #    chisq_tmp_r = chisq_tmp / nBins 
-                #    if chisq_tmp_r >= 1.0:
-                #        final_Run2_syst_err   = error_tmp
-                #        final_Run2_chisq_r = chisq_tmp_r
-                #    else:
-                #        # chisq_r < 1.0
-                #        if error_tmp == 0.0:
-                #            # this is the first error value, but chisq < 1.0 already
-                #            final_Run2_syst_err   = error_tmp
-                #            final_Run2_chisq_r = chisq_tmp_r
-                #        break
-
-
+                
+                
 
                 # loop over a range of Run 2 error
                 # set Run 2 error
                 # calculate chi sq
                 # find Run 2 error such that reduced chi sq is 1.0
                 
-                # do some fits
-                f_Combined  = ROOT.TF1("f1", "pol0", 0, 5)
-                h_Combined.Fit(f_Combined,  "", "", 0, 5)
-                f_Combined.SetLineColor(getColorIndex("violet"))
-                f_Combined.SetLineWidth(5)
                 # for Chi2Test()
                 # "WW" = MC MC comparison (weighted-weighted)
                 # "CHI2" = returns chi2 instead of p-value
-                chisq      = f_Combined.GetChisquare()
-                chisq_Run2 = h_Combined_Run2.Chi2Test(h_Combined, "WW CHI2")
                 # nDegFree = nBins - 1 for chisq_r
                 # nDegFree = nBins for chisq_Run2_r 
-                chisq_r      = chisq / (nBins - 1)
-                scale        = np.sqrt(chisq_r)
+                
+                # do a fit
+                fit_value   = -1.0
+                fit_error   = -1.0
+                chisq_fit   = -1.0
+                chisq_fit_r = -1.0
+                if doFit:
+                    f_Combined = ROOT.TF1("f1", "pol0", 0, 5)
+                    h_Combined.Fit(f_Combined,  "", "", 0, 5)
+                    f_Combined.SetLineColor(getColorIndex("violet"))
+                    f_Combined.SetLineWidth(5)
+                    fit_value = f_Combined.GetParameter(0)
+                    fit_error = f_Combined.GetParError(0)
+                    chisq_fit      = f_Combined.GetChisquare()
+                    chisq_fit_r    = chisq_fit / (nBins - 1)
+                
+                chisq_Run2 = h_Combined_Run2.Chi2Test(h_Combined, "WW CHI2")
+                chisq_Run2_r = chisq_Run2 / nBins
+                scale        = np.sqrt(chisq_Run2_r)
                 if scale >= 1.0:
                     final_Run2_total_err = scale * Run2_stat_err
                 else:
                     final_Run2_total_err = Run2_stat_err
-                final_Run2_syst_err  = np.sqrt(final_Run2_total_err**2 - Run2_stat_err**2)
                 # set total Run 2 errror
                 for i in xrange(nBins):
                     h_Combined_Run2.SetBinError(        i + 1,      final_Run2_total_err)
-                chisq_Run2_r = chisq_Run2 / nBins
-                fit_value = f_Combined.GetParameter(0)
-                fit_error = f_Combined.GetParError(0)
                 mark = ROOT.TLatex()
                 mark.SetTextSize(0.03)
                 
@@ -517,7 +503,8 @@ class Normalization:
                 h_Combined.Draw(draw_option)        
                 h_Electron.Draw(draw_option + " same")        
                 h_Muon.Draw(draw_option + " same")        
-                f_Combined.Draw("same")
+                if doFit:
+                    f_Combined.Draw("same")
                 h_Combined_Run2.Draw("same")
 
                 # legend: TLegend(x1,y1,x2,y2)
@@ -526,27 +513,29 @@ class Normalization:
                 legend.AddEntry(h_Muon,             "Muon",                      "l")
                 legend.AddEntry(h_Combined,         "Combined e, #mu",           "l")
                 legend.AddEntry(h_Combined_Run2,    "Run2",                      "l")
-                legend.AddEntry(f_Combined,         "Fit to Combined e, #mu",    "l")
+                if doFit:
+                    legend.AddEntry(f_Combined,         "Fit to Combined e, #mu",    "l")
                 legend.Draw()
 
                 # write chisq
-                # give x, y coordinates (same as plot coordinates)
-                #print "fit = %.2f #pm %.2f" % (fit_value, fit_error)
-                # y list is for positioning the text
+                # - give x, y coordinates (same as plot coordinates)
+                # - y list is for positioning the text
                 y_list = np.arange(y_max, 0.0, -0.3)
-                mark.DrawLatex(0.2, y_list[1], "Fit: f(x) = %.3f #pm %.3f"                % (fit_value, fit_error))
-                mark.DrawLatex(0.2, y_list[2], "Fit #chi_{r}^{2} = %.3f"                  % chisq_r)
-                mark.DrawLatex(0.2, y_list[3], "Run 2 #chi_{r}^{2} = %.3f"                % chisq_Run2_r)
-                mark.DrawLatex(0.2, y_list[4], "S = %.3f"                                 % scale)
-                mark.DrawLatex(0.2, y_list[5], "R_{Z} #pm #sigma_{stat} = %.3f #pm %.3f"  % (Run2_norm, Run2_stat_err))
-                mark.DrawLatex(0.2, y_list[6], "Run 2 #sigma_{total} = %.3f"              % final_Run2_total_err)
-                # old method
-                #mark.DrawLatex(0.2, y_list[6], "Run 2 #sigma_{syst} = %.3f"               % final_Run2_syst_err)
-                #mark.DrawLatex(0.2, y_max - 2.0, "Run 2 #chi_{r}^{2} = %.3f"        % final_Run2_chisq_r)
+                if doFit: 
+                    mark.DrawLatex(0.2, y_list[1], "Fit: f(x) = %.3f #pm %.3f"                % (fit_value, fit_error))
+                    mark.DrawLatex(0.2, y_list[2], "Fit #chi_{r}^{2} = %.3f"                  % chisq_fit_r)
+                    mark.DrawLatex(0.2, y_list[3], "Run 2 #chi_{r}^{2} = %.3f"                % chisq_Run2_r)
+                    mark.DrawLatex(0.2, y_list[4], "S = %.3f"                                 % scale)
+                    mark.DrawLatex(0.2, y_list[5], "R_{Z} #pm #sigma_{stat} = %.3f #pm %.3f"  % (Run2_norm, Run2_stat_err))
+                    mark.DrawLatex(0.2, y_list[6], "Run 2 #sigma_{total} = %.3f"              % final_Run2_total_err)
+                else:
+                    mark.DrawLatex(0.2, y_list[1], "Run 2 #chi_{r}^{2} = %.3f"                % chisq_Run2_r)
+                    mark.DrawLatex(0.2, y_list[2], "S = %.3f"                                 % scale)
+                    mark.DrawLatex(0.2, y_list[3], "#sigma_{stat} = %.3f"  %                  (Run2_stat_err))
+                    mark.DrawLatex(0.2, y_list[4], "R_{Z} #pm #sigma_{total} = %.3f #pm %.3f"  % (Run2_norm, final_Run2_total_err))
                 
                 # save final Rz syst.
                 # WARNING: this needs to be saved separately for validaiton and search bins, otherwise it will be overwritten
-                #print "----------------- DEBUG: {0}, {1}, Rz syst = {2}".format(region, selection, final_Run2_syst_err)
                 self.rz_syst_map[bin_type][region][selection] = final_Run2_total_err
 
                 # save histograms
@@ -559,6 +548,7 @@ class Normalization:
                 del h_Electron
                 del h_Muon
                 del h_Combined
+                del h_Combined_Run2
 
 
 
