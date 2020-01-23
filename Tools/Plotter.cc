@@ -463,8 +463,8 @@ void Plotter::createHistsFromTuple()
 
                 registerfunc_->registerFunctions(tr);
                 // skip to event
-                int myEvent = 6025;
-                tr.goToEvent(myEvent);
+                //int myEvent = 6025;
+                //tr.goToEvent(myEvent);
 
                 while(tr.getNextEvent())
                 {
@@ -489,7 +489,7 @@ void Plotter::createHistsFromTuple()
                     if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;
                     if(tr.getEvtNum() % printInterval_ == 0) std::cout << "Event #: " << tr.getEvtNum() << std::endl;
                     // print for testing
-                    std::cout << "Event #: " << tr.getEvtNum() << std::endl;
+                    //std::cout << "Event #: " << tr.getEvtNum() << std::endl;
 
                     //fill histograms
                     if(doHists_)
