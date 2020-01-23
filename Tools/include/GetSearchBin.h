@@ -42,13 +42,22 @@ namespace plotterFunctions
         void getSearchBin(NTupleReader& tr)
         {
             bool doUnits = true;
-            // TODO: calculate photon Data and MC yields in photon CR unit bins
-            // TODO: calculate Z nu nu MC yields in SR unit bins
+
+            // --- determine MET variable --- //
             std::string met_label = "MET_pt";
             if (suffix_.find("drPhotonCleaned") != std::string::npos)
             {
                 met_label = "metWithPhoton";
             }
+            else if (suffix_.find("METUnClustUp") != std::string::npos)
+            {
+                met_label = "MET_pt_unclustEnUp";
+            }
+            else if (suffix_.find("METUnClustDown") != std::string::npos)
+            {
+                met_label = "MET_pt_unclustEnDown";
+            }
+            // --- JES --- //
             if (suffix_.find("jesTotalUp") != std::string::npos)
             {
                 met_label = met_label + "_jesTotalUp";

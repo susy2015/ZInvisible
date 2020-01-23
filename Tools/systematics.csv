@@ -1,5 +1,5 @@
 key,name,nominal,up,down
-pdf,PDF_Weight,pdfWeight,pdfWeight_Up,pdfWeight_Down
+pdf,PDF_Weight,NONE,pdfWeight_Up,pdfWeight_Down
 pileup,PU_Weight,puWeight,puWeight_Up,puWeight_Down
 isr,ISR_Weight,ISRWeight,ISRWeight_Up,ISRWeight_Down
 prefire,Prefire_Weight,PrefireWeight,PrefireWeight_Up,PrefireWeight_Down
@@ -24,5 +24,6 @@ eff_sb,ivfunc,SoftBottomTotalSF_jetpt30,SoftBottomTotalSF_Up_jetpt30,SoftBottomT
 eff_sb_lepton,ivfunc,SoftBottomTotalSF_drLeptonCleaned_jetpt30,SoftBottomTotalSF_Up_drLeptonCleaned_jetpt30,SoftBottomTotalSF_Down_drLeptonCleaned_jetpt30
 eff_sb_photon,ivfunc,SoftBottomTotalSF_drPhotonCleaned_jetpt30,SoftBottomTotalSF_Up_drPhotonCleaned_jetpt30,SoftBottomTotalSF_Down_drPhotonCleaned_jetpt30
 jes,JES,NONE,NONE,NONE
+metres,metres,NONE,NONE,NONE
 znunu_rzunc,znunu_rzunc,NONE,NONE,NONE
 znunu_zgammdiff,znunu_zgammdiff,NONE,NONE,NONE

@@ -154,7 +154,7 @@ class Systematic:
         return h_ratio_normalized
 
     def makeZvsPhoton(self, file_name, era, rebin):
-        doFit = True
+        doFit = False
         draw_option = "hist error"
         # check that the file exists
         if not os.path.isfile(file_name): 
