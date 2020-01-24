@@ -11,6 +11,6 @@
 #include "PrepareMiniTupleVars.h"
 #include "SystematicCalc.h"
 #include "SystematicPrep.h"
-#include "ShapeNJets.h"
+#include "ShapeWeights.h"
 
 #endif

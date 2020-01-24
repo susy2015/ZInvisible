@@ -29,7 +29,7 @@ namespace plotterFunctions
     class SystematicCalc;
     class PrepareTopVars;
     class Gamma;
-    class ShapeNJets;
+    class ShapeWeights;
 }
 
 class SystWeights;
@@ -94,7 +94,7 @@ private:
     plotterFunctions::PrepareMiniTupleVars      *prepareMiniTupleVars;
     plotterFunctions::SystematicPrep            *systematicPrep;
     plotterFunctions::SystematicCalc            *systematicCalc;
-    plotterFunctions::ShapeNJets                *shapeNJets;
+    plotterFunctions::ShapeWeights              *shapeWeights;
 
 public:
     RegisterFunctionsNTuple(bool doSystematics, std::string sbEra, std::string year);

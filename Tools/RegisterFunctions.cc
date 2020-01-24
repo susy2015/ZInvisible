@@ -69,7 +69,7 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool doSystematics, std::string
     prepareMiniTupleVars                        = new plotterFunctions::PrepareMiniTupleVars(true);
     systematicPrep                              = new plotterFunctions::SystematicPrep;
     systematicCalc                              = new plotterFunctions::SystematicCalc(sbEra);
-    shapeNJets                                  = new plotterFunctions::ShapeNJets;
+    shapeWeights                                = new plotterFunctions::ShapeWeights;
 
     doSystematics_ = doSystematics;
     myPDFUnc = new PDFUncertainty();
@@ -120,7 +120,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(ISRcorrector)                                delete ISRcorrector;
     if(pileup)                                      delete pileup;
     if(gamma)                                       delete gamma;
-    if(shapeNJets)                                  delete shapeNJets;
+    if(shapeWeights)                                delete shapeWeights;
 }
         
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
@@ -141,7 +141,7 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*lepInfo);
     tr.registerFunction(*blv_drLeptonCleaned_jetpt30);
     tr.registerFunction(*blv_drPhotonCleaned_jetpt30);
-    tr.registerFunction(*shapeNJets);
+    tr.registerFunction(*shapeWeights);
     // run getSearchBin for both Z nu nu MC (search region) and photon Data and MC (control region)
     tr.registerFunction(*getSearchBin);
     tr.registerFunction(*getSearchBin_drPhotonCleaned);
