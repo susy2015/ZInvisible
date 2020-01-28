@@ -9,12 +9,13 @@
 #include "SusyAnaTools/Tools/RunTopTagger.h"
 
 class NTupleReader;
-class BaselineVessel;
 
 namespace plotterFunctions
 {
     class BasicLepton;
     class GetSearchBin;
+	class CountWLep;
+	class DownsizeBootstrap;
     class Gamma;
 	class JetSort;
 }
@@ -36,12 +37,13 @@ public:
 class RegisterFunctionsNTuple : public RegisterFunctions
 {
 private:
-    BaselineVessel                 *myBLV;
     GetVectors                     *getVectors;
     RunTopTagger                   *runTopTagger;
     plotterFunctions::Gamma        *gamma;
     plotterFunctions::BasicLepton  *basicLepton;
     plotterFunctions::GetSearchBin *getSearchBin;
+	plotterFunctions::CountWLep    *countWLep;
+	plotterFunctions::DownsizeBootstrap * downBoot;
 	plotterFunctions::JetSort      *jetSort;
 
 public:

@@ -1,6 +1,5 @@
 #include "Plotter.h"
 #include "tdrstyle.h"
-#include "MiniTupleMaker.h"
 #include "RegisterFunctions.h"
 #include "TypeDefinitions.h"
 #include "TROOT.h"
@@ -319,6 +318,10 @@ Plotter::Scanner::Scanner(std::string name, std::set<std::string> vars, std::vec
 	: name(name), vars(vars), datasets(datasets)
 {}
 
+Plotter::Scanner::Scanner(std::string name, std::set<std::string> vars, std::vector<DatasetSummary> datasets, std::map<std::string, std::string> name_map)
+	: name(name), vars(vars), datasets(datasets), name_map(name_map)
+{}
+
 void Plotter::createHistsFromTuple()
 {
     for(const AnaSamples::FileSummary& file : trees_)
@@ -395,7 +398,7 @@ void Plotter::createHistsFromTuple()
             }
         }
 
-        std::vector<std::pair<MiniTupleMaker*, Scanner*>> scannersToFill;
+        std::vector<Scanner*> scannersToFill;
 
         bool keepGoing = true;
         // Do not process files if there are no histograms asking for it
@@ -484,12 +487,10 @@ void Plotter::createHistsFromTuple()
 									else
 										weightbranch->SetAddress(&(sc.weight));
 
-									MiniTupleMaker * mtm = new MiniTupleMaker(tupletree);
-
-									mtm->setTupleVars(sc.vars);
-									mtm->initBranches(tr);
+									sc.SetTree(tupletree);
+									sc.initBranches(tr);
 									sc.currentDS = ds;
-									scannersToFill.push_back(std::make_pair(mtm, &sc));
+									scannersToFill.push_back(&sc);
 								}
 							}
 						}
@@ -516,7 +517,7 @@ void Plotter::createHistsFromTuple()
                             if(!hs.passCuts(tr)) continue;
 
                             // get the weight associated with the dataset
-                            double weight = dss.getWeight(tr) * lumi_;
+                            double weight = dss.getWeight(tr);
 
                             for(auto& hist : histsToFillVec.second.second)
                             {
@@ -530,17 +531,17 @@ void Plotter::createHistsFromTuple()
                     for(auto& cutFlow : cutFlowsToFill)
                     {
                         //get event weight here
-                        double weight = cutFlow->dssp->getWeight(tr) * lumi_;
+                        double weight = cutFlow->dssp->getWeight(tr);
 
                         cutFlow->fillHist(tr, weight);
                     }
 
-					for (auto &scpair : scannersToFill)
+					for (auto &sc : scannersToFill)
 					{
-						if(scpair.second->currentDS.passCuts(tr))
+						if(sc->currentDS.passCuts(tr))
 						{
-							scpair.second->weight = scpair.second->currentDS.getWeight(tr) * lumi_;
-							scpair.first->fill();
+							sc->weight = sc->currentDS.getWeight(tr);
+							sc->Fill();
 						}
 					}
 
@@ -556,11 +557,11 @@ void Plotter::createHistsFromTuple()
             f->Close();
             delete f;
 
-			for(auto & scpair : scannersToFill)
+			for(auto &sc : scannersToFill)
 			{
-				scpair.first->GetTree()->GetDirectory()->cd();
-				scpair.first->GetTree()->Write();
-				std::cout << "Writing " << scpair.first->GetTree()->GetName() << std::endl;
+				sc->GetTree()->GetDirectory()->cd();
+				sc->GetTree()->Write();
+				std::cout << "Writing " << sc->GetTree()->GetName() << std::endl;
 			}
         }
     }

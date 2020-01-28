@@ -2,8 +2,9 @@
 #include "NTupleReader.h"
 #include "Gamma.h"
 #include "GetSearchBin.h"
+#include "CountWLep.h"
+#include "DownsizeBootstrap.h"
 #include "BasicLepton.h"
-#include "baselineDef.h"
 #include "JetSort.h"
 
 void activateBranches(std::set<std::string>& activeBranches)
@@ -18,12 +19,13 @@ void activateBranches(std::set<std::string>& activeBranches)
 RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool isCondor, std::string year) : RegisterFunctions()
 {            
     // Important: create objects!!
-    myBLV        = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year);
     getVectors   = new GetVectors;
     runTopTagger = new RunTopTagger;
     gamma        = new plotterFunctions::Gamma(year);
     basicLepton  = new plotterFunctions::BasicLepton;
     getSearchBin = new plotterFunctions::GetSearchBin;
+	countWLep    = new plotterFunctions::CountWLep;
+	downBoot     = new plotterFunctions::DownsizeBootstrap;
 	jetSort      = new plotterFunctions::JetSort;
 }
 
@@ -31,9 +33,10 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 {
     if(getVectors)   delete getVectors;
     if(runTopTagger) delete runTopTagger;
-    if(myBLV)        delete myBLV;
     if(basicLepton)  delete basicLepton;
     if(getSearchBin) delete getSearchBin;
+	if(countWLep)    delete countWLep;
+	if(downBoot)     delete downBoot;
     if(gamma)        delete gamma;
 	if(jetSort)      delete jetSort;
 }
@@ -46,8 +49,9 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*gamma);
     tr.registerFunction(*basicLepton);
     tr.registerFunction(*runTopTagger);
-    tr.registerFunction(*myBLV);
     tr.registerFunction(*getSearchBin);
+	tr.registerFunction(*countWLep);
+	tr.registerFunction(*downBoot);
 	tr.registerFunction(*jetSort);
 }
 

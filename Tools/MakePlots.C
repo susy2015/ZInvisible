@@ -37,8 +37,6 @@ int main(int argc, char* argv[])
         {"startFile",  required_argument, 0, 'M'},
         {"numEvts",    required_argument, 0, 'E'},
         {"plotDir",    required_argument, 0, 'P'},
-        {"luminosity", required_argument, 0, 'L'},
-        {"refLumi",    required_argument, 0, 'R'},
         {"era",        required_argument, 0, 'Y'},
         {"syst",       required_argument, 0, 'S'}
     };
@@ -51,8 +49,6 @@ int main(int argc, char* argv[])
     int startFile   = 0;
     int nFiles      = -1;
     int nEvts       = -1;
-    double lumi     = -1.0;
-    std::string refLumi = "";
     std::string filename = "histoutput.root";
     std::string dataSets = "";
     std::string sampleloc = AnaSamples::fileDir;
@@ -62,7 +58,9 @@ int main(int argc, char* argv[])
     std::string suffix = "";
     std::string JESsuffix = "";
     std::string METUnClustsuffix = "";
-    while((opt = getopt_long(argc, argv, "pstfcvI:D:N:M:E:P:L:R:Y:S:", long_options, &option_index)) != -1)
+    std::string JetPtsuffix = "";
+    std::string MetPtsuffix = "";
+    while((opt = getopt_long(argc, argv, "pstfcvI:D:N:M:E:P:Y:S:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
@@ -88,7 +86,7 @@ int main(int argc, char* argv[])
             case 'c':
                 runOnCondor = true;
                 break;
-            
+
             case 'v':
                 verbose = true;
                 break;
@@ -117,22 +115,23 @@ int main(int argc, char* argv[])
                 plotDir = optarg;
                 break;
 
-            case 'L':
-                lumi = atof(optarg);
-                break;
-            
-            case 'R':
-                refLumi = optarg;
-                break;
-
             case 'Y':
                 era = optarg;
                 break;
-                
+
             case 'S':
                 suffix = std::string("_") + optarg;
-                if(suffix.find("_JES") == 0) JESsuffix = suffix;
-                if(suffix.find("_METUnClust") == 0) METUnClustsuffix = suffix;
+                if(suffix.find("_JES") == 0)
+                {
+                    JESsuffix = suffix;
+                    JetPtsuffix = "_jesTotal" + suffix.substr(4);
+                    MetPtsuffix = "_jesTotal" + suffix.substr(4);
+                }
+                if(suffix.find("_METUnClust") == 0)
+                {
+                    METUnClustsuffix = suffix;
+                    MetPtsuffix = "_unclustEn" + suffix.substr(11);
+                }
                 break;
         }
     }
@@ -143,69 +142,9 @@ int main(int argc, char* argv[])
     {
         year = era.substr(0, 4);
     }
-    
-    // datasets
-    // year and periods
-    std::string eraTag    = "_" + era;
+    std::string earTag = "_" + era;
     std::string yearTag   = "_" + year;
-    std::string periodTag = "";
-    // HEM veto for 2018 periods C and D
-    std::string HEMVeto = "";
-    std::string puWeight                = "puWeight";
 
-    // lumi for Plotter
-    if (era.compare("2016") == 0)
-    {
-    }
-    else if (era.compare("2017") == 0)
-    {
-    }
-    else if (era.compare("2017_BE") == 0)
-    {
-        puWeight                = "17BtoEpuWeight";
-    }
-    else if (era.compare("2017_F") == 0)
-    {
-        puWeight                = "17FpuWeight";
-    }
-    else if (era.compare("2018") == 0)
-    {
-    }
-    else if (era.compare("2018_PreHEM") == 0)
-    {
-        periodTag               = "_PreHEM";
-    }
-    else if (era.compare("2018_PostHEM") == 0)
-    {
-        // HEM vetos: use ";veto_name" so that it can be appended to cuts
-        HEMVeto                           = "Pass_exHEMVeto30" + suffix;
-        periodTag                         = "_PostHEM";
-    }
-    else
-    {
-        std::cout << "Please enter 2016, 2017, 2017_BE, 2017_F, 2018, 2018_PreHEM or 2018_PostHEM for the era using the -Y flag." << std::endl;
-        exit(1);
-    }
-
-    // if luminosity not set with -L flag
-    if (lumi < 0.0)
-    {
-        if (refLumi.empty())
-        {
-            std::cout << "Please enter either a luminosity (-L flag) or a data sample collection name (-R flag) for use as a reference luminosity." << std::endl;
-            exit(1);
-        }
-        else
-        {
-            // Hack to get luminosity from reference
-            AnaSamples::SampleSet        SS_temp("sampleSets_PostProcessed_"+year+".cfg", runOnCondor, lumi);
-            AnaSamples::SampleCollection SC_temp("sampleCollections_"+year+".cfg", SS_temp);
-            lumi = SC_temp.getSampleLumi(refLumi);
-        }
-    }
-    
-    std::cout << "Using luminosity " << lumi << std::endl;
-    
     //if running on condor override all optional settings
     if(runOnCondor)
     {
@@ -228,12 +167,12 @@ int main(int argc, char* argv[])
     };
 
     // --- follow the syntax; order matters for your arguments --- //
-    
+
     //SampleSet::SampleSet(std::string file, bool isCondor, double lumi)
-    AnaSamples::SampleSet        SS_2016("sampleSets_PostProcessed_2016.cfg", runOnCondor, lumi);
-    AnaSamples::SampleSet        SS_2017("sampleSets_PostProcessed_2017.cfg", runOnCondor, lumi);
-    AnaSamples::SampleSet        SS_2018("sampleSets_PostProcessed_2018.cfg", runOnCondor, lumi);
-    
+    AnaSamples::SampleSet        SS_2016("sampleSets_PostProcessed_2016.cfg", runOnCondor, 1);
+    AnaSamples::SampleSet        SS_2017("sampleSets_PostProcessed_2017.cfg", runOnCondor, 1);
+    AnaSamples::SampleSet        SS_2018("sampleSets_PostProcessed_2018.cfg", runOnCondor, 1);
+
     //SampleCollection::SampleCollection(const std::string& file, SampleSet& samples)
     AnaSamples::SampleCollection SC_2016("sampleCollections_2016.cfg", SS_2016);
     AnaSamples::SampleCollection SC_2017("sampleCollections_2017.cfg", SS_2017);
@@ -244,7 +183,7 @@ int main(int argc, char* argv[])
     sampleList.push_back({SS_2016, SC_2016, "2016"});
     sampleList.push_back({SS_2017, SC_2017, "2017"});
     sampleList.push_back({SS_2018, SC_2018, "2018"});
-    
+
     map<string, vector<AFS>> fileMap;
 
     std::cout << "dataSets:          " << dataSets << std::endl;
@@ -252,6 +191,8 @@ int main(int argc, char* argv[])
     std::cout << "suffix:            " << suffix << std::endl;
     std::cout << "JES suffix:        " << JESsuffix << std::endl;
     std::cout << "METUnClust suffix: " << METUnClustsuffix << std::endl;
+    std::cout << "JetPt suffix:      " << JetPtsuffix << std::endl;
+    std::cout << "MetPt suffix:      " << MetPtsuffix << std::endl;
     for (const auto& sample : sampleList)
     {
         AnaSamples::SampleSet           ss = sample.sample_set;
@@ -281,16 +222,65 @@ int main(int argc, char* argv[])
 
     std::vector<std::string> cut_vec;
     cut_vec.push_back("Pass_CaloMETRatio"+suffix);
-    if(!HEMVeto.empty()) cut_vec.push_back(HEMVeto);
 
     std::string cuts = boost::join(cut_vec, ";");
 
-    std::set<std::string> vars = {"run", "event",
-        "BTagWeight", "BTagWeight_Up", "BTagWeight_Down",
-        puWeight, puWeight+"_Up", puWeight+"_Down",
-        "PrefireWeight", "PrefireWeight_Up", "PrefireWeight_Down",
-        "ISRWeight", "ISRWeight_Up", "ISRWeight_Down",
-        "Jet_pt", "Jet_pt_jesTotalUp", "Jet_pt_jetTotalDown",
+    std::map<std::string, std::string> var_name_map = {
+        {"Jet_pt", "Jet_pt"+JetPtsuffix},
+        {"Jet_dPhiMET", "Jet_dPhiMET"+suffix},
+        {"Jet_sortedIdx", "Jet_sortedIdx"+suffix},
+        {"Jet_nsortedIdx", "Jet_nsortedIdx"+suffix},
+        {"Jet_btagStop0l", "Jet_btagStop0l"+JESsuffix},
+        {"Jet_Stop0l", "Jet_Stop0l"+JESsuffix},
+        {"MET_pt", "MET_pt"+MetPtsuffix},
+        {"MET_phi", "MET_phi"+MetPtsuffix},
+        {"ResolvedTop_Stop0l", "ResolvedTop_Stop0l"+JESsuffix},
+        {"Pass_exHEMVeto30", "Pass_exHEMVeto30"+suffix},
+        {"Pass_QCDCR", "Pass_QCDCR"+suffix},
+        {"Pass_QCDCR_highDM", "Pass_QCDCR_highDM"+suffix},
+        {"Pass_QCDCR_lowDM", "Pass_QCDCR_lowDM"+suffix},
+        {"Pass_Baseline", "Pass_Baseline"+suffix},
+        {"Pass_highDM", "Pass_highDM"+suffix},
+        {"Pass_lowDM", "Pass_lowDM"+suffix},
+        {"Stop0l_HT", "Stop0l_HT"+JESsuffix},
+        {"Stop0l_Mtb", "Stop0l_Mtb"+suffix},
+        {"Stop0l_Ptb", "Stop0l_Ptb"+JESsuffix},
+        {"Stop0l_ISRJetPt", "Stop0l_ISRJetPt"+JESsuffix},
+        {"Stop0l_METSig", "Stop0l_METSig"+suffix},
+        {"Stop0l_nTop", "Stop0l_nTop"+JESsuffix},
+        {"Stop0l_nW", "Stop0l_nW"+JESsuffix},
+        {"Stop0l_nResolved", "Stop0l_nResolved"+JESsuffix},
+        {"Stop0l_nbtags", "Stop0l_nbtags"+JESsuffix},
+        {"Stop0l_nJets", "Stop0l_nJets"+JESsuffix},
+        {"ResolvedTopCandidate_genMatch", "ResolvedTopCandidate"+JESsuffix+"_genMatch"}
+    };
+
+    std::set<std::string> vars = {
+        "run", "event",
+        "Jet_pt", "Jet_eta", "Jet_phi", "Jet_jetId", "Jet_puId", "Jet_dPhiMET",
+        "Jet_sortedIdx", "Jet_nsortedIdx", "Jet_btagStop0l", "Jet_Stop0l",
+        "MET_pt", "MET_phi",
+        "SB_Stop0l", "FatJet_Stop0l", "ResolvedTop_Stop0l",
+        "Pass_exHEMVeto30",
+        "Pass_QCDCR", "Pass_QCDCR_highDM", "Pass_QCDCR_lowDM",
+        "Pass_Baseline", "Pass_highDM", "Pass_lowDM",
+        "Stop0l_HT", "Stop0l_Mtb", "Stop0l_Ptb", "Stop0l_ISRJetPt",
+        "Stop0l_METSig", "Stop0l_nTop", "Stop0l_nW", "Stop0l_nResolved",
+        "Stop0l_nbtags", "Stop0l_nSoftb", "Stop0l_nJets",
+        "Stop0l_evtWeight",
+        "nValidationBinLowDM", "nValidationBinLowDMHighMET", "nValidationBinHighDM",
+        "Pass_trigger_MET",
+        "Stop0l_trigger_eff_MET_loose_baseline", "Stop0l_trigger_eff_MET_loose_baseline_down", "Stop0l_trigger_eff_MET_loose_baseline_up",
+        "Stop0l_trigger_eff_MET_low_dm", "Stop0l_trigger_eff_MET_low_dm_down", "Stop0l_trigger_eff_MET_low_dm_up",
+        "Stop0l_trigger_eff_MET_high_dm", "Stop0l_trigger_eff_MET_high_dm_down", "Stop0l_trigger_eff_MET_high_dm_up",
+        "Stop0l_trigger_eff_MET_loose_baseline_QCD", "Stop0l_trigger_eff_MET_loose_baseline_QCD_down", "Stop0l_trigger_eff_MET_loose_baseline_QCD_up",
+        "Stop0l_trigger_eff_MET_low_dm_QCD", "Stop0l_trigger_eff_MET_low_dm_QCD_down", "Stop0l_trigger_eff_MET_low_dm_QCD_up",
+        "Stop0l_trigger_eff_MET_high_dm_QCD", "Stop0l_trigger_eff_MET_high_dm_QCD_down", "Stop0l_trigger_eff_MET_high_dm_QCD_up"
+    };
+
+    /*std::set<std::string> vars = {"run", "event",
+        "puWeight", "puWeight_Up", "puWeight_Down",
+        "Jet_pt", "Jet_pt_jesTotalUp", "Jet_pt_jesTotalDown", "Jet_pt_jerUp", "Jet_pt_jerDown",
         "Jet_eta", "Jet_phi", "Jet_jetId", "Jet_puId",
         "Jet_dPhiMET", "Jet_dPhiMET_JESUp", "Jet_dPhiMET_JESDown", "Jet_dPhiMET_METUnClustUp", "Jet_dPhiMET_METUnClustDown",
         "Jet_sortedIdx", "Jet_sortedIdx_JESUp", "Jet_sortedIdx_JESDown", "Jet_sortedIdx_METUnClustUp", "Jet_sortedIdx_METUnClustDown",
@@ -301,6 +291,7 @@ int main(int argc, char* argv[])
         "MET_phi", "MET_phi_jesTotalUp", "MET_phi_unclustEnUp", "MET_phi_jesTotalDown", "MET_phi_unclustEnDown",
         "SB_Stop0l", "FatJet_Stop0l",
         "ResolvedTop_Stop0l", "ResolvedTop_Stop0l_JESUp", "ResolvedTop_Stop0l_JESDown",
+        "Pass_exHEMVeto30", "Pass_exHEMVeto30_JESUp", "Pass_exHEMVeto30_JESDown", "Pass_exHEMVeto30_METUnClustUp", "Pass_exHEMVeto30_METUnClustDown",
         "Pass_QCDCR", "Pass_QCDCR_JESUp", "Pass_QCDCR_JESDown", "Pass_QCDCR_METUnClustUp", "Pass_QCDCR_METUnClustDown",
         "Pass_QCDCR_highDM", "Pass_QCDCR_highDM_JESUp", "Pass_QCDCR_highDM_JESDown", "Pass_QCDCR_highDM_METUnClustUp", "Pass_QCDCR_highDM_METUnClustDown",
         "Pass_QCDCR_lowDM", "Pass_QCDCR_lowDM_JESUp", "Pass_QCDCR_lowDM_JESDown", "Pass_QCDCR_lowDM_METUnClustUp", "Pass_QCDCR_lowDM_METUnClustDown",
@@ -328,22 +319,44 @@ int main(int argc, char* argv[])
         "Stop0l_trigger_eff_MET_loose_baseline_QCD", "Stop0l_trigger_eff_MET_loose_baseline_QCD_down", "Stop0l_trigger_eff_MET_loose_baseline_QCD_up",
         "Stop0l_trigger_eff_MET_low_dm_QCD", "Stop0l_trigger_eff_MET_low_dm_QCD_down", "Stop0l_trigger_eff_MET_low_dm_QCD_up",
         "Stop0l_trigger_eff_MET_high_dm_QCD", "Stop0l_trigger_eff_MET_high_dm_QCD_down", "Stop0l_trigger_eff_MET_high_dm_QCD_up"
-    };
+    };*/
 
-    std::set<std::string> MCvars = {"Jet_genJetIdx", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_partonFlavour", "GenJet_hadronFlavour", "genWeight",
-        "SB_SF", "SB_SFerr", "FatJet_SF", "FatJet_SFerr", "ResolvedTopCandidate_sf",
+    std::set<std::string> MCvars = {
+        "Jet_genJetIdx", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_partonFlavour", "GenJet_hadronFlavour",
+        "genWeight",
+        "LHE_HTIncoming",
+        "SB_SF", "SB_SFerr",
+        "FatJet_SF", "FatJet_SFerr",
+        "puWeight", "puWeight_Up", "puWeight_Down",
+        "BTagWeight", "BTagWeight_Up", "BTagWeight_Down",
+        "ISRWeight", "ISRWeight_Up", "ISRWeight_Down",
+        "pdfWeight_Up", "pdfWeight_Down",
+        "ResolvedTopCandidate_sf",
         "ResolvedTopCandidate_syst_Btag_Up", "ResolvedTopCandidate_syst_Btag_Down",
         "ResolvedTopCandidate_syst_Pileup_Up", "ResolvedTopCandidate_syst_Pileup_Down",
         "ResolvedTopCandidate_syst_CSPur_Up", "ResolvedTopCandidate_syst_CSPur_Down",
         "ResolvedTopCandidate_syst_Stat_Up", "ResolvedTopCandidate_syst_Stat_Down",
         "ResolvedTopCandidate_syst_Closure_Up", "ResolvedTopCandidate_syst_Closure_Down",
-        "ResolvedTopCandidate_genMatch", "ResolvedTopCandidate_JESUp_genMatch", "ResolvedTopCandidate_JESDown_genMatch"
+        "ResolvedTopCandidate_genMatch",
+        "nWplusLep", "nWminusLep"
     };
-    MCvars.insert(vars.begin(), vars.end());
 
-    if (era == "2017")
+    if (year == "2017")
     {
         vars.insert("Flag_ecalBadCalibFilterV2");
+        MCvars.insert("17BtoEpuWeight");
+        MCvars.insert("17BtoEpuWeight_Up");
+        MCvars.insert("17BtoEpuWeight_Down");
+        MCvars.insert("17FpuWeight");
+        MCvars.insert("17FpuWeight_Up");
+        MCvars.insert("17FpuWeight_Down");
+    }
+
+    if (year != "2018")
+    {
+        MCvars.insert("PrefireWeight");
+        MCvars.insert("PrefireWeight_Up");
+        MCvars.insert("PrefireWeight_Down");
     }
 
     std::map<std::string, std::vector<std::string>> region_to_cuts = {
@@ -374,21 +387,32 @@ int main(int argc, char* argv[])
                      "!Pass_dPhiMETHighDM" + suffix,
                      "Pass_dPhiMETLowDM" + suffix}}};
 
+    MCvars.insert(vars.begin(), vars.end());
+
+    std::set<std::string> QCDvars = {"bootstrapWeight", "bootstrapWeight_smaller", "Stop0l_smearWeight", "uniqueID"};
+    QCDvars.insert(MCvars.begin(), MCvars.end());
+
     std::string region_cuts;
     for (string region : {"QCDCR", "Baseline", "vLowDM", "vLowDMHighMET", "vHighDM"})
     {
         region_cuts = boost::join(region_to_cuts[region], ";");
-        PDS dsData  = PDS("Data",       fileMap["Data_MET"   + eraTag], cuts + ";" + region_cuts, "");
-        PDS dstt    = PDS("ttbar",      fileMap["TTbar"      +yearTag], cuts + ";" + region_cuts, weights);
-        PDS dstt2   = PDS("ttbarnohad", fileMap["TTbarNoHad" +yearTag], cuts + ";" + region_cuts, weights);
-        PDS dsWJets = PDS("Wjets",      fileMap["WJetsToLNu" +yearTag], cuts + ";" + region_cuts, weights);
-        PDS dsZnunu = PDS("Znunu",      fileMap["ZJetsToNuNu"+yearTag], cuts + ";" + region_cuts, weights);
-        PDS dsrare  = PDS("rare",       fileMap["Rare"       +yearTag], cuts + ";" + region_cuts, weights);
-        PDS dsQCD   = PDS("QCD",        fileMap["QCD"        +yearTag], cuts + ";" + region_cuts, weights);
-        PDS dsQCD_s = PDS("QCD_smear",  fileMap["QCD_smear"  +yearTag], cuts + ";" + region_cuts, weights);
+        PDS dsData        = PDS("Data",         fileMap["Data_MET_2016"        ], cuts + ";" + region_cuts, "");
+        PDS dsDataPreHEM  = PDS("Data_PreHEM",  fileMap["Data_MET_2018_PreHEM" ], cuts + ";" + region_cuts, "");
+        PDS dsDataPostHEM = PDS("Data_PostHEM", fileMap["Data_MET_2018_PostHEM"], cuts + ";" + region_cuts, "");
+        PDS dsDataBE      = PDS("Data_BE",      fileMap["Data_MET_2017_BE"     ], cuts + ";" + region_cuts, "");
+        PDS dsDataF       = PDS("Data_F",       fileMap["Data_MET_2017_F"      ], cuts + ";" + region_cuts, "");
+        PDS dstt          = PDS("ttbar",        fileMap["TTbar"       + yearTag], cuts + ";" + region_cuts, weights);
+        PDS dstt2         = PDS("ttbarnohad",   fileMap["TTbarNoHad"  + yearTag], cuts + ";" + region_cuts, weights);
+        PDS dsttHT        = PDS("ttbarHT",      fileMap["TTbarHT"     + yearTag], cuts + ";" + region_cuts, weights);
+        PDS dsWJets       = PDS("Wjets",        fileMap["WJetsToLNu"  + yearTag], cuts + ";" + region_cuts, weights);
+        PDS dsZnunu       = PDS("Znunu",        fileMap["ZJetsToNuNu" + yearTag], cuts + ";" + region_cuts, weights);
+        PDS dsrare        = PDS("rare",         fileMap["Rare"        + yearTag], cuts + ";" + region_cuts, weights);
+        PDS dsQCD         = PDS("QCD",          fileMap["QCD"         + yearTag], cuts + ";" + region_cuts, weights);
+        PDS dsQCD_s       = PDS("QCD_smear",    fileMap["QCD_smear"   + yearTag], cuts + ";" + region_cuts, weights);
 
-        scanners.push_back(Plotter::Scanner(region, vars, {dsData}));
-        scanners.push_back(Plotter::Scanner(region, MCvars, {dstt, dstt2, dsWJets, dsZnunu, dsrare, dsQCD, dsQCD_s}));
+        scanners.push_back(Plotter::Scanner(region, vars, {dsData, dsDataPreHEM, dsDataPostHEM, dsDataBE, dsDataF}, var_name_map));
+        scanners.push_back(Plotter::Scanner(region, MCvars, {dstt, dstt2, dsttHT, dsWJets, dsZnunu, dsrare, dsQCD}, var_name_map));
+        scanners.push_back(Plotter::Scanner(region, QCDvars, {dsQCD_s}, var_name_map));
     }
 
     set<AFS> vvf;
@@ -405,11 +429,10 @@ int main(int argc, char* argv[])
         printf("    startFile: %d\n", startFile);                    fflush(stdout);
         printf("    nEvts: %d\n", nEvts);                            fflush(stdout);
     }
-  
+
     Plotter plotter(vh, vvf, fromTuple, filename, nFiles, startFile, nEvts);
     plotter.setScanners(scanners);
     //plotter.setCutFlows(cutFlowSummaries);
-    plotter.setLumi(lumi);
     plotter.setPlotDir(plotDir);
     plotter.setDoHists(doSave || doPlots);
     plotter.setDoTuple(doTuple);

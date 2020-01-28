@@ -124,13 +124,110 @@ public:
 		public:
 			std::string name;
 			std::set<std::string> vars;
+			std::map<std::string, std::string> name_map;
 			std::vector<DatasetSummary> datasets;
 			double weight;
 			DatasetSummary currentDS;
 
 			Scanner(std::string name, std::set<std::string> vars, std::vector<DatasetSummary> datasets);
+			Scanner(std::string name, std::set<std::string> vars, std::vector<DatasetSummary> datasets, std::map<std::string, std::string> name_map);
 
-			void initBranches();
+			~Scanner() {}
+
+			void initBranches(const NTupleReader& tr)
+			{
+				std::string type;
+				std::string inname;
+				std::string outname;
+
+				for(auto& var : vars)
+				{   
+					auto search = name_map.find(var);
+					if(search != name_map.end())
+					{
+						outname = search->first;
+						inname = search->second;
+					}
+					else
+					{
+						outname = var;
+						inname = var;
+					}
+
+					tr.getType(inname, type);
+
+					if(type.find("vector") != std::string::npos)
+					{   
+						if(type.find("*") != std::string::npos)
+						{   
+							throw "Scanner::initBranches(...): Vectors of pointers are not allowed in MiniTuples!!!";
+						}   
+						else
+						{   
+							//Anyone reading this please forgive me, but root made me do it
+							if     (type.find("TLorentzVector")     != std::string::npos) prepVec<TLorentzVector>     (tr, outname, inname);
+							else if(type.find("double")             != std::string::npos) prepVec<double>             (tr, outname, inname);
+							else if(type.find("float")              != std::string::npos) prepVec<float>              (tr, outname, inname);
+							else if(type.find("unsigned int")       != std::string::npos) prepVec<unsigned int>       (tr, outname, inname);
+							else if(type.find("int")                != std::string::npos) prepVec<int>                (tr, outname, inname);
+							else if(type.find("unsigned short")     != std::string::npos) prepVec<unsigned short>     (tr, outname, inname);
+							else if(type.find("short")              != std::string::npos) prepVec<short>              (tr, outname, inname);
+							else if(type.find("unsigned long long") != std::string::npos) prepVec<unsigned long long> (tr, outname, inname);
+							else if(type.find("long long")          != std::string::npos) prepVec<long long>          (tr, outname, inname);
+							else if(type.find("unsigned long")      != std::string::npos) prepVec<unsigned long>      (tr, outname, inname);
+							else if(type.find("long")               != std::string::npos) prepVec<long>               (tr, outname, inname);
+							else if(type.find("unsigned char")      != std::string::npos) prepVec<unsigned char>      (tr, outname, inname);
+							else
+							{   
+								throw "Scanner::initBranches(...): Variable type unknown!!! var: " + inname + ", type: " + type;               
+							}   
+						}   
+					}   
+					else
+					{   
+						if     (type.find("unsigned int")        != std::string::npos) prepVar<unsigned int>       (tr, outname, inname);
+						else if(type.find("int")                 != std::string::npos) prepVar<int>                (tr, outname, inname);
+						else if(type.find("double")              != std::string::npos) prepVar<double>             (tr, outname, inname);
+						else if(type.find("float")               != std::string::npos) prepVar<float>              (tr, outname, inname);
+						else if(type.find("unsigned short")      != std::string::npos) prepVar<unsigned short>     (tr, outname, inname);
+						else if(type.find("short")               != std::string::npos) prepVar<short>              (tr, outname, inname);
+						else if(type.find("unsigned char")       != std::string::npos) prepVar<unsigned char>      (tr, outname, inname);
+						else if(type.find("string")              != std::string::npos) prepVar<std::string>        (tr, outname, inname);
+						else if(type.find("char")                != std::string::npos) prepVar<char>               (tr, outname, inname);
+						else if(type.find("bool")                != std::string::npos) prepVar<bool>               (tr, outname, inname);
+						else if(type.find("unsigned long long")  != std::string::npos) prepVar<unsigned long long> (tr, outname, inname);
+						else if(type.find("long long")           != std::string::npos) prepVar<long long>          (tr, outname, inname);
+						else if(type.find("unsigned long")       != std::string::npos) prepVar<unsigned long>      (tr, outname, inname);
+						else if(type.find("long")                != std::string::npos) prepVar<long>               (tr, outname, inname);
+						else if(type.find("TLorentzVector")      != std::string::npos) prepVar<TLorentzVector>     (tr, outname, inname);
+						else
+						{   
+							throw "Scanner::initBranches(...): Variable type unknown!!! var: " + inname + ", type: " + type;
+						}
+					}
+				}
+			}
+
+			void SetTree(TTree * const t) { tree_ = t; }
+			TTree* GetTree() { return tree_; }
+
+			void Fill() { tree_->Fill(); }
+
+		private:
+			TTree *tree_;
+			template<typename T> void prepVar(const NTupleReader& tr, const std::string outname, const std::string inname)
+			{
+				TBranch *tb = tree_->GetBranch(outname.c_str());
+				if(!tb) tree_->Branch(outname.c_str(), static_cast<T*>(const_cast<void*>(tr.getPtr<T>(inname))));
+				else tb->SetAddress(const_cast<void*>(tr.getPtr<T>(inname)));
+			}
+
+			template<typename T> void prepVec(const NTupleReader& tr, const std::string outname, const std::string inname)
+			{
+				TBranch *tb = tree_->GetBranch(outname.c_str());
+				if(!tb) tree_->Branch(outname.c_str(), static_cast<std::vector<T>**>(const_cast<void*>(tr.getVecPtr<T>(inname))));
+				else tb->SetAddress(const_cast<void*>(tr.getVecPtr<T>(inname)));
+			}
 	};
 
     class HistSummary : public Cuttable
