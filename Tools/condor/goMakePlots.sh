@@ -23,7 +23,16 @@ xrdcp root://cmseos.fnal.gov/$(echo $6 | sed 's|/eos/uscms||') .
 
 ls -lhrt
 
-./makePlots -st --condor -D $1 -N $3 -M $4 -L $5 -S SB_v1_2017 -Y $year | grep -v LHAPDF
+syst=$5
+if [ ${syst} == "Base" ]
+then
+    systarg=""
+else
+    systarg="-S ${syst}"
+fi
+
+echo ./makePlots -st --condor -D $1 -N $3 -M $4 -Y $year ${systarg}
+./makePlots -st --condor -D $1 -N $3 -M $4 -Y $year ${systarg}
 
 ls -lhrt
 

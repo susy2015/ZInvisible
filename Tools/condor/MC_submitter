@@ -1,0 +1,15 @@
+#!/bin/bash
+
+year=$1
+systematic=$2
+
+if [ -n "${systematic}" ]
+then
+	systarg="-S ${systematic}"
+fi
+
+echo ${year}
+
+echo ${systematic}
+
+python condorSubmit.py -d TTbar_${year},TTbarNoHad_${year},TTbarHT_${year},WJetsToLNu_${year},ZJetsToNuNu_${year},Rare_${year},QCD_${year},QCD_smear_${year} -n 1 -y ${year} ${systarg}

@@ -30,4 +30,4 @@ echo ${data}
 
 echo ${systematic}
 
-python condorSubmit.py -d ${data}TTbar_${year},TTbarNoHad_${year},TTbarHT_${year},WJetsToLNu_${year},ZJetsToNuNu_${year},Rare_${year},QCD_${year},QCD_smear_${year} -n 1 -y ${year} ${systarg}
+python condorSubmit.py -d ${data} -n 1 -y ${year} ${systarg}
