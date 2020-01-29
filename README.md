@@ -57,10 +57,10 @@ Go to the `ZInvisible/Tools` directory and checkout the config files using getTa
 cd $CMSSW_BASE/src/ZInvisible/Tools
 mkdir ../../myTopTaggerCfgs
 mkdir ../../myStopCfgs
-getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2016_v1.0.7 -f TopTagger_2016.cfg -d ../../myTopTaggerCfgs/ -o
-getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2017_v1.0.1 -f TopTagger_2017.cfg -d ../../myTopTaggerCfgs/ -o
-getTaggerCfg.sh -t DeepResolved_DeepCSV_GR_fromStop0lPostProc_2018_v1.0.1 -f TopTagger_2018.cfg -d ../../myTopTaggerCfgs/ -o
-getStopCfg.sh -t PostProcessed_StopNtuple_v4.1.0 -d ../../myStopCfgs -o
+getTaggerCfg.sh -d ../../myTopTaggerCfgs/ -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2016_V1.1.0 -f TopTagger_2016.cfg -o 
+getTaggerCfg.sh -d ../../myTopTaggerCfgs/ -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2017_V1.1.0 -f TopTagger_2017.cfg -o 
+getTaggerCfg.sh -d ../../myTopTaggerCfgs/ -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2018_V1.1.0 -f TopTagger_2018.cfg -o 
+getStopCfg.sh -d ../../myStopCfgs -t PostProcessed_StopNtuple_v5.0.1 -o
 ```
 
 There are more detailed instructions that you can reference [here](https://github.com/susy2015/SusyAnaTools#get-configuration-files).
