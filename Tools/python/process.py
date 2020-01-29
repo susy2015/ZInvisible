@@ -77,7 +77,6 @@ def process():
             if not no_plots:
                 # Move plots to directory for each era
                 returncode = subprocess.check_call("mkdir -p {0}/{1}".format(folder, era),     shell=True)
-                returncode = subprocess.check_call("mv {0}/*.pdf {0}/{1}".format(folder, era), shell=True)
                 returncode = subprocess.check_call("mv {0}/*.png {0}/{1}".format(folder, era), shell=True)
     
     # ---------------------- # 
@@ -106,7 +105,6 @@ def process():
         
         # Move plots to directory for each era
         returncode = subprocess.check_call("mkdir -p {0}/{1}".format(folder, era),     shell=True)
-        returncode = subprocess.check_call("mv {0}/*.pdf {0}/{1}".format(folder, era), shell=True)
         returncode = subprocess.check_call("mv {0}/*.png {0}/{1}".format(folder, era), shell=True)
 
     # make Run 2 json file
