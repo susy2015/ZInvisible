@@ -206,6 +206,7 @@ def main():
     ZvPhoton_syst_files["controlUnit"]  = "ZvsPhotonSyst_CRUnitBins.root"
    
     doSymmetrize            = True
+    useLogNormal            = True
     doUnits                 = True
     draw                    = False
     saveRootFile            = False
@@ -525,8 +526,10 @@ def main():
         b_i = 1
         for b in validationBinMap[region]:
             p = histo["validation"][region][""].GetBinContent(b_i)
-            syst_up_sum   = 0.0
-            syst_down_sum = 0.0
+            syst_up_sum        = 0.0
+            syst_down_sum      = 0.0
+            log_syst_up_sum    = 0.0
+            log_syst_down_sum  = 0.0
             if p != 0:
                 # syst from p, p_up, p_down
                 for syst in systematics_znunu:
@@ -538,26 +541,61 @@ def main():
                     h_down  = syst_histo[syst]["validation"][region]["down"]
                     p_up    = h_up.GetBinContent(b_i)
                     p_down  = h_down.GetBinContent(b_i)
-                    syst_up   = (p_up - p  ) / p
-                    syst_down = (p - p_down) / p
+                    syst_up         = (p_up - p  ) / p
+                    syst_down       = (p - p_down) / p
+                    log_syst_up     = p_up / p
+                    log_syst_down   = p_down / p
+                    # sum in quadrature 
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
+                    # If both systematics go the same direction, need to symmetrize
+                    # Because all the nuisance parameters are log-normal, symmetrize by dividing by the geometric mean
+                    if ((log_syst_up > 1) and (log_syst_down > 1)) or ((log_syst_up < 1) and (log_syst_down < 1)):
+                        geometric_mean = np.sqrt(log_syst_up * log_syst_down)
+                        log_syst_up   /= geometric_mean
+                        log_syst_down /= geometric_mean
+                    # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
+                    # Sum (the square of the log of) all the ratios that are greater than 1
+                    # Sum (the square of the log of) all the ratios that are less than 1
+                    # Then at the end, take the exponential of the square root of each sum to get the total systematic ratio
+                    if log_syst_up > 1 or log_syst_down < 1:
+                        log_syst_up_sum     += np.log(log_syst_up)**2
+                        log_syst_down_sum   += np.log(log_syst_down)**2
+                    else:
+                        log_syst_up_sum     += np.log(log_syst_down)**2
+                        log_syst_down_sum   += np.log(log_syst_up)**2
                 # syst from root file
                 #systHistoMap[bintype][region][syst]
                 for syst in systHistoMap["validation"][region]:
                     error = systHistoMap["validation"][region][syst].GetBinContent(b_i)
                     # symmetric error with up = down
-                    syst_up   = error  
-                    syst_down = error  
+                    syst_up         = error  
+                    syst_down       = error  
+                    log_syst_up     = 1.0 + error 
+                    log_syst_down   = 1.0 - error
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
+                    if log_syst_up > 1 or log_syst_down < 1:
+                        log_syst_up_sum     += np.log(log_syst_up)**2
+                        log_syst_down_sum   += np.log(log_syst_down)**2
+                    else:
+                        log_syst_up_sum     += np.log(log_syst_down)**2
+                        log_syst_down_sum   += np.log(log_syst_up)**2
             syst_up_total   = np.sqrt(syst_up_sum)
             syst_down_total = np.sqrt(syst_down_sum)
             final_up   = 1.0 + syst_up_total
             final_down = 1.0 - syst_down_total
-            #print "bin {0}, pred={1}, syst_up={2}, syst_down={3}".format(b_i, p, final_up, final_down)
-            h_total_syst_up.SetBinContent(     b_i, final_up   )
-            h_total_syst_down.SetBinContent(   b_i, final_down )
+            log_syst_up_total   = np.exp( np.sqrt(log_syst_up_sum))
+            log_syst_down_total = np.exp(-np.sqrt(log_syst_down_sum)) # Minus sign is needed because this is the *down* ratio
+            log_final_up   = log_syst_up_total
+            log_final_down = log_syst_down_total
+            print "bin {0}, pred={1}, syst_up={2}, syst_down={3}, log_final_up={4}, log_final_down={5}".format(b_i, p, final_up, final_down, log_final_up, log_final_down)
+            if useLogNormal:
+                h_total_syst_up.SetBinContent(     b_i, log_final_up   )
+                h_total_syst_down.SetBinContent(   b_i, log_final_down )
+            else:
+                h_total_syst_up.SetBinContent(     b_i, final_up   )
+                h_total_syst_down.SetBinContent(   b_i, final_down )
             b_i += 1
         
         # --- write histograms to file
