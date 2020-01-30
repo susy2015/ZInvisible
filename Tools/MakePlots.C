@@ -206,16 +206,20 @@ int main(int argc, char* argv[])
     std::string semicolon_HEMVeto_drLeptonCleaned = "";
     std::string semicolon_HEMVeto_drPhotonCleaned = "";
     // Note: Don't apply Flag_ecalBadCalibFilter to 2016, but apply it to 2017 and 2018
-    std::string Flag_ecalBadCalibFilter = "";
-    std::string PrefireWeight           = "";
-    std::string puWeight                = ";puWeight";
-    std::string SAT_Pass_lowDM          = "";
-    std::string SAT_Pass_highDM         = "";
-    std::string SAT_Pass_lowDM_Loose    = "";
-    std::string SAT_Pass_highDM_Loose   = "";
-    std::string SAT_Pass_lowDM_Mid      = "";
-    std::string SAT_Pass_highDM_Mid     = "";
-    std::string SAT_Pass_lowDM_Tight    = "";
+    std::string Flag_ecalBadCalibFilter         = "";
+    std::string PrefireWeight                   = "";
+    std::string puWeight                        = ";puWeight";
+    // HEM veto weight is a weight which accounts for HEM veto
+    std::string HEMVetoWeight                   = "";
+    std::string HEMVetoWeight_drLeptonCleaned   = "";
+    std::string HEMVetoWeight_drPhotonCleaned   = "";
+    std::string SAT_Pass_lowDM                  = "";
+    std::string SAT_Pass_highDM                 = "";
+    std::string SAT_Pass_lowDM_Loose            = "";
+    std::string SAT_Pass_highDM_Loose           = "";
+    std::string SAT_Pass_lowDM_Mid              = "";
+    std::string SAT_Pass_highDM_Mid             = "";
+    std::string SAT_Pass_lowDM_Tight            = "";
 
     // lumi for Plotter
     if (era.compare("2016") == 0)
@@ -241,9 +245,12 @@ int main(int argc, char* argv[])
     }
     else if (era.compare("2018") == 0)
     {
-        ElectronDataset         = "Data_EGamma";
-        PhotonDataset           = "Data_EGamma";
-        Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
+        ElectronDataset                 = "Data_EGamma";
+        PhotonDataset                   = "Data_EGamma";
+        Flag_ecalBadCalibFilter         = ";Flag_ecalBadCalibFilter";
+        HEMVetoWeight                   = ";SAT_HEMVetoWeight_jetpt30";
+        HEMVetoWeight_drLeptonCleaned   = ";SAT_HEMVetoWeight_drLeptonCleaned_jetpt30";
+        HEMVetoWeight_drPhotonCleaned   = ";SAT_HEMVetoWeight_drPhotonCleaned_jetpt30";
     }
     else if (era.compare("2018_PreHEM") == 0)
     {
@@ -1175,7 +1182,7 @@ int main(int argc, char* argv[])
         if (doDataMCElectron)
         {
             // use DiElecTriggerEffPt instead of Stop0l_trigger_eff_Zee_pt because it applies a Z mass cut
-            std::string ElectronWeights = "genWeightNormalized_jetpt30;DiElecTriggerEffPt;DiElecSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
+            std::string ElectronWeights = "genWeightNormalized_jetpt30;DiElecTriggerEffPt;DiElecSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drLeptonCleaned;
             
             // ------------------------------------------------ //
             // bestRecoZM used to calculate normalization
@@ -1699,7 +1706,7 @@ int main(int argc, char* argv[])
         if (doDataMCMuon)
         {
             // Use DiMuTriggerEffPt intead of Stop0l_trigger_eff_Zmumu_pt because it applies a Z mass cut
-            std::string MuonWeights = "genWeightNormalized_jetpt30;DiMuTriggerEffPt;DiMuSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
+            std::string MuonWeights = "genWeightNormalized_jetpt30;DiMuTriggerEffPt;DiMuSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drLeptonCleaned;
             // ------------------------------------------------ //
             // bestRecoZM used to calculate normalization
             // Search and Validation Bins Selection
@@ -2166,7 +2173,7 @@ int main(int argc, char* argv[])
             std::vector<double> xbins_nj_nb0 = {2.0, 6.0, 10.0}; // njets = 2 - 5, >=6
             std::vector<double> xbins_nj_nb1 = {2.0, 7.0, 10.0}; // njets = 2 - 6, >=7
             // all weights
-            std::string PhotonWeights = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
+            std::string PhotonWeights = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drPhotonCleaned;
             // Search and Validation Bins Selection
             for (const auto& cut : map_shape_cuts_low_dm)
             {
@@ -3299,7 +3306,7 @@ int main(int argc, char* argv[])
             std::string ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + varSuffix;
             std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
             std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
-            std::string ZNuNuWeights        = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight;
+            std::string ZNuNuWeights        = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight;
             
             // ---------------------------------- // 
             // --- validation and search bins --- //
