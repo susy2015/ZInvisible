@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     bool runOnCondor        = false;
     bool unblind            = false;
     bool doLooseAndMid      = false;    // hi angel
-    bool doSystematics      = false;
+    bool doSystematics      = true;     // hi caleb
     bool doDataMCElectron   = true;
     bool doDataMCMuon       = true;
     bool doDataMCPhoton     = true;     // hi angel
@@ -3345,12 +3345,15 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffix,            {dcMC_ZNuNu_nSearchBin_HighDM},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
             vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffix,                {dcMC_ZNuNu_nSRUnit_LowDM},                {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,      max_srunit_low_dm,      false, false,  "Search Region Unit Low DM", "Events", true));
             vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffix,               {dcMC_ZNuNu_nSRUnit_HighDM},               {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,     max_srunit_high_dm,     false, false,  "Search Region Unit High DM", "Events", true));
-            // nValidationBin and nSearchBin with njetWeights applied 
-            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_njetWeight" + histSuffix,         {dcMC_ZNuNu_nValidationBin_LowDM_njetWeight},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
-            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET_njetWeight" + histSuffix, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET_njetWeight}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
-            vh.push_back(PHS("ZNuNu_nValidationBin_HighDM_njetWeight" + histSuffix,        {dcMC_ZNuNu_nValidationBin_HighDM_njetWeight},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
-            vh.push_back(PHS("ZNuNu_nSearchBin_LowDM_njetWeight" + histSuffix,             {dcMC_ZNuNu_nSearchBin_LowDM_njetWeight},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
-            vh.push_back(PHS("ZNuNu_nSearchBin_HighDM_njetWeight" + histSuffix,            {dcMC_ZNuNu_nSearchBin_HighDM_njetWeight},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
+            if (doLooseAndMid)
+            {
+                // nValidationBin and nSearchBin with njetWeights applied 
+                vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_njetWeight" + histSuffix,         {dcMC_ZNuNu_nValidationBin_LowDM_njetWeight},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
+                vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET_njetWeight" + histSuffix, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET_njetWeight}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
+                vh.push_back(PHS("ZNuNu_nValidationBin_HighDM_njetWeight" + histSuffix,        {dcMC_ZNuNu_nValidationBin_HighDM_njetWeight},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
+                vh.push_back(PHS("ZNuNu_nSearchBin_LowDM_njetWeight" + histSuffix,             {dcMC_ZNuNu_nSearchBin_LowDM_njetWeight},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
+                vh.push_back(PHS("ZNuNu_nSearchBin_HighDM_njetWeight" + histSuffix,            {dcMC_ZNuNu_nSearchBin_HighDM_njetWeight},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
+            }
             // additional histograms
             vh.push_back(PHS("T1tttt_FatJet_msoftdrop",             {dcMC_T1tttt_FatJet_msoftdrop, dcMC_T1tttt_FatJet_msoftdrop_mt, dcMC_T1tttt_FatJet_msoftdrop_w},             {1, 1}, "", nBins,         0.0,          600.0,          false, false,  "Fat Jet soft drop mass",  "Events", true));
 
