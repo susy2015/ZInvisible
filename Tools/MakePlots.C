@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     bool runOnCondor        = false;
     bool unblind            = false;
     bool doLooseAndMid      = false;    // hi angel
-    bool doSystematics      = false;
+    bool doSystematics      = true;     // hi caleb
     bool doDataMCElectron   = true;
     bool doDataMCMuon       = true;
     bool doDataMCPhoton     = true;     // hi angel
@@ -182,6 +182,7 @@ int main(int argc, char* argv[])
     }
 
     // get year from era
+    // if era is 2016, year is 2016
     // if era is 2018_PreHEM, year is 2018
     if (era.length() >= 4)
     {
@@ -193,7 +194,6 @@ int main(int argc, char* argv[])
     std::string MuonDataset     = "Data_SingleMuon";
     std::string PhotonDataset   = "Data_SinglePhoton";
     // year and periods
-    std::string eraTag      = "_" + era; 
     std::string yearTag     = "_" + year; 
     std::string periodTag   = ""; 
     std::string yearForLumi = year;
@@ -206,16 +206,20 @@ int main(int argc, char* argv[])
     std::string semicolon_HEMVeto_drLeptonCleaned = "";
     std::string semicolon_HEMVeto_drPhotonCleaned = "";
     // Note: Don't apply Flag_ecalBadCalibFilter to 2016, but apply it to 2017 and 2018
-    std::string Flag_ecalBadCalibFilter = "";
-    std::string PrefireWeight           = "";
-    std::string puWeight                = ";puWeight";
-    std::string SAT_Pass_lowDM          = "";
-    std::string SAT_Pass_highDM         = "";
-    std::string SAT_Pass_lowDM_Loose    = "";
-    std::string SAT_Pass_highDM_Loose   = "";
-    std::string SAT_Pass_lowDM_Mid      = "";
-    std::string SAT_Pass_highDM_Mid     = "";
-    std::string SAT_Pass_lowDM_Tight    = "";
+    std::string Flag_ecalBadCalibFilter         = "";
+    std::string PrefireWeight                   = "";
+    std::string puWeight                        = ";puWeight";
+    // HEM veto weight is a weight which accounts for HEM veto
+    std::string HEMVetoWeight                   = "";
+    std::string HEMVetoWeight_drLeptonCleaned   = "";
+    std::string HEMVetoWeight_drPhotonCleaned   = "";
+    std::string SAT_Pass_lowDM                  = "";
+    std::string SAT_Pass_highDM                 = "";
+    std::string SAT_Pass_lowDM_Loose            = "";
+    std::string SAT_Pass_highDM_Loose           = "";
+    std::string SAT_Pass_lowDM_Mid              = "";
+    std::string SAT_Pass_highDM_Mid             = "";
+    std::string SAT_Pass_lowDM_Tight            = "";
 
     // lumi for Plotter
     if (era.compare("2016") == 0)
@@ -241,9 +245,12 @@ int main(int argc, char* argv[])
     }
     else if (era.compare("2018") == 0)
     {
-        ElectronDataset         = "Data_EGamma";
-        PhotonDataset           = "Data_EGamma";
-        Flag_ecalBadCalibFilter = ";Flag_ecalBadCalibFilter";
+        ElectronDataset                 = "Data_EGamma";
+        PhotonDataset                   = "Data_EGamma";
+        Flag_ecalBadCalibFilter         = ";Flag_ecalBadCalibFilter";
+        HEMVetoWeight                   = ";SAT_HEMVetoWeight_jetpt30";
+        HEMVetoWeight_drLeptonCleaned   = ";SAT_HEMVetoWeight_drLeptonCleaned_jetpt30";
+        HEMVetoWeight_drPhotonCleaned   = ";SAT_HEMVetoWeight_drPhotonCleaned_jetpt30";
     }
     else if (era.compare("2018_PreHEM") == 0)
     {
@@ -269,12 +276,7 @@ int main(int argc, char* argv[])
     }
     else if (era.compare("Run2") == 0)
     {
-        // Hack to treat Run2 as 2016 for all but luminosity
-        era  = "2016";
-        year = "2016";
-        std::string eraTag      = "_" + era; 
-        std::string yearTag     = "_" + year; 
-        std::string periodTag   = ""; 
+        // nothing to do for Run2, but it is still a valid option
     }
     else
     {
@@ -1092,12 +1094,12 @@ int main(int argc, char* argv[])
     PDC dcMC_HighDM_Electron_bestRecoZM("single", "bestRecoZM", {dsDY_HighDM_Electron});
     PDC dcMC_HighDM_Muon_bestRecoZM("single",     "bestRecoZM", {dsDY_HighDM_Muon});
     
-    vh.push_back(PHS("MC_LowDM_nElectrons" + eraTag,  {dcMC_LowDM_nElectrons, dcMC_LowDM_Electron_nElectrons, dcMC_LowDM_Muon_nElectrons},    {2, 3}, "", 10,  0,  10, true, false, "nElectrons", "Events"));
-    vh.push_back(PHS("MC_HighDM_nElectrons" + eraTag, {dcMC_HighDM_nElectrons, dcMC_HighDM_Electron_nElectrons, dcMC_HighDM_Muon_nElectrons}, {2, 3}, "", 10,  0,  10, true, false, "nElectrons", "Events"));
-    vh.push_back(PHS("MC_LowDM_nMuons" + eraTag,      {dcMC_LowDM_nMuons, dcMC_LowDM_Electron_nMuons, dcMC_LowDM_Muon_nMuons},                {2, 3}, "", 10,  0,  10, true, false, "nMuons", "Events"));
-    vh.push_back(PHS("MC_HighDM_nMuons" + eraTag,     {dcMC_HighDM_nMuons, dcMC_HighDM_Electron_nMuons, dcMC_HighDM_Muon_nMuons},             {2, 3}, "", 10,  0,  10, true, false, "nMuons", "Events"));
-    vh.push_back(PHS("MC_LowDM_bestRecoZM" + eraTag,  {dcMC_LowDM_bestRecoZM, dcMC_LowDM_Electron_bestRecoZM, dcMC_LowDM_Muon_bestRecoZM},    {2, 3}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
-    vh.push_back(PHS("MC_HighDM_bestRecoZM" + eraTag, {dcMC_HighDM_bestRecoZM, dcMC_HighDM_Electron_bestRecoZM, dcMC_HighDM_Muon_bestRecoZM}, {2, 3}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
+    vh.push_back(PHS("MC_LowDM_nElectrons",  {dcMC_LowDM_nElectrons, dcMC_LowDM_Electron_nElectrons, dcMC_LowDM_Muon_nElectrons},    {2, 3}, "", 10,  0,  10, true, false, "nElectrons", "Events"));
+    vh.push_back(PHS("MC_HighDM_nElectrons", {dcMC_HighDM_nElectrons, dcMC_HighDM_Electron_nElectrons, dcMC_HighDM_Muon_nElectrons}, {2, 3}, "", 10,  0,  10, true, false, "nElectrons", "Events"));
+    vh.push_back(PHS("MC_LowDM_nMuons",      {dcMC_LowDM_nMuons, dcMC_LowDM_Electron_nMuons, dcMC_LowDM_Muon_nMuons},                {2, 3}, "", 10,  0,  10, true, false, "nMuons", "Events"));
+    vh.push_back(PHS("MC_HighDM_nMuons",     {dcMC_HighDM_nMuons, dcMC_HighDM_Electron_nMuons, dcMC_HighDM_Muon_nMuons},             {2, 3}, "", 10,  0,  10, true, false, "nMuons", "Events"));
+    vh.push_back(PHS("MC_LowDM_bestRecoZM",  {dcMC_LowDM_bestRecoZM, dcMC_LowDM_Electron_bestRecoZM, dcMC_LowDM_Muon_bestRecoZM},    {2, 3}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
+    vh.push_back(PHS("MC_HighDM_bestRecoZM", {dcMC_HighDM_bestRecoZM, dcMC_HighDM_Electron_bestRecoZM, dcMC_HighDM_Muon_bestRecoZM}, {2, 3}, "", 40, 50.0, 250.0, true, false, label_bestRecoZM, "Events"));
     
     // Jet pt cuts
     std::vector<std::string> JetPtCuts = {"_jetpt30"};
@@ -1175,7 +1177,7 @@ int main(int argc, char* argv[])
         if (doDataMCElectron)
         {
             // use DiElecTriggerEffPt instead of Stop0l_trigger_eff_Zee_pt because it applies a Z mass cut
-            std::string ElectronWeights = "genWeightNormalized_jetpt30;DiElecTriggerEffPt;DiElecSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
+            std::string ElectronWeights = "genWeightNormalized_jetpt30;DiElecTriggerEffPt;DiElecSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drLeptonCleaned;
             
             // ------------------------------------------------ //
             // bestRecoZM used to calculate normalization
@@ -1699,7 +1701,7 @@ int main(int argc, char* argv[])
         if (doDataMCMuon)
         {
             // Use DiMuTriggerEffPt intead of Stop0l_trigger_eff_Zmumu_pt because it applies a Z mass cut
-            std::string MuonWeights = "genWeightNormalized_jetpt30;DiMuTriggerEffPt;DiMuSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
+            std::string MuonWeights = "genWeightNormalized_jetpt30;DiMuTriggerEffPt;DiMuSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drLeptonCleaned;
             // ------------------------------------------------ //
             // bestRecoZM used to calculate normalization
             // Search and Validation Bins Selection
@@ -2166,7 +2168,7 @@ int main(int argc, char* argv[])
             std::vector<double> xbins_nj_nb0 = {2.0, 6.0, 10.0}; // njets = 2 - 5, >=6
             std::vector<double> xbins_nj_nb1 = {2.0, 7.0, 10.0}; // njets = 2 - 6, >=7
             // all weights
-            std::string PhotonWeights = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight;
+            std::string PhotonWeights = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drPhotonCleaned;
             // Search and Validation Bins Selection
             for (const auto& cut : map_shape_cuts_low_dm)
             {
@@ -2234,8 +2236,8 @@ int main(int argc, char* argv[])
                     // Control Region Units: nCRUnitLowDM and nCRUnitHighDM
                     PDC dcMC_Photon_LowDM_nCRUnitLowDM(         "stack",  "nCRUnitLowDM"  + varSuffix,   StackMC_Photon_LowDM);
                     PDC dcMC_Photon_HighDM_nCRUnitHighDM(       "stack",  "nCRUnitHighDM" + varSuffix,   StackMC_Photon_HighDM);
-                    vh.push_back(PHS("DataMC_Photon_LowDM_nCRUnitLowDM" + histSuffixSyst,                {dcData_Photon_LowDM_nCRUnitLowDM,                     dcMC_Photon_LowDM_nCRUnitLowDM},                     {1, 2}, "", max_crunit_low_dm - min_crunit_low_dm,    min_crunit_low_dm,  max_crunit_low_dm,   false, false, "Control Region Unit Low DM",  "Events"));
-                    vh.push_back(PHS("DataMC_Photon_HighDM_nCRUnitHighDM" + histSuffixSyst,              {dcData_Photon_HighDM_nCRUnitHighDM,                   dcMC_Photon_HighDM_nCRUnitHighDM},                   {1, 2}, "", max_crunit_high_dm - min_crunit_high_dm,  min_crunit_high_dm, max_crunit_high_dm,  false, false, "Control Region Unit High DM", "Events"));
+                    vh.push_back(PHS("DataMC_Photon_LowDM_nCRUnitLowDM" + histSuffixSyst,                {dcData_Photon_LowDM_nCRUnitLowDM,                     dcMC_Photon_LowDM_nCRUnitLowDM},                     {1, 2}, "", max_crunit_low_dm - min_crunit_low_dm,    min_crunit_low_dm,  max_crunit_low_dm,   true, false, "Control Region Unit Low DM",  "Events"));
+                    vh.push_back(PHS("DataMC_Photon_HighDM_nCRUnitHighDM" + histSuffixSyst,              {dcData_Photon_HighDM_nCRUnitHighDM,                   dcMC_Photon_HighDM_nCRUnitHighDM},                   {1, 2}, "", max_crunit_high_dm - min_crunit_high_dm,  min_crunit_high_dm, max_crunit_high_dm,  true, false, "Control Region Unit High DM", "Events"));
                 }
                 
                 //printf("# Systematics for Photon histograms\n");
@@ -2287,8 +2289,8 @@ int main(int argc, char* argv[])
                             std::vector<std::vector<PDS>> StackMC_Photon_HighDM         = makeStackMC_Photon( "MET_pt<250"                              + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, w.second);
                             PDC dcMC_Photon_LowDM_nCRUnitLowDM(         "stack",  "nCRUnitLowDM"  + varSuffix,   StackMC_Photon_LowDM);
                             PDC dcMC_Photon_HighDM_nCRUnitHighDM(       "stack",  "nCRUnitHighDM" + varSuffix,   StackMC_Photon_HighDM);
-                            vh.push_back(PHS("DataMC_Photon_LowDM_nCRUnitLowDM" + histSuffixSyst,                    {dcData_Photon_LowDM_nCRUnitLowDM,                     dcMC_Photon_LowDM_nCRUnitLowDM},                     {1, 2}, "", max_crunit_low_dm - min_crunit_low_dm,    min_crunit_low_dm,  max_crunit_low_dm,   false, false, "Control Region Unit Low DM",  "Events"));
-                            vh.push_back(PHS("DataMC_Photon_HighDM_nCRUnitHighDM" + histSuffixSyst,                  {dcData_Photon_HighDM_nCRUnitHighDM,                   dcMC_Photon_HighDM_nCRUnitHighDM},                   {1, 2}, "", max_crunit_high_dm - min_crunit_high_dm,  min_crunit_high_dm, max_crunit_high_dm,  false, false, "Control Region Unit High DM", "Events"));
+                            vh.push_back(PHS("DataMC_Photon_LowDM_nCRUnitLowDM" + histSuffixSyst,                    {dcData_Photon_LowDM_nCRUnitLowDM,                     dcMC_Photon_LowDM_nCRUnitLowDM},                     {1, 2}, "", max_crunit_low_dm - min_crunit_low_dm,    min_crunit_low_dm,  max_crunit_low_dm,   true, false, "Control Region Unit Low DM",  "Events"));
+                            vh.push_back(PHS("DataMC_Photon_HighDM_nCRUnitHighDM" + histSuffixSyst,                  {dcData_Photon_HighDM_nCRUnitHighDM,                   dcMC_Photon_HighDM_nCRUnitHighDM},                   {1, 2}, "", max_crunit_high_dm - min_crunit_high_dm,  min_crunit_high_dm, max_crunit_high_dm,  true, false, "Control Region Unit High DM", "Events"));
                         }
                     }
                 }
@@ -2493,8 +2495,8 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_LowDM_min_dR_RecoPhotonGenPhoton" + histSuffix,       {dcData_Photon_LowDM_min_dR_RecoPhotonGenPhoton,       dcMC_Photon_LowDM_min_dR_RecoPhotonGenPhoton},       {1, 2}, "", nBins, 0.0, 0.2,             true, doNorm, label_min_dR_RecoPhotonGenPhoton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenPhoton" + histSuffix, {dcData_Photon_LowDM_Tight_min_dR_RecoPhotonGenPhoton, dcMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenPhoton}, {1, 2}, "", nBins, 0.0, 0.2,             true, doNorm, label_min_dR_RecoPhotonGenPhoton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_min_dR_RecoPhotonGenPhoton" + histSuffix,      {dcData_Photon_HighDM_min_dR_RecoPhotonGenPhoton,      dcMC_Photon_HighDM_min_dR_RecoPhotonGenPhoton},      {1, 2}, "", nBins, 0.0, 0.2,             true, doNorm, label_min_dR_RecoPhotonGenPhoton, "Events"));
-            vh.push_back(PHS("DataMC_Photon_LowDM_nCRUnitLowDM" + histSuffix,                     {dcData_Photon_LowDM_nCRUnitLowDM,                     dcMC_Photon_LowDM_nCRUnitLowDM},                     {1, 2}, "", max_crunit_low_dm - min_crunit_low_dm,    min_crunit_low_dm,  max_crunit_low_dm,   false, false, "Control Region Unit Low DM",  "Events"));
-            vh.push_back(PHS("DataMC_Photon_HighDM_nCRUnitHighDM" + histSuffix,                   {dcData_Photon_HighDM_nCRUnitHighDM,                   dcMC_Photon_HighDM_nCRUnitHighDM},                   {1, 2}, "", max_crunit_high_dm - min_crunit_high_dm,  min_crunit_high_dm, max_crunit_high_dm,  false, false, "Control Region Unit High DM", "Events"));
+            vh.push_back(PHS("DataMC_Photon_LowDM_nCRUnitLowDM" + histSuffix,                     {dcData_Photon_LowDM_nCRUnitLowDM,                     dcMC_Photon_LowDM_nCRUnitLowDM},                     {1, 2}, "", max_crunit_low_dm - min_crunit_low_dm,    min_crunit_low_dm,  max_crunit_low_dm,   true, false, "Control Region Unit Low DM",  "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nCRUnitHighDM" + histSuffix,                   {dcData_Photon_HighDM_nCRUnitHighDM,                   dcMC_Photon_HighDM_nCRUnitHighDM},                   {1, 2}, "", max_crunit_high_dm - min_crunit_high_dm,  min_crunit_high_dm, max_crunit_high_dm,  true, false, "Control Region Unit High DM", "Events"));
             
             // dphi
             for (int i = 0; i < 4; i++)
@@ -3299,7 +3301,7 @@ int main(int argc, char* argv[])
             std::string ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + varSuffix;
             std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
             std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
-            std::string ZNuNuWeights        = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight;
+            std::string ZNuNuWeights        = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight;
             
             // ---------------------------------- // 
             // --- validation and search bins --- //
@@ -3345,12 +3347,15 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffix,            {dcMC_ZNuNu_nSearchBin_HighDM},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
             vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffix,                {dcMC_ZNuNu_nSRUnit_LowDM},                {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,      max_srunit_low_dm,      false, false,  "Search Region Unit Low DM", "Events", true));
             vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffix,               {dcMC_ZNuNu_nSRUnit_HighDM},               {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,     max_srunit_high_dm,     false, false,  "Search Region Unit High DM", "Events", true));
-            // nValidationBin and nSearchBin with njetWeights applied 
-            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_njetWeight" + histSuffix,         {dcMC_ZNuNu_nValidationBin_LowDM_njetWeight},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
-            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET_njetWeight" + histSuffix, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET_njetWeight}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
-            vh.push_back(PHS("ZNuNu_nValidationBin_HighDM_njetWeight" + histSuffix,        {dcMC_ZNuNu_nValidationBin_HighDM_njetWeight},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
-            vh.push_back(PHS("ZNuNu_nSearchBin_LowDM_njetWeight" + histSuffix,             {dcMC_ZNuNu_nSearchBin_LowDM_njetWeight},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
-            vh.push_back(PHS("ZNuNu_nSearchBin_HighDM_njetWeight" + histSuffix,            {dcMC_ZNuNu_nSearchBin_HighDM_njetWeight},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
+            if (doLooseAndMid)
+            {
+                // nValidationBin and nSearchBin with njetWeights applied 
+                vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_njetWeight" + histSuffix,         {dcMC_ZNuNu_nValidationBin_LowDM_njetWeight},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
+                vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET_njetWeight" + histSuffix, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET_njetWeight}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
+                vh.push_back(PHS("ZNuNu_nValidationBin_HighDM_njetWeight" + histSuffix,        {dcMC_ZNuNu_nValidationBin_HighDM_njetWeight},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
+                vh.push_back(PHS("ZNuNu_nSearchBin_LowDM_njetWeight" + histSuffix,             {dcMC_ZNuNu_nSearchBin_LowDM_njetWeight},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
+                vh.push_back(PHS("ZNuNu_nSearchBin_HighDM_njetWeight" + histSuffix,            {dcMC_ZNuNu_nSearchBin_HighDM_njetWeight},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
+            }
             // additional histograms
             vh.push_back(PHS("T1tttt_FatJet_msoftdrop",             {dcMC_T1tttt_FatJet_msoftdrop, dcMC_T1tttt_FatJet_msoftdrop_mt, dcMC_T1tttt_FatJet_msoftdrop_w},             {1, 1}, "", nBins,         0.0,          600.0,          false, false,  "Fat Jet soft drop mass",  "Events", true));
 
@@ -3502,12 +3507,15 @@ int main(int argc, char* argv[])
                             vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffixSyst,                {dcMC_ZNuNu_nSRUnit_LowDM},                {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,      max_srunit_low_dm,      false, false,  "Search Region Unit Low DM", "Events", true));
                             vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffixSyst,               {dcMC_ZNuNu_nSRUnit_HighDM},               {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,     max_srunit_high_dm,     false, false,  "Search Region Unit High DM", "Events", true));
 
-                            // nValidationBin and nSearchBin with njetWeights applied 
-                            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_njetWeight" + histSuffixSyst,         {dcMC_ZNuNu_nValidationBin_LowDM_njetWeight},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
-                            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET_njetWeight" + histSuffixSyst, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET_njetWeight}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
-                            vh.push_back(PHS("ZNuNu_nValidationBin_HighDM_njetWeight" + histSuffixSyst,        {dcMC_ZNuNu_nValidationBin_HighDM_njetWeight},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
-                            vh.push_back(PHS("ZNuNu_nSearchBin_LowDM_njetWeight" + histSuffixSyst,             {dcMC_ZNuNu_nSearchBin_LowDM_njetWeight},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
-                            vh.push_back(PHS("ZNuNu_nSearchBin_HighDM_njetWeight" + histSuffixSyst,            {dcMC_ZNuNu_nSearchBin_HighDM_njetWeight},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
+                            if (doLooseAndMid)
+                            {
+                                // nValidationBin and nSearchBin with njetWeights applied 
+                                vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_njetWeight" + histSuffixSyst,         {dcMC_ZNuNu_nValidationBin_LowDM_njetWeight},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
+                                vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET_njetWeight" + histSuffixSyst, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET_njetWeight}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
+                                vh.push_back(PHS("ZNuNu_nValidationBin_HighDM_njetWeight" + histSuffixSyst,        {dcMC_ZNuNu_nValidationBin_HighDM_njetWeight},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
+                                vh.push_back(PHS("ZNuNu_nSearchBin_LowDM_njetWeight" + histSuffixSyst,             {dcMC_ZNuNu_nSearchBin_LowDM_njetWeight},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
+                                vh.push_back(PHS("ZNuNu_nSearchBin_HighDM_njetWeight" + histSuffixSyst,            {dcMC_ZNuNu_nSearchBin_HighDM_njetWeight},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
+                            }
                         }
                     }
                 }
