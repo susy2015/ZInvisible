@@ -570,8 +570,8 @@ def main():
                     # symmetric error with up = down
                     original_syst_up   = error  
                     original_syst_down = error  
-                    syst_up   = error 
-                    syst_down = 1.0/error
+                    syst_up   = 1.0 + error 
+                    syst_down = 1.0 - error
                     syst_up_sum     += original_syst_up**2
                     syst_down_sum   += original_syst_down**2
                     if syst_up > 1 or syst_down < 1:
