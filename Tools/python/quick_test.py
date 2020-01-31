@@ -1,4 +1,4 @@
-# make_table.py
+# quick_test.py
 import ROOT
 import os
 
@@ -7,7 +7,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-class Table:
+class Test:
     def __init__(self, out_file):
         self.out_file = out_file
         self.jetpt_cut  - "jetpt30"
