@@ -10,7 +10,6 @@ from systematics import Systematic
 from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
 from data_card import makeDataCard
 from units import saveResults
-from make_table import Table
 
 def main():
     # options
