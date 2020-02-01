@@ -349,21 +349,64 @@ class Table:
     def makeYieldTable(self, output="pred_sr.tex"):
         ''' Make a Latex-formatted table with each bkg plus unc, total bkg plus unc, and observed data for every bin. '''
         print '\nprinting yield table...\n'
-        s  = self.beginTable()
+        s  = self.beginDocument()
+        s += self.beginTable()
         s += table_header
         s += '\\hline\n'
         s += self.makeTable()
         s += self.endTable()
+        s += self.endDocument()
         print s
         with open(output, 'w') as f:
             print >> f, s
+
+    def beginDocument(self):
+        '''begin latex document'''
+        s  = '\\documentclass{article}\n'
+        s += '\\usepackage[utf8]{inputenc}\n'
+        s += '\\usepackage{xspace}\n'
+        s += '\\usepackage{graphicx}\n'
+        s += '\\usepackage{geometry}\n'
+        s += '\\usepackage{longtable}\n'
+        s += '\\usepackage{cancel}\n'
+        s += '\\newcommand{\\Z}{Z}\n'
+        s += '\\newcommand{\\dm}{\\delta m}\n'
+        s += '\\newcommand{\\znunu}{\\ensuremath{\\Z \\rightarrow \\nu \\bar{\\nu}}\\xspace}\n'
+        s += '\\newcommand{\\met}{\\ensuremath{p^{\\rm miss}_{\\rm T}}\\xspace}\n'
+        s += '\\newcommand{\\njets}{\\ensuremath{N_{\\text{jets}}}\\xspace}\n'
+        s += '\\newcommand{\\ntops}{\\ensuremath{N_{\\text{tops}}}\\xspace}\n'
+        s += '\\newcommand{\\nbjets}{\\ensuremath{N_{\\text{b-jets}}}\\xspace}\n'
+        s += '\\newcommand{\\Nj}{\\ensuremath{N_{\\text{j}}}\\xspace}\n'
+        s += '\\newcommand{\\Nb}{\\ensuremath{N_{\\text{b}}}\\xspace}\n'
+        s += '\\newcommand{\\Nw}{\\ensuremath{N_{\\text{W}}}\\xspace}\n'
+        s += '\\newcommand{\\Nt}{\\ensuremath{N_{\\text{t}}}\\xspace}\n'
+        s += '\\newcommand{\\Nres}{\\ensuremath{N_{\\text{res}}}\\xspace}\n'
+        s += '\\newcommand{\\Nsv}{\\ensuremath{N_{\\text{SV}}}\\xspace}\n'
+        s += '\\newcommand{\\ptb}{\\ensuremath{\\pt^{\\text{b}}}\\xspace}\n'
+        s += '\\newcommand{\\ptbonetwo}{\\ensuremath{\\pt^{b_{12}}}}\n'
+        s += '\\newcommand{\\ptISR}{\\ensuremath{\\pt^{\\text{ISR}}}\\xspace}\n'
+        s += '\\newcommand{\\ptisr}{\\ptISR}\n'
+        s += '\\newcommand{\\nj}{\\Nj}\n'
+        s += '\\newcommand{\\nb}{\\Nb}\n'
+        s += '\\newcommand{\\Ht}{\\ensuremath{H_{\\mathrm{T}}}\\xspace}\n'
+        s += '\\geometry{margin=0.1cm}\n'
+        s += '\\begin{document}\n'
+        s += '\\footnotesize\n'
+        s += '\\tabcolsep=0.01cm\n'
+        s += '\\centering\n'
+        return s
+
+    def endDocument(self):
+        '''end latex document'''
+        s = '\\end{document}'
+        return s
        
     def beginTable(self):
         '''Add a break between the bins to fit on each page'''
         s  = '\\begin{table}[!h]\n'
         s += '\\begin{center}\n'
-        s += '\\resizebox*{0.6\textwidth}{!}{\n'
-        s += '\\begin{tabular}{|c||c||c|c|c|c|c|c|}'
+        s += '\\resizebox*{0.6\\textwidth}{!}{\n'
+        s += '\\begin{tabular}{|c||c||c|c|c|c|c|c|}\n'
         s += '\\hline\n'
         return s
     
