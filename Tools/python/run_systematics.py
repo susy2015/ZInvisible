@@ -331,7 +331,8 @@ def main():
                     
                     # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
                     if syst == "prefire":
-                        for e in ["2018_PreHEM", "2018_PostHEM"]:
+                        #for e in ["2018_PreHEM", "2018_PostHEM"]:
+                        for e in ["2018"]:
                             histo["validation"][region][direction].Add(     VB.histograms[e][region][variable]         )
                             histo["search"][region][direction].Add(         SB.histograms[e][region][variable]         )
                     
@@ -391,7 +392,8 @@ def main():
                     
                     # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
                     if syst == "prefire":
-                        for e in ["2018_PreHEM", "2018_PostHEM"]:
+                        #for e in ["2018_PreHEM", "2018_PostHEM"]:
+                        for e in ["2018"]:
                             histo["controlUnit"][region][direction].Add(    CRU.histograms[e][region]["mc_gjets"]      )
                     
                     syst_histo[syst]["controlUnit"][region][direction]   = histo["controlUnit"][region][direction]
