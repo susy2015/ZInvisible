@@ -106,7 +106,7 @@ def writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selec
         sb_i = i - 1 + offset
         sb_name = binMap[str(sb_i)]
         # add selection to systematic name if selection map given
-        final_syst = syst 
+        final_syst = syst + "_" + region
         if selectionMap:
             selection = selectionMap[str(sb_i)]["selection"]
             if removeCut:
