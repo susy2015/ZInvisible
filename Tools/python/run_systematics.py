@@ -247,7 +247,8 @@ def main():
     searchBinMap = invert(masterBinMap["binNum"])
     unitBinMap   = invert(masterBinMap["unitCRNum"]["phocr"])
 
-    eras            = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
+    #eras            = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
+    eras            = ["2016", "2017", "2018", "Run2"]
     era             = "Run2"
     runDir          = runMap[era]
     result_file     = "condor/" + runDir + "/result.root"
