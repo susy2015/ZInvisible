@@ -455,7 +455,7 @@ class Table:
             if ibin == 53 or ibin == 94 or ibin == 135:
                 s += self.beginTable()
                 s += table_header
-            s += self.endTable()
+                s += self.endTable()
         return s
     
     # formats the prediction nEvents +/- error
