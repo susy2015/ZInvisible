@@ -13,11 +13,10 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # https://github.com/mkilpatr/EstToolsSUSY/blob/SBv4/SUSYNano19/getUncertainty.py
 
 pred_total_name = 'hpred'
-#all_samples=('ttbarplusw', 'znunu', 'ttZ', 'diboson', 'qcd')
+#all_values=('ttbarplusw', 'znunu', 'ttZ', 'diboson', 'qcd')
 #graph_names=('httbar_stack_5', 'hznunu_stack_4', 'httz_stack_2', 'hdiboson_stack_1', 'hqcd_stack_3')
 #table_header='Search region & \\met [GeV]  &  Lost lepton  &  \\znunu  & rare & QCD  &  total SM  &  $N_{\\rm data}$  \\\\ \n'
-all_samples=("rz", "sg", "nmc", "np")
-graph_names=("rz", "sg", "nmc", "np")
+all_values=("norm_tex", "shape_tex", "mc_tex", "pred_tex")
 table_header='Search region & \\met [GeV]  &  $R_Z$  &  $S_{\gamma}$  & $N_{\\rm MC}$ & $N_{\\rm pred}$ \\\\ \n'
 
 # ordered bin list
@@ -266,96 +265,37 @@ class Table:
         self.allVals     = {}
         
     # read in yields
-    def readYields(self, pred_file):
-        ''' Read in predicted bkg yields and the stat. unc. 
-        
-        pred_file -- input root file 
-        '''
-        if pred_file:
-            f = ROOT.TFile(pred_file)
-            for hname, sample in zip(graph_names, all_samples):
-                h = f.Get(hname)
-                for ibin in xrange(0, h.GetNbinsX()):
-                    bin = binlist[ibin]
-                    if bin not in self.yields:
-                        self.yields[bin] = {}
-                        statUnc_pieces[bin] = {}
-                    y = h.GetBinContent(ibin)
-                    e_up = h.GetBinError(ibin)
-                    e_low = h.GetBinError(ibin)
-                    self.yields[bin][sample] = y
-                    if sample == 'rare': statUnc_pieces[bin][sample] = (min(e_up,y), min(e_up,y))  # don't want MC stat unc > 100%
-                    else :               statUnc_pieces[bin][sample] = (e_low, e_up)
-            #h = f.Get('data')
-            #for ibin in xrange(0, h.GetNbinsX()):
-                    bin = binlist[ibin]
-                    #self.yields_data[bin] = (h.GetBinContent(ibin+1), h.GetBinError(ibin+1))
-                    self.yields_data[bin] = (1, 1)
-            # get total pred (w/ asymmetric errors)
-            h = f.Get(pred_total_name)
-            for ibin in xrange(0, h.GetNbinsX()):
-                bin = binlist[ibin]
-                e_up = h.GetBinError(ibin)
-                e_low = h.GetBinError(ibin)
-                statUnc[bin] = (e_low, e_up)
-            f.Close()
-        else:
-            for ibin in xrange(0, len(binlist)):
-                bin = binlist[ibin]
-                self.yields[bin] = {}
-                for hname, sample in zip(graph_names, all_samples):
-                    #self.yields[bin][sample] = y
-                    #self.yields_data[bin] = (h.GetBinContent(ibin+1), h.GetBinError(ibin+1))
-                    self.yields[bin][sample] = 1
-                    self.yields_data[bin] = (1, 1)
+    def readYields(self):
+        for ibin in xrange(0, len(binlist)):
+            bin = binlist[ibin]
+            self.yields[bin] = {}
+            for value in all_values:
+                #self.yields[bin][value] = y
+                #self.yields_data[bin] = (h.GetBinContent(ibin+1), h.GetBinError(ibin+1))
+                self.yields[bin][value] = 1
+                self.yields_data[bin] = (1, 1)
 
 
 
-    def writeFullUnc(self, pred_file):
-        ''' Update the input root file, add a hist with total prediction and full uncertainty. '''
-        if pred_file:
-            f = ROOT.TFile(pred_file, 'UPDATE')
-            h = TGraphAsymmErrors(f.Get(pred_total_name).Clone('bkgtotal_unc_sr'))
-            h_pieces = {}
-            for hname, sample in zip(graph_names, all_samples):
-                h_pieces[sample] = TGraphAsymmErrors(f.Get(hname).Clone(sample+'_unc_sr'))
-            print "%30s %10s %16s" % ('bin', 'total pred', 'total unc.')
-            for ibin in xrange(0, h.GetN()):
-                bin = binlist[ibin]
-                val = h.GetY()[ibin]
-                e_low, e_up = fullUnc[bin]
-                h.SetPointEYlow(ibin, e_low)
-                h.SetPointEYhigh(ibin, e_up)
-                print "%30s %10.2f +%8.2f -%8.2f" % (bin, val, e_up, e_low)
-                self.allVals[bin] = {'bkg':(val,e_low,e_up)}
-                for sample in all_samples:
-                    val = self.yields[bin][sample]
-                    e_low, e_up = fullUnc_pieces[sample][bin]
-                    h_pieces[sample].SetPointEYlow(ibin, e_low)
-                    h_pieces[sample].SetPointEYhigh(ibin, e_up)
-                    self.allVals[bin][sample] = (val,e_low,e_up)  
-            h.Write('bkgtotal_unc_sr', ROOT.TObject.kOverwrite)
-            for sample in all_samples : h_pieces[sample].Write(sample+'_unc_sr', ROOT.TObject.kOverwrite)
-            f.Close()
-        else:
-            for ibin in xrange(0, len(binlist)):
-                bin = binlist[ibin]
-                self.allVals[bin] = {}
-                #self.allVals[bin]['bkg'] = (val,e_low,e_up)
-                self.allVals[bin]['bkg'] = (1,1,1)
-                for sample in all_samples:
-                    #self.allVals[bin][sample] = (val,e_low,e_up)  
-                    self.allVals[bin][sample] = (1,1,1)  
+    def writeFullUnc(self):
+        for ibin in xrange(0, len(binlist)):
+            bin = binlist[ibin]
+            self.allVals[bin] = {}
+            #self.allVals[bin]['bkg'] = (val,e_low,e_up)
+            self.allVals[bin]['bkg'] = (1,1,1)
+            for value in all_values:
+                #self.allVals[bin][value] = (val,e_low,e_up)  
+                self.allVals[bin][value] = (1,1,1)  
 
 
 
-    def makeYieldTable(self, output="pred_sr.tex"):
+    def makeYieldTable(self, BinObject, total_era, output="pred_sr.tex"):
         ''' Make a Latex-formatted table with each bkg plus unc, total bkg plus unc, and observed data for every bin. '''
         s  = self.beginDocument()
         s += self.beginTable()
         s += table_header
         s += '\\hline\n'
-        s += self.makeTable()
+        s += self.makeTable(BinObject, total_era)
         s += self.endTable()
         s += self.endDocument()
         print '\nprinting yield table...\n'
@@ -406,7 +346,7 @@ class Table:
         return s
     
     
-    def makeTable(self):
+    def makeTable(self, BinObject, total_era):
         ''' Put together the table chunk for the given nj,nb,mtb,nt mega-bin. '''
         sections=[]
         s=''
@@ -418,28 +358,17 @@ class Table:
             if sec not in sections:
                 sections.append(sec)
                 s += self.chunkHeader(sec)
-    #         metbins = binMap[sec]['bin']
-    #         print metbins
-    #         idx = metbins.index(int(met))
             xlow, xhigh = met.lstrip('met').split('to')
             metlabel = r'$>%s$'%xlow if xhigh=='inf' else '$-$'.join([xlow, xhigh])
-            s += '%d & '%ibin
-            ibin = ibin+1
+            s += '%d & ' % ibin
             s += metlabel
-            for bkg in list(all_samples):
-                if bkg == 'diboson': continue
-                n, e_low, e_up = self.allVals[bin][bkg]
-                if bkg == 'ttZ':
-                    n1, e1_low, e1_up = self.allVals[bin]["diboson"]
-                    n += n1
-                    #e_low = sumUnc([e_low, e1_low])
-                    #e_up  = sumUnc([e_up, e1_up])
-                    e_low = 1 
-                    e_up  = 1
-                s += self.formatPrediction(n,e_low,e_up)
-            n, e = self.yields_data[bin]
-            #s += ' & ' + str(int(n))
+            for value in list(all_values):
+                #n, e_low, e_up = self.allVals[bin][value]
+                #s += self.formatPrediction(n,e_low,e_up)
+                s += " & {0} ".format(BinObject.binValues[total_era][str(ibin)][value])
+            #n, e = self.yields_data[bin]
             s += ' \\\\ \n'
+            ibin += 1
             if ibin == 53 or ibin == 94 or ibin == 135:
                 s += self.endTable()
                 s += self.beginTable()
@@ -477,7 +406,7 @@ class Table:
         ''' Put together the mega-bin chunk header. '''
         cats = sec.split('_')
         labs = [labelMap[c] for c in cats]
-        ncolumn = len(all_samples)+2
+        ncolumn = len(all_values)+2
         s  = '\\hline\n'
         s += '\\multicolumn{'+str(ncolumn)+'}{c}{'
         s += ', '.join(labs)
@@ -490,9 +419,10 @@ class Table:
 
 def main():
     T = Table()
-    T.readYields("")
-    T.writeFullUnc("")
-    T.makeYieldTable("latex_files/zinv_pred_sr.tex")
+    T.readYields()
+    T.writeFullUnc()
+    # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex")
+    T.makeYieldTable(0, "Run2", "latex_files/zinv_pred_sr.tex")
 
 if __name__ == "__main__":
     main()
