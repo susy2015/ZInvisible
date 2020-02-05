@@ -13,9 +13,12 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # https://github.com/mkilpatr/EstToolsSUSY/blob/SBv4/SUSYNano19/getUncertainty.py
 
 pred_total_name = 'hpred'
-all_samples=('ttbarplusw', 'znunu', 'ttZ', 'diboson', 'qcd')
-graph_names=('httbar_stack_5', 'hznunu_stack_4', 'httz_stack_2', 'hdiboson_stack_1', 'hqcd_stack_3')
-table_header='Search region & \\met [GeV]  &  Lost lepton  &  \\znunu  & rare & QCD  &  total SM  &  $N_{\\rm data}$  \\\\ \n'
+#all_samples=('ttbarplusw', 'znunu', 'ttZ', 'diboson', 'qcd')
+#graph_names=('httbar_stack_5', 'hznunu_stack_4', 'httz_stack_2', 'hdiboson_stack_1', 'hqcd_stack_3')
+#table_header='Search region & \\met [GeV]  &  Lost lepton  &  \\znunu  & rare & QCD  &  total SM  &  $N_{\\rm data}$  \\\\ \n'
+all_samples=("rz", "sg", "nmc", "np")
+graph_names=("rz", "sg", "nmc", "np")
+table_header='Search region & \\met [GeV]  &  $R_Z$  &  $S_{\gamma}$  & $N_{\\rm MC}$ & $N_{\\rm pred}$ \\\\ \n'
 
 # ordered bin list
 binlist = (
@@ -387,8 +390,8 @@ class Table:
         '''Add a break between the bins to fit on each page'''
         s  = '\\begin{table}[!h]\n'
         s += '\\begin{center}\n'
-        #s += '\\resizebox*{0.6\\textwidth}{!}{\n'
-        s += '\\begin{tabular}{|c||c||c|c|c|c|c|c|}\n'
+        s += '\\resizebox*{0.6\\textwidth}{!}{\n'
+        s += '\\begin{tabular}{|c||c||c|c|c|c|}\n'
         s += '\\hline\n'
         return s
     
@@ -396,6 +399,7 @@ class Table:
         '''Add a break between the bins to fit on each page'''
         s  = '\\hline\n'
         s += '\\end{tabular}\n'
+        s += '}\n'
         s += '\\caption[]{}\n'
         s += '\\end{center}\n'
         s += '\\end{table}\n'
@@ -422,7 +426,7 @@ class Table:
             s += '%d & '%ibin
             ibin = ibin+1
             s += metlabel
-            for bkg in list(all_samples)+['bkg']:
+            for bkg in list(all_samples):
                 if bkg == 'diboson': continue
                 n, e_low, e_up = self.allVals[bin][bkg]
                 if bkg == 'ttZ':
@@ -434,7 +438,7 @@ class Table:
                     e_up  = 1
                 s += self.formatPrediction(n,e_low,e_up)
             n, e = self.yields_data[bin]
-            s += ' & ' + str(int(n))
+            #s += ' & ' + str(int(n))
             s += ' \\\\ \n'
             if ibin == 53 or ibin == 94 or ibin == 135:
                 s += self.endTable()
@@ -473,7 +477,7 @@ class Table:
         ''' Put together the mega-bin chunk header. '''
         cats = sec.split('_')
         labs = [labelMap[c] for c in cats]
-        ncolumn = len(all_samples)+3
+        ncolumn = len(all_samples)+2
         s  = '\\hline\n'
         s += '\\multicolumn{'+str(ncolumn)+'}{c}{'
         s += ', '.join(labs)
