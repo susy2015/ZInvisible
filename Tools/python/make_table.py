@@ -348,7 +348,6 @@ class Table:
 
     def makeYieldTable(self, output="pred_sr.tex"):
         ''' Make a Latex-formatted table with each bkg plus unc, total bkg plus unc, and observed data for every bin. '''
-        print '\nprinting yield table...\n'
         s  = self.beginDocument()
         s += self.beginTable()
         s += table_header
@@ -356,6 +355,7 @@ class Table:
         s += self.makeTable()
         s += self.endTable()
         s += self.endDocument()
+        print '\nprinting yield table...\n'
         print s
         with open(output, 'w') as f:
             print >> f, s
@@ -369,26 +369,8 @@ class Table:
         s += '\\usepackage{geometry}\n'
         s += '\\usepackage{longtable}\n'
         s += '\\usepackage{cancel}\n'
-        s += '\\newcommand{\\Z}{Z}\n'
-        s += '\\newcommand{\\dm}{\\delta m}\n'
-        s += '\\newcommand{\\znunu}{\\ensuremath{\\Z \\rightarrow \\nu \\bar{\\nu}}\\xspace}\n'
-        s += '\\newcommand{\\met}{\\ensuremath{p^{\\rm miss}_{\\rm T}}\\xspace}\n'
-        s += '\\newcommand{\\njets}{\\ensuremath{N_{\\text{jets}}}\\xspace}\n'
-        s += '\\newcommand{\\ntops}{\\ensuremath{N_{\\text{tops}}}\\xspace}\n'
-        s += '\\newcommand{\\nbjets}{\\ensuremath{N_{\\text{b-jets}}}\\xspace}\n'
-        s += '\\newcommand{\\Nj}{\\ensuremath{N_{\\text{j}}}\\xspace}\n'
-        s += '\\newcommand{\\Nb}{\\ensuremath{N_{\\text{b}}}\\xspace}\n'
-        s += '\\newcommand{\\Nw}{\\ensuremath{N_{\\text{W}}}\\xspace}\n'
-        s += '\\newcommand{\\Nt}{\\ensuremath{N_{\\text{t}}}\\xspace}\n'
-        s += '\\newcommand{\\Nres}{\\ensuremath{N_{\\text{res}}}\\xspace}\n'
-        s += '\\newcommand{\\Nsv}{\\ensuremath{N_{\\text{SV}}}\\xspace}\n'
-        s += '\\newcommand{\\ptb}{\\ensuremath{\\pt^{\\text{b}}}\\xspace}\n'
-        s += '\\newcommand{\\ptbonetwo}{\\ensuremath{\\pt^{b_{12}}}}\n'
-        s += '\\newcommand{\\ptISR}{\\ensuremath{\\pt^{\\text{ISR}}}\\xspace}\n'
-        s += '\\newcommand{\\ptisr}{\\ptISR}\n'
-        s += '\\newcommand{\\nj}{\\Nj}\n'
-        s += '\\newcommand{\\nb}{\\Nb}\n'
-        s += '\\newcommand{\\Ht}{\\ensuremath{H_{\\mathrm{T}}}\\xspace}\n'
+        s += '\\usepackage{amsmath}\n'
+        s += '\\input{VariableNames.tex}\n'
         s += '\\geometry{margin=0.1cm}\n'
         s += '\\begin{document}\n'
         s += '\\footnotesize\n'
@@ -405,7 +387,7 @@ class Table:
         '''Add a break between the bins to fit on each page'''
         s  = '\\begin{table}[!h]\n'
         s += '\\begin{center}\n'
-        s += '\\resizebox*{0.6\\textwidth}{!}{\n'
+        #s += '\\resizebox*{0.6\\textwidth}{!}{\n'
         s += '\\begin{tabular}{|c||c||c|c|c|c|c|c|}\n'
         s += '\\hline\n'
         return s
@@ -413,7 +395,7 @@ class Table:
     def endTable(self):
         '''Add a break between the bins to fit on each page'''
         s  = '\\hline\n'
-        s += '\\end{tabular}}\n'
+        s += '\\end{tabular}\n'
         s += '\\caption[]{}\n'
         s += '\\end{center}\n'
         s += '\\end{table}\n'
@@ -426,7 +408,9 @@ class Table:
         s=''
         ibin=0
         for bin in binlist: 
-            sec, met= bin.lstrip('bin_').rsplit('_', 1)
+            sec, met = bin.lstrip('bin_').rsplit('_', 1)
+            met = met.lstrip("pt")
+            #print "sec = {0}, met = {1}".format(sec, met)
             if sec not in sections:
                 sections.append(sec)
                 s += self.chunkHeader(sec)
@@ -453,9 +437,11 @@ class Table:
             s += ' & ' + str(int(n))
             s += ' \\\\ \n'
             if ibin == 53 or ibin == 94 or ibin == 135:
+                s += self.endTable()
                 s += self.beginTable()
                 s += table_header
                 s += self.endTable()
+                s += self.beginTable()
         return s
     
     # formats the prediction nEvents +/- error
