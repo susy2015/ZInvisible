@@ -99,8 +99,8 @@ def main():
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
     SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
     T = Table()
+    # fancy table only supported in search bins right now
     # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex")
-    #T.makeYieldTable(VB, total_era, "latex_files/fancy_zinv_pred_validation.tex") # not supported
     T.makeYieldTable(SB, total_era, "latex_files/fancy_zinv_pred_search.tex")
     
     # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics

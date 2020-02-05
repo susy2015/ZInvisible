@@ -12,10 +12,6 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # Reference: 
 # https://github.com/mkilpatr/EstToolsSUSY/blob/SBv4/SUSYNano19/getUncertainty.py
 
-pred_total_name = 'hpred'
-#all_values=('ttbarplusw', 'znunu', 'ttZ', 'diboson', 'qcd')
-#graph_names=('httbar_stack_5', 'hznunu_stack_4', 'httz_stack_2', 'hdiboson_stack_1', 'hqcd_stack_3')
-#table_header='Search region & \\met [GeV]  &  Lost lepton  &  \\znunu  & rare & QCD  &  total SM  &  $N_{\\rm data}$  \\\\ \n'
 all_values=("norm_tex", "shape_tex", "mc_tex", "pred_tex")
 table_header='Search region & \\met [GeV]  &  $R_Z$  &  $S_{\gamma}$  & $N_{\\rm MC}$ & $N_{\\rm pred}$ \\\\ \n'
 
@@ -260,35 +256,8 @@ labelMap = {
 
 class Table:
     def __init__(self):
-        self.yields_data = {}
-        self.yields      = {}
-        self.allVals     = {}
+        pass
         
-    # read in yields
-    def readYields(self):
-        for ibin in xrange(0, len(binlist)):
-            bin = binlist[ibin]
-            self.yields[bin] = {}
-            for value in all_values:
-                #self.yields[bin][value] = y
-                #self.yields_data[bin] = (h.GetBinContent(ibin+1), h.GetBinError(ibin+1))
-                self.yields[bin][value] = 1
-                self.yields_data[bin] = (1, 1)
-
-
-
-    def writeFullUnc(self):
-        for ibin in xrange(0, len(binlist)):
-            bin = binlist[ibin]
-            self.allVals[bin] = {}
-            #self.allVals[bin]['bkg'] = (val,e_low,e_up)
-            self.allVals[bin]['bkg'] = (1,1,1)
-            for value in all_values:
-                #self.allVals[bin][value] = (val,e_low,e_up)  
-                self.allVals[bin][value] = (1,1,1)  
-
-
-
     def makeYieldTable(self, BinObject, total_era, output="pred_sr.tex"):
         ''' Make a Latex-formatted table with each bkg plus unc, total bkg plus unc, and observed data for every bin. '''
         s  = self.beginDocument()
@@ -363,18 +332,13 @@ class Table:
             s += '%d & ' % ibin
             s += metlabel
             for value in list(all_values):
-                #n, e_low, e_up = self.allVals[bin][value]
-                #s += self.formatPrediction(n,e_low,e_up)
                 s += " & {0} ".format(BinObject.binValues[total_era][str(ibin)][value])
-            #n, e = self.yields_data[bin]
             s += ' \\\\ \n'
             ibin += 1
             if ibin == 53 or ibin == 94 or ibin == 135:
                 s += self.endTable()
                 s += self.beginTable()
                 s += table_header
-                s += self.endTable()
-                s += self.beginTable()
         return s
     
     # formats the prediction nEvents +/- error
@@ -419,8 +383,6 @@ class Table:
 
 def main():
     T = Table()
-    T.readYields()
-    T.writeFullUnc()
     # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex")
     T.makeYieldTable(0, "Run2", "latex_files/zinv_pred_sr.tex")
 
