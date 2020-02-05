@@ -286,7 +286,7 @@ class Table:
         s += '\\geometry{margin=0.1cm}\n'
         s += '\\begin{document}\n'
         s += '\\footnotesize\n'
-        s += '\\tabcolsep=0.01cm\n'
+        s += '\\tabcolsep=0.2cm\n'
         s += '\\centering\n'
         return s
 
