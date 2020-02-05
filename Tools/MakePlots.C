@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     bool runOnCondor        = false;
     bool unblind            = false;
     bool doLooseAndMid      = false;    // hi angel
-    bool doSystematics      = true;     // hi caleb
+    bool doSystematics      = false;    // hi caleb
     bool doDataMCElectron   = true;
     bool doDataMCMuon       = true;
     bool doDataMCPhoton     = true;     // hi angel
@@ -277,6 +277,11 @@ int main(int argc, char* argv[])
     else if (era.compare("Run2") == 0)
     {
         // nothing to do for Run2, but it is still a valid option
+        // Hack to treat Run2 as 2016 for all but luminosity 
+        era        = "2016";  
+        year       = "2016";  
+        yearTag    = "_" + year;   
+        periodTag  = ""; 
     }
     else
     {

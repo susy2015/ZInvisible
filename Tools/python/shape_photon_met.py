@@ -49,11 +49,12 @@ class Shape:
         self.label_events = "Events"
         self.label_ratio  = "Data / MC"
         # colors
+        self.color_black  = "black"
         self.color_red    = "vermillion"
         self.color_blue   = "electric blue"
         self.color_green  = "irish green" 
         self.color_purple = "violet"
-        self.color_black  = "black"
+        self.color_list   = ["pinkish red", "tangerine", "emerald", "dark sky blue", "pinky purple"]
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
     def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable):
@@ -452,7 +453,6 @@ class Shape:
 
     def makeComparison(self, bin_type):
         draw_option = "hist error"
-        h_map = self.ratio_rebinned_map
         
         ###################
         # Draw Histograms #
@@ -468,56 +468,44 @@ class Shape:
         legend_y1 = 0.7 
         legend_y2 = 0.9 
 
+        # TODO: update to loop over eras or years... use list to accept any number of eras/years
+
         for region in self.regions:
             for selection in self.selections[bin_type][region]:
                 for rebin in self.ratio_rebinned_map["2016"][bin_type][region][selection]: 
-                    h1 = self.ratio_rebinned_map["2016"][bin_type][region][selection][rebin]
-                    h2 = self.ratio_rebinned_map["2017_BE"][bin_type][region][selection][rebin]
-                    h3 = self.ratio_rebinned_map["2017_F"][bin_type][region][selection][rebin]
-                    h4 = self.ratio_rebinned_map["2018_PreHEM"][bin_type][region][selection][rebin]
-                    h5 = self.ratio_rebinned_map["2018_PostHEM"][bin_type][region][selection][rebin]
-                    h6 = self.ratio_rebinned_map["Run2"][bin_type][region][selection][rebin]
                     title = "Shape for {0} bins, {1}, {2}, {3}".format(bin_type, region, selection, rebin)
                     x_title = "MET (GeV)" 
                     y_title = "Shape #left(S_{#gamma}#right)"
                     y_min = -1.0
                     y_max = 3.0
-                    #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-                    setupHist(h1,   title, x_title, y_title, "pinkish red",     y_min, y_max)
-                    setupHist(h2,   title, x_title, y_title, "tangerine",       y_min, y_max)
-                    setupHist(h3,   title, x_title, y_title, "emerald",         y_min, y_max)
-                    setupHist(h4,   title, x_title, y_title, "dark sky blue",   y_min, y_max)
-                    setupHist(h5,   title, x_title, y_title, "pinky purple",    y_min, y_max)
-                    setupHist(h6,   title, x_title, y_title, "black",           y_min, y_max)
-                    # draw
-                    h1.Draw(draw_option)
-                    h2.Draw(draw_option + " same")
-                    h3.Draw(draw_option + " same")
-                    h4.Draw(draw_option + " same")
-                    h5.Draw(draw_option + " same")
-                    h6.Draw(draw_option + " same")
+                    
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                    legend.AddEntry(h1,     "2016",             "l")
-                    legend.AddEntry(h2,     "2017_BE",          "l")
-                    legend.AddEntry(h3,     "2017_F",           "l")
-                    legend.AddEntry(h4,     "2018_PreHEM",      "l")
-                    legend.AddEntry(h5,     "2018_PostHEM",     "l")
-                    legend.AddEntry(h6,     "Run2",             "l")
+                    
+                    # map for histograms
+                    hist_map = {}
+                    
+                    for i, era in enumerate(self.eras):
+                        color = self.color_list[i]
+                        if era == "Run2":
+                            color = self.color_black
+                        hist_map[era] = self.ratio_rebinned_map[era][bin_type][region][selection][rebin]
+                        #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+                        setupHist(hist_map[era],   title, x_title, y_title, color,     y_min, y_max)
+                        # draw
+                        if i == 0:
+                            hist_map[era].Draw(draw_option)
+                        else:
+                            hist_map[era].Draw(draw_option + " same")
+                        legend.AddEntry(hist_map[era],     era,             "l")
+                    
                     legend.Draw()
                     # save histograms
                     plot_name = "{0}Shape_{1}_{2}_{3}_{4}".format(self.plot_dir, bin_type, region, selection, rebin)
                     c.Update()
                     c.SaveAs(plot_name + ".pdf")
                     c.SaveAs(plot_name + ".png")
-               
-                    # delete histograms to avoid memory leak
-                    del h1
-                    del h2
-                    del h3
-                    del h4
-                    del h5
-                
+                    
 
 def main():
     json_file = "runs/run_2019-07-17.json"

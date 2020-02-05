@@ -529,10 +529,11 @@ class Normalization:
                     mark.DrawLatex(0.2, y_list[5], "R_{Z} #pm #sigma_{stat} = %.3f #pm %.3f"  % (Run2_norm, Run2_stat_err))
                     mark.DrawLatex(0.2, y_list[6], "Run 2 #sigma_{total} = %.3f"              % final_Run2_total_err)
                 else:
-                    mark.DrawLatex(0.2, y_list[1], "Run 2 #chi_{r}^{2} = %.3f"                % chisq_Run2_r)
-                    mark.DrawLatex(0.2, y_list[2], "S = %.3f"                                 % scale)
-                    mark.DrawLatex(0.2, y_list[3], "#sigma_{stat} = %.3f"  %                  (Run2_stat_err))
-                    mark.DrawLatex(0.2, y_list[4], "R_{Z} #pm #sigma_{total} = %.3f #pm %.3f"  % (Run2_norm, final_Run2_total_err))
+                    mark.DrawLatex(0.2, y_list[1], "Run 2 #chi^{2} = %.3f"                    % chisq_Run2)
+                    mark.DrawLatex(0.2, y_list[2], "Run 2 #chi_{r}^{2} = %.3f"                % chisq_Run2_r)
+                    mark.DrawLatex(0.2, y_list[3], "S = %.3f"                                 % scale)
+                    mark.DrawLatex(0.2, y_list[4], "#sigma_{stat} = %.3f"  %                  (Run2_stat_err))
+                    mark.DrawLatex(0.2, y_list[5], "R_{Z} #pm #sigma_{total} = %.3f #pm %.3f"  % (Run2_norm, final_Run2_total_err))
                 
                 # save final Rz syst.
                 # WARNING: this needs to be saved separately for validaiton and search bins, otherwise it will be overwritten

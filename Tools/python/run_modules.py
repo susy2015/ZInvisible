@@ -8,9 +8,10 @@ from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from systematics import Systematic
 from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
+from make_table import Table
 from data_card import makeDataCard
 from units import saveResults
-from make_table import Table
+
 
 def main():
     # options
@@ -31,8 +32,9 @@ def main():
         print "The json file \"{0}\" containing runs does not exist.".format(json_file)
         return
     
-    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
     #eras = ["2016"]
+    #eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
+    eras = ["2016", "2017", "2018", "Run2"]
     dirList = []
     plot_dir                = "more_plots"
     latex_dir               = "latex_files"
@@ -96,6 +98,11 @@ def main():
     total_era = "Run2"
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
     SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
+    T = Table()
+    # fancy table only supported in search bins right now
+    # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex")
+    T.makeYieldTable(SB, total_era, "latex_files/fancy_zinv_pred_search.tex")
+    
     # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics
     # must be done after N.makeComparison()
     # must be done after Syst.makeZvsPhoton()
