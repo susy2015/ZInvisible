@@ -258,17 +258,20 @@ class Table:
     def __init__(self):
         pass
         
-    def makeYieldTable(self, BinObject, total_era, output="pred_sr.tex"):
+    def makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False):
         ''' Make a Latex-formatted table with each bkg plus unc, total bkg plus unc, and observed data for every bin. '''
-        s  = self.beginDocument()
+        s  = ""
+        if makeDoc:
+            s += self.beginDocument()
         s += self.beginTable()
         s += table_header
         s += '\\hline\n'
         s += self.makeTable(BinObject, total_era)
         s += self.endTable()
-        s += self.endDocument()
-        print '\nprinting yield table...\n'
-        print s
+        if makeDoc:
+            s += self.endDocument()
+        #print '\nprinting yield table...\n'
+        #print s
         with open(output, 'w') as f:
             print >> f, s
 
@@ -382,9 +385,8 @@ class Table:
 
 
 def main():
-    T = Table()
-    # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex")
-    T.makeYieldTable(0, "Run2", "latex_files/zinv_pred_sr.tex")
+    print "Running \"python make_table.py\" directly is not supported."
+    print "Plesae use run_modules.py"  
 
 if __name__ == "__main__":
     main()
