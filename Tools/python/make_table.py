@@ -204,54 +204,54 @@ binlist = (
 
 # lookup map for latex labels
 labelMap = {
-    'lowptisr': r'($300\leq\ptisr<500$\,GeV)',
-    'ntgeq1': r'($\nt\geq1$)',
-    'nt2': r'($\nt=2$)',
-    'nivf0': r'($\nsv=0$)',
-    'nivf1': r'($\nsv\geq1$)',
-    'nw2': r'($\nw=2$)',
-    'nj2to5': r'($2\leq\nj\leq5$)',
-    'nb2': r'($\nb\geq2$)',
-    'nbeq2': r'($\nb=2$)',
-    'nb3': r'($\nb\geq3$)',
-    'nb1': r'($\nb=1$)',
-    'nbgeq1': r'($\nb\geq1$)',
-    'nb0': r'($\nb=0$)',
-    'nrt2': r'($\nrt=2$)',
-    'medptisr': r'($\ptisr\geq300$\,GeV)',
-    'highptisr': r'($\ptisr\geq500$\,GeV)',
-    'nj7': r'($\nj\geq7$)',
-    'highptb': r'($\ptb\geq70$\,GeV)',
-    'hm': r'(high \dm)',
-    'nw0': r'($\nw=0$)',
-    'nwgeq1': r'($\nw\geq1$)',
-    'nw1': r'($\nw=1$)',
-    'nrt0': r'($\nrt=0$)',
-    'nrt1': r'($\nrt=1$)',
-    'lowptb': r'($\ptb<40$\,GeV)',
-    'medptb': r'($40<\ptb<70$\,GeV)',
-    'nt0': r'($\nt=0$)',
-    'lm': r'(low \dm)',
-    'lowptb12': r'($\ptbonetwo<80$\,GeV)',
-    'highptb12': r'($\ptbonetwo\geq140$\,GeV)',
-    'lowmtb': r'($\mtb<175$~\GeV)',
-    'highmtb': r'($\mtb\geq175$~\GeV)',
-    'nt1': r'($\nt=1$)',
-    'medptb12': r'($80<\ptbonetwo<140$\,GeV)',
-    'nrtgeq1': r'($\nrt\geq1$)',
-    'nj6': r'($\nj\geq6$)',
-    'nrtntnwgeq2': r'($(\nt+\nrt+\nw)\geq2$)',
-    'nrtntnwgeq3': r'($(\nt+\nrt+\nw)\geq3$)',
-    'htlt1000': r'($\Ht<1000$)',
-    'htgt1000': r'($\Ht\geq1000$)',
-    'ht1000to1500': r'($1000\leq\Ht<1500$)',
-    'htgt1500': r'($\Ht\geq1500$)',
-    'htlt1300': r'($\Ht<1300$)',
-    'htgt1300': r'($\Ht\geq1300$)',
-    'lmNoDPhi': r'(low $\Delta m$)',
-    'hmNoDPhi': r'(high $\Delta m$)',
+    'lowptisr': r'$300\leq\ptisr<500$\,GeV',
+    'ntgeq1': r'$\nt\geq1$',
+    'nt2': r'$\nt=2$',
+    'nivf0': r'$\nsv=0$',
+    'nivf1': r'$\nsv\geq1$',
+    'nw2': r'$\nw=2$',
+    'nj2to5': r'$2\leq\nj\leq5$',
+    'nb2': r'$\nb\geq2$',
+    'nbeq2': r'$\nb=2$',
+    'nb3': r'$\nb\geq3$',
+    'nb1': r'$\nb=1$',
+    'nbgeq1': r'$\nb\geq1$',
+    'nb0': r'$\nb=0$',
+    'nrt2': r'$\nrt=2$',
+    'medptisr': r'$\ptisr\geq300$\,GeV',
+    'highptisr': r'$\ptisr\geq500$\,GeV',
+    'nj7': r'$\nj\geq7$',
+    'highptb': r'$\ptb\geq70$\,GeV',
+    'hm': r'high \dm',
+    'nw0': r'$\nw=0$',
+    'nwgeq1': r'$\nw\geq1$',
+    'nw1': r'$\nw=1$',
+    'nrt0': r'$\nrt=0$',
+    'nrt1': r'$\nrt=1$',
+    'lowptb': r'$\ptb<40$\,GeV',
+    'medptb': r'$40<\ptb<70$\,GeV',
+    'nt0': r'$\nt=0$',
+    'lm': r'low \dm',
+    'lowptb12': r'$\ptbonetwo<80$\,GeV',
+    'highptb12': r'$\ptbonetwo\geq140$\,GeV',
+    'lowmtb': r'$\mtb<175$~\GeV',
+    'highmtb': r'$\mtb\geq175$~\GeV',
+    'nt1': r'$\nt=1$',
+    'medptb12': r'$80<\ptbonetwo<140$\,GeV',
+    'nrtgeq1': r'$\nrt\geq1$',
+    'nj6': r'$\nj\geq6$',
+    'nrtntnwgeq2': r'$\nt+\nrt+\nw\geq2$',
+    'nrtntnwgeq3': r'$\nt+\nrt+\nw\geq3$',
+    'htlt1000': r'$\Ht<1000$',
+    'htgt1000': r'$\Ht\geq1000$',
+    'ht1000to1500': r'$1000\leq\Ht<1500$',
+    'htgt1500': r'$\Ht\geq1500$',
+    'htlt1300': r'$\Ht<1300$',
+    'htgt1300': r'$\Ht\geq1300$',
+    'lmNoDPhi': r'low $\Delta m$',
+    'hmNoDPhi': r'high $\Delta m$',
     'MET': r'',
-    }
+}
 
 
 class Table:
@@ -302,7 +302,7 @@ class Table:
         '''Add a break between the bins to fit on each page'''
         s  = '\\begin{table}[!h]\n'
         s += '\\begin{center}\n'
-        s += '\\resizebox*{0.6\\textwidth}{!}{\n'
+        s += '\\resizebox*{0.65\\textwidth}{!}{\n'
         s += '\\begin{tabular}{|c||c||c|c|c|c|}\n'
         s += '\\hline\n'
         return s
@@ -371,17 +371,20 @@ class Table:
     # puts together the bin header for bins of nJets, mtb, nTop (no selection on nB)
     def chunkHeader(self,sec):
         ''' Put together the mega-bin chunk header. '''
+        # felines
         cats = sec.split('_')
-        labs = [labelMap[c] for c in cats]
+        # canines
+        # only include non-empty labels, e.g. MET has not label
+        labs = [labelMap[c] for c in cats if labelMap[c]]
         ncolumn = len(all_values)+2
         s  = '\\hline\n'
         s += '\\multicolumn{'+str(ncolumn)+'}{c}{'
         s += ', '.join(labs)
         s += '} \\\\ \n'
         s += '\\hline\n' 
+        #print "cats: {0}, labs: {1}".format(cats, labs)
+        #print "mega-bin header: {0}".format(s)
         return s
-
-
 
 
 def main():
