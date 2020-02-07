@@ -65,6 +65,7 @@ def submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False, dat
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/CSVv2_Moriond17_B_H.csv", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/shapes_njets.root",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/factors_2016.root",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/factors_2017.root",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/2016_trigger_eff.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/2017_trigger_eff.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/2018_trigger_eff.root", 
