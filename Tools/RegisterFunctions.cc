@@ -134,9 +134,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
 {
     //register functions with NTupleReader
-    
     // order matters
-    // get photons and leptons
     // use photons and leptons to clean jets
     tr.registerFunction(*getVectors);
     tr.registerFunction(*gamma);
@@ -154,9 +152,6 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*getSearchBin);
     tr.registerFunction(*getSearchBin_drPhotonCleaned);
     
-    // TODO: create JES histograms in MakePlots.C
-    // apply JEC to MC only
-    //if (false)
     if (doSystematics_ && tr.checkBranch("GenJet_pt"))
     {
         tr.registerFunction(*runTopTagger_jesTotalUp);
