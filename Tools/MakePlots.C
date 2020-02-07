@@ -197,8 +197,6 @@ int main(int argc, char* argv[])
     std::string yearTag     = "_" + year; 
     std::string periodTag   = ""; 
     std::string yearForLumi = year;
-    // HEM veto for 2018 PostHEM
-    bool doHEMVeto = false;
     std::string HEMVeto                 = "";
     std::string HEMVeto_drLeptonCleaned = "";
     std::string HEMVeto_drPhotonCleaned = "";
@@ -245,12 +243,21 @@ int main(int argc, char* argv[])
     }
     else if (era.compare("2018") == 0)
     {
-        ElectronDataset                 = "Data_EGamma";
-        PhotonDataset                   = "Data_EGamma";
-        Flag_ecalBadCalibFilter         = ";Flag_ecalBadCalibFilter";
-        HEMVetoWeight                   = ";SAT_HEMVetoWeight_jetpt30";
-        HEMVetoWeight_drLeptonCleaned   = ";SAT_HEMVetoWeight_drLeptonCleaned_jetpt30";
-        HEMVetoWeight_drPhotonCleaned   = ";SAT_HEMVetoWeight_drPhotonCleaned_jetpt30";
+        // when running over 2018 as a year
+        // - apply HEM veto cut to Data
+        // - apply HEM veto weight to MC
+        ElectronDataset                   = "Data_EGamma";
+        PhotonDataset                     = "Data_EGamma";
+        Flag_ecalBadCalibFilter           = ";Flag_ecalBadCalibFilter";
+        HEMVetoWeight                     = ";SAT_HEMVetoWeight_jetpt30";
+        HEMVetoWeight_drLeptonCleaned     = ";SAT_HEMVetoWeight_drLeptonCleaned_jetpt30";
+        HEMVetoWeight_drPhotonCleaned     = ";SAT_HEMVetoWeight_drPhotonCleaned_jetpt30";
+        HEMVeto                           = "SAT_Pass_HEMVeto_DataOnly_jetpt30";
+        HEMVeto_drLeptonCleaned           = "SAT_Pass_HEMVeto_DataOnly_drLeptonCleaned_jetpt30";
+        HEMVeto_drPhotonCleaned           = "SAT_Pass_HEMVeto_DataOnly_drPhotonCleaned_jetpt30";
+        semicolon_HEMVeto                 = ";" + HEMVeto;
+        semicolon_HEMVeto_drLeptonCleaned = ";" + HEMVeto_drLeptonCleaned;
+        semicolon_HEMVeto_drPhotonCleaned = ";" + HEMVeto_drPhotonCleaned;
     }
     else if (era.compare("2018_PreHEM") == 0)
     {
@@ -266,13 +273,12 @@ int main(int argc, char* argv[])
         ElectronDataset                   = "Data_EGamma";
         PhotonDataset                     = "Data_EGamma";
         Flag_ecalBadCalibFilter           = ";Flag_ecalBadCalibFilter";
-        HEMVeto                           = "SAT_Pass_HEMVeto_jetpt30";
-        HEMVeto_drLeptonCleaned           = "SAT_Pass_HEMVeto_drLeptonCleaned_jetpt30";
-        HEMVeto_drPhotonCleaned           = "SAT_Pass_HEMVeto_drPhotonCleaned_jetpt30";
+        HEMVeto                           = "SAT_Pass_HEMVeto_DataAndMC_jetpt30";
+        HEMVeto_drLeptonCleaned           = "SAT_Pass_HEMVeto_DataAndMC_drLeptonCleaned_jetpt30";
+        HEMVeto_drPhotonCleaned           = "SAT_Pass_HEMVeto_DataAndMC_drPhotonCleaned_jetpt30";
         semicolon_HEMVeto                 = ";" + HEMVeto;
         semicolon_HEMVeto_drLeptonCleaned = ";" + HEMVeto_drLeptonCleaned;
         semicolon_HEMVeto_drPhotonCleaned = ";" + HEMVeto_drPhotonCleaned;
-        doHEMVeto                         = true;
     }
     else if (era.compare("Run2") == 0)
     {
