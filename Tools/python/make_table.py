@@ -267,7 +267,7 @@ class Table:
         s += table_header
         s += '\\hline\n'
         s += self.makeTable(BinObject, total_era)
-        s += self.endTable()
+        #s += self.endTable() # now down in makeTable()
         if makeDoc:
             s += self.endDocument()
         #print '\nprinting yield table...\n'
@@ -307,22 +307,26 @@ class Table:
         s += '\\hline\n'
         return s
     
-    def endTable(self):
+    def endTable(self, label = "", caption = ""):
         '''Add a break between the bins to fit on each page'''
+        '''Include label and caption'''
         s  = '\\hline\n'
         s += '\\end{tabular}\n'
         s += '}\n'
-        s += '\\caption[]{}\n'
+        s += '\\label{%s}\n' % label
+        s += '\\caption{%s}\n' % caption
         s += '\\end{center}\n'
         s += '\\end{table}\n'
         return s
     
     
     def makeTable(self, BinObject, total_era):
-        ''' Put together the table chunk for the given nj,nb,mtb,nt mega-bin. '''
+        ''' Put together the table chunk for the given nj,nb,mtb,nt,nw,ht mega-bin. '''
         sections=[]
         s=''
-        ibin=0
+        ibin = 0
+        firstBin = ibin
+        lastBin  = ibin
         for bin in binlist: 
             sec, met = bin.lstrip('bin_').rsplit('_', 1)
             met = met.lstrip("pt")
@@ -337,11 +341,24 @@ class Table:
             for value in list(all_values):
                 s += " & {0} ".format(BinObject.binValues[total_era][str(ibin)][value])
             s += ' \\\\ \n'
+            # first increment ibin
             ibin += 1
-            if ibin == 53 or ibin == 94 or ibin == 135:
-                s += self.endTable()
-                s += self.beginTable()
-                s += table_header
+            # now these are bin numbers to begin next table
+            if ibin == 53 or ibin == 94 or ibin == 135 or ibin == 183:
+                # last bin for previous table
+                lastBin = ibin - 1
+                # low/high dm
+                region = "low \dm"
+                if lastBin >= 53:
+                    region = "high \dm"
+                label = "tab:zinvPredToBin{0}".format(lastBin)
+                caption = "Predition for Z to invisible background in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
+                s += self.endTable(label, caption)
+                if ibin < 183:
+                    # first bin for next table 
+                    firstBin = ibin
+                    s += self.beginTable()
+                    s += table_header
         return s
     
     # formats the prediction nEvents +/- error
