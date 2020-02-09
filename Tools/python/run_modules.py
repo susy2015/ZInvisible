@@ -100,9 +100,9 @@ def main():
     SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
     T = Table()
     # fancy table only supported in search bins right now
-    # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False)
-    T.makeYieldTable(SB, total_era, "latex_files/zinv_pred_sr_doc.tex",   True)
-    T.makeYieldTable(SB, total_era, "latex_files/zinv_pred_sr_table.tex", False)
+    # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=0.6)
+    T.makeYieldTable(SB, total_era, "latex_files/zinv_pred_sr_doc.tex",   True,  0.55)
+    T.makeYieldTable(SB, total_era, "latex_files/zinv_pred_sr_table.tex", False, 0.60)
     
     # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics
     # must be done after N.makeComparison()

@@ -258,8 +258,9 @@ class Table:
     def __init__(self):
         pass
         
-    def makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False):
+    def makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=0.6):
         ''' Make a Latex-formatted table with each bkg plus unc, total bkg plus unc, and observed data for every bin. '''
+        self.size = size
         s  = ""
         if makeDoc:
             s += self.beginDocument()
@@ -302,7 +303,7 @@ class Table:
         '''Add a break between the bins to fit on each page'''
         s  = '\\begin{table}[!h]\n'
         s += '\\begin{center}\n'
-        s += '\\resizebox*{0.65\\textwidth}{!}{\n'
+        s += '\\resizebox*{%.2f\\textwidth}{!}{\n' % self.size
         s += '\\begin{tabular}{|c||c||c|c|c|c|}\n'
         s += '\\hline\n'
         return s
@@ -352,7 +353,9 @@ class Table:
                 if lastBin >= 53:
                     region = "high \dm"
                 label = "tab:zinvPredToBin{0}".format(lastBin)
-                caption = "Predition for Z to invisible background in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
+                caption  = "Predition for the Z to invisible background $\\left(\Np\\right)$ in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
+                caption += " The normalization factor \Rz, shape factor \Sg, and number of \znunu MC events \Nmc are also shown for each search bin."
+                caption += " See Eq.~\\ref{eq:zinv_pred}."
                 s += self.endTable(label, caption)
                 if ibin < 183:
                     # first bin for next table 
