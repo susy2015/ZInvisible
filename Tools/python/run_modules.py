@@ -85,6 +85,9 @@ def main():
                 SRunits.getValues(result_file, era)
             Syst.makeZvsPhoton(result_file, era, True)
 
+    # Normalization: makeTable(self, output_name, makeDoc=False)
+    N.makeTable(latex_dir + "zinv_rz_doc.tex",   True)
+    N.makeTable(latex_dir + "zinv_rz_table.tex", False)
     N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
     N.makeComparison("validation")
@@ -101,8 +104,8 @@ def main():
     T = Table()
     # fancy table only supported in search bins right now
     # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=0.6)
-    T.makeYieldTable(SB, total_era, "latex_files/zinv_pred_sr_doc.tex",   True,  0.55)
-    T.makeYieldTable(SB, total_era, "latex_files/zinv_pred_sr_table.tex", False, 0.60)
+    T.makeYieldTable(SB, total_era, latex_dir + "zinv_pred_sr_doc.tex",   True,  0.55)
+    T.makeYieldTable(SB, total_era, latex_dir + "zinv_pred_sr_table.tex", False, 0.60)
     
     # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics
     # must be done after N.makeComparison()
