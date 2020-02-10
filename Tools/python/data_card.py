@@ -36,7 +36,7 @@ def makeDataCard(BinObject, directory, era):
         # for datacard, use b starting from 1
         b           = str(int(bin_i) + 1)
         pred        = float(BinObject.binValues[era][bin_i]["pred"])
-        sigma       = float(BinObject.binValues[era][bin_i]["pred_error"])
+        sigma       = float(BinObject.binValues[era][bin_i]["pred_error_propagated"])
         n_eff       = float(BinObject.binValues[era][bin_i]["n_eff"])
         avg_w       = float(BinObject.binValues[era][bin_i]["avg_w"])
         n_eff_final = float(BinObject.binValues[era][bin_i]["n_eff_final"])

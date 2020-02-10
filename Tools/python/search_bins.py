@@ -223,7 +223,7 @@ class Common:
             h_mc_lowdm.SetBinContent(bin_i,     self.binValues[era][b]["mc"])
             h_mc_lowdm.SetBinError(bin_i,       self.binValues[era][b]["mc_error"])
             h_pred_lowdm.SetBinContent(bin_i,   self.binValues[era][b]["pred"])
-            h_pred_lowdm.SetBinError(bin_i,     self.binValues[era][b]["pred_error"])
+            h_pred_lowdm.SetBinError(bin_i,     self.binValues[era][b]["pred_error_mc_only"])
             bin_i += 1
         bin_i = 1
         for b in self.high_dm_bins:
@@ -233,7 +233,7 @@ class Common:
             h_mc_highdm.SetBinContent(bin_i,    self.binValues[era][b]["mc"])
             h_mc_highdm.SetBinError(bin_i,      self.binValues[era][b]["mc_error"])
             h_pred_highdm.SetBinContent(bin_i,  self.binValues[era][b]["pred"])
-            h_pred_highdm.SetBinError(bin_i,    self.binValues[era][b]["pred_error"])
+            h_pred_highdm.SetBinError(bin_i,    self.binValues[era][b]["pred_error_mc_only"])
             bin_i += 1
 
         # histogram map
@@ -356,22 +356,26 @@ class Common:
             # average weight:               avg_w = sigma^2 / p 
             # effective number of events:   N_eff = p / avg_w
             
-            # do not propagate Rz statistical error because total Rz uncertainty will be included in Rz systematic histogram
-            # do not propagate Sgamma statistical error because Higgs Combine will do shape factor for us
-            p       = n * s * m
-            #x_list  = [n, s, m]
-            #dx_list = [n_error, s_error, m_error]
-            #p_error = getMultiplicationErrorList(p, x_list, dx_list)
-            p_error = m_error
+            # For data card and validation bin histograms:
+            # - do not propagate Rz statistical error because total Rz uncertainty will be included in Rz systematic histogram
+            # - do not propagate Sgamma statistical error because Higgs Combine will do shape factor for us
+            p_error_mc_only    = m_error
+            # For prediction table in analysis note:
+            # - propagate Rz and Sg errors
+            p                  = n * s * m
+            x_list             = [n, s, m]
+            dx_list            = [n_error, s_error, m_error]
+            p_error_propagated = getMultiplicationErrorList(p, x_list, dx_list)
+            
             # error < 0.0 due to error code
-            if p_error < 0.0:
-                p_error = ERROR_ZERO 
+            if p_error_propagated < 0.0:
+                p_error_propagated = ERROR_ZERO 
             if p == 0:
                 if self.verbose:
                     print "WARNING: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
                 avg_w   = ERROR_ZERO
             else:
-                avg_w   = (p_error ** 2) / p
+                avg_w   = (p_error_propagated ** 2) / p
             n_eff = p / avg_w
             n_eff_final = int(n_eff)
             if n_eff_final == 0:
@@ -381,22 +385,26 @@ class Common:
             else:
                 avg_w_final = p / n_eff_final
 
-            self.binValues[era][b]["pred"]              = p
-            self.binValues[era][b]["pred_error"]        = p_error
-            self.binValues[era][b]["avg_w"]             = avg_w
-            self.binValues[era][b]["n_eff"]             = n_eff
-            self.binValues[era][b]["avg_w_final"]       = avg_w_final
-            self.binValues[era][b]["n_eff_final"]       = n_eff_final
+            self.binValues[era][b]["pred"]                  = p
+            self.binValues[era][b]["pred_error_mc_only"]    = p_error_mc_only
+            self.binValues[era][b]["pred_error_propagated"] = p_error_propagated
+            self.binValues[era][b]["avg_w"]                 = avg_w
+            self.binValues[era][b]["n_eff"]                 = n_eff
+            self.binValues[era][b]["avg_w_final"]           = avg_w_final
+            self.binValues[era][b]["n_eff_final"]           = n_eff_final
             
             for value in self.values:
-                self.binValues[era][b][value + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(self.binValues[era][b][value], self.binValues[era][b][value + "_error"])
+                error_suffix = "_error"
+                if value == "pred":
+                    error_suffix = "_error_propagated"
+                self.binValues[era][b][value + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(self.binValues[era][b][value], self.binValues[era][b][value + error_suffix])
                 
             for value in ["avg_w", "n_eff", "avg_w_final", "n_eff_final"]:
                 self.binValues[era][b][value + "_tex"] = "${0:.3f}$".format(self.binValues[era][b][value])
 
             if self.verbose:
                 print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
-                            b, n, n_error, s, s_error, m, m_error, p, p_error 
+                            b, n, n_error, s, s_error, m, m_error, p, p_error_propagated 
                         )
 
     # ---------------------------------------------------------------------- #
