@@ -34,6 +34,8 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool doSystematics, std::string
     myBLV_jetpt30                               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30");
     myBLV_jetpt30_jesTotalUp                    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_jesTotalUp");
     myBLV_jetpt30_jesTotalDown                  = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_jesTotalDown");
+    myBLV_jetpt30_METUnClustUp                  = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_METUnClustUp");
+    myBLV_jetpt30_METUnClustDown                = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_METUnClustDown");
     blv_drLeptonCleaned_jetpt30                 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30");
     blv_drLeptonCleaned_jetpt30_jesTotalUp      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30_jesTotalUp");
     blv_drLeptonCleaned_jetpt30_jesTotalDown    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30_jesTotalDown");
@@ -63,6 +65,8 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool doSystematics, std::string
     getSearchBin                                = new plotterFunctions::GetSearchBin("_jetpt30");
     getSearchBin_jesTotalUp                     = new plotterFunctions::GetSearchBin("_jetpt30_jesTotalUp");
     getSearchBin_jesTotalDown                   = new plotterFunctions::GetSearchBin("_jetpt30_jesTotalDown");
+    getSearchBin_METUnClustUp                   = new plotterFunctions::GetSearchBin("_jetpt30_METUnClustUp");
+    getSearchBin_METUnClustDown                 = new plotterFunctions::GetSearchBin("_jetpt30_METUnClustDown");
     getSearchBin_drPhotonCleaned                = new plotterFunctions::GetSearchBin("_drPhotonCleaned_jetpt30");
     getSearchBin_drPhotonCleaned_jesTotalUp     = new plotterFunctions::GetSearchBin("_drPhotonCleaned_jetpt30_jesTotalUp");
     getSearchBin_drPhotonCleaned_jesTotalDown   = new plotterFunctions::GetSearchBin("_drPhotonCleaned_jetpt30_jesTotalDown");
@@ -95,6 +99,8 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(myBLV_jetpt30)                               delete myBLV_jetpt30;
     if(myBLV_jetpt30_jesTotalUp)                    delete myBLV_jetpt30_jesTotalUp;
     if(myBLV_jetpt30_jesTotalDown)                  delete myBLV_jetpt30_jesTotalDown;
+    if(myBLV_jetpt30_METUnClustUp)                  delete myBLV_jetpt30_METUnClustUp;
+    if(myBLV_jetpt30_METUnClustDown)                delete myBLV_jetpt30_METUnClustDown;
     if(blv_drLeptonCleaned_jetpt30)                 delete blv_drLeptonCleaned_jetpt30;
     if(blv_drLeptonCleaned_jetpt30_jesTotalUp)      delete blv_drLeptonCleaned_jetpt30_jesTotalUp;
     if(blv_drLeptonCleaned_jetpt30_jesTotalDown)    delete blv_drLeptonCleaned_jetpt30_jesTotalDown;
@@ -109,6 +115,8 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(getSearchBin)                                delete getSearchBin;
     if(getSearchBin_jesTotalUp)                     delete getSearchBin_jesTotalUp;
     if(getSearchBin_jesTotalDown)                   delete getSearchBin_jesTotalDown;
+    if(getSearchBin_METUnClustUp)                   delete getSearchBin_METUnClustUp;
+    if(getSearchBin_METUnClustDown)                 delete getSearchBin_METUnClustDown;
     if(getSearchBin_drPhotonCleaned)                delete getSearchBin_drPhotonCleaned;
     if(getSearchBin_drPhotonCleaned_jesTotalUp)     delete getSearchBin_drPhotonCleaned_jesTotalUp;
     if(getSearchBin_drPhotonCleaned_jesTotalDown)   delete getSearchBin_drPhotonCleaned_jesTotalDown;
@@ -159,12 +167,16 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
         tr.registerFunction(*runTopTagger_drPhotonCleaned_jesTotalDown);
         tr.registerFunction(*myBLV_jetpt30_jesTotalUp);
         tr.registerFunction(*myBLV_jetpt30_jesTotalDown);
+        tr.registerFunction(*myBLV_jetpt30_METUnClustUp);
+        tr.registerFunction(*myBLV_jetpt30_METUnClustDown);
         tr.registerFunction(*blv_drLeptonCleaned_jetpt30_jesTotalUp);
         tr.registerFunction(*blv_drLeptonCleaned_jetpt30_jesTotalDown);
         tr.registerFunction(*blv_drPhotonCleaned_jetpt30_jesTotalUp);
         tr.registerFunction(*blv_drPhotonCleaned_jetpt30_jesTotalDown);
         tr.registerFunction(*getSearchBin_jesTotalUp);
         tr.registerFunction(*getSearchBin_jesTotalDown);
+        tr.registerFunction(*getSearchBin_METUnClustUp);
+        tr.registerFunction(*getSearchBin_METUnClustDown);
         tr.registerFunction(*getSearchBin_drPhotonCleaned_jesTotalUp);
         tr.registerFunction(*getSearchBin_drPhotonCleaned_jesTotalDown);
     }

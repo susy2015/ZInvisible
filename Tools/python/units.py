@@ -7,16 +7,14 @@ from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
 from tools import invert
 
 
-def show(jsonFile, key, title):
-    with open(jsonFile, "r") as inputFile:
-        unitMap = json.load(inputFile)
-        # invert map
-        binMap = invert(unitMap[key])
-        nBins = len(binMap)
-        bins = list(str(x) for x in xrange(nBins))
-        print "{0} ({1}) : {2} bins".format(title, key, nBins)
-        for b in bins: 
-            print "{0} : {1}".format(b, binMap[b])
+def show(binMap, title):
+    # invert map
+    invMap = invert(binMap)
+    nBins = len(invMap)
+    bins = list(str(x) for x in xrange(nBins))
+    print "{0}: {1} bins".format(title, nBins)
+    for b in bins: 
+        print "{0} : {1}".format(b, invMap[b])
 
 # save final results in json file
 def saveResults(inFile, outFile, CRunits, SRunits, SB, era):
@@ -101,9 +99,11 @@ def saveResults(inFile, outFile, CRunits, SRunits, SB, era):
 
 def run():
     jsonFile = "dc_BkgPred_BinMaps_master.json"
-    show(jsonFile, "binNum",    "Search Bins")
-    show(jsonFile, "unitCRNum", "Control Region Units")
-    show(jsonFile, "unitSRNum", "Search Region Units")
+    with open(jsonFile, "r") as inputFile:
+        binMap = json.load(inputFile)
+        show(binMap["binNum"],              "Search Bins")
+        show(binMap["unitCRNum"]["phocr"],  "Control Region Units")
+        show(binMap["unitSRNum"],           "Search Region Units")
 
 if __name__ == "__main__":
     run()

@@ -8,9 +8,10 @@ from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from systematics import Systematic
 from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
+from make_table import Table
 from data_card import makeDataCard
 from units import saveResults
-from make_table import Table
+
 
 def main():
     # options
@@ -31,28 +32,20 @@ def main():
         print "The json file \"{0}\" containing runs does not exist.".format(json_file)
         return
     
-    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
     #eras = ["2016"]
+    #eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
+    eras = ["2016", "2017", "2018", "Run2"]
     dirList = []
     plot_dir                = "more_plots"
     latex_dir               = "latex_files"
-    results_dir             = "results"
-    dataCard_dir            = "data_cards"
-    dataCardValidation_dir  = dataCard_dir + "/validation"
-    dataCardSearch_dir      = dataCard_dir + "/search"
+    results_dir             = "datacard_inputs"
     dirList.append(plot_dir)
     dirList.append(latex_dir)
     dirList.append(results_dir)
-    dirList.append(dataCard_dir)
-    dirList.append(dataCardValidation_dir)
-    dirList.append(dataCardSearch_dir)
     # add "/" to directory if not present
     if plot_dir[-1]  != "/":                plot_dir                += "/"
     if latex_dir[-1] != "/":                latex_dir               += "/"
     if results_dir[-1] != "/":              results_dir             += "/"
-    if dataCard_dir[-1] != "/":             dataCard_dir            += "/"
-    if dataCardValidation_dir[-1] != "/":   dataCardValidation_dir  += "/"
-    if dataCardSearch_dir[-1] != "/":       dataCardSearch_dir      += "/"
     
     for d in dirList:
         # make directory if it does not exist
@@ -78,7 +71,7 @@ def main():
         runMap = json.load(input_file)
         # loop over eras
         for era in eras:
-            print "|---------- Era: {0} ----------|".format(era)
+            print "|---------------------------------------------------- Era: {0} ----------------------------------------------------|".format(era)
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
             if doCutflows:
@@ -91,8 +84,6 @@ def main():
                 CRunits.getValues(result_file, era)
                 SRunits.getValues(result_file, era)
             Syst.makeZvsPhoton(result_file, era, True)
-            #makeDataCard(VB, dataCardValidation_dir, era)
-            #makeDataCard(SB, dataCardSearch_dir,     era)
 
     N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
@@ -104,29 +95,24 @@ def main():
     SB.makeTexFile("Z Invisible Per Era Prediction for Search Bins",     latex_dir + "zinv_per_era_prediction_search_bins.tex")
     
     # total Run2 prediction
-    # root files to save histograms
     total_era = "Run2"
-    validation_file = "validationBinsZinv_" + total_era + ".root"
-    search_file     = "searchBinsZinv_"     + total_era + ".root"
-    # WARNING: only run makeTotalPred() if you do not already have Run2 combined histograms; otherwise you will double count!
-    #VB.makeTotalPred( validation_file,  "Validation Bin",   "validation", total_era   )
-    #SB.makeTotalPred( search_file,      "Search Bin",       "search",     total_era   )
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
     SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
+    T = Table()
+    # fancy table only supported in search bins right now
+    # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex")
+    T.makeYieldTable(SB, total_era, "latex_files/fancy_zinv_pred_search.tex")
+    
     # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics
     # must be done after N.makeComparison()
     # must be done after Syst.makeZvsPhoton()
-    VB.getRzSyst(N.rz_syst_map, "validation",  "RzSyst_ValidationBins.root")
-    SB.getRzSyst(N.rz_syst_map, "search",      "RzSyst_SearchBins.root")
-    VB.getZvsPhotonSyst(Syst.h_map_syst, "ZvsPhotonSyst_ValidationBins.root")
-    SB.getZvsPhotonSyst(Syst.h_map_syst, "ZvsPhotonSyst_SearchBins.root")
+    VB.getRzSyst(N.rz_syst_map, "validation",   "RzSyst_ValidationBins.root")
+    SB.getRzSyst(N.rz_syst_map, "search",       "RzSyst_SearchBins.root")
+    VB.getZvsPhotonSyst(Syst.h_map_syst,        "ZvsPhotonSyst_ValidationBins.root")
+    SB.getZvsPhotonSyst(Syst.h_map_syst,        "ZvsPhotonSyst_SearchBins.root")
+    CRunits.getZvsPhotonSyst(Syst.h_map_syst,   "ZvsPhotonSyst_CRUnitBins.root")
 
-    # make json files
-    VB.makeJson(VB.binValues,           results_dir + "ValidationBinResults.json")
-    SB.makeJson(SB.binValues,           results_dir + "SearchBinResults.json")
     if doUnits:
-        CRunits.makeJson(CRunits.binValues, results_dir + "CRUnitsResults.json")
-        SRunits.makeJson(SRunits.binValues, results_dir + "SRUnitsResults.json")
         # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
         saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + total_era + ".json", CRunits, SRunits, SB, total_era)
 

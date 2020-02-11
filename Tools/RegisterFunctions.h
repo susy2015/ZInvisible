@@ -54,16 +54,18 @@ class RegisterFunctionsNTuple : public RegisterFunctions
 {
 private:
     bool doSystematics_; 
-    BaselineVessel *myBLV;
-    BaselineVessel *myBLV_jetpt30;
-    BaselineVessel *myBLV_jetpt30_jesTotalUp;
-    BaselineVessel *myBLV_jetpt30_jesTotalDown;
-    BaselineVessel *blv_drLeptonCleaned_jetpt30;
-    BaselineVessel *blv_drLeptonCleaned_jetpt30_jesTotalUp;
-    BaselineVessel *blv_drLeptonCleaned_jetpt30_jesTotalDown;
-    BaselineVessel *blv_drPhotonCleaned_jetpt30;
-    BaselineVessel *blv_drPhotonCleaned_jetpt30_jesTotalUp;
-    BaselineVessel *blv_drPhotonCleaned_jetpt30_jesTotalDown;
+    BaselineVessel                              *myBLV;
+    BaselineVessel                              *myBLV_jetpt30;
+    BaselineVessel                              *myBLV_jetpt30_jesTotalUp;
+    BaselineVessel                              *myBLV_jetpt30_jesTotalDown;
+    BaselineVessel                              *myBLV_jetpt30_METUnClustUp;
+    BaselineVessel                              *myBLV_jetpt30_METUnClustDown;
+    BaselineVessel                              *blv_drLeptonCleaned_jetpt30;
+    BaselineVessel                              *blv_drLeptonCleaned_jetpt30_jesTotalUp;
+    BaselineVessel                              *blv_drLeptonCleaned_jetpt30_jesTotalDown;
+    BaselineVessel                              *blv_drPhotonCleaned_jetpt30;
+    BaselineVessel                              *blv_drPhotonCleaned_jetpt30_jesTotalUp;
+    BaselineVessel                              *blv_drPhotonCleaned_jetpt30_jesTotalDown;
     GetVectors                                  *getVectors;
     CleanedJets                                 *cleanedJets;
     RunTopTagger                                *runTopTagger;
@@ -88,6 +90,8 @@ private:
     plotterFunctions::GetSearchBin              *getSearchBin;
     plotterFunctions::GetSearchBin              *getSearchBin_jesTotalUp;
     plotterFunctions::GetSearchBin              *getSearchBin_jesTotalDown;
+    plotterFunctions::GetSearchBin              *getSearchBin_METUnClustUp;
+    plotterFunctions::GetSearchBin              *getSearchBin_METUnClustDown;
     plotterFunctions::GetSearchBin              *getSearchBin_drPhotonCleaned;
     plotterFunctions::GetSearchBin              *getSearchBin_drPhotonCleaned_jesTotalUp;
     plotterFunctions::GetSearchBin              *getSearchBin_drPhotonCleaned_jesTotalDown;

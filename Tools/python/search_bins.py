@@ -27,6 +27,8 @@ class Common:
         # WARNING: be careful
         # it is safest to only put constant general attributes here
         self.values = ["norm", "shape", "mc", "pred"]
+
+        self.results_dir = "prediction_histos/"
     
     # ---------------------------------------------------------------------- #
     # setBinValues():                                                        #
@@ -189,10 +191,8 @@ class Common:
         eraTag = "_" + era
         draw_option = "hist error"
         if self.saveRootFile:
-            print "Running makeHistos(). Saving output to {0}".format(output_file)
+            #print "Running makeHistos(). Saving output to {0}".format(output_file)
             f_out = ROOT.TFile(output_file, "recreate")
-        else:
-            print "Running makeHistos()."
         
         # define histograms 
         if (self.unblind):
@@ -317,10 +317,11 @@ class Common:
                     print "h_pred[1] = {0}".format(h_pred.GetBinContent(1))
                 
                 # write histograms to file
-                if (self.unblind):
-                    h_data.Write()
-                h_mc.Write()
-                h_pred.Write()
+                if self.saveRootFile:
+                    if (self.unblind):
+                        h_data.Write()
+                    h_mc.Write()
+                    h_pred.Write()
         
         if self.saveRootFile:
             f_out.Close()
@@ -423,7 +424,7 @@ class Common:
             i = 1
             for b in systMap[region]["bins"]:
                 selection = self.bins[b]["selection"]
-                selection_norm = removeCuts(selection, "NJ")
+                selection_norm = removeCuts(selection, ["NJ"])
                 
                 #print "DEBUG: b={0}, selection={1}, selection_norm={2}, type={3}".format(b, selection, selection_norm, type(selection_norm))
                 #print "DEBUG: rz_syst_map[{0}] keys = {1}".format(region, rz_syst_map[bin_type][region].keys())
@@ -442,9 +443,8 @@ class Common:
     
     # ---------------------------------------------------------------------- #
     # getZvsPhotonSyst():                                                    #
-    #    - get Z vs Photon systematic in validation or search bins           #
+    #    - get Z vs Photon systematic in validation, search, or CR unit bins #
     #    - save systematic to root file                                      #
-    #    - TODO: also get this syst. in CR unit bins                         #
     # ---------------------------------------------------------------------- #
     def getZvsPhotonSyst(self, h_map_syst, output_file):
         # output root file
@@ -523,8 +523,8 @@ class ValidationBins(Common):
             selection   = self.bins[b]["selection"]
             met         = self.bins[b]["met"]
             # remove cuts from selection for norm and shape
-            selection_norm  = removeCuts(selection, "NJ")
-            selection_shape = removeCuts(selection, "NSV")
+            selection_norm  = removeCuts(selection, ["NJ"])
+            selection_shape = removeCuts(selection, ["NSV", "MET"])
             self.binValues[era][b] = {}
             self.binValues[era][b]["norm"]        = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z"]
             self.binValues[era][b]["norm_error"]  = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z_error"]
@@ -576,10 +576,9 @@ class ValidationBins(Common):
         self.setBinValues(b_map, h_map, era)
 
         # new root file to save validation bin histograms
-        new_file = "validationBinsZinv_" + era + ".root"
+        new_file = self.results_dir + "validationBinsZinv_" + era + ".root"
         self.calcPrediction(    new_file, "Validation Bin", "validation", era   )
         self.makeHistos(        new_file, "Validation Bin", "validation", era   )
-
         f_in.Close()
   
 # search bins 
@@ -618,8 +617,8 @@ class SearchBins(Common):
             selection   = self.bins[b]["selection"]
             met         = self.bins[b]["met"]
             # remove cuts from selection for norm and shape
-            selection_norm  = removeCuts(selection, "NJ")
-            selection_shape = removeCuts(selection, "NSV")
+            selection_norm  = removeCuts(selection, ["NJ"])
+            selection_shape = removeCuts(selection, ["NSV", "MET"])
             if self.verbose:
                 print "{0}: {1} {2} {3} {4}".format(b, region, selection_norm, selection_shape, met)
             self.binValues[era][b] = {}
@@ -654,7 +653,7 @@ class SearchBins(Common):
         self.setBinValues(b_map, h_map, era)
 
         # new root file to save search bin histograms
-        new_file = "searchBinsZinv_" + era + ".root"
+        new_file = self.results_dir + "searchBinsZinv_" + era + ".root"
         self.calcPrediction(    new_file, "Search Bin", "search", era   )
         self.makeHistos(        new_file, "Search Bin", "search", era   )
         f_in.Close()
@@ -708,10 +707,6 @@ class SRUnitBins(Common):
         # set bin values 
         self.setBinValues(b_map, h_map, era)
 
-        # new root file to save search bin histograms
-        #new_file = "SRUnitBinsZinv_" + era + ".root"
-        #self.calcPrediction(    new_file, "SR Unit Bins", "SRUnit", era   )
-        #self.makeHistos(        new_file, "SR Unit Bins", "SRUnit", era   )
         f_in.Close()
 
 # control region unit bins
@@ -736,6 +731,8 @@ class CRUnitBins(Common):
         self.all_bins       = self.low_dm_bins + self.high_dm_bins
         self.binValues      = {}
         self.histograms     = {}
+        with open("control_region_unit_bins_v4.json", "r") as j:
+            self.bins = stringifyMap(json.load(j))
     
     # TODO: normalize MC to Data in CR unit bins
     def getValues(self, file_name, era):
@@ -766,13 +763,10 @@ class CRUnitBins(Common):
         h_map["lowdm"]["mc_back"]       = h_mc_back_lowdm
         h_map["highdm"]["mc_back"]      = h_mc_back_highdm
         
+        # A temporary solution from Angel to Caleb
+        self.histograms[era] = copy.deepcopy(h_map)
+        
         # set bin values 
         self.setBinValues(b_map, h_map, era)
-
-        # new root file to save search bin histograms
-        #new_file = "CRUnitBinsZinv_" + era + ".root"
-        #self.calcPrediction(    new_file, "CR Unit Bins", "CRUnit", era   )
-        #self.makeHistos(        new_file, "CR Unit Bins", "CRUnit", era   )
-
 
 

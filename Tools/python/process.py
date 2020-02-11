@@ -77,46 +77,46 @@ def process():
             if not no_plots:
                 # Move plots to directory for each era
                 returncode = subprocess.check_call("mkdir -p {0}/{1}".format(folder, era),     shell=True)
-                returncode = subprocess.check_call("mv {0}/*.pdf {0}/{1}".format(folder, era), shell=True)
                 returncode = subprocess.check_call("mv {0}/*.png {0}/{1}".format(folder, era), shell=True)
     
     # ---------------------- # 
     # --- Combined Run 2 --- #
     # ---------------------- # 
 
-    # make directory if it does not exist
-    era = "Run2"
-    date = re.match("runs/submission_(.*).json", json_file).group(1)
-    directory = "DataMC_{0}_submission_{1}".format(era, date)
-    command = "mkdir -p condor/{0}".format(directory)
-    returncode = subprocess.check_call(command, shell=True)
-    
-    # hadd if Run 2 file does not exist
-    resultFile = "condor/{0}/result.root".format(directory)
-    file_exists = os.path.exists(resultFile)
-    if not file_exists:
-        files = " ".join(resultFiles)
-        command = "time ahadd.py {0} {1}".format(resultFile, files)
-        returncode = subprocess.check_call(command, shell=True)
-
-    if not no_plots:
-        # run make plots 
-        command = "./makePlots -f -I {0} -Y {1} -R Data_MET_{1} | grep -v LHAPDF".format(resultFile, era) 
+    # not needed if only making plots 
+    if not plot_only: 
+        # make directory if it does not exist
+        era = "Run2"
+        date = re.match("runs/submission_(.*).json", json_file).group(1)
+        directory = "DataMC_{0}_submission_{1}".format(era, date)
+        command = "mkdir -p condor/{0}".format(directory)
         returncode = subprocess.check_call(command, shell=True)
         
-        # Move plots to directory for each era
-        returncode = subprocess.check_call("mkdir -p {0}/{1}".format(folder, era),     shell=True)
-        returncode = subprocess.check_call("mv {0}/*.pdf {0}/{1}".format(folder, era), shell=True)
-        returncode = subprocess.check_call("mv {0}/*.png {0}/{1}".format(folder, era), shell=True)
+        # hadd if Run 2 file does not exist
+        resultFile = "condor/{0}/result.root".format(directory)
+        file_exists = os.path.exists(resultFile)
+        if not file_exists:
+            files = " ".join(resultFiles)
+            command = "time ahadd.py {0} {1}".format(resultFile, files)
+            returncode = subprocess.check_call(command, shell=True)
 
-    # make Run 2 json file
-    runMap[era]   = directory
-    new_json_file = "runs/submission_{0}_{1}.json".format(era, date) 
-    file_exists   = os.path.exists(new_json_file)
-    if not file_exists:
-        print "Creating {0}".format(new_json_file)
-        with open (new_json_file, "w") as j:
-            json.dump(runMap, j, sort_keys=True, indent=4, separators=(',', ' : '))
+        if not no_plots:
+            # run make plots 
+            command = "./makePlots -f -I {0} -Y {1} -R Data_MET_{1} | grep -v LHAPDF".format(resultFile, era) 
+            returncode = subprocess.check_call(command, shell=True)
+            
+            # Move plots to directory for each era
+            returncode = subprocess.check_call("mkdir -p {0}/{1}".format(folder, era),     shell=True)
+            returncode = subprocess.check_call("mv {0}/*.png {0}/{1}".format(folder, era), shell=True)
+
+        # make Run 2 json file
+        runMap[era]   = directory
+        new_json_file = "runs/submission_{0}_{1}.json".format(era, date) 
+        file_exists   = os.path.exists(new_json_file)
+        if not file_exists:
+            print "Creating {0}".format(new_json_file)
+            with open (new_json_file, "w") as j:
+                json.dump(runMap, j, sort_keys=True, indent=4, separators=(',', ' : '))
 
 
 if __name__ == "__main__":

@@ -31,13 +31,16 @@ def main():
     dataSetsList.append("Data_MET_{0},Data_EGamma_{0},Data_SingleMuon_{0},DYJetsToLL_{1},TTbarNoHad_{1},SingleTopZinv_{1},Rare_{1},TTZ_{1},Diboson_{1},GJets_{1},QCD_Photon_{1},WJetsToLNu_{1},TTbar_{1},tW_{1},ZJetsToNuNu_{1}")
     dataSetsMap = {
             "2016"          : 0,
+            "2017"          : 0,
             "2017_BE"       : 0,
             "2017_F"        : 0,
+            "2018"          : 1,
             "2018_PreHEM"   : 1,
             "2018_PostHEM"  : 1
     }
-    eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
+    #eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM"]
     #eras = ["2016"]
+    eras = ["2016", "2017", "2018"]
     dirMap = {}
     # submit jobs for each era 
     for era in eras:

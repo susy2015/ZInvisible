@@ -119,10 +119,16 @@
         "nominal": "Stop0l_trigger_eff_MET_loose_baseline",
         "up": "Stop0l_trigger_eff_MET_loose_baseline_up"
     },
+    "metres": {
+        "down": "NONE",
+        "name": "metres",
+        "nominal": "NONE",
+        "up": "NONE"
+    },
     "pdf": {
         "down": "pdfWeight_Down",
         "name": "PDF_Weight",
-        "nominal": "pdfWeight",
+        "nominal": "NONE",
         "up": "pdfWeight_Up"
     },
     "photon_sf": {
