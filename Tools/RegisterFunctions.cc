@@ -156,16 +156,16 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     {
         tr.registerFunction(*runTopTagger_jesTotalUp);
         tr.registerFunction(*runTopTagger_jesTotalDown);
-        tr.registerFunction(*runTopTagger_drLeptonCleaned_jesTotalUp);
-        tr.registerFunction(*runTopTagger_drLeptonCleaned_jesTotalDown);
+        //tr.registerFunction(*runTopTagger_drLeptonCleaned_jesTotalUp);
+        //tr.registerFunction(*runTopTagger_drLeptonCleaned_jesTotalDown);
         tr.registerFunction(*runTopTagger_drPhotonCleaned_jesTotalUp);
         tr.registerFunction(*runTopTagger_drPhotonCleaned_jesTotalDown);
         tr.registerFunction(*myBLV_jetpt30_jesTotalUp);
         tr.registerFunction(*myBLV_jetpt30_jesTotalDown);
         tr.registerFunction(*myBLV_jetpt30_METUnClustUp);
         tr.registerFunction(*myBLV_jetpt30_METUnClustDown);
-        tr.registerFunction(*blv_drLeptonCleaned_jetpt30_jesTotalUp);
-        tr.registerFunction(*blv_drLeptonCleaned_jetpt30_jesTotalDown);
+        //tr.registerFunction(*blv_drLeptonCleaned_jetpt30_jesTotalUp);
+        //tr.registerFunction(*blv_drLeptonCleaned_jetpt30_jesTotalDown);
         tr.registerFunction(*blv_drPhotonCleaned_jetpt30_jesTotalUp);
         tr.registerFunction(*blv_drPhotonCleaned_jetpt30_jesTotalDown);
         tr.registerFunction(*getSearchBin_jesTotalUp);

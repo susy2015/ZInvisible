@@ -49,24 +49,25 @@ int main(int argc, char* argv[])
         {"sbEra",      required_argument, 0, 'S'},
         {"era",        required_argument, 0, 'Y'}
     };
-    bool runOnCondor        = false;
-    bool unblind            = false;
-    bool doLooseAndMid      = false;    // hi angel
-    bool doSystematics      = true;     // hi caleb
-    bool doDataMCElectron   = true;
-    bool doDataMCMuon       = true;
-    bool doDataMCPhoton     = true;     // hi angel
-    bool doWeights = false;
-    bool doLeptons = false;
-    bool doPhotons = false;
-    bool doGJetsAndZnunu = false;
-    bool doDYAndZnunu = false;
-    bool doSearchBins = true;
-    bool doPlots = true;
-    bool doSave = true;
-    bool doTuple = true;
-    bool fromTuple = true;
-    bool verbose = false;
+    bool runOnCondor            = false;
+    bool unblind                = false;
+    bool doLooseAndMid          = false;    // hi angel
+    bool doSystematics          = true;     // hi caleb
+    bool doLeptonSystematics    = false;    // hi caleb
+    bool doDataMCElectron       = true;
+    bool doDataMCMuon           = true;
+    bool doDataMCPhoton         = true;     // hi angel
+    bool doWeights              = false;
+    bool doLeptons              = false;
+    bool doPhotons              = false;
+    bool doGJetsAndZnunu        = false;
+    bool doDYAndZnunu           = false;
+    bool doSearchBins           = true;
+    bool doPlots                = true;
+    bool doSave                 = true;
+    bool doTuple                = true;
+    bool fromTuple              = true;
+    bool verbose                = false;
     int startFile   = 0;
     int nFiles      = -1;
     int nEvts       = -1;
@@ -437,6 +438,13 @@ int main(int argc, char* argv[])
     int max_vb_low_dm_high_met  = 19;
     int min_vb_high_dm          = 19;
     int max_vb_high_dm          = 43;
+    // Validation bin MET study
+    // Low DM,           4 bins:  0 - 3
+    // High DM,          5 bins:  0 - 4
+    int min_vb_low_dm_metstudy  = 0;
+    int max_vb_low_dm_metstudy  = 4;
+    int min_vb_high_dm_metstudy = 0;
+    int max_vb_high_dm_metstudy = 5;
     // Number of searchbins
     int NSB = 183;
     // SBv4 search bins for low and high dm
@@ -1210,7 +1218,7 @@ int main(int argc, char* argv[])
                 
                 // --- JEC systematic --- //
                 // only apply JEC to MC, not Data
-                if (doSystematics)
+                if (doLeptonSystematics)
                 {
                     for (const auto& jec : jesMap)
                     {
@@ -1238,7 +1246,7 @@ int main(int argc, char* argv[])
 
                 // --- JEC systematic --- //
                 // only apply JEC to MC, not Data
-                if (doSystematics)
+                if (doLeptonSystematics)
                 {
                     for (const auto& jec : jesMap)
                     {
@@ -1253,7 +1261,7 @@ int main(int argc, char* argv[])
             // ------------------- //
             // --- Systematics --- //
             // ------------------- //
-            if (doSystematics)
+            if (doLeptonSystematics)
             {
                 // Additional weight based systematics
                 //printf("# Systematics for Electron histograms\n");
@@ -1733,7 +1741,7 @@ int main(int argc, char* argv[])
                 
                 // --- JEC systematic --- //
                 // only apply JEC to MC, not Data
-                if (doSystematics)
+                if (doLeptonSystematics)
                 {
                     for (const auto& jec : jesMap)
                     {
@@ -1761,7 +1769,7 @@ int main(int argc, char* argv[])
                 
                 // --- JEC systematic --- //
                 // only apply JEC to MC, not Data
-                if (doSystematics)
+                if (doLeptonSystematics)
                 {
                     for (const auto& jec : jesMap)
                     {
@@ -1776,7 +1784,7 @@ int main(int argc, char* argv[])
             // ------------------- //
             // --- Systematics --- //
             // ------------------- //
-            if (doSystematics)
+            if (doLeptonSystematics)
             {
                 //printf("# Systematics for Muon histograms\n");
                 for (const auto& element : systematics_json.items())
@@ -3319,18 +3327,22 @@ int main(int argc, char* argv[])
             // ---------------------------------- // 
             
             // MET Data in validation bins
-            PDC dcData_MET_nValidationBin_LowDM("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSMET("Validation Bin Low DM",            "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
-            PDC dcData_MET_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSMET("Validation Bin Low DM High MET",   "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
-            PDC dcData_MET_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSMET("Validation Bin High DM",           "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+            PDC dcData_MET_nValidationBin_LowDM("data",             "nValidationBinLowDM"           + JetPtCut, {makePDSMET("Validation Bin Low DM",            "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+            PDC dcData_MET_nValidationBin_LowDM_HighMET("data",     "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSMET("Validation Bin Low DM High MET",   "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+            PDC dcData_MET_nValidationBin_HighDM("data",            "nValidationBinHighDM"          + JetPtCut, {makePDSMET("Validation Bin High DM",           "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+            PDC dcData_MET_nValidationBin_LowDM_METStudy("data",    "nValidationBinLowDM_METStudy"  + JetPtCut, {makePDSMET("Validation Bin Low DM MET Study",  "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
+            PDC dcData_MET_nValidationBin_HighDM_METStudy("data",   "nValidationBinHighDM_METStudy" + JetPtCut, {makePDSMET("Validation Bin High DM MET Study", "Pass_trigger_MET;Flag_eeBadScFilter;SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto)});
 
             // ZNuNu MC in validation and search bins
-            PDC dcMC_ZNuNu_nValidationBin_LowDM("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-            PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET", "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-            PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-            PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",              "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-            PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",             "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-            PDC dcMC_ZNuNu_nSRUnit_LowDM("data",                "nSRUnitLowDM"                  + JetPtCut, {makePDSZnunu("Search Region Unit Low DM",      "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-            PDC dcMC_ZNuNu_nSRUnit_HighDM("data",               "nSRUnitHighDM"                 + JetPtCut, {makePDSZnunu("Search Region Unit High DM",     "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+            PDC dcMC_ZNuNu_nValidationBin_LowDM("data",             "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",              "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+            PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data",     "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET",     "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+            PDC dcMC_ZNuNu_nValidationBin_HighDM("data",            "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",             "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+            PDC dcMC_ZNuNu_nValidationBin_LowDM_METStudy("data",    "nValidationBinLowDM_METStudy"  + JetPtCut, {makePDSZnunu("Validation Bin Low DM MET Study",    "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+            PDC dcMC_ZNuNu_nValidationBin_HighDM_METStudy("data",   "nValidationBinHighDM_METStudy" + JetPtCut, {makePDSZnunu("Validation Bin High DM MET Study",   "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+            PDC dcMC_ZNuNu_nSearchBin_LowDM("data",                 "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",                  "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+            PDC dcMC_ZNuNu_nSearchBin_HighDM("data",                "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",                 "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+            PDC dcMC_ZNuNu_nSRUnit_LowDM("data",                    "nSRUnitLowDM"                  + JetPtCut, {makePDSZnunu("Search Region Unit Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+            PDC dcMC_ZNuNu_nSRUnit_HighDM("data",                   "nSRUnitHighDM"                 + JetPtCut, {makePDSZnunu("Search Region Unit High DM",         "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
         
             // nValidationBin and nSearchBin  with njetWeight applied 
             PDC dcMC_ZNuNu_nValidationBin_LowDM_njetWeight("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights + ";njetWeight_Electron_LowDM")});
@@ -3347,17 +3359,21 @@ int main(int argc, char* argv[])
             PDC dcMC_T1tttt_FatJet_msoftdrop_w("single",   "FatJet_msoftdrop{FatJet_Stop0l=2}", {dsT1tttt_gluino2000_lsp100});
 
             // MET Data in validation bins
-            vh.push_back(PHS("MET_nValidationBin_LowDM" + histSuffix,           {dcData_MET_nValidationBin_LowDM},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
-            vh.push_back(PHS("MET_nValidationBin_LowDM_HighMET" + histSuffix,   {dcData_MET_nValidationBin_LowDM_HighMET}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
-            vh.push_back(PHS("MET_nValidationBin_HighDM" + histSuffix,          {dcData_MET_nValidationBin_HighDM},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
+            vh.push_back(PHS("MET_nValidationBin_LowDM" + histSuffix,           {dcData_MET_nValidationBin_LowDM},              {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,              max_vb_low_dm,              false, false,  "Validation Bin Low DM", "Events", true));
+            vh.push_back(PHS("MET_nValidationBin_LowDM_HighMET" + histSuffix,   {dcData_MET_nValidationBin_LowDM_HighMET},      {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met,     max_vb_low_dm_high_met,     false, false,  "Validation Bin Low DM High MET", "Events", true));
+            vh.push_back(PHS("MET_nValidationBin_HighDM" + histSuffix,          {dcData_MET_nValidationBin_HighDM},             {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,             max_vb_high_dm,             false, false,  "Validation Bin High DM", "Events", true));
+            vh.push_back(PHS("MET_nValidationBin_LowDM_METStudy" + histSuffix,  {dcData_MET_nValidationBin_LowDM_METStudy},     {1, 1}, "", max_vb_low_dm_metstudy - min_vb_low_dm_metstudy,    min_vb_low_dm_metstudy,     max_vb_low_dm_metstudy,     false, false,  "Validation Bin Low DM MET Study", "Events", true));
+            vh.push_back(PHS("MET_nValidationBin_HighDM_METStudy" + histSuffix, {dcData_MET_nValidationBin_HighDM_METStudy},    {1, 1}, "", max_vb_high_dm_metstudy - min_vb_high_dm_metstudy,  min_vb_high_dm_metstudy,    max_vb_high_dm_metstudy,    false, false,  "Validation Bin High DM MET Study", "Events", true));
             // ZNuNu MC in validation and search bins
-            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM" + histSuffix,         {dcMC_ZNuNu_nValidationBin_LowDM},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
-            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET" + histSuffix, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
-            vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + histSuffix,        {dcMC_ZNuNu_nValidationBin_HighDM},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
-            vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + histSuffix,             {dcMC_ZNuNu_nSearchBin_LowDM},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
-            vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffix,            {dcMC_ZNuNu_nSearchBin_HighDM},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
-            vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffix,                {dcMC_ZNuNu_nSRUnit_LowDM},                {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,      max_srunit_low_dm,      false, false,  "Search Region Unit Low DM", "Events", true));
-            vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffix,               {dcMC_ZNuNu_nSRUnit_HighDM},               {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,     max_srunit_high_dm,     false, false,  "Search Region Unit High DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM" + histSuffix,             {dcMC_ZNuNu_nValidationBin_LowDM},              {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,              max_vb_low_dm,              false, false,  "Validation Bin Low DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET" + histSuffix,     {dcMC_ZNuNu_nValidationBin_LowDM_HighMET},      {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met,     max_vb_low_dm_high_met,     false, false,  "Validation Bin Low DM High MET", "Events", true));
+            vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + histSuffix,            {dcMC_ZNuNu_nValidationBin_HighDM},             {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,             max_vb_high_dm,             false, false,  "Validation Bin High DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_METStudy" + histSuffix,    {dcMC_ZNuNu_nValidationBin_LowDM_METStudy},     {1, 1}, "", max_vb_low_dm_metstudy - min_vb_low_dm_metstudy,    min_vb_low_dm_metstudy,     max_vb_low_dm_metstudy,     false, false,  "Validation Bin Low DM MET Study", "Events", true));
+            vh.push_back(PHS("ZNuNu_nValidationBin_HighDM_METStudy" + histSuffix,   {dcMC_ZNuNu_nValidationBin_HighDM_METStudy},    {1, 1}, "", max_vb_high_dm_metstudy - min_vb_high_dm_metstudy,  min_vb_high_dm_metstudy,    max_vb_high_dm_metstudy,    false, false,  "Validation Bin High DM MET Study", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + histSuffix,                 {dcMC_ZNuNu_nSearchBin_LowDM},                  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,              max_sb_low_dm,              false, false,  "Search Bin Low DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffix,                {dcMC_ZNuNu_nSearchBin_HighDM},                 {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,             max_sb_high_dm,             false, false,  "Search Bin High DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffix,                    {dcMC_ZNuNu_nSRUnit_LowDM},                     {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,          max_srunit_low_dm,          false, false,  "Search Region Unit Low DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffix,                   {dcMC_ZNuNu_nSRUnit_HighDM},                    {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,         max_srunit_high_dm,         false, false,  "Search Region Unit High DM", "Events", true));
             if (doLooseAndMid)
             {
                 // nValidationBin and nSearchBin with njetWeights applied 
@@ -3397,21 +3413,25 @@ int main(int argc, char* argv[])
                     std::string SAT_Pass_lowDM_mid_dPhi         = "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut;
                     std::string SAT_Pass_highDM_mid_dPhi        = "SAT_Pass_highDM_mid_dPhi" + JetPtCut;
                     // ZNuNu MC in validation and search bins
-                    PDC dcMC_ZNuNu_nValidationBin_LowDM("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          SAT_Pass_lowDM           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
-                    PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET", SAT_Pass_lowDM_mid_dPhi  + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
-                    PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",         SAT_Pass_highDM_mid_dPhi + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
-                    PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",              SAT_Pass_lowDM           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
-                    PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",             SAT_Pass_highDM          + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
-                    PDC dcMC_ZNuNu_nSRUnit_LowDM("data",                "nSRUnitLowDM"                  + JetPtCut, {makePDSZnunu("Search Region Unit Low DM",      SAT_Pass_lowDM           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
-                    PDC dcMC_ZNuNu_nSRUnit_HighDM("data",               "nSRUnitHighDM"                 + JetPtCut, {makePDSZnunu("Search Region Unit High DM",     SAT_Pass_highDM          + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_LowDM("data",             "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",              SAT_Pass_lowDM           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data",     "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET",     SAT_Pass_lowDM_mid_dPhi  + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_HighDM("data",            "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",             SAT_Pass_highDM_mid_dPhi + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_LowDM_METStudy("data",    "nValidationBinLowDM_METStudy"  + JetPtCut, {makePDSZnunu("Validation Bin Low DM MET Study",    SAT_Pass_lowDM_mid_dPhi  + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_HighDM_METStudy("data",   "nValidationBinHighDM_METStudy" + JetPtCut, {makePDSZnunu("Validation Bin High DM MET Study",   SAT_Pass_highDM_mid_dPhi + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
+                    PDC dcMC_ZNuNu_nSearchBin_LowDM("data",                 "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",                  SAT_Pass_lowDM           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
+                    PDC dcMC_ZNuNu_nSearchBin_HighDM("data",                "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",                 SAT_Pass_highDM          + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
+                    PDC dcMC_ZNuNu_nSRUnit_LowDM("data",                    "nSRUnitLowDM"                  + JetPtCut, {makePDSZnunu("Search Region Unit Low DM",          SAT_Pass_lowDM           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
+                    PDC dcMC_ZNuNu_nSRUnit_HighDM("data",                   "nSRUnitHighDM"                 + JetPtCut, {makePDSZnunu("Search Region Unit High DM",         SAT_Pass_highDM          + Flag_ecalBadCalibFilter + semicolon_HEMVeto, totalWeights)});
                     // ZNuNu MC in validation and search bins
-                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM" + histSuffixSyst,         {dcMC_ZNuNu_nValidationBin_LowDM},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET" + histSuffixSyst, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + histSuffixSyst,        {dcMC_ZNuNu_nValidationBin_HighDM},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + histSuffixSyst,             {dcMC_ZNuNu_nSearchBin_LowDM},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffixSyst,            {dcMC_ZNuNu_nSearchBin_HighDM},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffixSyst,                {dcMC_ZNuNu_nSRUnit_LowDM},                {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,      max_srunit_low_dm,      false, false,  "Search Region Unit Low DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffixSyst,               {dcMC_ZNuNu_nSRUnit_HighDM},               {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,     max_srunit_high_dm,     false, false,  "Search Region Unit High DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM" + histSuffixSyst,             {dcMC_ZNuNu_nValidationBin_LowDM},              {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,              max_vb_low_dm,              false, false,  "Validation Bin Low DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET" + histSuffixSyst,     {dcMC_ZNuNu_nValidationBin_LowDM_HighMET},      {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met,     max_vb_low_dm_high_met,     false, false,  "Validation Bin Low DM High MET", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + histSuffixSyst,            {dcMC_ZNuNu_nValidationBin_HighDM},             {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,             max_vb_high_dm,             false, false,  "Validation Bin High DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_METStudy" + histSuffixSyst,    {dcMC_ZNuNu_nValidationBin_LowDM_METStudy},     {1, 1}, "", max_vb_low_dm_metstudy - min_vb_low_dm_metstudy,    min_vb_low_dm_metstudy,     max_vb_low_dm_metstudy,     false, false,  "Validation Bin Low DM MET Study", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_HighDM_METStudy" + histSuffixSyst,   {dcMC_ZNuNu_nValidationBin_HighDM_METStudy},    {1, 1}, "", max_vb_high_dm_metstudy - min_vb_high_dm_metstudy,  min_vb_high_dm_metstudy,    max_vb_high_dm_metstudy,    false, false,  "Validation Bin High DM MET Study", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + histSuffixSyst,                 {dcMC_ZNuNu_nSearchBin_LowDM},                  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,              max_sb_low_dm,              false, false,  "Search Bin Low DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffixSyst,                {dcMC_ZNuNu_nSearchBin_HighDM},                 {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,             max_sb_high_dm,             false, false,  "Search Bin High DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffixSyst,                    {dcMC_ZNuNu_nSRUnit_LowDM},                     {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,          max_srunit_low_dm,          false, false,  "Search Region Unit Low DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffixSyst,                   {dcMC_ZNuNu_nSRUnit_HighDM},                    {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,         max_srunit_high_dm,         false, false,  "Search Region Unit High DM", "Events", true));
                 }
                 // --- MET unclustering systematic --- //
                 for (const auto& met : metMap)
@@ -3422,21 +3442,25 @@ int main(int argc, char* argv[])
                     std::string SAT_Pass_lowDM_mid_dPhi_met     = "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut  + met.second;
                     std::string SAT_Pass_highDM_mid_dPhi_met    = "SAT_Pass_highDM_mid_dPhi" + JetPtCut  + met.second;
                     // ZNuNu MC in validation and search bins
-                    PDC dcMC_ZNuNu_nValidationBin_LowDM("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          SAT_Pass_lowDM_met           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-                    PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET", SAT_Pass_lowDM_mid_dPhi_met  + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-                    PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",         SAT_Pass_highDM_mid_dPhi_met + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-                    PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",              SAT_Pass_lowDM_met           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-                    PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",             SAT_Pass_highDM_met          + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-                    PDC dcMC_ZNuNu_nSRUnit_LowDM("data",                "nSRUnitLowDM"                  + JetPtCut, {makePDSZnunu("Search Region Unit Low DM",      SAT_Pass_lowDM_met           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-                    PDC dcMC_ZNuNu_nSRUnit_HighDM("data",               "nSRUnitHighDM"                 + JetPtCut, {makePDSZnunu("Search Region Unit High DM",     SAT_Pass_highDM_met          + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_LowDM("data",             "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",              SAT_Pass_lowDM_met              + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data",     "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET",     SAT_Pass_lowDM_mid_dPhi_met     + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_HighDM("data",            "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",             SAT_Pass_highDM_mid_dPhi_met    + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_LowDM_METStudy("data",    "nValidationBinLowDM_METStudy"  + JetPtCut, {makePDSZnunu("Validation Bin Low DM MET Study",    SAT_Pass_lowDM_mid_dPhi_met     + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_HighDM_METStudy("data",   "nValidationBinHighDM_METStudy" + JetPtCut, {makePDSZnunu("Validation Bin High DM MET Study",   SAT_Pass_highDM_mid_dPhi_met    + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nSearchBin_LowDM("data",                 "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",                  SAT_Pass_lowDM_met              + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nSearchBin_HighDM("data",                "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",                 SAT_Pass_highDM_met             + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nSRUnit_LowDM("data",                    "nSRUnitLowDM"                  + JetPtCut, {makePDSZnunu("Search Region Unit Low DM",          SAT_Pass_lowDM_met              + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nSRUnit_HighDM("data",                   "nSRUnitHighDM"                 + JetPtCut, {makePDSZnunu("Search Region Unit High DM",         SAT_Pass_highDM_met             + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
                     // ZNuNu MC in validation and search bins
-                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM" + histSuffixSyst,         {dcMC_ZNuNu_nValidationBin_LowDM},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET" + histSuffixSyst, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + histSuffixSyst,        {dcMC_ZNuNu_nValidationBin_HighDM},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + histSuffixSyst,             {dcMC_ZNuNu_nSearchBin_LowDM},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffixSyst,            {dcMC_ZNuNu_nSearchBin_HighDM},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffixSyst,                {dcMC_ZNuNu_nSRUnit_LowDM},                {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,      max_srunit_low_dm,      false, false,  "Search Region Unit Low DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffixSyst,               {dcMC_ZNuNu_nSRUnit_HighDM},               {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,     max_srunit_high_dm,     false, false,  "Search Region Unit High DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM" + histSuffixSyst,             {dcMC_ZNuNu_nValidationBin_LowDM},              {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,              max_vb_low_dm,              false, false,  "Validation Bin Low DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET" + histSuffixSyst,     {dcMC_ZNuNu_nValidationBin_LowDM_HighMET},      {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met,     max_vb_low_dm_high_met,     false, false,  "Validation Bin Low DM High MET", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + histSuffixSyst,            {dcMC_ZNuNu_nValidationBin_HighDM},             {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,             max_vb_high_dm,             false, false,  "Validation Bin High DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_METStudy" + histSuffixSyst,    {dcMC_ZNuNu_nValidationBin_LowDM_METStudy},     {1, 1}, "", max_vb_low_dm_metstudy - min_vb_low_dm_metstudy,    min_vb_low_dm_metstudy,     max_vb_low_dm_metstudy,     false, false,  "Validation Bin Low DM MET Study", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_HighDM_METStudy" + histSuffixSyst,   {dcMC_ZNuNu_nValidationBin_HighDM_METStudy},    {1, 1}, "", max_vb_high_dm_metstudy - min_vb_high_dm_metstudy,  min_vb_high_dm_metstudy,    max_vb_high_dm_metstudy,    false, false,  "Validation Bin High DM MET Study", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + histSuffixSyst,                 {dcMC_ZNuNu_nSearchBin_LowDM},                  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,              max_sb_low_dm,              false, false,  "Search Bin Low DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffixSyst,                {dcMC_ZNuNu_nSearchBin_HighDM},                 {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,             max_sb_high_dm,             false, false,  "Search Bin High DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffixSyst,                    {dcMC_ZNuNu_nSRUnit_LowDM},                     {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,          max_srunit_low_dm,          false, false,  "Search Region Unit Low DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffixSyst,                   {dcMC_ZNuNu_nSRUnit_HighDM},                    {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,         max_srunit_high_dm,         false, false,  "Search Region Unit High DM", "Events", true));
                 }
                 // --- JEC systematic --- //
                 // only apply JEC to MC, not Data
@@ -3448,21 +3472,25 @@ int main(int argc, char* argv[])
                     std::string SAT_Pass_lowDM_mid_dPhi_jec     = "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut  + jec.second;
                     std::string SAT_Pass_highDM_mid_dPhi_jec    = "SAT_Pass_highDM_mid_dPhi" + JetPtCut  + jec.second;
                     // ZNuNu MC in validation and search bins
-                    PDC dcMC_ZNuNu_nValidationBin_LowDM("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          SAT_Pass_lowDM_jec           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-                    PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET", SAT_Pass_lowDM_mid_dPhi_jec  + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-                    PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",         SAT_Pass_highDM_mid_dPhi_jec + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-                    PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",              SAT_Pass_lowDM_jec           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-                    PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",             SAT_Pass_highDM_jec          + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-                    PDC dcMC_ZNuNu_nSRUnit_LowDM("data",                "nSRUnitLowDM"                  + JetPtCut, {makePDSZnunu("Search Region Unit Low DM",      SAT_Pass_lowDM_jec           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
-                    PDC dcMC_ZNuNu_nSRUnit_HighDM("data",               "nSRUnitHighDM"                 + JetPtCut, {makePDSZnunu("Search Region Unit High DM",     SAT_Pass_highDM_jec          + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_LowDM("data",             "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",              SAT_Pass_lowDM_jec           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data",     "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET",     SAT_Pass_lowDM_mid_dPhi_jec  + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_HighDM("data",            "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",             SAT_Pass_highDM_mid_dPhi_jec + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_LowDM_METStudy("data",    "nValidationBinLowDM_METStudy"  + JetPtCut, {makePDSZnunu("Validation Bin Low DM MET Study",    SAT_Pass_lowDM_mid_dPhi_jec  + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nValidationBin_HighDM_METStudy("data",   "nValidationBinHighDM_METStudy" + JetPtCut, {makePDSZnunu("Validation Bin High DM MET Study",   SAT_Pass_highDM_mid_dPhi_jec + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nSearchBin_LowDM("data",                 "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",                  SAT_Pass_lowDM_jec           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nSearchBin_HighDM("data",                "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",                 SAT_Pass_highDM_jec          + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nSRUnit_LowDM("data",                    "nSRUnitLowDM"                  + JetPtCut, {makePDSZnunu("Search Region Unit Low DM",          SAT_Pass_lowDM_jec           + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
+                    PDC dcMC_ZNuNu_nSRUnit_HighDM("data",                   "nSRUnitHighDM"                 + JetPtCut, {makePDSZnunu("Search Region Unit High DM",         SAT_Pass_highDM_jec          + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights)});
                     // ZNuNu MC in validation and search bins
-                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM" + histSuffixSyst,         {dcMC_ZNuNu_nValidationBin_LowDM},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET" + histSuffixSyst, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + histSuffixSyst,        {dcMC_ZNuNu_nValidationBin_HighDM},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + histSuffixSyst,             {dcMC_ZNuNu_nSearchBin_LowDM},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffixSyst,            {dcMC_ZNuNu_nSearchBin_HighDM},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffixSyst,                {dcMC_ZNuNu_nSRUnit_LowDM},                {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,      max_srunit_low_dm,      false, false,  "Search Region Unit Low DM", "Events", true));
-                    vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffixSyst,               {dcMC_ZNuNu_nSRUnit_HighDM},               {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,     max_srunit_high_dm,     false, false,  "Search Region Unit High DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM" + histSuffixSyst,             {dcMC_ZNuNu_nValidationBin_LowDM},              {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,              max_vb_low_dm,              false, false,  "Validation Bin Low DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET" + histSuffixSyst,     {dcMC_ZNuNu_nValidationBin_LowDM_HighMET},      {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met,     max_vb_low_dm_high_met,     false, false,  "Validation Bin Low DM High MET", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + histSuffixSyst,            {dcMC_ZNuNu_nValidationBin_HighDM},             {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,             max_vb_high_dm,             false, false,  "Validation Bin High DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_METStudy" + histSuffixSyst,    {dcMC_ZNuNu_nValidationBin_LowDM_METStudy},     {1, 1}, "", max_vb_low_dm_metstudy - min_vb_low_dm_metstudy,    min_vb_low_dm_metstudy,     max_vb_low_dm_metstudy,     false, false,  "Validation Bin Low DM MET Study", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nValidationBin_HighDM_METStudy" + histSuffixSyst,   {dcMC_ZNuNu_nValidationBin_HighDM_METStudy},    {1, 1}, "", max_vb_high_dm_metstudy - min_vb_high_dm_metstudy,  min_vb_high_dm_metstudy,    max_vb_high_dm_metstudy,    false, false,  "Validation Bin High DM MET Study", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + histSuffixSyst,                 {dcMC_ZNuNu_nSearchBin_LowDM},                  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,              max_sb_low_dm,              false, false,  "Search Bin Low DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffixSyst,                {dcMC_ZNuNu_nSearchBin_HighDM},                 {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,             max_sb_high_dm,             false, false,  "Search Bin High DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffixSyst,                    {dcMC_ZNuNu_nSRUnit_LowDM},                     {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,          max_srunit_low_dm,          false, false,  "Search Region Unit Low DM", "Events", true));
+                    vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffixSyst,                   {dcMC_ZNuNu_nSRUnit_HighDM},                    {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,         max_srunit_high_dm,         false, false,  "Search Region Unit High DM", "Events", true));
                 }
                 //printf("# Systematics for Z nu nu histograms\n");
                 for (const auto& element : systematics_json.items())
@@ -3494,13 +3522,15 @@ int main(int argc, char* argv[])
                             //printf("\t%s : %s\n", histSuffixSyst.c_str(), w.second.c_str());
                             
                             // ZNuNu MC in validation and search bins
-                            PDC dcMC_ZNuNu_nValidationBin_LowDM("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
-                            PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET", "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
-                            PDC dcMC_ZNuNu_nValidationBin_HighDM("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
-                            PDC dcMC_ZNuNu_nSearchBin_LowDM("data",             "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",              "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
-                            PDC dcMC_ZNuNu_nSearchBin_HighDM("data",            "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",             "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
-                            PDC dcMC_ZNuNu_nSRUnit_LowDM("data",                "nSRUnitLowDM"                  + JetPtCut, {makePDSZnunu("Search Region Unit Low DM",      "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
-                            PDC dcMC_ZNuNu_nSRUnit_HighDM("data",               "nSRUnitHighDM"                 + JetPtCut, {makePDSZnunu("Search Region Unit High DM",     "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
+                            PDC dcMC_ZNuNu_nValidationBin_LowDM("data",             "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",              "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
+                            PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET("data",     "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET",     "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
+                            PDC dcMC_ZNuNu_nValidationBin_HighDM("data",            "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",             "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
+                            PDC dcMC_ZNuNu_nValidationBin_LowDM_METStudy("data",    "nValidationBinLowDM_METStudy"  + JetPtCut, {makePDSZnunu("Validation Bin Low DM MET Study",    "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
+                            PDC dcMC_ZNuNu_nValidationBin_HighDM_METStudy("data",   "nValidationBinHighDM_METStudy" + JetPtCut, {makePDSZnunu("Validation Bin High DM MET Study",   "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
+                            PDC dcMC_ZNuNu_nSearchBin_LowDM("data",                 "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",                  "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
+                            PDC dcMC_ZNuNu_nSearchBin_HighDM("data",                "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",                 "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
+                            PDC dcMC_ZNuNu_nSRUnit_LowDM("data",                    "nSRUnitLowDM"                  + JetPtCut, {makePDSZnunu("Search Region Unit Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
+                            PDC dcMC_ZNuNu_nSRUnit_HighDM("data",                   "nSRUnitHighDM"                 + JetPtCut, {makePDSZnunu("Search Region Unit High DM",         "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second)});
         
                             // nValidationBin and nSearchBin  with njetWeight applied 
                             PDC dcMC_ZNuNu_nValidationBin_LowDM_njetWeight("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second + ";njetWeight_Electron_LowDM")});
@@ -3510,13 +3540,15 @@ int main(int argc, char* argv[])
                             PDC dcMC_ZNuNu_nSearchBin_HighDM_njetWeight("data",            "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",             "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, w.second + ";njetWeight_Electron_HighDM")});
                             
                             // ZNuNu MC in validation and search bins
-                            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM" + histSuffixSyst,         {dcMC_ZNuNu_nValidationBin_LowDM},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
-                            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET" + histSuffixSyst, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
-                            vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + histSuffixSyst,        {dcMC_ZNuNu_nValidationBin_HighDM},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
-                            vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + histSuffixSyst,             {dcMC_ZNuNu_nSearchBin_LowDM},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
-                            vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffixSyst,            {dcMC_ZNuNu_nSearchBin_HighDM},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
-                            vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffixSyst,                {dcMC_ZNuNu_nSRUnit_LowDM},                {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,      max_srunit_low_dm,      false, false,  "Search Region Unit Low DM", "Events", true));
-                            vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffixSyst,               {dcMC_ZNuNu_nSRUnit_HighDM},               {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,     max_srunit_high_dm,     false, false,  "Search Region Unit High DM", "Events", true));
+                            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM" + histSuffixSyst,             {dcMC_ZNuNu_nValidationBin_LowDM},              {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,              max_vb_low_dm,              false, false,  "Validation Bin Low DM", "Events", true));
+                            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET" + histSuffixSyst,     {dcMC_ZNuNu_nValidationBin_LowDM_HighMET},      {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met,     max_vb_low_dm_high_met,     false, false,  "Validation Bin Low DM High MET", "Events", true));
+                            vh.push_back(PHS("ZNuNu_nValidationBin_HighDM" + histSuffixSyst,            {dcMC_ZNuNu_nValidationBin_HighDM},             {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,             max_vb_high_dm,             false, false,  "Validation Bin High DM", "Events", true));
+                            vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_METStudy" + histSuffixSyst,    {dcMC_ZNuNu_nValidationBin_LowDM_METStudy},     {1, 1}, "", max_vb_low_dm_metstudy - min_vb_low_dm_metstudy,    min_vb_low_dm_metstudy,     max_vb_low_dm_metstudy,     false, false,  "Validation Bin Low DM MET Study", "Events", true));
+                            vh.push_back(PHS("ZNuNu_nValidationBin_HighDM_METStudy" + histSuffixSyst,   {dcMC_ZNuNu_nValidationBin_HighDM_METStudy},    {1, 1}, "", max_vb_high_dm_metstudy - min_vb_high_dm_metstudy,  min_vb_high_dm_metstudy,    max_vb_high_dm_metstudy,    false, false,  "Validation Bin High DM MET Study", "Events", true));
+                            vh.push_back(PHS("ZNuNu_nSearchBin_LowDM" + histSuffixSyst,                 {dcMC_ZNuNu_nSearchBin_LowDM},                  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,              max_sb_low_dm,              false, false,  "Search Bin Low DM", "Events", true));
+                            vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffixSyst,                {dcMC_ZNuNu_nSearchBin_HighDM},                 {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,             max_sb_high_dm,             false, false,  "Search Bin High DM", "Events", true));
+                            vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffixSyst,                    {dcMC_ZNuNu_nSRUnit_LowDM},                     {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,          max_srunit_low_dm,          false, false,  "Search Region Unit Low DM", "Events", true));
+                            vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffixSyst,                   {dcMC_ZNuNu_nSRUnit_HighDM},                    {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,         max_srunit_high_dm,         false, false,  "Search Region Unit High DM", "Events", true));
 
                             if (doLooseAndMid)
                             {

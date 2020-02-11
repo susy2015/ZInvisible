@@ -102,6 +102,19 @@ namespace plotterFunctions
             int nValidationBinLowDM        = SBv3_lowdm_validation(nJets, nBottoms, nSoftBottoms, ISRJetPt, ptb, met);
             int nValidationBinLowDMHighMET = SBv3_lowdm_validation_high_MET(nBottoms, nSoftBottoms, ISRJetPt, met);
             int nValidationBinHighDM       = SBv3_highdm_validation(mtb, nJets, nMergedTops, nWs, nResolvedTops, nBottoms, met); 
+            
+            //-------------------------------------------------------//
+            //--- MET Study Validation Bins: SBv3 (February 2020) ---//
+            //-------------------------------------------------------//
+            // New validation bins for MET study:
+            // - low dm MET binning. Use them under low dm med dPhi cuts, same as the last 4 bins of low dm validation:
+            //      - https://github.com/susy2015/SusyAnaTools/blob/hui_nanoAOD/Tools/SB2018.h#L868-L876
+            // - high dm MET binning. Use them under high dm med dPhi cuts, same as all the high dm validation bins:
+            //      - https://github.com/susy2015/SusyAnaTools/blob/hui_nanoAOD/Tools/SB2018.h#L942-L951
+            // int lowdm_validation_MET(float ISRpt, float met)
+            // int highdm_validation_MET(float mtb, int ntop, int nw, int nres, float met)
+            int nValidationBinLowDM_METStudy  = lowdm_validation_MET(ISRJetPt, met);
+            int nValidationBinHighDM_METStudy = highdm_validation_MET(mtb, nMergedTops, nWs, nResolvedTops, met);
 
             //----------------------------------------//
             //--- Updated Unit Bins (December 2019) ---//
@@ -180,19 +193,22 @@ namespace plotterFunctions
             }
             
             // search bins
-            tr.registerDerivedVar("nSearchBinLowDM"             + suffix_, nSearchBinLowDM);
-            tr.registerDerivedVar("nSearchBinHighDM"            + suffix_, nSearchBinHighDM);
+            tr.registerDerivedVar("nSearchBinLowDM"                 + suffix_, nSearchBinLowDM);
+            tr.registerDerivedVar("nSearchBinHighDM"                + suffix_, nSearchBinHighDM);
             // validation bins
-            tr.registerDerivedVar("nValidationBinLowDM"         + suffix_, nValidationBinLowDM);
-            tr.registerDerivedVar("nValidationBinLowDMHighMET"  + suffix_, nValidationBinLowDMHighMET);
-            tr.registerDerivedVar("nValidationBinHighDM"        + suffix_, nValidationBinHighDM);
+            tr.registerDerivedVar("nValidationBinLowDM"             + suffix_, nValidationBinLowDM);
+            tr.registerDerivedVar("nValidationBinLowDMHighMET"      + suffix_, nValidationBinLowDMHighMET);
+            tr.registerDerivedVar("nValidationBinHighDM"            + suffix_, nValidationBinHighDM);
+            // validation bins MET study
+            tr.registerDerivedVar("nValidationBinLowDM_METStudy"    + suffix_, nValidationBinLowDM_METStudy);
+            tr.registerDerivedVar("nValidationBinHighDM_METStudy"   + suffix_, nValidationBinHighDM_METStudy);
             // unit bins
-            tr.registerDerivedVar("nSBLowDM"                    + suffix_, nSBLowDM);
-            tr.registerDerivedVar("nSBHighDM"                   + suffix_, nSBHighDM);
-            tr.registerDerivedVar("nCRUnitLowDM"                + suffix_, nCRUnitLowDM);
-            tr.registerDerivedVar("nCRUnitHighDM"               + suffix_, nCRUnitHighDM);
-            tr.registerDerivedVar("nSRUnitLowDM"                + suffix_, nSRUnitLowDM);
-            tr.registerDerivedVar("nSRUnitHighDM"               + suffix_, nSRUnitHighDM);
+            tr.registerDerivedVar("nSBLowDM"                        + suffix_, nSBLowDM);
+            tr.registerDerivedVar("nSBHighDM"                       + suffix_, nSBHighDM);
+            tr.registerDerivedVar("nCRUnitLowDM"                    + suffix_, nCRUnitLowDM);
+            tr.registerDerivedVar("nCRUnitHighDM"                   + suffix_, nCRUnitHighDM);
+            tr.registerDerivedVar("nSRUnitLowDM"                    + suffix_, nSRUnitLowDM);
+            tr.registerDerivedVar("nSRUnitHighDM"                   + suffix_, nSRUnitHighDM);
         }
 
     public:
