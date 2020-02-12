@@ -114,13 +114,13 @@ def main():
     # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics
     # must be done after N.makeComparison()
     # must be done after Syst.makeZvsPhoton()
-    VB.getRzSyst(           N.rz_syst_map,      "validation",           "RzSyst_ValidationBins.root")
-    VB_MS.getRzSyst(        N.rz_syst_map,      "validationMetStudy",   "RzSyst_ValidationBinsMETStudy.root")
-    SB.getRzSyst(           N.rz_syst_map,      "search",               "RzSyst_SearchBins.root")
-    VB.getZvsPhotonSyst(    Syst.h_map_syst,                            "ZvsPhotonSyst_ValidationBins.root")
-    VB_MS.getZvsPhotonSyst( Syst.h_map_syst,                            "ZvsPhotonSyst_ValidationBinsMETStudy.root")
-    SB.getZvsPhotonSyst(    Syst.h_map_syst,                            "ZvsPhotonSyst_SearchBins.root")
-    CRunits.getZvsPhotonSyst(Syst.h_map_syst,   "ZvsPhotonSyst_CRUnitBins.root")
+    VB.getRzSyst(               N.rz_syst_map,      "validation",           "RzSyst_ValidationBins.root")
+    VB_MS.getRzSyst(            N.rz_syst_map,      "validationMetStudy",   "RzSyst_ValidationBinsMETStudy.root")
+    SB.getRzSyst(               N.rz_syst_map,      "search",               "RzSyst_SearchBins.root")
+    VB.getZvsPhotonSyst(        Syst.h_map_syst,                            "ZvsPhotonSyst_ValidationBins.root")
+    VB_MS.getZvsPhotonSyst(     Syst.h_map_syst,                            "ZvsPhotonSyst_ValidationBinsMETStudy.root")
+    SB.getZvsPhotonSyst(        Syst.h_map_syst,                            "ZvsPhotonSyst_SearchBins.root")
+    CRunits.getZvsPhotonSyst(   Syst.h_map_syst,                            "ZvsPhotonSyst_CRUnitBins.root")
 
     if doUnits:
         # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
