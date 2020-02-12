@@ -381,6 +381,60 @@ class Normalization:
             # end document
             self.writeLine("\end{document}")
 
+    def makeTable(self, output_name, makeDoc=False):
+        era      = "Run2"
+        bin_type = "search"
+        channel  = "Combined"
+        caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors as well as the final \Rz factors with total uncertainties."
+        with open(output_name, "w+") as f:
+            self.output_file = f
+            
+            if makeDoc:
+                # begin document
+                self.writeLine("\documentclass{article}")
+                self.writeLine("\usepackage[utf8]{inputenc}")
+                self.writeLine("\usepackage{geometry}")
+                self.writeLine("\usepackage{longtable}")
+                self.writeLine("\\usepackage{xspace}")
+                self.writeLine("\\usepackage{amsmath}")
+                self.writeLine("\\usepackage{graphicx}")
+                self.writeLine("\\usepackage{cancel}")
+                self.writeLine("\\usepackage{amsmath}")
+                self.writeLine("\geometry{margin=1in}")
+                self.writeLine("\\input{VariableNames.tex}")
+                self.writeLine("\\begin{document}")
+            
+            # begin table
+            self.writeLine("\\begin{table}")
+            self.writeLine("\\begin{center}")
+            self.writeLine("\\caption{%s}" % caption)
+            self.writeLine("\\label{tab:RZregions}")
+            self.writeLine("\\begin{tabular}{ccc}")
+            self.writeLine("$\Nb$ & $\Nsv$ & \Rz \\\\")
+            self.writeLine("\\hline")
+            self.writeLine("\\multicolumn{2}{c}{low \dm normalization regions} \\\\")
+            self.writeLine("\\hline")
+            self.writeLine("0       &   0       & %s \\\\" % self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVeq0"]["R_Z"]) 
+            self.writeLine("0       &   $\ge$1  & %s \\\\" % self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVge1"]["R_Z"])
+            self.writeLine("1       &   0       & %s \\\\" % self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVeq0"]["R_Z"])
+            self.writeLine("1       &   $\ge$1  & %s \\\\" % self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVge1"]["R_Z"])
+            self.writeLine("$\ge$2  &   --      & %s \\\\" % self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBge2"]["R_Z"])
+            self.writeLine("\\hline")
+            self.writeLine("\\multicolumn{2}{c}{high \dm normalization regions} \\\\")
+            self.writeLine("\\hline")
+            self.writeLine("1      & -- & %s \\\\" % self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq1"]["R_Z"]) 
+            self.writeLine("2      & -- & %s \\\\" % self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq2"]["R_Z"])
+            self.writeLine("$\ge$2 & -- & %s \\\\" % self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBge2"]["R_Z"])
+            self.writeLine("\\hline")
+            # end table
+            self.writeLine("\\end{tabular}")
+            self.writeLine("\\end{center}")
+            self.writeLine("\\end{table}")
+            
+            if makeDoc:
+                # end document
+                self.writeLine("\\end{document}")
+
 
     # make a plot of nomralization (y-axis) vs. era (x-axis) for different selections
     def makeComparison(self, bin_type):

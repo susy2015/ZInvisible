@@ -27,6 +27,10 @@ class cd:
     def __exit__(self, etype, value, traceback):
         os.chdir(self.savedPath)
 
+
+def divideRoundUp(n, d):
+    return (n + d - 1) / d
+
 # submit()
 def submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False, dataCollections=False, dataCollectionslong=False, goMakeEff=False, goMakeEffPhoton=False, goMakeBeff=False, goMakeSigEff=False, goMakeTopPlots=False, goTTPlots=False): 
     print "# ---------- Submitting condor jobs for {0} ---------- #".format(era)
@@ -49,7 +53,8 @@ def submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False, dat
     
     # TopTagger.cfg
     mvaFileName = ""
-    with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2016.cfg") as meowttcfgFile:
+    #with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2016.cfg") as meowttcfgFile:
+    with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Tensorflow_2016.cfg") as meowttcfgFile:
         for line in meowttcfgFile:
             line = line.split("#")[0]
             if "modelFile" in line:
@@ -80,9 +85,15 @@ def submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False, dat
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
                           environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagSF_AltTWP.root",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2016.cfg",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2017.cfg",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2018.cfg",
+                          #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2016.cfg",
+                          #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2017.cfg",
+                          #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2018.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Tensorflow_2016.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Tensorflow_2017.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Tensorflow_2018.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DiscriminatorFilter_2016.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DiscriminatorFilter_2017.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_DiscriminatorFilter_2018.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2016.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2017.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2018.cfg",
@@ -378,14 +389,18 @@ x509userproxy = $ENV(X509_USER_PROXY)
             for s, n, e in sc.sampleList(ds):
                 if debug:
                     print "s={0}, n={1}, e={2}".format(s, n, e)
-                n_files = sum(1 for line in open(s))
-                sample_files += n_files
-                sample_events += e
-                total_files += n_files
-                total_events += e
-                jobMap[n] =  n_files
+                nFiles           = sum(1 for line in open(s))
+                nJobs            = divideRoundUp(nFiles, nFilesPerJob)
+                sample_files    += nFiles
+                sample_events   += e
+                total_files     += nFiles
+                total_events    += e
+                jobMap[n]                 =  {}
+                jobMap[n]["nFilesPerJob"] =  nFilesPerJob
+                jobMap[n]["nFiles"]       =  nFiles
+                jobMap[n]["nJobs"]        =  nJobs
                 if verbose:
-                    print "\t{0}: n_files={1}, n_events={2}".format(n, n_files, e)
+                    print "\t{0}: nFiles={1}, nJobs={2}, n_events={3}".format(n, nFiles, nJobs, e)
                 try:
                     f = open(s)
                 except IOError:
