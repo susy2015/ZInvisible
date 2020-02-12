@@ -7,7 +7,7 @@ import os
 import ROOT
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
-from search_bins import  ValidationBins, SearchBins, CRUnitBins
+from search_bins import  ValidationBins, ValidationBinsMETStudy, SearchBins, CRUnitBins
 from tools import invert, setupHist, stringifyMap, removeCuts
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -197,13 +197,15 @@ def main():
     verbose                     = options.verbose
     # Note: DO NOT apply Rz syst. in CR unit bins
     rz_syst_files   = {}
-    rz_syst_files["validation"]   = "RzSyst_ValidationBins.root"
-    rz_syst_files["search"]       = "RzSyst_SearchBins.root"
+    rz_syst_files["validation"]         = "RzSyst_ValidationBins.root"
+    rz_syst_files["validationMetStudy"] = "RzSyst_ValidationBinsMETStudy.root"
+    rz_syst_files["search"]             = "RzSyst_SearchBins.root"
     # Note: apply Z vs. Photon syst. in CR unit bins
     ZvPhoton_syst_files = {}
-    ZvPhoton_syst_files["validation"]   = "ZvsPhotonSyst_ValidationBins.root"
-    ZvPhoton_syst_files["search"]       = "ZvsPhotonSyst_SearchBins.root" 
-    ZvPhoton_syst_files["controlUnit"]  = "ZvsPhotonSyst_CRUnitBins.root"
+    ZvPhoton_syst_files["validation"]           = "ZvsPhotonSyst_ValidationBins.root"
+    ZvPhoton_syst_files["validationMetStudy"]   = "ZvsPhotonSyst_ValidationBinsMETStudy.root"
+    ZvPhoton_syst_files["search"]               = "ZvsPhotonSyst_SearchBins.root" 
+    ZvPhoton_syst_files["controlUnit"]          = "ZvsPhotonSyst_CRUnitBins.root"
    
     doSymmetrize            = True
     useLogNormal            = True
@@ -259,7 +261,7 @@ def main():
     variable        = "mc"
     regions         = ["lowdm", "highdm"]
     directions      = ["up", "", "down"]
-    bintypes        = ["validation", "search", "controlUnit"]
+    bintypes        = ["validation", "validationMetStudy", "search", "controlUnit"]
     # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
     systematics_znunu  = ["pdf", "metres", "jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
     systematics_phocr  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
@@ -279,11 +281,12 @@ def main():
     # Class instanceses summoning 
     #-------------------------------------------------------
 
-    N   =  Normalization(tmp_dir, verbose)
-    S   =  Shape(tmp_dir, draw, doUnits, verbose)
-    VB  =  ValidationBins(  N, S, eras, tmp_dir, verbose, draw, saveRootFile)
-    SB  =  SearchBins(      N, S, eras, tmp_dir, verbose, draw, saveRootFile)
-    CRU =  CRUnitBins(      N, S, eras, tmp_dir, verbose)
+    N       =  Normalization(           tmp_dir, verbose)
+    S       =  Shape(                   tmp_dir, draw, doUnits, verbose)
+    VB      =  ValidationBins(          N, S, eras, tmp_dir, verbose, draw, saveRootFile)
+    VB_MS   =  ValidationBinsMETStudy(  N, S, eras, tmp_dir, verbose, draw, saveRootFile)
+    SB      =  SearchBins(              N, S, eras, tmp_dir, verbose, draw, saveRootFile)
+    CRU     =  CRUnitBins(              N, S, eras, tmp_dir, verbose)
     
     #-------------------------------------------------------
     # Normal predictions (no systematics) 
@@ -298,13 +301,15 @@ def main():
         N.getNormAndError(r, e)
         S.getShape(r, e)
         VB.getValues(r, e)
+        VB_MS.getValues(r, e)
         SB.getValues(r, e)
         CRU.getValues(r, e)
     
     for region in regions:
-        histo["validation"][region][""]     =  VB.histograms[era][region][variable].Clone()
-        histo["search"][region][""]         =  SB.histograms[era][region][variable].Clone()
-        histo["controlUnit"][region][""]    =  CRU.histograms[era][region]["mc_gjets"].Clone()
+        histo["validation"][region][""]             =  VB.histograms[era][region][variable].Clone()
+        histo["validationMetStudy"][region][""]     =  VB_MS.histograms[era][region][variable].Clone()
+        histo["search"][region][""]                 =  SB.histograms[era][region][variable].Clone()
+        histo["controlUnit"][region][""]            =  CRU.histograms[era][region]["mc_gjets"].Clone()
     
     #-------------------------------------------------------
     # Calculate normalization and shape factors
@@ -323,21 +328,25 @@ def main():
                 # --- calculate variation for this systematic
                 # only vary Z nu nu; do not vary Normalization or Shape
                 VB.getValues(       result_file,  era, systTag)
+                VB_MS.getValues(    result_file,  era, systTag)
                 SB.getValues(       result_file,  era, systTag)
                 
                 for region in regions:
-                    histo["validation"][region][direction]    =  VB.histograms[era][region][variable].Clone()
-                    histo["search"][region][direction]        =  SB.histograms[era][region][variable].Clone()
+                    histo["validation"][region][direction]          =  VB.histograms[era][region][variable].Clone()
+                    histo["validationMetStudy"][region][direction]  =  VB_MS.histograms[era][region][variable].Clone()
+                    histo["search"][region][direction]              =  SB.histograms[era][region][variable].Clone()
                     
                     # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
                     if syst == "prefire":
                         #for e in ["2018_PreHEM", "2018_PostHEM"]:
                         for e in ["2018"]:
-                            histo["validation"][region][direction].Add(     VB.histograms[e][region][variable]         )
-                            histo["search"][region][direction].Add(         SB.histograms[e][region][variable]         )
+                            histo["validation"][region][direction].Add(         VB.histograms[e][region][variable]      )
+                            histo["validationMetStudy"][region][direction].Add( VB_MS.histograms[e][region][variable]   )
+                            histo["search"][region][direction].Add(             SB.histograms[e][region][variable]      )
                     
-                    syst_histo[syst]["validation"][region][direction]    = histo["validation"][region][direction]
-                    syst_histo[syst]["search"][region][direction]        = histo["search"][region][direction]
+                    syst_histo[syst]["validation"][region][direction]           = histo["validation"][region][direction]
+                    syst_histo[syst]["validationMetStudy"][region][direction]   = histo["validationMetStudy"][region][direction]
+                    syst_histo[syst]["search"][region][direction]               = histo["search"][region][direction]
             
             #-------------------------------------------------------
             # Symmetrize systematics which are in the same direction
@@ -348,8 +357,9 @@ def main():
                     # symmetrize systematic if up/down variation is in the same direction compared to nominal
                     # modify histograms passed to function
                     # symmetrizeSyst(h, h_up, h_down)
-                    symmetrizeSyst(histo["validation"][region][""],     syst_histo[syst]["validation"][region]["up"],   syst_histo[syst]["validation"][region]["down"])
-                    symmetrizeSyst(histo["search"][region][""],         syst_histo[syst]["search"][region]["up"],       syst_histo[syst]["search"][region]["down"])
+                    symmetrizeSyst(histo["validation"][region][""],         syst_histo[syst]["validation"][region]["up"],           syst_histo[syst]["validation"][region]["down"])
+                    symmetrizeSyst(histo["validationMetStudy"][region][""], syst_histo[syst]["validationMetStudy"][region]["up"],   syst_histo[syst]["validationMetStudy"][region]["down"])
+                    symmetrizeSyst(histo["search"][region][""],             syst_histo[syst]["search"][region]["up"],               syst_histo[syst]["search"][region]["down"])
             
             #-------------------------------------------------------
             # Write to conf
@@ -365,7 +375,7 @@ def main():
             # Plot
             #-------------------------------------------------------
             
-            for bintype in ["validation", "search"]:
+            for bintype in ["validation", "validationMetStudy", "search"]:
                 for region in regions:
                     # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
                     plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir)
@@ -468,7 +478,9 @@ def main():
         systForConf = systMap["znunu_rzunc"]["name"]  
         writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["lowdm"]["znunu_rzunc"],  "lowdm",  SB.low_dm_start,  searchBinSelectionMap, ["NJ"])
         writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["highdm"]["znunu_rzunc"], "highdm", SB.high_dm_start, searchBinSelectionMap, ["NJ"])
-        
+       
+        # TODO: Z vs. Photon syst. should be in search bins instead of CR unit bins 
+
         # --- Z vs Photon syst --- #
         # writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selectionMap = {}, removeCut = "")
         systForConf = systMap["znunu_zgammdiff"]["name"]  
