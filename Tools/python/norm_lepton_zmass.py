@@ -28,7 +28,7 @@ class Normalization:
         self.systTag = ""
         # variable is also TDirectoryFile that holds histograms 
         self.variable = "bestRecoZM"
-        self.bin_types  = ["validation", "search"]
+        self.bin_types  = ["validation", "validationMetStudy", "search"]
         self.particles = ["Electron", "Muon"]
         self.channels = self.particles + ["Combined"]
         self.factors = ["R_Z", "R_T"]
@@ -41,6 +41,8 @@ class Normalization:
         self.bin_maps = {}
         with open("validation_bins_v3.json", "r") as j:
             self.bin_maps["validation"] = tools.stringifyMap(json.load(j))
+        with open("validation_bins_metStudy.json", "r") as j:
+            self.bin_maps["validationMetStudy"] = tools.stringifyMap(json.load(j))
         with open("search_bins_v4.json", "r") as j:
             self.bin_maps["search"] = tools.stringifyMap(json.load(j))
         

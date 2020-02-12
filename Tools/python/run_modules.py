@@ -7,7 +7,7 @@ from cutflow_plot import makeCutflows
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from systematics import Systematic
-from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
+from search_bins import SearchBins, ValidationBins, ValidationBinsMETStudy, CRUnitBins, SRUnitBins
 from make_table import Table
 from data_card import makeDataCard
 from units import saveResults
@@ -56,7 +56,8 @@ def main():
     # shape
     S = Shape(plot_dir, draw, doUnits, verbose)
     # validation bins
-    VB = ValidationBins(    N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
+    VB    = ValidationBins(            N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
+    VB_MS = ValidationBinsMETStudy(    N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
     # search bins
     SB = SearchBins(        N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
     if doUnits:
@@ -79,6 +80,7 @@ def main():
             N.getNormAndError(result_file, era)
             S.getShape(result_file, era)
             VB.getValues(result_file, era)
+            VB_MS.getValues(result_file, era)
             SB.getValues(result_file, era)
             if doUnits:
                 CRunits.getValues(result_file, era)

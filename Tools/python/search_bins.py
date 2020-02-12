@@ -588,6 +588,106 @@ class ValidationBins(Common):
         self.calcPrediction(    new_file, "Validation Bin", "validation", era   )
         self.makeHistos(        new_file, "Validation Bin", "validation", era   )
         f_in.Close()
+
+# vadliation bins for MET study
+class ValidationBinsMETStudy(Common):
+    def __init__(self, normalization, shape, eras, plot_dir, verbose, draw, saveRootFile):
+        # run parent init function
+        Common.__init__(self)
+        self.N = normalization
+        self.S = shape
+        self.eras = eras
+        self.plot_dir = plot_dir
+        self.verbose = verbose
+        self.draw = draw
+        self.saveRootFile = saveRootFile
+        self.binValues = {}
+        self.histograms = {}
+        self.unblind = True
+        self.low_dm_start  = 0
+        self.low_dm_end    = 3
+        self.high_dm_start = 4
+        self.high_dm_end   = 8
+        self.low_dm_nbins  = self.low_dm_end - self.low_dm_start + 1 
+        self.high_dm_nbins = self.high_dm_end - self.high_dm_start + 1 
+        self.low_dm_bins   = list(str(b) for b in range( self.low_dm_start,   self.low_dm_end + 1)) 
+        self.high_dm_bins  = list(str(b) for b in range( self.high_dm_start,  self.high_dm_end + 1)) 
+        self.all_bins      = self.low_dm_bins + self.high_dm_bins
+        with open("validation_bins_metStudy.json", "r") as j:
+            self.bins = stringifyMap(json.load(j))
+
+    def getValues(self, file_name, era, systTag=""):
+        self.binValues[era] = {}
+        
+        for b in self.all_bins:
+            region      = self.bins[b]["region"]
+            selection   = self.bins[b]["selection"]
+            met         = self.bins[b]["met"]
+            # remove cuts from selection for norm and shape
+            selection_norm  = removeCuts(selection, ["NJ"])
+            selection_shape = removeCuts(selection, ["NSV", "MET"])
+            self.binValues[era][b] = {}
+            self.binValues[era][b]["norm"]        = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z"]
+            self.binValues[era][b]["norm_error"]  = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z_error"]
+            self.binValues[era][b]["shape"]       = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met]
+            self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met + "_error"]
+
+
+
+        # --- old (standard) --- #
+        # Z to NuNu histograms
+        # central value
+        # TDirectoryFile*     nValidationBinLowDM_jetpt30 nValidationBinLowDM_jetpt30
+        # KEY: TH1D MET_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30Data MET Validation Bin Low DMdata;1  nValidationBinLowDM_jetpt30
+        # KEY: TH1D ZNuNu_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1 nValidationBinLowDM_jetpt30
+        # KEY: TH1D ZNuNu_nValidationBin_LowDM_njetWeight_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1  nValidationBinLowDM_jetpt30
+        # systematics
+        # KEY: TH1D ZNuNu_nValidationBin_LowDM_jes_syst_down_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1   nValidationBinLowDM_jetpt30
+        # KEY: TH1D ZNuNu_nValidationBin_LowDM_jes_syst_up_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1 nValidationBinLowDM_jetpt30
+        # KEY: TH1D ZNuNu_nValidationBin_LowDM_btag_syst_down_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1  nValidationBinLowDM_jetpt30
+        # KEY: TH1D ZNuNu_nValidationBin_LowDM_btag_syst_up_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata;1    nValidationBinLowDM_jetpt30
+        
+        # --- new (for MET study) --- #
+        # "nValidationBinLowDM_METStudy_jetpt30/MET_nValidationBin_LowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30Data MET Validation Bin Low DM MET Studydata"
+        # "nValidationBinHighDM_METStudy_jetpt30/MET_nValidationBin_HighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30Data MET Validation Bin High DM MET Studydata"
+        # "nValidationBinLowDM_METStudy_jetpt30/ZNuNu_nValidationBin_LowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30ZJetsToNuNu Validation Bin Low DM MET Studydata"
+        # "nValidationBinHighDM_METStudy_jetpt30/ZNuNu_nValidationBin_HighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30ZJetsToNuNu Validation Bin High DM MET Studydata"
+
+        # WARNING: only apply systematics to MC, not Data
+        
+        f_in                   = ROOT.TFile(file_name, "read")
+        if (self.unblind):
+            h_data_lowdm           = f_in.Get("nValidationBinLowDM_METStudy_jetpt30/MET_nValidationBin_LowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30Data MET Validation Bin Low DM MET Studydata") 
+            h_data_highdm          = f_in.Get("nValidationBinHighDM_METStudy_jetpt30/MET_nValidationBin_HighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30Data MET Validation Bin High DM MET Studydata")
+        # old
+        #h_mc_lowdm             = f_in.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM"                + systTag + "_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
+        #h_mc_highdm            = f_in.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM"              + systTag + "_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
+        # new
+        h_mc_lowdm             = f_in.Get("nValidationBinLowDM_METStudy_jetpt30/ZNuNu_nValidationBin_LowDM_METStudy"   + systTag + "_jetpt30nValidationBinLowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30ZJetsToNuNu Validation Bin Low DM MET Studydata")
+        h_mc_highdm            = f_in.Get("nValidationBinHighDM_METStudy_jetpt30/ZNuNu_nValidationBin_HighDM_METStudy" + systTag + "_jetpt30nValidationBinHighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30ZJetsToNuNu Validation Bin High DM MET Studydata")
+        
+        # bin map
+        b_map = {}
+        b_map["lowdm"]          = self.low_dm_bins
+        b_map["highdm"]         = self.high_dm_bins
+        # histogram map
+        h_map                           = {}
+        h_map["lowdm"]                  = {}
+        h_map["highdm"]                 = {}
+        h_map["lowdm"]["mc"]            = h_mc_lowdm
+        h_map["highdm"]["mc"]           = h_mc_highdm
+        if (self.unblind):
+            h_map["lowdm"]["data"]          = h_data_lowdm
+            h_map["highdm"]["data"]         = h_data_highdm
+        
+        # set bin values 
+        self.setBinValues(b_map, h_map, era)
+
+        # new root file to save validation bin histograms
+        new_file = self.results_dir + "validationBinsMETStudyZinv_" + era + ".root"
+        self.calcPrediction(    new_file, "Validation Bin", "validationMetStudy", era   )
+        self.makeHistos(        new_file, "Validation Bin", "validationMetStudy", era   )
+        f_in.Close()
   
 # search bins 
 class SearchBins(Common):
