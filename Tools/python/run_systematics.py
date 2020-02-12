@@ -182,7 +182,7 @@ def symmetrizeSyst(h, h_up, h_down):
                 h_up.SetBinContent(   i, p - diff_symm)
                 h_down.SetBinContent( i, p + diff_symm)
 
-# TODO: make this a function which can run on validaiton, MET study, search bins, CR unit bins, etc.
+# Total systematics function which can run on validaiton, MET study, search bins, CR unit bins, etc.
 
 def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir):
     
@@ -346,7 +346,7 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
         name = "{0}_{1}_syst".format(bintype, mySyst)
         
         title = "Z to Invisible: " + name + " in " + region + " for " + era
-        x_title = "Validation Bins"
+        x_title = bintype + " bins"
         setupHist(h_total_syst_up,     title, x_title, "total systematic",  color_red,    0.0, 2.0)
         setupHist(h_total_syst_down,   title, x_title, "total systematic",  color_blue,   0.0, 2.0)
         
@@ -396,8 +396,6 @@ def main():
     ZvPhoton_syst_files["controlUnit"]          = "ZvsPhotonSyst_CRUnitBins.root"
    
     doSymmetrize            = True
-    # TODO: remove if not needed
-    #useLogNormal            = True
     doUnits                 = True
     draw                    = False
     saveRootFile            = False
@@ -444,8 +442,6 @@ def main():
     runDir          = runMap[era]
     result_file     = "condor/" + runDir + "/result.root"
     conf_file       = "datacard_inputs/zinv_syst_" + era + ".conf"
-    # TODO: remove if not needed
-    #total_syst_dir  = "prediction_histos/"
     out_dir         = "syst_plots/" 
     tmp_dir         = "tmp_plots/"
     variable        = "mc"
@@ -457,10 +453,6 @@ def main():
     systematics_phocr  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
     systematics = list(set(systematics_znunu)| set(systematics_phocr))
     # Systematics which we don't use: pdf in photon CR, MET uncluster in photon CR, lepton veto SF, ISR weight for ttbar
-
-    # TODO: remove if not needed
-    # histo_tmp[region][direction]
-    #histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
 
     # histo[bintype][region][direction]
     histo      = {bintype:{region:dict.fromkeys(directions) for region in regions} for bintype in bintypes} 
@@ -679,8 +671,8 @@ def main():
         writeToConfFromSyst(outFile, unitBinMap, "phocr_gjets", systForConf, systHistoMap["controlUnit"]["highdm"]["znunu_zgammdiff"], "highdm", CRU.high_dm_start)
 
 
-    # TODO: make this a function which can run on validaiton, MET study, search bins, CR unit bins, etc.
-
+    # Total systematics function which can run on validaiton, MET study, search bins, CR unit bins, etc.
+    
     # getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
     getTotalSystematics(VB,     "validation",           systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
     getTotalSystematics(VB_MS,  "validationMetStudy",   systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
