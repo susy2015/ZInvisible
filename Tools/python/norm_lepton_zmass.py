@@ -386,13 +386,15 @@ class Normalization:
     def makeTable(self, output_name, makeDoc=False):
         era      = "Run2"
         bin_type = "search"
-        # for only showing weighted average
+        # --- for only showing weighted average
         #channelsForTable    = ["Combined"]
         #header              = "$\Nb$ & $\Nsv$ & \Rz \\\\"
-        # for showing all values
+        #caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors as well as the final \Rz factors with statistical uncertainties."
+        # --- for showing all values
         channelsForTable    = self.channels
         header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ \\\\"
-        caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors as well as the final \Rz factors with total uncertainties."
+        caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors. "
+        caption += "The \Rz factors from the di-electron and di-muon control regions for the full Run 2 dataset are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
         with open(output_name, "w+") as f:
             self.output_file = f
             
