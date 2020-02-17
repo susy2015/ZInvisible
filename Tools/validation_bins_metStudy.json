@@ -1,0 +1,11 @@
+{
+     "0" : {"region" : "LowDM",  "selection" : "NBeq0_NSVeq0",      "met" : "met_250to300"},
+     "1" : {"region" : "LowDM",  "selection" : "NBeq0_NSVeq0",      "met" : "met_300to400"},
+     "2" : {"region" : "LowDM",  "selection" : "NBeq0_NSVeq0",      "met" : "met_400to500"},
+     "3" : {"region" : "LowDM",  "selection" : "NBeq0_NSVeq0",      "met" : "met_500toINF"},
+     "4" : {"region" : "HighDM", "selection" : "NBeq1",             "met" : "met_250to350"},
+     "5" : {"region" : "HighDM", "selection" : "NBeq1",             "met" : "met_350to450"},
+     "6" : {"region" : "HighDM", "selection" : "NBeq1",             "met" : "met_450to550"},
+     "7" : {"region" : "HighDM", "selection" : "NBeq1",             "met" : "met_550to650"},
+     "8" : {"region" : "HighDM", "selection" : "NBeq1",             "met" : "met_650toINF"}
+}
