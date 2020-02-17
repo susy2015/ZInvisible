@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     bool runOnCondor            = false;
     bool unblind                = false;
     bool doLooseAndMid          = false;    // hi angel
-    bool doSystematics          = true;     // hi caleb
+    bool doSystematics          = false;    // hi caleb
     bool doLeptonSystematics    = false;    // hi caleb
     bool doDataMCElectron       = true;
     bool doDataMCMuon           = true;
@@ -3453,6 +3453,21 @@ int main(int argc, char* argv[])
             // ----------------------------- //
             // --- additional histograms --- //
             // ----------------------------- //
+            // testing top tagger for post-processing v6
+            // compare ResolvedTopTotalSF_jetpt30 with Stop0l_ResTopWeight
+            PDS dsT1tttt_gluino2000_lsp100_nrt0_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=0",  "ResolvedTopTotalSF_jetpt30");
+            PDS dsT1tttt_gluino2000_lsp100_nrt1_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=1",  "ResolvedTopTotalSF_jetpt30");
+            PDS dsT1tttt_gluino2000_lsp100_nrt2_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=2",  "ResolvedTopTotalSF_jetpt30");
+            PDS dsT1tttt_gluino2000_lsp100_nrt0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=0",  "Stop0l_ResTopWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nrt1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=1",  "Stop0l_ResTopWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nrt2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=2",  "Stop0l_ResTopWeight");
+            PDC dcMC_T1tttt_met_nrt0_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt0_SATWeight});
+            PDC dcMC_T1tttt_met_nrt1_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt1_SATWeight});
+            PDC dcMC_T1tttt_met_nrt2_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt2_SATWeight});
+            PDC dcMC_T1tttt_met_nrt0_PostProcWeight("single",   "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt0_PostProcWeight});
+            PDC dcMC_T1tttt_met_nrt1_PostProcWeight("single",   "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt1_PostProcWeight});
+            PDC dcMC_T1tttt_met_nrt2_PostProcWeight("single",   "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt2_PostProcWeight});
+            // testing soft drop mass
             PDC dcMC_T1tttt_FatJet_msoftdrop("single",     "FatJet_msoftdrop",                  {dsT1tttt_gluino2000_lsp100});
             PDC dcMC_T1tttt_FatJet_msoftdrop_mt("single",  "FatJet_msoftdrop{FatJet_Stop0l=1}", {dsT1tttt_gluino2000_lsp100});
             PDC dcMC_T1tttt_FatJet_msoftdrop_w("single",   "FatJet_msoftdrop{FatJet_Stop0l=2}", {dsT1tttt_gluino2000_lsp100});
@@ -3473,6 +3488,12 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("ZNuNu_nSearchBin_HighDM" + histSuffix,                {dcMC_ZNuNu_nSearchBin_HighDM},                 {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,             max_sb_high_dm,             false, false,  "Search Bin High DM", "Events", true));
             vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffix,                    {dcMC_ZNuNu_nSRUnit_LowDM},                     {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,          max_srunit_low_dm,          false, false,  "Search Region Unit Low DM", "Events", true));
             vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffix,                   {dcMC_ZNuNu_nSRUnit_HighDM},                    {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,         max_srunit_high_dm,         false, false,  "Search Region Unit High DM", "Events", true));
+            // additional histograms
+            vh.push_back(PHS("T1tttt_met_nrt0",             {dcMC_T1tttt_met_nrt0_SATWeight, dcMC_T1tttt_met_nrt0_PostProcWeight},                                 {1, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nrt1",             {dcMC_T1tttt_met_nrt1_SATWeight, dcMC_T1tttt_met_nrt1_PostProcWeight},                                 {1, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nrt2",             {dcMC_T1tttt_met_nrt2_SATWeight, dcMC_T1tttt_met_nrt2_PostProcWeight},                                 {1, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_FatJet_msoftdrop",     {dcMC_T1tttt_FatJet_msoftdrop, dcMC_T1tttt_FatJet_msoftdrop_mt, dcMC_T1tttt_FatJet_msoftdrop_w},       {1, 1}, "", nBins,         0.0,          600.0,          false, false,  "Fat Jet soft drop mass",  "Events", true));
+            
             if (doLooseAndMid)
             {
                 // nValidationBin and nSearchBin with njetWeights applied 
@@ -3482,8 +3503,6 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("ZNuNu_nSearchBin_LowDM_njetWeight" + histSuffix,             {dcMC_ZNuNu_nSearchBin_LowDM_njetWeight},             {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,          max_sb_low_dm,          false, false,  "Search Bin Low DM", "Events", true));
                 vh.push_back(PHS("ZNuNu_nSearchBin_HighDM_njetWeight" + histSuffix,            {dcMC_ZNuNu_nSearchBin_HighDM_njetWeight},            {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,         max_sb_high_dm,         false, false,  "Search Bin High DM", "Events", true));
             }
-            // additional histograms
-            vh.push_back(PHS("T1tttt_FatJet_msoftdrop",             {dcMC_T1tttt_FatJet_msoftdrop, dcMC_T1tttt_FatJet_msoftdrop_mt, dcMC_T1tttt_FatJet_msoftdrop_w},             {1, 1}, "", nBins,         0.0,          600.0,          false, false,  "Fat Jet soft drop mass",  "Events", true));
 
             // only show MET Data in search bins if we unblind
             if (unblind)
