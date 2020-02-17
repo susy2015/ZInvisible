@@ -30,10 +30,10 @@ class Systematic:
         self.met_max = 1000.0
         self.h_map_syst = {}
 
-    def getZRatio(self, root_file, region, selection, era, variable, rebin):
-        debug = False
-        eraTag = "_" + era
-        selectionTag = "_" + selection
+    def getZRatio(self, root_file, region, selection, era, name, variable, rebin):
+        debug = True
+        selectionTag    = "_" + selection
+        nameTag         = "_" + name
         
         # histogram names example 
         # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30_2016metWithLLmetWithLLDatadata;1  metWithLL
@@ -45,11 +45,11 @@ class Systematic:
         h_map_norm = {}
         for particle in self.particles:
             h_map_norm[particle] = { 
-                "Data"      : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "Datadata",
-                "DY"        : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "DYstack",
-                "TTbar"     : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "t#bar{t}stack",
-                "SingleT"   : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "Single tstack",
-                "Rare"      : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "Rarestack"
+                "Data"      : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "Datadata",
+                "DY"        : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "DYstack",
+                "TTbar"     : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "t#bar{t}stack",
+                "SingleT"   : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "Single tstack",
+                "Rare"      : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "Rarestack"
             }
         
             if debug:
@@ -99,16 +99,17 @@ class Systematic:
             h_num = h_Data.Clone("h_num") 
             h_den = h_mc.Clone("h_den")
             # contstant binning for plots
-            h_num.Rebin(2)
-            h_den.Rebin(2)
+            #h_num.Rebin(2)
+            #h_den.Rebin(2)
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
-    def getPhotonRatio(self, root_file, region, selection, era, variable, rebin):
-        eraTag = "_" + era
-        selectionTag = "_" + selection
+    def getPhotonRatio(self, root_file, region, selection, era, name, variable, rebin):
+        eraTag          = "_" + era
+        selectionTag    = "_" + selection
+        nameTag         = "_" + name
         # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable):
-        h_map_shape = self.S.getSimpleMap(region, "_met", selectionTag, selectionTag, eraTag, variable)
+        h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, eraTag, variable)
         #WARNING: strings loaded from json file have type 'unicode'
         # ROOT cannot load histograms using unicode input: use type 'str'
         h_Data              = root_file.Get( str(variable + "/" + h_map_shape["Data"]            ) )
@@ -148,12 +149,12 @@ class Systematic:
             h_num = h_Data.Clone("h_num") 
             h_den = h_mc.Clone("h_den")
             # contstant binning for plots
-            h_num.Rebin(2)
-            h_den.Rebin(2)
+            #h_num.Rebin(2)
+            #h_den.Rebin(2)
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
-    def makeZvsPhoton(self, file_name, era, rebin):
+    def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst):
         doFit = False
         draw_option = "hist error"
         # check that the file exists
@@ -164,8 +165,9 @@ class Systematic:
         f = ROOT.TFile(file_name)
         c = ROOT.TCanvas("c", "c", 800, 800)
         c.Divide(1, 2)
-        metPhoton = "metWithPhoton"
-        metLepton = "metWithLL"
+        # TODO: delete, now function parameter
+        #metPhoton = "metWithPhoton"
+        #metLepton = "metWithLL"
         selection = "jetpt30"
         # legend: TLegend(x1,y1,x2,y2)
         legend_x1 = 0.5
@@ -174,11 +176,11 @@ class Systematic:
         legend_y2 = 0.9 
         for region in self.regions:
             # MET with Z
-            # getZRatio(region, selection, era, variable)
-            h_ratio_lepton = self.getZRatio(f, region, selection, era, metLepton, rebin)
+            # getZRatio(self, root_file, region, selection, era, name, variable, rebin):
+            h_ratio_lepton = self.getZRatio(f, region, selection, era, var, varLepton, rebin)
             # MET with photon
-            # getPhotonRatio(self, region, selection, era, variable)
-            h_ratio_photon = self.getPhotonRatio(f, region, selection, era, metPhoton, rebin)
+            # getPhotonRatio(self, root_file, region, selection, era, name, variable, rebin)
+            h_ratio_photon = self.getPhotonRatio(f, region, selection, era, var, varPhoton, rebin)
             
             # Double Ratio for MET: Z / photon
             h_ratio_ZoverPhoton = h_ratio_lepton.Clone("h_ratio_ZoverPhoton")
@@ -206,7 +208,9 @@ class Systematic:
             
             # histogram info 
             title = "Z vs. Photon, {0}, {1}".format(region, era)
-            x_title = "MET (GeV)" 
+            # TODO: delete, now function parameter
+            #x_title = "MET (GeV)" 
+            x_title = var
             y_title = "Data / MC"
             y_min = 0.0
             y_max = 2.0
@@ -233,7 +237,8 @@ class Systematic:
                     h_syst.SetBinError(i, 0)
                 setupHist(h_syst,       title, x_title, "syst.",   "irish green",      y_min, y_max)
                 h_syst.GetXaxis().SetRangeUser(self.met_min, self.met_max)
-                self.h_map_syst[region] = copy.deepcopy(h_syst)
+                if useForSyst:
+                    self.h_map_syst[region] = copy.deepcopy(h_syst)
             
             # pad for histograms
             pad = c.cd(1)
@@ -275,9 +280,9 @@ class Systematic:
             
             # save histograms
             if rebin:
-                plot_name = "{0}ZvsPhoton_{1}_rebinned_{2}".format(self.plot_dir, region, era)
+                plot_name = "{0}ZvsPhoton_{1}_{2}_rebinned_{3}".format(self.plot_dir, var, region, era)
             else:
-                plot_name = "{0}ZvsPhoton_{1}_{2}".format(self.plot_dir, region, era)
+                plot_name = "{0}ZvsPhoton_{1}_{2}_{3}".format(self.plot_dir, var, region, era)
             c.Update()
             c.SaveAs(plot_name + ".pdf")
             c.SaveAs(plot_name + ".png")

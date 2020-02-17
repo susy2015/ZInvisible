@@ -85,7 +85,15 @@ def main():
             if doUnits:
                 CRunits.getValues(result_file, era)
                 SRunits.getValues(result_file, era)
-            Syst.makeZvsPhoton(result_file, era, True)
+            # WARNING: var, varPhoton, and varLepton are used to load histograms and must match histogram names
+            # makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst)
+            Syst.makeZvsPhoton(result_file, "met",  "metWithPhoton",                            "metWithLL",                                era, True, True)
+            Syst.makeZvsPhoton(result_file, "ht",   "HT_drPhotonCleaned_jetpt30",               "HT_drLeptonCleaned_jetpt30",               era, False, False)
+            Syst.makeZvsPhoton(result_file, "nj",   "nJets_drPhotonCleaned_jetpt30",            "nJets_drLeptonCleaned_jetpt30",            era, False, False)
+            Syst.makeZvsPhoton(result_file, "nb",   "nBottoms_drPhotonCleaned_jetpt30",         "nBottoms_drLeptonCleaned_jetpt30",         era, False, False)
+            Syst.makeZvsPhoton(result_file, "nmt",  "nMergedTops_drPhotonCleaned_jetpt30",      "nMergedTops_drLeptonCleaned_jetpt30",      era, False, False)
+            Syst.makeZvsPhoton(result_file, "nw",   "nWs_drPhotonCleaned_jetpt30",              "nWs_drLeptonCleaned_jetpt30",              era, False, False)
+            Syst.makeZvsPhoton(result_file, "nrt",  "nResolvedTops_drPhotonCleaned_jetpt30",    "nResolvedTops_drLeptonCleaned_jetpt30",    era, False, False)
 
     # Normalization: makeTable(self, output_name, makeDoc=False)
     N.makeTable(latex_dir + "zinv_rz_doc.tex",   True)

@@ -17,7 +17,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # Plot
 # ----------------
 
-def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
+def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir, mc_label):
 
     eraTag = "_" + era
     draw_option = "hist"
@@ -65,7 +65,7 @@ def plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir):
     
     # legend: TLegend(x1,y1,x2,y2)
     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-    legend.AddEntry(h,              "Z#rightarrow#nu#nu MC",  "l")
+    legend.AddEntry(h,              mc_label,                 "l")
     legend.AddEntry(h_up,           "syst up",                "l")
     legend.AddEntry(h_down,         "syst down",              "l")
     legend.Draw()
@@ -560,8 +560,8 @@ def main():
             
             for bintype in ["validation", "validationMetStudy", "search"]:
                 for region in regions:
-                    # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
-                    plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir)
+                    # plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir, mc_label)
+                    plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir, "Z#rightarrow#nu#nu MC")
                 
         # --- end loop over systematics
         
@@ -618,8 +618,8 @@ def main():
             
             for bintype in ["controlUnit"]:
                 for region in regions:
-                    # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
-                    plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir)
+                    # plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir, mc_label)
+                    plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir, "#gamma+Jets MC")
                 
         # --- end loop over systematics
             
