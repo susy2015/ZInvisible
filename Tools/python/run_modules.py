@@ -7,7 +7,7 @@ from cutflow_plot import makeCutflows
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from systematics import Systematic
-from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
+from search_bins import SearchBins, ValidationBins, ValidationBinsMETStudy, CRUnitBins, SRUnitBins
 from make_table import Table
 from data_card import makeDataCard
 from units import saveResults
@@ -56,7 +56,8 @@ def main():
     # shape
     S = Shape(plot_dir, draw, doUnits, verbose)
     # validation bins
-    VB = ValidationBins(    N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
+    VB    = ValidationBins(            N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
+    VB_MS = ValidationBinsMETStudy(    N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
     # search bins
     SB = SearchBins(        N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
     if doUnits:
@@ -79,6 +80,7 @@ def main():
             N.getNormAndError(result_file, era)
             S.getShape(result_file, era)
             VB.getValues(result_file, era)
+            VB_MS.getValues(result_file, era)
             SB.getValues(result_file, era)
             if doUnits:
                 CRunits.getValues(result_file, era)
@@ -91,8 +93,10 @@ def main():
     N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
     N.makeComparison("validation")
+    N.makeComparison("validationMetStudy")
     N.makeComparison("search")
     S.makeComparison("validation")
+    S.makeComparison("validationMetStudy")
     S.makeComparison("search")
     VB.makeTexFile("Z Invisible Per Era Prediction for Validation Bins", latex_dir + "zinv_per_era_prediction_validation_bins.tex")
     SB.makeTexFile("Z Invisible Per Era Prediction for Search Bins",     latex_dir + "zinv_per_era_prediction_search_bins.tex")
@@ -110,11 +114,13 @@ def main():
     # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics
     # must be done after N.makeComparison()
     # must be done after Syst.makeZvsPhoton()
-    VB.getRzSyst(N.rz_syst_map, "validation",   "RzSyst_ValidationBins.root")
-    SB.getRzSyst(N.rz_syst_map, "search",       "RzSyst_SearchBins.root")
-    VB.getZvsPhotonSyst(Syst.h_map_syst,        "ZvsPhotonSyst_ValidationBins.root")
-    SB.getZvsPhotonSyst(Syst.h_map_syst,        "ZvsPhotonSyst_SearchBins.root")
-    CRunits.getZvsPhotonSyst(Syst.h_map_syst,   "ZvsPhotonSyst_CRUnitBins.root")
+    VB.getRzSyst(               N.rz_syst_map,      "validation",           "RzSyst_ValidationBins.root")
+    VB_MS.getRzSyst(            N.rz_syst_map,      "validationMetStudy",   "RzSyst_ValidationBinsMETStudy.root")
+    SB.getRzSyst(               N.rz_syst_map,      "search",               "RzSyst_SearchBins.root")
+    VB.getZvsPhotonSyst(        Syst.h_map_syst,                            "ZvsPhotonSyst_ValidationBins.root")
+    VB_MS.getZvsPhotonSyst(     Syst.h_map_syst,                            "ZvsPhotonSyst_ValidationBinsMETStudy.root")
+    SB.getZvsPhotonSyst(        Syst.h_map_syst,                            "ZvsPhotonSyst_SearchBins.root")
+    CRunits.getZvsPhotonSyst(   Syst.h_map_syst,                            "ZvsPhotonSyst_CRUnitBins.root")
 
     if doUnits:
         # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
