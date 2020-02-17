@@ -26,8 +26,8 @@ class Systematic:
         # rebinned
         self.xbins   = np.array([0.0, 250.0, 350.0, 450.0, 550.0, 650.0, 1000.0])
         self.n_bins  = len(self.xbins) - 1
-        self.met_min = 250.0
-        self.met_max = 1000.0
+        self.x_min = 250.0
+        self.x_max = 1000.0
         self.h_map_syst = {}
 
     def getZRatio(self, root_file, region, selection, era, name, variable, rebin):
@@ -154,11 +154,14 @@ class Systematic:
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
-    def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst, xbins = np.array([]), n_bins = 0):
+    def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst, xbins = np.array([]), n_bins = 0, x_min=0, x_max=0):
         # redefine xbins and n_bins if provided
         if xbins.any():
             self.xbins  = xbins
             self.n_bins = n_bins
+        if x_max:
+            self.x_min = x_min
+            self.x_max = x_max
         doFit = False
         draw_option = "hist error"
         # check that the file exists
@@ -196,8 +199,8 @@ class Systematic:
                 # we use a linear 2 parameter fit
                 nBinsFit = self.n_bins - 1
                 nDegFree = nBinsFit - 2
-                fit = ROOT.TF1("f1", "pol1", self.met_min, self.met_max)
-                h_ratio_ZoverPhoton.Fit(fit, "N", "", self.met_min, self.met_max)
+                fit = ROOT.TF1("f1", "pol1", self.x_min, self.x_max)
+                h_ratio_ZoverPhoton.Fit(fit, "N", "", self.x_min, self.x_max)
                 fit.SetLineColor(getColorIndex("violet"))
                 fit.SetLineWidth(5)
                 p0      = fit.GetParameter(0)
@@ -224,9 +227,11 @@ class Systematic:
             setupHist(h_ratio_photon,       title, x_title, y_title,                "electric blue",   y_min, y_max)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
             # set x axis range
-            h_ratio_lepton.GetXaxis().SetRangeUser(self.met_min, self.met_max)
-            h_ratio_photon.GetXaxis().SetRangeUser(self.met_min, self.met_max)
-            h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.met_min, self.met_max)
+            print "self.x_min = {0}".format(self.x_min)
+            print "self.x_max = {0}".format(self.x_max)
+            h_ratio_lepton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
+            h_ratio_photon.GetXaxis().SetRangeUser(self.x_min, self.x_max)
+            h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             
             # do Run 2 systematic
             if era == "Run2" and rebin:
@@ -240,7 +245,7 @@ class Systematic:
                     h_syst.SetBinContent(i, syst_err)
                     h_syst.SetBinError(i, 0)
                 setupHist(h_syst,       title, x_title, "syst.",   "irish green",      y_min, y_max)
-                h_syst.GetXaxis().SetRangeUser(self.met_min, self.met_max)
+                h_syst.GetXaxis().SetRangeUser(self.x_min, self.x_max)
                 if useForSyst:
                     self.h_map_syst[region] = copy.deepcopy(h_syst)
             
