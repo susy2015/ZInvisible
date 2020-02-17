@@ -31,7 +31,7 @@ class Systematic:
         self.h_map_syst = {}
 
     def getZRatio(self, root_file, region, selection, era, name, variable, rebin):
-        debug = True
+        debug = False
         selectionTag    = "_" + selection
         nameTag         = "_" + name
         
@@ -154,7 +154,11 @@ class Systematic:
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
-    def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst):
+    def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst, xbins = np.array([]), n_bins = 0):
+        # redefine xbins and n_bins if provided
+        if xbins.any():
+            self.xbins  = xbins
+            self.n_bins = n_bins
         doFit = False
         draw_option = "hist error"
         # check that the file exists
