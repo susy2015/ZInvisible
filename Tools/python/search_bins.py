@@ -617,6 +617,7 @@ class ValidationBinsMETStudy(Common):
             self.bins = stringifyMap(json.load(j))
 
     def getValues(self, file_name, era, systTag=""):
+        doIntegral = False
         self.binValues[era] = {}
         
         for b in self.all_bins:
@@ -647,14 +648,15 @@ class ValidationBinsMETStudy(Common):
         h_mc_lowdm             = f_in.Get("nValidationBinLowDM_METStudy_jetpt30/ZNuNu_nValidationBin_LowDM_METStudy"   + systTag + "_jetpt30nValidationBinLowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30ZJetsToNuNu Validation Bin Low DM MET Studydata")
         h_mc_highdm            = f_in.Get("nValidationBinHighDM_METStudy_jetpt30/ZNuNu_nValidationBin_HighDM_METStudy" + systTag + "_jetpt30nValidationBinHighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30ZJetsToNuNu Validation Bin High DM MET Studydata")
 
-        # Integrate to count number of events. 
-        nDataLowDM  = h_data_lowdm.Integral(1, h_data_lowdm.GetNbinsX()) 
-        nDataHighDM = h_data_highdm.Integral(1, h_data_highdm.GetNbinsX())
-        nMCLowDM    = h_mc_lowdm.Integral(1, h_mc_lowdm.GetNbinsX())
-        nMCHighDM   = h_mc_highdm.Integral(1, h_mc_highdm.GetNbinsX())
-        print " --- Era: {0} --- ".format(era)
-        print "    nDataLowDM = {0}, nDataHighDM = {1}".format(nDataLowDM, nDataHighDM)
-        print "    nMCLowDM = {0},   nMCHighDM = {1}".format(nMCLowDM, nMCHighDM)
+        if doIntegral:
+            # Integrate to count number of events. 
+            nDataLowDM  = h_data_lowdm.Integral(1, h_data_lowdm.GetNbinsX()) 
+            nDataHighDM = h_data_highdm.Integral(1, h_data_highdm.GetNbinsX())
+            nMCLowDM    = h_mc_lowdm.Integral(1, h_mc_lowdm.GetNbinsX())
+            nMCHighDM   = h_mc_highdm.Integral(1, h_mc_highdm.GetNbinsX())
+            print " --- Era: {0} --- ".format(era)
+            print "    nDataLowDM = {0}, nDataHighDM = {1}".format(nDataLowDM, nDataHighDM)
+            print "    nMCLowDM = {0},   nMCHighDM = {1}".format(nMCLowDM, nMCHighDM)
         
         # bin map
         b_map = {}

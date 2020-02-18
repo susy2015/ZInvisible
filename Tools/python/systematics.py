@@ -227,8 +227,8 @@ class Systematic:
             setupHist(h_ratio_photon,       title, x_title, y_title,                "electric blue",   y_min, y_max)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
             # set x axis range
-            print "self.x_min = {0}".format(self.x_min)
-            print "self.x_max = {0}".format(self.x_max)
+            #print "self.x_min = {0}".format(self.x_min)
+            #print "self.x_max = {0}".format(self.x_max)
             h_ratio_lepton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_photon.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
