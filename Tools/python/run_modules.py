@@ -100,6 +100,7 @@ def main():
             Syst.makeZvsPhoton(result_file, "nw",   "nWs_drPhotonCleaned_jetpt30",              "nWs_drLeptonCleaned_jetpt30",              era, False, False)
             Syst.makeZvsPhoton(result_file, "nrt",  "nResolvedTops_drPhotonCleaned_jetpt30",    "nResolvedTops_drLeptonCleaned_jetpt30",    era, False, False)
 
+    
     # Normalization: makeTable(self, output_name, makeDoc=False)
     N.makeTable(latex_dir + "zinv_rz_doc.tex",   True)
     N.makeTable(latex_dir + "zinv_rz_table.tex", False)
@@ -114,8 +115,9 @@ def main():
     VB.makeTexFile("Z Invisible Per Era Prediction for Validation Bins", latex_dir + "zinv_per_era_prediction_validation_bins.tex")
     SB.makeTexFile("Z Invisible Per Era Prediction for Search Bins",     latex_dir + "zinv_per_era_prediction_search_bins.tex")
     
-    # total Run2 prediction
+    # total era is combiniation of all eras
     total_era = "Run2"
+    # total Run2 prediction
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
     SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
     T = Table()

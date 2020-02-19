@@ -238,16 +238,16 @@ class Shape:
                     # number of events for normalization
                     nNum  = h_num.Integral(0, h_num.GetNbinsX() + 1)
                     nDen  = h_den.Integral(0, h_den.GetNbinsX() + 1)
-                    DataMCNorm = float(nNum) / float(nDen)
+                    photonDataMCNorm = float(nNum) / float(nDen)
                     
                     if self.verbose:
-                        print "{0} {1}: nNum = {2:.3f}, nDen = {3:.3f}, DataMCNorm = {4:.3f}".format(era, region, nNum, nDen, DataMCNorm)
+                        print "{0} {1}: nNum = {2:.3f}, nDen = {3:.3f}, photonDataMCNorm = {4:.3f}".format(era, region, nNum, nDen, photonDataMCNorm)
 
-                    print "{0} {1} {2} {3}: nNum = {4:.3f}, nDen = {5:.3f}, DataMCNorm = {6:.3f}".format(era, bin_type, region, selection, nNum, nDen, DataMCNorm)
+                    print "{0} {1} {2} {3}: nNum = {4:.3f}, nDen = {5:.3f}, photonDataMCNorm = {6:.3f}".format(era, bin_type, region, selection, nNum, nDen, photonDataMCNorm)
                     h_den_normalized = h_den.Clone("h_den_normalized")
-                    h_den_normalized.Scale(DataMCNorm)
+                    h_den_normalized.Scale(photonDataMCNorm)
                         
-                    self.shape_map[era][bin_type][region][selection]["data_mc_norm"] = DataMCNorm
+                    self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm"] = photonDataMCNorm
                     
                     # rebin in MET
                     # variable binning for background prediction
@@ -415,14 +415,14 @@ class Shape:
                 variable = "nCRUnit" + region + "_drPhotonCleaned_jetpt30"
                 #WARNING: strings loaded from json file have type 'unicode'
                 # ROOT cannot load histograms using unicode input: use type 'str'
-                if self.splitQCD:
-                    samples = ["Data", "GJets", "QCD_Fragmented", "QCD_Fake", "WJets", "TTG", "TTbar", "tW", "Rare"]
-                else:
-                    samples = ["Data", "GJets", "QCD", "WJets", "TTG", "TTbar", "tW", "Rare"]
+                #if self.splitQCD:
+                #    samples = ["Data", "GJets", "QCD_Fragmented", "QCD_Fake", "WJets", "TTG", "TTbar", "tW", "Rare"]
+                #else:
+                #    samples = ["Data", "GJets", "QCD", "WJets", "TTG", "TTbar", "tW", "Rare"]
                 #print "Shape factor CR units; Loading {0} histograms".format(region)
-                for sample in samples:
-                    hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
-                    #print "\t{0}".format(hist_name) 
+                #for sample in samples:
+                #    hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
+                #    print "\t{0}".format(hist_name) 
                 
                 h_Data              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Data"]              ) )
                 h_GJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["GJets"]             ) )
