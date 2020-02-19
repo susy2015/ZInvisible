@@ -234,14 +234,18 @@ class Systematic:
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             
             # do Run 2 systematic
-            if era == "Run2" and rebin:
-                h_syst = ROOT.TH1F("h_syst", "h_syst", self.n_bins, self.xbins)
-                for i in xrange(1, self.n_bins + 1):
+            if era == "Run2":
+                #h_syst = ROOT.TH1F("h_syst", "h_syst", self.n_bins, self.xbins)
+                h_syst = h_ratio_ZoverPhoton.Clone("h_syst")
+                for i in xrange(1, h_syst.GetNbinsX() + 1):
                     # syst = max(stat uncertainty in double ratio, |(double ratio) - 1|)
                     value    = h_ratio_ZoverPhoton.GetBinContent(i)
                     stat_err = h_ratio_ZoverPhoton.GetBinError(i)
-                    diff     = abs(value - 1)
-                    syst_err = max(stat_err, diff) 
+                    # default
+                    syst_err = 0
+                    if value != 0:
+                        diff     = abs(value - 1)
+                        syst_err = max(stat_err, diff) 
                     h_syst.SetBinContent(i, syst_err)
                     h_syst.SetBinError(i, 0)
                 setupHist(h_syst,       title, x_title, "syst.",   "irish green",      y_min, y_max)
@@ -275,7 +279,7 @@ class Systematic:
                 #print "Fit: f(x) = (%.5f #pm %.5f) * x + (%.5f #pm %.5f)" % (p1, p1_err, p0, p0_err)
                 mark.DrawLatex(300.0, y_max - 0.2, "Fit: f(x) = %.5f + %.5f * x" % (p0, p1))
                 mark.DrawLatex(300.0, y_max - 0.4, "#chi_{r}^{2} = %.3f" % chisq_r)
-            if era == "Run2" and rebin:
+            if era == "Run2":
                 h_syst.Draw(draw_option + " same")
             
             # legend: TLegend(x1,y1,x2,y2)
@@ -283,7 +287,7 @@ class Systematic:
             legend2.AddEntry(h_ratio_ZoverPhoton,    "(Z to LL) / Photon",           "l")
             if doFit:
                 legend2.AddEntry(fit,                "Fit to (Z to LL) / Photon",    "l")
-            if era == "Run2" and rebin:
+            if era == "Run2":
                 legend2.AddEntry(h_syst,             "syst. unc.",    "l")
             legend2.Draw()
             
