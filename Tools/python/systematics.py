@@ -26,14 +26,14 @@ class Systematic:
         # rebinned
         self.xbins   = np.array([0.0, 250.0, 350.0, 450.0, 550.0, 650.0, 1000.0])
         self.n_bins  = len(self.xbins) - 1
-        self.met_min = 250.0
-        self.met_max = 1000.0
+        self.x_min = 250.0
+        self.x_max = 1000.0
         self.h_map_syst = {}
 
-    def getZRatio(self, root_file, region, selection, era, variable, rebin):
+    def getZRatio(self, root_file, region, selection, era, name, variable, rebin):
         debug = False
-        eraTag = "_" + era
-        selectionTag = "_" + selection
+        selectionTag    = "_" + selection
+        nameTag         = "_" + name
         
         # histogram names example 
         # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30_2016metWithLLmetWithLLDatadata;1  metWithLL
@@ -45,11 +45,11 @@ class Systematic:
         h_map_norm = {}
         for particle in self.particles:
             h_map_norm[particle] = { 
-                "Data"      : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "Datadata",
-                "DY"        : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "DYstack",
-                "TTbar"     : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "t#bar{t}stack",
-                "SingleT"   : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "Single tstack",
-                "Rare"      : "DataMC_" + particle + "_" + region + "_met" + selectionTag + 2 * variable + "Rarestack"
+                "Data"      : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "Datadata",
+                "DY"        : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "DYstack",
+                "TTbar"     : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "t#bar{t}stack",
+                "SingleT"   : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "Single tstack",
+                "Rare"      : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "Rarestack"
             }
         
             if debug:
@@ -99,16 +99,17 @@ class Systematic:
             h_num = h_Data.Clone("h_num") 
             h_den = h_mc.Clone("h_den")
             # contstant binning for plots
-            h_num.Rebin(2)
-            h_den.Rebin(2)
+            #h_num.Rebin(2)
+            #h_den.Rebin(2)
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
-    def getPhotonRatio(self, root_file, region, selection, era, variable, rebin):
-        eraTag = "_" + era
-        selectionTag = "_" + selection
+    def getPhotonRatio(self, root_file, region, selection, era, name, variable, rebin):
+        eraTag          = "_" + era
+        selectionTag    = "_" + selection
+        nameTag         = "_" + name
         # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable):
-        h_map_shape = self.S.getSimpleMap(region, "_met", selectionTag, selectionTag, eraTag, variable)
+        h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, eraTag, variable)
         #WARNING: strings loaded from json file have type 'unicode'
         # ROOT cannot load histograms using unicode input: use type 'str'
         h_Data              = root_file.Get( str(variable + "/" + h_map_shape["Data"]            ) )
@@ -148,12 +149,19 @@ class Systematic:
             h_num = h_Data.Clone("h_num") 
             h_den = h_mc.Clone("h_den")
             # contstant binning for plots
-            h_num.Rebin(2)
-            h_den.Rebin(2)
+            #h_num.Rebin(2)
+            #h_den.Rebin(2)
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
-    def makeZvsPhoton(self, file_name, era, rebin):
+    def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst, xbins = np.array([]), n_bins = 0, x_min=0, x_max=0):
+        # redefine xbins and n_bins if provided
+        if xbins.any():
+            self.xbins  = xbins
+            self.n_bins = n_bins
+        if x_max:
+            self.x_min = x_min
+            self.x_max = x_max
         doFit = False
         draw_option = "hist error"
         # check that the file exists
@@ -164,8 +172,6 @@ class Systematic:
         f = ROOT.TFile(file_name)
         c = ROOT.TCanvas("c", "c", 800, 800)
         c.Divide(1, 2)
-        metPhoton = "metWithPhoton"
-        metLepton = "metWithLL"
         selection = "jetpt30"
         # legend: TLegend(x1,y1,x2,y2)
         legend_x1 = 0.5
@@ -174,11 +180,11 @@ class Systematic:
         legend_y2 = 0.9 
         for region in self.regions:
             # MET with Z
-            # getZRatio(region, selection, era, variable)
-            h_ratio_lepton = self.getZRatio(f, region, selection, era, metLepton, rebin)
+            # getZRatio(self, root_file, region, selection, era, name, variable, rebin):
+            h_ratio_lepton = self.getZRatio(f, region, selection, era, var, varLepton, rebin)
             # MET with photon
-            # getPhotonRatio(self, region, selection, era, variable)
-            h_ratio_photon = self.getPhotonRatio(f, region, selection, era, metPhoton, rebin)
+            # getPhotonRatio(self, root_file, region, selection, era, name, variable, rebin)
+            h_ratio_photon = self.getPhotonRatio(f, region, selection, era, var, varPhoton, rebin)
             
             # Double Ratio for MET: Z / photon
             h_ratio_ZoverPhoton = h_ratio_lepton.Clone("h_ratio_ZoverPhoton")
@@ -190,8 +196,8 @@ class Systematic:
                 # we use a linear 2 parameter fit
                 nBinsFit = self.n_bins - 1
                 nDegFree = nBinsFit - 2
-                fit = ROOT.TF1("f1", "pol1", self.met_min, self.met_max)
-                h_ratio_ZoverPhoton.Fit(fit, "N", "", self.met_min, self.met_max)
+                fit = ROOT.TF1("f1", "pol1", self.x_min, self.x_max)
+                h_ratio_ZoverPhoton.Fit(fit, "N", "", self.x_min, self.x_max)
                 fit.SetLineColor(getColorIndex("violet"))
                 fit.SetLineWidth(5)
                 p0      = fit.GetParameter(0)
@@ -206,7 +212,7 @@ class Systematic:
             
             # histogram info 
             title = "Z vs. Photon, {0}, {1}".format(region, era)
-            x_title = "MET (GeV)" 
+            x_title = var
             y_title = "Data / MC"
             y_min = 0.0
             y_max = 2.0
@@ -216,24 +222,31 @@ class Systematic:
             setupHist(h_ratio_photon,       title, x_title, y_title,                "electric blue",   y_min, y_max)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
             # set x axis range
-            h_ratio_lepton.GetXaxis().SetRangeUser(self.met_min, self.met_max)
-            h_ratio_photon.GetXaxis().SetRangeUser(self.met_min, self.met_max)
-            h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.met_min, self.met_max)
+            #print "self.x_min = {0}".format(self.x_min)
+            #print "self.x_max = {0}".format(self.x_max)
+            h_ratio_lepton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
+            h_ratio_photon.GetXaxis().SetRangeUser(self.x_min, self.x_max)
+            h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             
             # do Run 2 systematic
-            if era == "Run2" and rebin:
-                h_syst = ROOT.TH1F("h_syst", "h_syst", self.n_bins, self.xbins)
-                for i in xrange(1, self.n_bins + 1):
+            if era == "Run2":
+                #h_syst = ROOT.TH1F("h_syst", "h_syst", self.n_bins, self.xbins)
+                h_syst = h_ratio_ZoverPhoton.Clone("h_syst")
+                for i in xrange(1, h_syst.GetNbinsX() + 1):
                     # syst = max(stat uncertainty in double ratio, |(double ratio) - 1|)
                     value    = h_ratio_ZoverPhoton.GetBinContent(i)
                     stat_err = h_ratio_ZoverPhoton.GetBinError(i)
-                    diff     = abs(value - 1)
-                    syst_err = max(stat_err, diff) 
+                    # default
+                    syst_err = 0
+                    if value != 0:
+                        diff     = abs(value - 1)
+                        syst_err = max(stat_err, diff) 
                     h_syst.SetBinContent(i, syst_err)
                     h_syst.SetBinError(i, 0)
                 setupHist(h_syst,       title, x_title, "syst.",   "irish green",      y_min, y_max)
-                h_syst.GetXaxis().SetRangeUser(self.met_min, self.met_max)
-                self.h_map_syst[region] = copy.deepcopy(h_syst)
+                h_syst.GetXaxis().SetRangeUser(self.x_min, self.x_max)
+                if useForSyst:
+                    self.h_map_syst[region] = copy.deepcopy(h_syst)
             
             # pad for histograms
             pad = c.cd(1)
@@ -261,7 +274,7 @@ class Systematic:
                 #print "Fit: f(x) = (%.5f #pm %.5f) * x + (%.5f #pm %.5f)" % (p1, p1_err, p0, p0_err)
                 mark.DrawLatex(300.0, y_max - 0.2, "Fit: f(x) = %.5f + %.5f * x" % (p0, p1))
                 mark.DrawLatex(300.0, y_max - 0.4, "#chi_{r}^{2} = %.3f" % chisq_r)
-            if era == "Run2" and rebin:
+            if era == "Run2":
                 h_syst.Draw(draw_option + " same")
             
             # legend: TLegend(x1,y1,x2,y2)
@@ -269,15 +282,15 @@ class Systematic:
             legend2.AddEntry(h_ratio_ZoverPhoton,    "(Z to LL) / Photon",           "l")
             if doFit:
                 legend2.AddEntry(fit,                "Fit to (Z to LL) / Photon",    "l")
-            if era == "Run2" and rebin:
+            if era == "Run2":
                 legend2.AddEntry(h_syst,             "syst. unc.",    "l")
             legend2.Draw()
             
             # save histograms
             if rebin:
-                plot_name = "{0}ZvsPhoton_{1}_rebinned_{2}".format(self.plot_dir, region, era)
+                plot_name = "{0}ZvsPhoton_{1}_{2}_rebinned_{3}".format(self.plot_dir, var, region, era)
             else:
-                plot_name = "{0}ZvsPhoton_{1}_{2}".format(self.plot_dir, region, era)
+                plot_name = "{0}ZvsPhoton_{1}_{2}_{3}".format(self.plot_dir, var, region, era)
             c.Update()
             c.SaveAs(plot_name + ".pdf")
             c.SaveAs(plot_name + ".png")

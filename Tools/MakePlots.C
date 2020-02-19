@@ -3455,18 +3455,48 @@ int main(int argc, char* argv[])
             // ----------------------------- //
             // testing top tagger for post-processing v6
             // compare ResolvedTopTotalSF_jetpt30 with Stop0l_ResTopWeight
+            // resolved top
             PDS dsT1tttt_gluino2000_lsp100_nrt0_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=0",  "ResolvedTopTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nrt1_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=1",  "ResolvedTopTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nrt2_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=2",  "ResolvedTopTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nrt0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=0",  "Stop0l_ResTopWeight");
             PDS dsT1tttt_gluino2000_lsp100_nrt1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=1",  "Stop0l_ResTopWeight");
             PDS dsT1tttt_gluino2000_lsp100_nrt2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=2",  "Stop0l_ResTopWeight");
+            // merged top
+            PDS dsT1tttt_gluino2000_lsp100_nmt0_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=0",  "MergedTopTotalSF_jetpt30");
+            PDS dsT1tttt_gluino2000_lsp100_nmt1_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=1",  "MergedTopTotalSF_jetpt30");
+            PDS dsT1tttt_gluino2000_lsp100_nmt2_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=2",  "MergedTopTotalSF_jetpt30");
+            PDS dsT1tttt_gluino2000_lsp100_nmt0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=0",  "Stop0l_DeepAK8_SFWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nmt1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=1",  "Stop0l_DeepAK8_SFWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nmt2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=2",  "Stop0l_DeepAK8_SFWeight");
+            // W
+            PDS dsT1tttt_gluino2000_lsp100_nw0_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=0",  "WTotalSF_jetpt30");
+            PDS dsT1tttt_gluino2000_lsp100_nw1_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=1",  "WTotalSF_jetpt30");
+            PDS dsT1tttt_gluino2000_lsp100_nw2_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=2",  "WTotalSF_jetpt30");
+            PDS dsT1tttt_gluino2000_lsp100_nw0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=0",  "Stop0l_DeepAK8_SFWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nw1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=1",  "Stop0l_DeepAK8_SFWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nw2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=2",  "Stop0l_DeepAK8_SFWeight");
+            // resolved top
             PDC dcMC_T1tttt_met_nrt0_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt0_SATWeight});
             PDC dcMC_T1tttt_met_nrt1_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt1_SATWeight});
             PDC dcMC_T1tttt_met_nrt2_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt2_SATWeight});
             PDC dcMC_T1tttt_met_nrt0_PostProcWeight("single",   "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt0_PostProcWeight});
             PDC dcMC_T1tttt_met_nrt1_PostProcWeight("single",   "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt1_PostProcWeight});
             PDC dcMC_T1tttt_met_nrt2_PostProcWeight("single",   "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt2_PostProcWeight});
+            // merged top
+            PDC dcMC_T1tttt_met_nmt0_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nmt0_SATWeight});
+            PDC dcMC_T1tttt_met_nmt1_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nmt1_SATWeight});
+            PDC dcMC_T1tttt_met_nmt2_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nmt2_SATWeight});
+            PDC dcMC_T1tttt_met_nmt0_PostProcWeight("single",   "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nmt0_PostProcWeight});
+            PDC dcMC_T1tttt_met_nmt1_PostProcWeight("single",   "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nmt1_PostProcWeight});
+            PDC dcMC_T1tttt_met_nmt2_PostProcWeight("single",   "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nmt2_PostProcWeight});
+            // W
+            PDC dcMC_T1tttt_met_nw0_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nw0_SATWeight});
+            PDC dcMC_T1tttt_met_nw1_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nw1_SATWeight});
+            PDC dcMC_T1tttt_met_nw2_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nw2_SATWeight});
+            PDC dcMC_T1tttt_met_nw0_PostProcWeight("single",   "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nw0_PostProcWeight});
+            PDC dcMC_T1tttt_met_nw1_PostProcWeight("single",   "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nw1_PostProcWeight});
+            PDC dcMC_T1tttt_met_nw2_PostProcWeight("single",   "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nw2_PostProcWeight});
             // testing soft drop mass
             PDC dcMC_T1tttt_FatJet_msoftdrop("single",     "FatJet_msoftdrop",                  {dsT1tttt_gluino2000_lsp100});
             PDC dcMC_T1tttt_FatJet_msoftdrop_mt("single",  "FatJet_msoftdrop{FatJet_Stop0l=1}", {dsT1tttt_gluino2000_lsp100});
@@ -3492,6 +3522,12 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("T1tttt_met_nrt0",             {dcMC_T1tttt_met_nrt0_SATWeight, dcMC_T1tttt_met_nrt0_PostProcWeight},                                 {1, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
             vh.push_back(PHS("T1tttt_met_nrt1",             {dcMC_T1tttt_met_nrt1_SATWeight, dcMC_T1tttt_met_nrt1_PostProcWeight},                                 {1, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
             vh.push_back(PHS("T1tttt_met_nrt2",             {dcMC_T1tttt_met_nrt2_SATWeight, dcMC_T1tttt_met_nrt2_PostProcWeight},                                 {1, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nmt0",             {dcMC_T1tttt_met_nmt0_SATWeight, dcMC_T1tttt_met_nmt0_PostProcWeight},                                 {1, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nmt1",             {dcMC_T1tttt_met_nmt1_SATWeight, dcMC_T1tttt_met_nmt1_PostProcWeight},                                 {1, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nmt2",             {dcMC_T1tttt_met_nmt2_SATWeight, dcMC_T1tttt_met_nmt2_PostProcWeight},                                 {1, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nw0",              {dcMC_T1tttt_met_nw0_SATWeight, dcMC_T1tttt_met_nw0_PostProcWeight},                                   {1, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nw1",              {dcMC_T1tttt_met_nw1_SATWeight, dcMC_T1tttt_met_nw1_PostProcWeight},                                   {1, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nw2",              {dcMC_T1tttt_met_nw2_SATWeight, dcMC_T1tttt_met_nw2_PostProcWeight},                                   {1, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
             vh.push_back(PHS("T1tttt_FatJet_msoftdrop",     {dcMC_T1tttt_FatJet_msoftdrop, dcMC_T1tttt_FatJet_msoftdrop_mt, dcMC_T1tttt_FatJet_msoftdrop_w},       {1, 1}, "", nBins,         0.0,          600.0,          false, false,  "Fat Jet soft drop mass",  "Events", true));
             
             if (doLooseAndMid)
