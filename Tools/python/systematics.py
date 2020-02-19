@@ -172,9 +172,6 @@ class Systematic:
         f = ROOT.TFile(file_name)
         c = ROOT.TCanvas("c", "c", 800, 800)
         c.Divide(1, 2)
-        # TODO: delete, now function parameter
-        #metPhoton = "metWithPhoton"
-        #metLepton = "metWithLL"
         selection = "jetpt30"
         # legend: TLegend(x1,y1,x2,y2)
         legend_x1 = 0.5
@@ -215,8 +212,6 @@ class Systematic:
             
             # histogram info 
             title = "Z vs. Photon, {0}, {1}".format(region, era)
-            # TODO: delete, now function parameter
-            #x_title = "MET (GeV)" 
             x_title = var
             y_title = "Data / MC"
             y_min = 0.0
