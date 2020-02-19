@@ -231,16 +231,23 @@ class Shape:
                     # denominator = MC
                     h_den = h_mc.Clone("h_den") 
                     
+                    ########################################
+                    # Apply and Save Data/MC normalization #
+                    ########################################
+                    
                     # number of events for normalization
                     nNum  = h_num.Integral(0, h_num.GetNbinsX() + 1)
                     nDen  = h_den.Integral(0, h_den.GetNbinsX() + 1)
-                    ratio = float(nNum) / float(nDen)
+                    DataMCNorm = float(nNum) / float(nDen)
                     
-                    #if self.verbose:
-                    #    print "{0} {1}: nNum = {2:.3f}, nDen = {3:.3f}, ratio = {4:.3f}".format(era, region, nNum, nDen, ratio)
+                    if self.verbose:
+                        print "{0} {1}: nNum = {2:.3f}, nDen = {3:.3f}, DataMCNorm = {4:.3f}".format(era, region, nNum, nDen, DataMCNorm)
 
+                    print "{0} {1} {2} {3}: nNum = {4:.3f}, nDen = {5:.3f}, DataMCNorm = {6:.3f}".format(era, bin_type, region, selection, nNum, nDen, DataMCNorm)
                     h_den_normalized = h_den.Clone("h_den_normalized")
-                    h_den_normalized.Scale(ratio)
+                    h_den_normalized.Scale(DataMCNorm)
+                        
+                    self.shape_map[era][bin_type][region][selection]["data_mc_norm"] = DataMCNorm
                     
                     # rebin in MET
                     # variable binning for background prediction
