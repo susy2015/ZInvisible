@@ -393,8 +393,9 @@ class Normalization:
         # --- for showing all values
         channelsForTable    = self.channels
         header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ \\\\"
-        caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors. "
-        caption += "The \Rz factors from the di-electron and di-muon control regions for the full Run 2 dataset are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
+        caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors."
+        caption += " The \Rz factors from the di-electron and di-muon control regions for the full Run 2 dataset are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
+        caption += " An additional systematic uncertainty is obtained to account for differents in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}."
         with open(output_name, "w+") as f:
             self.output_file = f
             
