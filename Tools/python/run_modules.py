@@ -109,6 +109,8 @@ def main():
     N.makeComparison("validation")
     N.makeComparison("validationMetStudy")
     N.makeComparison("search")
+    S.makeTable(latex_dir + "zinv_q_doc.tex",   True)
+    S.makeTable(latex_dir + "zinv_q_table.tex", False)
     S.makeComparison("validation")
     S.makeComparison("validationMetStudy")
     S.makeComparison("search")

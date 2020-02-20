@@ -247,6 +247,8 @@ class Shape:
                     h_den_normalized = h_den.Clone("h_den_normalized")
                     h_den_normalized.Scale(photonDataMCNorm)
                         
+                    self.shape_map[era][bin_type][region][selection]["total_data"]          = nNum
+                    self.shape_map[era][bin_type][region][selection]["total_mc"]            = nDen
                     self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm"] = photonDataMCNorm
                     
                     # rebin in MET
@@ -460,6 +462,72 @@ class Shape:
             self.cr_unit_histos_summed[era] = copy.deepcopy(h_map)
 
 
+    def writeLine(self, line):
+        self.output_file.write(line + "\n")
+    
+    # Run 2 Rz values in table for analysis note 
+    def makeTable(self, output_name, makeDoc=False):
+        # values for table store as follows:
+        # self.shape_map[era][bin_type][region][selection]["total_data"]          = nNum
+        # self.shape_map[era][bin_type][region][selection]["total_mc"]            = nDen
+        # self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm"] = photonDataMCNorm
+        era      = "Run2"
+        bin_type = "search"
+        channelsForTable    = ["total_data", "total_mc", "photon_data_mc_norm"]
+        header              = "$\Nb$ & $\Nj$ & $N_{\\text{data}}$ & $N_{\\text{MC}}$ & $Q$ \\\\"
+        caption  = "Summary of the different regions in which the photon normalization $Q$ is applied."
+        caption += " The total number of data and MC events for each selection are shown, as well as the ratio $Q$."
+        with open(output_name, "w+") as f:
+            self.output_file = f
+            
+            if makeDoc:
+                # begin document
+                self.writeLine("\documentclass{article}")
+                self.writeLine("\usepackage[utf8]{inputenc}")
+                self.writeLine("\usepackage{geometry}")
+                self.writeLine("\usepackage{longtable}")
+                self.writeLine("\\usepackage{xspace}")
+                self.writeLine("\\usepackage{amsmath}")
+                self.writeLine("\\usepackage{graphicx}")
+                self.writeLine("\\usepackage{cancel}")
+                self.writeLine("\\usepackage{amsmath}")
+                self.writeLine("\geometry{margin=1in}")
+                self.writeLine("\\input{VariableNames.tex}")
+                self.writeLine("\\begin{document}")
+            
+            # begin table
+            self.writeLine("\\begin{table}")
+            self.writeLine("\\begin{center}")
+            self.writeLine("\\caption{%s}" % caption)
+            self.writeLine("\\label{tab:Qregions}")
+            self.writeLine("\\begin{tabular}{%s}" % ( "c" * (2 + len(channelsForTable)) ) )
+            self.writeLine(header)
+            self.writeLine("\\hline")
+            self.writeLine("\\multicolumn{2}{c}{low \dm normalization regions} \\\\")
+            self.writeLine("\\hline")
+            self.writeLine("0         &   $\leq5$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBeq0_NJle5"][channel]) for channel in channelsForTable)) )
+            self.writeLine("0         &   $\geq6$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBeq0_NJge6"][channel]) for channel in channelsForTable)) )
+            self.writeLine("1         &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBeq1"][channel]      ) for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBge2"][channel]      ) for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   $\geq7$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBge2_NJge7"][channel]) for channel in channelsForTable)) )
+            self.writeLine("\\hline")
+            self.writeLine("\\multicolumn{2}{c}{high \dm normalization regions} \\\\")
+            self.writeLine("\\hline")
+            self.writeLine("1         &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBeq1"][channel]      )    for channel in channelsForTable)) )
+            self.writeLine("1         &   $\geq7$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBeq1_NJge7"][channel])    for channel in channelsForTable)) )
+            self.writeLine("2         &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBeq2"][channel]      )    for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBge2"][channel]      )    for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   $\geq7$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBge2_NJge7"][channel])    for channel in channelsForTable)) )
+            self.writeLine("\\hline")
+            # end table
+            self.writeLine("\\end{tabular}")
+            self.writeLine("\\end{center}")
+            self.writeLine("\\end{table}")
+            
+            if makeDoc:
+                # end document
+                self.writeLine("\\end{document}")
+    
     def makeComparison(self, bin_type):
         draw_option = "hist error"
         

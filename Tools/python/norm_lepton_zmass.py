@@ -348,6 +348,7 @@ class Normalization:
     def writeLine(self, line):
         self.output_file.write(line + "\n")
 
+    # tex file with Rz values in all eras
     def makeTexFile(self, bin_type, output_name):
         # write latex file with table
         with open(output_name, "w+") as f:
@@ -383,6 +384,7 @@ class Normalization:
             # end document
             self.writeLine("\end{document}")
 
+    # Run 2 Rz values in table for analysis note 
     def makeTable(self, output_name, makeDoc=False):
         era      = "Run2"
         bin_type = "search"
@@ -420,22 +422,21 @@ class Normalization:
             self.writeLine("\\caption{%s}" % caption)
             self.writeLine("\\label{tab:RZregions}")
             self.writeLine("\\begin{tabular}{%s}" % ( "c" * (2 + len(channelsForTable)) ) )
-            #self.writeLine("$\Nb$ & $\Nsv$ & \Rz \\\\")
             self.writeLine(header)
             self.writeLine("\\hline")
             self.writeLine("\\multicolumn{2}{c}{low \dm normalization regions} \\\\")
             self.writeLine("\\hline")
-            self.writeLine("0       &   0       & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
-            self.writeLine("0       &   $\ge$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVge1"]["R_Z"] for channel in channelsForTable)) )
-            self.writeLine("1       &   0       & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
-            self.writeLine("1       &   $\ge$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVge1"]["R_Z"] for channel in channelsForTable)) )
-            self.writeLine("$\ge$2  &   --      & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBge2"]["R_Z"]        for channel in channelsForTable)) )
+            self.writeLine("0       & 0        & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
+            self.writeLine("0       & $\geq$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVge1"]["R_Z"] for channel in channelsForTable)) )
+            self.writeLine("1       & 0        & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
+            self.writeLine("1       & $\geq$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVge1"]["R_Z"] for channel in channelsForTable)) )
+            self.writeLine("$\geq$2 & --       & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBge2"]["R_Z"]        for channel in channelsForTable)) )
             self.writeLine("\\hline")
             self.writeLine("\\multicolumn{2}{c}{high \dm normalization regions} \\\\")
             self.writeLine("\\hline")
-            self.writeLine("1      & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq1"]["R_Z"] for channel in channelsForTable))  ) 
-            self.writeLine("2      & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq2"]["R_Z"] for channel in channelsForTable))  )
-            self.writeLine("$\ge$2 & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBge2"]["R_Z"] for channel in channelsForTable))  )
+            self.writeLine("1       & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq1"]["R_Z"] for channel in channelsForTable))  ) 
+            self.writeLine("2       & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq2"]["R_Z"] for channel in channelsForTable))  )
+            self.writeLine("$\geq$2 & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBge2"]["R_Z"] for channel in channelsForTable))  )
             self.writeLine("\\hline")
             # end table
             self.writeLine("\\end{tabular}")

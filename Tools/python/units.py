@@ -18,7 +18,7 @@ def show(binMap, title):
 
 # save final results in json file
 def saveResults(inFile, outFile, CRunits, SRunits, SB, era):
-    verbose = True
+    verbose = False
     map_out                                 = {}
     map_out["yieldsMap"]                    = {}
     map_out["yieldsMap"]["znunu"]           = {}
