@@ -465,7 +465,7 @@ class Shape:
     def writeLine(self, line):
         self.output_file.write(line + "\n")
     
-    # Run 2 Rz values in table for analysis note 
+    # Run 2 Q values in table for analysis note 
     def makeTable(self, output_name, makeDoc=False):
         # values for table store as follows:
         # self.shape_map[era][bin_type][region][selection]["total_data"]          = nNum
