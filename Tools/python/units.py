@@ -4,7 +4,7 @@
 
 import json
 from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
-from tools import invert
+from tools import invert, getConstantMultiplicationError
 
 
 def show(binMap, title):
@@ -75,6 +75,7 @@ def saveResults(inFile, outFile, CRunits, SRunits, SB, era):
             norm = normForSRunits[b]["norm"]
         except:
             print "ERROR: No normalization value found for SR unit bin {0}".format(b)
+        # do not propagate norm to mc_error as total Rz unc. (stat and syst) are included in Rz syst.
         mc_with_norm = norm * mc
         # save value and error
         map_out["yieldsMap"]["znunu"][name] = [mc_with_norm, mc_error]
@@ -98,12 +99,15 @@ def saveResults(inFile, outFile, CRunits, SRunits, SB, era):
             norm = normForCRunits[b]["norm"]
         except:
             print "ERROR: No normalization value found for CR unit bin {0}".format(b)
-        mc_gjets_with_norm = norm * mc_gjets
-        mc_back_with_norm  = norm * mc_back
+        # propagate norm to photon MC stat. error
+        mc_gjets_with_norm          = norm * mc_gjets
+        mc_back_with_norm           = norm * mc_back
+        mc_gjets_error_with_norm    = getConstantMultiplicationError(norm, mc_gjets_error)
+        mc_back_error_with_norm     = getConstantMultiplicationError(norm, mc_back_error)
         # save value and error in map
         map_out["yieldsMap"]["phocr_data"][name]    = [data,                    data_error]
-        map_out["yieldsMap"]["phocr_gjets"][name]   = [mc_gjets_with_norm,      mc_gjets_error]
-        map_out["yieldsMap"]["phocr_back"][name]    = [mc_back_with_norm,       mc_back_error]
+        map_out["yieldsMap"]["phocr_gjets"][name]   = [mc_gjets_with_norm,      mc_gjets_error_with_norm]
+        map_out["yieldsMap"]["phocr_back"][name]    = [mc_back_with_norm,       mc_back_error_with_norm]
         
         if verbose:
             print "{0}: data = [{1}, {2}], mc_gjets = [{3}, {4}, {5}], mc_back = [{6}, {7}, {8}]".format(name, data, data_error, mc_gjets, mc_gjets_with_norm, mc_gjets_error, mc_back, mc_back_with_norm, mc_back_error)
