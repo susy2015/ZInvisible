@@ -534,10 +534,11 @@ class ValidationBins(Common):
             selection_norm  = removeCuts(selection, ["NJ"])
             selection_shape = removeCuts(selection, ["NSV", "MET"])
             self.binValues[era][b] = {}
-            self.binValues[era][b]["norm"]        = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z"]
-            self.binValues[era][b]["norm_error"]  = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z_error"]
-            self.binValues[era][b]["shape"]       = self.S.shape_map[era]["validation"][region][selection_shape][met]
-            self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["validation"][region][selection_shape][met + "_error"]
+            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z"]
+            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z_error"]
+            self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["validation"][region][selection_shape][met]
+            self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["validation"][region][selection_shape][met + "_error"]
+            self.binValues[era][b]["photon_data_mc_norm"]   = self.S.shape_map[era]["validation"][region][selection_shape]["photon_data_mc_norm"]
 
         # Z to NuNu histograms
         # central value
@@ -628,10 +629,11 @@ class ValidationBinsMETStudy(Common):
             selection_norm  = removeCuts(selection, ["NJ"])
             selection_shape = removeCuts(selection, ["NSV", "MET"])
             self.binValues[era][b] = {}
-            self.binValues[era][b]["norm"]        = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z"]
-            self.binValues[era][b]["norm_error"]  = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z_error"]
-            self.binValues[era][b]["shape"]       = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met]
-            self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met + "_error"]
+            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z"]
+            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z_error"]
+            self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met]
+            self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met + "_error"]
+            self.binValues[era][b]["photon_data_mc_norm"]   = self.S.shape_map[era]["validationMetStudy"][region][selection_shape]["photon_data_mc_norm"]
 
         # --- new (for MET study) --- #
         # "nValidationBinLowDM_METStudy_jetpt30/MET_nValidationBin_LowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30Data MET Validation Bin Low DM MET Studydata"
@@ -722,10 +724,11 @@ class SearchBins(Common):
             if self.verbose:
                 print "{0}: {1} {2} {3} {4}".format(b, region, selection_norm, selection_shape, met)
             self.binValues[era][b] = {}
-            self.binValues[era][b]["norm"]        = self.N.norm_map[era]["search"]["Combined"][region][selection_norm]["R_Z"]
-            self.binValues[era][b]["norm_error"]  = self.N.norm_map[era]["search"]["Combined"][region][selection_norm]["R_Z_error"]
-            self.binValues[era][b]["shape"]       = self.S.shape_map[era]["search"][region][selection_shape][met]
-            self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["search"][region][selection_shape][met + "_error"]
+            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["search"]["Combined"][region][selection_norm]["R_Z"]
+            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["search"]["Combined"][region][selection_norm]["R_Z_error"]
+            self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["search"][region][selection_shape][met]
+            self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["search"][region][selection_shape][met + "_error"]
+            self.binValues[era][b]["photon_data_mc_norm"]   = self.S.shape_map[era]["search"][region][selection_shape]["photon_data_mc_norm"]
         
         # Z to NuNu MC histograms
         f_in            = ROOT.TFile(file_name, "read")
@@ -781,7 +784,7 @@ class SRUnitBins(Common):
         self.binValues      = {}
         self.histograms     = {}
     
-    # TODO: apply Z to LL normalization to SR unit bins
+    # Z to LL normalization is applied to SR unit bins in units.py
     def getValues(self, file_name, era):
         self.binValues[era] = {}
         
@@ -834,7 +837,7 @@ class CRUnitBins(Common):
         with open("control_region_unit_bins_v4.json", "r") as j:
             self.bins = stringifyMap(json.load(j))
     
-    # TODO: normalize MC to Data in CR unit bins
+    # TODO: normalize photon MC to Data in CR unit bins
     def getValues(self, file_name, era):
         self.binValues[era] = {}
         

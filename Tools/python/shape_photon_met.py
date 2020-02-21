@@ -231,16 +231,25 @@ class Shape:
                     # denominator = MC
                     h_den = h_mc.Clone("h_den") 
                     
+                    ########################################
+                    # Apply and Save Data/MC normalization #
+                    ########################################
+                    
                     # number of events for normalization
                     nNum  = h_num.Integral(0, h_num.GetNbinsX() + 1)
                     nDen  = h_den.Integral(0, h_den.GetNbinsX() + 1)
-                    ratio = float(nNum) / float(nDen)
+                    photonDataMCNorm = float(nNum) / float(nDen)
                     
-                    #if self.verbose:
-                    #    print "{0} {1}: nNum = {2:.3f}, nDen = {3:.3f}, ratio = {4:.3f}".format(era, region, nNum, nDen, ratio)
+                    if self.verbose:
+                        print "{0} {1}: nNum = {2:.3f}, nDen = {3:.3f}, photonDataMCNorm = {4:.3f}".format(era, region, nNum, nDen, photonDataMCNorm)
 
+                    print "{0} {1} {2} {3}: nNum = {4:.3f}, nDen = {5:.3f}, photonDataMCNorm = {6:.3f}".format(era, bin_type, region, selection, nNum, nDen, photonDataMCNorm)
                     h_den_normalized = h_den.Clone("h_den_normalized")
-                    h_den_normalized.Scale(ratio)
+                    h_den_normalized.Scale(photonDataMCNorm)
+                        
+                    self.shape_map[era][bin_type][region][selection]["total_data"]          = nNum
+                    self.shape_map[era][bin_type][region][selection]["total_mc"]            = nDen
+                    self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm"] = photonDataMCNorm
                     
                     # rebin in MET
                     # variable binning for background prediction
@@ -408,14 +417,14 @@ class Shape:
                 variable = "nCRUnit" + region + "_drPhotonCleaned_jetpt30"
                 #WARNING: strings loaded from json file have type 'unicode'
                 # ROOT cannot load histograms using unicode input: use type 'str'
-                if self.splitQCD:
-                    samples = ["Data", "GJets", "QCD_Fragmented", "QCD_Fake", "WJets", "TTG", "TTbar", "tW", "Rare"]
-                else:
-                    samples = ["Data", "GJets", "QCD", "WJets", "TTG", "TTbar", "tW", "Rare"]
+                #if self.splitQCD:
+                #    samples = ["Data", "GJets", "QCD_Fragmented", "QCD_Fake", "WJets", "TTG", "TTbar", "tW", "Rare"]
+                #else:
+                #    samples = ["Data", "GJets", "QCD", "WJets", "TTG", "TTbar", "tW", "Rare"]
                 #print "Shape factor CR units; Loading {0} histograms".format(region)
-                for sample in samples:
-                    hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
-                    #print "\t{0}".format(hist_name) 
+                #for sample in samples:
+                #    hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
+                #    print "\t{0}".format(hist_name) 
                 
                 h_Data              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Data"]              ) )
                 h_GJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["GJets"]             ) )
@@ -453,6 +462,72 @@ class Shape:
             self.cr_unit_histos_summed[era] = copy.deepcopy(h_map)
 
 
+    def writeLine(self, line):
+        self.output_file.write(line + "\n")
+    
+    # Run 2 Rz values in table for analysis note 
+    def makeTable(self, output_name, makeDoc=False):
+        # values for table store as follows:
+        # self.shape_map[era][bin_type][region][selection]["total_data"]          = nNum
+        # self.shape_map[era][bin_type][region][selection]["total_mc"]            = nDen
+        # self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm"] = photonDataMCNorm
+        era      = "Run2"
+        bin_type = "search"
+        channelsForTable    = ["total_data", "total_mc", "photon_data_mc_norm"]
+        header              = "$\Nb$ & $\Nj$ & $N_{\\text{data}}$ & $N_{\\text{MC}}$ & $Q$ \\\\"
+        caption  = "Summary of the different regions in which the photon normalization $Q$ is applied."
+        caption += " The total number of data and MC events for each selection are shown, as well as the ratio $Q$."
+        with open(output_name, "w+") as f:
+            self.output_file = f
+            
+            if makeDoc:
+                # begin document
+                self.writeLine("\documentclass{article}")
+                self.writeLine("\usepackage[utf8]{inputenc}")
+                self.writeLine("\usepackage{geometry}")
+                self.writeLine("\usepackage{longtable}")
+                self.writeLine("\\usepackage{xspace}")
+                self.writeLine("\\usepackage{amsmath}")
+                self.writeLine("\\usepackage{graphicx}")
+                self.writeLine("\\usepackage{cancel}")
+                self.writeLine("\\usepackage{amsmath}")
+                self.writeLine("\geometry{margin=1in}")
+                self.writeLine("\\input{VariableNames.tex}")
+                self.writeLine("\\begin{document}")
+            
+            # begin table
+            self.writeLine("\\begin{table}")
+            self.writeLine("\\begin{center}")
+            self.writeLine("\\caption{%s}" % caption)
+            self.writeLine("\\label{tab:Qregions}")
+            self.writeLine("\\begin{tabular}{%s}" % ( "c" * (2 + len(channelsForTable)) ) )
+            self.writeLine(header)
+            self.writeLine("\\hline")
+            self.writeLine("\\multicolumn{2}{c}{low \dm normalization regions} \\\\")
+            self.writeLine("\\hline")
+            self.writeLine("0         &   $\leq5$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBeq0_NJle5"][channel]) for channel in channelsForTable)) )
+            self.writeLine("0         &   $\geq6$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBeq0_NJge6"][channel]) for channel in channelsForTable)) )
+            self.writeLine("1         &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBeq1"][channel]      ) for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBge2"][channel]      ) for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   $\geq7$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBge2_NJge7"][channel]) for channel in channelsForTable)) )
+            self.writeLine("\\hline")
+            self.writeLine("\\multicolumn{2}{c}{high \dm normalization regions} \\\\")
+            self.writeLine("\\hline")
+            self.writeLine("1         &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBeq1"][channel]      )    for channel in channelsForTable)) )
+            self.writeLine("1         &   $\geq7$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBeq1_NJge7"][channel])    for channel in channelsForTable)) )
+            self.writeLine("2         &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBeq2"][channel]      )    for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBge2"][channel]      )    for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   $\geq7$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBge2_NJge7"][channel])    for channel in channelsForTable)) )
+            self.writeLine("\\hline")
+            # end table
+            self.writeLine("\\end{tabular}")
+            self.writeLine("\\end{center}")
+            self.writeLine("\\end{table}")
+            
+            if makeDoc:
+                # end document
+                self.writeLine("\\end{document}")
+    
     def makeComparison(self, bin_type):
         draw_option = "hist error"
         
