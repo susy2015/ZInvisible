@@ -247,9 +247,12 @@ class Shape:
                     h_den_normalized = h_den.Clone("h_den_normalized")
                     h_den_normalized.Scale(photonDataMCNorm)
                         
-                    self.shape_map[era][bin_type][region][selection]["total_data"]          = nNum
-                    self.shape_map[era][bin_type][region][selection]["total_mc"]            = nDen
-                    self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm"] = photonDataMCNorm
+                    self.shape_map[era][bin_type][region][selection]["total_data"]              = nNum
+                    self.shape_map[era][bin_type][region][selection]["total_mc"]                = nDen
+                    self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm"]     = photonDataMCNorm
+                    self.shape_map[era][bin_type][region][selection]["total_data_tex"]          = "${0:d}$".format(int(nNum))
+                    self.shape_map[era][bin_type][region][selection]["total_mc_tex"]            = "${0:.3f}$".format(nDen)
+                    self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm_tex"] = "${0:.3f}$".format(photonDataMCNorm)
                     
                     # rebin in MET
                     # variable binning for background prediction
@@ -473,7 +476,7 @@ class Shape:
         # self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm"] = photonDataMCNorm
         era      = "Run2"
         bin_type = "search"
-        channelsForTable    = ["total_data", "total_mc", "photon_data_mc_norm"]
+        channelsForTable    = ["total_data_tex", "total_mc_tex", "photon_data_mc_norm_tex"]
         header              = "$\Nb$ & $\Nj$ & $N_{\\text{data}}$ & $N_{\\text{MC}}$ & $Q$ \\\\"
         caption  = "Summary of the different regions in which the photon normalization $Q$ is applied."
         caption += " The total number of data and MC events for each selection are shown, as well as the ratio $Q$."
@@ -505,19 +508,19 @@ class Shape:
             self.writeLine("\\hline")
             self.writeLine("\\multicolumn{2}{c}{low \dm normalization regions} \\\\")
             self.writeLine("\\hline")
-            self.writeLine("0         &   $\leq5$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBeq0_NJle5"][channel]) for channel in channelsForTable)) )
-            self.writeLine("0         &   $\geq6$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBeq0_NJge6"][channel]) for channel in channelsForTable)) )
-            self.writeLine("1         &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBeq1"][channel]      ) for channel in channelsForTable)) )
-            self.writeLine("$\geq2$   &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBge2"][channel]      ) for channel in channelsForTable)) )
-            self.writeLine("$\geq2$   &   $\geq7$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["LowDM"]["NBge2_NJge7"][channel]) for channel in channelsForTable)) )
+            self.writeLine("0         &   $\leq5$       & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["LowDM"]["NBeq0_NJle5"][channel]) for channel in channelsForTable)) )
+            self.writeLine("0         &   $\geq6$       & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["LowDM"]["NBeq0_NJge6"][channel]) for channel in channelsForTable)) )
+            self.writeLine("1         &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["LowDM"]["NBeq1"][channel]      ) for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["LowDM"]["NBge2"][channel]      ) for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   $\geq7$       & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["LowDM"]["NBge2_NJge7"][channel]) for channel in channelsForTable)) )
             self.writeLine("\\hline")
             self.writeLine("\\multicolumn{2}{c}{high \dm normalization regions} \\\\")
             self.writeLine("\\hline")
-            self.writeLine("1         &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBeq1"][channel]      )    for channel in channelsForTable)) )
-            self.writeLine("1         &   $\geq7$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBeq1_NJge7"][channel])    for channel in channelsForTable)) )
-            self.writeLine("2         &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBeq2"][channel]      )    for channel in channelsForTable)) )
-            self.writeLine("$\geq2$   &   --            & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBge2"][channel]      )    for channel in channelsForTable)) )
-            self.writeLine("$\geq2$   &   $\geq7$       & %s \\\\" % (" & ".join("${0:.3f}$".format(self.shape_map[era][bin_type]["HighDM"]["NBge2_NJge7"][channel])    for channel in channelsForTable)) )
+            self.writeLine("1         &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBeq1"][channel]      )    for channel in channelsForTable)) )
+            self.writeLine("1         &   $\geq7$       & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBeq1_NJge7"][channel])    for channel in channelsForTable)) )
+            self.writeLine("2         &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBeq2"][channel]      )    for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBge2"][channel]      )    for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   $\geq7$       & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBge2_NJge7"][channel])    for channel in channelsForTable)) )
             self.writeLine("\\hline")
             # end table
             self.writeLine("\\end{tabular}")
