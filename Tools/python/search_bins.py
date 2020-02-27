@@ -3,7 +3,7 @@ import re
 import ROOT
 import copy
 import json
-from tools import setupHist, getMultiplicationErrorList, removeCuts, getBinError, ERROR_ZERO, getTexSelection, getTexMultiCut, stringifyMap
+from tools import setupHist, getConstantMultiplicationError, getMultiplicationError, getAdditionErrorList, getMultiplicationErrorList, removeCuts, getBinError, ERROR_ZERO, getTexSelection, getTexMultiCut, stringifyMap
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -732,34 +732,50 @@ class SearchBins(Common):
             self.binValues[era][b]["photon_data_mc_norm"]   = photon_data_mc_norm
             
             if CRunits:
-                # get SR and CR unit bins for this search bin
+                # ---------------------------------------- # 
+                # - Use CR unit bins to get shape factor - #
+                # ---------------------------------------- # 
+                
+                # Shape factor: 
+                # S = sum(data) / (Q * sum(MC))
+                # Q = photon Data/MC normalization from MET histograms
+
+                # get CR unit bins for this search bin
                 cr_units = self.unitMap["unitBinMapCR_phocr"][b]
-                # loop over units for this search bin
-                total_data = 0
-                total_mc   = 0
-                for cr in cr_units:
-                    data                = CRunits.binValues[era][cr]["data"]
-                    data_error          = CRunits.binValues[era][cr]["data_error"]
-                    mc_gjets            = CRunits.binValues[era][cr]["mc_gjets"]
-                    mc_gjets_error      = CRunits.binValues[era][cr]["mc_gjets_error"]
-                    mc_back             = CRunits.binValues[era][cr]["mc_back"]
-                    mc_back_error       = CRunits.binValues[era][cr]["mc_back_error"]
-                    total_data += data
-                    total_mc   += mc_gjets
-                    total_mc   += mc_back
+                # add up data and mc yields in CR units for this search bin
+                data_list           = [CRunits.binValues[era][cr]["data"]           for cr in cr_units]
+                data_error_list     = [CRunits.binValues[era][cr]["data_error"]     for cr in cr_units]
+                mc_gjets_list       = [CRunits.binValues[era][cr]["mc_gjets"]       for cr in cr_units]
+                mc_gjets_error_list = [CRunits.binValues[era][cr]["mc_gjets_error"] for cr in cr_units]
+                mc_back_list        = [CRunits.binValues[era][cr]["mc_back"]        for cr in cr_units]
+                mc_back_error_list  = [CRunits.binValues[era][cr]["mc_back_error"]  for cr in cr_units]
+                total_data          = sum(data_list)
+                total_mc            = sum(mc_gjets_list + mc_back_list)
+                den                 = photon_data_mc_norm * total_mc 
+                total_data_error    = getAdditionErrorList(data_error_list)
+                total_mc_error      = getAdditionErrorList(mc_gjets_error_list + mc_back_error_list)
+                den_error           = getConstantMultiplicationError(photon_data_mc_norm, total_mc_error)
+                
+                # get shape and shape error
+                shape_cr        = -999
+                shape_cr_error  = -999
                 # check for 0 data
                 if total_data <= 0:
                     print "WARNING: Search bin {0}: NO DATA: total_data = {1} and total_mc = {2}".format(b, total_data, total_mc)
                 # avoid dividing by 0
-                shape_cr = -999
-                if photon_data_mc_norm * total_mc:
+                if den:
                     # S = sum(data) / (Q * sum(MC))
-                    shape_cr = total_data / (photon_data_mc_norm * total_mc)
+                    shape_cr = total_data / den
                 else:
                     print "WARNING: Search bin {0}: NO MC: total_data = {1} and total_mc = {2}".format(b, total_data, total_mc)
+                # error propagation
+                # getMultiplicationError(q, x, dx, y, dy)
+                shape_cr_error  = getMultiplicationError(shape_cr, total_data, total_data_error, den, den_error)
+                
                 self.binValues[era][b]["shape"]                 = shape_cr 
-                self.binValues[era][b]["shape_error"]           = -999 
+                self.binValues[era][b]["shape_error"]           = shape_cr_error
             else:
+                # use MET histograms if CR unit bins are not provided
                 self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["search"][region][selection_shape][met]
                 self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["search"][region][selection_shape][met + "_error"]
         
@@ -870,7 +886,7 @@ class CRUnitBins(Common):
         with open("control_region_unit_bins_v4.json", "r") as j:
             self.bins = stringifyMap(json.load(j))
     
-    # TODO: normalize photon MC to Data in CR unit bins
+    # Photon MC is normalized to Data using MET histogram selections
     def getValues(self, file_name, era):
         self.binValues[era] = {}
         
