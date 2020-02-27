@@ -53,6 +53,7 @@ def saveResults(inFile, outFile, CRunits, SRunits, SB, era):
     for b in SB.binValues[era]:
         norm             = SB.binValues[era][b]["norm"]
         photonDataMCNorm = SB.binValues[era][b]["photon_data_mc_norm"] 
+        # get SR and CR unit bins for this search bin
         sr_units = unitMap["unitBinMapSR"][b]
         cr_units = unitMap["unitBinMapCR_phocr"][b]
         for sr in sr_units:

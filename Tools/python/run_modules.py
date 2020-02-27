@@ -80,12 +80,12 @@ def main():
                 makeCutflows(result_file, era, plot_dir, doPhotons)
             N.getNormAndError(result_file, era)
             S.getShape(result_file, era)
-            VB.getValues(result_file, era)
-            VB_MS.getValues(result_file, era)
-            SB.getValues(result_file, era)
             if doUnits:
                 CRunits.getValues(result_file, era)
                 SRunits.getValues(result_file, era)
+            VB.getValues(result_file, era)
+            VB_MS.getValues(result_file, era)
+            SB.getValues(result_file, era, CRunits=CRunits)
             # WARNING: var, varPhoton, and varLepton are used to load histograms and must match histogram names
             # makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst, xbins = np.array([]), n_bins = 0, x_min=0, x_max=0)
             xbins_met   = np.array([0.0, 250.0, 350.0, 450.0, 550.0, 650.0, 1000.0])

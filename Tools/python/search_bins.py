@@ -710,8 +710,10 @@ class SearchBins(Common):
         self.histograms     = {}
         with open("search_bins_v4.json", "r") as j:
             self.bins = stringifyMap(json.load(j))
+        with open("units.json", "r") as input_file:
+            self.unitMap = json.load(input_file)
     
-    def getValues(self, file_name, era, systTag=""):
+    def getValues(self, file_name, era, systTag="", CRunits=0):
         self.binValues[era] = {}
         
         for b in self.all_bins:
@@ -726,9 +728,40 @@ class SearchBins(Common):
             self.binValues[era][b] = {}
             self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["search"]["Combined"][region][selection_norm]["R_Z"]
             self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["search"]["Combined"][region][selection_norm]["R_Z_error"]
-            self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["search"][region][selection_shape][met]
-            self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["search"][region][selection_shape][met + "_error"]
-            self.binValues[era][b]["photon_data_mc_norm"]   = self.S.shape_map[era]["search"][region][selection_shape]["photon_data_mc_norm"]
+            photon_data_mc_norm                             = self.S.shape_map[era]["search"][region][selection_shape]["photon_data_mc_norm"]
+            self.binValues[era][b]["photon_data_mc_norm"]   = photon_data_mc_norm
+            
+            if CRunits:
+                # get SR and CR unit bins for this search bin
+                cr_units = self.unitMap["unitBinMapCR_phocr"][b]
+                # loop over units for this search bin
+                total_data = 0
+                total_mc   = 0
+                for cr in cr_units:
+                    data                = CRunits.binValues[era][cr]["data"]
+                    data_error          = CRunits.binValues[era][cr]["data_error"]
+                    mc_gjets            = CRunits.binValues[era][cr]["mc_gjets"]
+                    mc_gjets_error      = CRunits.binValues[era][cr]["mc_gjets_error"]
+                    mc_back             = CRunits.binValues[era][cr]["mc_back"]
+                    mc_back_error       = CRunits.binValues[era][cr]["mc_back_error"]
+                    total_data += data
+                    total_mc   += mc_gjets
+                    total_mc   += mc_back
+                # check for 0 data
+                if total_data <= 0:
+                    print "WARNING: Search bin {0}: NO DATA: total_data = {1} and total_mc = {2}".format(b, total_data, total_mc)
+                # avoid dividing by 0
+                shape_cr = -999
+                if photon_data_mc_norm * total_mc:
+                    # S = sum(data) / (Q * sum(MC))
+                    shape_cr = total_data / (photon_data_mc_norm * total_mc)
+                else:
+                    print "WARNING: Search bin {0}: NO MC: total_data = {1} and total_mc = {2}".format(b, total_data, total_mc)
+                self.binValues[era][b]["shape"]                 = shape_cr 
+                self.binValues[era][b]["shape_error"]           = -999 
+            else:
+                self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["search"][region][selection_shape][met]
+                self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["search"][region][selection_shape][met + "_error"]
         
         # Z to NuNu MC histograms
         f_in            = ROOT.TFile(file_name, "read")
