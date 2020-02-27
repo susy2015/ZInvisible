@@ -547,7 +547,7 @@ class Normalization:
                     chisq_fit_r    = chisq_fit / (nBins - 1)
                 
                 chisq_Run2 = h_Combined_Run2.Chi2Test(h_Combined, "WW CHI2")
-                chisq_Run2_r = chisq_Run2 / nBins
+                chisq_Run2_r = chisq_Run2 / (nBins - 1)
                 scale        = np.sqrt(chisq_Run2_r)
                 if scale >= 1.0:
                     final_Run2_total_err = scale * Run2_stat_err
