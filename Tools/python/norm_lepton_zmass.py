@@ -388,18 +388,13 @@ class Normalization:
     def makeTable(self, output_name, makeDoc=False):
         era      = "Run2"
         bin_type = "search"
-        # --- for only showing weighted average
-        #channelsForTable    = ["Combined"]
-        #header              = "$\Nb$ & $\Nsv$ & \Rz \\\\"
-        #caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors as well as the final \Rz factors with statistical uncertainties."
-        # --- for showing all values
         channelsForTable    = self.channels
         header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ & $\\langle \Rz \\rangle$ \\\\"
-        header             += " & & & & & (w/ full unc.)\\\\"
+        header             += "\n& & & & & (w/ full unc.)\\\\"
         caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors."
-        caption += " The \Rz factors from the di-electron and di-muon control regions for the full Run 2 dataset are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
-        caption += " An additional systematic uncertainty is obtained to account for differences in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}, and the full uncertainty is listed in the last column."
-        caption += " The \Rz value obtained with $\Nb\geq2$ is used for search bins with $\Nb=2$, $\Nb\geq2$, $\Nb\geq3$."
+        caption += "\nThe \Rz factors from the di-electron and di-muon control regions for the full Run 2 dataset are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
+        caption += "\nAn additional systematic uncertainty is obtained to account for differences in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}, and the full uncertainty is listed in the last column."
+        caption += "\nThe \Rz value obtained with $\Nb\geq2$ is used for search bins with $\Nb=2$, $\Nb\geq2$, $\Nb\geq3$."
         with open(output_name, "w+") as f:
             self.output_file = f
             
@@ -421,7 +416,6 @@ class Normalization:
             # begin table
             self.writeLine("\\begin{table}")
             self.writeLine("\\begin{center}")
-            #self.writeLine("\\caption{%s}" % caption)
             self.writeLine("\\caption{")
             self.writeLine(caption)
             self.writeLine("}")
@@ -439,10 +433,9 @@ class Normalization:
             self.writeLine("\\hline")
             self.writeLine("\\multicolumn{2}{c}{high \dm normalization regions} \\\\")
             self.writeLine("\\hline")
+            # Nb = 2 is no longer used
             self.writeLine("1       & -- & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq1"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["HighDM"]["NBeq1"]["R_Z_total_unc"])  ) 
             self.writeLine("$\geq$2 & -- & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBge2"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["HighDM"]["NBge2"]["R_Z_total_unc"])  )
-            # Nb = 2 is no longer used
-            #self.writeLine("2       & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq2"]["R_Z"] for channel in channelsForTable))  )
             self.writeLine("\\hline")
             # end table
             self.writeLine("\\end{tabular}")
