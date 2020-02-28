@@ -102,18 +102,19 @@ def main():
 
     
     # Normalization: makeTable(self, output_name, makeDoc=False)
+    N.makeComparison("validation")
+    N.makeComparison("validationMetStudy")
+    N.makeComparison("search")
+    # N.makeTable to be after N.makeComparison
     N.makeTable(latex_dir + "zinv_rz_doc.tex",   True)
     N.makeTable(latex_dir + "zinv_rz_table.tex", False)
     N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
-    N.makeComparison("validation")
-    N.makeComparison("validationMetStudy")
-    N.makeComparison("search")
-    S.makeTable(latex_dir + "zinv_q_doc.tex",   True)
-    S.makeTable(latex_dir + "zinv_q_table.tex", False)
     S.makeComparison("validation")
     S.makeComparison("validationMetStudy")
     S.makeComparison("search")
+    S.makeTable(latex_dir + "zinv_q_doc.tex",   True)
+    S.makeTable(latex_dir + "zinv_q_table.tex", False)
     VB.makeTexFile("Z Invisible Per Era Prediction for Validation Bins", latex_dir + "zinv_per_era_prediction_validation_bins.tex")
     SB.makeTexFile("Z Invisible Per Era Prediction for Search Bins",     latex_dir + "zinv_per_era_prediction_search_bins.tex")
     

@@ -394,7 +394,8 @@ class Normalization:
         #caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors as well as the final \Rz factors with statistical uncertainties."
         # --- for showing all values
         channelsForTable    = self.channels
-        header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ \\\\"
+        header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ & $\\langle \Rz \\rangle$ \\\\"
+        header             += " & & & & & (w/ full unc.)\\\\"
         caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors."
         caption += " The \Rz factors from the di-electron and di-muon control regions for the full Run 2 dataset are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
         caption += " An additional systematic uncertainty is obtained to account for differences in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}, and the full uncertainty is listed in the last column."
@@ -404,16 +405,16 @@ class Normalization:
             
             if makeDoc:
                 # begin document
-                self.writeLine("\documentclass{article}")
-                self.writeLine("\usepackage[utf8]{inputenc}")
-                self.writeLine("\usepackage{geometry}")
-                self.writeLine("\usepackage{longtable}")
+                self.writeLine("\\documentclass{article}")
+                self.writeLine("\\usepackage[utf8]{inputenc}")
+                self.writeLine("\\usepackage{geometry}")
+                self.writeLine("\\usepackage{longtable}")
                 self.writeLine("\\usepackage{xspace}")
                 self.writeLine("\\usepackage{amsmath}")
                 self.writeLine("\\usepackage{graphicx}")
                 self.writeLine("\\usepackage{cancel}")
                 self.writeLine("\\usepackage{amsmath}")
-                self.writeLine("\geometry{margin=1in}")
+                self.writeLine("\\geometry{margin=1in}")
                 self.writeLine("\\input{VariableNames.tex}")
                 self.writeLine("\\begin{document}")
             
@@ -425,22 +426,23 @@ class Normalization:
             self.writeLine(caption)
             self.writeLine("}")
             self.writeLine("\\label{tab:RZregions}")
-            self.writeLine("\\begin{tabular}{%s}" % ( "c" * (2 + len(channelsForTable)) ) )
+            self.writeLine("\\begin{tabular}{%s}" % ( "c" * (3 + len(channelsForTable)) ) )
             self.writeLine(header)
             self.writeLine("\\hline")
             self.writeLine("\\multicolumn{2}{c}{low \dm normalization regions} \\\\")
             self.writeLine("\\hline")
-            self.writeLine("0       & 0        & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
-            self.writeLine("0       & $\geq$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVge1"]["R_Z"] for channel in channelsForTable)) )
-            self.writeLine("1       & 0        & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
-            self.writeLine("1       & $\geq$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVge1"]["R_Z"] for channel in channelsForTable)) )
-            self.writeLine("$\geq$2 & --       & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBge2"]["R_Z"]        for channel in channelsForTable)) )
+            self.writeLine("0       & 0        & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVeq0"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["LowDM"]["NBeq0_NSVeq0"]["R_Z_total_unc"]) )
+            self.writeLine("0       & $\geq$1  & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVge1"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["LowDM"]["NBeq0_NSVge1"]["R_Z_total_unc"]) )
+            self.writeLine("1       & 0        & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVeq0"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["LowDM"]["NBeq1_NSVeq0"]["R_Z_total_unc"]) )
+            self.writeLine("1       & $\geq$1  & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVge1"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["LowDM"]["NBeq1_NSVge1"]["R_Z_total_unc"]) )
+            self.writeLine("$\geq$2 & --       & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBge2"]["R_Z"]        for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["LowDM"]["NBge2"]["R_Z_total_unc"]       ) )
             self.writeLine("\\hline")
             self.writeLine("\\multicolumn{2}{c}{high \dm normalization regions} \\\\")
             self.writeLine("\\hline")
-            self.writeLine("1       & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq1"]["R_Z"] for channel in channelsForTable))  ) 
+            self.writeLine("1       & -- & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq1"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["HighDM"]["NBeq1"]["R_Z_total_unc"])  ) 
+            self.writeLine("$\geq$2 & -- & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBge2"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["HighDM"]["NBge2"]["R_Z_total_unc"])  )
+            # Nb = 2 is no longer used
             #self.writeLine("2       & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq2"]["R_Z"] for channel in channelsForTable))  )
-            self.writeLine("$\geq$2 & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBge2"]["R_Z"] for channel in channelsForTable))  )
             self.writeLine("\\hline")
             # end table
             self.writeLine("\\end{tabular}")
@@ -456,9 +458,10 @@ class Normalization:
     def makeComparison(self, bin_type):
         doFit = False
         draw_option = "hist error"
+        total_era = "Run2"
         # treat Run2 era differentley
         eras = self.eras
-        if self.eras[-1] == "Run2":
+        if self.eras[-1] == total_era:
             eras  = self.eras[:-1]
         nBins = len(eras)
         
@@ -608,6 +611,18 @@ class Normalization:
                 # save final Rz syst.
                 # WARNING: this needs to be saved separately for validaiton and search bins, otherwise it will be overwritten
                 self.rz_syst_map[bin_type][region][selection] = final_Run2_total_err
+                
+                # save final Rz syst. to norm_map
+                # can be used to print if needed
+                factor      = "R_Z_total_unc"
+                value       = self.norm_map[total_era][bin_type]["Combined"][region][selection]["R_Z"] 
+                value_error = final_Run2_total_err
+                factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
+                factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
+                self.norm_map[total_era][bin_type]["Combined"][region][selection][factor] = value
+                self.norm_map[total_era][bin_type]["Combined"][region][selection][factor + "_error"] = value_error
+                self.norm_map_tex[total_era][bin_type]["Combined"][region][selection][factor] = factor_tex
+                print "{0}".format(factor_print)
 
                 # save histograms
                 plot_name = "{0}Normalization_{1}_{2}_{3}".format(self.plot_dir, bin_type, region, selection)
