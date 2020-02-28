@@ -173,7 +173,8 @@ class Normalization:
         for bin_type in self.bin_types:
             self.norm_map[era][bin_type] = {}
             self.norm_map_tex[era][bin_type] = {}
-            for channel in self.channels:
+            # CombinedTotalUnc is used for Rz table in AN
+            for channel in self.channels + ["CombinedTotalUnc"]:
                 self.norm_map[era][bin_type][channel] = {}
                 self.norm_map_tex[era][bin_type][channel] = {}
                 for region in self.regions:
@@ -388,7 +389,7 @@ class Normalization:
     def makeTable(self, output_name, makeDoc=False):
         era      = "Run2"
         bin_type = "search"
-        channelsForTable    = self.channels
+        channelsForTable    = self.channels + ["CombinedTotalUnc"]
         header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ & $\\langle \Rz \\rangle$ \\\\"
         header             += "\n& & & & & (w/ full unc.)\\\\"
         caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors."
@@ -420,22 +421,22 @@ class Normalization:
             self.writeLine(caption)
             self.writeLine("}")
             self.writeLine("\\label{tab:RZregions}")
-            self.writeLine("\\begin{tabular}{%s}" % ( "c" * (3 + len(channelsForTable)) ) )
+            self.writeLine("\\begin{tabular}{%s}" % ( "c" * (2 + len(channelsForTable)) ) )
             self.writeLine(header)
             self.writeLine("\\hline")
             self.writeLine("\\multicolumn{2}{c}{low \dm normalization regions} \\\\")
             self.writeLine("\\hline")
-            self.writeLine("0       & 0        & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVeq0"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["LowDM"]["NBeq0_NSVeq0"]["R_Z_total_unc"]) )
-            self.writeLine("0       & $\geq$1  & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVge1"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["LowDM"]["NBeq0_NSVge1"]["R_Z_total_unc"]) )
-            self.writeLine("1       & 0        & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVeq0"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["LowDM"]["NBeq1_NSVeq0"]["R_Z_total_unc"]) )
-            self.writeLine("1       & $\geq$1  & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVge1"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["LowDM"]["NBeq1_NSVge1"]["R_Z_total_unc"]) )
-            self.writeLine("$\geq$2 & --       & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBge2"]["R_Z"]        for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["LowDM"]["NBge2"]["R_Z_total_unc"]       ) )
+            self.writeLine("0       & 0        & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
+            self.writeLine("0       & $\geq$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVge1"]["R_Z"] for channel in channelsForTable)) )
+            self.writeLine("1       & 0        & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
+            self.writeLine("1       & $\geq$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVge1"]["R_Z"] for channel in channelsForTable)) )
+            self.writeLine("$\geq$2 & --       & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBge2"]["R_Z"]        for channel in channelsForTable)) )
             self.writeLine("\\hline")
             self.writeLine("\\multicolumn{2}{c}{high \dm normalization regions} \\\\")
             self.writeLine("\\hline")
             # Nb = 2 is no longer used
-            self.writeLine("1       & -- & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq1"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["HighDM"]["NBeq1"]["R_Z_total_unc"])  ) 
-            self.writeLine("$\geq$2 & -- & %s & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBge2"]["R_Z"] for channel in channelsForTable), self.norm_map_tex[era][bin_type]["Combined"]["HighDM"]["NBge2"]["R_Z_total_unc"])  )
+            self.writeLine("1       & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq1"]["R_Z"] for channel in channelsForTable))  ) 
+            self.writeLine("$\geq$2 & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBge2"]["R_Z"] for channel in channelsForTable))  )
             self.writeLine("\\hline")
             # end table
             self.writeLine("\\end{tabular}")
@@ -607,15 +608,16 @@ class Normalization:
                 
                 # save final Rz syst. to norm_map
                 # can be used to print if needed
-                factor      = "R_Z_total_unc"
+                factor      = "R_Z"
+                channel     = "CombinedTotalUnc"
                 value       = self.norm_map[total_era][bin_type]["Combined"][region][selection]["R_Z"] 
                 value_error = final_Run2_total_err
                 factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
                 factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
-                self.norm_map[total_era][bin_type]["Combined"][region][selection][factor] = value
-                self.norm_map[total_era][bin_type]["Combined"][region][selection][factor + "_error"] = value_error
-                self.norm_map_tex[total_era][bin_type]["Combined"][region][selection][factor] = factor_tex
-                print "{0}".format(factor_print)
+                self.norm_map[total_era][bin_type][channel][region][selection][factor] = value
+                self.norm_map[total_era][bin_type][channel][region][selection][factor + "_error"] = value_error
+                self.norm_map_tex[total_era][bin_type][channel][region][selection][factor] = factor_tex
+                print "Rz with total unc: {0}".format(factor_print)
 
                 # save histograms
                 plot_name = "{0}Normalization_{1}_{2}_{3}".format(self.plot_dir, bin_type, region, selection)
