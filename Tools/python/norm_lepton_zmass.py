@@ -397,7 +397,8 @@ class Normalization:
         header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ \\\\"
         caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors."
         caption += " The \Rz factors from the di-electron and di-muon control regions for the full Run 2 dataset are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
-        caption += " An additional systematic uncertainty is obtained to account for differents in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}."
+        caption += " An additional systematic uncertainty is obtained to account for differences in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}, and the full uncertainty is listed in the last column."
+        caption += " The \Rz value obtained with $\Nb\geq2$ is used for search bins with $\Nb=2$, $\Nb\geq2$, $\Nb\geq3$."
         with open(output_name, "w+") as f:
             self.output_file = f
             
@@ -419,7 +420,10 @@ class Normalization:
             # begin table
             self.writeLine("\\begin{table}")
             self.writeLine("\\begin{center}")
-            self.writeLine("\\caption{%s}" % caption)
+            #self.writeLine("\\caption{%s}" % caption)
+            self.writeLine("\\caption{")
+            self.writeLine(caption)
+            self.writeLine("}")
             self.writeLine("\\label{tab:RZregions}")
             self.writeLine("\\begin{tabular}{%s}" % ( "c" * (2 + len(channelsForTable)) ) )
             self.writeLine(header)
