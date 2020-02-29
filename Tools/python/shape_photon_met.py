@@ -241,9 +241,8 @@ class Shape:
                     photonDataMCNorm = float(nNum) / float(nDen)
                     
                     if self.verbose:
-                        print "{0} {1}: nNum = {2:.3f}, nDen = {3:.3f}, photonDataMCNorm = {4:.3f}".format(era, region, nNum, nDen, photonDataMCNorm)
+                        print "{0} {1} {2} {3}: nNum = {4:.3f}, nDen = {5:.3f}, photonDataMCNorm = {6:.3f}".format(era, bin_type, region, selection, nNum, nDen, photonDataMCNorm)
 
-                    print "{0} {1} {2} {3}: nNum = {4:.3f}, nDen = {5:.3f}, photonDataMCNorm = {6:.3f}".format(era, bin_type, region, selection, nNum, nDen, photonDataMCNorm)
                     h_den_normalized = h_den.Clone("h_den_normalized")
                     h_den_normalized.Scale(photonDataMCNorm)
                         

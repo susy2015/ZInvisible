@@ -617,7 +617,6 @@ class Normalization:
                 self.norm_map[total_era][bin_type][channel][region][selection][factor] = value
                 self.norm_map[total_era][bin_type][channel][region][selection][factor + "_error"] = value_error
                 self.norm_map_tex[total_era][bin_type][channel][region][selection][factor] = factor_tex
-                print "Rz with total unc: {0}".format(factor_print)
 
                 # save histograms
                 plot_name = "{0}Normalization_{1}_{2}_{3}".format(self.plot_dir, bin_type, region, selection)
