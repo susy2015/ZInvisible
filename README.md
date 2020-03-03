@@ -52,16 +52,43 @@ ln -s $CMSSW_BASE/src/PhysicsTools/NanoSUSYTools/data/trigger_eff/*.root .
 
 ## Get Configuration Files
 
+
 Go to the `ZInvisible/Tools` directory and checkout the config files using getTaggerCfg.sh and getStopCfg.sh.
+
+The top tagger implementation has changed between v5 and v6 ntuples. Use the config files described bellow.
+
+Configuration files for using v5 ntuples:
+
 ```
 cd $CMSSW_BASE/src/ZInvisible/Tools
 mkdir ../../myTopTaggerCfgs
 mkdir ../../myStopCfgs
-getTaggerCfg.sh -d ../../myTopTaggerCfgs/ -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2016_V1.1.0 -f TopTagger_2016.cfg -o 
-getTaggerCfg.sh -d ../../myTopTaggerCfgs/ -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2017_V1.1.0 -f TopTagger_2017.cfg -o 
-getTaggerCfg.sh -d ../../myTopTaggerCfgs/ -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2018_V1.1.0 -f TopTagger_2018.cfg -o 
+getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2016_V1.1.0 -d ../../myTopTaggerCfgs/ -f TopTagger_Tensorflow_2016.cfg -o 
+getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2017_V1.1.0 -d ../../myTopTaggerCfgs/ -f TopTagger_Tensorflow_2017.cfg -o 
+getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2018_V1.1.0 -d ../../myTopTaggerCfgs/ -f TopTagger_Tensorflow_2018.cfg -o 
+getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2016_V2.0.0 -d ../../myTopTaggerCfgs/ -f TopTagger_DiscriminatorFilter_2016.cfg -o
+getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2017_V2.0.0 -d ../../myTopTaggerCfgs/ -f TopTagger_DiscriminatorFilter_2017.cfg -o
+getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2018_V2.0.0 -d ../../myTopTaggerCfgs/ -f TopTagger_DiscriminatorFilter_2018.cfg -o
 getStopCfg.sh -d ../../myStopCfgs -t PostProcessed_StopNtuple_v5.0.1 -o
 ```
+
+Configuration files for using v6 ntuples:
+
+```
+cd $CMSSW_BASE/src/ZInvisible/Tools
+mkdir ../../myTopTaggerCfgs
+mkdir ../../myStopCfgs
+getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2016_V1.1.2 -d ../../myTopTaggerCfgs/ -f TopTagger_Tensorflow_2016.cfg -o
+getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2017_V1.1.2 -d ../../myTopTaggerCfgs/ -f TopTagger_Tensorflow_2017.cfg -o
+getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2018_V1.1.2 -d ../../myTopTaggerCfgs/ -f TopTagger_Tensorflow_2018.cfg -o
+getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2016_V2.0.1 -d ../../myTopTaggerCfgs/ -f TopTagger_DiscriminatorFilter_2016.cfg -o
+getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2017_V2.0.1 -d ../../myTopTaggerCfgs/ -f TopTagger_DiscriminatorFilter_2017.cfg -o
+getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2018_V2.0.1 -d ../../myTopTaggerCfgs/ -f TopTagger_DiscriminatorFilter_2018.cfg -o
+getStopCfg.sh -d ../../myStopCfgs -t PostProcessed_StopNtuple_v6.0.0 -o
+```
+
+
+
 
 There are more detailed instructions that you can reference [here](https://github.com/susy2015/SusyAnaTools#get-configuration-files).
 
