@@ -2269,6 +2269,7 @@ int main(int argc, char* argv[])
         SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
         TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
         // baseline selections for photon control region
+        SAT_Pass_Baseline     = ";SAT_Pass_Baseline"    + varSuffix;
         SAT_Pass_lowDM        = ";SAT_Pass_lowDM"       + varSuffix;
         SAT_Pass_lowDM_Tight  = ";SAT_Pass_lowDM_Tight" + varSuffix;
         SAT_Pass_highDM       = ";SAT_Pass_highDM"      + varSuffix;
@@ -2430,6 +2431,10 @@ int main(int argc, char* argv[])
             
             // Data
             // Note: Apply Pass_trigger_photon and Flag_eeBadScFilter to Data but not MC
+            PDS dsData_Photon_Baseline(         "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                        + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_Baseline_nb0(     "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30=0"     + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_Baseline_nb1(     "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30=1"     + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
+            PDS dsData_Photon_Baseline_nbge2(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30>=2"    + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             PDS dsData_Photon_LowDM(        "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                        + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             PDS dsData_Photon_LowDM_nb0(    "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30=0"     + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             PDS dsData_Photon_LowDM_nb1(    "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30>=1"    + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
@@ -2439,6 +2444,10 @@ int main(int argc, char* argv[])
             PDS dsData_Photon_HighDM_nb2(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30=2"     + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             PDS dsData_Photon_HighDM_nb3(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30>=3"    + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             // MC
+            std::vector<std::vector<PDS>> StackMC_Photon_Baseline       = makeStackMC_Photon( "MET_pt<250"                                      + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_Baseline_nb0   = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30=0"   + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_Baseline_nb1   = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30=1"   + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            std::vector<std::vector<PDS>> StackMC_Photon_Baseline_nbge2 = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30>=2"  + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
             std::vector<std::vector<PDS>> StackMC_Photon_LowDM          = makeStackMC_Photon( "MET_pt<250"                                      + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
             std::vector<std::vector<PDS>> StackMC_Photon_LowDM_nb0      = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30=0"   + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
             std::vector<std::vector<PDS>> StackMC_Photon_LowDM_nb1      = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30>=1"  + PhotonIDSelection + SAT_Pass_lowDM         + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
@@ -2447,6 +2456,17 @@ int main(int argc, char* argv[])
             std::vector<std::vector<PDS>> StackMC_Photon_HighDM_nb1     = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30=1"   + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
             std::vector<std::vector<PDS>> StackMC_Photon_HighDM_nb2     = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30=2"   + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
             std::vector<std::vector<PDS>> StackMC_Photon_HighDM_nb3     = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30>=3"  + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
+            
+            // --- Study MET for different Nb --- //
+            // met
+            PDC dcData_Photon_Baseline_met(         "data",   "metWithPhoton", {dsData_Photon_Baseline});
+            PDC dcData_Photon_Baseline_met_nb0(     "data",   "metWithPhoton", {dsData_Photon_Baseline_nb0});
+            PDC dcData_Photon_Baseline_met_nb1(     "data",   "metWithPhoton", {dsData_Photon_Baseline_nb1});
+            PDC dcData_Photon_Baseline_met_nbge2(   "data",   "metWithPhoton", {dsData_Photon_Baseline_nbge2});
+            PDC dcMC_Photon_Baseline_met(           "stack",  "metWithPhoton", StackMC_Photon_Baseline);
+            PDC dcMC_Photon_Baseline_met_nb0(       "stack",  "metWithPhoton", StackMC_Photon_Baseline_nb0);
+            PDC dcMC_Photon_Baseline_met_nb1(       "stack",  "metWithPhoton", StackMC_Photon_Baseline_nb1);
+            PDC dcMC_Photon_Baseline_met_nbge2(     "stack",  "metWithPhoton", StackMC_Photon_Baseline_nbge2);
             
             // n_bottoms
             PDC dcData_Photon_LowDM_nb(  "data",   "nBottoms" + varSuffix, {dsData_Photon_LowDM});
@@ -2608,6 +2628,12 @@ int main(int argc, char* argv[])
 
             const bool doNorm = false;
             
+            // --- Study MET for different Nb --- //
+            vh.push_back(PHS("DataMC_Photon_Baseline_met" + histSuffix,                           {dcData_Photon_Baseline_met,                           dcMC_Photon_Baseline_met},                           {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_Baseline_met_nb0" + histSuffix,                       {dcData_Photon_Baseline_met_nb0,                       dcMC_Photon_Baseline_met_nb0},                       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_Baseline_met_nb1" + histSuffix,                       {dcData_Photon_Baseline_met_nb1,                       dcMC_Photon_Baseline_met_nb1},                       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_Baseline_met_nbge2" + histSuffix,                     {dcData_Photon_Baseline_met_nbge2,                     dcMC_Photon_Baseline_met_nbge2},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
+            // --- Standard Selection --- //
             vh.push_back(PHS("DataMC_Photon_LowDM_nb" + histSuffix,                               {dcData_Photon_LowDM_nb,                               dcMC_Photon_LowDM_nb},                               {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_nb" + histSuffix,                              {dcData_Photon_HighDM_nb,                              dcMC_Photon_HighDM_nb},                              {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_nw" + histSuffix,                               {dcData_Photon_LowDM_nw,                               dcMC_Photon_LowDM_nw},                               {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
