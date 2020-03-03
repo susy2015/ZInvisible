@@ -173,7 +173,8 @@ class Normalization:
         for bin_type in self.bin_types:
             self.norm_map[era][bin_type] = {}
             self.norm_map_tex[era][bin_type] = {}
-            for channel in self.channels:
+            # CombinedTotalUnc is used for Rz table in AN
+            for channel in self.channels + ["CombinedTotalUnc"]:
                 self.norm_map[era][bin_type][channel] = {}
                 self.norm_map_tex[era][bin_type][channel] = {}
                 for region in self.regions:
@@ -388,38 +389,37 @@ class Normalization:
     def makeTable(self, output_name, makeDoc=False):
         era      = "Run2"
         bin_type = "search"
-        # --- for only showing weighted average
-        #channelsForTable    = ["Combined"]
-        #header              = "$\Nb$ & $\Nsv$ & \Rz \\\\"
-        #caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors as well as the final \Rz factors with statistical uncertainties."
-        # --- for showing all values
-        channelsForTable    = self.channels
-        header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ \\\\"
+        channelsForTable    = self.channels + ["CombinedTotalUnc"]
+        header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ & $\\langle \Rz \\rangle$ \\\\"
+        header             += "\n& & & & & (w/ full unc.)\\\\"
         caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors."
-        caption += " The \Rz factors from the di-electron and di-muon control regions for the full Run 2 dataset are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
-        caption += " An additional systematic uncertainty is obtained to account for differents in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}."
+        caption += "\nThe \Rz factors from the di-electron and di-muon control regions for the full Run 2 dataset are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
+        caption += "\nAn additional systematic uncertainty is obtained to account for differences in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}, and the full uncertainty is listed in the last column."
+        caption += "\nThe \Rz value obtained with $\Nb\geq2$ is used for search bins with $\Nb=2$, $\Nb\geq2$, $\Nb\geq3$."
         with open(output_name, "w+") as f:
             self.output_file = f
             
             if makeDoc:
                 # begin document
-                self.writeLine("\documentclass{article}")
-                self.writeLine("\usepackage[utf8]{inputenc}")
-                self.writeLine("\usepackage{geometry}")
-                self.writeLine("\usepackage{longtable}")
+                self.writeLine("\\documentclass{article}")
+                self.writeLine("\\usepackage[utf8]{inputenc}")
+                self.writeLine("\\usepackage{geometry}")
+                self.writeLine("\\usepackage{longtable}")
                 self.writeLine("\\usepackage{xspace}")
                 self.writeLine("\\usepackage{amsmath}")
                 self.writeLine("\\usepackage{graphicx}")
                 self.writeLine("\\usepackage{cancel}")
                 self.writeLine("\\usepackage{amsmath}")
-                self.writeLine("\geometry{margin=1in}")
+                self.writeLine("\\geometry{margin=1in}")
                 self.writeLine("\\input{VariableNames.tex}")
                 self.writeLine("\\begin{document}")
             
             # begin table
             self.writeLine("\\begin{table}")
             self.writeLine("\\begin{center}")
-            self.writeLine("\\caption{%s}" % caption)
+            self.writeLine("\\caption{")
+            self.writeLine(caption)
+            self.writeLine("}")
             self.writeLine("\\label{tab:RZregions}")
             self.writeLine("\\begin{tabular}{%s}" % ( "c" * (2 + len(channelsForTable)) ) )
             self.writeLine(header)
@@ -434,8 +434,8 @@ class Normalization:
             self.writeLine("\\hline")
             self.writeLine("\\multicolumn{2}{c}{high \dm normalization regions} \\\\")
             self.writeLine("\\hline")
+            # Nb = 2 is no longer used
             self.writeLine("1       & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq1"]["R_Z"] for channel in channelsForTable))  ) 
-            self.writeLine("2       & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq2"]["R_Z"] for channel in channelsForTable))  )
             self.writeLine("$\geq$2 & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBge2"]["R_Z"] for channel in channelsForTable))  )
             self.writeLine("\\hline")
             # end table
@@ -452,9 +452,10 @@ class Normalization:
     def makeComparison(self, bin_type):
         doFit = False
         draw_option = "hist error"
+        total_era = "Run2"
         # treat Run2 era differentley
         eras = self.eras
-        if self.eras[-1] == "Run2":
+        if self.eras[-1] == total_era:
             eras  = self.eras[:-1]
         nBins = len(eras)
         
@@ -547,7 +548,7 @@ class Normalization:
                     chisq_fit_r    = chisq_fit / (nBins - 1)
                 
                 chisq_Run2 = h_Combined_Run2.Chi2Test(h_Combined, "WW CHI2")
-                chisq_Run2_r = chisq_Run2 / nBins
+                chisq_Run2_r = chisq_Run2 / (nBins - 1)
                 scale        = np.sqrt(chisq_Run2_r)
                 if scale >= 1.0:
                     final_Run2_total_err = scale * Run2_stat_err
@@ -604,6 +605,18 @@ class Normalization:
                 # save final Rz syst.
                 # WARNING: this needs to be saved separately for validaiton and search bins, otherwise it will be overwritten
                 self.rz_syst_map[bin_type][region][selection] = final_Run2_total_err
+                
+                # save final Rz syst. to norm_map
+                # can be used to print if needed
+                factor      = "R_Z"
+                channel     = "CombinedTotalUnc"
+                value       = self.norm_map[total_era][bin_type]["Combined"][region][selection]["R_Z"] 
+                value_error = final_Run2_total_err
+                factor_print = "{0} = {1:.3f} +/- {2:.3f}".format(factor, value, value_error)
+                factor_tex   = "${0:.3f} \pm {1:.3f}$".format(value, value_error)
+                self.norm_map[total_era][bin_type][channel][region][selection][factor] = value
+                self.norm_map[total_era][bin_type][channel][region][selection][factor + "_error"] = value_error
+                self.norm_map_tex[total_era][bin_type][channel][region][selection][factor] = factor_tex
 
                 # save histograms
                 plot_name = "{0}Normalization_{1}_{2}_{3}".format(self.plot_dir, bin_type, region, selection)

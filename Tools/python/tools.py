@@ -257,6 +257,13 @@ def getAdditionError(dx, dy):
     # dq = sqrt( dx^2 + dy^2 )
     return abs(np.sqrt( dx**2 + dy**2 ))
 
+def getAdditionErrorList(dx_list):
+    # q  = x + y + ...
+    # q  = x - y - ...
+    # dq = sqrt( dx^2 + dy^2 + ... )
+    dx2_list = [dx**2 for dx in dx_list]
+    return abs(np.sqrt(sum(dx2_list)))
+
 def getConstantMultiplicationError(a, dx):
     # a is a constant
     # q  = a * x

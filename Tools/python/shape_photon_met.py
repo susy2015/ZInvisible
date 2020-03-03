@@ -241,9 +241,8 @@ class Shape:
                     photonDataMCNorm = float(nNum) / float(nDen)
                     
                     if self.verbose:
-                        print "{0} {1}: nNum = {2:.3f}, nDen = {3:.3f}, photonDataMCNorm = {4:.3f}".format(era, region, nNum, nDen, photonDataMCNorm)
+                        print "{0} {1} {2} {3}: nNum = {4:.3f}, nDen = {5:.3f}, photonDataMCNorm = {6:.3f}".format(era, bin_type, region, selection, nNum, nDen, photonDataMCNorm)
 
-                    print "{0} {1} {2} {3}: nNum = {4:.3f}, nDen = {5:.3f}, photonDataMCNorm = {6:.3f}".format(era, bin_type, region, selection, nNum, nDen, photonDataMCNorm)
                     h_den_normalized = h_den.Clone("h_den_normalized")
                     h_den_normalized.Scale(photonDataMCNorm)
                         
@@ -518,7 +517,7 @@ class Shape:
             self.writeLine("\\hline")
             self.writeLine("1         &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBeq1"][channel]      )    for channel in channelsForTable)) )
             self.writeLine("1         &   $\geq7$       & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBeq1_NJge7"][channel])    for channel in channelsForTable)) )
-            self.writeLine("2         &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBeq2"][channel]      )    for channel in channelsForTable)) )
+            #self.writeLine("2         &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBeq2"][channel]      )    for channel in channelsForTable)) )
             self.writeLine("$\geq2$   &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBge2"][channel]      )    for channel in channelsForTable)) )
             self.writeLine("$\geq2$   &   $\geq7$       & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBge2_NJge7"][channel])    for channel in channelsForTable)) )
             self.writeLine("\\hline")

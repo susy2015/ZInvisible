@@ -483,10 +483,10 @@ def main():
         r  = "condor/" + d + "/result.root"
         N.getNormAndError(r, e)
         S.getShape(r, e)
+        CRU.getValues(r, e)
         VB.getValues(r, e)
         VB_MS.getValues(r, e)
-        SB.getValues(r, e)
-        CRU.getValues(r, e)
+        SB.getValues(r, e, CRunits=CRU)
     
     for region in regions:
         histo["validation"][region][""]             =  VB.histograms[era][region][variable].Clone()
@@ -512,7 +512,7 @@ def main():
                 # only vary Z nu nu; do not vary Normalization or Shape
                 VB.getValues(       result_file,  era, systTag)
                 VB_MS.getValues(    result_file,  era, systTag)
-                SB.getValues(       result_file,  era, systTag)
+                SB.getValues(       result_file,  era, systTag, CRunits=CRU)
                 
                 for region in regions:
                     histo["validation"][region][direction]          =  VB.histograms[era][region][variable].Clone()
