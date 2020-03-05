@@ -84,7 +84,7 @@ getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2018_V1.1.2 -d ../
 getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2016_V2.0.1 -d ../../myTopTaggerCfgs/ -f TopTagger_DiscriminatorFilter_2016.cfg -o
 getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2017_V2.0.1 -d ../../myTopTaggerCfgs/ -f TopTagger_DiscriminatorFilter_2017.cfg -o
 getTaggerCfg.sh -t DeepCombined_DeepCSV_GR_fromStop0lPostProc_2018_V2.0.1 -d ../../myTopTaggerCfgs/ -f TopTagger_DiscriminatorFilter_2018.cfg -o
-getStopCfg.sh -d ../../myStopCfgs -t PostProcessed_StopNtuple_v6.0.0 -o
+getStopCfg.sh -d ../../myStopCfgs -t PostProcessed_StopNtuple_v6.0.1 -o
 ```
 
 
