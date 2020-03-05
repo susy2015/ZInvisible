@@ -2627,7 +2627,13 @@ int main(int argc, char* argv[])
             }
 
             const bool doNorm = false;
+            std::vector<double> myCRUnitBinEdges = {0.0, 250.0, 300.0, 400.0, 500.0, 1000.0};
+            std::string CRUnitBins_53to56_Cuts = "nBottoms_drPhotonCleaned_jetpt30=1;SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30;nJets_drPhotonCleaned_jetpt30>=7;nResolvedTops_drPhotonCleaned_jetpt30>=1";
+            std::string CRUnitBins_57to60_Cuts = "nBottoms_drPhotonCleaned_jetpt30>=2;SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30;nJets_drPhotonCleaned_jetpt30>=7;nResolvedTops_drPhotonCleaned_jetpt30>=1";
             
+            // --- check CR unit bins 53-60 --- //
+            vh.push_back(PHS("DataMC_Photon_CRUnitBins_53to56" + histSuffix,                      {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2}, CRUnitBins_53to56_Cuts, myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_CRUnitBins_57to60" + histSuffix,                      {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2}, CRUnitBins_57to60_Cuts, myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
             // --- Study MET for different Nb --- //
             vh.push_back(PHS("DataMC_Photon_Baseline_met" + histSuffix,                           {dcData_Photon_Baseline_met,                           dcMC_Photon_Baseline_met},                           {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
             vh.push_back(PHS("DataMC_Photon_Baseline_met_nb0" + histSuffix,                       {dcData_Photon_Baseline_met_nb0,                       dcMC_Photon_Baseline_met_nb0},                       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
