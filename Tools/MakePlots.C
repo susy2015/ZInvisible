@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     bool runOnCondor            = false;
     bool unblind                = false;
     bool doLooseAndMid          = false;    // hi angel
-    bool doSystematics          = false;    // hi caleb
+    bool doSystematics          = true;     // hi caleb
     bool doLeptonSystematics    = false;    // hi caleb
     bool doDataMCElectron       = true;
     bool doDataMCMuon           = true;
@@ -1901,10 +1901,10 @@ int main(int argc, char* argv[])
             PDS dsData_Muon_LowDM_noZMassCut("Data",   fileMap[MuonDataset], "Flag_eeBadScFilter;passMuZinvSel;Pass_trigger_muon" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
             PDS dsData_Muon_HighDM_noZMassCut("Data",  fileMap[MuonDataset], "Flag_eeBadScFilter;passMuZinvSel;Pass_trigger_muon" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
             // with on Z mass peak cut
-            PDS dsData_Muon_Baseline("Data",        fileMap[MuonDataset], "Flag_eeBadScFilter;passElecZinvSelOnZMassPeak;Pass_trigger_muon"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Muon_Baseline_nb0("Data",    fileMap[MuonDataset], "Flag_eeBadScFilter;passElecZinvSelOnZMassPeak;Pass_trigger_muon;nBottoms_drLeptonCleaned_jetpt30=0"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Muon_Baseline_nb1("Data",    fileMap[MuonDataset], "Flag_eeBadScFilter;passElecZinvSelOnZMassPeak;Pass_trigger_muon;nBottoms_drLeptonCleaned_jetpt30=1"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Muon_Baseline_nbge2("Data",  fileMap[MuonDataset], "Flag_eeBadScFilter;passElecZinvSelOnZMassPeak;Pass_trigger_muon;nBottoms_drLeptonCleaned_jetpt30>=2" + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Muon_Baseline("Data",        fileMap[MuonDataset], "Flag_eeBadScFilter;passMuZinvSelOnZMassPeak;Pass_trigger_muon"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Muon_Baseline_nb0("Data",    fileMap[MuonDataset], "Flag_eeBadScFilter;passMuZinvSelOnZMassPeak;Pass_trigger_muon;nBottoms_drLeptonCleaned_jetpt30=0"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Muon_Baseline_nb1("Data",    fileMap[MuonDataset], "Flag_eeBadScFilter;passMuZinvSelOnZMassPeak;Pass_trigger_muon;nBottoms_drLeptonCleaned_jetpt30=1"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Muon_Baseline_nbge2("Data",  fileMap[MuonDataset], "Flag_eeBadScFilter;passMuZinvSelOnZMassPeak;Pass_trigger_muon;nBottoms_drLeptonCleaned_jetpt30>=2" + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
             PDS dsData_Muon_LowDM("Data",           fileMap[MuonDataset], "Flag_eeBadScFilter;passMuZinvSelOnZMassPeak;Pass_trigger_muon"  + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
             PDS dsData_Muon_HighDM("Data",          fileMap[MuonDataset], "Flag_eeBadScFilter;passMuZinvSelOnZMassPeak;Pass_trigger_muon"  + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
             PDS dsData_Muon_LowDM_Loose("Data",     fileMap[MuonDataset], "Flag_eeBadScFilter;passMuZinvSelOnZMassPeak;Pass_trigger_muon"  + SAT_Pass_lowDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
@@ -1913,10 +1913,10 @@ int main(int argc, char* argv[])
             PDS dsData_Muon_HighDM_Mid("Data",      fileMap[MuonDataset], "Flag_eeBadScFilter;passMuZinvSelOnZMassPeak;Pass_trigger_muon"  + SAT_Pass_highDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
             // MC
             // without Z mass cut
-            std::vector<std::vector<PDS>> StackMC_Muon_Baseline                         = makeStackMC_DiLepton(                 "passElecZinvSelOnZMassPeak" + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
-            std::vector<std::vector<PDS>> StackMC_Muon_Baseline_nb0                     = makeStackMC_DiLepton(                 "passElecZinvSelOnZMassPeak;nBottoms_drLeptonCleaned_jetpt30=0"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
-            std::vector<std::vector<PDS>> StackMC_Muon_Baseline_nb1                     = makeStackMC_DiLepton(                 "passElecZinvSelOnZMassPeak;nBottoms_drLeptonCleaned_jetpt30=1"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
-            std::vector<std::vector<PDS>> StackMC_Muon_Baseline_nbge2                   = makeStackMC_DiLepton(                 "passElecZinvSelOnZMassPeak;nBottoms_drLeptonCleaned_jetpt30>=2" + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
+            std::vector<std::vector<PDS>> StackMC_Muon_Baseline                         = makeStackMC_DiLepton(                 "passMuZinvSelOnZMassPeak" + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
+            std::vector<std::vector<PDS>> StackMC_Muon_Baseline_nb0                     = makeStackMC_DiLepton(                 "passMuZinvSelOnZMassPeak;nBottoms_drLeptonCleaned_jetpt30=0"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
+            std::vector<std::vector<PDS>> StackMC_Muon_Baseline_nb1                     = makeStackMC_DiLepton(                 "passMuZinvSelOnZMassPeak;nBottoms_drLeptonCleaned_jetpt30=1"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
+            std::vector<std::vector<PDS>> StackMC_Muon_Baseline_nbge2                   = makeStackMC_DiLepton(                 "passMuZinvSelOnZMassPeak;nBottoms_drLeptonCleaned_jetpt30>=2" + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
             std::vector<std::vector<PDS>> StackMC_Muon_LowDM_noZMassCut                 = makeStackMC_DiLepton(                 "passMuZinvSel" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
             std::vector<std::vector<PDS>> StackMC_Muon_HighDM_noZMassCut                = makeStackMC_DiLepton(                 "passMuZinvSel" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
             std::vector<std::vector<PDS>> StackMC_Muon_LowDM_Normalization_noZMassCut   = makeStackMC_DiLepton_Normalization(   "passMuZinvSel" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, MuonWeights);
@@ -3540,23 +3540,23 @@ int main(int argc, char* argv[])
             PDS dsT1tttt_gluino2000_lsp100_nrt0_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=0",  "ResolvedTopTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nrt1_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=1",  "ResolvedTopTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nrt2_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=2",  "ResolvedTopTotalSF_jetpt30");
-            PDS dsT1tttt_gluino2000_lsp100_nrt0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=0",  "");
-            PDS dsT1tttt_gluino2000_lsp100_nrt1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=1",  "");
-            PDS dsT1tttt_gluino2000_lsp100_nrt2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=2",  "");
+            PDS dsT1tttt_gluino2000_lsp100_nrt0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=0",  "Stop0l_ResTopWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nrt1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=1",  "Stop0l_ResTopWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nrt2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=2",  "Stop0l_ResTopWeight");
             // merged top
             PDS dsT1tttt_gluino2000_lsp100_nmt0_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=0",  "MergedTopTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nmt1_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=1",  "MergedTopTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nmt2_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=2",  "MergedTopTotalSF_jetpt30");
-            PDS dsT1tttt_gluino2000_lsp100_nmt0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=0",  "");
-            PDS dsT1tttt_gluino2000_lsp100_nmt1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=1",  "");
-            PDS dsT1tttt_gluino2000_lsp100_nmt2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=2",  "");
+            PDS dsT1tttt_gluino2000_lsp100_nmt0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=0",  "Stop0l_DeepAK8_SFWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nmt1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=1",  "Stop0l_DeepAK8_SFWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nmt2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=2",  "Stop0l_DeepAK8_SFWeight");
             // W
             PDS dsT1tttt_gluino2000_lsp100_nw0_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=0",  "WTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nw1_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=1",  "WTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nw2_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=2",  "WTotalSF_jetpt30");
-            PDS dsT1tttt_gluino2000_lsp100_nw0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=0",  "");
-            PDS dsT1tttt_gluino2000_lsp100_nw1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=1",  "");
-            PDS dsT1tttt_gluino2000_lsp100_nw2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=2",  "");
+            PDS dsT1tttt_gluino2000_lsp100_nw0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=0",  "Stop0l_DeepAK8_SFWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nw1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=1",  "Stop0l_DeepAK8_SFWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nw2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=2",  "Stop0l_DeepAK8_SFWeight");
             // resolved top
             PDC dcMC_T1tttt_met_nrt0_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt0_SATWeight});
             PDC dcMC_T1tttt_met_nrt1_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt1_SATWeight});
