@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     bool runOnCondor            = false;
     bool unblind                = false;
     bool doLooseAndMid          = false;    // hi angel
-    bool doSystematics          = false;    // hi caleb
+    bool doSystematics          = true;     // hi caleb
     bool doLeptonSystematics    = false;    // hi caleb
     bool doDataMCElectron       = true;
     bool doDataMCMuon           = true;
