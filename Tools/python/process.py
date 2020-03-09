@@ -28,6 +28,9 @@ def process():
     no_plots    = options.no_plots
     plot_only   = options.plot_only
     verbose     = options.verbose
+
+    # make combined Run2
+    do_run2 = False
     
     # flag for not making plots
     noPlotFlag  = ""
@@ -85,7 +88,7 @@ def process():
     # ---------------------- # 
 
     # not needed if only making plots 
-    if not plot_only: 
+    if do_run2 and not plot_only: 
         # make directory if it does not exist
         era = "Run2"
         date = re.match("runs/submission_(.*).json", json_file).group(1)
