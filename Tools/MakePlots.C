@@ -2491,6 +2491,12 @@ int main(int argc, char* argv[])
             PDC dcData_Photon_HighDM_nrt( "data",   "nResolvedTops" + varSuffix, {dsData_Photon_HighDM});
             PDC dcMC_Photon_LowDM_nrt(    "stack",  "nResolvedTops" + varSuffix, StackMC_Photon_LowDM);
             PDC dcMC_Photon_HighDM_nrt(   "stack",  "nResolvedTops" + varSuffix, StackMC_Photon_HighDM);
+            
+            // mtb
+            PDC dcData_Photon_LowDM_mtb(                             "data",   "mtb" + varSuffix, {dsData_Photon_LowDM});
+            PDC dcData_Photon_HighDM_mtb(                            "data",   "mtb" + varSuffix, {dsData_Photon_HighDM});
+            PDC dcMC_Photon_LowDM_mtb(                               "stack",  "mtb" + varSuffix, StackMC_Photon_LowDM);
+            PDC dcMC_Photon_HighDM_mtb(                              "stack",  "mtb" + varSuffix, StackMC_Photon_HighDM);
 
             // n_jets
             PDC dcData_Photon_LowDM_nj(                              "data",   "nJets" + varSuffix, {dsData_Photon_LowDM});
@@ -2626,6 +2632,7 @@ int main(int argc, char* argv[])
                 dcVecMC_Photon_HighDM_dPhi.push_back(        PDC("stack", var, StackMC_Photon_HighDM));
             }
 
+
             const bool doNorm = false;
             std::vector<double> myCRUnitBinEdges = {0.0, 250.0, 300.0, 400.0, 500.0, 1000.0};
             std::string CRUnitBins_53to56_basic_Cuts    = "nBottoms_drPhotonCleaned_jetpt30=1;nJets_drPhotonCleaned_jetpt30>=7";
@@ -2670,6 +2677,8 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_HighDM_nj_nb1" + histSuffix,                          {dcData_Photon_HighDM_nj_nb1,                          dcMC_Photon_HighDM_nj_nb1},                          {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_nj_nb2" + histSuffix,                          {dcData_Photon_HighDM_nj_nb2,                          dcMC_Photon_HighDM_nj_nb2},                          {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_nj_nb3" + histSuffix,                          {dcData_Photon_HighDM_nj_nb3,                          dcMC_Photon_HighDM_nj_nb3},                          {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+            vh.push_back(PHS("DataMC_Photon_LowDM_mtb" + histSuffix,                              {dcData_Photon_LowDM_mtb,                              dcMC_Photon_LowDM_mtb},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_mtb" + histSuffix,                             {dcData_Photon_HighDM_mtb,                             dcMC_Photon_HighDM_mtb},                             {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_ht" + histSuffix,                               {dcData_Photon_LowDM_ht,                               dcMC_Photon_LowDM_ht},                               {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_ht" + histSuffix,                         {dcData_Photon_LowDM_Tight_ht,                         dcMC_Photon_LowDM_Tight_ht},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_ht" + histSuffix,                              {dcData_Photon_HighDM_ht,                              dcMC_Photon_HighDM_ht},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
