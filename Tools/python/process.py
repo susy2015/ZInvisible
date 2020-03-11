@@ -1,19 +1,24 @@
 # process.py
 
+import shutil
 import subprocess
 import argparse
 import json
 import os
 import re
 
-def removeFiles(folder):
+def removeContent(folder):
     for f in os.listdir(folder):
         path = os.path.join(folder, f)
         try:
-            if os.path.isfile(path):
+            # remove files in folder
+            if os.path.isfile(path) or os.path.islink(path):
                 os.unlink(path)
+            # remove subfolders
+            elif os.path.isdir(path):
+                shutil.rmtree(path)
         except Exception as e:
-            print e
+            print "Failed to delete {0}. Exception: {1}".format(path, e)
 
 def process():
     # options
@@ -46,7 +51,7 @@ def process():
 
     # remove plots if they exist
     folder = "plots"
-    removeFiles(folder)
+    removeContent(folder)
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
