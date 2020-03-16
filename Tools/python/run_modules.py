@@ -141,8 +141,9 @@ def main():
     CRunits.getZvsPhotonSyst(   Syst.h_map_syst,                            "ZvsPhotonSyst_CRUnitBins.root")
 
     if doUnits:
-        # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
-        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + total_era + ".json", CRunits, SRunits, SB, total_era)
+        for era in eras:
+            # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
+            saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + era + ".json", CRunits, SRunits, SB, era)
 
 
 if __name__ == "__main__":
