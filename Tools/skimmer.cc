@@ -8,8 +8,7 @@
 
 int main(int argc, char *argv[])
 {
-    //gROOT->Reset();
-    
+    int verbose = 1;
     // TTGJets_2018 files:
     // root://cmseos.fnal.gov//store/user/lpcsusyhad/Stop_production/Autumn18_102X_v1/PostProcessed_22March2019_v6/TTGJets_2018/TTGJets_2018_0.root
     // root://cmseos.fnal.gov//store/user/lpcsusyhad/Stop_production/Autumn18_102X_v1/PostProcessed_22March2019_v6/TTGJets_2018/TTGJets_2018_1.root
@@ -22,9 +21,7 @@ int main(int argc, char *argv[])
     //Get old file, old tree and set top branch address
     TFile *oldfile = TFile::Open("root://cmseos.fnal.gov//store/user/lpcsusyhad/Stop_production/Autumn18_102X_v1/PostProcessed_22March2019_v6/TTGJets_2018/TTGJets_2018_0.root");
     TTree *oldtree = (TTree*)oldfile->Get("Events");
-    Int_t nentries = (Int_t)oldtree->GetEntries();
-    
-    std::cout << "nEvents before skimming: " << nentries << std::endl;
+    Int_t oldnentries = (Int_t)oldtree->GetEntries();
     
     // branches
     ULong64_t   event              = 0;
@@ -36,14 +33,23 @@ int main(int argc, char *argv[])
     TFile *newfile = new TFile("TTGJets_2018_0_skimmed.root","recreate");
     TTree *newtree = oldtree->CloneTree(0);
     
-    //for (Int_t i=0;i<nentries; i++) {
-    for (Int_t i=0;i<1000; i++) {
+    //for (Int_t i=0;i<1000; i++) {
+    for (Int_t i=0;i<oldnentries; i++) {
         oldtree->GetEntry(i);
         if (Stop0l_nResolved >= 2)
         if (true)
         {
-            printf("i = %d, event = %d, Stop0l_nResolved = %d\n", i, event, Stop0l_nResolved);
+            newtree->Fill();
+            if (verbose > 1) printf("i = %d, event = %d, Stop0l_nResolved = %d\n", i, event, Stop0l_nResolved);
         }
+    }
+    
+    Int_t newnentries = (Int_t)newtree->GetEntries();
+    
+    if (verbose > 0)
+    {
+        std::cout << "nEvents before skimming: " << oldnentries << std::endl;
+        std::cout << "nEvents after skimming: "  << newnentries << std::endl;
     }
     
     //newtree->Print();
