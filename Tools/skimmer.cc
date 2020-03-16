@@ -27,8 +27,10 @@ int main(int argc, char *argv[])
     std::cout << "nEvents before skimming: " << nentries << std::endl;
     
     // branches
-    ULong64_t *event = 0;
+    ULong64_t   event              = 0;
+    int         Stop0l_nResolved   = 0;
     oldtree->SetBranchAddress("event", &event);
+    oldtree->SetBranchAddress("Stop0l_nResolved", &Stop0l_nResolved);
 
     // //Create a new file + a clone of old tree in new file
     TFile *newfile = new TFile("TTGJets_2018_0_skimmed.root","recreate");
@@ -36,8 +38,12 @@ int main(int argc, char *argv[])
     
     //for (Int_t i=0;i<nentries; i++) {
     for (Int_t i=0;i<1000; i++) {
-       oldtree->GetEntry(i);
-       printf("i = %d, event = %d\n", i, event);
+        oldtree->GetEntry(i);
+        if (Stop0l_nResolved >= 2)
+        if (true)
+        {
+            printf("i = %d, event = %d, Stop0l_nResolved = %d\n", i, event, Stop0l_nResolved);
+        }
     }
     
     //newtree->Print();
