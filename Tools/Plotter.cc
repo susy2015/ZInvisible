@@ -469,21 +469,21 @@ void Plotter::createHistsFromTuple()
                 while(tr.getNextEvent())
                 {
                     //Things to run only on first event
-                    if(tr.isFirstEvent())
-                    {
-                        //Initialize the mini tuple branches, needs to be done after first call of tr.getNextEvent()
-                        if(tOut && mtm)
-                        {
-                            try
-                            {
-                                mtm->initBranches(tr);
-                            }
-                            catch(const std::string e)
-                            {
-                                std::cout << "Exception caught in Plotter::createHistsFromTuple(), text follows" << std::endl << e << std::endl;
-                            }
-                        }
-                    }
+                    //if(tr.isFirstEvent())
+                    //{
+                    //    //Initialize the mini tuple branches, needs to be done after first call of tr.getNextEvent()
+                    //    if(tOut && mtm)
+                    //    {
+                    //        try
+                    //        {
+                    //            mtm->initBranches(tr);
+                    //        }
+                    //        catch(const std::string e)
+                    //        {
+                    //            std::cout << "Exception caught in Plotter::createHistsFromTuple(), text follows" << std::endl << e << std::endl;
+                    //        }
+                    //    }
+                    //}
 
                     //If maxEvents_ is set, stop after so many events
                     if(maxEvts_ > 0 && NEvtsTotal > maxEvts_) break;
@@ -530,18 +530,18 @@ void Plotter::createHistsFromTuple()
                     }
 
                     //fill mini tuple
-                    if(tOut && mtm)
-                    {
-                        if(tr.getVar<bool>("passnJetsZinv"))
-                        {
-                            if(file.filePath.find("ZJetsToNuNu_") != std::string::npos || tr.getVar<bool>("passMuZinvSel"))
-                            {
-                                foutTuple_->cd();
-                                mtm->fill();
-                                fout_->cd();
-                            }
-                        }
-                    }
+                    //if(tOut && mtm)
+                    //{
+                    //    if(tr.getVar<bool>("passnJetsZinv"))
+                    //    {
+                    //        if(file.filePath.find("ZJetsToNuNu_") != std::string::npos || tr.getVar<bool>("passMuZinvSel"))
+                    //        {
+                    //            foutTuple_->cd();
+                    //            mtm->fill();
+                    //            fout_->cd();
+                    //        }
+                    //    }
+                    //}
 
                     ++NEvtsTotal;
                 }
