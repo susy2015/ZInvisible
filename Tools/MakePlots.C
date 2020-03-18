@@ -738,13 +738,14 @@ int main(int argc, char* argv[])
         PDS dsQCD(        "QCD",                    fileMap["QCD_Photon" + yearTag],    cuts + ";passQCDSelection",   weights);
         PDS dsWJetsToLNu( "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
         PDS dsTTG(        "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,   weights);
-        PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
+        //PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
         PDS dstW(         "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
         PDS dsRare(       "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
         PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
         PDS dsTTZ(        "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
-        //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
-        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
+        //std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
+        // removed dsTTbar which overlaps with dsTTG:
+        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
         return StackMC;
     };
     // using direct, fake and fragmented photons
@@ -755,13 +756,14 @@ int main(int argc, char* argv[])
     //    PDS dsQCDFake(          "QCD Fake",               fileMap["QCD_Photon" + yearTag],    cuts + ";passPhotonSelectionFake",        weights);
     //    PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts + ";passPhotonSelectionDirect",      weights);
     //    PDS dsWJetsToLNu(       "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
-    //    PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
+    //    //PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
     //    PDS dstW(               "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
     //    PDS dsRare(             "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
     //    PDS dsDiboson(          "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
     //    PDS dsTTZ(              "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
-    //    //std::vector<std::vector<PDS>> stack_gammaMC = {{dsGJets},{dsQCD},{dsWJets},{dsTTG},{dstt2l},{dstW},{dsVV},{dsRare,dsttZ}}; // from MakePhotonPlots.C for reference
     //    std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDFragmented}, {dsQCDFake}, {dsTTG}, {dsWJetsToLNu},  {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
+    //    // removed dsTTbar which overlaps with dsTTG:
+    //    std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
     //    return StackMC;
     //};
 
@@ -2468,6 +2470,40 @@ int main(int argc, char* argv[])
             PDC dcMC_Photon_Baseline_met_nb1(       "stack",  "metWithPhoton", StackMC_Photon_Baseline_nb1);
             PDC dcMC_Photon_Baseline_met_nbge2(     "stack",  "metWithPhoton", StackMC_Photon_Baseline_nbge2);
             
+            // --- nominal: without jet cleaning --- //
+            
+            // n_bottoms
+            PDC dcData_Photon_LowDM_nb_nominal(  "data",   "nBottoms" + JetPtCut, {dsData_Photon_LowDM});
+            PDC dcData_Photon_HighDM_nb_nominal( "data",   "nBottoms" + JetPtCut, {dsData_Photon_HighDM});
+            PDC dcMC_Photon_LowDM_nb_nominal(    "stack",  "nBottoms" + JetPtCut, StackMC_Photon_LowDM);
+            PDC dcMC_Photon_HighDM_nb_nominal(   "stack",  "nBottoms" + JetPtCut, StackMC_Photon_HighDM);
+            
+            // n_mergedTops
+            PDC dcData_Photon_LowDM_nmt_nominal(  "data",   "nMergedTops" + JetPtCut, {dsData_Photon_LowDM});
+            PDC dcData_Photon_HighDM_nmt_nominal( "data",   "nMergedTops" + JetPtCut, {dsData_Photon_HighDM});
+            PDC dcMC_Photon_LowDM_nmt_nominal(    "stack",  "nMergedTops" + JetPtCut, StackMC_Photon_LowDM);
+            PDC dcMC_Photon_HighDM_nmt_nominal(   "stack",  "nMergedTops" + JetPtCut, StackMC_Photon_HighDM);
+            
+            // n_Ws
+            PDC dcData_Photon_LowDM_nw_nominal(  "data",   "nWs" + JetPtCut, {dsData_Photon_LowDM});
+            PDC dcData_Photon_HighDM_nw_nominal( "data",   "nWs" + JetPtCut, {dsData_Photon_HighDM});
+            PDC dcMC_Photon_LowDM_nw_nominal(    "stack",  "nWs" + JetPtCut, StackMC_Photon_LowDM);
+            PDC dcMC_Photon_HighDM_nw_nominal(   "stack",  "nWs" + JetPtCut, StackMC_Photon_HighDM);
+            
+            // n_resolvedTops
+            PDC dcData_Photon_LowDM_nrt_nominal(  "data",   "nResolvedTops" + JetPtCut, {dsData_Photon_LowDM});
+            PDC dcData_Photon_HighDM_nrt_nominal( "data",   "nResolvedTops" + JetPtCut, {dsData_Photon_HighDM});
+            PDC dcMC_Photon_LowDM_nrt_nominal(    "stack",  "nResolvedTops" + JetPtCut, StackMC_Photon_LowDM);
+            PDC dcMC_Photon_HighDM_nrt_nominal(   "stack",  "nResolvedTops" + JetPtCut, StackMC_Photon_HighDM);
+            
+            // n_jets
+            PDC dcData_Photon_LowDM_nj_nominal(  "data",   "nJets" + JetPtCut, {dsData_Photon_LowDM});
+            PDC dcData_Photon_HighDM_nj_nominal( "data",   "nJets" + JetPtCut, {dsData_Photon_HighDM});
+            PDC dcMC_Photon_LowDM_nj_nominal(    "stack",  "nJets" + JetPtCut, StackMC_Photon_LowDM);
+            PDC dcMC_Photon_HighDM_nj_nominal(   "stack",  "nJets" + JetPtCut, StackMC_Photon_HighDM);
+            
+            // --- with jet cleaning --- //
+
             // n_bottoms
             PDC dcData_Photon_LowDM_nb(  "data",   "nBottoms" + varSuffix, {dsData_Photon_LowDM});
             PDC dcData_Photon_HighDM_nb( "data",   "nBottoms" + varSuffix, {dsData_Photon_HighDM});
@@ -2491,6 +2527,12 @@ int main(int argc, char* argv[])
             PDC dcData_Photon_HighDM_nrt( "data",   "nResolvedTops" + varSuffix, {dsData_Photon_HighDM});
             PDC dcMC_Photon_LowDM_nrt(    "stack",  "nResolvedTops" + varSuffix, StackMC_Photon_LowDM);
             PDC dcMC_Photon_HighDM_nrt(   "stack",  "nResolvedTops" + varSuffix, StackMC_Photon_HighDM);
+            
+            // mtb
+            PDC dcData_Photon_LowDM_mtb(                             "data",   "mtb" + varSuffix, {dsData_Photon_LowDM});
+            PDC dcData_Photon_HighDM_mtb(                            "data",   "mtb" + varSuffix, {dsData_Photon_HighDM});
+            PDC dcMC_Photon_LowDM_mtb(                               "stack",  "mtb" + varSuffix, StackMC_Photon_LowDM);
+            PDC dcMC_Photon_HighDM_mtb(                              "stack",  "mtb" + varSuffix, StackMC_Photon_HighDM);
 
             // n_jets
             PDC dcData_Photon_LowDM_nj(                              "data",   "nJets" + varSuffix, {dsData_Photon_LowDM});
@@ -2626,19 +2668,47 @@ int main(int argc, char* argv[])
                 dcVecMC_Photon_HighDM_dPhi.push_back(        PDC("stack", var, StackMC_Photon_HighDM));
             }
 
+
             const bool doNorm = false;
             std::vector<double> myCRUnitBinEdges = {0.0, 250.0, 300.0, 400.0, 500.0, 1000.0};
-            std::string CRUnitBins_53to56_Cuts = "nBottoms_drPhotonCleaned_jetpt30=1;SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30;nJets_drPhotonCleaned_jetpt30>=7;nResolvedTops_drPhotonCleaned_jetpt30>=1";
-            std::string CRUnitBins_57to60_Cuts = "nBottoms_drPhotonCleaned_jetpt30>=2;SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30;nJets_drPhotonCleaned_jetpt30>=7;nResolvedTops_drPhotonCleaned_jetpt30>=1";
+            std::string CRUnitBins_53to56_basic_Cuts            = "nBottoms_drPhotonCleaned_jetpt30=1;nJets_drPhotonCleaned_jetpt30>=7";
+            std::string CRUnitBins_57to60_basic_Cuts            = "nBottoms_drPhotonCleaned_jetpt30>=2;nJets_drPhotonCleaned_jetpt30>=7";
+            std::string CRUnitBins_53to56_lowmtb_Cuts           = "nBottoms_drPhotonCleaned_jetpt30=1;nJets_drPhotonCleaned_jetpt30>=7;SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30";
+            std::string CRUnitBins_57to60_lowmtb_Cuts           = "nBottoms_drPhotonCleaned_jetpt30>=2;nJets_drPhotonCleaned_jetpt30>=7;SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30";
+            std::string CRUnitBins_53to56_lowmtb_nrtge1_Cuts    = "nBottoms_drPhotonCleaned_jetpt30=1;nJets_drPhotonCleaned_jetpt30>=7;SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30;nResolvedTops_drPhotonCleaned_jetpt30>=1";
+            std::string CRUnitBins_57to60_lowmtb_nrtge1_Cuts    = "nBottoms_drPhotonCleaned_jetpt30>=2;nJets_drPhotonCleaned_jetpt30>=7;SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30;nResolvedTops_drPhotonCleaned_jetpt30>=1";
+            std::string CRUnitBins_53to56_lowmtb_nmtge1_Cuts    = "nBottoms_drPhotonCleaned_jetpt30=1;nJets_drPhotonCleaned_jetpt30>=7;SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30;nMergedTops_drPhotonCleaned_jetpt30>=1";
+            std::string CRUnitBins_57to60_lowmtb_nmtge1_Cuts    = "nBottoms_drPhotonCleaned_jetpt30>=2;nJets_drPhotonCleaned_jetpt30>=7;SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30;nMergedTops_drPhotonCleaned_jetpt30>=1";
+            std::string CRUnitBins_53to56_lowmtb_nwge1_Cuts     = "nBottoms_drPhotonCleaned_jetpt30=1;nJets_drPhotonCleaned_jetpt30>=7;SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30;nWs_drPhotonCleaned_jetpt30>=1";
+            std::string CRUnitBins_57to60_lowmtb_nwge1_Cuts     = "nBottoms_drPhotonCleaned_jetpt30>=2;nJets_drPhotonCleaned_jetpt30>=7;SAT_Pass_MTB_LowDM_drPhotonCleaned_jetpt30;nWs_drPhotonCleaned_jetpt30>=1";
             
             // --- check CR unit bins 53-60 --- //
-            vh.push_back(PHS("DataMC_Photon_CRUnitBins_53to56" + histSuffix,                      {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2}, CRUnitBins_53to56_Cuts, myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
-            vh.push_back(PHS("DataMC_Photon_CRUnitBins_57to60" + histSuffix,                      {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2}, CRUnitBins_57to60_Cuts, myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_CRUnitBins_53to56_basic" + histSuffix,                {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2},   CRUnitBins_53to56_basic_Cuts,           myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_CRUnitBins_57to60_basic" + histSuffix,                {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2},   CRUnitBins_57to60_basic_Cuts,           myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_CRUnitBins_53to56_lowmtb" + histSuffix,               {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2},   CRUnitBins_53to56_lowmtb_Cuts,          myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_CRUnitBins_57to60_lowmtb" + histSuffix,               {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2},   CRUnitBins_57to60_lowmtb_Cuts,          myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_CRUnitBins_53to56_lowmtb_nrtge1" + histSuffix,        {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2},   CRUnitBins_53to56_lowmtb_nrtge1_Cuts,   myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_CRUnitBins_57to60_lowmtb_nrtge1" + histSuffix,        {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2},   CRUnitBins_57to60_lowmtb_nrtge1_Cuts,   myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_CRUnitBins_53to56_lowmtb_nmtge1" + histSuffix,        {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2},   CRUnitBins_53to56_lowmtb_nmtge1_Cuts,   myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_CRUnitBins_57to60_lowmtb_nmtge1" + histSuffix,        {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2},   CRUnitBins_57to60_lowmtb_nmtge1_Cuts,   myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_CRUnitBins_53to56_lowmtb_nwge1" + histSuffix,         {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2},   CRUnitBins_53to56_lowmtb_nwge1_Cuts,    myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_CRUnitBins_57to60_lowmtb_nwge1" + histSuffix,         {dcData_Photon_HighDM_met,                             dcMC_Photon_HighDM_met},                             {1, 2},   CRUnitBins_57to60_lowmtb_nwge1_Cuts,    myCRUnitBinEdges,        true, doNorm, label_metWithPhoton, "Events"));
             // --- Study MET for different Nb --- //
             vh.push_back(PHS("DataMC_Photon_Baseline_met" + histSuffix,                           {dcData_Photon_Baseline_met,                           dcMC_Photon_Baseline_met},                           {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
             vh.push_back(PHS("DataMC_Photon_Baseline_met_nb0" + histSuffix,                       {dcData_Photon_Baseline_met_nb0,                       dcMC_Photon_Baseline_met_nb0},                       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
             vh.push_back(PHS("DataMC_Photon_Baseline_met_nb1" + histSuffix,                       {dcData_Photon_Baseline_met_nb1,                       dcMC_Photon_Baseline_met_nb1},                       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
             vh.push_back(PHS("DataMC_Photon_Baseline_met_nbge2" + histSuffix,                     {dcData_Photon_Baseline_met_nbge2,                     dcMC_Photon_Baseline_met_nbge2},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
+            // --- Nominal: without jet cleaning --- //
+            vh.push_back(PHS("DataMC_Photon_LowDM_nb_nominal" + histSuffix,                       {dcData_Photon_LowDM_nb_nominal,                       dcMC_Photon_LowDM_nb_nominal},                       {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nb_nominal" + histSuffix,                      {dcData_Photon_HighDM_nb_nominal,                      dcMC_Photon_HighDM_nb_nominal},                      {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+            vh.push_back(PHS("DataMC_Photon_LowDM_nw_nominal" + histSuffix,                       {dcData_Photon_LowDM_nw_nominal,                       dcMC_Photon_LowDM_nw_nominal},                       {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nw_nominal" + histSuffix,                      {dcData_Photon_HighDM_nw_nominal,                      dcMC_Photon_HighDM_nw_nominal},                      {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+            vh.push_back(PHS("DataMC_Photon_LowDM_nmt_nominal" + histSuffix,                      {dcData_Photon_LowDM_nmt_nominal,                      dcMC_Photon_LowDM_nmt_nominal},                      {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nmt_nominal" + histSuffix,                     {dcData_Photon_HighDM_nmt_nominal,                     dcMC_Photon_HighDM_nmt_nominal},                     {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+            vh.push_back(PHS("DataMC_Photon_LowDM_nrt_nominal" + histSuffix,                      {dcData_Photon_LowDM_nrt_nominal,                      dcMC_Photon_LowDM_nrt_nominal},                      {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nrt_nominal" + histSuffix,                     {dcData_Photon_HighDM_nrt_nominal,                     dcMC_Photon_HighDM_nrt_nominal},                     {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+            vh.push_back(PHS("DataMC_Photon_LowDM_nj_nominal" + histSuffix,                       {dcData_Photon_LowDM_nj_nominal,                       dcMC_Photon_LowDM_nj_nominal},                       {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nj_nominal" + histSuffix,                      {dcData_Photon_HighDM_nj_nominal,                      dcMC_Photon_HighDM_nj_nominal},                      {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
             // --- Standard Selection --- //
             vh.push_back(PHS("DataMC_Photon_LowDM_nb" + histSuffix,                               {dcData_Photon_LowDM_nb,                               dcMC_Photon_LowDM_nb},                               {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_nb" + histSuffix,                              {dcData_Photon_HighDM_nb,                              dcMC_Photon_HighDM_nb},                              {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
@@ -2658,6 +2728,8 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_HighDM_nj_nb1" + histSuffix,                          {dcData_Photon_HighDM_nj_nb1,                          dcMC_Photon_HighDM_nj_nb1},                          {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_nj_nb2" + histSuffix,                          {dcData_Photon_HighDM_nj_nb2,                          dcMC_Photon_HighDM_nj_nb2},                          {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_nj_nb3" + histSuffix,                          {dcData_Photon_HighDM_nj_nb3,                          dcMC_Photon_HighDM_nj_nb3},                          {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
+            vh.push_back(PHS("DataMC_Photon_LowDM_mtb" + histSuffix,                              {dcData_Photon_LowDM_mtb,                              dcMC_Photon_LowDM_mtb},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_mtb" + histSuffix,                             {dcData_Photon_HighDM_mtb,                             dcMC_Photon_HighDM_mtb},                             {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_ht" + histSuffix,                               {dcData_Photon_LowDM_ht,                               dcMC_Photon_LowDM_ht},                               {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_ht" + histSuffix,                         {dcData_Photon_LowDM_Tight_ht,                         dcMC_Photon_LowDM_Tight_ht},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_ht" + histSuffix,                              {dcData_Photon_HighDM_ht,                              dcMC_Photon_HighDM_ht},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
