@@ -121,7 +121,7 @@ class Systematic:
             h_QCD               = root_file.Get( str(variable + "/" + h_map_shape["QCD"]             ) )
         h_WJets             = root_file.Get( str(variable + "/" + h_map_shape["WJets"]           ) )
         h_TTG               = root_file.Get( str(variable + "/" + h_map_shape["TTG"]             ) )
-        h_TTbar             = root_file.Get( str(variable + "/" + h_map_shape["TTbar"]           ) )
+        #h_TTbar             = root_file.Get( str(variable + "/" + h_map_shape["TTbar"]           ) )
         h_tW                = root_file.Get( str(variable + "/" + h_map_shape["tW"]              ) )
         h_Rare              = root_file.Get( str(variable + "/" + h_map_shape["Rare"]            ) )
         
@@ -134,7 +134,7 @@ class Systematic:
             h_mc.Add(h_QCD)
         h_mc.Add(h_WJets)
         h_mc.Add(h_TTG)
-        h_mc.Add(h_TTbar)
+        #h_mc.Add(h_TTbar)
         h_mc.Add(h_tW)
         h_mc.Add(h_Rare)
 

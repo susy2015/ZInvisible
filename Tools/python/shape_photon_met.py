@@ -71,7 +71,7 @@ class Shape:
                             "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "QCD Fakestack",
                             "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "W(l#nu)+jetsstack",
                             "TTG"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}#gamma+jetsstack",
-                            "TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}stack",
+                            #"TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}stack",
                             "tW"                : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "tWstack",
                             "Rare"              : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "Rarestack",
             }
@@ -82,7 +82,7 @@ class Shape:
                             "QCD"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "QCDstack",
                             "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "W(l#nu)+jetsstack",
                             "TTG"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}#gamma+jetsstack",
-                            "TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}stack",
+                            #"TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}stack",
                             "tW"                : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "tWstack",
                             "Rare"              : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "Rarestack",
             }
@@ -195,7 +195,7 @@ class Shape:
                         h_QCD               = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD"]             ) )
                     h_WJets             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["WJets"]           ) )
                     h_TTG               = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTG"]             ) )
-                    h_TTbar             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTbar"]           ) )
+                    #h_TTbar             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTbar"]           ) )
                     h_tW                = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["tW"]              ) )
                     h_Rare              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Rare"]            ) )
                     
@@ -221,7 +221,7 @@ class Shape:
                         h_mc.Add(h_QCD)
                     h_mc.Add(h_WJets)
                     h_mc.Add(h_TTG)
-                    h_mc.Add(h_TTbar)
+                    #h_mc.Add(h_TTbar)
                     h_mc.Add(h_tW)
                     h_mc.Add(h_Rare)
 
@@ -437,7 +437,7 @@ class Shape:
                     h_QCD               = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["QCD"]               ) )
                 h_WJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["WJets"]             ) )
                 h_TTG               = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["TTG"]               ) )
-                h_TTbar             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["TTbar"]             ) )
+                #h_TTbar             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["TTbar"]             ) )
                 h_tW                = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["tW"]                ) )
                 h_Rare              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Rare"]              ) )
                 
@@ -449,7 +449,7 @@ class Shape:
                     h_back = h_QCD.Clone("h_back")
                 h_back.Add(h_WJets)
                 h_back.Add(h_TTG)
-                h_back.Add(h_TTbar)
+                #h_back.Add(h_TTbar)
                 h_back.Add(h_tW)
                 h_back.Add(h_Rare)
 
