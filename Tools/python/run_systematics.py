@@ -197,10 +197,11 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
     # syst_up_total   = sqrt ( sum ( syst_up_i ^2 ) ) 
     # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
     
+    verbose = False
+    useLogNormal    = True
+    total_syst_dir  = "prediction_histos/"
     # histo_tmp[region][direction]
     histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
-    total_syst_dir  = "prediction_histos/"
-    useLogNormal    = True
     
     # --- bins --- #
     f_out = ROOT.TFile(total_syst_dir + bintype + "BinsZinv_syst_" + era + ".root", "recreate")
@@ -225,7 +226,8 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
 
     # bins are list of strings starting at 0
     # loop over regions (lowdm and highdm)
-    print "# --- {0} bin systematics --- #".format(bintype)
+    if verbose:
+        print "# --- {0} bin systematics --- #".format(bintype)
     debug = False
     for region in regions:
         # get histograms for this region
@@ -307,7 +309,8 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
             log_syst_down_total = np.exp(-np.sqrt(log_syst_down_sum)) # Minus sign is needed because this is the *down* ratio
             log_final_up   = log_syst_up_total
             log_final_down = log_syst_down_total
-            print "bin {0}, pred={1}, syst_up={2}, syst_down={3}, log_final_up={4}, log_final_down={5}".format(b_i, p, final_up, final_down, log_final_up, log_final_down)
+            if verbose:
+                print "bin {0}, pred={1}, syst_up={2}, syst_down={3}, log_final_up={4}, log_final_down={5}".format(b_i, p, final_up, final_down, log_final_up, log_final_down)
             if useLogNormal:
                 h_total_syst_up.SetBinContent(     b_i, log_final_up   )
                 h_total_syst_down.SetBinContent(   b_i, log_final_down )
@@ -641,6 +644,7 @@ def main():
             systHistoMap[bintype]["highdm"] = {}
             # --- Rz syst --- #
             # Note: DO NOT apply Rz syst. in CR unit bins
+            # Note: DO NOT apply Z vs Photon syst. in CR unit bins
             if bintype != "controlUnit":
                 f_in = ROOT.TFile(rz_syst_files[bintype], "read")
                 # histogram names
@@ -648,13 +652,13 @@ def main():
                 # rz_syst_high_dm
                 systHistoMap[bintype]["lowdm"]["znunu_rzunc"]  = copy.deepcopy(f_in.Get("rz_syst_low_dm"))
                 systHistoMap[bintype]["highdm"]["znunu_rzunc"] = copy.deepcopy(f_in.Get("rz_syst_high_dm"))
-            # --- Z vs Photon syst --- #
-            f_in = ROOT.TFile(ZvPhoton_syst_files[bintype], "read")
-            # histogram names
-            # ZvsPhoton_syst_low_dm
-            # ZvsPhoton_syst_high_dm
-            systHistoMap[bintype]["lowdm"]["znunu_zgammdiff"]   = copy.deepcopy(f_in.Get("ZvsPhoton_syst_low_dm"))
-            systHistoMap[bintype]["highdm"]["znunu_zgammdiff"]  = copy.deepcopy(f_in.Get("ZvsPhoton_syst_high_dm"))
+                # --- Z vs Photon syst --- #
+                f_in = ROOT.TFile(ZvPhoton_syst_files[bintype], "read")
+                # histogram names
+                # ZvsPhoton_syst_low_dm
+                # ZvsPhoton_syst_high_dm
+                systHistoMap[bintype]["lowdm"]["znunu_zgammdiff"]   = copy.deepcopy(f_in.Get("ZvsPhoton_syst_low_dm"))
+                systHistoMap[bintype]["highdm"]["znunu_zgammdiff"]  = copy.deepcopy(f_in.Get("ZvsPhoton_syst_high_dm"))
 
         # --- Rz syst --- #
         # writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selectionMap = {}, removeCut = "")
@@ -662,15 +666,9 @@ def main():
         writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["lowdm"]["znunu_rzunc"],  "lowdm",  SB.low_dm_start,  searchBinSelectionMap, ["NJ"])
         writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["highdm"]["znunu_rzunc"], "highdm", SB.high_dm_start, searchBinSelectionMap, ["NJ"])
        
-        # TODO: Z vs. Photon syst. should be in search bins instead of CR unit bins 
-
         # --- Z vs Photon syst --- #
         # writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selectionMap = {}, removeCut = "")
         systForConf = systMap["znunu_zgammdiff"]["name"]  
-        # old
-        #writeToConfFromSyst(outFile, unitBinMap, "phocr_gjets", systForConf, systHistoMap["controlUnit"]["lowdm"]["znunu_zgammdiff"],  "lowdm",  CRU.low_dm_start)
-        #writeToConfFromSyst(outFile, unitBinMap, "phocr_gjets", systForConf, systHistoMap["controlUnit"]["highdm"]["znunu_zgammdiff"], "highdm", CRU.high_dm_start)
-        # new
         writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["lowdm"]["znunu_zgammdiff"],  "lowdm",  SB.low_dm_start)
         writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["highdm"]["znunu_zgammdiff"], "highdm", SB.high_dm_start)
 

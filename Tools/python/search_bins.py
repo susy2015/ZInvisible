@@ -761,13 +761,13 @@ class SearchBins(Common):
                 shape_cr_error  = -999
                 # check for 0 data
                 if total_data <= 0:
-                    print "WARNING: Search bin {0}: NO DATA: total_data = {1} and total_mc = {2}".format(b, total_data, total_mc)
+                    print "WARNING: Era: {0} Search bin {1}: NO DATA: total_data = {2} and total_mc = {3}".format(era, b, total_data, total_mc)
                 # avoid dividing by 0
                 if den:
                     # S = sum(data) / (Q * sum(MC))
                     shape_cr = total_data / den
                 else:
-                    print "WARNING: Search bin {0}: NO MC: total_data = {1} and total_mc = {2}".format(b, total_data, total_mc)
+                    print "WARNING: Era: {0} Search bin {1}: NO MC: total_data = {2} and total_mc = {3}".format(era, b, total_data, total_mc)
                 # error propagation
                 # getMultiplicationError(q, x, dx, y, dy)
                 shape_cr_error  = getMultiplicationError(shape_cr, total_data, total_data_error, den, den_error)
