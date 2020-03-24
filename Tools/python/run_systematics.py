@@ -320,8 +320,10 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                         new_value = ERROR_SYST * p
                         print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format(bintype, b, syst, log_syst_down, new_value)
                         log_syst_down = new_value
+                    # sum in quadrature 
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
+                    # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
                     try: 
                         if log_syst_up > 1 or log_syst_down < 1:
                             log_syst_up_sum     += np.log(log_syst_up)**2
@@ -458,9 +460,6 @@ def run(era, eras, runs_json, syst_json, verbose):
     searchBinMap = invert(masterBinMap["binNum"])
     unitBinMap   = invert(masterBinMap["unitCRNum"]["phocr"])
 
-    #era             = "Run2"
-    #eras            = ["2016", "2017", "2018", "Run2"]
-    #eras            = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
     runDir          = runMap[era]
     result_file     = "condor/" + runDir + "/result.root"
     conf_file       = "datacard_inputs/zinv_syst_" + era + ".conf"
