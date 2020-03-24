@@ -1,4 +1,5 @@
 # run_systematics.py (modified for systematics)
+import warnings
 import copy
 import numpy as np
 import json
@@ -9,6 +10,10 @@ from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from search_bins import  ValidationBins, ValidationBinsMETStudy, SearchBins, CRUnitBins
 from tools import invert, setupHist, stringifyMap, removeCuts
+
+# set numpy to provide warnings instead of just printing errors
+np.seterr(all='warn')
+warnings.filterwarnings('error')
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
@@ -278,12 +283,15 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                     # Sum (the square of the log of) all the ratios that are greater than 1
                     # Sum (the square of the log of) all the ratios that are less than 1
                     # Then at the end, take the exponential of the square root of each sum to get the total systematic ratio
-                    if log_syst_up > 1 or log_syst_down < 1:
-                        log_syst_up_sum     += np.log(log_syst_up)**2
-                        log_syst_down_sum   += np.log(log_syst_down)**2
-                    else:
-                        log_syst_up_sum     += np.log(log_syst_down)**2
-                        log_syst_down_sum   += np.log(log_syst_up)**2
+                    try: 
+                        if log_syst_up > 1 or log_syst_down < 1:
+                            log_syst_up_sum     += np.log(log_syst_up)**2
+                            log_syst_down_sum   += np.log(log_syst_down)**2
+                        else:
+                            log_syst_up_sum     += np.log(log_syst_down)**2
+                            log_syst_down_sum   += np.log(log_syst_up)**2
+                    except:
+                        print "ERROR for np.log(): log_syst_up = {0} and log_syst_down = {1}".format(log_syst_up, log_syst_down)
                 # syst from root file
                 #systHistoMap[bintype][region][syst]
                 for syst in systHistoMap[bintype][region]:
@@ -295,12 +303,15 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                     log_syst_down   = 1.0 - error
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
-                    if log_syst_up > 1 or log_syst_down < 1:
-                        log_syst_up_sum     += np.log(log_syst_up)**2
-                        log_syst_down_sum   += np.log(log_syst_down)**2
-                    else:
-                        log_syst_up_sum     += np.log(log_syst_down)**2
-                        log_syst_down_sum   += np.log(log_syst_up)**2
+                    try: 
+                        if log_syst_up > 1 or log_syst_down < 1:
+                            log_syst_up_sum     += np.log(log_syst_up)**2
+                            log_syst_down_sum   += np.log(log_syst_down)**2
+                        else:
+                            log_syst_up_sum     += np.log(log_syst_down)**2
+                            log_syst_down_sum   += np.log(log_syst_up)**2
+                    except:
+                        print "ERROR for np.log(): log_syst_up = {0} and log_syst_down = {1}".format(log_syst_up, log_syst_down)
             syst_up_total   = np.sqrt(syst_up_sum)
             syst_down_total = np.sqrt(syst_down_sum)
             final_up   = 1.0 + syst_up_total
@@ -373,19 +384,9 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
     f_out.Close()
 
 
-def main():
-    # options
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--runs_json",    "-j", default="",                             help="json file containing runs")
-    parser.add_argument("--syst_json",    "-s", default="",                             help="json file containing systematics")
-    parser.add_argument("--verbose",      "-v", default = False, action = "store_true", help="verbose flag to print more things")
-    
-    options                     = parser.parse_args()
+def run(era, eras, runs_json, syst_json, verbose):
     units_json                  = "dc_BkgPred_BinMaps_master.json"
     searchbin_selection_json    = "search_bins_v4.json"
-    runs_json                   = options.runs_json
-    syst_json                   = options.syst_json
-    verbose                     = options.verbose
     # Note: DO NOT apply Rz syst. in CR unit bins
     rz_syst_files   = {}
     rz_syst_files["validation"]         = "RzSyst_ValidationBins.root"
@@ -438,9 +439,9 @@ def main():
     searchBinMap = invert(masterBinMap["binNum"])
     unitBinMap   = invert(masterBinMap["unitCRNum"]["phocr"])
 
+    #era             = "Run2"
+    #eras            = ["2016", "2017", "2018", "Run2"]
     #eras            = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
-    eras            = ["2016", "2017", "2018", "Run2"]
-    era             = "Run2"
     runDir          = runMap[era]
     result_file     = "condor/" + runDir + "/result.root"
     conf_file       = "datacard_inputs/zinv_syst_" + era + ".conf"
@@ -451,8 +452,11 @@ def main():
     directions      = ["up", "", "down"]
     bintypes        = ["validation", "validationMetStudy", "search", "controlUnit_gjets", "controlUnit_back"]
     # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
-    systematics_znunu  = ["pdf", "metres", "jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
-    systematics_phocr  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
+    systematics_znunu  = ["pdf", "metres", "jes","btag","pileup","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig"]
+    systematics_phocr  = ["photon_sf", "jes","btag","pileup","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig"]
+    if era != "2018":
+        systematics_znunu.append("prefire")
+        systematics_phocr.append("prefire")
     systematics = list(set(systematics_znunu)| set(systematics_phocr))
     # Systematics which we don't use: pdf in photon CR, MET uncluster in photon CR, lepton veto SF, ISR weight for ttbar
 
@@ -523,7 +527,7 @@ def main():
                     histo["search"][region][direction]              =  SB.histograms[era][region][variable].Clone()
                     
                     # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
-                    if syst == "prefire":
+                    if era == "Run2" and syst == "prefire":
                         #for e in ["2018_PreHEM", "2018_PostHEM"]:
                         for e in ["2018"]:
                             histo["validation"][region][direction].Add(         VB.histograms[e][region][variable]      )
@@ -588,7 +592,7 @@ def main():
                     histo["controlUnit_back"][region][direction]    =  CRU.histograms[era][region]["mc_back"].Clone()
                     
                     # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
-                    if syst == "prefire":
+                    if era == "Run2" and syst == "prefire":
                         #for e in ["2018_PreHEM", "2018_PostHEM"]:
                         for e in ["2018"]:
                             histo["controlUnit_gjets"][region][direction].Add( CRU.histograms[e][region]["mc_gjets"] )
@@ -690,6 +694,23 @@ def main():
     getTotalSystematics(SB,     "search",               systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
     # CR unit bin not supported
 
+def main():
+    # options
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--runs_json",    "-j", default="",                             help="json file containing runs")
+    parser.add_argument("--syst_json",    "-s", default="",                             help="json file containing systematics")
+    parser.add_argument("--verbose",      "-v", default = False, action = "store_true", help="verbose flag to print more things")
+    
+    options                     = parser.parse_args()
+    runs_json                   = options.runs_json
+    syst_json                   = options.syst_json
+    verbose                     = options.verbose
+    
+    #eras            = ["2016", "2017", "2018", "Run2"]
+    eras            = ["2018"]
+    for era in eras:
+        # run(era, eras, runs_json, syst_json, verbose):
+        run(era, eras, runs_json, syst_json, verbose)
 
 
 if __name__ == "__main__":
