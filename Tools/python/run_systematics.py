@@ -207,7 +207,8 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
     total_syst_dir  = "prediction_histos/"
     # histo_tmp[region][direction]
     histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
-    
+    ERROR_SYST = 0.9
+
     # --- bins --- #
     f_out = ROOT.TFile(total_syst_dir + bintype + "BinsZinv_syst_" + era + ".root", "recreate")
     h_syst_up_lowdm     = ROOT.TH1F("syst_up_lowdm",    "syst_up_lowdm",    BinObject.low_dm_nbins,  BinObject.low_dm_start,  BinObject.low_dm_end  + 1)
@@ -272,11 +273,11 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                     log_syst_down   = p_down / p
                     # avoid taking log of negative number or 0
                     if log_syst_up <= 0:
-                        print "WARNING: For syst {0} log_syst_up = {1}. Setting log_syst_up = 0.01.".format(syst, log_syst_up)
-                        log_syst_up = 0.01
+                        print "WARNING: For syst {0} log_syst_up = {1}. Setting log_syst_up = {2}.".format(syst, log_syst_up, ERROR_SYST)
+                        log_syst_up = ERROR_SYST
                     if log_syst_down <= 0:
-                        print "WARNING: For syst {0} log_syst_down = {1}. Setting log_syst_down = 0.01.".format(syst, log_syst_down)
-                        log_syst_down = 0.01
+                        print "WARNING: For syst {0} log_syst_down = {1}. Setting log_syst_down = {2}.".format(syst, log_syst_down, ERROR_SYST)
+                        log_syst_down = ERROR_SYST
                     # sum in quadrature 
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
@@ -310,11 +311,11 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                     log_syst_down   = 1.0 - error
                     # avoid taking log of negative number or 0
                     if log_syst_up <= 0:
-                        print "WARNING: For syst {0} log_syst_up = {1}. Setting log_syst_up = 0.01.".format(syst, log_syst_up)
-                        log_syst_up = 0.01
+                        print "WARNING: For syst {0} log_syst_up = {1}. Setting log_syst_up = {2}.".format(syst, log_syst_up, ERROR_SYST)
+                        log_syst_up = ERROR_SYST
                     if log_syst_down <= 0:
-                        print "WARNING: For syst {0} log_syst_down = {1}. Setting log_syst_down = 0.01.".format(syst, log_syst_down)
-                        log_syst_down = 0.01
+                        print "WARNING: For syst {0} log_syst_down = {1}. Setting log_syst_down = {2}.".format(syst, log_syst_down, ERROR_SYST)
+                        log_syst_down = ERROR_SYST
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
                     try: 
