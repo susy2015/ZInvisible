@@ -273,11 +273,13 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                     log_syst_down   = p_down / p
                     # avoid taking log of negative number or 0
                     if log_syst_up <= 0:
-                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_up = {3}. Setting log_syst_up = {4}.".format(bintype, b, syst, log_syst_up, ERROR_SYST)
-                        log_syst_up = ERROR_SYST
+                        new_value = ERROR_SYST * p
+                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_up = {3}. Setting log_syst_up = {4}.".format(bintype, b, syst, log_syst_up, new_value)
+                        log_syst_up = new_value
                     if log_syst_down <= 0:
-                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format(bintype, b, syst, log_syst_down, ERROR_SYST)
-                        log_syst_down = ERROR_SYST
+                        new_value = ERROR_SYST * p
+                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format(bintype, b, syst, log_syst_down, new_value)
+                        log_syst_down = new_value
                     # sum in quadrature 
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
@@ -311,11 +313,13 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                     log_syst_down   = 1.0 - error
                     # avoid taking log of negative number or 0
                     if log_syst_up <= 0:
-                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_up = {3}. Setting log_syst_up = {4}.".format(bintype, b, syst, log_syst_up, ERROR_SYST)
-                        log_syst_up = ERROR_SYST
+                        new_value = ERROR_SYST * p
+                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_up = {3}. Setting log_syst_up = {4}.".format(bintype, b, syst, log_syst_up, new_value)
+                        log_syst_up = new_value
                     if log_syst_down <= 0:
-                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format(bintype, b, syst, log_syst_down, ERROR_SYST)
-                        log_syst_down = ERROR_SYST
+                        new_value = ERROR_SYST * p
+                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format(bintype, b, syst, log_syst_down, new_value)
+                        log_syst_down = new_value
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
                     try: 
