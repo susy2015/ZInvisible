@@ -270,6 +270,13 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                     syst_down       = (p - p_down) / p
                     log_syst_up     = p_up / p
                     log_syst_down   = p_down / p
+                    # avoid taking log of negative number or 0
+                    if log_syst_up <= 0:
+                        print "WARNING: For syst {0} log_syst_up = {1}. Setting log_syst_up = 0.01.".format(syst, log_syst_up)
+                        log_syst_up = 0.01
+                    if log_syst_down <= 0:
+                        print "WARNING: For syst {0} log_syst_down = {1}. Setting log_syst_down = 0.01.".format(syst, log_syst_down)
+                        log_syst_down = 0.01
                     # sum in quadrature 
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
@@ -291,7 +298,7 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                             log_syst_up_sum     += np.log(log_syst_down)**2
                             log_syst_down_sum   += np.log(log_syst_up)**2
                     except:
-                        print "ERROR for np.log(): log_syst_up = {0} and log_syst_down = {1}".format(log_syst_up, log_syst_down)
+                        print "ERROR for np.log(), location 1: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
                 # syst from root file
                 #systHistoMap[bintype][region][syst]
                 for syst in systHistoMap[bintype][region]:
@@ -301,6 +308,13 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                     syst_down       = error  
                     log_syst_up     = 1.0 + error 
                     log_syst_down   = 1.0 - error
+                    # avoid taking log of negative number or 0
+                    if log_syst_up <= 0:
+                        print "WARNING: For syst {0} log_syst_up = {1}. Setting log_syst_up = 0.01.".format(syst, log_syst_up)
+                        log_syst_up = 0.01
+                    if log_syst_down <= 0:
+                        print "WARNING: For syst {0} log_syst_down = {1}. Setting log_syst_down = 0.01.".format(syst, log_syst_down)
+                        log_syst_down = 0.01
                     syst_up_sum     += syst_up**2
                     syst_down_sum   += syst_down**2
                     try: 
@@ -311,7 +325,7 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                             log_syst_up_sum     += np.log(log_syst_down)**2
                             log_syst_down_sum   += np.log(log_syst_up)**2
                     except:
-                        print "ERROR for np.log(): log_syst_up = {0} and log_syst_down = {1}".format(log_syst_up, log_syst_down)
+                        print "ERROR for np.log(), location 2: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
             syst_up_total   = np.sqrt(syst_up_sum)
             syst_down_total = np.sqrt(syst_down_sum)
             final_up   = 1.0 + syst_up_total
