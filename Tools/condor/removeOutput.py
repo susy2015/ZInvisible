@@ -11,7 +11,8 @@ def main():
     for t in tuples:
         d = t[0]
         if d[2:8] == tag:
-            if "logs" in d or "output" in d: 
+            #if "logs" in d or "output" in d: 
+            if "output" in d: 
                 print "Removing {0}".format(d)
                 ## Try to remove tree; if failed show an error using try...except on screen
                 try:
