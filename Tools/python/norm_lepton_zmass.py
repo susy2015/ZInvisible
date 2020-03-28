@@ -28,7 +28,7 @@ class Normalization:
         self.systTag = ""
         # variable is also TDirectoryFile that holds histograms 
         self.variable = "bestRecoZM"
-        self.bin_types  = ["validation", "search"]
+        self.bin_types  = ["validation", "validationMetStudy", "search"]
         self.particles = ["Electron", "Muon"]
         self.channels = self.particles + ["Combined"]
         self.factors = ["R_Z", "R_T"]
@@ -41,6 +41,8 @@ class Normalization:
         self.bin_maps = {}
         with open("validation_bins_v3.json", "r") as j:
             self.bin_maps["validation"] = tools.stringifyMap(json.load(j))
+        with open("validation_bins_metStudy.json", "r") as j:
+            self.bin_maps["validationMetStudy"] = tools.stringifyMap(json.load(j))
         with open("search_bins_v4.json", "r") as j:
             self.bin_maps["search"] = tools.stringifyMap(json.load(j))
         
@@ -380,6 +382,68 @@ class Normalization:
             self.writeLine("\end{longtable}")
             # end document
             self.writeLine("\end{document}")
+
+    def makeTable(self, output_name, makeDoc=False):
+        era      = "Run2"
+        bin_type = "search"
+        # --- for only showing weighted average
+        #channelsForTable    = ["Combined"]
+        #header              = "$\Nb$ & $\Nsv$ & \Rz \\\\"
+        #caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors as well as the final \Rz factors with statistical uncertainties."
+        # --- for showing all values
+        channelsForTable    = self.channels
+        header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ \\\\"
+        caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors. "
+        caption += "The \Rz factors from the di-electron and di-muon control regions for the full Run 2 dataset are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
+        with open(output_name, "w+") as f:
+            self.output_file = f
+            
+            if makeDoc:
+                # begin document
+                self.writeLine("\documentclass{article}")
+                self.writeLine("\usepackage[utf8]{inputenc}")
+                self.writeLine("\usepackage{geometry}")
+                self.writeLine("\usepackage{longtable}")
+                self.writeLine("\\usepackage{xspace}")
+                self.writeLine("\\usepackage{amsmath}")
+                self.writeLine("\\usepackage{graphicx}")
+                self.writeLine("\\usepackage{cancel}")
+                self.writeLine("\\usepackage{amsmath}")
+                self.writeLine("\geometry{margin=1in}")
+                self.writeLine("\\input{VariableNames.tex}")
+                self.writeLine("\\begin{document}")
+            
+            # begin table
+            self.writeLine("\\begin{table}")
+            self.writeLine("\\begin{center}")
+            self.writeLine("\\caption{%s}" % caption)
+            self.writeLine("\\label{tab:RZregions}")
+            self.writeLine("\\begin{tabular}{%s}" % ( "c" * (2 + len(channelsForTable)) ) )
+            #self.writeLine("$\Nb$ & $\Nsv$ & \Rz \\\\")
+            self.writeLine(header)
+            self.writeLine("\\hline")
+            self.writeLine("\\multicolumn{2}{c}{low \dm normalization regions} \\\\")
+            self.writeLine("\\hline")
+            self.writeLine("0       &   0       & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
+            self.writeLine("0       &   $\ge$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVge1"]["R_Z"] for channel in channelsForTable)) )
+            self.writeLine("1       &   0       & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
+            self.writeLine("1       &   $\ge$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVge1"]["R_Z"] for channel in channelsForTable)) )
+            self.writeLine("$\ge$2  &   --      & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBge2"]["R_Z"]        for channel in channelsForTable)) )
+            self.writeLine("\\hline")
+            self.writeLine("\\multicolumn{2}{c}{high \dm normalization regions} \\\\")
+            self.writeLine("\\hline")
+            self.writeLine("1      & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq1"]["R_Z"] for channel in channelsForTable))  ) 
+            self.writeLine("2      & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq2"]["R_Z"] for channel in channelsForTable))  )
+            self.writeLine("$\ge$2 & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBge2"]["R_Z"] for channel in channelsForTable))  )
+            self.writeLine("\\hline")
+            # end table
+            self.writeLine("\\end{tabular}")
+            self.writeLine("\\end{center}")
+            self.writeLine("\\end{table}")
+            
+            if makeDoc:
+                # end document
+                self.writeLine("\\end{document}")
 
 
     # make a plot of nomralization (y-axis) vs. era (x-axis) for different selections

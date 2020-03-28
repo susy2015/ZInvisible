@@ -30,11 +30,13 @@ class Shape:
         self.eras = []
         # variable is also TDirectoryFile that holds histograms 
         self.variable   = "metWithPhoton"
-        self.bin_types  = ["validation", "search"]
+        self.bin_types  = ["validation", "validationMetStudy", "search"]
         self.regions    = ["LowDM", "HighDM"]
         self.bin_maps = {}
         with open("validation_bins_v3.json", "r") as j:
             self.bin_maps["validation"] = stringifyMap(json.load(j))
+        with open("validation_bins_metStudy.json", "r") as j:
+            self.bin_maps["validationMetStudy"] = stringifyMap(json.load(j))
         with open("search_bins_v4.json", "r") as j:
             self.bin_maps["search"] = stringifyMap(json.load(j))
         

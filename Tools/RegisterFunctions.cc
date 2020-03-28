@@ -30,50 +30,55 @@ void activateBranches(std::set<std::string>& activeBranches)
 RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool doSystematics, std::string sbEra, std::string year) : RegisterFunctions()
 {            
     // Important: create objects!!
-    myBLV                                       = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "");
-    myBLV_jetpt30                               = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30");
-    myBLV_jetpt30_jesTotalUp                    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_jesTotalUp");
-    myBLV_jetpt30_jesTotalDown                  = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_jesTotalDown");
-    myBLV_jetpt30_METUnClustUp                  = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_METUnClustUp");
-    myBLV_jetpt30_METUnClustDown                = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_METUnClustDown");
-    blv_drLeptonCleaned_jetpt30                 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30");
-    blv_drLeptonCleaned_jetpt30_jesTotalUp      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30_jesTotalUp");
-    blv_drLeptonCleaned_jetpt30_jesTotalDown    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30_jesTotalDown");
-    blv_drPhotonCleaned_jetpt30                 = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30");
-    blv_drPhotonCleaned_jetpt30_jesTotalUp      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30_jesTotalUp");
-    blv_drPhotonCleaned_jetpt30_jesTotalDown    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30_jesTotalDown");
+    myBLV                                           = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "");
+    myBLV_jetpt30                                   = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30");
+    myBLV_jetpt30_jesTotalUp                        = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_jesTotalUp");
+    myBLV_jetpt30_jesTotalDown                      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_jesTotalDown");
+    myBLV_jetpt30_METUnClustUp                      = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_METUnClustUp");
+    myBLV_jetpt30_METUnClustDown                    = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_jetpt30_METUnClustDown");
+    blv_drLeptonCleaned_jetpt30                     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30");
+    blv_drLeptonCleaned_jetpt30_jesTotalUp          = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30_jesTotalUp");
+    blv_drLeptonCleaned_jetpt30_jesTotalDown        = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drLeptonCleaned_jetpt30_jesTotalDown");
+    blv_drPhotonCleaned_jetpt30                     = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30");
+    blv_drPhotonCleaned_jetpt30_jesTotalUp          = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30_jesTotalUp");
+    blv_drPhotonCleaned_jetpt30_jesTotalDown        = new BaselineVessel(*static_cast<NTupleReader*>(nullptr), year, "_drPhotonCleaned_jetpt30_jesTotalDown");
 
-    std::string TopTaggerCfg                    = "TopTagger_" + year +".cfg";
-    getVectors                                  = new GetVectors;
-    cleanedJets                                 = new CleanedJets;
+    //std::string TopTaggerCfg                      = "TopTagger_" + year +".cfg";
+    std::string TopTaggerCfg_Tensorflow             = "TopTagger_Tensorflow_"           + year + ".cfg";
+    std::string TopTaggerCfg_DiscriminatorFilter    = "TopTagger_DiscriminatorFilter_"  + year + ".cfg";
+    getVectors                                      = new GetVectors;
+    cleanedJets                                     = new CleanedJets;
     // RunTopTagger(std::string taggerCfg = "TopTagger.cfg", std::string suffix = "", bool doLeptonCleaning = false, bool doPhotonCleaning = false)
-    runTopTagger                                = new RunTopTagger(TopTaggerCfg, "_jetpt30");
-    runTopTagger_jesTotalUp                     = new RunTopTagger(TopTaggerCfg, "_jetpt30_jesTotalUp");
-    runTopTagger_jesTotalDown                   = new RunTopTagger(TopTaggerCfg, "_jetpt30_jesTotalDown");
-    runTopTagger_drLeptonCleaned                = new RunTopTagger(TopTaggerCfg, "_drLeptonCleaned_jetpt30",                true,  false);
-    runTopTagger_drLeptonCleaned_jesTotalUp     = new RunTopTagger(TopTaggerCfg, "_drLeptonCleaned_jetpt30_jesTotalUp",     true,  false);
-    runTopTagger_drLeptonCleaned_jesTotalDown   = new RunTopTagger(TopTaggerCfg, "_drLeptonCleaned_jetpt30_jesTotalDown",   true,  false);
-    runTopTagger_drPhotonCleaned                = new RunTopTagger(TopTaggerCfg, "_drPhotonCleaned_jetpt30",                false, true);
-    runTopTagger_drPhotonCleaned_jesTotalUp     = new RunTopTagger(TopTaggerCfg, "_drPhotonCleaned_jetpt30_jesTotalUp",     false, true);
-    runTopTagger_drPhotonCleaned_jesTotalDown   = new RunTopTagger(TopTaggerCfg, "_drPhotonCleaned_jetpt30_jesTotalDown",   false, true);
-    gamma                                       = new plotterFunctions::Gamma(year);
-    weights                                     = new plotterFunctions::GenerateWeight;
-    generatePhotonEfficiency                    = new plotterFunctions::GeneratePhotonEfficiency;
-    njWeight                                    = new plotterFunctions::NJetWeight;
-    lepInfo                                     = new plotterFunctions::LepInfo(year);
-    basicLepton                                 = new plotterFunctions::BasicLepton;
-    getSearchBin                                = new plotterFunctions::GetSearchBin("_jetpt30");
-    getSearchBin_jesTotalUp                     = new plotterFunctions::GetSearchBin("_jetpt30_jesTotalUp");
-    getSearchBin_jesTotalDown                   = new plotterFunctions::GetSearchBin("_jetpt30_jesTotalDown");
-    getSearchBin_METUnClustUp                   = new plotterFunctions::GetSearchBin("_jetpt30_METUnClustUp");
-    getSearchBin_METUnClustDown                 = new plotterFunctions::GetSearchBin("_jetpt30_METUnClustDown");
-    getSearchBin_drPhotonCleaned                = new plotterFunctions::GetSearchBin("_drPhotonCleaned_jetpt30");
-    getSearchBin_drPhotonCleaned_jesTotalUp     = new plotterFunctions::GetSearchBin("_drPhotonCleaned_jetpt30_jesTotalUp");
-    getSearchBin_drPhotonCleaned_jesTotalDown   = new plotterFunctions::GetSearchBin("_drPhotonCleaned_jetpt30_jesTotalDown");
-    prepareMiniTupleVars                        = new plotterFunctions::PrepareMiniTupleVars(true);
-    systematicPrep                              = new plotterFunctions::SystematicPrep;
-    systematicCalc                              = new plotterFunctions::SystematicCalc(sbEra);
-    shapeWeights                                = new plotterFunctions::ShapeWeights;
+    runTopTagger                                    = new RunTopTagger(TopTaggerCfg_Tensorflow,          "_jetpt30");
+    runTopTagger_jesTotalUp                         = new RunTopTagger(TopTaggerCfg_Tensorflow,          "_jetpt30_jesTotalUp");
+    runTopTagger_jesTotalDown                       = new RunTopTagger(TopTaggerCfg_Tensorflow,          "_jetpt30_jesTotalDown");
+    //runTopTagger                                    = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_jetpt30");
+    //runTopTagger_jesTotalUp                         = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_jetpt30_jesTotalUp");
+    //runTopTagger_jesTotalDown                       = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_jetpt30_jesTotalDown");
+    runTopTagger_drLeptonCleaned                    = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_drLeptonCleaned_jetpt30",                true,  false);
+    runTopTagger_drLeptonCleaned_jesTotalUp         = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_drLeptonCleaned_jetpt30_jesTotalUp",     true,  false);
+    runTopTagger_drLeptonCleaned_jesTotalDown       = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_drLeptonCleaned_jetpt30_jesTotalDown",   true,  false);
+    runTopTagger_drPhotonCleaned                    = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_drPhotonCleaned_jetpt30",                false, true);
+    runTopTagger_drPhotonCleaned_jesTotalUp         = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_drPhotonCleaned_jetpt30_jesTotalUp",     false, true);
+    runTopTagger_drPhotonCleaned_jesTotalDown       = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_drPhotonCleaned_jetpt30_jesTotalDown",   false, true);
+    gamma                                           = new plotterFunctions::Gamma(year);
+    weights                                         = new plotterFunctions::GenerateWeight;
+    generatePhotonEfficiency                        = new plotterFunctions::GeneratePhotonEfficiency;
+    njWeight                                        = new plotterFunctions::NJetWeight;
+    lepInfo                                         = new plotterFunctions::LepInfo(year);
+    basicLepton                                     = new plotterFunctions::BasicLepton;
+    getSearchBin                                    = new plotterFunctions::GetSearchBin("_jetpt30");
+    getSearchBin_jesTotalUp                         = new plotterFunctions::GetSearchBin("_jetpt30_jesTotalUp");
+    getSearchBin_jesTotalDown                       = new plotterFunctions::GetSearchBin("_jetpt30_jesTotalDown");
+    getSearchBin_METUnClustUp                       = new plotterFunctions::GetSearchBin("_jetpt30_METUnClustUp");
+    getSearchBin_METUnClustDown                     = new plotterFunctions::GetSearchBin("_jetpt30_METUnClustDown");
+    getSearchBin_drPhotonCleaned                    = new plotterFunctions::GetSearchBin("_drPhotonCleaned_jetpt30");
+    getSearchBin_drPhotonCleaned_jesTotalUp         = new plotterFunctions::GetSearchBin("_drPhotonCleaned_jetpt30_jesTotalUp");
+    getSearchBin_drPhotonCleaned_jesTotalDown       = new plotterFunctions::GetSearchBin("_drPhotonCleaned_jetpt30_jesTotalDown");
+    prepareMiniTupleVars                            = new plotterFunctions::PrepareMiniTupleVars(true);
+    systematicPrep                                  = new plotterFunctions::SystematicPrep;
+    systematicCalc                                  = new plotterFunctions::SystematicCalc(sbEra);
+    shapeWeights                                    = new plotterFunctions::ShapeWeights;
 
     doSystematics_ = doSystematics;
     myPDFUnc = new PDFUncertainty();
@@ -134,9 +139,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
 void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
 {
     //register functions with NTupleReader
-    
     // order matters
-    // get photons and leptons
     // use photons and leptons to clean jets
     tr.registerFunction(*getVectors);
     tr.registerFunction(*gamma);
@@ -154,23 +157,20 @@ void RegisterFunctionsNTuple::registerFunctions(NTupleReader& tr)
     tr.registerFunction(*getSearchBin);
     tr.registerFunction(*getSearchBin_drPhotonCleaned);
     
-    // TODO: create JES histograms in MakePlots.C
-    // apply JEC to MC only
-    //if (false)
     if (doSystematics_ && tr.checkBranch("GenJet_pt"))
     {
         tr.registerFunction(*runTopTagger_jesTotalUp);
         tr.registerFunction(*runTopTagger_jesTotalDown);
-        tr.registerFunction(*runTopTagger_drLeptonCleaned_jesTotalUp);
-        tr.registerFunction(*runTopTagger_drLeptonCleaned_jesTotalDown);
+        //tr.registerFunction(*runTopTagger_drLeptonCleaned_jesTotalUp);
+        //tr.registerFunction(*runTopTagger_drLeptonCleaned_jesTotalDown);
         tr.registerFunction(*runTopTagger_drPhotonCleaned_jesTotalUp);
         tr.registerFunction(*runTopTagger_drPhotonCleaned_jesTotalDown);
         tr.registerFunction(*myBLV_jetpt30_jesTotalUp);
         tr.registerFunction(*myBLV_jetpt30_jesTotalDown);
         tr.registerFunction(*myBLV_jetpt30_METUnClustUp);
         tr.registerFunction(*myBLV_jetpt30_METUnClustDown);
-        tr.registerFunction(*blv_drLeptonCleaned_jetpt30_jesTotalUp);
-        tr.registerFunction(*blv_drLeptonCleaned_jetpt30_jesTotalDown);
+        //tr.registerFunction(*blv_drLeptonCleaned_jetpt30_jesTotalUp);
+        //tr.registerFunction(*blv_drLeptonCleaned_jetpt30_jesTotalDown);
         tr.registerFunction(*blv_drPhotonCleaned_jetpt30_jesTotalUp);
         tr.registerFunction(*blv_drPhotonCleaned_jetpt30_jesTotalDown);
         tr.registerFunction(*getSearchBin_jesTotalUp);

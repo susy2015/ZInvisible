@@ -204,71 +204,75 @@ binlist = (
 
 # lookup map for latex labels
 labelMap = {
-    'lowptisr': r'($300\leq\ptisr<500$\,GeV)',
-    'ntgeq1': r'($\nt\geq1$)',
-    'nt2': r'($\nt=2$)',
-    'nivf0': r'($\nsv=0$)',
-    'nivf1': r'($\nsv\geq1$)',
-    'nw2': r'($\nw=2$)',
-    'nj2to5': r'($2\leq\nj\leq5$)',
-    'nb2': r'($\nb\geq2$)',
-    'nbeq2': r'($\nb=2$)',
-    'nb3': r'($\nb\geq3$)',
-    'nb1': r'($\nb=1$)',
-    'nbgeq1': r'($\nb\geq1$)',
-    'nb0': r'($\nb=0$)',
-    'nrt2': r'($\nrt=2$)',
-    'medptisr': r'($\ptisr\geq300$\,GeV)',
-    'highptisr': r'($\ptisr\geq500$\,GeV)',
-    'nj7': r'($\nj\geq7$)',
-    'highptb': r'($\ptb\geq70$\,GeV)',
-    'hm': r'(high \dm)',
-    'nw0': r'($\nw=0$)',
-    'nwgeq1': r'($\nw\geq1$)',
-    'nw1': r'($\nw=1$)',
-    'nrt0': r'($\nrt=0$)',
-    'nrt1': r'($\nrt=1$)',
-    'lowptb': r'($\ptb<40$\,GeV)',
-    'medptb': r'($40<\ptb<70$\,GeV)',
-    'nt0': r'($\nt=0$)',
-    'lm': r'(low \dm)',
-    'lowptb12': r'($\ptbonetwo<80$\,GeV)',
-    'highptb12': r'($\ptbonetwo\geq140$\,GeV)',
-    'lowmtb': r'($\mtb<175$~\GeV)',
-    'highmtb': r'($\mtb\geq175$~\GeV)',
-    'nt1': r'($\nt=1$)',
-    'medptb12': r'($80<\ptbonetwo<140$\,GeV)',
-    'nrtgeq1': r'($\nrt\geq1$)',
-    'nj6': r'($\nj\geq6$)',
-    'nrtntnwgeq2': r'($(\nt+\nrt+\nw)\geq2$)',
-    'nrtntnwgeq3': r'($(\nt+\nrt+\nw)\geq3$)',
-    'htlt1000': r'($\Ht<1000$)',
-    'htgt1000': r'($\Ht\geq1000$)',
-    'ht1000to1500': r'($1000\leq\Ht<1500$)',
-    'htgt1500': r'($\Ht\geq1500$)',
-    'htlt1300': r'($\Ht<1300$)',
-    'htgt1300': r'($\Ht\geq1300$)',
-    'lmNoDPhi': r'(low $\Delta m$)',
-    'hmNoDPhi': r'(high $\Delta m$)',
+    'lowptisr': r'$300\leq\ptisr<500$\,GeV',
+    'ntgeq1': r'$\nt\geq1$',
+    'nt2': r'$\nt=2$',
+    'nivf0': r'$\nsv=0$',
+    'nivf1': r'$\nsv\geq1$',
+    'nw2': r'$\nw=2$',
+    'nj2to5': r'$2\leq\nj\leq5$',
+    'nb2': r'$\nb\geq2$',
+    'nbeq2': r'$\nb=2$',
+    'nb3': r'$\nb\geq3$',
+    'nb1': r'$\nb=1$',
+    'nbgeq1': r'$\nb\geq1$',
+    'nb0': r'$\nb=0$',
+    'nrt2': r'$\nrt=2$',
+    'medptisr': r'$\ptisr\geq300$\,GeV',
+    'highptisr': r'$\ptisr\geq500$\,GeV',
+    'nj7': r'$\nj\geq7$',
+    'highptb': r'$\ptb\geq70$\,GeV',
+    'hm': r'high \dm',
+    'nw0': r'$\nw=0$',
+    'nwgeq1': r'$\nw\geq1$',
+    'nw1': r'$\nw=1$',
+    'nrt0': r'$\nrt=0$',
+    'nrt1': r'$\nrt=1$',
+    'lowptb': r'$\ptb<40$\,GeV',
+    'medptb': r'$40<\ptb<70$\,GeV',
+    'nt0': r'$\nt=0$',
+    'lm': r'low \dm',
+    'lowptb12': r'$\ptbonetwo<80$\,GeV',
+    'highptb12': r'$\ptbonetwo\geq140$\,GeV',
+    'lowmtb': r'$\mtb<175$~\GeV',
+    'highmtb': r'$\mtb\geq175$~\GeV',
+    'nt1': r'$\nt=1$',
+    'medptb12': r'$80<\ptbonetwo<140$\,GeV',
+    'nrtgeq1': r'$\nrt\geq1$',
+    'nj6': r'$\nj\geq6$',
+    'nrtntnwgeq2': r'$\nt+\nrt+\nw\geq2$',
+    'nrtntnwgeq3': r'$\nt+\nrt+\nw\geq3$',
+    'htlt1000': r'$\Ht<1000$',
+    'htgt1000': r'$\Ht\geq1000$',
+    'ht1000to1500': r'$1000\leq\Ht<1500$',
+    'htgt1500': r'$\Ht\geq1500$',
+    'htlt1300': r'$\Ht<1300$',
+    'htgt1300': r'$\Ht\geq1300$',
+    'lmNoDPhi': r'low $\Delta m$',
+    'hmNoDPhi': r'high $\Delta m$',
     'MET': r'',
-    }
+}
 
 
 class Table:
     def __init__(self):
         pass
         
-    def makeYieldTable(self, BinObject, total_era, output="pred_sr.tex"):
+    def makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=0.6):
         ''' Make a Latex-formatted table with each bkg plus unc, total bkg plus unc, and observed data for every bin. '''
-        s  = self.beginDocument()
+        self.size = size
+        s  = ""
+        if makeDoc:
+            s += self.beginDocument()
         s += self.beginTable()
         s += table_header
         s += '\\hline\n'
         s += self.makeTable(BinObject, total_era)
-        s += self.endTable()
-        s += self.endDocument()
-        print '\nprinting yield table...\n'
-        print s
+        #s += self.endTable() # now down in makeTable()
+        if makeDoc:
+            s += self.endDocument()
+        #print '\nprinting yield table...\n'
+        #print s
         with open(output, 'w') as f:
             print >> f, s
 
@@ -299,27 +303,31 @@ class Table:
         '''Add a break between the bins to fit on each page'''
         s  = '\\begin{table}[!h]\n'
         s += '\\begin{center}\n'
-        s += '\\resizebox*{0.6\\textwidth}{!}{\n'
+        s += '\\resizebox*{%.2f\\textwidth}{!}{\n' % self.size
         s += '\\begin{tabular}{|c||c||c|c|c|c|}\n'
         s += '\\hline\n'
         return s
     
-    def endTable(self):
+    def endTable(self, label = "", caption = ""):
         '''Add a break between the bins to fit on each page'''
+        '''Include label and caption'''
         s  = '\\hline\n'
         s += '\\end{tabular}\n'
         s += '}\n'
-        s += '\\caption[]{}\n'
+        s += '\\label{%s}\n' % label
+        s += '\\caption{%s}\n' % caption
         s += '\\end{center}\n'
         s += '\\end{table}\n'
         return s
     
     
     def makeTable(self, BinObject, total_era):
-        ''' Put together the table chunk for the given nj,nb,mtb,nt mega-bin. '''
+        ''' Put together the table chunk for the given nj,nb,mtb,nt,nw,ht mega-bin. '''
         sections=[]
         s=''
-        ibin=0
+        ibin = 0
+        firstBin = ibin
+        lastBin  = ibin
         for bin in binlist: 
             sec, met = bin.lstrip('bin_').rsplit('_', 1)
             met = met.lstrip("pt")
@@ -334,11 +342,26 @@ class Table:
             for value in list(all_values):
                 s += " & {0} ".format(BinObject.binValues[total_era][str(ibin)][value])
             s += ' \\\\ \n'
+            # first increment ibin
             ibin += 1
-            if ibin == 53 or ibin == 94 or ibin == 135:
-                s += self.endTable()
-                s += self.beginTable()
-                s += table_header
+            # now these are bin numbers to begin next table
+            if ibin == 53 or ibin == 94 or ibin == 135 or ibin == 183:
+                # last bin for previous table
+                lastBin = ibin - 1
+                # low/high dm
+                region = "low \dm"
+                if lastBin >= 53:
+                    region = "high \dm"
+                label = "tab:zinvPredToBin{0}".format(lastBin)
+                caption  = "Predition for the Z to invisible background $\\left(\Np\\right)$ in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
+                caption += " The normalization factor \Rz, shape factor \Sg, and number of \znunu MC events \Nmc are also shown for each search bin."
+                caption += " See Eq.~\\ref{eq:zinv_pred}."
+                s += self.endTable(label, caption)
+                if ibin < 183:
+                    # first bin for next table 
+                    firstBin = ibin
+                    s += self.beginTable()
+                    s += table_header
         return s
     
     # formats the prediction nEvents +/- error
@@ -368,23 +391,25 @@ class Table:
     # puts together the bin header for bins of nJets, mtb, nTop (no selection on nB)
     def chunkHeader(self,sec):
         ''' Put together the mega-bin chunk header. '''
+        # felines
         cats = sec.split('_')
-        labs = [labelMap[c] for c in cats]
+        # canines
+        # only include non-empty labels, e.g. MET has not label
+        labs = [labelMap[c] for c in cats if labelMap[c]]
         ncolumn = len(all_values)+2
         s  = '\\hline\n'
         s += '\\multicolumn{'+str(ncolumn)+'}{c}{'
         s += ', '.join(labs)
         s += '} \\\\ \n'
         s += '\\hline\n' 
+        #print "cats: {0}, labs: {1}".format(cats, labs)
+        #print "mega-bin header: {0}".format(s)
         return s
 
 
-
-
 def main():
-    T = Table()
-    # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex")
-    T.makeYieldTable(0, "Run2", "latex_files/zinv_pred_sr.tex")
+    print "Running \"python make_table.py\" directly is not supported."
+    print "Plesae use run_modules.py"  
 
 if __name__ == "__main__":
     main()

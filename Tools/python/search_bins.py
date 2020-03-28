@@ -223,7 +223,7 @@ class Common:
             h_mc_lowdm.SetBinContent(bin_i,     self.binValues[era][b]["mc"])
             h_mc_lowdm.SetBinError(bin_i,       self.binValues[era][b]["mc_error"])
             h_pred_lowdm.SetBinContent(bin_i,   self.binValues[era][b]["pred"])
-            h_pred_lowdm.SetBinError(bin_i,     self.binValues[era][b]["pred_error"])
+            h_pred_lowdm.SetBinError(bin_i,     self.binValues[era][b]["pred_error_mc_only"])
             bin_i += 1
         bin_i = 1
         for b in self.high_dm_bins:
@@ -233,7 +233,7 @@ class Common:
             h_mc_highdm.SetBinContent(bin_i,    self.binValues[era][b]["mc"])
             h_mc_highdm.SetBinError(bin_i,      self.binValues[era][b]["mc_error"])
             h_pred_highdm.SetBinContent(bin_i,  self.binValues[era][b]["pred"])
-            h_pred_highdm.SetBinError(bin_i,    self.binValues[era][b]["pred_error"])
+            h_pred_highdm.SetBinError(bin_i,    self.binValues[era][b]["pred_error_mc_only"])
             bin_i += 1
 
         # histogram map
@@ -356,22 +356,26 @@ class Common:
             # average weight:               avg_w = sigma^2 / p 
             # effective number of events:   N_eff = p / avg_w
             
-            # do not propagate Rz statistical error because total Rz uncertainty will be included in Rz systematic histogram
-            # do not propagate Sgamma statistical error because Higgs Combine will do shape factor for us
-            p       = n * s * m
-            #x_list  = [n, s, m]
-            #dx_list = [n_error, s_error, m_error]
-            #p_error = getMultiplicationErrorList(p, x_list, dx_list)
-            p_error = m_error
+            # For data card and validation bin histograms:
+            # - do not propagate Rz statistical error because total Rz uncertainty will be included in Rz systematic histogram
+            # - do not propagate Sgamma statistical error because Higgs Combine will do shape factor for us
+            p_error_mc_only    = m_error
+            # For prediction table in analysis note:
+            # - propagate Rz and Sg errors
+            p                  = n * s * m
+            x_list             = [n, s, m]
+            dx_list            = [n_error, s_error, m_error]
+            p_error_propagated = getMultiplicationErrorList(p, x_list, dx_list)
+            
             # error < 0.0 due to error code
-            if p_error < 0.0:
-                p_error = ERROR_ZERO 
+            if p_error_propagated < 0.0:
+                p_error_propagated = ERROR_ZERO 
             if p == 0:
                 if self.verbose:
                     print "WARNING: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
                 avg_w   = ERROR_ZERO
             else:
-                avg_w   = (p_error ** 2) / p
+                avg_w   = (p_error_propagated ** 2) / p
             n_eff = p / avg_w
             n_eff_final = int(n_eff)
             if n_eff_final == 0:
@@ -381,22 +385,26 @@ class Common:
             else:
                 avg_w_final = p / n_eff_final
 
-            self.binValues[era][b]["pred"]              = p
-            self.binValues[era][b]["pred_error"]        = p_error
-            self.binValues[era][b]["avg_w"]             = avg_w
-            self.binValues[era][b]["n_eff"]             = n_eff
-            self.binValues[era][b]["avg_w_final"]       = avg_w_final
-            self.binValues[era][b]["n_eff_final"]       = n_eff_final
+            self.binValues[era][b]["pred"]                  = p
+            self.binValues[era][b]["pred_error_mc_only"]    = p_error_mc_only
+            self.binValues[era][b]["pred_error_propagated"] = p_error_propagated
+            self.binValues[era][b]["avg_w"]                 = avg_w
+            self.binValues[era][b]["n_eff"]                 = n_eff
+            self.binValues[era][b]["avg_w_final"]           = avg_w_final
+            self.binValues[era][b]["n_eff_final"]           = n_eff_final
             
             for value in self.values:
-                self.binValues[era][b][value + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(self.binValues[era][b][value], self.binValues[era][b][value + "_error"])
+                error_suffix = "_error"
+                if value == "pred":
+                    error_suffix = "_error_propagated"
+                self.binValues[era][b][value + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(self.binValues[era][b][value], self.binValues[era][b][value + error_suffix])
                 
             for value in ["avg_w", "n_eff", "avg_w_final", "n_eff_final"]:
                 self.binValues[era][b][value + "_tex"] = "${0:.3f}$".format(self.binValues[era][b][value])
 
             if self.verbose:
                 print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
-                            b, n, n_error, s, s_error, m, m_error, p, p_error 
+                            b, n, n_error, s, s_error, m, m_error, p, p_error_propagated 
                         )
 
     # ---------------------------------------------------------------------- #
@@ -579,6 +587,96 @@ class ValidationBins(Common):
         new_file = self.results_dir + "validationBinsZinv_" + era + ".root"
         self.calcPrediction(    new_file, "Validation Bin", "validation", era   )
         self.makeHistos(        new_file, "Validation Bin", "validation", era   )
+        f_in.Close()
+
+# vadliation bins for MET study
+class ValidationBinsMETStudy(Common):
+    def __init__(self, normalization, shape, eras, plot_dir, verbose, draw, saveRootFile):
+        # run parent init function
+        Common.__init__(self)
+        self.N = normalization
+        self.S = shape
+        self.eras = eras
+        self.plot_dir = plot_dir
+        self.verbose = verbose
+        self.draw = draw
+        self.saveRootFile = saveRootFile
+        self.binValues = {}
+        self.histograms = {}
+        self.unblind = True
+        self.low_dm_start  = 0
+        self.low_dm_end    = 3
+        self.high_dm_start = 4
+        self.high_dm_end   = 8
+        self.low_dm_nbins  = self.low_dm_end - self.low_dm_start + 1 
+        self.high_dm_nbins = self.high_dm_end - self.high_dm_start + 1 
+        self.low_dm_bins   = list(str(b) for b in range( self.low_dm_start,   self.low_dm_end + 1)) 
+        self.high_dm_bins  = list(str(b) for b in range( self.high_dm_start,  self.high_dm_end + 1)) 
+        self.all_bins      = self.low_dm_bins + self.high_dm_bins
+        with open("validation_bins_metStudy.json", "r") as j:
+            self.bins = stringifyMap(json.load(j))
+
+    def getValues(self, file_name, era, systTag=""):
+        self.binValues[era] = {}
+        
+        for b in self.all_bins:
+            region      = self.bins[b]["region"]
+            selection   = self.bins[b]["selection"]
+            met         = self.bins[b]["met"]
+            # remove cuts from selection for norm and shape
+            selection_norm  = removeCuts(selection, ["NJ"])
+            selection_shape = removeCuts(selection, ["NSV", "MET"])
+            self.binValues[era][b] = {}
+            self.binValues[era][b]["norm"]        = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z"]
+            self.binValues[era][b]["norm_error"]  = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z_error"]
+            self.binValues[era][b]["shape"]       = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met]
+            self.binValues[era][b]["shape_error"] = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met + "_error"]
+
+        # --- new (for MET study) --- #
+        # "nValidationBinLowDM_METStudy_jetpt30/MET_nValidationBin_LowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30Data MET Validation Bin Low DM MET Studydata"
+        # "nValidationBinHighDM_METStudy_jetpt30/MET_nValidationBin_HighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30Data MET Validation Bin High DM MET Studydata"
+        # "nValidationBinLowDM_METStudy_jetpt30/ZNuNu_nValidationBin_LowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30ZJetsToNuNu Validation Bin Low DM MET Studydata"
+        # "nValidationBinHighDM_METStudy_jetpt30/ZNuNu_nValidationBin_HighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30ZJetsToNuNu Validation Bin High DM MET Studydata"
+
+        # WARNING: only apply systematics to MC, not Data
+        
+        f_in                   = ROOT.TFile(file_name, "read")
+        if (self.unblind):
+            h_data_lowdm           = f_in.Get("nValidationBinLowDM_METStudy_jetpt30/MET_nValidationBin_LowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30Data MET Validation Bin Low DM MET Studydata") 
+            h_data_highdm          = f_in.Get("nValidationBinHighDM_METStudy_jetpt30/MET_nValidationBin_HighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30Data MET Validation Bin High DM MET Studydata")
+        h_mc_lowdm             = f_in.Get("nValidationBinLowDM_METStudy_jetpt30/ZNuNu_nValidationBin_LowDM_METStudy"   + systTag + "_jetpt30nValidationBinLowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30ZJetsToNuNu Validation Bin Low DM MET Studydata")
+        h_mc_highdm            = f_in.Get("nValidationBinHighDM_METStudy_jetpt30/ZNuNu_nValidationBin_HighDM_METStudy" + systTag + "_jetpt30nValidationBinHighDM_METStudy_jetpt30nValidationBinHighDM_METStudy_jetpt30ZJetsToNuNu Validation Bin High DM MET Studydata")
+
+        # Integrate to count number of events. 
+        nDataLowDM  = h_data_lowdm.Integral(1, h_data_lowdm.GetNbinsX()) 
+        nDataHighDM = h_data_highdm.Integral(1, h_data_highdm.GetNbinsX())
+        nMCLowDM    = h_mc_lowdm.Integral(1, h_mc_lowdm.GetNbinsX())
+        nMCHighDM   = h_mc_highdm.Integral(1, h_mc_highdm.GetNbinsX())
+        print " --- Era: {0} --- ".format(era)
+        print "    nDataLowDM = {0}, nDataHighDM = {1}".format(nDataLowDM, nDataHighDM)
+        print "    nMCLowDM = {0},   nMCHighDM = {1}".format(nMCLowDM, nMCHighDM)
+        
+        # bin map
+        b_map = {}
+        b_map["lowdm"]          = self.low_dm_bins
+        b_map["highdm"]         = self.high_dm_bins
+        # histogram map
+        h_map                           = {}
+        h_map["lowdm"]                  = {}
+        h_map["highdm"]                 = {}
+        h_map["lowdm"]["mc"]            = h_mc_lowdm
+        h_map["highdm"]["mc"]           = h_mc_highdm
+        if (self.unblind):
+            h_map["lowdm"]["data"]          = h_data_lowdm
+            h_map["highdm"]["data"]         = h_data_highdm
+        
+        # set bin values 
+        self.setBinValues(b_map, h_map, era)
+
+        # new root file to save validation bin histograms
+        new_file = self.results_dir + "validationBinsMETStudyZinv_" + era + ".root"
+        self.calcPrediction(    new_file, "Validation Bin", "validationMetStudy", era   )
+        self.makeHistos(        new_file, "Validation Bin", "validationMetStudy", era   )
         f_in.Close()
   
 # search bins 

@@ -7,7 +7,7 @@ import os
 import ROOT
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
-from search_bins import  ValidationBins, SearchBins, CRUnitBins
+from search_bins import  ValidationBins, ValidationBinsMETStudy, SearchBins, CRUnitBins
 from tools import invert, setupHist, stringifyMap, removeCuts
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -182,6 +182,194 @@ def symmetrizeSyst(h, h_up, h_down):
                 h_up.SetBinContent(   i, p - diff_symm)
                 h_down.SetBinContent( i, p + diff_symm)
 
+# Total systematics function which can run on validaiton, MET study, search bins, CR unit bins, etc.
+
+def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir):
+    
+    #-------------------------------------------------------
+    # Calculate total systematic up/down
+    #-------------------------------------------------------
+
+    # loop over bins
+    # loop over systematics
+    # syst_up_i       = (p_up - p)   / p
+    # syst_down_i     = (p - p_down) / p
+    # syst_up_total   = sqrt ( sum ( syst_up_i ^2 ) ) 
+    # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
+    
+    # histo_tmp[region][direction]
+    histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
+    total_syst_dir  = "prediction_histos/"
+    useLogNormal    = True
+    
+    # --- bins --- #
+    f_out = ROOT.TFile(total_syst_dir + bintype + "BinsZinv_syst_" + era + ".root", "recreate")
+    h_syst_up_lowdm     = ROOT.TH1F("syst_up_lowdm",    "syst_up_lowdm",    BinObject.low_dm_nbins,  BinObject.low_dm_start,  BinObject.low_dm_end  + 1)
+    h_syst_up_highdm    = ROOT.TH1F("syst_up_highdm",   "syst_up_highdm",   BinObject.high_dm_nbins, BinObject.high_dm_start, BinObject.high_dm_end + 1)
+    h_syst_down_lowdm   = ROOT.TH1F("syst_down_lowdm",  "syst_down_lowdm",  BinObject.low_dm_nbins,  BinObject.low_dm_start,  BinObject.low_dm_end  + 1)
+    h_syst_down_highdm  = ROOT.TH1F("syst_down_highdm", "syst_down_highdm", BinObject.high_dm_nbins, BinObject.high_dm_start, BinObject.high_dm_end + 1)
+    
+    myBinMap = {}
+    myBinMap["lowdm"]   = BinObject.low_dm_bins
+    myBinMap["highdm"]  = BinObject.high_dm_bins
+    # use copy.deepcopy() to avoid modifying original
+    # histo_tmp[region][direction]
+    myHistoMap = copy.deepcopy(histo_tmp)
+    myHistoMap["lowdm"]["up"]       = h_syst_up_lowdm
+    myHistoMap["lowdm"]["down"]     = h_syst_down_lowdm
+    myHistoMap["highdm"]["up"]      = h_syst_up_highdm
+    myHistoMap["highdm"]["down"]    = h_syst_down_highdm
+    
+    h_pred_lowdm    = histo[bintype]["lowdm"][""]
+    h_pred_highdm   = histo[bintype]["highdm"][""]
+
+    # bins are list of strings starting at 0
+    # loop over regions (lowdm and highdm)
+    print "# --- {0} bin systematics --- #".format(bintype)
+    debug = False
+    for region in regions:
+        # get histograms for this region
+        h_total_syst_up   = myHistoMap[region]["up"]
+        h_total_syst_down = myHistoMap[region]["down"]
+
+        # DEBUG
+        if debug:
+            #systHistoMap[bintype][region][syst]
+            for syst in systHistoMap[bintype][region]:
+                nBins = systHistoMap[bintype][region][syst].GetNbinsX()
+                error = systHistoMap[bintype][region][syst].GetBinContent(1)
+                print "DEBUG: {0}, {1}: nBins = {2}, bin 1 error = {3}".format(region, syst, nBins, error)
+        
+        # be careful with bin index, which needs to start at 1 in both lowdm and highdm
+        b_i = 1
+        for b in myBinMap[region]:
+            p = histo[bintype][region][""].GetBinContent(b_i)
+            syst_up_sum        = 0.0
+            syst_down_sum      = 0.0
+            log_syst_up_sum    = 0.0
+            log_syst_down_sum  = 0.0
+            if p != 0:
+                # syst from p, p_up, p_down
+                for syst in systematics_znunu:
+                    # do not apply SB syst in high dm
+                    if region == "highdm" and syst == "eff_sb":
+                        continue
+                    # syst_histo[systemaitc][bintype][region][direction]
+                    h_up    = syst_histo[syst][bintype][region]["up"]
+                    h_down  = syst_histo[syst][bintype][region]["down"]
+                    p_up    = h_up.GetBinContent(b_i)
+                    p_down  = h_down.GetBinContent(b_i)
+                    syst_up         = (p_up - p  ) / p
+                    syst_down       = (p - p_down) / p
+                    log_syst_up     = p_up / p
+                    log_syst_down   = p_down / p
+                    # sum in quadrature 
+                    syst_up_sum     += syst_up**2
+                    syst_down_sum   += syst_down**2
+                    # If both systematics go the same direction, need to symmetrize
+                    # Because all the nuisance parameters are log-normal, symmetrize by dividing by the geometric mean
+                    if ((log_syst_up > 1) and (log_syst_down > 1)) or ((log_syst_up < 1) and (log_syst_down < 1)):
+                        geometric_mean = np.sqrt(log_syst_up * log_syst_down)
+                        log_syst_up   /= geometric_mean
+                        log_syst_down /= geometric_mean
+                    # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
+                    # Sum (the square of the log of) all the ratios that are greater than 1
+                    # Sum (the square of the log of) all the ratios that are less than 1
+                    # Then at the end, take the exponential of the square root of each sum to get the total systematic ratio
+                    if log_syst_up > 1 or log_syst_down < 1:
+                        log_syst_up_sum     += np.log(log_syst_up)**2
+                        log_syst_down_sum   += np.log(log_syst_down)**2
+                    else:
+                        log_syst_up_sum     += np.log(log_syst_down)**2
+                        log_syst_down_sum   += np.log(log_syst_up)**2
+                # syst from root file
+                #systHistoMap[bintype][region][syst]
+                for syst in systHistoMap[bintype][region]:
+                    error = systHistoMap[bintype][region][syst].GetBinContent(b_i)
+                    # symmetric error with up = down
+                    syst_up         = error  
+                    syst_down       = error  
+                    log_syst_up     = 1.0 + error 
+                    log_syst_down   = 1.0 - error
+                    syst_up_sum     += syst_up**2
+                    syst_down_sum   += syst_down**2
+                    if log_syst_up > 1 or log_syst_down < 1:
+                        log_syst_up_sum     += np.log(log_syst_up)**2
+                        log_syst_down_sum   += np.log(log_syst_down)**2
+                    else:
+                        log_syst_up_sum     += np.log(log_syst_down)**2
+                        log_syst_down_sum   += np.log(log_syst_up)**2
+            syst_up_total   = np.sqrt(syst_up_sum)
+            syst_down_total = np.sqrt(syst_down_sum)
+            final_up   = 1.0 + syst_up_total
+            final_down = 1.0 - syst_down_total
+            log_syst_up_total   = np.exp( np.sqrt(log_syst_up_sum))
+            log_syst_down_total = np.exp(-np.sqrt(log_syst_down_sum)) # Minus sign is needed because this is the *down* ratio
+            log_final_up   = log_syst_up_total
+            log_final_down = log_syst_down_total
+            print "bin {0}, pred={1}, syst_up={2}, syst_down={3}, log_final_up={4}, log_final_down={5}".format(b_i, p, final_up, final_down, log_final_up, log_final_down)
+            if useLogNormal:
+                h_total_syst_up.SetBinContent(     b_i, log_final_up   )
+                h_total_syst_down.SetBinContent(   b_i, log_final_down )
+            else:
+                h_total_syst_up.SetBinContent(     b_i, final_up   )
+                h_total_syst_down.SetBinContent(   b_i, final_down )
+            b_i += 1
+        
+        # --- write histograms to file
+        h_total_syst_up.Write()
+        h_total_syst_down.Write()
+
+        #-------------------------------------------------------
+        # Plot total systematic up/down
+        #-------------------------------------------------------
+                    
+        # correct plot
+        mySyst = "total"
+        
+        eraTag = "_" + era
+        draw_option = "hist"
+        # colors
+        color_red    = "vermillion"
+        color_blue   = "electric blue"
+        color_green  = "irish green" 
+        color_purple = "violet"
+        color_black  = "black"
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.6
+        legend_x2 = 0.9 
+        legend_y1 = 0.7
+        legend_y2 = 0.9 
+    
+        c = ROOT.TCanvas("c", "c", 800, 800)
+        name = "{0}_{1}_syst".format(bintype, mySyst)
+        
+        title = "Z to Invisible: " + name + " in " + region + " for " + era
+        x_title = bintype + " bins"
+        setupHist(h_total_syst_up,     title, x_title, "total systematic",  color_red,    0.0, 2.0)
+        setupHist(h_total_syst_down,   title, x_title, "total systematic",  color_blue,   0.0, 2.0)
+        
+        # draw histograms
+        h_total_syst_up.Draw(draw_option)
+        h_total_syst_down.Draw(draw_option + " same")
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        legend.AddEntry(h_total_syst_up,           "syst up",                  "l")
+        legend.AddEntry(h_total_syst_down,         "syst down",                "l")
+        legend.Draw()
+        
+        
+        # save histograms
+        plot_name = out_dir + name + "_" + region + eraTag
+        c.Update()
+        c.SaveAs(plot_name + ".png")
+        del c
+
+    f_out.Close()
+
+
 def main():
     # options
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -197,16 +385,17 @@ def main():
     verbose                     = options.verbose
     # Note: DO NOT apply Rz syst. in CR unit bins
     rz_syst_files   = {}
-    rz_syst_files["validation"]   = "RzSyst_ValidationBins.root"
-    rz_syst_files["search"]       = "RzSyst_SearchBins.root"
+    rz_syst_files["validation"]         = "RzSyst_ValidationBins.root"
+    rz_syst_files["validationMetStudy"] = "RzSyst_ValidationBinsMETStudy.root"
+    rz_syst_files["search"]             = "RzSyst_SearchBins.root"
     # Note: apply Z vs. Photon syst. in CR unit bins
     ZvPhoton_syst_files = {}
-    ZvPhoton_syst_files["validation"]   = "ZvsPhotonSyst_ValidationBins.root"
-    ZvPhoton_syst_files["search"]       = "ZvsPhotonSyst_SearchBins.root" 
-    ZvPhoton_syst_files["controlUnit"]  = "ZvsPhotonSyst_CRUnitBins.root"
+    ZvPhoton_syst_files["validation"]           = "ZvsPhotonSyst_ValidationBins.root"
+    ZvPhoton_syst_files["validationMetStudy"]   = "ZvsPhotonSyst_ValidationBinsMETStudy.root"
+    ZvPhoton_syst_files["search"]               = "ZvsPhotonSyst_SearchBins.root" 
+    ZvPhoton_syst_files["controlUnit"]          = "ZvsPhotonSyst_CRUnitBins.root"
    
     doSymmetrize            = True
-    useLogNormal            = True
     doUnits                 = True
     draw                    = False
     saveRootFile            = False
@@ -253,21 +442,17 @@ def main():
     runDir          = runMap[era]
     result_file     = "condor/" + runDir + "/result.root"
     conf_file       = "datacard_inputs/zinv_syst_" + era + ".conf"
-    total_syst_dir  = "prediction_histos/"
     out_dir         = "syst_plots/" 
     tmp_dir         = "tmp_plots/"
     variable        = "mc"
     regions         = ["lowdm", "highdm"]
     directions      = ["up", "", "down"]
-    bintypes        = ["validation", "search", "controlUnit"]
+    bintypes        = ["validation", "validationMetStudy", "search", "controlUnit"]
     # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
     systematics_znunu  = ["pdf", "metres", "jes","btag","eff_restoptag","eff_sb","eff_toptag","eff_wtag","met_trig","pileup","prefire"]
     systematics_phocr  = ["jes","btag","eff_restoptag_photon","eff_sb_photon","eff_toptag_photon","eff_wtag_photon","photon_trig","pileup","prefire","photon_sf"]
     systematics = list(set(systematics_znunu)| set(systematics_phocr))
-    # TODO. missing systematics: pdf_weight, MET resolution (uncluster), lepton veto SF, ISR_Weight
-
-    # histo_tmp[region][direction]
-    histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
+    # Systematics which we don't use: pdf in photon CR, MET uncluster in photon CR, lepton veto SF, ISR weight for ttbar
 
     # histo[bintype][region][direction]
     histo      = {bintype:{region:dict.fromkeys(directions) for region in regions} for bintype in bintypes} 
@@ -279,11 +464,12 @@ def main():
     # Class instanceses summoning 
     #-------------------------------------------------------
 
-    N   =  Normalization(tmp_dir, verbose)
-    S   =  Shape(tmp_dir, draw, doUnits, verbose)
-    VB  =  ValidationBins(  N, S, eras, tmp_dir, verbose, draw, saveRootFile)
-    SB  =  SearchBins(      N, S, eras, tmp_dir, verbose, draw, saveRootFile)
-    CRU =  CRUnitBins(      N, S, eras, tmp_dir, verbose)
+    N       =  Normalization(           tmp_dir, verbose)
+    S       =  Shape(                   tmp_dir, draw, doUnits, verbose)
+    VB      =  ValidationBins(          N, S, eras, tmp_dir, verbose, draw, saveRootFile)
+    VB_MS   =  ValidationBinsMETStudy(  N, S, eras, tmp_dir, verbose, draw, saveRootFile)
+    SB      =  SearchBins(              N, S, eras, tmp_dir, verbose, draw, saveRootFile)
+    CRU     =  CRUnitBins(              N, S, eras, tmp_dir, verbose)
     
     #-------------------------------------------------------
     # Normal predictions (no systematics) 
@@ -298,13 +484,15 @@ def main():
         N.getNormAndError(r, e)
         S.getShape(r, e)
         VB.getValues(r, e)
+        VB_MS.getValues(r, e)
         SB.getValues(r, e)
         CRU.getValues(r, e)
     
     for region in regions:
-        histo["validation"][region][""]     =  VB.histograms[era][region][variable].Clone()
-        histo["search"][region][""]         =  SB.histograms[era][region][variable].Clone()
-        histo["controlUnit"][region][""]    =  CRU.histograms[era][region]["mc_gjets"].Clone()
+        histo["validation"][region][""]             =  VB.histograms[era][region][variable].Clone()
+        histo["validationMetStudy"][region][""]     =  VB_MS.histograms[era][region][variable].Clone()
+        histo["search"][region][""]                 =  SB.histograms[era][region][variable].Clone()
+        histo["controlUnit"][region][""]            =  CRU.histograms[era][region]["mc_gjets"].Clone()
     
     #-------------------------------------------------------
     # Calculate normalization and shape factors
@@ -323,21 +511,25 @@ def main():
                 # --- calculate variation for this systematic
                 # only vary Z nu nu; do not vary Normalization or Shape
                 VB.getValues(       result_file,  era, systTag)
+                VB_MS.getValues(    result_file,  era, systTag)
                 SB.getValues(       result_file,  era, systTag)
                 
                 for region in regions:
-                    histo["validation"][region][direction]    =  VB.histograms[era][region][variable].Clone()
-                    histo["search"][region][direction]        =  SB.histograms[era][region][variable].Clone()
+                    histo["validation"][region][direction]          =  VB.histograms[era][region][variable].Clone()
+                    histo["validationMetStudy"][region][direction]  =  VB_MS.histograms[era][region][variable].Clone()
+                    histo["search"][region][direction]              =  SB.histograms[era][region][variable].Clone()
                     
                     # fix prefire because it does not have a weight or syst. in 2018, but 2018 hist. was not added
                     if syst == "prefire":
                         #for e in ["2018_PreHEM", "2018_PostHEM"]:
                         for e in ["2018"]:
-                            histo["validation"][region][direction].Add(     VB.histograms[e][region][variable]         )
-                            histo["search"][region][direction].Add(         SB.histograms[e][region][variable]         )
+                            histo["validation"][region][direction].Add(         VB.histograms[e][region][variable]      )
+                            histo["validationMetStudy"][region][direction].Add( VB_MS.histograms[e][region][variable]   )
+                            histo["search"][region][direction].Add(             SB.histograms[e][region][variable]      )
                     
-                    syst_histo[syst]["validation"][region][direction]    = histo["validation"][region][direction]
-                    syst_histo[syst]["search"][region][direction]        = histo["search"][region][direction]
+                    syst_histo[syst]["validation"][region][direction]           = histo["validation"][region][direction]
+                    syst_histo[syst]["validationMetStudy"][region][direction]   = histo["validationMetStudy"][region][direction]
+                    syst_histo[syst]["search"][region][direction]               = histo["search"][region][direction]
             
             #-------------------------------------------------------
             # Symmetrize systematics which are in the same direction
@@ -348,8 +540,9 @@ def main():
                     # symmetrize systematic if up/down variation is in the same direction compared to nominal
                     # modify histograms passed to function
                     # symmetrizeSyst(h, h_up, h_down)
-                    symmetrizeSyst(histo["validation"][region][""],     syst_histo[syst]["validation"][region]["up"],   syst_histo[syst]["validation"][region]["down"])
-                    symmetrizeSyst(histo["search"][region][""],         syst_histo[syst]["search"][region]["up"],       syst_histo[syst]["search"][region]["down"])
+                    symmetrizeSyst(histo["validation"][region][""],         syst_histo[syst]["validation"][region]["up"],           syst_histo[syst]["validation"][region]["down"])
+                    symmetrizeSyst(histo["validationMetStudy"][region][""], syst_histo[syst]["validationMetStudy"][region]["up"],   syst_histo[syst]["validationMetStudy"][region]["down"])
+                    symmetrizeSyst(histo["search"][region][""],             syst_histo[syst]["search"][region]["up"],               syst_histo[syst]["search"][region]["down"])
             
             #-------------------------------------------------------
             # Write to conf
@@ -365,7 +558,7 @@ def main():
             # Plot
             #-------------------------------------------------------
             
-            for bintype in ["validation", "search"]:
+            for bintype in ["validation", "validationMetStudy", "search"]:
                 for region in regions:
                     # run_systematics.plot(h, h_up, h_down, mySyst, bintype, region, era, plot_dir)
                     plot(histo[bintype][region][""], histo[bintype][region]["up"], histo[bintype][region]["down"], syst, bintype, region, era, out_dir)
@@ -468,192 +661,29 @@ def main():
         systForConf = systMap["znunu_rzunc"]["name"]  
         writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["lowdm"]["znunu_rzunc"],  "lowdm",  SB.low_dm_start,  searchBinSelectionMap, ["NJ"])
         writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["highdm"]["znunu_rzunc"], "highdm", SB.high_dm_start, searchBinSelectionMap, ["NJ"])
-        
+       
+        # TODO: Z vs. Photon syst. should be in search bins instead of CR unit bins 
+
         # --- Z vs Photon syst --- #
         # writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selectionMap = {}, removeCut = "")
         systForConf = systMap["znunu_zgammdiff"]["name"]  
-        writeToConfFromSyst(outFile, unitBinMap, "phocr_gjets", systForConf, systHistoMap["controlUnit"]["lowdm"]["znunu_zgammdiff"],  "lowdm",  CRU.low_dm_start)
-        writeToConfFromSyst(outFile, unitBinMap, "phocr_gjets", systForConf, systHistoMap["controlUnit"]["highdm"]["znunu_zgammdiff"], "highdm", CRU.high_dm_start)
+        # old
+        #writeToConfFromSyst(outFile, unitBinMap, "phocr_gjets", systForConf, systHistoMap["controlUnit"]["lowdm"]["znunu_zgammdiff"],  "lowdm",  CRU.low_dm_start)
+        #writeToConfFromSyst(outFile, unitBinMap, "phocr_gjets", systForConf, systHistoMap["controlUnit"]["highdm"]["znunu_zgammdiff"], "highdm", CRU.high_dm_start)
+        # new
+        writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["lowdm"]["znunu_zgammdiff"],  "lowdm",  SB.low_dm_start)
+        writeToConfFromSyst(outFile, searchBinMap, "znunu", systForConf, systHistoMap["search"]["highdm"]["znunu_zgammdiff"], "highdm", SB.high_dm_start)
 
-    #-------------------------------------------------------
-    # Calculate total systematic up/down
-    #-------------------------------------------------------
 
-    # loop over validation bins
-    # loop over systematics
-    # syst_up_i       = (p_up - p)   / p
-    # syst_down_i     = (p - p_down) / p
-    # syst_up_total   = sqrt ( sum ( syst_up_i ^2 ) ) 
-    # syst_down_total = sqrt ( sum ( syst_down_i ^2 ) ) 
+    # Total systematics function which can run on validaiton, MET study, search bins, CR unit bins, etc.
     
-    # --- validation bins ---
-    f_out = ROOT.TFile(total_syst_dir + "validationBinsZinv_syst_" + era + ".root", "recreate")
-    h_syst_up_lowdm     = ROOT.TH1F("syst_up_lowdm",    "syst_up_lowdm",    VB.low_dm_nbins,  VB.low_dm_start,  VB.low_dm_end  + 1)
-    h_syst_up_highdm    = ROOT.TH1F("syst_up_highdm",   "syst_up_highdm",   VB.high_dm_nbins, VB.high_dm_start, VB.high_dm_end + 1)
-    h_syst_down_lowdm   = ROOT.TH1F("syst_down_lowdm",  "syst_down_lowdm",  VB.low_dm_nbins,  VB.low_dm_start,  VB.low_dm_end  + 1)
-    h_syst_down_highdm  = ROOT.TH1F("syst_down_highdm", "syst_down_highdm", VB.high_dm_nbins, VB.high_dm_start, VB.high_dm_end + 1)
-    
-    validationBinMap = {}
-    validationBinMap["lowdm"]   = VB.low_dm_bins
-    validationBinMap["highdm"]  = VB.high_dm_bins
-    # use copy.deepcopy() to avoid modifying original
-    # histo_tmp[region][direction]
-    validationHistoMap = copy.deepcopy(histo_tmp)
-    validationHistoMap["lowdm"]["up"]       = h_syst_up_lowdm
-    validationHistoMap["lowdm"]["down"]     = h_syst_down_lowdm
-    validationHistoMap["highdm"]["up"]      = h_syst_up_highdm
-    validationHistoMap["highdm"]["down"]    = h_syst_down_highdm
-    
-    h_pred_lowdm    = histo["validation"]["lowdm"][""]
-    h_pred_highdm   = histo["validation"]["highdm"][""]
+    # getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
+    getTotalSystematics(VB,     "validation",           systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
+    getTotalSystematics(VB_MS,  "validationMetStudy",   systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
+    getTotalSystematics(SB,     "search",               systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
+    # CR unit bin not supported
+    #getTotalSystematics(CRU,    "controlUnit",          systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
 
-    # validation bins
-    # bins are list of strings starting at 0
-    # loop over regions (lowdm and highdm)
-    print "# validation bin systematics"
-    debug = False
-    for region in regions:
-        # get histograms for this region
-        h_total_syst_up   = validationHistoMap[region]["up"]
-        h_total_syst_down = validationHistoMap[region]["down"]
-
-        # DEBUG
-        if debug:
-            #systHistoMap[bintype][region][syst]
-            for syst in systHistoMap["validation"][region]:
-                nBins = systHistoMap["validation"][region][syst].GetNbinsX()
-                error = systHistoMap["validation"][region][syst].GetBinContent(1)
-                print "DEBUG: {0}, {1}: nBins = {2}, bin 1 error = {3}".format(region, syst, nBins, error)
-        
-        # be careful with bin index, which needs to start at 1 in both lowdm and highdm
-        b_i = 1
-        for b in validationBinMap[region]:
-            p = histo["validation"][region][""].GetBinContent(b_i)
-            syst_up_sum        = 0.0
-            syst_down_sum      = 0.0
-            log_syst_up_sum    = 0.0
-            log_syst_down_sum  = 0.0
-            if p != 0:
-                # syst from p, p_up, p_down
-                for syst in systematics_znunu:
-                    # do not apply SB syst in high dm
-                    if region == "highdm" and syst == "eff_sb":
-                        continue
-                    # syst_histo[systemaitc][bintype][region][direction]
-                    h_up    = syst_histo[syst]["validation"][region]["up"]
-                    h_down  = syst_histo[syst]["validation"][region]["down"]
-                    p_up    = h_up.GetBinContent(b_i)
-                    p_down  = h_down.GetBinContent(b_i)
-                    syst_up         = (p_up - p  ) / p
-                    syst_down       = (p - p_down) / p
-                    log_syst_up     = p_up / p
-                    log_syst_down   = p_down / p
-                    # sum in quadrature 
-                    syst_up_sum     += syst_up**2
-                    syst_down_sum   += syst_down**2
-                    # If both systematics go the same direction, need to symmetrize
-                    # Because all the nuisance parameters are log-normal, symmetrize by dividing by the geometric mean
-                    if ((log_syst_up > 1) and (log_syst_down > 1)) or ((log_syst_up < 1) and (log_syst_down < 1)):
-                        geometric_mean = np.sqrt(log_syst_up * log_syst_down)
-                        log_syst_up   /= geometric_mean
-                        log_syst_down /= geometric_mean
-                    # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
-                    # Sum (the square of the log of) all the ratios that are greater than 1
-                    # Sum (the square of the log of) all the ratios that are less than 1
-                    # Then at the end, take the exponential of the square root of each sum to get the total systematic ratio
-                    if log_syst_up > 1 or log_syst_down < 1:
-                        log_syst_up_sum     += np.log(log_syst_up)**2
-                        log_syst_down_sum   += np.log(log_syst_down)**2
-                    else:
-                        log_syst_up_sum     += np.log(log_syst_down)**2
-                        log_syst_down_sum   += np.log(log_syst_up)**2
-                # syst from root file
-                #systHistoMap[bintype][region][syst]
-                for syst in systHistoMap["validation"][region]:
-                    error = systHistoMap["validation"][region][syst].GetBinContent(b_i)
-                    # symmetric error with up = down
-                    syst_up         = error  
-                    syst_down       = error  
-                    log_syst_up     = 1.0 + error 
-                    log_syst_down   = 1.0 - error
-                    syst_up_sum     += syst_up**2
-                    syst_down_sum   += syst_down**2
-                    if log_syst_up > 1 or log_syst_down < 1:
-                        log_syst_up_sum     += np.log(log_syst_up)**2
-                        log_syst_down_sum   += np.log(log_syst_down)**2
-                    else:
-                        log_syst_up_sum     += np.log(log_syst_down)**2
-                        log_syst_down_sum   += np.log(log_syst_up)**2
-            syst_up_total   = np.sqrt(syst_up_sum)
-            syst_down_total = np.sqrt(syst_down_sum)
-            final_up   = 1.0 + syst_up_total
-            final_down = 1.0 - syst_down_total
-            log_syst_up_total   = np.exp( np.sqrt(log_syst_up_sum))
-            log_syst_down_total = np.exp(-np.sqrt(log_syst_down_sum)) # Minus sign is needed because this is the *down* ratio
-            log_final_up   = log_syst_up_total
-            log_final_down = log_syst_down_total
-            print "bin {0}, pred={1}, syst_up={2}, syst_down={3}, log_final_up={4}, log_final_down={5}".format(b_i, p, final_up, final_down, log_final_up, log_final_down)
-            if useLogNormal:
-                h_total_syst_up.SetBinContent(     b_i, log_final_up   )
-                h_total_syst_down.SetBinContent(   b_i, log_final_down )
-            else:
-                h_total_syst_up.SetBinContent(     b_i, final_up   )
-                h_total_syst_down.SetBinContent(   b_i, final_down )
-            b_i += 1
-        
-        # --- write histograms to file
-        h_total_syst_up.Write()
-        h_total_syst_down.Write()
-
-        #-------------------------------------------------------
-        # Plot total systematic up/down
-        #-------------------------------------------------------
-                    
-        # correct plot
-        bintype = "validation"
-        mySyst = "total"
-        
-        eraTag = "_" + era
-        draw_option = "hist"
-        # colors
-        color_red    = "vermillion"
-        color_blue   = "electric blue"
-        color_green  = "irish green" 
-        color_purple = "violet"
-        color_black  = "black"
-        
-        # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.6
-        legend_x2 = 0.9 
-        legend_y1 = 0.7
-        legend_y2 = 0.9 
-    
-        c = ROOT.TCanvas("c", "c", 800, 800)
-        name = "{0}_{1}_syst".format(bintype, mySyst)
-        
-        title = "Z to Invisible: " + name + " in " + region + " for " + era
-        x_title = "Validation Bins"
-        setupHist(h_total_syst_up,     title, x_title, "total systematic",  color_red,    0.0, 2.0)
-        setupHist(h_total_syst_down,   title, x_title, "total systematic",  color_blue,   0.0, 2.0)
-        
-        # draw histograms
-        h_total_syst_up.Draw(draw_option)
-        h_total_syst_down.Draw(draw_option + " same")
-        
-        # legend: TLegend(x1,y1,x2,y2)
-        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-        legend.AddEntry(h_total_syst_up,           "syst up",                  "l")
-        legend.AddEntry(h_total_syst_down,         "syst down",                "l")
-        legend.Draw()
-        
-        
-        # save histograms
-        plot_name = out_dir + name + "_" + region + eraTag
-        c.Update()
-        c.SaveAs(plot_name + ".png")
-        del c
-
-    f_out.Close()
 
 
 if __name__ == "__main__":
