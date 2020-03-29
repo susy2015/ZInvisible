@@ -1,5 +1,6 @@
 # run_modules.py
 
+import numpy as np
 import argparse
 import json
 import os
@@ -79,30 +80,47 @@ def main():
                 makeCutflows(result_file, era, plot_dir, doPhotons)
             N.getNormAndError(result_file, era)
             S.getShape(result_file, era)
-            VB.getValues(result_file, era)
-            VB_MS.getValues(result_file, era)
-            SB.getValues(result_file, era)
             if doUnits:
                 CRunits.getValues(result_file, era)
                 SRunits.getValues(result_file, era)
-            Syst.makeZvsPhoton(result_file, era, True)
+            VB.getValues(result_file, era)
+            VB_MS.getValues(result_file, era)
+            SB.getValues(result_file, era, CRunits=CRunits)
+            # WARNING: var, varPhoton, and varLepton are used to load histograms and must match histogram names
+            # makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst, xbins = np.array([]), n_bins = 0, x_min=0, x_max=0)
+            xbins_met   = np.array([0.0, 250.0, 350.0, 450.0, 550.0, 650.0, 1000.0])
+            n_bins_met  = len(xbins_met) - 1
+            xbins_ht    = np.array([0.0, 300.0, 400.0, 500.0, 600.0, 700.0, 1000.0])
+            n_bins_ht   = len(xbins_ht) - 1
+            Syst.makeZvsPhoton(result_file, "met",  "metWithPhoton",                            "metWithLL",                                era, True,  True,  xbins_met, n_bins_met, 250.0, 1000.0)
+            Syst.makeZvsPhoton(result_file, "ht",   "HT_drPhotonCleaned_jetpt30",               "HT_drLeptonCleaned_jetpt30",               era, True,  False, xbins_ht,  n_bins_ht,  300.0, 1000.0)
+            Syst.makeZvsPhoton(result_file, "nj",   "nJets_drPhotonCleaned_jetpt30",            "nJets_drLeptonCleaned_jetpt30",            era, False, False)
+            Syst.makeZvsPhoton(result_file, "nb",   "nBottoms_drPhotonCleaned_jetpt30",         "nBottoms_drLeptonCleaned_jetpt30",         era, False, False)
+            Syst.makeZvsPhoton(result_file, "nmt",  "nMergedTops_drPhotonCleaned_jetpt30",      "nMergedTops_drLeptonCleaned_jetpt30",      era, False, False)
+            Syst.makeZvsPhoton(result_file, "nw",   "nWs_drPhotonCleaned_jetpt30",              "nWs_drLeptonCleaned_jetpt30",              era, False, False)
+            Syst.makeZvsPhoton(result_file, "nrt",  "nResolvedTops_drPhotonCleaned_jetpt30",    "nResolvedTops_drLeptonCleaned_jetpt30",    era, False, False)
 
+    
     # Normalization: makeTable(self, output_name, makeDoc=False)
+    N.makeComparison("validation")
+    N.makeComparison("validationMetStudy")
+    N.makeComparison("search")
+    # N.makeTable to be after N.makeComparison
     N.makeTable(latex_dir + "zinv_rz_doc.tex",   True)
     N.makeTable(latex_dir + "zinv_rz_table.tex", False)
     N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
     N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
-    N.makeComparison("validation")
-    N.makeComparison("validationMetStudy")
-    N.makeComparison("search")
     S.makeComparison("validation")
     S.makeComparison("validationMetStudy")
     S.makeComparison("search")
+    S.makeTable(latex_dir + "zinv_q_doc.tex",   True)
+    S.makeTable(latex_dir + "zinv_q_table.tex", False)
     VB.makeTexFile("Z Invisible Per Era Prediction for Validation Bins", latex_dir + "zinv_per_era_prediction_validation_bins.tex")
     SB.makeTexFile("Z Invisible Per Era Prediction for Search Bins",     latex_dir + "zinv_per_era_prediction_search_bins.tex")
     
-    # total Run2 prediction
+    # total era is combiniation of all eras
     total_era = "Run2"
+    # total Run2 prediction
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
     SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
     T = Table()
@@ -123,8 +141,9 @@ def main():
     CRunits.getZvsPhotonSyst(   Syst.h_map_syst,                            "ZvsPhotonSyst_CRUnitBins.root")
 
     if doUnits:
-        # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
-        saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + total_era + ".json", CRunits, SRunits, SB, total_era)
+        for era in eras:
+            # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
+            saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + era + ".json", CRunits, SRunits, SB, era)
 
 
 if __name__ == "__main__":

@@ -49,12 +49,12 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool doSystematics, std::string
     getVectors                                      = new GetVectors;
     cleanedJets                                     = new CleanedJets;
     // RunTopTagger(std::string taggerCfg = "TopTagger.cfg", std::string suffix = "", bool doLeptonCleaning = false, bool doPhotonCleaning = false)
-    runTopTagger                                    = new RunTopTagger(TopTaggerCfg_Tensorflow,          "_jetpt30");
-    runTopTagger_jesTotalUp                         = new RunTopTagger(TopTaggerCfg_Tensorflow,          "_jetpt30_jesTotalUp");
-    runTopTagger_jesTotalDown                       = new RunTopTagger(TopTaggerCfg_Tensorflow,          "_jetpt30_jesTotalDown");
-    //runTopTagger                                    = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_jetpt30");
-    //runTopTagger_jesTotalUp                         = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_jetpt30_jesTotalUp");
-    //runTopTagger_jesTotalDown                       = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_jetpt30_jesTotalDown");
+    //runTopTagger                                    = new RunTopTagger(TopTaggerCfg_Tensorflow,          "_jetpt30");
+    //runTopTagger_jesTotalUp                         = new RunTopTagger(TopTaggerCfg_Tensorflow,          "_jetpt30_jesTotalUp");
+    //runTopTagger_jesTotalDown                       = new RunTopTagger(TopTaggerCfg_Tensorflow,          "_jetpt30_jesTotalDown");
+    runTopTagger                                    = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_jetpt30");
+    runTopTagger_jesTotalUp                         = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_jetpt30_jesTotalUp");
+    runTopTagger_jesTotalDown                       = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_jetpt30_jesTotalDown");
     runTopTagger_drLeptonCleaned                    = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_drLeptonCleaned_jetpt30",                true,  false);
     runTopTagger_drLeptonCleaned_jesTotalUp         = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_drLeptonCleaned_jetpt30_jesTotalUp",     true,  false);
     runTopTagger_drLeptonCleaned_jesTotalDown       = new RunTopTagger(TopTaggerCfg_DiscriminatorFilter, "_drLeptonCleaned_jetpt30_jesTotalDown",   true,  false);

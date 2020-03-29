@@ -71,7 +71,7 @@ class Shape:
                             "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "QCD Fakestack",
                             "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "W(l#nu)+jetsstack",
                             "TTG"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}#gamma+jetsstack",
-                            "TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}stack",
+                            #"TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}stack",
                             "tW"                : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "tWstack",
                             "Rare"              : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "Rarestack",
             }
@@ -82,7 +82,7 @@ class Shape:
                             "QCD"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "QCDstack",
                             "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "W(l#nu)+jetsstack",
                             "TTG"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}#gamma+jetsstack",
-                            "TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}stack",
+                            #"TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}stack",
                             "tW"                : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "tWstack",
                             "Rare"              : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "Rarestack",
             }
@@ -195,7 +195,7 @@ class Shape:
                         h_QCD               = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD"]             ) )
                     h_WJets             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["WJets"]           ) )
                     h_TTG               = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTG"]             ) )
-                    h_TTbar             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTbar"]           ) )
+                    #h_TTbar             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["TTbar"]           ) )
                     h_tW                = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["tW"]              ) )
                     h_Rare              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Rare"]            ) )
                     
@@ -221,7 +221,7 @@ class Shape:
                         h_mc.Add(h_QCD)
                     h_mc.Add(h_WJets)
                     h_mc.Add(h_TTG)
-                    h_mc.Add(h_TTbar)
+                    #h_mc.Add(h_TTbar)
                     h_mc.Add(h_tW)
                     h_mc.Add(h_Rare)
 
@@ -231,16 +231,27 @@ class Shape:
                     # denominator = MC
                     h_den = h_mc.Clone("h_den") 
                     
+                    ########################################
+                    # Apply and Save Data/MC normalization #
+                    ########################################
+                    
                     # number of events for normalization
                     nNum  = h_num.Integral(0, h_num.GetNbinsX() + 1)
                     nDen  = h_den.Integral(0, h_den.GetNbinsX() + 1)
-                    ratio = float(nNum) / float(nDen)
+                    photonDataMCNorm = float(nNum) / float(nDen)
                     
-                    #if self.verbose:
-                    #    print "{0} {1}: nNum = {2:.3f}, nDen = {3:.3f}, ratio = {4:.3f}".format(era, region, nNum, nDen, ratio)
+                    if self.verbose:
+                        print "{0} {1} {2} {3}: nNum = {4:.3f}, nDen = {5:.3f}, photonDataMCNorm = {6:.3f}".format(era, bin_type, region, selection, nNum, nDen, photonDataMCNorm)
 
                     h_den_normalized = h_den.Clone("h_den_normalized")
-                    h_den_normalized.Scale(ratio)
+                    h_den_normalized.Scale(photonDataMCNorm)
+                        
+                    self.shape_map[era][bin_type][region][selection]["total_data"]              = nNum
+                    self.shape_map[era][bin_type][region][selection]["total_mc"]                = nDen
+                    self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm"]     = photonDataMCNorm
+                    self.shape_map[era][bin_type][region][selection]["total_data_tex"]          = "${0:d}$".format(int(nNum))
+                    self.shape_map[era][bin_type][region][selection]["total_mc_tex"]            = "${0:.3f}$".format(nDen)
+                    self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm_tex"] = "${0:.3f}$".format(photonDataMCNorm)
                     
                     # rebin in MET
                     # variable binning for background prediction
@@ -408,14 +419,14 @@ class Shape:
                 variable = "nCRUnit" + region + "_drPhotonCleaned_jetpt30"
                 #WARNING: strings loaded from json file have type 'unicode'
                 # ROOT cannot load histograms using unicode input: use type 'str'
-                if self.splitQCD:
-                    samples = ["Data", "GJets", "QCD_Fragmented", "QCD_Fake", "WJets", "TTG", "TTbar", "tW", "Rare"]
-                else:
-                    samples = ["Data", "GJets", "QCD", "WJets", "TTG", "TTbar", "tW", "Rare"]
+                #if self.splitQCD:
+                #    samples = ["Data", "GJets", "QCD_Fragmented", "QCD_Fake", "WJets", "TTG", "TTbar", "tW", "Rare"]
+                #else:
+                #    samples = ["Data", "GJets", "QCD", "WJets", "TTG", "TTbar", "tW", "Rare"]
                 #print "Shape factor CR units; Loading {0} histograms".format(region)
-                for sample in samples:
-                    hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
-                    #print "\t{0}".format(hist_name) 
+                #for sample in samples:
+                #    hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
+                #    print "\t{0}".format(hist_name) 
                 
                 h_Data              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Data"]              ) )
                 h_GJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["GJets"]             ) )
@@ -426,7 +437,7 @@ class Shape:
                     h_QCD               = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["QCD"]               ) )
                 h_WJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["WJets"]             ) )
                 h_TTG               = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["TTG"]               ) )
-                h_TTbar             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["TTbar"]             ) )
+                #h_TTbar             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["TTbar"]             ) )
                 h_tW                = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["tW"]                ) )
                 h_Rare              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Rare"]              ) )
                 
@@ -438,7 +449,7 @@ class Shape:
                     h_back = h_QCD.Clone("h_back")
                 h_back.Add(h_WJets)
                 h_back.Add(h_TTG)
-                h_back.Add(h_TTbar)
+                #h_back.Add(h_TTbar)
                 h_back.Add(h_tW)
                 h_back.Add(h_Rare)
 
@@ -453,6 +464,72 @@ class Shape:
             self.cr_unit_histos_summed[era] = copy.deepcopy(h_map)
 
 
+    def writeLine(self, line):
+        self.output_file.write(line + "\n")
+    
+    # Run 2 Q values in table for analysis note 
+    def makeTable(self, output_name, makeDoc=False):
+        # values for table store as follows:
+        # self.shape_map[era][bin_type][region][selection]["total_data"]          = nNum
+        # self.shape_map[era][bin_type][region][selection]["total_mc"]            = nDen
+        # self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm"] = photonDataMCNorm
+        era      = "Run2"
+        bin_type = "search"
+        channelsForTable    = ["total_data_tex", "total_mc_tex", "photon_data_mc_norm_tex"]
+        header              = "$\Nb$ & $\Nj$ & $N_{\\text{data}}$ & $N_{\\text{MC}}$ & $Q$ \\\\"
+        caption  = "Summary of the different regions in which the photon normalization $Q$ is applied."
+        caption += " The total number of data and MC events for each selection are shown, as well as the ratio $Q$."
+        with open(output_name, "w+") as f:
+            self.output_file = f
+            
+            if makeDoc:
+                # begin document
+                self.writeLine("\documentclass{article}")
+                self.writeLine("\usepackage[utf8]{inputenc}")
+                self.writeLine("\usepackage{geometry}")
+                self.writeLine("\usepackage{longtable}")
+                self.writeLine("\\usepackage{xspace}")
+                self.writeLine("\\usepackage{amsmath}")
+                self.writeLine("\\usepackage{graphicx}")
+                self.writeLine("\\usepackage{cancel}")
+                self.writeLine("\\usepackage{amsmath}")
+                self.writeLine("\geometry{margin=1in}")
+                self.writeLine("\\input{VariableNames.tex}")
+                self.writeLine("\\begin{document}")
+            
+            # begin table
+            self.writeLine("\\begin{table}")
+            self.writeLine("\\begin{center}")
+            self.writeLine("\\caption{%s}" % caption)
+            self.writeLine("\\label{tab:Qregions}")
+            self.writeLine("\\begin{tabular}{%s}" % ( "c" * (2 + len(channelsForTable)) ) )
+            self.writeLine(header)
+            self.writeLine("\\hline")
+            self.writeLine("\\multicolumn{2}{c}{low \dm normalization regions} \\\\")
+            self.writeLine("\\hline")
+            self.writeLine("0         &   $\leq5$       & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["LowDM"]["NBeq0_NJle5"][channel]) for channel in channelsForTable)) )
+            self.writeLine("0         &   $\geq6$       & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["LowDM"]["NBeq0_NJge6"][channel]) for channel in channelsForTable)) )
+            self.writeLine("1         &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["LowDM"]["NBeq1"][channel]      ) for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["LowDM"]["NBge2"][channel]      ) for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   $\geq7$       & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["LowDM"]["NBge2_NJge7"][channel]) for channel in channelsForTable)) )
+            self.writeLine("\\hline")
+            self.writeLine("\\multicolumn{2}{c}{high \dm normalization regions} \\\\")
+            self.writeLine("\\hline")
+            self.writeLine("1         &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBeq1"][channel]      )    for channel in channelsForTable)) )
+            self.writeLine("1         &   $\geq7$       & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBeq1_NJge7"][channel])    for channel in channelsForTable)) )
+            #self.writeLine("2         &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBeq2"][channel]      )    for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   --            & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBge2"][channel]      )    for channel in channelsForTable)) )
+            self.writeLine("$\geq2$   &   $\geq7$       & %s \\\\" % (" & ".join("{0}".format(self.shape_map[era][bin_type]["HighDM"]["NBge2_NJge7"][channel])    for channel in channelsForTable)) )
+            self.writeLine("\\hline")
+            # end table
+            self.writeLine("\\end{tabular}")
+            self.writeLine("\\end{center}")
+            self.writeLine("\\end{table}")
+            
+            if makeDoc:
+                # end document
+                self.writeLine("\\end{document}")
+    
     def makeComparison(self, bin_type):
         draw_option = "hist error"
         
