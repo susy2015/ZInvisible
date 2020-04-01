@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
     bool unblind                = false;
     bool doLooseAndMid          = true;    // hi angel
     bool doSystematics          = true;    // hi caleb
-    bool doLeptonSystematics    = false;    // hi caleb
+    bool doLeptonSystematics    = true;    // hi caleb
     bool doDataMCElectron       = true;
     bool doDataMCMuon           = true;
     bool doDataMCPhoton         = false;     // hi angel
@@ -1436,6 +1436,48 @@ int main(int argc, char* argv[])
             PDC dcMC_Electron_LowDM_Loose_met(    "stack",  "metWithLL", StackMC_Electron_LowDM_Loose);
             PDC dcMC_Electron_HighDM_Loose_met(   "stack",  "metWithLL", StackMC_Electron_HighDM_Loose);
             
+            // n_bottoms_Loose
+            PDC dcData_Electron_LowDM_Loose_nb(  "data",   "nBottoms" + varSuffix, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_nb( "data",   "nBottoms" + varSuffix, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_nb(    "stack",  "nBottoms" + varSuffix, StackMC_Electron_LowDM_Loose);
+            PDC dcMC_Electron_HighDM_Loose_nb(   "stack",  "nBottoms" + varSuffix, StackMC_Electron_HighDM_Loose);
+            
+            // n_mergedTops_Loose
+            PDC dcData_Electron_LowDM_Loose_nmt(  "data",   "nMergedTops" + varSuffix, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_nmt( "data",   "nMergedTops" + varSuffix, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_nmt(    "stack",  "nMergedTops" + varSuffix, StackMC_Electron_LowDM_Loose);
+            PDC dcMC_Electron_HighDM_Loose_nmt(   "stack",  "nMergedTops" + varSuffix, StackMC_Electron_HighDM_Loose);
+            
+            // n_Ws_Loose
+            PDC dcData_Electron_LowDM_Loose_nw(  "data",   "nWs" + varSuffix, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_nw( "data",   "nWs" + varSuffix, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_nw(    "stack",  "nWs" + varSuffix, StackMC_Electron_LowDM_Loose);
+            PDC dcMC_Electron_HighDM_Loose_nw(   "stack",  "nWs" + varSuffix, StackMC_Electron_HighDM_Loose);
+            
+            // n_resolvedTops_Loose
+            PDC dcData_Electron_LowDM_Loose_nrt(  "data",   "nResolvedTops" + varSuffix, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_nrt( "data",   "nResolvedTops" + varSuffix, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_nrt(    "stack",  "nResolvedTops" + varSuffix, StackMC_Electron_LowDM_Loose);
+            PDC dcMC_Electron_HighDM_Loose_nrt(   "stack",  "nResolvedTops" + varSuffix, StackMC_Electron_HighDM_Loose);
+
+            // mtb_Loose
+            PDC dcData_Electron_LowDM_Loose_mtb(  "data",   "mtb" + varSuffix, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_mtb( "data",   "mtb" + varSuffix, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_mtb(    "stack",  "mtb" + varSuffix, StackMC_Electron_LowDM_Loose);
+            PDC dcMC_Electron_HighDM_Loose_mtb(   "stack",  "mtb" + varSuffix, StackMC_Electron_HighDM_Loose);
+            
+            // ptb_Loose
+            PDC dcData_Electron_LowDM_Loose_ptb(  "data",   "ptb" + varSuffix, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_ptb( "data",   "ptb" + varSuffix, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_ptb(    "stack",  "ptb" + varSuffix, StackMC_Electron_LowDM_Loose);
+            PDC dcMC_Electron_HighDM_Loose_ptb(   "stack",  "ptb" + varSuffix, StackMC_Electron_HighDM_Loose);
+            
+            // ISRJetPt_Loose
+            PDC dcData_Electron_LowDM_Loose_ISRJetPt(  "data",   "ISRJetPt" + JetPtCut, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_ISRJetPt( "data",   "ISRJetPt" + JetPtCut, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_ISRJetPt(    "stack",  "ISRJetPt" + JetPtCut, StackMC_Electron_LowDM_Loose);
+            PDC dcMC_Electron_HighDM_Loose_ISRJetPt(   "stack",  "ISRJetPt" + JetPtCut, StackMC_Electron_HighDM_Loose);
+            
             // with njetWeight
             
             // n_jets with nj_shape
@@ -1474,6 +1516,90 @@ int main(int argc, char* argv[])
             PDC dcMC_Electron_LowDM_Loose_njetWeight_met(    "stack",  "metWithLL", StackMC_Electron_LowDM_Loose_njetWeight);
             PDC dcMC_Electron_HighDM_Loose_njetWeight_met(   "stack",  "metWithLL", StackMC_Electron_HighDM_Loose_njetWeight);
              
+            // n_bottoms with nj_shape
+            PDC dcData_Electron_LowDM_njetWeight_nb(  "data",   "nBottoms" + varSuffix, {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_njetWeight_nb( "data",   "nBottoms" + varSuffix, {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_njetWeight_nb(    "stack",  "nBottoms" + varSuffix, StackMC_Electron_LowDM_njetWeight);
+            PDC dcMC_Electron_HighDM_njetWeight_nb(   "stack",  "nBottoms" + varSuffix, StackMC_Electron_HighDM_njetWeight);
+            
+            // n_bottoms_Loose with nj_shape
+            PDC dcData_Electron_LowDM_Loose_njetWeight_nb(  "data",   "nBottoms" + varSuffix, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_njetWeight_nb( "data",   "nBottoms" + varSuffix, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_njetWeight_nb(    "stack",  "nBottoms" + varSuffix, StackMC_Electron_LowDM_Loose_njetWeight);
+            PDC dcMC_Electron_HighDM_Loose_njetWeight_nb(   "stack",  "nBottoms" + varSuffix, StackMC_Electron_HighDM_Loose_njetWeight);
+            
+            // n_mergedTops with nj_shape
+            PDC dcData_Electron_LowDM_njetWeight_nmt(  "data",   "nMergedTops" + varSuffix, {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_njetWeight_nmt( "data",   "nMergedTops" + varSuffix, {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_njetWeight_nmt(    "stack",  "nMergedTops" + varSuffix, StackMC_Electron_LowDM_njetWeight);
+            PDC dcMC_Electron_HighDM_njetWeight_nmt(   "stack",  "nMergedTops" + varSuffix, StackMC_Electron_HighDM_njetWeight);
+            
+            // n_mergedTops_Loose with nj_shape
+            PDC dcData_Electron_LowDM_Loose_njetWeight_nmt(  "data",   "nMergedTops" + varSuffix, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_njetWeight_nmt( "data",   "nMergedTops" + varSuffix, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_njetWeight_nmt(    "stack",  "nMergedTops" + varSuffix, StackMC_Electron_LowDM_Loose_njetWeight);
+            PDC dcMC_Electron_HighDM_Loose_njetWeight_nmt(   "stack",  "nMergedTops" + varSuffix, StackMC_Electron_HighDM_Loose_njetWeight);
+            
+            // n_Ws with nj_shape
+            PDC dcData_Electron_LowDM_njetWeight_nw(  "data",   "nWs" + varSuffix, {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_njetWeight_nw( "data",   "nWs" + varSuffix, {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_njetWeight_nw(    "stack",  "nWs" + varSuffix, StackMC_Electron_LowDM_njetWeight);
+            PDC dcMC_Electron_HighDM_njetWeight_nw(   "stack",  "nWs" + varSuffix, StackMC_Electron_HighDM_njetWeight);
+            
+            // n_Ws_Loose with nj_shape
+            PDC dcData_Electron_LowDM_Loose_njetWeight_nw(  "data",   "nWs" + varSuffix, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_njetWeight_nw( "data",   "nWs" + varSuffix, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_njetWeight_nw(    "stack",  "nWs" + varSuffix, StackMC_Electron_LowDM_Loose_njetWeight);
+            PDC dcMC_Electron_HighDM_Loose_njetWeight_nw(   "stack",  "nWs" + varSuffix, StackMC_Electron_HighDM_Loose_njetWeight);
+            
+            // n_resolvedTops with nj_shape
+            PDC dcData_Electron_LowDM_njetWeight_nrt(  "data",   "nResolvedTops" + varSuffix, {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_njetWeight_nrt( "data",   "nResolvedTops" + varSuffix, {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_njetWeight_nrt(    "stack",  "nResolvedTops" + varSuffix, StackMC_Electron_LowDM_njetWeight);
+            PDC dcMC_Electron_HighDM_njetWeight_nrt(   "stack",  "nResolvedTops" + varSuffix, StackMC_Electron_HighDM_njetWeight);
+
+            // n_resolvedTops_Loose with nj_shape
+            PDC dcData_Electron_LowDM_Loose_njetWeight_nrt(  "data",   "nResolvedTops" + varSuffix, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_njetWeight_nrt( "data",   "nResolvedTops" + varSuffix, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_njetWeight_nrt(    "stack",  "nResolvedTops" + varSuffix, StackMC_Electron_LowDM_Loose_njetWeight);
+            PDC dcMC_Electron_HighDM_Loose_njetWeight_nrt(   "stack",  "nResolvedTops" + varSuffix, StackMC_Electron_HighDM_Loose_njetWeight);
+
+            // mtb with nj_shape
+            PDC dcData_Electron_LowDM_njetWeight_mtb(  "data",   "mtb" + varSuffix, {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_njetWeight_mtb( "data",   "mtb" + varSuffix, {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_njetWeight_mtb(    "stack",  "mtb" + varSuffix, StackMC_Electron_LowDM_njetWeight);
+            PDC dcMC_Electron_HighDM_njetWeight_mtb(   "stack",  "mtb" + varSuffix, StackMC_Electron_HighDM_njetWeight);
+            
+            // mtb_Loose with nj_shape
+            PDC dcData_Electron_LowDM_Loose_njetWeight_mtb(  "data",   "mtb" + varSuffix, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_njetWeight_mtb( "data",   "mtb" + varSuffix, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_njetWeight_mtb(    "stack",  "mtb" + varSuffix, StackMC_Electron_LowDM_Loose_njetWeight);
+            PDC dcMC_Electron_HighDM_Loose_njetWeight_mtb(   "stack",  "mtb" + varSuffix, StackMC_Electron_HighDM_Loose_njetWeight);
+            
+            // ptb with nj_shape
+            PDC dcData_Electron_LowDM_njetWeight_ptb(  "data",   "ptb" + varSuffix, {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_njetWeight_ptb( "data",   "ptb" + varSuffix, {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_njetWeight_ptb(    "stack",  "ptb" + varSuffix, StackMC_Electron_LowDM_njetWeight);
+            PDC dcMC_Electron_HighDM_njetWeight_ptb(   "stack",  "ptb" + varSuffix, StackMC_Electron_HighDM_njetWeight);
+            
+            // ptb_Loose with nj_shape
+            PDC dcData_Electron_LowDM_Loose_njetWeight_ptb(  "data",   "ptb" + varSuffix, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_njetWeight_ptb( "data",   "ptb" + varSuffix, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_njetWeight_ptb(    "stack",  "ptb" + varSuffix, StackMC_Electron_LowDM_Loose_njetWeight);
+            PDC dcMC_Electron_HighDM_Loose_njetWeight_ptb(   "stack",  "ptb" + varSuffix, StackMC_Electron_HighDM_Loose_njetWeight);
+            
+            // ISRJetPt with nj_shape
+            PDC dcData_Electron_LowDM_njetWeight_ISRJetPt(  "data",   "ISRJetPt" + JetPtCut, {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_njetWeight_ISRJetPt( "data",   "ISRJetPt" + JetPtCut, {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_njetWeight_ISRJetPt(    "stack",  "ISRJetPt" + JetPtCut, StackMC_Electron_LowDM_njetWeight);
+            PDC dcMC_Electron_HighDM_njetWeight_ISRJetPt(   "stack",  "ISRJetPt" + JetPtCut, StackMC_Electron_HighDM_njetWeight);
+            
+            // ISRJetPt_Loose with nj_shape
+            PDC dcData_Electron_LowDM_Loose_njetWeight_ISRJetPt(  "data",   "ISRJetPt" + JetPtCut, {dsData_Electron_LowDM_Loose});
+            PDC dcData_Electron_HighDM_Loose_njetWeight_ISRJetPt( "data",   "ISRJetPt" + JetPtCut, {dsData_Electron_HighDM_Loose});
+            PDC dcMC_Electron_LowDM_Loose_njetWeight_ISRJetPt(    "stack",  "ISRJetPt" + JetPtCut, StackMC_Electron_LowDM_Loose_njetWeight);
+            PDC dcMC_Electron_HighDM_Loose_njetWeight_ISRJetPt(   "stack",  "ISRJetPt" + JetPtCut, StackMC_Electron_HighDM_Loose_njetWeight);
+            
             //end of <OM>
 
             // metphi
@@ -1679,6 +1805,20 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("DataMC_Electron_HighDM_Loose_ht" + histSuffix,                           {dcData_Electron_HighDM_Loose_ht,                    dcMC_Electron_HighDM_Loose_ht},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
                 vh.push_back(PHS("DataMC_Electron_LowDM_Loose_met" + histSuffix,                           {dcData_Electron_LowDM_Loose_met,                    dcMC_Electron_LowDM_Loose_met},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
                 vh.push_back(PHS("DataMC_Electron_HighDM_Loose_met" + histSuffix,                          {dcData_Electron_HighDM_Loose_met,                   dcMC_Electron_HighDM_Loose_met},                   {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nb" + histSuffix,                            {dcData_Electron_LowDM_Loose_nb,                     dcMC_Electron_LowDM_Loose_nb},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nb" + histSuffix,                           {dcData_Electron_HighDM_Loose_nb,                    dcMC_Electron_HighDM_Loose_nb},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nw" + histSuffix,                            {dcData_Electron_LowDM_Loose_nw,                     dcMC_Electron_LowDM_Loose_nw},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nw" + histSuffix,                           {dcData_Electron_HighDM_Loose_nw,                    dcMC_Electron_HighDM_Loose_nw},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nmt" + histSuffix,                           {dcData_Electron_LowDM_Loose_nmt,                    dcMC_Electron_LowDM_Loose_nmt},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nmt" + histSuffix,                          {dcData_Electron_HighDM_Loose_nmt,                   dcMC_Electron_HighDM_Loose_nmt},                         {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nrt" + histSuffix,                           {dcData_Electron_LowDM_Loose_nrt,                    dcMC_Electron_LowDM_Loose_nrt},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nrt" + histSuffix,                          {dcData_Electron_HighDM_Loose_nrt,                   dcMC_Electron_HighDM_Loose_nrt},                         {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_mtb" + histSuffix,                           {dcData_Electron_LowDM_Loose_mtb,                    dcMC_Electron_LowDM_Loose_mtb},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_mtb" + histSuffix,                          {dcData_Electron_HighDM_Loose_mtb,                   dcMC_Electron_HighDM_Loose_mtb},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_ptb" + histSuffix,                           {dcData_Electron_LowDM_Loose_ptb,                    dcMC_Electron_LowDM_Loose_ptb},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_ptb" + histSuffix,                          {dcData_Electron_HighDM_Loose_ptb,                   dcMC_Electron_HighDM_Loose_ptb},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_ISRJetPt" + histSuffix,                      {dcData_Electron_LowDM_Loose_ISRJetPt,               dcMC_Electron_LowDM_Loose_ISRJetPt},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ISRJetPt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_ISRJetPt" + histSuffix,                     {dcData_Electron_HighDM_Loose_ISRJetPt,              dcMC_Electron_HighDM_Loose_ISRJetPt},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ISRJetPt, "Events"));
 
                 //With nj shape
                 vh.push_back(PHS("DataMC_Electron_LowDM_nj_shape_nj" + histSuffix,                                  {dcData_Electron_LowDM_njetWeight_nj,                           dcMC_Electron_LowDM_njetWeight_nj},                           {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
@@ -1687,12 +1827,40 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("DataMC_Electron_HighDM_nj_shape_ht" + histSuffix,                                 {dcData_Electron_HighDM_njetWeight_ht,                          dcMC_Electron_HighDM_njetWeight_ht},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
                 vh.push_back(PHS("DataMC_Electron_LowDM_nj_shape_met" + histSuffix,                                 {dcData_Electron_LowDM_njetWeight_met,                          dcMC_Electron_LowDM_njetWeight_met},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
                 vh.push_back(PHS("DataMC_Electron_HighDM_nj_shape_met" + histSuffix,                                {dcData_Electron_HighDM_njetWeight_met,                         dcMC_Electron_HighDM_njetWeight_met},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_nj_shape_nb" + histSuffix,                                  {dcData_Electron_LowDM_njetWeight_nb,                           dcMC_Electron_LowDM_njetWeight_nb},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_nj_shape_nb" + histSuffix,                                 {dcData_Electron_HighDM_njetWeight_nb,                          dcMC_Electron_HighDM_njetWeight_nb},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_nj_shape_nw" + histSuffix,                                  {dcData_Electron_LowDM_njetWeight_nw,                           dcMC_Electron_LowDM_njetWeight_nw},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_nj_shape_nw" + histSuffix,                                 {dcData_Electron_HighDM_njetWeight_nw,                          dcMC_Electron_HighDM_njetWeight_nw},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_nj_shape_nmt" + histSuffix,                                 {dcData_Electron_LowDM_njetWeight_nmt,                          dcMC_Electron_LowDM_njetWeight_nmt},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_nj_shape_nmt" + histSuffix,                                {dcData_Electron_HighDM_njetWeight_nmt,                         dcMC_Electron_HighDM_njetWeight_nmt},                         {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_nj_shape_nrt" + histSuffix,                                 {dcData_Electron_LowDM_njetWeight_nrt,                          dcMC_Electron_LowDM_njetWeight_nrt},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_nj_shape_nrt" + histSuffix,                                {dcData_Electron_HighDM_njetWeight_nrt,                         dcMC_Electron_HighDM_njetWeight_nrt},                         {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_nj_shape_mtb" + histSuffix,                                 {dcData_Electron_LowDM_njetWeight_mtb,                          dcMC_Electron_LowDM_njetWeight_mtb},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_nj_shape_mtb" + histSuffix,                                {dcData_Electron_HighDM_njetWeight_mtb,                         dcMC_Electron_HighDM_njetWeight_mtb},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_nj_shape_ptb" + histSuffix,                                 {dcData_Electron_LowDM_njetWeight_ptb,                          dcMC_Electron_LowDM_njetWeight_ptb},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_nj_shape_ptb" + histSuffix,                                {dcData_Electron_HighDM_njetWeight_ptb,                         dcMC_Electron_HighDM_njetWeight_ptb},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_nj_shape_ISRJetPt" + histSuffix,                            {dcData_Electron_LowDM_njetWeight_ISRJetPt,                     dcMC_Electron_LowDM_njetWeight_ISRJetPt},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ISRJetPt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_nj_shape_ISRJetPt" + histSuffix,                           {dcData_Electron_HighDM_njetWeight_ISRJetPt,                    dcMC_Electron_HighDM_njetWeight_ISRJetPt},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ISRJetPt, "Events"));
                 vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nj_shape_nj" + histSuffix,                            {dcData_Electron_LowDM_Loose_njetWeight_nj,                     dcMC_Electron_LowDM_Loose_njetWeight_nj},                     {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
                 vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nj_shape_nj" + histSuffix,                           {dcData_Electron_HighDM_Loose_njetWeight_nj,                    dcMC_Electron_HighDM_Loose_njetWeight_nj},                    {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
                 vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nj_shape_ht" + histSuffix,                            {dcData_Electron_LowDM_Loose_njetWeight_ht,                     dcMC_Electron_LowDM_Loose_njetWeight_ht},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
                 vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nj_shape_ht" + histSuffix,                           {dcData_Electron_HighDM_Loose_njetWeight_ht,                    dcMC_Electron_HighDM_Loose_njetWeight_ht},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
                 vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nj_shape_met" + histSuffix,                           {dcData_Electron_LowDM_Loose_njetWeight_met,                    dcMC_Electron_LowDM_Loose_njetWeight_met},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
                 vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nj_shape_met" + histSuffix,                          {dcData_Electron_HighDM_Loose_njetWeight_met,                   dcMC_Electron_HighDM_Loose_njetWeight_met},                   {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nj_shape_nb" + histSuffix,                            {dcData_Electron_LowDM_Loose_njetWeight_nb,                     dcMC_Electron_LowDM_Loose_njetWeight_nb},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nj_shape_nb" + histSuffix,                           {dcData_Electron_HighDM_Loose_njetWeight_nb,                    dcMC_Electron_HighDM_Loose_njetWeight_nb},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nj_shape_nw" + histSuffix,                            {dcData_Electron_LowDM_Loose_njetWeight_nw,                     dcMC_Electron_LowDM_Loose_njetWeight_nw},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nj_shape_nw" + histSuffix,                           {dcData_Electron_HighDM_Loose_njetWeight_nw,                    dcMC_Electron_HighDM_Loose_njetWeight_nw},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nj_shape_nmt" + histSuffix,                           {dcData_Electron_LowDM_Loose_njetWeight_nmt,                    dcMC_Electron_LowDM_Loose_njetWeight_nmt},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nj_shape_nmt" + histSuffix,                          {dcData_Electron_HighDM_Loose_njetWeight_nmt,                   dcMC_Electron_HighDM_Loose_njetWeight_nmt},                         {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nj_shape_nrt" + histSuffix,                           {dcData_Electron_LowDM_Loose_njetWeight_nrt,                    dcMC_Electron_LowDM_Loose_njetWeight_nrt},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nj_shape_nrt" + histSuffix,                          {dcData_Electron_HighDM_Loose_njetWeight_nrt,                   dcMC_Electron_HighDM_Loose_njetWeight_nrt},                         {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nj_shape_mtb" + histSuffix,                           {dcData_Electron_LowDM_Loose_njetWeight_mtb,                    dcMC_Electron_LowDM_Loose_njetWeight_mtb},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nj_shape_mtb" + histSuffix,                          {dcData_Electron_HighDM_Loose_njetWeight_mtb,                   dcMC_Electron_HighDM_Loose_njetWeight_mtb},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nj_shape_ptb" + histSuffix,                           {dcData_Electron_LowDM_Loose_njetWeight_ptb,                    dcMC_Electron_LowDM_Loose_njetWeight_ptb},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nj_shape_ptb" + histSuffix,                          {dcData_Electron_HighDM_Loose_njetWeight_ptb,                   dcMC_Electron_HighDM_Loose_njetWeight_ptb},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
+                vh.push_back(PHS("DataMC_Electron_LowDM_Loose_nj_shape_ISRJetPt" + histSuffix,                      {dcData_Electron_LowDM_Loose_njetWeight_ISRJetPt,               dcMC_Electron_LowDM_Loose_njetWeight_ISRJetPt},                     {1, 2}, "", nBins,  minPt, maxPt,     true, doNorm, label_ISRJetPt, "Events"));
+                vh.push_back(PHS("DataMC_Electron_HighDM_Loose_nj_shape_ISRJetPt" + histSuffix,                     {dcData_Electron_HighDM_Loose_njetWeight_ISRJetPt,              dcMC_Electron_HighDM_Loose_njetWeight_ISRJetPt},                    {1, 2}, "", nBins,  minPt, maxPt,     true, doNorm, label_ISRJetPt, "Events"));
             }
 
 
@@ -1947,6 +2115,48 @@ int main(int argc, char* argv[])
             PDC dcMC_Muon_LowDM_Loose_met(    "stack",  "metWithLL", StackMC_Muon_LowDM_Loose);
             PDC dcMC_Muon_HighDM_Loose_met(   "stack",  "metWithLL", StackMC_Muon_HighDM_Loose);
             
+            // n_bottoms_Loose
+            PDC dcData_Muon_LowDM_Loose_nb(  "data",   "nBottoms" + varSuffix, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_nb( "data",   "nBottoms" + varSuffix, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_nb(    "stack",  "nBottoms" + varSuffix, StackMC_Muon_LowDM_Loose);
+            PDC dcMC_Muon_HighDM_Loose_nb(   "stack",  "nBottoms" + varSuffix, StackMC_Muon_HighDM_Loose);
+            
+            // n_mergedTops_Loose
+            PDC dcData_Muon_LowDM_Loose_nmt(  "data",   "nMergedTops" + varSuffix, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_nmt( "data",   "nMergedTops" + varSuffix, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_nmt(    "stack",  "nMergedTops" + varSuffix, StackMC_Muon_LowDM_Loose);
+            PDC dcMC_Muon_HighDM_Loose_nmt(   "stack",  "nMergedTops" + varSuffix, StackMC_Muon_HighDM_Loose);
+            
+            // n_Ws_Loose
+            PDC dcData_Muon_LowDM_Loose_nw(  "data",   "nWs" + varSuffix, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_nw( "data",   "nWs" + varSuffix, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_nw(    "stack",  "nWs" + varSuffix, StackMC_Muon_LowDM_Loose);
+            PDC dcMC_Muon_HighDM_Loose_nw(   "stack",  "nWs" + varSuffix, StackMC_Muon_HighDM_Loose);
+            
+            // n_resolvedTops_Loose
+            PDC dcData_Muon_LowDM_Loose_nrt(  "data",   "nResolvedTops" + varSuffix, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_nrt( "data",   "nResolvedTops" + varSuffix, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_nrt(    "stack",  "nResolvedTops" + varSuffix, StackMC_Muon_LowDM_Loose);
+            PDC dcMC_Muon_HighDM_Loose_nrt(   "stack",  "nResolvedTops" + varSuffix, StackMC_Muon_HighDM_Loose);
+
+            // mtb_Loose
+            PDC dcData_Muon_LowDM_Loose_mtb(  "data",   "mtb" + varSuffix, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_mtb( "data",   "mtb" + varSuffix, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_mtb(    "stack",  "mtb" + varSuffix, StackMC_Muon_LowDM_Loose);
+            PDC dcMC_Muon_HighDM_Loose_mtb(   "stack",  "mtb" + varSuffix, StackMC_Muon_HighDM_Loose);
+            
+            // ptb_Loose
+            PDC dcData_Muon_LowDM_Loose_ptb(  "data",   "ptb" + varSuffix, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_ptb( "data",   "ptb" + varSuffix, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_ptb(    "stack",  "ptb" + varSuffix, StackMC_Muon_LowDM_Loose);
+            PDC dcMC_Muon_HighDM_Loose_ptb(   "stack",  "ptb" + varSuffix, StackMC_Muon_HighDM_Loose);
+            
+            // ISRJetPt_Loose
+            PDC dcData_Muon_LowDM_Loose_ISRJetPt(  "data",   "ISRJetPt" + JetPtCut, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_ISRJetPt( "data",   "ISRJetPt" + JetPtCut, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_ISRJetPt(    "stack",  "ISRJetPt" + JetPtCut, StackMC_Muon_LowDM_Loose);
+            PDC dcMC_Muon_HighDM_Loose_ISRJetPt(   "stack",  "ISRJetPt" + JetPtCut, StackMC_Muon_HighDM_Loose);
+            
             //With shape weight
             
             // n_jets with nj_shape
@@ -1984,6 +2194,90 @@ int main(int argc, char* argv[])
             PDC dcData_Muon_HighDM_Loose_njetWeight_met( "data",   "metWithLL", {dsData_Muon_HighDM_Loose});
             PDC dcMC_Muon_LowDM_Loose_njetWeight_met(    "stack",  "metWithLL", StackMC_Muon_LowDM_Loose_njetWeight);
             PDC dcMC_Muon_HighDM_Loose_njetWeight_met(   "stack",  "metWithLL", StackMC_Muon_HighDM_Loose_njetWeight);
+            
+            // n_bottoms with nj_shape
+            PDC dcData_Muon_LowDM_njetWeight_nb(  "data",   "nBottoms" + varSuffix, {dsData_Muon_LowDM});
+            PDC dcData_Muon_HighDM_njetWeight_nb( "data",   "nBottoms" + varSuffix, {dsData_Muon_HighDM});
+            PDC dcMC_Muon_LowDM_njetWeight_nb(    "stack",  "nBottoms" + varSuffix, StackMC_Muon_LowDM_njetWeight);
+            PDC dcMC_Muon_HighDM_njetWeight_nb(   "stack",  "nBottoms" + varSuffix, StackMC_Muon_HighDM_njetWeight);
+            
+            // n_bottoms_Loose with nj_shape
+            PDC dcData_Muon_LowDM_Loose_njetWeight_nb(  "data",   "nBottoms" + varSuffix, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_njetWeight_nb( "data",   "nBottoms" + varSuffix, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_njetWeight_nb(    "stack",  "nBottoms" + varSuffix, StackMC_Muon_LowDM_Loose_njetWeight);
+            PDC dcMC_Muon_HighDM_Loose_njetWeight_nb(   "stack",  "nBottoms" + varSuffix, StackMC_Muon_HighDM_Loose_njetWeight);
+            
+            // n_mergedTops with nj_shape
+            PDC dcData_Muon_LowDM_njetWeight_nmt(  "data",   "nMergedTops" + varSuffix, {dsData_Muon_LowDM});
+            PDC dcData_Muon_HighDM_njetWeight_nmt( "data",   "nMergedTops" + varSuffix, {dsData_Muon_HighDM});
+            PDC dcMC_Muon_LowDM_njetWeight_nmt(    "stack",  "nMergedTops" + varSuffix, StackMC_Muon_LowDM_njetWeight);
+            PDC dcMC_Muon_HighDM_njetWeight_nmt(   "stack",  "nMergedTops" + varSuffix, StackMC_Muon_HighDM_njetWeight);
+            
+            // n_mergedTops_Loose with nj_shape
+            PDC dcData_Muon_LowDM_Loose_njetWeight_nmt(  "data",   "nMergedTops" + varSuffix, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_njetWeight_nmt( "data",   "nMergedTops" + varSuffix, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_njetWeight_nmt(    "stack",  "nMergedTops" + varSuffix, StackMC_Muon_LowDM_Loose_njetWeight);
+            PDC dcMC_Muon_HighDM_Loose_njetWeight_nmt(   "stack",  "nMergedTops" + varSuffix, StackMC_Muon_HighDM_Loose_njetWeight);
+            
+            // n_Ws with nj_shape
+            PDC dcData_Muon_LowDM_njetWeight_nw(  "data",   "nWs" + varSuffix, {dsData_Muon_LowDM});
+            PDC dcData_Muon_HighDM_njetWeight_nw( "data",   "nWs" + varSuffix, {dsData_Muon_HighDM});
+            PDC dcMC_Muon_LowDM_njetWeight_nw(    "stack",  "nWs" + varSuffix, StackMC_Muon_LowDM_njetWeight);
+            PDC dcMC_Muon_HighDM_njetWeight_nw(   "stack",  "nWs" + varSuffix, StackMC_Muon_HighDM_njetWeight);
+            
+            // n_Ws_Loose with nj_shape
+            PDC dcData_Muon_LowDM_Loose_njetWeight_nw(  "data",   "nWs" + varSuffix, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_njetWeight_nw( "data",   "nWs" + varSuffix, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_njetWeight_nw(    "stack",  "nWs" + varSuffix, StackMC_Muon_LowDM_Loose_njetWeight);
+            PDC dcMC_Muon_HighDM_Loose_njetWeight_nw(   "stack",  "nWs" + varSuffix, StackMC_Muon_HighDM_Loose_njetWeight);
+            
+            // n_resolvedTops with nj_shape
+            PDC dcData_Muon_LowDM_njetWeight_nrt(  "data",   "nResolvedTops" + varSuffix, {dsData_Muon_LowDM});
+            PDC dcData_Muon_HighDM_njetWeight_nrt( "data",   "nResolvedTops" + varSuffix, {dsData_Muon_HighDM});
+            PDC dcMC_Muon_LowDM_njetWeight_nrt(    "stack",  "nResolvedTops" + varSuffix, StackMC_Muon_LowDM_njetWeight);
+            PDC dcMC_Muon_HighDM_njetWeight_nrt(   "stack",  "nResolvedTops" + varSuffix, StackMC_Muon_HighDM_njetWeight);
+
+            // n_resolvedTops_Loose with nj_shape
+            PDC dcData_Muon_LowDM_Loose_njetWeight_nrt(  "data",   "nResolvedTops" + varSuffix, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_njetWeight_nrt( "data",   "nResolvedTops" + varSuffix, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_njetWeight_nrt(    "stack",  "nResolvedTops" + varSuffix, StackMC_Muon_LowDM_Loose_njetWeight);
+            PDC dcMC_Muon_HighDM_Loose_njetWeight_nrt(   "stack",  "nResolvedTops" + varSuffix, StackMC_Muon_HighDM_Loose_njetWeight);
+
+            // mtb with nj_shape
+            PDC dcData_Muon_LowDM_njetWeight_mtb(  "data",   "mtb" + varSuffix, {dsData_Muon_LowDM});
+            PDC dcData_Muon_HighDM_njetWeight_mtb( "data",   "mtb" + varSuffix, {dsData_Muon_HighDM});
+            PDC dcMC_Muon_LowDM_njetWeight_mtb(    "stack",  "mtb" + varSuffix, StackMC_Muon_LowDM_njetWeight);
+            PDC dcMC_Muon_HighDM_njetWeight_mtb(   "stack",  "mtb" + varSuffix, StackMC_Muon_HighDM_njetWeight);
+            
+            // mtb_Loose with nj_shape
+            PDC dcData_Muon_LowDM_Loose_njetWeight_mtb(  "data",   "mtb" + varSuffix, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_njetWeight_mtb( "data",   "mtb" + varSuffix, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_njetWeight_mtb(    "stack",  "mtb" + varSuffix, StackMC_Muon_LowDM_Loose_njetWeight);
+            PDC dcMC_Muon_HighDM_Loose_njetWeight_mtb(   "stack",  "mtb" + varSuffix, StackMC_Muon_HighDM_Loose_njetWeight);
+            
+            // ptb with nj_shape
+            PDC dcData_Muon_LowDM_njetWeight_ptb(  "data",   "ptb" + varSuffix, {dsData_Muon_LowDM});
+            PDC dcData_Muon_HighDM_njetWeight_ptb( "data",   "ptb" + varSuffix, {dsData_Muon_HighDM});
+            PDC dcMC_Muon_LowDM_njetWeight_ptb(    "stack",  "ptb" + varSuffix, StackMC_Muon_LowDM_njetWeight);
+            PDC dcMC_Muon_HighDM_njetWeight_ptb(   "stack",  "ptb" + varSuffix, StackMC_Muon_HighDM_njetWeight);
+            
+            // ptb_Loose with nj_shape
+            PDC dcData_Muon_LowDM_Loose_njetWeight_ptb(  "data",   "ptb" + varSuffix, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_njetWeight_ptb( "data",   "ptb" + varSuffix, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_njetWeight_ptb(    "stack",  "ptb" + varSuffix, StackMC_Muon_LowDM_Loose_njetWeight);
+            PDC dcMC_Muon_HighDM_Loose_njetWeight_ptb(   "stack",  "ptb" + varSuffix, StackMC_Muon_HighDM_Loose_njetWeight);
+            
+            // ISRJetPt with nj_shape
+            PDC dcData_Muon_LowDM_njetWeight_ISRJetPt(  "data",   "ISRJetPt" + JetPtCut, {dsData_Muon_LowDM});
+            PDC dcData_Muon_HighDM_njetWeight_ISRJetPt( "data",   "ISRJetPt" + JetPtCut, {dsData_Muon_HighDM});
+            PDC dcMC_Muon_LowDM_njetWeight_ISRJetPt(    "stack",  "ISRJetPt" + JetPtCut, StackMC_Muon_LowDM_njetWeight);
+            PDC dcMC_Muon_HighDM_njetWeight_ISRJetPt(   "stack",  "ISRJetPt" + JetPtCut, StackMC_Muon_HighDM_njetWeight);
+            
+            // ISRJetPt_Loose with nj_shape
+            PDC dcData_Muon_LowDM_Loose_njetWeight_ISRJetPt(  "data",   "ISRJetPt" + JetPtCut, {dsData_Muon_LowDM_Loose});
+            PDC dcData_Muon_HighDM_Loose_njetWeight_ISRJetPt( "data",   "ISRJetPt" + JetPtCut, {dsData_Muon_HighDM_Loose});
+            PDC dcMC_Muon_LowDM_Loose_njetWeight_ISRJetPt(    "stack",  "ISRJetPt" + JetPtCut, StackMC_Muon_LowDM_Loose_njetWeight);
+            PDC dcMC_Muon_HighDM_Loose_njetWeight_ISRJetPt(   "stack",  "ISRJetPt" + JetPtCut, StackMC_Muon_HighDM_Loose_njetWeight);
             
             // end of <OM>
 
@@ -2110,6 +2404,20 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("DataMC_Muon_HighDM_Loose_ht" + histSuffix,                           {dcData_Muon_HighDM_Loose_ht,    dcMC_Muon_HighDM_Loose_ht},                 {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
                 vh.push_back(PHS("DataMC_Muon_LowDM_Loose_met" + histSuffix,                           {dcData_Muon_LowDM_Loose_met,    dcMC_Muon_LowDM_Loose_met},                 {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
                 vh.push_back(PHS("DataMC_Muon_HighDM_Loose_met" + histSuffix,                          {dcData_Muon_HighDM_Loose_met,   dcMC_Muon_HighDM_Loose_met},                {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nb" + histSuffix,                            {dcData_Muon_LowDM_Loose_nb,                     dcMC_Muon_LowDM_Loose_nb},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nb" + histSuffix,                           {dcData_Muon_HighDM_Loose_nb,                    dcMC_Muon_HighDM_Loose_nb},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nw" + histSuffix,                            {dcData_Muon_LowDM_Loose_nw,                     dcMC_Muon_LowDM_Loose_nw},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nw" + histSuffix,                           {dcData_Muon_HighDM_Loose_nw,                    dcMC_Muon_HighDM_Loose_nw},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nmt" + histSuffix,                           {dcData_Muon_LowDM_Loose_nmt,                    dcMC_Muon_LowDM_Loose_nmt},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nmt" + histSuffix,                          {dcData_Muon_HighDM_Loose_nmt,                   dcMC_Muon_HighDM_Loose_nmt},                         {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nrt" + histSuffix,                           {dcData_Muon_LowDM_Loose_nrt,                    dcMC_Muon_LowDM_Loose_nrt},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nrt" + histSuffix,                          {dcData_Muon_HighDM_Loose_nrt,                   dcMC_Muon_HighDM_Loose_nrt},                         {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_mtb" + histSuffix,                           {dcData_Muon_LowDM_Loose_mtb,                    dcMC_Muon_LowDM_Loose_mtb},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_mtb" + histSuffix,                          {dcData_Muon_HighDM_Loose_mtb,                   dcMC_Muon_HighDM_Loose_mtb},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_ptb" + histSuffix,                           {dcData_Muon_LowDM_Loose_ptb,                    dcMC_Muon_LowDM_Loose_ptb},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_ptb" + histSuffix,                          {dcData_Muon_HighDM_Loose_ptb,                   dcMC_Muon_HighDM_Loose_ptb},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_ISRJetPt" + histSuffix,                      {dcData_Muon_LowDM_Loose_ISRJetPt,               dcMC_Muon_LowDM_Loose_ISRJetPt},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ISRJetPt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_ISRJetPt" + histSuffix,                     {dcData_Muon_HighDM_Loose_ISRJetPt,              dcMC_Muon_HighDM_Loose_ISRJetPt},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ISRJetPt, "Events"));
 
                 //With nj shape 
                 vh.push_back(PHS("DataMC_Muon_LowDM_nj_shape_nj" + histSuffix,                                  {dcData_Muon_LowDM_njetWeight_nj,           dcMC_Muon_LowDM_njetWeight_nj},                        {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
@@ -2118,12 +2426,41 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("DataMC_Muon_HighDM_nj_shape_ht" + histSuffix,                                 {dcData_Muon_HighDM_njetWeight_ht,          dcMC_Muon_HighDM_njetWeight_ht},                       {1, 2}, "",   nBins,  minPt, maxPt,      true, doNorm, label_ht, "Events"));
                 vh.push_back(PHS("DataMC_Muon_LowDM_nj_shape_met" + histSuffix,                                 {dcData_Muon_LowDM_njetWeight_met,          dcMC_Muon_LowDM_njetWeight_met},                       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
                 vh.push_back(PHS("DataMC_Muon_HighDM_nj_shape_met" + histSuffix,                                {dcData_Muon_HighDM_njetWeight_met,         dcMC_Muon_HighDM_njetWeight_met},                      {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_nj_shape_nb" + histSuffix,                                  {dcData_Muon_LowDM_njetWeight_nb,                           dcMC_Muon_LowDM_njetWeight_nb},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_nj_shape_nb" + histSuffix,                                 {dcData_Muon_HighDM_njetWeight_nb,                          dcMC_Muon_HighDM_njetWeight_nb},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_nj_shape_nw" + histSuffix,                                  {dcData_Muon_LowDM_njetWeight_nw,                           dcMC_Muon_LowDM_njetWeight_nw},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_nj_shape_nw" + histSuffix,                                 {dcData_Muon_HighDM_njetWeight_nw,                          dcMC_Muon_HighDM_njetWeight_nw},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_nj_shape_nmt" + histSuffix,                                 {dcData_Muon_LowDM_njetWeight_nmt,                          dcMC_Muon_LowDM_njetWeight_nmt},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_nj_shape_nmt" + histSuffix,                                {dcData_Muon_HighDM_njetWeight_nmt,                         dcMC_Muon_HighDM_njetWeight_nmt},                         {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_nj_shape_nrt" + histSuffix,                                 {dcData_Muon_LowDM_njetWeight_nrt,                          dcMC_Muon_LowDM_njetWeight_nrt},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_nj_shape_nrt" + histSuffix,                                {dcData_Muon_HighDM_njetWeight_nrt,                         dcMC_Muon_HighDM_njetWeight_nrt},                         {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_nj_shape_mtb" + histSuffix,                                 {dcData_Muon_LowDM_njetWeight_mtb,                          dcMC_Muon_LowDM_njetWeight_mtb},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_nj_shape_mtb" + histSuffix,                                {dcData_Muon_HighDM_njetWeight_mtb,                         dcMC_Muon_HighDM_njetWeight_mtb},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_nj_shape_ptb" + histSuffix,                                 {dcData_Muon_LowDM_njetWeight_ptb,                          dcMC_Muon_LowDM_njetWeight_ptb},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_nj_shape_ptb" + histSuffix,                                {dcData_Muon_HighDM_njetWeight_ptb,                         dcMC_Muon_HighDM_njetWeight_ptb},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_nj_shape_ISRJetPt" + histSuffix,                            {dcData_Muon_LowDM_njetWeight_ISRJetPt,                     dcMC_Muon_LowDM_njetWeight_ISRJetPt},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ISRJetPt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_nj_shape_ISRJetPt" + histSuffix,                           {dcData_Muon_HighDM_njetWeight_ISRJetPt,                    dcMC_Muon_HighDM_njetWeight_ISRJetPt},                    {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ISRJetPt, "Events"));
+
                 vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nj_shape_nj" + histSuffix,                            {dcData_Muon_LowDM_Loose_njetWeight_nj,     dcMC_Muon_LowDM_Loose_njetWeight_nj},                  {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
                 vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nj_shape_nj" + histSuffix,                           {dcData_Muon_HighDM_Loose_njetWeight_nj,    dcMC_Muon_HighDM_Loose_njetWeight_nj},                 {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
                 vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nj_shape_ht" + histSuffix,                            {dcData_Muon_LowDM_Loose_njetWeight_ht,     dcMC_Muon_LowDM_Loose_njetWeight_ht},                  {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
                 vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nj_shape_ht" + histSuffix,                           {dcData_Muon_HighDM_Loose_njetWeight_ht,    dcMC_Muon_HighDM_Loose_njetWeight_ht},                 {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ht, "Events"));
                 vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nj_shape_met" + histSuffix,                           {dcData_Muon_LowDM_Loose_njetWeight_met,    dcMC_Muon_LowDM_Loose_njetWeight_met},                 {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
                 vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nj_shape_met" + histSuffix,                          {dcData_Muon_HighDM_Loose_njetWeight_met,   dcMC_Muon_HighDM_Loose_njetWeight_met},                {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nj_shape_nb" + histSuffix,                            {dcData_Muon_LowDM_Loose_njetWeight_nb,                     dcMC_Muon_LowDM_Loose_njetWeight_nb},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nj_shape_nb" + histSuffix,                           {dcData_Muon_HighDM_Loose_njetWeight_nb,                    dcMC_Muon_HighDM_Loose_njetWeight_nb},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nj_shape_nw" + histSuffix,                            {dcData_Muon_LowDM_Loose_njetWeight_nw,                     dcMC_Muon_LowDM_Loose_njetWeight_nw},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nj_shape_nw" + histSuffix,                           {dcData_Muon_HighDM_Loose_njetWeight_nw,                    dcMC_Muon_HighDM_Loose_njetWeight_nw},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nj_shape_nmt" + histSuffix,                           {dcData_Muon_LowDM_Loose_njetWeight_nmt,                    dcMC_Muon_LowDM_Loose_njetWeight_nmt},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nj_shape_nmt" + histSuffix,                          {dcData_Muon_HighDM_Loose_njetWeight_nmt,                   dcMC_Muon_HighDM_Loose_njetWeight_nmt},                         {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nj_shape_nrt" + histSuffix,                           {dcData_Muon_LowDM_Loose_njetWeight_nrt,                    dcMC_Muon_LowDM_Loose_njetWeight_nrt},                          {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nj_shape_nrt" + histSuffix,                          {dcData_Muon_HighDM_Loose_njetWeight_nrt,                   dcMC_Muon_HighDM_Loose_njetWeight_nrt},                         {1, 2}, "", 6,  0,  6, true, doNorm, label_nrt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nj_shape_mtb" + histSuffix,                           {dcData_Muon_LowDM_Loose_njetWeight_mtb,                    dcMC_Muon_LowDM_Loose_njetWeight_mtb},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nj_shape_mtb" + histSuffix,                          {dcData_Muon_HighDM_Loose_njetWeight_mtb,                   dcMC_Muon_HighDM_Loose_njetWeight_mtb},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_mtb, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nj_shape_ptb" + histSuffix,                           {dcData_Muon_LowDM_Loose_njetWeight_ptb,                    dcMC_Muon_LowDM_Loose_njetWeight_ptb},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nj_shape_ptb" + histSuffix,                          {dcData_Muon_HighDM_Loose_njetWeight_ptb,                   dcMC_Muon_HighDM_Loose_njetWeight_ptb},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_ptb, "Events"));
+                vh.push_back(PHS("DataMC_Muon_LowDM_Loose_nj_shape_ISRJetPt" + histSuffix,                      {dcData_Muon_LowDM_Loose_njetWeight_ISRJetPt,               dcMC_Muon_LowDM_Loose_njetWeight_ISRJetPt},                     {1, 2}, "", nBins,  minPt, maxPt,     true, doNorm, label_ISRJetPt, "Events"));
+                vh.push_back(PHS("DataMC_Muon_HighDM_Loose_nj_shape_ISRJetPt" + histSuffix,                     {dcData_Muon_HighDM_Loose_njetWeight_ISRJetPt,              dcMC_Muon_HighDM_Loose_njetWeight_ISRJetPt},                    {1, 2}, "", nBins,  minPt, maxPt,     true, doNorm, label_ISRJetPt, "Events"));
             }
 
 
@@ -3491,6 +3828,12 @@ int main(int argc, char* argv[])
             PDC dcMC_ZNuNu_nValidationBin_LowDM_met_shape("data",         "nValidationBinLowDM"           + JetPtCut, {makePDSZnunu("Validation Bin Low DM",          "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights + ";met_LowDM_weight")});
             PDC dcMC_ZNuNu_nValidationBin_LowDM_HighMET_met_shape("data", "nValidationBinLowDMHighMET"    + JetPtCut, {makePDSZnunu("Validation Bin Low DM High MET", "SAT_Pass_lowDM_mid_dPhi"  + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights + ";met_LowDM_weight")});
             PDC dcMC_ZNuNu_nValidationBin_HighDM_met_shape("data",        "nValidationBinHighDM"          + JetPtCut, {makePDSZnunu("Validation Bin High DM",         "SAT_Pass_highDM_mid_dPhi" + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights + ";met_HighDM_weight")});
+            PDC dcMC_ZNuNu_nSearchBin_LowDM_njet_shape("data",                 "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",                  "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights + ";nj_LowDM_weight")});
+            PDC dcMC_ZNuNu_nSearchBin_HighDM_njet_shape("data",                "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",                 "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights + ";nj_HighDM_weight")});
+            PDC dcMC_ZNuNu_nSearchBin_LowDM_ht_shape("data",                 "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",                  "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights + ";ht_LowDM_weight")});
+            PDC dcMC_ZNuNu_nSearchBin_HighDM_ht_shape("data",                "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",                 "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights + ";ht_HighDM_weight")});
+            PDC dcMC_ZNuNu_nSearchBin_LowDM_met_shape("data",                 "nSearchBinLowDM"               + JetPtCut, {makePDSZnunu("Search Bin Low DM",                  "SAT_Pass_lowDM"           + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights + ";met_LowDM_weight")});
+            PDC dcMC_ZNuNu_nSearchBin_HighDM_met_shape("data",                "nSearchBinHighDM"              + JetPtCut, {makePDSZnunu("Search Bin High DM",                 "SAT_Pass_highDM"          + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, ZNuNuWeights + ";met_HighDM_weight")});
 
             // ----------------------------- //
             // --- additional histograms --- //
@@ -3587,6 +3930,12 @@ int main(int argc, char* argv[])
                 vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_met_shape" + histSuffix,         {dcMC_ZNuNu_nValidationBin_LowDM_met_shape},         {1, 1}, "", max_vb_low_dm - min_vb_low_dm,                      min_vb_low_dm,          max_vb_low_dm,          false, false,  "Validation Bin Low DM", "Events", true));
                 vh.push_back(PHS("ZNuNu_nValidationBin_LowDM_HighMET_met_shape" + histSuffix, {dcMC_ZNuNu_nValidationBin_LowDM_HighMET_met_shape}, {1, 1}, "", max_vb_low_dm_high_met - min_vb_low_dm_high_met,    min_vb_low_dm_high_met, max_vb_low_dm_high_met, false, false,  "Validation Bin Low DM High MET", "Events", true));
                 vh.push_back(PHS("ZNuNu_nValidationBin_HighDM_met_shape" + histSuffix,        {dcMC_ZNuNu_nValidationBin_HighDM_met_shape},        {1, 1}, "", max_vb_high_dm - min_vb_high_dm,                    min_vb_high_dm,         max_vb_high_dm,         false, false,  "Validation Bin High DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSearchBin_LowDM_nj_shape" + histSuffix,                 {dcMC_ZNuNu_nSearchBin_LowDM_njet_shape},                  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,              max_sb_low_dm,              false, false,  "Search Bin Low DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSearchBin_HighDM_nj_shape" + histSuffix,                {dcMC_ZNuNu_nSearchBin_HighDM_njet_shape},                 {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,             max_sb_high_dm,             false, false,  "Search Bin High DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSearchBin_LowDM_ht_shape" + histSuffix,                 {dcMC_ZNuNu_nSearchBin_LowDM_ht_shape},                  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,              max_sb_low_dm,              false, false,  "Search Bin Low DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSearchBin_HighDM_ht_shape" + histSuffix,                {dcMC_ZNuNu_nSearchBin_HighDM_ht_shape},                 {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,             max_sb_high_dm,             false, false,  "Search Bin High DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSearchBin_LowDM_met_shape" + histSuffix,                 {dcMC_ZNuNu_nSearchBin_LowDM_met_shape},                  {1, 1}, "", max_sb_low_dm - min_sb_low_dm,                      min_sb_low_dm,              max_sb_low_dm,              false, false,  "Search Bin Low DM", "Events", true));
+            vh.push_back(PHS("ZNuNu_nSearchBin_HighDM_met_shape" + histSuffix,                {dcMC_ZNuNu_nSearchBin_HighDM_met_shape},                 {1, 1}, "", max_sb_high_dm - min_sb_high_dm,                    min_sb_high_dm,             max_sb_high_dm,             false, false,  "Search Bin High DM", "Events", true));
             }
 
             // only show MET Data in search bins if we unblind
