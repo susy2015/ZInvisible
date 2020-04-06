@@ -126,8 +126,8 @@ def main():
     T = Table()
     # fancy table only supported in search bins right now
     # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=0.6)
-    T.makeYieldTable(SB, total_era, latex_dir + "zinv_pred_sr_doc.tex",   True,  0.55)
-    T.makeYieldTable(SB, total_era, latex_dir + "zinv_pred_sr_table.tex", False, 0.60)
+    #T.makeYieldTable(SB, total_era, latex_dir + "zinv_pred_sr_doc.tex",   True,  0.55)
+    #T.makeYieldTable(SB, total_era, latex_dir + "zinv_pred_sr_table.tex", False, 0.60)
     
     # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics
     # must be done after N.makeComparison()
@@ -144,6 +144,9 @@ def main():
         for era in eras:
             # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
             saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + era + ".json", CRunits, SRunits, SB, era)
+            # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=0.6)
+            T.makeYieldTable(SB, era, latex_dir + "zinv_pred_sr_" + era + "_doc.tex",   True,  0.55)
+            T.makeYieldTable(SB, era, latex_dir + "zinv_pred_sr_" + era + "_table.tex", False, 0.60)
 
 
 if __name__ == "__main__":
