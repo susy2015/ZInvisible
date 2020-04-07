@@ -2,6 +2,7 @@
 
 import ROOT
 import json
+import numpy as np
 from tools import setupHist
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
@@ -28,10 +29,14 @@ def run(era):
         binMap = json.load(f)
 
     # histograms
-    h_sgamma_searchbins_1       = ROOT.TH1F("h_sgamma_searchbins_1",        "h_sgamma_searchbins_1",        50, -5, 20)
-    h_sgamma_crunits_1          = ROOT.TH1F("h_sgamma_crunits_1",           "h_sgamma_crunits_1",           50, -5, 20)
-    h_sgamma_searchbins_2       = ROOT.TH1F("h_sgamma_searchbins_2",        "h_sgamma_searchbins_2",        60, -1, 5)
-    h_sgamma_crunits_2          = ROOT.TH1F("h_sgamma_crunits_2",           "h_sgamma_crunits_2",           60, -1, 5)
+    nbins_1 = 50
+    nbins_2 = 60
+    limits_1 = [-5, 20]
+    limits_2 = [-1, 5]
+    h_sgamma_searchbins_1       = ROOT.TH1F("h_sgamma_searchbins_1",        "h_sgamma_searchbins_1",        nbins_1, limits_1[0], limits_1[1])
+    h_sgamma_crunits_1          = ROOT.TH1F("h_sgamma_crunits_1",           "h_sgamma_crunits_1",           nbins_1, limits_1[0], limits_1[1])
+    h_sgamma_searchbins_2       = ROOT.TH1F("h_sgamma_searchbins_2",        "h_sgamma_searchbins_2",        nbins_2, limits_2[0], limits_2[1])
+    h_sgamma_crunits_2          = ROOT.TH1F("h_sgamma_crunits_2",           "h_sgamma_crunits_2",           nbins_2, limits_2[0], limits_2[1])
 
     # get bin and sgamma values for each search bin
     sgammaSearchBins = list((int(b), sbResults[era][b]["shape"]) for b in sbResults[era])
@@ -81,18 +86,19 @@ def run(era):
     labels = ["sgamma_searchbins", "sgamma_crunits"]
     
     # plot
-    # plot(histograms, labels, name, title, x_title, y_min, y_max, era)
-    plot(histograms_1, labels, "sgamma_binning1", "Sgamma", "Sgamma", 0.0, 200.0, era) 
-    plot(histograms_2, labels, "sgamma_binning2", "Sgamma", "Sgamma", 0.0, 60.0,  era) 
+    # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era):
+    plot(histograms_1, labels, "sgamma_binning1", "Sgamma", "Sgamma", limits_1[0], limits_1[1], 0.0, 200.0, era) 
+    plot(histograms_2, labels, "sgamma_binning2", "Sgamma", "Sgamma", limits_2[0], limits_2[1], 0.0, 60.0,  era) 
     
     del h_sgamma_searchbins_1
     del h_sgamma_searchbins_2
     del h_sgamma_crunits_1
     del h_sgamma_crunits_2
 
-def plot(histograms, labels, name, title, x_title, y_min, y_max, era):
+def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era):
     eraTag = "_" + era
     draw_option = "hist"
+    showStats = True
             
     # colors
     color_red    = "vermillion"
@@ -124,7 +130,25 @@ def plot(histograms, labels, name, title, x_title, y_min, y_max, era):
         legend.AddEntry(histograms[i],    labels[i],   "l")
 
     legend.Draw()
-    
+   
+    if showStats:
+        # write stats 
+        # - TLatex: DrawLatex(x, y, text)
+        # - give x, y coordinates (same as plot coordinates)
+        # - y list is for positioning the text
+        x_range = x_max - x_min 
+        x_pos = x_max - 0.4 * x_range
+        step = (y_max - y_min) / 10.0
+        y_list = np.arange(0.8 * y_max, 0.0, -1 * step)
+        mark = ROOT.TLatex()
+        mark.SetTextSize(0.03)
+        mark.DrawLatex(x_pos, y_list[1], labels[0])
+        mark.DrawLatex(x_pos, y_list[2], "mean = %.3f" % histograms[0].GetMean())
+        mark.DrawLatex(x_pos, y_list[3], "std dev = %.3f" % histograms[0].GetStdDev())
+        mark.DrawLatex(x_pos, y_list[4], labels[1])
+        mark.DrawLatex(x_pos, y_list[5], "mean = %.3f" % histograms[1].GetMean())
+        mark.DrawLatex(x_pos, y_list[6], "std dev = %.3f" % histograms[1].GetStdDev())
+
     # save histograms
     plot_dir = "more_plots/"
     plot_name = plot_dir + name + eraTag
