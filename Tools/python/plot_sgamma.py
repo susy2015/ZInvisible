@@ -138,8 +138,8 @@ def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, e
         # - y list is for positioning the text
         x_range = x_max - x_min 
         x_pos = x_max - 0.4 * x_range
-        step = (y_max - y_min) / 10.0
-        y_list = np.arange(0.8 * y_max, 0.0, -1 * step)
+        step = (y_max - y_min) / 20.0
+        y_list = np.arange(0.7 * y_max, 0.0, -1 * step)
         mark = ROOT.TLatex()
         mark.SetTextSize(0.03)
         mark.DrawLatex(x_pos, y_list[1], labels[0])
