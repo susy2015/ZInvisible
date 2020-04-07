@@ -54,7 +54,7 @@ class Common:
                     final_error = getBinError(value, value_error, ERROR_ZERO) 
                     self.binValues[era][b][h_type]            = value
                     self.binValues[era][b][h_type + "_error"] = final_error
-                    self.binValues[era][b][h_type + "_tex"] = "${0:.3f} \pm {1:.3f}$".format(value, final_error)
+                    self.binValues[era][b][h_type + "_tex"]   = "${0:.3f} \pm {1:.3f}$".format(value, final_error)
                     bin_i += 1
 
     def makeJson(self, map_, file_):

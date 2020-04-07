@@ -124,10 +124,6 @@ def main():
     VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
     SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
     T = Table()
-    # fancy table only supported in search bins right now
-    # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=0.6)
-    T.makeYieldTable(SB, total_era, latex_dir + "zinv_pred_sr_doc.tex",   True,  0.55)
-    T.makeYieldTable(SB, total_era, latex_dir + "zinv_pred_sr_table.tex", False, 0.60)
     
     # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics
     # must be done after N.makeComparison()
@@ -139,11 +135,25 @@ def main():
     VB_MS.getZvsPhotonSyst(     Syst.h_map_syst,                            "ZvsPhotonSyst_ValidationBinsMETStudy.root")
     SB.getZvsPhotonSyst(        Syst.h_map_syst,                            "ZvsPhotonSyst_SearchBins.root")
     CRunits.getZvsPhotonSyst(   Syst.h_map_syst,                            "ZvsPhotonSyst_CRUnitBins.root")
+            
+    # save maps to json files
+    # makeJson(self, map_, file_)
+    VB.makeJson(VB.binValues,           "results/ValidationBinResults.json")
+    SB.makeJson(SB.binValues,           "results/SearchBinResults.json")
 
     if doUnits:
+        # save maps to json files
+        # makeJson(self, map_, file_)
+        CRunits.makeJson(CRunits.binValues, "results/CRUnitsResults.json")
+        SRunits.makeJson(SRunits.binValues, "results/SRUnitsResults.json")
         for era in eras:
+            # save yields for data card inputs
             # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
             saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + era + ".json", CRunits, SRunits, SB, era)
+            # fancy table only supported in search bins right now
+            # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=0.6)
+            T.makeYieldTable(SB, era, latex_dir + "zinv_pred_sr_" + era + "_doc.tex",   True,  0.55)
+            T.makeYieldTable(SB, era, latex_dir + "zinv_pred_sr_" + era + "_table.tex", False, 0.60)
 
 
 if __name__ == "__main__":
