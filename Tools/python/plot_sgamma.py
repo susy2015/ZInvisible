@@ -2,7 +2,7 @@
 
 import ROOT
 import json
-
+from tools import setupHist
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -11,6 +11,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 
 def run(era):
+    verbose = 1
     print "---------- Running {0} ----------".format(era)
     # for datacard, the allowed Sgamma range is [0.01, 5]
     minSgamma = 0.01
@@ -26,13 +27,18 @@ def run(era):
     with open(fileBinMap, "r") as f:
         binMap = json.load(f)
 
+    # histograms
+    h_sgamma_searchbins       = ROOT.TH1F("h_sgamma_searchbins",        "h_sgamma_searchbins",        80, -20, 20)
+    h_sgamma_crunits          = ROOT.TH1F("h_sgamma_crunits",           "h_sgamma_crunits",           80, -20, 20)
+
     # get bin and sgamma values for each search bin
     sgammaSearchBins = list((int(b), sbResults[era][b]["shape"]) for b in sbResults[era])
     sgammaSearchBins.sort(key = lambda x: x[0])
     for x in sgammaSearchBins:
         b       = x[0]
         sgamma  = x[1]
-        if sgamma < minSgamma or sgamma > maxSgamma:  
+        h_sgamma_searchbins.Fill(sgamma)
+        if verbose > 1 and (sgamma < minSgamma or sgamma > maxSgamma):
             print "search bin {0}, sgamma = {1}".format(b, sgamma)
     # get bin and sgamma values for each control region bin
     sgammaCRUnits = []
@@ -40,11 +46,6 @@ def run(era):
     for binName in binMap["unitCRNum"]["phocr"]:
         b =  int(binMap["unitCRNum"]["phocr"][binName])
         CRBinNames[b] = binName
-    
-    #for b in xrange(len(CRBinNames)):
-    #    print "{0} : {1}".format(b, CRBinNames[b])
-    #for key in yieldResults["yieldsMap"]:
-    #    print key
     
     # keys for yieldResults["yieldsMap"]:
     # znunu
@@ -63,18 +64,67 @@ def run(era):
             sgamma = phocr_data / den
         else:
             print "WARNING: CR bin {0}, denominator = {1}".format(b, den)
+        h_sgamma_crunits.Fill(sgamma)
         
-        if sgamma < minSgamma or sgamma > maxSgamma:  
+        if verbose > 1 and (sgamma < minSgamma or sgamma > maxSgamma):
             print "CR bin {0}, sgamma = {1}".format(b, sgamma)
         
-        #if phocr_data < 2.0:
-        #    print "CR bin {0}: phocr_data = {1}".format(b, phocr_data)
+        if verbose > 2 and phocr_data < 2.0:
+            print "CR bin {0}: phocr_data = {1}".format(b, phocr_data)
 
+    histograms = [h_sgamma_searchbins, h_sgamma_crunits]
+    labels = ["sgamma_searchbins", "sgamma_crunits"]
+    # plot
+    # plot(histograms, labels, title, x_title, era) 
+    plot(histograms, labels, "Sgamma", "Sgamma", era) 
+    
+    del h_sgamma_searchbins
+    del h_sgamma_crunits
 
+def plot(histograms, labels, title, x_title, era):
+    eraTag = "_" + era
+    draw_option = "hist"
+            
+    # colors
+    color_red    = "vermillion"
+    color_blue   = "electric blue"
+    color_green  = "irish green" 
+    color_purple = "violet"
+    color_black  = "black"
+    colors = [color_red, color_blue, color_green, color_purple, color_black]
+    
+    # legend: TLegend(x1,y1,x2,y2)
+    legend_x1 = 0.6
+    legend_x2 = 0.9 
+    legend_y1 = 0.7
+    legend_y2 = 0.9 
+    legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+    
+    c = ROOT.TCanvas("c", "c", 800, 800)
+    #ROOT.gPad.SetLogy(1) # set log y
 
+    y_title = "Events"
+    y_min = 0.0
+    y_max = 200.0
+    
+    for i in xrange(len(histograms)):
+        # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False)
+        setupHist(histograms[i], title, x_title, y_title, colors[i], y_min, y_max, adjust=False)
+        # draw
+        if i == 0:
+            histograms[i].Draw(draw_option)
+        else:
+            histograms[i].Draw(draw_option + " same")
+        legend.AddEntry(histograms[i],    labels[i],   "l")
 
-
-
+    legend.Draw()
+    
+    # save histograms
+    plot_dir = "more_plots/"
+    name = "sgamma"
+    plot_name = plot_dir + name + eraTag
+    c.Update()
+    c.SaveAs(plot_name + ".png")
 
 def main():
     eras = ["2016", "2017", "2018", "Run2"]
