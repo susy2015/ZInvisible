@@ -139,8 +139,17 @@ def main():
     VB_MS.getZvsPhotonSyst(     Syst.h_map_syst,                            "ZvsPhotonSyst_ValidationBinsMETStudy.root")
     SB.getZvsPhotonSyst(        Syst.h_map_syst,                            "ZvsPhotonSyst_SearchBins.root")
     CRunits.getZvsPhotonSyst(   Syst.h_map_syst,                            "ZvsPhotonSyst_CRUnitBins.root")
+            
+    # save maps to json files
+    # makeJson(self, map_, file_)
+    VB.makeJson(VB.binValues,           "results/ValidationBinResults.json")
+    SB.makeJson(SB.binValues,           "results/SearchBinResults.json")
 
     if doUnits:
+        # save maps to json files
+        # makeJson(self, map_, file_)
+        CRunits.makeJson(CRunits.binValues, "results/CRUnitsResults.json")
+        SRunits.makeJson(SRunits.binValues, "results/SRUnitsResults.json")
         for era in eras:
             # save yields for data card inputs
             # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
@@ -148,12 +157,6 @@ def main():
             # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=0.6)
             T.makeYieldTable(SB, era, latex_dir + "zinv_pred_sr_" + era + "_doc.tex",   True,  0.55)
             T.makeYieldTable(SB, era, latex_dir + "zinv_pred_sr_" + era + "_table.tex", False, 0.60)
-            # save maps to json files
-            # makeJson(self, map_, file_)
-            VB.makeJson(VB.binValues,           "results/ValidationBinResults.json")
-            SB.makeJson(SB.binValues,           "results/SearchBinResults.json")
-            CRunits.makeJson(CRunits.binValues, "results/CRUnitsResults.json")
-            SRunits.makeJson(SRunits.binValues, "results/SRUnitsResults.json")
 
 
 if __name__ == "__main__":

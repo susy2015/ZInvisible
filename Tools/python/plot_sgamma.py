@@ -12,7 +12,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 
 def run(era):
-    verbose = 2
+    verbose = 0
     print "---------- Running {0} ----------".format(era)
     # for datacard, the allowed Sgamma range is [0.01, 5]
     minSgamma = 0.01
