@@ -11,7 +11,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 
 def run(era):
-    verbose = 1
+    verbose = 2
     print "---------- Running {0} ----------".format(era)
     # for datacard, the allowed Sgamma range is [0.01, 5]
     minSgamma = 0.01
@@ -28,8 +28,8 @@ def run(era):
         binMap = json.load(f)
 
     # histograms
-    h_sgamma_searchbins_1       = ROOT.TH1F("h_sgamma_searchbins_1",        "h_sgamma_searchbins_1",        80, -20, 20)
-    h_sgamma_crunits_1          = ROOT.TH1F("h_sgamma_crunits_1",           "h_sgamma_crunits_1",           80, -20, 20)
+    h_sgamma_searchbins_1       = ROOT.TH1F("h_sgamma_searchbins_1",        "h_sgamma_searchbins_1",        50, -5, 20)
+    h_sgamma_crunits_1          = ROOT.TH1F("h_sgamma_crunits_1",           "h_sgamma_crunits_1",           50, -5, 20)
     h_sgamma_searchbins_2       = ROOT.TH1F("h_sgamma_searchbins_2",        "h_sgamma_searchbins_2",        60, -1, 5)
     h_sgamma_crunits_2          = ROOT.TH1F("h_sgamma_crunits_2",           "h_sgamma_crunits_2",           60, -1, 5)
 
