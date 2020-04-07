@@ -137,17 +137,18 @@ def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, e
         # - give x, y coordinates (same as plot coordinates)
         # - y list is for positioning the text
         x_range = x_max - x_min 
-        x_pos = x_max - 0.4 * x_range
+        x_pos_1 = x_max - 0.4  * x_range
+        x_pos_2 = x_max - 0.35 * x_range
         step = (y_max - y_min) / 20.0
         y_list = np.arange(0.7 * y_max, 0.0, -1 * step)
         mark = ROOT.TLatex()
         mark.SetTextSize(0.03)
-        mark.DrawLatex(x_pos, y_list[1], labels[0])
-        mark.DrawLatex(x_pos, y_list[2], "mean = %.3f" % histograms[0].GetMean())
-        mark.DrawLatex(x_pos, y_list[3], "std dev = %.3f" % histograms[0].GetStdDev())
-        mark.DrawLatex(x_pos, y_list[4], labels[1])
-        mark.DrawLatex(x_pos, y_list[5], "mean = %.3f" % histograms[1].GetMean())
-        mark.DrawLatex(x_pos, y_list[6], "std dev = %.3f" % histograms[1].GetStdDev())
+        mark.DrawLatex(x_pos_1, y_list[1], labels[0])
+        mark.DrawLatex(x_pos_2, y_list[2], "mean = %.3f" % histograms[0].GetMean())
+        mark.DrawLatex(x_pos_2, y_list[3], "std dev = %.3f" % histograms[0].GetStdDev())
+        mark.DrawLatex(x_pos_1, y_list[4], labels[1])
+        mark.DrawLatex(x_pos_2, y_list[5], "mean = %.3f" % histograms[1].GetMean())
+        mark.DrawLatex(x_pos_2, y_list[6], "std dev = %.3f" % histograms[1].GetStdDev())
 
     # save histograms
     plot_dir = "more_plots/"
