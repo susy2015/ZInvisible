@@ -28,8 +28,10 @@ def run(era):
         binMap = json.load(f)
 
     # histograms
-    h_sgamma_searchbins       = ROOT.TH1F("h_sgamma_searchbins",        "h_sgamma_searchbins",        80, -20, 20)
-    h_sgamma_crunits          = ROOT.TH1F("h_sgamma_crunits",           "h_sgamma_crunits",           80, -20, 20)
+    h_sgamma_searchbins_1       = ROOT.TH1F("h_sgamma_searchbins_1",        "h_sgamma_searchbins_1",        80, -20, 20)
+    h_sgamma_crunits_1          = ROOT.TH1F("h_sgamma_crunits_1",           "h_sgamma_crunits_1",           80, -20, 20)
+    h_sgamma_searchbins_2       = ROOT.TH1F("h_sgamma_searchbins_2",        "h_sgamma_searchbins_2",        60, -1, 5)
+    h_sgamma_crunits_2          = ROOT.TH1F("h_sgamma_crunits_2",           "h_sgamma_crunits_2",           60, -1, 5)
 
     # get bin and sgamma values for each search bin
     sgammaSearchBins = list((int(b), sbResults[era][b]["shape"]) for b in sbResults[era])
@@ -37,7 +39,8 @@ def run(era):
     for x in sgammaSearchBins:
         b       = x[0]
         sgamma  = x[1]
-        h_sgamma_searchbins.Fill(sgamma)
+        h_sgamma_searchbins_1.Fill(sgamma)
+        h_sgamma_searchbins_2.Fill(sgamma)
         if verbose > 1 and (sgamma < minSgamma or sgamma > maxSgamma):
             print "search bin {0}, sgamma = {1}".format(b, sgamma)
     # get bin and sgamma values for each control region bin
@@ -64,7 +67,8 @@ def run(era):
             sgamma = phocr_data / den
         else:
             print "WARNING: CR bin {0}, denominator = {1}".format(b, den)
-        h_sgamma_crunits.Fill(sgamma)
+        h_sgamma_crunits_1.Fill(sgamma)
+        h_sgamma_crunits_2.Fill(sgamma)
         
         if verbose > 1 and (sgamma < minSgamma or sgamma > maxSgamma):
             print "CR bin {0}, sgamma = {1}".format(b, sgamma)
@@ -72,16 +76,21 @@ def run(era):
         if verbose > 2 and phocr_data < 2.0:
             print "CR bin {0}: phocr_data = {1}".format(b, phocr_data)
 
-    histograms = [h_sgamma_searchbins, h_sgamma_crunits]
+    histograms_1 = [h_sgamma_searchbins_1, h_sgamma_crunits_1]
+    histograms_2 = [h_sgamma_searchbins_2, h_sgamma_crunits_2]
     labels = ["sgamma_searchbins", "sgamma_crunits"]
-    # plot
-    # plot(histograms, labels, title, x_title, era) 
-    plot(histograms, labels, "Sgamma", "Sgamma", era) 
     
-    del h_sgamma_searchbins
-    del h_sgamma_crunits
+    # plot
+    # plot(histograms, labels, name, title, x_title, y_min, y_max, era)
+    plot(histograms_1, labels, "sgamma_binning1", "Sgamma", "Sgamma", 0.0, 200.0, era) 
+    plot(histograms_2, labels, "sgamma_binning2", "Sgamma", "Sgamma", 0.0, 60.0,  era) 
+    
+    del h_sgamma_searchbins_1
+    del h_sgamma_searchbins_2
+    del h_sgamma_crunits_1
+    del h_sgamma_crunits_2
 
-def plot(histograms, labels, title, x_title, era):
+def plot(histograms, labels, name, title, x_title, y_min, y_max, era):
     eraTag = "_" + era
     draw_option = "hist"
             
@@ -101,11 +110,8 @@ def plot(histograms, labels, title, x_title, era):
     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
     
     c = ROOT.TCanvas("c", "c", 800, 800)
-    #ROOT.gPad.SetLogy(1) # set log y
 
     y_title = "Events"
-    y_min = 0.0
-    y_max = 200.0
     
     for i in xrange(len(histograms)):
         # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False)
@@ -121,7 +127,6 @@ def plot(histograms, labels, title, x_title, era):
     
     # save histograms
     plot_dir = "more_plots/"
-    name = "sgamma"
     plot_name = plot_dir + name + eraTag
     c.Update()
     c.SaveAs(plot_name + ".png")
