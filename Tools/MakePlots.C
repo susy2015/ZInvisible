@@ -3710,9 +3710,6 @@ int main(int argc, char* argv[])
                 // --- pdf systematic --- //
                 for (const auto& pdf : pdfMap)
                 {
-                    // make first letter uppercase: up, down ---> Up, Down
-                    std::string direction = pdf.first;
-                    direction[0] = toupper(direction[0]);
                     std::string histSuffixSyst                  = "_pdf_syst_"               + pdf.first + JetPtCut;
                     std::string totalWeights                    = ZNuNuWeights               + ";"       + pdf.second;
                     std::string SAT_Pass_lowDM                  = "SAT_Pass_lowDM"           + JetPtCut;
