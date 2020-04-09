@@ -29,23 +29,17 @@
         "nominal": "DiMuTriggerEffPt",
         "up": "DiMuTriggerEffPt_Up"
     },
+    "eff_fatjet_veto": {
+        "down": "Stop0l_DeepAK8_SFWeight_veto_dn",
+        "name": "eff_fatjet_veto",
+        "nominal": "Stop0l_DeepAK8_SFWeight",
+        "up": "Stop0l_DeepAK8_SFWeight_veto_up"
+    },
     "eff_restoptag": {
-        "down": "ResolvedTopTotalSF_Down_jetpt30",
+        "down": "Stop0l_ResTopWeight_Dn",
         "name": "eff_restoptag",
-        "nominal": "ResolvedTopTotalSF_jetpt30",
-        "up": "ResolvedTopTotalSF_Up_jetpt30"
-    },
-    "eff_restoptag_lepton": {
-        "down": "ResolvedTopTotalSF_Down_drLeptonCleaned_jetpt30",
-        "name": "eff_restoptag",
-        "nominal": "ResolvedTopTotalSF_drLeptonCleaned_jetpt30",
-        "up": "ResolvedTopTotalSF_Up_drLeptonCleaned_jetpt30"
-    },
-    "eff_restoptag_photon": {
-        "down": "ResolvedTopTotalSF_Down_drPhotonCleaned_jetpt30",
-        "name": "eff_restoptag",
-        "nominal": "ResolvedTopTotalSF_drPhotonCleaned_jetpt30",
-        "up": "ResolvedTopTotalSF_Up_drPhotonCleaned_jetpt30"
+        "nominal": "Stop0l_ResTopWeight",
+        "up": "Stop0l_ResTopWeight_Up"
     },
     "eff_sb": {
         "down": "SoftBottomTotalSF_Down_jetpt30",
@@ -66,40 +60,16 @@
         "up": "SoftBottomTotalSF_Up_drPhotonCleaned_jetpt30"
     },
     "eff_toptag": {
-        "down": "MergedTopTotalSF_Down_jetpt30",
+        "down": "Stop0l_DeepAK8_SFWeight_top_dn",
         "name": "eff_toptag",
-        "nominal": "MergedTopTotalSF_jetpt30",
-        "up": "MergedTopTotalSF_Up_jetpt30"
-    },
-    "eff_toptag_lepton": {
-        "down": "MergedTopTotalSF_Down_drLeptonCleaned_jetpt30",
-        "name": "eff_toptag",
-        "nominal": "MergedTopTotalSF_drLeptonCleaned_jetpt30",
-        "up": "MergedTopTotalSF_Up_drLeptonCleaned_jetpt30"
-    },
-    "eff_toptag_photon": {
-        "down": "MergedTopTotalSF_Down_drPhotonCleaned_jetpt30",
-        "name": "eff_toptag",
-        "nominal": "MergedTopTotalSF_drPhotonCleaned_jetpt30",
-        "up": "MergedTopTotalSF_Up_drPhotonCleaned_jetpt30"
+        "nominal": "Stop0l_DeepAK8_SFWeight",
+        "up": "Stop0l_DeepAK8_SFWeight_top_up"
     },
     "eff_wtag": {
-        "down": "WTotalSF_Down_jetpt30",
+        "down": "Stop0l_DeepAK8_SFWeight_w_dn",
         "name": "eff_wtag",
-        "nominal": "WTotalSF_jetpt30",
-        "up": "WTotalSF_Up_jetpt30"
-    },
-    "eff_wtag_lepton": {
-        "down": "WTotalSF_Down_drLeptonCleaned_jetpt30",
-        "name": "eff_wtag",
-        "nominal": "WTotalSF_drLeptonCleaned_jetpt30",
-        "up": "WTotalSF_Up_drLeptonCleaned_jetpt30"
-    },
-    "eff_wtag_photon": {
-        "down": "WTotalSF_Down_drPhotonCleaned_jetpt30",
-        "name": "eff_wtag",
-        "nominal": "WTotalSF_drPhotonCleaned_jetpt30",
-        "up": "WTotalSF_Up_drPhotonCleaned_jetpt30"
+        "nominal": "Stop0l_DeepAK8_SFWeight",
+        "up": "Stop0l_DeepAK8_SFWeight_w_up"
     },
     "isr": {
         "down": "ISRWeight_Down",

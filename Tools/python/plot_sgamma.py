@@ -155,6 +155,7 @@ def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, e
     plot_name = plot_dir + name + eraTag
     c.Update()
     c.SaveAs(plot_name + ".png")
+    c.SaveAs(plot_name + ".pdf")
 
 def main():
     eras = ["2016", "2017", "2018", "Run2"]

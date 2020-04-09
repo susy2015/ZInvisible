@@ -50,9 +50,9 @@ int main(int argc, char* argv[])
         {"era",        required_argument, 0, 'Y'}
     };
     bool runOnCondor            = false;
-    bool unblind                = false;
+    bool unblind                = true;     // Hooray for unblinding! compare MET data in search bins with Hui and Matt.
     bool doLooseAndMid          = false;    // hi angel
-    bool doSystematics          = true;     // hi caleb
+    bool doSystematics          = false;    // hi caleb
     bool doLeptonSystematics    = false;    // hi caleb
     bool doDataMCElectron       = true;
     bool doDataMCMuon           = true;
@@ -1152,11 +1152,17 @@ int main(int argc, char* argv[])
         // suffix for histograms
         std::string histSuffix = JetPtCut;
         // top, W, and soft bottom weights
-        std::string MergedTopTotalSF    = ";MergedTopTotalSF"    + varSuffix;
-        std::string WTotalSF            = ";WTotalSF"            + varSuffix;
-        std::string ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + varSuffix;
+        // v5 ntuples
+        //std::string MergedTopTotalSF    = ";MergedTopTotalSF"    + varSuffix;
+        //std::string WTotalSF            = ";WTotalSF"            + varSuffix;
+        //std::string ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + varSuffix;
+        //std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
+        //std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
+        // v6 ntuples
+        std::string DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight";
+        std::string ResolvedTopTotalSF  = ";Stop0l_ResTopWeight";
         std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
-        std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
+        std::string TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
         // baseline selections for lepton control regions
         SAT_Pass_Baseline     = ";SAT_Pass_Baseline"        + varSuffix;
         SAT_Pass_lowDM        = ";SAT_Pass_lowDM"           + varSuffix;
@@ -2265,11 +2271,17 @@ int main(int argc, char* argv[])
         // suffix for variables
         varSuffix  = cleanTag + JetPtCut;
         // top, W, and soft bottom weights
-        MergedTopTotalSF    = ";MergedTopTotalSF"    + varSuffix;
-        WTotalSF            = ";WTotalSF"            + varSuffix;
-        ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + varSuffix;
+        // v5 ntuples
+        //MergedTopTotalSF    = ";MergedTopTotalSF"    + varSuffix;
+        //WTotalSF            = ";WTotalSF"            + varSuffix;
+        //ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + varSuffix;
+        //SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
+        //TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
+        // v6 ntuples
+        DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight";
+        ResolvedTopTotalSF  = ";Stop0l_ResTopWeight";
         SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
-        TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
+        TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
         // baseline selections for photon control region
         SAT_Pass_Baseline     = ";SAT_Pass_Baseline"    + varSuffix;
         SAT_Pass_lowDM        = ";SAT_Pass_lowDM"       + varSuffix;
@@ -3564,11 +3576,17 @@ int main(int argc, char* argv[])
             // suffix for histograms
             std::string histSuffix = JetPtCut;
             // top, W, and soft bottom weights
-            std::string MergedTopTotalSF    = ";MergedTopTotalSF"    + varSuffix;
-            std::string WTotalSF            = ";WTotalSF"            + varSuffix;
-            std::string ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + varSuffix;
+            // v5 ntuples
+            //std::string MergedTopTotalSF    = ";MergedTopTotalSF"    + varSuffix;
+            //std::string WTotalSF            = ";WTotalSF"            + varSuffix;
+            //std::string ResolvedTopTotalSF  = ";ResolvedTopTotalSF"  + varSuffix;
+            //std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
+            //std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
+            // v6 ntuples
+            std::string DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight";
+            std::string ResolvedTopTotalSF  = ";Stop0l_ResTopWeight";
             std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
-            std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
+            std::string TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
             std::string ZNuNuWeights        = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight;
             
             // ---------------------------------- // 
@@ -3710,9 +3728,6 @@ int main(int argc, char* argv[])
                 // --- pdf systematic --- //
                 for (const auto& pdf : pdfMap)
                 {
-                    // make first letter uppercase: up, down ---> Up, Down
-                    std::string direction = pdf.first;
-                    direction[0] = toupper(direction[0]);
                     std::string histSuffixSyst                  = "_pdf_syst_"               + pdf.first + JetPtCut;
                     std::string totalWeights                    = ZNuNuWeights               + ";"       + pdf.second;
                     std::string SAT_Pass_lowDM                  = "SAT_Pass_lowDM"           + JetPtCut;
