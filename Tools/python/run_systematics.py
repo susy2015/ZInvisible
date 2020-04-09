@@ -470,8 +470,8 @@ def run(era, eras, runs_json, syst_json, verbose):
     directions      = ["up", "", "down"]
     bintypes        = ["validation", "validationMetStudy", "search", "controlUnit_gjets", "controlUnit_back"]
     # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
-    systematics_znunu  = ["jes","btag","pileup","eff_restoptag","eff_toptag","eff_wtag","met_trig","eff_sb","pdf","metres"]
-    systematics_phocr  = ["jes","btag","pileup","eff_restoptag","eff_toptag","eff_wtag","photon_trig","eff_sb_photon","photon_sf"]
+    systematics_znunu  = ["jes","btag","pileup","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","pdf","metres"]
+    systematics_phocr  = ["jes","btag","pileup","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
     if era != "2018":
         systematics_znunu.append("prefire")
         systematics_phocr.append("prefire")
