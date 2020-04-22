@@ -169,6 +169,7 @@ def fixSystForZeroPred(h, h_up, h_down):
 # symmetrize systematic if up/down variation is in the same direction compared to nominal
 # modify histograms passed to function
 def symmetrizeSyst(h, h_up, h_down):
+    useLogNormal = True
     nBins = h.GetNbinsX()
     for i in xrange(1, nBins + 1):
         p       = h.GetBinContent(i)
@@ -178,14 +179,31 @@ def symmetrizeSyst(h, h_up, h_down):
         diff_up   = p_up - p
         diff_down = p_down - p
         same_dir   = diff_up * diff_down > 0
+        
+        # default for p = 0
+        Aup   = 1
+        Adown = 1
+        if p:
+            Aup   = p_up / p
+            Adown = p_down / p
+        
         if same_dir:
-            diff_symm = np.mean([abs(diff_up), abs(diff_down)])
-            if p_up >= p_down:
-                h_up.SetBinContent(   i, p + diff_symm)
-                h_down.SetBinContent( i, p - diff_symm)
+            if useLogNormal:
+                # using geometric mean
+                geometric_mean = np.sqrt(Aup * Adown)
+                Aup     /= geometric_mean
+                Adown   /= geometric_mean
+                h_up.SetBinContent(   i, p * Aup)
+                h_down.SetBinContent( i, p * Adown)
             else:
-                h_up.SetBinContent(   i, p - diff_symm)
-                h_down.SetBinContent( i, p + diff_symm)
+                # using arithmetic mean
+                ave_diff = np.mean([abs(diff_up), abs(diff_down)])
+                if p_up >= p_down:
+                    h_up.SetBinContent(   i, p + ave_diff)
+                    h_down.SetBinContent( i, p - ave_diff)
+                else:
+                    h_up.SetBinContent(   i, p - ave_diff)
+                    h_down.SetBinContent( i, p + ave_diff)
 
 # Total systematics function which can run on validaiton, MET study, search bins, CR unit bins, etc.
 
