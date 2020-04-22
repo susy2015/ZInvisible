@@ -15,15 +15,35 @@ def load(f, label, era):
     h_map["label"]  = label
     h_map["lowdm"]  = {}
     h_map["highdm"] = {}
-    h_lowdm_data            = f.Get("nValidationBinLowDM_jetpt30/MET_nValidationBin_LowDM_jetpt30_" + era + "nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30Data MET Validation Bin Low DMdata")
-    h_lowdm_mc              = f.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM_jetpt30_" + era + "nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
-    h_lowdm_pred            = f.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM_njetWeight_jetpt30_" + era + "nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
-    h_lowdm_highmet_data    = f.Get("nValidationBinLowDMHighMET_jetpt30/MET_nValidationBin_LowDM_HighMET_jetpt30_" + era + "nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30Data MET Validation Bin Low DM High METdata")
-    h_lowdm_highmet_mc      = f.Get("nValidationBinLowDMHighMET_jetpt30/ZNuNu_nValidationBin_LowDM_HighMET_jetpt30_" + era + "nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata")
-    h_lowdm_highmet_pred    = f.Get("nValidationBinLowDMHighMET_jetpt30/ZNuNu_nValidationBin_LowDM_HighMET_njetWeight_jetpt30_" + era + "nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata")
-    h_highdm_data           = f.Get("nValidationBinHighDM_jetpt30/MET_nValidationBin_HighDM_jetpt30_" + era + "nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30Data MET Validation Bin High DMdata")
-    h_highdm_mc             = f.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM_jetpt30_" + era + "nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
-    h_highdm_pred           = f.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM_njetWeight_jetpt30_" + era + "nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
+    
+    # --- Angel's histograms --- #
+    #
+    # nValidationBinLowDM_jetpt30
+    #   data: MET_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30Data MET Validation Bin Low DMdata
+    #   mc:   ZNuNu_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata
+    #   pred: ZNuNu_nValidationBin_LowDM_nj_shape_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata
+    #
+    # nValidationBinLowDMHighMET_jetpt30
+    #   data: MET_nValidationBin_LowDM_HighMET_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30Data MET Validation Bin Low DM High METdata
+    #   mc:   ZNuNu_nValidationBin_LowDM_HighMET_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata
+    #   pred: ZNuNu_nValidationBin_LowDM_HighMET_nj_shape_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata
+    #
+    # nValidationBinHighDM_jetpt30
+    #   data: MET_nValidationBin_HighDM_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30Data MET Validation Bin High DMdata
+    #   mc:   ZNuNu_nValidationBin_HighDM_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata
+    #   pred: ZNuNu_nValidationBin_HighDM_nj_shape_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata
+    #
+    # -------------------------- #
+    
+    h_lowdm_data            = f.Get("nValidationBinLowDM_jetpt30/MET_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30Data MET Validation Bin Low DMdata")
+    h_lowdm_mc              = f.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
+    h_lowdm_pred            = f.Get("nValidationBinLowDM_jetpt30/ZNuNu_nValidationBin_LowDM_nj_shape_jetpt30nValidationBinLowDM_jetpt30nValidationBinLowDM_jetpt30ZJetsToNuNu Validation Bin Low DMdata")
+    h_lowdm_highmet_data    = f.Get("nValidationBinLowDMHighMET_jetpt30/MET_nValidationBin_LowDM_HighMET_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30Data MET Validation Bin Low DM High METdata")
+    h_lowdm_highmet_mc      = f.Get("nValidationBinLowDMHighMET_jetpt30/ZNuNu_nValidationBin_LowDM_HighMET_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata")
+    h_lowdm_highmet_pred    = f.Get("nValidationBinLowDMHighMET_jetpt30/ZNuNu_nValidationBin_LowDM_HighMET_nj_shape_jetpt30nValidationBinLowDMHighMET_jetpt30nValidationBinLowDMHighMET_jetpt30ZJetsToNuNu Validation Bin Low DM High METdata")
+    h_highdm_data           = f.Get("nValidationBinHighDM_jetpt30/MET_nValidationBin_HighDM_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30Data MET Validation Bin High DMdata")
+    h_highdm_mc             = f.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
+    h_highdm_pred           = f.Get("nValidationBinHighDM_jetpt30/ZNuNu_nValidationBin_HighDM_nj_shape_jetpt30nValidationBinHighDM_jetpt30nValidationBinHighDM_jetpt30ZJetsToNuNu Validation Bin High DMdata")
        
     low_dm_start           = 0
     low_dm_normal_end      = 14
@@ -66,7 +86,7 @@ def load(f, label, era):
 
 def plot(h_map_1, h_map_2, era):
     
-    plot_dir = "more_plots"
+    plot_dir = "comparison_plots"
     eraTag = "_" + era
     regions = ["lowdm", "highdm"]
     draw_option = "hist error"
@@ -156,8 +176,8 @@ def validation(file_map, era):
 
 if __name__ == "__main__":
     f_map = {
-               "Caleb" : "/uscms/home/caleb/nobackup/SusyAnalysis/CMSSW_9_4_4/src/ZInvisible/Tools/predictions/caleb/2019-09-23/validationBinsZinv_2016.root",
-               "Angel" : "/uscms/home/arosado/nobackup/YOURWORKINGAREA/CMSSW_10_2_9/src/ZInvisible/Tools/condor/2016/result.root"
+               "Caleb" : "/uscms/home/caleb/archive/zinv_results/2020-04-15/prediction_histos/validationBinsZinv_2016.root",
+               "Angel" : "/uscms/home/caleb/archive/angel/2020-04-01/2016/result.root"
     }
     validation(f_map, "2016")
 
