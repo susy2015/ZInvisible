@@ -176,7 +176,10 @@ def validation(file_map, era):
 
 if __name__ == "__main__":
     eras = ["2016", "2017", "2018", "Run2"]
-    caleb_date = "2020-04-15"
+    #caleb_date = "2020-03-09"
+    #caleb_date = "2020-03-19"
+    caleb_date = "2020-03-24"
+    #caleb_date = "2020-04-15"
     angel_date = "2020-04-01"
     for era in eras:
         f_map = {}
