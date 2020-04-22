@@ -176,9 +176,24 @@ def validation(file_map, era):
 
 if __name__ == "__main__":
     f_map = {
-               "Caleb" : "/uscms/home/caleb/archive/zinv_results/2020-04-15/prediction_histos/validationBinsZinv_2016.root",
-               "Angel" : "/uscms/home/caleb/archive/angel/2020-04-01/2016/result.root"
+                "2016" : {
+                    "Caleb" : "/uscms/home/caleb/archive/zinv_results/2020-04-15/prediction_histos/validationBinsZinv_2016.root",
+                    "Angel" : "/uscms/home/caleb/archive/angel/2020-04-01/2016/result.root"
+                },
+                "2017" : {
+                    "Caleb" : "/uscms/home/caleb/archive/zinv_results/2020-04-15/prediction_histos/validationBinsZinv_2017.root",
+                    "Angel" : "/uscms/home/caleb/archive/angel/2020-04-01/2017/result.root"
+                },
+                "2018" : {
+                    "Caleb" : "/uscms/home/caleb/archive/zinv_results/2020-04-15/prediction_histos/validationBinsZinv_2018.root",
+                    "Angel" : "/uscms/home/caleb/archive/angel/2020-04-01/2018/result.root"
+                },
+                "Run2" : {
+                    "Caleb" : "/uscms/home/caleb/archive/zinv_results/2020-04-15/prediction_histos/validationBinsZinv_Run2.root",
+                    "Angel" : "/uscms/home/caleb/archive/angel/2020-04-01/Run2/result.root"
+                }
     }
-    validation(f_map, "2016")
+    for era in f_map:
+        validation(f_map[era], era)
 
 
