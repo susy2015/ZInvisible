@@ -84,7 +84,7 @@ def load(f, label, era):
     
     return h_map
 
-def plot(h_map_1, h_map_2, era):
+def plot(h_map_1, h_map_2, bin_type, era):
     
     plot_dir = "comparison_plots"
     eraTag = "_" + era
@@ -120,7 +120,7 @@ def plot(h_map_1, h_map_2, era):
             
             title_main  = "Z to Invisible {0} {1}: Compare {2} and {3}".format(value, era, label1, label2)
             title_ratio = "Z to Invisible {0}: {1}".format(value, label_ratio)
-            x_title = "Validation Bin"
+            x_title = bin_type + " bin"
             
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
             setupHist(h1, title_main, x_title, "Events", color_red,  10.0 ** -2, 10.0 ** 4)
@@ -171,7 +171,7 @@ def validation(file_map, era):
     h_map_2 = load(f2, label2, era)
 
     # make plots
-    plot(h_map_1, h_map_2, era)
+    plot(h_map_1, h_map_2, "validation", era)
 
 
 if __name__ == "__main__":
