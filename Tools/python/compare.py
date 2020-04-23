@@ -9,6 +9,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
+# plot comparison of histograms
 def plot(h_map_1, h_map_2, bin_type, era):
     
     plot_dir = "comparison_plots"
@@ -43,8 +44,8 @@ def plot(h_map_1, h_map_2, bin_type, era):
             h_ratio = h2.Clone("h_ratio") 
             h_ratio.Divide(h1)
             
-            title_main  = "Z to Invisible {0} {1}: Compare {2} and {3}".format(value, era, label1, label2)
-            title_ratio = "Z to Invisible {0}: {1}".format(value, label_ratio)
+            title_main  = "Z Invisible {0} {1}: Compare {2} and {3}".format(value, era, label1, label2)
+            title_ratio = "Z Invisible {0}: {1}".format(value, label_ratio)
             x_title = bin_type + " bin"
             
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
@@ -148,38 +149,106 @@ def getValidationHists(f, label):
     
     return h_map
 
-def getMyHists(f, label):
-    # setup histogram maps
+# return histogram map
+def getSearchHists(f, label):
     h_map = {}
-    h_map["label"] = label
+    h_map["label"]  = label
     h_map["lowdm"]  = {}
     h_map["highdm"] = {}
-    # load histograms 
-    h_map["lowdm"]["data"]  = f.Get("data_lowdm")
-    h_map["lowdm"]["mc"]    = f.Get("mc_lowdm")
-    h_map["lowdm"]["pred"]  = f.Get("pred_lowdm")
-    h_map["highdm"]["data"] = f.Get("data_highdm")
-    h_map["highdm"]["mc"]   = f.Get("mc_highdm")
-    h_map["highdm"]["pred"] = f.Get("pred_highdm")
+    
+    # --- Matt's histograms --- #
+    #
+    # data:         hdata
+    # total pred:   hpred
+    # znunu pred:   hznunu_stack_4
+    #
+    # -------------------------- #
+    
+    h_data = f.Get("hdata")
+    h_pred = f.Get("hznunu_stack_4")
+    
+    low_dm_start   = 0
+    low_dm_end     = 52
+    high_dm_start  = 53
+    high_dm_end    = 182
+    low_dm_nbins   = low_dm_end - low_dm_start + 1 
+    high_dm_nbins  = high_dm_end - high_dm_start + 1 
+    h_lowdm_data    = ROOT.TH1F("lowdm_data",    "lowdm_data",    low_dm_nbins,  low_dm_start,  low_dm_end + 1) 
+    h_lowdm_pred    = ROOT.TH1F("lowdm_pred",    "lowdm_pred",    low_dm_nbins,  low_dm_start,  low_dm_end + 1) 
+    h_highdm_data   = ROOT.TH1F("highdm_data",   "highdm_data",   high_dm_nbins, high_dm_start, high_dm_end + 1) 
+    h_highdm_pred   = ROOT.TH1F("highdm_pred",   "highdm_pred",   high_dm_nbins, high_dm_start, high_dm_end + 1) 
+    
+    # fill low and high dm histograms
+    bin_i = 1
+    for b in xrange(low_dm_start, low_dm_end + 1):
+        h_lowdm_data.SetBinContent(bin_i,   h_data.GetBinContent(b + 1))
+        h_lowdm_data.SetBinError(bin_i,     h_data.GetBinError(b + 1))
+        h_lowdm_pred.SetBinContent(bin_i,   h_pred.GetBinContent(b + 1))
+        h_lowdm_pred.SetBinError(bin_i,     h_pred.GetBinError(b + 1))
+        bin_i += 1
+    bin_i = 1
+    for b in xrange(high_dm_start, high_dm_end + 1):
+        h_highdm_data.SetBinContent(bin_i,   h_data.GetBinContent(b + 1))
+        h_highdm_data.SetBinError(bin_i,     h_data.GetBinError(b + 1))
+        h_highdm_pred.SetBinContent(bin_i,   h_pred.GetBinContent(b + 1))
+        h_highdm_pred.SetBinError(bin_i,     h_pred.GetBinError(b + 1))
+        bin_i += 1
+    
+    h_map["lowdm"]["data"]      = h_lowdm_data
+    h_map["lowdm"]["pred"]      = h_lowdm_pred
+    h_map["highdm"]["data"]     = h_highdm_data
+    h_map["highdm"]["pred"]     = h_highdm_pred
+    
     return h_map
 
-# compare validation histograms
+# return histogram map
+def getMyHists(f, label, values):
+    regions = ["lowdm", "highdm"]
+    h_map = {}
+    h_map["label"] = label
+    for region in regions:
+        h_map[region] = {}
+        for value in values:
+            name = "{0}_{1}".format(value, region)
+            h_map[region][value] = f.Get(name)
+    return h_map
+
+# compare validation bin histograms
 def validation(file_map, era):
     label1 = "Caleb"
     label2 = "Angel"
+    values = ["data", "mc", "pred"]
     file1 = file_map[label1]
     file2 = file_map[label2]
     f1    = ROOT.TFile(file1, "read")
     f2    = ROOT.TFile(file2, "read")
-    h_map_1 = getMyHists(           f1, label1 )
+    h_map_1 = getMyHists(           f1, label1 , values )
     h_map_2 = getValidationHists(   f2, label2 )
 
     # make plots
     plot(h_map_1, h_map_2, "validation", era)
 
+# compare search bin histograms
+def search(file_map, era):
+    label1 = "Caleb"
+    label2 = "Matt"
+    values = ["data", "pred"]
+    file1 = file_map[label1]
+    file2 = file_map[label2]
+    f1    = ROOT.TFile(file1, "read")
+    f2    = ROOT.TFile(file2, "read")
+    h_map_1 = getMyHists(       f1, label1, values )
+    h_map_2 = getSearchHists(   f2, label2 )
+
+    # make plots
+    plot(h_map_1, h_map_2, "search", era)
+
 
 if __name__ == "__main__":
+    
     eras = ["2016", "2017", "2018", "Run2"]
+    
+    # validation bins
     #caleb_date = "2020-03-09"
     #caleb_date = "2020-03-19"
     caleb_date = "2020-03-24"
@@ -190,4 +259,17 @@ if __name__ == "__main__":
         f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/validationBinsZinv_{1}.root".format(caleb_date, era)
         f_map["Angel"] = "/uscms/home/caleb/archive/angel/{0}/{1}/result.root".format(angel_date, era)
         validation(f_map, era)
+    
+    # Note: Matt only provided 2016 for now; do not use other eras
+    # Matt's files:
+    # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T1tttt_2000_0.root
+    # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T2tt_1000_0.root
+    # search bins
+    caleb_date = "2020-04-15"
+    matt_date  = "2020-04-22"
+    for era in ["2016"]:
+        f_map = {}
+        f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/searchBinsZinv_{1}.root".format(caleb_date, era)
+        f_map["Matt"]  = "/uscms/home/caleb/archive/matt/{0}/{1}/SumOfBkg_T1tttt_2000_0.root".format(matt_date, era)
+        search(f_map, era)
 
