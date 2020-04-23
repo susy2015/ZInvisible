@@ -10,8 +10,9 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 # plot comparison of histograms
-def plot(h_map_1, h_map_2, bin_type, era):
+def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
     
+    debug = False
     plot_dir = "comparison_plots"
     eraTag = "_" + era
     regions = ["lowdm", "highdm"]
@@ -39,6 +40,8 @@ def plot(h_map_1, h_map_2, bin_type, era):
     for region in regions:
         for value in h_map_1[region]:
             
+            if debug:
+                print "{0} {1}".format(region, value)
             h1 = h_map_1[region][value]
             h2 = h_map_2[region][value]
             h_ratio = h2.Clone("h_ratio") 
@@ -51,7 +54,7 @@ def plot(h_map_1, h_map_2, bin_type, era):
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
             setupHist(h1, title_main, x_title, "Events", color_red,  10.0 ** -2, 10.0 ** 4)
             setupHist(h2, title_main, x_title, "Events", color_blue, 10.0 ** -2, 10.0 ** 4)
-            setupHist(h_ratio, title_ratio, x_title, label_ratio, color_blue, 0.5, 1.5)
+            setupHist(h_ratio, title_ratio, x_title, label_ratio, color_blue, ratio_limits[0], ratio_limits[1])
             
             # histograms
             c.cd(1)
@@ -226,13 +229,16 @@ def validation(file_map, era):
     h_map_2 = getValidationHists(   f2, label2 )
 
     # make plots
-    plot(h_map_1, h_map_2, "validation", era)
+    print "Running plot() for {0} and {1}, {2}".format(label1, label2, era)
+    ratio_limits = [0.5, 1.5]
+    plot(h_map_1, h_map_2, ratio_limits, "validation", era)
 
 # compare search bin histograms
 def search(file_map, era):
     label1 = "Caleb"
     label2 = "Matt"
-    values = ["data", "pred"]
+    #values = ["data", "pred"]
+    values = ["pred"]
     file1 = file_map[label1]
     file2 = file_map[label2]
     f1    = ROOT.TFile(file1, "read")
@@ -241,7 +247,9 @@ def search(file_map, era):
     h_map_2 = getSearchHists(   f2, label2 )
 
     # make plots
-    plot(h_map_1, h_map_2, "search", era)
+    print "Running plot() for {0} and {1}, {2}".format(label1, label2, era)
+    ratio_limits = [0.98, 1.02]
+    plot(h_map_1, h_map_2, ratio_limits, "search", era)
 
 
 if __name__ == "__main__":
@@ -249,11 +257,17 @@ if __name__ == "__main__":
     eras = ["2016", "2017", "2018", "Run2"]
     
     # validation bins
+    
+    # v6 ntuples, old top/w weights
     #caleb_date = "2020-03-09"
     #caleb_date = "2020-03-19"
     caleb_date = "2020-03-24"
+    
+    # v6 ntuples, new top/w weights
     #caleb_date = "2020-04-15"
+    
     angel_date = "2020-04-01"
+    
     for era in eras:
         f_map = {}
         f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/validationBinsZinv_{1}.root".format(caleb_date, era)
@@ -264,9 +278,21 @@ if __name__ == "__main__":
     # Matt's files:
     # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T1tttt_2000_0.root
     # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T2tt_1000_0.root
+    
     # search bins
-    caleb_date = "2020-04-15"
+    
+    # v6 ntuples, old top/w weights
+    # note: these runs do not have MET data histograms... I am not sure why
+    # note: Matt still uses 09Mar2020_dev_v6 inputs which match my 2020-03-24 inputs
+    #caleb_date = "2020-03-19"
+    caleb_date = "2020-03-24"
+    
+    # v6 ntuples, new top/w weights
+    #caleb_date = "2020-04-09"
+    #caleb_date = "2020-04-15"
+    
     matt_date  = "2020-04-22"
+    
     for era in ["2016"]:
         f_map = {}
         f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/searchBinsZinv_{1}.root".format(caleb_date, era)
