@@ -9,8 +9,72 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
+def plot(h_map_1, h_map_2, bin_type, era):
+    
+    plot_dir = "comparison_plots"
+    eraTag = "_" + era
+    regions = ["lowdm", "highdm"]
+    draw_option = "hist error"
+    color_red    = "vermillion"
+    color_blue   = "electric blue"
+    label1 = h_map_1["label"]
+    label2 = h_map_2["label"]
+    label_ratio = "{0}/{1}".format(label2, label1)
+    
+    ###################
+    # Draw Histograms #
+    ###################
+
+    # draw histograms
+    c = ROOT.TCanvas("c", "c", 800, 800)
+    c.Divide(1, 2)
+    
+    # legend: TLegend(x1,y1,x2,y2)
+    legend_x1 = 0.7
+    legend_x2 = 0.9 
+    legend_y1 = 0.7 
+    legend_y2 = 0.9 
+    
+    for region in regions:
+        for value in h_map_1[region]:
+            
+            h1 = h_map_1[region][value]
+            h2 = h_map_2[region][value]
+            h_ratio = h2.Clone("h_ratio") 
+            h_ratio.Divide(h1)
+            
+            title_main  = "Z to Invisible {0} {1}: Compare {2} and {3}".format(value, era, label1, label2)
+            title_ratio = "Z to Invisible {0}: {1}".format(value, label_ratio)
+            x_title = bin_type + " bin"
+            
+            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+            setupHist(h1, title_main, x_title, "Events", color_red,  10.0 ** -2, 10.0 ** 4)
+            setupHist(h2, title_main, x_title, "Events", color_blue, 10.0 ** -2, 10.0 ** 4)
+            setupHist(h_ratio, title_ratio, x_title, label_ratio, color_blue, 0.5, 1.5)
+            
+            # histograms
+            c.cd(1)
+            ROOT.gPad.SetLogy(1) # set log y
+            h1.Draw(draw_option)
+            h2.Draw("error same")
+            # legend: TLegend(x1,y1,x2,y2)
+            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend.AddEntry(h1, "{0}: {1}".format(value, label1), "l")
+            legend.AddEntry(h2, "{0}: {1}".format(value, label2), "l")
+            legend.Draw()
+           
+            # ratios
+            c.cd(2)
+            h_ratio.Draw(draw_option)
+                
+            # save histograms
+            plot_name = "{0}/{1}_{2}_{3}_{4}".format(plot_dir, region, value, label1, label2)
+            c.Update()
+            c.SaveAs(plot_name + eraTag + ".pdf")
+            c.SaveAs(plot_name + eraTag + ".png")
+
 # return histogram map
-def load(f, label, era):
+def getValidationHists(f, label):
     h_map = {}
     h_map["label"]  = label
     h_map["lowdm"]  = {}
@@ -84,69 +148,20 @@ def load(f, label, era):
     
     return h_map
 
-def plot(h_map_1, h_map_2, bin_type, era):
-    
-    plot_dir = "comparison_plots"
-    eraTag = "_" + era
-    regions = ["lowdm", "highdm"]
-    draw_option = "hist error"
-    color_red    = "vermillion"
-    color_blue   = "electric blue"
-    label1 = h_map_1["label"]
-    label2 = h_map_2["label"]
-    label_ratio = "{0}/{1}".format(label2, label1)
-    
-    ###################
-    # Draw Histograms #
-    ###################
-
-    # draw histograms
-    c = ROOT.TCanvas("c", "c", 800, 800)
-    c.Divide(1, 2)
-    
-    # legend: TLegend(x1,y1,x2,y2)
-    legend_x1 = 0.7
-    legend_x2 = 0.9 
-    legend_y1 = 0.7 
-    legend_y2 = 0.9 
-    
-    for region in regions:
-        for value in h_map_1[region]:
-            
-            h1 = h_map_1[region][value]
-            h2 = h_map_2[region][value]
-            h_ratio = h2.Clone("h_ratio") 
-            h_ratio.Divide(h1)
-            
-            title_main  = "Z to Invisible {0} {1}: Compare {2} and {3}".format(value, era, label1, label2)
-            title_ratio = "Z to Invisible {0}: {1}".format(value, label_ratio)
-            x_title = bin_type + " bin"
-            
-            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h1, title_main, x_title, "Events", color_red,  10.0 ** -2, 10.0 ** 4)
-            setupHist(h2, title_main, x_title, "Events", color_blue, 10.0 ** -2, 10.0 ** 4)
-            setupHist(h_ratio, title_ratio, x_title, label_ratio, color_blue, 0.5, 1.5)
-            
-            # histograms
-            c.cd(1)
-            ROOT.gPad.SetLogy(1) # set log y
-            h1.Draw(draw_option)
-            h2.Draw("error same")
-            # legend: TLegend(x1,y1,x2,y2)
-            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            legend.AddEntry(h1, "{0}: {1}".format(value, label1), "l")
-            legend.AddEntry(h2, "{0}: {1}".format(value, label2), "l")
-            legend.Draw()
-           
-            # ratios
-            c.cd(2)
-            h_ratio.Draw(draw_option)
-                
-            # save histograms
-            plot_name = "{0}/{1}_{2}_{3}_{4}".format(plot_dir, region, value, label1, label2)
-            c.Update()
-            c.SaveAs(plot_name + eraTag + ".pdf")
-            c.SaveAs(plot_name + eraTag + ".png")
+def getMyHists(f, label):
+    # setup histogram maps
+    h_map = {}
+    h_map["label"] = label
+    h_map["lowdm"]  = {}
+    h_map["highdm"] = {}
+    # load histograms 
+    h_map["lowdm"]["data"]  = f.Get("data_lowdm")
+    h_map["lowdm"]["mc"]    = f.Get("mc_lowdm")
+    h_map["lowdm"]["pred"]  = f.Get("pred_lowdm")
+    h_map["highdm"]["data"] = f.Get("data_highdm")
+    h_map["highdm"]["mc"]   = f.Get("mc_highdm")
+    h_map["highdm"]["pred"] = f.Get("pred_highdm")
+    return h_map
 
 # compare validation histograms
 def validation(file_map, era):
@@ -156,19 +171,8 @@ def validation(file_map, era):
     file2 = file_map[label2]
     f1    = ROOT.TFile(file1, "read")
     f2    = ROOT.TFile(file2, "read")
-    # setup histogram maps
-    h_map_1 = {}
-    h_map_1["label"] = label1
-    h_map_1["lowdm"]  = {}
-    h_map_1["highdm"] = {}
-    # load histograms 
-    h_map_1["lowdm"]["data"]  = f1.Get("data_lowdm")
-    h_map_1["lowdm"]["mc"]    = f1.Get("mc_lowdm")
-    h_map_1["lowdm"]["pred"]  = f1.Get("pred_lowdm")
-    h_map_1["highdm"]["data"] = f1.Get("data_highdm")
-    h_map_1["highdm"]["mc"]   = f1.Get("mc_highdm")
-    h_map_1["highdm"]["pred"] = f1.Get("pred_highdm")
-    h_map_2 = load(f2, label2, era)
+    h_map_1 = getMyHists(           f1, label1 )
+    h_map_2 = getValidationHists(   f2, label2 )
 
     # make plots
     plot(h_map_1, h_map_2, "validation", era)
