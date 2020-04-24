@@ -52,7 +52,8 @@ LIBS       = $(shell root-config --glibs) -lASImage
 MT2LIB     = -L$(shell $(PYTHONCFG) --prefix)/lib $(shell $(PYTHONCFG) --libs) -L$(TTTDIR) -lTopTagger
 LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
-PROGRAMS = calcEff calcEffPhoton harvestHists makePlots moneyplot scalefactorplot systplot simpleAnalyzer
+#PROGRAMS = calcEff calcEffPhoton harvestHists makePlots moneyplot scalefactorplot systplot simpleAnalyzer
+PROGRAMS = makePlots
 
 all: mkobj PyWraps $(PROGRAMS)
 

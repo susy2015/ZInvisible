@@ -80,7 +80,8 @@ RegisterFunctionsNTuple::RegisterFunctionsNTuple(bool doSystematics, std::string
     systematicCalc                                  = new plotterFunctions::SystematicCalc(sbEra);
     shapeNJets                                      = new plotterFunctions::ShapeNJets;
 
-    doSystematics_ = doSystematics;
+    doSystematics_  = doSystematics;
+    year_           = year;
     myPDFUnc = new PDFUncertainty();
     bTagCorrector = nullptr;
     ISRcorrector = nullptr;
@@ -100,6 +101,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(runTopTagger_drPhotonCleaned)                delete runTopTagger_drPhotonCleaned;
     if(runTopTagger_drPhotonCleaned_jesTotalUp)     delete runTopTagger_drPhotonCleaned_jesTotalUp;
     if(runTopTagger_drPhotonCleaned_jesTotalDown)   delete runTopTagger_drPhotonCleaned_jesTotalDown;
+    if(topWeightCalculator)                         delete topWeightCalculator;
     if(myBLV)                                       delete myBLV;
     if(myBLV_jetpt30)                               delete myBLV_jetpt30;
     if(myBLV_jetpt30_jesTotalUp)                    delete myBLV_jetpt30_jesTotalUp;
@@ -201,6 +203,24 @@ void RegisterFunctionsNTuple::remakeISRreweight(std::string sampleName)
     if(sampleName.find("Data") == std::string::npos){
         if(ISRcorrector) ISRcorrector->resetSample(sampleName);
     }
+}
+
+
+void RegisterFunctionsNTuple::setupTopWeightCalculator(NTupleReader& tr)
+{
+    // HACK top weight calculator
+    if(tr.checkBranch("GenJet_pt"))
+    {
+        std::string TopTagger_effFile   = "tTagEff_" + year_ + ".root";
+        // TopWeightCalculator(const std::string& effFileName, const std::string& sampleName, const std::string& year)
+        topWeightCalculator = new TopWeightCalculator(TopTagger_effFile, sampleName_, year_);
+        tr.registerFunction(*topWeightCalculator);
+    }
+}
+
+void RegisterFunctionsNTuple::setSampleName(std::string sampleName)
+{
+    sampleName_ = sampleName;
 }
 
 ////////////////////////////////

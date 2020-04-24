@@ -407,7 +407,9 @@ void Plotter::createHistsFromTuple()
         TTree *tOut = nullptr;
         MiniTupleMaker* mtm = nullptr;
 
+        // modules which depend on sample set name
         if(registerfunc_ == nullptr) registerfunc_ = new RegisterFunctions();
+        registerfunc_->setSampleName(file.tag);
         registerfunc_->remakeBTagCorrector(file.tag);
         registerfunc_->remakeISRreweight(file.tag);
 
@@ -462,6 +464,8 @@ void Plotter::createHistsFromTuple()
                 tr.setReThrow(false);
 
                 registerfunc_->registerFunctions(tr);
+                registerfunc_->setupTopWeightCalculator(tr);
+        
                 // skip to event
                 //int myEvent = 6025;
                 //tr.goToEvent(myEvent);
