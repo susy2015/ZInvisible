@@ -1159,7 +1159,7 @@ int main(int argc, char* argv[])
         //std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
         //std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
         // v6 ntuples
-        std::string DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight";
+        std::string DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight_recalc";
         std::string ResolvedTopTotalSF  = ";Stop0l_ResTopWeight";
         std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
         std::string TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
@@ -2278,7 +2278,7 @@ int main(int argc, char* argv[])
         //SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
         //TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
         // v6 ntuples
-        DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight";
+        DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight_recalc";
         ResolvedTopTotalSF  = ";Stop0l_ResTopWeight";
         SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
         TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
@@ -3583,7 +3583,7 @@ int main(int argc, char* argv[])
             //std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
             //std::string TotalSFs            = MergedTopTotalSF + WTotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
             // v6 ntuples
-            std::string DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight";
+            std::string DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight_recalc";
             std::string ResolvedTopTotalSF  = ";Stop0l_ResTopWeight";
             std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
             std::string TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
@@ -3625,7 +3625,7 @@ int main(int argc, char* argv[])
             // compare ResolvedTopTotalSF_jetpt30 with Stop0l_ResTopWeight
             // new top tagger SFs in v6 ntuples:
             // - resolved tops:         Stop0l_ResTopWeight
-            // - merged tops and Ws:    Stop0l_DeepAK8_SFWeight
+            // - merged tops and Ws:    Stop0l_DeepAK8_SFWeight_recalc
             // resolved top
             PDS dsT1tttt_gluino2000_lsp100_nrt0_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=0",  "ResolvedTopTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nrt1_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nResolvedTops_jetpt30=1",  "ResolvedTopTotalSF_jetpt30");
@@ -3637,16 +3637,16 @@ int main(int argc, char* argv[])
             PDS dsT1tttt_gluino2000_lsp100_nmt0_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=0",  "MergedTopTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nmt1_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=1",  "MergedTopTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nmt2_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=2",  "MergedTopTotalSF_jetpt30");
-            PDS dsT1tttt_gluino2000_lsp100_nmt0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=0",  "Stop0l_DeepAK8_SFWeight");
-            PDS dsT1tttt_gluino2000_lsp100_nmt1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=1",  "Stop0l_DeepAK8_SFWeight");
-            PDS dsT1tttt_gluino2000_lsp100_nmt2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=2",  "Stop0l_DeepAK8_SFWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nmt0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=0",  "Stop0l_DeepAK8_SFWeight_recalc");
+            PDS dsT1tttt_gluino2000_lsp100_nmt1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=1",  "Stop0l_DeepAK8_SFWeight_recalc");
+            PDS dsT1tttt_gluino2000_lsp100_nmt2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nMergedTops_jetpt30=2",  "Stop0l_DeepAK8_SFWeight_recalc");
             // W
             PDS dsT1tttt_gluino2000_lsp100_nw0_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=0",  "WTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nw1_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=1",  "WTotalSF_jetpt30");
             PDS dsT1tttt_gluino2000_lsp100_nw2_SATWeight("T1tttt_gluino2000_lsp100 SATWeight",             fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=2",  "WTotalSF_jetpt30");
-            PDS dsT1tttt_gluino2000_lsp100_nw0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=0",  "Stop0l_DeepAK8_SFWeight");
-            PDS dsT1tttt_gluino2000_lsp100_nw1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=1",  "Stop0l_DeepAK8_SFWeight");
-            PDS dsT1tttt_gluino2000_lsp100_nw2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=2",  "Stop0l_DeepAK8_SFWeight");
+            PDS dsT1tttt_gluino2000_lsp100_nw0_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=0",  "Stop0l_DeepAK8_SFWeight_recalc");
+            PDS dsT1tttt_gluino2000_lsp100_nw1_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=1",  "Stop0l_DeepAK8_SFWeight_recalc");
+            PDS dsT1tttt_gluino2000_lsp100_nw2_PostProcWeight("T1tttt_gluino2000_lsp100 PostProcWeight",   fileMap["SMS_T1tttt_mGluino2000_mLSP100_fullsim" + yearTag], "SAT_Pass_Baseline" + JetPtCut + ";nWs_jetpt30=2",  "Stop0l_DeepAK8_SFWeight_recalc");
             // resolved top
             PDC dcMC_T1tttt_met_nrt0_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt0_SATWeight});
             PDC dcMC_T1tttt_met_nrt1_SATWeight("single",        "MET_pt",                  {dsT1tttt_gluino2000_lsp100_nrt1_SATWeight});
