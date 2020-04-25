@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     bool runOnCondor            = false;
     bool unblind                = true;     // Hooray for unblinding! compare MET data in search bins with Hui and Matt.
     bool doLooseAndMid          = false;    // hi angel
-    bool doSystematics          = true;     // hi caleb
+    bool doSystematics          = false;    // hi caleb
     bool doLeptonSystematics    = false;    // hi caleb
     bool doDataMCElectron       = true;
     bool doDataMCMuon           = true;
@@ -3298,6 +3298,7 @@ int main(int argc, char* argv[])
     // WARNING: do not apply weights to data
     auto makePDSMET         = [&](const std::string& label, const std::string& cuts = "")                                  {return PDS("Data MET "+label,    fileMap["Data_MET" + yearTag], cuts, ""); };
     auto makePDSZnunu       = [&](const std::string& label, const std::string& cuts = "", const std::string& weights = "") {return PDS("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu" + yearTag], cuts, weights); };
+    auto makePDSTTbar       = [&](const std::string& label, const std::string& cuts = "", const std::string& weights = "") {return PDS("TTbar "+label, fileMap["TTbar" + yearTag], cuts, weights); };
     auto makePDCGJetsZnunu  = [&](const std::string& var,   const std::string& style,     const std::string& label, const std::string& cuts) {return PDC(style, {{var, makePDSPhoton(label, "GJets", "passPhotonSelection;" + cuts)}, {var, makePDSZnunu(label, cuts)}}); };
     
     // study jet collections and jet cleaning
@@ -3638,6 +3639,20 @@ int main(int argc, char* argv[])
             PDC dcMC_ZNuNu_nWs_w_down("single",                 "nWs"               + JetPtCut, {makePDSZnunu("nWs",                "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_w_dn")});
             PDC dcMC_ZNuNu_nWs_veto_up("single",                "nWs"               + JetPtCut, {makePDSZnunu("nWs",                "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_up")});
             PDC dcMC_ZNuNu_nWs_veto_down("single",              "nWs"               + JetPtCut, {makePDSZnunu("nWs",                "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_dn")});
+            // TTbar
+            PDC dcMC_TTbar_nResolvedTops_nominal("single",      "nResolvedTops"     + JetPtCut, {makePDSTTbar("nResolvedTops",      "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_ResTopWeight")});
+            PDC dcMC_TTbar_nResolvedTops_up("single",           "nResolvedTops"     + JetPtCut, {makePDSTTbar("nResolvedTops",      "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_ResTopWeight_Up")});
+            PDC dcMC_TTbar_nResolvedTops_down("single",         "nResolvedTops"     + JetPtCut, {makePDSTTbar("nResolvedTops",      "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_ResTopWeight_Dn")});
+            PDC dcMC_TTbar_nMergedTops_nominal("single",        "nMergedTops"       + JetPtCut, {makePDSTTbar("nMergedTops",        "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
+            PDC dcMC_TTbar_nMergedTops_top_up("single",         "nMergedTops"       + JetPtCut, {makePDSTTbar("nMergedTops",        "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_top_up")});
+            PDC dcMC_TTbar_nMergedTops_top_down("single",       "nMergedTops"       + JetPtCut, {makePDSTTbar("nMergedTops",        "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_top_dn")});
+            PDC dcMC_TTbar_nMergedTops_veto_up("single",        "nMergedTops"       + JetPtCut, {makePDSTTbar("nMergedTops",        "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_up")});
+            PDC dcMC_TTbar_nMergedTops_veto_down("single",      "nMergedTops"       + JetPtCut, {makePDSTTbar("nMergedTops",        "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_dn")});
+            PDC dcMC_TTbar_nWs_nominal("single",                "nWs"               + JetPtCut, {makePDSTTbar("nWs",                "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
+            PDC dcMC_TTbar_nWs_w_up("single",                   "nWs"               + JetPtCut, {makePDSTTbar("nWs",                "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_w_up")});
+            PDC dcMC_TTbar_nWs_w_down("single",                 "nWs"               + JetPtCut, {makePDSTTbar("nWs",                "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_w_dn")});
+            PDC dcMC_TTbar_nWs_veto_up("single",                "nWs"               + JetPtCut, {makePDSTTbar("nWs",                "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_up")});
+            PDC dcMC_TTbar_nWs_veto_down("single",              "nWs"               + JetPtCut, {makePDSTTbar("nWs",                "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_dn")});
             
             // compare ResolvedTopTotalSF_jetpt30 with Stop0l_ResTopWeight
             // new top tagger SFs in v6 ntuples:
@@ -3707,11 +3722,16 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffix,                    {dcMC_ZNuNu_nSRUnit_LowDM},                     {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,          max_srunit_low_dm,          false, false,  "Search Region Unit Low DM", "Events", true));
             vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffix,                   {dcMC_ZNuNu_nSRUnit_HighDM},                    {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,         max_srunit_high_dm,         false, false,  "Search Region Unit High DM", "Events", true));
             // additional histograms
-            vh.push_back(PHS("ZNuNu_nResolvedTops",         {dcMC_ZNuNu_nResolvedTops_nominal, dcMC_ZNuNu_nResolvedTops_up, dcMC_ZNuNu_nResolvedTops_down},        {2, 3}, "",  6, 0,  6,          false, false,  label_nrt,                 "Events", true));
-            vh.push_back(PHS("ZNuNu_nMergedTops_topsyst",   {dcMC_ZNuNu_nMergedTops_nominal, dcMC_ZNuNu_nMergedTops_top_up, dcMC_ZNuNu_nMergedTops_top_down},      {2, 3}, "",  6, 0,  6,          false, false,  label_nmt,                 "Events", true));
-            vh.push_back(PHS("ZNuNu_nMergedTops_vetosyst",  {dcMC_ZNuNu_nMergedTops_nominal, dcMC_ZNuNu_nMergedTops_veto_up, dcMC_ZNuNu_nMergedTops_veto_down},    {2, 3}, "",  6, 0,  6,          false, false,  label_nmt,                 "Events", true));
-            vh.push_back(PHS("ZNuNu_nWs_wsyst",             {dcMC_ZNuNu_nWs_nominal, dcMC_ZNuNu_nWs_w_up, dcMC_ZNuNu_nWs_w_down},                                  {2, 3}, "",  6, 0,  6,          false, false,  label_nw,                  "Events", true));
-            vh.push_back(PHS("ZNuNu_nWs_vetosyst",          {dcMC_ZNuNu_nWs_nominal, dcMC_ZNuNu_nWs_veto_up, dcMC_ZNuNu_nWs_veto_down},                            {2, 3}, "",  6, 0,  6,          false, false,  label_nw,                  "Events", true));
+            vh.push_back(PHS("ZNuNu_nResolvedTops",         {dcMC_ZNuNu_nResolvedTops_nominal, dcMC_ZNuNu_nResolvedTops_up, dcMC_ZNuNu_nResolvedTops_down},        {2, 3}, "",  6, 0, 6,  false, false,  label_nrt,     "Events", true));
+            vh.push_back(PHS("ZNuNu_nMergedTops_topsyst",   {dcMC_ZNuNu_nMergedTops_nominal, dcMC_ZNuNu_nMergedTops_top_up, dcMC_ZNuNu_nMergedTops_top_down},      {2, 3}, "",  6, 0, 6,  false, false,  label_nmt,     "Events", true));
+            vh.push_back(PHS("ZNuNu_nMergedTops_vetosyst",  {dcMC_ZNuNu_nMergedTops_nominal, dcMC_ZNuNu_nMergedTops_veto_up, dcMC_ZNuNu_nMergedTops_veto_down},    {2, 3}, "",  6, 0, 6,  false, false,  label_nmt,     "Events", true));
+            vh.push_back(PHS("ZNuNu_nWs_wsyst",             {dcMC_ZNuNu_nWs_nominal, dcMC_ZNuNu_nWs_w_up, dcMC_ZNuNu_nWs_w_down},                                  {2, 3}, "",  6, 0, 6,  false, false,  label_nw,      "Events", true));
+            vh.push_back(PHS("ZNuNu_nWs_vetosyst",          {dcMC_ZNuNu_nWs_nominal, dcMC_ZNuNu_nWs_veto_up, dcMC_ZNuNu_nWs_veto_down},                            {2, 3}, "",  6, 0, 6,  false, false,  label_nw,      "Events", true));
+            vh.push_back(PHS("TTbar_nResolvedTops",         {dcMC_TTbar_nResolvedTops_nominal, dcMC_TTbar_nResolvedTops_up, dcMC_TTbar_nResolvedTops_down},        {2, 3}, "",  6, 0, 6,  false, false,  label_nrt,     "Events", true));
+            vh.push_back(PHS("TTbar_nMergedTops_topsyst",   {dcMC_TTbar_nMergedTops_nominal, dcMC_TTbar_nMergedTops_top_up, dcMC_TTbar_nMergedTops_top_down},      {2, 3}, "",  6, 0, 6,  false, false,  label_nmt,     "Events", true));
+            vh.push_back(PHS("TTbar_nMergedTops_vetosyst",  {dcMC_TTbar_nMergedTops_nominal, dcMC_TTbar_nMergedTops_veto_up, dcMC_TTbar_nMergedTops_veto_down},    {2, 3}, "",  6, 0, 6,  false, false,  label_nmt,     "Events", true));
+            vh.push_back(PHS("TTbar_nWs_wsyst",             {dcMC_TTbar_nWs_nominal, dcMC_TTbar_nWs_w_up, dcMC_TTbar_nWs_w_down},                                  {2, 3}, "",  6, 0, 6,  false, false,  label_nw,      "Events", true));
+            vh.push_back(PHS("TTbar_nWs_vetosyst",          {dcMC_TTbar_nWs_nominal, dcMC_TTbar_nWs_veto_up, dcMC_TTbar_nWs_veto_down},                            {2, 3}, "",  6, 0, 6,  false, false,  label_nw,      "Events", true));
             vh.push_back(PHS("T1tttt_met_nrt0",             {dcMC_T1tttt_met_nrt0_SATWeight, dcMC_T1tttt_met_nrt0_PostProcWeight},                                 {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
             vh.push_back(PHS("T1tttt_met_nrt1",             {dcMC_T1tttt_met_nrt1_SATWeight, dcMC_T1tttt_met_nrt1_PostProcWeight},                                 {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
             vh.push_back(PHS("T1tttt_met_nrt2",             {dcMC_T1tttt_met_nrt2_SATWeight, dcMC_T1tttt_met_nrt2_PostProcWeight},                                 {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
