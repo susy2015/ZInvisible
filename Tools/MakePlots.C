@@ -31,6 +31,7 @@ int main(int argc, char* argv[])
     int option_index = 0;
     static struct option long_options[] = {
         {"plot",             no_argument, 0, 'p'},
+        {"nosyst",           no_argument, 0, 'q'},
         {"savehist",         no_argument, 0, 's'},
         {"savetuple",        no_argument, 0, 't'},
         {"fromFile",         no_argument, 0, 'f'},
@@ -80,13 +81,17 @@ int main(int argc, char* argv[])
     std::string sbEra = "SB_v1_2017";
     std::string era  = "";
     std::string year = "";
-    while((opt = getopt_long(argc, argv, "pstfcglvI:D:N:M:E:P:L:R:S:Y:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "pqstfcglvI:D:N:M:E:P:L:R:S:Y:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
         case 'p':
             if(doPlots) doSave  = doTuple = false;
             else        doPlots = true;
+            break;
+        
+        case 'q':
+            doSystematics = false;
             break;
 
         case 's':
