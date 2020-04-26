@@ -46,7 +46,7 @@ elif [ "$executableOption" = "-n" ]; then
     executable="echo nothing to do"
 else
     resultFile="result.root"
-    executable="./makePlots -f -I ${resultFile} -Y ${year} -R Data_MET_${year} | grep -v LHAPDF"
+    executable="./makePlots -q -f -I ${resultFile} -Y ${year} -R Data_MET_${year} | grep -v LHAPDF"
 fi
 
 echo "- Running processResults.sh for the data set ${dirName}"
