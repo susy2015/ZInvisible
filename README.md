@@ -97,7 +97,16 @@ Make sure that you checkout the configuration files in the `$CMSSW_BASE/src/ZInv
 ## Get More Dependencies
 
 Run the following commands to get additional dependencies.
-These allow you to use json files in C++ and to load the unit bin json file.
+
+Get the top tagger releases used in post-processing and create soft links to top tagger efficiency root files.
+```
+getTaggerCfg.sh -n -t DeepResolved_DeepCSV_GR_nanoAOD_2016_v1.0.6
+getTaggerCfg.sh -n -t DeepResolved_DeepCSV_GR_nanoAOD_2017_v1.0.6
+getTaggerCfg.sh -n -t DeepResolved_DeepCSV_GR_nanoAOD_2018_v1.0.6
+ln -s TopTaggerCfg-DeepResolved_DeepCSV_GR_nanoAOD_2016_v1.0.6/tTagEff_2016.root .
+ln -s TopTaggerCfg-DeepResolved_DeepCSV_GR_nanoAOD_2017_v1.0.6/tTagEff_2017.root .
+ln -s TopTaggerCfg-DeepResolved_DeepCSV_GR_nanoAOD_2018_v1.0.6/tTagEff_2018.root .
+```
 
 Get json library to use json files in C++.
 ```
