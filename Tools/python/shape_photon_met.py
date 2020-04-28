@@ -64,10 +64,6 @@ class Shape:
         # only use varTag for MC, not data
         # only use varTag if variable name changes (e.g. nCRUnit, but not metWithPhoton)
         variableWithTag = variable + varTag
-        print "getSimpleMap(): variableWithTag = {0}".format(variableWithTag)
-        # testing
-        #print "In getSimpleMap():" + "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata"
-        #print "In getSimpleMap():" + "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "#gamma+jetsstack"
         if self.splitQCD:
             temp_map = {
                             "Data"              : "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata",
@@ -130,7 +126,6 @@ class Shape:
         # apply syst to MC only
         dataSelectionTag = "_jetpt30"
         mcSelectionTag   = self.systTag + "_jetpt30"
-        print "getCRUnitMap(): variable = {0}".format(variable)
         # use varTag for CR unit systematics
         temp_map = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable, self.varTag)
         return temp_map
@@ -193,7 +188,7 @@ class Shape:
                         else:
                             print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD"]
                     
-                    #WARNING: strings loaded from json file have type 'unicode'
+                    # WARNING: strings loaded from json file have type 'unicode'
                     # ROOT cannot load histograms using unicode input: use type 'str'
                     h_Data              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Data"]            ) )
                     h_GJets             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["GJets"]           ) )
@@ -430,21 +425,14 @@ class Shape:
                 # nCRUnitLowDM_drPhotonCleaned_jetpt30_jesTotalDown
                 # nCRUnitHighDM_drPhotonCleaned_jetpt30_jesTotalUp
                 # nCRUnitHighDM_drPhotonCleaned_jetpt30_jesTotalDown
+                
                 variable = "nCRUnit" + region + "_drPhotonCleaned_jetpt30"
                 variableWithTag = variable + self.varTag
-                print "For CR units, variableWithTag = {0}".format(variableWithTag)
-                #WARNING: strings loaded from json file have type 'unicode'
-                # ROOT cannot load histograms using unicode input: use type 'str'
-                #if self.splitQCD:
-                #    samples = ["Data", "GJets", "QCD_Fragmented", "QCD_Fake", "WJets", "TTG", "TTbar", "tW", "Rare"]
-                #else:
-                #    samples = ["Data", "GJets", "QCD", "WJets", "TTG", "TTbar", "tW", "Rare"]
-                #print "Shape factor CR units; Loading {0} histograms".format(region)
-                #for sample in samples:
-                #    hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
-                #    print "\t{0}".format(hist_name) 
                 
+                # WARNING: strings loaded from json file have type 'unicode'
+                # ROOT cannot load histograms using unicode input: use type 'str'
                 # Note: systematic (and thus varTag) should be apply only to MC, not to data
+                
                 h_Data                  = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Data"]              ) )
                 h_GJets                 = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["GJets"]             ) )
                 if self.splitQCD:
@@ -486,7 +474,7 @@ class Shape:
     
     # Run 2 Q values in table for analysis note 
     def makeTable(self, output_name, makeDoc=False):
-        # values for table store as follows:
+        # values for table are stored as follows:
         # self.shape_map[era][bin_type][region][selection]["total_data"]          = nNum
         # self.shape_map[era][bin_type][region][selection]["total_mc"]            = nDen
         # self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm"] = photonDataMCNorm
