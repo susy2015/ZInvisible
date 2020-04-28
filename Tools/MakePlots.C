@@ -2322,6 +2322,9 @@ int main(int argc, char* argv[])
             // all weights
             std::string PhotonWeights = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drPhotonCleaned;
             // Search and Validation Bins Selection
+            // -------------- //
+            // --- low dm --- //
+            // -------------- //
             for (const auto& cut : map_shape_cuts_low_dm)
             {
                 const bool doNorm = true;
@@ -2330,10 +2333,19 @@ int main(int argc, char* argv[])
                 PDC dcData_Photon_LowDM_met(                             "data",   "metWithPhoton", {dsData_Photon_LowDM});
                 PDC dcMC_Photon_LowDM_met(                               "stack",  "metWithPhoton", StackMC_Photon_LowDM);
                 vh.push_back(PHS("DataMC_Photon_LowDM_met_" + cut.first + histSuffix,                              {dcData_Photon_LowDM_met,                              dcMC_Photon_LowDM_met},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
-                // --- JEC systematic --- //
-                // only apply JEC to MC, not Data
                 if (doSystematics)
                 {
+                    // --- pdf systematic --- //
+                    for (const auto& pdf : pdfMap)
+                    {
+                        std::string histSuffixSyst = "_pdf_syst_"  + pdf.first + JetPtCut;
+                        std::string totalWeights   = PhotonWeights + ";"       + pdf.second;
+                        std::vector<std::vector<PDS>> StackMC_Photon_LowDM_pdf   = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_lowDM  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned + cut.second, totalWeights);
+                        PDC dcMC_Photon_LowDM_met_pdf(         "stack",  "metWithPhoton",   StackMC_Photon_LowDM_pdf);
+                        vh.push_back(PHS("DataMC_Photon_LowDM_met_" + cut.first + histSuffixSyst, {dcData_Photon_LowDM_met, dcMC_Photon_LowDM_met_pdf}, {1, 2}, "", nBins,  minPt, maxPt, true, doNorm, label_metWithPhoton, "Events"));
+                    }
+                    // --- JEC systematic --- //
+                    // only apply JEC to MC, not Data
                     for (const auto& jec : jesMap)
                     {
                         std::string histSuffixSyst = "_jes_syst_" + jec.first + JetPtCut;
@@ -2344,6 +2356,9 @@ int main(int argc, char* argv[])
                     }
                 }
             }
+            // --------------- //
+            // --- high dm --- //
+            // --------------- //
             for (const auto& cut : map_shape_cuts_high_dm)
             {
                 const bool doNorm = true;
@@ -2352,10 +2367,19 @@ int main(int argc, char* argv[])
                 PDC dcData_Photon_HighDM_met(                             "data",   "metWithPhoton", {dsData_Photon_HighDM});
                 PDC dcMC_Photon_HighDM_met(                               "stack",  "metWithPhoton", StackMC_Photon_HighDM);
                 vh.push_back(PHS("DataMC_Photon_HighDM_met_" + cut.first + histSuffix,                              {dcData_Photon_HighDM_met,                              dcMC_Photon_HighDM_met},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
-                // --- JEC systematic --- //
-                // only apply JEC to MC, not Data
                 if (doSystematics)
                 {
+                    // --- pdf systematic --- //
+                    for (const auto& pdf : pdfMap)
+                    {
+                        std::string histSuffixSyst = "_pdf_syst_"  + pdf.first + JetPtCut;
+                        std::string totalWeights   = PhotonWeights + ";"       + pdf.second;
+                        std::vector<std::vector<PDS>> StackMC_Photon_HighDM_pdf   = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_highDM  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned + cut.second, totalWeights);
+                        PDC dcMC_Photon_HighDM_met_pdf(         "stack",  "metWithPhoton",   StackMC_Photon_HighDM_pdf);
+                        vh.push_back(PHS("DataMC_Photon_HighDM_met_" + cut.first + histSuffixSyst, {dcData_Photon_HighDM_met, dcMC_Photon_HighDM_met_pdf}, {1, 2}, "", nBins,  minPt, maxPt, true, doNorm, label_metWithPhoton, "Events"));
+                    }
+                    // --- JEC systematic --- //
+                    // only apply JEC to MC, not Data
                     for (const auto& jec : jesMap)
                     {
                         std::string histSuffixSyst = "_jes_syst_" + jec.first + JetPtCut;
@@ -2379,8 +2403,8 @@ int main(int argc, char* argv[])
                 // --- pdf systematic --- //
                 for (const auto& pdf : pdfMap)
                 {
-                    std::string histSuffixSyst                  = "_pdf_syst_"               + pdf.first + JetPtCut;
-                    std::string totalWeights                    = PhotonWeights              + ";"       + pdf.second;
+                    std::string histSuffixSyst = "_pdf_syst_"  + pdf.first + JetPtCut;
+                    std::string totalWeights   = PhotonWeights + ";"       + pdf.second;
                     std::vector<std::vector<PDS>> StackMC_Photon_LowDM   = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_lowDM  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, totalWeights);
                     std::vector<std::vector<PDS>> StackMC_Photon_HighDM  = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, totalWeights);
                     // Control Region Units: nCRUnitLowDM and nCRUnitHighDM
