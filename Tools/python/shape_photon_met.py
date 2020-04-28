@@ -21,6 +21,7 @@ class Shape:
         self.verbose                = verbose
         self.splitQCD               = False
         self.systTag                = ""
+        self.varTag                 = ""
         self.histos                 = {}
         self.cr_unit_histos         = {}
         self.cr_unit_histos_summed  = {}
@@ -59,32 +60,32 @@ class Shape:
         self.color_list   = ["pinkish red", "tangerine", "emerald", "dark sky blue", "pinky purple"]
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
-    def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable):
-        # testing
-        #print "In getSimpleMap():" + "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata"
-        #print "In getSimpleMap():" + "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "#gamma+jetsstack"
+    def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable, varTag = ""):
+        # only use varTag for MC, not data
+        # only use varTag if variable name changes (e.g. nCRUnit, but not metWithPhoton)
+        variableWithTag = variable + varTag
         if self.splitQCD:
             temp_map = {
                             "Data"              : "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata",
-                            "GJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "#gamma+jetsstack",
-                            "QCD_Fragmented"    : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "QCD Fragmentedstack",
-                            "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "QCD Fakestack",
-                            "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "W(l#nu)+jetsstack",
-                            "TTG"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}#gamma+jetsstack",
-                            #"TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}stack",
-                            "tW"                : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "tWstack",
-                            "Rare"              : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "Rarestack",
+                            "GJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "#gamma+jetsstack",
+                            "QCD_Fragmented"    : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD Fragmentedstack",
+                            "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD Fakestack",
+                            "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "W(l#nu)+jetsstack",
+                            "TTG"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "t#bar{t}#gamma+jetsstack",
+                            #"TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "t#bar{t}stack",
+                            "tW"                : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "tWstack",
+                            "Rare"              : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "Rarestack",
             }
         else:
             temp_map = {
                             "Data"              : "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata",
-                            "GJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "#gamma+jetsstack",
-                            "QCD"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "QCDstack",
-                            "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "W(l#nu)+jetsstack",
-                            "TTG"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}#gamma+jetsstack",
-                            #"TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "t#bar{t}stack",
-                            "tW"                : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "tWstack",
-                            "Rare"              : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variable + "Rarestack",
+                            "GJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "#gamma+jetsstack",
+                            "QCD"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCDstack",
+                            "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "W(l#nu)+jetsstack",
+                            "TTG"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "t#bar{t}#gamma+jetsstack",
+                            #"TTbar"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "t#bar{t}stack",
+                            "tW"                : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "tWstack",
+                            "Rare"              : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "Rarestack",
             }
         return temp_map
 
@@ -109,6 +110,7 @@ class Shape:
                     # apply syst to MC only
                     dataSelectionTag = "_" + selection + "_jetpt30"
                     mcSelectionTag   = "_" + selection + self.systTag + "_jetpt30"
+                    # do not use varTag for MET histogram systematics
                     temp_map[bin_type][region][selection] = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable)
 
         return temp_map
@@ -124,11 +126,13 @@ class Shape:
         # apply syst to MC only
         dataSelectionTag = "_jetpt30"
         mcSelectionTag   = self.systTag + "_jetpt30"
-        temp_map = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable)
+        # use varTag for CR unit systematics
+        temp_map = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable, self.varTag)
         return temp_map
     
-    def getShape(self, file_name, era, systTag = ""): 
+    def getShape(self, file_name, era, systTag = "", varTag=""): 
         self.systTag = systTag
+        self.varTag = varTag
         self.eras.append(era)
         draw_option = "hist error"
         eraTag = "_" + era
@@ -184,7 +188,7 @@ class Shape:
                         else:
                             print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD"]
                     
-                    #WARNING: strings loaded from json file have type 'unicode'
+                    # WARNING: strings loaded from json file have type 'unicode'
                     # ROOT cannot load histograms using unicode input: use type 'str'
                     h_Data              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Data"]            ) )
                     h_GJets             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["GJets"]           ) )
@@ -416,30 +420,31 @@ class Shape:
 
                 # nCRUnitLowDM_drPhotonCleaned_jetpt30
                 # nCRUnitHighDM_drPhotonCleaned_jetpt30 
-                variable = "nCRUnit" + region + "_drPhotonCleaned_jetpt30"
-                #WARNING: strings loaded from json file have type 'unicode'
-                # ROOT cannot load histograms using unicode input: use type 'str'
-                #if self.splitQCD:
-                #    samples = ["Data", "GJets", "QCD_Fragmented", "QCD_Fake", "WJets", "TTG", "TTbar", "tW", "Rare"]
-                #else:
-                #    samples = ["Data", "GJets", "QCD", "WJets", "TTG", "TTbar", "tW", "Rare"]
-                #print "Shape factor CR units; Loading {0} histograms".format(region)
-                #for sample in samples:
-                #    hist_name = str(variable + "/" + self.cr_unit_histos[era][region][sample])
-                #    print "\t{0}".format(hist_name) 
+                # for JEC systematic:
+                # nCRUnitLowDM_drPhotonCleaned_jetpt30_jesTotalUp
+                # nCRUnitLowDM_drPhotonCleaned_jetpt30_jesTotalDown
+                # nCRUnitHighDM_drPhotonCleaned_jetpt30_jesTotalUp
+                # nCRUnitHighDM_drPhotonCleaned_jetpt30_jesTotalDown
                 
-                h_Data              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Data"]              ) )
-                h_GJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["GJets"]             ) )
+                variable = "nCRUnit" + region + "_drPhotonCleaned_jetpt30"
+                variableWithTag = variable + self.varTag
+                
+                # WARNING: strings loaded from json file have type 'unicode'
+                # ROOT cannot load histograms using unicode input: use type 'str'
+                # Note: systematic (and thus varTag) should be apply only to MC, not to data
+                
+                h_Data                  = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Data"]              ) )
+                h_GJets                 = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["GJets"]             ) )
                 if self.splitQCD:
-                    h_QCD_Fragmented    = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["QCD_Fragmented"]    ) )
-                    h_QCD_Fake          = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["QCD_Fake"]          ) )
+                    h_QCD_Fragmented    = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["QCD_Fragmented"]    ) )
+                    h_QCD_Fake          = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["QCD_Fake"]          ) )
                 else:
-                    h_QCD               = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["QCD"]               ) )
-                h_WJets             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["WJets"]             ) )
-                h_TTG               = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["TTG"]               ) )
-                #h_TTbar             = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["TTbar"]             ) )
-                h_tW                = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["tW"]                ) )
-                h_Rare              = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Rare"]              ) )
+                    h_QCD               = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["QCD"]               ) )
+                h_WJets                 = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["WJets"]             ) )
+                h_TTG                   = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["TTG"]               ) )
+                #h_TTbar                 = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["TTbar"]             ) )
+                h_tW                    = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["tW"]                ) )
+                h_Rare                  = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["Rare"]              ) )
                 
                 # MC_background
                 if self.splitQCD:
@@ -469,7 +474,7 @@ class Shape:
     
     # Run 2 Q values in table for analysis note 
     def makeTable(self, output_name, makeDoc=False):
-        # values for table store as follows:
+        # values for table are stored as follows:
         # self.shape_map[era][bin_type][region][selection]["total_data"]          = nNum
         # self.shape_map[era][bin_type][region][selection]["total_mc"]            = nDen
         # self.shape_map[era][bin_type][region][selection]["photon_data_mc_norm"] = photonDataMCNorm

@@ -53,7 +53,6 @@ def submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False, dat
     
     # TopTagger.cfg
     mvaFileName = ""
-    #with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2016.cfg") as meowttcfgFile:
     with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Tensorflow_2016.cfg") as meowttcfgFile:
         for line in meowttcfgFile:
             line = line.split("#")[0]
@@ -85,9 +84,9 @@ def submit(datasets, refLumi, era, numfile=5, noSubmit=False, verbose=False, dat
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/PileupHistograms_0121_69p2mb_pm4p6.root",
                           environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagSF_AltTWP.root",
-                          #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2016.cfg",
-                          #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2017.cfg",
-                          #environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_2018.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/tTagEff_2016.root", 
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/tTagEff_2017.root", 
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/tTagEff_2018.root", 
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Tensorflow_2016.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Tensorflow_2017.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger_Tensorflow_2018.cfg",

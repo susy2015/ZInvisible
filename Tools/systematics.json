@@ -30,10 +30,10 @@
         "up": "DiMuTriggerEffPt_Up"
     },
     "eff_fatjet_veto": {
-        "down": "Stop0l_DeepAK8_SFWeight_veto_dn",
+        "down": "Stop0l_DeepAK8_SFWeight_recalc_veto_dn",
         "name": "eff_fatjet_veto",
-        "nominal": "Stop0l_DeepAK8_SFWeight",
-        "up": "Stop0l_DeepAK8_SFWeight_veto_up"
+        "nominal": "Stop0l_DeepAK8_SFWeight_recalc",
+        "up": "Stop0l_DeepAK8_SFWeight_recalc_veto_up"
     },
     "eff_restoptag": {
         "down": "Stop0l_ResTopWeight_Dn",
@@ -60,16 +60,16 @@
         "up": "SoftBottomTotalSF_Up_drPhotonCleaned_jetpt30"
     },
     "eff_toptag": {
-        "down": "Stop0l_DeepAK8_SFWeight_top_dn",
+        "down": "Stop0l_DeepAK8_SFWeight_recalc_top_dn",
         "name": "eff_toptag",
-        "nominal": "Stop0l_DeepAK8_SFWeight",
-        "up": "Stop0l_DeepAK8_SFWeight_top_up"
+        "nominal": "Stop0l_DeepAK8_SFWeight_recalc",
+        "up": "Stop0l_DeepAK8_SFWeight_recalc_top_up"
     },
     "eff_wtag": {
-        "down": "Stop0l_DeepAK8_SFWeight_w_dn",
+        "down": "Stop0l_DeepAK8_SFWeight_recalc_w_dn",
         "name": "eff_wtag",
-        "nominal": "Stop0l_DeepAK8_SFWeight",
-        "up": "Stop0l_DeepAK8_SFWeight_w_up"
+        "nominal": "Stop0l_DeepAK8_SFWeight_recalc",
+        "up": "Stop0l_DeepAK8_SFWeight_recalc_w_up"
     },
     "isr": {
         "down": "ISRWeight_Down",

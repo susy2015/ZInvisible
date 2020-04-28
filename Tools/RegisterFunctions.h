@@ -8,6 +8,7 @@
 #include "SusyAnaTools/Tools/GetVectors.h"
 #include "SusyAnaTools/Tools/CleanedJets.h"
 #include "SusyAnaTools/Tools/RunTopTagger.h"
+#include "SusyAnaTools/Tools/TopWeightCalculator.h"
 
 class NTupleReader;
 class BaselineVessel;
@@ -47,6 +48,8 @@ public:
     virtual const std::set<std::string> getMiniTupleSetData();
     virtual void remakeBTagCorrector(std::string sampleName) {};
     virtual void remakeISRreweight(std::string sampleName) {};
+    virtual void setupTopWeightCalculator(NTupleReader& tr) {};
+    virtual void setSampleName(std::string sampleName) {};
     
 };
 
@@ -54,6 +57,8 @@ class RegisterFunctionsNTuple : public RegisterFunctions
 {
 private:
     bool doSystematics_; 
+    std::string year_;
+    std::string sampleName_;
     BaselineVessel                              *myBLV;
     BaselineVessel                              *myBLV_jetpt30;
     BaselineVessel                              *myBLV_jetpt30_jesTotalUp;
@@ -77,6 +82,7 @@ private:
     RunTopTagger                                *runTopTagger_drPhotonCleaned;
     RunTopTagger                                *runTopTagger_drPhotonCleaned_jesTotalUp;
     RunTopTagger                                *runTopTagger_drPhotonCleaned_jesTotalDown;
+    TopWeightCalculator                         *topWeightCalculator; 
     plotterFunctions::Gamma                     *gamma;
     PDFUncertainty                              *myPDFUnc;
     BTagCorrector                               *bTagCorrector;
@@ -107,6 +113,8 @@ public:
     void activateBranches(std::set<std::string>& activeBranches);
     void remakeBTagCorrector(std::string sampleName);
     void remakeISRreweight(std::string sampleName);
+    void setupTopWeightCalculator(NTupleReader& tr);
+    void setSampleName(std::string sampleName);
 };
 
 class RegisterFunctionsMiniTuple : public RegisterFunctions

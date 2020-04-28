@@ -66,7 +66,7 @@ def process():
             if plot_only:
                 # Only run if file exists
                 if file_exists:
-                    command = "./makePlots -f -I {0} -Y {1} -R Data_MET_{1} | grep -v LHAPDF".format(resultFile, era) 
+                    command = "./makePlots -q -f -I {0} -Y {1} -R Data_MET_{1} | grep -v LHAPDF".format(resultFile, era) 
                 else:
                     print "The file {0} does not exist".format(resultFile)
                     exit(1)
@@ -111,7 +111,7 @@ def process():
 
         if not no_plots:
             # run make plots 
-            command = "./makePlots -f -I {0} -Y {1} -R Data_MET_{1} | grep -v LHAPDF".format(resultFile, era) 
+            command = "./makePlots -q -f -I {0} -Y {1} -R Data_MET_{1} | grep -v LHAPDF".format(resultFile, era) 
             returncode = subprocess.check_call(command, shell=True)
             
             # Move plots to directory for each era

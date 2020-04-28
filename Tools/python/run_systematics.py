@@ -190,7 +190,11 @@ def symmetrizeSyst(h, h_up, h_down):
         if same_dir:
             if useLogNormal:
                 # using geometric mean
-                geometric_mean = np.sqrt(Aup * Adown)
+                if Aup * Adown < 0:
+                    print "WARNING: Aup * Adown = {0}, about to take square root.".format(Aup * Adown)
+                #geometric_mean = np.sqrt(Aup * Adown)
+                # HACK to avoid negative values
+                geometric_mean = np.sqrt(abs(Aup * Adown))
                 Aup     /= geometric_mean
                 Adown   /= geometric_mean
                 h_up.SetBinContent(   i, p * Aup)
@@ -487,14 +491,21 @@ def run(era, eras, runs_json, syst_json, verbose):
     regions         = ["lowdm", "highdm"]
     directions      = ["up", "", "down"]
     bintypes        = ["validation", "validationMetStudy", "search", "controlUnit_gjets", "controlUnit_back"]
-    # including prefire; WARNING: prefire only exists in (2016,2017) and needs to be handled carefully 
-    systematics_znunu  = ["jes","btag","pileup","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","pdf","metres"]
+    # Systematics which we don't use: MET uncluster in photon CR, lepton veto SF, ISR weight for ttbar
+    systematics_znunu  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","metres"]
+    #systematics_phocr  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
     systematics_phocr  = ["jes","btag","pileup","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
+    # pdf syst. not working for metWithPhoton at the moment.
+    # Include prefire here; WARNING: prefire syst. only exists in (2016,2017) and needs to be handled carefully 
     if era != "2018":
         systematics_znunu.append("prefire")
         systematics_phocr.append("prefire")
     systematics = list(set(systematics_znunu)| set(systematics_phocr))
-    # Systematics which we don't use: pdf in photon CR, MET uncluster in photon CR, lepton veto SF, ISR weight for ttbar
+
+    varTagMap = {
+            "jes"    : {"up" : "_jesTotalUp",   "down" : "_jesTotalDown"},
+            "metres" : {"up" : "_METUnClustUp", "down" : "_METUnClustDown"}
+    }
 
     # histo[bintype][region][direction]
     histo      = {bintype:{region:dict.fromkeys(directions) for region in regions} for bintype in bintypes} 
@@ -550,12 +561,16 @@ def run(era, eras, runs_json, syst_json, verbose):
         for syst in systematics_znunu:
             for direction in ["up", "down"]:
                 systTag = "_{0}_syst_{1}".format(syst, direction)
+                varTag = ""
+                # variable name changes for JEC and MET unclustering systematics
+                if syst in varTagMap:
+                    varTag = varTagMap[syst][direction]
         
                 # --- calculate variation for this systematic
                 # only vary Z nu nu; do not vary Normalization or Shape
-                VB.getValues(       result_file,  era, systTag)
-                VB_MS.getValues(    result_file,  era, systTag)
-                SB.getValues(       result_file,  era, systTag, CRunits=CRU)
+                VB.getValues(       result_file,  era, systTag, varTag)
+                VB_MS.getValues(    result_file,  era, systTag, varTag)
+                SB.getValues(       result_file,  era, systTag, varTag, CRunits=CRU)
                 
                 for region in regions:
                     histo["validation"][region][direction]          =  VB.histograms[era][region][variable].Clone()
@@ -616,11 +631,16 @@ def run(era, eras, runs_json, syst_json, verbose):
         for syst in systematics_phocr:
             for direction in ["up", "down"]:
                 systTag = "_{0}_syst_{1}".format(syst, direction)
+                varTag  = ""
+                # variable name changes for JEC and MET unclustering systematics
+                if syst in varTagMap:
+                    varTag = varTagMap[syst][direction]
         
                 # --- calculate variation for this systematic
                 # Do not vary Normalization
                 # Vary shape to get GJets MC variation
-                S.getShape(         result_file,  era, systTag)
+                S.getShape(         result_file,  era, systTag, varTag)
+                print "Using systTag={0}, varTag={1}".format(systTag, varTag)
                 CRU.getValues(      result_file,  era)
                 
                 for region in regions:
@@ -734,7 +754,7 @@ def main():
     # options
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--runs_json",    "-j", default="",                             help="json file containing runs")
-    parser.add_argument("--syst_json",    "-s", default="",                             help="json file containing systematics")
+    parser.add_argument("--syst_json",    "-s", default="systematics.json",             help="json file containing systematics (default systematics.json)")
     parser.add_argument("--verbose",      "-v", default = False, action = "store_true", help="verbose flag to print more things")
     
     options                     = parser.parse_args()
