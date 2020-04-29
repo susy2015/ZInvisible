@@ -2322,6 +2322,9 @@ int main(int argc, char* argv[])
             // all weights
             std::string PhotonWeights = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drPhotonCleaned;
             // Search and Validation Bins Selection
+            // -------------- //
+            // --- low dm --- //
+            // -------------- //
             for (const auto& cut : map_shape_cuts_low_dm)
             {
                 const bool doNorm = true;
@@ -2330,10 +2333,19 @@ int main(int argc, char* argv[])
                 PDC dcData_Photon_LowDM_met(                             "data",   "metWithPhoton", {dsData_Photon_LowDM});
                 PDC dcMC_Photon_LowDM_met(                               "stack",  "metWithPhoton", StackMC_Photon_LowDM);
                 vh.push_back(PHS("DataMC_Photon_LowDM_met_" + cut.first + histSuffix,                              {dcData_Photon_LowDM_met,                              dcMC_Photon_LowDM_met},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
-                // --- JEC systematic --- //
-                // only apply JEC to MC, not Data
                 if (doSystematics)
                 {
+                    // --- pdf systematic --- //
+                    for (const auto& pdf : pdfMap)
+                    {
+                        std::string histSuffixSyst = "_pdf_syst_"  + pdf.first + JetPtCut;
+                        std::string totalWeights   = PhotonWeights + ";"       + pdf.second;
+                        std::vector<std::vector<PDS>> StackMC_Photon_LowDM_pdf   = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_lowDM  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned + cut.second, totalWeights);
+                        PDC dcMC_Photon_LowDM_met_pdf(         "stack",  "metWithPhoton",   StackMC_Photon_LowDM_pdf);
+                        vh.push_back(PHS("DataMC_Photon_LowDM_met_" + cut.first + histSuffixSyst, {dcData_Photon_LowDM_met, dcMC_Photon_LowDM_met_pdf}, {1, 2}, "", nBins,  minPt, maxPt, true, doNorm, label_metWithPhoton, "Events"));
+                    }
+                    // --- JEC systematic --- //
+                    // only apply JEC to MC, not Data
                     for (const auto& jec : jesMap)
                     {
                         std::string histSuffixSyst = "_jes_syst_" + jec.first + JetPtCut;
@@ -2344,6 +2356,9 @@ int main(int argc, char* argv[])
                     }
                 }
             }
+            // --------------- //
+            // --- high dm --- //
+            // --------------- //
             for (const auto& cut : map_shape_cuts_high_dm)
             {
                 const bool doNorm = true;
@@ -2352,10 +2367,19 @@ int main(int argc, char* argv[])
                 PDC dcData_Photon_HighDM_met(                             "data",   "metWithPhoton", {dsData_Photon_HighDM});
                 PDC dcMC_Photon_HighDM_met(                               "stack",  "metWithPhoton", StackMC_Photon_HighDM);
                 vh.push_back(PHS("DataMC_Photon_HighDM_met_" + cut.first + histSuffix,                              {dcData_Photon_HighDM_met,                              dcMC_Photon_HighDM_met},                              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
-                // --- JEC systematic --- //
-                // only apply JEC to MC, not Data
                 if (doSystematics)
                 {
+                    // --- pdf systematic --- //
+                    for (const auto& pdf : pdfMap)
+                    {
+                        std::string histSuffixSyst = "_pdf_syst_"  + pdf.first + JetPtCut;
+                        std::string totalWeights   = PhotonWeights + ";"       + pdf.second;
+                        std::vector<std::vector<PDS>> StackMC_Photon_HighDM_pdf   = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_highDM  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned + cut.second, totalWeights);
+                        PDC dcMC_Photon_HighDM_met_pdf(         "stack",  "metWithPhoton",   StackMC_Photon_HighDM_pdf);
+                        vh.push_back(PHS("DataMC_Photon_HighDM_met_" + cut.first + histSuffixSyst, {dcData_Photon_HighDM_met, dcMC_Photon_HighDM_met_pdf}, {1, 2}, "", nBins,  minPt, maxPt, true, doNorm, label_metWithPhoton, "Events"));
+                    }
+                    // --- JEC systematic --- //
+                    // only apply JEC to MC, not Data
                     for (const auto& jec : jesMap)
                     {
                         std::string histSuffixSyst = "_jes_syst_" + jec.first + JetPtCut;
@@ -2379,8 +2403,8 @@ int main(int argc, char* argv[])
                 // --- pdf systematic --- //
                 for (const auto& pdf : pdfMap)
                 {
-                    std::string histSuffixSyst                  = "_pdf_syst_"               + pdf.first + JetPtCut;
-                    std::string totalWeights                    = PhotonWeights              + ";"       + pdf.second;
+                    std::string histSuffixSyst = "_pdf_syst_"  + pdf.first + JetPtCut;
+                    std::string totalWeights   = PhotonWeights + ";"       + pdf.second;
                     std::vector<std::vector<PDS>> StackMC_Photon_LowDM   = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_lowDM  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, totalWeights);
                     std::vector<std::vector<PDS>> StackMC_Photon_HighDM  = makeStackMC_Photon( "MET_pt<250" + PhotonIDSelection + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, totalWeights);
                     // Control Region Units: nCRUnitLowDM and nCRUnitHighDM
@@ -3647,12 +3671,14 @@ int main(int argc, char* argv[])
             PDC dcMC_ZNuNu_nResolvedTops_nominal("single",      "nResolvedTops"     + JetPtCut, {makePDSZnunu("nominal",            "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_ResTopWeight")});
             PDC dcMC_ZNuNu_nResolvedTops_up("single",           "nResolvedTops"     + JetPtCut, {makePDSZnunu("resolvedtop_up",     "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_ResTopWeight_Up")});
             PDC dcMC_ZNuNu_nResolvedTops_down("single",         "nResolvedTops"     + JetPtCut, {makePDSZnunu("resolvedtop_down",   "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_ResTopWeight_Dn")});
-            PDC dcMC_ZNuNu_nMergedTops_nominal("single",        "nMergedTops"       + JetPtCut, {makePDSZnunu("nominal",            "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
+            PDC dcMC_ZNuNu_nMergedTops_nominal("single",        "nMergedTops"       + JetPtCut, {makePDSZnunu("nominal",            "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight")});
+            PDC dcMC_ZNuNu_nMergedTops_recalc("single",         "nMergedTops"       + JetPtCut, {makePDSZnunu("recalc",             "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
             PDC dcMC_ZNuNu_nMergedTops_top_up("single",         "nMergedTops"       + JetPtCut, {makePDSZnunu("mergedtop_up",       "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_top_up")});
             PDC dcMC_ZNuNu_nMergedTops_top_down("single",       "nMergedTops"       + JetPtCut, {makePDSZnunu("mergedtop_down",     "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_top_dn")});
             PDC dcMC_ZNuNu_nMergedTops_veto_up("single",        "nMergedTops"       + JetPtCut, {makePDSZnunu("fatjet_veto_up",     "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_up")});
             PDC dcMC_ZNuNu_nMergedTops_veto_down("single",      "nMergedTops"       + JetPtCut, {makePDSZnunu("fatjet_veto_down",   "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_dn")});
-            PDC dcMC_ZNuNu_nWs_nominal("single",                "nWs"               + JetPtCut, {makePDSZnunu("nominal",            "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
+            PDC dcMC_ZNuNu_nWs_nominal("single",                "nWs"               + JetPtCut, {makePDSZnunu("nominal",            "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight")});
+            PDC dcMC_ZNuNu_nWs_recalc("single",                 "nWs"               + JetPtCut, {makePDSZnunu("recalc",             "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
             PDC dcMC_ZNuNu_nWs_w_up("single",                   "nWs"               + JetPtCut, {makePDSZnunu("w_up",               "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_w_up")});
             PDC dcMC_ZNuNu_nWs_w_down("single",                 "nWs"               + JetPtCut, {makePDSZnunu("w_down",             "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_w_dn")});
             PDC dcMC_ZNuNu_nWs_veto_up("single",                "nWs"               + JetPtCut, {makePDSZnunu("fatjet_veto_up",     "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_up")});
@@ -3661,12 +3687,14 @@ int main(int argc, char* argv[])
             PDC dcMC_TTbar_nResolvedTops_nominal("single",      "nResolvedTops"     + JetPtCut, {makePDSTTbar("nominal",            "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_ResTopWeight")});
             PDC dcMC_TTbar_nResolvedTops_up("single",           "nResolvedTops"     + JetPtCut, {makePDSTTbar("resolvedtop_up",     "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_ResTopWeight_Up")});
             PDC dcMC_TTbar_nResolvedTops_down("single",         "nResolvedTops"     + JetPtCut, {makePDSTTbar("resolvedtop_down",   "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_ResTopWeight_Dn")});
-            PDC dcMC_TTbar_nMergedTops_nominal("single",        "nMergedTops"       + JetPtCut, {makePDSTTbar("nominal",            "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
+            PDC dcMC_TTbar_nMergedTops_nominal("single",        "nMergedTops"       + JetPtCut, {makePDSTTbar("nominal",            "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight")});
+            PDC dcMC_TTbar_nMergedTops_recalc("single",         "nMergedTops"       + JetPtCut, {makePDSTTbar("recalc",             "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
             PDC dcMC_TTbar_nMergedTops_top_up("single",         "nMergedTops"       + JetPtCut, {makePDSTTbar("mergedtop_up",       "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_top_up")});
             PDC dcMC_TTbar_nMergedTops_top_down("single",       "nMergedTops"       + JetPtCut, {makePDSTTbar("mergedtop_down",     "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_top_dn")});
             PDC dcMC_TTbar_nMergedTops_veto_up("single",        "nMergedTops"       + JetPtCut, {makePDSTTbar("fatjet_veto_up",     "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_up")});
             PDC dcMC_TTbar_nMergedTops_veto_down("single",      "nMergedTops"       + JetPtCut, {makePDSTTbar("fatjet_veto_down",   "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_dn")});
-            PDC dcMC_TTbar_nWs_nominal("single",                "nWs"               + JetPtCut, {makePDSTTbar("nominal",            "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
+            PDC dcMC_TTbar_nWs_nominal("single",                "nWs"               + JetPtCut, {makePDSTTbar("nominal",            "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight")});
+            PDC dcMC_TTbar_nWs_recalc("single",                 "nWs"               + JetPtCut, {makePDSTTbar("recalc",             "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
             PDC dcMC_TTbar_nWs_w_up("single",                   "nWs"               + JetPtCut, {makePDSTTbar("w_up",               "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_w_up")});
             PDC dcMC_TTbar_nWs_w_down("single",                 "nWs"               + JetPtCut, {makePDSTTbar("w_down",             "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_w_dn")});
             PDC dcMC_TTbar_nWs_veto_up("single",                "nWs"               + JetPtCut, {makePDSTTbar("fatjet_veto_up",     "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_up")});
@@ -3740,27 +3768,32 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("ZNuNu_nSRUnit_LowDM" + histSuffix,                    {dcMC_ZNuNu_nSRUnit_LowDM},                     {1, 1}, "", max_srunit_low_dm - min_srunit_low_dm,              min_srunit_low_dm,          max_srunit_low_dm,          false, false,  "Search Region Unit Low DM", "Events", true));
             vh.push_back(PHS("ZNuNu_nSRUnit_HighDM" + histSuffix,                   {dcMC_ZNuNu_nSRUnit_HighDM},                    {1, 1}, "", max_srunit_high_dm - min_srunit_high_dm,            min_srunit_high_dm,         max_srunit_high_dm,         false, false,  "Search Region Unit High DM", "Events", true));
             // additional histograms
-            //                                                                                                                                                                            log,  norm, ...                        isRatio               
-            vh.push_back(PHS("ZNuNu_nResolvedTops",         {dcMC_ZNuNu_nResolvedTops_nominal, dcMC_ZNuNu_nResolvedTops_up, dcMC_ZNuNu_nResolvedTops_down},        {2, 3}, "",  6, 0, 6,  true, false,  label_nrt,     "Events", true));
-            vh.push_back(PHS("ZNuNu_nMergedTops_topsyst",   {dcMC_ZNuNu_nMergedTops_nominal, dcMC_ZNuNu_nMergedTops_top_up, dcMC_ZNuNu_nMergedTops_top_down},      {2, 3}, "",  6, 0, 6,  true, false,  label_nmt,     "Events", true));
-            vh.push_back(PHS("ZNuNu_nMergedTops_vetosyst",  {dcMC_ZNuNu_nMergedTops_nominal, dcMC_ZNuNu_nMergedTops_veto_up, dcMC_ZNuNu_nMergedTops_veto_down},    {2, 3}, "",  6, 0, 6,  true, false,  label_nmt,     "Events", true));
-            vh.push_back(PHS("ZNuNu_nWs_wsyst",             {dcMC_ZNuNu_nWs_nominal, dcMC_ZNuNu_nWs_w_up, dcMC_ZNuNu_nWs_w_down},                                  {2, 3}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
-            vh.push_back(PHS("ZNuNu_nWs_vetosyst",          {dcMC_ZNuNu_nWs_nominal, dcMC_ZNuNu_nWs_veto_up, dcMC_ZNuNu_nWs_veto_down},                            {2, 3}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
-            vh.push_back(PHS("TTbar_nResolvedTops",         {dcMC_TTbar_nResolvedTops_nominal, dcMC_TTbar_nResolvedTops_up, dcMC_TTbar_nResolvedTops_down},        {2, 3}, "",  6, 0, 6,  true, false,  label_nrt,     "Events", true));
-            vh.push_back(PHS("TTbar_nMergedTops_topsyst",   {dcMC_TTbar_nMergedTops_nominal, dcMC_TTbar_nMergedTops_top_up, dcMC_TTbar_nMergedTops_top_down},      {2, 3}, "",  6, 0, 6,  true, false,  label_nmt,     "Events", true));
-            vh.push_back(PHS("TTbar_nMergedTops_vetosyst",  {dcMC_TTbar_nMergedTops_nominal, dcMC_TTbar_nMergedTops_veto_up, dcMC_TTbar_nMergedTops_veto_down},    {2, 3}, "",  6, 0, 6,  true, false,  label_nmt,     "Events", true));
-            vh.push_back(PHS("TTbar_nWs_wsyst",             {dcMC_TTbar_nWs_nominal, dcMC_TTbar_nWs_w_up, dcMC_TTbar_nWs_w_down},                                  {2, 3}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
-            vh.push_back(PHS("TTbar_nWs_vetosyst",          {dcMC_TTbar_nWs_nominal, dcMC_TTbar_nWs_veto_up, dcMC_TTbar_nWs_veto_down},                            {2, 3}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
-            vh.push_back(PHS("T1tttt_met_nrt0",             {dcMC_T1tttt_met_nrt0_SATWeight, dcMC_T1tttt_met_nrt0_PostProcWeight},                                 {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
-            vh.push_back(PHS("T1tttt_met_nrt1",             {dcMC_T1tttt_met_nrt1_SATWeight, dcMC_T1tttt_met_nrt1_PostProcWeight},                                 {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
-            vh.push_back(PHS("T1tttt_met_nrt2",             {dcMC_T1tttt_met_nrt2_SATWeight, dcMC_T1tttt_met_nrt2_PostProcWeight},                                 {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
-            vh.push_back(PHS("T1tttt_met_nmt0",             {dcMC_T1tttt_met_nmt0_SATWeight, dcMC_T1tttt_met_nmt0_PostProcWeight},                                 {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
-            vh.push_back(PHS("T1tttt_met_nmt1",             {dcMC_T1tttt_met_nmt1_SATWeight, dcMC_T1tttt_met_nmt1_PostProcWeight},                                 {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
-            vh.push_back(PHS("T1tttt_met_nmt2",             {dcMC_T1tttt_met_nmt2_SATWeight, dcMC_T1tttt_met_nmt2_PostProcWeight},                                 {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
-            vh.push_back(PHS("T1tttt_met_nw0",              {dcMC_T1tttt_met_nw0_SATWeight, dcMC_T1tttt_met_nw0_PostProcWeight},                                   {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
-            vh.push_back(PHS("T1tttt_met_nw1",              {dcMC_T1tttt_met_nw1_SATWeight, dcMC_T1tttt_met_nw1_PostProcWeight},                                   {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
-            vh.push_back(PHS("T1tttt_met_nw2",              {dcMC_T1tttt_met_nw2_SATWeight, dcMC_T1tttt_met_nw2_PostProcWeight},                                   {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
-            vh.push_back(PHS("T1tttt_FatJet_msoftdrop",     {dcMC_T1tttt_FatJet_msoftdrop, dcMC_T1tttt_FatJet_msoftdrop_mt, dcMC_T1tttt_FatJet_msoftdrop_w},       {1, 1}, "", nBins,         0.0,          600.0,          false, false,  "Fat Jet soft drop mass",  "Events", true));
+            // recalculated DeepAK8 weight for merged top and W 
+            // systematics                                                                                                                                                                           log,  norm, ...                        isRatio               
+            vh.push_back(PHS("ZNuNu_nResolvedTops",                     {dcMC_ZNuNu_nResolvedTops_nominal, dcMC_ZNuNu_nResolvedTops_up, dcMC_ZNuNu_nResolvedTops_down},         {2, 3}, "",  6, 0, 6,  true, false,  label_nrt,     "Events", true));
+            vh.push_back(PHS("ZNuNu_nMergedTops_nominal_and_recalc",    {dcMC_ZNuNu_nMergedTops_nominal, dcMC_ZNuNu_nMergedTops_recalc},                                        {2, 1}, "",  6, 0, 6,  true, false,  label_nmt,     "Events", true));
+            vh.push_back(PHS("ZNuNu_nMergedTops_topsyst",               {dcMC_ZNuNu_nMergedTops_recalc, dcMC_ZNuNu_nMergedTops_top_up, dcMC_ZNuNu_nMergedTops_top_down},        {2, 3}, "",  6, 0, 6,  true, false,  label_nmt,     "Events", true));
+            vh.push_back(PHS("ZNuNu_nMergedTops_vetosyst",              {dcMC_ZNuNu_nMergedTops_recalc, dcMC_ZNuNu_nMergedTops_veto_up, dcMC_ZNuNu_nMergedTops_veto_down},      {2, 3}, "",  6, 0, 6,  true, false,  label_nmt,     "Events", true));
+            vh.push_back(PHS("ZNuNu_nWs_nominal_and_recalc",            {dcMC_ZNuNu_nWs_nominal, dcMC_ZNuNu_nWs_recalc},                                                        {2, 1}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
+            vh.push_back(PHS("ZNuNu_nWs_wsyst",                         {dcMC_ZNuNu_nWs_recalc, dcMC_ZNuNu_nWs_w_up, dcMC_ZNuNu_nWs_w_down},                                    {2, 3}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
+            vh.push_back(PHS("ZNuNu_nWs_vetosyst",                      {dcMC_ZNuNu_nWs_recalc, dcMC_ZNuNu_nWs_veto_up, dcMC_ZNuNu_nWs_veto_down},                              {2, 3}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
+            vh.push_back(PHS("TTbar_nResolvedTops",                     {dcMC_TTbar_nResolvedTops_nominal, dcMC_TTbar_nResolvedTops_up, dcMC_TTbar_nResolvedTops_down},         {2, 3}, "",  6, 0, 6,  true, false,  label_nrt,     "Events", true));
+            vh.push_back(PHS("TTbar_nMergedTops_nominal_and_recalc",    {dcMC_TTbar_nMergedTops_nominal, dcMC_TTbar_nMergedTops_recalc},                                        {2, 1}, "",  6, 0, 6,  true, false,  label_nmt,     "Events", true));
+            vh.push_back(PHS("TTbar_nMergedTops_topsyst",               {dcMC_TTbar_nMergedTops_recalc, dcMC_TTbar_nMergedTops_top_up, dcMC_TTbar_nMergedTops_top_down},        {2, 3}, "",  6, 0, 6,  true, false,  label_nmt,     "Events", true));
+            vh.push_back(PHS("TTbar_nMergedTops_vetosyst",              {dcMC_TTbar_nMergedTops_recalc, dcMC_TTbar_nMergedTops_veto_up, dcMC_TTbar_nMergedTops_veto_down},      {2, 3}, "",  6, 0, 6,  true, false,  label_nmt,     "Events", true));
+            vh.push_back(PHS("TTbar_nWs_nominal_and_recalc",            {dcMC_TTbar_nWs_nominal, dcMC_TTbar_nWs_recalc},                                                        {2, 1}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
+            vh.push_back(PHS("TTbar_nWs_wsyst",                         {dcMC_TTbar_nWs_recalc, dcMC_TTbar_nWs_w_up, dcMC_TTbar_nWs_w_down},                                    {2, 3}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
+            vh.push_back(PHS("TTbar_nWs_vetosyst",                      {dcMC_TTbar_nWs_recalc, dcMC_TTbar_nWs_veto_up, dcMC_TTbar_nWs_veto_down},                              {2, 3}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
+            vh.push_back(PHS("T1tttt_met_nrt0",                         {dcMC_T1tttt_met_nrt0_SATWeight, dcMC_T1tttt_met_nrt0_PostProcWeight},                                  {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nrt1",                         {dcMC_T1tttt_met_nrt1_SATWeight, dcMC_T1tttt_met_nrt1_PostProcWeight},                                  {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nrt2",                         {dcMC_T1tttt_met_nrt2_SATWeight, dcMC_T1tttt_met_nrt2_PostProcWeight},                                  {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nmt0",                         {dcMC_T1tttt_met_nmt0_SATWeight, dcMC_T1tttt_met_nmt0_PostProcWeight},                                  {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nmt1",                         {dcMC_T1tttt_met_nmt1_SATWeight, dcMC_T1tttt_met_nmt1_PostProcWeight},                                  {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nmt2",                         {dcMC_T1tttt_met_nmt2_SATWeight, dcMC_T1tttt_met_nmt2_PostProcWeight},                                  {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nw0",                          {dcMC_T1tttt_met_nw0_SATWeight, dcMC_T1tttt_met_nw0_PostProcWeight},                                    {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nw1",                          {dcMC_T1tttt_met_nw1_SATWeight, dcMC_T1tttt_met_nw1_PostProcWeight},                                    {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_met_nw2",                          {dcMC_T1tttt_met_nw2_SATWeight, dcMC_T1tttt_met_nw2_PostProcWeight},                                    {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
+            vh.push_back(PHS("T1tttt_FatJet_msoftdrop",                 {dcMC_T1tttt_FatJet_msoftdrop, dcMC_T1tttt_FatJet_msoftdrop_mt, dcMC_T1tttt_FatJet_msoftdrop_w},        {1, 1}, "", nBins,         0.0,          600.0,          false, false,  "Fat Jet soft drop mass",  "Events", true));
             
             if (doLooseAndMid)
             {
