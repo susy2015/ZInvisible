@@ -3699,6 +3699,8 @@ int main(int argc, char* argv[])
             PDC dcMC_TTbar_nWs_w_down("single",                 "nWs"               + JetPtCut, {makePDSTTbar("w_down",             "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_w_dn")});
             PDC dcMC_TTbar_nWs_veto_up("single",                "nWs"               + JetPtCut, {makePDSTTbar("fatjet_veto_up",     "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_up")});
             PDC dcMC_TTbar_nWs_veto_down("single",              "nWs"               + JetPtCut, {makePDSTTbar("fatjet_veto_down",   "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_veto_dn")});
+            // check number of gen partons for merged tops
+            PDC dcMC_TTbar_MergedTop_nGenPart_recalc("single",         "FatJet_nGenPart{FatJet_Stop0l=1}", {makePDSTTbar("recalc",             "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
             
             // compare ResolvedTopTotalSF_jetpt30 with Stop0l_ResTopWeight
             // new top tagger SFs in v6 ntuples:
@@ -3784,6 +3786,11 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("TTbar_nWs_nominal_and_recalc",            {dcMC_TTbar_nWs_nominal, dcMC_TTbar_nWs_recalc},                                                        {2, 1}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
             vh.push_back(PHS("TTbar_nWs_wsyst",                         {dcMC_TTbar_nWs_recalc, dcMC_TTbar_nWs_w_up, dcMC_TTbar_nWs_w_down},                                    {2, 1}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
             vh.push_back(PHS("TTbar_nWs_vetosyst",                      {dcMC_TTbar_nWs_recalc, dcMC_TTbar_nWs_veto_up, dcMC_TTbar_nWs_veto_down},                              {2, 1}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
+            // nGetPart
+            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_nmteq0",    {dcMC_TTbar_MergedTop_nGenPart_recalc},                                                               {1, 1}, "nMergedTops_jetpt30=0",   9, 0, 9,  true, false,  label_nmt,     "Events", true));
+            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_nmteq1",    {dcMC_TTbar_MergedTop_nGenPart_recalc},                                                               {1, 1}, "nMergedTops_jetpt30=1",   9, 0, 9,  true, false,  label_nmt,     "Events", true));
+            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_nmtgeq2",   {dcMC_TTbar_MergedTop_nGenPart_recalc},                                                               {1, 1}, "nMergedTops_jetpt30>=2",  9, 0, 9,  true, false,  label_nmt,     "Events", true));
+            // T1tttt
             vh.push_back(PHS("T1tttt_met_nrt0",                         {dcMC_T1tttt_met_nrt0_SATWeight, dcMC_T1tttt_met_nrt0_PostProcWeight},                                  {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
             vh.push_back(PHS("T1tttt_met_nrt1",                         {dcMC_T1tttt_met_nrt1_SATWeight, dcMC_T1tttt_met_nrt1_PostProcWeight},                                  {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
             vh.push_back(PHS("T1tttt_met_nrt2",                         {dcMC_T1tttt_met_nrt2_SATWeight, dcMC_T1tttt_met_nrt2_PostProcWeight},                                  {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
