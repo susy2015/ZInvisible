@@ -384,8 +384,10 @@ namespace plotterFunctions
             TLorentzVector cleanMet_jesTotalDown    = metV_jesTotalDown + metZ;
             
             // di-lepton selections
-            bool passMuPt      = (cutMuVec.size() == 2   && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt);
+            bool passMuPt      = (cutMuVec.size()   == 2 && cutMuVec[0].Pt() > highMuPt     && cutMuVec[1].Pt() > minMuPt);
             bool passElecPt    = (cutElecVec.size() == 2 && cutElecVec[0].Pt() > highElecPt && cutElecVec[1].Pt() > minElecPt);
+            bool passDiMuPt    = bestRecoMuZ.Pt()   >= 200;
+            bool passDiElecPt  = bestRecoElecZ.Pt() >= 200;
             bool passDiMuSel   = (passMuPt   && cutMuSummedCharge == 0);
             bool passDiElecSel = (passElecPt && cutElecSummedCharge == 0);
             bool passElMuSel   = (cutMuVec.size() == 1   && cutElecVec.size() == 1   && cutElecSummedCharge == -cutMuSummedCharge 
@@ -401,15 +403,18 @@ namespace plotterFunctions
             bool passElMuOnZMassPeak  = (bestRecoElMuZ.M() > zMassLow)  && (bestRecoElMuZ.M() < zMassHigh);
             bool passElMuOffZMassPeak = passElMuZMassMin && ! passElMuOnZMassPeak;
 
-            bool passMuZinvSel                = Pass_ElecVeto   && passDiMuSel && passMuZMassMin;
-            bool passMuZinvSelOnZMassPeak     = passMuZinvSel   && passMuOnZMassPeak;
-            bool passMuZinvSelOffZMassPeak    = passMuZinvSel   && passMuOffZMassPeak;
-            bool passElecZinvSel              = Pass_MuonVeto   && passDiElecSel && passElecZMassMin;
-            bool passElecZinvSelOnZMassPeak   = passElecZinvSel && passElecOnZMassPeak;
-            bool passElecZinvSelOffZMassPeak  = passElecZinvSel && passElecOffZMassPeak;
-            bool passElMuZinvSel              = passElMuSel     && passElMuZMassMin;
-            bool passElMuZinvSelOnZMassPeak   = passElMuSel     && passElMuOnZMassPeak;
-            bool passElMuZinvSelOffZMassPeak  = passElMuSel     && passElMuOffZMassPeak;
+            // Full Z selections
+            bool passMuZinvSel                  = Pass_ElecVeto         && passDiMuSel && passMuZMassMin && passDiMuPt;
+            bool passMuZinvNoZPtCut             = Pass_ElecVeto         && passDiMuSel && passMuZMassMin;
+            bool passMuZinvOnZMassPeak          = passMuZinvNoZPtCut    && passMuOnZMassPeak;
+            bool passMuZinvOffZMassPeak         = passMuZinvNoZPtCut    && passMuOffZMassPeak;
+            bool passElecZinvSel                = Pass_MuonVeto         && passDiElecSel && passElecZMassMin && passDiElecPt;
+            bool passElecZinvNoZPtCut           = Pass_MuonVeto         && passDiElecSel && passElecZMassMin;
+            bool passElecZinvOnZMassPeak        = passElecZinvNoZPtCut  && passElecOnZMassPeak;
+            bool passElecZinvOffZMassPeak       = passElecZinvNoZPtCut  && passElecOffZMassPeak;
+            bool passElMuZinvSel                = passElMuSel           && passElMuZMassMin;
+            bool passElMuZinvSelOnZMassPeak     = passElMuSel           && passElMuOnZMassPeak;
+            bool passElMuZinvSelOffZMassPeak    = passElMuSel           && passElMuOffZMassPeak;
 
             data_t genMuPt     = -999.9;
             data_t genMuEta    = -999.9;
@@ -516,7 +521,7 @@ namespace plotterFunctions
                 DiElecSF_Down   = cutElecSF_Down[0] * cutElecSF_Down[1];
             }
             
-            // print passMuZinvSelOnZMassPeak conditions
+            // print passMuZinvOnZMassPeak conditions
             bool printMuon = false;
             if (printMuon)
             {
@@ -530,9 +535,9 @@ namespace plotterFunctions
                     printf("cutMuVec[1].Pt() > minMuPt: %d ", cutMuVec[1].Pt() > minMuPt);
                     printf("bestRecoMuZ.M() > zMassLow: %d ", bestRecoMuZ.M() > zMassLow);
                     printf("bestRecoMuZ.M() < zMassHigh: %d ", bestRecoMuZ.M() < zMassHigh);
-                    if (passMuZinvSelOnZMassPeak)
+                    if (passMuZinvOnZMassPeak)
                     {
-                        printf(" --- passMuZinvSelOnZMassPeak");
+                        printf(" --- passMuZinvOnZMassPeak");
                     }
                     printf("\n");
                 }
@@ -640,15 +645,19 @@ namespace plotterFunctions
             tr.registerDerivedVar("passSingleMu45",                 muTrigMu45);
             tr.registerDerivedVar("passMuPt",                       passMuPt);
             tr.registerDerivedVar("passElecPt",                     passElecPt);
+            tr.registerDerivedVar("passDiMuPt",                     passDiMuPt);
+            tr.registerDerivedVar("passDiElecPt",                   passDiElecPt);
             tr.registerDerivedVar("passDiMuSel",                    passDiMuSel);
             tr.registerDerivedVar("passDiElecSel",                  passDiElecSel);
             tr.registerDerivedVar("passElMuSel",                    passElMuSel);
             tr.registerDerivedVar("passMuZinvSel",                  passMuZinvSel);
-            tr.registerDerivedVar("passMuZinvSelOnZMassPeak",       passMuZinvSelOnZMassPeak);
-            tr.registerDerivedVar("passMuZinvSelOffZMassPeak",      passMuZinvSelOffZMassPeak);
+            tr.registerDerivedVar("passMuZinvNoZPtCut",             passMuZinvNoZPtCut);
+            tr.registerDerivedVar("passMuZinvOnZMassPeak",          passMuZinvOnZMassPeak);
+            tr.registerDerivedVar("passMuZinvOffZMassPeak",         passMuZinvOffZMassPeak);
             tr.registerDerivedVar("passElecZinvSel",                passElecZinvSel);
-            tr.registerDerivedVar("passElecZinvSelOnZMassPeak",     passElecZinvSelOnZMassPeak);
-            tr.registerDerivedVar("passElecZinvSelOffZMassPeak",    passElecZinvSelOffZMassPeak);
+            tr.registerDerivedVar("passElecZinvNoZPtCut",           passElecZinvNoZPtCut);
+            tr.registerDerivedVar("passElecZinvOnZMassPeak",        passElecZinvOnZMassPeak);
+            tr.registerDerivedVar("passElecZinvOffZMassPeak",       passElecZinvOffZMassPeak);
             tr.registerDerivedVar("passElMuZinvSel",                passElMuZinvSel);
             tr.registerDerivedVar("passElMuZinvSelOnZMassPeak",     passElMuZinvSelOnZMassPeak);
             tr.registerDerivedVar("passElMuZinvSelOffZMassPeak",    passElMuZinvSelOffZMassPeak);
