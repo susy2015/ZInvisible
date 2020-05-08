@@ -10,12 +10,10 @@ def main():
     # options
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--directory",      "-d", default="",                                   help="directory for condor jobs")
-    parser.add_argument("--files_per_job",  "-n", default=-1,                                   help="number of files per job")
     parser.add_argument("--verbose",        "-v", default = False,  action = "store_true",      help="verbose flag to print more things")
     
     options       = parser.parse_args()
     directory     = options.directory
-    files_per_job = int(options.files_per_job)
     verbose       = options.verbose
     jobsMap = {}
 
@@ -29,9 +27,6 @@ def main():
         return
     if not os.path.isfile(json_file):
         print "ERROR: The file {0} does not exist.".format(json_file)
-        return
-    if files_per_job < 1:
-        print "Please enter number of files per job (greater than 0) using the -n option."
         return
     
     with open(json_file, "r") as infile:
@@ -75,8 +70,7 @@ def main():
         except:
             print "ERROR: The sample {0} was not found in {1}".format(sample, output_directory)
         if nReturned >= 0:
-            # nSubmitted: divide nJobs by files_per_job and round up: e.g. for 2 files per job, number of jobs is 4/2 = 2, 5/2 = 3
-            nSubmitted = int(round(nJobs/files_per_job))
+            nSubmitted = nJobs
             diff = nSubmitted - nReturned 
             nSubmittedTotal += nSubmitted
             nReturnedTotal += nReturned
@@ -92,6 +86,7 @@ def main():
     for sample in samples:
         samples[sample].sort()
         nReturned = len(samples[sample]) 
+        nFilesPerJob = jobsMap[sample]["nFilesPerJob"]
         nJobs = -1
         try:
             nJobs = jobsMap[sample]["nJobs"]
@@ -99,15 +94,15 @@ def main():
             print "ERROR: The sample {0} was not found in {1}".format(sample, json_file)
         
         if nJobs >= 0:
-            # nSubmitted: divide nJobs by files_per_job and round up: e.g. for 2 files per job, number of jobs is 4/2 = 2, 5/2 = 3
-            nSubmitted = int(round(nJobs/files_per_job))
+            nSubmitted = nJobs
             diff = nSubmitted - nReturned 
             if verbose:
                 print "{0}: {1} - {2} = {3}".format(sample, nSubmitted, nReturned, diff)
         else:
             print "ERROR: No jobs found for for {0}".format(sample)
         
-        expected = (i for i in xrange(0, max(samples[sample]), files_per_job))
+        # use nFilesPerJob as step size, use max(samples[sample]) as max value
+        expected = (i for i in xrange(0, max(samples[sample]) + nFilesPerJob, nFilesPerJob))
         s_expected = set(expected) 
         s_returned = set(samples[sample])
         s_diff = s_expected.difference(s_returned)
