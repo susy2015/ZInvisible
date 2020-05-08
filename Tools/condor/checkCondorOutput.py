@@ -9,12 +9,14 @@ import json
 def main():
     # options
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--directory",      "-d", default="",    help="directory for condor jobs")
-    parser.add_argument("--files_per_job",  "-n", default=-1,    help="number of files per job")
+    parser.add_argument("--directory",      "-d", default="",                                   help="directory for condor jobs")
+    parser.add_argument("--files_per_job",  "-n", default=-1,                                   help="number of files per job")
+    parser.add_argument("--verbose",        "-v", default = False,  action = "store_true",      help="verbose flag to print more things")
     
-    options = parser.parse_args()
-    directory = options.directory
+    options       = parser.parse_args()
+    directory     = options.directory
     files_per_job = int(options.files_per_job)
+    verbose       = options.verbose
     jobsMap = {}
 
     if not directory:
@@ -62,11 +64,11 @@ def main():
         #print "{0} {1}".format(match.group(1), match.group(2))
         n_files += 1
     
-    print "--- Loop over submitted samples ---"
+    if verbose:
+        print "--- Loop over submitted samples ---"
     # loop over submitted samples
     for sample in jobsMap:
         nJobs = jobsMap[sample]["nJobs"]
-        print "nJobs={0}".format(nJobs)
         nReturned = -1
         try:
             nReturned = len(samples[sample])
@@ -78,12 +80,14 @@ def main():
             diff = nSubmitted - nReturned 
             nSubmittedTotal += nSubmitted
             nReturnedTotal += nReturned
-            print "{0}: {1} - {2} = {3}".format(sample, nSubmitted, nReturned, diff)
+            if verbose:
+                print "{0}: {1} - {2} = {3}".format(sample, nSubmitted, nReturned, diff)
         else:
             print "ERROR: No jobs found for for {0}".format(sample)
 
     
-    print "--- Loop over returned samples ---"
+    if verbose:
+        print "--- Loop over returned samples ---"
     # loop over returned samples
     for sample in samples:
         samples[sample].sort()
@@ -98,12 +102,10 @@ def main():
             # nSubmitted: divide nJobs by files_per_job and round up: e.g. for 2 files per job, number of jobs is 4/2 = 2, 5/2 = 3
             nSubmitted = int(round(nJobs/files_per_job))
             diff = nSubmitted - nReturned 
-            print "{0}: {1} - {2} = {3}".format(sample, nSubmitted, nReturned, diff)
+            if verbose:
+                print "{0}: {1} - {2} = {3}".format(sample, nSubmitted, nReturned, diff)
         else:
             print "ERROR: No jobs found for for {0}".format(sample)
-        
-        #print "{0} {1}".format(sample, samples[sample])
-        #print "{0} {1}".format(sample, nReturned)
         
         expected = (i for i in xrange(0, max(samples[sample]), files_per_job))
         s_expected = set(expected) 
@@ -112,6 +114,8 @@ def main():
         if s_diff:
             print "WARNING: This sample has missing jobs: {0} jobs {1}".format(sample, s_diff)
 
+    if verbose:
+        print "--- Totals ---"
     print "n_files = {0}".format(n_files)
     print "nSubmittedTotal = {0}".format(nSubmittedTotal)
     print "nReturnedTotal = {0}".format(nReturnedTotal)
