@@ -65,15 +65,16 @@ def main():
     print "--- Loop over submitted samples ---"
     # loop over submitted samples
     for sample in jobsMap:
-        nJobs = jobsMap[sample]
+        nJobs = jobsMap[sample]["nJobs"]
+        print "nJobs={0}".format(nJobs)
         nReturned = -1
         try:
             nReturned = len(samples[sample])
         except:
             print "ERROR: The sample {0} was not found in {1}".format(sample, output_directory)
         if nReturned >= 0:
-            # nSubmitted: divide nJobs by 2 and round up: 4/2 = 2, 5/2 = 3
-            nSubmitted = int(round(nJobs/2.0))
+            # nSubmitted: divide nJobs by files_per_job and round up: e.g. for 2 files per job, number of jobs is 4/2 = 2, 5/2 = 3
+            nSubmitted = int(round(nJobs/files_per_job))
             diff = nSubmitted - nReturned 
             nSubmittedTotal += nSubmitted
             nReturnedTotal += nReturned
@@ -89,13 +90,13 @@ def main():
         nReturned = len(samples[sample]) 
         nJobs = -1
         try:
-            nJobs = jobsMap[sample]
+            nJobs = jobsMap[sample]["nJobs"]
         except:
             print "ERROR: The sample {0} was not found in {1}".format(sample, json_file)
         
         if nJobs >= 0:
-            # nSubmitted: divide nJobs by 2 and round up: 4/2 = 2, 5/2 = 3
-            nSubmitted = int(round(nJobs/2.0))
+            # nSubmitted: divide nJobs by files_per_job and round up: e.g. for 2 files per job, number of jobs is 4/2 = 2, 5/2 = 3
+            nSubmitted = int(round(nJobs/files_per_job))
             diff = nSubmitted - nReturned 
             print "{0}: {1} - {2} = {3}".format(sample, nSubmitted, nReturned, diff)
         else:
