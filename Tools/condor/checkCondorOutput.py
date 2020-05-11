@@ -140,8 +140,8 @@ def main():
                                    stdout=subprocess.PIPE, 
                                    stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
-        out_list = stdout.split("\n")
-        out_list = filter(None, out_list)
+        out_list = stdout.split("\n")     # get list for each line of output
+        out_list = filter(None, out_list) # remove empty strings from list 
         
         #print out_list
         print " > number of occurances of '{0}' in logs: {1}".format(word, len(out_list))
