@@ -10,21 +10,39 @@ def main():
     # options
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--directory",         "-d", default="",                                   help="directory for condor jobs")
+    parser.add_argument("--dir_map",           "-j", default="",                                   help="json file with directories for condor jobs")
     parser.add_argument("--check_output",      "-o", default = True,   action = "store_false",     help="check number of output root files, use flag to turn off")
     parser.add_argument("--verbose",           "-v", default = False,  action = "store_true",      help="verbose flag to print more things")
     
     options       = parser.parse_args()
     directory     = options.directory
+    dir_map       = options.dir_map
     check_output  = options.check_output
     verbose       = options.verbose
-    jobsMap = {}
+    if directory:
+        run(directory, check_output, verbose)
+    elif dir_map:
+        with open(dir_map, "r") as input_file:
+            dirMap = json.load(input_file)
+            for key in dirMap:
+                print "--------- {0} ---------".format(key)
+                path = "condor/{0}".format(dirMap[key])
+                run(path, check_output, verbose)
+    else:
+        print "Please enter a directory using the -d option."
+        print "For multiple directories, you may provide a json file with the -j option."
+        return
 
+
+def run(directory, check_output, verbose):
     if not directory:
         print "Please enter a directory using the -d option."
+        print "For multiple directories, you may provide a json file with the -j option."
         return
     output_directory = directory + "/output/"
     log_directory    = directory + "/logs/"
     json_file        = directory + "/nJobs.json"
+    jobsMap = {}
     
     if output_directory[-1] != "/":
         output_directory += "/"
@@ -133,7 +151,7 @@ def main():
     # check log files
     # look for these key words (ignoring case)
     print "--- Logs ---"
-    key_words = ["error", "warn", "not found"]
+    key_words = ["warn", "error", "not found"]
     for word in key_words:
         process = subprocess.Popen("grep -i \"{0}\" {1}*".format(word, log_directory),
                                    shell=True,
