@@ -754,7 +754,7 @@ def main():
     # options
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--runs_json",    "-j", default="",                             help="json file containing runs")
-    parser.add_argument("--syst_json",    "-s", default="systematics.json",             help="json file containing systematics (default systematics.json)")
+    parser.add_argument("--syst_json",    "-s", default="systematics.json",             help="json file containing systematics")
     parser.add_argument("--verbose",      "-v", default = False, action = "store_true", help="verbose flag to print more things")
     
     options                     = parser.parse_args()
