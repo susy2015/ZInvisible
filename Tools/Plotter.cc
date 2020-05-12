@@ -1163,7 +1163,7 @@ void Plotter::plot()
                 {
                     fline->SetParameter(0, 1);
                     drawOptions = "same PE1";
-                    bool autoScale = true;
+                    bool autoScale = false;
 
                     h1->Divide(h2);
                     h1->SetMarkerStyle(20);
