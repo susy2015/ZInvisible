@@ -1167,7 +1167,8 @@ int main(int argc, char* argv[])
         std::string DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight_recalc";
         std::string ResolvedTopTotalSF  = ";Stop0l_ResTopWeight";
         std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
-        std::string TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
+        // test removing SoftBottomTotalSF
+        std::string TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF;
         // baseline selections for lepton control regions
         SAT_Pass_Baseline     = ";SAT_Pass_Baseline"        + varSuffix;
         SAT_Pass_lowDM        = ";SAT_Pass_lowDM"           + varSuffix;
@@ -2395,7 +2396,8 @@ int main(int argc, char* argv[])
         DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight_recalc";
         ResolvedTopTotalSF  = ";Stop0l_ResTopWeight";
         SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
-        TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
+        // test removing SoftBottomTotalSF
+        TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF;
         // baseline selections for photon control region
         SAT_Pass_Baseline     = ";SAT_Pass_Baseline"    + varSuffix;
         SAT_Pass_lowDM        = ";SAT_Pass_lowDM"       + varSuffix;
@@ -3738,7 +3740,8 @@ int main(int argc, char* argv[])
             std::string DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight_recalc";
             std::string ResolvedTopTotalSF  = ";Stop0l_ResTopWeight";
             std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
-            std::string TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
+            // test removing SoftBottomTotalSF
+            std::string TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF;
             std::string ZNuNuWeights        = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight;
             
             // ---------------------------------- // 
