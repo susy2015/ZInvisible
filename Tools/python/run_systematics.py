@@ -492,8 +492,11 @@ def run(era, eras, runs_json, syst_json, verbose):
     directions      = ["up", "", "down"]
     bintypes        = ["validation", "validationMetStudy", "search", "controlUnit_gjets", "controlUnit_back"]
     # Systematics which we don't use: MET uncluster in photon CR, lepton veto SF, ISR weight for ttbar
-    systematics_znunu  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","metres"]
-    systematics_phocr  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
+    #systematics_znunu  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","metres"]
+    #systematics_phocr  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
+    # test removing soft b systematic (eff_sb)
+    systematics_znunu  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","metres"]
+    systematics_phocr  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","photon_sf"]
     # Include prefire here; WARNING: prefire syst. only exists in (2016,2017) and needs to be handled carefully 
     if era != "2018":
         systematics_znunu.append("prefire")
