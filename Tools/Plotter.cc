@@ -1163,7 +1163,7 @@ void Plotter::plot()
                 {
                     fline->SetParameter(0, 1);
                     drawOptions = "same PE1";
-                    bool autoScale = false;
+                    bool autoScale = true;
 
                     h1->Divide(h2);
                     h1->SetMarkerStyle(20);
@@ -1173,14 +1173,15 @@ void Plotter::plot()
                     if (autoScale)
                     {
                         d2ymin = -0.1;
-                        d2ymax =  1.1;
+                        d2ymax =  1.0;
                         for(int iBin = 1; iBin <= h1->GetNbinsX(); ++iBin)
                         {
-                            if(h1->GetBinContent(iBin) < 2.1)
+                            if(h1->GetBinContent(iBin) <= 5.0)
                             {
                                 d2ymax = std::max(d2ymax, h1->GetBinContent(iBin));
                             }
                         }
+                        d2ymax += 0.1;
                     }
                     dummy2->GetYaxis()->SetRangeUser(d2ymin, d2ymax);
                 }
