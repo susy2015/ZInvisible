@@ -35,7 +35,7 @@ def process():
     verbose     = options.verbose
 
     # make combined Run2
-    do_run2 = True
+    do_run2 = False
     
     # flag for not making plots
     noPlotFlag  = ""
