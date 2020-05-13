@@ -24,6 +24,7 @@ def main():
     json_file   = options.json_file
     verbose     = options.verbose
 
+    doRun2      = False
     doUnits     = True
     doCutflows  = False
     doPhotons   = False
@@ -102,39 +103,42 @@ def main():
 
     
     # Normalization: makeTable(self, output_name, makeDoc=False)
-    N.makeComparison("validation")
-    N.makeComparison("validationMetStudy")
-    N.makeComparison("search")
-    # N.makeTable to be after N.makeComparison
-    N.makeTable(latex_dir + "zinv_rz_doc.tex",   True)
-    N.makeTable(latex_dir + "zinv_rz_table.tex", False)
-    N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
-    N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
-    S.makeComparison("validation")
-    S.makeComparison("validationMetStudy")
-    S.makeComparison("search")
-    S.makeTable(latex_dir + "zinv_q_doc.tex",   True)
-    S.makeTable(latex_dir + "zinv_q_table.tex", False)
-    VB.makeTexFile("Z Invisible Per Era Prediction for Validation Bins", latex_dir + "zinv_per_era_prediction_validation_bins.tex")
-    SB.makeTexFile("Z Invisible Per Era Prediction for Search Bins",     latex_dir + "zinv_per_era_prediction_search_bins.tex")
+    if doRun2:
+        N.makeComparison("validation")
+        N.makeComparison("validationMetStudy")
+        N.makeComparison("search")
+        # N.makeTable to be after N.makeComparison
+        N.makeTable(latex_dir + "zinv_rz_doc.tex",   True)
+        N.makeTable(latex_dir + "zinv_rz_table.tex", False)
+        N.makeTexFile("validation", latex_dir + "validationBins_normalization_Zmass.tex")
+        N.makeTexFile("search",     latex_dir + "searchBins_normalization_Zmass.tex")
+        S.makeComparison("validation")
+        S.makeComparison("validationMetStudy")
+        S.makeComparison("search")
+        S.makeTable(latex_dir + "zinv_q_doc.tex",   True)
+        S.makeTable(latex_dir + "zinv_q_table.tex", False)
+        VB.makeTexFile("Z Invisible Per Era Prediction for Validation Bins", latex_dir + "zinv_per_era_prediction_validation_bins.tex")
+        SB.makeTexFile("Z Invisible Per Era Prediction for Search Bins",     latex_dir + "zinv_per_era_prediction_search_bins.tex")
     
-    # total era is combiniation of all eras
-    total_era = "Run2"
-    # total Run2 prediction
-    VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
-    SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
+        # total era is combiniation of all eras
+        total_era = "Run2"
+        # total Run2 prediction
+        VB.makeTexFile("Z Invisible Total Prediction for Validation Bins", latex_dir + "zinv_total_prediction_validation_bins.tex", total_era)
+        SB.makeTexFile("Z Invisible Total Prediction for Search Bins",     latex_dir + "zinv_total_prediction_search_bins.tex",     total_era)
+    
     T = Table()
     
     # Get systematics in proper bins: Rz and "Z to LL vs. Photon" systematics
     # must be done after N.makeComparison()
     # must be done after Syst.makeZvsPhoton()
-    VB.getRzSyst(               N.rz_syst_map,      "validation",           "RzSyst_ValidationBins.root")
-    VB_MS.getRzSyst(            N.rz_syst_map,      "validationMetStudy",   "RzSyst_ValidationBinsMETStudy.root")
-    SB.getRzSyst(               N.rz_syst_map,      "search",               "RzSyst_SearchBins.root")
-    VB.getZvsPhotonSyst(        Syst.h_map_syst,                            "ZvsPhotonSyst_ValidationBins.root")
-    VB_MS.getZvsPhotonSyst(     Syst.h_map_syst,                            "ZvsPhotonSyst_ValidationBinsMETStudy.root")
-    SB.getZvsPhotonSyst(        Syst.h_map_syst,                            "ZvsPhotonSyst_SearchBins.root")
-    CRunits.getZvsPhotonSyst(   Syst.h_map_syst,                            "ZvsPhotonSyst_CRUnitBins.root")
+    if doRun2:
+        VB.getRzSyst(               N.rz_syst_map,      "validation",           "RzSyst_ValidationBins.root")
+        VB_MS.getRzSyst(            N.rz_syst_map,      "validationMetStudy",   "RzSyst_ValidationBinsMETStudy.root")
+        SB.getRzSyst(               N.rz_syst_map,      "search",               "RzSyst_SearchBins.root")
+        VB.getZvsPhotonSyst(        Syst.h_map_syst,                            "ZvsPhotonSyst_ValidationBins.root")
+        VB_MS.getZvsPhotonSyst(     Syst.h_map_syst,                            "ZvsPhotonSyst_ValidationBinsMETStudy.root")
+        SB.getZvsPhotonSyst(        Syst.h_map_syst,                            "ZvsPhotonSyst_SearchBins.root")
+        CRunits.getZvsPhotonSyst(   Syst.h_map_syst,                            "ZvsPhotonSyst_CRUnitBins.root")
             
     # save maps to json files
     # makeJson(self, map_, file_)
