@@ -687,14 +687,15 @@ int main(int argc, char* argv[])
 
     // use DYInc if true, otherwise use DYJetsToLL (HT binned DY)
     bool useDYInc = false;
-    // apply ISRWeight to ttbar only... 
-    std::string ISRWeight = ";ISRWeight";
+    // apply ISRWeight and Stop0l_topptWeight to ttbar only... 
+    std::string ISRWeight   = ";ISRWeight";
+    std::string topptWeight = ";Stop0l_topptWeight";
     
     auto makeStackMC_DiLepton = [&](const std::string& cuts, const std::string& weights, const std::string& DYweight = "")
     {
         PDS dsDYInc(         "DY Inc",                      fileMap["IncDY" + yearTag],           cuts,   weights + DYweight);
         PDS dsDY(            "DY",                          fileMap["DYJetsToLL" + yearTag],      cuts,   weights + DYweight);
-        PDS dsTTbar(         "t#bar{t}",                    fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight);
+        PDS dsTTbar(         "t#bar{t}",                    fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
         PDS dsSingleTopZinv( "Single t",                    fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsRare(          "Rare",                        fileMap["Rare" + yearTag],            cuts,   weights);
         PDS dsDiboson(       "Diboson",                     fileMap["Diboson" + yearTag],         cuts,   weights);
@@ -715,7 +716,7 @@ int main(int argc, char* argv[])
     {
         PDS dsDYInc(            "IncZToLL",         fileMap["IncDY" + yearTag],           cuts,   weights);
         PDS dsDY(               "ZToLL",            fileMap["DYJetsToLL" + yearTag],      cuts,   weights);
-        PDS dsTTbar(            "NoZToLL",          fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight);
+        PDS dsTTbar(            "NoZToLL",          fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
         PDS dsSingleTopZinv(    "Single t",         fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsRareZ(            "RareZ",            fileMap["RareZ" + yearTag],           cuts,   weights);
         PDS dsRareNoZ(          "RareNoZ",          fileMap["RareNoZ" + yearTag],         cuts,   weights);
@@ -1167,6 +1168,7 @@ int main(int argc, char* argv[])
         std::string DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight_recalc";
         std::string ResolvedTopTotalSF  = ";Stop0l_ResTopWeight";
         std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
+        // test removing SoftBottomTotalSF
         std::string TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
         // baseline selections for lepton control regions
         SAT_Pass_Baseline     = ";SAT_Pass_Baseline"        + varSuffix;
@@ -2395,6 +2397,7 @@ int main(int argc, char* argv[])
         DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight_recalc";
         ResolvedTopTotalSF  = ";Stop0l_ResTopWeight";
         SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
+        // test removing SoftBottomTotalSF
         TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
         // baseline selections for photon control region
         SAT_Pass_Baseline     = ";SAT_Pass_Baseline"    + varSuffix;
@@ -3738,6 +3741,7 @@ int main(int argc, char* argv[])
             std::string DeepAK8TotalSF      = ";Stop0l_DeepAK8_SFWeight_recalc";
             std::string ResolvedTopTotalSF  = ";Stop0l_ResTopWeight";
             std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
+            // test removing SoftBottomTotalSF
             std::string TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
             std::string ZNuNuWeights        = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight;
             

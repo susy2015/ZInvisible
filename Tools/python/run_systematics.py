@@ -211,7 +211,7 @@ def symmetrizeSyst(h, h_up, h_down):
 
 # Total systematics function which can run on validaiton, MET study, search bins, CR unit bins, etc.
 
-def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir):
+def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2):
     
     #-------------------------------------------------------
     # Calculate total systematic up/down
@@ -324,37 +324,39 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                             log_syst_down_sum   += np.log(log_syst_up)**2
                     except:
                         print "ERROR for np.log(), location 1: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
-                # syst from root file
-                #systHistoMap[bintype][region][syst]
-                for syst in systHistoMap[bintype][region]:
-                    error = systHistoMap[bintype][region][syst].GetBinContent(b_i)
-                    # symmetric error with up = down
-                    syst_up         = error  
-                    syst_down       = error  
-                    log_syst_up     = 1.0 + error 
-                    log_syst_down   = 1.0 - error
-                    # avoid taking log of negative number or 0
-                    if log_syst_up <= 0:
-                        new_value = ERROR_SYST * p
-                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_up = {3}. Setting log_syst_up = {4}.".format(bintype, b, syst, log_syst_up, new_value)
-                        log_syst_up = new_value
-                    if log_syst_down <= 0:
-                        new_value = ERROR_SYST * p
-                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format(bintype, b, syst, log_syst_down, new_value)
-                        log_syst_down = new_value
-                    # sum in quadrature 
-                    syst_up_sum     += syst_up**2
-                    syst_down_sum   += syst_down**2
-                    # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
-                    try: 
-                        if log_syst_up > 1 or log_syst_down < 1:
-                            log_syst_up_sum     += np.log(log_syst_up)**2
-                            log_syst_down_sum   += np.log(log_syst_down)**2
-                        else:
-                            log_syst_up_sum     += np.log(log_syst_down)**2
-                            log_syst_down_sum   += np.log(log_syst_up)**2
-                    except:
-                        print "ERROR for np.log(), location 2: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
+                # these syst. are only available when doing Run 2
+                if doRun2:
+                    # syst from root file
+                    #systHistoMap[bintype][region][syst]
+                    for syst in systHistoMap[bintype][region]:
+                        error = systHistoMap[bintype][region][syst].GetBinContent(b_i)
+                        # symmetric error with up = down
+                        syst_up         = error  
+                        syst_down       = error  
+                        log_syst_up     = 1.0 + error 
+                        log_syst_down   = 1.0 - error
+                        # avoid taking log of negative number or 0
+                        if log_syst_up <= 0:
+                            new_value = ERROR_SYST * p
+                            print "WARNING: For {0} bin {1}, syst {2}: log_syst_up = {3}. Setting log_syst_up = {4}.".format(bintype, b, syst, log_syst_up, new_value)
+                            log_syst_up = new_value
+                        if log_syst_down <= 0:
+                            new_value = ERROR_SYST * p
+                            print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format(bintype, b, syst, log_syst_down, new_value)
+                            log_syst_down = new_value
+                        # sum in quadrature 
+                        syst_up_sum     += syst_up**2
+                        syst_down_sum   += syst_down**2
+                        # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
+                        try: 
+                            if log_syst_up > 1 or log_syst_down < 1:
+                                log_syst_up_sum     += np.log(log_syst_up)**2
+                                log_syst_down_sum   += np.log(log_syst_down)**2
+                            else:
+                                log_syst_up_sum     += np.log(log_syst_down)**2
+                                log_syst_down_sum   += np.log(log_syst_up)**2
+                        except:
+                            print "ERROR for np.log(), location 2: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
             syst_up_total   = np.sqrt(syst_up_sum)
             syst_down_total = np.sqrt(syst_down_sum)
             final_up   = 1.0 + syst_up_total
@@ -427,7 +429,7 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
     f_out.Close()
 
 
-def run(era, eras, runs_json, syst_json, verbose):
+def run(era, eras, runs_json, syst_json, doRun2, verbose):
     units_json                  = "dc_BkgPred_BinMaps_master.json"
     searchbin_selection_json    = "search_bins_v4.json"
     # Note: DO NOT apply Rz syst. in CR unit bins
@@ -494,8 +496,9 @@ def run(era, eras, runs_json, syst_json, verbose):
     # Systematics which we don't use: MET uncluster in photon CR, lepton veto SF, ISR weight for ttbar
     systematics_znunu  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","metres"]
     systematics_phocr  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
-    #systematics_phocr  = ["jes","btag","pileup","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
-    # pdf syst. not working for metWithPhoton at the moment.
+    # test removing soft b systematic (eff_sb)
+    #systematics_znunu  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","metres"]
+    #systematics_phocr  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","photon_sf"]
     # Include prefire here; WARNING: prefire syst. only exists in (2016,2017) and needs to be handled carefully 
     if era != "2018":
         systematics_znunu.append("prefire")
@@ -744,10 +747,10 @@ def run(era, eras, runs_json, syst_json, verbose):
 
     # Total systematics function which can run on validaiton, MET study, search bins, CR unit bins, etc.
     
-    # getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
-    getTotalSystematics(VB,     "validation",           systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
-    getTotalSystematics(VB_MS,  "validationMetStudy",   systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
-    getTotalSystematics(SB,     "search",               systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir)
+    # getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2)
+    getTotalSystematics(VB,     "validation",           systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2)
+    getTotalSystematics(VB_MS,  "validationMetStudy",   systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2)
+    getTotalSystematics(SB,     "search",               systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2)
     # CR unit bin not supported
 
 def main():
@@ -761,11 +764,13 @@ def main():
     runs_json                   = options.runs_json
     syst_json                   = options.syst_json
     verbose                     = options.verbose
+    doRun2                      = True
     
     eras            = ["2016", "2017", "2018", "Run2"]
+    #eras            = ["2016"]
     for era in eras:
-        # run(era, eras, runs_json, syst_json, verbose):
-        run(era, eras, runs_json, syst_json, verbose)
+        # run(era, eras, runs_json, syst_json, doRun2, verbose)
+        run(era, eras, runs_json, syst_json, doRun2, verbose)
 
 
 if __name__ == "__main__":

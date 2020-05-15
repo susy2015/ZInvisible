@@ -343,11 +343,20 @@ There is now a script to process all Run 2 output from condor. It accepts a json
 python python/process.py -j runs/submission_2019-08-28_14-24-48.json
 ```
 
-## Running Prediction Modules
+## Calculating Prediction and Systematics
+
+### Prediction
 Use the run_modules.py script to run modules to calculate the normalization and shape factors, as well as the Z to invisible prediction in the validation and search bins.
 ```
 python python/run_modules.py -j runs/submission_2019-08-28_14-24-48.json
 ```
+
+### Systematics
+Use the run_systematics.py script to calculate systematic uncertainties in the validation and search bins.
+```
+python python/run_systematics.py -j runs/submission_2019-08-28_14-24-48.json
+```
+
 
 ## La Fin
 
