@@ -701,7 +701,7 @@ class SearchBins(Common):
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
-        self.unblind = False
+        self.unblind = True
         self.draw = draw
         self.saveRootFile = saveRootFile
         # SBv4
