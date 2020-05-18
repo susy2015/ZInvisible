@@ -417,7 +417,7 @@ class Common:
                 self.binValues[era][b][value + "_tex"] = "${0:.3f}$".format(self.binValues[era][b][value])
 
             if self.verbose:
-                print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
+                print "bin {0}: N = {1:.6f} +/- {2:.6f} S = {3:.6f} +/- {4:.6f} M = {5:.6f} +/- {6:.6f} P = {7:.6f} +/- {8:.6f}".format(
                             b, n, n_error, s, s_error, m, m_error, p, p_error_propagated 
                         )
 
