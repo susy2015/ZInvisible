@@ -372,9 +372,11 @@ class Common:
             # - treat Rz and const. multiplication
             # - propagate Sg errors
             p                  = n * s * m
+            
             #x_list             = [n, s, m]
             #dx_list            = [n_error, s_error, m_error]
             #p_error_propagated = getMultiplicationErrorList(p, x_list, dx_list)
+            
             shapeAndMC         = s * m
             x_list             = [s, m]
             dx_list            = [s_error, m_error]
