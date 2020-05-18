@@ -223,7 +223,7 @@ class Common:
             h_mc_lowdm.SetBinContent(bin_i,     self.binValues[era][b]["mc"])
             h_mc_lowdm.SetBinError(bin_i,       self.binValues[era][b]["mc_error"])
             h_pred_lowdm.SetBinContent(bin_i,   self.binValues[era][b]["pred"])
-            h_pred_lowdm.SetBinError(bin_i,     self.binValues[era][b]["pred_error_mc_only"])
+            h_pred_lowdm.SetBinError(bin_i,     self.binValues[era][b]["pred_error_propagated"])
             bin_i += 1
         bin_i = 1
         for b in self.high_dm_bins:
@@ -233,7 +233,7 @@ class Common:
             h_mc_highdm.SetBinContent(bin_i,    self.binValues[era][b]["mc"])
             h_mc_highdm.SetBinError(bin_i,      self.binValues[era][b]["mc_error"])
             h_pred_highdm.SetBinContent(bin_i,  self.binValues[era][b]["pred"])
-            h_pred_highdm.SetBinError(bin_i,    self.binValues[era][b]["pred_error_mc_only"])
+            h_pred_highdm.SetBinError(bin_i,    self.binValues[era][b]["pred_error_propagated"])
             bin_i += 1
 
         # histogram map
@@ -356,16 +356,30 @@ class Common:
             # average weight:               avg_w = sigma^2 / p 
             # effective number of events:   N_eff = p / avg_w
             
-            # For data card and validation bin histograms:
-            # - do not propagate Rz statistical error because total Rz uncertainty will be included in Rz systematic histogram
-            # - do not propagate Sgamma statistical error because Higgs Combine will do shape factor for us
+            # For data card
+            # - total Rz unc. (stat + syst) is included in nuisance parameter
+            # - Higgs Combined will handle Sgamma data and MC stat unc. in fit
+            # - Rz * Nmc is written in data card; adjust stat. error by Rz multiplication
+            # see units.py for implementation 
+
+            # MC stat. error adjusted by multiplication; does not include Rz or Sgamma stat. unc.
             p_error_mc_only    = m_error
-            # For prediction table in analysis note:
-            # - propagate Rz and Sg errors
+            p_error_mc_only    = getConstantMultiplicationError(n, p_error_mc_only) 
+            p_error_mc_only    = getConstantMultiplicationError(s, p_error_mc_only) 
+            
+            # For validation and search bin histograms and prediction table
+            # - total Rz unc. (stat + syst) is included in systematic histograms
+            # - treat Rz and const. multiplication
+            # - propagate Sg errors
             p                  = n * s * m
-            x_list             = [n, s, m]
-            dx_list            = [n_error, s_error, m_error]
-            p_error_propagated = getMultiplicationErrorList(p, x_list, dx_list)
+            #x_list             = [n, s, m]
+            #dx_list            = [n_error, s_error, m_error]
+            #p_error_propagated = getMultiplicationErrorList(p, x_list, dx_list)
+            shapeAndMC         = s * m
+            x_list             = [s, m]
+            dx_list            = [s_error, m_error]
+            p_error_propagated = getMultiplicationErrorList(shapeAndMC, x_list, dx_list)
+            p_error_propagated = getConstantMultiplicationError(n, p_error_propagated)
             
             # error < 0.0 due to error code
             if p_error_propagated < 0.0:

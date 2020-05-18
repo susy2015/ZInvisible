@@ -76,13 +76,15 @@ def saveResults(inFile, outFile, CRunits, SRunits, SB, era):
             norm = normForSRunits[b]["norm"]
         except:
             print "ERROR: No normalization value found for SR unit bin {0}".format(b)
-        # do not propagate norm to mc_error as total Rz unc. (stat and syst) are included in Rz syst.
-        mc_with_norm = norm * mc
+        # total Rz unc. (stat and syst) are included in Rz syst.
+        # we simply adjust the MC error by constant Rz multiplicaiton (not including Rz unc.)
+        mc_with_norm       = norm * mc
+        mc_with_norm_error = getConstantMultiplicationError(norm, mc_error)
         # save value and error
-        map_out["yieldsMap"]["znunu"][name] = [mc_with_norm, mc_error]
+        map_out["yieldsMap"]["znunu"][name] = [mc_with_norm, mc_with_norm_error]
         
         if verbose:
-            print "{0}: mc = {1}, mc_with_norm = {2}, mc_error = {3}".format(name, mc, mc_with_norm, mc_error)
+            print "{0}: mc = {1}, mc_with_norm = {2}, mc_error = {3}, mc_with_norm_error = {4}".format(name, mc, mc_with_norm, mc_error, mc_with_norm_error)
 
     if verbose:
         print " --- Control Region Units --- "
