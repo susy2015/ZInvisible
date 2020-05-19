@@ -350,11 +350,7 @@ class Common:
             s_error = self.binValues[era][b]["shape_error"]
             m       = self.binValues[era][b]["mc"]
             m_error = self.binValues[era][b]["mc_error"]
-            
-            # prediction:                   p     = bin value
-            # uncertainty:                  sigma = bin error
-            # average weight:               avg_w = sigma^2 / p 
-            # effective number of events:   N_eff = p / avg_w
+            p       = n * s * m
             
             # For data card
             # - total Rz unc. (stat + syst) is included in nuisance parameter
@@ -362,30 +358,41 @@ class Common:
             # - Rz * Nmc is written in data card; adjust stat. error by Rz multiplication
             # see units.py for implementation 
 
-            # MC stat. error adjusted by multiplication; does not include Rz or Sgamma stat. unc.
-            p_error_mc_only    = m_error
-            p_error_mc_only    = getConstantMultiplicationError(n, p_error_mc_only) 
-            p_error_mc_only    = getConstantMultiplicationError(s, p_error_mc_only) 
+            if s == 0:
+                # use garwood interval for 0
+                # this error is already in s_error... but we need to scale by Rz and Nmc
+                p_error_mc_only    = s_error * n * m
+                p_error_propagated = s_error * n * m
+                print "bin {0}: shape = {1} +{2} -0.0, Rz * Nmc = {3}, pred = {4} +{5} -0.0".format(b, s, s_error, n * m, p, p_error_propagated)
+            else:
+                # MC stat. error adjusted by multiplication; does not include Rz or Sgamma stat. unc.
+                p_error_mc_only    = m_error
+                p_error_mc_only    = getConstantMultiplicationError(n, p_error_mc_only) 
+                p_error_mc_only    = getConstantMultiplicationError(s, p_error_mc_only) 
             
-            # For validation and search bin histograms and prediction table
-            # - total Rz unc. (stat + syst) is included in systematic histograms
-            # - treat Rz and const. multiplication
-            # - propagate Sg errors
-            p                  = n * s * m
-            
-            #x_list             = [n, s, m]
-            #dx_list            = [n_error, s_error, m_error]
-            #p_error_propagated = getMultiplicationErrorList(p, x_list, dx_list)
-            
-            shapeAndMC         = s * m
-            x_list             = [s, m]
-            dx_list            = [s_error, m_error]
-            p_error_propagated = getMultiplicationErrorList(shapeAndMC, x_list, dx_list)
-            p_error_propagated = getConstantMultiplicationError(n, p_error_propagated)
+                # For validation and search bin histograms and prediction table
+                # - total Rz unc. (stat + syst) is included in systematic histograms
+                # - treat Rz and const. multiplication
+                # - propagate Sg errors
+                
+                #x_list             = [n, s, m]
+                #dx_list            = [n_error, s_error, m_error]
+                #p_error_propagated = getMultiplicationErrorList(p, x_list, dx_list)
+                
+                shapeAndMC         = s * m
+                x_list             = [s, m]
+                dx_list            = [s_error, m_error]
+                p_error_propagated = getMultiplicationErrorList(shapeAndMC, x_list, dx_list)
+                p_error_propagated = getConstantMultiplicationError(n, p_error_propagated)
             
             # error < 0.0 due to error code
             if p_error_propagated < 0.0:
                 p_error_propagated = ERROR_ZERO 
+            
+            # prediction:                   p     = bin value
+            # uncertainty:                  sigma = bin error
+            # average weight:               avg_w = sigma^2 / p 
+            # effective number of events:   N_eff = p / avg_w
             if p == 0:
                 if self.verbose:
                     print "WARNING: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
@@ -783,18 +790,24 @@ class SearchBins(Common):
                 # get shape and shape error
                 shape_cr        = -999
                 shape_cr_error  = -999
-                # check for 0 data
-                if total_data <= 0:
-                    print "WARNING: Era: {0} Search bin {1}: NO DATA: total_data = {2} and total_mc = {3}".format(era, b, total_data, total_mc)
                 # avoid dividing by 0
                 if den:
                     # S = sum(data) / (Q * sum(MC))
                     shape_cr = total_data / den
                 else:
-                    print "WARNING: Era: {0} Search bin {1}: NO MC: total_data = {2} and total_mc = {3}".format(era, b, total_data, total_mc)
+                    print "WARNING: Era: {0} Search bin {1}: NO MC: data = {2}, mc = {3}".format(era, b, total_data, den)
                 # error propagation
-                # getMultiplicationError(q, x, dx, y, dy)
-                shape_cr_error  = getMultiplicationError(shape_cr, total_data, total_data_error, den, den_error)
+                # check for 0 data
+                if total_data <= 0:
+                    # use garwood interval for 0
+                    # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PoissonErrorBars
+                    # https://hypernews.cern.ch/HyperNews/CMS/get/SUS-19-003/103/1/1/1/1/1/1.html
+                    # -ln((1-0.68)/2) = 1.8325814637483102
+                    shape_cr_error = 1.83 / den
+                    print "WARNING: Era: {0} Search bin {1}: NO DATA: data = {2}, mc = {3}, shape_cr = {4} +{5} -0.0".format(era, b, total_data, den, shape_cr, shape_cr_error)
+                else:
+                    # getMultiplicationError(q, x, dx, y, dy)
+                    shape_cr_error  = getMultiplicationError(shape_cr, total_data, total_data_error, den, den_error)
                 
                 self.binValues[era][b]["shape"]                 = shape_cr 
                 self.binValues[era][b]["shape_error"]           = shape_cr_error
