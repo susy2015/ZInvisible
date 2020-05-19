@@ -1,6 +1,6 @@
 # units.py
-# here we go.....
-# use those CR and SR units!
+# control region (CR) bins
+# search region (SR) bins
 
 import json
 from search_bins import SearchBins, ValidationBins, CRUnitBins, SRUnitBins
