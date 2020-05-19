@@ -697,8 +697,7 @@ int main(int argc, char* argv[])
     {
         PDS dsDYInc(         "DY Inc",                      fileMap["IncDY" + yearTag],           cuts,   weights + DYweight);
         PDS dsDY(            "DY",                          fileMap["DYJetsToLL" + yearTag],      cuts,   weights + DYweight);
-        //PDS dsTTbar(         "t#bar{t}",                    fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
-        PDS dsTTbar(         "t#bar{t}",                    fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight);
+        PDS dsTTbar(         "t#bar{t}",                    fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
         PDS dsSingleTopZinv( "Single t",                    fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsRare(          "Rare",                        fileMap["Rare" + yearTag],            cuts,   weights);
         PDS dsDiboson(       "Diboson",                     fileMap["Diboson" + yearTag],         cuts,   weights);
@@ -719,8 +718,7 @@ int main(int argc, char* argv[])
     {
         PDS dsDYInc(            "IncZToLL",         fileMap["IncDY" + yearTag],           cuts,   weights);
         PDS dsDY(               "ZToLL",            fileMap["DYJetsToLL" + yearTag],      cuts,   weights);
-        //PDS dsTTbar(            "NoZToLL",          fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
-        PDS dsTTbar(            "NoZToLL",          fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight);
+        PDS dsTTbar(            "NoZToLL",          fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
         PDS dsSingleTopZinv(    "Single t",         fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsRareZ(            "RareZ",            fileMap["RareZ" + yearTag],           cuts,   weights);
         PDS dsRareNoZ(          "RareNoZ",          fileMap["RareNoZ" + yearTag],         cuts,   weights);
@@ -748,7 +746,7 @@ int main(int argc, char* argv[])
         PDS dsQCD(        "QCD",                    fileMap["QCD_Photon" + yearTag],    cuts + ";passQCDSelection",   weights);
         PDS dsWJetsToLNu( "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
         PDS dsTTG(        "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,   weights);
-        //PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
+        //PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight + topptWeight);
         PDS dstW(         "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
         PDS dsRare(       "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
         PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
@@ -1341,25 +1339,28 @@ int main(int argc, char* argv[])
             // Data
             // Note: Apply Flag_eeBadScFilter to Data but not MC
             // no Z mass or Pt cuts
-            PDS dsData_Electron_LowDM_noZMassCut_noZPtCut("Data",  fileMap[ElectronDataset],     "Flag_eeBadScFilter;passElecZinvNoZPtCut;Pass_trigger_electron" + SAT_Pass_lowDM  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Electron_HighDM_noZMassCut_noZPtCut("Data", fileMap[ElectronDataset],     "Flag_eeBadScFilter;passElecZinvNoZPtCut;Pass_trigger_electron" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_LowDM_noZMassCut_noZPtCut("Data",  fileMap[ElectronDataset],  "Flag_eeBadScFilter;passElecZinvNoZPtCut;Pass_trigger_electron" + SAT_Pass_lowDM  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_HighDM_noZMassCut_noZPtCut("Data", fileMap[ElectronDataset],  "Flag_eeBadScFilter;passElecZinvNoZPtCut;Pass_trigger_electron" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
             // without Z mass cut; with Z pt cut
-            PDS dsData_Electron_LowDM_noZMassCut("Data",  fileMap[ElectronDataset],     "Flag_eeBadScFilter;passElecZinvSel;Pass_trigger_electron" + SAT_Pass_lowDM  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Electron_HighDM_noZMassCut("Data", fileMap[ElectronDataset],     "Flag_eeBadScFilter;passElecZinvSel;Pass_trigger_electron" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_LowDM_noZMassCut("Data",  fileMap[ElectronDataset],           "Flag_eeBadScFilter;passElecZinvSel;Pass_trigger_electron" + SAT_Pass_lowDM  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_HighDM_noZMassCut("Data", fileMap[ElectronDataset],           "Flag_eeBadScFilter;passElecZinvSel;Pass_trigger_electron" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
             // with on Z mass peak cut; without Z pt cut
-            PDS dsData_Electron_Baseline("Data",        fileMap[ElectronDataset],          "Flag_eeBadScFilter;passElecZinvOnZMassPeak;Pass_trigger_electron"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Electron_Baseline_nb0("Data",    fileMap[ElectronDataset],          "Flag_eeBadScFilter;passElecZinvOnZMassPeak;Pass_trigger_electron;nBottoms_drLeptonCleaned_jetpt30=0"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Electron_Baseline_nb1("Data",    fileMap[ElectronDataset],          "Flag_eeBadScFilter;passElecZinvOnZMassPeak;Pass_trigger_electron;nBottoms_drLeptonCleaned_jetpt30=1"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Electron_Baseline_nbge2("Data",  fileMap[ElectronDataset],          "Flag_eeBadScFilter;passElecZinvOnZMassPeak;Pass_trigger_electron;nBottoms_drLeptonCleaned_jetpt30>=2" + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Electron_LowDM("Data",           fileMap[ElectronDataset],          "Flag_eeBadScFilter;passElecZinvOnZMassPeak;Pass_trigger_electron"  + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Electron_HighDM("Data",          fileMap[ElectronDataset],          "Flag_eeBadScFilter;passElecZinvOnZMassPeak;Pass_trigger_electron"  + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Electron_LowDM_Loose("Data",     fileMap[ElectronDataset],          "Flag_eeBadScFilter;passElecZinvOnZMassPeak;Pass_trigger_electron"  + SAT_Pass_lowDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Electron_HighDM_Loose("Data",    fileMap[ElectronDataset],          "Flag_eeBadScFilter;passElecZinvOnZMassPeak;Pass_trigger_electron"  + SAT_Pass_highDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Electron_LowDM_Mid("Data",       fileMap[ElectronDataset],          "Flag_eeBadScFilter;passElecZinvOnZMassPeak;Pass_trigger_electron"  + SAT_Pass_lowDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Electron_HighDM_Mid("Data",      fileMap[ElectronDataset],          "Flag_eeBadScFilter;passElecZinvOnZMassPeak;Pass_trigger_electron"  + SAT_Pass_highDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_LowDM_noZPtCut("Data",    fileMap[ElectronDataset],           "Flag_eeBadScFilter;passElecZinvOnZMassPeak;Pass_trigger_electron"  + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_HighDM_noZPtCut("Data",   fileMap[ElectronDataset],           "Flag_eeBadScFilter;passElecZinvOnZMassPeak;Pass_trigger_electron"  + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
             // with Z mass and Pt cuts
-            PDS dsData_Electron_LowDM_ZMassAndPtCuts("Data",  fileMap[ElectronDataset],     "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron" + SAT_Pass_lowDM  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
-            PDS dsData_Electron_HighDM_ZMassAndPtCuts("Data", fileMap[ElectronDataset],     "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_LowDM_ZMassAndPtCuts("Data",  fileMap[ElectronDataset],       "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron" + SAT_Pass_lowDM  + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_HighDM_ZMassAndPtCuts("Data", fileMap[ElectronDataset],       "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            // with Z mass and Pt cuts
+            PDS dsData_Electron_Baseline("Data",        fileMap[ElectronDataset],             "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_Baseline_nb0("Data",    fileMap[ElectronDataset],             "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron;nBottoms_drLeptonCleaned_jetpt30=0"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_Baseline_nb1("Data",    fileMap[ElectronDataset],             "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron;nBottoms_drLeptonCleaned_jetpt30=1"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_Baseline_nbge2("Data",  fileMap[ElectronDataset],             "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron;nBottoms_drLeptonCleaned_jetpt30>=2" + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_LowDM("Data",           fileMap[ElectronDataset],             "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron"  + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_HighDM("Data",          fileMap[ElectronDataset],             "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron"  + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_LowDM_Loose("Data",     fileMap[ElectronDataset],             "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron"  + SAT_Pass_lowDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_HighDM_Loose("Data",    fileMap[ElectronDataset],             "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron"  + SAT_Pass_highDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_LowDM_Mid("Data",       fileMap[ElectronDataset],             "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron"  + SAT_Pass_lowDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
+            PDS dsData_Electron_HighDM_Mid("Data",      fileMap[ElectronDataset],             "Flag_eeBadScFilter;passElecZinvOnZMassPeak;passDiElecPt;Pass_trigger_electron"  + SAT_Pass_highDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, "");
             
             // MC
             // no Z mass or Pt cuts
@@ -1373,29 +1374,32 @@ int main(int argc, char* argv[])
             std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Normalization_noZMassCut  = makeStackMC_DiLepton_Normalization(  "passElecZinvSel"  + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
             std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Normalization_noZMassCut = makeStackMC_DiLepton_Normalization(  "passElecZinvSel"  + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
             // with on Z mass peak cut; without Z pt cut
-            std::vector<std::vector<PDS>> StackMC_Electron_Baseline             = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
-            std::vector<std::vector<PDS>> StackMC_Electron_Baseline_nb0         = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;nBottoms_drLeptonCleaned_jetpt30=0"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
-            std::vector<std::vector<PDS>> StackMC_Electron_Baseline_nb1         = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;nBottoms_drLeptonCleaned_jetpt30=1"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
-            std::vector<std::vector<PDS>> StackMC_Electron_Baseline_nbge2       = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;nBottoms_drLeptonCleaned_jetpt30>=2" + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
-            std::vector<std::vector<PDS>> StackMC_Electron_LowDM                = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
-            std::vector<std::vector<PDS>> StackMC_Electron_HighDM               = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights); 
-            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Loose          = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_lowDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights); 
-            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Loose         = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_highDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights); 
-            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Mid            = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_lowDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights); 
-            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Mid           = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_highDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
-            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Normalization  = makeStackMC_DiLepton_Normalization(   "passElecZinvOnZMassPeak" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
-            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Normalization = makeStackMC_DiLepton_Normalization(   "passElecZinvOnZMassPeak" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
+            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_noZPtCut                  = makeStackMC_DiLepton(                "passElecZinvOnZMassPeak" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
+            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_noZPtCut                 = makeStackMC_DiLepton(                "passElecZinvOnZMassPeak" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights); 
             // with Z mass and Pt cuts
-            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_ZMassAndPtCuts       = makeStackMC_DiLepton(                "passElecZinvOnZMassPeak;passDiElecPt"  + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
-            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_ZMassAndPtCuts      = makeStackMC_DiLepton(                "passElecZinvOnZMassPeak;passDiElecPt"  + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
+            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_ZMassAndPtCuts            = makeStackMC_DiLepton(                "passElecZinvOnZMassPeak;passDiElecPt"  + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
+            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_ZMassAndPtCuts           = makeStackMC_DiLepton(                "passElecZinvOnZMassPeak;passDiElecPt"  + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
+            // with Z mass and Pt cuts
+            std::vector<std::vector<PDS>> StackMC_Electron_Baseline             = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
+            std::vector<std::vector<PDS>> StackMC_Electron_Baseline_nb0         = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt;nBottoms_drLeptonCleaned_jetpt30=0"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
+            std::vector<std::vector<PDS>> StackMC_Electron_Baseline_nb1         = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt;nBottoms_drLeptonCleaned_jetpt30=1"  + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
+            std::vector<std::vector<PDS>> StackMC_Electron_Baseline_nbge2       = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt;nBottoms_drLeptonCleaned_jetpt30>=2" + SAT_Pass_Baseline + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
+            std::vector<std::vector<PDS>> StackMC_Electron_LowDM                = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
+            std::vector<std::vector<PDS>> StackMC_Electron_HighDM               = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights); 
+            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Loose          = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_lowDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights); 
+            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Loose         = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_highDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights); 
+            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Mid            = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_lowDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights); 
+            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Mid           = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_highDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
+            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Normalization  = makeStackMC_DiLepton_Normalization(   "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
+            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Normalization = makeStackMC_DiLepton_Normalization(   "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights);
 
             // with shape weight            
-            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_njetWeight                = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_LowDM");
-            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_njetWeight               = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_HighDM");
-            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Loose_njetWeight          = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_lowDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_LowDM");
-            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Loose_njetWeight         = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_highDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_HighDM");
-            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Mid_njetWeight            = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_lowDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_LowDM");
-            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Mid_njetWeight           = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak" + SAT_Pass_highDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_HighDM");
+            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_njetWeight                = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_lowDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_LowDM");
+            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_njetWeight               = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_highDM + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_HighDM");
+            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Loose_njetWeight          = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_lowDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_LowDM");
+            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Loose_njetWeight         = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_highDM_Loose + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_HighDM");
+            std::vector<std::vector<PDS>> StackMC_Electron_LowDM_Mid_njetWeight            = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_lowDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_LowDM");
+            std::vector<std::vector<PDS>> StackMC_Electron_HighDM_Mid_njetWeight           = makeStackMC_DiLepton(                 "passElecZinvOnZMassPeak;passDiElecPt" + SAT_Pass_highDM_Mid + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drLeptonCleaned, ElectronWeights, ";njetWeight_Electron_HighDM");
             
             // --- Study MET for different Nb --- //
             // met
@@ -1635,10 +1639,10 @@ int main(int argc, char* argv[])
             PDC dcMC_Electron_HighDM_bestRecoZPt_noZMassCut(   "stack",  "bestRecoZPt", StackMC_Electron_HighDM_noZMassCut);
             
             // bestRecoZPt: with on Z mass peak cut; without Z pt cut
-            PDC dcData_Electron_LowDM_bestRecoZPt(  "data",   "bestRecoZPt", {dsData_Electron_LowDM});
-            PDC dcData_Electron_HighDM_bestRecoZPt( "data",   "bestRecoZPt", {dsData_Electron_HighDM});
-            PDC dcMC_Electron_LowDM_bestRecoZPt(    "stack",  "bestRecoZPt", StackMC_Electron_LowDM);
-            PDC dcMC_Electron_HighDM_bestRecoZPt(   "stack",  "bestRecoZPt", StackMC_Electron_HighDM);
+            PDC dcData_Electron_LowDM_bestRecoZPt_noZPtCut(  "data",   "bestRecoZPt", {dsData_Electron_LowDM_noZPtCut});
+            PDC dcData_Electron_HighDM_bestRecoZPt_noZPtCut( "data",   "bestRecoZPt", {dsData_Electron_HighDM_noZPtCut});
+            PDC dcMC_Electron_LowDM_bestRecoZPt_noZPtCut(    "stack",  "bestRecoZPt", StackMC_Electron_LowDM_noZPtCut);
+            PDC dcMC_Electron_HighDM_bestRecoZPt_noZPtCut(   "stack",  "bestRecoZPt", StackMC_Electron_HighDM_noZPtCut);
             
             // bestRecoZPt: with Z mass and Pt cuts 
             PDC dcData_Electron_LowDM_bestRecoZPt_ZMassAndPtCuts(  "data",   "bestRecoZPt", {dsData_Electron_LowDM_ZMassAndPtCuts});
@@ -1762,8 +1766,8 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Electron_HighDM_bestRecoZPt_noZMassCut_noZPtCut" + histSuffix,             {dcData_Electron_HighDM_bestRecoZPt_noZMassCut_noZPtCut,     dcMC_Electron_HighDM_bestRecoZPt_noZMassCut_noZPtCut},     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_bestRecoZPt, "Events"));
             vh.push_back(PHS("DataMC_Electron_LowDM_bestRecoZPt_noZMassCut" + histSuffix,                       {dcData_Electron_LowDM_bestRecoZPt_noZMassCut,               dcMC_Electron_LowDM_bestRecoZPt_noZMassCut},               {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_bestRecoZPt, "Events"));
             vh.push_back(PHS("DataMC_Electron_HighDM_bestRecoZPt_noZMassCut" + histSuffix,                      {dcData_Electron_HighDM_bestRecoZPt_noZMassCut,              dcMC_Electron_HighDM_bestRecoZPt_noZMassCut},              {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_bestRecoZPt, "Events"));
-            vh.push_back(PHS("DataMC_Electron_LowDM_bestRecoZPt" + histSuffix,                                  {dcData_Electron_LowDM_bestRecoZPt,                          dcMC_Electron_LowDM_bestRecoZPt},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_bestRecoZPt, "Events"));
-            vh.push_back(PHS("DataMC_Electron_HighDM_bestRecoZPt" + histSuffix,                                 {dcData_Electron_HighDM_bestRecoZPt,                         dcMC_Electron_HighDM_bestRecoZPt},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_bestRecoZPt, "Events"));
+            vh.push_back(PHS("DataMC_Electron_LowDM_bestRecoZPt_noZPtCut" + histSuffix,                         {dcData_Electron_LowDM_bestRecoZPt_noZPtCut,                 dcMC_Electron_LowDM_bestRecoZPt_noZPtCut},                 {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_bestRecoZPt, "Events"));
+            vh.push_back(PHS("DataMC_Electron_HighDM_bestRecoZPt_noZPtCut" + histSuffix,                        {dcData_Electron_HighDM_bestRecoZPt_noZPtCut,                dcMC_Electron_HighDM_bestRecoZPt_noZPtCut},                {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_bestRecoZPt, "Events"));
             vh.push_back(PHS("DataMC_Electron_LowDM_bestRecoZPt_ZMassAndPtCuts" + histSuffix,                   {dcData_Electron_LowDM_bestRecoZPt_ZMassAndPtCuts,           dcMC_Electron_LowDM_bestRecoZPt_ZMassAndPtCuts},           {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_bestRecoZPt, "Events"));
             vh.push_back(PHS("DataMC_Electron_HighDM_bestRecoZPt_ZMassAndPtCuts" + histSuffix,                  {dcData_Electron_HighDM_bestRecoZPt_ZMassAndPtCuts,          dcMC_Electron_HighDM_bestRecoZPt_ZMassAndPtCuts},          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_bestRecoZPt, "Events"));
             vh.push_back(PHS("DataMC_Electron_LowDM_bestRecoZM_noZPtCut_50to250" + histSuffix,                  {dcData_Electron_LowDM_bestRecoZM_noZPtCut,                  dcMC_Electron_LowDM_bestRecoZM_noZPtCut},                  {1, 2}, "", 40, 50.0, 250.0,             true, doNorm, label_bestRecoZM, "Events"));
