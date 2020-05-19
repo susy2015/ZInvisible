@@ -525,9 +525,10 @@ int main(int argc, char* argv[])
     std::string label_mht = "MH_{T} [GeV]";
     std::string label_nj  = "N_{j}";
     std::string label_nb  = "N_{b}";
+    std::string label_nsv = "N_{sv}";
     std::string label_nw  = "N_{W}";
-    std::string label_nmt  = "N_{merged tops}";
-    std::string label_nrt  = "N_{resolved tops}";
+    std::string label_nmt = "N_{merged tops}";
+    std::string label_nrt = "N_{resolved tops}";
     std::string label_nt  = "N_{tops}";
     std::string label_dr  = "#DeltaR";
     // start with dphi1 for leading jet 1
@@ -688,6 +689,7 @@ int main(int argc, char* argv[])
     // use DYInc if true, otherwise use DYJetsToLL (HT binned DY)
     bool useDYInc = false;
     // apply ISRWeight and Stop0l_topptWeight to ttbar only... 
+    // Stop0l_topptWeight available in v6p5 ntuples
     std::string ISRWeight   = ";ISRWeight";
     std::string topptWeight = ";Stop0l_topptWeight";
     
@@ -695,7 +697,8 @@ int main(int argc, char* argv[])
     {
         PDS dsDYInc(         "DY Inc",                      fileMap["IncDY" + yearTag],           cuts,   weights + DYweight);
         PDS dsDY(            "DY",                          fileMap["DYJetsToLL" + yearTag],      cuts,   weights + DYweight);
-        PDS dsTTbar(         "t#bar{t}",                    fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
+        //PDS dsTTbar(         "t#bar{t}",                    fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
+        PDS dsTTbar(         "t#bar{t}",                    fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight);
         PDS dsSingleTopZinv( "Single t",                    fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsRare(          "Rare",                        fileMap["Rare" + yearTag],            cuts,   weights);
         PDS dsDiboson(       "Diboson",                     fileMap["Diboson" + yearTag],         cuts,   weights);
@@ -716,7 +719,8 @@ int main(int argc, char* argv[])
     {
         PDS dsDYInc(            "IncZToLL",         fileMap["IncDY" + yearTag],           cuts,   weights);
         PDS dsDY(               "ZToLL",            fileMap["DYJetsToLL" + yearTag],      cuts,   weights);
-        PDS dsTTbar(            "NoZToLL",          fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
+        //PDS dsTTbar(            "NoZToLL",          fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
+        PDS dsTTbar(            "NoZToLL",          fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight);
         PDS dsSingleTopZinv(    "Single t",         fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsRareZ(            "RareZ",            fileMap["RareZ" + yearTag],           cuts,   weights);
         PDS dsRareNoZ(          "RareNoZ",          fileMap["RareNoZ" + yearTag],         cuts,   weights);
@@ -1410,6 +1414,12 @@ int main(int argc, char* argv[])
             PDC dcMC_Electron_LowDM_nb(    "stack",  "nBottoms" + varSuffix, StackMC_Electron_LowDM);
             PDC dcMC_Electron_HighDM_nb(   "stack",  "nBottoms" + varSuffix, StackMC_Electron_HighDM);
             
+            // n_soft_bottoms
+            PDC dcData_Electron_LowDM_nsv(  "data",   "nSoftBottoms" + varSuffix, {dsData_Electron_LowDM});
+            PDC dcData_Electron_HighDM_nsv( "data",   "nSoftBottoms" + varSuffix, {dsData_Electron_HighDM});
+            PDC dcMC_Electron_LowDM_nsv(    "stack",  "nSoftBottoms" + varSuffix, StackMC_Electron_LowDM);
+            PDC dcMC_Electron_HighDM_nsv(   "stack",  "nSoftBottoms" + varSuffix, StackMC_Electron_HighDM);
+            
             // n_mergedTops
             PDC dcData_Electron_LowDM_nmt(  "data",   "nMergedTops" + varSuffix, {dsData_Electron_LowDM});
             PDC dcData_Electron_HighDM_nmt( "data",   "nMergedTops" + varSuffix, {dsData_Electron_HighDM});
@@ -1712,6 +1722,8 @@ int main(int argc, char* argv[])
             // --- Standard selection --- //
             vh.push_back(PHS("DataMC_Electron_LowDM_nb" + histSuffix,                                           {dcData_Electron_LowDM_nb,                                   dcMC_Electron_LowDM_nb},                                   {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
             vh.push_back(PHS("DataMC_Electron_HighDM_nb" + histSuffix,                                          {dcData_Electron_HighDM_nb,                                  dcMC_Electron_HighDM_nb},                                  {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+            vh.push_back(PHS("DataMC_Electron_LowDM_nsv" + histSuffix,                                          {dcData_Electron_LowDM_nsv,                                  dcMC_Electron_LowDM_nsv},                                  {1, 2}, "", 6,  0,  6, true, doNorm, label_nsv, "Events"));
+            vh.push_back(PHS("DataMC_Electron_HighDM_nsv" + histSuffix,                                         {dcData_Electron_HighDM_nsv,                                 dcMC_Electron_HighDM_nsv},                                 {1, 2}, "", 6,  0,  6, true, doNorm, label_nsv, "Events"));
             vh.push_back(PHS("DataMC_Electron_LowDM_nw" + histSuffix,                                           {dcData_Electron_LowDM_nw,                                   dcMC_Electron_LowDM_nw},                                   {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
             vh.push_back(PHS("DataMC_Electron_HighDM_nw" + histSuffix,                                          {dcData_Electron_HighDM_nw,                                  dcMC_Electron_HighDM_nw},                                  {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
             vh.push_back(PHS("DataMC_Electron_LowDM_nmt" + histSuffix,                                          {dcData_Electron_LowDM_nmt,                                  dcMC_Electron_LowDM_nmt},                                  {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
@@ -2040,6 +2052,12 @@ int main(int argc, char* argv[])
             PDC dcMC_Muon_LowDM_nb(    "stack",  "nBottoms" + varSuffix, StackMC_Muon_LowDM);
             PDC dcMC_Muon_HighDM_nb(   "stack",  "nBottoms" + varSuffix, StackMC_Muon_HighDM);
             
+            // n_soft_bottoms
+            PDC dcData_Muon_LowDM_nsv(  "data",   "nSoftBottoms" + varSuffix, {dsData_Muon_LowDM});
+            PDC dcData_Muon_HighDM_nsv( "data",   "nSoftBottoms" + varSuffix, {dsData_Muon_HighDM});
+            PDC dcMC_Muon_LowDM_nsv(    "stack",  "nSoftBottoms" + varSuffix, StackMC_Muon_LowDM);
+            PDC dcMC_Muon_HighDM_nsv(   "stack",  "nSoftBottoms" + varSuffix, StackMC_Muon_HighDM);
+            
             // n_mergedTops
             PDC dcData_Muon_LowDM_nmt(  "data",   "nMergedTops" + varSuffix, {dsData_Muon_LowDM});
             PDC dcData_Muon_HighDM_nmt( "data",   "nMergedTops" + varSuffix, {dsData_Muon_HighDM});
@@ -2270,6 +2288,8 @@ int main(int argc, char* argv[])
             // Standard selection
             vh.push_back(PHS("DataMC_Muon_LowDM_nb" + histSuffix,                                           {dcData_Muon_LowDM_nb,                                  dcMC_Muon_LowDM_nb},                                    {1, 2}, "", 6,  0,  6,                   true, doNorm, label_nb,  "Events"));
             vh.push_back(PHS("DataMC_Muon_HighDM_nb" + histSuffix,                                          {dcData_Muon_HighDM_nb,                                 dcMC_Muon_HighDM_nb},                                   {1, 2}, "", 6,  0,  6,                   true, doNorm, label_nb,  "Events"));
+            vh.push_back(PHS("DataMC_Muon_LowDM_nsv" + histSuffix,                                          {dcData_Muon_LowDM_nsv,                                 dcMC_Muon_LowDM_nsv},                                   {1, 2}, "", 6,  0,  6,                   true, doNorm, label_nsv, "Events"));
+            vh.push_back(PHS("DataMC_Muon_HighDM_nsv" + histSuffix,                                         {dcData_Muon_HighDM_nsv,                                dcMC_Muon_HighDM_nsv},                                  {1, 2}, "", 6,  0,  6,                   true, doNorm, label_nsv, "Events"));
             vh.push_back(PHS("DataMC_Muon_LowDM_nw" + histSuffix,                                           {dcData_Muon_LowDM_nw,                                  dcMC_Muon_LowDM_nw},                                    {1, 2}, "", 6,  0,  6,                   true, doNorm, label_nw,  "Events"));
             vh.push_back(PHS("DataMC_Muon_HighDM_nw" + histSuffix,                                          {dcData_Muon_HighDM_nw,                                 dcMC_Muon_HighDM_nw},                                   {1, 2}, "", 6,  0,  6,                   true, doNorm, label_nw,  "Events"));
             vh.push_back(PHS("DataMC_Muon_LowDM_nmt" + histSuffix,                                          {dcData_Muon_LowDM_nmt,                                 dcMC_Muon_LowDM_nmt},                                   {1, 2}, "", 6,  0,  6,                   true, doNorm, label_nmt, "Events"));
@@ -2644,6 +2664,12 @@ int main(int argc, char* argv[])
             PDC dcMC_Photon_LowDM_nb_nominal(    "stack",  "nBottoms" + JetPtCut, StackMC_Photon_LowDM);
             PDC dcMC_Photon_HighDM_nb_nominal(   "stack",  "nBottoms" + JetPtCut, StackMC_Photon_HighDM);
             
+            // n_soft_bottoms
+            PDC dcData_Photon_LowDM_nsv_nominal(  "data",   "nSoftBottoms" + JetPtCut, {dsData_Photon_LowDM});
+            PDC dcData_Photon_HighDM_nsv_nominal( "data",   "nSoftBottoms" + JetPtCut, {dsData_Photon_HighDM});
+            PDC dcMC_Photon_LowDM_nsv_nominal(    "stack",  "nSoftBottoms" + JetPtCut, StackMC_Photon_LowDM);
+            PDC dcMC_Photon_HighDM_nsv_nominal(   "stack",  "nSoftBottoms" + JetPtCut, StackMC_Photon_HighDM);
+            
             // n_mergedTops
             PDC dcData_Photon_LowDM_nmt_nominal(  "data",   "nMergedTops" + JetPtCut, {dsData_Photon_LowDM});
             PDC dcData_Photon_HighDM_nmt_nominal( "data",   "nMergedTops" + JetPtCut, {dsData_Photon_HighDM});
@@ -2675,6 +2701,12 @@ int main(int argc, char* argv[])
             PDC dcData_Photon_HighDM_nb( "data",   "nBottoms" + varSuffix, {dsData_Photon_HighDM});
             PDC dcMC_Photon_LowDM_nb(    "stack",  "nBottoms" + varSuffix, StackMC_Photon_LowDM);
             PDC dcMC_Photon_HighDM_nb(   "stack",  "nBottoms" + varSuffix, StackMC_Photon_HighDM);
+            
+            // n_soft_bottoms
+            PDC dcData_Photon_LowDM_nsv(  "data",   "nSoftBottoms" + varSuffix, {dsData_Photon_LowDM});
+            PDC dcData_Photon_HighDM_nsv( "data",   "nSoftBottoms" + varSuffix, {dsData_Photon_HighDM});
+            PDC dcMC_Photon_LowDM_nsv(    "stack",  "nSoftBottoms" + varSuffix, StackMC_Photon_LowDM);
+            PDC dcMC_Photon_HighDM_nsv(   "stack",  "nSoftBottoms" + varSuffix, StackMC_Photon_HighDM);
             
             // n_mergedTops
             PDC dcData_Photon_LowDM_nmt(  "data",   "nMergedTops" + varSuffix, {dsData_Photon_LowDM});
@@ -2867,6 +2899,8 @@ int main(int argc, char* argv[])
             // --- Nominal: without jet cleaning --- //
             vh.push_back(PHS("DataMC_Photon_LowDM_nb_nominal" + histSuffix,                       {dcData_Photon_LowDM_nb_nominal,                       dcMC_Photon_LowDM_nb_nominal},                       {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_nb_nominal" + histSuffix,                      {dcData_Photon_HighDM_nb_nominal,                      dcMC_Photon_HighDM_nb_nominal},                      {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+            vh.push_back(PHS("DataMC_Photon_LowDM_nsv_nominal" + histSuffix,                      {dcData_Photon_LowDM_nsv_nominal,                      dcMC_Photon_LowDM_nsv_nominal},                      {1, 2}, "", 6,  0,  6, true, doNorm, label_nsv, "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nsv_nominal" + histSuffix,                     {dcData_Photon_HighDM_nsv_nominal,                     dcMC_Photon_HighDM_nsv_nominal},                     {1, 2}, "", 6,  0,  6, true, doNorm, label_nsv, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_nw_nominal" + histSuffix,                       {dcData_Photon_LowDM_nw_nominal,                       dcMC_Photon_LowDM_nw_nominal},                       {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_nw_nominal" + histSuffix,                      {dcData_Photon_HighDM_nw_nominal,                      dcMC_Photon_HighDM_nw_nominal},                      {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_nmt_nominal" + histSuffix,                      {dcData_Photon_LowDM_nmt_nominal,                      dcMC_Photon_LowDM_nmt_nominal},                      {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
@@ -2878,6 +2912,8 @@ int main(int argc, char* argv[])
             // --- Standard Selection --- //
             vh.push_back(PHS("DataMC_Photon_LowDM_nb" + histSuffix,                               {dcData_Photon_LowDM_nb,                               dcMC_Photon_LowDM_nb},                               {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_nb" + histSuffix,                              {dcData_Photon_HighDM_nb,                              dcMC_Photon_HighDM_nb},                              {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+            vh.push_back(PHS("DataMC_Photon_LowDM_nsv" + histSuffix,                              {dcData_Photon_LowDM_nsv,                              dcMC_Photon_LowDM_nsv},                              {1, 2}, "", 6,  0,  6, true, doNorm, label_nsv, "Events"));
+            vh.push_back(PHS("DataMC_Photon_HighDM_nsv" + histSuffix,                             {dcData_Photon_HighDM_nsv,                             dcMC_Photon_HighDM_nsv},                             {1, 2}, "", 6,  0,  6, true, doNorm, label_nsv, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_nw" + histSuffix,                               {dcData_Photon_LowDM_nw,                               dcMC_Photon_LowDM_nw},                               {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_nw" + histSuffix,                              {dcData_Photon_HighDM_nw,                              dcMC_Photon_HighDM_nw},                              {1, 2}, "", 6,  0,  6, true, doNorm, label_nw,  "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_nmt" + histSuffix,                              {dcData_Photon_LowDM_nmt,                              dcMC_Photon_LowDM_nmt},                              {1, 2}, "", 6,  0,  6, true, doNorm, label_nmt, "Events"));
@@ -3452,6 +3488,7 @@ int main(int argc, char* argv[])
     // WARNING: do not apply weights to data
     auto makePDSMET         = [&](const std::string& label, const std::string& cuts = "")                                  {return PDS("Data MET "+label,    fileMap["Data_MET" + yearTag], cuts, ""); };
     auto makePDSZnunu       = [&](const std::string& label, const std::string& cuts = "", const std::string& weights = "") {return PDS("ZJetsToNuNu "+label, fileMap["ZJetsToNuNu" + yearTag], cuts, weights); };
+    auto makePDSGJets       = [&](const std::string& label, const std::string& cuts = "", const std::string& weights = "") {return PDS("GJets "+label, fileMap["GJets" + yearTag], cuts, weights); };
     auto makePDSTTbar       = [&](const std::string& label, const std::string& cuts = "", const std::string& weights = "") {return PDS("TTbar "+label, fileMap["TTbar" + yearTag], cuts, weights); };
     auto makePDCGJetsZnunu  = [&](const std::string& var,   const std::string& style,     const std::string& label, const std::string& cuts) {return PDC(style, {{var, makePDSPhoton(label, "GJets", "passPhotonSelection;" + cuts)}, {var, makePDSZnunu(label, cuts)}}); };
     
@@ -3467,7 +3504,6 @@ int main(int argc, char* argv[])
       photon_cut += ";" + met_cut;
       lepton_cut += ";" + met_cut;
     }
-    auto makePDSGJets = [&](const std::string& label, const std::string& cuts) {return PDS("GJets "+label, fileMap["GJets"], cuts, ""); };
     
     // lepton jet cleaning study
     // variables: HT, MET, METPHI, dPhi, n_j, n_t, n_b 
@@ -3821,6 +3857,14 @@ int main(int argc, char* argv[])
             PDC dcMC_TTbar_MergedTop_nGenPart_recalc("single",         "FatJet_nGenPart{FatJet_Stop0l=1}", {makePDSTTbar("recalc",             "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
             PDC dcMC_TTbar_MergedTop_nGenPart_top_up("single",         "FatJet_nGenPart{FatJet_Stop0l=1}", {makePDSTTbar("mergedtop_up",       "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_top_up")});
             PDC dcMC_TTbar_MergedTop_nGenPart_top_down("single",       "FatJet_nGenPart{FatJet_Stop0l=1}", {makePDSTTbar("mergedtop_down",     "SAT_Pass_Baseline"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_top_dn")});
+            // GJets
+            // use photon CR baseline and variable (photon cleaning) 
+            //PDC dcMC_GJets_MergedTop_nGenPart_recalc("single",         "FatJet_nGenPart{FatJet_Stop0l=1;!FatJet_matchesPhoton}", {makePDSGJets("recalc",             "SAT_Pass_Baseline_drPhotonCleaned"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
+            //PDC dcMC_GJets_MergedTop_nGenPart_top_up("single",         "FatJet_nGenPart{FatJet_Stop0l=1;!FatJet_matchesPhoton}", {makePDSGJets("mergedtop_up",       "SAT_Pass_Baseline_drPhotonCleaned"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_top_up")});
+            //PDC dcMC_GJets_MergedTop_nGenPart_top_down("single",       "FatJet_nGenPart{FatJet_Stop0l=1;!FatJet_matchesPhoton}", {makePDSGJets("mergedtop_down",     "SAT_Pass_Baseline_drPhotonCleaned"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_top_dn")});
+            PDC dcMC_GJets_MergedTop_nGenPart_recalc("single",         "FatJet_nGenPart{FatJet_Stop0l=1}", {makePDSGJets("recalc",             "SAT_Pass_Baseline_drPhotonCleaned"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc")});
+            PDC dcMC_GJets_MergedTop_nGenPart_top_up("single",         "FatJet_nGenPart{FatJet_Stop0l=1}", {makePDSGJets("mergedtop_up",       "SAT_Pass_Baseline_drPhotonCleaned"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_top_up")});
+            PDC dcMC_GJets_MergedTop_nGenPart_top_down("single",       "FatJet_nGenPart{FatJet_Stop0l=1}", {makePDSGJets("mergedtop_down",     "SAT_Pass_Baseline_drPhotonCleaned"   + JetPtCut + Flag_ecalBadCalibFilter + semicolon_HEMVeto, "Stop0l_DeepAK8_SFWeight_recalc_top_dn")});
             
             // compare ResolvedTopTotalSF_jetpt30 with Stop0l_ResTopWeight
             // new top tagger SFs in v6 ntuples:
@@ -3906,22 +3950,25 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("TTbar_nWs_nominal_and_recalc",            {dcMC_TTbar_nWs_nominal, dcMC_TTbar_nWs_recalc},                                                            {2, 1}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
             vh.push_back(PHS("TTbar_nWs_wsyst",                         {dcMC_TTbar_nWs_recalc, dcMC_TTbar_nWs_w_up, dcMC_TTbar_nWs_w_down},                                        {2, 1}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
             vh.push_back(PHS("TTbar_nWs_vetosyst",                      {dcMC_TTbar_nWs_recalc, dcMC_TTbar_nWs_veto_up, dcMC_TTbar_nWs_veto_down},                                  {2, 1}, "",  6, 0, 6,  true, false,  label_nw,      "Events", true));
-            // nGetPart
-            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_nmteq0",  {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30=0",   9, 0, 9,  true, false,  "MergedTop_nGenPart, nmt=0",     "Events", true));
-            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_nmteq1",  {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30=1",   9, 0, 9,  true, false,  "MergedTop_nGenPart, nmt=1",     "Events", true));
-            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_nmtgeq2", {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30>=2",  9, 0, 9,  true, false,  "MergedTop_nGenPart, nmt>=2",    "Events", true));
-            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_nmteq0",  {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30=0",   9, 0, 9,  true, false,  "MergedTop_nGenPart, nmt=0",     "Events", true));
-            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_nmteq1",  {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30=1",   9, 0, 9,  true, false,  "MergedTop_nGenPart, nmt=1",     "Events", true));
-            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_nmtgeq2", {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30>=2",  9, 0, 9,  true, false,  "MergedTop_nGenPart, nmt>=2",    "Events", true));
+            // nGenPart
+            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_nmteq0",  {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30=0",   11, 0, 11,  true, false,  "MergedTop_nGenPart, nmt=0",     "Events", true));
+            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_nmteq1",  {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30=1",   11, 0, 11,  true, false,  "MergedTop_nGenPart, nmt=1",     "Events", true));
+            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_nmtgeq2", {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30>=2",  11, 0, 11,  true, false,  "MergedTop_nGenPart, nmt>=2",    "Events", true));
+            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_nmteq0",  {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30=0",   11, 0, 11,  true, false,  "MergedTop_nGenPart, nmt=0",     "Events", true));
+            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_nmteq1",  {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30=1",   11, 0, 11,  true, false,  "MergedTop_nGenPart, nmt=1",     "Events", true));
+            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_nmtgeq2", {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30>=2",  11, 0, 11,  true, false,  "MergedTop_nGenPart, nmt>=2",    "Events", true));
+            vh.push_back(PHS("GJets_MergedTop_nGenPart_recalc_nmteq0",  {dcMC_GJets_MergedTop_nGenPart_recalc, dcMC_GJets_MergedTop_nGenPart_top_up, dcMC_GJets_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30=0",   11, 0, 11,  true, false,  "MergedTop_nGenPart, nmt=0",     "Events", true));
+            vh.push_back(PHS("GJets_MergedTop_nGenPart_recalc_nmteq1",  {dcMC_GJets_MergedTop_nGenPart_recalc, dcMC_GJets_MergedTop_nGenPart_top_up, dcMC_GJets_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30=1",   11, 0, 11,  true, false,  "MergedTop_nGenPart, nmt=1",     "Events", true));
+            vh.push_back(PHS("GJets_MergedTop_nGenPart_recalc_nmtgeq2", {dcMC_GJets_MergedTop_nGenPart_recalc, dcMC_GJets_MergedTop_nGenPart_top_up, dcMC_GJets_MergedTop_nGenPart_top_down},   {2, 1}, "nMergedTops_jetpt30>=2",  11, 0, 11,  true, false,  "MergedTop_nGenPart, nmt>=2",    "Events", true));
             // select search bins:
-            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_sb69",     {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=69",   9, 0, 9,  true, false,  "MergedTop_nGenPart, SB=69",  "Events", true));
-            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_sb105",    {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=105",  9, 0, 9,  true, false,  "MergedTop_nGenPart, SB=105", "Events", true));
-            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_sb153",    {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=153",  9, 0, 9,  true, false,  "MergedTop_nGenPart, SB=153", "Events", true));
-            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_sb161",    {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=161",  9, 0, 9,  true, false,  "MergedTop_nGenPart, SB=161", "Events", true));
-            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_sb69",     {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=69",   9, 0, 9,  true, false,  "MergedTop_nGenPart, SB=69",  "Events", true));
-            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_sb105",    {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=105",  9, 0, 9,  true, false,  "MergedTop_nGenPart, SB=105", "Events", true));
-            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_sb153",    {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=153",  9, 0, 9,  true, false,  "MergedTop_nGenPart, SB=153", "Events", true));
-            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_sb161",    {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=161",  9, 0, 9,  true, false,  "MergedTop_nGenPart, SB=161", "Events", true));
+            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_sb69",     {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=69",   11, 0, 11,  true, false,  "MergedTop_nGenPart, SB=69",  "Events", true));
+            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_sb105",    {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=105",  11, 0, 11,  true, false,  "MergedTop_nGenPart, SB=105", "Events", true));
+            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_sb153",    {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=153",  11, 0, 11,  true, false,  "MergedTop_nGenPart, SB=153", "Events", true));
+            vh.push_back(PHS("ZNuNu_MergedTop_nGenPart_recalc_sb161",    {dcMC_ZNuNu_MergedTop_nGenPart_recalc, dcMC_ZNuNu_MergedTop_nGenPart_top_up, dcMC_ZNuNu_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=161",  11, 0, 11,  true, false,  "MergedTop_nGenPart, SB=161", "Events", true));
+            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_sb69",     {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=69",   11, 0, 11,  true, false,  "MergedTop_nGenPart, SB=69",  "Events", true));
+            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_sb105",    {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=105",  11, 0, 11,  true, false,  "MergedTop_nGenPart, SB=105", "Events", true));
+            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_sb153",    {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=153",  11, 0, 11,  true, false,  "MergedTop_nGenPart, SB=153", "Events", true));
+            vh.push_back(PHS("TTbar_MergedTop_nGenPart_recalc_sb161",    {dcMC_TTbar_MergedTop_nGenPart_recalc, dcMC_TTbar_MergedTop_nGenPart_top_up, dcMC_TTbar_MergedTop_nGenPart_top_down},   {2, 1}, "nSearchBinHighDM_jetpt30=161",  11, 0, 11,  true, false,  "MergedTop_nGenPart, SB=161", "Events", true));
             // T1tttt
             vh.push_back(PHS("T1tttt_met_nrt0",                         {dcMC_T1tttt_met_nrt0_SATWeight, dcMC_T1tttt_met_nrt0_PostProcWeight},                                  {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));
             vh.push_back(PHS("T1tttt_met_nrt1",                         {dcMC_T1tttt_met_nrt1_SATWeight, dcMC_T1tttt_met_nrt1_PostProcWeight},                                  {2, 1}, "", nBins,         0.0,         2000.0,          false, false,  label_met,                 "Events", true));

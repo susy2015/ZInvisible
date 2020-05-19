@@ -268,7 +268,7 @@ def getConstantMultiplicationError(a, dx):
     # a is a constant
     # q  = a * x
     # dq = |a| * dx
-    return abs(a * dx)
+    return abs(a) * dx
 
 def getMultiplicationError(q, x, dx, y, dy):
     # q = x * y 
@@ -289,7 +289,7 @@ def getMultiplicationErrorList(q, x_list, dx_list):
     s = 0.0
     for i in xrange(len(x_list)):
         if x_list[i] == 0.0:
-            #print "ERROR in getMultiplicationErrorList(): Cannot divide by zero."
+            print "ERROR in getMultiplicationErrorList(): Cannot divide by zero."
             return ERROR_CODE
         s += (dx_list[i] / x_list[i]) ** 2
     return abs(q * np.sqrt(s))

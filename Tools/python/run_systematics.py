@@ -764,10 +764,10 @@ def main():
     runs_json                   = options.runs_json
     syst_json                   = options.syst_json
     verbose                     = options.verbose
-    doRun2                      = True
+    doRun2                      = False
     
-    eras            = ["2016", "2017", "2018", "Run2"]
-    #eras            = ["2016"]
+    #eras            = ["2016", "2017", "2018", "Run2"]
+    eras            = ["2016"]
     for era in eras:
         # run(era, eras, runs_json, syst_json, doRun2, verbose)
         run(era, eras, runs_json, syst_json, doRun2, verbose)

@@ -223,7 +223,7 @@ class Common:
             h_mc_lowdm.SetBinContent(bin_i,     self.binValues[era][b]["mc"])
             h_mc_lowdm.SetBinError(bin_i,       self.binValues[era][b]["mc_error"])
             h_pred_lowdm.SetBinContent(bin_i,   self.binValues[era][b]["pred"])
-            h_pred_lowdm.SetBinError(bin_i,     self.binValues[era][b]["pred_error_mc_only"])
+            h_pred_lowdm.SetBinError(bin_i,     self.binValues[era][b]["pred_error_propagated"])
             bin_i += 1
         bin_i = 1
         for b in self.high_dm_bins:
@@ -233,7 +233,7 @@ class Common:
             h_mc_highdm.SetBinContent(bin_i,    self.binValues[era][b]["mc"])
             h_mc_highdm.SetBinError(bin_i,      self.binValues[era][b]["mc_error"])
             h_pred_highdm.SetBinContent(bin_i,  self.binValues[era][b]["pred"])
-            h_pred_highdm.SetBinError(bin_i,    self.binValues[era][b]["pred_error_mc_only"])
+            h_pred_highdm.SetBinError(bin_i,    self.binValues[era][b]["pred_error_propagated"])
             bin_i += 1
 
         # histogram map
@@ -350,37 +350,63 @@ class Common:
             s_error = self.binValues[era][b]["shape_error"]
             m       = self.binValues[era][b]["mc"]
             m_error = self.binValues[era][b]["mc_error"]
+            p       = n * s * m
+            
+            # For data card
+            # - total Rz unc. (stat + syst) is included in nuisance parameter
+            # - Higgs Combined will handle Sgamma data and MC stat unc. in fit
+            # - Rz * Nmc is written in data card; adjust stat. error by Rz multiplication
+            # see units.py for implementation 
+
+            if s <= 0:
+                # use garwood interval for 0
+                # this error is already in s_error... but we need to scale by Rz and Nmc
+                p_error_mc_only    = s_error * n * m
+                p_error_propagated = s_error * n * m
+                print "bin {0}: shape = {1} +{2} -0.0, Rz * Nmc = {3}, pred = {4} +{5} -0.0".format(b, s, s_error, n * m, p, p_error_propagated)
+            else:
+                # MC stat. error adjusted by multiplication; does not include Rz or Sgamma stat. unc.
+                p_error_mc_only    = m_error
+                p_error_mc_only    = getConstantMultiplicationError(n, p_error_mc_only) 
+                p_error_mc_only    = getConstantMultiplicationError(s, p_error_mc_only) 
+            
+                # For validation and search bin histograms and prediction table
+                # - total Rz unc. (stat + syst) is included in systematic histograms
+                # - treat Rz and const. multiplication
+                # - propagate Sg errors
+                
+                #x_list             = [n, s, m]
+                #dx_list            = [n_error, s_error, m_error]
+                #p_error_propagated = getMultiplicationErrorList(p, x_list, dx_list)
+                
+                shapeAndMC         = s * m
+                x_list             = [s, m]
+                dx_list            = [s_error, m_error]
+                p_error_propagated = getMultiplicationErrorList(shapeAndMC, x_list, dx_list)
+                p_error_propagated = getConstantMultiplicationError(n, p_error_propagated)
+            
+            # error < 0.0 due to error code
+            if p_error_propagated < 0:
+                print "ERROR: p_error_propagated = {0}; setting error to {1}".format(p_error_propagated, ERROR_ZERO)
+                p_error_propagated = ERROR_ZERO 
+            elif p_error_propagated >= 100:
+                print "WARNING: p_error_propagated = {0}".format(p_error_propagated)
             
             # prediction:                   p     = bin value
             # uncertainty:                  sigma = bin error
             # average weight:               avg_w = sigma^2 / p 
             # effective number of events:   N_eff = p / avg_w
-            
-            # For data card and validation bin histograms:
-            # - do not propagate Rz statistical error because total Rz uncertainty will be included in Rz systematic histogram
-            # - do not propagate Sgamma statistical error because Higgs Combine will do shape factor for us
-            p_error_mc_only    = m_error
-            # For prediction table in analysis note:
-            # - propagate Rz and Sg errors
-            p                  = n * s * m
-            x_list             = [n, s, m]
-            dx_list            = [n_error, s_error, m_error]
-            p_error_propagated = getMultiplicationErrorList(p, x_list, dx_list)
-            
-            # error < 0.0 due to error code
-            if p_error_propagated < 0.0:
-                p_error_propagated = ERROR_ZERO 
             if p == 0:
-                if self.verbose:
-                    print "WARNING: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
+                #if self.verbose:
+                #    print "WARNING: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
                 avg_w   = ERROR_ZERO
             else:
                 avg_w   = (p_error_propagated ** 2) / p
             n_eff = p / avg_w
             n_eff_final = int(n_eff)
             if n_eff_final == 0:
-                if self.verbose:
-                    print "WARNING: bin {0}, n_eff_final = {1}; leaving avg weight unchanged".format(b, n_eff_final)
+                #if self.verbose:
+                #    print "WARNING: bin {0}, n_eff_final = {1}; leaving avg weight unchanged".format(b, n_eff_final)
                 avg_w_final = avg_w
             else:
                 avg_w_final = p / n_eff_final
@@ -403,7 +429,7 @@ class Common:
                 self.binValues[era][b][value + "_tex"] = "${0:.3f}$".format(self.binValues[era][b][value])
 
             if self.verbose:
-                print "bin {0}: N = {1:.3f} +/- {2:.3f} S = {3:.3f} +/- {4:.3f} M = {5:.3f} +/- {6:.3f} P = {7:.3f} +/- {8:.3f}".format(
+                print "bin {0}: N = {1:.6f} +/- {2:.6f} S = {3:.6f} +/- {4:.6f} M = {5:.6f} +/- {6:.6f} P = {7:.6f} +/- {8:.6f}".format(
                             b, n, n_error, s, s_error, m, m_error, p, p_error_propagated 
                         )
 
@@ -701,7 +727,7 @@ class SearchBins(Common):
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
-        self.unblind = False
+        self.unblind = True
         self.draw = draw
         self.saveRootFile = saveRootFile
         # SBv4
@@ -767,19 +793,27 @@ class SearchBins(Common):
                 # get shape and shape error
                 shape_cr        = -999
                 shape_cr_error  = -999
-                # check for 0 data
-                if total_data <= 0:
-                    print "WARNING: Era: {0} Search bin {1}: NO DATA: total_data = {2} and total_mc = {3}".format(era, b, total_data, total_mc)
                 # avoid dividing by 0
-                if den:
+                if den > 0:
                     # S = sum(data) / (Q * sum(MC))
                     shape_cr = total_data / den
                 else:
-                    print "WARNING: Era: {0} Search bin {1}: NO MC: total_data = {2} and total_mc = {3}".format(era, b, total_data, total_mc)
+                    print "ERROR: Era: {0} Search bin {1}: MC <= 0: data = {2}, mc = {3}".format(era, b, total_data, den)
                 # error propagation
-                # getMultiplicationError(q, x, dx, y, dy)
-                shape_cr_error  = getMultiplicationError(shape_cr, total_data, total_data_error, den, den_error)
-                
+                # check for 0 data
+                if total_data <= 0:
+                    # use garwood interval for 0
+                    # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PoissonErrorBars
+                    # https://hypernews.cern.ch/HyperNews/CMS/get/SUS-19-003/103/1/1/1/1/1/1.html
+                    # -ln((1-0.68)/2) = 1.8325814637483102
+                    shape_cr_error = 1.83 / den
+                    print "WARNING: Era: {0} Search bin {1}: NO DATA: data = {2}, mc = {3}, shape_cr = {4} +{5} -0.0".format(era, b, total_data, den, shape_cr, shape_cr_error)
+                else:
+                    # getMultiplicationError(q, x, dx, y, dy)
+                    shape_cr_error  = getMultiplicationError(shape_cr, total_data, total_data_error, den, den_error)
+                    if shape_cr_error < 0:
+                        print "ERROR: Era: {0} Search bin {1}: data = {2}, mc = {3}, shape_cr = {4} +/- {5}".format(era, b, total_data, den, shape_cr, shape_cr_error)
+
                 self.binValues[era][b]["shape"]                 = shape_cr 
                 self.binValues[era][b]["shape_error"]           = shape_cr_error
             else:
