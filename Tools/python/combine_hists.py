@@ -31,6 +31,18 @@ def combine(predFile, systFile, outFile):
     f_pred        = ROOT.TFile(predFile, "read")
     f_syst        = ROOT.TFile(systFile, "read")
     f_out         = ROOT.TFile(outFile,  "recreate")
+    
+    # search bins 
+    low_dm_start   = 0
+    low_dm_end     = 52
+    high_dm_start  = 53
+    high_dm_end    = 182
+    combined_start = low_dm_start
+    combined_end   = high_dm_end
+    low_dm_nbins   = low_dm_end - low_dm_start + 1 
+    high_dm_nbins  = high_dm_end - high_dm_start + 1 
+    combined_nbins = combined_end - combined_start + 1
+    
     # data, mc, pred
     h_data_lowdm  = f_pred.Get("data_lowdm")
     h_mc_lowdm    = f_pred.Get("mc_lowdm")
@@ -43,21 +55,16 @@ def combine(predFile, systFile, outFile):
     h_syst_down_lowdm  = f_syst.Get("syst_down_lowdm")
     h_syst_up_highdm   = f_syst.Get("syst_up_highdm")
     h_syst_down_highdm = f_syst.Get("syst_down_highdm")
-    # search bins 
-    low_dm_start   = 0
-    low_dm_end     = 52
-    high_dm_start  = 53
-    high_dm_end    = 182
-    combined_start = low_dm_start
-    combined_end   = high_dm_end
-    low_dm_nbins   = low_dm_end - low_dm_start + 1 
-    high_dm_nbins  = high_dm_end - high_dm_start + 1 
-    combined_nbins = combined_end - combined_start + 1
     
-    h_data_combined  = ROOT.TH1F("data",  "data",  combined_nbins,  combined_start,  combined_end + 1) 
-    h_mc_combined    = ROOT.TH1F("mc",    "mc",    combined_nbins,  combined_start,  combined_end + 1) 
-    h_pred_combined  = ROOT.TH1F("pred",  "pred",  combined_nbins,  combined_start,  combined_end + 1) 
+    # data, mc, pred
+    h_data_combined = ROOT.TH1F("Data",         "Data",         combined_nbins,  combined_start,  combined_end + 1) 
+    h_mc_combined   = ROOT.TH1F("MC",           "MC",           combined_nbins,  combined_start,  combined_end + 1) 
+    h_pred_combined = ROOT.TH1F("Prediction",   "Prediction",   combined_nbins,  combined_start,  combined_end + 1) 
+    # syst
+    h_syst_up_combined   = ROOT.TH1F("Total_Up",    "Total_Up",    combined_nbins,  combined_start,  combined_end + 1) 
+    h_syst_down_combined = ROOT.TH1F("Total_Down",  "Total_Down",  combined_nbins,  combined_start,  combined_end + 1) 
 
+    # check that data is present
     if not h_data_lowdm:
         print "ERROR: No data lowdm for {0}".format(predFile)
     if not h_data_highdm:
@@ -65,26 +72,38 @@ def combine(predFile, systFile, outFile):
 
     bin_i = 1
     for b in xrange(low_dm_start, low_dm_end + 1):
-        h_data_combined.SetBinContent(b + 1, h_data_lowdm.GetBinContent(bin_i)) 
-        h_data_combined.SetBinError(b + 1,   h_data_lowdm.GetBinError(bin_i)) 
-        h_mc_combined.SetBinContent(b + 1,   h_mc_lowdm.GetBinContent(bin_i)) 
-        h_mc_combined.SetBinError(b + 1,     h_mc_lowdm.GetBinError(bin_i)) 
-        h_pred_combined.SetBinContent(b + 1, h_pred_lowdm.GetBinContent(bin_i)) 
-        h_pred_combined.SetBinError(b + 1,   h_pred_lowdm.GetBinError(bin_i)) 
+        h_data_combined.SetBinContent(b + 1,        h_data_lowdm.GetBinContent(bin_i)) 
+        h_data_combined.SetBinError(b + 1,          h_data_lowdm.GetBinError(bin_i)) 
+        h_mc_combined.SetBinContent(b + 1,          h_mc_lowdm.GetBinContent(bin_i)) 
+        h_mc_combined.SetBinError(b + 1,            h_mc_lowdm.GetBinError(bin_i)) 
+        h_pred_combined.SetBinContent(b + 1,        h_pred_lowdm.GetBinContent(bin_i)) 
+        h_pred_combined.SetBinError(b + 1,          h_pred_lowdm.GetBinError(bin_i)) 
+        h_syst_up_combined.SetBinContent(b + 1,     h_syst_up_lowdm.GetBinContent(bin_i)) 
+        h_syst_up_combined.SetBinError(b + 1,       h_syst_up_lowdm.GetBinError(bin_i)) 
+        h_syst_down_combined.SetBinContent(b + 1,   h_syst_down_lowdm.GetBinContent(bin_i)) 
+        h_syst_down_combined.SetBinError(b + 1,     h_syst_down_lowdm.GetBinError(bin_i)) 
         bin_i += 1
     bin_i = 1
     for b in xrange(high_dm_start, high_dm_end + 1):
-        h_data_combined.SetBinContent(b + 1, h_data_highdm.GetBinContent(bin_i)) 
-        h_data_combined.SetBinError(b + 1,   h_data_highdm.GetBinError(bin_i)) 
-        h_mc_combined.SetBinContent(b + 1,   h_mc_highdm.GetBinContent(bin_i)) 
-        h_mc_combined.SetBinError(b + 1,     h_mc_highdm.GetBinError(bin_i)) 
-        h_pred_combined.SetBinContent(b + 1, h_pred_highdm.GetBinContent(bin_i)) 
-        h_pred_combined.SetBinError(b + 1,   h_pred_highdm.GetBinError(bin_i)) 
+        h_data_combined.SetBinContent(b + 1,        h_data_highdm.GetBinContent(bin_i)) 
+        h_data_combined.SetBinError(b + 1,          h_data_highdm.GetBinError(bin_i)) 
+        h_mc_combined.SetBinContent(b + 1,          h_mc_highdm.GetBinContent(bin_i)) 
+        h_mc_combined.SetBinError(b + 1,            h_mc_highdm.GetBinError(bin_i)) 
+        h_pred_combined.SetBinContent(b + 1,        h_pred_highdm.GetBinContent(bin_i)) 
+        h_pred_combined.SetBinError(b + 1,          h_pred_highdm.GetBinError(bin_i)) 
+        h_syst_up_combined.SetBinContent(b + 1,     h_syst_up_highdm.GetBinContent(bin_i)) 
+        h_syst_up_combined.SetBinError(b + 1,       h_syst_up_highdm.GetBinError(bin_i)) 
+        h_syst_down_combined.SetBinContent(b + 1,   h_syst_down_highdm.GetBinContent(bin_i)) 
+        h_syst_down_combined.SetBinError(b + 1,     h_syst_down_highdm.GetBinError(bin_i)) 
         bin_i += 1
 
+    # save histograms to file
     h_data_combined.Write()
     h_mc_combined.Write()
     h_pred_combined.Write()
+    h_syst_up_combined.Write()
+    h_syst_down_combined.Write()
+    # close file
     f_out.Close()
 
 def main():
