@@ -1411,7 +1411,23 @@ int main(int argc, char* argv[])
             PDC dcMC_Electron_Baseline_met_nb0(         "stack",  "metWithLL", StackMC_Electron_Baseline_nb0);
             PDC dcMC_Electron_Baseline_met_nb1(         "stack",  "metWithLL", StackMC_Electron_Baseline_nb1);
             PDC dcMC_Electron_Baseline_met_nbge2(       "stack",  "metWithLL", StackMC_Electron_Baseline_nbge2);
+
+            // --- Study variables using baseline (not low/high dm) --- //
             
+            // n_bottoms
+            PDC dcData_Electron_Baseline_nb(  "data",   "nBottoms" + varSuffix, {dsData_Electron_Baseline});
+            PDC dcMC_Electron_Baseline_nb(    "stack",  "nBottoms" + varSuffix, StackMC_Electron_Baseline);
+            
+            // n_soft_bottoms
+            PDC dcData_Electron_Baseline_nsv( "data",   "nSoftBottoms" + varSuffix, {dsData_Electron_Baseline});
+            PDC dcMC_Electron_Baseline_nsv(   "stack",  "nSoftBottoms" + varSuffix, StackMC_Electron_Baseline);
+            
+            // n_jets
+            PDC dcData_Electron_Baseline_nj(  "data",   "nJets" + varSuffix, {dsData_Electron_Baseline});
+            PDC dcMC_Electron_Baseline_nj(    "stack",  "nJets" + varSuffix, StackMC_Electron_Baseline);
+            
+            // --- Using low/high dm selections --- //
+
             // n_bottoms
             PDC dcData_Electron_LowDM_nb(  "data",   "nBottoms" + varSuffix, {dsData_Electron_LowDM});
             PDC dcData_Electron_HighDM_nb( "data",   "nBottoms" + varSuffix, {dsData_Electron_HighDM});
@@ -1723,6 +1739,10 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Electron_Baseline_met_nb0" + histSuffix,                                   {dcData_Electron_Baseline_met_nb0,                           dcMC_Electron_Baseline_met_nb0},                           {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
             vh.push_back(PHS("DataMC_Electron_Baseline_met_nb1" + histSuffix,                                   {dcData_Electron_Baseline_met_nb1,                           dcMC_Electron_Baseline_met_nb1},                           {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
             vh.push_back(PHS("DataMC_Electron_Baseline_met_nbge2" + histSuffix,                                 {dcData_Electron_Baseline_met_nbge2,                         dcMC_Electron_Baseline_met_nbge2},                         {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+            // --- Study variables using baseline (not low/high dm) --- //
+            vh.push_back(PHS("DataMC_Electron_Baseline_nb" + histSuffix,                                        {dcData_Electron_Baseline_nb,                                dcMC_Electron_Baseline_nb},                                {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+            vh.push_back(PHS("DataMC_Electron_Baseline_nsv" + histSuffix,                                       {dcData_Electron_Baseline_nsv,                               dcMC_Electron_Baseline_nsv},                               {1, 2}, "", 6,  0,  6, true, doNorm, label_nsv, "Events"));
+            vh.push_back(PHS("DataMC_Electron_Baseline_nj" + histSuffix,                                        {dcData_Electron_Baseline_nj,                                dcMC_Electron_Baseline_nj},                                {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
             // --- Standard selection --- //
             vh.push_back(PHS("DataMC_Electron_LowDM_nb" + histSuffix,                                           {dcData_Electron_LowDM_nb,                                   dcMC_Electron_LowDM_nb},                                   {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
             vh.push_back(PHS("DataMC_Electron_HighDM_nb" + histSuffix,                                          {dcData_Electron_HighDM_nb,                                  dcMC_Electron_HighDM_nb},                                  {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
@@ -2056,6 +2076,22 @@ int main(int argc, char* argv[])
             PDC dcMC_Muon_Baseline_met_nb1(         "stack",  "metWithLL", StackMC_Muon_Baseline_nb1);
             PDC dcMC_Muon_Baseline_met_nbge2(       "stack",  "metWithLL", StackMC_Muon_Baseline_nbge2);
             
+            // --- Study variables using baseline (not low/high dm) --- //
+            
+            // n_bottoms
+            PDC dcData_Muon_Baseline_nb(  "data",   "nBottoms" + varSuffix, {dsData_Muon_Baseline});
+            PDC dcMC_Muon_Baseline_nb(    "stack",  "nBottoms" + varSuffix, StackMC_Muon_Baseline);
+            
+            // n_soft_bottoms
+            PDC dcData_Muon_Baseline_nsv( "data",   "nSoftBottoms" + varSuffix, {dsData_Muon_Baseline});
+            PDC dcMC_Muon_Baseline_nsv(   "stack",  "nSoftBottoms" + varSuffix, StackMC_Muon_Baseline);
+            
+            // n_jets
+            PDC dcData_Muon_Baseline_nj(  "data",   "nJets" + varSuffix, {dsData_Muon_Baseline});
+            PDC dcMC_Muon_Baseline_nj(    "stack",  "nJets" + varSuffix, StackMC_Muon_Baseline);
+            
+            // --- Using low/high dm selections --- //
+            
             // n_bottoms
             PDC dcData_Muon_LowDM_nb(  "data",   "nBottoms" + varSuffix, {dsData_Muon_LowDM});
             PDC dcData_Muon_HighDM_nb( "data",   "nBottoms" + varSuffix, {dsData_Muon_HighDM});
@@ -2295,6 +2331,10 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Muon_Baseline_met_nb0" + histSuffix,                                   {dcData_Muon_Baseline_met_nb0,                          dcMC_Muon_Baseline_met_nb0},                            {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
             vh.push_back(PHS("DataMC_Muon_Baseline_met_nb1" + histSuffix,                                   {dcData_Muon_Baseline_met_nb1,                          dcMC_Muon_Baseline_met_nb1},                            {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
             vh.push_back(PHS("DataMC_Muon_Baseline_met_nbge2" + histSuffix,                                 {dcData_Muon_Baseline_met_nbge2,                        dcMC_Muon_Baseline_met_nbge2},                          {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithLL, "Events"));
+            // --- Study variables using baseline (not low/high dm) --- //
+            vh.push_back(PHS("DataMC_Muon_Baseline_nb" + histSuffix,                                        {dcData_Muon_Baseline_nb,                               dcMC_Muon_Baseline_nb},                                 {1, 2}, "", 6,  0,  6,                   true, doNorm, label_nb,  "Events"));
+            vh.push_back(PHS("DataMC_Muon_Baseline_nsv" + histSuffix,                                       {dcData_Muon_Baseline_nsv,                              dcMC_Muon_Baseline_nsv},                                {1, 2}, "", 6,  0,  6,                   true, doNorm, label_nsv, "Events"));
+            vh.push_back(PHS("DataMC_Muon_Baseline_nj" + histSuffix,                                        {dcData_Muon_Baseline_nj,                               dcMC_Muon_Baseline_nj},                                 {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
             // Standard selection
             vh.push_back(PHS("DataMC_Muon_LowDM_nb" + histSuffix,                                           {dcData_Muon_LowDM_nb,                                  dcMC_Muon_LowDM_nb},                                    {1, 2}, "", 6,  0,  6,                   true, doNorm, label_nb,  "Events"));
             vh.push_back(PHS("DataMC_Muon_HighDM_nb" + histSuffix,                                          {dcData_Muon_HighDM_nb,                                 dcMC_Muon_HighDM_nb},                                   {1, 2}, "", 6,  0,  6,                   true, doNorm, label_nb,  "Events"));
@@ -2666,6 +2706,20 @@ int main(int argc, char* argv[])
             PDC dcMC_Photon_Baseline_met_nb1(       "stack",  "metWithPhoton", StackMC_Photon_Baseline_nb1);
             PDC dcMC_Photon_Baseline_met_nbge2(     "stack",  "metWithPhoton", StackMC_Photon_Baseline_nbge2);
             
+            // --- Study variables using baseline (not low/high dm) --- //
+            
+            // n_bottoms
+            PDC dcData_Photon_Baseline_nb(  "data",   "nBottoms" + varSuffix, {dsData_Photon_Baseline});
+            PDC dcMC_Photon_Baseline_nb(    "stack",  "nBottoms" + varSuffix, StackMC_Photon_Baseline);
+            
+            // n_soft_bottoms
+            PDC dcData_Photon_Baseline_nsv( "data",   "nSoftBottoms" + varSuffix, {dsData_Photon_Baseline});
+            PDC dcMC_Photon_Baseline_nsv(   "stack",  "nSoftBottoms" + varSuffix, StackMC_Photon_Baseline);
+            
+            // n_jets
+            PDC dcData_Photon_Baseline_nj(  "data",   "nJets" + varSuffix, {dsData_Photon_Baseline});
+            PDC dcMC_Photon_Baseline_nj(    "stack",  "nJets" + varSuffix, StackMC_Photon_Baseline);
+            
             // --- nominal: without jet cleaning --- //
             
             // n_bottoms
@@ -2906,6 +2960,10 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_Baseline_met_nb0" + histSuffix,                       {dcData_Photon_Baseline_met_nb0,                       dcMC_Photon_Baseline_met_nb0},                       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
             vh.push_back(PHS("DataMC_Photon_Baseline_met_nb1" + histSuffix,                       {dcData_Photon_Baseline_met_nb1,                       dcMC_Photon_Baseline_met_nb1},                       {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
             vh.push_back(PHS("DataMC_Photon_Baseline_met_nbge2" + histSuffix,                     {dcData_Photon_Baseline_met_nbge2,                     dcMC_Photon_Baseline_met_nbge2},                     {1, 2}, "", nBins,  minPt, maxPt,        true, doNorm, label_metWithPhoton, "Events"));
+            // --- Study variables using baseline (not low/high dm) --- //
+            vh.push_back(PHS("DataMC_Photon_Baseline_nb" + histSuffix,                            {dcData_Photon_Baseline_nb,                            dcMC_Photon_Baseline_nb},                            {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
+            vh.push_back(PHS("DataMC_Photon_Baseline_nsv" + histSuffix,                           {dcData_Photon_Baseline_nsv,                           dcMC_Photon_Baseline_nsv},                           {1, 2}, "", 6,  0,  6, true, doNorm, label_nsv, "Events"));
+            vh.push_back(PHS("DataMC_Photon_Baseline_nj" + histSuffix,                            {dcData_Photon_Baseline_nj,                            dcMC_Photon_Baseline_nj},                            {1, 2}, "", maxJets,  minJets,  maxJets, true, doNorm, label_nj, "Events"));
             // --- Nominal: without jet cleaning --- //
             vh.push_back(PHS("DataMC_Photon_LowDM_nb_nominal" + histSuffix,                       {dcData_Photon_LowDM_nb_nominal,                       dcMC_Photon_LowDM_nb_nominal},                       {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_nb_nominal" + histSuffix,                      {dcData_Photon_HighDM_nb_nominal,                      dcMC_Photon_HighDM_nb_nominal},                      {1, 2}, "", 6,  0,  6, true, doNorm, label_nb,  "Events"));
