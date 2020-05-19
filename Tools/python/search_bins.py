@@ -358,7 +358,7 @@ class Common:
             # - Rz * Nmc is written in data card; adjust stat. error by Rz multiplication
             # see units.py for implementation 
 
-            if s == 0:
+            if s <= 0:
                 # use garwood interval for 0
                 # this error is already in s_error... but we need to scale by Rz and Nmc
                 p_error_mc_only    = s_error * n * m
@@ -386,24 +386,27 @@ class Common:
                 p_error_propagated = getConstantMultiplicationError(n, p_error_propagated)
             
             # error < 0.0 due to error code
-            if p_error_propagated < 0.0:
+            if p_error_propagated < 0:
+                print "ERROR: p_error_propagated = {0}; setting error to {1}".format(p_error_propagated, ERROR_ZERO)
                 p_error_propagated = ERROR_ZERO 
+            elif p_error_propagated >= 100:
+                print "WARNING: p_error_propagated = {0}".format(p_error_propagated)
             
             # prediction:                   p     = bin value
             # uncertainty:                  sigma = bin error
             # average weight:               avg_w = sigma^2 / p 
             # effective number of events:   N_eff = p / avg_w
             if p == 0:
-                if self.verbose:
-                    print "WARNING: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
+                #if self.verbose:
+                #    print "WARNING: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
                 avg_w   = ERROR_ZERO
             else:
                 avg_w   = (p_error_propagated ** 2) / p
             n_eff = p / avg_w
             n_eff_final = int(n_eff)
             if n_eff_final == 0:
-                if self.verbose:
-                    print "WARNING: bin {0}, n_eff_final = {1}; leaving avg weight unchanged".format(b, n_eff_final)
+                #if self.verbose:
+                #    print "WARNING: bin {0}, n_eff_final = {1}; leaving avg weight unchanged".format(b, n_eff_final)
                 avg_w_final = avg_w
             else:
                 avg_w_final = p / n_eff_final
@@ -791,11 +794,11 @@ class SearchBins(Common):
                 shape_cr        = -999
                 shape_cr_error  = -999
                 # avoid dividing by 0
-                if den:
+                if den > 0:
                     # S = sum(data) / (Q * sum(MC))
                     shape_cr = total_data / den
                 else:
-                    print "WARNING: Era: {0} Search bin {1}: NO MC: data = {2}, mc = {3}".format(era, b, total_data, den)
+                    print "ERROR: Era: {0} Search bin {1}: MC <= 0: data = {2}, mc = {3}".format(era, b, total_data, den)
                 # error propagation
                 # check for 0 data
                 if total_data <= 0:
@@ -808,7 +811,9 @@ class SearchBins(Common):
                 else:
                     # getMultiplicationError(q, x, dx, y, dy)
                     shape_cr_error  = getMultiplicationError(shape_cr, total_data, total_data_error, den, den_error)
-                
+                    if shape_cr_error < 0:
+                        print "ERROR: Era: {0} Search bin {1}: data = {2}, mc = {3}, shape_cr = {4} +/- {5}".format(era, b, total_data, den, shape_cr, shape_cr_error)
+
                 self.binValues[era][b]["shape"]                 = shape_cr 
                 self.binValues[era][b]["shape_error"]           = shape_cr_error
             else:
