@@ -202,7 +202,6 @@ int main(int argc, char* argv[])
     // year and periods
     std::string yearTag     = "_" + year; 
     std::string periodTag   = ""; 
-    std::string yearForLumi = year;
     std::string HEMVeto                 = "";
     std::string HEMVeto_drLeptonCleaned = "";
     std::string HEMVeto_drPhotonCleaned = "";
@@ -312,9 +311,9 @@ int main(int argc, char* argv[])
         }
         else
         {
-            // Hack to get luminosity from reference
-            AnaSamples::SampleSet        SS_temp("sampleSets_PostProcessed_"+yearForLumi+".cfg", runOnCondor, lumi);
-            AnaSamples::SampleCollection SC_temp("sampleCollections_"+yearForLumi+".cfg", SS_temp);
+            // Get luminosity from reference using Run2 configs
+            AnaSamples::SampleSet        SS_temp("sampleSets_PostProcessed_Run2.cfg", runOnCondor, lumi);
+            AnaSamples::SampleCollection SC_temp("sampleCollections_Run2.cfg", SS_temp);
             lumi = SC_temp.getSampleLumi(refLumi);
         }
     }
