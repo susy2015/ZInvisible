@@ -286,6 +286,15 @@ int main(int argc, char* argv[])
         semicolon_HEMVeto_drLeptonCleaned = ";" + HEMVeto_drLeptonCleaned;
         semicolon_HEMVeto_drPhotonCleaned = ";" + HEMVeto_drPhotonCleaned;
     }
+    else if (era.compare("2016and2017") == 0)
+    {
+        // nothing to do for 2016and2017, but it is still a valid option
+        // Hack to treat 2016and2017 as 2016 for all but luminosity 
+        era        = "2016";  
+        year       = "2016";  
+        yearTag    = "_" + year;   
+        periodTag  = ""; 
+    }
     else if (era.compare("Run2") == 0)
     {
         // nothing to do for Run2, but it is still a valid option
@@ -297,7 +306,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        std::cout << "Please enter 2016, 2017, 2017_BE, 2017_F, 2018, 2018_PreHEM, 2018_PostHEM, or Run2 for the era using the -Y flag." << std::endl;
+        std::cout << "Please enter 2016, 2017, 2017_BE, 2017_F, 2018, 2018_PreHEM, 2018_PostHEM, 2016and2017, or Run2 for the era using the -Y flag." << std::endl;
         exit(1);
     }
 
