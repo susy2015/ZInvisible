@@ -15,6 +15,26 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 def run(era, result_file, verbose):
     if verbose:
         print "{0}: {1}".format(era, result_file)
+    f = ROOT.TFile(result_file, "read")
+
+    # FatJet_nGenPart histograms
+    h_TTbar_MergedTop_nGenPart_nmteq1 = f.Get("FatJet_nGenPart/TTbar_MergedTop_nGenPart_recalc_nmteq1FatJet_nGenPartFatJet_nGenPart{FatJet_Stop0l=1}TTbar recalcsingle")
+    h_ZNuNu_MergedTop_nGenPart_nmteq1 = f.Get("FatJet_nGenPart/ZNuNu_MergedTop_nGenPart_recalc_nmteq1FatJet_nGenPartFatJet_nGenPart{FatJet_Stop0l=1}ZJetsToNuNu recalcsingle")
+    h_GJets_MergedTop_nGenPart_nmteq1 = f.Get("FatJet_nGenPart/GJets_MergedTop_nGenPart_recalc_nmteq1FatJet_nGenPartFatJet_nGenPart{FatJet_Stop0l=1}GJets recalcsingle")
+    
+    #histograms = [h_TTbar_MergedTop_nGenPart_nmteq1, h_ZNuNu_MergedTop_nGenPart_nmteq1, h_GJets_MergedTop_nGenPart_nmteq1]
+    #labels  = ["TTbar", "ZNuNu", "GJets"]
+    histograms = [h_ZNuNu_MergedTop_nGenPart_nmteq1, h_GJets_MergedTop_nGenPart_nmteq1]
+    labels  = ["ZNuNu", "GJets"]
+    name    = "MergedTop_nGenPart_nmteq1" 
+    title   = "MergedTop_nGenPart, nmt=1, {0}".format(era)
+    x_title = "MergedTop_nGenPart"
+    x_min   = 0
+    x_max   = 11
+    y_min   = 0
+    y_max   = 300
+    # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era)
+    plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era)
 
 
 def main():
@@ -31,8 +51,8 @@ def main():
         print "The json file \"{0}\" containing runs does not exist.".format(json_file)
         return
     
-    #eras = ["2016", "2017", "2018", "Run2"]
-    eras = ["Run2"]
+    eras = ["2016", "2017", "2018", "Run2"]
+    #eras = ["Run2"]
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
