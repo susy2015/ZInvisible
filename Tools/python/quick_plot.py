@@ -22,10 +22,10 @@ def run(era, result_file, verbose):
     h_ZNuNu_MergedTop_nGenPart_nmteq1 = f.Get("FatJet_nGenPart/ZNuNu_MergedTop_nGenPart_recalc_nmteq1FatJet_nGenPartFatJet_nGenPart{FatJet_Stop0l=1}ZJetsToNuNu recalcsingle")
     h_GJets_MergedTop_nGenPart_nmteq1 = f.Get("FatJet_nGenPart/GJets_MergedTop_nGenPart_recalc_nmteq1FatJet_nGenPartFatJet_nGenPart{FatJet_Stop0l=1}GJets recalcsingle")
     
-    #histograms = [h_TTbar_MergedTop_nGenPart_nmteq1, h_ZNuNu_MergedTop_nGenPart_nmteq1, h_GJets_MergedTop_nGenPart_nmteq1]
-    #labels  = ["TTbar", "ZNuNu", "GJets"]
-    histograms = [h_ZNuNu_MergedTop_nGenPart_nmteq1, h_GJets_MergedTop_nGenPart_nmteq1]
-    labels  = ["ZNuNu", "GJets"]
+    histograms = [h_TTbar_MergedTop_nGenPart_nmteq1, h_ZNuNu_MergedTop_nGenPart_nmteq1, h_GJets_MergedTop_nGenPart_nmteq1]
+    labels  = ["TTbar", "ZNuNu", "GJets"]
+    #histograms = [h_ZNuNu_MergedTop_nGenPart_nmteq1, h_GJets_MergedTop_nGenPart_nmteq1]
+    #labels  = ["ZNuNu", "GJets"]
     name_1  = "MergedTop_nGenPart_nmteq1" 
     name_2  = "MergedTop_nGenPart_nmteq1_norm" 
     title_1 = "MergedTop_nGenPart, nmt=1, {0}".format(era)
