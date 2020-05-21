@@ -324,6 +324,9 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                             log_syst_down_sum   += np.log(log_syst_up)**2
                     except:
                         print "ERROR for np.log(), location 1: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
+                    # check leading systematic for bin 61
+                    if b == "61":
+                        print "BIN_61: {0} up={1}, down={2}".format(syst, log_syst_up, log_syst_down)
                 # these syst. are only available when doing Run 2
                 if doRun2:
                     # syst from root file
