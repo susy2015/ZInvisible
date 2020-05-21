@@ -108,10 +108,10 @@ def run(era):
     histograms_2 = [h_sgamma_searchbins_2, h_sgamma_crunits_2]
     labels = ["sgamma_searchbins", "sgamma_crunits"]
     
-    # plot
-    # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era):
-    plot(histograms_1, labels, "sgamma_binning1", "Sgamma for " + era, "Sgamma", limits_1[0], limits_1[1], 0.0, 200.0, era) 
-    plot(histograms_2, labels, "sgamma_binning2", "Sgamma for " + era, "Sgamma", limits_2[0], limits_2[1], 0.0, 60.0,  era) 
+    # --- plot --- #
+    # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False)
+    plot(histograms_1, labels, "sgamma_binning1", "Sgamma for " + era, "Sgamma", limits_1[0], limits_1[1], 0.0, 200.0, era, showStats=True) 
+    plot(histograms_2, labels, "sgamma_binning2", "Sgamma for " + era, "Sgamma", limits_2[0], limits_2[1], 0.0, 60.0,  era, showStats=True) 
    
     if verbose > 0:
         print "Total data  = {0}".format(total_phocr_data)
@@ -125,8 +125,7 @@ def run(era):
     del h_sgamma_crunits_2
 
 def main():
-    #eras = ["2016", "2017", "2018", "Run2"]
-    eras = ["2016"]
+    eras = ["2016", "2017", "2018", "Run2"]
     for era in eras:
         run(era)
 

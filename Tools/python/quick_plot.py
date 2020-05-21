@@ -26,15 +26,20 @@ def run(era, result_file, verbose):
     #labels  = ["TTbar", "ZNuNu", "GJets"]
     histograms = [h_ZNuNu_MergedTop_nGenPart_nmteq1, h_GJets_MergedTop_nGenPart_nmteq1]
     labels  = ["ZNuNu", "GJets"]
-    name    = "MergedTop_nGenPart_nmteq1" 
-    title   = "MergedTop_nGenPart, nmt=1, {0}".format(era)
+    name_1  = "MergedTop_nGenPart_nmteq1" 
+    name_2  = "MergedTop_nGenPart_nmteq1_norm" 
+    title_1 = "MergedTop_nGenPart, nmt=1, {0}".format(era)
+    title_2 = "MergedTop_nGenPart, nmt=1, {0}, norm.".format(era)
     x_title = "MergedTop_nGenPart"
     x_min   = 0
     x_max   = 11
-    y_min   = 0
-    y_max   = 300
-    # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era)
-    plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era)
+    y_min_1 = 0
+    y_max_1 = 300
+    y_min_2 = 0
+    y_max_2 = 0.3
+    # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False)
+    plot(histograms, labels, name_1, title_1, x_title, x_min, x_max, y_min_1, y_max_1, era, showStats=True, normalize=False)
+    plot(histograms, labels, name_2, title_2, x_title, x_min, x_max, y_min_2, y_max_2, era, showStats=True, normalize=True)
 
 
 def main():

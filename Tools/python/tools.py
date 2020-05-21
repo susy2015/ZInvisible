@@ -313,10 +313,9 @@ def getMatrixInverseError(A, A_error):
     Ainverse_error[1][1] = getMultiplicationError( A[0][0] / det,  A[0][0], A_error[0][0], det, det_error)
     return Ainverse_error
 
-def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era):
+def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False):
     eraTag = "_" + era
     draw_option = "hist"
-    showStats = True
             
     # colors
     color_red    = "vermillion"
@@ -338,6 +337,10 @@ def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, e
     y_title = "Events"
     
     for i in xrange(len(histograms)):
+        # normalize
+        if normalize:
+            integral = histograms[i].Integral()
+            histograms[i].Scale(1.0 / integral)
         # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False)
         setupHist(histograms[i], title, x_title, y_title, colors[i], y_min, y_max, adjust=False)
         # draw
