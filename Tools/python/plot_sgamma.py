@@ -3,7 +3,7 @@
 import ROOT
 import json
 import numpy as np
-from tools import setupHist
+from tools import plot
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -124,75 +124,12 @@ def run(era):
     del h_sgamma_crunits_1
     del h_sgamma_crunits_2
 
-def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era):
-    eraTag = "_" + era
-    draw_option = "hist"
-    showStats = True
-            
-    # colors
-    color_red    = "vermillion"
-    color_blue   = "electric blue"
-    color_green  = "irish green" 
-    color_purple = "violet"
-    color_black  = "black"
-    colors = [color_red, color_blue, color_green, color_purple, color_black]
-    
-    # legend: TLegend(x1,y1,x2,y2)
-    legend_x1 = 0.6
-    legend_x2 = 0.9 
-    legend_y1 = 0.7
-    legend_y2 = 0.9 
-    legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-    
-    c = ROOT.TCanvas("c", "c", 800, 800)
-
-    y_title = "Events"
-    
-    for i in xrange(len(histograms)):
-        # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False)
-        setupHist(histograms[i], title, x_title, y_title, colors[i], y_min, y_max, adjust=False)
-        # draw
-        if i == 0:
-            histograms[i].Draw(draw_option)
-        else:
-            histograms[i].Draw(draw_option + " same")
-        legend.AddEntry(histograms[i],    labels[i],   "l")
-
-    legend.Draw()
-   
-    if showStats:
-        # write stats 
-        # - TLatex: DrawLatex(x, y, text)
-        # - give x, y coordinates (same as plot coordinates)
-        # - y list is for positioning the text
-        x_range = x_max - x_min 
-        x_pos_1 = x_max - 0.4  * x_range
-        x_pos_2 = x_max - 0.35 * x_range
-        step = (y_max - y_min) / 20.0
-        y_list = np.arange(0.7 * y_max, 0.0, -1 * step)
-        mark = ROOT.TLatex()
-        mark.SetTextSize(0.03)
-        mark.DrawLatex(x_pos_1, y_list[1], labels[0])
-        mark.DrawLatex(x_pos_2, y_list[2], "mean = %.3f" % histograms[0].GetMean())
-        mark.DrawLatex(x_pos_2, y_list[3], "std dev = %.3f" % histograms[0].GetStdDev())
-        mark.DrawLatex(x_pos_1, y_list[4], labels[1])
-        mark.DrawLatex(x_pos_2, y_list[5], "mean = %.3f" % histograms[1].GetMean())
-        mark.DrawLatex(x_pos_2, y_list[6], "std dev = %.3f" % histograms[1].GetStdDev())
-
-    # save histograms
-    plot_dir = "more_plots/"
-    plot_name = plot_dir + name + eraTag
-    c.Update()
-    c.SaveAs(plot_name + ".png")
-    c.SaveAs(plot_name + ".pdf")
-
 def main():
-    eras = ["2016", "2017", "2018", "Run2"]
+    #eras = ["2016", "2017", "2018", "Run2"]
+    eras = ["2016"]
     for era in eras:
         run(era)
 
 if __name__ == "__main__":
     main()
-
-
 
