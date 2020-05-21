@@ -454,9 +454,8 @@ class Normalization:
         draw_option = "hist error"
         total_era = "Run2"
         # treat Run2 era differentley
-        eras = self.eras
-        if self.eras[-1] == total_era:
-            eras  = self.eras[:-1]
+        # for bins, use 2016, 2017, 2018
+        eras = ["2016", "2017", "2018"]
         nBins = len(eras)
         
         ###################

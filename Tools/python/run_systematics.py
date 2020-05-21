@@ -325,8 +325,8 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                     except:
                         print "ERROR for np.log(), location 1: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
                     # check leading systematic for bin 61
-                    if b == "61":
-                        print "BIN_61: {0} up={1}, down={2}".format(syst, log_syst_up, log_syst_down)
+                    # if b == "61":
+                    #     print "BIN_61: {0} up={1}, down={2}".format(syst, log_syst_up, log_syst_down)
                 # these syst. are only available when doing Run 2
                 if doRun2:
                     # syst from root file
@@ -769,8 +769,8 @@ def main():
     verbose                     = options.verbose
     doRun2                      = False
     
-    #eras            = ["2016", "2017", "2018", "Run2"]
-    eras            = ["2016"]
+    #eras = ["2016", "2017", "2018", "Run2"]
+    eras = ["2016", "2017", "2018", "2016and2017", "Run2"]
     for era in eras:
         # run(era, eras, runs_json, syst_json, doRun2, verbose)
         run(era, eras, runs_json, syst_json, doRun2, verbose)
