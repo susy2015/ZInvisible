@@ -33,10 +33,16 @@ def run(era, result_file, verbose):
     x_title = "MergedTop_nGenPart"
     x_min   = 0
     x_max   = 11
+    # y limits for TTbar, ZNuNu, GJets
     y_min_1 = 0
-    y_max_1 = 300
+    y_max_1 = 10**5
     y_min_2 = 0
-    y_max_2 = 0.3
+    y_max_2 = 0.8
+    # y limits for ZNuNu, GJets
+    #y_min_1 = 0
+    #y_max_1 = 300
+    #y_min_2 = 0
+    #y_max_2 = 0.3
     # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False)
     plot(histograms, labels, name_1, title_1, x_title, x_min, x_max, y_min_1, y_max_1, era, showStats=True, normalize=False)
     plot(histograms, labels, name_2, title_2, x_title, x_min, x_max, y_min_2, y_max_2, era, showStats=True, normalize=True)
