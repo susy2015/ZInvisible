@@ -34,7 +34,7 @@ def run(era, result_file, verbose):
     x_min   = 0
     x_max   = 11
     # y limits for TTbar, ZNuNu, GJets
-    y_min_1 = 0
+    y_min_1 = 10**-1
     y_max_1 = 10**5
     y_min_2 = 0
     y_max_2 = 0.8
@@ -43,8 +43,11 @@ def run(era, result_file, verbose):
     #y_max_1 = 300
     #y_min_2 = 0
     #y_max_2 = 0.3
-    # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False)
-    plot(histograms, labels, name_1, title_1, x_title, x_min, x_max, y_min_1, y_max_1, era, showStats=True, normalize=False)
+    
+    # WARNING: if using setLog=True, do not use y_min = 0
+    # WARNING: currently stats do not show properly on log scale... this would need work to fix
+    # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False, setLog=False)
+    plot(histograms, labels, name_1, title_1, x_title, x_min, x_max, y_min_1, y_max_1, era, showStats=False, normalize=False, setLog=True)
     plot(histograms, labels, name_2, title_2, x_title, x_min, x_max, y_min_2, y_max_2, era, showStats=True, normalize=True)
 
 
@@ -63,7 +66,6 @@ def main():
         return
     
     eras = ["2016", "2017", "2018", "Run2"]
-    #eras = ["Run2"]
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)

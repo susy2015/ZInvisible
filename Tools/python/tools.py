@@ -313,7 +313,7 @@ def getMatrixInverseError(A, A_error):
     Ainverse_error[1][1] = getMultiplicationError( A[0][0] / det,  A[0][0], A_error[0][0], det, det_error)
     return Ainverse_error
 
-def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False):
+def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False, setLog=False):
     eraTag = "_" + era
     draw_option = "hist"
             
@@ -343,6 +343,9 @@ def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, e
             histograms[i].Scale(1.0 / integral)
         # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False)
         setupHist(histograms[i], title, x_title, y_title, colors[i], y_min, y_max, adjust=False)
+        # set log scale
+        if setLog:
+            ROOT.gPad.SetLogy()
         # draw
         if i == 0:
             histograms[i].Draw(draw_option)
