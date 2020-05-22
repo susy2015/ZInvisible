@@ -366,9 +366,8 @@ def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, e
         mark.SetTextSize(0.03)
         
         for i in xrange(len(labels)):
-            mark.DrawLatex(x_pos_1, y_list[3 * i + 0], labels[i])
-            mark.DrawLatex(x_pos_2, y_list[3 * i + 1], "mean = %.3f"    % histograms[i].GetMean())
-            mark.DrawLatex(x_pos_2, y_list[3 * i + 2], "std dev = %.3f" % histograms[i].GetStdDev())
+            mark.DrawLatex(x_pos_1, y_list[2 * i + 0], labels[i])
+            mark.DrawLatex(x_pos_2, y_list[2 * i + 1], "\mu = %.3f, \sigma = %.3f" % (histograms[i].GetMean(), histograms[i].GetStdDev()))
 
     # save histograms
     plot_dir = "more_plots/"
