@@ -252,6 +252,7 @@ int main(int argc, char* argv[])
         {"Stop0l_nResolved", "Stop0l_nResolved"+JESsuffix},
         {"Stop0l_nbtags", "Stop0l_nbtags"+JESsuffix},
         {"Stop0l_nJets", "Stop0l_nJets"+JESsuffix},
+		{"Stop0l_ResTopWeight", "Stop0l_ResTopWeight"+JESsuffix},
         {"ResolvedTopCandidate_genMatch", "ResolvedTopCandidate"+JESsuffix+"_genMatch"}
     };
 
@@ -260,7 +261,8 @@ int main(int argc, char* argv[])
         "Jet_pt", "Jet_eta", "Jet_phi", "Jet_jetId", "Jet_puId", "Jet_dPhiMET",
         "Jet_sortedIdx", "Jet_nsortedIdx", "Jet_btagStop0l", "Jet_Stop0l",
         "MET_pt", "MET_phi",
-        "SB_Stop0l", "FatJet_Stop0l", "ResolvedTop_Stop0l",
+		"rpseudo", "best_dphi", "best_index",
+        "SB_Stop0l", "FatJet_pt", "FatJet_Stop0l", "ResolvedTop_Stop0l",
         "Pass_exHEMVeto30",
         "Pass_QCDCR", "Pass_QCDCR_highDM", "Pass_QCDCR_lowDM",
         "Pass_Baseline", "Pass_highDM", "Pass_lowDM",
@@ -323,22 +325,21 @@ int main(int argc, char* argv[])
 
     std::set<std::string> MCvars = {
         "Jet_genJetIdx", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_partonFlavour", "GenJet_hadronFlavour",
+		"rjet", "best_genindex", "best_dR",
         "genWeight",
         "LHE_HTIncoming",
         "SB_SF", "SB_SFerr",
-        "FatJet_SF", "FatJet_SFerr",
         "puWeight", "puWeight_Up", "puWeight_Down",
         "BTagWeight", "BTagWeight_Up", "BTagWeight_Down",
         "ISRWeight", "ISRWeight_Up", "ISRWeight_Down",
         "pdfWeight_Up", "pdfWeight_Down",
-        "ResolvedTopCandidate_sf",
-        "ResolvedTopCandidate_syst_Btag_Up", "ResolvedTopCandidate_syst_Btag_Down",
-        "ResolvedTopCandidate_syst_Pileup_Up", "ResolvedTopCandidate_syst_Pileup_Down",
-        "ResolvedTopCandidate_syst_CSPur_Up", "ResolvedTopCandidate_syst_CSPur_Down",
-        "ResolvedTopCandidate_syst_Stat_Up", "ResolvedTopCandidate_syst_Stat_Down",
-        "ResolvedTopCandidate_syst_Closure_Up", "ResolvedTopCandidate_syst_Closure_Down",
-        "ResolvedTopCandidate_genMatch",
-        "nWplusLep", "nWminusLep"
+		"Stop0l_ResTopWeight", "Stop0l_ResTopWeight_Up", "Stop0l_ResTopWeight_Dn",
+		"Stop0l_DeepAK8_SFWeight",
+		"Stop0l_DeepAK8_SFWeight_total_up", "Stop0l_DeepAK8_SFWeight_total_dn",
+		"Stop0l_DeepAK8_SFWeight_top_up", "Stop0l_DeepAK8_SFWeight_top_dn",
+		"Stop0l_DeepAK8_SFWeight_w_up", "Stop0l_DeepAK8_SFWeight_w_dn",
+		"Stop0l_DeepAK8_SFWeight_veto_up", "Stop0l_DeepAK8_SFWeight_veto_dn",
+        "nWplusLep", "nWminusLep", "TopPt", "TbarPt", "LHEScaleWeight"
     };
 
     if (year == "2017")
@@ -389,18 +390,26 @@ int main(int argc, char* argv[])
 
     MCvars.insert(vars.begin(), vars.end());
 
-    std::set<std::string> QCDvars = {"bootstrapWeight", "bootstrapWeight_smaller", "Stop0l_smearWeight", "uniqueID"};
+    //std::set<std::string> QCDvars = {"bootstrapWeight", "bootstrapWeight_smaller", "Stop0l_smearWeight", "uniqueID"};
+    std::set<std::string> QCDvars = {"uniqueID"};
     QCDvars.insert(MCvars.begin(), MCvars.end());
+
+    std::set<std::string> sQCDvars = {"Stop0l_smearWeight", "uniqueID"};
+    sQCDvars.insert(MCvars.begin(), MCvars.end());
+
+	std::set<std::string> Topvars = {"Stop0l_topptWeight", "Stop0l_topMGPowWeight", "Stop0l_topptOnly", "Stop0l_topptOnly_Up", "Stop0l_topptOnly_Down"};
+	Topvars.insert(MCvars.begin(), MCvars.end());
 
     std::string region_cuts;
     for (string region : {"QCDCR", "Baseline", "vLowDM", "vLowDMHighMET", "vHighDM"})
     {
         region_cuts = boost::join(region_to_cuts[region], ";");
         PDS dsData        = PDS("Data",         fileMap["Data_MET_2016"        ], cuts + ";" + region_cuts, "");
-        PDS dsDataPreHEM  = PDS("Data_PreHEM",  fileMap["Data_MET_2018_PreHEM" ], cuts + ";" + region_cuts, "");
-        PDS dsDataPostHEM = PDS("Data_PostHEM", fileMap["Data_MET_2018_PostHEM"], cuts + ";" + region_cuts, "");
+        //PDS dsDataPreHEM  = PDS("Data_PreHEM",  fileMap["Data_MET_2018_PreHEM" ], cuts + ";" + region_cuts, "");
+        //PDS dsDataPostHEM = PDS("Data_PostHEM", fileMap["Data_MET_2018_PostHEM"], cuts + ";" + region_cuts, "");
         PDS dsDataBE      = PDS("Data_BE",      fileMap["Data_MET_2017_BE"     ], cuts + ";" + region_cuts, "");
         PDS dsDataF       = PDS("Data_F",       fileMap["Data_MET_2017_F"      ], cuts + ";" + region_cuts, "");
+        PDS dsData18      = PDS("Data18",       fileMap["Data_MET_2018"        ], cuts + ";" + region_cuts, "");
         PDS dstt          = PDS("ttbar",        fileMap["TTbar"       + yearTag], cuts + ";" + region_cuts, weights);
         PDS dstt2         = PDS("ttbarnohad",   fileMap["TTbarNoHad"  + yearTag], cuts + ";" + region_cuts, weights);
         PDS dsttHT        = PDS("ttbarHT",      fileMap["TTbarHT"     + yearTag], cuts + ";" + region_cuts, weights);
@@ -408,17 +417,19 @@ int main(int argc, char* argv[])
         PDS dsZnunu       = PDS("Znunu",        fileMap["ZJetsToNuNu" + yearTag], cuts + ";" + region_cuts, weights);
         PDS dsrare        = PDS("rare",         fileMap["Rare"        + yearTag], cuts + ";" + region_cuts, weights);
         PDS dsQCD         = PDS("QCD",          fileMap["QCD"         + yearTag], cuts + ";" + region_cuts, weights);
-        PDS dsQCD_s       = PDS("QCD_smear",    fileMap["QCD_smear"   + yearTag], cuts + ";" + region_cuts, weights);
+        PDS dsQCD_s       = PDS("QCD_smear",    fileMap["QCD_Smear"   + yearTag], cuts + ";" + region_cuts, weights);
 
-        scanners.push_back(Plotter::Scanner(region, vars, {dsData, dsDataPreHEM, dsDataPostHEM, dsDataBE, dsDataF}, var_name_map));
-        scanners.push_back(Plotter::Scanner(region, MCvars, {dstt, dstt2, dsttHT, dsWJets, dsZnunu, dsrare, dsQCD}, var_name_map));
-        scanners.push_back(Plotter::Scanner(region, QCDvars, {dsQCD_s}, var_name_map));
+        scanners.push_back(Plotter::Scanner(region, vars, {dsData, dsData18, dsDataBE, dsDataF}, var_name_map));
+        scanners.push_back(Plotter::Scanner(region, MCvars, {dsWJets, dsZnunu, dsrare}, var_name_map));
+        scanners.push_back(Plotter::Scanner(region, Topvars, {dstt, dstt2, dsttHT}, var_name_map));
+        scanners.push_back(Plotter::Scanner(region, MCvars, {dsQCD}, var_name_map));
+        scanners.push_back(Plotter::Scanner(region, sQCDvars, {dsQCD_s}, var_name_map));
     }
 
     set<AFS> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);
 
-    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, year);
+    RegisterFunctions* rf = new RegisterFunctionsNTuple(runOnCondor, year, var_name_map);
 
     if (verbose)
     {

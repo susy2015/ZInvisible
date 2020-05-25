@@ -540,7 +540,8 @@ void Plotter::createHistsFromTuple()
 					{
 						if(sc->currentDS.passCuts(tr))
 						{
-							sc->weight = sc->currentDS.getWeight(tr);
+							//sc->weight = sc->currentDS.getWeight(tr);
+							sc->weight = file.getWeight();
 							sc->Fill();
 						}
 					}

@@ -4,7 +4,7 @@ SDIR       = .
 RSDIR      = $(CMSSW_BASE)/src/SusyAnaTools/Tools
 
 TTIDIR     = $(CMSSW_BASE)/src/TopTagger/TopTagger/interface
-TPIDIR     = $(CMSSW_BASE)/src/TopTagger/CfgParser/include
+TPIDIR     = $(CMSSW_BASE)/src/TopTagger/CfgParser/interface
 TPTDIR     = $(CMSSW_BASE)/src
 TTTDIR     = $(CMSSW_BASE)/src/TopTagger/TopTagger/test
 

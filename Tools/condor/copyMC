@@ -1,0 +1,11 @@
+for year in 2016 2017 2018;
+do
+	for syst in Data Base JESUp JESDown METUnClustUp METUnClustDown;
+	do
+		for file in *_${year}_${syst}_*/*.root;
+		do
+			echo ${file}
+			xrdcp ${file} root://cmseos.fnal.gov//store/user/jsw/v6p5/${year}_${syst}/ && rm ${file};
+		done;
+	done;
+done

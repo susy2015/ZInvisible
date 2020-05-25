@@ -1,0 +1,103 @@
+universe = vanilla
+Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/do_hadd.sh
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/do_hadd.sh,gmp.tar.gz,$ENV(CMSSW_VERSION).tar.gz
+Output = logs/makePlots_$(Process).stdout
+Error = logs/makePlots_$(Process).stderr
+Log = logs/makePlots_$(Process).log
+notify_user = ${LOGNAME}@FNAL.GOV
+x509userproxy = $ENV(X509_USER_PROXY)
++maxWallTime = 2880
+
+Arguments = 2016 Base
+Output = logs/$(Cluster)_$(Process)_hadd_2016_Base.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2016_Base.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2016_Base.log
+Queue
+
+Arguments = 2016 JESUp
+Output = logs/$(Cluster)_$(Process)_hadd_2016_JESUp.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2016_JESUp.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2016_JESUp.log
+Queue
+
+Arguments = 2016 JESDown
+Output = logs/$(Cluster)_$(Process)_hadd_2016_JESDown.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2016_JESDown.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2016_JESDown.log
+Queue
+
+Arguments = 2016 METUnClustUp
+Output = logs/$(Cluster)_$(Process)_hadd_2016_METUnClustUp.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2016_METUnClustUp.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2016_METUnClustUp.log
+Queue
+
+Arguments = 2016 METUnClustDown
+Output = logs/$(Cluster)_$(Process)_hadd_2016_METUnClustDown.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2016_METUnClustDown.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2016_METUnClustDown.log
+Queue
+
+Arguments = 2017 Base
+Output = logs/$(Cluster)_$(Process)_hadd_2017_Base.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2017_Base.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2017_Base.log
+Queue
+
+Arguments = 2017 JESUp
+Output = logs/$(Cluster)_$(Process)_hadd_2017_JESUp.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2017_JESUp.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2017_JESUp.log
+Queue
+
+Arguments = 2017 JESDown
+Output = logs/$(Cluster)_$(Process)_hadd_2017_JESDown.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2017_JESDown.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2017_JESDown.log
+Queue
+
+Arguments = 2017 METUnClustUp
+Output = logs/$(Cluster)_$(Process)_hadd_2017_METUnClustUp.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2017_METUnClustUp.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2017_METUnClustUp.log
+Queue
+
+Arguments = 2017 METUnClustDown
+Output = logs/$(Cluster)_$(Process)_hadd_2017_METUnClustDown.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2017_METUnClustDown.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2017_METUnClustDown.log
+Queue
+
+Arguments = 2018 Base
+Output = logs/$(Cluster)_$(Process)_hadd_2018_Base.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2018_Base.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2018_Base.log
+Queue
+
+Arguments = 2018 JESUp
+Output = logs/$(Cluster)_$(Process)_hadd_2018_JESUp.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2018_JESUp.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2018_JESUp.log
+Queue
+
+Arguments = 2018 JESDown
+Output = logs/$(Cluster)_$(Process)_hadd_2018_JESDown.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2018_JESDown.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2018_JESDown.log
+Queue
+
+Arguments = 2018 METUnClustUp
+Output = logs/$(Cluster)_$(Process)_hadd_2018_METUnClustUp.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2018_METUnClustUp.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2018_METUnClustUp.log
+Queue
+
+Arguments = 2018 METUnClustDown
+Output = logs/$(Cluster)_$(Process)_hadd_2018_METUnClustDown.stdout
+Error = logs/$(Cluster)_$(Process)_hadd_2018_METUnClustDown.stderr
+Log = logs/$(Cluster)_$(Process)_hadd_2018_METUnClustDown.log
+Queue
+

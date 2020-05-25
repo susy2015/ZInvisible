@@ -4,6 +4,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <map>
 #include <functional>
 #include "SusyAnaTools/Tools/GetVectors.h"
 #include "SusyAnaTools/Tools/RunTopTagger.h"
@@ -18,6 +19,8 @@ namespace plotterFunctions
 	class DownsizeBootstrap;
     class Gamma;
 	class JetSort;
+	class RJet;
+	class TopPt;
 }
 
 class SystWeights;
@@ -45,9 +48,11 @@ private:
 	plotterFunctions::CountWLep    *countWLep;
 	plotterFunctions::DownsizeBootstrap * downBoot;
 	plotterFunctions::JetSort      *jetSort;
+	plotterFunctions::RJet         *rJet;
+	plotterFunctions::TopPt        *toppt;
 
 public:
-    RegisterFunctionsNTuple(bool isCondor, std::string year);
+    RegisterFunctionsNTuple(bool isCondor, std::string year, std::map<std::string, std::string> var_name_map);
     ~RegisterFunctionsNTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);

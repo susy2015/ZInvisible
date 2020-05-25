@@ -1,7 +1,6 @@
 #!/bin/bash
 
 year=$1
-systematic=$2
 
 if [ "${year}" -eq "2016" ]
 then
@@ -18,16 +17,8 @@ then
 	data="Data_MET_2018_PreHEM,Data_MET_2018_PostHEM,"
 fi
 
-if [ -n "${systematic}" ]
-then
-	data=""
-	systarg="-S ${systematic}"
-fi
-
 echo ${year}
 
 echo ${data}
 
-echo ${systematic}
-
-python condorSubmit.py -d ${data} -n 1 -y ${year} ${systarg}
+python condorSubmit.py -d ${data} -n 2 -y ${year} -S Data

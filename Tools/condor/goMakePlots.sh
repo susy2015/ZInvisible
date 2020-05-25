@@ -27,6 +27,9 @@ syst=$5
 if [ ${syst} == "Base" ]
 then
     systarg=""
+elif [ ${syst} == "Data" ]
+then
+	systarg=""
 else
     systarg="-S ${syst}"
 fi
