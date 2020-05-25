@@ -270,7 +270,7 @@ int main(int argc, char* argv[])
         "Stop0l_METSig", "Stop0l_nTop", "Stop0l_nW", "Stop0l_nResolved",
         "Stop0l_nbtags", "Stop0l_nSoftb", "Stop0l_nJets",
         "Stop0l_evtWeight",
-        "nValidationBinLowDM", "nValidationBinLowDMHighMET", "nValidationBinHighDM",
+        //"nValidationBinLowDM", "nValidationBinLowDMHighMET", "nValidationBinHighDM",
         "Pass_trigger_MET",
         "Stop0l_trigger_eff_MET_loose_baseline", "Stop0l_trigger_eff_MET_loose_baseline_down", "Stop0l_trigger_eff_MET_loose_baseline_up",
         "Stop0l_trigger_eff_MET_low_dm", "Stop0l_trigger_eff_MET_low_dm_down", "Stop0l_trigger_eff_MET_low_dm_up",
@@ -339,6 +339,12 @@ int main(int argc, char* argv[])
 		"Stop0l_DeepAK8_SFWeight_top_up", "Stop0l_DeepAK8_SFWeight_top_dn",
 		"Stop0l_DeepAK8_SFWeight_w_up", "Stop0l_DeepAK8_SFWeight_w_dn",
 		"Stop0l_DeepAK8_SFWeight_veto_up", "Stop0l_DeepAK8_SFWeight_veto_dn",
+		"Stop0l_DeepAK8_SFWeight_recalc",
+		"Stop0l_DeepAK8_SFWeight_recalc_total_up", "Stop0l_DeepAK8_SFWeight_recalc_total_dn",
+		"Stop0l_DeepAK8_SFWeight_recalc_top_up", "Stop0l_DeepAK8_SFWeight_recalc_top_dn",
+		"Stop0l_DeepAK8_SFWeight_recalc_w_up", "Stop0l_DeepAK8_SFWeight_recalc_w_dn",
+		"Stop0l_DeepAK8_SFWeight_recalc_veto_up", "Stop0l_DeepAK8_SFWeight_recalc_veto_dn",
+		"Stop0l_DeepAK8_SFWeight_recalc_densetop_up", "Stop0l_DeepAK8_SFWeight_recalc_densetop_dn",
         "nWplusLep", "nWminusLep", "TopPt", "TbarPt", "LHEScaleWeight"
     };
 

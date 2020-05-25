@@ -6,18 +6,14 @@
 #include <vector>
 #include <map>
 #include <functional>
-#include "SusyAnaTools/Tools/GetVectors.h"
-#include "SusyAnaTools/Tools/RunTopTagger.h"
+#include <memory>
+#include "SusyAnaTools/Tools/TopWeightCalculator.h"
 
 class NTupleReader;
 
 namespace plotterFunctions
 {
-    class BasicLepton;
-    class GetSearchBin;
 	class CountWLep;
-	class DownsizeBootstrap;
-    class Gamma;
 	class JetSort;
 	class RJet;
 	class TopPt;
@@ -34,28 +30,27 @@ public:
         
     virtual void registerFunctions(NTupleReader& tr) {};
     virtual void activateBranches(std::set<std::string>& activeBranches) {};
+	virtual void setSampleName(const std::string &sampleName) {};
     
 };
 
 class RegisterFunctionsNTuple : public RegisterFunctions
 {
 private:
-    GetVectors                     *getVectors;
-    RunTopTagger                   *runTopTagger;
-    plotterFunctions::Gamma        *gamma;
-    plotterFunctions::BasicLepton  *basicLepton;
-    plotterFunctions::GetSearchBin *getSearchBin;
 	plotterFunctions::CountWLep    *countWLep;
-	plotterFunctions::DownsizeBootstrap * downBoot;
 	plotterFunctions::JetSort      *jetSort;
 	plotterFunctions::RJet         *rJet;
 	plotterFunctions::TopPt        *toppt;
+	std::unique_ptr<TopWeightCalculator> topweightcalculator;
+	std::string year_;
+	std::map<std::string, std::string> sample_name_map;
 
 public:
-    RegisterFunctionsNTuple(bool isCondor, std::string year, std::map<std::string, std::string> var_name_map);
+    RegisterFunctionsNTuple(bool isCondor, const std::string &year, std::map<std::string, std::string> var_name_map);
     ~RegisterFunctionsNTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);
+	void setSampleName(const std::string &sampleName);
 };
 
 #endif

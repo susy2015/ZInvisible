@@ -3,16 +3,6 @@ ODIR       = obj
 SDIR       = .
 RSDIR      = $(CMSSW_BASE)/src/SusyAnaTools/Tools
 
-TTIDIR     = $(CMSSW_BASE)/src/TopTagger/TopTagger/interface
-TPIDIR     = $(CMSSW_BASE)/src/TopTagger/CfgParser/interface
-TPTDIR     = $(CMSSW_BASE)/src
-TTTDIR     = $(CMSSW_BASE)/src/TopTagger/TopTagger/test
-
-TTSDIR     = $(CMSSW_BASE)/src/TopTagger/Tools/cpp
-
-TTTSDIR    = $(CMSSW_BASE)/src/TopTaggerTools/Tools/src
-TTTIDIR    = $(CMSSW_BASE)/src/TopTaggerTools/Tools/include
-
 ZINVISIBLE = $(CMSSW_BASE)/src/ZInvisible
 
 JSONDIR    = ${CMSSW_BASE}/src/json
@@ -47,7 +37,7 @@ INCLUDES += -I$(ZINVISIBLE)/Tools/include -I$(JSONDIR)/include
 CXXFLAGS += -DDOTENSORFLOWPYBIND
 
 LIBS       = $(shell root-config --glibs) -lASImage
-MT2LIB     = -L$(shell $(PYTHONCFG) --prefix)/lib $(shell $(PYTHONCFG) --libs) -L$(TTTDIR) -lTopTagger
+MT2LIB     = -L$(shell $(PYTHONCFG) --prefix)/lib $(shell $(PYTHONCFG) --libs)
 LHAPDFLIB  = -L$(LHAPDF_DATA_PATH)/../../lib -lLHAPDF
 
 PROGRAMS = makePlots
@@ -70,42 +60,24 @@ $(ODIR)/samplesModulePyWrap.o: $(RSDIR)/samplesModule.cc
 	$(CXX) --std=c++11 -c -fPIC -o $@ $<
 
 $(ODIR)/%.o : $(SDIR)/%.C
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) $(INCLUDES) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) $(INCLUDES) -o $@ -c $<
 
 $(ODIR)/%.o : $(SDIR)/%.cc
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) $(INCLUDES) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) $(INCLUDES) -o $@ -c $<
 
 $(ODIR)/%.o : $(SDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) $(INCLUDES) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) $(INCLUDES) -o $@ -c $<
 
 $(ODIR)/%.o : $(RSDIR)/%.C
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) $(INCLUDES) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) $(INCLUDES) -o $@ -c $<
 
 $(ODIR)/%.o : $(RSDIR)/%.cc
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) $(INCLUDES) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) $(INCLUDES) -o $@ -c $<
 
 $(ODIR)/%.o : $(RSDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) $(INCLUDES) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) $(INCLUDES) -o $@ -c $<
 
-$(ODIR)/%.o : $(TTSDIR)/%.C
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) $(INCLUDES) -o $@ -c $<
-
-$(ODIR)/%.o : $(TTSDIR)/%.cc
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) $(INCLUDES) -o $@ -c $<
-
-$(ODIR)/%.o : $(TTSDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) $(INCLUDES) -o $@ -c $<
-
-$(ODIR)/%.o : $(TTTSDIR)/%.C
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) -I$(TTTIDIR) $(INCLUDES) -o $@ -c $<
-
-$(ODIR)/%.o : $(TTTSDIR)/%.cc
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) -I$(TTTIDIR) $(INCLUDES) -o $@ -c $<
-
-$(ODIR)/%.o : $(TTTSDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -I$(RSDIR) -I$(TTIDIR) -I$(TPIDIR) -I$(TPTDIR) -I$(TTTIDIR) $(INCLUDES) -o $@ -c $<
-
-makePlots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePlots.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/searchBins.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/TaggerUtility.o $(ODIR)/PlotUtility.o $(ODIR)/SusyUtility.o $(ODIR)/baselineDef.o $(ODIR)/customize.o $(ODIR)/ISRCorrector.o 
+makePlots: $(ODIR)/NTupleReader.o $(ODIR)/SATException.o $(ODIR)/samples.o $(ODIR)/Plotter.o $(ODIR)/MakePlots.o $(ODIR)/PDFUncertainty.o $(ODIR)/RegisterFunctions.o $(ODIR)/SusyUtility.o $(ODIR)/customize.o
 	$(LD) $^ $(LIBS) $(MT2LIB) $(LHAPDFLIB) -o $@
 
 clean:

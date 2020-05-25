@@ -411,6 +411,7 @@ void Plotter::createHistsFromTuple()
         std::cout << "Processing file(s): " << file.filePath << std::endl;
 
         if(registerfunc_ == nullptr) registerfunc_ = new RegisterFunctions();
+		registerfunc_->setSampleName(file.tag);
 
         int fileCount = 0, startCount = 0;
         int NEvtsTotal = 0;

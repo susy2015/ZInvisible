@@ -21,4 +21,4 @@ echo ${year}
 
 echo ${data}
 
-python condorSubmit.py -d ${data} -n 2 -y ${year} -S Data
+python condorSubmit.py -d ${data} -n 24 -y ${year} -S Data
