@@ -13,10 +13,10 @@ class NTupleReader;
 
 namespace plotterFunctions
 {
-	class CountWLep;
-	class JetSort;
-	class RJet;
-	class TopPt;
+    class CountWLep;
+    class JetSort;
+    class RJet;
+    class TopPt;
 }
 
 class SystWeights;
@@ -30,27 +30,27 @@ public:
         
     virtual void registerFunctions(NTupleReader& tr) {};
     virtual void activateBranches(std::set<std::string>& activeBranches) {};
-	virtual void setSampleName(const std::string &sampleName) {};
+    virtual void setSampleName(const std::string &sampleName) {};
     
 };
 
 class RegisterFunctionsNTuple : public RegisterFunctions
 {
 private:
-	plotterFunctions::CountWLep    *countWLep;
-	plotterFunctions::JetSort      *jetSort;
-	plotterFunctions::RJet         *rJet;
-	plotterFunctions::TopPt        *toppt;
-	std::unique_ptr<TopWeightCalculator> topweightcalculator;
-	std::string year_;
-	std::map<std::string, std::string> sample_name_map;
+    plotterFunctions::CountWLep    *countWLep;
+    plotterFunctions::JetSort      *jetSort;
+    plotterFunctions::RJet         *rJet;
+    plotterFunctions::TopPt        *toppt;
+    std::unique_ptr<TopWeightCalculator> topweightcalculator;
+    std::string year_;
+    std::map<std::string, std::string> sample_name_map;
 
 public:
     RegisterFunctionsNTuple(bool isCondor, const std::string &year, std::map<std::string, std::string> var_name_map);
     ~RegisterFunctionsNTuple();
     void registerFunctions(NTupleReader& tr);
     void activateBranches(std::set<std::string>& activeBranches);
-	void setSampleName(const std::string &sampleName);
+    void setSampleName(const std::string &sampleName);
 };
 
 #endif

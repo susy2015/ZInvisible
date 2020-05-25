@@ -315,11 +315,11 @@ Plotter::DataCollection::DataCollection(std::string type, std::string var, std::
 }
 
 Plotter::Scanner::Scanner(std::string name, std::set<std::string> vars, std::vector<DatasetSummary> datasets)
-	: name(name), vars(vars), datasets(datasets)
+    : name(name), vars(vars), datasets(datasets)
 {}
 
 Plotter::Scanner::Scanner(std::string name, std::set<std::string> vars, std::vector<DatasetSummary> datasets, std::map<std::string, std::string> name_map)
-	: name(name), vars(vars), datasets(datasets), name_map(name_map)
+    : name(name), vars(vars), datasets(datasets), name_map(name_map)
 {}
 
 void Plotter::createHistsFromTuple()
@@ -411,13 +411,13 @@ void Plotter::createHistsFromTuple()
         std::cout << "Processing file(s): " << file.filePath << std::endl;
 
         if(registerfunc_ == nullptr) registerfunc_ = new RegisterFunctions();
-		registerfunc_->setSampleName(file.tag);
+        registerfunc_->setSampleName(file.tag);
 
         int fileCount = 0, startCount = 0;
         int NEvtsTotal = 0;
         for(const std::string& fname : file.filelist_)
         {
-			scannersToFill.clear();
+            scannersToFill.clear();
 
             if(startCount++ < startFile_) continue;
             if(nFile_ > 0 && fileCount++ >= nFile_) break;
@@ -455,46 +455,46 @@ void Plotter::createHistsFromTuple()
                     //Things to run only on first event
                     if(tr.isFirstEvent())
                     {
-						for(Scanner& sc : scanners_)
-						{
-							for(DatasetSummary& ds : sc.datasets)
-							{
-								TDirectory *tupledir = (TDirectory*) fout_->Get(sc.name.c_str());
-								if(tupledir == NULL)
-								{
-									tupledir = fout_->mkdir(sc.name.c_str(), sc.name.c_str());
-									tupledir->Write();
-								}
-								tupledir->cd();
+                        for(Scanner& sc : scanners_)
+                        {
+                            for(DatasetSummary& ds : sc.datasets)
+                            {
+                                TDirectory *tupledir = (TDirectory*) fout_->Get(sc.name.c_str());
+                                if(tupledir == NULL)
+                                {
+                                    tupledir = fout_->mkdir(sc.name.c_str(), sc.name.c_str());
+                                    tupledir->Write();
+                                }
+                                tupledir->cd();
 
-								bool tofill = false;
-								for(const AnaSamples::FileSummary& fileToComp : ds.files)
-								{
-									if(file == fileToComp)
-									{
-										tofill = true;
-									}
-								}
-								
-								if(tofill)
-								{
-									TTree *tupletree = (TTree*) tupledir->Get(ds.label.c_str());
-									if(tupletree == NULL)
-										tupletree = new TTree(ds.label.c_str(), ds.label.c_str(), 99, tupledir);
+                                bool tofill = false;
+                                for(const AnaSamples::FileSummary& fileToComp : ds.files)
+                                {
+                                    if(file == fileToComp)
+                                    {
+                                        tofill = true;
+                                    }
+                                }
+                                
+                                if(tofill)
+                                {
+                                    TTree *tupletree = (TTree*) tupledir->Get(ds.label.c_str());
+                                    if(tupletree == NULL)
+                                        tupletree = new TTree(ds.label.c_str(), ds.label.c_str(), 99, tupledir);
 
-									TBranch *weightbranch = tupletree->GetBranch("weight");
-									if(weightbranch == NULL)
-										tupletree->Branch("weight", &(sc.weight));
-									else
-										weightbranch->SetAddress(&(sc.weight));
+                                    TBranch *weightbranch = tupletree->GetBranch("weight");
+                                    if(weightbranch == NULL)
+                                        tupletree->Branch("weight", &(sc.weight));
+                                    else
+                                        weightbranch->SetAddress(&(sc.weight));
 
-									sc.SetTree(tupletree);
-									sc.initBranches(tr);
-									sc.currentDS = ds;
-									scannersToFill.push_back(&sc);
-								}
-							}
-						}
+                                    sc.SetTree(tupletree);
+                                    sc.initBranches(tr);
+                                    sc.currentDS = ds;
+                                    scannersToFill.push_back(&sc);
+                                }
+                            }
+                        }
                     }
 
                     //If maxEvents_ is set, stop after so many events
@@ -537,15 +537,15 @@ void Plotter::createHistsFromTuple()
                         cutFlow->fillHist(tr, weight);
                     }
 
-					for (auto &sc : scannersToFill)
-					{
-						if(sc->currentDS.passCuts(tr))
-						{
-							//sc->weight = sc->currentDS.getWeight(tr);
-							sc->weight = file.getWeight();
-							sc->Fill();
-						}
-					}
+                    for (auto &sc : scannersToFill)
+                    {
+                        if(sc->currentDS.passCuts(tr))
+                        {
+                            //sc->weight = sc->currentDS.getWeight(tr);
+                            sc->weight = file.getWeight();
+                            sc->Fill();
+                        }
+                    }
 
                     ++NEvtsTotal;
                 }
@@ -559,12 +559,12 @@ void Plotter::createHistsFromTuple()
             f->Close();
             delete f;
 
-			for(auto &sc : scannersToFill)
-			{
-				sc->GetTree()->GetDirectory()->cd();
-				sc->GetTree()->Write();
-				std::cout << "Writing " << sc->GetTree()->GetName() << std::endl;
-			}
+            for(auto &sc : scannersToFill)
+            {
+                sc->GetTree()->GetDirectory()->cd();
+                sc->GetTree()->Write();
+                std::cout << "Writing " << sc->GetTree()->GetName() << std::endl;
+            }
         }
     }
 }
@@ -799,7 +799,7 @@ void Plotter::setCutFlows(std::vector<CutFlowSummary> cfs)
 
 void Plotter::setScanners(std::vector<Scanner> scanners)
 {
-	scanners_ = scanners;
+    scanners_ = scanners;
 }
 
 double Plotter::getLumi()
