@@ -47,23 +47,10 @@ def submit(datasets, era, numfile=5, noSubmit=False, verbose=False, dataCollecti
     sampleSetsFile = "sampleSets_PostProcessed_" + year + ".cfg"
     sampleCollectionsFile = "sampleCollections_" + year + ".cfg"
 
-    # TopTagger.cfg
-    mvaFileName = ""
-    with file(environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg") as meowttcfgFile:
-        for line in meowttcfgFile:
-            line = line.split("#")[0]
-            if "modelFile" in line:
-                mvaFileName = line.split("=")[1].strip().strip("\"")
-                break
-
-    if verbose:
-        print "mvaFileName = {0}".format(mvaFileName)
-
-    #here I hack in the tarball for GMP, this needs to be generalized to the other options
-
     filestoTransferGMP = [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/makePlots",
-                          environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
-                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTagger.cfg",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg-DeepResolved_DeepCSV_GR_nanoAOD_2016_v1.0.6/",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg-DeepResolved_DeepCSV_GR_nanoAOD_2017_v1.0.6/",
+                          environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/TopTaggerCfg-DeepResolved_DeepCSV_GR_nanoAOD_2018_v1.0.6/",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2016.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2017.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleSets_PostProcessed_2018.cfg",
@@ -71,8 +58,6 @@ def submit(datasets, era, numfile=5, noSubmit=False, verbose=False, dataCollecti
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2017.cfg",
                           environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/sampleCollections_2018.cfg",
                          ]
-
-    if mvaFileName:                 filestoTransferGMP += [environ["CMSSW_BASE"] + "/src/ZInvisible/Tools/%(trainingFile)s"%{"trainingFile":mvaFileName}]
 
     submitFileGMP = """universe = vanilla
 Executable = $ENV(CMSSW_BASE)/src/ZInvisible/Tools/condor/goMakePlots.sh

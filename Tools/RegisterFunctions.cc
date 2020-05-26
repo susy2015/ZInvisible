@@ -59,7 +59,10 @@ void RegisterFunctionsNTuple::setSampleName(const std::string &sampleName)
         sname = search->second;
     else
         sname = sampleName;
-    topweightcalculator = std::make_unique<TopWeightCalculator>("TopTaggerCfg-DeepResolved_DeepCSV_GR_nanoAOD_" + year_ + "_v1.0.6/tTagEff_" + year_ + ".root", sname, year_);
+	if (sampleName.find("Data") == std::string::npos)
+		topweightcalculator = std::make_unique<TopWeightCalculator>("TopTaggerCfg-DeepResolved_DeepCSV_GR_nanoAOD_" + year_ + "_v1.0.6/tTagEff_" + year_ + ".root", sname, year_);
+	else
+		topweightcalculator.reset();
 }
 
 RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
