@@ -101,6 +101,7 @@ RegisterFunctionsNTuple::~RegisterFunctionsNTuple()
     if(runTopTagger_drPhotonCleaned)                delete runTopTagger_drPhotonCleaned;
     if(runTopTagger_drPhotonCleaned_jesTotalUp)     delete runTopTagger_drPhotonCleaned_jesTotalUp;
     if(runTopTagger_drPhotonCleaned_jesTotalDown)   delete runTopTagger_drPhotonCleaned_jesTotalDown;
+    if(topWeightCalculator)                         delete topWeightCalculator;
     if(myBLV)                                       delete myBLV;
     if(myBLV_jetpt30)                               delete myBLV_jetpt30;
     if(myBLV_jetpt30_jesTotalUp)                    delete myBLV_jetpt30_jesTotalUp;
