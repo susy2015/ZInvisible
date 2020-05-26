@@ -767,7 +767,7 @@ def main():
     runs_json                   = options.runs_json
     syst_json                   = options.syst_json
     verbose                     = options.verbose
-    doRun2                      = False
+    doRun2                      = True
     
     #eras = ["2016", "2017", "2018", "Run2"]
     eras = ["2016", "2017", "2018", "2016and2017", "Run2"]

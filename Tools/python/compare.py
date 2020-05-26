@@ -168,7 +168,7 @@ def getSearchHists(f, label):
     # -------------------------- #
     
     h_data = f.Get("hdata")
-    h_pred = f.Get("hznunu_stack_4")
+    h_pred = f.Get("hznunu")
     
     low_dm_start   = 0
     low_dm_end     = 52
@@ -237,8 +237,7 @@ def validation(file_map, era):
 def search(file_map, era):
     label1 = "Caleb"
     label2 = "Matt"
-    #values = ["data", "pred"]
-    values = ["pred"]
+    values = ["data", "pred"]
     file1 = file_map[label1]
     file2 = file_map[label2]
     f1    = ROOT.TFile(file1, "read")
@@ -256,46 +255,58 @@ if __name__ == "__main__":
     
     eras = ["2016", "2017", "2018", "Run2"]
     
-    # validation bins
+    # ----------------------- #
+    # --- validation bins --- #
+    # ----------------------- #
     
-    # v6 ntuples, old top/w weights
-    #caleb_date = "2020-03-09"
-    #caleb_date = "2020-03-19"
-    caleb_date = "2020-03-24"
+    # # v6 ntuples, old top/w weights
+    # #caleb_date = "2020-03-09"
+    # #caleb_date = "2020-03-19"
+    # caleb_date = "2020-03-24"
+    # 
+    # # v6 ntuples, new top/w weights
+    # #caleb_date = "2020-04-15"
+    # 
+    # angel_date = "2020-04-01"
+    # 
+    # for era in eras:
+    #     f_map = {}
+    #     f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/validationBinsZinv_{1}.root".format(caleb_date, era)
+    #     f_map["Angel"] = "/uscms/home/caleb/archive/angel/{0}/{1}/result.root".format(angel_date, era)
+    #     validation(f_map, era)
+    # 
+    # # Note: Matt only provided 2016 for now; do not use other eras
+    # # Matt's files:
+    # # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T1tttt_2000_0.root
+    # # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T2tt_1000_0.root
     
-    # v6 ntuples, new top/w weights
-    #caleb_date = "2020-04-15"
+    # ------------------- #
+    # --- search bins --- #
+    # ------------------- #
     
-    angel_date = "2020-04-01"
+    # # v6 ntuples, old top/w weights
+    # # note: these runs do not have MET data histograms... I am not sure why
+    # # note: Matt still uses 09Mar2020_dev_v6 inputs which match my 2020-03-24 inputs
+    # #caleb_date = "2020-03-19"
+    # caleb_date = "2020-03-24"
+    # 
+    # # v6 ntuples, new top/w weights
+    # #caleb_date = "2020-04-09"
+    # #caleb_date = "2020-04-15"
+    # 
+    # matt_date  = "2020-04-22"
+    # 
+    # for era in ["2016"]:
+    #     f_map = {}
+    #     f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/searchBinsZinv_{1}.root".format(caleb_date, era)
+    #     f_map["Matt"]  = "/uscms/home/caleb/archive/matt/{0}/{1}/SumOfBkg_T1tttt_2000_0.root".format(matt_date, era)
+    #     search(f_map, era)
     
-    for era in eras:
-        f_map = {}
-        f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/validationBinsZinv_{1}.root".format(caleb_date, era)
-        f_map["Angel"] = "/uscms/home/caleb/archive/angel/{0}/{1}/result.root".format(angel_date, era)
-        validation(f_map, era)
-    
-    # Note: Matt only provided 2016 for now; do not use other eras
-    # Matt's files:
-    # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T1tttt_2000_0.root
-    # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T2tt_1000_0.root
-    
-    # search bins
-    
-    # v6 ntuples, old top/w weights
-    # note: these runs do not have MET data histograms... I am not sure why
-    # note: Matt still uses 09Mar2020_dev_v6 inputs which match my 2020-03-24 inputs
-    #caleb_date = "2020-03-19"
-    caleb_date = "2020-03-24"
-    
-    # v6 ntuples, new top/w weights
-    #caleb_date = "2020-04-09"
-    #caleb_date = "2020-04-15"
-    
-    matt_date  = "2020-04-22"
-    
-    for era in ["2016"]:
-        f_map = {}
-        f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/searchBinsZinv_{1}.root".format(caleb_date, era)
-        f_map["Matt"]  = "/uscms/home/caleb/archive/matt/{0}/{1}/SumOfBkg_T1tttt_2000_0.root".format(matt_date, era)
-        search(f_map, era)
+    # v6p5 ntuple unblinding Run2 comparison
+    f_map = {}
+    f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_Run2.root"
+    f_map["Matt"]  = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/19May2020_Run2Unblind_dev_v6/SearchBinsPlot/SumOfBkg.root"
+    search(f_map, "Run2")
+
+
 
