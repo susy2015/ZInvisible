@@ -217,9 +217,9 @@ def getMyHists(f, label, values):
     return h_map
 
 # compare validation bin histograms
-def validation(file_map, era):
-    label1 = "Caleb"
-    label2 = "Angel"
+def validation(file_map, labels, era):
+    label1 = labels[0]
+    label2 = labels[1]
     values = ["data", "mc", "pred"]
     file1 = file_map[label1]
     file2 = file_map[label2]
@@ -234,9 +234,9 @@ def validation(file_map, era):
     plot(h_map_1, h_map_2, ratio_limits, "validation", era)
 
 # compare search bin histograms
-def search(file_map, era):
-    label1 = "Caleb"
-    label2 = "Matt"
+def search(file_map, labels, era):
+    label1 = labels[0]
+    label2 = labels[1]
     values = ["data", "pred"]
     file1 = file_map[label1]
     file2 = file_map[label2]
@@ -259,26 +259,28 @@ if __name__ == "__main__":
     # --- validation bins --- #
     # ----------------------- #
     
-    # # v6 ntuples, old top/w weights
-    # #caleb_date = "2020-03-09"
-    # #caleb_date = "2020-03-19"
-    # caleb_date = "2020-03-24"
-    # 
-    # # v6 ntuples, new top/w weights
-    # #caleb_date = "2020-04-15"
-    # 
-    # angel_date = "2020-04-01"
-    # 
-    # for era in eras:
-    #     f_map = {}
-    #     f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/validationBinsZinv_{1}.root".format(caleb_date, era)
-    #     f_map["Angel"] = "/uscms/home/caleb/archive/angel/{0}/{1}/result.root".format(angel_date, era)
-    #     validation(f_map, era)
-    # 
-    # # Note: Matt only provided 2016 for now; do not use other eras
-    # # Matt's files:
-    # # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T1tttt_2000_0.root
-    # # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T2tt_1000_0.root
+    # v6 ntuples, old top/w weights
+    #caleb_date = "2020-03-09"
+    #caleb_date = "2020-03-19"
+    caleb_date = "2020-03-24"
+    
+    # v6 ntuples, new top/w weights
+    #caleb_date = "2020-04-15"
+    
+    angel_date = "2020-04-01"
+    
+    labels = ["Caleb", "Angel"]
+    
+    for era in eras:
+        f_map = {}
+        f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/validationBinsZinv_{1}.root".format(caleb_date, era)
+        f_map["Angel"] = "/uscms/home/caleb/archive/angel/{0}/{1}/result.root".format(angel_date, era)
+        validation(f_map, labels, era)
+    
+    # Note: Matt only provided 2016 for now; do not use other eras
+    # Matt's files:
+    # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T1tttt_2000_0.root
+    # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T2tt_1000_0.root
     
     # ------------------- #
     # --- search bins --- #
@@ -303,10 +305,21 @@ if __name__ == "__main__":
     #     search(f_map, era)
     
     # v6p5 ntuple unblinding Run2 comparison
+    # comparison with Matt
+    labels = ["Caleb", "Matt"]
     f_map = {}
     f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_Run2.root"
     f_map["Matt"]  = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/19May2020_Run2Unblind_dev_v6/SearchBinsPlot/SumOfBkg.root"
-    search(f_map, "Run2")
+    search(f_map, labels, "Run2")
+
+    # comparison with Jon
+    # /uscms_data/d3/jsw/SusyAna/CMSSW_10_2_9/src/notebooks/Yields_v6_5/2016_SearchBins_QCDResidMET.root
+    # /eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/26May2020_2016Unblind_dev_v6/SearchBinsPlot/SearchBins_QCDResidMET.root
+    # labels = ["Caleb", "Jon"]
+    # f_map = {}
+    # f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_Run2.root"
+    # f_map["Jon"]   = "/uscms_data/d3/jsw/SusyAna/CMSSW_10_2_9/src/notebooks/Yields_v6_5/2016_SearchBins_QCDResidMET.root"
+    # search(f_map, labels, "Run2")
 
 
 
