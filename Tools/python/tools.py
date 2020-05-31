@@ -313,4 +313,69 @@ def getMatrixInverseError(A, A_error):
     Ainverse_error[1][1] = getMultiplicationError( A[0][0] / det,  A[0][0], A_error[0][0], det, det_error)
     return Ainverse_error
 
+def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False, setLog=False):
+    eraTag = "_" + era
+    draw_option = "hist"
+            
+    # colors
+    color_red    = "vermillion"
+    color_blue   = "electric blue"
+    color_green  = "irish green" 
+    color_purple = "violet"
+    color_black  = "black"
+    colors = [color_red, color_blue, color_green, color_purple, color_black]
+    
+    # legend: TLegend(x1,y1,x2,y2)
+    legend_x1 = 0.6
+    legend_x2 = 0.9 
+    legend_y1 = 0.7
+    legend_y2 = 0.9 
+    legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+    
+    c = ROOT.TCanvas("c", "c", 800, 800)
+
+    y_title = "Events"
+    
+    for i in xrange(len(histograms)):
+        # normalize
+        if normalize:
+            integral = histograms[i].Integral()
+            histograms[i].Scale(1.0 / integral)
+        # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False)
+        setupHist(histograms[i], title, x_title, y_title, colors[i], y_min, y_max, adjust=False)
+        # set log scale
+        if setLog:
+            ROOT.gPad.SetLogy()
+        # draw
+        if i == 0:
+            histograms[i].Draw(draw_option)
+        else:
+            histograms[i].Draw(draw_option + " same")
+        legend.AddEntry(histograms[i],    labels[i],   "l")
+
+    legend.Draw()
+   
+    if showStats:
+        # write stats 
+        # - TLatex: DrawLatex(x, y, text)
+        # - give x, y coordinates (same as plot coordinates)
+        # - y list is for positioning the text
+        x_range = x_max - x_min 
+        x_pos_1 = x_max - 0.4  * x_range
+        x_pos_2 = x_max - 0.35 * x_range
+        step = (y_max - y_min) / 20.0
+        y_list = np.arange(0.7 * y_max, 0.0, -1 * step)
+        mark = ROOT.TLatex()
+        mark.SetTextSize(0.03)
+        
+        for i in xrange(len(labels)):
+            mark.DrawLatex(x_pos_1, y_list[2 * i + 0], labels[i])
+            mark.DrawLatex(x_pos_2, y_list[2 * i + 1], "\mu = %.3f, \sigma = %.3f" % (histograms[i].GetMean(), histograms[i].GetStdDev()))
+
+    # save histograms
+    plot_dir = "more_plots/"
+    plot_name = plot_dir + name + eraTag
+    c.Update()
+    c.SaveAs(plot_name + ".png")
+    c.SaveAs(plot_name + ".pdf")
 

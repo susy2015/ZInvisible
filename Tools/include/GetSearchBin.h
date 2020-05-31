@@ -142,11 +142,11 @@ namespace plotterFunctions
                 int nSRUnit  = SRunit(     SAT_Pass_Baseline, Pass_QCDCR, Pass_LepCR, Pass_PhoCR, SAT_Pass_highDM, SAT_Pass_lowDM, nBottoms, mtb, ptb, met, nSoftBottoms, nJets, ISRJetPt, ht, nResolvedTops, nMergedTops, nWs);
 
                 // --- testing
-                bool isFavoriteBin = bool(nCRUnit >= 53 && nCRUnit <= 60);
-                if (isFavoriteBin)
-                {
-                    printf("Found a favorite bin: nCRUnit = %d; SAT_Pass_lowDM = %d, SAT_Pass_highDM = %d\n", nCRUnit, SAT_Pass_lowDM, SAT_Pass_highDM);
-                }
+                //bool isFavoriteBin = bool(nCRUnit >= 53 && nCRUnit <= 60);
+                //if (isFavoriteBin)
+                //{
+                //    printf("Found a favorite bin: nCRUnit = %d; SAT_Pass_lowDM = %d, SAT_Pass_highDM = %d\n", nCRUnit, SAT_Pass_lowDM, SAT_Pass_highDM);
+                //}
                 
                 if (SAT_Pass_lowDM)
                 {

@@ -51,6 +51,9 @@ class Common:
                         print "era {0}; b={1} b_i={2} {3} {4}, types {5}, {6}, {7}, {8}".format(era, b, bin_i, region, h_type, type(b), type(bin_i), type(region), type(h_type))
                     value       = h.GetBinContent(bin_i)
                     value_error = h.GetBinError(bin_i)
+                    if value < 0:
+                        print "WARNING: {0} {1} bin {2}, {3}: bin content = {4}; setting to 0.000001".format(era, region, b, h_type, value)
+                        value = 0.000001
                     final_error = getBinError(value, value_error, ERROR_ZERO) 
                     self.binValues[era][b][h_type]            = value
                     self.binValues[era][b][h_type + "_error"] = final_error

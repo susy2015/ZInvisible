@@ -24,7 +24,7 @@ def main():
     json_file   = options.json_file
     verbose     = options.verbose
 
-    doRun2      = False
+    doRun2      = True
     doUnits     = True
     doCutflows  = False
     doPhotons   = False
@@ -36,7 +36,7 @@ def main():
     
     #eras = ["2016", "2017_BE", "2017_F", "2018_PreHEM", "2018_PostHEM", "Run2"]
     #eras = ["2016", "2017", "2018", "Run2"]
-    eras = ["2016"]
+    eras = ["2016", "2017", "2018", "2016and2017", "Run2"]
     dirList = []
     plot_dir                = "more_plots"
     latex_dir               = "latex_files"

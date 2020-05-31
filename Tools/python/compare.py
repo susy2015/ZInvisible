@@ -152,23 +152,49 @@ def getValidationHists(f, label):
     
     return h_map
 
+
+def getSearchHistsSimple(f, h_type, h_name):
+    # e.g. h_type = "data", h_name = "hdata"
+    h_map = {}
+    h_map["lowdm"]  = {}
+    h_map["highdm"] = {}
+    h = f.Get(h_name)
+    
+    low_dm_start   = 0
+    low_dm_end     = 52
+    high_dm_start  = 53
+    high_dm_end    = 182
+    low_dm_nbins   = low_dm_end - low_dm_start + 1 
+    high_dm_nbins  = high_dm_end - high_dm_start + 1 
+    h_lowdm        = ROOT.TH1F("lowdm_" + h_type,    "lowdm_" + h_type,    low_dm_nbins,  low_dm_start,  low_dm_end + 1) 
+    h_highdm       = ROOT.TH1F("highdm_" + h_type,   "highdm_" + h_type,   high_dm_nbins, high_dm_start, high_dm_end + 1) 
+    
+    # fill low and high dm histograms
+    bin_i = 1
+    for b in xrange(low_dm_start, low_dm_end + 1):
+        h_lowdm.SetBinContent(bin_i,   h.GetBinContent(b + 1))
+        h_lowdm.SetBinError(bin_i,     h.GetBinError(b + 1))
+        bin_i += 1
+    bin_i = 1
+    for b in xrange(high_dm_start, high_dm_end + 1):
+        h_highdm.SetBinContent(bin_i,   h.GetBinContent(b + 1))
+        h_highdm.SetBinError(bin_i,     h.GetBinError(b + 1))
+        bin_i += 1
+    
+    h_map["lowdm"]  = h_lowdm
+    h_map["highdm"] = h_highdm
+
+    return h_map
+
 # return histogram map
-def getSearchHists(f, label):
+def getSearchHists(f, label, h_names):
     h_map = {}
     h_map["label"]  = label
     h_map["lowdm"]  = {}
     h_map["highdm"] = {}
     
-    # --- Matt's histograms --- #
-    #
-    # data:         hdata
-    # total pred:   hpred
-    # znunu pred:   hznunu_stack_4
-    #
-    # -------------------------- #
-    
     h_data = f.Get("hdata")
-    h_pred = f.Get("hznunu_stack_4")
+    h_pred = f.Get("hznunu")
     
     low_dm_start   = 0
     low_dm_end     = 52
@@ -217,9 +243,9 @@ def getMyHists(f, label, values):
     return h_map
 
 # compare validation bin histograms
-def validation(file_map, era):
-    label1 = "Caleb"
-    label2 = "Angel"
+def validation(file_map, labels, era):
+    label1 = labels[0]
+    label2 = labels[1]
     values = ["data", "mc", "pred"]
     file1 = file_map[label1]
     file2 = file_map[label2]
@@ -234,17 +260,29 @@ def validation(file_map, era):
     plot(h_map_1, h_map_2, ratio_limits, "validation", era)
 
 # compare search bin histograms
-def search(file_map, era):
-    label1 = "Caleb"
-    label2 = "Matt"
-    #values = ["data", "pred"]
-    values = ["pred"]
+def search(file_map, values, labels, h_names, era):
+    label1 = labels[0]
+    label2 = labels[1]
     file1 = file_map[label1]
     file2 = file_map[label2]
     f1    = ROOT.TFile(file1, "read")
     f2    = ROOT.TFile(file2, "read")
     h_map_1 = getMyHists(       f1, label1, values )
-    h_map_2 = getSearchHists(   f2, label2 )
+    #h_map_2 = getSearchHists(   f2, label2, h_names )
+    
+    h_map_2 = {}
+    h_map_2["label"]  = label2
+    h_map_2["lowdm"]  = {}
+    h_map_2["highdm"] = {}
+
+    for value in values:
+        h_name = value
+        if value == "pred":
+            h_name = "znunu_pred"
+    
+        simple_map = getSearchHistsSimple(f2, value, h_names[h_name])
+        h_map_2["lowdm"][value]  = simple_map["lowdm"]
+        h_map_2["highdm"][value] = simple_map["highdm"] 
 
     # make plots
     print "Running plot() for {0} and {1}, {2}".format(label1, label2, era)
@@ -256,46 +294,93 @@ if __name__ == "__main__":
     
     eras = ["2016", "2017", "2018", "Run2"]
     
-    # validation bins
+    # ----------------------- #
+    # --- validation bins --- #
+    # ----------------------- #
     
-    # v6 ntuples, old top/w weights
-    #caleb_date = "2020-03-09"
-    #caleb_date = "2020-03-19"
-    caleb_date = "2020-03-24"
+    # # v6 ntuples, old top/w weights
+    # #caleb_date = "2020-03-09"
+    # #caleb_date = "2020-03-19"
+    # caleb_date = "2020-03-24"
+    # 
+    # # v6 ntuples, new top/w weights
+    # #caleb_date = "2020-04-15"
+    # 
+    # angel_date = "2020-04-01"
+    # 
+    # labels = ["Caleb", "Angel"]
+    # 
+    # for era in eras:
+    #     f_map = {}
+    #     f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/validationBinsZinv_{1}.root".format(caleb_date, era)
+    #     f_map["Angel"] = "/uscms/home/caleb/archive/angel/{0}/{1}/result.root".format(angel_date, era)
+    #     validation(f_map, labels, era)
     
-    # v6 ntuples, new top/w weights
-    #caleb_date = "2020-04-15"
     
-    angel_date = "2020-04-01"
-    
-    for era in eras:
-        f_map = {}
-        f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/validationBinsZinv_{1}.root".format(caleb_date, era)
-        f_map["Angel"] = "/uscms/home/caleb/archive/angel/{0}/{1}/result.root".format(angel_date, era)
-        validation(f_map, era)
+    # ------------------- #
+    # --- search bins --- #
+    # ------------------- #
     
     # Note: Matt only provided 2016 for now; do not use other eras
     # Matt's files:
     # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T1tttt_2000_0.root
     # /uscms/home/caleb/archive/matt/2020-04-22/2016/SumOfBkg_T2tt_1000_0.root
     
-    # search bins
+    # # v6 ntuples, old top/w weights
+    # # note: these runs do not have MET data histograms... I am not sure why
+    # # note: Matt still uses 09Mar2020_dev_v6 inputs which match my 2020-03-24 inputs
+    # #caleb_date = "2020-03-19"
+    # caleb_date = "2020-03-24"
+    # 
+    # # v6 ntuples, new top/w weights
+    # #caleb_date = "2020-04-09"
+    # #caleb_date = "2020-04-15"
+    # 
+    # matt_date  = "2020-04-22"
+    # 
+    # for era in ["2016"]:
+    #     f_map = {}
+    #     f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/searchBinsZinv_{1}.root".format(caleb_date, era)
+    #     f_map["Matt"]  = "/uscms/home/caleb/archive/matt/{0}/{1}/SumOfBkg_T1tttt_2000_0.root".format(matt_date, era)
+    #     search(f_map, era)
     
-    # v6 ntuples, old top/w weights
-    # note: these runs do not have MET data histograms... I am not sure why
-    # note: Matt still uses 09Mar2020_dev_v6 inputs which match my 2020-03-24 inputs
-    #caleb_date = "2020-03-19"
-    caleb_date = "2020-03-24"
+    # --- Matt's histograms --- #
+    #
+    # data:         hdata
+    # total pred:   hpred
+    # znunu pred:   hznunu
+    #
+    # -------------------------- #
     
-    # v6 ntuples, new top/w weights
-    #caleb_date = "2020-04-09"
-    #caleb_date = "2020-04-15"
+    # v6p5 ntuple unblinding Run2 comparison
+    # comparison with Matt
+    # Run2
+    values = ["data", "pred"]
+    labels = ["Caleb", "Matt"]
+    h_names = {"data" : "hdata", "znunu_pred" : "hznunu"}
+    f_map = {}
+    f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_Run2.root"
+    f_map["Matt"]  = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/19May2020_Run2Unblind_dev_v6/SearchBinsPlot/SumOfBkg.root"
+    search(f_map, values, labels, h_names, "Run2")
+
+    # --- Jon's histograms --- #
+    #
+    # data:         Data
+    # QCD pred:     QCD
+    #
+    # -------------------------- #
     
-    matt_date  = "2020-04-22"
-    
-    for era in ["2016"]:
-        f_map = {}
-        f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/{0}/prediction_histos/searchBinsZinv_{1}.root".format(caleb_date, era)
-        f_map["Matt"]  = "/uscms/home/caleb/archive/matt/{0}/{1}/SumOfBkg_T1tttt_2000_0.root".format(matt_date, era)
-        search(f_map, era)
+    # comparison with Jon
+    # /uscms_data/d3/jsw/SusyAna/CMSSW_10_2_9/src/notebooks/Yields_v6_5/2016_SearchBins_QCDResidMET.root
+    # /eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/26May2020_2016Unblind_dev_v6/SearchBinsPlot/SearchBins_QCDResidMET.root
+    # 2016
+    values = ["data"]
+    labels = ["Caleb", "Jon"]
+    h_names = {"data" : "Data", "qcd_pred" : "QCD"}
+    f_map = {}
+    f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_2016.root"
+    f_map["Jon"]   = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/26May2020_2016Unblind_dev_v6/SearchBinsPlot/SearchBins_QCDResidMET.root"
+    search(f_map, values, labels, h_names, "2016")
+
+
 
