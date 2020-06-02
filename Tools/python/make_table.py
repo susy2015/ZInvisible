@@ -355,8 +355,8 @@ class Table:
                     region = "high \dm"
                 label = "tab:zinvPredToBin{0}".format(lastBin)
                 caption  = "Prediction for the \zinv background $\\left(\Np\\right)$ in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
-                caption += " The normalization factor \Rz, shape factor \Sg, and number of \znunu MC events \Nmc are also shown for each search bin including their statistical uncertainties."
-                caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \znunu MC."
+                caption += " The normalization factor $\\left(\Rz\\right)$, shape factor $\\left(\Sg\\right)$, and number of \znunu MC events $\\left(\Nmc\\right)$ are also shown for each search bin including their statistical uncertainties."
+                caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \Nmc."
                 caption += " See Eq.~\\ref{eq:zinv_pred}."
                 s += self.endTable(label, caption)
                 if ibin < 183:
