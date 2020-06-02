@@ -314,8 +314,9 @@ class Table:
         s  = '\\hline\n'
         s += '\\end{tabular}\n'
         s += '}\n'
-        s += '\\label{%s}\n' % label
+        # WARNING: label must go after caption for table reference to work
         s += '\\caption{%s}\n' % caption
+        s += '\\label{%s}\n' % label
         s += '\\end{center}\n'
         s += '\\end{table}\n'
         return s
