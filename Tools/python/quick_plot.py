@@ -53,8 +53,9 @@ def plotMergedTopPartons(era, result_file, verbose):
     plot(histograms, labels, name_2, title_2, x_title, x_min, x_max, y_min_2, y_max_2, era, showStats=True, normalize=True)
 
 # plot Nb, Nsv, Nj for different eras
-def plotVars(eras, runMap, verbose):
-    var = "Nb"
+def plotVars(var, eras, runMap, varMap, verbose):
+    var_label = varMap[var]["label"] 
+    h_var     = varMap[var]["h_var"]  
     histograms = []
     labels     = []
     for era in eras:
@@ -64,14 +65,14 @@ def plotVars(eras, runMap, verbose):
             print "{0}: {1}".format(era, result_file)
         # use deepcopy so that histogram exists after file is closed / reassigned
         f = ROOT.TFile(result_file, "read")
-        h_name = "nBottoms_drLeptonCleaned_jetpt30/DataMC_Electron_Baseline_nb_jetpt30nBottoms_drLeptonCleaned_jetpt30nBottoms_drLeptonCleaned_jetpt30Datadata"
+        h_name = "{0}/DataMC_Electron_Baseline_nb_jetpt30{0}{0}Datadata".format(h_var)
         histograms.append(copy.deepcopy(f.Get(h_name)))
         labels.append(era + " data")
         if not histograms[-1]:
             print "ERROR: Unable to load histogram {0}".format(h_name) 
-    name = var + "_data"
-    title = "Data comparison for " + var
-    x_title = var
+    name    = var_label + "_data"
+    title   = "Data comparison for " + var_label
+    x_title = var_label
     x_min = 0
     x_max = 6
     #y_min = 10**-1
@@ -96,6 +97,10 @@ def main():
         return
     
     eras = ["2016", "2017", "2018", "Run2"]
+    varMap = {}
+    varMap["nb"] = {}
+    varMap["nb"]["label"] = "Nb"
+    varMap["nb"]["h_var"] = "nBottoms_drLeptonCleaned_jetpt30"
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
@@ -104,7 +109,7 @@ def main():
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
             plotMergedTopPartons(era, result_file, verbose)
-        plotVars(eras, runMap, verbose)
+        plotVars("nb", eras, runMap, varMap, verbose)
 
 if __name__ == "__main__":
     main()
