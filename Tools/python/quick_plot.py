@@ -99,7 +99,7 @@ def plotVars(var, particle, eras, runMap, varMap, verbose):
     titleMC     = "{0} MC comparison for {1}".format(particle, var_label)
     x_title     = var_label
     x_min = 0
-    x_max = 6
+    x_max = 11
     #y_min = 10**-1
     #y_max = 10**5
     y_min = 10**-2
@@ -130,6 +130,9 @@ def main():
     varMap["nsv"] = {}
     varMap["nsv"]["label"] = "Nsv"
     varMap["nsv"]["h_var"] = "nSoftBottoms_drLeptonCleaned_jetpt30"
+    varMap["nj"] = {}
+    varMap["nj"]["label"] = "Nj"
+    varMap["nj"]["h_var"] = "nJets_drLeptonCleaned_jetpt30"
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
@@ -142,6 +145,8 @@ def main():
         plotVars("nb",  "Muon",     eras, runMap, varMap, verbose)
         plotVars("nsv", "Electron", eras, runMap, varMap, verbose)
         plotVars("nsv", "Muon",     eras, runMap, varMap, verbose)
+        plotVars("nj",  "Electron", eras, runMap, varMap, verbose)
+        plotVars("nj",  "Muon",     eras, runMap, varMap, verbose)
 
 if __name__ == "__main__":
     main()
