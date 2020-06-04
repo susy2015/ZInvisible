@@ -1,6 +1,7 @@
 # quick_plot.py
 
 import ROOT
+import copy
 import json
 import os
 import argparse
@@ -12,7 +13,8 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-def run(era, result_file, verbose):
+# plot merged top partons
+def plotMergedTopPartons(era, result_file, verbose):
     if verbose:
         print "{0}: {1}".format(era, result_file)
     f = ROOT.TFile(result_file, "read")
@@ -50,6 +52,32 @@ def run(era, result_file, verbose):
     plot(histograms, labels, name_1, title_1, x_title, x_min, x_max, y_min_1, y_max_1, era, showStats=False, normalize=False, setLog=True)
     plot(histograms, labels, name_2, title_2, x_title, x_min, x_max, y_min_2, y_max_2, era, showStats=True, normalize=True)
 
+# plot Nb, Nsv, Nj for different eras
+def plotVars(eras, runMap, verbose):
+    var = "Nb"
+    histograms = []
+    labels     = []
+    for era in eras:
+        runDir = runMap[era]
+        result_file = "condor/" + runDir + "/result.root"
+        if verbose:
+            print "{0}: {1}".format(era, result_file)
+        # use deepcopy so that histogram exists after file is closed / reassigned
+        f = ROOT.TFile(result_file, "read")
+        h_name = "nBottoms_drLeptonCleaned_jetpt30/DataMC_Electron_Baseline_nb_jetpt30nBottoms_drLeptonCleaned_jetpt30nBottoms_drLeptonCleaned_jetpt30Datadata"
+        histograms.append(copy.deepcopy(f.Get(h_name)))
+        labels.append(era)
+        if not histograms[-1]:
+            print "ERROR: Unable to load histogram {0}".format(h_name) 
+    name = var
+    title = var
+    x_title = var
+    x_min = 0
+    x_max = 6
+    y_min = 10**-1
+    y_max = 10**5
+    # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False, setLog=False)
+    plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, "Run2", showStats=False, normalize=False, setLog=True)
 
 def main():
     # options
@@ -73,7 +101,8 @@ def main():
         for era in eras:
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
-            run(era, result_file, verbose)
+            plotMergedTopPartons(era, result_file, verbose)
+        plotVars(eras, runMap, verbose)
 
 if __name__ == "__main__":
     main()
