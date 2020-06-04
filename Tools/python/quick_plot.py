@@ -56,24 +56,48 @@ def plotMergedTopPartons(era, result_file, verbose):
 def plotVars(var, particle, eras, runMap, varMap, verbose):
     var_label = varMap[var]["label"] 
     h_var     = varMap[var]["h_var"]  
-    histograms = []
-    labels     = []
+    histogramsData = []
+    histogramsMC   = []
+    labelsData     = []
+    labelsMC       = []
     for era in eras:
         runDir = runMap[era]
         result_file = "condor/" + runDir + "/result.root"
         if verbose:
             print "{0}: {1}".format(era, result_file)
-        # use deepcopy so that histogram exists after file is closed / reassigned
+        # read input file
         f = ROOT.TFile(result_file, "read")
+        # data
         h_name = "{0}/DataMC_{1}_Baseline_{2}_jetpt30{0}{0}Datadata".format(h_var, particle, var)
-        h = f.Get(h_name)
-        histograms.append(copy.deepcopy(h))
-        labels.append(era + " data")
-        if not histograms[-1]:
+        h_data = f.Get(h_name)
+        # use deepcopy so that histogram exists after file is closed / reassigned
+        histogramsData.append(copy.deepcopy(h_data))
+        labelsData.append(era + " data")
+        if not histogramsData[-1]:
             print "ERROR: Unable to load histogram {0}".format(h_name) 
-    name    = "{0}_data_{1}".format(particle, var_label)
-    title   = "{0} data comparison for {1}".format(particle, var_label)
-    x_title = var_label
+        # MC
+        h1_name = "{0}/DataMC_{1}_Baseline_{2}_jetpt30{0}{0}DYstack".format(h_var, particle, var)
+        h2_name = "{0}/DataMC_{1}_Baseline_{2}_jetpt30{0}{0}t#bar{{t}}stack".format(h_var, particle, var)
+        h3_name = "{0}/DataMC_{1}_Baseline_{2}_jetpt30{0}{0}Single tstack".format(h_var, particle, var)
+        h4_name = "{0}/DataMC_{1}_Baseline_{2}_jetpt30{0}{0}Rarestack".format(h_var, particle, var)
+        h1 = f.Get(h1_name)
+        h2 = f.Get(h2_name)
+        h3 = f.Get(h3_name)
+        h4 = f.Get(h4_name)
+        h_mc = h1.Clone("h_mc")
+        h_mc.Add(h2)
+        h_mc.Add(h3)
+        h_mc.Add(h4)
+        # use deepcopy so that histogram exists after file is closed / reassigned
+        histogramsMC.append(copy.deepcopy(h_mc))
+        labelsMC.append(era + " MC")
+        if not histogramsMC[-1]:
+            print "ERROR: Unable to load histogram {0}".format(h_name) 
+    nameData    = "{0}_data_{1}".format(particle, var_label)
+    titleData   = "{0} data comparison for {1}".format(particle, var_label)
+    nameMC      = "{0}_mc_{1}".format(particle, var_label)
+    titleMC     = "{0} MC comparison for {1}".format(particle, var_label)
+    x_title     = var_label
     x_min = 0
     x_max = 6
     #y_min = 10**-1
@@ -81,7 +105,8 @@ def plotVars(var, particle, eras, runMap, varMap, verbose):
     y_min = 10**-2
     y_max = 10**1
     # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False, setLog=False)
-    plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, "Run2", showStats=False, normalize=True, setLog=True)
+    plot(histogramsData, labelsData, nameData, titleData, x_title, x_min, x_max, y_min, y_max, "Run2", showStats=False, normalize=True, setLog=True)
+    plot(histogramsMC, labelsMC, nameMC, titleMC, x_title, x_min, x_max, y_min, y_max, "Run2", showStats=False, normalize=True, setLog=True)
 
 def main():
     # options
