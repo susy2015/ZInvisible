@@ -53,7 +53,7 @@ def plotMergedTopPartons(era, result_file, verbose):
     plot(histograms, labels, name_2, title_2, x_title, x_min, x_max, y_min_2, y_max_2, era, showStats=True, normalize=True)
 
 # plot Nb, Nsv, Nj for different eras
-def plotVars(var, eras, runMap, varMap, verbose):
+def plotVars(var, particle, eras, runMap, varMap, verbose):
     var_label = varMap[var]["label"] 
     h_var     = varMap[var]["h_var"]  
     histograms = []
@@ -65,13 +65,13 @@ def plotVars(var, eras, runMap, varMap, verbose):
             print "{0}: {1}".format(era, result_file)
         # use deepcopy so that histogram exists after file is closed / reassigned
         f = ROOT.TFile(result_file, "read")
-        h_name = "{0}/DataMC_Electron_Baseline_nb_jetpt30{0}{0}Datadata".format(h_var)
+        h_name = "{0}/DataMC_{1}_Baseline_nb_jetpt30{0}{0}Datadata".format(h_var, particle)
         histograms.append(copy.deepcopy(f.Get(h_name)))
         labels.append(era + " data")
         if not histograms[-1]:
             print "ERROR: Unable to load histogram {0}".format(h_name) 
-    name    = var_label + "_data"
-    title   = "Data comparison for " + var_label
+    name    = "{0}_data_{1}".format(particle, var_label)
+    title   = "{0} data comparison for {1}".format(particle, var_label)
     x_title = var_label
     x_min = 0
     x_max = 6
@@ -109,7 +109,8 @@ def main():
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
             plotMergedTopPartons(era, result_file, verbose)
-        plotVars("nb", eras, runMap, varMap, verbose)
+        plotVars("nb", "Electron", eras, runMap, varMap, verbose)
+        plotVars("nb", "Muon",     eras, runMap, varMap, verbose)
 
 if __name__ == "__main__":
     main()
