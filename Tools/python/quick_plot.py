@@ -66,7 +66,8 @@ def plotVars(var, particle, eras, runMap, varMap, verbose):
         # use deepcopy so that histogram exists after file is closed / reassigned
         f = ROOT.TFile(result_file, "read")
         h_name = "{0}/DataMC_{1}_Baseline_{2}_jetpt30{0}{0}Datadata".format(h_var, particle, var)
-        histograms.append(copy.deepcopy(f.Get(h_name)))
+        h = f.Get(h_name)
+        histograms.append(copy.deepcopy(h))
         labels.append(era + " data")
         if not histograms[-1]:
             print "ERROR: Unable to load histogram {0}".format(h_name) 
