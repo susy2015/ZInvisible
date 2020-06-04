@@ -130,6 +130,7 @@ def writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selec
         outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, final_syst, process, r_down ) )
 
 # use prediction, syst up/down histograms
+# syst name is "syst for conf" name from systematics.json
 def writeToConfFromPred(outFile, binMap, process, syst, h, h_up, h_down, region, offset):
     nBins = h.GetNbinsX()
     for i in xrange(1, nBins + 1):
@@ -148,8 +149,11 @@ def writeToConfFromPred(outFile, binMap, process, syst, h, h_up, h_down, region,
                 r_up   = p_up   / p
                 r_down = p_down / p
             else:
-                print "WARNING: pred = 0 for search bin {0}".format(sb_i)
+                print "WARNING: pred = 0 for bin {0}".format(sb_i)
         # syst is already systForConf (systForConf = systMap[syst]["name"])
+        # investigate jes
+        if process == "znunu" and syst == "JES":
+            print "SEARCH_BIN_{0}  {1}  {2}  {3}: nominal={4}, up={5}, down={6}".format(sb_i, sb_name, syst, process, p, p_up, p_down)
         outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, process, r_up   ) )
         outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, process, r_down ) )
 
