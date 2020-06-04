@@ -65,7 +65,7 @@ def plotVars(var, particle, eras, runMap, varMap, verbose):
             print "{0}: {1}".format(era, result_file)
         # use deepcopy so that histogram exists after file is closed / reassigned
         f = ROOT.TFile(result_file, "read")
-        h_name = "{0}/DataMC_{1}_Baseline_nb_jetpt30{0}{0}Datadata".format(h_var, particle)
+        h_name = "{0}/DataMC_{1}_Baseline_{2}_jetpt30{0}{0}Datadata".format(h_var, particle, var)
         histograms.append(copy.deepcopy(f.Get(h_name)))
         labels.append(era + " data")
         if not histograms[-1]:
@@ -101,6 +101,9 @@ def main():
     varMap["nb"] = {}
     varMap["nb"]["label"] = "Nb"
     varMap["nb"]["h_var"] = "nBottoms_drLeptonCleaned_jetpt30"
+    varMap["nsv"] = {}
+    varMap["nsv"]["label"] = "Nsv"
+    varMap["nsv"]["h_var"] = "nSoftBottoms_drLeptonCleaned_jetpt30"
     
     with open(json_file, "r") as input_file:
         runMap = json.load(input_file)
@@ -109,8 +112,10 @@ def main():
             runDir = runMap[era]
             result_file = "condor/" + runDir + "/result.root"
             plotMergedTopPartons(era, result_file, verbose)
-        plotVars("nb", "Electron", eras, runMap, varMap, verbose)
-        plotVars("nb", "Muon",     eras, runMap, varMap, verbose)
+        plotVars("nb",  "Electron", eras, runMap, varMap, verbose)
+        plotVars("nb",  "Muon",     eras, runMap, varMap, verbose)
+        plotVars("nsv", "Electron", eras, runMap, varMap, verbose)
+        plotVars("nsv", "Muon",     eras, runMap, varMap, verbose)
 
 if __name__ == "__main__":
     main()
