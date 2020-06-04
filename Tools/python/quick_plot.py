@@ -66,18 +66,20 @@ def plotVars(eras, runMap, verbose):
         f = ROOT.TFile(result_file, "read")
         h_name = "nBottoms_drLeptonCleaned_jetpt30/DataMC_Electron_Baseline_nb_jetpt30nBottoms_drLeptonCleaned_jetpt30nBottoms_drLeptonCleaned_jetpt30Datadata"
         histograms.append(copy.deepcopy(f.Get(h_name)))
-        labels.append(era)
+        labels.append(era + " data")
         if not histograms[-1]:
             print "ERROR: Unable to load histogram {0}".format(h_name) 
-    name = var
-    title = var
+    name = var + "_data"
+    title = "Data comparison for " + var
     x_title = var
     x_min = 0
     x_max = 6
-    y_min = 10**-1
-    y_max = 10**5
+    #y_min = 10**-1
+    #y_max = 10**5
+    y_min = 10**-2
+    y_max = 10**1
     # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False, setLog=False)
-    plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, "Run2", showStats=False, normalize=False, setLog=True)
+    plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, "Run2", showStats=False, normalize=True, setLog=True)
 
 def main():
     # options
