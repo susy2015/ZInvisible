@@ -112,15 +112,17 @@ def plotVars(var, particle, eras, runMap, varMap, verbose):
     x_title     = var_label
     x_min = 0
     x_max = 11
-    #y_min = 10**-1
-    #y_max = 10**5
-    y_min_1 = 10**-7
-    y_max_1 = 10**1
+    # standard y-axis limits
+    y_min_1 = 10**-2
+    y_max_1 = 10**6
+    # normalized y-axis limits
+    #y_min_1 = 10**-7
+    #y_max_1 = 10**1
     y_min_2 = 0.0
     y_max_2 = 3.0
     # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False, setLog=False)
-    plot(histogramsData, labelsData, nameData, titleData, x_title, x_min, x_max, y_min_1, y_max_1, "Run2", showStats=False, normalize=True, setLog=True)
-    plot(histogramsMC, labelsMC, nameMC, titleMC, x_title, x_min, x_max, y_min_1, y_max_1, "Run2", showStats=False, normalize=True, setLog=True)
+    plot(histogramsData, labelsData, nameData, titleData, x_title, x_min, x_max, y_min_1, y_max_1, "Run2", showStats=False, normalize=False, setLog=True)
+    plot(histogramsMC, labelsMC, nameMC, titleMC, x_title, x_min, x_max, y_min_1, y_max_1, "Run2", showStats=False, normalize=False, setLog=True)
     plot(histogramsRatio, labelsRatio, nameRatio, titleRatio, x_title, x_min, x_max, y_min_2, y_max_2, "Run2", showStats=False, normalize=False, setLog=False)
 
 def main():
