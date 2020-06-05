@@ -2939,7 +2939,7 @@ int main(int argc, char* argv[])
             }
 
 
-            const bool doNorm = false;
+            const bool doNorm = true;
             std::vector<double> myCRUnitBinEdges = {0.0, 250.0, 300.0, 400.0, 500.0, 1000.0};
             std::string CRUnitBins_53to56_basic_Cuts            = "nBottoms_drPhotonCleaned_jetpt30=1;nJets_drPhotonCleaned_jetpt30>=7";
             std::string CRUnitBins_57to60_basic_Cuts            = "nBottoms_drPhotonCleaned_jetpt30>=2;nJets_drPhotonCleaned_jetpt30>=7";
