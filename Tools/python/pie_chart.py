@@ -62,14 +62,14 @@ def pieChart(inputFile):
 
     # Pie chart, where the slices will be ordered and plotted counter-clockwise
 
-    # xkcd colors
-    with open("rgb.json", "r") as j:
-        colorMap = json.load(j) 
-
-    labels = ["ttbar", "znunu", "qcd", "ttz", "rare"]
+    plotLabels = ["ttbar", "znunu", "qcd", "ttz", "rare"]
+    
     # Stop-0L background colors matching search bin plot
     colors = ["#66CCFF", "#FF9999", "#99FF33", "#FF9901", "#FFFF99"]
-    # xkcd colors (by eye)
+    
+    # xkcd colors
+    #with open("rgb.json", "r") as j:
+    #    colorMap = json.load(j) 
     #colors = [colorMap["sky blue"], colorMap["rose pink"], colorMap["neon green"], colorMap["tangerine"], colorMap["pale yellow"]]
    
     # map used to loop over different plots
@@ -78,28 +78,34 @@ def pieChart(inputFile):
     plotMap["lowdm"]["title"]  = "Total Background Predictions: Low $\Delta m$"
     plotMap["lowdm"]["output"] = "backgrounds_lowdm"
     plotMap["lowdm"]["sizes"]  = [ttbar_lowdm, znunu_lowdm, qcd_lowdm, ttz_lowdm, rare_lowdm] 
-    plotMap["lowdm"]["labels"] = labels 
+    plotMap["lowdm"]["labels"] = plotLabels
     plotMap["highdm"] = {}
     plotMap["highdm"]["title"]  = "Total Background Predictions: High $\Delta m$"
     plotMap["highdm"]["output"] = "backgrounds_highdm"
     plotMap["highdm"]["sizes"]  = [ttbar_highdm, znunu_highdm, qcd_highdm, ttz_highdm, rare_highdm] 
-    plotMap["highdm"]["labels"] = labels 
+    plotMap["highdm"]["labels"] = plotLabels
     plotMap["total"] = {}
     plotMap["total"]["title"]  = "Total Background Predictions: Full Search Region"
     plotMap["total"]["output"] = "backgrounds_total"
     plotMap["total"]["sizes"]  = [ttbar_total, znunu_total, qcd_total, ttz_total, rare_total] 
-    plotMap["total"]["labels"] = labels 
-
+    plotMap["total"]["labels"] = plotLabels 
+    
     for p in plotMap:
-        title       = plotMap[p]["title"]
-        output      = plotMap[p]["output"]
-        sizes       = plotMap[p]["sizes"]
-        plotLabels  = plotMap[p]["labels"]
+        title   = plotMap[p]["title"]
+        output  = plotMap[p]["output"]
+        sizes   = plotMap[p]["sizes"]
+        labels  = plotMap[p]["labels"]
+        # get percentages
+        sizesArray = np.array(sizes)
+        percent = 100.0 * sizesArray / sizesArray.sum()
+        labelsWithPercent = ['{0} - {1:.1f} %'.format(i,j) for i,j in zip(labels, percent)] 
+        
         fig1, ax1 = plt.subplots()
-        ax1.pie(sizes, colors=colors, shadow=False, startangle=90)
+        texts = ax1.pie(sizes, colors=colors, shadow=False, startangle=90)
         ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        
         plt.title(title)
-        plt.legend(plotLabels)
+        plt.legend(labelsWithPercent)
         plt.tight_layout()
         plt.savefig("more_plots/{0}.pdf".format(output), bbox_inches="tight")
         plt.savefig("more_plots/{0}.png".format(output), bbox_inches="tight")
