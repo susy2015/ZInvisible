@@ -68,17 +68,16 @@ def pieChart(inputFile):
         colorMap = json.load(j) 
 
     labels = ["ttbar", "znunu", "qcd", "ttz", "rare"]
-    colors = [colorMap["blue"], colorMap["orange"], colorMap["green"], colorMap["red"], colorMap["purple"]]
-    #colors = ['xkcd:blue', 'xkcd:orange', 'xkcd:green', 'xkcd:red', 'xkcd:purple']
-    #colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple']
-    #colors = ['b', 'y', 'g', 'r', 'm']
+    colors = [colorMap["sky blue"], colorMap["rose pink"], colorMap["neon green"], colorMap["tangerine"], colorMap["pale yellow"]]
     
     # lowdm
     sizes_lowdm  = [ttbar_lowdm, znunu_lowdm, qcd_lowdm, ttz_lowdm, rare_lowdm]
     fig1, ax1 = plt.subplots()
-    ax1.pie(sizes_lowdm, labels=labels, colors=colors, autopct='%1.1f%%', shadow=False, startangle=90)
+    #ax1.pie(sizes_lowdm, labels=labels, colors=colors, autopct='%1.1f%%', shadow=False, startangle=90)
+    ax1.pie(sizes_lowdm, colors=colors, shadow=False, startangle=90)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
     plt.title("Total Background Predictions: Low $\Delta m$")
+    plt.legend(labels)
     plt.tight_layout()
     plt.savefig("more_plots/backgrounds_lowdm.pdf", bbox_inches="tight")
     plt.savefig("more_plots/backgrounds_lowdm.png", bbox_inches="tight")
@@ -86,9 +85,11 @@ def pieChart(inputFile):
     # highdm
     sizes_highdm  = [ttbar_highdm, znunu_highdm, qcd_highdm, ttz_highdm, rare_highdm]
     fig1, ax1 = plt.subplots()
-    ax1.pie(sizes_highdm, labels=labels, colors=colors, autopct='%1.1f%%', shadow=False, startangle=90)
+    #ax1.pie(sizes_highdm, labels=labels, colors=colors, autopct='%1.1f%%', shadow=False, startangle=90)
+    ax1.pie(sizes_highdm, colors=colors, shadow=False, startangle=90)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
     plt.title("Total Background Predictions: High $\Delta m$")
+    plt.legend(labels)
     plt.tight_layout()
     plt.savefig("more_plots/backgrounds_highdm.pdf", bbox_inches="tight")
     plt.savefig("more_plots/backgrounds_highdm.png", bbox_inches="tight")
@@ -96,9 +97,11 @@ def pieChart(inputFile):
     # total
     sizes_total  = [ttbar_total, znunu_total, qcd_total, ttz_total, rare_total]
     fig1, ax1 = plt.subplots()
-    ax1.pie(sizes_total, labels=labels, colors=colors, autopct='%1.1f%%', shadow=False, startangle=90)
+    #ax1.pie(sizes_total, labels=labels, colors=colors, autopct='%1.1f%%', shadow=False, startangle=90)
+    ax1.pie(sizes_total, colors=colors, shadow=False, startangle=90)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
     plt.title("Total Background Predictions: Full Search Region")
+    plt.legend(labels)
     plt.tight_layout()
     plt.savefig("more_plots/backgrounds_total.pdf", bbox_inches="tight")
     plt.savefig("more_plots/backgrounds_total.png", bbox_inches="tight")
