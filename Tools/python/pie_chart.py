@@ -52,14 +52,13 @@ def pieChart(inputFile):
 
     ttbar_total = ttbar_lowdm + ttbar_highdm
     znunu_total = znunu_lowdm + znunu_highdm
-    qcd_total   = qcd_lowdm + qcd_highdm
-    ttz_total   = ttz_lowdm + ttz_highdm
-    rare_total  = rare_lowdm + rare_highdm
+    qcd_total   = qcd_lowdm   + qcd_highdm
+    ttz_total   = ttz_lowdm   + ttz_highdm
+    rare_total  = rare_lowdm  + rare_highdm
 
     print "low dm:  ttbar = {0:.3f}, znunu = {1:.3f}, qcd = {2:.3f}, ttz = {3:.3f}, rare = {4:.3f}".format(ttbar_lowdm, znunu_lowdm, qcd_lowdm, ttz_lowdm, rare_lowdm)
     print "high dm: ttbar = {0:.3f}, znunu = {1:.3f}, qcd = {2:.3f}, ttz = {3:.3f}, rare = {4:.3f}".format(ttbar_highdm, znunu_highdm, qcd_highdm, ttz_highdm, rare_highdm)
     print "total:   ttbar = {0:.3f}, znunu = {1:.3f}, qcd = {2:.3f}, ttz = {3:.3f}, rare = {4:.3f}".format(ttbar_total, znunu_total, qcd_total, ttz_total, rare_total)
-
 
     # Pie chart, where the slices will be ordered and plotted counter-clockwise
 
@@ -68,7 +67,10 @@ def pieChart(inputFile):
         colorMap = json.load(j) 
 
     labels = ["ttbar", "znunu", "qcd", "ttz", "rare"]
-    colors = [colorMap["sky blue"], colorMap["rose pink"], colorMap["neon green"], colorMap["tangerine"], colorMap["pale yellow"]]
+    # Stop-0L background colors matching search bin plot
+    colors = ["#66CCFF", "#FF9999", "#99FF33", "#FF9901", "#FFFF99"]
+    # xkcd colors (by eye)
+    #colors = [colorMap["sky blue"], colorMap["rose pink"], colorMap["neon green"], colorMap["tangerine"], colorMap["pale yellow"]]
    
     # map used to loop over different plots
     plotMap = {}
