@@ -69,42 +69,39 @@ def pieChart(inputFile):
 
     labels = ["ttbar", "znunu", "qcd", "ttz", "rare"]
     colors = [colorMap["sky blue"], colorMap["rose pink"], colorMap["neon green"], colorMap["tangerine"], colorMap["pale yellow"]]
-    
-    # lowdm
-    sizes_lowdm  = [ttbar_lowdm, znunu_lowdm, qcd_lowdm, ttz_lowdm, rare_lowdm]
-    fig1, ax1 = plt.subplots()
-    #ax1.pie(sizes_lowdm, labels=labels, colors=colors, autopct='%1.1f%%', shadow=False, startangle=90)
-    ax1.pie(sizes_lowdm, colors=colors, shadow=False, startangle=90)
-    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    plt.title("Total Background Predictions: Low $\Delta m$")
-    plt.legend(labels)
-    plt.tight_layout()
-    plt.savefig("more_plots/backgrounds_lowdm.pdf", bbox_inches="tight")
-    plt.savefig("more_plots/backgrounds_lowdm.png", bbox_inches="tight")
-    
-    # highdm
-    sizes_highdm  = [ttbar_highdm, znunu_highdm, qcd_highdm, ttz_highdm, rare_highdm]
-    fig1, ax1 = plt.subplots()
-    #ax1.pie(sizes_highdm, labels=labels, colors=colors, autopct='%1.1f%%', shadow=False, startangle=90)
-    ax1.pie(sizes_highdm, colors=colors, shadow=False, startangle=90)
-    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    plt.title("Total Background Predictions: High $\Delta m$")
-    plt.legend(labels)
-    plt.tight_layout()
-    plt.savefig("more_plots/backgrounds_highdm.pdf", bbox_inches="tight")
-    plt.savefig("more_plots/backgrounds_highdm.png", bbox_inches="tight")
-    
-    # total
-    sizes_total  = [ttbar_total, znunu_total, qcd_total, ttz_total, rare_total]
-    fig1, ax1 = plt.subplots()
-    #ax1.pie(sizes_total, labels=labels, colors=colors, autopct='%1.1f%%', shadow=False, startangle=90)
-    ax1.pie(sizes_total, colors=colors, shadow=False, startangle=90)
-    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    plt.title("Total Background Predictions: Full Search Region")
-    plt.legend(labels)
-    plt.tight_layout()
-    plt.savefig("more_plots/backgrounds_total.pdf", bbox_inches="tight")
-    plt.savefig("more_plots/backgrounds_total.png", bbox_inches="tight")
+   
+    # map used to loop over different plots
+    plotMap = {}
+    plotMap["lowdm"] = {}
+    plotMap["lowdm"]["title"]  = "Total Background Predictions: Low $\Delta m$"
+    plotMap["lowdm"]["output"] = "backgrounds_lowdm"
+    plotMap["lowdm"]["sizes"]  = [ttbar_lowdm, znunu_lowdm, qcd_lowdm, ttz_lowdm, rare_lowdm] 
+    plotMap["lowdm"]["labels"] = labels 
+    plotMap["highdm"] = {}
+    plotMap["highdm"]["title"]  = "Total Background Predictions: High $\Delta m$"
+    plotMap["highdm"]["output"] = "backgrounds_highdm"
+    plotMap["highdm"]["sizes"]  = [ttbar_highdm, znunu_highdm, qcd_highdm, ttz_highdm, rare_highdm] 
+    plotMap["highdm"]["labels"] = labels 
+    plotMap["total"] = {}
+    plotMap["total"]["title"]  = "Total Background Predictions: Full Search Region"
+    plotMap["total"]["output"] = "backgrounds_total"
+    plotMap["total"]["sizes"]  = [ttbar_total, znunu_total, qcd_total, ttz_total, rare_total] 
+    plotMap["total"]["labels"] = labels 
+
+    for p in plotMap:
+        title       = plotMap[p]["title"]
+        output      = plotMap[p]["output"]
+        sizes       = plotMap[p]["sizes"]
+        plotLabels  = plotMap[p]["labels"]
+        fig1, ax1 = plt.subplots()
+        ax1.pie(sizes, colors=colors, shadow=False, startangle=90)
+        ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        plt.title(title)
+        plt.legend(plotLabels)
+        plt.tight_layout()
+        plt.savefig("more_plots/{0}.pdf".format(output), bbox_inches="tight")
+        plt.savefig("more_plots/{0}.png".format(output), bbox_inches="tight")
+
 
 def main():
     inputFile = "/uscms/home/mkilpatr/nobackup/CMSSW_9_4_10/src/AnalysisMethods/EstTools/SUSYNano19/getFinalPlot_allMethods/pred_binnum_getFinalPlot_Nano.root"
