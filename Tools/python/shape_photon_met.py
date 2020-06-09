@@ -552,7 +552,8 @@ class Shape:
         legend_y1 = 0.7 
         legend_y2 = 0.9 
 
-        # TODO: update to loop over eras or years... use list to accept any number of eras/years
+        # use 3 years and Run2 for eras
+        eras = ["2016", "2017", "2018", "Run2"]
 
         for region in self.regions:
             for selection in self.selections[bin_type][region]:
@@ -569,7 +570,7 @@ class Shape:
                     # map for histograms
                     hist_map = {}
                     
-                    for i, era in enumerate(self.eras):
+                    for i, era in enumerate(eras):
                         color = self.color_list[i]
                         if era == "Run2":
                             color = self.color_black
