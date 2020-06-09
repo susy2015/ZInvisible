@@ -1,6 +1,7 @@
 # pie_chart.py
 
 import ROOT
+import json
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -60,14 +61,47 @@ def pieChart(inputFile):
     print "total:   ttbar = {0:.3f}, znunu = {1:.3f}, qcd = {2:.3f}, ttz = {3:.3f}, rare = {4:.3f}".format(ttbar_total, znunu_total, qcd_total, ttz_total, rare_total)
 
 
-    # Pie chart, where the slices will be ordered and plotted counter-clockwise:
+    # Pie chart, where the slices will be ordered and plotted counter-clockwise
+
+    # xkcd colors
+    with open("rgb.json", "r") as j:
+        colorMap = json.load(j) 
+
     labels = ["ttbar", "znunu", "qcd", "ttz", "rare"]
+    colors = [colorMap["blue"], colorMap["orange"], colorMap["green"], colorMap["red"], colorMap["purple"]]
+    #colors = ['xkcd:blue', 'xkcd:orange', 'xkcd:green', 'xkcd:red', 'xkcd:purple']
+    #colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple']
+    #colors = ['b', 'y', 'g', 'r', 'm']
+    
+    # lowdm
     sizes_lowdm  = [ttbar_lowdm, znunu_lowdm, qcd_lowdm, ttz_lowdm, rare_lowdm]
     fig1, ax1 = plt.subplots()
-    ax1.pie(sizes_lowdm, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+    ax1.pie(sizes_lowdm, labels=labels, colors=colors, autopct='%1.1f%%', shadow=False, startangle=90)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    plt.title("Total Background Predictions: Low $\Delta m$")
+    plt.tight_layout()
     plt.savefig("more_plots/backgrounds_lowdm.pdf", bbox_inches="tight")
     plt.savefig("more_plots/backgrounds_lowdm.png", bbox_inches="tight")
+    
+    # highdm
+    sizes_highdm  = [ttbar_highdm, znunu_highdm, qcd_highdm, ttz_highdm, rare_highdm]
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes_highdm, labels=labels, colors=colors, autopct='%1.1f%%', shadow=False, startangle=90)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    plt.title("Total Background Predictions: High $\Delta m$")
+    plt.tight_layout()
+    plt.savefig("more_plots/backgrounds_highdm.pdf", bbox_inches="tight")
+    plt.savefig("more_plots/backgrounds_highdm.png", bbox_inches="tight")
+    
+    # total
+    sizes_total  = [ttbar_total, znunu_total, qcd_total, ttz_total, rare_total]
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes_total, labels=labels, colors=colors, autopct='%1.1f%%', shadow=False, startangle=90)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    plt.title("Total Background Predictions: Full Search Region")
+    plt.tight_layout()
+    plt.savefig("more_plots/backgrounds_total.pdf", bbox_inches="tight")
+    plt.savefig("more_plots/backgrounds_total.png", bbox_inches="tight")
 
 def main():
     inputFile = "/uscms/home/mkilpatr/nobackup/CMSSW_9_4_10/src/AnalysisMethods/EstTools/SUSYNano19/getFinalPlot_allMethods/pred_binnum_getFinalPlot_Nano.root"
