@@ -19,6 +19,8 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 ERROR_ZERO = 0.001
 # general error code
 ERROR_CODE = -999
+# systematic limit to avoid taking log of values <= 0 
+ERROR_SYST = 0.9
 # infinity
 INF = float("inf")
 

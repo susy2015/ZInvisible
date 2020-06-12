@@ -9,7 +9,7 @@ import ROOT
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from search_bins import  ValidationBins, ValidationBinsMETStudy, SearchBins, CRUnitBins
-from tools import invert, setupHist, stringifyMap, removeCuts
+from tools import invert, setupHist, stringifyMap, removeCuts, ERROR_SYST
 
 # set numpy to provide warnings instead of just printing errors
 np.seterr(all='warn')
@@ -158,8 +158,18 @@ def writeToConfFromPred(outFile, infoFile, binMap, process, syst, h, h_up, h_dow
         #if process == "znunu" and syst == "JES":
         #    print "SEARCH_BIN_{0}  {1}  {2}  {3}: nominal={4}, up={5}, down={6}".format(sb_i, sb_name, syst, process, p, p_up, p_down)
         
-        values_up.append(r_up)
-        values_down.append(r_down)
+        # avoid taking log of negative number or 0
+        new_up   = r_up
+        new_down = r_down
+        if new_up <= 0:
+            new_up = abs(ERROR_SYST * p)
+        if new_down <= 0:
+            new_down = abs(ERROR_SYST * p)
+        # make both up and down variations >= 1.0 independent of direction
+        values_up.append(np.exp(abs(np.log(new_up))))
+        values_down.append(np.exp(abs(np.log(new_down))))
+        #values_up.append(r_up)
+        #values_down.append(r_down)
         
         outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, process, r_up   ) )
         outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, process, r_down ) )
@@ -244,7 +254,6 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
     total_syst_dir  = "prediction_histos/"
     # histo_tmp[region][direction]
     histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
-    ERROR_SYST = 0.9
 
     # --- bins --- #
     f_out = ROOT.TFile(total_syst_dir + bintype + "BinsZinv_syst_" + era + ".root", "recreate")
