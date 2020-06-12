@@ -174,9 +174,16 @@ def writeToConfFromPred(outFile, infoFile, binMap, process, syst, h, h_up, h_dow
         outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, process, r_up   ) )
         outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, process, r_down ) )
     
+    # get percentages >= 0.0%
+    ave_up   = 100 * (np.average(values_up) - 1)
+    ave_down = 100 * (np.average(values_down) - 1)
+    min_up   = 100 * (min(values_up) - 1)
+    min_down = 100 * (min(values_down) - 1)
+    max_up   = 100 * (max(values_up) - 1)
+    max_down = 100 * (max(values_down) - 1)
     # record average systematic here
-    infoFile.write("{0}  {1}  {2}_Up    ave={3}, range=[{4}, {5}]\n".format(process, region, syst, np.average(values_up),   min(values_up),   max(values_up)   ))
-    infoFile.write("{0}  {1}  {2}_Down  ave={3}, range=[{4}, {5}]\n".format(process, region, syst, np.average(values_down), min(values_down), max(values_down) ))
+    infoFile.write("{0}  {1}  {2}_Up    ave={3:.3f}%, range=[{4:.3f}%, {5:.3f}%]\n".format(process, region, syst, ave_up,   min_up,   max_up   ))
+    infoFile.write("{0}  {1}  {2}_Down  ave={3:.3f}%, range=[{4:.3f}%, {5:.3f}%]\n".format(process, region, syst, ave_down, min_down, max_down ))
 
 # set p_up and p_down to 1.0 if p is 0.0
 # modify histograms passed to function
