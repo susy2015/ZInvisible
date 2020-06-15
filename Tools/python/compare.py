@@ -268,7 +268,6 @@ def search(file_map, values, labels, h_names, era):
     f1    = ROOT.TFile(file1, "read")
     f2    = ROOT.TFile(file2, "read")
     h_map_1 = getMyHists(       f1, label1, values )
-    #h_map_2 = getSearchHists(   f2, label2, h_names )
     
     h_map_2 = {}
     h_map_2["label"]  = label2
@@ -289,6 +288,20 @@ def search(file_map, values, labels, h_names, era):
     ratio_limits = [0.98, 1.02]
     plot(h_map_1, h_map_2, ratio_limits, "search", era)
 
+def searchCompareMyHists(file_map, values, labels, era):
+    label1 = labels[0]
+    label2 = labels[1]
+    file1 = file_map[label1]
+    file2 = file_map[label2]
+    f1    = ROOT.TFile(file1, "read")
+    f2    = ROOT.TFile(file2, "read")
+    h_map_1 = getMyHists(       f1, label1, values )
+    h_map_2 = getMyHists(       f2, label2, values )
+
+    # make plots
+    print "Running plot() for {0} and {1}, {2}".format(label1, label2, era)
+    ratio_limits = [0.5, 1.5]
+    plot(h_map_1, h_map_2, ratio_limits, "search", era)
 
 if __name__ == "__main__":
     
@@ -382,5 +395,18 @@ if __name__ == "__main__":
     f_map["Jon"]   = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/26May2020_2016Unblind_dev_v6/SearchBinsPlot/SearchBins_QCDResidMET.root"
     search(f_map, values, labels, h_names, "2016")
 
+    
+    # --- Caleb's comparison --- #
+    #
+    # compare using Rz per year with using Run 2 Rz
+    #
+    # -------------------------- #
+    values = ["pred"]
+    labels = ["RzRun2", "RzPerYear"]
+    f_map = {}
+    f_map["RzRun2"]    = "/uscms_data/d3/caleb/SusyAnalysis/CMSSW_10_2_9/src/ZInvisible/Tools/prediction_histos/searchBinsZinv_Run2.root"
+    f_map["RzPerYear"] = "/uscms_data/d3/caleb/SusyAnalysis/CMSSW_10_2_9/src/ZInvisible/Tools/prediction_histos/searchBinsZinv_useRzPerYear_Run2.root"
+    searchCompareMyHists(f_map, values, labels, "Run2")
+    
 
 
