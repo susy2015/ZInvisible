@@ -334,7 +334,7 @@ class Common:
     #    - calculate final prediction                                        #
     #    - save relevant values to map                                       #
     # ---------------------------------------------------------------------- #
-    def calcPrediction(self, output_file, x_title, name, era):
+    def calcPrediction(self, x_title, name, era):
         # save values in map
         if self.verbose:
             print era
@@ -621,7 +621,7 @@ class ValidationBins(Common):
 
         # new root file to save validation bin histograms
         new_file = self.results_dir + "validationBinsZinv_" + era + ".root"
-        self.calcPrediction(    new_file, "Validation Bin", "validation", era   )
+        self.calcPrediction(              "Validation Bin", "validation", era   )
         self.makeHistos(        new_file, "Validation Bin", "validation", era   )
         f_in.Close()
 
@@ -716,7 +716,7 @@ class ValidationBinsMETStudy(Common):
 
         # new root file to save validation bin histograms
         new_file = self.results_dir + "validationBinsMETStudyZinv_" + era + ".root"
-        self.calcPrediction(    new_file, "Validation Bin", "validationMetStudy", era   )
+        self.calcPrediction(              "Validation Bin", "validationMetStudy", era   )
         self.makeHistos(        new_file, "Validation Bin", "validationMetStudy", era   )
         f_in.Close()
   
@@ -853,7 +853,7 @@ class SearchBins(Common):
 
         # new root file to save search bin histograms
         new_file = self.results_dir + "searchBinsZinv_" + era + ".root"
-        self.calcPrediction(    new_file, "Search Bin", "search", era   )
+        self.calcPrediction(              "Search Bin", "search", era   )
         self.makeHistos(        new_file, "Search Bin", "search", era   )
         f_in.Close()
 
