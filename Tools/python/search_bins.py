@@ -334,7 +334,7 @@ class Common:
     #    - calculate final prediction                                        #
     #    - save relevant values to map                                       #
     # ---------------------------------------------------------------------- #
-    def calcPrediction(self, output_file, x_title, name, era):
+    def calcPrediction(self, x_title, name, era, useRzPerYear=False):
         # save values in map
         if self.verbose:
             print era
@@ -353,7 +353,15 @@ class Common:
             s_error = self.binValues[era][b]["shape_error"]
             m       = self.binValues[era][b]["mc"]
             m_error = self.binValues[era][b]["mc_error"]
-            p       = n * s * m
+
+            if useRzPerYear and era == "Run2":
+                normMC = 0
+                for e in ["2016", "2017", "2018"]:
+                    normMC += self.binValues[e][b]["norm"] * self.binValues[e][b]["mc"]
+                p = normMC * s
+            else:
+                p = n * s * m
+
             
             # For data card
             # - total Rz unc. (stat + syst) is included in nuisance parameter
@@ -400,16 +408,12 @@ class Common:
             # average weight:               avg_w = sigma^2 / p 
             # effective number of events:   N_eff = p / avg_w
             if p == 0:
-                #if self.verbose:
-                #    print "WARNING: bin {0}, pred = {1}; seting avg weight to {2}".format(b, p, ERROR_ZERO)
                 avg_w   = ERROR_ZERO
             else:
                 avg_w   = (p_error_propagated ** 2) / p
             n_eff = p / avg_w
             n_eff_final = int(n_eff)
             if n_eff_final == 0:
-                #if self.verbose:
-                #    print "WARNING: bin {0}, n_eff_final = {1}; leaving avg weight unchanged".format(b, n_eff_final)
                 avg_w_final = avg_w
             else:
                 avg_w_final = p / n_eff_final
@@ -621,7 +625,7 @@ class ValidationBins(Common):
 
         # new root file to save validation bin histograms
         new_file = self.results_dir + "validationBinsZinv_" + era + ".root"
-        self.calcPrediction(    new_file, "Validation Bin", "validation", era   )
+        self.calcPrediction(              "Validation Bin", "validation", era   )
         self.makeHistos(        new_file, "Validation Bin", "validation", era   )
         f_in.Close()
 
@@ -716,7 +720,7 @@ class ValidationBinsMETStudy(Common):
 
         # new root file to save validation bin histograms
         new_file = self.results_dir + "validationBinsMETStudyZinv_" + era + ".root"
-        self.calcPrediction(    new_file, "Validation Bin", "validationMetStudy", era   )
+        self.calcPrediction(              "Validation Bin", "validationMetStudy", era   )
         self.makeHistos(        new_file, "Validation Bin", "validationMetStudy", era   )
         f_in.Close()
   
@@ -853,8 +857,13 @@ class SearchBins(Common):
 
         # new root file to save search bin histograms
         new_file = self.results_dir + "searchBinsZinv_" + era + ".root"
-        self.calcPrediction(    new_file, "Search Bin", "search", era   )
+        self.calcPrediction(              "Search Bin", "search", era   )
         self.makeHistos(        new_file, "Search Bin", "search", era   )
+        # For Run2, also create file with useRzPerYear
+        if era == "Run2":
+            new_file = self.results_dir + "searchBinsZinv_useRzPerYear_" + era + ".root"
+            self.calcPrediction(              "Search Bin", "search", era, useRzPerYear=True )
+            self.makeHistos(        new_file, "Search Bin", "search", era   )
         f_in.Close()
 
 # search region unit bins

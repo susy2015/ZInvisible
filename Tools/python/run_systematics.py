@@ -9,7 +9,7 @@ import ROOT
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from search_bins import  ValidationBins, ValidationBinsMETStudy, SearchBins, CRUnitBins
-from tools import invert, setupHist, stringifyMap, removeCuts
+from tools import invert, setupHist, stringifyMap, removeCuts, ERROR_SYST
 
 # set numpy to provide warnings instead of just printing errors
 np.seterr(all='warn')
@@ -131,8 +131,10 @@ def writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selec
 
 # use prediction, syst up/down histograms
 # syst name is "syst for conf" name from systematics.json
-def writeToConfFromPred(outFile, binMap, process, syst, h, h_up, h_down, region, offset):
+def writeToConfFromPred(outFile, infoFile, binMap, process, syst, h, h_up, h_down, region, offset):
     nBins = h.GetNbinsX()
+    values_up   = []
+    values_down = []
     for i in xrange(1, nBins + 1):
         sb_i = i - 1 + offset
         sb_name = binMap[str(sb_i)]
@@ -150,12 +152,38 @@ def writeToConfFromPred(outFile, binMap, process, syst, h, h_up, h_down, region,
                 r_down = p_down / p
             else:
                 print "WARNING: pred = 0 for bin {0}".format(sb_i)
+        
         # syst is already systForConf (systForConf = systMap[syst]["name"])
         # investigate jes
-        if process == "znunu" and syst == "JES":
-            print "SEARCH_BIN_{0}  {1}  {2}  {3}: nominal={4}, up={5}, down={6}".format(sb_i, sb_name, syst, process, p, p_up, p_down)
+        #if process == "znunu" and syst == "JES":
+        #    print "SEARCH_BIN_{0}  {1}  {2}  {3}: nominal={4}, up={5}, down={6}".format(sb_i, sb_name, syst, process, p, p_up, p_down)
+        
+        # avoid taking log of negative number or 0
+        new_up   = r_up
+        new_down = r_down
+        if new_up <= 0:
+            new_up = abs(ERROR_SYST * p)
+        if new_down <= 0:
+            new_down = abs(ERROR_SYST * p)
+        # make both up and down variations >= 1.0 independent of direction
+        values_up.append(np.exp(abs(np.log(new_up))))
+        values_down.append(np.exp(abs(np.log(new_down))))
+        #values_up.append(r_up)
+        #values_down.append(r_down)
+        
         outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, process, r_up   ) )
         outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, process, r_down ) )
+    
+    # get percentages >= 0.0%
+    ave_up   = 100 * (np.average(values_up) - 1)
+    ave_down = 100 * (np.average(values_down) - 1)
+    min_up   = 100 * (min(values_up) - 1)
+    min_down = 100 * (min(values_down) - 1)
+    max_up   = 100 * (max(values_up) - 1)
+    max_down = 100 * (max(values_down) - 1)
+    # record average systematic here
+    infoFile.write("{0}  {1}  {2}_Up    ave={3:.3f}%, range=[{4:.3f}%, {5:.3f}%]\n".format(process, region, syst, ave_up,   min_up,   max_up   ))
+    infoFile.write("{0}  {1}  {2}_Down  ave={3:.3f}%, range=[{4:.3f}%, {5:.3f}%]\n".format(process, region, syst, ave_down, min_down, max_down ))
 
 # set p_up and p_down to 1.0 if p is 0.0
 # modify histograms passed to function
@@ -233,7 +261,6 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
     total_syst_dir  = "prediction_histos/"
     # histo_tmp[region][direction]
     histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
-    ERROR_SYST = 0.9
 
     # --- bins --- #
     f_out = ROOT.TFile(total_syst_dir + bintype + "BinsZinv_syst_" + era + ".root", "recreate")
@@ -491,15 +518,18 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
     searchBinMap = invert(masterBinMap["binNum"])
     unitBinMap   = invert(masterBinMap["unitCRNum"]["phocr"])
 
-    runDir          = runMap[era]
-    result_file     = "condor/" + runDir + "/result.root"
-    conf_file       = "datacard_inputs/zinv_syst_" + era + ".conf"
-    out_dir         = "syst_plots/" 
-    tmp_dir         = "tmp_plots/"
-    variable        = "mc"
-    regions         = ["lowdm", "highdm"]
-    directions      = ["up", "", "down"]
-    bintypes        = ["validation", "validationMetStudy", "search", "controlUnit_gjets", "controlUnit_back"]
+    runDir                  = runMap[era]
+    result_file             = "condor/" + runDir + "/result.root"
+    conf_file               = "datacard_inputs/zinv_syst_" + era + ".conf"
+    info_file_znunu         = "syst_info/systematics_znunu_{0}.txt".format(era)
+    info_file_phocr_gjets   = "syst_info/systematics_phocr_gjets_{0}.txt".format(era)
+    info_file_phocr_back    = "syst_info/systematics_phocr_back_{0}.txt".format(era)
+    out_dir                 = "syst_plots/" 
+    tmp_dir                 = "tmp_plots/"
+    variable                = "mc"
+    regions                 = ["lowdm", "highdm"]
+    directions              = ["up", "", "down"]
+    bintypes                = ["validation", "validationMetStudy", "search", "controlUnit_gjets", "controlUnit_back"]
     # Systematics which we don't use: MET uncluster in photon CR, lepton veto SF, ISR weight for ttbar
     systematics_znunu  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","metres"]
     systematics_phocr  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
@@ -551,6 +581,7 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
         VB_MS.getValues(r, e)
         SB.getValues(r, e, CRunits=CRU)
     
+    # histograms for total era being run
     for region in regions:
         histo["validation"][region][""]             =  VB.histograms[era][region][variable].Clone()
         histo["validationMetStudy"][region][""]     =  VB_MS.histograms[era][region][variable].Clone()
@@ -561,7 +592,14 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
     #-------------------------------------------------------
     # Calculate normalization and shape factors
     #-------------------------------------------------------
+   
+    # info files for systematics
+    info_znunu          = open(info_file_znunu, "w")
+    info_phocr_gjets    = open(info_file_phocr_gjets, "w")
+    info_phocr_back     = open(info_file_phocr_back, "w")
+    
     with open(conf_file, "w") as outFile:
+
         
         #-------------------------------------------------------
         # Systematics for znunu
@@ -617,10 +655,10 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
             #-------------------------------------------------------
 
             # WARNING: offset is starting point for low/high dm bins, use with care
-            #writeToConfFromPred(outFile, binMap, process, syst, h, h_up, h_down, region, offset):
+            #writeToConfFromPred(outFile, infoFile, binMap, process, syst, h, h_up, h_down, region, offset)
             systForConf = systMap[syst]["name"]  
-            writeToConfFromPred(outFile, searchBinMap, "znunu", systForConf, histo["search"]["lowdm"][""],  histo["search"]["lowdm"]["up"],  histo["search"]["lowdm"]["down"],  "lowdm",  SB.low_dm_start)
-            writeToConfFromPred(outFile, searchBinMap, "znunu", systForConf, histo["search"]["highdm"][""], histo["search"]["highdm"]["up"], histo["search"]["highdm"]["down"], "highdm", SB.high_dm_start)
+            writeToConfFromPred(outFile, info_znunu, searchBinMap, "znunu", systForConf, histo["search"]["lowdm"][""],  histo["search"]["lowdm"]["up"],  histo["search"]["lowdm"]["down"],  "lowdm",  SB.low_dm_start)
+            writeToConfFromPred(outFile, info_znunu, searchBinMap, "znunu", systForConf, histo["search"]["highdm"][""], histo["search"]["highdm"]["up"], histo["search"]["highdm"]["down"], "highdm", SB.high_dm_start)
             
             #-------------------------------------------------------
             # Plot
@@ -684,12 +722,12 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
             #-------------------------------------------------------
 
             # WARNING: offset is starting point for low/high dm bins, use with care
-            #writeToConfFromPred(outFile, binMap, process, syst, h, h_up, h_down, region, offset):
+            #writeToConfFromPred(outFile, infoFile, binMap, process, syst, h, h_up, h_down, region, offset)
             systForConf = systMap[syst]["name"]  
-            writeToConfFromPred(outFile, unitBinMap,   "phocr_gjets", systForConf, histo["controlUnit_gjets"]["lowdm"][""],  histo["controlUnit_gjets"]["lowdm"]["up"],  histo["controlUnit_gjets"]["lowdm"]["down"],  "lowdm",  CRU.low_dm_start)
-            writeToConfFromPred(outFile, unitBinMap,   "phocr_gjets", systForConf, histo["controlUnit_gjets"]["highdm"][""], histo["controlUnit_gjets"]["highdm"]["up"], histo["controlUnit_gjets"]["highdm"]["down"], "highdm", CRU.high_dm_start)
-            writeToConfFromPred(outFile, unitBinMap,   "phocr_back",  systForConf, histo["controlUnit_back"]["lowdm"][""],   histo["controlUnit_back"]["lowdm"]["up"],   histo["controlUnit_back"]["lowdm"]["down"],  "lowdm",  CRU.low_dm_start)
-            writeToConfFromPred(outFile, unitBinMap,   "phocr_back",  systForConf, histo["controlUnit_back"]["highdm"][""],  histo["controlUnit_back"]["highdm"]["up"],  histo["controlUnit_back"]["highdm"]["down"], "highdm", CRU.high_dm_start)
+            writeToConfFromPred(outFile, info_phocr_gjets, unitBinMap,   "phocr_gjets", systForConf, histo["controlUnit_gjets"]["lowdm"][""],  histo["controlUnit_gjets"]["lowdm"]["up"],  histo["controlUnit_gjets"]["lowdm"]["down"],  "lowdm",  CRU.low_dm_start)
+            writeToConfFromPred(outFile, info_phocr_gjets, unitBinMap,   "phocr_gjets", systForConf, histo["controlUnit_gjets"]["highdm"][""], histo["controlUnit_gjets"]["highdm"]["up"], histo["controlUnit_gjets"]["highdm"]["down"], "highdm", CRU.high_dm_start)
+            writeToConfFromPred(outFile, info_phocr_back,  unitBinMap,   "phocr_back",  systForConf, histo["controlUnit_back"]["lowdm"][""],   histo["controlUnit_back"]["lowdm"]["up"],   histo["controlUnit_back"]["lowdm"]["down"],  "lowdm",  CRU.low_dm_start)
+            writeToConfFromPred(outFile, info_phocr_back,  unitBinMap,   "phocr_back",  systForConf, histo["controlUnit_back"]["highdm"][""],  histo["controlUnit_back"]["highdm"]["up"],  histo["controlUnit_back"]["highdm"]["down"], "highdm", CRU.high_dm_start)
             
             #-------------------------------------------------------
             # Plot
@@ -759,6 +797,12 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
     getTotalSystematics(VB_MS,  "validationMetStudy",   systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2)
     getTotalSystematics(SB,     "search",               systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2)
     # CR unit bin not supported
+
+
+    # close files
+    info_znunu.close()
+    info_phocr_gjets.close()
+    info_phocr_back.close()
 
 def main():
     # options
