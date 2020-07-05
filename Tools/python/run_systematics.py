@@ -463,6 +463,99 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
     f_out.Close()
 
 
+
+#-------------------------------------------------------
+# Calculate total systematic up/down
+# - variation in prediction
+# - include both Z nunu search bin and photon CR bin variation
+#-------------------------------------------------------
+
+def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2):
+    d = runMap[era]
+    r  = "condor/" + d + "/result.root"
+    N.getNormAndError(r, era)
+    S.getShape(r, era)
+    CRBinObject.getValues(r, era)
+    SearchBinObject.getValues(r, era, CRunits=CRBinObject)
+    
+    bintype = "search"
+    
+    with open("units.json", "r") as input_file:
+        searchToUnitMap = json.load(input_file)
+    
+    total_syst_dir  = "prediction_histos/"
+    # histo_tmp[region][direction]
+    histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
+    
+    # --- bins --- #
+    f_out = ROOT.TFile(total_syst_dir + bintype + "BinsZinv_totalPredSyst_" + era + ".root", "recreate")
+    h_syst_up_lowdm     = ROOT.TH1F("syst_up_lowdm",    "syst_up_lowdm",    SearchBinObject.low_dm_nbins,  SearchBinObject.low_dm_start,  SearchBinObject.low_dm_end  + 1)
+    h_syst_up_highdm    = ROOT.TH1F("syst_up_highdm",   "syst_up_highdm",   SearchBinObject.high_dm_nbins, SearchBinObject.high_dm_start, SearchBinObject.high_dm_end + 1)
+    h_syst_down_lowdm   = ROOT.TH1F("syst_down_lowdm",  "syst_down_lowdm",  SearchBinObject.low_dm_nbins,  SearchBinObject.low_dm_start,  SearchBinObject.low_dm_end  + 1)
+    h_syst_down_highdm  = ROOT.TH1F("syst_down_highdm", "syst_down_highdm", SearchBinObject.high_dm_nbins, SearchBinObject.high_dm_start, SearchBinObject.high_dm_end + 1)
+    
+    myBinMap = {}
+    myBinMap["lowdm"]   = SearchBinObject.low_dm_bins
+    myBinMap["highdm"]  = SearchBinObject.high_dm_bins
+    # use copy.deepcopy() to avoid modifying original
+    # histo_tmp[region][direction]
+    myHistoMap = copy.deepcopy(histo_tmp)
+    myHistoMap["lowdm"]["up"]       = h_syst_up_lowdm
+    myHistoMap["lowdm"]["down"]     = h_syst_down_lowdm
+    myHistoMap["highdm"]["up"]      = h_syst_up_highdm
+    myHistoMap["highdm"]["down"]    = h_syst_down_highdm
+    
+    for region in regions:
+        # offset = 0
+        # if region == "highdm":
+        #     offset = 53
+        # get histograms for this region
+        h_total_syst_up   = myHistoMap[region]["up"]
+        h_total_syst_down = myHistoMap[region]["down"]
+        # be careful with bin index, which needs to start at 1 in both lowdm and highdm
+        b_i = 1
+        for b in myBinMap[region]:
+            p1 = histo[bintype][region][""].GetBinContent(b_i)
+            p2 = SearchBinObject.binValues[era][b]["pred"]
+            p  = p1
+
+            print "PREDICTION search bin {0}: {1}, {2}, {3}".format(b, p1, p2, p1 == p2)
+            
+            # norm        = SearchBinObject.binValues[era][b]["norm"]
+            # znunu       = histo[bintype][region][""].GetBinContent(b_i)
+            # h_pho_data  = histo["controlUnit_data"][region][""]
+            # h_pho_gjets = histo["controlUnit_gjets"][region][""]
+            # h_pho_back  = histo["controlUnit_back"][region][""]
+    
+            # # get CR unit bins for this search bin
+            # cr_units = searchToUnitMap["unitBinMapCR_phocr"][b]
+            # # get histogram bin numbers
+            # cr_units_bin_i = [int(cr) + 1 - offset for cr in cr_units]
+            # 
+            # # check that prediction calculation is correct
+            # data_list   = [h_pho_data[i]           for i in cr_units_bin_i]
+            # gjets_list  = [h_pho_gjets[i]          for i in cr_units_bin_i]
+            # back_list   = [h_pho_back[i]           for i in cr_units_bin_i]
+            
+            log_syst_up_sum    = 0.0
+            log_syst_down_sum  = 0.0
+            
+            if p != 0:
+                # syst from p, p_up, p_down
+                for syst in systematics_znunu:
+                    # do not apply SB syst in high dm
+                    if region == "highdm" and syst == "eff_sb":
+                        continue
+                    # syst_histo[systemaitc][bintype][region][direction]
+                    h_up    = syst_histo[syst][bintype][region]["up"]
+                    h_down  = syst_histo[syst][bintype][region]["down"]
+                    p_up    = h_up.GetBinContent(b_i)
+                    p_down  = h_down.GetBinContent(b_i)
+                    log_syst_up     = p_up / p
+                    log_syst_down   = p_down / p
+            b_i += 1
+
+
 def run(era, eras, runs_json, syst_json, doRun2, verbose):
     units_json                  = "dc_BkgPred_BinMaps_master.json"
     searchbin_selection_json    = "search_bins_v4.json"
@@ -554,7 +647,7 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
     syst_histo = {syst:{bintype:{region:dict.fromkeys(directions) for region in regions} for bintype in bintypes} for syst in systematics} 
 
     #-------------------------------------------------------
-    # Class instanceses summoning 
+    # Initiate class instances
     #-------------------------------------------------------
 
     N       =  Normalization(           tmp_dir, verbose)
@@ -798,6 +891,9 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
     getTotalSystematics(SB,     "search",               systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2)
     # CR unit bin not supported
 
+    # total systematics using variation on full prediction
+    # getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2):
+    getTotalSystematicsPrediction(SB, CRU, N, S, runMap, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2)
 
     # close files
     info_znunu.close()
