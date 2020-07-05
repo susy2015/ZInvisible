@@ -855,15 +855,17 @@ class SearchBins(Common):
         # set bin values 
         self.setBinValues(b_map, h_map, era)
 
-        # new root file to save search bin histograms
-        new_file = self.results_dir + "searchBinsZinv_" + era + ".root"
-        self.calcPrediction(              "Search Bin", "search", era   )
-        self.makeHistos(        new_file, "Search Bin", "search", era   )
         # For Run2, also create file with useRzPerYear
+        # WARNING: this sets the prediction value; overwrite this later if you don't want to keep this value
         if era == "Run2":
             new_file = self.results_dir + "searchBinsZinv_useRzPerYear_" + era + ".root"
             self.calcPrediction(              "Search Bin", "search", era, useRzPerYear=True )
             self.makeHistos(        new_file, "Search Bin", "search", era   )
+        # new root file to save search bin histograms
+        # overwrite prediction value with standard value
+        new_file = self.results_dir + "searchBinsZinv_" + era + ".root"
+        self.calcPrediction(              "Search Bin", "search", era   )
+        self.makeHistos(        new_file, "Search Bin", "search", era   )
         f_in.Close()
 
 # search region unit bins
