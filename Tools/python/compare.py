@@ -16,7 +16,7 @@ def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
     plot_dir = "comparison_plots"
     eraTag = "_" + era
     regions = ["lowdm", "highdm"]
-    draw_option = "hist error"
+    draw_option = "hist"
     color_red    = "vermillion"
     color_blue   = "electric blue"
     label1 = h_map_1["label"]
@@ -60,7 +60,7 @@ def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
             c.cd(1)
             ROOT.gPad.SetLogy(1) # set log y
             h1.Draw(draw_option)
-            h2.Draw("error same")
+            h2.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
             legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
             legend.AddEntry(h1, "{0}: {1}".format(value, label1), "l")
