@@ -516,9 +516,9 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             norm                = SearchBinObject.binValues[era][b]["norm"]
             shape               = SearchBinObject.binValues[era][b]["shape"]
             photon_data_mc_norm = SearchBinObject.binValues[era][b]["photon_data_mc_norm"]
-            mc                  = histo["search"][region][""].GetBinContent(b_i) 
+            znunu_mc            = histo["search"][region][""].GetBinContent(b_i) 
             
-            p1 = shape * norm * mc 
+            p1 = shape * norm * znunu_mc
             p2 = SearchBinObject.binValues[era][b]["pred"]
             
             p  = p1
