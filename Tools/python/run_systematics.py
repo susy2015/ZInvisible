@@ -470,7 +470,7 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
 # - include both Z nunu search bin and photon CR bin variation
 #-------------------------------------------------------
 
-def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2):
+def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, systematics_map, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2):
     d = runMap[era]
     r  = "condor/" + d + "/result.root"
     N.getNormAndError(r, era)
@@ -545,17 +545,36 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             
             if p != 0:
                 # syst from p, p_up, p_down
-                for syst in systematics_znunu:
+                for key in systematics_map:
+                    syst_znunu = systematics_map[key]["znunu"]
+                    syst_phocr = systematics_map[key]["phocr"]
                     # do not apply SB syst in high dm
-                    if region == "highdm" and syst == "eff_sb":
+                    if region == "highdm" and key == "eff_sb":
                         continue
                     # syst_histo[systemaitc][bintype][region][direction]
-                    h_up    = syst_histo[syst]["search"][region]["up"]
-                    h_down  = syst_histo[syst]["search"][region]["down"]
-                    p_up    = h_up.GetBinContent(b_i)
-                    p_down  = h_down.GetBinContent(b_i)
-                    log_syst_up     = p_up / p
-                    log_syst_down   = p_down / p
+                    # some systematics are only for Znunu or only for photon CR
+                    if syst_znunu:
+                        h_znunu_up    = syst_histo[syst_znunu]["search"][region]["up"]
+                        h_znunu_down  = syst_histo[syst_znunu]["search"][region]["down"]
+                    else:
+                        h_znunu_up   = histo["search"][region][""]
+                        h_znunu_down = histo["search"][region][""]
+                    if syst_phocr:
+                        h_gjets_up    = syst_histo[syst_phocr]["controlUnit_gjets"][region]["up"]
+                        h_gjets_down  = syst_histo[syst_phocr]["controlUnit_gjets"][region]["down"]
+                        h_back_up     = syst_histo[syst_phocr]["controlUnit_back"][region]["up"]
+                        h_back_down   = syst_histo[syst_phocr]["controlUnit_back"][region]["down"]
+                    else:
+                        h_gjets_up    = histo["controlUnit_gjets"][region][""] 
+                        h_gjets_down  = histo["controlUnit_gjets"][region][""] 
+                        h_back_up     = histo["controlUnit_back"][region][""] 
+                        h_back_down   = histo["controlUnit_back"][region][""] 
+                    
+                    # p_up    = h_up.GetBinContent(b_i)
+                    # p_down  = h_down.GetBinContent(b_i)
+                    # log_syst_up     = p_up / p
+                    # log_syst_down   = p_down / p
+
             b_i += 1
 
 
@@ -629,14 +648,25 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
     # Systematics which we don't use: MET uncluster in photon CR, lepton veto SF, ISR weight for ttbar
     systematics_znunu  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","metres"]
     systematics_phocr  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
-    # test removing soft b systematic (eff_sb)
-    #systematics_znunu  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","metres"]
-    #systematics_phocr  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","photon_sf"]
+    systematics_map    = {  "jes"               : {"znunu" : "jes",             "phocr" : "jes"},
+                            "btag"              : {"znunu" : "btag",            "phocr" : "btag"},
+                            "pileup"            : {"znunu" : "pileup",          "phocr" : "pileup"},
+                            "pdf"               : {"znunu" : "pdf",             "phocr" : "pdf"},
+                            "eff_restoptag"     : {"znunu" : "eff_restoptag",   "phocr" : "eff_restoptag"},
+                            "eff_toptag"        : {"znunu" : "eff_toptag",      "phocr" : "eff_toptag"},
+                            "eff_wtag"          : {"znunu" : "eff_wtag",        "phocr" : "eff_wtag"},
+                            "eff_fatjet_veto"   : {"znunu" : "eff_fatjet_veto", "phocr" : "eff_fatjet_veto"},
+                            "met_trig"          : {"znunu" : "met_trig",        "phocr" : None},
+                            "photon_trig"       : {"znunu" : None,              "phocr" : "photon_trig"},
+                            "eff_sb"            : {"znunu" : "eff_sb",          "phocr" : "eff_sb_photon"},
+                            "metres"            : {"znunu" : "metres",          "phocr" : None},
+                            "photon_sf"         : {"znunu" : None,              "phocr" : "photon_sf"}
+                         }
     # Include prefire here; WARNING: prefire syst. only exists in (2016,2017) and needs to be handled carefully 
     if era != "2018":
         systematics_znunu.append("prefire")
         systematics_phocr.append("prefire")
-    systematics = list(set(systematics_znunu)| set(systematics_phocr))
+    systematics = list(set(systematics_znunu) | set(systematics_phocr))
 
     varTagMap = {
             "jes"    : {"up" : "_jesTotalUp",   "down" : "_jesTotalDown"},
@@ -896,7 +926,8 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
 
     # total systematics using variation on full prediction
     # getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2):
-    getTotalSystematicsPrediction(SB, CRU, N, S, runMap, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2)
+    # getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, systematics_map, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2):
+    getTotalSystematicsPrediction(SB, CRU, N, S, runMap, systematics_map, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2)
 
     # close files
     info_znunu.close()
