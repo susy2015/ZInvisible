@@ -570,6 +570,10 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                         h_back_up     = histo["controlUnit_back"][region][""] 
                         h_back_down   = histo["controlUnit_back"][region][""] 
                     
+                    # sum CR unit bins to get up/down shape factor
+                    # apply photon Data/MC norm.
+                    # include znunu up/down and Rz
+
                     # p_up    = h_up.GetBinContent(b_i)
                     # p_down  = h_down.GetBinContent(b_i)
                     # log_syst_up     = p_up / p
