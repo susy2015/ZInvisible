@@ -525,22 +525,6 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
 
             print "PREDICTION search bin {0}: {1}, {2}, {3}".format(b, p1, p2, isclose(p1, p2, rel_tol=1e-06))
             
-            # norm        = SearchBinObject.binValues[era][b]["norm"]
-            # znunu       = histo["search"][region][""].GetBinContent(b_i)
-            # h_pho_data  = histo["controlUnit_data"][region][""]
-            # h_pho_gjets = histo["controlUnit_gjets"][region][""]
-            # h_pho_back  = histo["controlUnit_back"][region][""]
-    
-            # # get CR unit bins for this search bin
-            # cr_units = searchToUnitMap["unitBinMapCR_phocr"][b]
-            # # get histogram bin numbers
-            # cr_units_bin_i = [int(cr) + 1 - offset for cr in cr_units]
-            # 
-            # # check that prediction calculation is correct
-            # data_list   = [h_pho_data[i]           for i in cr_units_bin_i]
-            # gjets_list  = [h_pho_gjets[i]          for i in cr_units_bin_i]
-            # back_list   = [h_pho_back[i]           for i in cr_units_bin_i]
-            
             log_syst_up_sum    = 0.0
             log_syst_down_sum  = 0.0
             
@@ -607,6 +591,71 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
 
                     log_syst_up     = p_up / p
                     log_syst_down   = p_down / p
+                    
+                    # avoid taking log of negative number or 0
+                    if log_syst_up <= 0:
+                        new_value = ERROR_SYST * p
+                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_up = {3}. Setting log_syst_up = {4}.".format("search", b, syst, log_syst_up, new_value)
+                        log_syst_up = new_value
+                    if log_syst_down <= 0:
+                        new_value = ERROR_SYST * p
+                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format("search", b, syst, log_syst_down, new_value)
+                        log_syst_down = new_value
+                    # If both systematics go the same direction, need to symmetrize
+                    # Because all the nuisance parameters are log-normal, symmetrize by dividing by the geometric mean
+                    if ((log_syst_up > 1) and (log_syst_down > 1)) or ((log_syst_up < 1) and (log_syst_down < 1)):
+                        geometric_mean = np.sqrt(log_syst_up * log_syst_down)
+                        log_syst_up   /= geometric_mean
+                        log_syst_down /= geometric_mean
+                    # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
+                    # Sum (the square of the log of) all the ratios that are greater than 1
+                    # Sum (the square of the log of) all the ratios that are less than 1
+                    # Then at the end, take the exponential of the square root of each sum to get the total systematic ratio
+                    try: 
+                        if log_syst_up > 1 or log_syst_down < 1:
+                            log_syst_up_sum     += np.log(log_syst_up)**2
+                            log_syst_down_sum   += np.log(log_syst_down)**2
+                        else:
+                            log_syst_up_sum     += np.log(log_syst_down)**2
+                            log_syst_down_sum   += np.log(log_syst_up)**2
+                    except:
+                        print "ERROR for np.log(), location 1: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
+                # these syst. are only available when doing Run 2
+                if doRun2:
+                    # syst from root file
+                    #systHistoMap[bintype][region][syst]
+                    for syst in systHistoMap["search"][region]:
+                        error = systHistoMap["search"][region][syst].GetBinContent(b_i)
+                        # symmetric error with up = down
+                        log_syst_up     = 1.0 + error 
+                        log_syst_down   = 1.0 - error
+                        # avoid taking log of negative number or 0
+                        if log_syst_up <= 0:
+                            new_value = ERROR_SYST * p
+                            print "WARNING: For {0} bin {1}, syst {2}: log_syst_up = {3}. Setting log_syst_up = {4}.".format("search", b, syst, log_syst_up, new_value)
+                            log_syst_up = new_value
+                        if log_syst_down <= 0:
+                            new_value = ERROR_SYST * p
+                            print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format("search", b, syst, log_syst_down, new_value)
+                            log_syst_down = new_value
+                        # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
+                        try: 
+                            if log_syst_up > 1 or log_syst_down < 1:
+                                log_syst_up_sum     += np.log(log_syst_up)**2
+                                log_syst_down_sum   += np.log(log_syst_down)**2
+                            else:
+                                log_syst_up_sum     += np.log(log_syst_down)**2
+                                log_syst_down_sum   += np.log(log_syst_up)**2
+                        except:
+                            print "ERROR for np.log(), location 2: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
+
+
+            log_syst_up_total   = np.exp( np.sqrt(log_syst_up_sum))
+            log_syst_down_total = np.exp(-np.sqrt(log_syst_down_sum)) # Minus sign is needed because this is the *down* ratio
+            log_final_up        = log_syst_up_total
+            log_final_down      = log_syst_down_total
+            h_total_syst_up.SetBinContent(     b_i, log_final_up   )
+            h_total_syst_down.SetBinContent(   b_i, log_final_down )
 
             b_i += 1
 
@@ -958,8 +1007,7 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
     # CR unit bin not supported
 
     # total systematics using variation on full prediction
-    # getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, systematics_znunu, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2):
-    # getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, systematics_map, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2):
+    # getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, systematics_map, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2)
     getTotalSystematicsPrediction(SB, CRU, N, S, runMap, systematics_map, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, doRun2)
 
     # close files
