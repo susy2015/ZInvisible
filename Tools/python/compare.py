@@ -372,8 +372,10 @@ if __name__ == "__main__":
     labels = ["Caleb", "Matt"]
     h_names = {"data" : "hdata", "znunu_pred" : "hznunu"}
     f_map = {}
-    f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_Run2.root"
-    f_map["Matt"]  = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/19May2020_Run2Unblind_dev_v6/SearchBinsPlot/SumOfBkg.root"
+    #f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_Run2.root"
+    #f_map["Matt"]  = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/19May2020_Run2Unblind_dev_v6/SearchBinsPlot/SumOfBkg.root"
+    f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-07-06/prediction_histos/searchBinsZinv_Run2.root"
+    f_map["Matt"]  = "/uscms/home/mkilpatr/nobackup/CMSSW_9_4_10/src/AnalysisMethods/EstTools/SUSYNano19/getFinalPlot/SumOfBkg.root"
     search(f_map, values, labels, h_names, "Run2")
 
     # --- Jon's histograms --- #
