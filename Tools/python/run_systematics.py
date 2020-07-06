@@ -762,6 +762,14 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         infoFile.write("{0}  {1}_Up    ave={2:.3f}%, range=[{3:.3f}%, {4:.3f}%]\n".format("total", syst, ave_up,   min_up,   max_up   ))
         infoFile.write("{0}  {1}_Down  ave={2:.3f}%, range=[{3:.3f}%, {4:.3f}%]\n".format("total", syst, ave_down, min_down, max_down ))
 
+        # --- investigate large values
+        for i in xrange(len(values_up)):
+            maxVal = 2.0
+            if values_up[i] >= maxVal: 
+                print "LargeSyst: {0}, {1}, bin {2}, syst_up = {3}".format(era, syst, i, values_up[i])
+            if values_down[i] >= maxVal: 
+                print "LargeSyst: {0}, {1}, bin {2}, syst_down = {3}".format(era, syst, i, values_down[i])
+
     f_out.Close()
 
 
