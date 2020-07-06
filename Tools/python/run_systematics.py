@@ -658,6 +658,59 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             h_total_syst_down.SetBinContent(   b_i, log_final_down )
 
             b_i += 1
+        
+        # --- write histograms to file
+        h_total_syst_up.Write()
+        h_total_syst_down.Write()
+
+        #-------------------------------------------------------
+        # Plot total systematic up/down
+        #-------------------------------------------------------
+                    
+        # correct plot
+        mySyst = "totalPredSyst"
+        
+        eraTag = "_" + era
+        draw_option = "hist"
+        # colors
+        color_red    = "vermillion"
+        color_blue   = "electric blue"
+        color_green  = "irish green" 
+        color_purple = "violet"
+        color_black  = "black"
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.6
+        legend_x2 = 0.9 
+        legend_y1 = 0.7
+        legend_y2 = 0.9 
+    
+        c = ROOT.TCanvas("c", "c", 800, 800)
+        name = "{0}_{1}".format("search", mySyst)
+        
+        title = "Z to Invisible: " + name + " in " + region + " for " + era
+        x_title = "search bins"
+        setupHist(h_total_syst_up,     title, x_title, "total systematic",  color_red,    0.0, 2.0)
+        setupHist(h_total_syst_down,   title, x_title, "total systematic",  color_blue,   0.0, 2.0)
+        
+        # draw histograms
+        h_total_syst_up.Draw(draw_option)
+        h_total_syst_down.Draw(draw_option + " same")
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        legend.AddEntry(h_total_syst_up,           "syst up",                  "l")
+        legend.AddEntry(h_total_syst_down,         "syst down",                "l")
+        legend.Draw()
+        
+        
+        # save histograms
+        plot_name = out_dir + name + "_" + region + eraTag
+        c.Update()
+        c.SaveAs(plot_name + ".png")
+        del c
+
+    f_out.Close()
 
 
 def run(era, eras, runs_json, syst_json, doRun2, verbose):
