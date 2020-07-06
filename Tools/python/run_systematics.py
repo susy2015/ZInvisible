@@ -504,18 +504,19 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     myHistoMap["highdm"]["down"]    = h_syst_down_highdm
     
     for region in regions:
-        # offset = 0
-        # if region == "highdm":
-        #     offset = 53
+        offset = 0
+        if region == "highdm":
+            offset = 53
         # get histograms for this region
         h_total_syst_up   = myHistoMap[region]["up"]
         h_total_syst_down = myHistoMap[region]["down"]
         # be careful with bin index, which needs to start at 1 in both lowdm and highdm
         b_i = 1
         for b in myBinMap[region]:
-            norm  = SearchBinObject.binValues[era][b]["norm"]
-            shape = SearchBinObject.binValues[era][b]["shape"]
-            mc    = histo["search"][region][""].GetBinContent(b_i) 
+            norm                = SearchBinObject.binValues[era][b]["norm"]
+            shape               = SearchBinObject.binValues[era][b]["shape"]
+            photon_data_mc_norm = SearchBinObject.binValues[era][b]["photon_data_mc_norm"]
+            mc                  = histo["search"][region][""].GetBinContent(b_i) 
             
             p1 = shape * norm * mc 
             p2 = SearchBinObject.binValues[era][b]["pred"]
@@ -573,11 +574,39 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     # sum CR unit bins to get up/down shape factor
                     # apply photon Data/MC norm.
                     # include znunu up/down and Rz
+            
+                    # get CR unit bins for this search bin
+                    cr_units = searchToUnitMap["unitBinMapCR_phocr"][b]
+                    # get histogram bin numbers
+                    cr_units_bin_i = [int(cr) + 1 - offset for cr in cr_units]
+                
+                    # for data, use CRBinObject and CR bin string
+                    data_list       = [CRBinObject.binValues[era][cr]["data"] for cr in cr_units]
+                    # for MC, use histograms and integer bin number
+                    gjets_up_list   = [h_gjets_up.GetBinContent(i)      for i in cr_units_bin_i]
+                    gjets_down_list = [h_gjets_down.GetBinContent(i)    for i in cr_units_bin_i]
+                    back_up_list    = [h_back_up.GetBinContent(i)       for i in cr_units_bin_i]
+                    back_down_list  = [h_back_down.GetBinContent(i)     for i in cr_units_bin_i]
 
-                    # p_up    = h_up.GetBinContent(b_i)
-                    # p_down  = h_down.GetBinContent(b_i)
-                    # log_syst_up     = p_up / p
-                    # log_syst_down   = p_down / p
+                    znunu_up_total   = h_znunu_up.GetBinContent(b_i)
+                    znunu_down_total = h_znunu_down.GetBinContent(b_i)
+                    data_total       = sum(data_list)
+                    gjets_up_total   = sum(gjets_up_list)
+                    gjets_down_total = sum(gjets_down_list)
+                    back_up_total    = sum(back_up_list)
+                    back_down_total  = sum(back_down_list)
+                    shape_up   = 1
+                    shape_down = 1
+                    if photon_data_mc_norm * (gjets_up_total + back_up_total) > 0:
+                        shape_up         = data_total / (photon_data_mc_norm * (gjets_up_total + back_up_total))
+                    if photon_data_mc_norm * (gjets_down_total + back_down_total) > 0:
+                        shape_down       = data_total / (photon_data_mc_norm * (gjets_down_total + back_down_total))
+
+                    p_up   = shape_up   * norm * znunu_up_total 
+                    p_down = shape_down * norm * znunu_down_total 
+
+                    log_syst_up     = p_up / p
+                    log_syst_down   = p_down / p
 
             b_i += 1
 
