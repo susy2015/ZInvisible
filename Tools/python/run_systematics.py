@@ -9,7 +9,7 @@ import ROOT
 from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from search_bins import  ValidationBins, ValidationBinsMETStudy, SearchBins, CRUnitBins
-from tools import invert, setupHist, stringifyMap, removeCuts, ERROR_SYST
+from tools import invert, setupHist, stringifyMap, removeCuts, ERROR_SYST, isclose
 
 # set numpy to provide warnings instead of just printing errors
 np.seterr(all='warn')
@@ -478,8 +478,6 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     CRBinObject.getValues(r, era)
     SearchBinObject.getValues(r, era, CRunits=CRBinObject)
     
-    bintype = "search"
-    
     with open("units.json", "r") as input_file:
         searchToUnitMap = json.load(input_file)
     
@@ -488,7 +486,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     histo_tmp  = {region:dict.fromkeys(directions) for region in regions}
     
     # --- bins --- #
-    f_out = ROOT.TFile(total_syst_dir + bintype + "BinsZinv_totalPredSyst_" + era + ".root", "recreate")
+    f_out = ROOT.TFile(total_syst_dir + "searchBinsZinv_totalPredSyst_" + era + ".root", "recreate")
     h_syst_up_lowdm     = ROOT.TH1F("syst_up_lowdm",    "syst_up_lowdm",    SearchBinObject.low_dm_nbins,  SearchBinObject.low_dm_start,  SearchBinObject.low_dm_end  + 1)
     h_syst_up_highdm    = ROOT.TH1F("syst_up_highdm",   "syst_up_highdm",   SearchBinObject.high_dm_nbins, SearchBinObject.high_dm_start, SearchBinObject.high_dm_end + 1)
     h_syst_down_lowdm   = ROOT.TH1F("syst_down_lowdm",  "syst_down_lowdm",  SearchBinObject.low_dm_nbins,  SearchBinObject.low_dm_start,  SearchBinObject.low_dm_end  + 1)
@@ -515,14 +513,19 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         # be careful with bin index, which needs to start at 1 in both lowdm and highdm
         b_i = 1
         for b in myBinMap[region]:
-            p1 = histo[bintype][region][""].GetBinContent(b_i)
+            norm  = SearchBinObject.binValues[era][b]["norm"]
+            shape = SearchBinObject.binValues[era][b]["shape"]
+            mc    = histo["search"][region][""].GetBinContent(b_i) 
+            
+            p1 = shape * norm * mc 
             p2 = SearchBinObject.binValues[era][b]["pred"]
+            
             p  = p1
 
-            print "PREDICTION search bin {0}: {1}, {2}, {3}".format(b, p1, p2, p1 == p2)
+            print "PREDICTION search bin {0}: {1}, {2}, {3}".format(b, p1, p2, isclose(p1, p2, rel_tol=1e-06))
             
             # norm        = SearchBinObject.binValues[era][b]["norm"]
-            # znunu       = histo[bintype][region][""].GetBinContent(b_i)
+            # znunu       = histo["search"][region][""].GetBinContent(b_i)
             # h_pho_data  = histo["controlUnit_data"][region][""]
             # h_pho_gjets = histo["controlUnit_gjets"][region][""]
             # h_pho_back  = histo["controlUnit_back"][region][""]
@@ -547,8 +550,8 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     if region == "highdm" and syst == "eff_sb":
                         continue
                     # syst_histo[systemaitc][bintype][region][direction]
-                    h_up    = syst_histo[syst][bintype][region]["up"]
-                    h_down  = syst_histo[syst][bintype][region]["down"]
+                    h_up    = syst_histo[syst]["search"][region]["up"]
+                    h_down  = syst_histo[syst]["search"][region]["down"]
                     p_up    = h_up.GetBinContent(b_i)
                     p_down  = h_down.GetBinContent(b_i)
                     log_syst_up     = p_up / p
