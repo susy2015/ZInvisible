@@ -575,10 +575,25 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     znunu_up_total   = h_znunu_up.GetBinContent(b_i)
                     znunu_down_total = h_znunu_down.GetBinContent(b_i)
                     data_total       = sum(data_list)
-                    gjets_up_total   = sum(gjets_up_list)
-                    gjets_down_total = sum(gjets_down_list)
-                    back_up_total    = sum(back_up_list)
-                    back_down_total  = sum(back_down_list)
+                    
+                    # sum without cutoff
+                    #gjets_up_total   = sum(gjets_up_list)
+                    #gjets_down_total = sum(gjets_down_list)
+                    #back_up_total    = sum(back_up_list)
+                    #back_down_total  = sum(back_down_list)
+                    
+                    # for values <= 0, use 0.000001
+                    cutoff = 0.000001
+                    gjets_up_list_pos   = [x if x > 0 else cutoff for x in gjets_up_list]
+                    gjets_down_list_pos = [x if x > 0 else cutoff for x in gjets_down_list]
+                    back_up_list_pos    = [x if x > 0 else cutoff for x in back_up_list]
+                    back_down_list_pos  = [x if x > 0 else cutoff for x in back_down_list]
+                    
+                    gjets_up_total   = sum(gjets_up_list_pos)
+                    gjets_down_total = sum(gjets_down_list_pos)
+                    back_up_total    = sum(back_up_list_pos)
+                    back_down_total  = sum(back_down_list_pos)
+                    
                     shape_up   = 1
                     shape_down = 1
                     if photon_data_mc_norm * (gjets_up_total + back_up_total) > 0:
