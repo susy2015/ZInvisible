@@ -244,13 +244,13 @@ def getMyHists(f, label, values):
 
 # compare validation bin histograms
 def validation(file_map, labels, era):
-    label1 = labels[0]
-    label2 = labels[1]
-    values = ["data", "mc", "pred"]
-    file1 = file_map[label1]
-    file2 = file_map[label2]
-    f1    = ROOT.TFile(file1, "read")
-    f2    = ROOT.TFile(file2, "read")
+    label1  = labels[0]
+    label2  = labels[1]
+    values  = ["data", "mc", "pred"]
+    file1   = file_map[label1]
+    file2   = file_map[label2]
+    f1      = ROOT.TFile(file1, "read")
+    f2      = ROOT.TFile(file2, "read")
     h_map_1 = getMyHists(           f1, label1 , values )
     h_map_2 = getValidationHists(   f2, label2 )
 
@@ -261,12 +261,12 @@ def validation(file_map, labels, era):
 
 # compare search bin histograms
 def search(file_map, values, labels, h_names, era):
-    label1 = labels[0]
-    label2 = labels[1]
-    file1 = file_map[label1]
-    file2 = file_map[label2]
-    f1    = ROOT.TFile(file1, "read")
-    f2    = ROOT.TFile(file2, "read")
+    label1  = labels[0]
+    label2  = labels[1]
+    file1   = file_map[label1]
+    file2   = file_map[label2]
+    f1      = ROOT.TFile(file1, "read")
+    f2      = ROOT.TFile(file2, "read")
     h_map_1 = getMyHists(       f1, label1, values )
     
     h_map_2 = {}
@@ -375,6 +375,15 @@ if __name__ == "__main__":
     #f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_Run2.root"
     #f_map["Matt"]  = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/19May2020_Run2Unblind_dev_v6/SearchBinsPlot/SumOfBkg.root"
     f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-07-06/prediction_histos/searchBinsZinv_Run2.root"
+    f_map["Matt"]  = "/uscms/home/mkilpatr/nobackup/CMSSW_9_4_10/src/AnalysisMethods/EstTools/SUSYNano19/getFinalPlot/SumOfBkg.root"
+    search(f_map, values, labels, h_names, "Run2")
+
+    # compare systematics with Matt
+    values = ["syst_up", "syst_down"]
+    labels = ["Caleb", "Matt"]
+    h_names = {"syst_up" : "znunu_syst_up", "syst_down" : "znunu_syst_dn"}
+    f_map = {}
+    f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-07-06/prediction_histos/searchBinsZinv_totalPredSyst_Run2.root"
     f_map["Matt"]  = "/uscms/home/mkilpatr/nobackup/CMSSW_9_4_10/src/AnalysisMethods/EstTools/SUSYNano19/getFinalPlot/SumOfBkg.root"
     search(f_map, values, labels, h_names, "Run2")
 
