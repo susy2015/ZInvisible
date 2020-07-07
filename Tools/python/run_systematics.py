@@ -842,10 +842,11 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
     directions              = ["up", "", "down"]
     bintypes                = ["validation", "validationMetStudy", "search", "controlUnit_gjets", "controlUnit_back"]
     # Systematics which we don't use: MET uncluster in photon CR, lepton veto SF, ISR weight for ttbar
-    systematics_znunu  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","metres"]
-    systematics_phocr  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
+    systematics_znunu  = ["jes","btag_light","btag_heavy","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","metres"]
+    systematics_phocr  = ["jes","btag_light","btag_heavy","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
     systematics_map    = {  "jes"               : {"znunu" : "jes",             "phocr" : "jes"},
-                            "btag"              : {"znunu" : "btag",            "phocr" : "btag"},
+                            "btag_light"        : {"znunu" : "btag_light",      "phocr" : "btag_light"},
+                            "btag_heavy"        : {"znunu" : "btag_heavy",      "phocr" : "btag_heavy"},
                             "pileup"            : {"znunu" : "pileup",          "phocr" : "pileup"},
                             "pdf"               : {"znunu" : "pdf",             "phocr" : "pdf"},
                             "eff_restoptag"     : {"znunu" : "eff_restoptag",   "phocr" : "eff_restoptag"},
