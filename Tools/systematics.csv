@@ -3,7 +3,8 @@ pdf,PDF_Weight,NONE,pdfWeight_Up,pdfWeight_Down
 pileup,PU_Weight,puWeight,puWeight_Up,puWeight_Down
 isr,ISR_Weight,ISRWeight,ISRWeight_Up,ISRWeight_Down
 prefire,Prefire_Weight,PrefireWeight,PrefireWeight_Up,PrefireWeight_Down
-btag,b,BTagWeight,BTagWeight_Up,BTagWeight_Down
+btag_light,b_light,BTagWeightLight,BTagWeightLight_Up,BTagWeightLight_Down
+btag_heavy,b_heavy,BTagWeightHeavy,BTagWeightHeavy_Up,BTagWeightHeavy_Down
 dielec_sf,dielec_sf,DiElecSF,DiElecSF_Up,DiElecSF_Down
 dimu_sf,dimu_sf,DiMuSF,DiMuSF_Up,DiMuSF_Down
 photon_sf,photon_sf,photonSF,photonSF_Up,photonSF_Down
