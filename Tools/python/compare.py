@@ -16,7 +16,7 @@ def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
     plot_dir = "comparison_plots"
     eraTag = "_" + era
     regions = ["lowdm", "highdm"]
-    draw_option = "hist error"
+    draw_option = "hist"
     color_red    = "vermillion"
     color_blue   = "electric blue"
     label1 = h_map_1["label"]
@@ -60,7 +60,7 @@ def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
             c.cd(1)
             ROOT.gPad.SetLogy(1) # set log y
             h1.Draw(draw_option)
-            h2.Draw("error same")
+            h2.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
             legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
             legend.AddEntry(h1, "{0}: {1}".format(value, label1), "l")
@@ -244,13 +244,13 @@ def getMyHists(f, label, values):
 
 # compare validation bin histograms
 def validation(file_map, labels, era):
-    label1 = labels[0]
-    label2 = labels[1]
-    values = ["data", "mc", "pred"]
-    file1 = file_map[label1]
-    file2 = file_map[label2]
-    f1    = ROOT.TFile(file1, "read")
-    f2    = ROOT.TFile(file2, "read")
+    label1  = labels[0]
+    label2  = labels[1]
+    values  = ["data", "mc", "pred"]
+    file1   = file_map[label1]
+    file2   = file_map[label2]
+    f1      = ROOT.TFile(file1, "read")
+    f2      = ROOT.TFile(file2, "read")
     h_map_1 = getMyHists(           f1, label1 , values )
     h_map_2 = getValidationHists(   f2, label2 )
 
@@ -261,12 +261,12 @@ def validation(file_map, labels, era):
 
 # compare search bin histograms
 def search(file_map, values, labels, h_names, era):
-    label1 = labels[0]
-    label2 = labels[1]
-    file1 = file_map[label1]
-    file2 = file_map[label2]
-    f1    = ROOT.TFile(file1, "read")
-    f2    = ROOT.TFile(file2, "read")
+    label1  = labels[0]
+    label2  = labels[1]
+    file1   = file_map[label1]
+    file2   = file_map[label2]
+    f1      = ROOT.TFile(file1, "read")
+    f2      = ROOT.TFile(file2, "read")
     h_map_1 = getMyHists(       f1, label1, values )
     
     h_map_2 = {}
@@ -372,8 +372,19 @@ if __name__ == "__main__":
     labels = ["Caleb", "Matt"]
     h_names = {"data" : "hdata", "znunu_pred" : "hznunu"}
     f_map = {}
-    f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_Run2.root"
-    f_map["Matt"]  = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/19May2020_Run2Unblind_dev_v6/SearchBinsPlot/SumOfBkg.root"
+    #f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_Run2.root"
+    #f_map["Matt"]  = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/19May2020_Run2Unblind_dev_v6/SearchBinsPlot/SumOfBkg.root"
+    f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-07-06/prediction_histos/searchBinsZinv_Run2.root"
+    f_map["Matt"]  = "/uscms/home/mkilpatr/nobackup/CMSSW_9_4_10/src/AnalysisMethods/EstTools/SUSYNano19/getFinalPlot/SumOfBkg.root"
+    search(f_map, values, labels, h_names, "Run2")
+
+    # compare systematics with Matt
+    values = ["syst_up", "syst_down"]
+    labels = ["Caleb", "Matt"]
+    h_names = {"syst_up" : "znunu_syst_up", "syst_down" : "znunu_syst_dn"}
+    f_map = {}
+    f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-07-06/prediction_histos/searchBinsZinv_totalPredSyst_Run2.root"
+    f_map["Matt"]  = "/uscms/home/mkilpatr/nobackup/CMSSW_9_4_10/src/AnalysisMethods/EstTools/SUSYNano19/getFinalPlot/SumOfBkg.root"
     search(f_map, values, labels, h_names, "Run2")
 
     # --- Jon's histograms --- #

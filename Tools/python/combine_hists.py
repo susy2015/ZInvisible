@@ -111,7 +111,7 @@ def main():
     eras = ["2016", "2017", "2018", "2016and2017", "Run2"]
     for era in eras:
         predFile = "prediction_histos/searchBinsZinv_{0}.root".format(era)
-        systFile = "prediction_histos/searchBinsZinv_syst_{0}.root".format(era)
+        systFile = "prediction_histos/searchBinsZinv_totalPredSyst_{0}.root".format(era)
         outFile  = "prediction_histos/searchBinsZinv_combined_{0}.root".format(era)
         combine(predFile, systFile, outFile)
 
