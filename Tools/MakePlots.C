@@ -694,8 +694,6 @@ int main(int argc, char* argv[])
     std::vector<std::vector<PDS>> stackww_MC = {{dswwDY, dswwDYInc}, {dswtt2l}, {dswtW}, {dswttZ}, {dswVV}, {dswRare, dswVV, dswttZ}};
 
 
-    // use DYInc if true, otherwise use DYJetsToLL (HT binned DY)
-    bool useDYInc = false;
     // apply ISRWeight and Stop0l_topptWeight to ttbar only... 
     // Stop0l_topptWeight available in v6p5 ntuples
     std::string ISRWeight   = ";ISRWeight";
@@ -703,48 +701,34 @@ int main(int argc, char* argv[])
     
     auto makeStackMC_DiLepton = [&](const std::string& cuts, const std::string& weights, const std::string& DYweight = "")
     {
-        PDS dsDYInc(         "DY Inc",                      fileMap["IncDY" + yearTag],           cuts,   weights + DYweight);
         PDS dsDY(            "DY",                          fileMap["DYJetsToLL" + yearTag],      cuts,   weights + DYweight);
         PDS dsTTbar(         "t#bar{t}",                    fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
         PDS dsSingleTopZinv( "Single t",                    fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
-        PDS dsRare(          "Rare",                        fileMap["Rare" + yearTag],            cuts,   weights);
-        PDS dsDiboson(       "Diboson",                     fileMap["Diboson" + yearTag],         cuts,   weights);
         PDS dsTTZ(           "t#bar{t}Z",                   fileMap["TTZ" + yearTag],             cuts,   weights);
-        if (useDYInc)
-        {
-            std::vector<std::vector<PDS>> StackMC = {{dsDYInc}, {dsTTbar}, {dsSingleTopZinv}, {dsRare, dsDiboson, dsTTZ}};
-            return StackMC;
-        }
-        else
-        {
-            std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTbar}, {dsSingleTopZinv}, {dsRare, dsDiboson, dsTTZ}};
-            return StackMC;
-        }
+        PDS dsWZ(            "WZ",                          fileMap["WZ_amcatnlo" + yearTag],     cuts,   weights);
+        PDS dsDiboson(       "Diboson",                     fileMap["Diboson" + yearTag],         cuts,   weights);
+        PDS dsRare(          "Rare",                        fileMap["Rare" + yearTag],            cuts,   weights);
+        // DY, ttbar, single top, ttZ, WZ, rare, and diboson
+        std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTbar}, {dsSingleTopZinv}, {dsTTZ}, {dsWZ}, {dsDiboson}, {dsRare}};
+        return StackMC;
     };
     
     auto makeStackMC_DiLepton_Normalization = [&](const std::string& cuts, const std::string& weights)
     {
-        PDS dsDYInc(            "IncZToLL",         fileMap["IncDY" + yearTag],           cuts,   weights);
-        PDS dsDY(               "ZToLL",            fileMap["DYJetsToLL" + yearTag],      cuts,   weights);
-        PDS dsTTbar(            "NoZToLL",          fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
-        PDS dsSingleTopZinv(    "Single t",         fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
-        PDS dsRareZ(            "RareZ",            fileMap["RareZ" + yearTag],           cuts,   weights);
-        PDS dsRareNoZ(          "RareNoZ",          fileMap["RareNoZ" + yearTag],         cuts,   weights);
-        PDS dsDibosonZToLL(     "DibosonZToLL",     fileMap["DibosonZToLL" + yearTag],    cuts,   weights);
-        PDS dsDibosonNoZToLL(   "DibosonNoZToLL",   fileMap["DibosonNoZToLL" + yearTag],  cuts,   weights);
-        PDS dsTTZ(              "t#bar{t}Z",        fileMap["TTZ" + yearTag],             cuts,   weights);
-        if (useDYInc)
-        {
-            // "Z to LL" MC and "No Z to LL" MC
-            std::vector<std::vector<PDS>> StackMC = {{dsDYInc, dsRareZ, dsDibosonZToLL}, {dsTTbar, dsSingleTopZinv, dsRareNoZ, dsDibosonNoZToLL, dsTTZ}};
-            return StackMC;
-        }
-        else
-        {
-            // "Z to LL" MC and "No Z to LL" MC
-            std::vector<std::vector<PDS>> StackMC = {{dsDY, dsRareZ, dsDibosonZToLL}, {dsTTbar, dsSingleTopZinv, dsRareNoZ, dsDibosonNoZToLL, dsTTZ}};
-            return StackMC;
-        }
+        PDS dsDY(               "ZToLL",                fileMap["DYJetsToLL" + yearTag],      cuts,   weights);
+        PDS dsTTbar(            "NoZToLL",              fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
+        PDS dsSingleTopZinv(    "Single t",             fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
+        PDS dsTTZToLLNuNu(      "t#bar{t}ZToLL#nu#nu",  fileMap["TTZToLLNuNu" + yearTag],     cuts,   weights);
+        PDS dsTTZToQQ(          "t#bar{t}ZToQQ",        fileMap["TTZToQQ" + yearTag],         cuts,   weights);
+        PDS dsWZ_ZToLL(         "WZ_ZToLL",             fileMap["WZ_ZToLL" + yearTag],        cuts,   weights);
+        PDS dsWZ_NoZToLL(       "WZ_NoZToLL",           fileMap["WZ_NoZToLL" + yearTag],      cuts,   weights);
+        PDS dsDibosonZToLL(     "DibosonZToLL",         fileMap["DibosonZToLL" + yearTag],    cuts,   weights);
+        PDS dsDibosonNoZToLL(   "DibosonNoZToLL",       fileMap["DibosonNoZToLL" + yearTag],  cuts,   weights);
+        PDS dsRareZ(            "RareZ",                fileMap["RareZ" + yearTag],           cuts,   weights);
+        PDS dsRareNoZ(          "RareNoZ",              fileMap["RareNoZ" + yearTag],         cuts,   weights);
+        // "Z to LL" MC and "No Z to LL" MC
+        std::vector<std::vector<PDS>> StackMC = {{dsDY, dsTTZToLLNuNu, dsWZ_ZToLL, dsDibosonZToLL, dsRareZ}, {dsTTbar, dsSingleTopZinv, dsTTZToQQ, dsWZ_NoZToLL, dsDibosonNoZToLL, dsRareNoZ}};
+        return StackMC;
     };
     
     // standard MC, single photon selection
@@ -759,9 +743,9 @@ int main(int argc, char* argv[])
         PDS dsRare(       "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
         PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
         PDS dsTTZ(        "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
-        //std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
+        PDS dsWZ(         "WZ",                     fileMap["WZ_amcatnlo" + yearTag],   cuts,   weights);
         // removed dsTTbar which overlaps with dsTTG:
-        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
+        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsDiboson, dsTTZ, dsWZ}};
         return StackMC;
     };
     // using direct, fake and fragmented photons
@@ -777,7 +761,6 @@ int main(int argc, char* argv[])
     //    PDS dsRare(             "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
     //    PDS dsDiboson(          "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
     //    PDS dsTTZ(              "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
-    //    std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDFragmented}, {dsQCDFake}, {dsTTG}, {dsWJetsToLNu},  {dsTTbar}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
     //    // removed dsTTbar which overlaps with dsTTG:
     //    std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsDiboson, dsTTZ}};
     //    return StackMC;
@@ -1100,10 +1083,7 @@ int main(int argc, char* argv[])
             
     // MC DY comparison of electron and muon selection
             
-    // use IncDY or DYJetsToLL
-    std::string DY_sample = "";
-    if (useDYInc) DY_sample = "IncDY";
-    else          DY_sample = "DYJetsToLL";
+    std::string DY_sample = "DYJetsToLL";
 
     // only di-lepton selection
     PDS dsDY_LowDM("DY",                    fileMap[DY_sample + yearTag],  "",               "");
