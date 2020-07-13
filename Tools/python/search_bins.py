@@ -411,7 +411,9 @@ class Common:
                 avg_w   = ERROR_ZERO
             else:
                 avg_w   = (p_error_propagated ** 2) / p
-            n_eff = p / avg_w
+            n_eff = 0
+            if avg_w:
+                n_eff = p / avg_w
             n_eff_final = int(n_eff)
             if n_eff_final == 0:
                 avg_w_final = avg_w
