@@ -204,7 +204,7 @@ namespace plotterFunctions
                 }
                 
                 // testing
-                //printf("INFO: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                //printf("INFO: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                 
                 
                 // --- old version for gen partons --- //
@@ -229,7 +229,7 @@ namespace plotterFunctions
                 {
                     if ((statusFlags & 1) == 1)
                     {
-                        if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                        if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPartonTLV.push_back(GenPartTLV[i]);
                     }
                 }
@@ -241,7 +241,7 @@ namespace plotterFunctions
                 
                 if (pdgId == 22 && status == 1 && ((statusFlags & 1) == 1) )
                 {
-                    if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                    if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                     GenPhotonTLV.push_back(GenPartTLV[i]);
                 }
             }
