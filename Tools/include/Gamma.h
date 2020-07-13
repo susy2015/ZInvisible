@@ -27,7 +27,7 @@ namespace plotterFunctions
 
     private:
         std::string year_;
-        bool verbose = false;
+        bool verbose = true;
         enum ID{Loose, Medium, Tight};
 
     void generateGamma(NTupleReader& tr) {
@@ -211,7 +211,7 @@ namespace plotterFunctions
                 //if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
                 //{
                 //    // old version
-                //    if (status == 23 && (statusFlags & 0x80 == 0x80) )
+                //    if (status == 23 && ((statusFlags & 0x80) == 0x80) )
                 //    {
                 //        if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                 //        GenPartonTLV.push_back(GenPartTLV[i]);
@@ -227,7 +227,7 @@ namespace plotterFunctions
                 
                 if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
                 {
-                    if (statusFlags & 1 == 1)
+                    if ((statusFlags & 1) == 1)
                     {
                         if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPartonTLV.push_back(GenPartTLV[i]);
@@ -239,7 +239,7 @@ namespace plotterFunctions
                 // stable: status == 1
                 // statusFlag: isPrompt; statusFlag & 1 == 1
                 
-                if (pdgId == 22 && status == 1 && (statusFlags & 1 == 1) )
+                if (pdgId == 22 && status == 1 && ((statusFlags & 1) == 1) )
                 {
                     if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                     GenPhotonTLV.push_back(GenPartTLV[i]);
