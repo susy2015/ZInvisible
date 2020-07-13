@@ -270,8 +270,12 @@ namespace plotterFunctions
                     dR_GenPhotonGenParton.push_back(dR);
                     if (dR > 0.4)
                     {
-                        if (verbose) printf("Rejecting QCD event: DR(gen photon, gen parton) = %f\n", dR);
+                        if (verbose) printf("FAIL_QCD_CUT event: DR(gen photon, gen parton) = %f\n", dR);
                         passQCDSelection = false;
+                    }
+                    else
+                    {
+                        if (verbose) printf("PASS_QCD_CUT QCD event: DR(gen photon, gen parton) = %f\n", dR);
                     }
                 }
             }
