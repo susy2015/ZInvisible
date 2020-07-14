@@ -105,7 +105,6 @@ class Normalization:
                         }
                         # additional histos including all MC categories
                         # note: histogram names are different for stack split into all MC categories
-                        # note: WZ not present in old run
                         self.histosSplit[era][bin_type][particle][region][selection] = { 
                             "Data"              : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + dataSelectionTag + 2 * self.variable + "Datadata",
                             "DY"                : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "DYstack",
