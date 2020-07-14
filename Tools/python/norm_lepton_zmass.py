@@ -98,6 +98,21 @@ class Normalization:
                             "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "ZToLLstack",
                             "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "NoZToLLstack",
                         }
+                        # additional histos including all MC categories
+                        self.histosSplit[era][bin_type][particle][region][selection] = { 
+                            "Data"              : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + dataSelectionTag + 2 * self.variable + "Datadata",
+                            "DY"                : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "DYstack",
+                            "TTZToLLNuNu"       : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "t#bar{t}ZToLL#nu#nustack",
+                            "WZ_ZToLL"          : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "WZ_ZToLLstack",
+                            "DibosonZToLL"      : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "DibosonZToLLstack",
+                            "RareZ"             : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "RareZstack",
+                            "TTbar"             : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "t#bar{t}stack",
+                            "SingleTop"         : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "Single tstack",
+                            "TTZToQQ"           : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "t#bar{t}ZToQQstack",
+                            "WZ_NoZToLL"        : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "WZ_NoZToLLstack",
+                            "DibosonNoZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "DibosonNoZToLLstack",
+                            "RareNoZ"           : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "RareNoZstack",
+                        }
 
     def calcNorm(self, A, x):
         # --- Solve for b --- #
