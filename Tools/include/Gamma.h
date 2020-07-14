@@ -27,7 +27,7 @@ namespace plotterFunctions
 
     private:
         std::string year_;
-        bool verbose = false;
+        bool verbose = true;
         enum ID{Loose, Medium, Tight};
 
     void generateGamma(NTupleReader& tr) {
@@ -274,12 +274,12 @@ namespace plotterFunctions
                     dR_GenPhotonGenParton.push_back(dR);
                     if (dR > 0.4)
                     {
-                        if (verbose) printf("FAIL_QCD_CUT event: DR(gen photon, gen parton) = %f\n", dR);
+                        if (verbose) printf("FAIL_QCD_CUT_DR: DR(gen photon, gen parton) = %f\n", dR);
                         passQCDSelection = false;
                     }
                     else
                     {
-                        if (verbose) printf("PASS_QCD_CUT QCD event: DR(gen photon, gen parton) = %f\n", dR);
+                        if (verbose) printf("PASS_QCD_CUT_DR: DR(gen photon, gen parton) = %f\n", dR);
                     }
                 }
             }
@@ -455,6 +455,18 @@ namespace plotterFunctions
             printf("photonSF_Down = %f ",           photonSF_Down);
             printf("passPhotonSelection = %i ",     passPhotonSelection);
             printf("\n");
+        }
+
+        if (verbose)
+        {
+            if (passQCDSelection)
+            {
+                printf("PASS_QCD_CUT_EVENT\n");
+            }
+            else
+            {
+                printf("FAIL_QCD_CUT_EVENT\n");
+            }
         }
         
         // Register derived variables
