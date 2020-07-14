@@ -221,14 +221,14 @@ namespace plotterFunctions
                 // Particle IDs
                 // quarks: +/- (1 to 6)
                 // gluons: + (9 and 21)
-                // statusFlag: isPrompt; statusFlag & 1 == 1
+                // stable: status == 1
                 // outgoing particles of the hardest subprocess: GenPart_status = 23
-                // isHardProcess: (GenPart_statusFlags & 0x80) == 0x80
+                // statusFlag: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 
                 if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
                 {
-                    //if ((statusFlags & 1) == 1)
-                    if ((statusFlags & 0x2000) == 0x2000)
+                    //if ((statusFlags & 0x2000) == 0x2000)
+                    if ((statusFlags & 0x1) == 0x1)
                     {
                         if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPartonTLV.push_back(GenPartTLV[i]);
@@ -238,12 +238,10 @@ namespace plotterFunctions
                 // Particle IDs
                 // photons: +22
                 // stable: status == 1
-                // statusFlag: isPrompt; statusFlag & 1 == 1
+                // statusFlag: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 
-                //if ( pdgId == 22 )
-                //if ( pdgId == 22 && status == 1 )
-                //if ( pdgId == 22 && status == 1 && ((statusFlags & 1) == 1) )
-                if ( pdgId == 22 && status == 1 && ((statusFlags & 0x2000) == 0x2000) )
+                //if ( pdgId == 22 && status == 1 && ((statusFlags & 0x2000) == 0x2000) )
+                if ( pdgId == 22 && status == 1 && ((statusFlags & 0x1) == 0x1) )
                 {
                     if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                     GenPhotonTLV.push_back(GenPartTLV[i]);
