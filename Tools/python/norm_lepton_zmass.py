@@ -244,6 +244,13 @@ class Normalization:
     def findContributions(self, era, bin_type, particle, region, selection, outFile): 
         # WARNING: strings loaded from json file have type 'unicode'
         # ROOT cannot load histograms using unicode input: use type 'str'
+        
+        # get total MC categories for comparison
+        h_Data    = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["Data"]    ) )
+        h_ZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["ZToLL"]   ) )
+        h_NoZToLL = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["NoZToLL"] ) )
+        
+        # get MC split into all types 
         histoMap = {}
         histoMap["Data"]              = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["Data"]            ) )
         histoMap["DY"]                = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["DY"]              ) )
@@ -261,7 +268,9 @@ class Normalization:
         # use list to define order 
         histoList = ["Data", "DY", "TTZToLLNuNu", "WZ_ZToLL", "DibosonZToLL", "RareZ", "TTbar", "SingleTop", "TTZToQQ", "WZ_NoZToLL", "DibosonNoZToLL", "RareNoZ"]
         
-        h_Data = histoMap["Data"]
+        # Total MC for comparison
+        h_totalMC = h_ZToLL.Clone("h_totalMC")  
+        h_totalMC.Add(h_NoZToLL)
         
         # define on-Z and off-Z peak regions
         minMass = 50.0
@@ -276,6 +285,35 @@ class Normalization:
         bin_5 = bin_4 + 1
         bin_6 = h_Data.GetNbinsX() + 1
         bins = [bin_1, bin_2, bin_3, bin_4, bin_5, bin_6]
+
+        h = h_Data
+        # find on-Z and off-Z peak number of events
+        a_error = ROOT.Double()
+        b_error_1 = ROOT.Double()
+        b_error_2 = ROOT.Double()
+        # on Z peak
+        a = h.IntegralAndError(bin_3, bin_4, a_error) 
+        # off Z peak
+        b = h.IntegralAndError(bin_1, bin_2, b_error_1) + h.IntegralAndError(bin_5, bin_6, b_error_2)
+        b_error = tools.getAdditionError(b_error_1, b_error_2) 
+        
+        onPeakData  = a 
+        offPeakData = b
+        totalData   = a + b
+        
+        h = h_totalMC
+        # find on-Z and off-Z peak number of events
+        a_error = ROOT.Double()
+        b_error_1 = ROOT.Double()
+        b_error_2 = ROOT.Double()
+        # on Z peak
+        a = h.IntegralAndError(bin_3, bin_4, a_error) 
+        # off Z peak
+        b = h.IntegralAndError(bin_1, bin_2, b_error_1) + h.IntegralAndError(bin_5, bin_6, b_error_2)
+        b_error = tools.getAdditionError(b_error_1, b_error_2) 
+        
+        onPeakMC  = a 
+        offPeakMC = b
         
         outFile.write("----------------------------------------------------------------------\n")
         for key in histoList:
@@ -289,7 +327,15 @@ class Normalization:
             # off Z peak
             b = h.IntegralAndError(bin_1, bin_2, b_error_1) + h.IntegralAndError(bin_5, bin_6, b_error_2)
             b_error = tools.getAdditionError(b_error_1, b_error_2) 
-            outFile.write("{0} {1} {2} {3} on_peak = {4:.3f} +/- {5:.3f} off_peak = {6:.3f} +/- {7:.3f}\n".format(particle, region, selection, key, a, a_error, b, b_error))
+            #if key == "Data":
+            #    onPeakPerc  = 100.0 * a / totalData 
+            #    offPeakPerc = 100.0 * b / totalData 
+            #else:
+            #    onPeakPerc  = 100.0 * a / onPeakMC
+            #    offPeakPerc = 100.0 * b / offPeakMC
+            onPeakPerc  = 100.0 * a / onPeakMC
+            offPeakPerc = 100.0 * b / offPeakMC
+            outFile.write("{0} {1} {2} {3} on_peak = {4:.3f} +/- {5:.3f} ({6:.1f}%) off_peak = {7:.3f} +/- {8:.3f} ({9:.1f}%)\n".format(particle, region, selection, key, a, a_error, onPeakPerc, b, b_error, offPeakPerc))
     
     # calculate R_Z and R_T
     def runCalculation(self, era, bin_type, particle, region, selection): 
