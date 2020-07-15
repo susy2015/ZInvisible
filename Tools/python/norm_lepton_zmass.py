@@ -271,6 +271,9 @@ class Normalization:
         # Total MC for comparison
         h_totalMC = h_ZToLL.Clone("h_totalMC")  
         h_totalMC.Add(h_NoZToLL)
+        # non DY MC on peak for comparison
+        h_ZToLLNoDY = h_ZToLL.Clone("h_ZToLLNoDY")
+        h_ZToLLNoDY.Add(histoMap["DY"], -1)
         
         # define on-Z and off-Z peak regions
         minMass = 50.0
@@ -286,24 +289,9 @@ class Normalization:
         bin_6 = h_Data.GetNbinsX() + 1
         bins = [bin_1, bin_2, bin_3, bin_4, bin_5, bin_6]
 
-        h = h_Data
-        # find on-Z and off-Z peak number of events
-        a_error = ROOT.Double()
-        b_error_1 = ROOT.Double()
-        b_error_2 = ROOT.Double()
-        # on Z peak
-        a = h.IntegralAndError(bin_3, bin_4, a_error) 
-        # off Z peak
-        b = h.IntegralAndError(bin_1, bin_2, b_error_1) + h.IntegralAndError(bin_5, bin_6, b_error_2)
-        b_error = tools.getAdditionError(b_error_1, b_error_2) 
-        
-        onPeakData  = a 
-        offPeakData = b
-        totalData   = a + b
-        
         h = h_totalMC
         # find on-Z and off-Z peak number of events
-        a_error = ROOT.Double()
+        a_error   = ROOT.Double()
         b_error_1 = ROOT.Double()
         b_error_2 = ROOT.Double()
         # on Z peak
@@ -315,11 +303,42 @@ class Normalization:
         onPeakMC  = a 
         offPeakMC = b
         
+        h = histoMap["DY"]
+        # find on-Z and off-Z peak number of events
+        a_error   = ROOT.Double()
+        b_error_1 = ROOT.Double()
+        b_error_2 = ROOT.Double()
+        # on Z peak
+        a = h.IntegralAndError(bin_3, bin_4, a_error) 
+        # off Z peak
+        b = h.IntegralAndError(bin_1, bin_2, b_error_1) + h.IntegralAndError(bin_5, bin_6, b_error_2)
+        b_error = tools.getAdditionError(b_error_1, b_error_2) 
+
+        onPeakDY  = a 
+        offPeakDY = b
+        
+        h = h_ZToLLNoDY
+        # find on-Z and off-Z peak number of events
+        a_error   = ROOT.Double()
+        b_error_1 = ROOT.Double()
+        b_error_2 = ROOT.Double()
+        # on Z peak
+        a = h.IntegralAndError(bin_3, bin_4, a_error) 
+        # off Z peak
+        b = h.IntegralAndError(bin_1, bin_2, b_error_1) + h.IntegralAndError(bin_5, bin_6, b_error_2)
+        b_error = tools.getAdditionError(b_error_1, b_error_2) 
+        
+        onPeakZToLLNoDY  = a 
+        offPeakZToLLNoDY = b
+        
+        onPeakPerc  = 100.0 * onPeakZToLLNoDY / onPeakDY
+        outFile.write("----------------------------------------------------------------------\n")
+        outFile.write("{0} {1} {2} On Z Peak: (ZToLLNoDY / DY) = {3:.3f} / {4:.3f} = {5:.1f}%\n".format(particle, region, selection, onPeakZToLLNoDY, onPeakDY, onPeakPerc))
         outFile.write("----------------------------------------------------------------------\n")
         for key in histoList:
             h = histoMap[key]
             # find on-Z and off-Z peak number of events
-            a_error = ROOT.Double()
+            a_error   = ROOT.Double()
             b_error_1 = ROOT.Double()
             b_error_2 = ROOT.Double()
             # on Z peak
@@ -327,12 +346,6 @@ class Normalization:
             # off Z peak
             b = h.IntegralAndError(bin_1, bin_2, b_error_1) + h.IntegralAndError(bin_5, bin_6, b_error_2)
             b_error = tools.getAdditionError(b_error_1, b_error_2) 
-            #if key == "Data":
-            #    onPeakPerc  = 100.0 * a / totalData 
-            #    offPeakPerc = 100.0 * b / totalData 
-            #else:
-            #    onPeakPerc  = 100.0 * a / onPeakMC
-            #    offPeakPerc = 100.0 * b / offPeakMC
             onPeakPerc  = 100.0 * a / onPeakMC
             offPeakPerc = 100.0 * b / offPeakMC
             outFile.write("{0} {1} {2} {3} on_peak = {4:.3f} +/- {5:.3f} ({6:.1f}%) off_peak = {7:.3f} +/- {8:.3f} ({9:.1f}%)\n".format(particle, region, selection, key, a, a_error, onPeakPerc, b, b_error, offPeakPerc))
@@ -394,8 +407,8 @@ class Normalization:
         # off Z mass peak: bin_1 to bin_2 and bin_5 to bin_6 
     
         # MC matrix
-        a11_error = ROOT.Double()
-        a12_error = ROOT.Double()
+        a11_error   = ROOT.Double()
+        a12_error   = ROOT.Double()
         a21_error_1 = ROOT.Double()
         a21_error_2 = ROOT.Double()
         a22_error_1 = ROOT.Double()
