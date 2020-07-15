@@ -117,25 +117,17 @@ namespace PhotonFunctions
   bool isGenMatched_Method1(const TLorentzVector& photon, std::vector<TLorentzVector> genPhotons){
     double RecoPt = photon.Pt();
     bool genMatched = false;
-    //std::cout << "genPhotons: " << genPhotons.size() << std::endl;
-    for(int i = 0; i < genPhotons.size(); i++){
-      double deltaR = ROOT::Math::VectorUtil::DeltaR(genPhotons[i],photon);
-      double GenPt = genPhotons[i].Pt();
-      double temp_ratio = GenPt/RecoPt;
-      /*
-      std::cout << "igenPhotons: " << i+1 << std::endl;
-      std::cout << "Reco Photon Pt: " << RecoPt << std::endl;
-      std::cout<< "Gen Photon Pt: " << GenPt<< std::endl;
-      std::cout<< "GenPt/RecoPt: " << temp_ratio << std::endl;
-      std::cout << "deltaR: " << deltaR << std::endl;
-      */
-      if (temp_ratio > 0.5 && temp_ratio < 2.0 && deltaR < 0.1){
+    for(int i = 0; i < genPhotons.size(); i++)
+    {
+      double deltaR     = ROOT::Math::VectorUtil::DeltaR(genPhotons[i],photon);
+      double GenPt      = genPhotons[i].Pt();
+      double temp_ratio = RecoPt/GenPt;
+      if (temp_ratio > 0.5 && temp_ratio < 2.0 && deltaR < 0.1)
+      {
         genMatched = true;
         break;
       }
     }
-    //if (genMatched) std::cout << "pass"<< std::endl << std::endl;
-    //else std::cout << "fake"<< std::endl << std::endl;
     return genMatched;
   }
 
