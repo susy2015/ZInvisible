@@ -27,7 +27,8 @@ namespace plotterFunctions
 
     private:
         std::string year_;
-        bool verbose = true;
+        bool verbose  = false;
+        bool verbose2 = true;
         enum ID{Loose, Medium, Tight};
 
     void generateGamma(NTupleReader& tr) {
@@ -327,6 +328,15 @@ namespace plotterFunctions
                         // MC Only
                         if (! isData)
                         {
+                            // print reco and gen photons
+                            if (verbose2)
+                            {
+                                printf("Reco Photon: (pt=%.3f, eta=%.3f)\n", PhotonTLV[i].Pt(), PhotonTLV[i].Eta());
+                                for(int i = 0; i < GenPhotonTLV.size(); ++i)
+                                {
+                                    printf("Gen Photon: (pt=%.3f, eta=%.3f)\n", GenPhotonTLV[i].Pt(), GenPhotonTLV[i].Eta());
+                                }
+                            }
                             // get scale factor for MC
                             cutPhotonSF.push_back(Photon_SF[i]);
                             cutPhotonSF_Up.push_back(Photon_SF[i] + Photon_SF_Err[i]);
