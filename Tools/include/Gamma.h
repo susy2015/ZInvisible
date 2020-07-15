@@ -30,6 +30,8 @@ namespace plotterFunctions
         bool verbose  = false;
         bool verbose2 = true;
         enum ID{Loose, Medium, Tight};
+        enum PhotonType{Reco, Direct, Fragmented, Fake};
+        std::map<int, std::string> PhotonMap;
 
     void generateGamma(NTupleReader& tr) {
         const auto& PhotonTLV              = tr.getVec<TLorentzVector>("PhotonTLV");  // reco photon
@@ -46,6 +48,12 @@ namespace plotterFunctions
         // Photon_genPartIdx and Photon_genPartFlav are broken due to GenPart skimming
         //std::vector<int> Photon_genPartIdx;
         //std::vector<unsigned char> Photon_genPartFlav;
+        
+        // setup photon map to match photon types
+        PhotonMap[0] = "Reco";
+        PhotonMap[1] = "Direct";
+        PhotonMap[2] = "Fragmented";
+        PhotonMap[3] = "Fake";
         
         // choose ID to use
         enum ID myID = Medium;
@@ -322,6 +330,7 @@ namespace plotterFunctions
         //Select reco photons within the ECAL acceptance region and Pt > 200 GeV 
         for(int i = 0; i < PhotonTLV.size(); ++i)
         {
+            PhotonType photonType = Reco;
             RecoPhotonTLV.push_back(PhotonTLV[i]);
             if (PhotonFunctions::passPhotonECAL(PhotonTLV[i])) 
             {
@@ -344,15 +353,6 @@ namespace plotterFunctions
                         // MC Only
                         if (! isData)
                         {
-                            // print reco and gen photons
-                            if (verbose2)
-                            {
-                                printf("Reco Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f)\n", PhotonTLV[i].Pt(), PhotonTLV[i].Eta(), PhotonTLV[i].Phi(), PhotonTLV[i].M());
-                                for(int j = 0; j < GenPhotonTLV.size(); ++j)
-                                {
-                                    printf("Gen Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, min_parton_DR=%.3f\n", GenPhotonTLV[j].Pt(), GenPhotonTLV[j].Eta(), GenPhotonTLV[j].Phi(), GenPhotonTLV[j].M(), GenPhotonStatus[j], GenPhotonStatusFlags[j], GenPhotonMinPartonDR[j]);
-                                }
-                            }
                             // get scale factor for MC
                             cutPhotonSF.push_back(Photon_SF[i]);
                             cutPhotonSF_Up.push_back(Photon_SF[i] + Photon_SF_Err[i]);
@@ -378,12 +378,14 @@ namespace plotterFunctions
                                 {
                                     if (verbose) printf("Found FragmentedPhoton\n");
                                     FragmentedPhotons.push_back(PhotonTLV[i]);
+                                    photonType = Fragmented;
                                 }
                                 // direct photon if not fragmented
                                 else
                                 {
                                     if (verbose) printf("Found DirectPhoton\n");
                                     DirectPhotons.push_back(PhotonTLV[i]);
+                                    photonType = Direct;
                                 }
                             }
                             // fake photon if not prompt
@@ -391,8 +393,19 @@ namespace plotterFunctions
                             {
                                 if (verbose) printf("Found FakePhoton\n");
                                 FakePhotons.push_back(PhotonTLV[i]);
+                                photonType = Fake;
+                            }
+                            // print reco and gen photons
+                            if (verbose2)
+                            {
+                                printf("Reco Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), photonType=%s\n", PhotonTLV[i].Pt(), PhotonTLV[i].Eta(), PhotonTLV[i].Phi(), PhotonTLV[i].M(), PhotonMap[photonType].c_str());
+                                for(int j = 0; j < GenPhotonTLV.size(); ++j)
+                                {
+                                    printf("Gen Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, min_parton_DR=%.3f, \n", GenPhotonTLV[j].Pt(), GenPhotonTLV[j].Eta(), GenPhotonTLV[j].Phi(), GenPhotonTLV[j].M(), GenPhotonStatus[j], GenPhotonStatusFlags[j], GenPhotonMinPartonDR[j]);
+                                }
                             }
                         }
+                        // end of MC Only
                         else
                         {
                             // set scale factor to 1.0 for data
