@@ -159,6 +159,8 @@ namespace plotterFunctions
         auto& GenPhotonTLVEta               = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEta"); 
         auto& GenPhotonTLVEtaPt             = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPt"); 
         auto& GenPhotonTLVEtaPtMatched      = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPtMatched"); 
+        auto& GenPhotonStatus               = tr.createDerivedVec<int>("GenPhotonStatus"); 
+        auto& GenPhotonStatusFlags          = tr.createDerivedVec<int>("GenPhotonStatusFlags"); 
         auto& RecoPhotonTLV                 = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLV");
         auto& RecoPhotonTLVEta              = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEta");
         auto& RecoPhotonTLVEtaPt            = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEtaPt");
@@ -242,10 +244,13 @@ namespace plotterFunctions
                 // statusFlag: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 
                 //if ( pdgId == 22 && status == 1 && ((statusFlags & 0x1) == 0x1) )
-                if ( pdgId == 22 && status == 1 && ((statusFlags & 0x2000) == 0x2000) )
+                //if ( pdgId == 22 && status == 1 && ((statusFlags & 0x2000) == 0x2000) )
+                if ( pdgId == 22 )
                 {
                     if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                     GenPhotonTLV.push_back(GenPartTLV[i]);
+                    GenPhotonStatus.push_back(status);
+                    GenPhotonStatusFlags.push_back(statusFlags);
                 }
             }
             //Apply cuts to Gen Photons
@@ -331,10 +336,10 @@ namespace plotterFunctions
                             // print reco and gen photons
                             if (verbose2)
                             {
-                                printf("Reco Photon: (pt=%.3f, eta=%.3f)\n", PhotonTLV[i].Pt(), PhotonTLV[i].Eta());
-                                for(int i = 0; i < GenPhotonTLV.size(); ++i)
+                                printf("Reco Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f)\n", PhotonTLV[i].Pt(), PhotonTLV[i].Eta(), PhotonTLV[i].Phi(), PhotonTLV[i].M());
+                                for(int j = 0; j < GenPhotonTLV.size(); ++j)
                                 {
-                                    printf("Gen Photon: (pt=%.3f, eta=%.3f)\n", GenPhotonTLV[i].Pt(), GenPhotonTLV[i].Eta());
+                                    printf("Gen Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x\n", GenPhotonTLV[j].Pt(), GenPhotonTLV[j].Eta(), GenPhotonTLV[j].Phi(), GenPhotonTLV[j].M(), GenPhotonStatus[j], GenPhotonStatusFlags[j]);
                                 }
                             }
                             // get scale factor for MC
