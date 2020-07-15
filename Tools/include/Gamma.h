@@ -415,7 +415,7 @@ namespace plotterFunctions
                                 // print all gen particles
                                 for (int j = 0; j < GenPartTLV.size(); ++j)
                                 {
-                                    printf("Gen Particle %d: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), pdgId=%d, status=%d, statusFlags=0x%x\n", j, GenPartTLV[j].Pt(), GenPartTLV[j].Eta(), GenPartTLV[j].Phi(), GenPartTLV[j].M(), GenPart_pdgId[j], GenPart_status[j], GenPart_statusFlags[j]);
+                                    printf("Gen Particle %d: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), pdgId=%d, status=%d, statusFlags=0x%x, genPartIdxMother=%d\n", j, GenPartTLV[j].Pt(), GenPartTLV[j].Eta(), GenPartTLV[j].Phi(), GenPartTLV[j].M(), GenPart_pdgId[j], GenPart_status[j], GenPart_statusFlags[j], GenPart_genPartIdxMother[j]);
                                 }
                             }
                         }
