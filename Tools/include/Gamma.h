@@ -168,6 +168,8 @@ namespace plotterFunctions
         auto& GenPhotonTLVEta               = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEta"); 
         auto& GenPhotonTLVEtaPt             = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPt"); 
         auto& GenPhotonTLVEtaPtMatched      = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPtMatched"); 
+        auto& GenPhotonGenPartIdx           = tr.createDerivedVec<int>("GenPhotonGenPartIdx"); 
+        auto& GenPhotonGenPartIdxMother     = tr.createDerivedVec<int>("GenPhotonGenPartIdxMother"); 
         auto& GenPhotonStatus               = tr.createDerivedVec<int>("GenPhotonStatus"); 
         auto& GenPhotonStatusFlags          = tr.createDerivedVec<int>("GenPhotonStatusFlags"); 
         auto& GenPhotonMinPartonDR          = tr.createDerivedVec<float>("GenPhotonMinPartonDR"); 
@@ -244,6 +246,8 @@ namespace plotterFunctions
                     {
                         if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPhotonTLV.push_back(GenPartTLV[i]);
+                        GenPhotonGenPartIdx.push_back(i);
+                        GenPhotonGenPartIdxMother.push_back(genPartIdxMother);
                         GenPhotonStatus.push_back(status);
                         GenPhotonStatusFlags.push_back(statusFlags);
                     }
@@ -299,7 +303,7 @@ namespace plotterFunctions
                 
                 // warning 
                 //if ( GenPhotonStatus[i] == 1 && ((GenPhotonStatusFlags[i] & 0x3040) == 0x3040) )
-                if (true)
+                if (false)
                 {
                     if (minDR > 0.4)
                     {
@@ -396,14 +400,22 @@ namespace plotterFunctions
                                 FakePhotons.push_back(PhotonTLV[i]);
                                 photonType = Fake;
                             }
-                            // print reco and gen photons
                             if (verbose2)
                             {
+                                // print reco and gen photons
+                                printf("------------------------------------------------------------------------------------\n");
                                 printf("event=%d, passQCDSelection=%d\n", event, passQCDSelection);
                                 printf("Reco Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), photonType=%s\n", PhotonTLV[i].Pt(), PhotonTLV[i].Eta(), PhotonTLV[i].Phi(), PhotonTLV[i].M(), PhotonMap[photonType].c_str());
+                                printf("------------------------------------------------------------------------------------\n");
                                 for(int j = 0; j < GenPhotonTLV.size(); ++j)
                                 {
-                                    printf("Gen Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, min_parton_DR=%.3f\n", GenPhotonTLV[j].Pt(), GenPhotonTLV[j].Eta(), GenPhotonTLV[j].Phi(), GenPhotonTLV[j].M(), GenPhotonStatus[j], GenPhotonStatusFlags[j], GenPhotonMinPartonDR[j]);
+                                    printf("Gen Photon %d: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, genPartIdx=%d, genPartIdxMother=%d, min_parton_DR=%.3f\n", j, GenPhotonTLV[j].Pt(), GenPhotonTLV[j].Eta(), GenPhotonTLV[j].Phi(), GenPhotonTLV[j].M(), GenPhotonStatus[j], GenPhotonStatusFlags[j], GenPhotonGenPartIdx[j], GenPhotonGenPartIdxMother[j], GenPhotonMinPartonDR[j]);
+                                }
+                                printf("------------------------------------------------------------------------------------\n");
+                                // print all gen particles
+                                for (int j = 0; j < GenPartTLV.size(); ++j)
+                                {
+                                    printf("Gen Particle %d: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), pdgId=%d, status=%d, statusFlags=0x%x\n", j, GenPartTLV[j].Pt(), GenPartTLV[j].Eta(), GenPartTLV[j].Phi(), GenPartTLV[j].M(), GenPart_pdgId[j], GenPart_status[j], GenPart_statusFlags[j]);
                                 }
                             }
                         }
