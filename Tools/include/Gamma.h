@@ -227,8 +227,8 @@ namespace plotterFunctions
                 
                 if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
                 {
-                    //if ((statusFlags & 0x2000) == 0x2000)
-                    if ((statusFlags & 0x1) == 0x1)
+                    //if ((statusFlags & 0x1) == 0x1)
+                    if ((statusFlags & 0x2000) == 0x2000)
                     {
                         if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPartonTLV.push_back(GenPartTLV[i]);
@@ -240,8 +240,8 @@ namespace plotterFunctions
                 // stable: status == 1
                 // statusFlag: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 
-                //if ( pdgId == 22 && status == 1 && ((statusFlags & 0x2000) == 0x2000) )
-                if ( pdgId == 22 && status == 1 && ((statusFlags & 0x1) == 0x1) )
+                //if ( pdgId == 22 && status == 1 && ((statusFlags & 0x1) == 0x1) )
+                if ( pdgId == 22 && status == 1 && ((statusFlags & 0x2000) == 0x2000) )
                 {
                     if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                     GenPhotonTLV.push_back(GenPartTLV[i]);
@@ -266,19 +266,21 @@ namespace plotterFunctions
                     }
                 }
                 // calculate dR
+                // QCD overlap cut: veto QCD events which have at least one isolated photon
+                bool photonIsIsolated = true;
                 for (const auto& genParton : GenPartonTLV)
                 {
                     float dR = ROOT::Math::VectorUtil::DeltaR(GenPhotonTLV[i], genParton);
                     dR_GenPhotonGenParton.push_back(dR);
-                    if (dR > 0.4)
+                    if (verbose) printf("DR(gen photon, gen parton) = %f\n", dR);
+                    if (dR < 0.4)
                     {
-                        if (verbose) printf("FAIL_QCD_CUT_DR: DR(gen photon, gen parton) = %f\n", dR);
-                        passQCDSelection = false;
+                        photonIsIsolated = false;
                     }
-                    else
-                    {
-                        if (verbose) printf("PASS_QCD_CUT_DR: DR(gen photon, gen parton) = %f\n", dR);
-                    }
+                }
+                if (photonIsIsolated)
+                {
+                    passQCDSelection = false;
                 }
             }
         }
@@ -459,11 +461,11 @@ namespace plotterFunctions
         {
             if (passQCDSelection)
             {
-                printf("PASS_QCD_CUT_EVENT\n");
+                printf("EVENT_PASS_QCD_CUT\n");
             }
             else
             {
-                printf("FAIL_QCD_CUT_EVENT\n");
+                printf("EVENT_FAIL_QCD_CUT\n");
             }
         }
         
