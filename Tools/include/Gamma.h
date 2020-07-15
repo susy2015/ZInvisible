@@ -293,8 +293,8 @@ namespace plotterFunctions
                         printf("DR(gen photon, gen parton) = %f\n", dR);
                     }
                 }
-                // QCD overlap cut: veto QCD events which have at least one isolated photon
                 GenPhotonMinPartonDR.push_back(minDR);
+                // QCD overlap cut: veto QCD events which have at least one isolated photon
                 if (photonIsIsolated)
                 {
                     passQCDSelection = false;
