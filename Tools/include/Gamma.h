@@ -161,6 +161,7 @@ namespace plotterFunctions
         auto& GenPhotonTLVEtaPtMatched      = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPtMatched"); 
         auto& GenPhotonStatus               = tr.createDerivedVec<int>("GenPhotonStatus"); 
         auto& GenPhotonStatusFlags          = tr.createDerivedVec<int>("GenPhotonStatusFlags"); 
+        auto& GenPhotonMinPartonDR          = tr.createDerivedVec<float>("GenPhotonMinPartonDR"); 
         auto& RecoPhotonTLV                 = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLV");
         auto& RecoPhotonTLVEta              = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEta");
         auto& RecoPhotonTLVEtaPt            = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEtaPt");
@@ -271,19 +272,29 @@ namespace plotterFunctions
                         GenPhotonTLVEtaPtMatched.push_back(GenPhotonTLV[i]);
                     }
                 }
-                // calculate dR
-                // QCD overlap cut: veto QCD events which have at least one isolated photon
+                // calculate dR and min dR
+                // check if photon is isolated
+                float minDR = 999.0;
                 bool photonIsIsolated = true;
                 for (const auto& genParton : GenPartonTLV)
                 {
                     float dR = ROOT::Math::VectorUtil::DeltaR(GenPhotonTLV[i], genParton);
                     dR_GenPhotonGenParton.push_back(dR);
-                    if (verbose) printf("DR(gen photon, gen parton) = %f\n", dR);
+                    if (dR < minDR)
+                    {
+                        minDR = dR;
+                    }
                     if (dR < 0.4)
                     {
                         photonIsIsolated = false;
                     }
+                    if (verbose)
+                    {
+                        printf("DR(gen photon, gen parton) = %f\n", dR);
+                    }
                 }
+                // QCD overlap cut: veto QCD events which have at least one isolated photon
+                GenPhotonMinPartonDR.push_back(minDR);
                 if (photonIsIsolated)
                 {
                     passQCDSelection = false;
@@ -339,7 +350,7 @@ namespace plotterFunctions
                                 printf("Reco Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f)\n", PhotonTLV[i].Pt(), PhotonTLV[i].Eta(), PhotonTLV[i].Phi(), PhotonTLV[i].M());
                                 for(int j = 0; j < GenPhotonTLV.size(); ++j)
                                 {
-                                    printf("Gen Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x\n", GenPhotonTLV[j].Pt(), GenPhotonTLV[j].Eta(), GenPhotonTLV[j].Phi(), GenPhotonTLV[j].M(), GenPhotonStatus[j], GenPhotonStatusFlags[j]);
+                                    printf("Gen Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, min_parton_DR=%.3f\n", GenPhotonTLV[j].Pt(), GenPhotonTLV[j].Eta(), GenPhotonTLV[j].Phi(), GenPhotonTLV[j].M(), GenPhotonStatus[j], GenPhotonStatusFlags[j], GenPhotonMinPartonDR[j]);
                                 }
                             }
                             // get scale factor for MC
