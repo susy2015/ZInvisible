@@ -77,9 +77,11 @@ def process():
                     #print "WARNING: The file {0} exists. Skipping {1}.".format(resultFile, era)
                     #continue
                     print "WARNING: The file {0} exists.".format(resultFile)
-                    print "DO NOT run processResults.sh if result.root exists because processResults.sh will move result.root!"
-                    print "Please use the -p option to only run makePlots instead of processResults.sh."
-                    exit(1)
+                    print "- DO NOT run processResults.sh if result.root exists because processResults.sh will move result.root!"
+                    print "- Please use the -p option to only run makePlots instead of processResults.sh."
+                    #exit(1)
+                    print "- Skipping {0}.".format(resultFile)
+                    continue
                 else:
                     command = "./condor/processResults.sh {0} {1} {2}".format(directory, era, noPlotFlag) 
             returncode = subprocess.check_call(command, shell=True)
