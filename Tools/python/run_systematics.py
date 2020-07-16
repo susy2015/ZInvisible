@@ -773,7 +773,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     f_out.Close()
 
 
-def run(era, eras, runs_json, syst_json, doRun2, verbose):
+def run(era, eras, runs_json, syst_json, doRun2, splitBtag, verbose):
     units_json                  = "dc_BkgPred_BinMaps_master.json"
     searchbin_selection_json    = "search_bins_v4.json"
     # Note: DO NOT apply Rz syst. in CR unit bins
@@ -787,7 +787,6 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
     ZvPhoton_syst_files["validationMetStudy"]   = "ZvsPhotonSyst_ValidationBinsMETStudy.root"
     ZvPhoton_syst_files["search"]               = "ZvsPhotonSyst_SearchBins.root" 
    
-    splitBtag               = False 
     doSymmetrize            = True
     doUnits                 = True
     draw                    = False
@@ -1160,19 +1159,21 @@ def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--runs_json",    "-j", default="",                             help="json file containing runs")
     parser.add_argument("--syst_json",    "-s", default="systematics.json",             help="json file containing systematics")
+    parser.add_argument("--splitBtag",    "-b", default = False, action = "store_true", help="split btag systematic into light and heavy")
     parser.add_argument("--verbose",      "-v", default = False, action = "store_true", help="verbose flag to print more things")
     
     options                     = parser.parse_args()
     runs_json                   = options.runs_json
     syst_json                   = options.syst_json
+    splitBtag                   = options.splitBtag
     verbose                     = options.verbose
     doRun2                      = True
     
     #eras = ["2016", "2017", "2018", "Run2"]
     eras = ["2016", "2017", "2018", "2016and2017", "Run2"]
     for era in eras:
-        # run(era, eras, runs_json, syst_json, doRun2, verbose)
-        run(era, eras, runs_json, syst_json, doRun2, verbose)
+        #run(era, eras, runs_json, syst_json, doRun2, splitBtag, verbose):
+        run(era, eras, runs_json, syst_json, doRun2, splitBtag, verbose)
 
 
 if __name__ == "__main__":
