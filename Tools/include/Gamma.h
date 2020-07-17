@@ -27,8 +27,8 @@ namespace plotterFunctions
 
     private:
         std::string year_;
-        bool verbose  = true;
-        bool verbose2 = false;
+        bool verbose  = false;
+        bool verbose2 = true;
         enum ID{Loose, Medium, Tight};
         enum PhotonType{Reco, Direct, Fragmented, Fake};
         std::map<int, std::string> PhotonMap;
@@ -222,10 +222,8 @@ namespace plotterFunctions
                 // stable: status == 1
                 // outgoing particles of the hardest subprocess: GenPart_status = 23
                 // statusFlag: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
-                
                 if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
                 {
-                    //if ((statusFlags & 0x1) == 0x1)
                     if ((statusFlags & 0x2000) == 0x2000)
                     {
                         if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
@@ -237,10 +235,8 @@ namespace plotterFunctions
                 // photons: +22
                 // stable: status == 1
                 // statusFlag: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
-                
                 if ( pdgId == 22 )
                 {
-                    //if ( status == 1 && ((statusFlags & 0x1) == 0x1) )
                     if ( status == 1 && ((statusFlags & 0x2000) == 0x2000) )
                     {
                         if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
@@ -296,6 +292,7 @@ namespace plotterFunctions
                 
                 // QCD overlap cut: veto QCD events which have at least one isolated photon
                 // only apply QCD overlap cut using 0x2001 photons
+                // statusFlag: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 if (photonIsIsolated && (GenPhotonStatusFlags[i] == 0x2001))
                 {
                     passQCDSelection = false;
@@ -308,7 +305,6 @@ namespace plotterFunctions
                     if (minDR > 0.4)
                     {
                         printf("event=%d, passQCDSelection=%d\n", event, passQCDSelection);
-                        //printf("WARNING: min_parton_DR > 0.4 for 0x3040 gen photon; Gen Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, min_parton_DR=%.3f\n", GenPhotonTLV[i].Pt(), GenPhotonTLV[i].Eta(), GenPhotonTLV[i].Phi(), GenPhotonTLV[i].M(), GenPhotonStatus[i], GenPhotonStatusFlags[i], GenPhotonMinPartonDR[i]);
                         printf("WARNING: min_parton_DR > 0.4; Gen Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, min_parton_DR=%.3f\n", GenPhotonTLV[i].Pt(), GenPhotonTLV[i].Eta(), GenPhotonTLV[i].Phi(), GenPhotonTLV[i].M(), GenPhotonStatus[i], GenPhotonStatusFlags[i], GenPhotonMinPartonDR[i]);
                     }
                 }
