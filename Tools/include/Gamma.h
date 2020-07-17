@@ -221,7 +221,7 @@ namespace plotterFunctions
                 // gluons: + (9 and 21)
                 // stable: status == 1
                 // outgoing particles of the hardest subprocess: GenPart_status = 23
-                // statusFlag: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
+                // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
                 {
                     if ((statusFlags & 0x2000) == 0x2000)
@@ -234,7 +234,7 @@ namespace plotterFunctions
                 // Particle IDs
                 // photons: +22
                 // stable: status == 1
-                // statusFlag: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
+                // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 if ( pdgId == 22 )
                 {
                     if ( status == 1 && ((statusFlags & 0x2000) == 0x2000) )
@@ -292,7 +292,7 @@ namespace plotterFunctions
                 
                 // QCD overlap cut: veto QCD events which have at least one isolated photon
                 // only apply QCD overlap cut using 0x2001 photons
-                // statusFlag: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
+                // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 if (photonIsIsolated && (GenPhotonStatusFlags[i] == 0x2001))
                 {
                     passQCDSelection = false;
