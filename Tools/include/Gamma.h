@@ -291,9 +291,9 @@ namespace plotterFunctions
                 GenPhotonMinPartonDR.push_back(minDR);
                 
                 // QCD overlap cut: veto QCD events which have at least one isolated photon
-                // only apply QCD overlap cut using 0x2001 photons
+                // For QCD overlap cut, require gen photons to have statusFlags 0x2001
                 // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
-                if (photonIsIsolated && (GenPhotonStatusFlags[i] == 0x2001))
+                if (photonIsIsolated && (GenPhotonStatusFlags[i] & 0x2001) == 0x2001)
                 {
                     passQCDSelection = false;
                 }
