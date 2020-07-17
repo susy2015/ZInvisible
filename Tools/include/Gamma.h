@@ -220,11 +220,11 @@ namespace plotterFunctions
                 // quarks: +/- (1 to 6)
                 // gluons: + (9 and 21)
                 // stable: status == 1
-                // outgoing particles of the hardest subprocess: GenPart_status = 23
+                // outgoing particles of the hardest subprocess: status == 23
                 // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
                 {
-                    if ((statusFlags & 0x2000) == 0x2000)
+                    if ((statusFlags & 0x2001) == 0x2001)
                     {
                         if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPartonTLV.push_back(GenPartTLV[i]);
