@@ -241,8 +241,7 @@ namespace plotterFunctions
                 if ( pdgId == 22 )
                 {
                     //if ( status == 1 && ((statusFlags & 0x1) == 0x1) )
-                    //if ( status == 1 && ((statusFlags & 0x2000) == 0x2000) )
-                    if (true)
+                    if ( status == 1 && ((statusFlags & 0x2000) == 0x2000) )
                     {
                         if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPhotonTLV.push_back(GenPartTLV[i]);
@@ -296,7 +295,8 @@ namespace plotterFunctions
                 GenPhotonMinPartonDR.push_back(minDR);
                 
                 // QCD overlap cut: veto QCD events which have at least one isolated photon
-                if (photonIsIsolated)
+                // only apply QCD overlap cut using 0x2001 photons
+                if (photonIsIsolated && (GenPhotonStatusFlags[i] == 0x2001))
                 {
                     passQCDSelection = false;
                 }
