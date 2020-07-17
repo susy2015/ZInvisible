@@ -27,10 +27,14 @@ namespace plotterFunctions
 
     private:
         std::string year_;
-        bool verbose = false;
+        bool verbose  = false;
+        bool verbose2 = false;
         enum ID{Loose, Medium, Tight};
+        enum PhotonType{Reco, Direct, Fragmented, Fake};
+        std::map<int, std::string> PhotonMap;
 
     void generateGamma(NTupleReader& tr) {
+        const auto& event                  = tr.getVar<unsigned long long>("event");
         const auto& PhotonTLV              = tr.getVec<TLorentzVector>("PhotonTLV");  // reco photon
         const auto& Photon_jetIdx          = tr.getVec<int>("Photon_jetIdx");
         const auto& Photon_Stop0l          = tr.getVec<unsigned char>("Photon_Stop0l");
@@ -45,6 +49,12 @@ namespace plotterFunctions
         // Photon_genPartIdx and Photon_genPartFlav are broken due to GenPart skimming
         //std::vector<int> Photon_genPartIdx;
         //std::vector<unsigned char> Photon_genPartFlav;
+        
+        // setup photon map to match photon types
+        PhotonMap[0] = "Reco";
+        PhotonMap[1] = "Direct";
+        PhotonMap[2] = "Fragmented";
+        PhotonMap[3] = "Fake";
         
         // choose ID to use
         enum ID myID = Medium;
@@ -158,6 +168,11 @@ namespace plotterFunctions
         auto& GenPhotonTLVEta               = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEta"); 
         auto& GenPhotonTLVEtaPt             = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPt"); 
         auto& GenPhotonTLVEtaPtMatched      = tr.createDerivedVec<TLorentzVector>("GenPhotonTLVEtaPtMatched"); 
+        auto& GenPhotonGenPartIdx           = tr.createDerivedVec<int>("GenPhotonGenPartIdx"); 
+        auto& GenPhotonGenPartIdxMother     = tr.createDerivedVec<int>("GenPhotonGenPartIdxMother"); 
+        auto& GenPhotonStatus               = tr.createDerivedVec<int>("GenPhotonStatus"); 
+        auto& GenPhotonStatusFlags          = tr.createDerivedVec<int>("GenPhotonStatusFlags"); 
+        auto& GenPhotonMinPartonDR          = tr.createDerivedVec<float>("GenPhotonMinPartonDR"); 
         auto& RecoPhotonTLV                 = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLV");
         auto& RecoPhotonTLVEta              = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEta");
         auto& RecoPhotonTLVEtaPt            = tr.createDerivedVec<TLorentzVector>("RecoPhotonTLVEtaPt");
@@ -178,7 +193,6 @@ namespace plotterFunctions
         auto& dR_GenPhotonGenParton         = tr.createDerivedVec<float>("dR_GenPhotonGenParton");
         auto& dR_RecoPhotonGenParton        = tr.createDerivedVec<float>("dR_RecoPhotonGenParton");
         auto& dR_RecoPhotonGenPhoton        = tr.createDerivedVec<float>("dR_RecoPhotonGenPhoton");
-        
 
         //NanoAOD Gen Particles Ref: https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html#GenPart
         //Particle Status Codes Ref: http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
@@ -193,7 +207,6 @@ namespace plotterFunctions
                 int pdgId               = GenPart_pdgId[i];
                 int status              = GenPart_status[i];
                 int statusFlags         = GenPart_statusFlags[i];
-                
 
                 // mother particle: default pdgId is 0 which means no mother particle found
                 int mother_pdgId        = 0;
@@ -203,32 +216,15 @@ namespace plotterFunctions
                     mother_pdgId        = GenPart_pdgId[genPartIdxMother];
                 }
                 
-                // testing
-                //printf("INFO: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
-                
-                
-                // --- old version for gen partons --- //
-                //if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
-                //{
-                //    // old version
-                //    if (status == 23 && ((statusFlags & 0x80) == 0x80) )
-                //    {
-                //        if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = %d, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
-                //        GenPartonTLV.push_back(GenPartTLV[i]);
-                //    }
-                //}
-                
                 // Particle IDs
                 // quarks: +/- (1 to 6)
                 // gluons: + (9 and 21)
-                // statusFlag: isPrompt; statusFlag & 1 == 1
-                // outgoing particles of the hardest subprocess: GenPart_status = 23
-                // isHardProcess: (GenPart_statusFlags & 0x80) == 0x80
-                
+                // stable: status == 1
+                // outgoing particles of the hardest subprocess: status == 23
+                // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
                 {
-                    //if ((statusFlags & 1) == 1)
-                    if ((statusFlags & 0x2000) == 0x2000)
+                    if ((statusFlags & 0x2001) == 0x2001)
                     {
                         if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPartonTLV.push_back(GenPartTLV[i]);
@@ -238,15 +234,18 @@ namespace plotterFunctions
                 // Particle IDs
                 // photons: +22
                 // stable: status == 1
-                // statusFlag: isPrompt; statusFlag & 1 == 1
-                
-                //if ( pdgId == 22 )
-                //if ( pdgId == 22 && status == 1 )
-                //if ( pdgId == 22 && status == 1 && ((statusFlags & 1) == 1) )
-                if ( pdgId == 22 && status == 1 && ((statusFlags & 0x2000) == 0x2000) )
+                // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
+                if ( pdgId == 22 )
                 {
-                    if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
-                    GenPhotonTLV.push_back(GenPartTLV[i]);
+                    if ( status == 1 && ((statusFlags & 0x2000) == 0x2000) )
+                    {
+                        if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                        GenPhotonTLV.push_back(GenPartTLV[i]);
+                        GenPhotonGenPartIdx.push_back(i);
+                        GenPhotonGenPartIdxMother.push_back(genPartIdxMother);
+                        GenPhotonStatus.push_back(status);
+                        GenPhotonStatusFlags.push_back(statusFlags);
+                    }
                 }
             }
             //Apply cuts to Gen Photons
@@ -267,19 +266,46 @@ namespace plotterFunctions
                         GenPhotonTLVEtaPtMatched.push_back(GenPhotonTLV[i]);
                     }
                 }
-                // calculate dR
+                // calculate dR and min dR
+                // check if photon is isolated
+                float minDR = 999.0;
+                bool photonIsIsolated = true;
                 for (const auto& genParton : GenPartonTLV)
                 {
                     float dR = ROOT::Math::VectorUtil::DeltaR(GenPhotonTLV[i], genParton);
                     dR_GenPhotonGenParton.push_back(dR);
-                    if (dR > 0.4)
+                    if (dR < minDR)
                     {
-                        if (verbose) printf("FAIL_QCD_CUT event: DR(gen photon, gen parton) = %f\n", dR);
-                        passQCDSelection = false;
+                        minDR = dR;
                     }
-                    else
+                    if (dR < 0.4)
                     {
-                        if (verbose) printf("PASS_QCD_CUT QCD event: DR(gen photon, gen parton) = %f\n", dR);
+                        photonIsIsolated = false;
+                    }
+                    if (verbose)
+                    {
+                        printf("DR(gen photon, gen parton) = %f\n", dR);
+                    }
+                }
+                
+                GenPhotonMinPartonDR.push_back(minDR);
+                
+                // QCD overlap cut: veto QCD events which have at least one isolated photon
+                // only apply QCD overlap cut using 0x2001 photons
+                // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
+                if (photonIsIsolated && (GenPhotonStatusFlags[i] == 0x2001))
+                {
+                    passQCDSelection = false;
+                }
+                
+                // warning 
+                //if ( GenPhotonStatus[i] == 1 && ((GenPhotonStatusFlags[i] & 0x3040) == 0x3040) )
+                if (false)
+                {
+                    if (minDR > 0.4)
+                    {
+                        printf("event=%d, passQCDSelection=%d\n", event, passQCDSelection);
+                        printf("WARNING: min_parton_DR > 0.4; Gen Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, min_parton_DR=%.3f\n", GenPhotonTLV[i].Pt(), GenPhotonTLV[i].Eta(), GenPhotonTLV[i].Phi(), GenPhotonTLV[i].M(), GenPhotonStatus[i], GenPhotonStatusFlags[i], GenPhotonMinPartonDR[i]);
                     }
                 }
             }
@@ -305,6 +331,7 @@ namespace plotterFunctions
         //Select reco photons within the ECAL acceptance region and Pt > 200 GeV 
         for(int i = 0; i < PhotonTLV.size(); ++i)
         {
+            PhotonType photonType = Reco;
             RecoPhotonTLV.push_back(PhotonTLV[i]);
             if (PhotonFunctions::passPhotonECAL(PhotonTLV[i])) 
             {
@@ -352,12 +379,14 @@ namespace plotterFunctions
                                 {
                                     if (verbose) printf("Found FragmentedPhoton\n");
                                     FragmentedPhotons.push_back(PhotonTLV[i]);
+                                    photonType = Fragmented;
                                 }
                                 // direct photon if not fragmented
                                 else
                                 {
                                     if (verbose) printf("Found DirectPhoton\n");
                                     DirectPhotons.push_back(PhotonTLV[i]);
+                                    photonType = Direct;
                                 }
                             }
                             // fake photon if not prompt
@@ -365,8 +394,28 @@ namespace plotterFunctions
                             {
                                 if (verbose) printf("Found FakePhoton\n");
                                 FakePhotons.push_back(PhotonTLV[i]);
+                                photonType = Fake;
+                            }
+                            if (verbose2)
+                            {
+                                // print reco and gen photons
+                                printf("------------------------------------------------------------------------------------\n");
+                                printf("event=%d, passQCDSelection=%d\n", event, passQCDSelection);
+                                printf("Reco Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), photonType=%s\n", PhotonTLV[i].Pt(), PhotonTLV[i].Eta(), PhotonTLV[i].Phi(), PhotonTLV[i].M(), PhotonMap[photonType].c_str());
+                                printf("------------------------------------------------------------------------------------\n");
+                                for(int j = 0; j < GenPhotonTLV.size(); ++j)
+                                {
+                                    printf("Gen Photon %d: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, genPartIdx=%d, genPartIdxMother=%d, min_parton_DR=%.3f\n", j, GenPhotonTLV[j].Pt(), GenPhotonTLV[j].Eta(), GenPhotonTLV[j].Phi(), GenPhotonTLV[j].M(), GenPhotonStatus[j], GenPhotonStatusFlags[j], GenPhotonGenPartIdx[j], GenPhotonGenPartIdxMother[j], GenPhotonMinPartonDR[j]);
+                                }
+                                printf("------------------------------------------------------------------------------------\n");
+                                // print all gen particles
+                                for (int j = 0; j < GenPartTLV.size(); ++j)
+                                {
+                                    printf("Gen Particle %d: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), pdgId=%d, status=%d, statusFlags=0x%x, genPartIdxMother=%d\n", j, GenPartTLV[j].Pt(), GenPartTLV[j].Eta(), GenPartTLV[j].Phi(), GenPartTLV[j].M(), GenPart_pdgId[j], GenPart_status[j], GenPart_statusFlags[j], GenPart_genPartIdxMother[j]);
+                                }
                             }
                         }
+                        // end of MC Only
                         else
                         {
                             // set scale factor to 1.0 for data
@@ -455,6 +504,18 @@ namespace plotterFunctions
             printf("photonSF_Down = %f ",           photonSF_Down);
             printf("passPhotonSelection = %i ",     passPhotonSelection);
             printf("\n");
+        }
+
+        if (verbose)
+        {
+            if (passQCDSelection)
+            {
+                printf("EVENT_PASS_QCD_CUT\n");
+            }
+            else
+            {
+                printf("EVENT_FAIL_QCD_CUT\n");
+            }
         }
         
         // Register derived variables
