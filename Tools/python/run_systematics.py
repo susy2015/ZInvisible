@@ -773,7 +773,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     f_out.Close()
 
 
-def run(era, eras, runs_json, syst_json, doRun2, verbose):
+def run(era, eras, runs_json, syst_json, doRun2, splitBtag, verbose):
     units_json                  = "dc_BkgPred_BinMaps_master.json"
     searchbin_selection_json    = "search_bins_v4.json"
     # Note: DO NOT apply Rz syst. in CR unit bins
@@ -842,23 +842,45 @@ def run(era, eras, runs_json, syst_json, doRun2, verbose):
     directions              = ["up", "", "down"]
     bintypes                = ["validation", "validationMetStudy", "search", "controlUnit_gjets", "controlUnit_back"]
     # Systematics which we don't use: MET uncluster in photon CR, lepton veto SF, ISR weight for ttbar
-    systematics_znunu  = ["jes","btag_light","btag_heavy","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","metres"]
-    systematics_phocr  = ["jes","btag_light","btag_heavy","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
-    systematics_map    = {  "jes"               : {"znunu" : "jes",             "phocr" : "jes"},
-                            "btag_light"        : {"znunu" : "btag_light",      "phocr" : "btag_light"},
-                            "btag_heavy"        : {"znunu" : "btag_heavy",      "phocr" : "btag_heavy"},
-                            "pileup"            : {"znunu" : "pileup",          "phocr" : "pileup"},
-                            "pdf"               : {"znunu" : "pdf",             "phocr" : "pdf"},
-                            "eff_restoptag"     : {"znunu" : "eff_restoptag",   "phocr" : "eff_restoptag"},
-                            "eff_toptag"        : {"znunu" : "eff_toptag",      "phocr" : "eff_toptag"},
-                            "eff_wtag"          : {"znunu" : "eff_wtag",        "phocr" : "eff_wtag"},
-                            "eff_fatjet_veto"   : {"znunu" : "eff_fatjet_veto", "phocr" : "eff_fatjet_veto"},
-                            "met_trig"          : {"znunu" : "met_trig",        "phocr" : None},
-                            "photon_trig"       : {"znunu" : None,              "phocr" : "photon_trig"},
-                            "eff_sb"            : {"znunu" : "eff_sb",          "phocr" : "eff_sb_photon"},
-                            "metres"            : {"znunu" : "metres",          "phocr" : None},
-                            "photon_sf"         : {"znunu" : None,              "phocr" : "photon_sf"}
-                         }
+
+    if splitBtag:
+        # btag split into btag_light and btag_heavy
+        systematics_znunu  = ["jes","btag_light","btag_heavy","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","metres"]
+        systematics_phocr  = ["jes","btag_light","btag_heavy","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
+        systematics_map    = {  "jes"               : {"znunu" : "jes",             "phocr" : "jes"},
+                                "btag_light"        : {"znunu" : "btag_light",      "phocr" : "btag_light"},
+                                "btag_heavy"        : {"znunu" : "btag_heavy",      "phocr" : "btag_heavy"},
+                                "pileup"            : {"znunu" : "pileup",          "phocr" : "pileup"},
+                                "pdf"               : {"znunu" : "pdf",             "phocr" : "pdf"},
+                                "eff_restoptag"     : {"znunu" : "eff_restoptag",   "phocr" : "eff_restoptag"},
+                                "eff_toptag"        : {"znunu" : "eff_toptag",      "phocr" : "eff_toptag"},
+                                "eff_wtag"          : {"znunu" : "eff_wtag",        "phocr" : "eff_wtag"},
+                                "eff_fatjet_veto"   : {"znunu" : "eff_fatjet_veto", "phocr" : "eff_fatjet_veto"},
+                                "met_trig"          : {"znunu" : "met_trig",        "phocr" : None},
+                                "photon_trig"       : {"znunu" : None,              "phocr" : "photon_trig"},
+                                "eff_sb"            : {"znunu" : "eff_sb",          "phocr" : "eff_sb_photon"},
+                                "metres"            : {"znunu" : "metres",          "phocr" : None},
+                                "photon_sf"         : {"znunu" : None,              "phocr" : "photon_sf"}
+                             }
+    else:
+        # total btag
+        systematics_znunu  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","met_trig","eff_sb","metres"]
+        systematics_phocr  = ["jes","btag","pileup","pdf","eff_restoptag","eff_toptag","eff_wtag","eff_fatjet_veto","photon_trig","eff_sb_photon","photon_sf"]
+        systematics_map    = {  "jes"               : {"znunu" : "jes",             "phocr" : "jes"},
+                                "btag"              : {"znunu" : "btag",            "phocr" : "btag"},
+                                "pileup"            : {"znunu" : "pileup",          "phocr" : "pileup"},
+                                "pdf"               : {"znunu" : "pdf",             "phocr" : "pdf"},
+                                "eff_restoptag"     : {"znunu" : "eff_restoptag",   "phocr" : "eff_restoptag"},
+                                "eff_toptag"        : {"znunu" : "eff_toptag",      "phocr" : "eff_toptag"},
+                                "eff_wtag"          : {"znunu" : "eff_wtag",        "phocr" : "eff_wtag"},
+                                "eff_fatjet_veto"   : {"znunu" : "eff_fatjet_veto", "phocr" : "eff_fatjet_veto"},
+                                "met_trig"          : {"znunu" : "met_trig",        "phocr" : None},
+                                "photon_trig"       : {"znunu" : None,              "phocr" : "photon_trig"},
+                                "eff_sb"            : {"znunu" : "eff_sb",          "phocr" : "eff_sb_photon"},
+                                "metres"            : {"znunu" : "metres",          "phocr" : None},
+                                "photon_sf"         : {"znunu" : None,              "phocr" : "photon_sf"}
+                             }
+
     # Include prefire here; WARNING: prefire syst. only exists in (2016,2017) and needs to be handled carefully 
     if era != "2018":
         systematics_znunu.append("prefire")
@@ -1137,19 +1159,21 @@ def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--runs_json",    "-j", default="",                             help="json file containing runs")
     parser.add_argument("--syst_json",    "-s", default="systematics.json",             help="json file containing systematics")
+    parser.add_argument("--splitBtag",    "-b", default = False, action = "store_true", help="split btag systematic into light and heavy")
     parser.add_argument("--verbose",      "-v", default = False, action = "store_true", help="verbose flag to print more things")
     
     options                     = parser.parse_args()
     runs_json                   = options.runs_json
     syst_json                   = options.syst_json
+    splitBtag                   = options.splitBtag
     verbose                     = options.verbose
     doRun2                      = True
     
     #eras = ["2016", "2017", "2018", "Run2"]
     eras = ["2016", "2017", "2018", "2016and2017", "Run2"]
     for era in eras:
-        # run(era, eras, runs_json, syst_json, doRun2, verbose)
-        run(era, eras, runs_json, syst_json, doRun2, verbose)
+        #run(era, eras, runs_json, syst_json, doRun2, splitBtag, verbose):
+        run(era, eras, runs_json, syst_json, doRun2, splitBtag, verbose)
 
 
 if __name__ == "__main__":

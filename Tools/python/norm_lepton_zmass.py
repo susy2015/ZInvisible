@@ -22,6 +22,7 @@ class Normalization:
         self.norm_map_tex   = {}
         self.rz_syst_map    = {}
         self.histos         = {}
+        self.histosSplit    = {}
         self.output_file = 0 
         self.root_file   = 0
         self.eras = []
@@ -77,13 +78,17 @@ class Normalization:
         # KEY: TH1D    DataMC_Muon_HighDM_Normalization_bestRecoZM_0to400_NBeq1_pileup_syst_down_jetpt30bestRecoZMbestRecoZMZToLLstack;1   bestRecoZM
         eraTag = "_" + era
         self.histos[era] = {}
+        self.histosSplit[era] = {}
         for bin_type in self.bin_types:
             self.histos[era][bin_type] = {}
+            self.histosSplit[era][bin_type] = {}
             for particle in self.particles:
                 self.histos[era][bin_type][particle] = {}
+                self.histosSplit[era][bin_type][particle] = {}
                 for region in self.regions:
                     # using ZToLL and NoZToLL MC for normalization 
                     self.histos[era][bin_type][particle][region] = {}
+                    self.histosSplit[era][bin_type][particle][region] = {}
                     for selection in self.selections[bin_type][region]: 
                         # apply syst. to MC only
                         dataSelectionTag    = "_" + selection + "_jetpt30"
@@ -97,6 +102,22 @@ class Normalization:
                             "Data"     : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + dataSelectionTag + 2 * self.variable + "Datadata",
                             "ZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "ZToLLstack",
                             "NoZToLL"  : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_0to400" + mcSelectionTag   + 2 * self.variable + "NoZToLLstack",
+                        }
+                        # additional histos including all MC categories
+                        # note: histogram names are different for stack split into all MC categories
+                        self.histosSplit[era][bin_type][particle][region][selection] = { 
+                            "Data"              : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + dataSelectionTag + 2 * self.variable + "Datadata",
+                            "DY"                : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "DYstack",
+                            "TTZToLLNuNu"       : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "t#bar{t}ZToLL#nu#nustack",
+                            "WZ_ZToLL"          : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "WZ_ZToLLstack",
+                            "DibosonZToLL"      : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "DibosonZToLLstack",
+                            "RareZ"             : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "RareZstack",
+                            "TTbar"             : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "t#bar{t}stack",
+                            "SingleTop"         : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "Single tstack",
+                            "TTZToQQ"           : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "t#bar{t}ZToQQstack",
+                            "WZ_NoZToLL"        : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "WZ_NoZToLLstack",
+                            "DibosonNoZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "DibosonNoZToLLstack",
+                            "RareNoZ"           : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "RareNoZstack",
                         }
 
     def calcNorm(self, A, x):
@@ -199,10 +220,14 @@ class Normalization:
         
         # calculate normalizations
         for bin_type in self.bin_types:
+            fileName = "norm_info/norm_{0}_bins_{1}.txt".format(bin_type, era)
+            infoFile = open(fileName, "w")
             for particle in self.particles:
                 for region in self.regions:
                     for selection in self.selections[bin_type][region]:
                         self.runCalculation(era, bin_type, particle, region, selection)
+                        self.findContributions(era, bin_type, particle, region, selection, infoFile)
+            infoFile.close()
                 
         # weighted average: combine channels
         for bin_type in self.bin_types:
@@ -215,8 +240,119 @@ class Normalization:
             print "------------------------------------------------------------------------------"
    
 
+    # determine contributions to R_Z and R_T from different MC
+    def findContributions(self, era, bin_type, particle, region, selection, outFile): 
+        # WARNING: strings loaded from json file have type 'unicode'
+        # ROOT cannot load histograms using unicode input: use type 'str'
+        
+        # get total MC categories for comparison
+        h_Data    = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["Data"]    ) )
+        h_ZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["ZToLL"]   ) )
+        h_NoZToLL = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["NoZToLL"] ) )
+        
+        # get MC split into all types 
+        histoMap = {}
+        histoMap["Data"]              = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["Data"]            ) )
+        histoMap["DY"]                = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["DY"]              ) )
+        histoMap["TTZToLLNuNu"]       = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["TTZToLLNuNu"]     ) )
+        histoMap["WZ_ZToLL"]          = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["WZ_ZToLL"]        ) )
+        histoMap["DibosonZToLL"]      = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["DibosonZToLL"]    ) )
+        histoMap["RareZ"]             = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["RareZ"]           ) )
+        histoMap["TTbar"]             = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["TTbar"]           ) )
+        histoMap["SingleTop"]         = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["SingleTop"]       ) )
+        histoMap["TTZToQQ"]           = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["TTZToQQ"]         ) )
+        histoMap["WZ_NoZToLL"]        = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["WZ_NoZToLL"]      ) )
+        histoMap["DibosonNoZToLL"]    = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["DibosonNoZToLL"]  ) )
+        histoMap["RareNoZ"]           = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["RareNoZ"]         ) )
+        
+        # use list to define order 
+        histoList = ["Data", "DY", "TTZToLLNuNu", "WZ_ZToLL", "DibosonZToLL", "RareZ", "TTbar", "SingleTop", "TTZToQQ", "WZ_NoZToLL", "DibosonNoZToLL", "RareNoZ"]
+        
+        # Total MC for comparison
+        h_totalMC = h_ZToLL.Clone("h_totalMC")  
+        h_totalMC.Add(h_NoZToLL)
+        # non DY MC on peak for comparison
+        h_ZToLLNoDY = h_ZToLL.Clone("h_ZToLLNoDY")
+        h_ZToLLNoDY.Add(histoMap["DY"], -1)
+        
+        # define on-Z and off-Z peak regions
+        minMass = 50.0
+        Zmass = 91.0
+        window = 10.0
+        minZmass = Zmass - window
+        maxZmass = Zmass + window
+        bin_1 = h_Data.FindBin(minMass)
+        bin_2 = h_Data.FindBin(minZmass) - 1
+        bin_3 = bin_2 + 1
+        bin_4 = h_Data.FindBin(maxZmass) - 1
+        bin_5 = bin_4 + 1
+        bin_6 = h_Data.GetNbinsX() + 1
+        bins = [bin_1, bin_2, bin_3, bin_4, bin_5, bin_6]
+
+        h = h_totalMC
+        # find on-Z and off-Z peak number of events
+        a_error   = ROOT.Double()
+        b_error_1 = ROOT.Double()
+        b_error_2 = ROOT.Double()
+        # on Z peak
+        a = h.IntegralAndError(bin_3, bin_4, a_error) 
+        # off Z peak
+        b = h.IntegralAndError(bin_1, bin_2, b_error_1) + h.IntegralAndError(bin_5, bin_6, b_error_2)
+        b_error = tools.getAdditionError(b_error_1, b_error_2) 
+        
+        onPeakMC  = a 
+        offPeakMC = b
+        
+        h = histoMap["DY"]
+        # find on-Z and off-Z peak number of events
+        a_error   = ROOT.Double()
+        b_error_1 = ROOT.Double()
+        b_error_2 = ROOT.Double()
+        # on Z peak
+        a = h.IntegralAndError(bin_3, bin_4, a_error) 
+        # off Z peak
+        b = h.IntegralAndError(bin_1, bin_2, b_error_1) + h.IntegralAndError(bin_5, bin_6, b_error_2)
+        b_error = tools.getAdditionError(b_error_1, b_error_2) 
+
+        onPeakDY  = a 
+        offPeakDY = b
+        
+        h = h_ZToLLNoDY
+        # find on-Z and off-Z peak number of events
+        a_error   = ROOT.Double()
+        b_error_1 = ROOT.Double()
+        b_error_2 = ROOT.Double()
+        # on Z peak
+        a = h.IntegralAndError(bin_3, bin_4, a_error) 
+        # off Z peak
+        b = h.IntegralAndError(bin_1, bin_2, b_error_1) + h.IntegralAndError(bin_5, bin_6, b_error_2)
+        b_error = tools.getAdditionError(b_error_1, b_error_2) 
+        
+        onPeakZToLLNoDY  = a 
+        offPeakZToLLNoDY = b
+        
+        onPeakPerc  = 100.0 * onPeakZToLLNoDY / onPeakDY
+        outFile.write("----------------------------------------------------------------------\n")
+        outFile.write("{0} {1} {2} On Z Peak: (ZToLLNoDY / DY) = {3:.3f} / {4:.3f} = {5:.1f}%\n".format(particle, region, selection, onPeakZToLLNoDY, onPeakDY, onPeakPerc))
+        outFile.write("----------------------------------------------------------------------\n")
+        for key in histoList:
+            h = histoMap[key]
+            # find on-Z and off-Z peak number of events
+            a_error   = ROOT.Double()
+            b_error_1 = ROOT.Double()
+            b_error_2 = ROOT.Double()
+            # on Z peak
+            a = h.IntegralAndError(bin_3, bin_4, a_error) 
+            # off Z peak
+            b = h.IntegralAndError(bin_1, bin_2, b_error_1) + h.IntegralAndError(bin_5, bin_6, b_error_2)
+            b_error = tools.getAdditionError(b_error_1, b_error_2) 
+            onPeakPerc  = 100.0 * a / onPeakMC
+            offPeakPerc = 100.0 * b / offPeakMC
+            outFile.write("{0} {1} {2} {3} on_peak = {4:.3f} +/- {5:.3f} ({6:.1f}%) off_peak = {7:.3f} +/- {8:.3f} ({9:.1f}%)\n".format(particle, region, selection, key, a, a_error, onPeakPerc, b, b_error, offPeakPerc))
+    
+    # calculate R_Z and R_T
     def runCalculation(self, era, bin_type, particle, region, selection): 
-        #WARNING: strings loaded from json file have type 'unicode'
+        # WARNING: strings loaded from json file have type 'unicode'
         # ROOT cannot load histograms using unicode input: use type 'str'
         h_Data    = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["Data"]    ) )
         h_ZToLL   = self.root_file.Get( str(self.variable + "/" + self.histos[era][bin_type][particle][region][selection]["ZToLL"]   ) )
@@ -271,8 +407,8 @@ class Normalization:
         # off Z mass peak: bin_1 to bin_2 and bin_5 to bin_6 
     
         # MC matrix
-        a11_error = ROOT.Double()
-        a12_error = ROOT.Double()
+        a11_error   = ROOT.Double()
+        a12_error   = ROOT.Double()
         a21_error_1 = ROOT.Double()
         a21_error_2 = ROOT.Double()
         a22_error_1 = ROOT.Double()

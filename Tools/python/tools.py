@@ -15,8 +15,8 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 # poisson error for 0 
 #ERROR_ZERO = 1.841022
-# small error for 0
-ERROR_ZERO = 0.001
+# 0 error for 0 yield
+ERROR_ZERO = 0.0
 # general error code
 ERROR_CODE = -999
 # systematic limit to avoid taking log of values <= 0 
