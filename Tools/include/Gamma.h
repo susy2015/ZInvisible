@@ -27,7 +27,7 @@ namespace plotterFunctions
 
     private:
         std::string year_;
-        bool verbose  = false;
+        bool verbose  = true;
         bool verbose2 = false;
         enum ID{Loose, Medium, Tight};
         enum PhotonType{Reco, Direct, Fragmented, Fake};
@@ -224,7 +224,7 @@ namespace plotterFunctions
                 // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
                 {
-                    if ((statusFlags & 0x2001) == 0x2001)
+                    if ( status == 23 && ((statusFlags & 0x1) == 0x1) )
                     {
                         if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPartonTLV.push_back(GenPartTLV[i]);
@@ -237,7 +237,7 @@ namespace plotterFunctions
                 // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 if ( pdgId == 22 )
                 {
-                    if ( status == 1 && ((statusFlags & 0x2000) == 0x2000) )
+                    if ( status == 1 )
                     {
                         if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPhotonTLV.push_back(GenPartTLV[i]);
@@ -293,7 +293,7 @@ namespace plotterFunctions
                 // QCD overlap cut: veto QCD events which have at least one isolated photon
                 // For QCD overlap cut, require gen photons to have statusFlags 0x2001
                 // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
-                if (photonIsIsolated && (GenPhotonStatusFlags[i] & 0x2001) == 0x2001)
+                if (photonIsIsolated && (GenPhotonStatusFlags[i] & 0x1) == 0x1)
                 {
                     passQCDSelection = false;
                 }

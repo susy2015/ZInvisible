@@ -114,15 +114,16 @@ namespace PhotonFunctions
     return recoMatched;
   }
 
-  bool isGenMatched_Method1(const TLorentzVector& photon, std::vector<TLorentzVector> genPhotons){
+  bool isGenMatched_Method1(const TLorentzVector& photon, std::vector<TLorentzVector> genPhotons)
+  {
     double RecoPt = photon.Pt();
     bool genMatched = false;
     for(int i = 0; i < genPhotons.size(); i++)
     {
-      double deltaR     = ROOT::Math::VectorUtil::DeltaR(genPhotons[i],photon);
+      double dR         = ROOT::Math::VectorUtil::DeltaR(genPhotons[i],photon);
       double GenPt      = genPhotons[i].Pt();
       double temp_ratio = RecoPt/GenPt;
-      if (temp_ratio > 0.5 && temp_ratio < 2.0 && deltaR < 0.1)
+      if (temp_ratio > 0.5 && temp_ratio < 2.0 && dR < 0.1)
       {
         genMatched = true;
         break;
@@ -131,17 +132,13 @@ namespace PhotonFunctions
     return genMatched;
   }
 
-  bool isGenMatched_Method2(const TLorentzVector& photon, std::vector<TLorentzVector> genPhotons){
+  bool isGenMatched_Method2(const TLorentzVector& photon, std::vector<TLorentzVector> genPhotons)
+  {
     bool genMatched = false;
-    double dRMin = 999.9;
     for (int i = 0; i < genPhotons.size(); i++)
     {
       double dR = ROOT::Math::VectorUtil::DeltaR(genPhotons[i],photon);
-      if(dR < dRMin)
-      {
-        dRMin = dR;
-      }
-      if (dRMin < 0.2)
+      if (dR < 0.1)
       {
         genMatched = true;
         break;
@@ -150,35 +147,31 @@ namespace PhotonFunctions
     return genMatched;
   }
 
-  bool isDirectPhoton(const TLorentzVector& photon, std::vector<TLorentzVector> genParton){
-
+  bool isDirectPhoton(const TLorentzVector& photon, std::vector<TLorentzVector> genPartons)
+  {
     bool isDirect = true;
-
-    for(int i = 0; i < genParton.size(); i++){
-      double deltaR = ROOT::Math::VectorUtil::DeltaR(photon,genParton[i]);
-      //std::cout << "deltaR: " << deltaR << std::endl;
-      if (deltaR < 0.4){
+    for(int i = 0; i < genPartons.size(); i++)
+    {
+      double dR = ROOT::Math::VectorUtil::DeltaR(photon,genPartons[i]);
+      if (dR < 0.4){
         isDirect = false;
       }
     }
-    //if (isDirect) std::cout << "passDirect" << std::endl << std::endl;
-    //else std::cout << "fragmentation" << std::endl << std::endl;
-    return (isDirect);
+    return isDirect;
   }
 
-  bool isFragmentationPhoton(const TLorentzVector& photon, std::vector<TLorentzVector> genParton){
+  bool isFragmentationPhoton(const TLorentzVector& photon, std::vector<TLorentzVector> genPartons)
+  {
     bool isFrag = false;
-
-    for(int i = 0; i < genParton.size(); i++){
-      double deltaR = ROOT::Math::VectorUtil::DeltaR(photon,genParton[i]);
-      //std::cout << "deltaR: " << deltaR << std::endl;
-      if (deltaR < 0.4){
+    for(int i = 0; i < genPartons.size(); i++)
+    {
+      double dR = ROOT::Math::VectorUtil::DeltaR(photon,genPartons[i]);
+      if (dR < 0.4){
         isFrag = true;
         break;
       }
     }
-    //if (isFrag) std::cout << "passFragmentation" << std::endl << std::endl;
-    return (isFrag);
+    return isFrag;
   }
 
   void prepareHist(TH1D* hist){

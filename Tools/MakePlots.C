@@ -762,10 +762,10 @@ int main(int argc, char* argv[])
     // using direct, fake and fragmented photons
     auto makeStackMC_Photon_split = [&](const std::string& cuts, const std::string& weights)
     {
-        PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts + ";passPhotonSelectionDirect",                      weights);
+        PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,                                                      weights);
         PDS dsQCDFragmented(    "QCD Fragmented",         fileMap["QCD_Photon" + yearTag],    cuts + ";passQCDSelection;passPhotonSelectionFragmented",  weights);
         PDS dsQCDFake(          "QCD Fake",               fileMap["QCD_Photon" + yearTag],    cuts + ";passQCDSelection;passPhotonSelectionFake",        weights);
-        PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts + ";passPhotonSelectionDirect",                      weights);
+        PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,                                                      weights);
         PDS dsWJetsToLNu(       "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
         //PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
         PDS dstW(               "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
