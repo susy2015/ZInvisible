@@ -30,7 +30,7 @@ namespace plotterFunctions
         bool verbose  = true;
         bool verbose2 = false;
         enum ID{Loose, Medium, Tight};
-        enum PhotonType{Reco, Direct, Fragmented, Fake};
+        enum PhotonType{Reco, Direct, Fragmented, NonPrompt, Fake};
         std::map<int, std::string> PhotonMap;
 
     void generateGamma(NTupleReader& tr) {
@@ -54,7 +54,8 @@ namespace plotterFunctions
         PhotonMap[0] = "Reco";
         PhotonMap[1] = "Direct";
         PhotonMap[2] = "Fragmented";
-        PhotonMap[3] = "Fake";
+        PhotonMap[3] = "NonPrompt";
+        PhotonMap[4] = "Fake";
         
         // choose ID to use
         enum ID myID = Medium;
@@ -158,6 +159,7 @@ namespace plotterFunctions
         bool passPhotonSelection            = false;
         bool passPhotonSelectionDirect      = false;
         bool passPhotonSelectionFragmented  = false;
+        bool passPhotonSelectionNonPrompt   = false;
         bool passPhotonSelectionFake        = false;
         bool passQCDSelection               = true;  // default should be true
         
@@ -182,6 +184,7 @@ namespace plotterFunctions
         auto& MediumPhotonTLV               = tr.createDerivedVec<TLorentzVector>("MediumPhotonTLV");
         auto& TightPhotonTLV                = tr.createDerivedVec<TLorentzVector>("TightPhotonTLV");
         auto& PromptPhotons                 = tr.createDerivedVec<TLorentzVector>("PromptPhotons");
+        auto& NonPromptPhotons              = tr.createDerivedVec<TLorentzVector>("NonPromptPhotons");
         auto& DirectPhotons                 = tr.createDerivedVec<TLorentzVector>("DirectPhotons");
         auto& FragmentedPhotons             = tr.createDerivedVec<TLorentzVector>("FragmentedPhotons");
         auto& FakePhotons                   = tr.createDerivedVec<TLorentzVector>("FakePhotons");
@@ -370,9 +373,9 @@ namespace plotterFunctions
                                 dR_RecoPhotonGenPhoton.push_back(dR);
                             }
                             // -- specify different types of photons --- //
-                            if (PhotonFunctions::isGenMatched_Method1(PhotonTLV[i], GenPhotonTLV))
+                            if (PhotonFunctions::isGenMatched_prompt(PhotonTLV[i], GenPhotonTLV, GenPhotonStatusFlags))
                             {
-                                if (verbose) printf("Found PromptPhoton; ");
+                                if (verbose) printf("Found isPromptPhoton; ");
                                 RecoPhotonTLVEtaPtMatched.push_back(PhotonTLV[i]);
                                 PromptPhotons.push_back(PhotonTLV[i]);
                                 if (PhotonFunctions::isFragmentationPhoton(PhotonTLV[i], GenPartonTLV))
@@ -389,7 +392,15 @@ namespace plotterFunctions
                                     photonType = Direct;
                                 }
                             }
-                            // fake photon if not prompt
+                            // non prompt
+                            else if (PhotonFunctions::isGenMatched_nonPrompt(PhotonTLV[i], GenPhotonTLV, GenPhotonStatusFlags))
+                            {
+                                if (verbose) printf("Found isNonPromptPhoton\n");
+                                RecoPhotonTLVEtaPtMatched.push_back(PhotonTLV[i]);
+                                NonPromptPhotons.push_back(PhotonTLV[i]);
+                                photonType = NonPrompt;
+                            }
+                            // fake photon if not gen matched
                             else
                             {
                                 if (verbose) printf("Found FakePhoton\n");
@@ -491,6 +502,7 @@ namespace plotterFunctions
             {
                 if      (DirectPhotons.size() == 1)     passPhotonSelectionDirect       = true;
                 else if (FragmentedPhotons.size() == 1) passPhotonSelectionFragmented   = true;
+                else if (NonPromptPhotons.size() == 1)  passPhotonSelectionNonPrompt    = true;
                 else if (FakePhotons.size() == 1)       passPhotonSelectionFake         = true;
             }                                               
         }
@@ -536,6 +548,7 @@ namespace plotterFunctions
         tr.registerDerivedVar("passPhotonSelection",            passPhotonSelection);
         tr.registerDerivedVar("passPhotonSelectionDirect",      passPhotonSelectionDirect);
         tr.registerDerivedVar("passPhotonSelectionFragmented",  passPhotonSelectionFragmented);
+        tr.registerDerivedVar("passPhotonSelectionNonPrompt",   passPhotonSelectionNonPrompt);
         tr.registerDerivedVar("passPhotonSelectionFake",        passPhotonSelectionFake);
         tr.registerDerivedVar("passQCDSelection",               passQCDSelection);
         tr.registerDerivedVar("min_dR_GenPhotonGenParton",      min_dR_GenPhotonGenParton);
