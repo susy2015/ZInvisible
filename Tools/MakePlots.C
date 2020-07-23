@@ -2691,6 +2691,7 @@ int main(int argc, char* argv[])
             
             // Data
             // Note: Apply Pass_trigger_photon and Flag_eeBadScFilter to Data but not MC
+            PDS dsData_Photon_NoBaseline(       "Data",  fileMap[PhotonDataset], "Pass_trigger_photon;Flag_eeBadScFilter"                                                   + PhotonIDSelection + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             PDS dsData_Photon_Baseline(         "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter"                                        + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             PDS dsData_Photon_Baseline_nb0(     "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30=0"     + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             PDS dsData_Photon_Baseline_nb1(     "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30=1"     + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
@@ -2704,6 +2705,7 @@ int main(int argc, char* argv[])
             PDS dsData_Photon_HighDM_nb2(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30=2"     + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             PDS dsData_Photon_HighDM_nb3(   "Data",  fileMap[PhotonDataset], "MET_pt<250;Pass_trigger_photon;Flag_eeBadScFilter;nBottoms_drPhotonCleaned_jetpt30>=3"    + PhotonIDSelection + SAT_Pass_highDM        + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned,  "");
             // MC
+            std::vector<std::vector<PDS>> StackMC_Photon_NoBaseline     = makeStackMC_Photon( "passPhotonSelection"                             + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
             std::vector<std::vector<PDS>> StackMC_Photon_Baseline       = makeStackMC_Photon( "MET_pt<250"                                      + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
             std::vector<std::vector<PDS>> StackMC_Photon_Baseline_nb0   = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30=0"   + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
             std::vector<std::vector<PDS>> StackMC_Photon_Baseline_nb1   = makeStackMC_Photon( "MET_pt<250;nBottoms_drPhotonCleaned_jetpt30=1"   + PhotonIDSelection + SAT_Pass_Baseline      + Flag_ecalBadCalibFilter + semicolon_HEMVeto_drPhotonCleaned, PhotonWeights);
@@ -2901,9 +2903,11 @@ int main(int argc, char* argv[])
             PDC dcMC_Photon_HighDM_dR_RecoPhotonGenParton(           "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_HighDM);
             
             // dR_PromptPhotonGenParton
+            PDC dcData_Photon_NoBaseline_dR_PromptPhotonGenParton(   "data",   "dR_PromptPhotonGenParton", {dsData_Photon_NoBaseline});
             PDC dcData_Photon_LowDM_dR_PromptPhotonGenParton(        "data",   "dR_PromptPhotonGenParton", {dsData_Photon_LowDM});
             PDC dcData_Photon_LowDM_Tight_dR_PromptPhotonGenParton(  "data",   "dR_PromptPhotonGenParton", {dsData_Photon_LowDM_Tight});
             PDC dcData_Photon_HighDM_dR_PromptPhotonGenParton(       "data",   "dR_PromptPhotonGenParton", {dsData_Photon_HighDM});
+            PDC dcMC_Photon_NoBaseline_dR_PromptPhotonGenParton(     "stack",  "dR_PromptPhotonGenParton", StackMC_Photon_NoBaseline);
             PDC dcMC_Photon_LowDM_dR_PromptPhotonGenParton(          "stack",  "dR_PromptPhotonGenParton", StackMC_Photon_LowDM);
             PDC dcMC_Photon_LowDM_Tight_dR_PromptPhotonGenParton(    "stack",  "dR_PromptPhotonGenParton", StackMC_Photon_LowDM_Tight);
             PDC dcMC_Photon_HighDM_dR_PromptPhotonGenParton(         "stack",  "dR_PromptPhotonGenParton", StackMC_Photon_HighDM);
@@ -2935,9 +2939,11 @@ int main(int argc, char* argv[])
             PDC dcMC_Photon_HighDM_min_dR_RecoPhotonGenParton(        "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_HighDM);
             
             // min_dR_PromptPhotonGenParton
+            PDC dcData_Photon_NoBaseline_min_dR_PromptPhotonGenParton(  "data",   "min_dR_PromptPhotonGenParton", {dsData_Photon_NoBaseline});
             PDC dcData_Photon_LowDM_min_dR_PromptPhotonGenParton(       "data",   "min_dR_PromptPhotonGenParton", {dsData_Photon_LowDM});
             PDC dcData_Photon_LowDM_Tight_min_dR_PromptPhotonGenParton( "data",   "min_dR_PromptPhotonGenParton", {dsData_Photon_LowDM_Tight});
             PDC dcData_Photon_HighDM_min_dR_PromptPhotonGenParton(      "data",   "min_dR_PromptPhotonGenParton", {dsData_Photon_HighDM});
+            PDC dcMC_Photon_NoBaseline_min_dR_PromptPhotonGenParton(    "stack",  "min_dR_PromptPhotonGenParton", StackMC_Photon_NoBaseline);
             PDC dcMC_Photon_LowDM_min_dR_PromptPhotonGenParton(         "stack",  "min_dR_PromptPhotonGenParton", StackMC_Photon_LowDM);
             PDC dcMC_Photon_LowDM_Tight_min_dR_PromptPhotonGenParton(   "stack",  "min_dR_PromptPhotonGenParton", StackMC_Photon_LowDM_Tight);
             PDC dcMC_Photon_HighDM_min_dR_PromptPhotonGenParton(        "stack",  "min_dR_PromptPhotonGenParton", StackMC_Photon_HighDM);
@@ -3069,6 +3075,7 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_LowDM_dR_RecoPhotonGenParton" + histSuffix,             {dcData_Photon_LowDM_dR_RecoPhotonGenParton,                dcMC_Photon_LowDM_dR_RecoPhotonGenParton},              {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_dR_RecoPhotonGenParton" + histSuffix,       {dcData_Photon_LowDM_Tight_dR_RecoPhotonGenParton,          dcMC_Photon_LowDM_Tight_dR_RecoPhotonGenParton},        {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_dR_RecoPhotonGenParton" + histSuffix,            {dcData_Photon_HighDM_dR_RecoPhotonGenParton,               dcMC_Photon_HighDM_dR_RecoPhotonGenParton},             {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_dR_PromptPhotonGenParton" + histSuffix,      {dcData_Photon_NoBaseline_dR_PromptPhotonGenParton,         dcMC_Photon_NoBaseline_dR_PromptPhotonGenParton},       {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_dR_PromptPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_dR_PromptPhotonGenParton" + histSuffix,           {dcData_Photon_LowDM_dR_PromptPhotonGenParton,              dcMC_Photon_LowDM_dR_PromptPhotonGenParton},            {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_dR_PromptPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_dR_PromptPhotonGenParton" + histSuffix,     {dcData_Photon_LowDM_Tight_dR_PromptPhotonGenParton,        dcMC_Photon_LowDM_Tight_dR_PromptPhotonGenParton},      {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_dR_PromptPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_dR_PromptPhotonGenParton" + histSuffix,          {dcData_Photon_HighDM_dR_PromptPhotonGenParton,             dcMC_Photon_HighDM_dR_PromptPhotonGenParton},           {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_dR_PromptPhotonGenParton, "Events"));
@@ -3081,6 +3088,7 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_LowDM_min_dR_RecoPhotonGenParton" + histSuffix,         {dcData_Photon_LowDM_min_dR_RecoPhotonGenParton,            dcMC_Photon_LowDM_min_dR_RecoPhotonGenParton},          {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_min_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton" + histSuffix,   {dcData_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton,      dcMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton},    {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_min_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_min_dR_RecoPhotonGenParton" + histSuffix,        {dcData_Photon_HighDM_min_dR_RecoPhotonGenParton,           dcMC_Photon_HighDM_min_dR_RecoPhotonGenParton},         {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_min_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_min_dR_PromptPhotonGenParton" + histSuffix,  {dcData_Photon_NoBaseline_min_dR_PromptPhotonGenParton,     dcMC_Photon_NoBaseline_min_dR_PromptPhotonGenParton},   {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_min_dR_PromptPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_min_dR_PromptPhotonGenParton" + histSuffix,       {dcData_Photon_LowDM_min_dR_PromptPhotonGenParton,          dcMC_Photon_LowDM_min_dR_PromptPhotonGenParton},        {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_min_dR_PromptPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_min_dR_PromptPhotonGenParton" + histSuffix, {dcData_Photon_LowDM_Tight_min_dR_PromptPhotonGenParton,    dcMC_Photon_LowDM_Tight_min_dR_PromptPhotonGenParton},  {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_min_dR_PromptPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_min_dR_PromptPhotonGenParton" + histSuffix,      {dcData_Photon_HighDM_min_dR_PromptPhotonGenParton,         dcMC_Photon_HighDM_min_dR_PromptPhotonGenParton},       {1, 2}, "", nBins, 0.0, 1.0,             true, doNorm, label_min_dR_PromptPhotonGenParton, "Events"));
