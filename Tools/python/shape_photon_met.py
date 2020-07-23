@@ -60,11 +60,11 @@ class Shape:
         self.color_list   = ["pinkish red", "tangerine", "emerald", "dark sky blue", "pinky purple"]
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
-    def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable, varTag = ""):
+    def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=False):
         # only use varTag for MC, not data
         # only use varTag if variable name changes (e.g. nCRUnit, but not metWithPhoton)
         variableWithTag = variable + varTag
-        if self.splitQCD:
+        if splitQCD:
             temp_map = {
                             "Data"              : "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata",
                             "GJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "#gamma+jetsstack",
@@ -100,7 +100,6 @@ class Shape:
         # KEY: TH1D    DataMC_Photon_LowDM_met_NBge2_NJge7_prefire_syst_up_jetpt30metWithPhotonmetWithPhoton#gamma+jetsstack;1 metWithPhoton
         # KEY: TH1D    DataMC_Photon_HighDM_met_NBge2_NJge7_pileup_syst_up_jetpt30metWithPhotonmetWithPhoton#gamma+jetsstack;1 metWithPhoton
         nameTag = "_" + name
-        eraTag = "_" + era
         temp_map = {}
         for bin_type in self.bin_types:
             temp_map[bin_type] = {}
@@ -111,7 +110,7 @@ class Shape:
                     dataSelectionTag = "_" + selection + "_jetpt30"
                     mcSelectionTag   = "_" + selection + self.systTag + "_jetpt30"
                     # do not use varTag for MET histogram systematics
-                    temp_map[bin_type][region][selection] = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable)
+                    temp_map[bin_type][region][selection] = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, variable, splitQCD=self.splitQCD)
 
         return temp_map
     
@@ -122,12 +121,11 @@ class Shape:
         # DataMC_Photon_LowDM_nCRUnitLowDM_jetpt30_2016nCRUnitLowDM_drPhotonCleaned_jetpt30nCRUnitLowDM_drPhotonCleaned_jetpt30Datadata
         # DataMC_Photon_LowDM_nCRUnitLowDM_jetpt30_2016nCRUnitLowDM_drPhotonCleaned_jetpt30nCRUnitLowDM_drPhotonCleaned_jetpt30#gamma+jetsstack
         nameTag = "_" + name
-        eraTag = "_" + era
         # apply syst to MC only
         dataSelectionTag = "_jetpt30"
         mcSelectionTag   = self.systTag + "_jetpt30"
         # use varTag for CR unit systematics
-        temp_map = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable, self.varTag)
+        temp_map = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, variable, self.varTag, splitQCD=self.splitQCD)
         return temp_map
     
     def getShape(self, file_name, era, systTag = "", varTag=""): 
@@ -590,6 +588,12 @@ class Shape:
                     c.Update()
                     c.SaveAs(plot_name + ".pdf")
                     c.SaveAs(plot_name + ".png")
+    
+    def studyShapes(file_name, region, era, variable, nameTag):
+        dataSelectionTag = ""
+        mcSelectionTag   = ""
+        # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=self.splitQCD):
+        hMap = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=True)
                     
 
 def main():

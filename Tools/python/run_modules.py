@@ -79,6 +79,11 @@ def main():
                 makeCutflows(result_file, era, plot_dir, doPhotons)
             N.getNormAndError(result_file, era)
             S.getShape(result_file, era)
+            # studyShapes(file_name, region, era, variable, nameTag)
+            S.studyShapes(result_file, "LowDM",  era, "metWithPhoton",              "_met_split_jetpt30")
+            S.studyShapes(result_file, "HighDM", era, "metWithPhoton",              "_met_split_jetpt30")
+            S.studyShapes(result_file, "LowDM",  era, "HT_drPhotonCleaned_jetpt30", "_ht_split_jetpt30")
+            S.studyShapes(result_file, "HighDM", era, "HT_drPhotonCleaned_jetpt30", "_ht_split_jetpt30")
             if doUnits:
                 CRunits.getValues(result_file, era)
                 SRunits.getValues(result_file, era)
