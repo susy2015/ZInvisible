@@ -99,13 +99,13 @@ namespace PhotonFunctions
   bool isRecoMatched(const TLorentzVector& photon, std::vector<TLorentzVector> recoPhotons)
   {
     bool recoMatched = false;
-    double genPt = photon.Pt();
+    double GenPt = photon.Pt();
     for(int i = 0; i < recoPhotons.size(); i++)
     {
       double deltaR = ROOT::Math::VectorUtil::DeltaR(photon, recoPhotons[i]);
-      double recoPt = recoPhotons[i].Pt();
-      double ptRatio = genPt / recoPt; 
-      if (ptRatio > 0.5 && ptRatio < 2.0 && deltaR < 0.1)
+      double RecoPt = recoPhotons[i].Pt();
+      double temp_ratio = RecoPt/GenPt;
+      if (temp_ratio > 0.5 && temp_ratio < 2.0 && deltaR < 0.1)
       {
         recoMatched = true;
         break;
