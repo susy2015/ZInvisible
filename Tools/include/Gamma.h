@@ -195,6 +195,7 @@ namespace plotterFunctions
         auto& cutPhotonSF_Down              = tr.createDerivedVec<float>("cutPhotonSF_Down");
         auto& dR_GenPhotonGenParton         = tr.createDerivedVec<float>("dR_GenPhotonGenParton");
         auto& dR_RecoPhotonGenParton        = tr.createDerivedVec<float>("dR_RecoPhotonGenParton");
+        auto& dR_PromptPhotonGenParton      = tr.createDerivedVec<float>("dR_PromptPhotonGenParton");
         auto& dR_RecoPhotonGenPhoton        = tr.createDerivedVec<float>("dR_RecoPhotonGenPhoton");
 
         //NanoAOD Gen Particles Ref: https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html#GenPart
@@ -384,6 +385,12 @@ namespace plotterFunctions
                                 if (verbose) printf("Found isPromptPhoton; ");
                                 RecoPhotonTLVEtaPtMatched.push_back(PhotonTLV[i]);
                                 PromptPhotons.push_back(PhotonTLV[i]);
+                                // calculate dR 
+                                for (const auto& genParton : GenPartonTLV)
+                                {
+                                    float dR = ROOT::Math::VectorUtil::DeltaR(PhotonTLV[i], genParton);
+                                    dR_PromptPhotonGenParton.push_back(dR);
+                                }
                                 if (PhotonFunctions::isFragmentationPhoton(PhotonTLV[i], GenPartonTLV))
                                 {
                                     if (verbose) printf("Found FragmentedPhoton\n");
@@ -448,13 +455,15 @@ namespace plotterFunctions
         // calculate min dR
         float min_dR_GenPhotonGenParton     = -999.0;  
         float min_dR_RecoPhotonGenParton    = -999.0; 
+        float min_dR_PromptPhotonGenParton  = -999.0; 
         float min_dR_RecoPhotonGenPhoton    = -999.0;  
         // MC Only
         if (! isData)
         {
-            if (!dR_GenPhotonGenParton.empty())  min_dR_GenPhotonGenParton  = *std::min_element(dR_GenPhotonGenParton.begin(),  dR_GenPhotonGenParton.end());
-            if (!dR_RecoPhotonGenParton.empty()) min_dR_RecoPhotonGenParton = *std::min_element(dR_RecoPhotonGenParton.begin(), dR_RecoPhotonGenParton.end());
-            if (!dR_RecoPhotonGenPhoton.empty()) min_dR_RecoPhotonGenPhoton = *std::min_element(dR_RecoPhotonGenPhoton.begin(), dR_RecoPhotonGenPhoton.end());
+            if (!dR_GenPhotonGenParton.empty())    min_dR_GenPhotonGenParton    = *std::min_element(dR_GenPhotonGenParton.begin(),    dR_GenPhotonGenParton.end());
+            if (!dR_RecoPhotonGenParton.empty())   min_dR_RecoPhotonGenParton   = *std::min_element(dR_RecoPhotonGenParton.begin(),   dR_RecoPhotonGenParton.end());
+            if (!dR_PromptPhotonGenParton.empty()) min_dR_PromptPhotonGenParton = *std::min_element(dR_PromptPhotonGenParton.begin(), dR_PromptPhotonGenParton.end());
+            if (!dR_RecoPhotonGenPhoton.empty())   min_dR_RecoPhotonGenPhoton   = *std::min_element(dR_RecoPhotonGenPhoton.begin(),   dR_RecoPhotonGenPhoton.end());
         }
 
         if (verbose) fflush(stdout);
@@ -559,6 +568,7 @@ namespace plotterFunctions
         tr.registerDerivedVar("passQCDSelection",               passQCDSelection);
         tr.registerDerivedVar("min_dR_GenPhotonGenParton",      min_dR_GenPhotonGenParton);
         tr.registerDerivedVar("min_dR_RecoPhotonGenParton",     min_dR_RecoPhotonGenParton);
+        tr.registerDerivedVar("min_dR_PromptPhotonGenParton",   min_dR_PromptPhotonGenParton);
         tr.registerDerivedVar("min_dR_RecoPhotonGenPhoton",     min_dR_RecoPhotonGenPhoton);
     }
 
