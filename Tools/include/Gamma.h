@@ -30,7 +30,7 @@ namespace plotterFunctions
         bool verbose  = false;
         bool verbose2 = false;
         enum ID{Loose, Medium, Tight};
-        enum PhotonType{Reco, Direct, Fragmented, Fake};
+        enum PhotonType{Reco, Direct, Fragmented, NonPrompt, Fake};
         std::map<int, std::string> PhotonMap;
 
     void generateGamma(NTupleReader& tr) {
@@ -54,7 +54,8 @@ namespace plotterFunctions
         PhotonMap[0] = "Reco";
         PhotonMap[1] = "Direct";
         PhotonMap[2] = "Fragmented";
-        PhotonMap[3] = "Fake";
+        PhotonMap[3] = "NonPrompt";
+        PhotonMap[4] = "Fake";
         
         // choose ID to use
         enum ID myID = Medium;
@@ -158,6 +159,7 @@ namespace plotterFunctions
         bool passPhotonSelection            = false;
         bool passPhotonSelectionDirect      = false;
         bool passPhotonSelectionFragmented  = false;
+        bool passPhotonSelectionNonPrompt   = false;
         bool passPhotonSelectionFake        = false;
         bool passQCDSelection               = true;  // default should be true
         
@@ -182,6 +184,7 @@ namespace plotterFunctions
         auto& MediumPhotonTLV               = tr.createDerivedVec<TLorentzVector>("MediumPhotonTLV");
         auto& TightPhotonTLV                = tr.createDerivedVec<TLorentzVector>("TightPhotonTLV");
         auto& PromptPhotons                 = tr.createDerivedVec<TLorentzVector>("PromptPhotons");
+        auto& NonPromptPhotons              = tr.createDerivedVec<TLorentzVector>("NonPromptPhotons");
         auto& DirectPhotons                 = tr.createDerivedVec<TLorentzVector>("DirectPhotons");
         auto& FragmentedPhotons             = tr.createDerivedVec<TLorentzVector>("FragmentedPhotons");
         auto& FakePhotons                   = tr.createDerivedVec<TLorentzVector>("FakePhotons");
@@ -192,6 +195,7 @@ namespace plotterFunctions
         auto& cutPhotonSF_Down              = tr.createDerivedVec<float>("cutPhotonSF_Down");
         auto& dR_GenPhotonGenParton         = tr.createDerivedVec<float>("dR_GenPhotonGenParton");
         auto& dR_RecoPhotonGenParton        = tr.createDerivedVec<float>("dR_RecoPhotonGenParton");
+        auto& dR_PromptPhotonGenParton      = tr.createDerivedVec<float>("dR_PromptPhotonGenParton");
         auto& dR_RecoPhotonGenPhoton        = tr.createDerivedVec<float>("dR_RecoPhotonGenPhoton");
 
         //NanoAOD Gen Particles Ref: https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html#GenPart
@@ -224,7 +228,7 @@ namespace plotterFunctions
                 // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 if ( (abs(pdgId) > 0 && abs(pdgId) < 7) || pdgId == 9 || pdgId == 21 )
                 {
-                    if ((statusFlags & 0x2001) == 0x2001)
+                    if ( status == 23 && ((statusFlags & 0x1) == 0x1) )
                     {
                         if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPartonTLV.push_back(GenPartTLV[i]);
@@ -237,7 +241,7 @@ namespace plotterFunctions
                 // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
                 if ( pdgId == 22 )
                 {
-                    if ( status == 1 && ((statusFlags & 0x2000) == 0x2000) )
+                    if ( status == 1 )
                     {
                         if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPhotonTLV.push_back(GenPartTLV[i]);
@@ -266,6 +270,8 @@ namespace plotterFunctions
                         GenPhotonTLVEtaPtMatched.push_back(GenPhotonTLV[i]);
                     }
                 }
+                
+                
                 // calculate dR and min dR
                 // check if photon is isolated
                 float minDR = 999.0;
@@ -273,7 +279,11 @@ namespace plotterFunctions
                 for (const auto& genParton : GenPartonTLV)
                 {
                     float dR = ROOT::Math::VectorUtil::DeltaR(GenPhotonTLV[i], genParton);
-                    dR_GenPhotonGenParton.push_back(dR);
+                    // fill only for prompt photons
+                    if ((GenPhotonStatusFlags[i] & 0x1) == 0x1)
+                    {
+                        dR_GenPhotonGenParton.push_back(dR);
+                    }
                     if (dR < minDR)
                     {
                         minDR = dR;
@@ -293,7 +303,7 @@ namespace plotterFunctions
                 // QCD overlap cut: veto QCD events which have at least one isolated photon
                 // For QCD overlap cut, require gen photons to have statusFlags 0x2001
                 // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
-                if (photonIsIsolated && (GenPhotonStatusFlags[i] & 0x2001) == 0x2001)
+                if (photonIsIsolated && (GenPhotonStatusFlags[i] & 0x1) == 0x1)
                 {
                     passQCDSelection = false;
                 }
@@ -370,11 +380,17 @@ namespace plotterFunctions
                                 dR_RecoPhotonGenPhoton.push_back(dR);
                             }
                             // -- specify different types of photons --- //
-                            if (PhotonFunctions::isGenMatched_Method1(PhotonTLV[i], GenPhotonTLV))
+                            if (PhotonFunctions::isGenMatched_prompt(PhotonTLV[i], GenPhotonTLV, GenPhotonStatusFlags))
                             {
-                                if (verbose) printf("Found PromptPhoton; ");
+                                if (verbose) printf("Found isPromptPhoton; ");
                                 RecoPhotonTLVEtaPtMatched.push_back(PhotonTLV[i]);
                                 PromptPhotons.push_back(PhotonTLV[i]);
+                                // calculate dR 
+                                for (const auto& genParton : GenPartonTLV)
+                                {
+                                    float dR = ROOT::Math::VectorUtil::DeltaR(PhotonTLV[i], genParton);
+                                    dR_PromptPhotonGenParton.push_back(dR);
+                                }
                                 if (PhotonFunctions::isFragmentationPhoton(PhotonTLV[i], GenPartonTLV))
                                 {
                                     if (verbose) printf("Found FragmentedPhoton\n");
@@ -389,7 +405,15 @@ namespace plotterFunctions
                                     photonType = Direct;
                                 }
                             }
-                            // fake photon if not prompt
+                            // non prompt
+                            else if (PhotonFunctions::isGenMatched_nonPrompt(PhotonTLV[i], GenPhotonTLV, GenPhotonStatusFlags))
+                            {
+                                if (verbose) printf("Found isNonPromptPhoton\n");
+                                RecoPhotonTLVEtaPtMatched.push_back(PhotonTLV[i]);
+                                NonPromptPhotons.push_back(PhotonTLV[i]);
+                                photonType = NonPrompt;
+                            }
+                            // fake photon if not gen matched
                             else
                             {
                                 if (verbose) printf("Found FakePhoton\n");
@@ -431,13 +455,15 @@ namespace plotterFunctions
         // calculate min dR
         float min_dR_GenPhotonGenParton     = -999.0;  
         float min_dR_RecoPhotonGenParton    = -999.0; 
+        float min_dR_PromptPhotonGenParton  = -999.0; 
         float min_dR_RecoPhotonGenPhoton    = -999.0;  
         // MC Only
         if (! isData)
         {
-            if (!dR_GenPhotonGenParton.empty())  min_dR_GenPhotonGenParton  = *std::min_element(dR_GenPhotonGenParton.begin(), dR_GenPhotonGenParton.end());
-            if (!dR_RecoPhotonGenParton.empty()) min_dR_RecoPhotonGenParton = *std::min_element(dR_RecoPhotonGenParton.begin(), dR_RecoPhotonGenParton.end());
-            if (!dR_RecoPhotonGenPhoton.empty()) min_dR_RecoPhotonGenPhoton = *std::min_element(dR_RecoPhotonGenPhoton.begin(), dR_RecoPhotonGenPhoton.end());
+            if (!dR_GenPhotonGenParton.empty())    min_dR_GenPhotonGenParton    = *std::min_element(dR_GenPhotonGenParton.begin(),    dR_GenPhotonGenParton.end());
+            if (!dR_RecoPhotonGenParton.empty())   min_dR_RecoPhotonGenParton   = *std::min_element(dR_RecoPhotonGenParton.begin(),   dR_RecoPhotonGenParton.end());
+            if (!dR_PromptPhotonGenParton.empty()) min_dR_PromptPhotonGenParton = *std::min_element(dR_PromptPhotonGenParton.begin(), dR_PromptPhotonGenParton.end());
+            if (!dR_RecoPhotonGenPhoton.empty())   min_dR_RecoPhotonGenPhoton   = *std::min_element(dR_RecoPhotonGenPhoton.begin(),   dR_RecoPhotonGenPhoton.end());
         }
 
         if (verbose) fflush(stdout);
@@ -491,6 +517,7 @@ namespace plotterFunctions
             {
                 if      (DirectPhotons.size() == 1)     passPhotonSelectionDirect       = true;
                 else if (FragmentedPhotons.size() == 1) passPhotonSelectionFragmented   = true;
+                else if (NonPromptPhotons.size() == 1)  passPhotonSelectionNonPrompt    = true;
                 else if (FakePhotons.size() == 1)       passPhotonSelectionFake         = true;
             }                                               
         }
@@ -536,10 +563,12 @@ namespace plotterFunctions
         tr.registerDerivedVar("passPhotonSelection",            passPhotonSelection);
         tr.registerDerivedVar("passPhotonSelectionDirect",      passPhotonSelectionDirect);
         tr.registerDerivedVar("passPhotonSelectionFragmented",  passPhotonSelectionFragmented);
+        tr.registerDerivedVar("passPhotonSelectionNonPrompt",   passPhotonSelectionNonPrompt);
         tr.registerDerivedVar("passPhotonSelectionFake",        passPhotonSelectionFake);
         tr.registerDerivedVar("passQCDSelection",               passQCDSelection);
         tr.registerDerivedVar("min_dR_GenPhotonGenParton",      min_dR_GenPhotonGenParton);
         tr.registerDerivedVar("min_dR_RecoPhotonGenParton",     min_dR_RecoPhotonGenParton);
+        tr.registerDerivedVar("min_dR_PromptPhotonGenParton",   min_dR_PromptPhotonGenParton);
         tr.registerDerivedVar("min_dR_RecoPhotonGenPhoton",     min_dR_RecoPhotonGenPhoton);
     }
 
