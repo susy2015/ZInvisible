@@ -27,7 +27,7 @@ namespace plotterFunctions
 
     private:
         std::string year_;
-        bool verbose  = true;
+        bool verbose  = false;
         bool verbose2 = false;
         enum ID{Loose, Medium, Tight};
         enum PhotonType{Reco, Direct, Fragmented, NonPrompt, Fake};
