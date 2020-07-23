@@ -269,46 +269,52 @@ namespace plotterFunctions
                         GenPhotonTLVEtaPtMatched.push_back(GenPhotonTLV[i]);
                     }
                 }
-                // calculate dR and min dR
-                // check if photon is isolated
-                float minDR = 999.0;
-                bool photonIsIsolated = true;
-                for (const auto& genParton : GenPartonTLV)
-                {
-                    float dR = ROOT::Math::VectorUtil::DeltaR(GenPhotonTLV[i], genParton);
-                    dR_GenPhotonGenParton.push_back(dR);
-                    if (dR < minDR)
-                    {
-                        minDR = dR;
-                    }
-                    if (dR < 0.4)
-                    {
-                        photonIsIsolated = false;
-                    }
-                    if (verbose)
-                    {
-                        printf("DR(gen photon, gen parton) = %f\n", dR);
-                    }
-                }
                 
-                GenPhotonMinPartonDR.push_back(minDR);
                 
-                // QCD overlap cut: veto QCD events which have at least one isolated photon
-                // For QCD overlap cut, require gen photons to have statusFlags 0x2001
-                // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
-                if (photonIsIsolated && (GenPhotonStatusFlags[i] & 0x1) == 0x1)
+                // calculate dR only for prompt photons
+                if ((GenPhotonStatusFlags[i] & 0x1) == 0x1)
                 {
-                    passQCDSelection = false;
-                }
-                
-                // warning 
-                //if ( GenPhotonStatus[i] == 1 && ((GenPhotonStatusFlags[i] & 0x3040) == 0x3040) )
-                if (false)
-                {
-                    if (minDR > 0.4)
+                    // calculate dR and min dR
+                    // check if photon is isolated
+                    float minDR = 999.0;
+                    bool photonIsIsolated = true;
+                    for (const auto& genParton : GenPartonTLV)
                     {
-                        printf("event=%d, passQCDSelection=%d\n", event, passQCDSelection);
-                        printf("WARNING: min_parton_DR > 0.4; Gen Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, min_parton_DR=%.3f\n", GenPhotonTLV[i].Pt(), GenPhotonTLV[i].Eta(), GenPhotonTLV[i].Phi(), GenPhotonTLV[i].M(), GenPhotonStatus[i], GenPhotonStatusFlags[i], GenPhotonMinPartonDR[i]);
+                        float dR = ROOT::Math::VectorUtil::DeltaR(GenPhotonTLV[i], genParton);
+                        dR_GenPhotonGenParton.push_back(dR);
+                        if (dR < minDR)
+                        {
+                            minDR = dR;
+                        }
+                        if (dR < 0.4)
+                        {
+                            photonIsIsolated = false;
+                        }
+                        if (verbose)
+                        {
+                            printf("DR(gen photon, gen parton) = %f\n", dR);
+                        }
+                    }
+                    
+                    GenPhotonMinPartonDR.push_back(minDR);
+                    
+                    // QCD overlap cut: veto QCD events which have at least one isolated photon
+                    // For QCD overlap cut, require gen photons to have statusFlags 0x2001
+                    // statusFlags: bit 0 (0x1): isPrompt, bit 13 (0x2000): isLastCopy
+                    if (photonIsIsolated && (GenPhotonStatusFlags[i] & 0x1) == 0x1)
+                    {
+                        passQCDSelection = false;
+                    }
+                    
+                    // warning 
+                    //if ( GenPhotonStatus[i] == 1 && ((GenPhotonStatusFlags[i] & 0x3040) == 0x3040) )
+                    if (false)
+                    {
+                        if (minDR > 0.4)
+                        {
+                            printf("event=%d, passQCDSelection=%d\n", event, passQCDSelection);
+                            printf("WARNING: min_parton_DR > 0.4; Gen Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, min_parton_DR=%.3f\n", GenPhotonTLV[i].Pt(), GenPhotonTLV[i].Eta(), GenPhotonTLV[i].Phi(), GenPhotonTLV[i].M(), GenPhotonStatus[i], GenPhotonStatusFlags[i], GenPhotonMinPartonDR[i]);
+                        }
                     }
                 }
             }
@@ -446,7 +452,7 @@ namespace plotterFunctions
         // MC Only
         if (! isData)
         {
-            if (!dR_GenPhotonGenParton.empty())  min_dR_GenPhotonGenParton  = *std::min_element(dR_GenPhotonGenParton.begin(), dR_GenPhotonGenParton.end());
+            if (!dR_GenPhotonGenParton.empty())  min_dR_GenPhotonGenParton  = *std::min_element(dR_GenPhotonGenParton.begin(),  dR_GenPhotonGenParton.end());
             if (!dR_RecoPhotonGenParton.empty()) min_dR_RecoPhotonGenParton = *std::min_element(dR_RecoPhotonGenParton.begin(), dR_RecoPhotonGenParton.end());
             if (!dR_RecoPhotonGenPhoton.empty()) min_dR_RecoPhotonGenPhoton = *std::min_element(dR_RecoPhotonGenPhoton.begin(), dR_RecoPhotonGenPhoton.end());
         }
