@@ -68,7 +68,9 @@ class Shape:
             temp_map = {
                             "Data"              : "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata",
                             "GJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "#gamma+jetsstack",
+                            "QCD_Direct"        : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD Directstack",
                             "QCD_Fragmented"    : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD Fragmentedstack",
+                            "QCD_NonPrompt"     : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD NonPromptstack",
                             "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD Fakestack",
                             "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "W(l#nu)+jetsstack",
                             "TTG"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "t#bar{t}#gamma+jetsstack",
@@ -589,11 +591,28 @@ class Shape:
                     c.SaveAs(plot_name + ".pdf")
                     c.SaveAs(plot_name + ".png")
     
-    def studyShapes(file_name, region, era, variable, nameTag):
+    def studyShapes(self, file_name, region, era, variable, nameTag):
+        # check that the file exists
+        if not os.path.isfile(file_name): 
+            print "The file {0} does not exist".format(file_name)
+            return
+        
+        f = ROOT.TFile(file_name)
+        
         dataSelectionTag = ""
         mcSelectionTag   = ""
         # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=self.splitQCD):
         hMap = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=True)
+        h_Data            = f.Get( str(variable + "/" + hMap["Data"]              ) )
+        h_GJets           = f.Get( str(variable + "/" + hMap["GJets"]             ) )
+        h_QCD_Direct      = f.Get( str(variable + "/" + hMap["QCD_Direct"]        ) )
+        h_QCD_Fragmented  = f.Get( str(variable + "/" + hMap["QCD_Fragmented"]    ) )
+        h_QCD_NonPrompt   = f.Get( str(variable + "/" + hMap["QCD_NonPrompt"]     ) )
+        h_QCD_Fake        = f.Get( str(variable + "/" + hMap["QCD_Fake"]          ) )
+        h_WJets           = f.Get( str(variable + "/" + hMap["WJets"]             ) )
+        h_WJets           = f.Get( str(variable + "/" + hMap["WJets"]             ) )
+        h_tW              = f.Get( str(variable + "/" + hMap["tW"]                ) )
+        h_Rare            = f.Get( str(variable + "/" + hMap["Rare"]              ) )
                     
 
 def main():
