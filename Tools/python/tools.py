@@ -220,6 +220,11 @@ def removeCuts(cutString, pattern_list, delim = "_"):
         newString = delim.join(newList)
     return newString
 
+# normalize histogram
+def normalize(hist):
+    area = hist.Integral(0, hist.GetNbinsX() + 1)
+    hist.Scale(1.0 / area)
+
 # get ratio
 def getNormalizedRatio(h_num, h_den):
     # number of events for normalization

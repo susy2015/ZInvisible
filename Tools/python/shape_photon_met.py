@@ -5,7 +5,7 @@ import json
 import os
 import numpy as np
 from colors import getColorIndex
-from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringifyMap
+from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringifyMap, normalize
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -613,6 +613,8 @@ class Shape:
         h_WJets           = f.Get( str(variable + "/" + hMap["WJets"]             ) )
         h_tW              = f.Get( str(variable + "/" + hMap["tW"]                ) )
         h_Rare            = f.Get( str(variable + "/" + hMap["Rare"]              ) )
+        for h in hMap:
+            normalize(h)
                     
 
 def main():
