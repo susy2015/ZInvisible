@@ -57,7 +57,7 @@ class Shape:
         self.color_blue   = "electric blue"
         self.color_green  = "irish green" 
         self.color_purple = "violet"
-        self.color_list   = ["pinkish red", "tangerine", "emerald", "dark sky blue", "pinky purple"]
+        self.color_list   = ["pinkish red", "tangerine", "emerald", "dark sky blue", "pinky purple", "reddish orange", "dark peach", "teal green", "blurple", "periwinkle blue", "apricot", "electric purple", "bright orange", "marigold", "ocean"]
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
     def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=False):
@@ -592,6 +592,7 @@ class Shape:
                     c.SaveAs(plot_name + ".png")
     
     def studyShapes(self, file_name, region, era, variable, nameTag):
+        
         # check that the file exists
         if not os.path.isfile(file_name): 
             print "The file {0} does not exist".format(file_name)
@@ -599,22 +600,68 @@ class Shape:
         
         f = ROOT.TFile(file_name)
         
+        draw_option = "hist error"
+        
+        ###################
+        # Draw Histograms #
+        ###################
+
+        # draw histograms
+        c = ROOT.TCanvas("c", "c", 800, 800)
+        c.SetGrid()
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.5
+        legend_x2 = 0.9 
+        legend_y1 = 0.7 
+        legend_y2 = 0.9 
+                    
+        # legend: TLegend(x1,y1,x2,y2)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        
         dataSelectionTag = ""
         mcSelectionTag   = ""
         # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=self.splitQCD):
-        hMap = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=True)
-        h_Data            = f.Get( str(variable + "/" + hMap["Data"]              ) )
-        h_GJets           = f.Get( str(variable + "/" + hMap["GJets"]             ) )
-        h_QCD_Direct      = f.Get( str(variable + "/" + hMap["QCD_Direct"]        ) )
-        h_QCD_Fragmented  = f.Get( str(variable + "/" + hMap["QCD_Fragmented"]    ) )
-        h_QCD_NonPrompt   = f.Get( str(variable + "/" + hMap["QCD_NonPrompt"]     ) )
-        h_QCD_Fake        = f.Get( str(variable + "/" + hMap["QCD_Fake"]          ) )
-        h_WJets           = f.Get( str(variable + "/" + hMap["WJets"]             ) )
-        h_WJets           = f.Get( str(variable + "/" + hMap["WJets"]             ) )
-        h_tW              = f.Get( str(variable + "/" + hMap["tW"]                ) )
-        h_Rare            = f.Get( str(variable + "/" + hMap["Rare"]              ) )
-        for h in hMap:
+        hNames = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=True)
+        hMap = {}
+        hMap["Data"]            = f.Get( str(variable + "/" + hNames["Data"]              ) )
+        hMap["GJets"]           = f.Get( str(variable + "/" + hNames["GJets"]             ) )
+        hMap["QCD_Direct"]      = f.Get( str(variable + "/" + hNames["QCD_Direct"]        ) )
+        hMap["QCD_Fragmented"]  = f.Get( str(variable + "/" + hNames["QCD_Fragmented"]    ) )
+        hMap["QCD_NonPrompt"]   = f.Get( str(variable + "/" + hNames["QCD_NonPrompt"]     ) )
+        hMap["QCD_Fake"]        = f.Get( str(variable + "/" + hNames["QCD_Fake"]          ) )
+        hMap["WJets"]           = f.Get( str(variable + "/" + hNames["WJets"]             ) )
+        hMap["TTG"]             = f.Get( str(variable + "/" + hNames["TTG"]               ) )
+        hMap["tW"]              = f.Get( str(variable + "/" + hNames["tW"]                ) )
+        hMap["Rare"]            = f.Get( str(variable + "/" + hNames["Rare"]              ) )
+        for i, key in enumerate(hMap):
+            h = hMap[key]
             normalize(h)
+            if key == "Data":
+                color = self.color_black
+            else:
+                color = self.color_list[i]
+            title   = variable
+            x_title = variable
+            y_title = "Events (normalized)"
+            y_min   = 0.0
+            y_max   = 1.0
+            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+            setupHist(h, title, x_title, y_title, color, y_min, y_max)
+            # draw
+            if i == 0:
+                h.Draw(draw_option)
+            else:
+                h.Draw(draw_option + " same")
+            legend.AddEntry(h,  key,  "l")
+                    
+                    
+        legend.Draw()
+        # save histograms
+        plot_name = "{0}StudyShapes_{1}_{2}_{3}".format(self.plot_dir, region, variable, era)
+        c.Update()
+        c.SaveAs(plot_name + ".pdf")
+        c.SaveAs(plot_name + ".png")
                     
 
 def main():

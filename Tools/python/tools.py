@@ -223,7 +223,8 @@ def removeCuts(cutString, pattern_list, delim = "_"):
 # normalize histogram
 def normalize(hist):
     area = hist.Integral(0, hist.GetNbinsX() + 1)
-    hist.Scale(1.0 / area)
+    if area != 0.0:
+        hist.Scale(1.0 / area)
 
 # get ratio
 def getNormalizedRatio(h_num, h_den):
