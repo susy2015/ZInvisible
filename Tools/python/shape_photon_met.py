@@ -4,7 +4,6 @@ import copy
 import json
 import os
 import numpy as np
-from colors import getColorIndex
 from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringifyMap, normalize
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
@@ -57,7 +56,11 @@ class Shape:
         self.color_blue   = "electric blue"
         self.color_green  = "irish green" 
         self.color_purple = "violet"
-        self.color_list   = ["pinkish red", "tangerine", "emerald", "dark sky blue", "pinky purple", "reddish orange", "dark peach", "teal green", "blurple", "periwinkle blue", "apricot", "electric purple", "bright orange", "marigold", "ocean"]
+        #self.color_list   = ["pinkish red", "tangerine", "emerald", "dark sky blue", "pinky purple", "reddish orange", "dark peach", "teal green", "blurple", "periwinkle blue", "apricot", "electric purple", "bright orange", "marigold", "ocean"]
+        # rainbow ordered
+        #self.color_list   = ["bubblegum pink", "hot pink", "red", "salmon", "red orange", "orange", "goldenrod", "light olive green", "medium green", "turquoise", "aqua blue", "bright blue", "dark sky blue", "blurple", "purple", "pastel purple"]
+        # for shape study
+        self.color_list   = ["hot pink", "bright magenta", "red", "orange", "goldenrod", "light olive green", "aqua blue", "bright blue", "violet", "blurple", "purple", "pastel purple"]
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
     def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=False):
@@ -634,8 +637,10 @@ class Shape:
         hMap["TTG"]             = f.Get( str(variable + "/" + hNames["TTG"]               ) )
         hMap["tW"]              = f.Get( str(variable + "/" + hNames["tW"]                ) )
         hMap["Rare"]            = f.Get( str(variable + "/" + hNames["Rare"]              ) )
+        # add QCD Direct to QCD Fragmented
+        hMap["QCD_Fragmented"].Add(hMap["QCD_Direct"])
         # use list to define order
-        hList = ["Data", "GJets", "QCD_Direct", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
+        hList = ["Data", "GJets", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
         for i, key in enumerate(hList):
             hOriginal = hMap[key]
             # rebin 
