@@ -591,7 +591,7 @@ class Shape:
                     c.SaveAs(plot_name + ".pdf")
                     c.SaveAs(plot_name + ".png")
     
-    def studyShapes(self, file_name, region, era, variable, nameTag):
+    def studyShapes(self, file_name, region, era, variable, nameTag, varName):
         
         # check that the file exists
         if not os.path.isfile(file_name): 
@@ -600,7 +600,7 @@ class Shape:
         
         f = ROOT.TFile(file_name)
         
-        draw_option = "hist error"
+        draw_option = "hist"
         
         ###################
         # Draw Histograms #
@@ -634,18 +634,20 @@ class Shape:
         hMap["TTG"]             = f.Get( str(variable + "/" + hNames["TTG"]               ) )
         hMap["tW"]              = f.Get( str(variable + "/" + hNames["tW"]                ) )
         hMap["Rare"]            = f.Get( str(variable + "/" + hNames["Rare"]              ) )
-        for i, key in enumerate(hMap):
+        # use list to define order
+        hList = ["Data", "GJets", "QCD_Direct", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
+        for i, key in enumerate(hList):
             h = hMap[key]
             normalize(h)
             if key == "Data":
                 color = self.color_black
             else:
                 color = self.color_list[i]
-            title   = variable
-            x_title = variable
+            title   = "{0} in {1} for {2}".format(varName, region, era)
+            x_title = varName
             y_title = "Events (normalized)"
             y_min   = 0.0
-            y_max   = 1.0
+            y_max   = 0.5
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
             setupHist(h, title, x_title, y_title, color, y_min, y_max)
             # draw
