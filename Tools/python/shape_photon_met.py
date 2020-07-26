@@ -591,7 +591,7 @@ class Shape:
                     c.SaveAs(plot_name + ".pdf")
                     c.SaveAs(plot_name + ".png")
     
-    def studyShapes(self, file_name, region, era, variable, nameTag, varName):
+    def studyShapes(self, file_name, region, era, variable, nameTag, varName, xbins, n_bins):
         
         # check that the file exists
         if not os.path.isfile(file_name): 
@@ -637,7 +637,9 @@ class Shape:
         # use list to define order
         hList = ["Data", "GJets", "QCD_Direct", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
         for i, key in enumerate(hList):
-            h = hMap[key]
+            hOriginal = hMap[key]
+            # rebin 
+            h = hOriginal.Rebin(n_bins, "h_" + key + "_rebinned", xbins)
             normalize(h)
             if key == "Data":
                 color = self.color_black
@@ -647,7 +649,7 @@ class Shape:
             x_title = varName
             y_title = "Events (normalized)"
             y_min   = 0.0
-            y_max   = 0.5
+            y_max   = 1.0
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
             setupHist(h, title, x_title, y_title, color, y_min, y_max)
             # draw
