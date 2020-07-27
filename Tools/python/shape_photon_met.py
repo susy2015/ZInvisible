@@ -697,6 +697,10 @@ class Shape:
         # vary QCD components up and down
         varyList = ["QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake"]
         for i, key in enumerate(varyList): 
+            # new legend for each plot
+            # legend: TLegend(x1,y1,x2,y2)
+            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            # get histos
             h_den_nominal_original   = h_mc.Clone("h_den_nominal_original")
             h_den_up_original        = h_mc.Clone("h_den_up_original")
             h_den_down_original      = h_mc.Clone("h_den_down_original")
@@ -723,10 +727,14 @@ class Shape:
             setupHist(h_ratio_nominal, title, x_title, y_title, self.color_black, y_min, y_max)
             setupHist(h_ratio_up,      title, x_title, y_title, self.color_red,   y_min, y_max)
             setupHist(h_ratio_down,    title, x_title, y_title, self.color_blue,  y_min, y_max)
+            legend.AddEntry(h_ratio_nominal,  "Shape (nominal)",                "l")
+            legend.AddEntry(h_ratio_up,       "Shape ({0} up)".format(key),     "l")
+            legend.AddEntry(h_ratio_down,     "Shape ({0} down)".format(key),   "l")
             # draw
             h_ratio_nominal.Draw(draw_option)
             h_ratio_up.Draw(draw_option + " same")
             h_ratio_down.Draw(draw_option + " same")
+            legend.Draw()
             # save histograms
             plot_name = "{0}VaryShapes_{1}_{2}_{3}_{4}".format(self.plot_dir, region, variable, key, era)
             c.Update()
