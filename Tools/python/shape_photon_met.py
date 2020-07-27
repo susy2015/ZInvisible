@@ -695,40 +695,28 @@ class Shape:
         h_mc.Add(hMap["Rare"])
         
         # vary QCD components up and down
-        h_den_nominal             = h_mc.Clone("h_den_nominal")
-        h_den_QCD_Fragmented_Up   = h_mc.Clone("h_den_QCD_Fragmented_Up")
-        h_den_QCD_Fragmented_Down = h_mc.Clone("h_den_QCD_Fragmented_Down")
-        h_den_QCD_NonPrompt_Up    = h_mc.Clone("h_den_QCD_NonPrompt_Up")
-        h_den_QCD_NonPrompt_Down  = h_mc.Clone("h_den_QCD_NonPrompt_Down")
-        h_den_QCD_Fake_Up         = h_mc.Clone("h_den_QCD_Fake_Up")
-        h_den_QCD_Fake_Down       = h_mc.Clone("h_den_QCD_Fake_Down")
-        # 50% variation up and down
-        h_den_QCD_Fragmented_Up.Add(hMap["QCD_Fragmented"],      0.5)
-        h_den_QCD_Fragmented_Down.Add(hMap["QCD_Fragmented"],   -0.5)
-        h_den_QCD_NonPrompt_Up.Add(hMap["QCD_NonPrompt"],        0.5)
-        h_den_QCD_NonPrompt_Down.Add(hMap["QCD_NonPrompt"],     -0.5)
-        h_den_QCD_Fake_Up.Add(hMap["QCD_Fake"],                  0.5)
-        h_den_QCD_Fake_Down.Add(hMap["QCD_Fake"],               -0.5)
-
-        h_ratio_nominal             = getNormalizedRatio(h_num, h_den_nominal) 
-        h_ratio_QCD_Fragmented_Up   = getNormalizedRatio(h_num, h_den_QCD_Fragmented_Up) 
-        h_ratio_QCD_Fragmented_Down = getNormalizedRatio(h_num, h_den_QCD_Fragmented_Down) 
-        h_ratio_QCD_NonPrompt_Up    = getNormalizedRatio(h_num, h_den_QCD_NonPrompt_Up) 
-        h_ratio_QCD_NonPrompt_Down  = getNormalizedRatio(h_num, h_den_QCD_NonPrompt_Down) 
-        h_ratio_QCD_Fake_Up         = getNormalizedRatio(h_num, h_den_QCD_Fake_Up) 
-        h_ratio_QCD_Fake_Down       = getNormalizedRatio(h_num, h_den_QCD_Fake_Down) 
-
-
-        h_ratio_nominal.Draw(draw_option)
-        h_ratio_QCD_Fragmented_Up.Draw(draw_option + " same")
-        h_ratio_QCD_Fragmented_Down.Draw(draw_option + " same")
-        # save histograms
-        varied = "QCD_Fragmented"
-        plot_name = "{0}VaryShapes_{1}_{2}_{3}_{4}".format(self.plot_dir, region, variable, varied, era)
-        c.Update()
-        c.SaveAs(plot_name + ".pdf")
-        c.SaveAs(plot_name + ".png")
-
+        varyList = ["QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake"]
+        for key in varyList: 
+            h_den_nominal   = h_mc.Clone("h_den_nominal")
+            h_den_Up        = h_mc.Clone("h_den_Up")
+            h_den_Down      = h_mc.Clone("h_den_Down")
+            # 50% variation up and down
+            h_den_Up.Add(hMap[key],      0.5)
+            h_den_Down.Add(hMap[key],   -0.5)
+            # get ratios
+            h_ratio_nominal = getNormalizedRatio(h_num, h_den_nominal) 
+            h_ratio_Up      = getNormalizedRatio(h_num, h_den_Up) 
+            h_ratio_Down    = getNormalizedRatio(h_num, h_den_Down) 
+            # draw
+            h_ratio_nominal.Draw(draw_option)
+            h_ratio_Up.Draw(draw_option + " same")
+            h_ratio_Down.Draw(draw_option + " same")
+            # save histograms
+            plot_name = "{0}VaryShapes_{1}_{2}_{3}_{4}".format(self.plot_dir, region, variable, key, era)
+            c.Update()
+            c.SaveAs(plot_name + ".pdf")
+            c.SaveAs(plot_name + ".png")
+        
 
 
 def main():
