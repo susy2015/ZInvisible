@@ -640,7 +640,10 @@ class Shape:
         # add QCD Direct to QCD Fragmented
         hMap["QCD_Fragmented"].Add(hMap["QCD_Direct"])
         # use list to define order
-        hList = ["Data", "GJets", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
+        # Data and all MC
+        #hList = ["Data", "GJets", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
+        # only Data, GJets, QCD
+        hList = ["Data", "GJets", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake"]
         for i, key in enumerate(hList):
             hOriginal = hMap[key]
             # rebin 
