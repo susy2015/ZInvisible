@@ -684,8 +684,8 @@ class Shape:
         # ----------------------------------- #
         # --- Show affect on shape factor --- #
         # ----------------------------------- #
-        h_num = hMap["Data"].Clone("h_num")
-        h_mc  = hMap["GJets"].Clone("h_mc") 
+        h_num_original = hMap["Data"].Clone("h_num_original")
+        h_mc           = hMap["GJets"].Clone("h_mc") 
         h_mc.Add(hMap["QCD_Fragmented"])
         h_mc.Add(hMap["QCD_NonPrompt"])
         h_mc.Add(hMap["QCD_Fake"])
@@ -696,21 +696,37 @@ class Shape:
         
         # vary QCD components up and down
         varyList = ["QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake"]
-        for key in varyList: 
-            h_den_nominal   = h_mc.Clone("h_den_nominal")
-            h_den_Up        = h_mc.Clone("h_den_Up")
-            h_den_Down      = h_mc.Clone("h_den_Down")
+        for i, key in enumerate(varyList): 
+            h_den_nominal_original   = h_mc.Clone("h_den_nominal_original")
+            h_den_up_original        = h_mc.Clone("h_den_up_original")
+            h_den_down_original      = h_mc.Clone("h_den_down_original")
             # 50% variation up and down
-            h_den_Up.Add(hMap[key],      0.5)
-            h_den_Down.Add(hMap[key],   -0.5)
+            h_den_up_original.Add(hMap[key],      0.5)
+            h_den_down_original.Add(hMap[key],   -0.5)
+            # WARNING: do not rebin ratios; first rebin, then get ratio
+            # rebin 
+            h_num         = h_num_original.Rebin(n_bins,            "h_num_rebinned",           xbins)
+            h_den_nominal = h_den_nominal_original.Rebin(n_bins,    "h_den_nominal_rebinned",   xbins)
+            h_den_up      = h_den_up_original.Rebin(n_bins,         "h_den_up_rebinned",        xbins)
+            h_den_down    = h_den_down_original.Rebin(n_bins,       "h_den_down_rebinned",      xbins)
             # get ratios
             h_ratio_nominal = getNormalizedRatio(h_num, h_den_nominal) 
-            h_ratio_Up      = getNormalizedRatio(h_num, h_den_Up) 
-            h_ratio_Down    = getNormalizedRatio(h_num, h_den_Down) 
+            h_ratio_up      = getNormalizedRatio(h_num, h_den_up) 
+            h_ratio_down    = getNormalizedRatio(h_num, h_den_down) 
+            
+            title   = "{0} with {1} varied 50% in {2} for {3}".format(varName, key, region, era)
+            x_title = varName
+            y_title = "Data / (normalized MC)"
+            y_min   = 0.0
+            y_max   = 2.0
+            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+            setupHist(h_ratio_nominal, title, x_title, y_title, self.color_black, y_min, y_max)
+            setupHist(h_ratio_up,      title, x_title, y_title, self.color_red,   y_min, y_max)
+            setupHist(h_ratio_down,    title, x_title, y_title, self.color_blue,  y_min, y_max)
             # draw
             h_ratio_nominal.Draw(draw_option)
-            h_ratio_Up.Draw(draw_option + " same")
-            h_ratio_Down.Draw(draw_option + " same")
+            h_ratio_up.Draw(draw_option + " same")
+            h_ratio_down.Draw(draw_option + " same")
             # save histograms
             plot_name = "{0}VaryShapes_{1}_{2}_{3}_{4}".format(self.plot_dir, region, variable, key, era)
             c.Update()
