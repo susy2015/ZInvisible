@@ -643,7 +643,7 @@ class Shape:
         # ---------------------- #
         # --- Compare shapes --- #
         # ---------------------- #
-        
+
         # use list to define order
         # Data and all MC
         #hList = ["Data", "GJets", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
@@ -684,6 +684,12 @@ class Shape:
         # ----------------------------------- #
         # --- Show affect on shape factor --- #
         # ----------------------------------- #
+        
+        # clear canvas
+        c.Clear()
+        # split canvas to show ratios
+        c.Divide(1, 2)
+        
         h_num_original = hMap["Data"].Clone("h_num_original")
         h_mc           = hMap["GJets"].Clone("h_mc") 
         h_mc.Add(hMap["QCD_Fragmented"])
@@ -693,9 +699,6 @@ class Shape:
         h_mc.Add(hMap["TTG"])
         h_mc.Add(hMap["tW"])
         h_mc.Add(hMap["Rare"])
-            
-        # split canvas to show ratios
-        c.Divide(1, 2)
         
         # vary QCD components up and down
         varyList = ["QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake"]
@@ -735,6 +738,8 @@ class Shape:
             setupHist(h_ratio_down,    title, x_title, "Ratio", self.color_blue,  0.8, 1.2)
             
             # draw
+            # note: use different variables for different legends, one legend for each plot
+
             # shapes
             pad = c.cd(1)
             pad.SetGrid()
