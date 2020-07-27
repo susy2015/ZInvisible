@@ -4,7 +4,7 @@ import copy
 import json
 import os
 import numpy as np
-from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringifyMap, normalize
+from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringifyMap, normalize, getNormalizedRatio
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -639,6 +639,11 @@ class Shape:
         hMap["Rare"]            = f.Get( str(variable + "/" + hNames["Rare"]              ) )
         # add QCD Direct to QCD Fragmented
         hMap["QCD_Fragmented"].Add(hMap["QCD_Direct"])
+        
+        # ---------------------- #
+        # --- Compare shapes --- #
+        # ---------------------- #
+        
         # use list to define order
         # Data and all MC
         #hList = ["Data", "GJets", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
@@ -648,6 +653,7 @@ class Shape:
             hOriginal = hMap[key]
             # rebin 
             h = hOriginal.Rebin(n_bins, "h_" + key + "_rebinned", xbins)
+            # normalize each histogram so that we can compare shapes
             normalize(h)
             if key == "Data":
                 color = self.color_black
@@ -674,7 +680,56 @@ class Shape:
         c.Update()
         c.SaveAs(plot_name + ".pdf")
         c.SaveAs(plot_name + ".png")
-                    
+        
+        # ----------------------------------- #
+        # --- Show affect on shape factor --- #
+        # ----------------------------------- #
+        h_num = hMap["Data"].Clone("h_num")
+        h_mc  = hMap["GJets"].Clone("h_mc") 
+        h_mc.Add(hMap["QCD_Fragmented"])
+        h_mc.Add(hMap["QCD_NonPrompt"])
+        h_mc.Add(hMap["QCD_Fake"])
+        h_mc.Add(hMap["WJets"])
+        h_mc.Add(hMap["TTG"])
+        h_mc.Add(hMap["tW"])
+        h_mc.Add(hMap["Rare"])
+        
+        # vary QCD components up and down
+        h_den_nominal             = h_mc.Clone("h_den_nominal")
+        h_den_QCD_Fragmented_Up   = h_mc.Clone("h_den_QCD_Fragmented_Up")
+        h_den_QCD_Fragmented_Down = h_mc.Clone("h_den_QCD_Fragmented_Down")
+        h_den_QCD_NonPrompt_Up    = h_mc.Clone("h_den_QCD_NonPrompt_Up")
+        h_den_QCD_NonPrompt_Down  = h_mc.Clone("h_den_QCD_NonPrompt_Down")
+        h_den_QCD_Fake_Up         = h_mc.Clone("h_den_QCD_Fake_Up")
+        h_den_QCD_Fake_Down       = h_mc.Clone("h_den_QCD_Fake_Down")
+        # 50% variation up and down
+        h_den_QCD_Fragmented_Up.Add(hMap["QCD_Fragmented"],      0.5)
+        h_den_QCD_Fragmented_Down.Add(hMap["QCD_Fragmented"],   -0.5)
+        h_den_QCD_NonPrompt_Up.Add(hMap["QCD_NonPrompt"],        0.5)
+        h_den_QCD_NonPrompt_Down.Add(hMap["QCD_NonPrompt"],     -0.5)
+        h_den_QCD_Fake_Up.Add(hMap["QCD_Fake"],                  0.5)
+        h_den_QCD_Fake_Down.Add(hMap["QCD_Fake"],               -0.5)
+
+        h_ratio_nominal             = getNormalizedRatio(h_num, h_den_nominal) 
+        h_ratio_QCD_Fragmented_Up   = getNormalizedRatio(h_num, h_den_QCD_Fragmented_Up) 
+        h_ratio_QCD_Fragmented_Down = getNormalizedRatio(h_num, h_den_QCD_Fragmented_Down) 
+        h_ratio_QCD_NonPrompt_Up    = getNormalizedRatio(h_num, h_den_QCD_NonPrompt_Up) 
+        h_ratio_QCD_NonPrompt_Down  = getNormalizedRatio(h_num, h_den_QCD_NonPrompt_Down) 
+        h_ratio_QCD_Fake_Up         = getNormalizedRatio(h_num, h_den_QCD_Fake_Up) 
+        h_ratio_QCD_Fake_Down       = getNormalizedRatio(h_num, h_den_QCD_Fake_Down) 
+
+
+        h_ratio_nominal.Draw(draw_option)
+        h_ratio_QCD_Fragmented_Up.Draw(draw_option + " same")
+        h_ratio_QCD_Fragmented_Down.Draw(draw_option + " same")
+        # save histograms
+        varied = "QCD_Fragmented"
+        plot_name = "{0}VaryShapes_{1}_{2}_{3}_{4}".format(self.plot_dir, region, variable, varied, era)
+        c.Update()
+        c.SaveAs(plot_name + ".pdf")
+        c.SaveAs(plot_name + ".png")
+
+
 
 def main():
     json_file = "runs/run_2019-07-17.json"
