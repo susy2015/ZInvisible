@@ -30,7 +30,7 @@ class Systematic:
         self.x_max = 1000.0
         self.h_map_syst = {}
 
-    def getZRatio(self, root_file, region, selection, era, name, variable, rebin):
+    def getZRatio(self, root_file, region, selection, name, variable, rebin):
         debug = False
         selectionTag    = "_" + selection
         nameTag         = "_" + name
@@ -104,21 +104,22 @@ class Systematic:
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
-    def getPhotonRatio(self, root_file, region, selection, era, name, variable, rebin):
-        eraTag          = "_" + era
+    def getPhotonRatio(self, root_file, region, selection, name, variable, rebin):
         selectionTag    = "_" + selection
         nameTag         = "_" + name
-        # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable):
-        h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, eraTag, variable)
+        # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable):
+        h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, variable)
         #WARNING: strings loaded from json file have type 'unicode'
         # ROOT cannot load histograms using unicode input: use type 'str'
         h_Data              = root_file.Get( str(variable + "/" + h_map_shape["Data"]            ) )
         h_GJets             = root_file.Get( str(variable + "/" + h_map_shape["GJets"]           ) )
         if self.S.splitQCD:
-            h_QCD_Fragmented    = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fragmented"]  ) )
-            h_QCD_Fake          = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fake"]        ) )
+            h_QCD_Direct     = root_file.Get( str(variable + "/" + h_map_shape["QCD_Direct"]     ) )
+            h_QCD_Fragmented = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fragmented"] ) )
+            h_QCD_NonPrompt  = root_file.Get( str(variable + "/" + h_map_shape["QCD_NonPrompt"]  ) )
+            h_QCD_Fake       = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fake"]       ) )
         else:
-            h_QCD               = root_file.Get( str(variable + "/" + h_map_shape["QCD"]             ) )
+            h_QCD               = root_file.Get( str(variable + "/" + h_map_shape["QCD"]         ) )
         h_WJets             = root_file.Get( str(variable + "/" + h_map_shape["WJets"]           ) )
         h_TTG               = root_file.Get( str(variable + "/" + h_map_shape["TTG"]             ) )
         #h_TTbar             = root_file.Get( str(variable + "/" + h_map_shape["TTbar"]           ) )
@@ -128,7 +129,9 @@ class Systematic:
         # combine all MC in denominator
         h_mc = h_GJets.Clone("h_mc") 
         if self.S.splitQCD:
+            h_mc.Add(h_QCD_Direct)
             h_mc.Add(h_QCD_Fragmented)
+            h_mc.Add(h_QCD_NonPrompt)
             h_mc.Add(h_QCD_Fake)
         else:
             h_mc.Add(h_QCD)
@@ -180,11 +183,11 @@ class Systematic:
         legend_y2 = 0.9 
         for region in self.regions:
             # MET with Z
-            # getZRatio(self, root_file, region, selection, era, name, variable, rebin):
-            h_ratio_lepton = self.getZRatio(f, region, selection, era, var, varLepton, rebin)
+            # getZRatio(self, root_file, region, selection, name, variable, rebin):
+            h_ratio_lepton = self.getZRatio(f, region, selection, var, varLepton, rebin)
             # MET with photon
-            # getPhotonRatio(self, root_file, region, selection, era, name, variable, rebin)
-            h_ratio_photon = self.getPhotonRatio(f, region, selection, era, var, varPhoton, rebin)
+            # getPhotonRatio(self, root_file, region, selection, name, variable, rebin)
+            h_ratio_photon = self.getPhotonRatio(f, region, selection, var, varPhoton, rebin)
             
             # Double Ratio for MET: Z / photon
             h_ratio_ZoverPhoton = h_ratio_lepton.Clone("h_ratio_ZoverPhoton")

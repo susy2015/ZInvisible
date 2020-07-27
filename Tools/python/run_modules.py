@@ -98,6 +98,11 @@ def main():
             Syst.makeZvsPhoton(result_file, "nmt",  "nMergedTops_drPhotonCleaned_jetpt30",      "nMergedTops_drLeptonCleaned_jetpt30",      era, False, False)
             Syst.makeZvsPhoton(result_file, "nw",   "nWs_drPhotonCleaned_jetpt30",              "nWs_drLeptonCleaned_jetpt30",              era, False, False)
             Syst.makeZvsPhoton(result_file, "nrt",  "nResolvedTops_drPhotonCleaned_jetpt30",    "nResolvedTops_drLeptonCleaned_jetpt30",    era, False, False)
+            # studyShapes(file_name, region, era, variable, nameTag, varName, xbins, n_bins)
+            S.studyShapes(result_file, "LowDM",  era, "metWithPhoton",              "_met_split_jetpt30", "MET", xbins_met, n_bins_met)
+            S.studyShapes(result_file, "HighDM", era, "metWithPhoton",              "_met_split_jetpt30", "MET", xbins_met, n_bins_met)
+            S.studyShapes(result_file, "LowDM",  era, "HT_drPhotonCleaned_jetpt30", "_ht_split_jetpt30",  "HT",  xbins_ht,  n_bins_ht)
+            S.studyShapes(result_file, "HighDM", era, "HT_drPhotonCleaned_jetpt30", "_ht_split_jetpt30",  "HT",  xbins_ht,  n_bins_ht)
 
     
     # Normalization: makeTable(self, output_name, makeDoc=False)

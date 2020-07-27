@@ -4,8 +4,7 @@ import copy
 import json
 import os
 import numpy as np
-from colors import getColorIndex
-from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringifyMap
+from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringifyMap, normalize, getNormalizedRatio
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -57,18 +56,24 @@ class Shape:
         self.color_blue   = "electric blue"
         self.color_green  = "irish green" 
         self.color_purple = "violet"
-        self.color_list   = ["pinkish red", "tangerine", "emerald", "dark sky blue", "pinky purple"]
+        #self.color_list   = ["pinkish red", "tangerine", "emerald", "dark sky blue", "pinky purple", "reddish orange", "dark peach", "teal green", "blurple", "periwinkle blue", "apricot", "electric purple", "bright orange", "marigold", "ocean"]
+        # rainbow ordered
+        #self.color_list   = ["bubblegum pink", "hot pink", "red", "salmon", "red orange", "orange", "goldenrod", "light olive green", "medium green", "turquoise", "aqua blue", "bright blue", "dark sky blue", "blurple", "purple", "pastel purple"]
+        # for shape study
+        self.color_list   = ["hot pink", "bright magenta", "red", "orange", "goldenrod", "light olive green", "aqua blue", "bright blue", "violet", "blurple", "purple", "pastel purple"]
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
-    def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable, varTag = ""):
+    def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=False):
         # only use varTag for MC, not data
         # only use varTag if variable name changes (e.g. nCRUnit, but not metWithPhoton)
         variableWithTag = variable + varTag
-        if self.splitQCD:
+        if splitQCD:
             temp_map = {
                             "Data"              : "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata",
                             "GJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "#gamma+jetsstack",
+                            "QCD_Direct"        : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD Directstack",
                             "QCD_Fragmented"    : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD Fragmentedstack",
+                            "QCD_NonPrompt"     : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD NonPromptstack",
                             "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD Fakestack",
                             "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "W(l#nu)+jetsstack",
                             "TTG"               : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "t#bar{t}#gamma+jetsstack",
@@ -100,7 +105,6 @@ class Shape:
         # KEY: TH1D    DataMC_Photon_LowDM_met_NBge2_NJge7_prefire_syst_up_jetpt30metWithPhotonmetWithPhoton#gamma+jetsstack;1 metWithPhoton
         # KEY: TH1D    DataMC_Photon_HighDM_met_NBge2_NJge7_pileup_syst_up_jetpt30metWithPhotonmetWithPhoton#gamma+jetsstack;1 metWithPhoton
         nameTag = "_" + name
-        eraTag = "_" + era
         temp_map = {}
         for bin_type in self.bin_types:
             temp_map[bin_type] = {}
@@ -111,7 +115,7 @@ class Shape:
                     dataSelectionTag = "_" + selection + "_jetpt30"
                     mcSelectionTag   = "_" + selection + self.systTag + "_jetpt30"
                     # do not use varTag for MET histogram systematics
-                    temp_map[bin_type][region][selection] = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable)
+                    temp_map[bin_type][region][selection] = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, variable, splitQCD=self.splitQCD)
 
         return temp_map
     
@@ -122,12 +126,11 @@ class Shape:
         # DataMC_Photon_LowDM_nCRUnitLowDM_jetpt30_2016nCRUnitLowDM_drPhotonCleaned_jetpt30nCRUnitLowDM_drPhotonCleaned_jetpt30Datadata
         # DataMC_Photon_LowDM_nCRUnitLowDM_jetpt30_2016nCRUnitLowDM_drPhotonCleaned_jetpt30nCRUnitLowDM_drPhotonCleaned_jetpt30#gamma+jetsstack
         nameTag = "_" + name
-        eraTag = "_" + era
         # apply syst to MC only
         dataSelectionTag = "_jetpt30"
         mcSelectionTag   = self.systTag + "_jetpt30"
         # use varTag for CR unit systematics
-        temp_map = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, eraTag, variable, self.varTag)
+        temp_map = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, variable, self.varTag, splitQCD=self.splitQCD)
         return temp_map
     
     def getShape(self, file_name, era, systTag = "", varTag=""): 
@@ -590,7 +593,155 @@ class Shape:
                     c.Update()
                     c.SaveAs(plot_name + ".pdf")
                     c.SaveAs(plot_name + ".png")
+    
+    def studyShapes(self, file_name, region, era, variable, nameTag, varName, xbins, n_bins):
+        
+        # check that the file exists
+        if not os.path.isfile(file_name): 
+            print "The file {0} does not exist".format(file_name)
+            return
+        
+        f = ROOT.TFile(file_name)
+        
+        draw_option = "hist"
+        
+        ###################
+        # Draw Histograms #
+        ###################
+
+        # draw histograms
+        c = ROOT.TCanvas("c", "c", 800, 800)
+        c.SetGrid()
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.5
+        legend_x2 = 0.9 
+        legend_y1 = 0.7 
+        legend_y2 = 0.9 
                     
+        # legend: TLegend(x1,y1,x2,y2)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        
+        dataSelectionTag = ""
+        mcSelectionTag   = ""
+        # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=self.splitQCD):
+        hNames = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=True)
+        hMap = {}
+        hMap["Data"]            = f.Get( str(variable + "/" + hNames["Data"]              ) )
+        hMap["GJets"]           = f.Get( str(variable + "/" + hNames["GJets"]             ) )
+        hMap["QCD_Direct"]      = f.Get( str(variable + "/" + hNames["QCD_Direct"]        ) )
+        hMap["QCD_Fragmented"]  = f.Get( str(variable + "/" + hNames["QCD_Fragmented"]    ) )
+        hMap["QCD_NonPrompt"]   = f.Get( str(variable + "/" + hNames["QCD_NonPrompt"]     ) )
+        hMap["QCD_Fake"]        = f.Get( str(variable + "/" + hNames["QCD_Fake"]          ) )
+        hMap["WJets"]           = f.Get( str(variable + "/" + hNames["WJets"]             ) )
+        hMap["TTG"]             = f.Get( str(variable + "/" + hNames["TTG"]               ) )
+        hMap["tW"]              = f.Get( str(variable + "/" + hNames["tW"]                ) )
+        hMap["Rare"]            = f.Get( str(variable + "/" + hNames["Rare"]              ) )
+        # add QCD Direct to QCD Fragmented
+        hMap["QCD_Fragmented"].Add(hMap["QCD_Direct"])
+        
+        # ---------------------- #
+        # --- Compare shapes --- #
+        # ---------------------- #
+        
+        # use list to define order
+        # Data and all MC
+        #hList = ["Data", "GJets", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
+        # only Data, GJets, QCD
+        hList = ["Data", "GJets", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake"]
+        for i, key in enumerate(hList):
+            hOriginal = hMap[key]
+            # rebin 
+            h = hOriginal.Rebin(n_bins, "h_" + key + "_rebinned", xbins)
+            # normalize each histogram so that we can compare shapes
+            normalize(h)
+            if key == "Data":
+                color = self.color_black
+            else:
+                color = self.color_list[i]
+            title   = "{0} in {1} for {2}".format(varName, region, era)
+            x_title = varName
+            y_title = "Events (normalized)"
+            y_min   = 0.0
+            y_max   = 1.0
+            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+            setupHist(h, title, x_title, y_title, color, y_min, y_max)
+            # draw
+            if i == 0:
+                h.Draw(draw_option)
+            else:
+                h.Draw(draw_option + " same")
+            legend.AddEntry(h,  key,  "l")
+                    
+                    
+        legend.Draw()
+        # save histograms
+        plot_name = "{0}StudyShapes_{1}_{2}_{3}".format(self.plot_dir, region, variable, era)
+        c.Update()
+        c.SaveAs(plot_name + ".pdf")
+        c.SaveAs(plot_name + ".png")
+        
+        # ----------------------------------- #
+        # --- Show affect on shape factor --- #
+        # ----------------------------------- #
+        h_num_original = hMap["Data"].Clone("h_num_original")
+        h_mc           = hMap["GJets"].Clone("h_mc") 
+        h_mc.Add(hMap["QCD_Fragmented"])
+        h_mc.Add(hMap["QCD_NonPrompt"])
+        h_mc.Add(hMap["QCD_Fake"])
+        h_mc.Add(hMap["WJets"])
+        h_mc.Add(hMap["TTG"])
+        h_mc.Add(hMap["tW"])
+        h_mc.Add(hMap["Rare"])
+        
+        # vary QCD components up and down
+        varyList = ["QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake"]
+        for i, key in enumerate(varyList): 
+            # new legend for each plot
+            # legend: TLegend(x1,y1,x2,y2)
+            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            # get histos
+            h_den_nominal_original   = h_mc.Clone("h_den_nominal_original")
+            h_den_up_original        = h_mc.Clone("h_den_up_original")
+            h_den_down_original      = h_mc.Clone("h_den_down_original")
+            # 50% variation up and down
+            h_den_up_original.Add(hMap[key],      0.5)
+            h_den_down_original.Add(hMap[key],   -0.5)
+            # WARNING: do not rebin ratios; first rebin, then get ratio
+            # rebin 
+            h_num         = h_num_original.Rebin(n_bins,            "h_num_rebinned",           xbins)
+            h_den_nominal = h_den_nominal_original.Rebin(n_bins,    "h_den_nominal_rebinned",   xbins)
+            h_den_up      = h_den_up_original.Rebin(n_bins,         "h_den_up_rebinned",        xbins)
+            h_den_down    = h_den_down_original.Rebin(n_bins,       "h_den_down_rebinned",      xbins)
+            # get ratios
+            h_ratio_nominal = getNormalizedRatio(h_num, h_den_nominal) 
+            h_ratio_up      = getNormalizedRatio(h_num, h_den_up) 
+            h_ratio_down    = getNormalizedRatio(h_num, h_den_down) 
+            
+            title   = "{0} with {1} varied 50% in {2} for {3}".format(varName, key, region, era)
+            x_title = varName
+            y_title = "Data / (normalized MC)"
+            y_min   = 0.0
+            y_max   = 2.0
+            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+            setupHist(h_ratio_nominal, title, x_title, y_title, self.color_black, y_min, y_max)
+            setupHist(h_ratio_up,      title, x_title, y_title, self.color_red,   y_min, y_max)
+            setupHist(h_ratio_down,    title, x_title, y_title, self.color_blue,  y_min, y_max)
+            legend.AddEntry(h_ratio_nominal,  "Shape (nominal)",                "l")
+            legend.AddEntry(h_ratio_up,       "Shape ({0} up)".format(key),     "l")
+            legend.AddEntry(h_ratio_down,     "Shape ({0} down)".format(key),   "l")
+            # draw
+            h_ratio_nominal.Draw(draw_option)
+            h_ratio_up.Draw(draw_option + " same")
+            h_ratio_down.Draw(draw_option + " same")
+            legend.Draw()
+            # save histograms
+            plot_name = "{0}VaryShapes_{1}_{2}_{3}_{4}".format(self.plot_dir, region, variable, key, era)
+            c.Update()
+            c.SaveAs(plot_name + ".pdf")
+            c.SaveAs(plot_name + ".png")
+        
+
 
 def main():
     json_file = "runs/run_2019-07-17.json"
