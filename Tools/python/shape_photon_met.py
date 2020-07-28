@@ -643,7 +643,7 @@ class Shape:
         # ---------------------- #
         # --- Compare shapes --- #
         # ---------------------- #
-        
+
         # use list to define order
         # Data and all MC
         #hList = ["Data", "GJets", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
@@ -684,6 +684,12 @@ class Shape:
         # ----------------------------------- #
         # --- Show affect on shape factor --- #
         # ----------------------------------- #
+        
+        # clear canvas
+        c.Clear()
+        # split canvas to show ratios
+        c.Divide(1, 2)
+        
         h_num_original = hMap["Data"].Clone("h_num_original")
         h_mc           = hMap["GJets"].Clone("h_mc") 
         h_mc.Add(hMap["QCD_Fragmented"])
@@ -697,9 +703,6 @@ class Shape:
         # vary QCD components up and down
         varyList = ["QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake"]
         for i, key in enumerate(varyList): 
-            # new legend for each plot
-            # legend: TLegend(x1,y1,x2,y2)
-            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
             # get histos
             h_den_nominal_original   = h_mc.Clone("h_den_nominal_original")
             h_den_up_original        = h_mc.Clone("h_den_up_original")
@@ -713,28 +716,55 @@ class Shape:
             h_den_nominal = h_den_nominal_original.Rebin(n_bins,    "h_den_nominal_rebinned",   xbins)
             h_den_up      = h_den_up_original.Rebin(n_bins,         "h_den_up_rebinned",        xbins)
             h_den_down    = h_den_down_original.Rebin(n_bins,       "h_den_down_rebinned",      xbins)
-            # get ratios
-            h_ratio_nominal = getNormalizedRatio(h_num, h_den_nominal) 
-            h_ratio_up      = getNormalizedRatio(h_num, h_den_up) 
-            h_ratio_down    = getNormalizedRatio(h_num, h_den_down) 
+            # get shapes by normalizing denominator to numerator and taking the ratio 
+            h_shape_nominal = getNormalizedRatio(h_num, h_den_nominal) 
+            h_shape_up      = getNormalizedRatio(h_num, h_den_up) 
+            h_shape_down    = getNormalizedRatio(h_num, h_den_down) 
+            h_ratio_up      = h_shape_up.Clone("h_ratio_up")
+            h_ratio_down    = h_shape_down.Clone("h_ratio_down")
+            h_ratio_up.Divide(h_shape_nominal)
+            h_ratio_down.Divide(h_shape_nominal)
             
             title   = "{0} with {1} varied 50% in {2} for {3}".format(varName, key, region, era)
             x_title = varName
             y_title = "Data / (normalized MC)"
-            y_min   = 0.0
-            y_max   = 2.0
+            y_min   = 0.5
+            y_max   = 1.5
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_ratio_nominal, title, x_title, y_title, self.color_black, y_min, y_max)
-            setupHist(h_ratio_up,      title, x_title, y_title, self.color_red,   y_min, y_max)
-            setupHist(h_ratio_down,    title, x_title, y_title, self.color_blue,  y_min, y_max)
-            legend.AddEntry(h_ratio_nominal,  "Shape (nominal)",                "l")
-            legend.AddEntry(h_ratio_up,       "Shape ({0} up)".format(key),     "l")
-            legend.AddEntry(h_ratio_down,     "Shape ({0} down)".format(key),   "l")
+            setupHist(h_shape_nominal, title, x_title, y_title, self.color_black, y_min, y_max)
+            setupHist(h_shape_up,      title, x_title, y_title, self.color_red,   y_min, y_max)
+            setupHist(h_shape_down,    title, x_title, y_title, self.color_blue,  y_min, y_max)
+            setupHist(h_ratio_up,      title, x_title, "Ratio", self.color_red,   0.8, 1.2)
+            setupHist(h_ratio_down,    title, x_title, "Ratio", self.color_blue,  0.8, 1.2)
+            
             # draw
-            h_ratio_nominal.Draw(draw_option)
-            h_ratio_up.Draw(draw_option + " same")
+            # note: use different variables for different legends, one legend for each plot
+
+            # shapes
+            pad = c.cd(1)
+            pad.SetGrid()
+            # new legend for each plot
+            # legend: TLegend(x1,y1,x2,y2)
+            legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend1.AddEntry(h_shape_nominal,  "Shape (nominal)",                "l")
+            legend1.AddEntry(h_shape_up,       "Shape ({0} up)".format(key),     "l")
+            legend1.AddEntry(h_shape_down,     "Shape ({0} down)".format(key),   "l")
+            h_shape_nominal.Draw(draw_option)
+            h_shape_up.Draw(draw_option + " same")
+            h_shape_down.Draw(draw_option + " same")
+            legend1.Draw()
+            # ratios
+            pad = c.cd(2)
+            pad.SetGrid()
+            # new legend for each plot
+            # legend: TLegend(x1,y1,x2,y2)
+            legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend2.AddEntry(h_ratio_up,       "({0} up) / nominal".format(key),     "l")
+            legend2.AddEntry(h_ratio_down,     "({0} down) / nominal".format(key),   "l")
+            h_ratio_up.Draw(draw_option)
             h_ratio_down.Draw(draw_option + " same")
-            legend.Draw()
+            legend2.Draw()
+            
             # save histograms
             plot_name = "{0}VaryShapes_{1}_{2}_{3}_{4}".format(self.plot_dir, region, variable, key, era)
             c.Update()
