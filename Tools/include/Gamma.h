@@ -30,7 +30,7 @@ namespace plotterFunctions
         bool verbose  = false;
         bool verbose2 = false;
         enum ID{Loose, Medium, Tight};
-        enum PhotonType{Reco, Direct, Fragmented, NonPrompt, Fake};
+        enum PhotonType{Reco, Direct, Fragmentation, NonPrompt, Fake};
         std::map<int, std::string> PhotonMap;
 
     void generateGamma(NTupleReader& tr) {
@@ -53,7 +53,7 @@ namespace plotterFunctions
         // setup photon map to match photon types
         PhotonMap[0] = "Reco";
         PhotonMap[1] = "Direct";
-        PhotonMap[2] = "Fragmented";
+        PhotonMap[2] = "Fragmentation";
         PhotonMap[3] = "NonPrompt";
         PhotonMap[4] = "Fake";
         
@@ -145,23 +145,23 @@ namespace plotterFunctions
         //{
         //    std::cout << "ID = " << tempID[i] << "; (L, M, T) = (" << Photon_PassLooseID[i] << ", " << Photon_PassMediumID[i] << ", " << Photon_PassTightID[i] << "); myID = " << Photon_ID[i] << std::endl;
         //}
-        float metWithPhoton                 = -999.9;
-        float metWithPhoton_jesTotalUp      = -999.9;
-        float metWithPhoton_jesTotalDown    = -999.9;
-        float metphiWithPhoton              = -999.9;
-        float metphiWithPhoton_jesTotalUp   = -999.9;
-        float metphiWithPhoton_jesTotalDown = -999.9;
-        float cutPhotonPt                   = -999.9;
-        float cutPhotonEta                  = -999.9;
-        float photonSF                      = 1.0;
-        float photonSF_Up                   = 1.0;
-        float photonSF_Down                 = 1.0;
-        bool passPhotonSelection            = false;
-        bool passPhotonSelectionDirect      = false;
-        bool passPhotonSelectionFragmented  = false;
-        bool passPhotonSelectionNonPrompt   = false;
-        bool passPhotonSelectionFake        = false;
-        bool passQCDSelection               = true;  // default should be true
+        float metWithPhoton                     = -999.9;
+        float metWithPhoton_jesTotalUp          = -999.9;
+        float metWithPhoton_jesTotalDown        = -999.9;
+        float metphiWithPhoton                  = -999.9;
+        float metphiWithPhoton_jesTotalUp       = -999.9;
+        float metphiWithPhoton_jesTotalDown     = -999.9;
+        float cutPhotonPt                       = -999.9;
+        float cutPhotonEta                      = -999.9;
+        float photonSF                          = 1.0;
+        float photonSF_Up                       = 1.0;
+        float photonSF_Down                     = 1.0;
+        bool passPhotonSelection                = false;
+        bool passPhotonSelectionDirect          = false;
+        bool passPhotonSelectionFragmentation   = false;
+        bool passPhotonSelectionNonPrompt       = false;
+        bool passPhotonSelectionFake            = false;
+        bool passQCDSelection                   = true;  // default should be true
         
         // if you use new, you need to register it or destroy it yourself to clear memory; otherwise there will be memory leaks
         // use createDerivedVec to avoid this issue 
@@ -186,7 +186,7 @@ namespace plotterFunctions
         auto& PromptPhotons                 = tr.createDerivedVec<TLorentzVector>("PromptPhotons");
         auto& NonPromptPhotons              = tr.createDerivedVec<TLorentzVector>("NonPromptPhotons");
         auto& DirectPhotons                 = tr.createDerivedVec<TLorentzVector>("DirectPhotons");
-        auto& FragmentedPhotons             = tr.createDerivedVec<TLorentzVector>("FragmentedPhotons");
+        auto& FragmentationPhotons          = tr.createDerivedVec<TLorentzVector>("FragmentationPhotons");
         auto& FakePhotons                   = tr.createDerivedVec<TLorentzVector>("FakePhotons");
         auto& cutPhotonTLV                  = tr.createDerivedVec<TLorentzVector>("cutPhotonTLV");
         auto& cutPhotonJetIndex             = tr.createDerivedVec<int>("cutPhotonJetIndex");
@@ -326,9 +326,9 @@ namespace plotterFunctions
                                 }
                                 if (PhotonFunctions::isFragmentationPhoton(PhotonTLV[i], GenPartonTLV))
                                 {
-                                    if (verbose) printf("Found FragmentedPhoton\n");
-                                    FragmentedPhotons.push_back(PhotonTLV[i]);
-                                    photonType = Fragmented;
+                                    if (verbose) printf("Found FragmentationPhoton\n");
+                                    FragmentationPhotons.push_back(PhotonTLV[i]);
+                                    photonType = Fragmentation;
                                 }
                                 // direct photon if not fragmented
                                 else
@@ -523,10 +523,10 @@ namespace plotterFunctions
             // MC Only
             if (! isData)
             {
-                if      (DirectPhotons.size() == 1)     passPhotonSelectionDirect       = true;
-                else if (FragmentedPhotons.size() == 1) passPhotonSelectionFragmented   = true;
-                else if (NonPromptPhotons.size() == 1)  passPhotonSelectionNonPrompt    = true;
-                else if (FakePhotons.size() == 1)       passPhotonSelectionFake         = true;
+                if      (DirectPhotons.size() == 1)         passPhotonSelectionDirect           = true;
+                else if (FragmentationPhotons.size() == 1)  passPhotonSelectionFragmentation    = true;
+                else if (NonPromptPhotons.size() == 1)      passPhotonSelectionNonPrompt        = true;
+                else if (FakePhotons.size() == 1)           passPhotonSelectionFake             = true;
             }                                               
         }
         bool printEff = false;
@@ -554,30 +554,30 @@ namespace plotterFunctions
         }
         
         // Register derived variables
-        tr.registerDerivedVar("metWithPhoton",                  metWithPhoton);
-        tr.registerDerivedVar("metWithPhoton_jesTotalUp",       metWithPhoton_jesTotalUp);
-        tr.registerDerivedVar("metWithPhoton_jesTotalDown",     metWithPhoton_jesTotalDown);
-        tr.registerDerivedVar("metphiWithPhoton",               metphiWithPhoton);
-        tr.registerDerivedVar("metphiWithPhoton_jesTotalUp",    metphiWithPhoton_jesTotalUp);
-        tr.registerDerivedVar("metphiWithPhoton_jesTotalDown",  metphiWithPhoton_jesTotalDown);
-        tr.registerDerivedVar("photonSF",                       photonSF);
-        tr.registerDerivedVar("photonSF_Up",                    photonSF_Up);
-        tr.registerDerivedVar("photonSF_Down",                  photonSF_Down);
-        tr.registerDerivedVar("cutPhotonPt",                    cutPhotonPt);
-        tr.registerDerivedVar("cutPhotonEta",                   cutPhotonEta);
-        tr.registerDerivedVar("passPhotonSelectionLoose",       passPhotonSelectionLoose);
-        tr.registerDerivedVar("passPhotonSelectionMedium",      passPhotonSelectionMedium);
-        tr.registerDerivedVar("passPhotonSelectionTight",       passPhotonSelectionTight);
-        tr.registerDerivedVar("passPhotonSelection",            passPhotonSelection);
-        tr.registerDerivedVar("passPhotonSelectionDirect",      passPhotonSelectionDirect);
-        tr.registerDerivedVar("passPhotonSelectionFragmented",  passPhotonSelectionFragmented);
-        tr.registerDerivedVar("passPhotonSelectionNonPrompt",   passPhotonSelectionNonPrompt);
-        tr.registerDerivedVar("passPhotonSelectionFake",        passPhotonSelectionFake);
-        tr.registerDerivedVar("passQCDSelection",               passQCDSelection);
-        tr.registerDerivedVar("min_dR_GenPhotonGenParton",      min_dR_GenPhotonGenParton);
-        tr.registerDerivedVar("min_dR_RecoPhotonGenParton",     min_dR_RecoPhotonGenParton);
-        tr.registerDerivedVar("min_dR_PromptPhotonGenParton",   min_dR_PromptPhotonGenParton);
-        tr.registerDerivedVar("min_dR_RecoPhotonGenPhoton",     min_dR_RecoPhotonGenPhoton);
+        tr.registerDerivedVar("metWithPhoton",                      metWithPhoton);
+        tr.registerDerivedVar("metWithPhoton_jesTotalUp",           metWithPhoton_jesTotalUp);
+        tr.registerDerivedVar("metWithPhoton_jesTotalDown",         metWithPhoton_jesTotalDown);
+        tr.registerDerivedVar("metphiWithPhoton",                   metphiWithPhoton);
+        tr.registerDerivedVar("metphiWithPhoton_jesTotalUp",        metphiWithPhoton_jesTotalUp);
+        tr.registerDerivedVar("metphiWithPhoton_jesTotalDown",      metphiWithPhoton_jesTotalDown);
+        tr.registerDerivedVar("photonSF",                           photonSF);
+        tr.registerDerivedVar("photonSF_Up",                        photonSF_Up);
+        tr.registerDerivedVar("photonSF_Down",                      photonSF_Down);
+        tr.registerDerivedVar("cutPhotonPt",                        cutPhotonPt);
+        tr.registerDerivedVar("cutPhotonEta",                       cutPhotonEta);
+        tr.registerDerivedVar("passPhotonSelectionLoose",           passPhotonSelectionLoose);
+        tr.registerDerivedVar("passPhotonSelectionMedium",          passPhotonSelectionMedium);
+        tr.registerDerivedVar("passPhotonSelectionTight",           passPhotonSelectionTight);
+        tr.registerDerivedVar("passPhotonSelection",                passPhotonSelection);
+        tr.registerDerivedVar("passPhotonSelectionDirect",          passPhotonSelectionDirect);
+        tr.registerDerivedVar("passPhotonSelectionFragmentation",   passPhotonSelectionFragmentation);
+        tr.registerDerivedVar("passPhotonSelectionNonPrompt",       passPhotonSelectionNonPrompt);
+        tr.registerDerivedVar("passPhotonSelectionFake",            passPhotonSelectionFake);
+        tr.registerDerivedVar("passQCDSelection",                   passQCDSelection);
+        tr.registerDerivedVar("min_dR_GenPhotonGenParton",          min_dR_GenPhotonGenParton);
+        tr.registerDerivedVar("min_dR_RecoPhotonGenParton",         min_dR_RecoPhotonGenParton);
+        tr.registerDerivedVar("min_dR_PromptPhotonGenParton",       min_dR_PromptPhotonGenParton);
+        tr.registerDerivedVar("min_dR_RecoPhotonGenPhoton",         min_dR_RecoPhotonGenPhoton);
     }
 
     public:

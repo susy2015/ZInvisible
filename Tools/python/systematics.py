@@ -114,23 +114,23 @@ class Systematic:
         h_Data              = root_file.Get( str(variable + "/" + h_map_shape["Data"]            ) )
         h_GJets             = root_file.Get( str(variable + "/" + h_map_shape["GJets"]           ) )
         if self.S.splitQCD:
-            h_QCD_Direct     = root_file.Get( str(variable + "/" + h_map_shape["QCD_Direct"]     ) )
-            h_QCD_Fragmented = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fragmented"] ) )
-            h_QCD_NonPrompt  = root_file.Get( str(variable + "/" + h_map_shape["QCD_NonPrompt"]  ) )
-            h_QCD_Fake       = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fake"]       ) )
+            h_QCD_Direct        = root_file.Get( str(variable + "/" + h_map_shape["QCD_Direct"]         ) )
+            h_QCD_Fragmentation = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fragmentation"]  ) )
+            h_QCD_NonPrompt     = root_file.Get( str(variable + "/" + h_map_shape["QCD_NonPrompt"]      ) )
+            h_QCD_Fake          = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fake"]           ) )
         else:
-            h_QCD               = root_file.Get( str(variable + "/" + h_map_shape["QCD"]         ) )
-        h_WJets             = root_file.Get( str(variable + "/" + h_map_shape["WJets"]           ) )
-        h_TTG               = root_file.Get( str(variable + "/" + h_map_shape["TTG"]             ) )
-        #h_TTbar             = root_file.Get( str(variable + "/" + h_map_shape["TTbar"]           ) )
-        h_tW                = root_file.Get( str(variable + "/" + h_map_shape["tW"]              ) )
-        h_Rare              = root_file.Get( str(variable + "/" + h_map_shape["Rare"]            ) )
+            h_QCD               = root_file.Get( str(variable + "/" + h_map_shape["QCD"]  ) )
+        h_WJets             = root_file.Get( str(variable + "/" + h_map_shape["WJets"]    ) )
+        h_TTG               = root_file.Get( str(variable + "/" + h_map_shape["TTG"]      ) )
+        #h_TTbar             = root_file.Get( str(variable + "/" + h_map_shape["TTbar"]    ) )
+        h_tW                = root_file.Get( str(variable + "/" + h_map_shape["tW"]       ) )
+        h_Rare              = root_file.Get( str(variable + "/" + h_map_shape["Rare"]     ) )
         
         # combine all MC in denominator
         h_mc = h_GJets.Clone("h_mc") 
         if self.S.splitQCD:
             h_mc.Add(h_QCD_Direct)
-            h_mc.Add(h_QCD_Fragmented)
+            h_mc.Add(h_QCD_Fragmentation)
             h_mc.Add(h_QCD_NonPrompt)
             h_mc.Add(h_QCD_Fake)
         else:

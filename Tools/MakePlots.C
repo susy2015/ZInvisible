@@ -764,12 +764,12 @@ int main(int argc, char* argv[])
     // using direct, fake and fragmented photons
     auto makeStackMC_Photon_split = [&](const std::string& cuts, const std::string& weights, const std::string& QCDcuts = "")
     {
-        PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,                                               weights);
-        PDS dsQCDDirect(        "QCD Direct",             fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionDirect",      weights);
-        PDS dsQCDFragmented(    "QCD Fragmented",         fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionFragmented",  weights);
-        PDS dsQCDNonPrompt(     "QCD NonPrompt",          fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionNonPrompt",   weights);
-        PDS dsQCDFake(          "QCD Fake",               fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionFake",        weights);
-        PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,                                               weights);
+        PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,                                                 weights);
+        PDS dsQCDDirect(        "QCD Direct",             fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionDirect",        weights);
+        PDS dsQCDFragmentation( "QCD Fragmentation",      fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionFragmentation", weights);
+        PDS dsQCDNonPrompt(     "QCD NonPrompt",          fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionNonPrompt",     weights);
+        PDS dsQCDFake(          "QCD Fake",               fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionFake",          weights);
+        PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,                                                 weights);
         PDS dsWJetsToLNu(       "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
         //PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
         PDS dstW(               "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
@@ -778,7 +778,7 @@ int main(int argc, char* argv[])
         PDS dsTTZ(              "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
         PDS dsWZ(               "WZ",                     fileMap["WZ_amcatnlo" + yearTag],   cuts,   weights);
         // removed dsTTbar which overlaps with dsTTG:
-        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDDirect}, {dsQCDFragmented}, {dsQCDNonPrompt}, {dsQCDFake}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsDiboson, dsTTZ, dsWZ}};
+        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDDirect}, {dsQCDFragmentation}, {dsQCDNonPrompt}, {dsQCDFake}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsDiboson, dsTTZ, dsWZ}};
         return StackMC;
     };
 
