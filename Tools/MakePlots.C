@@ -707,11 +707,11 @@ int main(int argc, char* argv[])
         PDS dsTTbar(         "t#bar{t}",                    fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
         PDS dsSingleTopZinv( "Single t",                    fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsTTZ(           "t#bar{t}Z",                   fileMap["TTZ" + yearTag],             cuts,   weights);
-        PDS dsWZ(            "WZ",                          fileMap["WZ_amcatnlo" + yearTag],     cuts,   weights);
         PDS dsDiboson(       "Diboson",                     fileMap["Diboson" + yearTag],         cuts,   weights);
+        PDS dsWZ(            "WZ",                          fileMap["WZ_amcatnlo" + yearTag],     cuts,   weights);
         PDS dsRare(          "Rare",                        fileMap["Rare" + yearTag],            cuts,   weights);
         // DY, ttbar, single top, ttZ, WZ, rare, and diboson
-        std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTbar}, {dsSingleTopZinv}, {dsTTZ}, {dsWZ}, {dsDiboson}, {dsRare}};
+        std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTbar}, {dsSingleTopZinv}, {dsTTZ}, {dsDiboson, dsWZ}, {dsRare}};
         return StackMC;
     };
     
@@ -724,22 +724,22 @@ int main(int argc, char* argv[])
         PDS dsSingleTopZinv(    "Single t",             fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsTTZToLLNuNu(      "t#bar{t}ZToLL#nu#nu",  fileMap["TTZToLLNuNu" + yearTag],     cuts,   weights);
         PDS dsTTZToQQ(          "t#bar{t}ZToQQ",        fileMap["TTZToQQ" + yearTag],         cuts,   weights);
-        PDS dsWZ_ZToLL(         "WZ_ZToLL",             fileMap["WZ_ZToLL" + yearTag],        cuts,   weights);
-        PDS dsWZ_NoZToLL(       "WZ_NoZToLL",           fileMap["WZ_NoZToLL" + yearTag],      cuts,   weights);
         PDS dsDibosonZToLL(     "DibosonZToLL",         fileMap["DibosonZToLL" + yearTag],    cuts,   weights);
         PDS dsDibosonNoZToLL(   "DibosonNoZToLL",       fileMap["DibosonNoZToLL" + yearTag],  cuts,   weights);
+        PDS dsWZ_ZToLL(         "WZ_ZToLL",             fileMap["WZ_ZToLL" + yearTag],        cuts,   weights);
+        PDS dsWZ_NoZToLL(       "WZ_NoZToLL",           fileMap["WZ_NoZToLL" + yearTag],      cuts,   weights);
         PDS dsRareZ(            "RareZ",                fileMap["RareZ" + yearTag],           cuts,   weights);
         PDS dsRareNoZ(          "RareNoZ",              fileMap["RareNoZ" + yearTag],         cuts,   weights);
         if (split)
         {
             // show all categories
-            std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTZToLLNuNu}, {dsWZ_ZToLL}, {dsDibosonZToLL}, {dsRareZ}, {dsTTbar}, {dsSingleTopZinv}, {dsTTZToQQ}, {dsWZ_NoZToLL}, {dsDibosonNoZToLL}, {dsRareNoZ}};
+            std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTZToLLNuNu}, {dsDibosonZToLL, dsWZ_ZToLL}, {dsRareZ}, {dsTTbar}, {dsSingleTopZinv}, {dsTTZToQQ}, {dsDibosonNoZToLL, dsWZ_NoZToLL}, {dsRareNoZ}};
             return StackMC;
         }
         else
         {
             // "Z to LL" MC and "No Z to LL" MC
-            std::vector<std::vector<PDS>> StackMC = {{dsDY_ZToLL, dsTTZToLLNuNu, dsWZ_ZToLL, dsDibosonZToLL, dsRareZ}, {dsTTbar_NoZToLL, dsSingleTopZinv, dsTTZToQQ, dsWZ_NoZToLL, dsDibosonNoZToLL, dsRareNoZ}};
+            std::vector<std::vector<PDS>> StackMC = {{dsDY_ZToLL, dsTTZToLLNuNu, dsDibosonZToLL, dsWZ_ZToLL, dsRareZ}, {dsTTbar_NoZToLL, dsSingleTopZinv, dsTTZToQQ, dsDibosonNoZToLL, dsWZ_NoZToLL, dsRareNoZ}};
             return StackMC;
         }
     };
@@ -754,11 +754,11 @@ int main(int argc, char* argv[])
         //PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight + topptWeight);
         PDS dstW(         "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
         PDS dsRare(       "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
-        PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
         PDS dsTTZ(        "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
+        PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
         PDS dsWZ(         "WZ",                     fileMap["WZ_amcatnlo" + yearTag],   cuts,   weights);
         // removed dsTTbar which overlaps with dsTTG:
-        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsDiboson, dsTTZ, dsWZ}};
+        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsTTZ, dsDiboson, dsWZ}};
         return StackMC;
     };
     // using direct, fake and fragmented photons
@@ -774,11 +774,11 @@ int main(int argc, char* argv[])
         //PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
         PDS dstW(               "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
         PDS dsRare(             "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
-        PDS dsDiboson(          "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
         PDS dsTTZ(              "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
+        PDS dsDiboson(          "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
         PDS dsWZ(               "WZ",                     fileMap["WZ_amcatnlo" + yearTag],   cuts,   weights);
         // removed dsTTbar which overlaps with dsTTG:
-        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDDirect}, {dsQCDFragmentation}, {dsQCDNonPrompt}, {dsQCDFake}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsDiboson, dsTTZ, dsWZ}};
+        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDDirect}, {dsQCDFragmentation}, {dsQCDNonPrompt}, {dsQCDFake}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsTTZ, dsDiboson, dsWZ}};
         return StackMC;
     };
 
