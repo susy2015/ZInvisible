@@ -2897,12 +2897,15 @@ int main(int argc, char* argv[])
             PDC dcMC_Photon_HighDM_dR_GenPhotonGenParton(            "stack",  "dR_GenPhotonGenParton", StackMC_Photon_HighDM);
             
             // dR_RecoPhotonGenParton
-            PDC dcData_Photon_LowDM_dR_RecoPhotonGenParton(          "data",   "dR_RecoPhotonGenParton", {dsData_Photon_LowDM});
-            PDC dcData_Photon_LowDM_Tight_dR_RecoPhotonGenParton(    "data",   "dR_RecoPhotonGenParton", {dsData_Photon_LowDM_Tight});
-            PDC dcData_Photon_HighDM_dR_RecoPhotonGenParton(         "data",   "dR_RecoPhotonGenParton", {dsData_Photon_HighDM});
-            PDC dcMC_Photon_LowDM_dR_RecoPhotonGenParton(            "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_LowDM);
-            PDC dcMC_Photon_LowDM_Tight_dR_RecoPhotonGenParton(      "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_LowDM_Tight);
-            PDC dcMC_Photon_HighDM_dR_RecoPhotonGenParton(           "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_HighDM);
+            PDC dcData_Photon_NoBaseline_dR_RecoPhotonGenParton(            "data",   "dR_RecoPhotonGenParton", {dsData_Photon_NoBaseline});
+            PDC dcData_Photon_LowDM_dR_RecoPhotonGenParton(                 "data",   "dR_RecoPhotonGenParton", {dsData_Photon_LowDM});
+            PDC dcData_Photon_LowDM_Tight_dR_RecoPhotonGenParton(           "data",   "dR_RecoPhotonGenParton", {dsData_Photon_LowDM_Tight});
+            PDC dcData_Photon_HighDM_dR_RecoPhotonGenParton(                "data",   "dR_RecoPhotonGenParton", {dsData_Photon_HighDM});
+            PDC dcMC_Photon_NoBaseline_dR_RecoPhotonGenParton(              "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_NoBaseline);
+            PDC dcMC_Photon_NoBaseline_withQCDcut_dR_RecoPhotonGenParton(   "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_NoBaseline_withQCDcut);
+            PDC dcMC_Photon_LowDM_dR_RecoPhotonGenParton(                   "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_LowDM);
+            PDC dcMC_Photon_LowDM_Tight_dR_RecoPhotonGenParton(             "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_LowDM_Tight);
+            PDC dcMC_Photon_HighDM_dR_RecoPhotonGenParton(                  "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_HighDM);
             
             // dR_PromptPhotonGenParton
             PDC dcData_Photon_NoBaseline_dR_PromptPhotonGenParton(          "data",   "dR_PromptPhotonGenParton", {dsData_Photon_NoBaseline});
@@ -2934,12 +2937,15 @@ int main(int argc, char* argv[])
             PDC dcMC_Photon_HighDM_min_dR_GenPhotonGenParton(        "stack",  "min_dR_GenPhotonGenParton", StackMC_Photon_HighDM);
             
             // min_dR_RecoPhotonGenParton
-            PDC dcData_Photon_LowDM_min_dR_RecoPhotonGenParton(       "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_LowDM});
-            PDC dcData_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton( "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_LowDM_Tight});
-            PDC dcData_Photon_HighDM_min_dR_RecoPhotonGenParton(      "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_HighDM});
-            PDC dcMC_Photon_LowDM_min_dR_RecoPhotonGenParton(         "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_LowDM);
-            PDC dcMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton(   "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_LowDM_Tight);
-            PDC dcMC_Photon_HighDM_min_dR_RecoPhotonGenParton(        "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_HighDM);
+            PDC dcData_Photon_NoBaseline_min_dR_RecoPhotonGenParton(            "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_NoBaseline});
+            PDC dcData_Photon_LowDM_min_dR_RecoPhotonGenParton(                 "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_LowDM});
+            PDC dcData_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton(           "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_LowDM_Tight});
+            PDC dcData_Photon_HighDM_min_dR_RecoPhotonGenParton(                "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_HighDM});
+            PDC dcMC_Photon_NoBaseline_min_dR_RecoPhotonGenParton(              "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_NoBaseline);
+            PDC dcMC_Photon_NoBaseline_withQCDcut_min_dR_RecoPhotonGenParton(   "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_NoBaseline_withQCDcut);
+            PDC dcMC_Photon_LowDM_min_dR_RecoPhotonGenParton(                   "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_LowDM);
+            PDC dcMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton(             "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_LowDM_Tight);
+            PDC dcMC_Photon_HighDM_min_dR_RecoPhotonGenParton(                  "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_HighDM);
             
             // min_dR_PromptPhotonGenParton
             PDC dcData_Photon_NoBaseline_min_dR_PromptPhotonGenParton(          "data",   "min_dR_PromptPhotonGenParton", {dsData_Photon_NoBaseline});
@@ -3076,6 +3082,10 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_LowDM_dR_GenPhotonGenParton" + histSuffix,                              {dcData_Photon_LowDM_dR_GenPhotonGenParton,                         dcMC_Photon_LowDM_dR_GenPhotonGenParton},                           {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_GenPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_dR_GenPhotonGenParton" + histSuffix,                        {dcData_Photon_LowDM_Tight_dR_GenPhotonGenParton,                   dcMC_Photon_LowDM_Tight_dR_GenPhotonGenParton},                     {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_GenPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_dR_GenPhotonGenParton" + histSuffix,                             {dcData_Photon_HighDM_dR_GenPhotonGenParton,                        dcMC_Photon_HighDM_dR_GenPhotonGenParton},                          {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_GenPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_dR_RecoPhotonGenParton" + histSuffix,                        {dcData_Photon_NoBaseline_dR_RecoPhotonGenParton,                   dcMC_Photon_NoBaseline_dR_RecoPhotonGenParton},                     {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_withQCDcut_dR_RecoPhotonGenParton" + histSuffix,             {dcData_Photon_NoBaseline_dR_RecoPhotonGenParton,                   dcMC_Photon_NoBaseline_withQCDcut_dR_RecoPhotonGenParton},          {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_0to10_dR_RecoPhotonGenParton" + histSuffix,                  {dcData_Photon_NoBaseline_dR_RecoPhotonGenParton,                   dcMC_Photon_NoBaseline_dR_RecoPhotonGenParton},                     {1, 2}, "", nBins, 0.0, 10.0,            true, false, label_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_0to10_withQCDcut_dR_RecoPhotonGenParton" + histSuffix,       {dcData_Photon_NoBaseline_dR_RecoPhotonGenParton,                   dcMC_Photon_NoBaseline_withQCDcut_dR_RecoPhotonGenParton},          {1, 2}, "", nBins, 0.0, 10.0,            true, false, label_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_dR_RecoPhotonGenParton" + histSuffix,                             {dcData_Photon_LowDM_dR_RecoPhotonGenParton,                        dcMC_Photon_LowDM_dR_RecoPhotonGenParton},                          {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_dR_RecoPhotonGenParton" + histSuffix,                       {dcData_Photon_LowDM_Tight_dR_RecoPhotonGenParton,                  dcMC_Photon_LowDM_Tight_dR_RecoPhotonGenParton},                    {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_dR_RecoPhotonGenParton" + histSuffix,                            {dcData_Photon_HighDM_dR_RecoPhotonGenParton,                       dcMC_Photon_HighDM_dR_RecoPhotonGenParton},                         {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_RecoPhotonGenParton, "Events"));
@@ -3092,6 +3102,10 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_LowDM_min_dR_GenPhotonGenParton" + histSuffix,                          {dcData_Photon_LowDM_min_dR_GenPhotonGenParton,                     dcMC_Photon_LowDM_min_dR_GenPhotonGenParton},                       {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_GenPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_min_dR_GenPhotonGenParton" + histSuffix,                    {dcData_Photon_LowDM_Tight_min_dR_GenPhotonGenParton,               dcMC_Photon_LowDM_Tight_min_dR_GenPhotonGenParton},                 {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_GenPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_min_dR_GenPhotonGenParton" + histSuffix,                         {dcData_Photon_HighDM_min_dR_GenPhotonGenParton,                    dcMC_Photon_HighDM_min_dR_GenPhotonGenParton},                      {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_GenPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_min_dR_RecoPhotonGenParton" + histSuffix,                    {dcData_Photon_NoBaseline_min_dR_RecoPhotonGenParton,               dcMC_Photon_NoBaseline_min_dR_RecoPhotonGenParton},                 {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_withQCDcut_min_dR_RecoPhotonGenParton" + histSuffix,         {dcData_Photon_NoBaseline_min_dR_RecoPhotonGenParton,               dcMC_Photon_NoBaseline_withQCDcut_min_dR_RecoPhotonGenParton},      {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_0to10_min_dR_RecoPhotonGenParton" + histSuffix,              {dcData_Photon_NoBaseline_min_dR_RecoPhotonGenParton,               dcMC_Photon_NoBaseline_min_dR_RecoPhotonGenParton},                 {1, 2}, "", nBins, 0.0, 10.0,            true, false, label_min_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_0to10_withQCDcut_min_dR_RecoPhotonGenParton" + histSuffix,   {dcData_Photon_NoBaseline_min_dR_RecoPhotonGenParton,               dcMC_Photon_NoBaseline_withQCDcut_min_dR_RecoPhotonGenParton},      {1, 2}, "", nBins, 0.0, 10.0,            true, false, label_min_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_min_dR_RecoPhotonGenParton" + histSuffix,                         {dcData_Photon_LowDM_min_dR_RecoPhotonGenParton,                    dcMC_Photon_LowDM_min_dR_RecoPhotonGenParton},                      {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton" + histSuffix,                   {dcData_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton,              dcMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton},                {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_min_dR_RecoPhotonGenParton" + histSuffix,                        {dcData_Photon_HighDM_min_dR_RecoPhotonGenParton,                   dcMC_Photon_HighDM_min_dR_RecoPhotonGenParton},                     {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_RecoPhotonGenParton, "Events"));
