@@ -114,7 +114,7 @@ namespace PhotonFunctions
     return recoMatched;
   }
 
-  bool isGenMatched_prompt(const TLorentzVector& photon, std::vector<TLorentzVector> GenPhotonTLV, std::vector<int> GenPhotonStatusFlags)
+  bool isGenMatched_prompt(const TLorentzVector& photon, std::vector<TLorentzVector> GenPhotonTLV, std::vector<int> GenPhotonStatusFlags, TLorentzVector& matchedGenPhoton)
   {
     double RecoPt = photon.Pt();
     bool genMatched = false;
@@ -130,6 +130,7 @@ namespace PhotonFunctions
         if (temp_ratio > 0.5 && temp_ratio < 2.0 && dR < 0.1)
         {
           genMatched = true;
+          matchedGenPhoton.SetPtEtaPhiM(GenPhotonTLV[i].Pt(), GenPhotonTLV[i].Eta(), GenPhotonTLV[i].Phi(), GenPhotonTLV[i].M());
           break;
         }
       }
@@ -212,7 +213,8 @@ namespace PhotonFunctions
     for(int i = 0; i < GenPartonTLV.size(); i++)
     {
       double dR = ROOT::Math::VectorUtil::DeltaR(photon,GenPartonTLV[i]);
-      if (dR < 0.4){
+      if (dR < 0.4)
+      {
         isFrag = true;
         break;
       }

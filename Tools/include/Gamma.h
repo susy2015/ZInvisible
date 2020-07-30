@@ -230,7 +230,7 @@ namespace plotterFunctions
                 {
                     if ( status == 23 && ((statusFlags & 0x1) == 0x1) )
                     {
-                        if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                        //if(verbose) printf("Found GenParton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPartonTLV.push_back(GenPartTLV[i]);
                     }
                 }
@@ -243,7 +243,7 @@ namespace plotterFunctions
                 {
                     if ( status == 1 )
                     {
-                        if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
+                        //if(verbose) printf("Found GenPhoton: pdgId = %d, status = %d, statusFlags = 0x%x, genPartIdxMother = %d, mother_pdgId = %d\n", pdgId, status, statusFlags, genPartIdxMother, mother_pdgId);
                         GenPhotonTLV.push_back(GenPartTLV[i]);
                         GenPhotonGenPartIdx.push_back(i);
                         GenPhotonGenPartIdxMother.push_back(genPartIdxMother);
@@ -312,8 +312,9 @@ namespace plotterFunctions
                                 float dR = ROOT::Math::VectorUtil::DeltaR(PhotonTLV[i], genPhoton);
                                 dR_RecoPhotonGenPhoton.push_back(dR);
                             }
+                            TLorentzVector matchedGenPhoton;
                             // -- specify different types of photons --- //
-                            if (PhotonFunctions::isGenMatched_prompt(PhotonTLV[i], GenPhotonTLV, GenPhotonStatusFlags))
+                            if (PhotonFunctions::isGenMatched_prompt(PhotonTLV[i], GenPhotonTLV, GenPhotonStatusFlags, matchedGenPhoton))
                             {
                                 if (verbose) printf("Found isPromptPhoton; ");
                                 RecoPhotonTLVEtaPtMatched.push_back(PhotonTLV[i]);
@@ -324,7 +325,7 @@ namespace plotterFunctions
                                     float dR = ROOT::Math::VectorUtil::DeltaR(PhotonTLV[i], genParton);
                                     dR_PromptPhotonGenParton.push_back(dR);
                                 }
-                                if (PhotonFunctions::isFragmentationPhoton(PhotonTLV[i], GenPartonTLV))
+                                if (PhotonFunctions::isFragmentationPhoton(matchedGenPhoton, GenPartonTLV))
                                 {
                                     if (verbose) printf("Found FragmentationPhoton\n");
                                     FragmentationPhotons.push_back(PhotonTLV[i]);
@@ -337,6 +338,7 @@ namespace plotterFunctions
                                     DirectPhotons.push_back(PhotonTLV[i]);
                                     photonType = Direct;
                                 }
+                                if (verbose) printf("matchedGenPhoton: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f)\n", matchedGenPhoton.Pt(), matchedGenPhoton.Eta(), matchedGenPhoton.Phi(), matchedGenPhoton.M());
                             }
                             // non prompt
                             else if (PhotonFunctions::isGenMatched_nonPrompt(PhotonTLV[i], GenPhotonTLV, GenPhotonStatusFlags))
@@ -409,6 +411,9 @@ namespace plotterFunctions
                     }
                 }
                 
+                // reco matching
+                bool recoMatched = PhotonFunctions::isRecoMatched(GenPhotonTLV[i], cutPhotonTLV);
+                
                 // calculate dR and min dR
                 // check if photon is isolated
                 float minDR = 999.0;
@@ -417,7 +422,7 @@ namespace plotterFunctions
                 {
                     float dR = ROOT::Math::VectorUtil::DeltaR(GenPhotonTLV[i], genParton);
                     // fill only for prompt photons
-                    if ((GenPhotonStatusFlags[i] & 0x1) == 0x1)
+                    if (recoMatched && (GenPhotonStatusFlags[i] & 0x1) == 0x1)
                     {
                         dR_GenPhotonGenParton.push_back(dR);
                     }
@@ -429,15 +434,13 @@ namespace plotterFunctions
                     {
                         photonIsIsolated = false;
                     }
-                    if (verbose)
-                    {
-                        printf("DR(gen photon, gen parton) = %f\n", dR);
-                    }
+                    //if (verbose)
+                    //{
+                    //    printf("DR(gen photon, gen parton) = %f\n", dR);
+                    //}
                 }
                 
                 GenPhotonMinPartonDR.push_back(minDR);
-
-                bool recoMatched = PhotonFunctions::isRecoMatched(GenPhotonTLV[i], cutPhotonTLV);
                 
                 // QCD overlap cut: veto QCD events which have at least one isolated photon
                 // For QCD overlap cut, require gen photons to have statusFlags 0x2001
@@ -541,7 +544,8 @@ namespace plotterFunctions
             printf("\n");
         }
 
-        if (verbose)
+        //if (verbose)
+        if (false)
         {
             if (passQCDSelection)
             {
