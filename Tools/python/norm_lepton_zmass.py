@@ -109,13 +109,13 @@ class Normalization:
                             "Data"              : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + dataSelectionTag + 2 * self.variable + "Datadata",
                             "DY"                : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "DYstack",
                             "TTZToLLNuNu"       : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "t#bar{t}ZToLL#nu#nustack",
-                            "WZ_ZToLL"          : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "WZ_ZToLLstack",
+                            #"WZ_ZToLL"          : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "WZ_ZToLLstack",
                             "DibosonZToLL"      : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "DibosonZToLLstack",
                             "RareZ"             : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "RareZstack",
                             "TTbar"             : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "t#bar{t}stack",
                             "SingleTop"         : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "Single tstack",
                             "TTZToQQ"           : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "t#bar{t}ZToQQstack",
-                            "WZ_NoZToLL"        : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "WZ_NoZToLLstack",
+                            #"WZ_NoZToLL"        : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "WZ_NoZToLLstack",
                             "DibosonNoZToLL"    : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "DibosonNoZToLLstack",
                             "RareNoZ"           : "DataMC_" + particle + "_" + region + "_Normalization_bestRecoZM_split_0to400" + mcSelectionTag   + 2 * self.variable + "RareNoZstack",
                         }
@@ -255,18 +255,19 @@ class Normalization:
         histoMap["Data"]              = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["Data"]            ) )
         histoMap["DY"]                = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["DY"]              ) )
         histoMap["TTZToLLNuNu"]       = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["TTZToLLNuNu"]     ) )
-        histoMap["WZ_ZToLL"]          = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["WZ_ZToLL"]        ) )
+        #histoMap["WZ_ZToLL"]          = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["WZ_ZToLL"]        ) )
         histoMap["DibosonZToLL"]      = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["DibosonZToLL"]    ) )
         histoMap["RareZ"]             = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["RareZ"]           ) )
         histoMap["TTbar"]             = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["TTbar"]           ) )
         histoMap["SingleTop"]         = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["SingleTop"]       ) )
         histoMap["TTZToQQ"]           = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["TTZToQQ"]         ) )
-        histoMap["WZ_NoZToLL"]        = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["WZ_NoZToLL"]      ) )
+        #histoMap["WZ_NoZToLL"]        = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["WZ_NoZToLL"]      ) )
         histoMap["DibosonNoZToLL"]    = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["DibosonNoZToLL"]  ) )
         histoMap["RareNoZ"]           = self.root_file.Get( str(self.variable + "/" + self.histosSplit[era][bin_type][particle][region][selection]["RareNoZ"]         ) )
         
         # use list to define order 
-        histoList = ["Data", "DY", "TTZToLLNuNu", "WZ_ZToLL", "DibosonZToLL", "RareZ", "TTbar", "SingleTop", "TTZToQQ", "WZ_NoZToLL", "DibosonNoZToLL", "RareNoZ"]
+        #histoList = ["Data", "DY", "TTZToLLNuNu", "WZ_ZToLL", "DibosonZToLL", "RareZ", "TTbar", "SingleTop", "TTZToQQ", "WZ_NoZToLL", "DibosonNoZToLL", "RareNoZ"]
+        histoList = ["Data", "DY", "TTZToLLNuNu", "DibosonZToLL", "RareZ", "TTbar", "SingleTop", "TTZToQQ", "DibosonNoZToLL", "RareNoZ"]
         
         # Total MC for comparison
         h_totalMC = h_ZToLL.Clone("h_totalMC")  
@@ -336,6 +337,7 @@ class Normalization:
         outFile.write("{0} {1} {2} On Z Peak: (ZToLLNoDY / DY) = {3:.3f} / {4:.3f} = {5:.1f}%\n".format(particle, region, selection, onPeakZToLLNoDY, onPeakDY, onPeakPerc))
         outFile.write("----------------------------------------------------------------------\n")
         for key in histoList:
+            #print key
             h = histoMap[key]
             # find on-Z and off-Z peak number of events
             a_error   = ROOT.Double()
