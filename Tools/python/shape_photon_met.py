@@ -69,10 +69,10 @@ class Shape:
         variableWithTag = variable + varTag
         if splitQCD:
             temp_map = {
-                            "Data"              : "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable + "Datadata",
+                            "Data"              : "DataMC_Photon_" + region + nameTag + dataSelectionTag + 2 * variable        + "Datadata",
                             "GJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "#gamma+jetsstack",
                             "QCD_Direct"        : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD Directstack",
-                            "QCD_Fragmented"    : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD Fragmentedstack",
+                            "QCD_Fragmentation" : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD Fragmentationstack",
                             "QCD_NonPrompt"     : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD NonPromptstack",
                             "QCD_Fake"          : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "QCD Fakestack",
                             "WJets"             : "DataMC_Photon_" + region + nameTag + mcSelectionTag   + 2 * variableWithTag + "W(l#nu)+jetsstack",
@@ -186,7 +186,9 @@ class Shape:
                     if self.verbose:
                         print self.variable + "/" + self.histos[era][bin_type][region][selection]["Data"]
                         if self.splitQCD:
-                            print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fragmented"]
+                            print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Direct"]
+                            print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fragmentation"]
+                            print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_NonPrompt"]
                             print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fake"]
                         else:
                             print self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD"]
@@ -196,8 +198,10 @@ class Shape:
                     h_Data              = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["Data"]            ) )
                     h_GJets             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["GJets"]           ) )
                     if self.splitQCD:
-                        h_QCD_Fragmented    = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fragmented"]  ) )
-                        h_QCD_Fake          = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fake"]        ) )
+                        h_QCD_Direct        = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Direct"]          ) )
+                        h_QCD_Fragmentation = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fragmentation"]   ) )
+                        h_QCD_NonPrompt     = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_NonPrompt"]       ) )
+                        h_QCD_Fake          = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fake"]            ) )
                     else:
                         h_QCD               = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD"]             ) )
                     h_WJets             = f.Get( str(self.variable + "/" + self.histos[era][bin_type][region][selection]["WJets"]           ) )
@@ -210,8 +214,12 @@ class Shape:
                     if not h_Data:
                         print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["Data"])
                     if self.splitQCD:
-                        if not h_QCD_Fragmented:
-                            print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fragmented"])
+                        if not h_QCD_Direct:
+                            print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Direct"])
+                        if not h_QCD_Fragmentation:
+                            print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fragmentation"])
+                        if not h_QCD_NonPrompt:
+                            print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_NonPrompt"])
                         if not h_QCD_Fake:
                             print "ERROR: unable to load histogram {0}".format(self.variable + "/" + self.histos[era][bin_type][region][selection]["QCD_Fake"])
                     else:
@@ -222,7 +230,9 @@ class Shape:
                     # combine all MC in denominator
                     h_mc = h_GJets.Clone("h_mc") 
                     if self.splitQCD:
-                        h_mc.Add(h_QCD_Fragmented)
+                        h_mc.Add(h_QCD_Direct)
+                        h_mc.Add(h_QCD_Fragmentation)
+                        h_mc.Add(h_QCD_NonPrompt)
                         h_mc.Add(h_QCD_Fake)
                     else:
                         h_mc.Add(h_QCD)
@@ -439,19 +449,23 @@ class Shape:
                 h_Data                  = f.Get( str(variable + "/" + self.cr_unit_histos[era][region]["Data"]              ) )
                 h_GJets                 = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["GJets"]             ) )
                 if self.splitQCD:
-                    h_QCD_Fragmented    = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["QCD_Fragmented"]    ) )
-                    h_QCD_Fake          = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["QCD_Fake"]          ) )
+                    h_QCD_Direct        = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["QCD_Direct"]         ) )
+                    h_QCD_Fragmentation = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["QCD_Fragmentation"]  ) )
+                    h_QCD_NonPrompt     = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["QCD_NonPrompt"]      ) )
+                    h_QCD_Fake          = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["QCD_Fake"]           ) )
                 else:
-                    h_QCD               = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["QCD"]               ) )
-                h_WJets                 = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["WJets"]             ) )
-                h_TTG                   = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["TTG"]               ) )
-                #h_TTbar                 = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["TTbar"]             ) )
-                h_tW                    = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["tW"]                ) )
-                h_Rare                  = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["Rare"]              ) )
+                    h_QCD               = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["QCD"]     ) )
+                h_WJets                 = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["WJets"]   ) )
+                h_TTG                   = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["TTG"]     ) )
+                #h_TTbar                 = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["TTbar"]   ) )
+                h_tW                    = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["tW"]      ) )
+                h_Rare                  = f.Get( str(variableWithTag + "/" + self.cr_unit_histos[era][region]["Rare"]    ) )
                 
                 # MC_background
                 if self.splitQCD:
-                    h_back = h_QCD_Fragmented.Clone("h_back")
+                    h_back = h_QCD_Direct.Clone("h_back")
+                    h_back.Add(h_QCD_Fragmentation)
+                    h_back.Add(h_QCD_NonPrompt)
                     h_back.Add(h_QCD_Fake)
                 else:
                     h_back = h_QCD.Clone("h_back")
@@ -627,18 +641,18 @@ class Shape:
         # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=self.splitQCD):
         hNames = self.getSimpleMap(region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=True)
         hMap = {}
-        hMap["Data"]            = f.Get( str(variable + "/" + hNames["Data"]              ) )
-        hMap["GJets"]           = f.Get( str(variable + "/" + hNames["GJets"]             ) )
-        hMap["QCD_Direct"]      = f.Get( str(variable + "/" + hNames["QCD_Direct"]        ) )
-        hMap["QCD_Fragmented"]  = f.Get( str(variable + "/" + hNames["QCD_Fragmented"]    ) )
-        hMap["QCD_NonPrompt"]   = f.Get( str(variable + "/" + hNames["QCD_NonPrompt"]     ) )
-        hMap["QCD_Fake"]        = f.Get( str(variable + "/" + hNames["QCD_Fake"]          ) )
-        hMap["WJets"]           = f.Get( str(variable + "/" + hNames["WJets"]             ) )
-        hMap["TTG"]             = f.Get( str(variable + "/" + hNames["TTG"]               ) )
-        hMap["tW"]              = f.Get( str(variable + "/" + hNames["tW"]                ) )
-        hMap["Rare"]            = f.Get( str(variable + "/" + hNames["Rare"]              ) )
-        # add QCD Direct to QCD Fragmented
-        hMap["QCD_Fragmented"].Add(hMap["QCD_Direct"])
+        hMap["Data"]                = f.Get( str(variable + "/" + hNames["Data"]              ) )
+        hMap["GJets"]               = f.Get( str(variable + "/" + hNames["GJets"]             ) )
+        hMap["QCD_Direct"]          = f.Get( str(variable + "/" + hNames["QCD_Direct"]        ) )
+        hMap["QCD_Fragmentation"]   = f.Get( str(variable + "/" + hNames["QCD_Fragmentation"] ) )
+        hMap["QCD_NonPrompt"]       = f.Get( str(variable + "/" + hNames["QCD_NonPrompt"]     ) )
+        hMap["QCD_Fake"]            = f.Get( str(variable + "/" + hNames["QCD_Fake"]          ) )
+        hMap["WJets"]               = f.Get( str(variable + "/" + hNames["WJets"]             ) )
+        hMap["TTG"]                 = f.Get( str(variable + "/" + hNames["TTG"]               ) )
+        hMap["tW"]                  = f.Get( str(variable + "/" + hNames["tW"]                ) )
+        hMap["Rare"]                = f.Get( str(variable + "/" + hNames["Rare"]              ) )
+        # add QCD Direct to QCD Fragmentation
+        hMap["QCD_Fragmentation"].Add(hMap["QCD_Direct"])
         
         # ---------------------- #
         # --- Compare shapes --- #
@@ -646,9 +660,9 @@ class Shape:
 
         # use list to define order
         # Data and all MC
-        #hList = ["Data", "GJets", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
+        #hList = ["Data", "GJets", "QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
         # only Data, GJets, QCD
-        hList = ["Data", "GJets", "QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake"]
+        hList = ["Data", "GJets", "QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake"]
         for i, key in enumerate(hList):
             hOriginal = hMap[key]
             # rebin 
@@ -692,7 +706,7 @@ class Shape:
         
         h_num_original = hMap["Data"].Clone("h_num_original")
         h_mc           = hMap["GJets"].Clone("h_mc") 
-        h_mc.Add(hMap["QCD_Fragmented"])
+        h_mc.Add(hMap["QCD_Fragmentation"])
         h_mc.Add(hMap["QCD_NonPrompt"])
         h_mc.Add(hMap["QCD_Fake"])
         h_mc.Add(hMap["WJets"])
@@ -701,7 +715,7 @@ class Shape:
         h_mc.Add(hMap["Rare"])
         
         # vary QCD components up and down
-        varyList = ["QCD_Fragmented", "QCD_NonPrompt", "QCD_Fake"]
+        varyList = ["QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake"]
         for i, key in enumerate(varyList): 
             # get histos
             h_den_nominal_original   = h_mc.Clone("h_den_nominal_original")

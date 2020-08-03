@@ -1,9 +1,15 @@
 {
-    "btag": {
-        "down": "BTagWeight_Down",
-        "name": "b",
-        "nominal": "BTagWeight",
-        "up": "BTagWeight_Up"
+    "btag_heavy": {
+        "down": "BTagWeightHeavy_Down",
+        "name": "b_heavy",
+        "nominal": "BTagWeightHeavy",
+        "up": "BTagWeightHeavy_Up"
+    },
+    "btag_light": {
+        "down": "BTagWeightLight_Down",
+        "name": "b_light",
+        "nominal": "BTagWeightLight",
+        "up": "BTagWeightLight_Up"
     },
     "dielec_sf": {
         "down": "DiElecSF_Down",

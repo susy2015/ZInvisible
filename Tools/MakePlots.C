@@ -707,11 +707,11 @@ int main(int argc, char* argv[])
         PDS dsTTbar(         "t#bar{t}",                    fileMap["TTbarNoHad" + yearTag],      cuts,   weights + ISRWeight + topptWeight);
         PDS dsSingleTopZinv( "Single t",                    fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsTTZ(           "t#bar{t}Z",                   fileMap["TTZ" + yearTag],             cuts,   weights);
-        PDS dsWZ(            "WZ",                          fileMap["WZ_amcatnlo" + yearTag],     cuts,   weights);
         PDS dsDiboson(       "Diboson",                     fileMap["Diboson" + yearTag],         cuts,   weights);
+        PDS dsWZ(            "WZ",                          fileMap["WZ_amcatnlo" + yearTag],     cuts,   weights);
         PDS dsRare(          "Rare",                        fileMap["Rare" + yearTag],            cuts,   weights);
         // DY, ttbar, single top, ttZ, WZ, rare, and diboson
-        std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTbar}, {dsSingleTopZinv}, {dsTTZ}, {dsWZ}, {dsDiboson}, {dsRare}};
+        std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTbar}, {dsSingleTopZinv}, {dsTTZ}, {dsDiboson, dsWZ}, {dsRare}};
         return StackMC;
     };
     
@@ -724,22 +724,22 @@ int main(int argc, char* argv[])
         PDS dsSingleTopZinv(    "Single t",             fileMap["SingleTopZinv" + yearTag],   cuts,   weights);
         PDS dsTTZToLLNuNu(      "t#bar{t}ZToLL#nu#nu",  fileMap["TTZToLLNuNu" + yearTag],     cuts,   weights);
         PDS dsTTZToQQ(          "t#bar{t}ZToQQ",        fileMap["TTZToQQ" + yearTag],         cuts,   weights);
-        PDS dsWZ_ZToLL(         "WZ_ZToLL",             fileMap["WZ_ZToLL" + yearTag],        cuts,   weights);
-        PDS dsWZ_NoZToLL(       "WZ_NoZToLL",           fileMap["WZ_NoZToLL" + yearTag],      cuts,   weights);
         PDS dsDibosonZToLL(     "DibosonZToLL",         fileMap["DibosonZToLL" + yearTag],    cuts,   weights);
         PDS dsDibosonNoZToLL(   "DibosonNoZToLL",       fileMap["DibosonNoZToLL" + yearTag],  cuts,   weights);
+        PDS dsWZ_ZToLL(         "WZ_ZToLL",             fileMap["WZ_ZToLL" + yearTag],        cuts,   weights);
+        PDS dsWZ_NoZToLL(       "WZ_NoZToLL",           fileMap["WZ_NoZToLL" + yearTag],      cuts,   weights);
         PDS dsRareZ(            "RareZ",                fileMap["RareZ" + yearTag],           cuts,   weights);
         PDS dsRareNoZ(          "RareNoZ",              fileMap["RareNoZ" + yearTag],         cuts,   weights);
         if (split)
         {
             // show all categories
-            std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTZToLLNuNu}, {dsWZ_ZToLL}, {dsDibosonZToLL}, {dsRareZ}, {dsTTbar}, {dsSingleTopZinv}, {dsTTZToQQ}, {dsWZ_NoZToLL}, {dsDibosonNoZToLL}, {dsRareNoZ}};
+            std::vector<std::vector<PDS>> StackMC = {{dsDY}, {dsTTZToLLNuNu}, {dsDibosonZToLL, dsWZ_ZToLL}, {dsRareZ}, {dsTTbar}, {dsSingleTopZinv}, {dsTTZToQQ}, {dsDibosonNoZToLL, dsWZ_NoZToLL}, {dsRareNoZ}};
             return StackMC;
         }
         else
         {
             // "Z to LL" MC and "No Z to LL" MC
-            std::vector<std::vector<PDS>> StackMC = {{dsDY_ZToLL, dsTTZToLLNuNu, dsWZ_ZToLL, dsDibosonZToLL, dsRareZ}, {dsTTbar_NoZToLL, dsSingleTopZinv, dsTTZToQQ, dsWZ_NoZToLL, dsDibosonNoZToLL, dsRareNoZ}};
+            std::vector<std::vector<PDS>> StackMC = {{dsDY_ZToLL, dsTTZToLLNuNu, dsDibosonZToLL, dsWZ_ZToLL, dsRareZ}, {dsTTbar_NoZToLL, dsSingleTopZinv, dsTTZToQQ, dsDibosonNoZToLL, dsWZ_NoZToLL, dsRareNoZ}};
             return StackMC;
         }
     };
@@ -754,31 +754,31 @@ int main(int argc, char* argv[])
         //PDS dsTTbar(      "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight + topptWeight);
         PDS dstW(         "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
         PDS dsRare(       "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
-        PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
         PDS dsTTZ(        "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
+        PDS dsDiboson(    "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
         PDS dsWZ(         "WZ",                     fileMap["WZ_amcatnlo" + yearTag],   cuts,   weights);
         // removed dsTTbar which overlaps with dsTTG:
-        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsDiboson, dsTTZ, dsWZ}};
+        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCD}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsTTZ, dsDiboson, dsWZ}};
         return StackMC;
     };
     // using direct, fake and fragmented photons
     auto makeStackMC_Photon_split = [&](const std::string& cuts, const std::string& weights, const std::string& QCDcuts = "")
     {
-        PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,                                               weights);
-        PDS dsQCDDirect(        "QCD Direct",             fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionDirect",      weights);
-        PDS dsQCDFragmented(    "QCD Fragmented",         fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionFragmented",  weights);
-        PDS dsQCDNonPrompt(     "QCD NonPrompt",          fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionNonPrompt",   weights);
-        PDS dsQCDFake(          "QCD Fake",               fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionFake",        weights);
-        PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,                                               weights);
+        PDS dsGJets(            "#gamma+jets",            fileMap["GJets" + yearTag],         cuts,                                                 weights);
+        PDS dsQCDDirect(        "QCD Direct",             fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionDirect",        weights);
+        PDS dsQCDFragmentation( "QCD Fragmentation",      fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionFragmentation", weights);
+        PDS dsQCDNonPrompt(     "QCD NonPrompt",          fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionNonPrompt",     weights);
+        PDS dsQCDFake(          "QCD Fake",               fileMap["QCD_Photon" + yearTag],    cuts + QCDcuts + ";passPhotonSelectionFake",          weights);
+        PDS dsTTG(              "t#bar{t}#gamma+jets",    fileMap["TTG" + yearTag],           cuts,                                                 weights);
         PDS dsWJetsToLNu(       "W(l#nu)+jets",           fileMap["WJetsToLNu" + yearTag],    cuts,   weights);
         //PDS dsTTbar(            "t#bar{t}",               fileMap["TTbar" + yearTag],         cuts,   weights + ISRWeight);
         PDS dstW(               "tW",                     fileMap["tW" + yearTag],            cuts,   weights);
         PDS dsRare(             "Rare",                   fileMap["Rare_Photon" + yearTag],   cuts,   weights);
-        PDS dsDiboson(          "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
         PDS dsTTZ(              "t#bar{t}Z",              fileMap["TTZ" + yearTag],           cuts,   weights);
+        PDS dsDiboson(          "Diboson",                fileMap["Diboson" + yearTag],       cuts,   weights);
         PDS dsWZ(               "WZ",                     fileMap["WZ_amcatnlo" + yearTag],   cuts,   weights);
         // removed dsTTbar which overlaps with dsTTG:
-        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDDirect}, {dsQCDFragmented}, {dsQCDNonPrompt}, {dsQCDFake}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsDiboson, dsTTZ, dsWZ}};
+        std::vector<std::vector<PDS>> StackMC = {{dsGJets}, {dsQCDDirect}, {dsQCDFragmentation}, {dsQCDNonPrompt}, {dsQCDFake}, {dsWJetsToLNu}, {dsTTG}, {dstW}, {dsRare, dsTTZ, dsDiboson, dsWZ}};
         return StackMC;
     };
 
@@ -1222,8 +1222,8 @@ int main(int argc, char* argv[])
         if (doDataMCElectron)
         {
             // use DiElecTriggerEffPt instead of Stop0l_trigger_eff_Zee_pt because it applies a Z mass cut
-            //std::string ElectronWeights = "genWeightNormalized_jetpt30;DiElecTriggerEffPt;DiElecSF;BTagWeightLight;BTagWeightHeavy" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drLeptonCleaned;
-            std::string ElectronWeights = "genWeightNormalized_jetpt30;DiElecTriggerEffPt;DiElecSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drLeptonCleaned;
+            //std::string ElectronWeights = "genWeightNormalized_jetpt30;DiElecTriggerEffPt;DiElecSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drLeptonCleaned;
+            std::string ElectronWeights = "genWeightNormalized_jetpt30;DiElecTriggerEffPt;DiElecSF;BTagWeightLight;BTagWeightHeavy" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drLeptonCleaned;
             
             // ------------------------------------------------ //
             // bestRecoZM used to calculate normalization
@@ -1897,8 +1897,8 @@ int main(int argc, char* argv[])
         if (doDataMCMuon)
         {
             // Use DiMuTriggerEffPt intead of Stop0l_trigger_eff_Zmumu_pt because it applies a Z mass cut
-            //std::string MuonWeights = "genWeightNormalized_jetpt30;DiMuTriggerEffPt;DiMuSF;BTagWeightLight;BTagWeightHeavy" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drLeptonCleaned;
-            std::string MuonWeights = "genWeightNormalized_jetpt30;DiMuTriggerEffPt;DiMuSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drLeptonCleaned;
+            //std::string MuonWeights = "genWeightNormalized_jetpt30;DiMuTriggerEffPt;DiMuSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drLeptonCleaned;
+            std::string MuonWeights = "genWeightNormalized_jetpt30;DiMuTriggerEffPt;DiMuSF;BTagWeightLight;BTagWeightHeavy" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drLeptonCleaned;
             // ------------------------------------------------ //
             // bestRecoZM used to calculate normalization
             // Search and Validation Bins Selection
@@ -2524,8 +2524,8 @@ int main(int argc, char* argv[])
             std::vector<double> xbins_nj_nb0 = {2.0, 6.0, 10.0}; // njets = 2 - 5, >=6
             std::vector<double> xbins_nj_nb1 = {2.0, 7.0, 10.0}; // njets = 2 - 6, >=7
             // all weights
-            //std::string PhotonWeights = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeightLight;BTagWeightHeavy" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drPhotonCleaned;
-            std::string PhotonWeights = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drPhotonCleaned;
+            //std::string PhotonWeights = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeight" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drPhotonCleaned;
+            std::string PhotonWeights = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_Photon_pt;photonSF;BTagWeightLight;BTagWeightHeavy" + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight_drPhotonCleaned;
             // Search and Validation Bins Selection
             // -------------- //
             // --- low dm --- //
@@ -2897,12 +2897,15 @@ int main(int argc, char* argv[])
             PDC dcMC_Photon_HighDM_dR_GenPhotonGenParton(            "stack",  "dR_GenPhotonGenParton", StackMC_Photon_HighDM);
             
             // dR_RecoPhotonGenParton
-            PDC dcData_Photon_LowDM_dR_RecoPhotonGenParton(          "data",   "dR_RecoPhotonGenParton", {dsData_Photon_LowDM});
-            PDC dcData_Photon_LowDM_Tight_dR_RecoPhotonGenParton(    "data",   "dR_RecoPhotonGenParton", {dsData_Photon_LowDM_Tight});
-            PDC dcData_Photon_HighDM_dR_RecoPhotonGenParton(         "data",   "dR_RecoPhotonGenParton", {dsData_Photon_HighDM});
-            PDC dcMC_Photon_LowDM_dR_RecoPhotonGenParton(            "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_LowDM);
-            PDC dcMC_Photon_LowDM_Tight_dR_RecoPhotonGenParton(      "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_LowDM_Tight);
-            PDC dcMC_Photon_HighDM_dR_RecoPhotonGenParton(           "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_HighDM);
+            PDC dcData_Photon_NoBaseline_dR_RecoPhotonGenParton(            "data",   "dR_RecoPhotonGenParton", {dsData_Photon_NoBaseline});
+            PDC dcData_Photon_LowDM_dR_RecoPhotonGenParton(                 "data",   "dR_RecoPhotonGenParton", {dsData_Photon_LowDM});
+            PDC dcData_Photon_LowDM_Tight_dR_RecoPhotonGenParton(           "data",   "dR_RecoPhotonGenParton", {dsData_Photon_LowDM_Tight});
+            PDC dcData_Photon_HighDM_dR_RecoPhotonGenParton(                "data",   "dR_RecoPhotonGenParton", {dsData_Photon_HighDM});
+            PDC dcMC_Photon_NoBaseline_dR_RecoPhotonGenParton(              "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_NoBaseline);
+            PDC dcMC_Photon_NoBaseline_withQCDcut_dR_RecoPhotonGenParton(   "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_NoBaseline_withQCDcut);
+            PDC dcMC_Photon_LowDM_dR_RecoPhotonGenParton(                   "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_LowDM);
+            PDC dcMC_Photon_LowDM_Tight_dR_RecoPhotonGenParton(             "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_LowDM_Tight);
+            PDC dcMC_Photon_HighDM_dR_RecoPhotonGenParton(                  "stack",  "dR_RecoPhotonGenParton", StackMC_Photon_HighDM);
             
             // dR_PromptPhotonGenParton
             PDC dcData_Photon_NoBaseline_dR_PromptPhotonGenParton(          "data",   "dR_PromptPhotonGenParton", {dsData_Photon_NoBaseline});
@@ -2934,12 +2937,15 @@ int main(int argc, char* argv[])
             PDC dcMC_Photon_HighDM_min_dR_GenPhotonGenParton(        "stack",  "min_dR_GenPhotonGenParton", StackMC_Photon_HighDM);
             
             // min_dR_RecoPhotonGenParton
-            PDC dcData_Photon_LowDM_min_dR_RecoPhotonGenParton(       "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_LowDM});
-            PDC dcData_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton( "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_LowDM_Tight});
-            PDC dcData_Photon_HighDM_min_dR_RecoPhotonGenParton(      "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_HighDM});
-            PDC dcMC_Photon_LowDM_min_dR_RecoPhotonGenParton(         "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_LowDM);
-            PDC dcMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton(   "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_LowDM_Tight);
-            PDC dcMC_Photon_HighDM_min_dR_RecoPhotonGenParton(        "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_HighDM);
+            PDC dcData_Photon_NoBaseline_min_dR_RecoPhotonGenParton(            "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_NoBaseline});
+            PDC dcData_Photon_LowDM_min_dR_RecoPhotonGenParton(                 "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_LowDM});
+            PDC dcData_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton(           "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_LowDM_Tight});
+            PDC dcData_Photon_HighDM_min_dR_RecoPhotonGenParton(                "data",   "min_dR_RecoPhotonGenParton", {dsData_Photon_HighDM});
+            PDC dcMC_Photon_NoBaseline_min_dR_RecoPhotonGenParton(              "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_NoBaseline);
+            PDC dcMC_Photon_NoBaseline_withQCDcut_min_dR_RecoPhotonGenParton(   "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_NoBaseline_withQCDcut);
+            PDC dcMC_Photon_LowDM_min_dR_RecoPhotonGenParton(                   "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_LowDM);
+            PDC dcMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton(             "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_LowDM_Tight);
+            PDC dcMC_Photon_HighDM_min_dR_RecoPhotonGenParton(                  "stack",  "min_dR_RecoPhotonGenParton", StackMC_Photon_HighDM);
             
             // min_dR_PromptPhotonGenParton
             PDC dcData_Photon_NoBaseline_min_dR_PromptPhotonGenParton(          "data",   "min_dR_PromptPhotonGenParton", {dsData_Photon_NoBaseline});
@@ -3076,6 +3082,10 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_LowDM_dR_GenPhotonGenParton" + histSuffix,                              {dcData_Photon_LowDM_dR_GenPhotonGenParton,                         dcMC_Photon_LowDM_dR_GenPhotonGenParton},                           {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_GenPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_dR_GenPhotonGenParton" + histSuffix,                        {dcData_Photon_LowDM_Tight_dR_GenPhotonGenParton,                   dcMC_Photon_LowDM_Tight_dR_GenPhotonGenParton},                     {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_GenPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_dR_GenPhotonGenParton" + histSuffix,                             {dcData_Photon_HighDM_dR_GenPhotonGenParton,                        dcMC_Photon_HighDM_dR_GenPhotonGenParton},                          {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_GenPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_dR_RecoPhotonGenParton" + histSuffix,                        {dcData_Photon_NoBaseline_dR_RecoPhotonGenParton,                   dcMC_Photon_NoBaseline_dR_RecoPhotonGenParton},                     {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_withQCDcut_dR_RecoPhotonGenParton" + histSuffix,             {dcData_Photon_NoBaseline_dR_RecoPhotonGenParton,                   dcMC_Photon_NoBaseline_withQCDcut_dR_RecoPhotonGenParton},          {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_0to10_dR_RecoPhotonGenParton" + histSuffix,                  {dcData_Photon_NoBaseline_dR_RecoPhotonGenParton,                   dcMC_Photon_NoBaseline_dR_RecoPhotonGenParton},                     {1, 2}, "", nBins, 0.0, 10.0,            true, false, label_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_0to10_withQCDcut_dR_RecoPhotonGenParton" + histSuffix,       {dcData_Photon_NoBaseline_dR_RecoPhotonGenParton,                   dcMC_Photon_NoBaseline_withQCDcut_dR_RecoPhotonGenParton},          {1, 2}, "", nBins, 0.0, 10.0,            true, false, label_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_dR_RecoPhotonGenParton" + histSuffix,                             {dcData_Photon_LowDM_dR_RecoPhotonGenParton,                        dcMC_Photon_LowDM_dR_RecoPhotonGenParton},                          {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_dR_RecoPhotonGenParton" + histSuffix,                       {dcData_Photon_LowDM_Tight_dR_RecoPhotonGenParton,                  dcMC_Photon_LowDM_Tight_dR_RecoPhotonGenParton},                    {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_dR_RecoPhotonGenParton" + histSuffix,                            {dcData_Photon_HighDM_dR_RecoPhotonGenParton,                       dcMC_Photon_HighDM_dR_RecoPhotonGenParton},                         {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_dR_RecoPhotonGenParton, "Events"));
@@ -3092,6 +3102,10 @@ int main(int argc, char* argv[])
             vh.push_back(PHS("DataMC_Photon_LowDM_min_dR_GenPhotonGenParton" + histSuffix,                          {dcData_Photon_LowDM_min_dR_GenPhotonGenParton,                     dcMC_Photon_LowDM_min_dR_GenPhotonGenParton},                       {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_GenPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_min_dR_GenPhotonGenParton" + histSuffix,                    {dcData_Photon_LowDM_Tight_min_dR_GenPhotonGenParton,               dcMC_Photon_LowDM_Tight_min_dR_GenPhotonGenParton},                 {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_GenPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_min_dR_GenPhotonGenParton" + histSuffix,                         {dcData_Photon_HighDM_min_dR_GenPhotonGenParton,                    dcMC_Photon_HighDM_min_dR_GenPhotonGenParton},                      {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_GenPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_min_dR_RecoPhotonGenParton" + histSuffix,                    {dcData_Photon_NoBaseline_min_dR_RecoPhotonGenParton,               dcMC_Photon_NoBaseline_min_dR_RecoPhotonGenParton},                 {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_withQCDcut_min_dR_RecoPhotonGenParton" + histSuffix,         {dcData_Photon_NoBaseline_min_dR_RecoPhotonGenParton,               dcMC_Photon_NoBaseline_withQCDcut_min_dR_RecoPhotonGenParton},      {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_0to10_min_dR_RecoPhotonGenParton" + histSuffix,              {dcData_Photon_NoBaseline_min_dR_RecoPhotonGenParton,               dcMC_Photon_NoBaseline_min_dR_RecoPhotonGenParton},                 {1, 2}, "", nBins, 0.0, 10.0,            true, false, label_min_dR_RecoPhotonGenParton, "Events"));
+            vh.push_back(PHS("DataMC_Photon_NoBaseline_0to10_withQCDcut_min_dR_RecoPhotonGenParton" + histSuffix,   {dcData_Photon_NoBaseline_min_dR_RecoPhotonGenParton,               dcMC_Photon_NoBaseline_withQCDcut_min_dR_RecoPhotonGenParton},      {1, 2}, "", nBins, 0.0, 10.0,            true, false, label_min_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_min_dR_RecoPhotonGenParton" + histSuffix,                         {dcData_Photon_LowDM_min_dR_RecoPhotonGenParton,                    dcMC_Photon_LowDM_min_dR_RecoPhotonGenParton},                      {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton" + histSuffix,                   {dcData_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton,              dcMC_Photon_LowDM_Tight_min_dR_RecoPhotonGenParton},                {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_RecoPhotonGenParton, "Events"));
             vh.push_back(PHS("DataMC_Photon_HighDM_min_dR_RecoPhotonGenParton" + histSuffix,                        {dcData_Photon_HighDM_min_dR_RecoPhotonGenParton,                   dcMC_Photon_HighDM_min_dR_RecoPhotonGenParton},                     {1, 2}, "", nBins, 0.0, 1.0,             true, false, label_min_dR_RecoPhotonGenParton, "Events"));
@@ -3919,8 +3933,8 @@ int main(int argc, char* argv[])
             std::string SoftBottomTotalSF   = ";SoftBottomTotalSF"   + varSuffix;
             // test removing SoftBottomTotalSF
             std::string TotalSFs            = DeepAK8TotalSF + ResolvedTopTotalSF + SoftBottomTotalSF;
-            //std::string ZNuNuWeights        = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_MET_loose_baseline;BTagWeightLight;BTagWeightHeavy"  + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight;
-            std::string ZNuNuWeights        = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight;
+            //std::string ZNuNuWeights        = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_MET_loose_baseline;BTagWeight"  + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight;
+            std::string ZNuNuWeights        = "genWeightNormalized_jetpt30;Stop0l_trigger_eff_MET_loose_baseline;BTagWeightLight;BTagWeightHeavy"  + TotalSFs + PrefireWeight + puWeight + HEMVetoWeight;
             
             // ---------------------------------- // 
             // --- validation and search bins --- //
