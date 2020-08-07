@@ -562,7 +562,7 @@ class Normalization:
             self.writeLine("\\begin{tabular}{%s}" % ( "c" * (2 + len(channelsForTable)) ) )
             self.writeLine(header)
             self.writeLine("\\hline")
-            self.writeLine("\\multicolumn{2}{c}{low \dm normalization regions} \\\\")
+            self.writeLine("\\multicolumn{2}{c}{low \dm regions} \\\\")
             self.writeLine("\\hline")
             self.writeLine("0       & 0        & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
             self.writeLine("0       & $\geq$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVge1"]["R_Z"] for channel in channelsForTable)) )
@@ -570,7 +570,7 @@ class Normalization:
             self.writeLine("1       & $\geq$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVge1"]["R_Z"] for channel in channelsForTable)) )
             self.writeLine("$\geq$2 & --       & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBge2"]["R_Z"]        for channel in channelsForTable)) )
             self.writeLine("\\hline")
-            self.writeLine("\\multicolumn{2}{c}{high \dm normalization regions} \\\\")
+            self.writeLine("\\multicolumn{2}{c}{high \dm regions} \\\\")
             self.writeLine("\\hline")
             # Nb = 2 is no longer used
             self.writeLine("1       & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq1"]["R_Z"] for channel in channelsForTable))  ) 
