@@ -534,7 +534,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             
             p  = p1
 
-            print "PREDICTION search bin {0}: {1}, {2}, {3}".format(b, p1, p2, isclose(p1, p2, rel_tol=1e-06))
+            #print "PREDICTION search bin {0}: {1}, {2}, {3}".format(b, p1, p2, isclose(p1, p2, rel_tol=1e-06))
             
             log_syst_up_sum    = 0.0
             log_syst_down_sum  = 0.0
@@ -754,13 +754,15 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         # get percentages >= 0.0%
         ave_up   = 100 * (np.average(values_up) - 1)
         ave_down = 100 * (np.average(values_down) - 1)
+        med_up   = 100 * (np.median(values_up) - 1)
+        med_down = 100 * (np.median(values_down) - 1)
         min_up   = 100 * (min(values_up) - 1)
         min_down = 100 * (min(values_down) - 1)
         max_up   = 100 * (max(values_up) - 1)
         max_down = 100 * (max(values_down) - 1)
         # record average systematic here
-        infoFile.write("{0}  {1}_Up    ave={2:.3f}%, range=[{3:.3f}%, {4:.3f}%]\n".format("total", syst, ave_up,   min_up,   max_up   ))
-        infoFile.write("{0}  {1}_Down  ave={2:.3f}%, range=[{3:.3f}%, {4:.3f}%]\n".format("total", syst, ave_down, min_down, max_down ))
+        infoFile.write("{0}  {1}_Up    ave={2:.3f}%, med={3:.3f}%, range=[{4:.3f}%, {5:.3f}%]\n".format("total", syst, ave_up,   med_up,   min_up,   max_up   ))
+        infoFile.write("{0}  {1}_Down  ave={2:.3f}%, med={3:.3f}%, range=[{4:.3f}%, {5:.3f}%]\n".format("total", syst, ave_down, med_down, min_down, max_down ))
 
         # --- investigate large values
         for i in xrange(len(values_up)):
