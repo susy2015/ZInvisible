@@ -746,6 +746,8 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         del c
 
     # --- record systematic averages and ranges
+    medianList = [] 
+    infoFile.write("--- systematics ---\n")
     for syst in systValMap:
         values_up   = systValMap[syst]["up"]
         values_down = systValMap[syst]["down"]
@@ -760,6 +762,10 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         min_down = 100 * (min(values_down) - 1)
         max_up   = 100 * (max(values_up) - 1)
         max_down = 100 * (max(values_down) - 1)
+        # list of medians (average over up/down)
+        med = np.mean([med_up, med_down])
+        medianList.append((syst, med))
+        
         # record average systematic here
         infoFile.write("{0}  {1}_Up    ave={2:.3f}%, med={3:.3f}%, range=[{4:.3f}%, {5:.3f}%]\n".format("total", syst, ave_up,   med_up,   min_up,   max_up   ))
         infoFile.write("{0}  {1}_Down  ave={2:.3f}%, med={3:.3f}%, range=[{4:.3f}%, {5:.3f}%]\n".format("total", syst, ave_down, med_down, min_down, max_down ))
@@ -771,6 +777,14 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                 print "LargeSyst: {0}, {1}, bin {2}, syst_up = {3}".format(era, syst, i, values_up[i])
             if values_down[i] >= maxVal: 
                 print "LargeSyst: {0}, {1}, bin {2}, syst_down = {3}".format(era, syst, i, values_down[i])
+
+    # sort by median, greatest to least
+    medianArray = np.array(medianList, dtype=[('x', 'S30'), ('y', float)])
+    medianArray[::-1].sort(order='y')
+
+    infoFile.write("--- sorted by median ---\n")
+    for x in medianArray:
+        infoFile.write("{0}  {1}  med={2:.3f}%\n".format("total", x[0], x[1]))
 
     f_out.Close()
 
