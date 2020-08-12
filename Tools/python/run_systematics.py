@@ -526,7 +526,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     if doRun2:
         moreSyst = [syst for syst in systHistoMap["search"]["lowdm"]]
         allSyst += moreSyst
-    systValMap = {syst:{"up" : [], "down" : []} for syst in allSyst}
+    systValMap = {syst:{"up" : [], "down" : [], "pred" : [], "pred_error_propagated" : []} for syst in allSyst}
 
     for region in regions:
         offset = 0
@@ -545,6 +545,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             
             p1 = shape * norm * znunu_mc
             p2 = SearchBinObject.binValues[era][b]["pred"]
+            pred_error_propagated = SearchBinObject.binValues[era][b]["pred_error_propagated"]
             
             p  = p1
 
@@ -663,6 +664,8 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     # make both up and down variations >= 1.0 independent of direction
                     systValMap[key]["up"].append(np.exp(abs(np.log(log_syst_up))))
                     systValMap[key]["down"].append(np.exp(abs(np.log(log_syst_down))))
+                    systValMap[key]["pred"].append(p)
+                    systValMap[key]["pred_error_propagated"].append(pred_error_propagated)
                 # these syst. are only available when doing Run 2
                 if doRun2:
                     # syst from root file
@@ -694,6 +697,8 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                         # make both up and down variations >= 1.0 independent of direction
                         systValMap[syst]["up"].append(np.exp(abs(np.log(log_syst_up))))
                         systValMap[syst]["down"].append(np.exp(abs(np.log(log_syst_down))))
+                        systValMap[syst]["pred"].append(p)
+                        systValMap[syst]["pred_error_propagated"].append(pred_error_propagated)
 
 
             log_syst_up_total   = np.exp( np.sqrt(log_syst_up_sum))
@@ -751,8 +756,10 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     medianList = [] 
     infoFile.write("--- systematics ---\n")
     for syst in systValMap:
-        values_up   = systValMap[syst]["up"]
-        values_down = systValMap[syst]["down"]
+        values_up               = systValMap[syst]["up"]
+        values_down             = systValMap[syst]["down"]
+        pred                    = systValMap[syst]["pred"]
+        pred_error_propagated   = systValMap[syst]["pred_error_propagated"]
         print "Recording systematic {0}".format(syst)
 
         # get percentages >= 0.0%
@@ -776,13 +783,11 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         for i in xrange(len(values_up)):
             maxVal = 2.0
             if values_up[i] >= maxVal: 
-                print "LargeSyst: {0}, {1}, bin {2}, syst_up = {3}".format(era, syst, i, values_up[i])
+                print "LargeSyst: {0}, {1}, bin {2}, syst_up = {3}; pred = {4} +/- {5}".format(era, syst, i, values_up[i], pred[i], pred_error_propagated[i])
             if values_down[i] >= maxVal: 
-                print "LargeSyst: {0}, {1}, bin {2}, syst_down = {3}".format(era, syst, i, values_down[i])
+                print "LargeSyst: {0}, {1}, bin {2}, syst_down = {3}; pred = {4} +/- {5}".format(era, syst, i, values_down[i], pred[i], pred_error_propagated[i])
 
         # --- plot 1D histograms
-        #c = ROOT.TCanvas("c", "c", 800, 800)
-        
         h_up    = ROOT.TH1F("h_up",   "h_up",   100, 1.0, 3.0)
         h_down  = ROOT.TH1F("h_down", "h_down", 100, 1.0, 3.0)
         
@@ -794,25 +799,6 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         title = "Z to Invisible: syst. distribution " + name + " for " + era
         x_title = "systematic"
         y_title = "number of search bins"
-
-        # setupHist(h_up,     title, x_title, "number of search bins",  color_red,    0.0, 200.0)
-        # setupHist(h_down,   title, x_title, "number of search bins",  color_blue,   0.0, 200.0)
-        # 
-        # h_up.Draw(draw_option)
-        # h_down.Draw(draw_option + " same")
-        # 
-        # # legend: TLegend(x1,y1,x2,y2)
-        # legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-        # legend.AddEntry(h_up,           "syst up",                  "l")
-        # legend.AddEntry(h_down,         "syst down",                "l")
-        # legend.Draw()
-        # 
-        # # save histograms
-        # plot_name = out_dir + name + eraTag
-        # c.Update()
-        # c.SaveAs(plot_name + ".png")
-        
-        # --- plot 1D histograms using tools.plot()
         histograms = [h_up, h_down]
         labels = ["syst_up", "syst_down"]
         # tools.plot(histograms, labels, name, title, x_title, y_title, x_min, x_max, y_min, y_max, era, plot_dir, showStats=False, normalize=False, setLog=False)
