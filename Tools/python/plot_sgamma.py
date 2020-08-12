@@ -109,9 +109,9 @@ def run(era):
     labels = ["sgamma_searchbins", "sgamma_crunits"]
     
     # --- plot --- #
-    # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, plot_dir, showStats=False, normalize=False, setLog=False)
-    plot(histograms_1, labels, "sgamma_binning1", "Sgamma for " + era, "Sgamma", limits_1[0], limits_1[1], 0.0, 200.0, era, "more_plots", showStats=True) 
-    plot(histograms_2, labels, "sgamma_binning2", "Sgamma for " + era, "Sgamma", limits_2[0], limits_2[1], 0.0, 60.0,  era, "more_plots", showStats=True) 
+    # plot(histograms, labels, name, title, x_title, y_title, x_min, x_max, y_min, y_max, era, plot_dir, showStats=False, normalize=False, setLog=False)
+    plot(histograms_1, labels, "sgamma_binning1", "Sgamma for " + era, "Sgamma", "Events", limits_1[0], limits_1[1], 0.0, 200.0, era, "more_plots", showStats=True) 
+    plot(histograms_2, labels, "sgamma_binning2", "Sgamma for " + era, "Sgamma", "Events", limits_2[0], limits_2[1], 0.0, 60.0,  era, "more_plots", showStats=True) 
    
     if verbose > 0:
         print "Total data  = {0}".format(total_phocr_data)

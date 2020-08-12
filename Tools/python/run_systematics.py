@@ -793,6 +793,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         name = "{0}_systDistribution_{1}".format("search", syst)
         title = "Z to Invisible: syst. distribution " + name + " for " + era
         x_title = "systematic"
+        y_title = "number of search bins"
 
         # setupHist(h_up,     title, x_title, "number of search bins",  color_red,    0.0, 200.0)
         # setupHist(h_down,   title, x_title, "number of search bins",  color_blue,   0.0, 200.0)
@@ -814,8 +815,8 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         # --- plot 1D histograms using tools.plot()
         histograms = [h_up, h_down]
         labels = ["syst_up", "syst_down"]
-        # tools.plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, plot_dir, showStats=False, normalize=False, setLog=False)
-        tplot(histograms, labels, name, title, x_title, 1.0, 3.0, 0.0, 200.0, era, out_dir, showStats=True)
+        # tools.plot(histograms, labels, name, title, x_title, y_title, x_min, x_max, y_min, y_max, era, plot_dir, showStats=False, normalize=False, setLog=False)
+        tplot(histograms, labels, name, title, x_title, y_title, 1.0, 3.0, 0.0, 200.0, era, out_dir, showStats=True)
         
         # del c
         del histograms

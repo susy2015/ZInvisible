@@ -321,7 +321,7 @@ def getMatrixInverseError(A, A_error):
     Ainverse_error[1][1] = getMultiplicationError( A[0][0] / det,  A[0][0], A_error[0][0], det, det_error)
     return Ainverse_error
 
-def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, plot_dir, showStats=False, normalize=False, setLog=False):
+def plot(histograms, labels, name, title, x_title, y_title, x_min, x_max, y_min, y_max, era, plot_dir, showStats=False, normalize=False, setLog=False):
     eraTag = "_" + era
     draw_option = "hist"
             
@@ -342,8 +342,6 @@ def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, e
     
     c = ROOT.TCanvas("c", "c", 800, 800)
 
-    y_title = "Events"
-    
     for i in xrange(len(histograms)):
         # normalize
         if normalize:
