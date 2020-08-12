@@ -475,6 +475,19 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
 #-------------------------------------------------------
 
 def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, systematics_map, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, infoFile, doRun2):
+    # colors
+    color_red    = "vermillion"
+    color_blue   = "electric blue"
+    color_green  = "irish green" 
+    color_purple = "violet"
+    color_black  = "black"
+         
+    # legend: TLegend(x1,y1,x2,y2)
+    legend_x1 = 0.6
+    legend_x2 = 0.9 
+    legend_y1 = 0.7
+    legend_y2 = 0.9 
+
     d = runMap[era]
     r  = "condor/" + d + "/result.root"
     N.getNormAndError(r, era)
@@ -707,18 +720,6 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         
         eraTag = "_" + era
         draw_option = "hist"
-        # colors
-        color_red    = "vermillion"
-        color_blue   = "electric blue"
-        color_green  = "irish green" 
-        color_purple = "violet"
-        color_black  = "black"
-        
-        # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.6
-        legend_x2 = 0.9 
-        legend_y1 = 0.7
-        legend_y2 = 0.9 
     
         c = ROOT.TCanvas("c", "c", 800, 800)
         name = "{0}_{1}".format("search", mySyst)
@@ -777,6 +778,39 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                 print "LargeSyst: {0}, {1}, bin {2}, syst_up = {3}".format(era, syst, i, values_up[i])
             if values_down[i] >= maxVal: 
                 print "LargeSyst: {0}, {1}, bin {2}, syst_down = {3}".format(era, syst, i, values_down[i])
+        
+        # --- plot 1D histograms
+        c = ROOT.TCanvas("c", "c", 800, 800)
+        
+        h_up    = ROOT.TH1F("h_up",   "h_up",   100, 1.0, 3.0)
+        h_down  = ROOT.TH1F("h_down", "h_down", 100, 1.0, 3.0)
+        
+        for i in xrange(len(values_up)):
+            h_up.Fill(values_up[i])
+            h_down.Fill(values_down[i])
+        
+        name = "{0}_systDistribution_{1}".format("search", syst)
+        title = "Z to Invisible: syst. distribution " + name + " for " + era
+        x_title = "systematic"
+        setupHist(h_up,     title, x_title, "number of search bins",  color_red,    0.0, 200.0)
+        setupHist(h_down,   title, x_title, "number of search bins",  color_blue,   0.0, 200.0)
+        
+        h_up.Draw(draw_option)
+        h_down.Draw(draw_option + " same")
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        legend.AddEntry(h_up,           "syst up",                  "l")
+        legend.AddEntry(h_down,         "syst down",                "l")
+        legend.Draw()
+        
+        # save histograms
+        plot_name = out_dir + name + eraTag
+        c.Update()
+        c.SaveAs(plot_name + ".png")
+        del c
+        del h_up
+        del h_down
 
     # sort by median, greatest to least
     medianArray = np.array(medianList, dtype=[('x', 'S30'), ('y', float)])
