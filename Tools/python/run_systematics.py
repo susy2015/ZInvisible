@@ -10,6 +10,7 @@ from norm_lepton_zmass import Normalization
 from shape_photon_met import Shape
 from search_bins import  ValidationBins, ValidationBinsMETStudy, SearchBins, CRUnitBins
 from tools import invert, setupHist, stringifyMap, removeCuts, ERROR_SYST, isclose
+from tools import plot as tplot
 
 # set numpy to provide warnings instead of just printing errors
 np.seterr(all='warn')
@@ -778,9 +779,9 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                 print "LargeSyst: {0}, {1}, bin {2}, syst_up = {3}".format(era, syst, i, values_up[i])
             if values_down[i] >= maxVal: 
                 print "LargeSyst: {0}, {1}, bin {2}, syst_down = {3}".format(era, syst, i, values_down[i])
-        
+
         # --- plot 1D histograms
-        c = ROOT.TCanvas("c", "c", 800, 800)
+        #c = ROOT.TCanvas("c", "c", 800, 800)
         
         h_up    = ROOT.TH1F("h_up",   "h_up",   100, 1.0, 3.0)
         h_down  = ROOT.TH1F("h_down", "h_down", 100, 1.0, 3.0)
@@ -792,25 +793,35 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         name = "{0}_systDistribution_{1}".format("search", syst)
         title = "Z to Invisible: syst. distribution " + name + " for " + era
         x_title = "systematic"
-        setupHist(h_up,     title, x_title, "number of search bins",  color_red,    0.0, 200.0)
-        setupHist(h_down,   title, x_title, "number of search bins",  color_blue,   0.0, 200.0)
+
+        # setupHist(h_up,     title, x_title, "number of search bins",  color_red,    0.0, 200.0)
+        # setupHist(h_down,   title, x_title, "number of search bins",  color_blue,   0.0, 200.0)
+        # 
+        # h_up.Draw(draw_option)
+        # h_down.Draw(draw_option + " same")
+        # 
+        # # legend: TLegend(x1,y1,x2,y2)
+        # legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        # legend.AddEntry(h_up,           "syst up",                  "l")
+        # legend.AddEntry(h_down,         "syst down",                "l")
+        # legend.Draw()
+        # 
+        # # save histograms
+        # plot_name = out_dir + name + eraTag
+        # c.Update()
+        # c.SaveAs(plot_name + ".png")
         
-        h_up.Draw(draw_option)
-        h_down.Draw(draw_option + " same")
+        # --- plot 1D histograms using tools.plot()
+        histograms = [h_up, h_down]
+        labels = ["syst_up", "syst_down"]
+        # tools.plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, plot_dir, showStats=False, normalize=False, setLog=False)
+        tplot(histograms, labels, name, title, x_title, 1.0, 3.0, 0.0, 200.0, era, out_dir, showStats=True)
         
-        # legend: TLegend(x1,y1,x2,y2)
-        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-        legend.AddEntry(h_up,           "syst up",                  "l")
-        legend.AddEntry(h_down,         "syst down",                "l")
-        legend.Draw()
-        
-        # save histograms
-        plot_name = out_dir + name + eraTag
-        c.Update()
-        c.SaveAs(plot_name + ".png")
-        del c
+        # del c
+        del histograms
         del h_up
         del h_down
+        
 
     # sort by median, greatest to least
     medianArray = np.array(medianList, dtype=[('x', 'S30'), ('y', float)])

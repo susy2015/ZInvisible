@@ -48,9 +48,9 @@ def plotMergedTopPartons(era, result_file, verbose):
     
     # WARNING: if using setLog=True, do not use y_min = 0
     # WARNING: currently stats do not show properly on log scale... this would need work to fix
-    # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False, setLog=False)
-    plot(histograms, labels, name_1, title_1, x_title, x_min, x_max, y_min_1, y_max_1, era, showStats=False, normalize=False, setLog=True)
-    plot(histograms, labels, name_2, title_2, x_title, x_min, x_max, y_min_2, y_max_2, era, showStats=True, normalize=True)
+    # plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, plot_dir, showStats=False, normalize=False, setLog=False)
+    plot(histograms, labels, name_1, title_1, x_title, x_min, x_max, y_min_1, y_max_1, era, "more_plots", showStats=False, normalize=False, setLog=True)
+    plot(histograms, labels, name_2, title_2, x_title, x_min, x_max, y_min_2, y_max_2, era, "more_plots", showStats=True, normalize=True)
 
 # plot Nb, Nsv, Nj for different eras
 def plotVars(var, particle, eras, runMap, varMap, verbose):
