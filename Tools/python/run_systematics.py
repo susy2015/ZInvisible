@@ -526,7 +526,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     if doRun2:
         moreSyst = [syst for syst in systHistoMap["search"]["lowdm"]]
         allSyst += moreSyst
-    systValMap = {syst:{"up" : [], "down" : [], "pred" : [], "pred_error_propagated" : []} for syst in allSyst}
+    systValMap = {syst:{"up" : [], "down" : [], "pred" : [], "pred_up" : [], "pred_down" : [], "pred_error_propagated" : []} for syst in allSyst}
 
     for region in regions:
         offset = 0
@@ -665,6 +665,8 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     systValMap[key]["up"].append(np.exp(abs(np.log(log_syst_up))))
                     systValMap[key]["down"].append(np.exp(abs(np.log(log_syst_down))))
                     systValMap[key]["pred"].append(p)
+                    systValMap[key]["pred_up"].append(p_up)
+                    systValMap[key]["pred_down"].append(p_down)
                     systValMap[key]["pred_error_propagated"].append(pred_error_propagated)
                 # these syst. are only available when doing Run 2
                 if doRun2:
@@ -698,6 +700,8 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                         systValMap[syst]["up"].append(np.exp(abs(np.log(log_syst_up))))
                         systValMap[syst]["down"].append(np.exp(abs(np.log(log_syst_down))))
                         systValMap[syst]["pred"].append(p)
+                        systValMap[syst]["pred_up"].append(p_up)
+                        systValMap[syst]["pred_down"].append(p_down)
                         systValMap[syst]["pred_error_propagated"].append(pred_error_propagated)
 
 
@@ -759,6 +763,8 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         values_up               = systValMap[syst]["up"]
         values_down             = systValMap[syst]["down"]
         pred                    = systValMap[syst]["pred"]
+        pred_up                 = systValMap[syst]["pred_up"]
+        pred_down               = systValMap[syst]["pred_down"]
         pred_error_propagated   = systValMap[syst]["pred_error_propagated"]
         print "Recording systematic {0}".format(syst)
 
@@ -783,9 +789,9 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         for i in xrange(len(values_up)):
             maxVal = 2.0
             if values_up[i] >= maxVal: 
-                print "LargeSyst: {0}, {1}, bin {2}, syst_up = {3}; pred = {4} +/- {5}".format(era, syst, i, values_up[i], pred[i], pred_error_propagated[i])
+                print "LargeSyst: {0}, {1}, bin {2}, pred = {3} +/- {4}, pred_up = {5}, syst_up = {6}".format(era, syst, i, pred[i], pred_error_propagated[i], pred_up[i], values_up[i])
             if values_down[i] >= maxVal: 
-                print "LargeSyst: {0}, {1}, bin {2}, syst_down = {3}; pred = {4} +/- {5}".format(era, syst, i, values_down[i], pred[i], pred_error_propagated[i])
+                print "LargeSyst: {0}, {1}, bin {2}, pred = {3} +/- {4}, pred_down = {5}, syst_down = {6}".format(era, syst, i, pred[i], pred_error_propagated[i], pred_down[i], values_down[i])
 
         # --- plot 1D histograms
         h_up    = ROOT.TH1F("h_up",   "h_up",   100, 1.0, 3.0)
