@@ -684,18 +684,22 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     # values to estimate systematic ranges
                     value_up        = log_syst_up
                     value_down      = log_syst_down
-                    useValUp   = False
-                    useValDown = False
+                    useValUp        = False
+                    useValDown      = False
                     if value_up > 0 and value_up != 1:
-                        useValUp = True
                         # take inverse if value is less than 1
                         if value_up < 1:
                             value_up = 1.0 / value_up
+                        # set limit of 200% on systematic
+                        if value_up < 3.0:
+                            useValUp = True
                     if value_down > 0 and value_down != 1:
-                        useValDown = True
                         # take inverse if value is less than 1
                         if value_down < 1:
                             value_down = 1.0 / value_down
+                        # set limit of 200% on systematic
+                        if value_down < 3.0:
+                            useValDown = True
                     
                     # avoid taking log of negative number or 0
                     if log_syst_up <= 0:
@@ -751,18 +755,22 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                         # values to estimate systematic ranges
                         value_up        = log_syst_up
                         value_down      = log_syst_down
-                        useValUp   = False
-                        useValDown = False
+                        useValUp        = False
+                        useValDown      = False
                         if value_up > 0 and value_up != 1:
-                            useValUp = True
                             # take inverse if value is less than 1
                             if value_up < 1:
                                 value_up = 1.0 / value_up
+                            # set limit of 200% on systematic
+                            if value_up < 3.0:
+                                useValUp = True
                         if value_down > 0 and value_down != 1:
-                            useValDown = True
                             # take inverse if value is less than 1
                             if value_down < 1:
                                 value_down = 1.0 / value_down
+                            # set limit of 200% on systematic
+                            if value_down < 3.0:
+                                useValDown = True
                         # avoid taking log of negative number or 0
                         if log_syst_up <= 0:
                             new_value = abs(ERROR_SYST * p)
@@ -911,7 +919,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         
 
     # estimate ranges
-    infoFile.write("--- estimated ranges ---\n")
+    infoFile.write("--- estimated systematic ranges ---\n")
     for syst in systValMap:
         # Find the mean and standard deviation of the resulting set of numbers.
         # Now report exp(mean - std) and exp(mean + std) as the lower and upper ends of the range.
