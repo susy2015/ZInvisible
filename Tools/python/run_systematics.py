@@ -918,7 +918,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         del h_down
         
 
-    # estimate ranges
+    # --- estimate ranges
     infoFile.write("--- estimated systematic ranges ---\n")
     for syst in systValMap:
         # Find the mean and standard deviation of the resulting set of numbers.
@@ -928,9 +928,12 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         val_std  = np.std(values)
         low  = 100.0 * np.exp(val_mean - val_std)
         high = 100.0 * np.exp(val_mean + val_std)
-        infoFile.write("{0:>30}  {1:.2f}% -- {2:.2f}%\n".format(syst, low, high))
+        # decimal
+        #infoFile.write("{0:>30}  {1:.2f}% -- {2:.2f}%\n".format(syst, low, high))
+        # integer
+        infoFile.write("{0:>30}  {1:.0f}% -- {2:.0f}%\n".format(syst, low, high))
     
-    # sort by median, greatest to least
+    # --- sort by median, greatest to least
     medianArray = np.array(medianList, dtype=[('x', 'S30'), ('y', float)])
     medianArray[::-1].sort(order='y')
 
