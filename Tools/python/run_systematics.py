@@ -473,6 +473,7 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
 # Calculate total systematic up/down
 # - variation in prediction
 # - include both Z nunu search bin and photon CR bin variation
+# - also estimate range of systematics using mean +/- sigma of the log(syst_ratio - 1) distribution
 #-------------------------------------------------------
 
 def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, systematics_map, systHistoMap, histo, syst_histo, era, directions, regions, out_dir, infoFile, doRun2):
@@ -526,7 +527,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     if doRun2:
         moreSyst = [syst for syst in systHistoMap["search"]["lowdm"]]
         allSyst += moreSyst
-    systValMap = {syst:{"up" : [], "down" : [], "pred" : [], "pred_error" : [], "pred_up" : [], "pred_up_error" : [], "pred_down" : [], "pred_down_error" : []} for syst in allSyst}
+    systValMap = {syst:{"up" : [], "down" : [], "pred" : [], "pred_error" : [], "pred_up" : [], "pred_up_error" : [], "pred_down" : [], "pred_down_error" : [], "value" : []} for syst in allSyst}
 
     for region in regions:
         offset = 0
@@ -558,11 +559,11 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             
             if p != 0:
                 # syst from p, p_up, p_down
-                for key in systematics_map:
-                    syst_znunu = systematics_map[key]["znunu"]
-                    syst_phocr = systematics_map[key]["phocr"]
+                for syst in systematics_map:
+                    syst_znunu = systematics_map[syst]["znunu"]
+                    syst_phocr = systematics_map[syst]["phocr"]
                     # do not apply SB syst in high dm
-                    if region == "highdm" and key == "eff_sb":
+                    if region == "highdm" and syst == "eff_sb":
                         continue
                     # syst_histo[systemaitc][bintype][region][direction]
                     # some systematics are only for Znunu or only for photon CR
@@ -680,6 +681,21 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
 
                     log_syst_up     = p_up / p
                     log_syst_down   = p_down / p
+                    # values to estimate systematic ranges
+                    value_up        = log_syst_up
+                    value_down      = log_syst_down
+                    useValUp   = False
+                    useValDown = False
+                    if value_up > 0 and value_up != 1:
+                        useValUp = True
+                        # take inverse if value is less than 1
+                        if value_up < 1:
+                            value_up = 1.0 / value_up
+                    if value_down > 0 and value_down != 1:
+                        useValDown = True
+                        # take inverse if value is less than 1
+                        if value_down < 1:
+                            value_down = 1.0 / value_down
                     
                     # avoid taking log of negative number or 0
                     if log_syst_up <= 0:
@@ -710,14 +726,19 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     except:
                         print "ERROR for np.log(), location 1: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
                     # make both up and down variations >= 1.0 independent of direction
-                    systValMap[key]["up"].append(np.exp(abs(np.log(log_syst_up))))
-                    systValMap[key]["down"].append(np.exp(abs(np.log(log_syst_down))))
-                    systValMap[key]["pred"].append(p)
-                    systValMap[key]["pred_error"].append(p_error)
-                    systValMap[key]["pred_up"].append(p_up)
-                    systValMap[key]["pred_up_error"].append(p_up_error)
-                    systValMap[key]["pred_down"].append(p_down)
-                    systValMap[key]["pred_down_error"].append(p_down_error)
+                    systValMap[syst]["up"].append(np.exp(abs(np.log(log_syst_up))))
+                    systValMap[syst]["down"].append(np.exp(abs(np.log(log_syst_down))))
+                    systValMap[syst]["pred"].append(p)
+                    systValMap[syst]["pred_error"].append(p_error)
+                    systValMap[syst]["pred_up"].append(p_up)
+                    systValMap[syst]["pred_up_error"].append(p_up_error)
+                    systValMap[syst]["pred_down"].append(p_down)
+                    systValMap[syst]["pred_down_error"].append(p_down_error)
+                    # use log(value_up/down - 1)
+                    if useValUp:
+                        systValMap[syst]["value"].append(np.log(value_up - 1))
+                    if useValDown:
+                        systValMap[syst]["value"].append(np.log(value_down - 1))
                 # these syst. are only available when doing Run 2
                 if doRun2:
                     # syst from root file
@@ -727,6 +748,21 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                         # symmetric error with up = down
                         log_syst_up     = 1.0 + error 
                         log_syst_down   = 1.0 - error
+                        # values to estimate systematic ranges
+                        value_up        = log_syst_up
+                        value_down      = log_syst_down
+                        useValUp   = False
+                        useValDown = False
+                        if value_up > 0 and value_up != 1:
+                            useValUp = True
+                            # take inverse if value is less than 1
+                            if value_up < 1:
+                                value_up = 1.0 / value_up
+                        if value_down > 0 and value_down != 1:
+                            useValDown = True
+                            # take inverse if value is less than 1
+                            if value_down < 1:
+                                value_down = 1.0 / value_down
                         # avoid taking log of negative number or 0
                         if log_syst_up <= 0:
                             new_value = abs(ERROR_SYST * p)
@@ -755,6 +791,11 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                         systValMap[syst]["pred_up_error"].append(p_up_error)
                         systValMap[syst]["pred_down"].append(p_down)
                         systValMap[syst]["pred_down_error"].append(p_down_error)
+                        # use log(value_up/down - 1)
+                        if useValUp:
+                            systValMap[syst]["value"].append(np.log(value_up - 1))
+                        if useValDown:
+                            systValMap[syst]["value"].append(np.log(value_down - 1))
 
             log_syst_up_total   = np.exp( np.sqrt(log_syst_up_sum))
             log_syst_down_total = np.exp(-np.sqrt(log_syst_down_sum)) # Minus sign is needed because this is the *down* ratio
@@ -835,8 +876,8 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         medianList.append((syst, med))
         
         # record average systematic here
-        infoFile.write("{0}  {1}_Up    ave={2:.3f}%, med={3:.3f}%, range=[{4:.3f}%, {5:.3f}%]\n".format("total", syst, ave_up,   med_up,   min_up,   max_up   ))
-        infoFile.write("{0}  {1}_Down  ave={2:.3f}%, med={3:.3f}%, range=[{4:.3f}%, {5:.3f}%]\n".format("total", syst, ave_down, med_down, min_down, max_down ))
+        infoFile.write("{0}  {1}_Up    ave={2:.2f}%, med={3:.2f}%, range=[{4:.2f}%, {5:.2f}%]\n".format("total", syst, ave_up,   med_up,   min_up,   max_up   ))
+        infoFile.write("{0}  {1}_Down  ave={2:.2f}%, med={3:.2f}%, range=[{4:.2f}%, {5:.2f}%]\n".format("total", syst, ave_down, med_down, min_down, max_down ))
 
         # --- investigate large values
         for i in xrange(len(values_up)):
@@ -869,15 +910,29 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         del h_down
         
 
+    # estimate ranges
+    infoFile.write("--- estimated ranges ---\n")
+    for syst in systValMap:
+        # Find the mean and standard deviation of the resulting set of numbers.
+        # Now report exp(mean - std) and exp(mean + std) as the lower and upper ends of the range.
+        values = systValMap[syst]["value"]
+        val_mean = np.mean(values)
+        val_std  = np.std(values)
+        low  = 100.0 * np.exp(val_mean - val_std)
+        high = 100.0 * np.exp(val_mean + val_std)
+        infoFile.write("{0:>30}  {1:.2f}% -- {2:.2f}%\n".format(syst, low, high))
+    
     # sort by median, greatest to least
     medianArray = np.array(medianList, dtype=[('x', 'S30'), ('y', float)])
     medianArray[::-1].sort(order='y')
 
     infoFile.write("--- sorted by median ---\n")
     for x in medianArray:
-        infoFile.write("{0}  {1}  med={2:.3f}%\n".format("total", x[0], x[1]))
+        infoFile.write("{0}  {1}  med={2:.2f}%\n".format("total", x[0], x[1]))
 
     f_out.Close()
+
+
 
 
 def run(era, eras, runs_json, syst_json, doRun2, splitBtag, verbose):
