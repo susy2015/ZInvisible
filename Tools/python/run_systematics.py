@@ -1055,6 +1055,7 @@ def run(era, eras, runs_json, syst_json, doRun2, splitBtag, verbose):
     if era != "2018":
         systematics_znunu.append("prefire")
         systematics_phocr.append("prefire")
+        systematics_map["prefire"] = {"znunu" : "prefire", "phocr" : "prefire"}
     systematics = list(set(systematics_znunu) | set(systematics_phocr))
 
     varTagMap = {
