@@ -321,7 +321,7 @@ def getMatrixInverseError(A, A_error):
     Ainverse_error[1][1] = getMultiplicationError( A[0][0] / det,  A[0][0], A_error[0][0], det, det_error)
     return Ainverse_error
 
-def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, era, showStats=False, normalize=False, setLog=False):
+def plot(histograms, labels, name, title, x_title, y_title, x_min, x_max, y_min, y_max, era, plot_dir, showStats=False, normalize=False, setLog=False):
     eraTag = "_" + era
     draw_option = "hist"
             
@@ -342,8 +342,6 @@ def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, e
     
     c = ROOT.TCanvas("c", "c", 800, 800)
 
-    y_title = "Events"
-    
     for i in xrange(len(histograms)):
         # normalize
         if normalize:
@@ -381,7 +379,8 @@ def plot(histograms, labels, name, title, x_title, x_min, x_max, y_min, y_max, e
             mark.DrawLatex(x_pos_2, y_list[2 * i + 1], "\mu = %.3f, \sigma = %.3f" % (histograms[i].GetMean(), histograms[i].GetStdDev()))
 
     # save histograms
-    plot_dir = "more_plots/"
+    if plot_dir[-1] != "/":
+        plot_dir += "/"
     plot_name = plot_dir + name + eraTag
     c.Update()
     c.SaveAs(plot_name + ".png")

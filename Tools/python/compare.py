@@ -365,59 +365,81 @@ if __name__ == "__main__":
     #
     # -------------------------- #
     
-    # v6p5 ntuple unblinding Run2 comparison
-    # comparison with Matt
-    # Run2
-    values = ["data", "pred"]
-    labels = ["Caleb", "Matt"]
-    h_names = {"data" : "hdata", "znunu_pred" : "hznunu"}
-    f_map = {}
-    #f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_Run2.root"
-    #f_map["Matt"]  = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/19May2020_Run2Unblind_dev_v6/SearchBinsPlot/SumOfBkg.root"
-    f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-07-06/prediction_histos/searchBinsZinv_Run2.root"
-    f_map["Matt"]  = "/uscms/home/mkilpatr/nobackup/CMSSW_9_4_10/src/AnalysisMethods/EstTools/SUSYNano19/getFinalPlot/SumOfBkg.root"
-    search(f_map, values, labels, h_names, "Run2")
+    if False:
+        # v6p5 ntuple unblinding Run2 comparison
+        # comparison with Matt
+        # Run2
+        values = ["data", "pred"]
+        labels = ["Caleb", "Matt"]
+        h_names = {"data" : "hdata", "znunu_pred" : "hznunu"}
+        f_map = {}
+        #f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_Run2.root"
+        #f_map["Matt"]  = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/19May2020_Run2Unblind_dev_v6/SearchBinsPlot/SumOfBkg.root"
+        f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-07-06/prediction_histos/searchBinsZinv_Run2.root"
+        f_map["Matt"]  = "/uscms/home/mkilpatr/nobackup/CMSSW_9_4_10/src/AnalysisMethods/EstTools/SUSYNano19/getFinalPlot/SumOfBkg.root"
+        search(f_map, values, labels, h_names, "Run2")
 
-    # compare systematics with Matt
-    values = ["syst_up", "syst_down"]
-    labels = ["Caleb", "Matt"]
-    h_names = {"syst_up" : "znunu_syst_up", "syst_down" : "znunu_syst_dn"}
-    f_map = {}
-    f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-07-06/prediction_histos/searchBinsZinv_totalPredSyst_Run2.root"
-    f_map["Matt"]  = "/uscms/home/mkilpatr/nobackup/CMSSW_9_4_10/src/AnalysisMethods/EstTools/SUSYNano19/getFinalPlot/SumOfBkg.root"
-    search(f_map, values, labels, h_names, "Run2")
+        # compare systematics with Matt
+        values = ["syst_up", "syst_down"]
+        labels = ["Caleb", "Matt"]
+        h_names = {"syst_up" : "znunu_syst_up", "syst_down" : "znunu_syst_dn"}
+        f_map = {}
+        f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-07-06/prediction_histos/searchBinsZinv_totalPredSyst_Run2.root"
+        f_map["Matt"]  = "/uscms/home/mkilpatr/nobackup/CMSSW_9_4_10/src/AnalysisMethods/EstTools/SUSYNano19/getFinalPlot/SumOfBkg.root"
+        search(f_map, values, labels, h_names, "Run2")
 
-    # --- Jon's histograms --- #
-    #
-    # data:         Data
-    # QCD pred:     QCD
-    #
-    # -------------------------- #
+        # --- Jon's histograms --- #
+        #
+        # data:         Data
+        # QCD pred:     QCD
+        #
+        # -------------------------- #
+        
+        # comparison with Jon
+        # /uscms_data/d3/jsw/SusyAna/CMSSW_10_2_9/src/notebooks/Yields_v6_5/2016_SearchBins_QCDResidMET.root
+        # /eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/26May2020_2016Unblind_dev_v6/SearchBinsPlot/SearchBins_QCDResidMET.root
+        # 2016
+        values = ["data"]
+        labels = ["Caleb", "Jon"]
+        h_names = {"data" : "Data", "qcd_pred" : "QCD"}
+        f_map = {}
+        f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_2016.root"
+        f_map["Jon"]   = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/26May2020_2016Unblind_dev_v6/SearchBinsPlot/SearchBins_QCDResidMET.root"
+        search(f_map, values, labels, h_names, "2016")
+
+        
+        # --- Caleb's comparison --- #
+        #
+        # compare using Rz per year with using Run 2 Rz
+        #
+        # -------------------------- #
+        values = ["pred"]
+        labels = ["RzRun2", "RzPerYear"]
+        f_map = {}
+        f_map["RzRun2"]    = "/uscms_data/d3/caleb/SusyAnalysis/CMSSW_10_2_9/src/ZInvisible/Tools/prediction_histos/searchBinsZinv_Run2.root"
+        f_map["RzPerYear"] = "/uscms_data/d3/caleb/SusyAnalysis/CMSSW_10_2_9/src/ZInvisible/Tools/prediction_histos/searchBinsZinv_useRzPerYear_Run2.root"
+        searchCompareMyHists(f_map, values, labels, "Run2")
     
-    # comparison with Jon
-    # /uscms_data/d3/jsw/SusyAna/CMSSW_10_2_9/src/notebooks/Yields_v6_5/2016_SearchBins_QCDResidMET.root
-    # /eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/26May2020_2016Unblind_dev_v6/SearchBinsPlot/SearchBins_QCDResidMET.root
-    # 2016
-    values = ["data"]
-    labels = ["Caleb", "Jon"]
-    h_names = {"data" : "Data", "qcd_pred" : "QCD"}
-    f_map = {}
-    f_map["Caleb"] = "/uscms/home/caleb/archive/zinv_results/2020-05-19/prediction_histos/searchBinsZinv_2016.root"
-    f_map["Jon"]   = "/eos/uscms/store/user/lpcsusyhad/Stop_production/LimitInputs/26May2020_2016Unblind_dev_v6/SearchBinsPlot/SearchBins_QCDResidMET.root"
-    search(f_map, values, labels, h_names, "2016")
-
-    
-    # --- Caleb's comparison --- #
-    #
-    # compare using Rz per year with using Run 2 Rz
-    #
-    # -------------------------- #
-    values = ["pred"]
-    labels = ["RzRun2", "RzPerYear"]
-    f_map = {}
-    f_map["RzRun2"]    = "/uscms_data/d3/caleb/SusyAnalysis/CMSSW_10_2_9/src/ZInvisible/Tools/prediction_histos/searchBinsZinv_Run2.root"
-    f_map["RzPerYear"] = "/uscms_data/d3/caleb/SusyAnalysis/CMSSW_10_2_9/src/ZInvisible/Tools/prediction_histos/searchBinsZinv_useRzPerYear_Run2.root"
-    searchCompareMyHists(f_map, values, labels, "Run2")
+    if True:
+        # --- Caleb's comparison --- #
+        #
+        # compare v6p5 runs (before and after changes to the prediciton)
+        # compare v6p5 vs. v7 predictions
+        #
+        # -------------------------- #
+        values = ["pred"]
+        labels = ["v6p5_May31", "v6p5_July24"]
+        f_map = {}
+        f_map["v6p5_May31"]    = "/uscms/home/caleb/archive/zinv_results/2020-05-31/prediction_histos/searchBinsZinv_Run2.root"
+        f_map["v6p5_July24"]   = "/uscms/home/caleb/archive/zinv_results/2020-07-24/prediction_histos/searchBinsZinv_Run2.root"
+        searchCompareMyHists(f_map, values, labels, "Run2")
+        
+        values = ["pred"]
+        labels = ["v6p5_July24", "v7"]
+        f_map = {}
+        f_map["v6p5_July24"]    = "/uscms/home/caleb/archive/zinv_results/2020-07-24/prediction_histos/searchBinsZinv_Run2.root"
+        f_map["v7"]             = "/uscms/home/caleb/archive/zinv_results/2020-07-31/prediction_histos/searchBinsZinv_Run2.root"
+        searchCompareMyHists(f_map, values, labels, "Run2")
     
 
 
