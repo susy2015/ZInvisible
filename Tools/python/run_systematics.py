@@ -930,12 +930,18 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         values = systValMap[syst]["value"]
         val_mean = np.mean(values)
         val_std  = np.std(values)
-        low  = 100.0 * np.exp(val_mean - val_std)
-        high = 100.0 * np.exp(val_mean + val_std)
+        low    = 100.0 * np.exp(val_mean - val_std)
+        high   = 100.0 * np.exp(val_mean + val_std)
+        center = 100.0 * np.exp(val_mean)
+        
         # decimal
         #infoFile.write("{0:>30}  {1:.2f}% -- {2:.2f}%\n".format(syst, low, high))
         # integer
-        infoFile.write("{0:>30}  {1:.0f}% -- {2:.0f}%\n".format(syst, low, high))
+        #infoFile.write("{0:>30}  {1:.0f}% -- {2:.0f}%\n".format(syst, low, high))
+        
+        #infoFile.write("{0:>30}  center = {1:.0f}%, range = {2:.0f}% -- {3:.0f}%\n".format(syst, center, low, high))
+        
+        infoFile.write("{0:>30}  ({1:.0f}--{2:.0f}\\%)\n".format(syst, low, high))
     
     # --- sort by median, greatest to least
     medianArray = np.array(medianList, dtype=[('x', 'S30'), ('y', float)])
