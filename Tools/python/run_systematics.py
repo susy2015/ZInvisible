@@ -328,11 +328,11 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                     # avoid taking log of negative number or 0
                     if log_syst_up <= 0:
                         new_value = abs(ERROR_SYST * p)
-                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_up = {3}. Setting log_syst_up = {4}.".format(bintype, b, syst, log_syst_up, new_value)
+                        print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_up = {4}. Setting log_syst_up = {5}.".format(era, bintype, b, syst, log_syst_up, new_value)
                         log_syst_up = new_value
                     if log_syst_down <= 0:
                         new_value = abs(ERROR_SYST * p)
-                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format(bintype, b, syst, log_syst_down, new_value)
+                        print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_down = {4}. Setting log_syst_down = {5}.".format(era, bintype, b, syst, log_syst_down, new_value)
                         log_syst_down = new_value
                     # sum in quadrature 
                     syst_up_sum     += syst_up**2
@@ -373,11 +373,11 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                         # avoid taking log of negative number or 0
                         if log_syst_up <= 0:
                             new_value = abs(ERROR_SYST * p)
-                            print "WARNING: For {0} bin {1}, syst {2}: log_syst_up = {3}. Setting log_syst_up = {4}.".format(bintype, b, syst, log_syst_up, new_value)
+                            print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_up = {4}. Setting log_syst_up = {5}.".format(era, bintype, b, syst, log_syst_up, new_value)
                             log_syst_up = new_value
                         if log_syst_down <= 0:
                             new_value = abs(ERROR_SYST * p)
-                            print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format(bintype, b, syst, log_syst_down, new_value)
+                            print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_down = {4}. Setting log_syst_down = {5}.".format(era, bintype, b, syst, log_syst_down, new_value)
                             log_syst_down = new_value
                         # sum in quadrature 
                         syst_up_sum     += syst_up**2
@@ -708,11 +708,11 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     # avoid taking log of negative number or 0
                     if log_syst_up <= 0:
                         new_value = abs(ERROR_SYST * p)
-                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_up = {3}. Setting log_syst_up = {4}.".format("search", b, syst, log_syst_up, new_value)
+                        print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_up = {4}. Setting log_syst_up = {5}.".format(era, "search", b, syst, log_syst_up, new_value)
                         log_syst_up = new_value
                     if log_syst_down <= 0:
                         new_value = abs(ERROR_SYST * p)
-                        print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format("search", b, syst, log_syst_down, new_value)
+                        print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_down = {4}. Setting log_syst_down = {5}.".format(era, "search", b, syst, log_syst_down, new_value)
                         log_syst_down = new_value
                     # If both systematics go the same direction, need to symmetrize
                     # Because all the nuisance parameters are log-normal, symmetrize by dividing by the geometric mean
@@ -780,11 +780,11 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                         # avoid taking log of negative number or 0
                         if log_syst_up <= 0:
                             new_value = abs(ERROR_SYST * p)
-                            print "WARNING: For {0} bin {1}, syst {2}: log_syst_up = {3}. Setting log_syst_up = {4}.".format("search", b, syst, log_syst_up, new_value)
+                            print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_up = {4}. Setting log_syst_up = {5}.".format(era, "search", b, syst, log_syst_up, new_value)
                             log_syst_up = new_value
                         if log_syst_down <= 0:
                             new_value = abs(ERROR_SYST * p)
-                            print "WARNING: For {0} bin {1}, syst {2}: log_syst_down = {3}. Setting log_syst_down = {4}.".format("search", b, syst, log_syst_down, new_value)
+                            print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_down = {4}. Setting log_syst_down = {5}.".format(era, "search", b, syst, log_syst_down, new_value)
                             log_syst_down = new_value
                         # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
                         try: 
@@ -900,6 +900,9 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         infoFile.write("{0}  {1}_Down  ave={2:.2f}%, med={3:.2f}%, range=[{4:.2f}%, {5:.2f}%]\n".format("total", syst, ave_down, med_down, min_down, max_down ))
 
         # --- investigate large values
+        print "{0} LENGTH values: {1}".format(era, len(values))
+        print "{0} LENGTH values_up: {1}".format(era, len(values_up))
+        print "{0} LENGTH values_down: {1}".format(era, len(values_down))
         for i in xrange(len(values_up)):
             maxVal = 2.0
             if values_up[i] >= maxVal: 
