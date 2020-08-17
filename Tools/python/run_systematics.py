@@ -556,6 +556,8 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             
             log_syst_up_sum    = 0.0
             log_syst_down_sum  = 0.0
+
+            syst_limit = 1.5
             
             if p != 0:
                 # syst from p, p_up, p_down
@@ -692,7 +694,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                             value_up = 1.0 / value_up
                             #value_up = 1.0 + abs(1.0 - value_up)
                         # set limit of 200% on systematic
-                        if value_up < 3.0:
+                        if value_up < syst_limit:
                             useValUp = True
                     if value_down > 0 and value_down != 1:
                         # take inverse if value is less than 1
@@ -700,7 +702,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                             value_down = 1.0 / value_down
                             #value_down = 1.0 + abs(1.0 - value_down)
                         # set limit of 200% on systematic
-                        if value_down < 3.0:
+                        if value_down < syst_limit:
                             useValDown = True
                     
                     # avoid taking log of negative number or 0
@@ -765,7 +767,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                                 value_up = 1.0 / value_up
                                 #value_up = 1.0 + abs(1.0 - value_up)
                             # set limit of 200% on systematic
-                            if value_up < 3.0:
+                            if value_up < syst_limit:
                                 useValUp = True
                         if value_down > 0 and value_down != 1:
                             # take inverse if value is less than 1
@@ -773,7 +775,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                                 value_down = 1.0 / value_down
                                 #value_down = 1.0 + abs(1.0 - value_down)
                             # set limit of 200% on systematic
-                            if value_down < 3.0:
+                            if value_down < syst_limit:
                                 useValDown = True
                         # avoid taking log of negative number or 0
                         if log_syst_up <= 0:
@@ -864,6 +866,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     medianList = [] 
     infoFile.write("--- systematics ---\n")
     for syst in systValMap:
+        values          = systValMap[syst]["value"]
         values_up       = systValMap[syst]["up"]
         values_down     = systValMap[syst]["down"]
         pred            = systValMap[syst]["pred"]
@@ -875,19 +878,24 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         print "Recording systematic {0}".format(syst)
 
         # get percentages >= 0.0%
+        ave_val  = 100 * np.exp(np.average(values))
         ave_up   = 100 * (np.average(values_up) - 1)
         ave_down = 100 * (np.average(values_down) - 1)
+        med_val  = 100 * np.exp(np.median(values))
         med_up   = 100 * (np.median(values_up) - 1)
         med_down = 100 * (np.median(values_down) - 1)
+        min_val  = 100 * np.exp(min(values))
         min_up   = 100 * (min(values_up) - 1)
         min_down = 100 * (min(values_down) - 1)
+        max_val  = 100 * np.exp(max(values))
         max_up   = 100 * (max(values_up) - 1)
         max_down = 100 * (max(values_down) - 1)
         # list of medians (average over up/down)
         med = np.mean([med_up, med_down])
         medianList.append((syst, med))
         
-        # record average systematic here
+        # record average systematics here
+        infoFile.write("{0}  {1}  ave={2:.2f}%, med={3:.2f}%, range=[{4:.2f}%, {5:.2f}%]\n".format("total", syst, ave_val,   med_val,   min_val,   max_val   ))
         infoFile.write("{0}  {1}_Up    ave={2:.2f}%, med={3:.2f}%, range=[{4:.2f}%, {5:.2f}%]\n".format("total", syst, ave_up,   med_up,   min_up,   max_up   ))
         infoFile.write("{0}  {1}_Down  ave={2:.2f}%, med={3:.2f}%, range=[{4:.2f}%, {5:.2f}%]\n".format("total", syst, ave_down, med_down, min_down, max_down ))
 
@@ -923,7 +931,18 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         
 
     # --- estimate ranges
-    infoFile.write("--- estimated systematic ranges ---\n")
+    infoFile.write("--- estimated systematic ranges (v1) ---\n")
+    for syst in systValMap:
+        values = systValMap[syst]["value"]
+        val_mean = np.mean(values)
+        val_min = min(values)
+        val_max = max(values)
+        low    = 100.0 * np.exp(val_min)
+        high   = 100.0 * np.exp(val_max)
+        center = 100.0 * np.exp(val_mean)
+        infoFile.write("{0:>30}  center = {1:.2f}%, range = {2:.2f}% -- {3:.2f}%\n".format(syst, center, low, high))
+
+    infoFile.write("--- estimated systematic ranges (v2) ---\n")
     for syst in systValMap:
         # Find the mean and standard deviation of the resulting set of numbers.
         # Now report exp(mean - std) and exp(mean + std) as the lower and upper ends of the range.
@@ -939,9 +958,9 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         # integer
         #infoFile.write("{0:>30}  {1:.0f}% -- {2:.0f}%\n".format(syst, low, high))
         
-        #infoFile.write("{0:>30}  center = {1:.0f}%, range = {2:.0f}% -- {3:.0f}%\n".format(syst, center, low, high))
+        infoFile.write("{0:>30}  center = {1:.2f}%, range = {2:.2f}% -- {3:.2f}%\n".format(syst, center, low, high))
         
-        infoFile.write("{0:>30}  ({1:.0f}--{2:.0f}\\%)\n".format(syst, low, high))
+        #infoFile.write("{0:>30}  ({1:.0f}--{2:.0f}\\%)\n".format(syst, low, high))
     
     # --- sort by median, greatest to least
     medianArray = np.array(medianList, dtype=[('x', 'S30'), ('y', float)])
