@@ -1051,7 +1051,12 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         low    = 100.0 * np.exp(val_min)
         high   = 100.0 * np.exp(val_max)
         center = 100.0 * np.exp(val_mean)
-        infoFile.write("{0:>30}  center = {1:.2f}%, range = {2:.2f}% -- {3:.2f}%\n".format(syst, center, low, high))
+        
+        # including center
+        #infoFile.write("{0:>30}  center = {1:.2f}%, range = {2:.2f}% -- {3:.2f}%\n".format(syst, center, low, high))
+        
+        # for paper
+        infoFile.write("{0:>30}  ({1:.0f}--{2:.0f}\\%)\n".format(syst, low, high))
 
     infoFile.write("--- estimated systematic ranges (v2) ---\n")
     for syst in systValMap:
@@ -1069,9 +1074,11 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         # integer
         #infoFile.write("{0:>30}  {1:.0f}% -- {2:.0f}%\n".format(syst, low, high))
         
-        infoFile.write("{0:>30}  center = {1:.2f}%, range = {2:.2f}% -- {3:.2f}%\n".format(syst, center, low, high))
+        # including center
+        #infoFile.write("{0:>30}  center = {1:.2f}%, range = {2:.2f}% -- {3:.2f}%\n".format(syst, center, low, high))
         
-        #infoFile.write("{0:>30}  ({1:.0f}--{2:.0f}\\%)\n".format(syst, low, high))
+        # for paper
+        infoFile.write("{0:>30}  ({1:.0f}--{2:.0f}\\%)\n".format(syst, low, high))
     
     # --- sort by median, greatest to least
     medianArray = np.array(medianList, dtype=[('x', 'S30'), ('y', float)])
