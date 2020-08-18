@@ -131,8 +131,14 @@ def writeToConfFromSyst(era, outFile, binMap, process, syst, h, region, offset, 
         if new_up <= 0:
             new_up = ERROR_SYST
             print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
+        if new_up > 3:
+            new_up = 3
+            print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
         if new_down <= 0:
             new_down = ERROR_SYST
+            print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
+        if new_down > 3:
+            new_down = 3
             print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
 
         outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, final_syst, process, new_up   ) )
@@ -173,8 +179,14 @@ def writeToConfFromPred(era, outFile, infoFile, binMap, process, syst, h, h_up, 
         if new_up <= 0:
             new_up = ERROR_SYST
             print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
+        if new_up > 3:
+            new_up = 3
+            print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
         if new_down <= 0:
             new_down = ERROR_SYST
+            print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
+        if new_down > 3:
+            new_down = 3
             print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
         # make both up and down variations >= 1.0 independent of direction
         values_up.append(np.exp(abs(np.log(new_up))))
