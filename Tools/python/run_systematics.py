@@ -579,7 +579,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             log_syst_up_sum    = 0.0
             log_syst_down_sum  = 0.0
 
-            syst_limit = 1.5
+            syst_limit = 3.0
             
             # pred != 0 
             if p != 0:
