@@ -141,6 +141,9 @@ def writeToConfFromSyst(era, outFile, binMap, process, syst, h, region, offset, 
             new_down = 3
             print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
 
+        # fix largely asymmetric systematics
+        new_up, new_down = fixAsymmetry(new_up, new_down)
+
         outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, final_syst, process, new_up   ) )
         outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, final_syst, process, new_down ) )
 
@@ -188,6 +191,9 @@ def writeToConfFromPred(era, outFile, infoFile, binMap, process, syst, h, h_up, 
         if new_down > 3:
             new_down = 3
             print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
+        # fix largely asymmetric systematics
+        new_up, new_down = fixAsymmetry(new_up, new_down)
+        
         # make both up and down variations >= 1.0 independent of direction
         values_up.append(np.exp(abs(np.log(new_up))))
         values_down.append(np.exp(abs(np.log(new_down))))
@@ -263,6 +269,31 @@ def symmetrizeSyst(h, h_up, h_down):
                 else:
                     h_up.SetBinContent(   i, p - ave_diff)
                     h_down.SetBinContent( i, p + ave_diff)
+
+# modify largely one-sided systematics
+# use the value of the smaller systematic
+def fixAsymmetry(r_up, r_down):
+    new_up   = r_up
+    new_down = r_down
+    # address large asymmetry
+    log_up   = np.log(new_up)
+    log_down = np.log(new_down)
+    diff_logs = abs(abs(log_up) - abs(log_down))
+    if diff_logs > 0.35:
+        # find if up or down variation is larger
+        tmp_up   = r_up
+        tmp_down = r_down
+        if tmp_up < 1.0:
+            tmp_up = 1.0 / tmp_up
+        if tmp_down < 1.0:
+            tmp_down = 1.0 / tmp_down
+        if tmp_up > tmp_down:
+            # up variation is larger
+            new_up = 1.0 / r_down
+        else:
+            # down variation is larger
+            new_down = 1.0 / r_up
+    return new_up, new_down
 
 # Total systematics function which can run on validaiton, MET study, search bins, CR unit bins, etc.
 
@@ -713,7 +744,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     useValDown      = False
                     if value_up > 0 and value_up != 1:
                         # take inverse if value is less than 1
-                        if value_up < 1:
+                        if value_up < 1.0:
                             value_up = 1.0 / value_up
                             #value_up = 1.0 + abs(1.0 - value_up)
                         # set limit of 200% on systematic
@@ -721,7 +752,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                             useValUp = True
                     if value_down > 0 and value_down != 1:
                         # take inverse if value is less than 1
-                        if value_down < 1:
+                        if value_down < 1.0:
                             value_down = 1.0 / value_down
                             #value_down = 1.0 + abs(1.0 - value_down)
                         # set limit of 200% on systematic
@@ -786,7 +817,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                         useValDown      = False
                         if value_up > 0 and value_up != 1:
                             # take inverse if value is less than 1
-                            if value_up < 1:
+                            if value_up < 1.0:
                                 value_up = 1.0 / value_up
                                 #value_up = 1.0 + abs(1.0 - value_up)
                             # set limit of 200% on systematic
@@ -794,7 +825,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                                 useValUp = True
                         if value_down > 0 and value_down != 1:
                             # take inverse if value is less than 1
-                            if value_down < 1:
+                            if value_down < 1.0:
                                 value_down = 1.0 / value_down
                                 #value_down = 1.0 + abs(1.0 - value_down)
                             # set limit of 200% on systematic
