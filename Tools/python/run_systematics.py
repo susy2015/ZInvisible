@@ -752,29 +752,9 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                         p_down_error = getMultiplicationErrorList(shapeAndMC, x_list, dx_list)
                         p_down_error = getConstantMultiplicationError(norm, p_down_error)
 
+                    # --- ratios --- #
                     log_syst_up     = p_up / p
                     log_syst_down   = p_down / p
-                    # values to estimate systematic ranges
-                    value_up        = log_syst_up
-                    value_down      = log_syst_down
-                    useValUp        = False
-                    useValDown      = False
-                    if value_up > 0 and value_up != 1:
-                        # take inverse if value is less than 1
-                        if value_up < 1.0:
-                            value_up = 1.0 / value_up
-                            #value_up = 1.0 + abs(1.0 - value_up)
-                        # set limit of 200% on systematic
-                        if value_up < syst_limit:
-                            useValUp = True
-                    if value_down > 0 and value_down != 1:
-                        # take inverse if value is less than 1
-                        if value_down < 1.0:
-                            value_down = 1.0 / value_down
-                            #value_down = 1.0 + abs(1.0 - value_down)
-                        # set limit of 200% on systematic
-                        if value_down < syst_limit:
-                            useValDown = True
                     
                     # avoid taking log of negative number or 0
                     if log_syst_up <= 0:
@@ -806,6 +786,29 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                             log_syst_down_sum   += np.log(log_syst_up)**2
                     except:
                         print "ERROR for np.log(), location 1: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
+                    
+                    # --- values to estimate systematic ranges --- #
+                    value_up        = log_syst_up
+                    value_down      = log_syst_down
+                    useValUp        = False
+                    useValDown      = False
+                    if value_up > 0 and value_up != 1:
+                        # take inverse if value is less than 1
+                        if value_up < 1.0:
+                            value_up = 1.0 / value_up
+                            #value_up = 1.0 + abs(1.0 - value_up)
+                        # set limit of 200% on systematic
+                        if value_up < syst_limit:
+                            useValUp = True
+                    if value_down > 0 and value_down != 1:
+                        # take inverse if value is less than 1
+                        if value_down < 1.0:
+                            value_down = 1.0 / value_down
+                            #value_down = 1.0 + abs(1.0 - value_down)
+                        # set limit of 200% on systematic
+                        if value_down < syst_limit:
+                            useValDown = True
+                    
                     # make both up and down variations >= 1.0 independent of direction
                     systValMap[syst]["up"].append(np.exp(abs(np.log(log_syst_up))))
                     systValMap[syst]["down"].append(np.exp(abs(np.log(log_syst_down))))
