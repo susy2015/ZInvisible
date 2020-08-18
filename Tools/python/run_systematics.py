@@ -795,16 +795,16 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     if value_up > 0 and value_up != 1:
                         # take inverse if value is less than 1
                         if value_up < 1.0:
-                            value_up = 1.0 / value_up
-                            #value_up = 1.0 + abs(1.0 - value_up)
+                            value_up = 1.0 + abs(1.0 - value_up)
+                            #value_up = 1.0 / value_up
                         # set limit of 200% on systematic
                         if value_up < syst_limit:
                             useValUp = True
                     if value_down > 0 and value_down != 1:
                         # take inverse if value is less than 1
                         if value_down < 1.0:
-                            value_down = 1.0 / value_down
-                            #value_down = 1.0 + abs(1.0 - value_down)
+                            value_down = 1.0 + abs(1.0 - value_down)
+                            #value_down = 1.0 / value_down
                         # set limit of 200% on systematic
                         if value_down < syst_limit:
                             useValDown = True
@@ -840,16 +840,16 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                         if value_up > 0 and value_up != 1:
                             # take inverse if value is less than 1
                             if value_up < 1.0:
-                                value_up = 1.0 / value_up
-                                #value_up = 1.0 + abs(1.0 - value_up)
+                                value_up = 1.0 + abs(1.0 - value_up)
+                                #value_up = 1.0 / value_up
                             # set limit of 200% on systematic
                             if value_up < syst_limit:
                                 useValUp = True
                         if value_down > 0 and value_down != 1:
                             # take inverse if value is less than 1
                             if value_down < 1.0:
-                                value_down = 1.0 / value_down
-                                #value_down = 1.0 + abs(1.0 - value_down)
+                                value_down = 1.0 + abs(1.0 - value_down)
+                                #value_down = 1.0 / value_down
                             # set limit of 200% on systematic
                             if value_down < syst_limit:
                                 useValDown = True
