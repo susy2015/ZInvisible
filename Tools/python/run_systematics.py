@@ -123,12 +123,20 @@ def writeToConfFromSyst(outFile, binMap, process, syst, h, region, offset, selec
         
         # systematic error is stored in bin content
         # treat error as symmetric
-        error   = h.GetBinContent(i)
-        r_up   = 1 + error 
-        r_down = 1 - error 
+        error    = h.GetBinContent(i)
+        r_up     = 1 + error 
+        r_down   = 1 - error 
+        new_up   = r_up
+        new_down = r_down
+        if new_up <= 0:
+            new_up = ERROR_SYST
+            print "WARNING: DATACARD: bin {0}, {1}: {2}, {3}, r_up = {4}, setting to {5}".format(sb_i, sb_name, process, syst, r_up, new_up)
+        if new_down <= 0:
+            new_down = ERROR_SYST
+            print "WARNING: DATACARD: bin {0}, {1}: {2}, {3}, r_up = {4}, setting to {5}".format(sb_i, sb_name, process, syst, r_up, new_up)
 
-        outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, final_syst, process, r_up   ) )
-        outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, final_syst, process, r_down ) )
+        outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, final_syst, process, new_up   ) )
+        outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, final_syst, process, new_down ) )
 
 # use prediction, syst up/down histograms
 # syst name is "syst for conf" name from systematics.json
