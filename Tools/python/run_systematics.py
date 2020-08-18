@@ -552,13 +552,14 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             
             p  = p1
 
-            print "PREDICTION search bin {0}: {1}, {2}, {3}".format(b, p1, p2, isclose(p1, p2, rel_tol=1e-06))
+            print "PREDICTION {0} search bin {1}: {2}, {3}, {4}".format(era, b, p1, p2, isclose(p1, p2, rel_tol=1e-06))
             
             log_syst_up_sum    = 0.0
             log_syst_down_sum  = 0.0
 
             syst_limit = 1.5
             
+            # pred != 0 
             if p != 0:
                 # syst from p, p_up, p_down
                 for syst in systematics_map:
@@ -810,6 +811,38 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                             systValMap[syst]["value"].append(np.log(value_up - 1))
                         if useValDown:
                             systValMap[syst]["value"].append(np.log(value_down - 1))
+
+            # pred = 0 
+            else:
+                # For pred = 0,  
+                # still add values to systValMap to maintain bin numbers; all bins included
+
+                for syst in systematics_map:
+                    systValMap[syst]["up"].append(1.0)
+                    systValMap[syst]["down"].append(1.0)
+                    systValMap[syst]["pred"].append(p)
+                    systValMap[syst]["pred_error"].append(p_error)
+                    systValMap[syst]["pred_up"].append(p)
+                    systValMap[syst]["pred_up_error"].append(p_error)
+                    systValMap[syst]["pred_down"].append(p)
+                    systValMap[syst]["pred_down_error"].append(p_error)
+                
+                # these syst. are only available when doing Run 2
+                if doRun2:
+                    # syst from root file
+                    #systHistoMap[bintype][region][syst]
+                    for syst in systHistoMap["search"][region]:
+                        systValMap[syst]["up"].append(1.0)
+                        systValMap[syst]["down"].append(1.0)
+                        systValMap[syst]["pred"].append(p)
+                        systValMap[syst]["pred_error"].append(p_error)
+                        systValMap[syst]["pred_up"].append(p)
+                        systValMap[syst]["pred_up_error"].append(p_error)
+                        systValMap[syst]["pred_down"].append(p)
+                        systValMap[syst]["pred_down_error"].append(p_error)
+            
+
+
 
             log_syst_up_total   = np.exp( np.sqrt(log_syst_up_sum))
             log_syst_down_total = np.exp(-np.sqrt(log_syst_down_sum)) # Minus sign is needed because this is the *down* ratio
