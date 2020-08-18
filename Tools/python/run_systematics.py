@@ -407,10 +407,7 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                     syst_down_sum   += syst_down**2
                     # If both systematics go the same direction, need to symmetrize
                     # Because all the nuisance parameters are log-normal, symmetrize by dividing by the geometric mean
-                    if ((log_syst_up > 1) and (log_syst_down > 1)) or ((log_syst_up < 1) and (log_syst_down < 1)):
-                        geometric_mean = np.sqrt(log_syst_up * log_syst_down)
-                        log_syst_up   /= geometric_mean
-                        log_syst_down /= geometric_mean
+                    log_syst_up, log_syst_down = fixSameDirection(log_syst_up, log_syst_down)
                     # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
                     # Sum (the square of the log of) all the ratios that are greater than 1
                     # Sum (the square of the log of) all the ratios that are less than 1
@@ -785,10 +782,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                         log_syst_down = new_value
                     # If both systematics go the same direction, need to symmetrize
                     # Because all the nuisance parameters are log-normal, symmetrize by dividing by the geometric mean
-                    if ((log_syst_up > 1) and (log_syst_down > 1)) or ((log_syst_up < 1) and (log_syst_down < 1)):
-                        geometric_mean = np.sqrt(log_syst_up * log_syst_down)
-                        log_syst_up   /= geometric_mean
-                        log_syst_down /= geometric_mean
+                    log_syst_up, log_syst_down = fixSameDirection(log_syst_up, log_syst_down)
                     # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
                     # Sum (the square of the log of) all the ratios that are greater than 1
                     # Sum (the square of the log of) all the ratios that are less than 1
