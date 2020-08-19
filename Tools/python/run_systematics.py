@@ -203,13 +203,13 @@ def writeToConfFromPred(era, outFile, infoFile, binMap, process, syst, h, h_up, 
         new_up, new_down = fixSameDirection(new_up, new_down)
 
         # check for large statistical uncertainties
-        if p > 0 and p_error > 0 and p_error / p > 0.9:  
+        if p > 0 and p_error > 0 and p_error / p > 0.9:
             if new_up != 1.0:
                 new_up   = 1.0
-                print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
+                print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}; nominal = {7}, stat_unc = {8}, stat_unc/nominal = {9}".format(era, sb_i, sb_name, process, syst, r_up, new_up, p, p_error, p_error / p)
             if new_down != 1.0:
                 new_down   = 1.0
-                print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
+                print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}; nominal = {7}, stat_unc = {8}, stat_unc/nominal = {9}".format(era, sb_i, sb_name, process, syst, r_down, new_down, p, p_error, p_error / p)
         
         # make both up and down variations >= 1.0 independent of direction
         values_up.append(np.exp(abs(np.log(new_up))))
@@ -805,7 +805,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     useValUp        = False
                     useValDown      = False
                     # check for large statistical uncertainties
-                    if p > 0 and p_error > 0 and p_error / p > 0.9:  
+                    if p > 0 and p_error > 0 and p_error / p > 0.9:
                         value_up   = 1.0
                         value_down = 1.0
                     if value_up > 0 and value_up != 1:
