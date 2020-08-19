@@ -124,8 +124,8 @@ def writeToConfFromSyst(era, outFile, binMap, process, syst, h, region, offset, 
         # systematic error is stored in bin content
         # treat error as symmetric
         error    = h.GetBinContent(i)
-        r_up     = 1 + error 
-        r_down   = 1 - error 
+        r_up     = 1.0 + error 
+        r_down   = 1.0 - error 
         new_up   = r_up
         new_down = r_down
         if new_up <= 0:
@@ -157,14 +157,17 @@ def writeToConfFromPred(era, outFile, infoFile, binMap, process, syst, h, h_up, 
     values_down = []
     for i in xrange(1, nBins + 1):
         sb_i = i - 1 + offset
-        sb_name = binMap[str(sb_i)]
-        p       = h.GetBinContent(i)
-        p_up    = h_up.GetBinContent(i)
-        p_down  = h_down.GetBinContent(i)
+        sb_name      = binMap[str(sb_i)]
+        p            = h.GetBinContent(i)
+        p_up         = h_up.GetBinContent(i)
+        p_down       = h_down.GetBinContent(i)
+        p_error      = h.GetBinError(i)
+        p_up_error   = h_up.GetBinError(i)
+        p_down_error = h_down.GetBinError(i)
         # If there is a zero prediction for nominal, up, and down can you set the systematic to 1.
         # The error is a deviation from 1.
-        r_up   = 1
-        r_down = 1
+        r_up   = 1.0
+        r_down = 1.0
         # do not apply SB syst in high dm
         if not (region == "highdm" and syst == "ivfunc"):
             if p != 0:
@@ -198,6 +201,15 @@ def writeToConfFromPred(era, outFile, infoFile, binMap, process, syst, h, h_up, 
         # Next fix same direction systematics
         new_up, new_down = fixAsymmetry(new_up, new_down)
         new_up, new_down = fixSameDirection(new_up, new_down)
+
+        # check for large statistical uncertainties
+        if p > 0 and p_error > 0 and p_error / p > 0.9:  
+            if new_up != 1.0:
+                new_up   = 1.0
+                print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
+            if new_down != 1.0:
+                new_down   = 1.0
+                print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
         
         # make both up and down variations >= 1.0 independent of direction
         values_up.append(np.exp(abs(np.log(new_up))))
@@ -1012,7 +1024,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         print "{0} LENGTH values_up: {1}".format(era, len(values_up))
         print "{0} LENGTH values_down: {1}".format(era, len(values_down))
         for i in xrange(len(values_up)):
-            maxVal = 2.0
+            maxVal = 1.5
             if values_up[i] >= maxVal: 
                 print "LargeSyst: {0}, {1}, bin {2}, pred = {3} +/- {4}, pred_up = {5} +/- {6}, syst_up = {7}".format(era, syst, i, pred[i], pred_error[i], pred_up[i], pred_up_error[i], values_up[i])
             if values_down[i] >= maxVal: 
