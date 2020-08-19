@@ -176,11 +176,6 @@ def writeToConfFromPred(era, outFile, infoFile, binMap, process, syst, h, h_up, 
             else:
                 print "WARNING: pred = 0 for bin {0}".format(sb_i)
         
-        # syst is already systForConf (systForConf = systMap[syst]["name"])
-        # investigate jes
-        #if process == "znunu" and syst == "JES":
-        #    print "SEARCH_BIN_{0}  {1}  {2}  {3}: nominal={4}, up={5}, down={6}".format(sb_i, sb_name, syst, process, p, p_up, p_down)
-        
         # avoid taking log of negative number or 0
         new_up   = r_up
         new_down = r_down
@@ -214,8 +209,6 @@ def writeToConfFromPred(era, outFile, infoFile, binMap, process, syst, h, h_up, 
         # make both up and down variations >= 1.0 independent of direction
         values_up.append(np.exp(abs(np.log(new_up))))
         values_down.append(np.exp(abs(np.log(new_down))))
-        #values_up.append(r_up)
-        #values_down.append(r_down)
         
         outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, process, new_up   ) )
         outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, process, new_down ) )
@@ -270,8 +263,7 @@ def symmetrizeSyst(h, h_up, h_down):
                 # using geometric mean
                 if Aup * Adown < 0:
                     print "WARNING: Aup * Adown = {0}, about to take square root.".format(Aup * Adown)
-                #geometric_mean = np.sqrt(Aup * Adown)
-                # HACK to avoid negative values
+                # HACK: use abs() to avoid negative values
                 geometric_mean = np.sqrt(abs(Aup * Adown))
                 Aup     /= geometric_mean
                 Adown   /= geometric_mean
@@ -438,9 +430,6 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                             log_syst_down_sum   += np.log(log_syst_up)**2
                     except:
                         print "ERROR for np.log(), location 1: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
-                    # check leading systematic for bin 61
-                    # if b == "61":
-                    #     print "BIN_61: {0} up={1}, down={2}".format(syst, log_syst_up, log_syst_down)
                 # these syst. are only available when doing Run 2
                 if doRun2:
                     # syst from root file
@@ -626,7 +615,6 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             photon_data_mc_norm = SearchBinObject.binValues[era][b]["photon_data_mc_norm"]
             znunu_mc            = SearchBinObject.binValues[era][b]["mc"]
             znunu_mc_error      = SearchBinObject.binValues[era][b]["mc_error"]
-            #znunu_mc            = histo["search"][region][""].GetBinContent(b_i) 
             
             p1 = shape * norm * znunu_mc
             p2 = SearchBinObject.binValues[era][b]["pred"]
@@ -698,12 +686,6 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     
                     data_total              = sum(data_list)
                     data_total_error        = getAdditionErrorList(data_error_list) 
-                    
-                    # sum without cutoff
-                    #gjets_up_total   = sum(gjets_up_list)
-                    #gjets_down_total = sum(gjets_down_list)
-                    #back_up_total    = sum(back_up_list)
-                    #back_down_total  = sum(back_down_list)
                     
                     # for values <= 0, use 0.000001
                     cutoff = 0.000001
@@ -1515,6 +1497,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
 
