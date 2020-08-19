@@ -804,6 +804,10 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     value_down      = log_syst_down
                     useValUp        = False
                     useValDown      = False
+                    # check for large statistical uncertainties
+                    if p > 0 and p_error > 0 and p_error / p > 0.9:  
+                        value_up   = 1.0
+                        value_down = 1.0
                     if value_up > 0 and value_up != 1:
                         # take inverse if value is less than 1
                         if value_up < 1.0:
