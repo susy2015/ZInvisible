@@ -562,19 +562,8 @@ class ValidationBins(Common):
         self.binValues[era] = {}
         
         for b in self.all_bins:
-            region      = self.bins[b]["region"]
-            selection   = self.bins[b]["selection"]
-            met         = self.bins[b]["met"]
-            # remove cuts from selection for norm and shape
-            selection_norm  = removeCuts(selection, ["NJ"])
-            selection_shape = removeCuts(selection, ["NSV", "MET"])
             self.binValues[era][b] = {}
-            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z"]
-            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z_error"]
-            self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["validation"][region][selection_shape][met]
-            self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["validation"][region][selection_shape][met + "_error"]
-            self.binValues[era][b]["photon_data_mc_norm"]   = self.S.shape_map[era]["validation"][region][selection_shape]["photon_data_mc_norm"]
-
+        
         # Z to NuNu histograms
         # central value
         # TDirectoryFile*     nValidationBinLowDM_jetpt30 nValidationBinLowDM_jetpt30
@@ -624,6 +613,19 @@ class ValidationBins(Common):
         
         # set bin values 
         self.setBinValues(b_map, h_map, era)
+        
+        for b in self.all_bins:
+            region      = self.bins[b]["region"]
+            selection   = self.bins[b]["selection"]
+            met         = self.bins[b]["met"]
+            # remove cuts from selection for norm and shape
+            selection_norm  = removeCuts(selection, ["NJ"])
+            selection_shape = removeCuts(selection, ["NSV", "MET"])
+            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z"]
+            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z_error"]
+            self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["validation"][region][selection_shape][met]
+            self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["validation"][region][selection_shape][met + "_error"]
+            self.binValues[era][b]["photon_data_mc_norm"]   = self.S.shape_map[era]["validation"][region][selection_shape]["photon_data_mc_norm"]
 
         # new root file to save validation bin histograms
         new_file = self.results_dir + "validationBinsZinv_" + era + ".root"
@@ -663,18 +665,7 @@ class ValidationBinsMETStudy(Common):
         self.binValues[era] = {}
         
         for b in self.all_bins:
-            region      = self.bins[b]["region"]
-            selection   = self.bins[b]["selection"]
-            met         = self.bins[b]["met"]
-            # remove cuts from selection for norm and shape
-            selection_norm  = removeCuts(selection, ["NJ"])
-            selection_shape = removeCuts(selection, ["NSV", "MET"])
             self.binValues[era][b] = {}
-            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z"]
-            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z_error"]
-            self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met]
-            self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met + "_error"]
-            self.binValues[era][b]["photon_data_mc_norm"]   = self.S.shape_map[era]["validationMetStudy"][region][selection_shape]["photon_data_mc_norm"]
 
         # --- new (for MET study) --- #
         # "nValidationBinLowDM_METStudy_jetpt30/MET_nValidationBin_LowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30Data MET Validation Bin Low DM MET Studydata"
@@ -719,6 +710,19 @@ class ValidationBinsMETStudy(Common):
         
         # set bin values 
         self.setBinValues(b_map, h_map, era)
+        
+        for b in self.all_bins:
+            region      = self.bins[b]["region"]
+            selection   = self.bins[b]["selection"]
+            met         = self.bins[b]["met"]
+            # remove cuts from selection for norm and shape
+            selection_norm  = removeCuts(selection, ["NJ"])
+            selection_shape = removeCuts(selection, ["NSV", "MET"])
+            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z"]
+            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z_error"]
+            self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met]
+            self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met + "_error"]
+            self.binValues[era][b]["photon_data_mc_norm"]   = self.S.shape_map[era]["validationMetStudy"][region][selection_shape]["photon_data_mc_norm"]
 
         # new root file to save validation bin histograms
         new_file = self.results_dir + "validationBinsMETStudyZinv_" + era + ".root"
@@ -760,75 +764,7 @@ class SearchBins(Common):
         self.binValues[era] = {}
         
         for b in self.all_bins:
-            region      = self.bins[b]["region"]
-            selection   = self.bins[b]["selection"]
-            met         = self.bins[b]["met"]
-            # remove cuts from selection for norm and shape
-            selection_norm  = removeCuts(selection, ["NJ"])
-            selection_shape = removeCuts(selection, ["NSV", "MET"])
-            if self.verbose:
-                print "{0}: {1} {2} {3} {4}".format(b, region, selection_norm, selection_shape, met)
             self.binValues[era][b] = {}
-            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["search"]["Combined"][region][selection_norm]["R_Z"]
-            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["search"]["Combined"][region][selection_norm]["R_Z_error"]
-            photon_data_mc_norm                             = self.S.shape_map[era]["search"][region][selection_shape]["photon_data_mc_norm"]
-            self.binValues[era][b]["photon_data_mc_norm"]   = photon_data_mc_norm
-            
-            if CRunits:
-                # ---------------------------------------- # 
-                # - Use CR unit bins to get shape factor - #
-                # ---------------------------------------- # 
-                
-                # Shape factor: 
-                # S = sum(data) / (Q * sum(MC))
-                # Q = photon Data/MC normalization from MET histograms
-
-                # get CR unit bins for this search bin
-                cr_units = self.unitMap["unitBinMapCR_phocr"][b]
-                # add up data and mc yields in CR units for this search bin
-                data_list           = [CRunits.binValues[era][cr]["data"]           for cr in cr_units]
-                data_error_list     = [CRunits.binValues[era][cr]["data_error"]     for cr in cr_units]
-                mc_gjets_list       = [CRunits.binValues[era][cr]["mc_gjets"]       for cr in cr_units]
-                mc_gjets_error_list = [CRunits.binValues[era][cr]["mc_gjets_error"] for cr in cr_units]
-                mc_back_list        = [CRunits.binValues[era][cr]["mc_back"]        for cr in cr_units]
-                mc_back_error_list  = [CRunits.binValues[era][cr]["mc_back_error"]  for cr in cr_units]
-                total_data          = sum(data_list)
-                total_mc            = sum(mc_gjets_list + mc_back_list)
-                den                 = photon_data_mc_norm * total_mc 
-                total_data_error    = getAdditionErrorList(data_error_list)
-                total_mc_error      = getAdditionErrorList(mc_gjets_error_list + mc_back_error_list)
-                den_error           = getConstantMultiplicationError(photon_data_mc_norm, total_mc_error)
-                
-                # get shape and shape error
-                shape_cr        = -999
-                shape_cr_error  = -999
-                # avoid dividing by 0
-                if den > 0:
-                    # S = sum(data) / (Q * sum(MC))
-                    shape_cr = total_data / den
-                else:
-                    print "ERROR: Era: {0} Search bin {1}: MC <= 0: data = {2}, mc = {3}".format(era, b, total_data, den)
-                # error propagation
-                # check for 0 data
-                if total_data <= 0:
-                    # use garwood interval for 0
-                    # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PoissonErrorBars
-                    # https://hypernews.cern.ch/HyperNews/CMS/get/SUS-19-003/103/1/1/1/1/1/1.html
-                    # -ln((1-0.68)/2) = 1.8325814637483102
-                    shape_cr_error = 1.83 / den
-                    print "WARNING: Era: {0} Search bin {1}: NO DATA: data = {2}, mc = {3}, shape_cr = {4} +{5} -0.0".format(era, b, total_data, den, shape_cr, shape_cr_error)
-                else:
-                    # getMultiplicationError(q, x, dx, y, dy)
-                    shape_cr_error  = getMultiplicationError(shape_cr, total_data, total_data_error, den, den_error)
-                    if shape_cr_error < 0:
-                        print "ERROR: Era: {0} Search bin {1}: data = {2}, mc = {3}, shape_cr = {4} +/- {5}".format(era, b, total_data, den, shape_cr, shape_cr_error)
-
-                self.binValues[era][b]["shape"]                 = shape_cr 
-                self.binValues[era][b]["shape_error"]           = shape_cr_error
-            else:
-                # use MET histograms if CR unit bins are not provided
-                self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["search"][region][selection_shape][met]
-                self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["search"][region][selection_shape][met + "_error"]
         
         # Z to NuNu MC histograms
         variable_lowdm  = "nSearchBinLowDM_jetpt30" 
@@ -856,6 +792,98 @@ class SearchBins(Common):
         
         # set bin values 
         self.setBinValues(b_map, h_map, era)
+        
+        for b in self.all_bins:
+            region      = self.bins[b]["region"]
+            selection   = self.bins[b]["selection"]
+            met         = self.bins[b]["met"]
+            # remove cuts from selection for norm and shape
+            selection_norm  = removeCuts(selection, ["NJ"])
+            selection_shape = removeCuts(selection, ["NSV", "MET"])
+            if self.verbose:
+                print "{0}: {1} {2} {3} {4}".format(b, region, selection_norm, selection_shape, met)
+            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["search"]["Combined"][region][selection_norm]["R_Z"]
+            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["search"]["Combined"][region][selection_norm]["R_Z_error"]
+            photon_data_mc_norm                             = self.S.shape_map[era]["search"][region][selection_shape]["photon_data_mc_norm"]
+            self.binValues[era][b]["photon_data_mc_norm"]   = photon_data_mc_norm
+            
+            if CRunits:
+                # ---------------------------------------- # 
+                # - Use CR unit bins to get shape factor - #
+                # ---------------------------------------- # 
+                
+                # Shape factor: 
+                # S = sum(data) / (Q * sum(MC))
+                # Q = photon Data/MC normalization from MET histograms
+
+                # get Z nunu to define transfer factor (TF)
+                znunu               = self.binValues[era][b]["mc"]
+                znunu_error         = self.binValues[era][b]["mc_error"]
+                # get CR unit bins for this search bin
+                cr_units = self.unitMap["unitBinMapCR_phocr"][b]
+                # add up data and mc yields in CR units for this search bin
+                data_list           = [CRunits.binValues[era][cr]["data"]           for cr in cr_units]
+                data_error_list     = [CRunits.binValues[era][cr]["data_error"]     for cr in cr_units]
+                mc_gjets_list       = [CRunits.binValues[era][cr]["mc_gjets"]       for cr in cr_units]
+                mc_gjets_error_list = [CRunits.binValues[era][cr]["mc_gjets_error"] for cr in cr_units]
+                mc_back_list        = [CRunits.binValues[era][cr]["mc_back"]        for cr in cr_units]
+                mc_back_error_list  = [CRunits.binValues[era][cr]["mc_back_error"]  for cr in cr_units]
+                total_data          = sum(data_list)
+                total_mc            = sum(mc_gjets_list + mc_back_list)
+                den                 = photon_data_mc_norm * total_mc 
+                total_data_error    = getAdditionErrorList(data_error_list)
+                total_mc_error      = getAdditionErrorList(mc_gjets_error_list + mc_back_error_list)
+                den_error           = getConstantMultiplicationError(photon_data_mc_norm, total_mc_error)
+                
+                # get shape, shape error and transfer factor (TF)
+                shape_cr                = -999
+                shape_cr_error          = -999
+                TF_withoutPhoNorm       = -999
+                TF_withoutPhoNorm_error = -999
+                TF_withPhoNorm          = -999
+                TF_withPhoNorm_error    = -999
+                # avoid dividing by 0
+                if den > 0:
+                    # S = sum(data) / (Q * sum(MC))
+                    shape_cr = total_data / den
+                    TF_withoutPhoNorm = znunu / total_mc
+                    TF_withPhoNorm    = znunu / den
+                    # getMultiplicationError(q, x, dx, y, dy)
+                    TF_withoutPhoNorm_error = getMultiplicationError(TF_withoutPhoNorm, znunu, znunu_error, total_mc, total_mc_error)
+                    TF_withPhoNorm_error    = getMultiplicationError(TF_withPhoNorm, znunu, znunu_error, den, den_error)
+                else:
+                    print "ERROR for shape factor: Era: {0} Search bin {1}: photon MC <= 0: data = {2}, mc = {3}".format(era, b, total_data, den)
+                # error propagation
+                # check for 0 data
+                if total_data <= 0:
+                    # use garwood interval for 0
+                    # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PoissonErrorBars
+                    # https://hypernews.cern.ch/HyperNews/CMS/get/SUS-19-003/103/1/1/1/1/1/1.html
+                    # -ln((1-0.68)/2) = 1.8325814637483102
+                    total_data_error = 1.83
+                    shape_cr_error   = 1.83 / den
+                    print "WARNING: Era: {0} Search bin {1}: NO DATA: data = {2}, mc = {3}, shape_cr = {4} +{5} -0.0".format(era, b, total_data, den, shape_cr, shape_cr_error)
+                else:
+                    # getMultiplicationError(q, x, dx, y, dy)
+                    shape_cr_error  = getMultiplicationError(shape_cr, total_data, total_data_error, den, den_error)
+                    if shape_cr_error < 0:
+                        print "ERROR: Era: {0} Search bin {1}: data = {2}, mc = {3}, shape_cr = {4} +/- {5}".format(era, b, total_data, den, shape_cr, shape_cr_error)
+
+                self.binValues[era][b]["shape"]                     = shape_cr 
+                self.binValues[era][b]["shape_error"]               = shape_cr_error
+                self.binValues[era][b]["TF_withoutPhoNorm"]         = TF_withoutPhoNorm
+                self.binValues[era][b]["TF_withoutPhoNorm_error"]   = TF_withoutPhoNorm_error
+                self.binValues[era][b]["TF_withPhoNorm"]            = TF_withPhoNorm
+                self.binValues[era][b]["TF_withPhoNorm_error"]      = TF_withPhoNorm_error
+                self.binValues[era][b]["photon_data"]               = total_data
+                self.binValues[era][b]["photon_mc"]                 = total_mc
+                self.binValues[era][b]["photon_data_error"]         = total_data_error
+                self.binValues[era][b]["photon_mc_error"]           = total_mc_error
+            else:
+                # use MET histograms if CR unit bins are not provided
+                self.binValues[era][b]["shape"]             = self.S.shape_map[era]["search"][region][selection_shape][met]
+                self.binValues[era][b]["shape_error"]       = self.S.shape_map[era]["search"][region][selection_shape][met + "_error"]
+        
 
         # For Run2, also create file with useRzPerYear
         # WARNING: this sets the prediction value; overwrite this later if you don't want to keep this value

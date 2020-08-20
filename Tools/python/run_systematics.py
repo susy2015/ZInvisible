@@ -176,11 +176,6 @@ def writeToConfFromPred(era, outFile, infoFile, binMap, process, syst, h, h_up, 
             else:
                 print "WARNING: pred = 0 for bin {0}".format(sb_i)
         
-        # syst is already systForConf (systForConf = systMap[syst]["name"])
-        # investigate jes
-        #if process == "znunu" and syst == "JES":
-        #    print "SEARCH_BIN_{0}  {1}  {2}  {3}: nominal={4}, up={5}, down={6}".format(sb_i, sb_name, syst, process, p, p_up, p_down)
-        
         # avoid taking log of negative number or 0
         new_up   = r_up
         new_down = r_down
@@ -214,8 +209,6 @@ def writeToConfFromPred(era, outFile, infoFile, binMap, process, syst, h, h_up, 
         # make both up and down variations >= 1.0 independent of direction
         values_up.append(np.exp(abs(np.log(new_up))))
         values_down.append(np.exp(abs(np.log(new_down))))
-        #values_up.append(r_up)
-        #values_down.append(r_down)
         
         outFile.write("{0}  {1}_Up    {2}  {3}\n".format( sb_name, syst, process, new_up   ) )
         outFile.write("{0}  {1}_Down  {2}  {3}\n".format( sb_name, syst, process, new_down ) )
@@ -270,8 +263,7 @@ def symmetrizeSyst(h, h_up, h_down):
                 # using geometric mean
                 if Aup * Adown < 0:
                     print "WARNING: Aup * Adown = {0}, about to take square root.".format(Aup * Adown)
-                #geometric_mean = np.sqrt(Aup * Adown)
-                # HACK to avoid negative values
+                # HACK: use abs() to avoid negative values
                 geometric_mean = np.sqrt(abs(Aup * Adown))
                 Aup     /= geometric_mean
                 Adown   /= geometric_mean
@@ -438,9 +430,6 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                             log_syst_down_sum   += np.log(log_syst_up)**2
                     except:
                         print "ERROR for np.log(), location 1: syst = {0}, log_syst_up = {1}, log_syst_down = {2}".format(syst, log_syst_up, log_syst_down)
-                    # check leading systematic for bin 61
-                    # if b == "61":
-                    #     print "BIN_61: {0} up={1}, down={2}".format(syst, log_syst_up, log_syst_down)
                 # these syst. are only available when doing Run 2
                 if doRun2:
                     # syst from root file
@@ -609,6 +598,9 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     if doRun2:
         moreSyst = [syst for syst in systHistoMap["search"]["lowdm"]]
         allSyst += moreSyst
+    
+    stat_list = ["znunu", "phocr_data", "phocr_mc", "TF_withoutPhoNorm", "TF_withPhoNorm"]
+    statValMap = {"znunu" : [], "phocr_data" : [], "phocr_mc" : [], "TF_withoutPhoNorm" : [], "TF_withPhoNorm" : []}
     systValMap = {syst:{"up" : [], "down" : [], "pred" : [], "pred_error" : [], "pred_up" : [], "pred_up_error" : [], "pred_down" : [], "pred_down_error" : [], "value" : []} for syst in allSyst}
 
     for region in regions:
@@ -621,12 +613,19 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         # be careful with bin index, which needs to start at 1 in both lowdm and highdm
         b_i = 1
         for b in myBinMap[region]:
-            norm                = SearchBinObject.binValues[era][b]["norm"]
-            shape               = SearchBinObject.binValues[era][b]["shape"]
-            photon_data_mc_norm = SearchBinObject.binValues[era][b]["photon_data_mc_norm"]
-            znunu_mc            = SearchBinObject.binValues[era][b]["mc"]
-            znunu_mc_error      = SearchBinObject.binValues[era][b]["mc_error"]
-            #znunu_mc            = histo["search"][region][""].GetBinContent(b_i) 
+            norm                    = SearchBinObject.binValues[era][b]["norm"]
+            shape                   = SearchBinObject.binValues[era][b]["shape"]
+            TF_withoutPhoNorm       = SearchBinObject.binValues[era][b]["TF_withoutPhoNorm"]
+            TF_withoutPhoNorm_error = SearchBinObject.binValues[era][b]["TF_withoutPhoNorm_error"]
+            TF_withPhoNorm          = SearchBinObject.binValues[era][b]["TF_withPhoNorm"]
+            TF_withPhoNorm_error    = SearchBinObject.binValues[era][b]["TF_withPhoNorm_error"]
+            photon_data             = SearchBinObject.binValues[era][b]["photon_data"]
+            photon_data_error       = SearchBinObject.binValues[era][b]["photon_data_error"]
+            photon_mc               = SearchBinObject.binValues[era][b]["photon_mc"]
+            photon_mc_error         = SearchBinObject.binValues[era][b]["photon_mc_error"]
+            photon_data_mc_norm     = SearchBinObject.binValues[era][b]["photon_data_mc_norm"]
+            znunu_mc                = SearchBinObject.binValues[era][b]["mc"]
+            znunu_mc_error          = SearchBinObject.binValues[era][b]["mc_error"]
             
             p1 = shape * norm * znunu_mc
             p2 = SearchBinObject.binValues[era][b]["pred"]
@@ -635,7 +634,25 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             p  = p1
 
             print "PREDICTION {0} search bin {1}: {2}, {3}, {4}".format(era, b, p1, p2, isclose(p1, p2, rel_tol=1e-06))
+
+            # stat unc
+            if znunu_mc > 0:
+                stat = znunu_mc_error / znunu_mc
+                statValMap["znunu"].append(stat)
+            if photon_data > 0:
+                stat = photon_data_error / photon_data
+                statValMap["phocr_data"].append(stat)
+            if photon_mc > 0:
+                stat = photon_mc_error / photon_mc
+                statValMap["phocr_mc"].append(stat)
+            if TF_withoutPhoNorm > 0:
+                stat = TF_withoutPhoNorm_error / TF_withoutPhoNorm
+                statValMap["TF_withoutPhoNorm"].append(stat)
+            if TF_withPhoNorm > 0:
+                stat = TF_withPhoNorm_error / TF_withPhoNorm
+                statValMap["TF_withPhoNorm"].append(stat)
             
+            # syst unc
             log_syst_up_sum    = 0.0
             log_syst_down_sum  = 0.0
 
@@ -698,12 +715,6 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     
                     data_total              = sum(data_list)
                     data_total_error        = getAdditionErrorList(data_error_list) 
-                    
-                    # sum without cutoff
-                    #gjets_up_total   = sum(gjets_up_list)
-                    #gjets_down_total = sum(gjets_down_list)
-                    #back_up_total    = sum(back_up_list)
-                    #back_down_total  = sum(back_down_list)
                     
                     # for values <= 0, use 0.000001
                     cutoff = 0.000001
@@ -1057,13 +1068,38 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         del h_down
         
 
-    # --- estimate ranges
+    # --- estimate statistical uncertainty ranges
+    infoFile.write("--- estimated statistical ranges ---\n")
+    for i in xrange(2):
+        for stat in stat_list:
+            values   = statValMap[stat]
+            val_mean = np.mean(values)
+            val_med  = np.median(values)
+            val_min  = min(values)
+            val_max  = max(values)
+            low         = 100.0 * val_min
+            high        = 100.0 * val_max
+            center_mean = 100.0 * val_mean
+            center_med  = 100.0 * val_med
+            
+            # number of large values
+            largeVals  = [x for x in values if x >= 1.0]
+            nLargeVals = len(largeVals)
+            
+            # including mean and median
+            if i == 0:
+                infoFile.write("{0:>30}  mean = {1:.2f}%, median = {2:.2f}%, range = {3:.2f}% -- {4:.2f}%, {5} values >= 100%\n".format(stat, center_mean, center_med, low, high, nLargeVals))
+            # for paper
+            if i == 1:
+                infoFile.write("{0:>30}  ({1:.0f}--{2:.0f}\\%)\n".format(stat, low, high))
+    
+    # --- estimate systematic uncertainty ranges
     infoFile.write("--- estimated systematic ranges (v1) ---\n")
     for syst in systValMap:
-        values = systValMap[syst]["value"]
+        values   = systValMap[syst]["value"]
         val_mean = np.mean(values)
-        val_min = min(values)
-        val_max = max(values)
+        val_min  = min(values)
+        val_max  = max(values)
         low    = 100.0 * np.exp(val_min)
         high   = 100.0 * np.exp(val_max)
         center = 100.0 * np.exp(val_mean)
@@ -1078,7 +1114,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     for syst in systValMap:
         # Find the mean and standard deviation of the resulting set of numbers.
         # Now report exp(mean - std) and exp(mean + std) as the lower and upper ends of the range.
-        values = systValMap[syst]["value"]
+        values   = systValMap[syst]["value"]
         val_mean = np.mean(values)
         val_std  = np.std(values)
         low    = 100.0 * np.exp(val_mean - val_std)
@@ -1515,6 +1551,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
 
