@@ -1063,20 +1063,23 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
 
     # --- estimate statistical uncertainty ranges
     infoFile.write("--- estimated statistical ranges ---\n")
-    for stat in stat_list:
-        values   = statValMap[stat]
-        val_mean = np.mean(values)
-        val_med  = np.median(values)
-        val_min  = min(values)
-        val_max  = max(values)
-        low         = 100.0 * val_min
-        high        = 100.0 * val_max
-        center_mean = 100.0 * val_mean
-        center_med  = 100.0 * val_med
-        # including mean and median
-        infoFile.write("{0:>30}  mean = {1:.2f}%, median = {2:.2f}%, range = {3:.2f}% -- {4:.2f}%\n".format(stat, center_mean, center_med, low, high))
-        # for paper
-        #infoFile.write("{0:>30}  ({1:.0f}--{2:.0f}\\%)\n".format(syst, low, high))
+    for i in xrange(2):
+        for stat in stat_list:
+            values   = statValMap[stat]
+            val_mean = np.mean(values)
+            val_med  = np.median(values)
+            val_min  = min(values)
+            val_max  = max(values)
+            low         = 100.0 * val_min
+            high        = 100.0 * val_max
+            center_mean = 100.0 * val_mean
+            center_med  = 100.0 * val_med
+            # including mean and median
+            if i == 0:
+                infoFile.write("{0:>30}  mean = {1:.2f}%, median = {2:.2f}%, range = {3:.2f}% -- {4:.2f}%\n".format(stat, center_mean, center_med, low, high))
+            # for paper
+            if i == 1:
+                infoFile.write("{0:>30}  ({1:.0f}--{2:.0f}\\%)\n".format(stat, low, high))
     
     # --- estimate systematic uncertainty ranges
     infoFile.write("--- estimated systematic ranges (v1) ---\n")
