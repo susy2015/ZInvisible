@@ -562,19 +562,8 @@ class ValidationBins(Common):
         self.binValues[era] = {}
         
         for b in self.all_bins:
-            region      = self.bins[b]["region"]
-            selection   = self.bins[b]["selection"]
-            met         = self.bins[b]["met"]
-            # remove cuts from selection for norm and shape
-            selection_norm  = removeCuts(selection, ["NJ"])
-            selection_shape = removeCuts(selection, ["NSV", "MET"])
             self.binValues[era][b] = {}
-            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z"]
-            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z_error"]
-            self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["validation"][region][selection_shape][met]
-            self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["validation"][region][selection_shape][met + "_error"]
-            self.binValues[era][b]["photon_data_mc_norm"]   = self.S.shape_map[era]["validation"][region][selection_shape]["photon_data_mc_norm"]
-
+        
         # Z to NuNu histograms
         # central value
         # TDirectoryFile*     nValidationBinLowDM_jetpt30 nValidationBinLowDM_jetpt30
@@ -624,6 +613,19 @@ class ValidationBins(Common):
         
         # set bin values 
         self.setBinValues(b_map, h_map, era)
+        
+        for b in self.all_bins:
+            region      = self.bins[b]["region"]
+            selection   = self.bins[b]["selection"]
+            met         = self.bins[b]["met"]
+            # remove cuts from selection for norm and shape
+            selection_norm  = removeCuts(selection, ["NJ"])
+            selection_shape = removeCuts(selection, ["NSV", "MET"])
+            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z"]
+            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["validation"]["Combined"][region][selection_norm]["R_Z_error"]
+            self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["validation"][region][selection_shape][met]
+            self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["validation"][region][selection_shape][met + "_error"]
+            self.binValues[era][b]["photon_data_mc_norm"]   = self.S.shape_map[era]["validation"][region][selection_shape]["photon_data_mc_norm"]
 
         # new root file to save validation bin histograms
         new_file = self.results_dir + "validationBinsZinv_" + era + ".root"
@@ -663,18 +665,7 @@ class ValidationBinsMETStudy(Common):
         self.binValues[era] = {}
         
         for b in self.all_bins:
-            region      = self.bins[b]["region"]
-            selection   = self.bins[b]["selection"]
-            met         = self.bins[b]["met"]
-            # remove cuts from selection for norm and shape
-            selection_norm  = removeCuts(selection, ["NJ"])
-            selection_shape = removeCuts(selection, ["NSV", "MET"])
             self.binValues[era][b] = {}
-            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z"]
-            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z_error"]
-            self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met]
-            self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met + "_error"]
-            self.binValues[era][b]["photon_data_mc_norm"]   = self.S.shape_map[era]["validationMetStudy"][region][selection_shape]["photon_data_mc_norm"]
 
         # --- new (for MET study) --- #
         # "nValidationBinLowDM_METStudy_jetpt30/MET_nValidationBin_LowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30nValidationBinLowDM_METStudy_jetpt30Data MET Validation Bin Low DM MET Studydata"
@@ -719,6 +710,19 @@ class ValidationBinsMETStudy(Common):
         
         # set bin values 
         self.setBinValues(b_map, h_map, era)
+        
+        for b in self.all_bins:
+            region      = self.bins[b]["region"]
+            selection   = self.bins[b]["selection"]
+            met         = self.bins[b]["met"]
+            # remove cuts from selection for norm and shape
+            selection_norm  = removeCuts(selection, ["NJ"])
+            selection_shape = removeCuts(selection, ["NSV", "MET"])
+            self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z"]
+            self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["validationMetStudy"]["Combined"][region][selection_norm]["R_Z_error"]
+            self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met]
+            self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["validationMetStudy"][region][selection_shape][met + "_error"]
+            self.binValues[era][b]["photon_data_mc_norm"]   = self.S.shape_map[era]["validationMetStudy"][region][selection_shape]["photon_data_mc_norm"]
 
         # new root file to save validation bin histograms
         new_file = self.results_dir + "validationBinsMETStudyZinv_" + era + ".root"
@@ -760,6 +764,36 @@ class SearchBins(Common):
         self.binValues[era] = {}
         
         for b in self.all_bins:
+            self.binValues[era][b] = {}
+        
+        # Z to NuNu MC histograms
+        variable_lowdm  = "nSearchBinLowDM_jetpt30" 
+        variable_highdm = "nSearchBinHighDM_jetpt30" 
+        f_in            = ROOT.TFile(file_name, "read")
+        if (self.unblind):
+            h_data_lowdm    = f_in.Get("{0}/MET_nSearchBin_LowDM_jetpt30{0}{0}Data MET Search Bin Low DMdata".format(variable_lowdm)) 
+            h_data_highdm   = f_in.Get("{0}/MET_nSearchBin_HighDM_jetpt30{0}{0}Data MET Search Bin High DMdata".format(variable_highdm))
+        h_mc_lowdm      = f_in.Get("{0}/ZNuNu_nSearchBin_LowDM{1}_jetpt30{0}{0}ZJetsToNuNu Search Bin Low DMdata".format(variable_lowdm + varTag, systTag))
+        h_mc_highdm     = f_in.Get("{0}/ZNuNu_nSearchBin_HighDM{1}_jetpt30{0}{0}ZJetsToNuNu Search Bin High DMdata".format(variable_highdm + varTag, systTag))
+        
+        # bin map
+        b_map = {}
+        b_map["lowdm"]   = self.low_dm_bins
+        b_map["highdm"]  = self.high_dm_bins
+        # histogram map
+        h_map                 = {}
+        h_map["lowdm"]        = {}
+        h_map["highdm"]       = {}
+        h_map["lowdm"]["mc"]  = h_mc_lowdm
+        h_map["highdm"]["mc"] = h_mc_highdm
+        if (self.unblind):
+            h_map["lowdm"]["data"]  = h_data_lowdm
+            h_map["highdm"]["data"] = h_data_highdm
+        
+        # set bin values 
+        self.setBinValues(b_map, h_map, era)
+        
+        for b in self.all_bins:
             region      = self.bins[b]["region"]
             selection   = self.bins[b]["selection"]
             met         = self.bins[b]["met"]
@@ -768,7 +802,6 @@ class SearchBins(Common):
             selection_shape = removeCuts(selection, ["NSV", "MET"])
             if self.verbose:
                 print "{0}: {1} {2} {3} {4}".format(b, region, selection_norm, selection_shape, met)
-            self.binValues[era][b] = {}
             self.binValues[era][b]["norm"]                  = self.N.norm_map[era]["search"]["Combined"][region][selection_norm]["R_Z"]
             self.binValues[era][b]["norm_error"]            = self.N.norm_map[era]["search"]["Combined"][region][selection_norm]["R_Z_error"]
             photon_data_mc_norm                             = self.S.shape_map[era]["search"][region][selection_shape]["photon_data_mc_norm"]
@@ -835,32 +868,6 @@ class SearchBins(Common):
                 self.binValues[era][b]["shape"]             = self.S.shape_map[era]["search"][region][selection_shape][met]
                 self.binValues[era][b]["shape_error"]       = self.S.shape_map[era]["search"][region][selection_shape][met + "_error"]
         
-        # Z to NuNu MC histograms
-        variable_lowdm  = "nSearchBinLowDM_jetpt30" 
-        variable_highdm = "nSearchBinHighDM_jetpt30" 
-        f_in            = ROOT.TFile(file_name, "read")
-        if (self.unblind):
-            h_data_lowdm    = f_in.Get("{0}/MET_nSearchBin_LowDM_jetpt30{0}{0}Data MET Search Bin Low DMdata".format(variable_lowdm)) 
-            h_data_highdm   = f_in.Get("{0}/MET_nSearchBin_HighDM_jetpt30{0}{0}Data MET Search Bin High DMdata".format(variable_highdm))
-        h_mc_lowdm      = f_in.Get("{0}/ZNuNu_nSearchBin_LowDM{1}_jetpt30{0}{0}ZJetsToNuNu Search Bin Low DMdata".format(variable_lowdm + varTag, systTag))
-        h_mc_highdm     = f_in.Get("{0}/ZNuNu_nSearchBin_HighDM{1}_jetpt30{0}{0}ZJetsToNuNu Search Bin High DMdata".format(variable_highdm + varTag, systTag))
-        
-        # bin map
-        b_map = {}
-        b_map["lowdm"]   = self.low_dm_bins
-        b_map["highdm"]  = self.high_dm_bins
-        # histogram map
-        h_map                 = {}
-        h_map["lowdm"]        = {}
-        h_map["highdm"]       = {}
-        h_map["lowdm"]["mc"]  = h_mc_lowdm
-        h_map["highdm"]["mc"] = h_mc_highdm
-        if (self.unblind):
-            h_map["lowdm"]["data"]  = h_data_lowdm
-            h_map["highdm"]["data"] = h_data_highdm
-        
-        # set bin values 
-        self.setBinValues(b_map, h_map, era)
 
         # For Run2, also create file with useRzPerYear
         # WARNING: this sets the prediction value; overwrite this later if you don't want to keep this value
