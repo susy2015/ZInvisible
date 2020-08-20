@@ -633,14 +633,17 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
 
             # stat unc
             if znunu_mc > 0:
-                stat_znunu = znunu_mc_error / znunu_mc
-                statValMap["znunu"].append(stat_znunu)
+                stat = znunu_mc_error / znunu_mc
+                if stat < 1.0:
+                    statValMap["znunu"].append(stat)
             if photon_data > 0:
-                stat_photon_data = photon_data_error / photon_data
-                statValMap["phocr_data"].append(stat_photon_data)
+                stat = photon_data_error / photon_data
+                if stat < 1.0:
+                    statValMap["phocr_data"].append(stat)
             if photon_mc > 0:
-                stat_photon_mc = photon_mc_error / photon_mc
-                statValMap["phocr_mc"].append(stat_photon_mc)
+                stat = photon_mc_error / photon_mc
+                if stat < 1.0:
+                    statValMap["phocr_mc"].append(stat)
             
             # syst unc
             log_syst_up_sum    = 0.0
