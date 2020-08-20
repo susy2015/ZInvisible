@@ -634,16 +634,13 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             # stat unc
             if znunu_mc > 0:
                 stat = znunu_mc_error / znunu_mc
-                if stat < 1.0:
-                    statValMap["znunu"].append(stat)
+                statValMap["znunu"].append(stat)
             if photon_data > 0:
                 stat = photon_data_error / photon_data
-                if stat < 1.0:
-                    statValMap["phocr_data"].append(stat)
+                statValMap["phocr_data"].append(stat)
             if photon_mc > 0:
                 stat = photon_mc_error / photon_mc
-                if stat < 1.0:
-                    statValMap["phocr_mc"].append(stat)
+                statValMap["phocr_mc"].append(stat)
             
             # syst unc
             log_syst_up_sum    = 0.0
@@ -1074,9 +1071,14 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             high        = 100.0 * val_max
             center_mean = 100.0 * val_mean
             center_med  = 100.0 * val_med
+            
+            # number of large values
+            largeVals  = [x for x in values if x >= 1.0]
+            nLargeVals = len(largeVals)
+            
             # including mean and median
             if i == 0:
-                infoFile.write("{0:>30}  mean = {1:.2f}%, median = {2:.2f}%, range = {3:.2f}% -- {4:.2f}%\n".format(stat, center_mean, center_med, low, high))
+                infoFile.write("{0:>30}  mean = {1:.2f}%, median = {2:.2f}%, range = {3:.2f}% -- {4:.2f}%, {5} values >= 100%\n".format(stat, center_mean, center_med, low, high, nLargeVals))
             # for paper
             if i == 1:
                 infoFile.write("{0:>30}  ({1:.0f}--{2:.0f}\\%)\n".format(stat, low, high))
