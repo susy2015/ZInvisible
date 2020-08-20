@@ -816,6 +816,9 @@ class SearchBins(Common):
                 # S = sum(data) / (Q * sum(MC))
                 # Q = photon Data/MC normalization from MET histograms
 
+                # get Z nunu to define transfer factor (TF)
+                znunu               = self.binValues[era][b]["mc"]
+                znunu_error         = self.binValues[era][b]["mc_error"]
                 # get CR unit bins for this search bin
                 cr_units = self.unitMap["unitBinMapCR_phocr"][b]
                 # add up data and mc yields in CR units for this search bin
@@ -832,15 +835,24 @@ class SearchBins(Common):
                 total_mc_error      = getAdditionErrorList(mc_gjets_error_list + mc_back_error_list)
                 den_error           = getConstantMultiplicationError(photon_data_mc_norm, total_mc_error)
                 
-                # get shape and shape error
-                shape_cr        = -999
-                shape_cr_error  = -999
+                # get shape, shape error and transfer factor (TF)
+                shape_cr                = -999
+                shape_cr_error          = -999
+                TF_withoutPhoNorm       = -999
+                TF_withoutPhoNorm_error = -999
+                TF_withPhoNorm          = -999
+                TF_withPhoNorm_error    = -999
                 # avoid dividing by 0
                 if den > 0:
                     # S = sum(data) / (Q * sum(MC))
                     shape_cr = total_data / den
+                    TF_withoutPhoNorm = znunu / total_mc
+                    TF_withPhoNorm    = znunu / den
+                    # getMultiplicationError(q, x, dx, y, dy)
+                    TF_withoutPhoNorm_error = getMultiplicationError(TF_withoutPhoNorm, znunu, znunu_error, total_mc, total_mc_error)
+                    TF_withPhoNorm_error    = getMultiplicationError(TF_withPhoNorm, znunu, znunu_error, den, den_error)
                 else:
-                    print "ERROR: Era: {0} Search bin {1}: MC <= 0: data = {2}, mc = {3}".format(era, b, total_data, den)
+                    print "ERROR for shape factor: Era: {0} Search bin {1}: photon MC <= 0: data = {2}, mc = {3}".format(era, b, total_data, den)
                 # error propagation
                 # check for 0 data
                 if total_data <= 0:
@@ -857,12 +869,16 @@ class SearchBins(Common):
                     if shape_cr_error < 0:
                         print "ERROR: Era: {0} Search bin {1}: data = {2}, mc = {3}, shape_cr = {4} +/- {5}".format(era, b, total_data, den, shape_cr, shape_cr_error)
 
-                self.binValues[era][b]["shape"]             = shape_cr 
-                self.binValues[era][b]["shape_error"]       = shape_cr_error
-                self.binValues[era][b]["photon_data"]       = total_data
-                self.binValues[era][b]["photon_mc"]         = total_mc
-                self.binValues[era][b]["photon_data_error"] = total_data_error
-                self.binValues[era][b]["photon_mc_error"]   = total_mc_error
+                self.binValues[era][b]["shape"]                     = shape_cr 
+                self.binValues[era][b]["shape_error"]               = shape_cr_error
+                self.binValues[era][b]["TF_withoutPhoNorm"]         = TF_withoutPhoNorm
+                self.binValues[era][b]["TF_withoutPhoNorm_error"]   = TF_withoutPhoNorm_error
+                self.binValues[era][b]["TF_withPhoNorm"]            = TF_withPhoNorm
+                self.binValues[era][b]["TF_withPhoNorm_error"]      = TF_withPhoNorm_error
+                self.binValues[era][b]["photon_data"]               = total_data
+                self.binValues[era][b]["photon_mc"]                 = total_mc
+                self.binValues[era][b]["photon_data_error"]         = total_data_error
+                self.binValues[era][b]["photon_mc_error"]           = total_mc_error
             else:
                 # use MET histograms if CR unit bins are not provided
                 self.binValues[era][b]["shape"]             = self.S.shape_map[era]["search"][region][selection_shape][met]

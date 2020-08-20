@@ -599,8 +599,8 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         moreSyst = [syst for syst in systHistoMap["search"]["lowdm"]]
         allSyst += moreSyst
     
-    stat_list = ["znunu", "phocr_data", "phocr_mc"]
-    statValMap = {"znunu" : [], "phocr_data" : [], "phocr_mc" : []}
+    stat_list = ["znunu", "phocr_data", "phocr_mc", "TF_withoutPhoNorm", "TF_withPhoNorm"]
+    statValMap = {"znunu" : [], "phocr_data" : [], "phocr_mc" : [], "TF_withoutPhoNorm" : [], "TF_withPhoNorm" : []}
     systValMap = {syst:{"up" : [], "down" : [], "pred" : [], "pred_error" : [], "pred_up" : [], "pred_up_error" : [], "pred_down" : [], "pred_down_error" : [], "value" : []} for syst in allSyst}
 
     for region in regions:
@@ -613,15 +613,19 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         # be careful with bin index, which needs to start at 1 in both lowdm and highdm
         b_i = 1
         for b in myBinMap[region]:
-            norm                = SearchBinObject.binValues[era][b]["norm"]
-            shape               = SearchBinObject.binValues[era][b]["shape"]
-            photon_data         = SearchBinObject.binValues[era][b]["photon_data"]
-            photon_data_error   = SearchBinObject.binValues[era][b]["photon_data_error"]
-            photon_mc           = SearchBinObject.binValues[era][b]["photon_mc"]
-            photon_mc_error     = SearchBinObject.binValues[era][b]["photon_mc_error"]
-            photon_data_mc_norm = SearchBinObject.binValues[era][b]["photon_data_mc_norm"]
-            znunu_mc            = SearchBinObject.binValues[era][b]["mc"]
-            znunu_mc_error      = SearchBinObject.binValues[era][b]["mc_error"]
+            norm                    = SearchBinObject.binValues[era][b]["norm"]
+            shape                   = SearchBinObject.binValues[era][b]["shape"]
+            TF_withoutPhoNorm       = SearchBinObject.binValues[era][b]["TF_withoutPhoNorm"]
+            TF_withoutPhoNorm_error = SearchBinObject.binValues[era][b]["TF_withoutPhoNorm_error"]
+            TF_withPhoNorm          = SearchBinObject.binValues[era][b]["TF_withPhoNorm"]
+            TF_withPhoNorm_error    = SearchBinObject.binValues[era][b]["TF_withPhoNorm_error"]
+            photon_data             = SearchBinObject.binValues[era][b]["photon_data"]
+            photon_data_error       = SearchBinObject.binValues[era][b]["photon_data_error"]
+            photon_mc               = SearchBinObject.binValues[era][b]["photon_mc"]
+            photon_mc_error         = SearchBinObject.binValues[era][b]["photon_mc_error"]
+            photon_data_mc_norm     = SearchBinObject.binValues[era][b]["photon_data_mc_norm"]
+            znunu_mc                = SearchBinObject.binValues[era][b]["mc"]
+            znunu_mc_error          = SearchBinObject.binValues[era][b]["mc_error"]
             
             p1 = shape * norm * znunu_mc
             p2 = SearchBinObject.binValues[era][b]["pred"]
@@ -641,6 +645,12 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             if photon_mc > 0:
                 stat = photon_mc_error / photon_mc
                 statValMap["phocr_mc"].append(stat)
+            if TF_withoutPhoNorm > 0:
+                stat = TF_withoutPhoNorm_error / TF_withoutPhoNorm
+                statValMap["TF_withoutPhoNorm"].append(stat)
+            if TF_withPhoNorm > 0:
+                stat = TF_withPhoNorm_error / TF_withPhoNorm
+                statValMap["TF_withPhoNorm"].append(stat)
             
             # syst unc
             log_syst_up_sum    = 0.0
