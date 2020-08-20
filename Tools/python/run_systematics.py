@@ -598,6 +598,9 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     if doRun2:
         moreSyst = [syst for syst in systHistoMap["search"]["lowdm"]]
         allSyst += moreSyst
+    
+    stat_list = ["znunu", "phocr_data", "phocr_mc"]
+    statValMap = {"znunu" : [], "phocr_data" : [], "phocr_mc" : []}
     systValMap = {syst:{"up" : [], "down" : [], "pred" : [], "pred_error" : [], "pred_up" : [], "pred_up_error" : [], "pred_down" : [], "pred_down_error" : [], "value" : []} for syst in allSyst}
 
     for region in regions:
@@ -612,6 +615,10 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         for b in myBinMap[region]:
             norm                = SearchBinObject.binValues[era][b]["norm"]
             shape               = SearchBinObject.binValues[era][b]["shape"]
+            photon_data         = SearchBinObject.binValues[era][b]["photon_data"]
+            photon_data_error   = SearchBinObject.binValues[era][b]["photon_data_error"]
+            photon_mc           = SearchBinObject.binValues[era][b]["photon_mc"]
+            photon_mc_error     = SearchBinObject.binValues[era][b]["photon_mc_error"]
             photon_data_mc_norm = SearchBinObject.binValues[era][b]["photon_data_mc_norm"]
             znunu_mc            = SearchBinObject.binValues[era][b]["mc"]
             znunu_mc_error      = SearchBinObject.binValues[era][b]["mc_error"]
@@ -623,7 +630,19 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             p  = p1
 
             print "PREDICTION {0} search bin {1}: {2}, {3}, {4}".format(era, b, p1, p2, isclose(p1, p2, rel_tol=1e-06))
+
+            # stat unc
+            if znunu_mc > 0:
+                stat_znunu = znunu_mc_error / znunu_mc
+                statValMap["znunu"].append(stat_znunu)
+            if photon_data > 0:
+                stat_photon_data = photon_data_error / photon_data
+                statValMap["phocr_data"].append(stat_photon_data)
+            if photon_mc > 0:
+                stat_photon_mc = photon_mc_error / photon_mc
+                statValMap["phocr_mc"].append(stat_photon_mc)
             
+            # syst unc
             log_syst_up_sum    = 0.0
             log_syst_down_sum  = 0.0
 
@@ -1039,13 +1058,30 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         del h_down
         
 
-    # --- estimate ranges
+    # --- estimate statistical uncertainty ranges
+    infoFile.write("--- estimated statistical ranges ---\n")
+    for stat in stat_list:
+        values   = statValMap[stat]
+        val_mean = np.mean(values)
+        val_med  = np.median(values)
+        val_min  = min(values)
+        val_max  = max(values)
+        low         = 100.0 * val_min
+        high        = 100.0 * val_max
+        center_mean = 100.0 * val_mean
+        center_med  = 100.0 * val_med
+        # including mean and median
+        infoFile.write("{0:>30}  mean = {1:.2f}%, median = {2:.2f}%, range = {3:.2f}% -- {4:.2f}%\n".format(stat, center_mean, center_med, low, high))
+        # for paper
+        #infoFile.write("{0:>30}  ({1:.0f}--{2:.0f}\\%)\n".format(syst, low, high))
+    
+    # --- estimate systematic uncertainty ranges
     infoFile.write("--- estimated systematic ranges (v1) ---\n")
     for syst in systValMap:
-        values = systValMap[syst]["value"]
+        values   = systValMap[syst]["value"]
         val_mean = np.mean(values)
-        val_min = min(values)
-        val_max = max(values)
+        val_min  = min(values)
+        val_max  = max(values)
         low    = 100.0 * np.exp(val_min)
         high   = 100.0 * np.exp(val_max)
         center = 100.0 * np.exp(val_mean)
@@ -1060,7 +1096,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
     for syst in systValMap:
         # Find the mean and standard deviation of the resulting set of numbers.
         # Now report exp(mean - std) and exp(mean + std) as the lower and upper ends of the range.
-        values = systValMap[syst]["value"]
+        values   = systValMap[syst]["value"]
         val_mean = np.mean(values)
         val_std  = np.std(values)
         low    = 100.0 * np.exp(val_mean - val_std)

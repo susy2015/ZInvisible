@@ -815,7 +815,8 @@ class SearchBins(Common):
                     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PoissonErrorBars
                     # https://hypernews.cern.ch/HyperNews/CMS/get/SUS-19-003/103/1/1/1/1/1/1.html
                     # -ln((1-0.68)/2) = 1.8325814637483102
-                    shape_cr_error = 1.83 / den
+                    total_data_error = 1.83
+                    shape_cr_error   = 1.83 / den
                     print "WARNING: Era: {0} Search bin {1}: NO DATA: data = {2}, mc = {3}, shape_cr = {4} +{5} -0.0".format(era, b, total_data, den, shape_cr, shape_cr_error)
                 else:
                     # getMultiplicationError(q, x, dx, y, dy)
@@ -823,12 +824,16 @@ class SearchBins(Common):
                     if shape_cr_error < 0:
                         print "ERROR: Era: {0} Search bin {1}: data = {2}, mc = {3}, shape_cr = {4} +/- {5}".format(era, b, total_data, den, shape_cr, shape_cr_error)
 
-                self.binValues[era][b]["shape"]                 = shape_cr 
-                self.binValues[era][b]["shape_error"]           = shape_cr_error
+                self.binValues[era][b]["shape"]             = shape_cr 
+                self.binValues[era][b]["shape_error"]       = shape_cr_error
+                self.binValues[era][b]["photon_data"]       = total_data
+                self.binValues[era][b]["photon_mc"]         = total_mc
+                self.binValues[era][b]["photon_data_error"] = total_data_error
+                self.binValues[era][b]["photon_mc_error"]   = total_mc_error
             else:
                 # use MET histograms if CR unit bins are not provided
-                self.binValues[era][b]["shape"]                 = self.S.shape_map[era]["search"][region][selection_shape][met]
-                self.binValues[era][b]["shape_error"]           = self.S.shape_map[era]["search"][region][selection_shape][met + "_error"]
+                self.binValues[era][b]["shape"]             = self.S.shape_map[era]["search"][region][selection_shape][met]
+                self.binValues[era][b]["shape_error"]       = self.S.shape_map[era]["search"][region][selection_shape][met + "_error"]
         
         # Z to NuNu MC histograms
         variable_lowdm  = "nSearchBinLowDM_jetpt30" 
