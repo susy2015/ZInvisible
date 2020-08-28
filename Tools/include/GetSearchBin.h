@@ -68,6 +68,8 @@ namespace plotterFunctions
             }
             
             // For photon CR, we need to use _drPhotonCleaned for all variables and metWithPhoton
+            const auto& run                 = tr.getVar<unsigned int>("run");
+            const auto& luminosityBlock     = tr.getVar<unsigned int>("luminosityBlock");
             const auto& event               = tr.getVar<unsigned long long>("event");
             const auto& met                 = tr.getVar<data_t>(met_label);
             const auto& Pass_PhoCR          = tr.getVar<bool>("passPhotonSelection");
@@ -196,6 +198,16 @@ namespace plotterFunctions
                 {
                     printf("CMS_event=%d; HighDM; %s; nSB_hui = %d; nSB_matt = %d --- nSB are different --- \n", event, suffix_.c_str(), nSearchBinHighDM, nSBHighDM);
                 }
+                // get event info to show event displays
+                if (SAT_Pass_lowDM && nSearchBinLowDM >= 0)
+                {
+                    printf("lowdm_sb=%d; run=%d; luminosityBlock=%d; CMS_event=%d; ntuple_event=%d\n", nSearchBinLowDM, run, luminosityBlock, event, tr.getEvtNum());
+                }
+                if (SAT_Pass_highDM && nSearchBinHighDM >= 0)
+                {
+                    printf("highdm_sb=%d; run=%d; luminosityBlock=%d; CMS_event=%d; ntuple_event=%d\n", nSearchBinHighDM, run, luminosityBlock, event, tr.getEvtNum());
+                }
+
 
             }
             
