@@ -467,8 +467,8 @@ void Plotter::createHistsFromTuple()
                 registerfunc_->setupTopWeightCalculator(tr);
         
                 // skip to event
-                std::vector<int> events = {726000};
-                tr.goToEvent(events[0]);
+                std::vector<int> events = {726000, 684000, 556000, 1016000, 998000};
+                tr.goToEvent(events[4]);
 
                 while(tr.getNextEvent())
                 {
