@@ -191,7 +191,16 @@ class Systematic:
         return h_ratio_normalized
 
     # double ratio: Z (data/MC) over Photon (data/MC), or data (Z/Photon) over MC (Z/Photon)
-    def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst, xbins = np.array([]), n_bins = 0, x_min=0, x_max=0):
+    def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst, doDataOverData=False, xbins = np.array([]), n_bins = 0, x_min=0, x_max=0):
+        # set variables based on mode
+        if doDataOverData:
+            fileTag = "DataOverData"
+            num_label = "(Z to LL Data)/(Photon Data)"
+            den_label = "(Z to LL MC)/(Photon MC)" 
+        else:
+            fileTag = "ZvsPhoton"
+            num_label = "Z to LL Data/MC"
+            den_label = "Photon Data/MC" 
         # redefine xbins and n_bins if provided
         if xbins.any():
             self.xbins  = xbins
@@ -216,16 +225,16 @@ class Systematic:
         legend_y1 = 0.7 
         legend_y2 = 0.9 
         for region in self.regions:
-            # MET with Z
-            # getZRatio(self, root_file, region, selection, name, variable, rebin):
-            h_ratio_lepton = self.getZRatio(f, region, selection, var, varLepton, rebin)
-            # MET with photon
-            # getPhotonRatio(self, root_file, region, selection, name, variable, rebin)
-            h_ratio_photon = self.getPhotonRatio(f, region, selection, var, varPhoton, rebin)
+            if doDataOverData:
+                h_ratio_num = self.getDataRatio(f, region, selection, var, varLepton, varPhoton, rebin)
+                h_ratio_den = self.getMCRatio(f, region, selection, var, varLepton, varPhoton, rebin)
+            else:
+                h_ratio_num = self.getZRatio(f, region, selection, var, varLepton, rebin)
+                h_ratio_den = self.getPhotonRatio(f, region, selection, var, varPhoton, rebin)
             
-            # Double Ratio for MET: Z / photon
-            h_ratio_ZoverPhoton = h_ratio_lepton.Clone("h_ratio_ZoverPhoton")
-            h_ratio_ZoverPhoton.Divide(h_ratio_photon)    
+            # Double Ratio: Z / photon
+            h_ratio_ZoverPhoton = h_ratio_num.Clone("h_ratio_ZoverPhoton")
+            h_ratio_ZoverPhoton.Divide(h_ratio_den)    
                 
             # fit the Z over Photon ratio
             if doFit:
@@ -255,14 +264,14 @@ class Systematic:
             y_max = 2.0
             
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_ratio_lepton,       title, x_title, y_title,                "vermillion",      y_min, y_max)
-            setupHist(h_ratio_photon,       title, x_title, y_title,                "electric blue",   y_min, y_max)
+            setupHist(h_ratio_num,       title, x_title, y_title,                "vermillion",      y_min, y_max)
+            setupHist(h_ratio_den,       title, x_title, y_title,                "electric blue",   y_min, y_max)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
             # set x axis range
             #print "self.x_min = {0}".format(self.x_min)
             #print "self.x_max = {0}".format(self.x_max)
-            h_ratio_lepton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
-            h_ratio_photon.GetXaxis().SetRangeUser(self.x_min, self.x_max)
+            h_ratio_num.GetXaxis().SetRangeUser(self.x_min, self.x_max)
+            h_ratio_den.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             
             # do Run 2 systematic
@@ -290,12 +299,12 @@ class Systematic:
             pad.SetGrid()
             
             # draw
-            h_ratio_lepton.Draw(draw_option)
-            h_ratio_photon.Draw(draw_option + " same")
+            h_ratio_num.Draw(draw_option)
+            h_ratio_den.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            legend1.AddEntry(h_ratio_lepton,         "Z to LL Data/MC",              "l")
-            legend1.AddEntry(h_ratio_photon,         "Photon Data/MC",               "l")
+            legend1.AddEntry(h_ratio_num, num_label, "l")
+            legend1.AddEntry(h_ratio_den, den_label, "l")
             legend1.Draw()
             
             # pad for ratio
@@ -325,9 +334,9 @@ class Systematic:
             
             # save histograms
             if rebin:
-                plot_name = "{0}ZvsPhoton_{1}_{2}_rebinned_{3}".format(self.plot_dir, var, region, era)
+                plot_name = "{0}{1}_{2}_{3}_rebinned_{4}".format(self.plot_dir, fileTag, var, region, era)
             else:
-                plot_name = "{0}ZvsPhoton_{1}_{2}_{3}".format(self.plot_dir, var, region, era)
+                plot_name = "{0}{1}_{2}_{3}_{4}".format(self.plot_dir, fileTag, var, region, era)
             c.Update()
             c.SaveAs(plot_name + ".pdf")
             c.SaveAs(plot_name + ".png")
