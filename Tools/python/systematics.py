@@ -70,6 +70,17 @@ class Systematic:
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
 
+    def getZData(self, root_file, variable, h_map_norm):
+        h_Data_Electron = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Data"]    ) )
+        h_Data_Muon     = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Data"]        ) )
+        h_Data_Lepton   = h_Data_Electron.Clone("h_Data_Lepton") 
+        h_Data_Lepton.Add(h_Data_Muon)
+        return h_Data_Lepton
+
+    def getPhotonData(self, root_file, variable, h_map_shape):
+        h_Data_Photon = root_file.Get( str(variable + "/" + h_map_shape["Data"]) )
+        return h_Data_Photon
+
     # get data Z / Photon ratio
     def getDataRatio(self, root_file, region, selection, name, varLepton, varPhoton, rebin):
         selectionTag    = "_" + selection
@@ -78,12 +89,9 @@ class Systematic:
         h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, varPhoton)
         
         # numerator: Z data
-        h_Data_Electron     = root_file.Get( str(varLepton + "/" + h_map_norm["Electron"]["Data"]    ) )
-        h_Data_Muon         = root_file.Get( str(varLepton + "/" + h_map_norm["Muon"]["Data"]        ) )
-        h_Data_Lepton = h_Data_Electron.Clone("h_Data") 
-        h_Data_Lepton.Add(h_Data_Muon)
+        h_Data_Lepton = self.getZData(root_file, varLepton, h_map_norm)
         # denominator: Photon data
-        h_Data_Photon       = root_file.Get( str(varPhoton + "/" + h_map_shape["Data"]) )
+        h_Data_Photon = self.getPhotonData(root_file, varPhoton, h_map_shape)
         
         h_ratio_normalized = self.getRatio(h_Data_Lepton, h_Data_Photon, rebin) 
         return h_ratio_normalized
@@ -147,15 +155,16 @@ class Systematic:
         selectionTag    = "_" + selection
         nameTag         = "_" + name
         h_map_norm = self.getZHistoMap(region, nameTag, selectionTag, variable)
+        
+        # numerator: data
+        h_Data = self.getZData(root_file, variable, h_map_norm)
 
         #WARNING: strings loaded from json file have type 'unicode'
         # ROOT cannot load histograms using unicode input: use type 'str'
-        h_Data_Electron     = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Data"]    ) )
         h_DY_Electron       = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["DY"]      ) )
         h_TTbar_Electron    = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["TTbar"]   ) )
         h_SingleT_Electron  = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["SingleT"] ) )
         h_Rare_Electron     = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Rare"]    ) )
-        h_Data_Muon         = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Data"]        ) )
         h_DY_Muon           = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["DY"]          ) )
         h_TTbar_Muon        = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["TTbar"]       ) )
         h_SingleT_Muon      = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["SingleT"]     ) )
@@ -170,9 +179,6 @@ class Systematic:
         h_mc.Add(h_TTbar_Muon)
         h_mc.Add(h_SingleT_Muon)
         h_mc.Add(h_Rare_Muon)
-        # combine all Data in numerator
-        h_Data = h_Data_Electron.Clone("h_Data") 
-        h_Data.Add(h_Data_Muon)
         
         h_ratio_normalized = self.getRatio(h_Data, h_mc, rebin)
         return h_ratio_normalized
@@ -183,9 +189,11 @@ class Systematic:
         # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable)
         h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, variable)
         
+        # numerator: data
+        h_Data = self.getPhotonData(root_file, variable, h_map_shape)
+        
         #WARNING: strings loaded from json file have type 'unicode'
         # ROOT cannot load histograms using unicode input: use type 'str'
-        h_Data              = root_file.Get( str(variable + "/" + h_map_shape["Data"]            ) )
         h_GJets             = root_file.Get( str(variable + "/" + h_map_shape["GJets"]           ) )
         if self.S.splitQCD:
             h_QCD_Direct        = root_file.Get( str(variable + "/" + h_map_shape["QCD_Direct"]         ) )
