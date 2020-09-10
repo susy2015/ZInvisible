@@ -69,6 +69,9 @@ class Systematic:
             h_den = den.Clone("h_den")
         h_ratio_normalized = getNormalizedRatio(h_num, h_den)
         return h_ratio_normalized
+    
+    # WARNING: strings loaded from json file have type 'unicode'
+    # ROOT cannot load histograms using unicode input: use type 'str'
 
     def getZData(self, root_file, variable, h_map_norm):
         h_Data_Electron = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Data"]    ) )
@@ -77,9 +80,59 @@ class Systematic:
         h_Data_Lepton.Add(h_Data_Muon)
         return h_Data_Lepton
 
+    def getZMC(self, root_file, variable, h_map_norm):
+        h_DY_Electron       = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["DY"]      ) )
+        h_TTbar_Electron    = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["TTbar"]   ) )
+        h_SingleT_Electron  = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["SingleT"] ) )
+        h_Rare_Electron     = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Rare"]    ) )
+        h_DY_Muon           = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["DY"]          ) )
+        h_TTbar_Muon        = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["TTbar"]       ) )
+        h_SingleT_Muon      = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["SingleT"]     ) )
+        h_Rare_Muon         = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Rare"]        ) )
+        
+        h_mc_Z = h_DY_Electron.Clone("h_mc_Z") 
+        h_mc_Z.Add(h_TTbar_Electron)
+        h_mc_Z.Add(h_SingleT_Electron)
+        h_mc_Z.Add(h_Rare_Electron)
+        h_mc_Z.Add(h_DY_Muon)
+        h_mc_Z.Add(h_TTbar_Muon)
+        h_mc_Z.Add(h_SingleT_Muon)
+        h_mc_Z.Add(h_Rare_Muon)
+        
+        return h_mc_Z
+
     def getPhotonData(self, root_file, variable, h_map_shape):
         h_Data_Photon = root_file.Get( str(variable + "/" + h_map_shape["Data"]) )
         return h_Data_Photon
+    
+    def getPhotonMC(self, root_file, variable, h_map_shape):
+        h_GJets             = root_file.Get( str(variable + "/" + h_map_shape["GJets"]           ) )
+        if self.S.splitQCD:
+            h_QCD_Direct        = root_file.Get( str(variable + "/" + h_map_shape["QCD_Direct"]         ) )
+            h_QCD_Fragmentation = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fragmentation"]  ) )
+            h_QCD_NonPrompt     = root_file.Get( str(variable + "/" + h_map_shape["QCD_NonPrompt"]      ) )
+            h_QCD_Fake          = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fake"]           ) )
+        else:
+            h_QCD               = root_file.Get( str(variable + "/" + h_map_shape["QCD"]  ) )
+        h_WJets             = root_file.Get( str(variable + "/" + h_map_shape["WJets"]    ) )
+        h_TTG               = root_file.Get( str(variable + "/" + h_map_shape["TTG"]      ) )
+        h_tW                = root_file.Get( str(variable + "/" + h_map_shape["tW"]       ) )
+        h_Rare              = root_file.Get( str(variable + "/" + h_map_shape["Rare"]     ) )
+        
+        h_mc_Photon = h_GJets.Clone("h_mc_Photon") 
+        if self.S.splitQCD:
+            h_mc_Photon.Add(h_QCD_Direct)
+            h_mc_Photon.Add(h_QCD_Fragmentation)
+            h_mc_Photon.Add(h_QCD_NonPrompt)
+            h_mc_Photon.Add(h_QCD_Fake)
+        else:
+            h_mc_Photon.Add(h_QCD)
+        h_mc_Photon.Add(h_WJets)
+        h_mc_Photon.Add(h_TTG)
+        h_mc_Photon.Add(h_tW)
+        h_mc_Photon.Add(h_Rare)
+
+        return h_mc_Photon
 
     # get data Z / Photon ratio
     def getDataRatio(self, root_file, region, selection, name, varLepton, varPhoton, rebin):
@@ -103,50 +156,9 @@ class Systematic:
         h_map_norm  = self.getZHistoMap(region, nameTag, selectionTag, varLepton)
         h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, varPhoton)
         # numerator: Z MC
-        h_DY_Electron       = root_file.Get( str(varLepton + "/" + h_map_norm["Electron"]["DY"]      ) )
-        h_TTbar_Electron    = root_file.Get( str(varLepton + "/" + h_map_norm["Electron"]["TTbar"]   ) )
-        h_SingleT_Electron  = root_file.Get( str(varLepton + "/" + h_map_norm["Electron"]["SingleT"] ) )
-        h_Rare_Electron     = root_file.Get( str(varLepton + "/" + h_map_norm["Electron"]["Rare"]    ) )
-        h_DY_Muon           = root_file.Get( str(varLepton + "/" + h_map_norm["Muon"]["DY"]          ) )
-        h_TTbar_Muon        = root_file.Get( str(varLepton + "/" + h_map_norm["Muon"]["TTbar"]       ) )
-        h_SingleT_Muon      = root_file.Get( str(varLepton + "/" + h_map_norm["Muon"]["SingleT"]     ) )
-        h_Rare_Muon         = root_file.Get( str(varLepton + "/" + h_map_norm["Muon"]["Rare"]        ) )
-        # combine Z MC
-        h_mc_Z = h_DY_Electron.Clone("h_mc_Z") 
-        h_mc_Z.Add(h_TTbar_Electron)
-        h_mc_Z.Add(h_SingleT_Electron)
-        h_mc_Z.Add(h_Rare_Electron)
-        h_mc_Z.Add(h_DY_Muon)
-        h_mc_Z.Add(h_TTbar_Muon)
-        h_mc_Z.Add(h_SingleT_Muon)
-        h_mc_Z.Add(h_Rare_Muon)
+        h_mc_Z = self.getZMC(root_file, varLepton, h_map_norm)
         # denominator: Photon MC
-        h_GJets             = root_file.Get( str(varPhoton + "/" + h_map_shape["GJets"]           ) )
-        if self.S.splitQCD:
-            h_QCD_Direct        = root_file.Get( str(varPhoton + "/" + h_map_shape["QCD_Direct"]         ) )
-            h_QCD_Fragmentation = root_file.Get( str(varPhoton + "/" + h_map_shape["QCD_Fragmentation"]  ) )
-            h_QCD_NonPrompt     = root_file.Get( str(varPhoton + "/" + h_map_shape["QCD_NonPrompt"]      ) )
-            h_QCD_Fake          = root_file.Get( str(varPhoton + "/" + h_map_shape["QCD_Fake"]           ) )
-        else:
-            h_QCD               = root_file.Get( str(varPhoton + "/" + h_map_shape["QCD"]  ) )
-        h_WJets             = root_file.Get( str(varPhoton + "/" + h_map_shape["WJets"]    ) )
-        h_TTG               = root_file.Get( str(varPhoton + "/" + h_map_shape["TTG"]      ) )
-        h_tW                = root_file.Get( str(varPhoton + "/" + h_map_shape["tW"]       ) )
-        h_Rare              = root_file.Get( str(varPhoton + "/" + h_map_shape["Rare"]     ) )
-        
-        # combine Photon MC
-        h_mc_Photon = h_GJets.Clone("h_mc_Photon") 
-        if self.S.splitQCD:
-            h_mc_Photon.Add(h_QCD_Direct)
-            h_mc_Photon.Add(h_QCD_Fragmentation)
-            h_mc_Photon.Add(h_QCD_NonPrompt)
-            h_mc_Photon.Add(h_QCD_Fake)
-        else:
-            h_mc_Photon.Add(h_QCD)
-        h_mc_Photon.Add(h_WJets)
-        h_mc_Photon.Add(h_TTG)
-        h_mc_Photon.Add(h_tW)
-        h_mc_Photon.Add(h_Rare)
+        h_mc_Photon = self.getPhotonMC(root_file, varPhoton, h_map_shape)
         
         h_ratio_normalized = self.getRatio(h_mc_Z, h_mc_Photon, rebin) 
         return h_ratio_normalized
@@ -158,28 +170,9 @@ class Systematic:
         
         # numerator: data
         h_Data = self.getZData(root_file, variable, h_map_norm)
+        # denominator: MC 
+        h_mc = self.getZMC(root_file, variable, h_map_norm)
 
-        #WARNING: strings loaded from json file have type 'unicode'
-        # ROOT cannot load histograms using unicode input: use type 'str'
-        h_DY_Electron       = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["DY"]      ) )
-        h_TTbar_Electron    = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["TTbar"]   ) )
-        h_SingleT_Electron  = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["SingleT"] ) )
-        h_Rare_Electron     = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Rare"]    ) )
-        h_DY_Muon           = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["DY"]          ) )
-        h_TTbar_Muon        = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["TTbar"]       ) )
-        h_SingleT_Muon      = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["SingleT"]     ) )
-        h_Rare_Muon         = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Rare"]        ) )
-        
-        # combine all MC in denominator
-        h_mc = h_DY_Electron.Clone("h_mc") 
-        h_mc.Add(h_TTbar_Electron)
-        h_mc.Add(h_SingleT_Electron)
-        h_mc.Add(h_Rare_Electron)
-        h_mc.Add(h_DY_Muon)
-        h_mc.Add(h_TTbar_Muon)
-        h_mc.Add(h_SingleT_Muon)
-        h_mc.Add(h_Rare_Muon)
-        
         h_ratio_normalized = self.getRatio(h_Data, h_mc, rebin)
         return h_ratio_normalized
 
@@ -191,36 +184,9 @@ class Systematic:
         
         # numerator: data
         h_Data = self.getPhotonData(root_file, variable, h_map_shape)
+        # denominator: MC
+        h_mc = self.getPhotonMC(root_file, variable, h_map_shape)
         
-        #WARNING: strings loaded from json file have type 'unicode'
-        # ROOT cannot load histograms using unicode input: use type 'str'
-        h_GJets             = root_file.Get( str(variable + "/" + h_map_shape["GJets"]           ) )
-        if self.S.splitQCD:
-            h_QCD_Direct        = root_file.Get( str(variable + "/" + h_map_shape["QCD_Direct"]         ) )
-            h_QCD_Fragmentation = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fragmentation"]  ) )
-            h_QCD_NonPrompt     = root_file.Get( str(variable + "/" + h_map_shape["QCD_NonPrompt"]      ) )
-            h_QCD_Fake          = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fake"]           ) )
-        else:
-            h_QCD               = root_file.Get( str(variable + "/" + h_map_shape["QCD"]  ) )
-        h_WJets             = root_file.Get( str(variable + "/" + h_map_shape["WJets"]    ) )
-        h_TTG               = root_file.Get( str(variable + "/" + h_map_shape["TTG"]      ) )
-        h_tW                = root_file.Get( str(variable + "/" + h_map_shape["tW"]       ) )
-        h_Rare              = root_file.Get( str(variable + "/" + h_map_shape["Rare"]     ) )
-        
-        # combine all MC in denominator
-        h_mc = h_GJets.Clone("h_mc") 
-        if self.S.splitQCD:
-            h_mc.Add(h_QCD_Direct)
-            h_mc.Add(h_QCD_Fragmentation)
-            h_mc.Add(h_QCD_NonPrompt)
-            h_mc.Add(h_QCD_Fake)
-        else:
-            h_mc.Add(h_QCD)
-        h_mc.Add(h_WJets)
-        h_mc.Add(h_TTG)
-        h_mc.Add(h_tW)
-        h_mc.Add(h_Rare)
-
         h_ratio_normalized = self.getRatio(h_Data, h_mc, rebin)
         return h_ratio_normalized
 
