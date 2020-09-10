@@ -58,13 +58,90 @@ class Systematic:
                 print str(variable + "/" + h_map_norm[particle]["Rare"]     )
         return h_map_norm
 
-    # get data Z / photon ratio
-    def getDataRatio(self, root_file, region, selection, name, variable, rebin):
-        pass
+    def getRatio(self, num, den, rebin):
+        # WARNING: do not rebin ratios; first rebin, then get ratio
+        if rebin:
+            # variable binning
+            h_num = num.Rebin(self.n_bins, "h_num", self.xbins)
+            h_den = den.Rebin(self.n_bins, "h_den", self.xbins)
+        else:
+            h_num = num.Clone("h_num") 
+            h_den = den.Clone("h_den")
+        h_ratio_normalized = getNormalizedRatio(h_num, h_den)
+        return h_ratio_normalized
 
-    # get MC Z / photon ratio
-    def getMCRatio(self, root_file, region, selection, name, variable, rebin):
-        pass
+    # get data Z / Photon ratio
+    def getDataRatio(self, root_file, region, selection, name, varLepton, varPhoton, rebin):
+        selectionTag    = "_" + selection
+        nameTag         = "_" + name
+        h_map_norm  = self.getZHistoMap(region, nameTag, selectionTag, varLepton)
+        h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, varPhoton)
+        
+        # numerator: Z data
+        h_Data_Electron     = root_file.Get( str(varLepton + "/" + h_map_norm["Electron"]["Data"]    ) )
+        h_Data_Muon         = root_file.Get( str(varLepton + "/" + h_map_norm["Muon"]["Data"]        ) )
+        h_Data_Lepton = h_Data_Electron.Clone("h_Data") 
+        h_Data_Lepton.Add(h_Data_Muon)
+        # denominator: Photon data
+        h_Data_Photon       = root_file.Get( str(varPhoton + "/" + h_map_shape["Data"]) )
+        
+        h_ratio_normalized = self.getRatio(h_Data_Lepton, h_Data_Photon, rebin) 
+        return h_ratio_normalized
+
+    # get MC Z / Photon ratio
+    def getMCRatio(self, root_file, region, selection, name, varLepton, varPhoton, rebin):
+        selectionTag    = "_" + selection
+        nameTag         = "_" + name
+        h_map_norm  = self.getZHistoMap(region, nameTag, selectionTag, varLepton)
+        h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, varPhoton)
+        # numerator: Z MC
+        h_DY_Electron       = root_file.Get( str(varLepton + "/" + h_map_norm["Electron"]["DY"]      ) )
+        h_TTbar_Electron    = root_file.Get( str(varLepton + "/" + h_map_norm["Electron"]["TTbar"]   ) )
+        h_SingleT_Electron  = root_file.Get( str(varLepton + "/" + h_map_norm["Electron"]["SingleT"] ) )
+        h_Rare_Electron     = root_file.Get( str(varLepton + "/" + h_map_norm["Electron"]["Rare"]    ) )
+        h_DY_Muon           = root_file.Get( str(varLepton + "/" + h_map_norm["Muon"]["DY"]          ) )
+        h_TTbar_Muon        = root_file.Get( str(varLepton + "/" + h_map_norm["Muon"]["TTbar"]       ) )
+        h_SingleT_Muon      = root_file.Get( str(varLepton + "/" + h_map_norm["Muon"]["SingleT"]     ) )
+        h_Rare_Muon         = root_file.Get( str(varLepton + "/" + h_map_norm["Muon"]["Rare"]        ) )
+        # combine Z MC
+        h_mc_Z = h_DY_Electron.Clone("h_mc_Z") 
+        h_mc_Z.Add(h_TTbar_Electron)
+        h_mc_Z.Add(h_SingleT_Electron)
+        h_mc_Z.Add(h_Rare_Electron)
+        h_mc_Z.Add(h_DY_Muon)
+        h_mc_Z.Add(h_TTbar_Muon)
+        h_mc_Z.Add(h_SingleT_Muon)
+        h_mc_Z.Add(h_Rare_Muon)
+        # denominator: Photon MC
+        h_GJets             = root_file.Get( str(varPhoton + "/" + h_map_shape["GJets"]           ) )
+        if self.S.splitQCD:
+            h_QCD_Direct        = root_file.Get( str(varPhoton + "/" + h_map_shape["QCD_Direct"]         ) )
+            h_QCD_Fragmentation = root_file.Get( str(varPhoton + "/" + h_map_shape["QCD_Fragmentation"]  ) )
+            h_QCD_NonPrompt     = root_file.Get( str(varPhoton + "/" + h_map_shape["QCD_NonPrompt"]      ) )
+            h_QCD_Fake          = root_file.Get( str(varPhoton + "/" + h_map_shape["QCD_Fake"]           ) )
+        else:
+            h_QCD               = root_file.Get( str(varPhoton + "/" + h_map_shape["QCD"]  ) )
+        h_WJets             = root_file.Get( str(varPhoton + "/" + h_map_shape["WJets"]    ) )
+        h_TTG               = root_file.Get( str(varPhoton + "/" + h_map_shape["TTG"]      ) )
+        h_tW                = root_file.Get( str(varPhoton + "/" + h_map_shape["tW"]       ) )
+        h_Rare              = root_file.Get( str(varPhoton + "/" + h_map_shape["Rare"]     ) )
+        
+        # combine Photon MC
+        h_mc_Photon = h_GJets.Clone("h_mc_Photon") 
+        if self.S.splitQCD:
+            h_mc_Photon.Add(h_QCD_Direct)
+            h_mc_Photon.Add(h_QCD_Fragmentation)
+            h_mc_Photon.Add(h_QCD_NonPrompt)
+            h_mc_Photon.Add(h_QCD_Fake)
+        else:
+            h_mc_Photon.Add(h_QCD)
+        h_mc_Photon.Add(h_WJets)
+        h_mc_Photon.Add(h_TTG)
+        h_mc_Photon.Add(h_tW)
+        h_mc_Photon.Add(h_Rare)
+        
+        h_ratio_normalized = self.getRatio(h_mc_Z, h_mc_Photon, rebin) 
+        return h_ratio_normalized
 
     def getZRatio(self, root_file, region, selection, name, variable, rebin):
         selectionTag    = "_" + selection
@@ -97,26 +174,13 @@ class Systematic:
         h_Data = h_Data_Electron.Clone("h_Data") 
         h_Data.Add(h_Data_Muon)
         
-        # WARNING: do not rebin ratios; first rebin, then get ratio
-        # numerator = Data
-        # denominator = MC
-        if rebin:
-            # variable binning
-            h_num = h_Data.Rebin(self.n_bins, "h_num", self.xbins)
-            h_den = h_mc.Rebin(self.n_bins, "h_den", self.xbins)
-        else:
-            h_num = h_Data.Clone("h_num") 
-            h_den = h_mc.Clone("h_den")
-            # contstant binning for plots
-            #h_num.Rebin(2)
-            #h_den.Rebin(2)
-        h_ratio_normalized = getNormalizedRatio(h_num, h_den)
+        h_ratio_normalized = self.getRatio(h_Data, h_mc, rebin)
         return h_ratio_normalized
 
     def getPhotonRatio(self, root_file, region, selection, name, variable, rebin):
         selectionTag    = "_" + selection
         nameTag         = "_" + name
-        # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable):
+        # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable)
         h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, variable)
         
         #WARNING: strings loaded from json file have type 'unicode'
@@ -132,7 +196,6 @@ class Systematic:
             h_QCD               = root_file.Get( str(variable + "/" + h_map_shape["QCD"]  ) )
         h_WJets             = root_file.Get( str(variable + "/" + h_map_shape["WJets"]    ) )
         h_TTG               = root_file.Get( str(variable + "/" + h_map_shape["TTG"]      ) )
-        #h_TTbar             = root_file.Get( str(variable + "/" + h_map_shape["TTbar"]    ) )
         h_tW                = root_file.Get( str(variable + "/" + h_map_shape["tW"]       ) )
         h_Rare              = root_file.Get( str(variable + "/" + h_map_shape["Rare"]     ) )
         
@@ -147,26 +210,13 @@ class Systematic:
             h_mc.Add(h_QCD)
         h_mc.Add(h_WJets)
         h_mc.Add(h_TTG)
-        #h_mc.Add(h_TTbar)
         h_mc.Add(h_tW)
         h_mc.Add(h_Rare)
 
-        # WARNING: do not rebin ratios; first rebin, then get ratio
-        # numerator = Data
-        # denominator = MC
-        if rebin:
-            # variable binning
-            h_num = h_Data.Rebin(self.n_bins, "h_num", self.xbins)
-            h_den = h_mc.Rebin(self.n_bins, "h_den", self.xbins)
-        else:
-            h_num = h_Data.Clone("h_num") 
-            h_den = h_mc.Clone("h_den")
-            # contstant binning for plots
-            #h_num.Rebin(2)
-            #h_den.Rebin(2)
-        h_ratio_normalized = getNormalizedRatio(h_num, h_den)
+        h_ratio_normalized = self.getRatio(h_Data, h_mc, rebin)
         return h_ratio_normalized
 
+    # double ratio: Z (data/MC) over Photon (data/MC), or data (Z/Photon) over MC (Z/Photon)
     def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst, xbins = np.array([]), n_bins = 0, x_min=0, x_max=0):
         # redefine xbins and n_bins if provided
         if xbins.any():
