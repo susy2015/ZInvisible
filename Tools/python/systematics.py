@@ -30,18 +30,15 @@ class Systematic:
         self.x_max = 1000.0
         self.h_map_syst = {}
 
-    def getZRatio(self, root_file, region, selection, name, variable, rebin):
-        debug = False
-        selectionTag    = "_" + selection
-        nameTag         = "_" + name
-        
-        # histogram names example 
+    # get make of Z histograms
+    def getZHistoMap(self, region, nameTag, selectionTag, variable):
+        # histogram name examples
         # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30_2016metWithLLmetWithLLDatadata;1  metWithLL
         # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30_2016metWithLLmetWithLLDYstack;1   metWithLL
         # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30_2016metWithLLmetWithLLt#bar{t}stack;1 metWithLL
         # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30_2016metWithLLmetWithLLSingle tstack;1 metWithLL
         # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30_2016metWithLLmetWithLLRarestack;1 metWithLL
-        
+        debug = False
         h_map_norm = {}
         for particle in self.particles:
             h_map_norm[particle] = { 
@@ -59,8 +56,20 @@ class Systematic:
                 print str(variable + "/" + h_map_norm[particle]["TTbar"]    )
                 print str(variable + "/" + h_map_norm[particle]["SingleT"]  )
                 print str(variable + "/" + h_map_norm[particle]["Rare"]     )
+        return h_map_norm
 
+    # get data Z / photon ratio
+    def getDataRatio(self, root_file, region, selection, name, variable, rebin):
+        pass
 
+    # get MC Z / photon ratio
+    def getMCRatio(self, root_file, region, selection, name, variable, rebin):
+        pass
+
+    def getZRatio(self, root_file, region, selection, name, variable, rebin):
+        selectionTag    = "_" + selection
+        nameTag         = "_" + name
+        h_map_norm = self.getZHistoMap(region, nameTag, selectionTag, variable)
 
         #WARNING: strings loaded from json file have type 'unicode'
         # ROOT cannot load histograms using unicode input: use type 'str'
@@ -109,6 +118,7 @@ class Systematic:
         nameTag         = "_" + name
         # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable):
         h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, variable)
+        
         #WARNING: strings loaded from json file have type 'unicode'
         # ROOT cannot load histograms using unicode input: use type 'str'
         h_Data              = root_file.Get( str(variable + "/" + h_map_shape["Data"]            ) )
