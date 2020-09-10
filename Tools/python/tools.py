@@ -226,7 +226,12 @@ def normalize(hist):
     if area != 0.0:
         hist.Scale(1.0 / area)
 
-# get ratio
+def getRatio(h_num, h_den):
+    h_ratio = h_num.Clone("h_ratio")
+    h_ratio.Divide(h_den)
+    return h_ratio
+
+# get normalized ratio
 def getNormalizedRatio(h_num, h_den):
     # number of events for normalization
     nNum  = h_num.Integral(0, h_num.GetNbinsX() + 1)

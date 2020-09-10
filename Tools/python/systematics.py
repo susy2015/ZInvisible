@@ -7,7 +7,7 @@ import os
 import numpy as np
 import ROOT
 import tools
-from tools import setupHist, getNormalizedRatio
+from tools import setupHist, getRatio, getNormalizedRatio
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -58,7 +58,7 @@ class Systematic:
                 print str(variable + "/" + h_map_norm[particle]["Rare"]     )
         return h_map_norm
 
-    def getRatio(self, num, den, rebin):
+    def getHistRatio(self, num, den, rebin):
         # WARNING: do not rebin ratios; first rebin, then get ratio
         if rebin:
             # variable binning
@@ -67,8 +67,9 @@ class Systematic:
         else:
             h_num = num.Clone("h_num") 
             h_den = den.Clone("h_den")
-        h_ratio_normalized = getNormalizedRatio(h_num, h_den)
-        return h_ratio_normalized
+        #h_ratio = getNormalizedRatio(h_num, h_den)
+        h_ratio = getRatio(h_num, h_den)
+        return h_ratio
     
     # WARNING: strings loaded from json file have type 'unicode'
     # ROOT cannot load histograms using unicode input: use type 'str'
@@ -146,8 +147,8 @@ class Systematic:
         # denominator: Photon data
         h_Data_Photon = self.getPhotonData(root_file, varPhoton, h_map_shape)
         
-        h_ratio_normalized = self.getRatio(h_Data_Lepton, h_Data_Photon, rebin) 
-        return h_ratio_normalized
+        h_ratio = self.getHistRatio(h_Data_Lepton, h_Data_Photon, rebin) 
+        return h_ratio
 
     # get MC Z / Photon ratio
     def getMCRatio(self, root_file, region, selection, name, varLepton, varPhoton, rebin):
@@ -160,8 +161,8 @@ class Systematic:
         # denominator: Photon MC
         h_mc_Photon = self.getPhotonMC(root_file, varPhoton, h_map_shape)
         
-        h_ratio_normalized = self.getRatio(h_mc_Z, h_mc_Photon, rebin) 
-        return h_ratio_normalized
+        h_ratio = self.getHistRatio(h_mc_Z, h_mc_Photon, rebin) 
+        return h_ratio
 
     def getZRatio(self, root_file, region, selection, name, variable, rebin):
         selectionTag    = "_" + selection
@@ -173,8 +174,8 @@ class Systematic:
         # denominator: MC 
         h_mc = self.getZMC(root_file, variable, h_map_norm)
 
-        h_ratio_normalized = self.getRatio(h_Data, h_mc, rebin)
-        return h_ratio_normalized
+        h_ratio = self.getHistRatio(h_Data, h_mc, rebin)
+        return h_ratio
 
     def getPhotonRatio(self, root_file, region, selection, name, variable, rebin):
         selectionTag    = "_" + selection
@@ -187,8 +188,8 @@ class Systematic:
         # denominator: MC
         h_mc = self.getPhotonMC(root_file, variable, h_map_shape)
         
-        h_ratio_normalized = self.getRatio(h_Data, h_mc, rebin)
-        return h_ratio_normalized
+        h_ratio = self.getHistRatio(h_Data, h_mc, rebin)
+        return h_ratio
 
     # double ratio: Z (data/MC) over Photon (data/MC), or data (Z/Photon) over MC (Z/Photon)
     def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst, doDataOverData=False, xbins = np.array([]), n_bins = 0, x_min=0, x_max=0):
