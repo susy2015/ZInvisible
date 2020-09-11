@@ -198,10 +198,14 @@ class Systematic:
             fileTag = "DataOverData"
             num_label = "(Z to LL Data)/(Photon Data)"
             den_label = "(Z to LL MC)/(Photon MC)" 
+            y_min = 0.0
+            y_max = 0.2
         else:
             fileTag = "ZvsPhoton"
             num_label = "Z to LL Data/MC"
             den_label = "Photon Data/MC" 
+            y_min = 0.0
+            y_max = 2.0
         # redefine xbins and n_bins if provided
         if xbins.any():
             self.xbins  = xbins
@@ -261,13 +265,13 @@ class Systematic:
             title = "Z vs. Photon, {0}, {1}".format(region, era)
             x_title = var
             y_title = "Data / MC"
-            y_min = 0.0
-            y_max = 2.0
+            ratio_y_min = 0.0
+            ratio_y_max = 2.0
             
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_ratio_num,       title, x_title, y_title,                "vermillion",      y_min, y_max)
-            setupHist(h_ratio_den,       title, x_title, y_title,                "electric blue",   y_min, y_max)
-            setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           y_min, y_max)
+            setupHist(h_ratio_num,          title, x_title, y_title,                "vermillion",      y_min, y_max)
+            setupHist(h_ratio_den,          title, x_title, y_title,                "electric blue",   y_min, y_max)
+            setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           ratio_y_min, ratio_y_max)
             # set x axis range
             #print "self.x_min = {0}".format(self.x_min)
             #print "self.x_max = {0}".format(self.x_max)
