@@ -7,7 +7,7 @@ import os
 import numpy as np
 import ROOT
 import tools
-from tools import setupHist, getRatio, getNormalizedRatio
+from tools import setupHist, getRatio, getNormalizedRatio, normalizeHistToHist
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -75,11 +75,11 @@ class Systematic:
     # ROOT cannot load histograms using unicode input: use type 'str'
 
     def getZData(self, root_file, variable, h_map_norm):
-        h_Data_Electron = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Data"]    ) )
-        h_Data_Muon     = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Data"]        ) )
-        h_Data_Lepton   = h_Data_Electron.Clone("h_Data_Lepton") 
-        h_Data_Lepton.Add(h_Data_Muon)
-        return h_Data_Lepton
+        h_data_electron = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Data"]    ) )
+        h_data_muon     = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Data"]        ) )
+        h_data_lepton   = h_data_electron.Clone("h_data_lepton") 
+        h_data_lepton.Add(h_data_muon)
+        return h_data_lepton
 
     def getZMC(self, root_file, variable, h_map_norm):
         h_DY_Electron       = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["DY"]      ) )
@@ -103,8 +103,8 @@ class Systematic:
         return h_mc_Z
 
     def getPhotonData(self, root_file, variable, h_map_shape):
-        h_Data_Photon = root_file.Get( str(variable + "/" + h_map_shape["Data"]) )
-        return h_Data_Photon
+        h_data_photon = root_file.Get( str(variable + "/" + h_map_shape["Data"]) )
+        return h_data_photon
     
     def getPhotonMC(self, root_file, variable, h_map_shape):
         h_GJets             = root_file.Get( str(variable + "/" + h_map_shape["GJets"]           ) )
@@ -120,20 +120,20 @@ class Systematic:
         h_tW                = root_file.Get( str(variable + "/" + h_map_shape["tW"]       ) )
         h_Rare              = root_file.Get( str(variable + "/" + h_map_shape["Rare"]     ) )
         
-        h_mc_Photon = h_GJets.Clone("h_mc_Photon") 
+        h_mc_photon = h_GJets.Clone("h_mc_photon") 
         if self.S.splitQCD:
-            h_mc_Photon.Add(h_QCD_Direct)
-            h_mc_Photon.Add(h_QCD_Fragmentation)
-            h_mc_Photon.Add(h_QCD_NonPrompt)
-            h_mc_Photon.Add(h_QCD_Fake)
+            h_mc_photon.Add(h_QCD_Direct)
+            h_mc_photon.Add(h_QCD_Fragmentation)
+            h_mc_photon.Add(h_QCD_NonPrompt)
+            h_mc_photon.Add(h_QCD_Fake)
         else:
-            h_mc_Photon.Add(h_QCD)
-        h_mc_Photon.Add(h_WJets)
-        h_mc_Photon.Add(h_TTG)
-        h_mc_Photon.Add(h_tW)
-        h_mc_Photon.Add(h_Rare)
+            h_mc_photon.Add(h_QCD)
+        h_mc_photon.Add(h_WJets)
+        h_mc_photon.Add(h_TTG)
+        h_mc_photon.Add(h_tW)
+        h_mc_photon.Add(h_Rare)
 
-        return h_mc_Photon
+        return h_mc_photon
 
     # get data Z / Photon ratio
     def getDataRatio(self, root_file, region, selection, name, varLepton, varPhoton, rebin):
@@ -141,13 +141,12 @@ class Systematic:
         nameTag         = "_" + name
         h_map_norm  = self.getZHistoMap(region, nameTag, selectionTag, varLepton)
         h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, varPhoton)
-        
         # numerator: Z data
-        h_Data_Lepton = self.getZData(root_file, varLepton, h_map_norm)
+        h_data_lepton = self.getZData(root_file, varLepton, h_map_norm)
         # denominator: Photon data
-        h_Data_Photon = self.getPhotonData(root_file, varPhoton, h_map_shape)
-        
-        h_ratio = self.getHistRatio(h_Data_Lepton, h_Data_Photon, rebin) 
+        h_data_photon = self.getPhotonData(root_file, varPhoton, h_map_shape)
+        # take ratio
+        h_ratio = self.getHistRatio(h_data_lepton, h_data_photon, rebin) 
         return h_ratio
 
     # get MC Z / Photon ratio
@@ -156,25 +155,30 @@ class Systematic:
         nameTag         = "_" + name
         h_map_norm  = self.getZHistoMap(region, nameTag, selectionTag, varLepton)
         h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, varPhoton)
-        # numerator: Z MC
-        h_mc_Z = self.getZMC(root_file, varLepton, h_map_norm)
-        # denominator: Photon MC
-        h_mc_Photon = self.getPhotonMC(root_file, varPhoton, h_map_shape)
-        
-        h_ratio = self.getHistRatio(h_mc_Z, h_mc_Photon, rebin) 
+        # numerator: Z MC (normalize to Z data)
+        h_mc_Z   = self.getZMC(root_file, varLepton, h_map_norm)
+        h_data_Z = self.getZData(root_file, varLepton, h_map_norm)
+        normalizeHistToHist(h_mc_Z, h_data_Z)
+        # denominator: Photon MC (normalize to Photon data)
+        h_mc_photon   = self.getPhotonMC(root_file, varPhoton, h_map_shape)
+        h_data_photon = self.getPhotonData(root_file, varPhoton, h_map_shape)
+        normalizeHistToHist(h_mc_photon, h_data_photon)
+        # take ratio
+        h_ratio = self.getHistRatio(h_mc_Z, h_mc_photon, rebin) 
         return h_ratio
 
     def getZRatio(self, root_file, region, selection, name, variable, rebin):
         selectionTag    = "_" + selection
         nameTag         = "_" + name
         h_map_norm = self.getZHistoMap(region, nameTag, selectionTag, variable)
-        
         # numerator: data
-        h_Data = self.getZData(root_file, variable, h_map_norm)
+        h_data = self.getZData(root_file, variable, h_map_norm)
         # denominator: MC 
         h_mc = self.getZMC(root_file, variable, h_map_norm)
-
-        h_ratio = self.getHistRatio(h_Data, h_mc, rebin)
+        # normalize MC to data
+        normalizeHistToHist(h_mc, h_data)
+        # take ratio
+        h_ratio = self.getHistRatio(h_data, h_mc, rebin)
         return h_ratio
 
     def getPhotonRatio(self, root_file, region, selection, name, variable, rebin):
@@ -182,13 +186,14 @@ class Systematic:
         nameTag         = "_" + name
         # getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable)
         h_map_shape = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, variable)
-        
         # numerator: data
-        h_Data = self.getPhotonData(root_file, variable, h_map_shape)
+        h_data = self.getPhotonData(root_file, variable, h_map_shape)
         # denominator: MC
         h_mc = self.getPhotonMC(root_file, variable, h_map_shape)
-        
-        h_ratio = self.getHistRatio(h_Data, h_mc, rebin)
+        # normalize MC to data
+        normalizeHistToHist(h_mc, h_data)
+        # take ratio
+        h_ratio = self.getHistRatio(h_data, h_mc, rebin)
         return h_ratio
 
     # double ratio: Z (data/MC) over Photon (data/MC), or data (Z/Photon) over MC (Z/Photon)
