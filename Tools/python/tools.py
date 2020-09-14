@@ -259,10 +259,12 @@ def setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False):
     hist.SetTitle(title)
     # adjust font sizes only for some plots
     if adjust:
+        x_axis.SetLabelSize(0.06)
+        y_axis.SetLabelSize(0.06)
         x_axis.SetTitleSize(0.06)
         y_axis.SetTitleSize(0.06)
-        x_axis.SetTitleOffset(0.75)
-        y_axis.SetTitleOffset(0.75)
+        x_axis.SetTitleOffset(1.0)
+        y_axis.SetTitleOffset(1.0)
     x_axis.SetTitle(x_title)
     y_axis.SetTitle(y_title)
     hist.SetStats(ROOT.kFALSE)

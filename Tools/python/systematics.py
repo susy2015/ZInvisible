@@ -274,9 +274,9 @@ class Systematic:
             ratio_y_max = 2.0
             
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_ratio_num,          title, x_title, y_title,                "vermillion",      y_min, y_max)
-            setupHist(h_ratio_den,          title, x_title, y_title,                "electric blue",   y_min, y_max)
-            setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           ratio_y_min, ratio_y_max)
+            setupHist(h_ratio_num,          title, x_title, y_title,                "vermillion",      y_min, y_max, True)
+            setupHist(h_ratio_den,          title, x_title, y_title,                "electric blue",   y_min, y_max, True)
+            setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           ratio_y_min, ratio_y_max, True)
             # set x axis range
             #print "self.x_min = {0}".format(self.x_min)
             #print "self.x_max = {0}".format(self.x_max)
@@ -307,6 +307,8 @@ class Systematic:
             # pad for histograms
             pad = c.cd(1)
             pad.SetGrid()
+            pad.SetLeftMargin(0.2)
+            pad.SetBottomMargin(0.2)
             
             # draw
             h_ratio_num.Draw(draw_option)
@@ -320,6 +322,8 @@ class Systematic:
             # pad for ratio
             pad = c.cd(2)
             pad.SetGrid()
+            pad.SetLeftMargin(0.2)
+            pad.SetBottomMargin(0.2)
             
             # draw
             h_ratio_ZoverPhoton.Draw(draw_option)
