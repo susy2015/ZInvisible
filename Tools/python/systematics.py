@@ -207,21 +207,24 @@ class Systematic:
 
     # double ratio: Z (data/MC) over Photon (data/MC), or data (Z/Photon) over MC (Z/Photon)
     def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst, doDataOverData=False, xbins = np.array([]), n_bins = 0, x_min=0, x_max=0):
+        drawSyst = (era == "Run2") and (not doDataOverData)
         # set variables based on mode
         if doDataOverData:
             fileTag = "DataOverData"
-            num_label = "(Z #rightarrow LL Data)/(#gamma Data)"
-            den_label = "(Z #rightarrow LL MC)/(#gamma MC)" 
+            num_label = "Data"
+            den_label = "Simulation"
             y_title   = "(Z #rightarrow LL) / #gamma"
             ratio_title = "Data / MC"
+            num_color = "black"
             y_min = 0.0
             y_max = 0.2
         else:
             fileTag = "ZvsPhoton"
-            num_label = "Z #rightarrow LL Data/MC"
-            den_label = "#gamma Data/MC" 
+            num_label = "Z #rightarrow LL"
+            den_label = "#gamma" 
             y_title   = "Data / MC"
             ratio_title = "(Z #rightarrow LL) / #gamma"
+            num_color = "vermillion"
             y_min = 0.0
             y_max = 2.0
         # redefine xbins and n_bins if provided
@@ -288,7 +291,7 @@ class Systematic:
                 x_title = self.labels[var]
             
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_ratio_num,          title, x_title, y_title,       "vermillion",      y_min, y_max, True)
+            setupHist(h_ratio_num,          title, x_title, y_title,       num_color,         y_min, y_max, True)
             setupHist(h_ratio_den,          title, x_title, y_title,       "electric blue",   y_min, y_max, True)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, ratio_title,   "black",           ratio_y_min, ratio_y_max, True)
             # set x axis range
@@ -325,8 +328,12 @@ class Systematic:
             pad.SetBottomMargin(0.2)
             
             # draw
-            h_ratio_num.Draw(draw_option)
-            h_ratio_den.Draw(draw_option + " same")
+            h_ratio_den.Draw(draw_option)
+            if doDataOverData:
+                h_ratio_num.SetMarkerStyle(ROOT.kFullCircle);
+                h_ratio_num.Draw("E1 same")
+            else:
+                h_ratio_num.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
             legend1.AddEntry(h_ratio_num, num_label, "l")
@@ -348,17 +355,16 @@ class Systematic:
                 #print "Fit: f(x) = (%.5f #pm %.5f) * x + (%.5f #pm %.5f)" % (p1, p1_err, p0, p0_err)
                 mark.DrawLatex(300.0, y_max - 0.2, "Fit: f(x) = %.5f + %.5f * x" % (p0, p1))
                 mark.DrawLatex(300.0, y_max - 0.4, "#chi_{r}^{2} = %.3f" % chisq_r)
-            if era == "Run2":
-                h_syst.Draw(draw_option + " same")
             
-            # legend: TLegend(x1,y1,x2,y2)
-            legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            legend2.AddEntry(h_ratio_ZoverPhoton,    ratio_title,           "l")
-            if doFit:
-                legend2.AddEntry(fit,                "Fit to " + ratio_title,    "l")
-            if era == "Run2":
+            if drawSyst:
+                h_syst.Draw(draw_option + " same")
+                # legend: TLegend(x1,y1,x2,y2)
+                legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+                legend2.AddEntry(h_ratio_ZoverPhoton,    ratio_title,           "l")
+                if doFit:
+                    legend2.AddEntry(fit,                "Fit to " + ratio_title,    "l")
                 legend2.AddEntry(h_syst,             "syst. unc.",    "l")
-            legend2.Draw()
+                legend2.Draw()
             
             # save histograms
             if rebin:
