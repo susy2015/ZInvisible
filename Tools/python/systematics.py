@@ -210,16 +210,18 @@ class Systematic:
         # set variables based on mode
         if doDataOverData:
             fileTag = "DataOverData"
-            num_label = "(Z to LL Data)/(Photon Data)"
-            den_label = "(Z to LL MC)/(Photon MC)" 
-            y_title   = "(Z to LL) / Photon"
+            num_label = "(Z #rightarrow LL Data)/(#gamma Data)"
+            den_label = "(Z #rightarrow LL MC)/(#gamma MC)" 
+            y_title   = "(Z #rightarrow LL) / #gamma"
+            ratio_title = "Data / MC"
             y_min = 0.0
             y_max = 0.2
         else:
             fileTag = "ZvsPhoton"
-            num_label = "Z to LL Data/MC"
-            den_label = "Photon Data/MC" 
+            num_label = "Z #rightarrow LL Data/MC"
+            den_label = "#gamma Data/MC" 
             y_title   = "Data / MC"
+            ratio_title = "(Z #rightarrow LL) / #gamma"
             y_min = 0.0
             y_max = 2.0
         # redefine xbins and n_bins if provided
@@ -286,9 +288,9 @@ class Systematic:
                 x_title = self.labels[var]
             
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_ratio_num,          title, x_title, y_title,                "vermillion",      y_min, y_max, True)
-            setupHist(h_ratio_den,          title, x_title, y_title,                "electric blue",   y_min, y_max, True)
-            setupHist(h_ratio_ZoverPhoton,  title, x_title, "(Z to LL) / Photon",   "black",           ratio_y_min, ratio_y_max, True)
+            setupHist(h_ratio_num,          title, x_title, y_title,       "vermillion",      y_min, y_max, True)
+            setupHist(h_ratio_den,          title, x_title, y_title,       "electric blue",   y_min, y_max, True)
+            setupHist(h_ratio_ZoverPhoton,  title, x_title, ratio_title,   "black",           ratio_y_min, ratio_y_max, True)
             # set x axis range
             #print "self.x_min = {0}".format(self.x_min)
             #print "self.x_max = {0}".format(self.x_max)
@@ -351,9 +353,9 @@ class Systematic:
             
             # legend: TLegend(x1,y1,x2,y2)
             legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            legend2.AddEntry(h_ratio_ZoverPhoton,    "(Z to LL) / Photon",           "l")
+            legend2.AddEntry(h_ratio_ZoverPhoton,    ratio_title,           "l")
             if doFit:
-                legend2.AddEntry(fit,                "Fit to (Z to LL) / Photon",    "l")
+                legend2.AddEntry(fit,                "Fit to " + ratio_title,    "l")
             if era == "Run2":
                 legend2.AddEntry(h_syst,             "syst. unc.",    "l")
             legend2.Draw()
