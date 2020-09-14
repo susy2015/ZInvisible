@@ -212,12 +212,14 @@ class Systematic:
             fileTag = "DataOverData"
             num_label = "(Z to LL Data)/(Photon Data)"
             den_label = "(Z to LL MC)/(Photon MC)" 
+            y_title   = "(Z to LL) / Photon"
             y_min = 0.0
             y_max = 0.2
         else:
             fileTag = "ZvsPhoton"
             num_label = "Z to LL Data/MC"
             den_label = "Photon Data/MC" 
+            y_title   = "Data / MC"
             y_min = 0.0
             y_max = 2.0
         # redefine xbins and n_bins if provided
@@ -277,10 +279,9 @@ class Systematic:
             
             # histogram info 
             title = "Z vs. Photon, {0}, {1}".format(region, era)
-            x_title = var
-            y_title = "Data / MC"
             ratio_y_min = 0.0
             ratio_y_max = 2.0
+            x_title = var
             if var in self.labels:
                 x_title = self.labels[var]
             
