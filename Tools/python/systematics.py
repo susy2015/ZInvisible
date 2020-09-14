@@ -29,6 +29,15 @@ class Systematic:
         self.x_min = 250.0
         self.x_max = 1000.0
         self.h_map_syst = {}
+        self.labels = {
+                        "met"   : "#slash{E}_{T} [GeV]", 
+                        "ht"    : "H_{T} [GeV]",
+                        "nj"    : "N_{j}",
+                        "nb"    : "N_{b}",
+                        "nmt"   : "N_{merged tops}",
+                        "nrt"   : "N_{resolved tops}",
+                        "nw"    : "N_{W}"
+                      }
 
     # get make of Z histograms
     def getZHistoMap(self, region, nameTag, selectionTag, variable):
@@ -272,6 +281,8 @@ class Systematic:
             y_title = "Data / MC"
             ratio_y_min = 0.0
             ratio_y_max = 2.0
+            if var in self.labels:
+                x_title = self.labels[var]
             
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
             setupHist(h_ratio_num,          title, x_title, y_title,                "vermillion",      y_min, y_max, True)
