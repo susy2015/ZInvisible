@@ -206,7 +206,9 @@ class Systematic:
         return h_ratio
 
     # double ratio: Z (data/MC) over Photon (data/MC), or data (Z/Photon) over MC (Z/Photon)
-    def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, rebin, useForSyst, doDataOverData=False, xbins = np.array([]), n_bins = 0, x_min=0, x_max=0):
+    def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, x_min, x_max, n_bins=0, xbins=np.array([]), rebin=False, useForSyst=False, doDataOverData=False):
+        doFit = False
+        draw_option = "hist error"
         drawSyst = (era == "Run2") and (not doDataOverData)
         # set variables based on mode
         if doDataOverData:
@@ -227,15 +229,14 @@ class Systematic:
             num_color = "vermillion"
             y_min = 0.0
             y_max = 2.0
+        
         # redefine xbins and n_bins if provided
         if xbins.any():
             self.xbins  = xbins
             self.n_bins = n_bins
-        if x_max:
-            self.x_min = x_min
-            self.x_max = x_max
-        doFit = False
-        draw_option = "hist error"
+        self.x_min = x_min
+        self.x_max = x_max
+        
         # check that the file exists
         if not os.path.isfile(file_name): 
             print "The file {0} does not exist".format(file_name)
@@ -278,8 +279,6 @@ class Systematic:
                 p1_err  = fit.GetParError(1)
                 chisq   = fit.GetChisquare()
                 chisq_r = chisq / nDegFree
-                mark = ROOT.TLatex()
-                mark.SetTextSize(0.05)
             
             
             # histogram info 
@@ -294,16 +293,12 @@ class Systematic:
             setupHist(h_ratio_num,          title, x_title, y_title,       num_color,         y_min, y_max, True)
             setupHist(h_ratio_den,          title, x_title, y_title,       "electric blue",   y_min, y_max, True)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, ratio_title,   "black",           ratio_y_min, ratio_y_max, True)
-            # set x axis range
-            #print "self.x_min = {0}".format(self.x_min)
-            #print "self.x_max = {0}".format(self.x_max)
             h_ratio_num.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_den.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             
             # do Run 2 systematic
             if era == "Run2":
-                #h_syst = ROOT.TH1F("h_syst", "h_syst", self.n_bins, self.xbins)
                 h_syst = h_ratio_ZoverPhoton.Clone("h_syst")
                 for i in xrange(1, h_syst.GetNbinsX() + 1):
                     # syst = max(stat uncertainty in double ratio, |(double ratio) - 1|)
@@ -340,6 +335,23 @@ class Systematic:
             legend1.AddEntry(h_ratio_den, den_label, "l")
             legend1.Draw()
             
+            # Draw CMS mark
+            font_scale = 0.05
+            left    = self.x_min
+            right   = self.x_max
+            mark_x1 = left
+            mark_x2 = left + 0.1 * (right - left)
+            mark_y  = 1.05 * y_max
+            print "CMS_MARK var: {0}, left = {1}, right = {2}, mark_x1 = {3}, mark_x2 = {4}, mark_y = {5}".format(var, left, right, mark_x1, mark_x2, mark_y)
+            cms_mark = ROOT.TLatex()
+            cms_mark.SetTextAlign(11)
+            cms_mark.SetTextSize(1.25 * font_scale)
+            cms_mark.SetTextFont(61)
+            cms_mark.DrawLatex(mark_x1, mark_y, "CMS")
+            cms_mark.SetTextSize(font_scale)
+            cms_mark.SetTextFont(52)
+            cms_mark.DrawLatex(mark_x2, mark_y, "Supplementary")
+            
             # pad for ratio
             pad = c.cd(2)
             pad.SetGrid()
@@ -353,6 +365,8 @@ class Systematic:
                 # write chisq_r
                 # give x, y coordinates (same as plot coordinates)
                 #print "Fit: f(x) = (%.5f #pm %.5f) * x + (%.5f #pm %.5f)" % (p1, p1_err, p0, p0_err)
+                mark = ROOT.TLatex()
+                mark.SetTextSize(0.05)
                 mark.DrawLatex(300.0, y_max - 0.2, "Fit: f(x) = %.5f + %.5f * x" % (p0, p1))
                 mark.DrawLatex(300.0, y_max - 0.4, "#chi_{r}^{2} = %.3f" % chisq_r)
             
