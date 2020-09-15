@@ -257,10 +257,10 @@ class Systematic:
         c.Divide(1, 2)
         selection = "jetpt30"
         # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.5
-        legend_x2 = 0.9 
-        legend_y1 = 0.7 
-        legend_y2 = 0.9 
+        legend_x1 = 0.65
+        legend_x2 = 0.90
+        legend_y1 = 0.73
+        legend_y2 = 0.88
         for region in self.regions:
             if doDataOverData:
                 h_ratio_num = self.getDataRatio(f, region, selection, var, varLepton, varPhoton, rebin)
@@ -330,6 +330,9 @@ class Systematic:
             # pad for histograms
             pad = c.cd(1)
             #pad.SetGrid()
+            # set ticks on all sides of plot
+            pad.SetTickx()
+            pad.SetTicky()
             pad.SetLeftMargin(0.2)
             pad.SetBottomMargin(0.2)
             
@@ -342,6 +345,11 @@ class Systematic:
                 h_ratio_num.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend1.SetFillStyle(0)
+            legend1.SetBorderSize(0)
+            legend1.SetLineWidth(1)
+            legend1.SetNColumns(1)
+            legend1.SetTextFont(42)
             legend1.AddEntry(h_ratio_num, num_label, num_legend_style)
             legend1.AddEntry(h_ratio_den, den_label, "l")
             legend1.Draw()
@@ -375,6 +383,9 @@ class Systematic:
             # pad for ratio
             pad = c.cd(2)
             #pad.SetGrid()
+            # set ticks on all sides of plot
+            pad.SetTickx()
+            pad.SetTicky()
             pad.SetLeftMargin(0.2)
             pad.SetBottomMargin(0.2)
             
@@ -398,6 +409,11 @@ class Systematic:
                 h_syst.Draw(draw_option + " same")
                 # legend: TLegend(x1,y1,x2,y2)
                 legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+                legend2.SetFillStyle(0)
+                legend2.SetBorderSize(0)
+                legend2.SetLineWidth(1)
+                legend2.SetNColumns(1)
+                legend2.SetTextFont(42)
                 legend2.AddEntry(h_ratio_ZoverPhoton,    ratio_title,           num_legend_style)
                 if doFit:
                     legend2.AddEntry(fit,                "Fit to " + ratio_title,    "l")
