@@ -224,17 +224,19 @@ class Systematic:
             num_label = "Data"
             den_label = "Simulation"
             y_title   = "(Z #rightarrow LL) / #gamma"
-            ratio_title = "Data / MC"
+            ratio_title = "Data / Simulation"
             num_color = "black"
+            num_legend_style = "p"
             y_min = 0.0
             y_max = 0.2
         else:
             fileTag = "ZvsPhoton"
             num_label = "Z #rightarrow LL"
             den_label = "#gamma" 
-            y_title   = "Data / MC"
+            y_title   = "Data / Simulation"
             ratio_title = "(Z #rightarrow LL) / #gamma"
             num_color = "vermillion"
+            num_legend_style = "l"
             y_min = 0.0
             y_max = 2.0
         
@@ -340,7 +342,7 @@ class Systematic:
                 h_ratio_num.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            legend1.AddEntry(h_ratio_num, num_label, "l")
+            legend1.AddEntry(h_ratio_num, num_label, num_legend_style)
             legend1.AddEntry(h_ratio_den, den_label, "l")
             legend1.Draw()
             
@@ -377,7 +379,11 @@ class Systematic:
             pad.SetBottomMargin(0.2)
             
             # draw
-            h_ratio_ZoverPhoton.Draw(draw_option)
+            if doDataOverData:
+                h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullCircle)
+                h_ratio_ZoverPhoton.Draw("E1")
+            else:
+                h_ratio_ZoverPhoton.Draw(draw_option)
             if doFit:
                 fit.Draw("same")
                 # write chisq_r
@@ -392,7 +398,7 @@ class Systematic:
                 h_syst.Draw(draw_option + " same")
                 # legend: TLegend(x1,y1,x2,y2)
                 legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-                legend2.AddEntry(h_ratio_ZoverPhoton,    ratio_title,           "l")
+                legend2.AddEntry(h_ratio_ZoverPhoton,    ratio_title,           num_legend_style)
                 if doFit:
                     legend2.AddEntry(fit,                "Fit to " + ratio_title,    "l")
                 legend2.AddEntry(h_syst,             "syst. unc.",    "l")
