@@ -38,6 +38,13 @@ class Systematic:
                         "nrt"   : "N_{resolved tops}",
                         "nw"    : "N_{W}"
                       }
+        self.lumis = {
+                        "2016" :  35815.165,
+                        "2017" :  41486.136,
+                        "2018" :  59699.489,
+                        "Run2" : 137000.790,
+                        "2016and2017" : 77301.301
+                     }
 
     # get make of Z histograms
     def getZHistoMap(self, region, nameTag, selectionTag, variable):
@@ -282,7 +289,8 @@ class Systematic:
             
             
             # histogram info 
-            title = "Z vs. Photon, {0}, {1}".format(region, era)
+            #title = "Z vs. Photon, {0}, {1}".format(region, era)
+            title = ""
             ratio_y_min = 0.0
             ratio_y_max = 2.0
             x_title = var
@@ -340,17 +348,26 @@ class Systematic:
             left    = self.x_min
             right   = self.x_max
             mark_x1 = left
-            mark_x2 = left + 0.1 * (right - left)
+            mark_x2 = left + 0.10 * (right - left)
+            mark_x3 = right
             mark_y  = 1.05 * y_max
             print "CMS_MARK var: {0}, left = {1}, right = {2}, mark_x1 = {3}, mark_x2 = {4}, mark_y = {5}".format(var, left, right, mark_x1, mark_x2, mark_y)
             cms_mark = ROOT.TLatex()
-            cms_mark.SetTextAlign(11)
-            cms_mark.SetTextSize(1.25 * font_scale)
+            cms_mark.SetTextAlign(11) # left aligned
             cms_mark.SetTextFont(61)
+            cms_mark.SetTextSize(1.25 * font_scale)
             cms_mark.DrawLatex(mark_x1, mark_y, "CMS")
-            cms_mark.SetTextSize(font_scale)
             cms_mark.SetTextFont(52)
+            cms_mark.SetTextSize(font_scale)
             cms_mark.DrawLatex(mark_x2, mark_y, "Supplementary")
+
+            # Draw lumi stamp
+            lumi = self.lumis[era]
+            lumistamp = "{0:.1f} fb^{{-1}} (13 TeV)".format(lumi / 1000.0)
+            cms_mark.SetTextAlign(31) # right aligned
+            cms_mark.SetTextFont(42)
+            cms_mark.SetTextSize(font_scale)
+            cms_mark.DrawLatex(mark_x3, mark_y, lumistamp)
             
             # pad for ratio
             pad = c.cd(2)
