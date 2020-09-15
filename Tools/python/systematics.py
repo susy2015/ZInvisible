@@ -30,7 +30,7 @@ class Systematic:
         self.x_max = 1000.0
         self.h_map_syst = {}
         self.labels = {
-                        "met"   : "#slash{E}_{T} [GeV]", 
+                        "met"   : "modified p_{T}^{miss} [GeV]", 
                         "ht"    : "H_{T} [GeV]",
                         "nj"    : "N_{j}",
                         "nb"    : "N_{b}",
