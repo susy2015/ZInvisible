@@ -217,6 +217,7 @@ class Systematic:
         doFit = False
         draw_option = "hist error"
         drawSyst = (era == "Run2") and (not doDataOverData)
+        ROOT.gStyle.SetErrorX(0) # remove horizontal bar for data points
         # set variables based on mode
         if doDataOverData:
             fileTag = "DataOverData"
@@ -333,7 +334,7 @@ class Systematic:
             # draw
             h_ratio_den.Draw(draw_option)
             if doDataOverData:
-                h_ratio_num.SetMarkerStyle(ROOT.kFullCircle);
+                h_ratio_num.SetMarkerStyle(ROOT.kFullCircle)
                 h_ratio_num.Draw("E1 same")
             else:
                 h_ratio_num.Draw(draw_option + " same")
