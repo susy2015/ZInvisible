@@ -30,7 +30,7 @@ class Systematic:
         self.x_max = 1000.0
         self.h_map_syst = {}
         self.labels = {
-                        "met"   : "modified p_{T}^{miss} [GeV]", 
+                        "met"   : "Modified p_{T}^{miss} [GeV]", 
                         "ht"    : "H_{T} [GeV]",
                         "nj"    : "N_{j}",
                         "nb"    : "N_{b}",
@@ -223,7 +223,7 @@ class Systematic:
             fileTag = "DataOverData"
             num_label = "Data"
             den_label = "Simulation"
-            y_title   = "(Z #rightarrow LL) / #gamma"
+            y_title   = "(Z #rightarrow ll) / #gamma"
             ratio_title = "Data / Simulation"
             num_color = "black"
             num_legend_style = "p"
@@ -231,10 +231,10 @@ class Systematic:
             y_max = 0.2
         else:
             fileTag = "ZvsPhoton"
-            num_label = "Z #rightarrow LL"
+            num_label = "Z #rightarrow ll"
             den_label = "#gamma" 
             y_title   = "Data / Simulation"
-            ratio_title = "(Z #rightarrow LL) / #gamma"
+            ratio_title = "(Z #rightarrow ll) / #gamma"
             num_color = "vermillion"
             num_legend_style = "l"
             y_min = 0.0
@@ -329,7 +329,7 @@ class Systematic:
             
             # pad for histograms
             pad = c.cd(1)
-            pad.SetGrid()
+            #pad.SetGrid()
             pad.SetLeftMargin(0.2)
             pad.SetBottomMargin(0.2)
             
@@ -374,7 +374,7 @@ class Systematic:
             
             # pad for ratio
             pad = c.cd(2)
-            pad.SetGrid()
+            #pad.SetGrid()
             pad.SetLeftMargin(0.2)
             pad.SetBottomMargin(0.2)
             
