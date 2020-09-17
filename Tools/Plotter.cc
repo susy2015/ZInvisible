@@ -470,8 +470,10 @@ void Plotter::createHistsFromTuple()
                 // events to display
                 //std::vector<int> events = {726000, 684000, 556000, 1016000, 998000};
                 // events to display: two resolved tops
-                std::vector<int> events = {556000, 66000, 56000, 621000, 779000, 794000, 532000};
-                tr.goToEvent(events[6]);
+                //std::vector<int> events = {556000, 66000, 56000, 621000, 779000, 794000, 532000};
+                // events to display: one merged top, one resolved top
+                std::vector<int> events = {684000, 462000};
+                tr.goToEvent(events[1]);
 
                 while(tr.getNextEvent())
                 {
