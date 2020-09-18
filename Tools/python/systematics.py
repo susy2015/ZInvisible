@@ -311,20 +311,23 @@ class Systematic:
             h_ratio_num.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_den.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
-            # label formatting
-            labelSize = 0.15
+            
+            # label and title formatting
+            labelSize   = 0.15
+            titleSize   = 0.12
+            titleOffset = 0.20
             
             h_ratio_den.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
             h_ratio_den.GetYaxis().SetLabelSize(padHeightRatio * labelSize)
-            h_ratio_den.GetYaxis().SetTitleSize(0.06)
-            h_ratio_den.GetYaxis().SetTitleOffset(1.20)
+            h_ratio_den.GetYaxis().SetTitleSize(padHeightRatio * titleSize)
+            h_ratio_den.GetYaxis().SetTitleOffset(1.0 + titleOffset/padHeightRatio)
             h_ratio_den.GetYaxis().SetNdivisions(5, 5, 0, True)
             
             h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(labelSize)
-            h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(0.12)
-            h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(1.20)
+            h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(titleSize)
+            h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(1.0 + titleOffset)
             h_ratio_ZoverPhoton.GetYaxis().SetLabelSize(labelSize)
-            h_ratio_ZoverPhoton.GetYaxis().SetTitleSize(0.12)
+            h_ratio_ZoverPhoton.GetYaxis().SetTitleSize(titleSize)
             h_ratio_ZoverPhoton.GetYaxis().SetTitleOffset(0.60)
             h_ratio_ZoverPhoton.GetYaxis().SetNdivisions(3, 5, 0, True)
             
