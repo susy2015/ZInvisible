@@ -227,8 +227,9 @@ class Systematic:
             ratio_title = "Data / Simulation"
             num_color = "black"
             num_legend_style = "p"
-            y_min = 0.0
-            y_max = 0.2
+            # avoid 0 label which is cutoff
+            y_min = 0.01
+            y_max = 0.20
         else:
             fileTag = "ZvsPhoton"
             num_label = "Z #rightarrow ll"
@@ -237,7 +238,8 @@ class Systematic:
             ratio_title = "(Z #rightarrow ll) / #gamma"
             num_color = "vermillion"
             num_legend_style = "l"
-            y_min = 0.0
+            # avoid 0 label which is cutoff
+            y_min = 0.1
             y_max = 2.0
         
         # redefine xbins and n_bins if provided
