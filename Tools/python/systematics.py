@@ -225,23 +225,23 @@ class Systematic:
         
         # set variables based on mode
         if doDataOverData:
-            fileTag = "DataOverData"
-            num_label = "Data"
-            den_label = "Simulation"
-            y_title   = "(Z #rightarrow ll) / #gamma"
-            ratio_title = "Data / Simulation"
-            num_color = "black"
+            fileTag     = "DataOverData"
+            num_label   = "Data"
+            den_label   = "Simulation"
+            y_title     = "(Z #rightarrow ll)/#gamma"
+            ratio_title = "Data/Sim."
+            num_color   = "black"
             num_legend_style = "p"
             # avoid 0 label which is cutoff
             y_min = 0.01
             y_max = 0.20
         else:
-            fileTag = "ZvsPhoton"
-            num_label = "Z #rightarrow ll"
-            den_label = "#gamma" 
-            y_title   = "Data / Simulation"
-            ratio_title = "(Z #rightarrow ll) / #gamma"
-            num_color = "vermillion"
+            fileTag     = "ZvsPhoton"
+            num_label   = "Z #rightarrow ll"
+            den_label   = "#gamma" 
+            y_title     = "Data/Sim."
+            ratio_title = "(Z #rightarrow ll)/#gamma"
+            num_color   = "vermillion"
             num_legend_style = "l"
             # avoid 0 label which is cutoff
             y_min = 0.1
@@ -315,20 +315,21 @@ class Systematic:
             # label and title formatting
             labelSize   = 0.14
             titleSize   = 0.14
-            titleOffset = 0.20
+            titleOffsetXaxis = 1.20
+            titleOffsetYaxis = 0.60
             
             h_ratio_den.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
             h_ratio_den.GetYaxis().SetLabelSize(padHeightRatio * labelSize)
             h_ratio_den.GetYaxis().SetTitleSize(padHeightRatio * titleSize)
-            h_ratio_den.GetYaxis().SetTitleOffset(1.0 + titleOffset/padHeightRatio)
+            h_ratio_den.GetYaxis().SetTitleOffset(titleOffsetYaxis/padHeightRatio)
             h_ratio_den.GetYaxis().SetNdivisions(5, 5, 0, True)
             
             h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(labelSize)
             h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(titleSize)
-            h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(1.0 + titleOffset)
+            h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(titleOffsetXaxis)
             h_ratio_ZoverPhoton.GetYaxis().SetLabelSize(labelSize)
             h_ratio_ZoverPhoton.GetYaxis().SetTitleSize(titleSize)
-            h_ratio_ZoverPhoton.GetYaxis().SetTitleOffset(0.60)
+            h_ratio_ZoverPhoton.GetYaxis().SetTitleOffset(titleOffsetYaxis)
             h_ratio_ZoverPhoton.GetYaxis().SetNdivisions(3, 5, 0, True)
             
             # do Run 2 systematic
@@ -388,11 +389,11 @@ class Systematic:
             legend1.Draw()
             
             # Draw CMS mark
-            font_scale = 0.04
+            font_scale = 0.05
             left    = self.x_min
             right   = self.x_max
             mark_x1 = left
-            mark_x2 = left + 0.12 * (right - left)
+            mark_x2 = left + 0.15 * (right - left)
             mark_x3 = right
             mark_y  = 1.02 * y_max
             #print "CMS_MARK var: {0}, left = {1}, right = {2}, mark_x1 = {3}, mark_x2 = {4}, mark_y = {5}".format(var, left, right, mark_x1, mark_x2, mark_y)
