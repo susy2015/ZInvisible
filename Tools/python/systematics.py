@@ -218,6 +218,11 @@ class Systematic:
         draw_option = "hist error"
         drawSyst = (era == "Run2") and (not doDataOverData)
         ROOT.gStyle.SetErrorX(0) # remove horizontal bar for data points
+        
+        # set lower pad height as percentage
+        lowerPadHeight = 0.30
+        padHeightRatio = lowerPadHeight / (1.0 - lowerPadHeight)
+        
         # set variables based on mode
         if doDataOverData:
             fileTag = "DataOverData"
@@ -307,16 +312,18 @@ class Systematic:
             h_ratio_den.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             # label formatting
+            labelSize = 0.15
+            
             h_ratio_den.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
-            h_ratio_den.GetYaxis().SetLabelSize(0.04)
+            h_ratio_den.GetYaxis().SetLabelSize(padHeightRatio * labelSize)
             h_ratio_den.GetYaxis().SetTitleSize(0.06)
             h_ratio_den.GetYaxis().SetTitleOffset(1.20)
             h_ratio_den.GetYaxis().SetNdivisions(5, 5, 0, True)
             
-            h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(0.10)
+            h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(labelSize)
             h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(0.12)
             h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(1.20)
-            h_ratio_ZoverPhoton.GetYaxis().SetLabelSize(0.10)
+            h_ratio_ZoverPhoton.GetYaxis().SetLabelSize(labelSize)
             h_ratio_ZoverPhoton.GetYaxis().SetTitleSize(0.12)
             h_ratio_ZoverPhoton.GetYaxis().SetTitleOffset(0.60)
             h_ratio_ZoverPhoton.GetYaxis().SetNdivisions(3, 5, 0, True)
@@ -346,7 +353,7 @@ class Systematic:
             #pad.SetGrid()
             # resize pad
             # SetPad(xlow, ylow, xup, yup)
-            pad.SetPad(0, 0.30, 1, 1)
+            pad.SetPad(0, lowerPadHeight, 1, 1)
             # set ticks on all sides of plot
             pad.SetTickx()
             pad.SetTicky()
@@ -409,7 +416,7 @@ class Systematic:
             #pad.SetGrid()
             pad.SetGridy()
             # SetPad(xlow, ylow, xup, yup)
-            pad.SetPad(0, 0, 1, 0.30)
+            pad.SetPad(0, 0, 1, lowerPadHeight)
             # set ticks on all sides of plot
             pad.SetTickx()
             pad.SetTicky()
