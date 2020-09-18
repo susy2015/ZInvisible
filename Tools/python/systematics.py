@@ -301,12 +301,24 @@ class Systematic:
                 x_title = self.labels[var]
             
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_ratio_num,          title, x_title, y_title,       num_color,         y_min, y_max, True)
-            setupHist(h_ratio_den,          title, x_title, y_title,       "electric blue",   y_min, y_max, True)
+            setupHist(h_ratio_num,          title, "",      y_title,       num_color,         y_min, y_max, True)
+            setupHist(h_ratio_den,          title, "",      y_title,       "electric blue",   y_min, y_max, True)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, ratio_title,   "black",           ratio_y_min, ratio_y_max, True)
             h_ratio_num.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_den.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
+            # label formatting
+            h_ratio_den.GetXaxis().SetLabelSize(0)
+            h_ratio_den.GetYaxis().SetLabelSize(0.04)
+            h_ratio_den.GetYaxis().SetNdivisions(5, 5, 0, True)
+            
+            h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(0.1)
+            h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(0.1)
+            h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(1.5)
+            h_ratio_ZoverPhoton.GetYaxis().SetLabelSize(0.1)
+            h_ratio_ZoverPhoton.GetYaxis().SetTitleSize(0.1)
+            h_ratio_ZoverPhoton.GetYaxis().SetTitleOffset(0.5)
+            h_ratio_ZoverPhoton.GetYaxis().SetNdivisions(5, 5, 0, True)
             
             # do Run 2 systematic
             if era == "Run2":
@@ -322,6 +334,7 @@ class Systematic:
                         syst_err = max(stat_err, diff) 
                     h_syst.SetBinContent(i, syst_err)
                     h_syst.SetBinError(i, 0)
+                # setup
                 setupHist(h_syst,       title, x_title, "syst.",   "irish green",      y_min, y_max)
                 h_syst.GetXaxis().SetRangeUser(self.x_min, self.x_max)
                 if useForSyst:
@@ -330,11 +343,16 @@ class Systematic:
             # pad for histograms
             pad = c.cd(1)
             #pad.SetGrid()
+            # resize pad
+            # SetPad(xlow, ylow, xup, yup)
+            pad.SetPad(0, 0.25, 1, 1)
             # set ticks on all sides of plot
             pad.SetTickx()
             pad.SetTicky()
             pad.SetLeftMargin(0.2)
-            pad.SetBottomMargin(0.2)
+            pad.SetRightMargin(0.1)
+            pad.SetTopMargin(0.1)
+            pad.SetBottomMargin(0.01)
             
             # draw
             h_ratio_den.Draw(draw_option)
@@ -355,7 +373,7 @@ class Systematic:
             legend1.Draw()
             
             # Draw CMS mark
-            font_scale = 0.05
+            font_scale = 0.03
             left    = self.x_min
             right   = self.x_max
             mark_x1 = left
@@ -382,12 +400,18 @@ class Systematic:
             
             # pad for ratio
             pad = c.cd(2)
+            # resize pad
             #pad.SetGrid()
+            pad.SetGridy()
+            # SetPad(xlow, ylow, xup, yup)
+            pad.SetPad(0, 0, 1, 0.25)
             # set ticks on all sides of plot
             pad.SetTickx()
             pad.SetTicky()
             pad.SetLeftMargin(0.2)
-            pad.SetBottomMargin(0.2)
+            pad.SetRightMargin(0.1)
+            pad.SetTopMargin(0.01)
+            pad.SetBottomMargin(0.4)
             
             # draw
             if doDataOverData:
