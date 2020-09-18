@@ -300,6 +300,7 @@ class Systematic:
             if var in self.labels:
                 x_title = self.labels[var]
             
+            # turn off x-axis titles for upper plot
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
             setupHist(h_ratio_num,          title, "",      y_title,       num_color,         y_min, y_max, True)
             setupHist(h_ratio_den,          title, "",      y_title,       "electric blue",   y_min, y_max, True)
@@ -308,16 +309,18 @@ class Systematic:
             h_ratio_den.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             # label formatting
-            h_ratio_den.GetXaxis().SetLabelSize(0)
+            h_ratio_den.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
             h_ratio_den.GetYaxis().SetLabelSize(0.04)
+            h_ratio_den.GetYaxis().SetTitleSize(0.05)
+            h_ratio_den.GetYaxis().SetTitleOffset(1.50)
             h_ratio_den.GetYaxis().SetNdivisions(5, 5, 0, True)
             
-            h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(0.1)
-            h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(0.1)
-            h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(1.5)
-            h_ratio_ZoverPhoton.GetYaxis().SetLabelSize(0.1)
-            h_ratio_ZoverPhoton.GetYaxis().SetTitleSize(0.1)
-            h_ratio_ZoverPhoton.GetYaxis().SetTitleOffset(0.5)
+            h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(0.10)
+            h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(0.12)
+            h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(1.50)
+            h_ratio_ZoverPhoton.GetYaxis().SetLabelSize(0.10)
+            h_ratio_ZoverPhoton.GetYaxis().SetTitleSize(0.12)
+            h_ratio_ZoverPhoton.GetYaxis().SetTitleOffset(0.50)
             h_ratio_ZoverPhoton.GetYaxis().SetNdivisions(5, 5, 0, True)
             
             # do Run 2 systematic
@@ -373,14 +376,14 @@ class Systematic:
             legend1.Draw()
             
             # Draw CMS mark
-            font_scale = 0.03
+            font_scale = 0.04
             left    = self.x_min
             right   = self.x_max
             mark_x1 = left
-            mark_x2 = left + 0.10 * (right - left)
+            mark_x2 = left + 0.15 * (right - left)
             mark_x3 = right
             mark_y  = 1.05 * y_max
-            print "CMS_MARK var: {0}, left = {1}, right = {2}, mark_x1 = {3}, mark_x2 = {4}, mark_y = {5}".format(var, left, right, mark_x1, mark_x2, mark_y)
+            #print "CMS_MARK var: {0}, left = {1}, right = {2}, mark_x1 = {3}, mark_x2 = {4}, mark_y = {5}".format(var, left, right, mark_x1, mark_x2, mark_y)
             cms_mark = ROOT.TLatex()
             cms_mark.SetTextAlign(11) # left aligned
             cms_mark.SetTextFont(61)
