@@ -294,8 +294,8 @@ class Systematic:
             # histogram info 
             #title = "Z vs. Photon, {0}, {1}".format(region, era)
             title = ""
-            ratio_y_min = 0.0
-            ratio_y_max = 2.0
+            ratio_y_min = 0.4
+            ratio_y_max = 1.6
             x_title = var
             if var in self.labels:
                 x_title = self.labels[var]
@@ -311,17 +311,17 @@ class Systematic:
             # label formatting
             h_ratio_den.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
             h_ratio_den.GetYaxis().SetLabelSize(0.04)
-            h_ratio_den.GetYaxis().SetTitleSize(0.05)
-            h_ratio_den.GetYaxis().SetTitleOffset(1.50)
+            h_ratio_den.GetYaxis().SetTitleSize(0.06)
+            h_ratio_den.GetYaxis().SetTitleOffset(1.20)
             h_ratio_den.GetYaxis().SetNdivisions(5, 5, 0, True)
             
             h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(0.10)
             h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(0.12)
-            h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(1.50)
+            h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(1.20)
             h_ratio_ZoverPhoton.GetYaxis().SetLabelSize(0.10)
             h_ratio_ZoverPhoton.GetYaxis().SetTitleSize(0.12)
-            h_ratio_ZoverPhoton.GetYaxis().SetTitleOffset(0.50)
-            h_ratio_ZoverPhoton.GetYaxis().SetNdivisions(5, 5, 0, True)
+            h_ratio_ZoverPhoton.GetYaxis().SetTitleOffset(0.60)
+            h_ratio_ZoverPhoton.GetYaxis().SetNdivisions(3, 5, 0, True)
             
             # do Run 2 systematic
             if era == "Run2":
@@ -348,7 +348,7 @@ class Systematic:
             #pad.SetGrid()
             # resize pad
             # SetPad(xlow, ylow, xup, yup)
-            pad.SetPad(0, 0.25, 1, 1)
+            pad.SetPad(0, 0.30, 1, 1)
             # set ticks on all sides of plot
             pad.SetTickx()
             pad.SetTicky()
@@ -407,7 +407,7 @@ class Systematic:
             #pad.SetGrid()
             pad.SetGridy()
             # SetPad(xlow, ylow, xup, yup)
-            pad.SetPad(0, 0, 1, 0.25)
+            pad.SetPad(0, 0, 1, 0.30)
             # set ticks on all sides of plot
             pad.SetTickx()
             pad.SetTicky()
