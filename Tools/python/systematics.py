@@ -256,11 +256,6 @@ class Systematic:
         c = ROOT.TCanvas("c", "c", 800, 800)
         c.Divide(1, 2)
         selection = "jetpt30"
-        # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.65
-        legend_x2 = 0.90
-        legend_y1 = 0.73
-        legend_y2 = 0.88
         for region in self.regions:
             if doDataOverData:
                 h_ratio_num = self.getDataRatio(f, region, selection, var, varLepton, varPhoton, rebin)
@@ -292,6 +287,7 @@ class Systematic:
             
             
             # histogram info 
+            # turn off title
             #title = "Z vs. Photon, {0}, {1}".format(region, era)
             title = ""
             ratio_y_min = 0.4
@@ -365,6 +361,10 @@ class Systematic:
             else:
                 h_ratio_num.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
+            legend_x1 = 0.65
+            legend_x2 = 0.90
+            legend_y1 = 0.73
+            legend_y2 = 0.88
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
             legend1.SetFillStyle(0)
             legend1.SetBorderSize(0)
@@ -435,6 +435,10 @@ class Systematic:
             if drawSyst:
                 h_syst.Draw(draw_option + " same")
                 # legend: TLegend(x1,y1,x2,y2)
+                legend_x1 = 0.65
+                legend_x2 = 0.90
+                legend_y1 = 0.80
+                legend_y2 = 0.95
                 legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
                 legend2.SetFillStyle(0)
                 legend2.SetBorderSize(0)
