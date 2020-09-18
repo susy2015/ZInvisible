@@ -313,8 +313,8 @@ class Systematic:
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             
             # label and title formatting
-            labelSize   = 0.15
-            titleSize   = 0.12
+            labelSize   = 0.14
+            titleSize   = 0.14
             titleOffset = 0.20
             
             h_ratio_den.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
