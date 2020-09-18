@@ -382,9 +382,9 @@ class Systematic:
             left    = self.x_min
             right   = self.x_max
             mark_x1 = left
-            mark_x2 = left + 0.15 * (right - left)
+            mark_x2 = left + 0.12 * (right - left)
             mark_x3 = right
-            mark_y  = 1.05 * y_max
+            mark_y  = 1.02 * y_max
             #print "CMS_MARK var: {0}, left = {1}, right = {2}, mark_x1 = {3}, mark_x2 = {4}, mark_y = {5}".format(var, left, right, mark_x1, mark_x2, mark_y)
             cms_mark = ROOT.TLatex()
             cms_mark.SetTextAlign(11) # left aligned
