@@ -388,15 +388,19 @@ class Systematic:
             legend1.AddEntry(h_ratio_den, den_label, "l")
             legend1.Draw()
             
+            # parameters for CMS mark and lumi stamp
+            font_scale  = 0.05
+            left        = self.x_min
+            right       = self.x_max
+            x_offset    = 0.05
+            width       = right - left
+            mark_x1     = left + x_offset * width
+            mark_x2     = left + (x_offset + 0.15) * width
+            mark_y      = 0.9 * y_max
+            lumi_x      = right 
+            lumi_y      = 1.02 * y_max
+            
             # Draw CMS mark
-            font_scale = 0.05
-            left    = self.x_min
-            right   = self.x_max
-            mark_x1 = left
-            mark_x2 = left + 0.15 * (right - left)
-            mark_x3 = right
-            mark_y  = 1.02 * y_max
-            #print "CMS_MARK var: {0}, left = {1}, right = {2}, mark_x1 = {3}, mark_x2 = {4}, mark_y = {5}".format(var, left, right, mark_x1, mark_x2, mark_y)
             cms_mark = ROOT.TLatex()
             cms_mark.SetTextAlign(11) # left aligned
             cms_mark.SetTextFont(61)
@@ -412,7 +416,7 @@ class Systematic:
             cms_mark.SetTextAlign(31) # right aligned
             cms_mark.SetTextFont(42)
             cms_mark.SetTextSize(font_scale)
-            cms_mark.DrawLatex(mark_x3, mark_y, lumistamp)
+            cms_mark.DrawLatex(lumi_x, lumi_y, lumistamp)
             
             # pad for ratio
             pad = c.cd(2)
