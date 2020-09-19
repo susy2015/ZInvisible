@@ -218,26 +218,33 @@ class Systematic:
         draw_option = "hist error"
         drawSyst = (era == "Run2") and (not doDataOverData)
         ROOT.gStyle.SetErrorX(0) # remove horizontal bar for data points
+        
+        # set lower pad height as percentage
+        lowerPadHeight = 0.30
+        padHeightRatio = lowerPadHeight / (1.0 - lowerPadHeight)
+        
         # set variables based on mode
         if doDataOverData:
-            fileTag = "DataOverData"
-            num_label = "Data"
-            den_label = "Simulation"
-            y_title   = "(Z #rightarrow ll) / #gamma"
-            ratio_title = "Data / Simulation"
-            num_color = "black"
+            fileTag     = "DataOverData"
+            num_label   = "Data"
+            den_label   = "Simulation"
+            y_title     = "(Z #rightarrow ll)/#gamma"
+            ratio_title = "Data/Sim."
+            num_color   = "black"
             num_legend_style = "p"
-            y_min = 0.0
-            y_max = 0.2
+            # avoid 0 label which is cutoff
+            y_min = 0.01
+            y_max = 0.20
         else:
-            fileTag = "ZvsPhoton"
-            num_label = "Z #rightarrow ll"
-            den_label = "#gamma" 
-            y_title   = "Data / Simulation"
-            ratio_title = "(Z #rightarrow ll) / #gamma"
-            num_color = "vermillion"
+            fileTag     = "ZvsPhoton"
+            num_label   = "Z #rightarrow ll"
+            den_label   = "#gamma" 
+            y_title     = "Data/Sim."
+            ratio_title = "(Z #rightarrow ll)/#gamma"
+            num_color   = "vermillion"
             num_legend_style = "l"
-            y_min = 0.0
+            # avoid 0 label which is cutoff
+            y_min = 0.1
             y_max = 2.0
         
         # redefine xbins and n_bins if provided
@@ -256,11 +263,6 @@ class Systematic:
         c = ROOT.TCanvas("c", "c", 800, 800)
         c.Divide(1, 2)
         selection = "jetpt30"
-        # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.65
-        legend_x2 = 0.90
-        legend_y1 = 0.73
-        legend_y2 = 0.88
         for region in self.regions:
             if doDataOverData:
                 h_ratio_num = self.getDataRatio(f, region, selection, var, varLepton, varPhoton, rebin)
@@ -292,21 +294,43 @@ class Systematic:
             
             
             # histogram info 
+            # turn off title
             #title = "Z vs. Photon, {0}, {1}".format(region, era)
             title = ""
-            ratio_y_min = 0.0
-            ratio_y_max = 2.0
+            ratio_y_min = 0.4
+            ratio_y_max = 1.6
             x_title = var
             if var in self.labels:
                 x_title = self.labels[var]
             
+            # turn off x-axis titles for upper plot
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_ratio_num,          title, x_title, y_title,       num_color,         y_min, y_max, True)
-            setupHist(h_ratio_den,          title, x_title, y_title,       "electric blue",   y_min, y_max, True)
+            setupHist(h_ratio_num,          title, "",      y_title,       num_color,         y_min, y_max, True)
+            setupHist(h_ratio_den,          title, "",      y_title,       "electric blue",   y_min, y_max, True)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, ratio_title,   "black",           ratio_y_min, ratio_y_max, True)
             h_ratio_num.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_den.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
+            
+            # label and title formatting
+            labelSize   = 0.14
+            titleSize   = 0.14
+            titleOffsetXaxis = 1.20
+            titleOffsetYaxis = 0.60
+            
+            h_ratio_den.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
+            h_ratio_den.GetYaxis().SetLabelSize(padHeightRatio * labelSize)
+            h_ratio_den.GetYaxis().SetTitleSize(padHeightRatio * titleSize)
+            h_ratio_den.GetYaxis().SetTitleOffset(titleOffsetYaxis/padHeightRatio)
+            h_ratio_den.GetYaxis().SetNdivisions(5, 5, 0, True)
+            
+            h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(labelSize)
+            h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(titleSize)
+            h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(titleOffsetXaxis)
+            h_ratio_ZoverPhoton.GetYaxis().SetLabelSize(labelSize)
+            h_ratio_ZoverPhoton.GetYaxis().SetTitleSize(titleSize)
+            h_ratio_ZoverPhoton.GetYaxis().SetTitleOffset(titleOffsetYaxis)
+            h_ratio_ZoverPhoton.GetYaxis().SetNdivisions(3, 5, 0, True)
             
             # do Run 2 systematic
             if era == "Run2":
@@ -322,6 +346,7 @@ class Systematic:
                         syst_err = max(stat_err, diff) 
                     h_syst.SetBinContent(i, syst_err)
                     h_syst.SetBinError(i, 0)
+                # setup
                 setupHist(h_syst,       title, x_title, "syst.",   "irish green",      y_min, y_max)
                 h_syst.GetXaxis().SetRangeUser(self.x_min, self.x_max)
                 if useForSyst:
@@ -330,11 +355,16 @@ class Systematic:
             # pad for histograms
             pad = c.cd(1)
             #pad.SetGrid()
+            # resize pad
+            # SetPad(xlow, ylow, xup, yup)
+            pad.SetPad(0, lowerPadHeight, 1, 1)
             # set ticks on all sides of plot
             pad.SetTickx()
             pad.SetTicky()
             pad.SetLeftMargin(0.2)
-            pad.SetBottomMargin(0.2)
+            pad.SetRightMargin(0.1)
+            pad.SetTopMargin(0.1)
+            pad.SetBottomMargin(0.01)
             
             # draw
             h_ratio_den.Draw(draw_option)
@@ -344,6 +374,10 @@ class Systematic:
             else:
                 h_ratio_num.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
+            legend_x1 = 0.65
+            legend_x2 = 0.90
+            legend_y1 = 0.73
+            legend_y2 = 0.88
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
             legend1.SetFillStyle(0)
             legend1.SetBorderSize(0)
@@ -354,15 +388,19 @@ class Systematic:
             legend1.AddEntry(h_ratio_den, den_label, "l")
             legend1.Draw()
             
+            # parameters for CMS mark and lumi stamp
+            font_scale  = 0.05
+            left        = self.x_min
+            right       = self.x_max
+            x_offset    = 0.05
+            width       = right - left
+            mark_x1     = left + x_offset * width
+            mark_x2     = left + (x_offset + 0.15) * width
+            mark_y      = 0.9 * y_max
+            lumi_x      = right 
+            lumi_y      = 1.02 * y_max
+            
             # Draw CMS mark
-            font_scale = 0.05
-            left    = self.x_min
-            right   = self.x_max
-            mark_x1 = left
-            mark_x2 = left + 0.10 * (right - left)
-            mark_x3 = right
-            mark_y  = 1.05 * y_max
-            print "CMS_MARK var: {0}, left = {1}, right = {2}, mark_x1 = {3}, mark_x2 = {4}, mark_y = {5}".format(var, left, right, mark_x1, mark_x2, mark_y)
             cms_mark = ROOT.TLatex()
             cms_mark.SetTextAlign(11) # left aligned
             cms_mark.SetTextFont(61)
@@ -378,16 +416,22 @@ class Systematic:
             cms_mark.SetTextAlign(31) # right aligned
             cms_mark.SetTextFont(42)
             cms_mark.SetTextSize(font_scale)
-            cms_mark.DrawLatex(mark_x3, mark_y, lumistamp)
+            cms_mark.DrawLatex(lumi_x, lumi_y, lumistamp)
             
             # pad for ratio
             pad = c.cd(2)
+            # resize pad
             #pad.SetGrid()
+            pad.SetGridy()
+            # SetPad(xlow, ylow, xup, yup)
+            pad.SetPad(0, 0, 1, lowerPadHeight)
             # set ticks on all sides of plot
             pad.SetTickx()
             pad.SetTicky()
             pad.SetLeftMargin(0.2)
-            pad.SetBottomMargin(0.2)
+            pad.SetRightMargin(0.1)
+            pad.SetTopMargin(0.01)
+            pad.SetBottomMargin(0.4)
             
             # draw
             if doDataOverData:
@@ -408,6 +452,10 @@ class Systematic:
             if drawSyst:
                 h_syst.Draw(draw_option + " same")
                 # legend: TLegend(x1,y1,x2,y2)
+                legend_x1 = 0.65
+                legend_x2 = 0.90
+                legend_y1 = 0.80
+                legend_y2 = 0.95
                 legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
                 legend2.SetFillStyle(0)
                 legend2.SetBorderSize(0)
