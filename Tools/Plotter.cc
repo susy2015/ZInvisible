@@ -467,8 +467,13 @@ void Plotter::createHistsFromTuple()
                 registerfunc_->setupTopWeightCalculator(tr);
         
                 // skip to event
-                //int myEvent = 6025;
-                //tr.goToEvent(myEvent);
+                // events to display
+                //std::vector<int> events = {726000, 684000, 556000, 1016000, 998000};
+                // events to display: two resolved tops
+                //std::vector<int> events = {556000, 66000, 56000, 621000, 779000, 794000, 532000};
+                // events to display: one merged top, one resolved top
+                //std::vector<int> events = {684000, 462000};
+                //tr.goToEvent(events[1]);
 
                 while(tr.getNextEvent())
                 {
@@ -1265,18 +1270,29 @@ void Plotter::plot()
         //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * 1.25 * fontScale);
         mark.SetTextFont(61);
         //mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
-        mark.DrawLatex(gPad->GetLeftMargin() + x_offset, 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
+        mark.DrawLatex(gPad->GetLeftMargin() + x_offset, 1 - (gPad->GetTopMargin() - 0.017), "CMS");
         mark.SetTextSize(0.042 * fontScale);
         //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
         mark.SetTextFont(52);
+        //mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+        mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
+        
         //mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
-        mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
         //mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
 
         //Draw lumistamp
         mark.SetTextFont(42);
         mark.SetTextAlign(31);
         mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
+
+        //Write comment on normalization
+        if(hist.isNorm)
+        {
+            mark.SetTextSize(0.042 * fontScale * 0.75);
+            mark.SetTextFont(42);
+            mark.SetTextAlign(11);
+            mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.05, 1 - (gPad->GetTopMargin() + 0.1), "Normalized to unit area");
+        }
 
         fixOverlay();
         c->Print((plotDir_ + hist.name+".pdf").c_str());

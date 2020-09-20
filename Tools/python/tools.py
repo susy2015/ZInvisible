@@ -220,22 +220,32 @@ def removeCuts(cutString, pattern_list, delim = "_"):
         newString = delim.join(newList)
     return newString
 
-# normalize histogram
+# normalize histogram to unit area
 def normalize(hist):
     area = hist.Integral(0, hist.GetNbinsX() + 1)
     if area != 0.0:
         hist.Scale(1.0 / area)
 
-# get ratio
-def getNormalizedRatio(h_num, h_den):
+# normalize histogram to have equal area of another histogram
+def normalizeHistToHist(hist, histForNorm):
     # number of events for normalization
-    nNum  = h_num.Integral(0, h_num.GetNbinsX() + 1)
-    nDen  = h_den.Integral(0, h_den.GetNbinsX() + 1)
-    ratio = float(nNum) / float(nDen)
-    
+    nNum  = histForNorm.Integral( 0, histForNorm.GetNbinsX() + 1)
+    nDen  = hist.Integral(        0, hist.GetNbinsX()        + 1)
+    if nDen != 0.0:
+        ratio = nNum / nDen
+        hist.Scale(ratio)
+
+# get ratio
+def getRatio(h_num, h_den):
+    h_ratio = h_num.Clone("h_ratio")
+    h_ratio.Divide(h_den)
+    return h_ratio
+
+# get normalized ratio
+def getNormalizedRatio(h_num, h_den):
+    # normalize denominator to numerator
     h_den_normalized = h_den.Clone("h_den_normalized")
-    h_den_normalized.Scale(ratio)
-    
+    normalizeHistToHist(h_den_normalized, h_num)
     # normalized ratio
     h_ratio_normalized = h_num.Clone("h_ratio_normalized")
     h_ratio_normalized.Divide(h_den_normalized)
@@ -249,10 +259,12 @@ def setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False):
     hist.SetTitle(title)
     # adjust font sizes only for some plots
     if adjust:
+        x_axis.SetLabelSize(0.06)
+        y_axis.SetLabelSize(0.06)
         x_axis.SetTitleSize(0.06)
         y_axis.SetTitleSize(0.06)
-        x_axis.SetTitleOffset(0.75)
-        y_axis.SetTitleOffset(0.75)
+        x_axis.SetTitleOffset(1.0)
+        y_axis.SetTitleOffset(1.0)
     x_axis.SetTitle(x_title)
     y_axis.SetTitle(y_title)
     hist.SetStats(ROOT.kFALSE)
