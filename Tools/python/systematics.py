@@ -231,7 +231,7 @@ class Systematic:
             y_title     = "(Z #rightarrow ll)/#gamma"
             ratio_title = "Data/Sim."
             num_color   = "black"
-            num_legend_style = "p"
+            num_legend_style = "pe"
             # avoid 0 label which is cutoff
             y_min = 0.01
             y_max = 0.20
