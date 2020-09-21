@@ -899,6 +899,7 @@ void Plotter::plot()
         double max = 0.0, lmax = 0.0, min = 1.0e300, minAvgWgt = 1.0e300;
         int iSingle = 0, iRatio = 0, iFill = 0;
         char legEntry[128];
+        bool showIntegral = false;
 
         for(auto& hvec : hist.hists)
         {
@@ -911,7 +912,8 @@ void Plotter::plot()
                     hvec.hcsVec.front()->h->SetMarkerColor(kBlack);
                     hvec.hcsVec.front()->h->SetMarkerStyle(20);
                     double integral = hvec.hcsVec.front()->h->Integral(1, hvec.hcsVec.front()->h->GetNbinsX() + 1);
-                    if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", hvec.hcsVec.front()->label.c_str(), integral);
+                    if(not showIntegral)      sprintf(legEntry, "%s",          hvec.hcsVec.front()->label.c_str());
+                    else if(integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", hvec.hcsVec.front()->label.c_str(), integral);
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", hvec.hcsVec.front()->label.c_str(), integral);
                     else                      sprintf(legEntry, "%s (%0.2e)",  hvec.hcsVec.front()->label.c_str(), integral);
                     leg->AddEntry(hvec.hcsVec.front()->h, legEntry, "PE");
@@ -941,7 +943,8 @@ void Plotter::plot()
                     h->h->SetLineWidth(3);
                     iSingle++;
                     double integral = h->h->Integral(0, h->h->GetNbinsX() + 1);
-                    if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", h->label.c_str(), integral);
+                    if(not showIntegral)      sprintf(legEntry, "%s",          h->label.c_str());
+                    else if(integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", h->label.c_str(), integral);
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", h->label.c_str(), integral);
                     else                      sprintf(legEntry, "%s (%0.2e)",  h->label.c_str(), integral);
                     leg->AddEntry(h->h, legEntry, drawOptions.c_str());
@@ -982,7 +985,8 @@ void Plotter::plot()
                     (*ih)->h->SetFillColor(stackColors[iStack%NSTACKCOLORS]);
                     iStack++;
                     double integral = (*ih)->h->Integral(0, (*ih)->h->GetNbinsX() + 1);
-                    if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", (*ih)->label.c_str(), integral);
+                    if(not showIntegral)      sprintf(legEntry, "%s",          (*ih)->label.c_str());
+                    else if(integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", (*ih)->label.c_str(), integral);
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", (*ih)->label.c_str(), integral);
                     else                      sprintf(legEntry, "%s (%0.2e)",  (*ih)->label.c_str(), integral);
                     leg->AddEntry((*ih)->h, legEntry, "F");

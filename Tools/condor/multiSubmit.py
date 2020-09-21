@@ -27,10 +27,10 @@ def main():
     
     # different datasets for different eras; note the order
     dataSetsList = []
-    #dataSetsList.append("Data_MET_{0},Data_SingleElectron_{0},Data_SingleMuon_{0},Data_SinglePhoton_{0},DYJetsToLL_{1},TTbarNoHad_{1},SingleTopZinv_{1},Rare_{1},TTZ_{1},WZ_amcatnlo_{1},Diboson_{1},GJets_{1},QCD_Photon_{1},WJetsToLNu_{1},TTbar_{1},tW_{1},ZJetsToNuNu_{1}")
-    #dataSetsList.append("Data_MET_{0},Data_EGamma_{0},Data_SingleMuon_{0},DYJetsToLL_{1},TTbarNoHad_{1},SingleTopZinv_{1},Rare_{1},TTZ_{1},WZ_amcatnlo_{1},Diboson_{1},GJets_{1},QCD_Photon_{1},WJetsToLNu_{1},TTbar_{1},tW_{1},ZJetsToNuNu_{1}")
-    dataSetsList.append("Data_MET_{0}")
-    dataSetsList.append("Data_MET_{0}")
+    dataSetsList.append("Data_MET_{0},Data_SingleElectron_{0},Data_SingleMuon_{0},Data_SinglePhoton_{0},DYJetsToLL_{1},TTbarNoHad_{1},SingleTopZinv_{1},Rare_{1},TTZ_{1},WZ_amcatnlo_{1},Diboson_{1},GJets_{1},QCD_Photon_{1},WJetsToLNu_{1},TTbar_{1},tW_{1},ZJetsToNuNu_{1}")
+    dataSetsList.append("Data_MET_{0},Data_EGamma_{0},Data_SingleMuon_{0},DYJetsToLL_{1},TTbarNoHad_{1},SingleTopZinv_{1},Rare_{1},TTZ_{1},WZ_amcatnlo_{1},Diboson_{1},GJets_{1},QCD_Photon_{1},WJetsToLNu_{1},TTbar_{1},tW_{1},ZJetsToNuNu_{1}")
+    #dataSetsList.append("Data_MET_{0}")
+    #dataSetsList.append("Data_MET_{0}")
     dataSetsMap = {
             "2016"          : 0,
             "2017"          : 0,
