@@ -1290,13 +1290,13 @@ void Plotter::plot()
         mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
 
         //Write comment on normalization
-        if(hist.isNorm)
-        {
-            mark.SetTextSize(0.042 * fontScale * 0.75);
-            mark.SetTextFont(42);
-            mark.SetTextAlign(11);
-            mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.05, 1 - (gPad->GetTopMargin() + 0.1), "Normalized to unit area");
-        }
+        //if(hist.isNorm)
+        //{
+        //    mark.SetTextSize(0.042 * fontScale * 0.75);
+        //    mark.SetTextFont(42);
+        //    mark.SetTextAlign(11);
+        //    mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.05, 1 - (gPad->GetTopMargin() + 0.1), "Normalized to unit area");
+        //}
 
         fixOverlay();
         c->Print((plotDir_ + hist.name+".pdf").c_str());
