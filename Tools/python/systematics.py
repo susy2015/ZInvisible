@@ -327,6 +327,7 @@ class Systematic:
             h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(labelSize)
             h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(titleSize)
             h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(titleOffsetXaxis)
+            h_ratio_ZoverPhoton.GetXaxis().SetNdivisions(5, 5, 0, True)
             h_ratio_ZoverPhoton.GetYaxis().SetLabelSize(labelSize)
             h_ratio_ZoverPhoton.GetYaxis().SetTitleSize(titleSize)
             h_ratio_ZoverPhoton.GetYaxis().SetTitleOffset(titleOffsetYaxis)
