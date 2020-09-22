@@ -891,7 +891,7 @@ void Plotter::plot()
             else if(hvec.type.compare("stack") == 0)                             NlegEntries += hvec.hcsVec.size();
         }
         
-        //
+        // setup legend dimensions
         double leg_x_offset = 0.0;
         if(not showIntegral)
         {
@@ -902,7 +902,6 @@ void Plotter::plot()
         double leg_y1 = 0.88 - NlegEntries * 0.045;
         double leg_y2 = 0.88;
 
-        //TLegend *leg = new TLegend(0.50, 0.88 - NlegEntries * 0.045, 0.89, 0.88);
         TLegend *leg = new TLegend(leg_x1, leg_y1, leg_x2, leg_y2);
         leg->SetFillStyle(0);
         leg->SetBorderSize(0);
