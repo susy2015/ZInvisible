@@ -297,8 +297,8 @@ class Systematic:
             # turn off title
             #title = "Z vs. Photon, {0}, {1}".format(region, era)
             title = ""
-            ratio_y_min = 0.4
-            ratio_y_max = 1.6
+            ratio_y_min = 0.7
+            ratio_y_max = 1.3
             x_title = var
             if var in self.labels:
                 x_title = self.labels[var]
