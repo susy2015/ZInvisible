@@ -522,13 +522,13 @@ int main(int argc, char* argv[])
     std::string label_Events = "Events";
     //std::string label_met = "p_{T}^{miss} [GeV]";
     std::string label_met = "#slash{E}_{T} [GeV]";
-    std::string label_metWithLL = "#slash{E}_{T}^{LL} [GeV]";
+    std::string label_metWithLL = "#slash{E}_{T}^{ll} [GeV]";
     std::string label_metWithPhoton = "#slash{E}_{T}^{#gamma} [GeV]";
     std::string label_metphi = "#phi_{MET}";
-    std::string label_metphiWithLL = "#phi_{MET}^{LL}";
+    std::string label_metphiWithLL = "#phi_{MET}^{ll}";
     std::string label_metphiWithPhoton = "#phi_{MET}^{#gamma}";
-    std::string label_bestRecoZM  = "m_{LL} [GeV]";
-    std::string label_bestRecoZPt = "p_{T}(LL) [GeV]";
+    std::string label_bestRecoZM  = "m_{ll} [GeV]";
+    std::string label_bestRecoZPt = "p_{T}(ll) [GeV]";
     std::string label_ht  = "H_{T} [GeV]";
     std::string label_mtb = "M_{T}(b_{1,2}, #slash{E}_{T}) [GeV]";
     std::string label_ptb = "p_{T}(b) [GeV]";

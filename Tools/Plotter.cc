@@ -1101,9 +1101,10 @@ void Plotter::plot()
             dummy2 = new TH1F("dummy2", "dummy2", 1000, hist.fhist()->GetBinLowEdge(1), hist.fhist()->GetBinLowEdge(hist.fhist()->GetNbinsX()) + hist.fhist()->GetBinWidth(hist.fhist()->GetNbinsX()));
             dummy2->GetXaxis()->SetTitle(hist.xAxisLabel.c_str());
             dummy2->GetXaxis()->SetTitleOffset(0.97);
-            //dummy2->GetYaxis()->SetTitle("Data/MC");
-            dummy2->GetYaxis()->SetTitle("Ratio");
-            dummy2->GetYaxis()->SetTitleOffset(0.42);
+            //dummy2->GetYaxis()->SetTitle("Ratio");
+            dummy2->GetYaxis()->SetTitle("Data/Sim.");
+            //dummy2->GetYaxis()->SetTitleOffset(0.42);
+            dummy2->GetYaxis()->SetTitleOffset(0.5);
             dummy2->GetYaxis()->SetNdivisions(3, 5, 0, true);
 
             dummy2->GetYaxis()->SetTitleSize(0.16 * 2 / 2.5);
