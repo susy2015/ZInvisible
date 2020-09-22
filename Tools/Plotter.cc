@@ -817,6 +817,8 @@ void Plotter::plot()
     //gROOT->SetStyle("Plain");
     // make png files
     bool make_png = true;
+    // show integral (number of events) in legend
+    bool showIntegral = false;
 
     for(HistSummary& hist : hists_)
     {
@@ -888,8 +890,20 @@ void Plotter::plot()
             else if(hvec.type.compare("ratio") == 0 && hvec.hcsVec.size() >= 2)  ++NlegEntries;
             else if(hvec.type.compare("stack") == 0)                             NlegEntries += hvec.hcsVec.size();
         }
+        
+        //
+        double leg_x_offset = 0.0;
+        if(not showIntegral)
+        {
+            leg_x_offset = 0.1;
+        }
+        double leg_x1 = 0.50 + leg_x_offset;
+        double leg_x2 = 0.89 + leg_x_offset;
+        double leg_y1 = 0.88 - NlegEntries * 0.045;
+        double leg_y2 = 0.88;
 
-        TLegend *leg = new TLegend(0.50, 0.88 - NlegEntries * 0.045, 0.89, 0.88);
+        //TLegend *leg = new TLegend(0.50, 0.88 - NlegEntries * 0.045, 0.89, 0.88);
+        TLegend *leg = new TLegend(leg_x1, leg_y1, leg_x2, leg_y2);
         leg->SetFillStyle(0);
         leg->SetBorderSize(0);
         leg->SetLineWidth(1);
@@ -899,7 +913,6 @@ void Plotter::plot()
         double max = 0.0, lmax = 0.0, min = 1.0e300, minAvgWgt = 1.0e300;
         int iSingle = 0, iRatio = 0, iFill = 0;
         char legEntry[128];
-        bool showIntegral = false;
 
         for(auto& hvec : hist.hists)
         {
