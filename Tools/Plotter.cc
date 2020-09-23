@@ -817,6 +817,8 @@ void Plotter::plot()
     //gROOT->SetStyle("Plain");
     // make png files
     bool make_png = true;
+    // show integral (number of events) in legend
+    bool showIntegral = false;
 
     for(HistSummary& hist : hists_)
     {
@@ -888,8 +890,25 @@ void Plotter::plot()
             else if(hvec.type.compare("ratio") == 0 && hvec.hcsVec.size() >= 2)  ++NlegEntries;
             else if(hvec.type.compare("stack") == 0)                             NlegEntries += hvec.hcsVec.size();
         }
+        
+        // setup legend dimensions
+        double leg_x_offset = 0.0;
+        if(not showIntegral)
+        {
+            leg_x_offset = 0.1;
+        }
+        // original
+        //double leg_x1 = 0.50;
+        //double leg_x2 = 0.89;
+        //double leg_y1 = 0.88 - NlegEntries * 0.045;
+        //double leg_y2 = 0.88;
+        // modified
+        double leg_x1 = 0.50 + leg_x_offset;
+        double leg_x2 = 0.89 + leg_x_offset;
+        double leg_y1 = 0.89 - NlegEntries * 0.06;
+        double leg_y2 = 0.89;
 
-        TLegend *leg = new TLegend(0.50, 0.88 - NlegEntries * 0.045, 0.89, 0.88);
+        TLegend *leg = new TLegend(leg_x1, leg_y1, leg_x2, leg_y2);
         leg->SetFillStyle(0);
         leg->SetBorderSize(0);
         leg->SetLineWidth(1);
@@ -911,7 +930,8 @@ void Plotter::plot()
                     hvec.hcsVec.front()->h->SetMarkerColor(kBlack);
                     hvec.hcsVec.front()->h->SetMarkerStyle(20);
                     double integral = hvec.hcsVec.front()->h->Integral(1, hvec.hcsVec.front()->h->GetNbinsX() + 1);
-                    if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", hvec.hcsVec.front()->label.c_str(), integral);
+                    if(not showIntegral)      sprintf(legEntry, "%s",          hvec.hcsVec.front()->label.c_str());
+                    else if(integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", hvec.hcsVec.front()->label.c_str(), integral);
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", hvec.hcsVec.front()->label.c_str(), integral);
                     else                      sprintf(legEntry, "%s (%0.2e)",  hvec.hcsVec.front()->label.c_str(), integral);
                     leg->AddEntry(hvec.hcsVec.front()->h, legEntry, "PE");
@@ -941,7 +961,8 @@ void Plotter::plot()
                     h->h->SetLineWidth(3);
                     iSingle++;
                     double integral = h->h->Integral(0, h->h->GetNbinsX() + 1);
-                    if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", h->label.c_str(), integral);
+                    if(not showIntegral)      sprintf(legEntry, "%s",          h->label.c_str());
+                    else if(integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", h->label.c_str(), integral);
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", h->label.c_str(), integral);
                     else                      sprintf(legEntry, "%s (%0.2e)",  h->label.c_str(), integral);
                     leg->AddEntry(h->h, legEntry, drawOptions.c_str());
@@ -982,7 +1003,8 @@ void Plotter::plot()
                     (*ih)->h->SetFillColor(stackColors[iStack%NSTACKCOLORS]);
                     iStack++;
                     double integral = (*ih)->h->Integral(0, (*ih)->h->GetNbinsX() + 1);
-                    if(     integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", (*ih)->label.c_str(), integral);
+                    if(not showIntegral)      sprintf(legEntry, "%s",          (*ih)->label.c_str());
+                    else if(integral < 3.0)   sprintf(legEntry, "%s (%0.2lf)", (*ih)->label.c_str(), integral);
                     else if(integral < 1.0e5) sprintf(legEntry, "%s (%0.0lf)", (*ih)->label.c_str(), integral);
                     else                      sprintf(legEntry, "%s (%0.2e)",  (*ih)->label.c_str(), integral);
                     leg->AddEntry((*ih)->h, legEntry, "F");
@@ -1097,9 +1119,10 @@ void Plotter::plot()
             dummy2 = new TH1F("dummy2", "dummy2", 1000, hist.fhist()->GetBinLowEdge(1), hist.fhist()->GetBinLowEdge(hist.fhist()->GetNbinsX()) + hist.fhist()->GetBinWidth(hist.fhist()->GetNbinsX()));
             dummy2->GetXaxis()->SetTitle(hist.xAxisLabel.c_str());
             dummy2->GetXaxis()->SetTitleOffset(0.97);
-            //dummy2->GetYaxis()->SetTitle("Data/MC");
-            dummy2->GetYaxis()->SetTitle("Ratio");
-            dummy2->GetYaxis()->SetTitleOffset(0.42);
+            //dummy2->GetYaxis()->SetTitle("Ratio");
+            dummy2->GetYaxis()->SetTitle("Data/Sim.");
+            //dummy2->GetYaxis()->SetTitleOffset(0.42);
+            dummy2->GetYaxis()->SetTitleOffset(0.5);
             dummy2->GetYaxis()->SetNdivisions(3, 5, 0, true);
 
             dummy2->GetYaxis()->SetTitleSize(0.16 * 2 / 2.5);
@@ -1286,13 +1309,13 @@ void Plotter::plot()
         mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
 
         //Write comment on normalization
-        if(hist.isNorm)
-        {
-            mark.SetTextSize(0.042 * fontScale * 0.75);
-            mark.SetTextFont(42);
-            mark.SetTextAlign(11);
-            mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.05, 1 - (gPad->GetTopMargin() + 0.1), "Normalized to unit area");
-        }
+        //if(hist.isNorm)
+        //{
+        //    mark.SetTextSize(0.042 * fontScale * 0.75);
+        //    mark.SetTextFont(42);
+        //    mark.SetTextAlign(11);
+        //    mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.05, 1 - (gPad->GetTopMargin() + 0.1), "Normalized to unit area");
+        //}
 
         fixOverlay();
         c->Print((plotDir_ + hist.name+".pdf").c_str());

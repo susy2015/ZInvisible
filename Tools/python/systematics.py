@@ -231,7 +231,7 @@ class Systematic:
             y_title     = "(Z #rightarrow ll)/#gamma"
             ratio_title = "Data/Sim."
             num_color   = "black"
-            num_legend_style = "p"
+            num_legend_style = "pe"
             # avoid 0 label which is cutoff
             y_min = 0.01
             y_max = 0.20
@@ -297,8 +297,8 @@ class Systematic:
             # turn off title
             #title = "Z vs. Photon, {0}, {1}".format(region, era)
             title = ""
-            ratio_y_min = 0.4
-            ratio_y_max = 1.6
+            ratio_y_min = 0.7
+            ratio_y_max = 1.3
             x_title = var
             if var in self.labels:
                 x_title = self.labels[var]
@@ -327,6 +327,7 @@ class Systematic:
             h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(labelSize)
             h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(titleSize)
             h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(titleOffsetXaxis)
+            h_ratio_ZoverPhoton.GetXaxis().SetNdivisions(5, 5, 0, True)
             h_ratio_ZoverPhoton.GetYaxis().SetLabelSize(labelSize)
             h_ratio_ZoverPhoton.GetYaxis().SetTitleSize(titleSize)
             h_ratio_ZoverPhoton.GetYaxis().SetTitleOffset(titleOffsetYaxis)

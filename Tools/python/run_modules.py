@@ -87,14 +87,14 @@ def main():
             SB.getValues(result_file, era, CRunits=CRunits)
             xbins_met   = np.array([0.0, 250.0, 350.0, 450.0, 550.0, 650.0, 1000.0])
             n_bins_met  = len(xbins_met) - 1
-            xbins_ht    = np.array([0.0, 300.0, 400.0, 500.0, 600.0, 700.0, 1000.0])
+            xbins_ht    = np.array([0.0, 300.0, 500.0, 700.0, 1000.0, 1500.0, 2000.0])
             n_bins_ht   = len(xbins_ht) - 1
             # WARNING: var, varPhoton, and varLepton are used to load histograms and must match histogram names
             # makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, x_min, x_max, n_bins=0, xbins=np.array([]), rebin=False, useForSyst=False, doDataOverData=False)
             Syst.makeZvsPhoton(result_file, "met",  "metWithPhoton",                            "metWithLL",                                era, 250.0, 1000.0, n_bins_met, xbins_met, True,  True,  False )
             Syst.makeZvsPhoton(result_file, "met",  "metWithPhoton",                            "metWithLL",                                era, 250.0, 1000.0, n_bins_met, xbins_met, True,  False, True  )
-            Syst.makeZvsPhoton(result_file, "ht",   "HT_drPhotonCleaned_jetpt30",               "HT_drLeptonCleaned_jetpt30",               era, 300.0, 1000.0, n_bins_ht,  xbins_ht,  True,  False, False )
-            Syst.makeZvsPhoton(result_file, "ht",   "HT_drPhotonCleaned_jetpt30",               "HT_drLeptonCleaned_jetpt30",               era, 300.0, 1000.0, n_bins_ht,  xbins_ht,  True,  False, True  )
+            Syst.makeZvsPhoton(result_file, "ht",   "HT_drPhotonCleaned_jetpt30",               "HT_drLeptonCleaned_jetpt30",               era, 300.0, 2000.0, n_bins_ht,  xbins_ht,  True,  False, False )
+            Syst.makeZvsPhoton(result_file, "ht",   "HT_drPhotonCleaned_jetpt30",               "HT_drLeptonCleaned_jetpt30",               era, 300.0, 2000.0, n_bins_ht,  xbins_ht,  True,  False, True  )
             Syst.makeZvsPhoton(result_file, "nj",   "nJets_drPhotonCleaned_jetpt30",            "nJets_drLeptonCleaned_jetpt30",            era, 0, 11)
             Syst.makeZvsPhoton(result_file, "nb",   "nBottoms_drPhotonCleaned_jetpt30",         "nBottoms_drLeptonCleaned_jetpt30",         era, 0,  6)
             Syst.makeZvsPhoton(result_file, "nmt",  "nMergedTops_drPhotonCleaned_jetpt30",      "nMergedTops_drLeptonCleaned_jetpt30",      era, 0,  6)
