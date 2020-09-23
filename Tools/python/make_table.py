@@ -7,8 +7,6 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-
-
 # Reference: 
 # https://github.com/mkilpatr/EstToolsSUSY/blob/SBv4/SUSYNano19/getUncertainty.py
 
@@ -253,7 +251,6 @@ labelMap = {
     'MET': r'',
 }
 
-
 class Table:
     def __init__(self):
         pass
@@ -268,11 +265,8 @@ class Table:
         s += table_header
         s += '\\hline\n'
         s += self.makeTable(BinObject, total_era)
-        #s += self.endTable() # now down in makeTable()
         if makeDoc:
             s += self.endDocument()
-        #print '\nprinting yield table...\n'
-        #print s
         with open(output, 'w') as f:
             print >> f, s
 
@@ -321,7 +315,6 @@ class Table:
         s += '\\end{table}\n'
         return s
     
-    
     def makeTable(self, BinObject, total_era):
         ''' Put together the table chunk for the given nj,nb,mtb,nt,nw,ht mega-bin. '''
         sections=[]
@@ -332,7 +325,6 @@ class Table:
         for bin in binlist: 
             sec, met = bin.lstrip('bin_').rsplit('_', 1)
             met = met.lstrip("pt")
-            #print "sec = {0}, met = {1}".format(sec, met)
             if sec not in sections:
                 sections.append(sec)
                 s += self.chunkHeader(sec)
@@ -389,7 +381,6 @@ class Table:
         else:
             return ' & $ %s\,^{+%s}_{-%s} $ ' %(n, e_up, e_low)
     
-    
     # puts together the bin header for bins of nJets, mtb, nTop (no selection on nB)
     def chunkHeader(self,sec):
         ''' Put together the mega-bin chunk header. '''
@@ -404,10 +395,7 @@ class Table:
         s += ', '.join(labs)
         s += '} \\\\ \n'
         s += '\\hline\n' 
-        #print "cats: {0}, labs: {1}".format(cats, labs)
-        #print "mega-bin header: {0}".format(s)
         return s
-
 
 def main():
     print "Running \"python make_table.py\" directly is not supported."
@@ -415,11 +403,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
 
