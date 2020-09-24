@@ -311,6 +311,13 @@ class Table:
         s += '\\end{center}\n'
         s += '\\end{table}\n'
         return s
+
+    def getCaption(self, region, firstBin, lastBin):
+        caption  = "Prediction for the \zinv background $\\left(\Np\\right)$ in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
+        caption += " The normalization factor $\\left(\Rz\\right)$, shape factor $\\left(\Sg\\right)$, and number of \znunu MC events $\\left(\Nmc\\right)$ are also shown for each search bin including their statistical uncertainties."
+        caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \Nmc."
+        caption += " See Eq.~\\ref{eq:zinv_pred}."
+        return caption
     
     def makeTable(self, BinObject, total_era):
         ''' Put together the table chunk for the given nj,nb,mtb,nt,nw,ht mega-bin. '''
@@ -328,13 +335,10 @@ class Table:
                 lastBin  = binRanges[ibin]
                 # low/high dm
                 region = "low \dm"
-                if lastBin >= 53:
+                if firstBin >= 53:
                     region = "high \dm"
-                caption  = "Prediction for the \zinv background $\\left(\Np\\right)$ in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
-                caption += " The normalization factor $\\left(\Rz\\right)$, shape factor $\\left(\Sg\\right)$, and number of \znunu MC events $\\left(\Nmc\\right)$ are also shown for each search bin including their statistical uncertainties."
-                caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \Nmc."
-                caption += " See Eq.~\\ref{eq:zinv_pred}."
-                label    = "tab:zinvPredToBin{0}".format(lastBin)
+                caption = self.getCaption(region, firstBin, lastBin)
+                label   = "tab:zinvPredToBin{0}".format(lastBin)
                 s += self.beginTable(caption, label)
                 s += table_header
             sec, met = bin.lstrip('bin_').rsplit('_', 1)
