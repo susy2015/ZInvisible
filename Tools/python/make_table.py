@@ -261,9 +261,6 @@ class Table:
         s  = ""
         if makeDoc:
             s += self.beginDocument()
-        # TODO: remove
-        #s += self.beginTable()
-        #s += table_header
         s += self.makeTable(BinObject, total_era)
         if makeDoc:
             s += self.endDocument()
@@ -317,6 +314,7 @@ class Table:
     
     def makeTable(self, BinObject, total_era):
         ''' Put together the table chunk for the given nj,nb,mtb,nt,nw,ht mega-bin. '''
+        # keys: starting bin; values: ending bin
         binRanges = {0:52, 53:93, 94:134, 135:182}
         sections=[]
         s  = ""
@@ -351,29 +349,11 @@ class Table:
             for value in list(all_values):
                 s += " & {0} ".format(BinObject.binValues[total_era][str(ibin)][value])
             s += ' \\\\ \n'
-            # first increment ibin
-            ibin += 1
-            # now these are bin numbers to end table
-            if ibin == 53 or ibin == 94 or ibin == 135 or ibin == 183:
-                # TODO: remove
-                # # last bin for previous table
-                # lastBin = ibin - 1
-                # # low/high dm
-                # region = "low \dm"
-                # if lastBin >= 53:
-                #     region = "high \dm"
-                # caption  = "Prediction for the \zinv background $\\left(\Np\\right)$ in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
-                # caption += " The normalization factor $\\left(\Rz\\right)$, shape factor $\\left(\Sg\\right)$, and number of \znunu MC events $\\left(\Nmc\\right)$ are also shown for each search bin including their statistical uncertainties."
-                # caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \Nmc."
-                # caption += " See Eq.~\\ref{eq:zinv_pred}."
-                # label    = "tab:zinvPredToBin{0}".format(lastBin)
-                # TODO: remove
+            # end table after last bin
+            if ibin in binRanges.values():
                 s += self.endTable()
-                # if ibin < 183:
-                #     # first bin for next table 
-                #     firstBin = ibin
-                #     s += self.beginTable()
-                #     s += table_header
+            # increment ibin at the end
+            ibin += 1
         return s
     
     # formats the prediction nEvents +/- error
