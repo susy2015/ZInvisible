@@ -261,9 +261,9 @@ class Table:
         s  = ""
         if makeDoc:
             s += self.beginDocument()
-        s += self.beginTable()
-        s += table_header
-        s += '\\hline\n'
+        # TODO: remove
+        #s += self.beginTable()
+        #s += table_header
         s += self.makeTable(BinObject, total_era)
         if makeDoc:
             s += self.endDocument()
@@ -293,36 +293,52 @@ class Table:
         s = '\\end{document}'
         return s
        
-    def beginTable(self):
+    def beginTable(self, caption="", label=""):
         '''Add a break between the bins to fit on each page'''
+        # WARNING: label must go after caption for table reference to work
         s  = '\\begin{table}[!h]\n'
         s += '\\begin{center}\n'
+        s += '\\caption{%s}\n' % caption
+        s += '\\label{%s}\n' % label
         s += '\\resizebox*{%.2f\\textwidth}{!}{\n' % self.size
         s += '\\begin{tabular}{|c||c||c|c|c|c|}\n'
         s += '\\hline\n'
         return s
     
-    def endTable(self, label = "", caption = ""):
+    def endTable(self):
         '''Add a break between the bins to fit on each page'''
         '''Include label and caption'''
         s  = '\\hline\n'
         s += '\\end{tabular}\n'
         s += '}\n'
-        # WARNING: label must go after caption for table reference to work
-        s += '\\caption{%s}\n' % caption
-        s += '\\label{%s}\n' % label
         s += '\\end{center}\n'
         s += '\\end{table}\n'
         return s
     
     def makeTable(self, BinObject, total_era):
         ''' Put together the table chunk for the given nj,nb,mtb,nt,nw,ht mega-bin. '''
+        binRanges = {0:52, 53:93, 94:134, 135:182}
         sections=[]
-        s=''
+        s  = ""
         ibin = 0
-        firstBin = ibin
-        lastBin  = ibin
+        # WARNING: binlist contains string bin names
         for bin in binlist: 
+            # put caption before table
+            if ibin in binRanges:
+                # bin range
+                firstBin = ibin
+                lastBin  = binRanges[ibin]
+                # low/high dm
+                region = "low \dm"
+                if lastBin >= 53:
+                    region = "high \dm"
+                caption  = "Prediction for the \zinv background $\\left(\Np\\right)$ in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
+                caption += " The normalization factor $\\left(\Rz\\right)$, shape factor $\\left(\Sg\\right)$, and number of \znunu MC events $\\left(\Nmc\\right)$ are also shown for each search bin including their statistical uncertainties."
+                caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \Nmc."
+                caption += " See Eq.~\\ref{eq:zinv_pred}."
+                label    = "tab:zinvPredToBin{0}".format(lastBin)
+                s += self.beginTable(caption, label)
+                s += table_header
             sec, met = bin.lstrip('bin_').rsplit('_', 1)
             met = met.lstrip("pt")
             if sec not in sections:
@@ -337,25 +353,27 @@ class Table:
             s += ' \\\\ \n'
             # first increment ibin
             ibin += 1
-            # now these are bin numbers to begin next table
+            # now these are bin numbers to end table
             if ibin == 53 or ibin == 94 or ibin == 135 or ibin == 183:
-                # last bin for previous table
-                lastBin = ibin - 1
-                # low/high dm
-                region = "low \dm"
-                if lastBin >= 53:
-                    region = "high \dm"
-                label = "tab:zinvPredToBin{0}".format(lastBin)
-                caption  = "Prediction for the \zinv background $\\left(\Np\\right)$ in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
-                caption += " The normalization factor $\\left(\Rz\\right)$, shape factor $\\left(\Sg\\right)$, and number of \znunu MC events $\\left(\Nmc\\right)$ are also shown for each search bin including their statistical uncertainties."
-                caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \Nmc."
-                caption += " See Eq.~\\ref{eq:zinv_pred}."
-                s += self.endTable(label, caption)
-                if ibin < 183:
-                    # first bin for next table 
-                    firstBin = ibin
-                    s += self.beginTable()
-                    s += table_header
+                # TODO: remove
+                # # last bin for previous table
+                # lastBin = ibin - 1
+                # # low/high dm
+                # region = "low \dm"
+                # if lastBin >= 53:
+                #     region = "high \dm"
+                # caption  = "Prediction for the \zinv background $\\left(\Np\\right)$ in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
+                # caption += " The normalization factor $\\left(\Rz\\right)$, shape factor $\\left(\Sg\\right)$, and number of \znunu MC events $\\left(\Nmc\\right)$ are also shown for each search bin including their statistical uncertainties."
+                # caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \Nmc."
+                # caption += " See Eq.~\\ref{eq:zinv_pred}."
+                # label    = "tab:zinvPredToBin{0}".format(lastBin)
+                # TODO: remove
+                s += self.endTable()
+                # if ibin < 183:
+                #     # first bin for next table 
+                #     firstBin = ibin
+                #     s += self.beginTable()
+                #     s += table_header
         return s
     
     # formats the prediction nEvents +/- error
