@@ -531,7 +531,7 @@ class Normalization:
         header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ & $\\langle \Rz \\rangle$ \\\\"
         header             += "\n& & & & (with stat. unc.) & (with full unc.)\\\\"
         caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors."
-        caption += "\nThe \Rz factors from the di-electron and di-muon control regions for the full Run 2 dataset are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
+        caption += "\nThe \Rz factors from the di-electron and di-muon control regions for the full Run 2 data set are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
         caption += "\nAn additional systematic uncertainty is obtained to account for differences in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}, and the full uncertainty is listed in the last column."
         caption += "\nThe \Rz value obtained with $\Nb\geq2$ is used for search bins with $\Nb=2$, $\Nb\geq2$, $\Nb\geq3$."
         with open(output_name, "w+") as f:
