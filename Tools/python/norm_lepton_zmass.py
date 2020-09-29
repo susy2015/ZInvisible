@@ -629,8 +629,8 @@ class Normalization:
                 title = "Norm. for {0} bins, {1}, {2}".format(bin_type, region_root_tex, selections_root_tex)
                 x_title = "Era" 
                 y_title = "Norm. #left(R_{Z}#right)"
-                y_min = -1.0
-                y_max = 5.0
+                y_min = 0.0
+                y_max = 3.0
                 #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
                 setupHist(h_Electron,       title, x_title, y_title, self.color_red,    y_min, y_max)
                 setupHist(h_Muon,           title, x_title, y_title, self.color_blue,   y_min, y_max)
@@ -656,8 +656,6 @@ class Normalization:
                     h_Combined.GetXaxis().SetBinLabel(      i + 1, era)
                     h_Combined_Run2.GetXaxis().SetBinLabel( i + 1, era)
                 
-                
-
                 # loop over a range of Run 2 error
                 # set Run 2 error
                 # calculate chi sq
@@ -709,7 +707,7 @@ class Normalization:
                 h_Muon.Draw(draw_option + " same")        
                 if doFit:
                     f_Combined.Draw("same")
-                h_Combined_Run2.Draw("same")
+                h_Combined_Run2.Draw(draw_option + "same")
 
                 # legend: TLegend(x1,y1,x2,y2)
                 legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
@@ -724,7 +722,9 @@ class Normalization:
                 # write chisq
                 # - give x, y coordinates (same as plot coordinates)
                 # - y list is for positioning the text
-                y_list = np.arange(y_max, 0.0, -0.3)
+                #y_list = np.arange(y_max, 0.0, -0.3)
+                height = y_max - y_min
+                y_list = np.arange(y_max, 0.0, -height/20.0)
                 if doFit: 
                     mark.DrawLatex(0.2, y_list[1], "Fit: f(x) = %.3f #pm %.3f"                % (fit_value, fit_error))
                     mark.DrawLatex(0.2, y_list[2], "Fit #chi_{r}^{2} = %.3f"                  % chisq_fit_r)
