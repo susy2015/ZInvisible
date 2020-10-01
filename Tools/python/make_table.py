@@ -308,7 +308,7 @@ class Table:
         '''Include label and caption'''
         s  = '\\hline\n'
         s += '\\end{tabular}\n'
-        s += '}\n'
+        s += '}\n' # end \resizebox
         s += '\\end{center}\n'
         s += '\\end{table}\n'
         return s
