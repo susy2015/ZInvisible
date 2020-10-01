@@ -298,7 +298,8 @@ class Table:
         s += '\\caption{%s}\n' % caption
         s += '\\label{%s}\n' % label
         s += '\\resizebox*{%.2f\\textwidth}{!}{\n' % self.size
-        s += '\\begin{tabular}{|c||c||c|c|c|c|}\n'
+        #s += '\\begin{tabular}{|c||c||c|c|c|c|}\n'
+        s += '\\begin{tabular}{cccccc}\n'
         s += '\\hline\n'
         return s
     
@@ -341,6 +342,7 @@ class Table:
                 label   = "tab:zinvPredToBin{0}".format(lastBin)
                 s += self.beginTable(caption, label)
                 s += table_header
+                s += '\\hline\n' 
             sec, met = bin.lstrip('bin_').rsplit('_', 1)
             met = met.lstrip("pt")
             if sec not in sections:
@@ -392,11 +394,11 @@ class Table:
         # only include non-empty labels, e.g. MET has not label
         labs = [labelMap[c] for c in cats if labelMap[c]]
         ncolumn = len(all_values)+2
-        s  = '\\hline\n'
-        s += '\\multicolumn{'+str(ncolumn)+'}{c}{'
+        #s  = '\\hline\n'
+        s  = '\\multicolumn{'+str(ncolumn)+'}{c}{'
         s += ', '.join(labs)
         s += '} \\\\ \n'
-        s += '\\hline\n' 
+        #s += '\\hline\n' 
         return s
 
 def main():

@@ -592,7 +592,7 @@ class Normalization:
                 self.writeLine("\\end{document}")
 
 
-    # make a plot of nomralization (y-axis) vs. era (x-axis) for different selections
+    # make a plot of normalization (y-axis) vs. era (x-axis) for different selections
     def makeComparison(self, bin_type):
         doFit = False
         draw_option = "hist error"
