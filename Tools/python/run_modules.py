@@ -160,9 +160,9 @@ def main():
             # saveResults(inFile, outFile, CRunits, SRunits, SB, era)
             saveResults("dc_BkgPred_BinMaps_master.json", results_dir + "zinv_yields_" + era + ".json", CRunits, SRunits, SB, era)
             # fancy table only supported in search bins right now
-            # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=0.6)
-            T.makeYieldTable(SB, era, latex_dir + "zinv_pred_sr_" + era + "_doc.tex",   True,  0.55)
-            T.makeYieldTable(SB, era, latex_dir + "zinv_pred_sr_" + era + "_table.tex", False, 0.60)
+            # makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=1.0)
+            T.makeYieldTable(SB, era, latex_dir + "zinv_pred_sr_" + era + "_doc.tex",   True )
+            T.makeYieldTable(SB, era, latex_dir + "zinv_pred_sr_" + era + "_table.tex", False)
 
 
 if __name__ == "__main__":

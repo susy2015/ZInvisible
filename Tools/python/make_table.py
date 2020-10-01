@@ -255,7 +255,7 @@ class Table:
     def __init__(self):
         pass
         
-    def makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=0.6):
+    def makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=1.0):
         ''' Make a Latex-formatted table with each bkg plus unc, total bkg plus unc, and observed data for every bin. '''
         self.size = size
         s  = ""
@@ -323,14 +323,15 @@ class Table:
     def makeTable(self, BinObject, total_era):
         ''' Put together the table chunk for the given nj,nb,mtb,nt,nw,ht mega-bin. '''
         # keys: starting bin; values: ending bin
-        binRanges = {0:52, 53:93, 94:134, 135:182}
+        #binRanges = {0:52, 53:93, 94:134, 135:182}
+        binRanges = {0:27, 28:52, 53:80, 81:107, 108:136, 137:161, 162:182}
         sections=[]
         s  = ""
         ibin = 0
         # WARNING: binlist contains string bin names
         for bin in binlist: 
             # put caption before table
-            if ibin in binRanges:
+            if ibin in binRanges.keys():
                 # bin range
                 firstBin = ibin
                 lastBin  = binRanges[ibin]
@@ -339,7 +340,7 @@ class Table:
                 if firstBin >= 53:
                     region = "high \dm"
                 caption = self.getCaption(region, firstBin, lastBin)
-                label   = "tab:zinvPredToBin{0}".format(lastBin)
+                label   = "tab:zinvPredBins{0}to{1}".format(firstBin, lastBin)
                 s += self.beginTable(caption, label)
                 s += table_header
                 s += '\\hline\n' 
