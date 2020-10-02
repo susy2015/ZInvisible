@@ -396,12 +396,12 @@ class Table:
         labs = [labelMap[c] for c in cats if labelMap[c]]
         ncolumn = len(all_values)+2
         #s  = '\\hline\n'
-        #s  = '\\vspace{1mm}\n'
+        #s  = '[\\cmsTabSkip]\n'
         s  = '\\multicolumn{'+str(ncolumn)+'}{c}{'
         s += ', '.join(labs)
         s += '} \\\\ \n'
         #s += '\\hline\n' 
-        #s += '\\vspace{1mm}\n'
+        s += '[\\cmsTabSkip]\n'
         return s
 
 def main():
