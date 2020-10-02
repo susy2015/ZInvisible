@@ -314,10 +314,10 @@ class Table:
         return s
 
     def getCaption(self, region, firstBin, lastBin):
-        caption  = "Prediction for the \zinv background $\\left(\Np\\right)$ in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
+        caption  = "Prediction for the \zinv background $\\left(\Np\\right)$ with statistical uncertainty in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
         caption += " The normalization factor $\\left(\Rz\\right)$, shape factor $\\left(\Sg\\right)$, and number of \znunu MC events $\\left(\Nmc\\right)$ are also shown for each search bin including their statistical uncertainties."
-        caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \Nmc."
-        caption += " See Eq.~\\ref{eq:zinv_pred}."
+        #caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \Nmc."
+        #caption += " See Eq.~\\ref{eq:zinv_pred}."
         return caption
     
     def makeTable(self, BinObject, total_era):
@@ -396,10 +396,12 @@ class Table:
         labs = [labelMap[c] for c in cats if labelMap[c]]
         ncolumn = len(all_values)+2
         #s  = '\\hline\n'
+        #s  = '\\vspace{1mm}\n'
         s  = '\\multicolumn{'+str(ncolumn)+'}{c}{'
         s += ', '.join(labs)
         s += '} \\\\ \n'
         #s += '\\hline\n' 
+        #s += '\\vspace{1mm}\n'
         return s
 
 def main():
