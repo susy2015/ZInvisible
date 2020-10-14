@@ -183,7 +183,6 @@ class Normalization:
             print "-----------------------------------"
         return b_error 
     
-    
     def getNormAndError(self, file_name, era, systTag = ""):
         self.systTag = systTag
         self.eras.append(era)
@@ -239,7 +238,6 @@ class Normalization:
         if self.verbose:
             print "------------------------------------------------------------------------------"
    
-
     # determine contributions to R_Z and R_T from different MC
     def findContributions(self, era, bin_type, particle, region, selection, outFile): 
         # WARNING: strings loaded from json file have type 'unicode'
@@ -527,13 +525,15 @@ class Normalization:
     def makeTable(self, output_name, makeDoc=False):
         era      = "Run2"
         bin_type = "search"
-        channelsForTable    = self.channels + ["CombinedTotalUnc"]
-        header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ & $\\langle \Rz \\rangle$ \\\\"
-        header             += "\n& & & & (with stat. unc.) & (with full unc.)\\\\"
-        caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors."
-        caption += "\nThe \Rz factors from the di-electron and di-muon control regions for the full Run 2 data set are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
-        caption += "\nAn additional systematic uncertainty is obtained to account for differences in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}, and the full uncertainty is listed in the last column."
-        caption += "\nThe \Rz value obtained with $\Nb\geq2$ is used for search bins with $\Nb=2$, $\Nb\geq2$, $\Nb\geq3$."
+        channelsForTable    =  self.channels + ["CombinedTotalUnc"]
+        header              =  "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ & $\\langle \Rz \\rangle$ \\\\"
+        header              += "\n& & & & (with stat. unc.) & (with full unc.)\\\\"
+        # no period for short caption
+        short_caption       =  "The normalization values \Rz calculated for various \Nb and \Nsv selections in low and high \dm"
+        caption             =  short_caption + "."
+        caption             += "\nThe \Rz factors from the di-electron and di-muon control regions for the full Run 2 data set are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
+        caption             += "\nAn additional systematic uncertainty is obtained to account for differences in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}, and the full uncertainty is listed in the last column."
+        caption             += "\nThe \Rz value obtained with $\Nb\geq2$ is used for search bins that require $\Nb=2$, $\Nb\geq2$, and $\Nb\geq3$."
         with open(output_name, "w+") as f:
             self.output_file = f
             
@@ -557,7 +557,8 @@ class Normalization:
             self.writeLine("\\begin{table}")
             self.writeLine("\\addtolength{\\tabcolsep}{-2pt}")
             self.writeLine("\\begin{center}")
-            self.writeLine("\\caption{")
+            self.writeLine("\\caption[%s]" % short_caption)
+            self.writeLine("{")
             self.writeLine(caption)
             self.writeLine("}")
             self.writeLine("\\label{tab:RZregions}")
@@ -590,7 +591,6 @@ class Normalization:
             if makeDoc:
                 # end document
                 self.writeLine("\\end{document}")
-
 
     # make a plot of normalization (y-axis) vs. era (x-axis) for different selections
     def makeComparison(self, bin_type):
@@ -773,8 +773,6 @@ class Normalization:
                 del h_Combined
                 del h_Combined_Run2
 
-
-
 def main():
     json_file = "runs/run_2019-07-24.json"
     eras = ["2016", "2017", "2018_AB", "2018_CD"]
@@ -798,9 +796,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
 
