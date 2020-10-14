@@ -290,12 +290,17 @@ class Table:
         s = '\\end{document}'
         return s
        
-    def beginTable(self, caption="", label=""):
+    def beginTable(self, short_caption="", caption="", label=""):
         '''Add a break between the bins to fit on each page'''
+        '''Include caption and label'''
         # WARNING: label must go after caption for table reference to work
         s  = '\\begin{table}[!h]\n'
         s += '\\begin{center}\n'
-        s += '\\caption{%s}\n' % caption
+        # use short caption
+        s += '\\caption[%s]\n' % short_caption
+        s += '{\n'
+        s += '%s\n' % caption
+        s += '}\n'
         s += '\\label{%s}\n' % label
         s += '\\resizebox*{%.2f\\textwidth}{!}{\n' % self.size
         #s += '\\begin{tabular}{|c||c||c|c|c|c|}\n'
@@ -305,7 +310,6 @@ class Table:
     
     def endTable(self):
         '''Add a break between the bins to fit on each page'''
-        '''Include label and caption'''
         s  = '\\hline\n'
         s += '\\end{tabular}\n'
         s += '}\n' # end \resizebox
@@ -313,12 +317,16 @@ class Table:
         s += '\\end{table}\n'
         return s
 
-    def getCaption(self, region, firstBin, lastBin):
-        caption  = "Prediction for the \zinv background $\\left(\Np\\right)$ with statistical uncertainty in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
-        caption += " The normalization factor $\\left(\Rz\\right)$, shape factor $\\left(\Sg\\right)$, and number of \znunu MC events $\\left(\Nmc\\right)$ are also shown for each search bin including their statistical uncertainties."
+    def getCaption(self, region, firstBin, lastBin, short=False):
+        short_caption   = "Prediction for the \zinv background $\\left(\Np\\right)$ with statistical uncertainty in {0} search bins {1}--{2}".format(region, firstBin, lastBin)
+        caption         = short_caption + "."
+        caption         += " The normalization factor $\\left(\Rz\\right)$, shape factor $\\left(\Sg\\right)$, and number of \znunu MC events $\\left(\Nmc\\right)$ are also shown for each search bin including their statistical uncertainties."
         #caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \Nmc."
         #caption += " See Eq.~\\ref{eq:zinv_pred}."
-        return caption
+        if short:
+            return short_caption
+        else:
+            return caption
     
     def makeTable(self, BinObject, total_era):
         ''' Put together the table chunk for the given nj,nb,mtb,nt,nw,ht mega-bin. '''
@@ -339,9 +347,10 @@ class Table:
                 region = "low \dm"
                 if firstBin >= 53:
                     region = "high \dm"
-                caption = self.getCaption(region, firstBin, lastBin)
+                short_caption = self.getCaption(region, firstBin, lastBin, True)
+                caption       = self.getCaption(region, firstBin, lastBin, False)
                 label   = "tab:zinvPredBins{0}to{1}".format(firstBin, lastBin)
-                s += self.beginTable(caption, label)
+                s += self.beginTable(short_caption, caption, label)
                 s += table_header
                 s += '\\hline\n' 
             sec, met = bin.lstrip('bin_').rsplit('_', 1)
