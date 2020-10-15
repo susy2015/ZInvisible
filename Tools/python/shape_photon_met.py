@@ -60,7 +60,9 @@ class Shape:
         # rainbow ordered
         #self.color_list   = ["bubblegum pink", "hot pink", "red", "salmon", "red orange", "orange", "goldenrod", "light olive green", "medium green", "turquoise", "aqua blue", "bright blue", "dark sky blue", "blurple", "purple", "pastel purple"]
         # for shape study
-        self.color_list   = ["hot pink", "bright magenta", "red", "orange", "goldenrod", "light olive green", "aqua blue", "bright blue", "violet", "blurple", "purple", "pastel purple"]
+        #self.color_list   = ["hot pink", "bright magenta", "red", "orange", "goldenrod", "light olive green", "aqua blue", "bright blue", "violet", "blurple", "purple", "pastel purple"]
+        # colors matching data/MC plots
+        self.color_list   = ["#0373E6", "#66CC33", "#FF9900", "#C843C8", "#6699FF", "#CC3333", "#339966", "#0533FF"]
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
     def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=False):
@@ -662,8 +664,15 @@ class Shape:
         # Data and all MC
         #hList = ["Data", "GJets", "QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
         # only Data, GJets, QCD
-        hList = ["Data", "GJets", "QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake"]
-        for i, key in enumerate(hList):
+        # order to draw
+        hListDraw   = ["GJets", "QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake", "Data"]
+        # order for legend
+        hListLegend = ["Data", "GJets", "QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake"]
+
+        hNew = {} 
+        
+        # draw
+        for i, key in enumerate(hListDraw):
             hOriginal = hMap[key]
             # rebin 
             h = hOriginal.Rebin(n_bins, "h_" + key + "_rebinned", xbins)
@@ -685,6 +694,12 @@ class Shape:
                 h.Draw(draw_option)
             else:
                 h.Draw(draw_option + " same")
+            # save new histogram to map
+            hNew[key] = h
+        
+        # legend
+        for i, key in enumerate(hListLegend):
+            h = hNew[key]
             legend.AddEntry(h,  key,  "l")
                     
                     
