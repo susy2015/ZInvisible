@@ -26,13 +26,15 @@ def process():
     parser.add_argument("--json_file",    "-j", default="",                             help="json file containing runs")
     parser.add_argument("--no_plots",     "-n", default = False, action = "store_true", help="do not make plots; only move and hadd root files, etc.")
     parser.add_argument("--plot_only",    "-p", default = False, action = "store_true", help="only make plots; do not move and hadd root files, etc.")
+    parser.add_argument("--run_two_only", "-r", default = False, action = "store_true", help="combine with plot_only to only plot Run 2")
     parser.add_argument("--verbose",      "-v", default = False, action = "store_true", help="verbose flag to print more things")
 
-    options     = parser.parse_args()
-    json_file   = options.json_file
-    no_plots    = options.no_plots
-    plot_only   = options.plot_only
-    verbose     = options.verbose
+    options         = parser.parse_args()
+    json_file       = options.json_file
+    no_plots        = options.no_plots
+    plot_only       = options.plot_only
+    run_two_only    = options.run_two_only
+    verbose         = options.verbose
 
     # make combined Run2
     do_run2 = True
@@ -57,6 +59,9 @@ def process():
         runMap = json.load(input_file)
         # process all eras
         for era in runMap:
+            # skip all eras except Run 2 if only plotting Run 2
+            if plot_only and run_two_only and era != "Run2":
+                continue
             directory = runMap[era]
             print "Processing Era {0}, directory {1}".format(era, directory)
             resultFile = "condor/{0}/result.root".format(directory)
@@ -92,17 +97,18 @@ def process():
                 returncode = subprocess.check_call("mv {0}/*.png {0}/{1}".format(folder, era), shell=True)
                 returncode = subprocess.check_call("mv {0}/*.pdf {0}/{1}".format(folder, era), shell=True)
     
-    # ----------------------- # 
-    # --- 2016 + 2017 and --- #
-    # --- Combined Run 2  --- #
-    # ----------------------- # 
-
-    filesToCombine = {}
-    filesToCombine["2016and2017"] = " ".join([resultFileMap["2016"], resultFileMap["2017"]])
-    filesToCombine["Run2"]        = " ".join([resultFileMap["2016"], resultFileMap["2017"], resultFileMap["2018"]])
-
-    # not needed if only making plots 
+    # --- not needed if only making plots --- #
     if do_run2 and not plot_only: 
+        
+        # ----------------------- # 
+        # --- 2016 + 2017 and --- #
+        # --- Combined Run 2  --- #
+        # ----------------------- # 
+
+        filesToCombine = {}
+        filesToCombine["2016and2017"] = " ".join([resultFileMap["2016"], resultFileMap["2017"]])
+        filesToCombine["Run2"]        = " ".join([resultFileMap["2016"], resultFileMap["2017"], resultFileMap["2018"]])
+        
         for era in ["2016and2017", "Run2"]:
             # make directory if it does not exist
             date = re.match("runs/submission_(.*).json", json_file).group(1)
