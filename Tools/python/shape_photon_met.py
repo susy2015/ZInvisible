@@ -772,21 +772,40 @@ class Shape:
             #title   = "{0} with {1} varied 50% in {2} for {3}".format(varName, key, region, era)
             title   = "{0} varied 50% in {1}".format(key, region)
             x_title = varName
-            y_title = "Data / (normalized MC)"
+            y_title = "Data/Sim."
             y_min   = 0.5
             y_max   = 1.5
+            
+            # turn off x-axis titles for upper plot
+            # turn off main title for lower plot
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_shape_nominal, title, x_title, y_title, self.color_black, y_min, y_max)
-            setupHist(h_shape_up,      title, x_title, y_title, self.color_red,   y_min, y_max)
-            setupHist(h_shape_down,    title, x_title, y_title, self.color_blue,  y_min, y_max)
-            setupHist(h_ratio_up,      title, x_title, "Ratio", self.color_red,   0.8, 1.2)
-            setupHist(h_ratio_down,    title, x_title, "Ratio", self.color_blue,  0.8, 1.2)
+            setupHist(h_shape_nominal, title, "",      y_title,             self.color_black, y_min, y_max, True)
+            setupHist(h_shape_up,      title, "",      y_title,             self.color_red,   y_min, y_max, True)
+            setupHist(h_shape_down,    title, "",      y_title,             self.color_blue,  y_min, y_max, True)
+            setupHist(h_ratio_up,      "",    x_title, "Varied/Nominal",    self.color_red,   0.94,  1.06,  True)
+            setupHist(h_ratio_down,    "",    x_title, "Varied/Nominal",    self.color_blue,  0.94,  1.06,  True)
+            
+            # label and title formatting
+            
+            # upper plot
+            h_shape_nominal.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
+            
+            # lower plot
+            h_ratio_up.GetYaxis().SetNdivisions(3, 5, 0, True)
             
             # draw
             # note: use different variables for different legends, one legend for each plot
 
             # shapes
             pad = c.cd(1)
+            # set ticks on all sides of plot
+            pad.SetTickx()
+            pad.SetTicky()
+            pad.SetLeftMargin(0.2)
+            pad.SetRightMargin(0.1)
+            pad.SetTopMargin(0.1)
+            pad.SetBottomMargin(0.01)
+            
             # new legend for each plot
             # legend: TLegend(x1,y1,x2,y2)
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
@@ -800,14 +819,23 @@ class Shape:
             # ratios
             pad = c.cd(2)
             pad.SetGridy()
-            # new legend for each plot
+            # set ticks on all sides of plot
+            pad.SetTickx()
+            pad.SetTicky()
+            pad.SetLeftMargin(0.2)
+            pad.SetRightMargin(0.1)
+            pad.SetTopMargin(0.01)
+            pad.SetBottomMargin(0.4)
+            
+            # skip legend in lower plot for now
             # legend: TLegend(x1,y1,x2,y2)
-            legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            legend2.AddEntry(h_ratio_up,       "({0} up) / nominal".format(key),     "l")
-            legend2.AddEntry(h_ratio_down,     "({0} down) / nominal".format(key),   "l")
+            # legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            # legend2.AddEntry(h_ratio_up,       "({0} up) / nominal".format(key),     "l")
+            # legend2.AddEntry(h_ratio_down,     "({0} down) / nominal".format(key),   "l")
+            
             h_ratio_up.Draw(draw_option)
             h_ratio_down.Draw(draw_option + " same")
-            legend2.Draw()
+            # legend2.Draw()
             
             # save histograms
             plot_name = "{0}VaryShapes_{1}_{2}_{3}_{4}".format(self.plot_dir, region, variable, key, era)

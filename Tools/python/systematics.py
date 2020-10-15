@@ -319,12 +319,14 @@ class Systematic:
             titleOffsetXaxis = 1.20
             titleOffsetYaxis = 0.60
             
+            # upper plot
             h_ratio_den.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
             h_ratio_den.GetYaxis().SetLabelSize(padHeightRatio * labelSize)
             h_ratio_den.GetYaxis().SetTitleSize(padHeightRatio * titleSize)
             h_ratio_den.GetYaxis().SetTitleOffset(titleOffsetYaxis/padHeightRatio)
             h_ratio_den.GetYaxis().SetNdivisions(5, 5, 0, True)
             
+            # lower plot
             h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(labelSize)
             h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(titleSize)
             h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(titleOffsetXaxis)
