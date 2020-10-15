@@ -628,15 +628,24 @@ class Shape:
 
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
+        pad = c.cd(1)
+        # set ticks on all sides of plot
+        pad.SetTickx()
+        pad.SetTicky()
         
         # legend: TLegend(x1,y1,x2,y2)
         legend_x1 = 0.45
-        legend_x2 = 0.9 
-        legend_y1 = 0.6 
-        legend_y2 = 0.9 
-                    
+        legend_x2 = 0.90
+        legend_y1 = 0.55
+        legend_y2 = 0.85
+        
         # legend: TLegend(x1,y1,x2,y2)
         legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        legend.SetFillStyle(0)
+        legend.SetBorderSize(0)
+        legend.SetLineWidth(1)
+        legend.SetNColumns(1)
+        legend.SetTextFont(42)
         
         dataSelectionTag = ""
         mcSelectionTag   = ""
@@ -789,8 +798,10 @@ class Shape:
             
             # upper plot
             h_shape_nominal.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
+            h_shape_nominal.GetYaxis().SetNdivisions(5, 5, 0, True)
             
             # lower plot
+            h_ratio_up.GetXaxis().SetNdivisions(5, 5, 0, True)
             h_ratio_up.GetYaxis().SetNdivisions(3, 5, 0, True)
             
             # draw
@@ -809,6 +820,11 @@ class Shape:
             # new legend for each plot
             # legend: TLegend(x1,y1,x2,y2)
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend1.SetFillStyle(0)
+            legend1.SetBorderSize(0)
+            legend1.SetLineWidth(1)
+            legend1.SetNColumns(1)
+            legend1.SetTextFont(42)
             legend1.AddEntry(h_shape_nominal,  "Shape (nominal)",                "l")
             legend1.AddEntry(h_shape_up,       "Shape ({0} up)".format(key),     "l")
             legend1.AddEntry(h_shape_down,     "Shape ({0} down)".format(key),   "l")
