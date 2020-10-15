@@ -47,9 +47,19 @@ class Shape:
             self.selections[bin_type] = getSelections(self.bin_maps[bin_type], bin_type, ["NSV", "MET"])
         
         # labels
-        self.label_met    = "#slash{E}_{T}^{#gamma} [GeV]"
+        #self.label_met    = "#slash{E}_{T}^{#gamma} [GeV]"
+        self.label_met    = "Modified p_{T}^{miss} [GeV]"
         self.label_events = "Events"
         self.label_ratio  = "Data / MC"
+        self.labels = {
+                        "met"   : "Modified p_{T}^{miss} [GeV]", 
+                        "ht"    : "H_{T} [GeV]",
+                        "nj"    : "N_{j}",
+                        "nb"    : "N_{b}",
+                        "nmt"   : "N_{merged tops}",
+                        "nrt"   : "N_{resolved tops}",
+                        "nw"    : "N_{W}"
+                      }
         # colors
         self.color_black  = "black"
         self.color_red    = "vermillion"
@@ -632,6 +642,10 @@ class Shape:
         # set ticks on all sides of plot
         pad.SetTickx()
         pad.SetTicky()
+        pad.SetLeftMargin(0.15)
+        pad.SetRightMargin(0.1)
+        pad.SetTopMargin(0.1)
+        pad.SetBottomMargin(0.2)
         
         # legend: TLegend(x1,y1,x2,y2)
         legend_x1 = 0.45
@@ -693,11 +707,15 @@ class Shape:
                 color = self.color_list[i]
             title   = "{0} in {1} for {2}".format(varName, region, era)
             x_title = varName
+            if varName.lower() in self.labels:
+                x_title = self.labels[varName.lower()]
             y_title = "Events (normalized)"
             y_min   = 0.0
             y_max   = 1.0
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
             setupHist(h, title, x_title, y_title, color, y_min, y_max)
+            h.GetXaxis().SetTitleOffset(1.5)
+            h.GetXaxis().SetNdivisions(5, 5, 0, True)
             # change style for data
             if key == "Data":
                 #h.SetLineWidth(6)
@@ -780,7 +798,6 @@ class Shape:
             
             #title   = "{0} with {1} varied 50% in {2} for {3}".format(varName, key, region, era)
             title   = "{0} varied 50% in {1}".format(key, region)
-            x_title = varName
             y_title = "Data/Sim."
             y_min   = 0.5
             y_max   = 1.5
@@ -801,6 +818,7 @@ class Shape:
             h_shape_nominal.GetYaxis().SetNdivisions(5, 5, 0, True)
             
             # lower plot
+            h_ratio_up.GetXaxis().SetTitleOffset(1.5)
             h_ratio_up.GetXaxis().SetNdivisions(5, 5, 0, True)
             h_ratio_up.GetYaxis().SetNdivisions(3, 5, 0, True)
             
@@ -812,7 +830,7 @@ class Shape:
             # set ticks on all sides of plot
             pad.SetTickx()
             pad.SetTicky()
-            pad.SetLeftMargin(0.2)
+            pad.SetLeftMargin(0.15)
             pad.SetRightMargin(0.1)
             pad.SetTopMargin(0.1)
             pad.SetBottomMargin(0.01)
@@ -838,10 +856,10 @@ class Shape:
             # set ticks on all sides of plot
             pad.SetTickx()
             pad.SetTicky()
-            pad.SetLeftMargin(0.2)
+            pad.SetLeftMargin(0.15)
             pad.SetRightMargin(0.1)
             pad.SetTopMargin(0.01)
-            pad.SetBottomMargin(0.4)
+            pad.SetBottomMargin(0.2)
             
             # skip legend in lower plot for now
             # legend: TLegend(x1,y1,x2,y2)
