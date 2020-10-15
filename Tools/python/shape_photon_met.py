@@ -689,18 +689,33 @@ class Shape:
             y_max   = 1.0
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
             setupHist(h, title, x_title, y_title, color, y_min, y_max)
+            # change style for data
+            if key == "Data":
+                #h.SetLineWidth(6)
+                h.SetMarkerStyle(ROOT.kFullCircle)
+                h.SetMarkerSize(1.25)
             # draw
             if i == 0:
-                h.Draw(draw_option)
+                if key == "Data":
+                    h.Draw("E1")
+                else:
+                    h.Draw(draw_option)
             else:
-                h.Draw(draw_option + " same")
+                if key == "Data":
+                    h.Draw("E1 same")
+                else:
+                    h.Draw(draw_option + " same")
             # save new histogram to map
             hNew[key] = h
         
         # legend
         for i, key in enumerate(hListLegend):
             h = hNew[key]
-            legend.AddEntry(h,  key,  "l")
+            # change style for data
+            if key == "Data":
+                legend.AddEntry(h,  key,  "pe")
+            else:
+                legend.AddEntry(h,  key,  "l")
                     
                     
         legend.Draw()

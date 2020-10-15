@@ -269,7 +269,7 @@ def setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False):
     y_axis.SetTitle(y_title)
     hist.SetStats(ROOT.kFALSE)
     hist.SetLineColor(getColorIndex(color))
-    hist.SetLineWidth(3)
+    hist.SetLineWidth(4)
 
 def getAdditionError(dx, dy):
     # q  = x + y
