@@ -620,6 +620,7 @@ class Shape:
         f = ROOT.TFile(file_name)
         
         draw_option = "hist"
+        data_style  = "E"
         
         ###################
         # Draw Histograms #
@@ -697,12 +698,12 @@ class Shape:
             # draw
             if i == 0:
                 if key == "Data":
-                    h.Draw("E1")
+                    h.Draw(data_style)
                 else:
                     h.Draw(draw_option)
             else:
                 if key == "Data":
-                    h.Draw("E1 same")
+                    h.Draw(data_style + " same")
                 else:
                     h.Draw(draw_option + " same")
             # save new histogram to map

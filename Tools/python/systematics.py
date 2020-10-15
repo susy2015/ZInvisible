@@ -216,6 +216,7 @@ class Systematic:
     def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, x_min, x_max, n_bins=0, xbins=np.array([]), rebin=False, useForSyst=False, doDataOverData=False):
         doFit = False
         draw_option = "hist error"
+        data_style  = "E"
         drawSyst = (era == "Run2") and (not doDataOverData)
         ROOT.gStyle.SetErrorX(0) # remove horizontal bar for data points
         
@@ -371,7 +372,7 @@ class Systematic:
             h_ratio_den.Draw(draw_option)
             if doDataOverData:
                 h_ratio_num.SetMarkerStyle(ROOT.kFullCircle)
-                h_ratio_num.Draw("E1 same")
+                h_ratio_num.Draw(data_style + " same")
             else:
                 h_ratio_num.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
@@ -437,7 +438,7 @@ class Systematic:
             # draw
             if doDataOverData:
                 h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullCircle)
-                h_ratio_ZoverPhoton.Draw("E1")
+                h_ratio_ZoverPhoton.Draw(data_style)
             else:
                 h_ratio_ZoverPhoton.Draw(draw_option)
             if doFit:
