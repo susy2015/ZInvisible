@@ -305,7 +305,7 @@ class Systematic:
                 x_title = self.labels[var]
             
             # turn off x-axis titles for upper plot
-            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+            # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False)
             setupHist(h_ratio_num,          title, "",      y_title,       num_color,         y_min, y_max, True)
             setupHist(h_ratio_den,          title, "",      y_title,       "electric blue",   y_min, y_max, True)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, ratio_title,   "black",           ratio_y_min, ratio_y_max, True)
@@ -356,7 +356,6 @@ class Systematic:
             
             # pad for histograms
             pad = c.cd(1)
-            #pad.SetGrid()
             # resize pad
             # SetPad(xlow, ylow, xup, yup)
             pad.SetPad(0, lowerPadHeight, 1, 1)
@@ -423,7 +422,6 @@ class Systematic:
             # pad for ratio
             pad = c.cd(2)
             # resize pad
-            #pad.SetGrid()
             pad.SetGridy()
             # SetPad(xlow, ylow, xup, yup)
             pad.SetPad(0, 0, 1, lowerPadHeight)

@@ -628,12 +628,11 @@ class Shape:
 
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
-        c.SetGrid()
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.5
+        legend_x1 = 0.45
         legend_x2 = 0.9 
-        legend_y1 = 0.7 
+        legend_y1 = 0.6 
         legend_y2 = 0.9 
                     
         # legend: TLegend(x1,y1,x2,y2)
@@ -770,7 +769,8 @@ class Shape:
             h_ratio_up.Divide(h_shape_nominal)
             h_ratio_down.Divide(h_shape_nominal)
             
-            title   = "{0} with {1} varied 50% in {2} for {3}".format(varName, key, region, era)
+            #title   = "{0} with {1} varied 50% in {2} for {3}".format(varName, key, region, era)
+            title   = "{0} varied 50% in {1}".format(key, region)
             x_title = varName
             y_title = "Data / (normalized MC)"
             y_min   = 0.5
@@ -787,7 +787,6 @@ class Shape:
 
             # shapes
             pad = c.cd(1)
-            pad.SetGrid()
             # new legend for each plot
             # legend: TLegend(x1,y1,x2,y2)
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
@@ -800,7 +799,7 @@ class Shape:
             legend1.Draw()
             # ratios
             pad = c.cd(2)
-            pad.SetGrid()
+            pad.SetGridy()
             # new legend for each plot
             # legend: TLegend(x1,y1,x2,y2)
             legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
