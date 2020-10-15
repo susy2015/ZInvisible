@@ -183,7 +183,6 @@ class Normalization:
             print "-----------------------------------"
         return b_error 
     
-    
     def getNormAndError(self, file_name, era, systTag = ""):
         self.systTag = systTag
         self.eras.append(era)
@@ -239,7 +238,6 @@ class Normalization:
         if self.verbose:
             print "------------------------------------------------------------------------------"
    
-
     # determine contributions to R_Z and R_T from different MC
     def findContributions(self, era, bin_type, particle, region, selection, outFile): 
         # WARNING: strings loaded from json file have type 'unicode'
@@ -527,13 +525,15 @@ class Normalization:
     def makeTable(self, output_name, makeDoc=False):
         era      = "Run2"
         bin_type = "search"
-        channelsForTable    = self.channels + ["CombinedTotalUnc"]
-        header              = "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ & $\\langle \Rz \\rangle$ \\\\"
-        header             += "\n& & & & (with stat. unc.) & (with full unc.)\\\\"
-        caption  = "Summary of the different regions used to derive the \Rz and $R_T$ factors."
-        caption += "\nThe \Rz factors from the di-electron and di-muon control regions for the full Run 2 dataset are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
-        caption += "\nAn additional systematic uncertainty is obtained to account for differences in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}, and the full uncertainty is listed in the last column."
-        caption += "\nThe \Rz value obtained with $\Nb\geq2$ is used for search bins with $\Nb=2$, $\Nb\geq2$, $\Nb\geq3$."
+        channelsForTable    =  self.channels + ["CombinedTotalUnc"]
+        header              =  "$\Nb$ & $\Nsv$ & $\Rz^{ee}$ & $\Rz^{\\mu\\mu}$ & $\\langle \Rz \\rangle$ & $\\langle \Rz \\rangle$ \\\\"
+        header              += "\n& & & & (with stat. unc.) & (with full unc.)\\\\"
+        # no period for short caption
+        short_caption       =  "The normalization values \Rz calculated for various \Nb and \Nsv selections in low and high \dm"
+        caption             =  short_caption + "."
+        caption             += "\nThe \Rz factors from the di-electron and di-muon control regions for the full Run 2 data set are shown, as well as the weighted average $\\langle \Rz \\rangle$, all with statistical uncertainties."
+        caption             += "\nAn additional systematic uncertainty is obtained to account for differences in \Rz for different eras as shown in Figs.~\\ref{fig:norm_eras_lowdm}--\\ref{fig:norm_eras_highdm}, and the full uncertainty is listed in the last column."
+        caption             += "\nThe \Rz value obtained with $\Nb\geq2$ is used for search bins that require $\Nb=2$, $\Nb\geq2$, and $\Nb\geq3$."
         with open(output_name, "w+") as f:
             self.output_file = f
             
@@ -553,25 +553,32 @@ class Normalization:
                 self.writeLine("\\begin{document}")
             
             # begin table
+            # note: hline and spacing modified for dissertation table format requirements
             self.writeLine("\\begin{table}")
+            self.writeLine("\\addtolength{\\tabcolsep}{-2pt}")
             self.writeLine("\\begin{center}")
-            self.writeLine("\\caption{")
+            self.writeLine("\\caption[%s]" % short_caption)
+            self.writeLine("{")
             self.writeLine(caption)
             self.writeLine("}")
             self.writeLine("\\label{tab:RZregions}")
             self.writeLine("\\begin{tabular}{%s}" % ( "c" * (2 + len(channelsForTable)) ) )
+            self.writeLine("\\hline")
             self.writeLine(header)
             self.writeLine("\\hline")
             self.writeLine("\\multicolumn{2}{c}{low \dm regions} \\\\")
-            self.writeLine("\\hline")
+            #self.writeLine("\\hline")
+            self.writeLine("\\\\")
             self.writeLine("0       & 0        & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
             self.writeLine("0       & $\geq$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq0_NSVge1"]["R_Z"] for channel in channelsForTable)) )
             self.writeLine("1       & 0        & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVeq0"]["R_Z"] for channel in channelsForTable)) )
             self.writeLine("1       & $\geq$1  & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBeq1_NSVge1"]["R_Z"] for channel in channelsForTable)) )
             self.writeLine("$\geq$2 & --       & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["LowDM"]["NBge2"]["R_Z"]        for channel in channelsForTable)) )
-            self.writeLine("\\hline")
+            #self.writeLine("\\hline")
+            self.writeLine("\\\\")
             self.writeLine("\\multicolumn{2}{c}{high \dm regions} \\\\")
-            self.writeLine("\\hline")
+            #self.writeLine("\\hline")
+            self.writeLine("\\\\")
             # Nb = 2 is no longer used
             self.writeLine("1       & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBeq1"]["R_Z"] for channel in channelsForTable))  ) 
             self.writeLine("$\geq$2 & -- & %s \\\\" % (" & ".join(self.norm_map_tex[era][bin_type][channel]["HighDM"]["NBge2"]["R_Z"] for channel in channelsForTable))  )
@@ -585,8 +592,7 @@ class Normalization:
                 # end document
                 self.writeLine("\\end{document}")
 
-
-    # make a plot of nomralization (y-axis) vs. era (x-axis) for different selections
+    # make a plot of normalization (y-axis) vs. era (x-axis) for different selections
     def makeComparison(self, bin_type):
         doFit = False
         draw_option = "hist error"
@@ -629,8 +635,8 @@ class Normalization:
                 title = "Norm. for {0} bins, {1}, {2}".format(bin_type, region_root_tex, selections_root_tex)
                 x_title = "Era" 
                 y_title = "Norm. #left(R_{Z}#right)"
-                y_min = -1.0
-                y_max = 5.0
+                y_min = 0.0
+                y_max = 3.0
                 #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
                 setupHist(h_Electron,       title, x_title, y_title, self.color_red,    y_min, y_max)
                 setupHist(h_Muon,           title, x_title, y_title, self.color_blue,   y_min, y_max)
@@ -656,8 +662,6 @@ class Normalization:
                     h_Combined.GetXaxis().SetBinLabel(      i + 1, era)
                     h_Combined_Run2.GetXaxis().SetBinLabel( i + 1, era)
                 
-                
-
                 # loop over a range of Run 2 error
                 # set Run 2 error
                 # calculate chi sq
@@ -709,7 +713,7 @@ class Normalization:
                 h_Muon.Draw(draw_option + " same")        
                 if doFit:
                     f_Combined.Draw("same")
-                h_Combined_Run2.Draw("same")
+                h_Combined_Run2.Draw(draw_option + "same")
 
                 # legend: TLegend(x1,y1,x2,y2)
                 legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
@@ -724,7 +728,9 @@ class Normalization:
                 # write chisq
                 # - give x, y coordinates (same as plot coordinates)
                 # - y list is for positioning the text
-                y_list = np.arange(y_max, 0.0, -0.3)
+                #y_list = np.arange(y_max, 0.0, -0.3)
+                height = y_max - y_min
+                y_list = np.arange(y_max, 0.0, -height/20.0)
                 if doFit: 
                     mark.DrawLatex(0.2, y_list[1], "Fit: f(x) = %.3f #pm %.3f"                % (fit_value, fit_error))
                     mark.DrawLatex(0.2, y_list[2], "Fit #chi_{r}^{2} = %.3f"                  % chisq_fit_r)
@@ -767,8 +773,6 @@ class Normalization:
                 del h_Combined
                 del h_Combined_Run2
 
-
-
 def main():
     json_file = "runs/run_2019-07-24.json"
     eras = ["2016", "2017", "2018_AB", "2018_CD"]
@@ -792,9 +796,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
 

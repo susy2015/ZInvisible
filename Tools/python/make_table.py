@@ -7,8 +7,6 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-
-
 # Reference: 
 # https://github.com/mkilpatr/EstToolsSUSY/blob/SBv4/SUSYNano19/getUncertainty.py
 
@@ -253,26 +251,19 @@ labelMap = {
     'MET': r'',
 }
 
-
 class Table:
     def __init__(self):
         pass
         
-    def makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=0.6):
+    def makeYieldTable(self, BinObject, total_era, output="pred_sr.tex", makeDoc=False, size=1.0):
         ''' Make a Latex-formatted table with each bkg plus unc, total bkg plus unc, and observed data for every bin. '''
         self.size = size
         s  = ""
         if makeDoc:
             s += self.beginDocument()
-        s += self.beginTable()
-        s += table_header
-        s += '\\hline\n'
         s += self.makeTable(BinObject, total_era)
-        #s += self.endTable() # now down in makeTable()
         if makeDoc:
             s += self.endDocument()
-        #print '\nprinting yield table...\n'
-        #print s
         with open(output, 'w') as f:
             print >> f, s
 
@@ -299,40 +290,71 @@ class Table:
         s = '\\end{document}'
         return s
        
-    def beginTable(self):
+    def beginTable(self, short_caption="", caption="", label=""):
         '''Add a break between the bins to fit on each page'''
+        '''Include caption and label'''
+        # WARNING: label must go after caption for table reference to work
         s  = '\\begin{table}[!h]\n'
         s += '\\begin{center}\n'
+        # use short caption
+        s += '\\caption[%s]\n' % short_caption
+        s += '{\n'
+        s += '%s\n' % caption
+        s += '}\n'
+        s += '\\label{%s}\n' % label
         s += '\\resizebox*{%.2f\\textwidth}{!}{\n' % self.size
-        s += '\\begin{tabular}{|c||c||c|c|c|c|}\n'
+        #s += '\\begin{tabular}{|c||c||c|c|c|c|}\n'
+        s += '\\begin{tabular}{cccccc}\n'
         s += '\\hline\n'
         return s
     
-    def endTable(self, label = "", caption = ""):
+    def endTable(self):
         '''Add a break between the bins to fit on each page'''
-        '''Include label and caption'''
         s  = '\\hline\n'
         s += '\\end{tabular}\n'
-        s += '}\n'
-        # WARNING: label must go after caption for table reference to work
-        s += '\\caption{%s}\n' % caption
-        s += '\\label{%s}\n' % label
+        s += '}\n' # end \resizebox
         s += '\\end{center}\n'
         s += '\\end{table}\n'
         return s
-    
+
+    def getCaption(self, region, firstBin, lastBin, short=False):
+        short_caption   = "Prediction for the \zinv background $\\left(\Np\\right)$ with statistical uncertainty in {0} search bins {1}--{2}".format(region, firstBin, lastBin)
+        caption         = short_caption + "."
+        caption         += " The normalization factor $\\left(\Rz\\right)$, shape factor $\\left(\Sg\\right)$, and number of \znunu MC events $\\left(\Nmc\\right)$ are also shown for each search bin including their statistical uncertainties."
+        #caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \Nmc."
+        #caption += " See Eq.~\\ref{eq:zinv_pred}."
+        if short:
+            return short_caption
+        else:
+            return caption
     
     def makeTable(self, BinObject, total_era):
         ''' Put together the table chunk for the given nj,nb,mtb,nt,nw,ht mega-bin. '''
+        # keys: starting bin; values: ending bin
+        #binRanges = {0:52, 53:93, 94:134, 135:182}
+        binRanges = {0:27, 28:52, 53:80, 81:107, 108:136, 137:161, 162:182}
         sections=[]
-        s=''
+        s  = ""
         ibin = 0
-        firstBin = ibin
-        lastBin  = ibin
+        # WARNING: binlist contains string bin names
         for bin in binlist: 
+            # put caption before table
+            if ibin in binRanges.keys():
+                # bin range
+                firstBin = ibin
+                lastBin  = binRanges[ibin]
+                # low/high dm
+                region = "low \dm"
+                if firstBin >= 53:
+                    region = "high \dm"
+                short_caption = self.getCaption(region, firstBin, lastBin, True)
+                caption       = self.getCaption(region, firstBin, lastBin, False)
+                label   = "tab:zinvPredBins{0}to{1}".format(firstBin, lastBin)
+                s += self.beginTable(short_caption, caption, label)
+                s += table_header
+                s += '\\hline\n' 
             sec, met = bin.lstrip('bin_').rsplit('_', 1)
             met = met.lstrip("pt")
-            #print "sec = {0}, met = {1}".format(sec, met)
             if sec not in sections:
                 sections.append(sec)
                 s += self.chunkHeader(sec)
@@ -343,27 +365,11 @@ class Table:
             for value in list(all_values):
                 s += " & {0} ".format(BinObject.binValues[total_era][str(ibin)][value])
             s += ' \\\\ \n'
-            # first increment ibin
+            # end table after last bin
+            if ibin in binRanges.values():
+                s += self.endTable()
+            # increment ibin at the end
             ibin += 1
-            # now these are bin numbers to begin next table
-            if ibin == 53 or ibin == 94 or ibin == 135 or ibin == 183:
-                # last bin for previous table
-                lastBin = ibin - 1
-                # low/high dm
-                region = "low \dm"
-                if lastBin >= 53:
-                    region = "high \dm"
-                label = "tab:zinvPredToBin{0}".format(lastBin)
-                caption  = "Prediction for the \zinv background $\\left(\Np\\right)$ in {0} search bins {1}--{2}.".format(region, firstBin, lastBin)
-                caption += " The normalization factor $\\left(\Rz\\right)$, shape factor $\\left(\Sg\\right)$, and number of \znunu MC events $\\left(\Nmc\\right)$ are also shown for each search bin including their statistical uncertainties."
-                caption += " The uncertainty for the prediction $\\left(\Np\\right)$ is calculated by propagating the statistical uncertainties of \Rz, \Sg, and \Nmc."
-                caption += " See Eq.~\\ref{eq:zinv_pred}."
-                s += self.endTable(label, caption)
-                if ibin < 183:
-                    # first bin for next table 
-                    firstBin = ibin
-                    s += self.beginTable()
-                    s += table_header
         return s
     
     # formats the prediction nEvents +/- error
@@ -389,7 +395,6 @@ class Table:
         else:
             return ' & $ %s\,^{+%s}_{-%s} $ ' %(n, e_up, e_low)
     
-    
     # puts together the bin header for bins of nJets, mtb, nTop (no selection on nB)
     def chunkHeader(self,sec):
         ''' Put together the mega-bin chunk header. '''
@@ -399,15 +404,14 @@ class Table:
         # only include non-empty labels, e.g. MET has not label
         labs = [labelMap[c] for c in cats if labelMap[c]]
         ncolumn = len(all_values)+2
-        s  = '\\hline\n'
-        s += '\\multicolumn{'+str(ncolumn)+'}{c}{'
+        #s  = '\\hline\n'
+        #s  = '[\\cmsTabSkip]\n'
+        s  = '\\multicolumn{'+str(ncolumn)+'}{c}{'
         s += ', '.join(labs)
         s += '} \\\\ \n'
-        s += '\\hline\n' 
-        #print "cats: {0}, labs: {1}".format(cats, labs)
-        #print "mega-bin header: {0}".format(s)
+        #s += '\\hline\n' 
+        s += '[\\cmsTabSkip]\n'
         return s
-
 
 def main():
     print "Running \"python make_table.py\" directly is not supported."
@@ -415,11 +419,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
 
