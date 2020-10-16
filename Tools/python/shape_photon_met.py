@@ -645,6 +645,8 @@ class Shape:
                         hist_map[era] = self.ratio_rebinned_map[era][bin_type][region][selection][rebin]
                         #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
                         setupHist(hist_map[era],   title, x_title, y_title, color,     y_min, y_max)
+                        hist_map[era].GetXaxis().SetTitleOffset(1.5)
+                        hist_map[era].GetXaxis().SetNdivisions(5, 5, 0, True)
                         # draw
                         if i == 0:
                             hist_map[era].Draw(draw_option)
