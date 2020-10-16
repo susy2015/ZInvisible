@@ -10,7 +10,11 @@ from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringif
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
-
+# title size
+ROOT.gStyle.SetTitleSize(0.075, "t")
+# how to set title size:
+# https://root-forum.cern.ch/t/setting-histogram-title-size-in-root/4468
+# https://root.cern.ch/doc/master/classTStyle.html#a92b426badbae2e2d8dcceb38a8b93912
 
 class Shape:
     def __init__(self, plot_dir, draw, doUnits, verbose):
@@ -812,14 +816,27 @@ class Shape:
             setupHist(h_ratio_down,    "",    x_title, "Varied/Nominal",    self.color_blue,  0.94,  1.06,  True)
             
             # label and title formatting
+            labelSize           = 0.08 
+            titleSize           = 0.08
+            titleOffsetXaxis    = 1.20
+            titleOffsetYaxis    = 0.80
             
             # upper plot
+            #h_shape_nominal.SetTitleSize(0.075, "t")
             h_shape_nominal.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
+            h_shape_nominal.GetYaxis().SetLabelSize(labelSize)
+            h_shape_nominal.GetYaxis().SetTitleSize(titleSize)
+            h_shape_nominal.GetYaxis().SetTitleOffset(titleOffsetYaxis)
             h_shape_nominal.GetYaxis().SetNdivisions(5, 5, 0, True)
             
             # lower plot
-            h_ratio_up.GetXaxis().SetTitleOffset(1.5)
+            h_ratio_up.GetXaxis().SetLabelSize(labelSize)
+            h_ratio_up.GetXaxis().SetTitleSize(titleSize)
+            h_ratio_up.GetXaxis().SetTitleOffset(titleOffsetXaxis)
             h_ratio_up.GetXaxis().SetNdivisions(5, 5, 0, True)
+            h_ratio_up.GetYaxis().SetLabelSize(labelSize)
+            h_ratio_up.GetYaxis().SetTitleSize(titleSize)
+            h_ratio_up.GetYaxis().SetTitleOffset(titleOffsetYaxis)
             h_ratio_up.GetYaxis().SetNdivisions(3, 5, 0, True)
             
             # draw
@@ -831,11 +848,16 @@ class Shape:
             pad.SetTickx()
             pad.SetTicky()
             pad.SetLeftMargin(0.15)
-            pad.SetRightMargin(0.1)
-            pad.SetTopMargin(0.1)
+            pad.SetRightMargin(0.10)
+            pad.SetTopMargin(0.15)
             pad.SetBottomMargin(0.01)
             
             # new legend for each plot
+            # legend: TLegend(x1,y1,x2,y2)
+            legend_x1 = 0.40
+            legend_x2 = 0.90
+            legend_y1 = 0.50
+            legend_y2 = 0.85
             # legend: TLegend(x1,y1,x2,y2)
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
             legend1.SetFillStyle(0)
@@ -857,9 +879,9 @@ class Shape:
             pad.SetTickx()
             pad.SetTicky()
             pad.SetLeftMargin(0.15)
-            pad.SetRightMargin(0.1)
+            pad.SetRightMargin(0.10)
             pad.SetTopMargin(0.01)
-            pad.SetBottomMargin(0.2)
+            pad.SetBottomMargin(0.25)
             
             # skip legend in lower plot for now
             # legend: TLegend(x1,y1,x2,y2)
