@@ -11,8 +11,8 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # title size
-ROOT.gStyle.SetTitleSize(0.075, "t")
-# how to set title size:
+ROOT.gStyle.SetTitleSize(0.15, "t")
+# how to set pad title size (for histogram):
 # https://root-forum.cern.ch/t/setting-histogram-title-size-in-root/4468
 # https://root.cern.ch/doc/master/classTStyle.html#a92b426badbae2e2d8dcceb38a8b93912
 
@@ -624,6 +624,9 @@ class Shape:
                     c.SaveAs(plot_name + ".pdf")
                     c.SaveAs(plot_name + ".png")
     
+    # ----------------------------------------------------- #
+    # - study shape of data and different MC in photon CR - #
+    # ----------------------------------------------------- #
     def studyShapes(self, file_name, region, era, variable, nameTag, varName, xbins, n_bins):
         
         # check that the file exists
@@ -647,15 +650,15 @@ class Shape:
         pad.SetTickx()
         pad.SetTicky()
         pad.SetLeftMargin(0.15)
-        pad.SetRightMargin(0.1)
-        pad.SetTopMargin(0.1)
-        pad.SetBottomMargin(0.2)
+        pad.SetRightMargin(0.10)
+        pad.SetTopMargin(0.05)
+        pad.SetBottomMargin(0.15)
         
         # legend: TLegend(x1,y1,x2,y2)
         legend_x1 = 0.45
         legend_x2 = 0.90
-        legend_y1 = 0.55
-        legend_y2 = 0.85
+        legend_y1 = 0.60
+        legend_y2 = 0.90
         
         # legend: TLegend(x1,y1,x2,y2)
         legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
@@ -709,7 +712,9 @@ class Shape:
                 color = self.color_black
             else:
                 color = self.color_list[i]
-            title   = "{0} in {1} for {2}".format(varName, region, era)
+            # turn off title
+            #title   = "{0} in {1} for {2}".format(varName, region, era)
+            title   = ""
             x_title = varName
             if varName.lower() in self.labels:
                 x_title = self.labels[varName.lower()]

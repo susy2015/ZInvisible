@@ -12,6 +12,11 @@ from tools import setupHist
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
+# title size
+ROOT.gStyle.SetTitleSize(0.10, "t")
+# how to set pad title size (for histogram):
+# https://root-forum.cern.ch/t/setting-histogram-title-size-in-root/4468
+# https://root.cern.ch/doc/master/classTStyle.html#a92b426badbae2e2d8dcceb38a8b93912
 
 class Normalization:
     def __init__(self, plot_dir, verbose):
@@ -335,7 +340,6 @@ class Normalization:
         outFile.write("{0} {1} {2} On Z Peak: (ZToLLNoDY / DY) = {3:.3f} / {4:.3f} = {5:.1f}%\n".format(particle, region, selection, onPeakZToLLNoDY, onPeakDY, onPeakPerc))
         outFile.write("----------------------------------------------------------------------\n")
         for key in histoList:
-            #print key
             h = histoMap[key]
             # find on-Z and off-Z peak number of events
             a_error   = ROOT.Double()
@@ -609,12 +613,24 @@ class Normalization:
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
         c.SetGrid()
+        pad = c.cd(1)
+        rightMargin = 0.05
+        topMargin   = 0.18
+        # set ticks on all sides of plot
+        pad.SetTickx()
+        pad.SetTicky()
+        pad.SetLeftMargin(0.15)
+        pad.SetRightMargin(rightMargin)
+        pad.SetTopMargin(topMargin)
+        pad.SetBottomMargin(0.15)
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.5
-        legend_x2 = 0.9 
-        legend_y1 = 0.7 
-        legend_y2 = 0.9 
+        legend_width  = 0.4
+        legend_height = 0.3
+        legend_x1 = 1.0 - rightMargin - legend_width
+        legend_x2 = 1.0 - rightMargin
+        legend_y1 = 1.0 - topMargin   - legend_height
+        legend_y2 = 1.0 - topMargin
         
         self.rz_syst_map[bin_type] = {}
         for region in self.regions:
@@ -626,22 +642,20 @@ class Normalization:
                 selections_root_tex     = selections_tex.replace("\\", "#")
                 region_root_tex         = region_root_tex.replace("$", "")
                 selections_root_tex     = selections_root_tex.replace("$", "")
-                #print "{0} : {1}".format(region_tex, region_root_tex)
-                #print "{0} : {1}".format(selections_tex, selections_root_tex)
                 h_Electron       = ROOT.TH1F("h_Electron",        "h_Electron",        nBins, 0, nBins)
                 h_Muon           = ROOT.TH1F("h_Muon",            "h_Muon",            nBins, 0, nBins)
                 h_Combined       = ROOT.TH1F("h_Combined",        "h_Combined",        nBins, 0, nBins)
                 h_Combined_Run2  = ROOT.TH1F("h_Combined_Run2",   "h_Combined_Run2",   nBins, 0, nBins)
-                title = "Norm. for {0} bins, {1}, {2}".format(bin_type, region_root_tex, selections_root_tex)
-                x_title = "Era" 
+                title = "Norm. for {0}, {1}".format(region_root_tex, selections_root_tex)
+                x_title = "Year"
                 y_title = "Norm. #left(R_{Z}#right)"
                 y_min = 0.0
-                y_max = 3.0
-                #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-                setupHist(h_Electron,       title, x_title, y_title, self.color_red,    y_min, y_max)
-                setupHist(h_Muon,           title, x_title, y_title, self.color_blue,   y_min, y_max)
-                setupHist(h_Combined,       title, x_title, y_title, self.color_black,  y_min, y_max)
-                setupHist(h_Combined_Run2,  title, x_title, y_title, self.color_green,  y_min, y_max)
+                y_max = 4.0
+                # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False)
+                setupHist(h_Electron,       title, x_title, y_title, self.color_red,    y_min, y_max, True)
+                setupHist(h_Muon,           title, x_title, y_title, self.color_blue,   y_min, y_max, True)
+                setupHist(h_Combined,       title, x_title, y_title, self.color_black,  y_min, y_max, True)
+                setupHist(h_Combined_Run2,  title, x_title, y_title, self.color_green,  y_min, y_max, True)
                 Run2_norm     = self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z"]
                 Run2_stat_err = self.norm_map["Run2"][bin_type]["Combined"][region][selection]["R_Z_error"]
                 final_Run2_total_err  = -1
@@ -699,13 +713,21 @@ class Normalization:
                 for i in xrange(nBins):
                     h_Combined_Run2.SetBinError(        i + 1,      final_Run2_total_err)
                 mark = ROOT.TLatex()
-                mark.SetTextSize(0.03)
+                mark.SetTextSize(0.04)
                 
-                # title font size
-                h_Electron.SetTitleSize(0.1)
-                h_Muon.SetTitleSize(0.1)
-                h_Combined.SetTitleSize(0.1)
-                h_Combined_Run2.SetTitleSize(0.1)
+                # label and title formatting
+                labelSize           = 0.05
+                titleSize           = 0.05
+                titleOffsetXaxis    = 1.25
+                titleOffsetYaxis    = 1.25
+                
+                h_Combined.SetTitleSize(0.2, "t")
+                h_Combined.GetXaxis().SetLabelSize(1.5 * labelSize)
+                h_Combined.GetXaxis().SetTitleSize(titleSize)
+                h_Combined.GetXaxis().SetTitleOffset(titleOffsetXaxis)
+                h_Combined.GetYaxis().SetLabelSize(labelSize)
+                h_Combined.GetYaxis().SetTitleSize(titleSize)
+                h_Combined.GetYaxis().SetTitleOffset(titleOffsetYaxis)
                 
                 # draw
                 h_Combined.Draw(draw_option)        
@@ -728,9 +750,8 @@ class Normalization:
                 # write chisq
                 # - give x, y coordinates (same as plot coordinates)
                 # - y list is for positioning the text
-                #y_list = np.arange(y_max, 0.0, -0.3)
                 height = y_max - y_min
-                y_list = np.arange(y_max, 0.0, -height/20.0)
+                y_list = np.arange(y_max, 0.0, -height/10.0)
                 if doFit: 
                     mark.DrawLatex(0.2, y_list[1], "Fit: f(x) = %.3f #pm %.3f"                % (fit_value, fit_error))
                     mark.DrawLatex(0.2, y_list[2], "Fit #chi_{r}^{2} = %.3f"                  % chisq_fit_r)
@@ -739,11 +760,11 @@ class Normalization:
                     mark.DrawLatex(0.2, y_list[5], "R_{Z} #pm #sigma_{stat} = %.3f #pm %.3f"  % (Run2_norm, Run2_stat_err))
                     mark.DrawLatex(0.2, y_list[6], "Run 2 #sigma_{total} = %.3f"              % final_Run2_total_err)
                 else:
-                    mark.DrawLatex(0.2, y_list[1], "Run 2 #chi^{2} = %.3f"                    % chisq_Run2)
-                    mark.DrawLatex(0.2, y_list[2], "Run 2 #chi_{r}^{2} = %.3f"                % chisq_Run2_r)
-                    mark.DrawLatex(0.2, y_list[3], "S = %.3f"                                 % scale)
-                    mark.DrawLatex(0.2, y_list[4], "#sigma_{stat} = %.3f"  %                  (Run2_stat_err))
-                    mark.DrawLatex(0.2, y_list[5], "R_{Z} #pm #sigma_{total} = %.3f #pm %.3f"  % (Run2_norm, final_Run2_total_err))
+                    #mark.DrawLatex(0.2, y_list[1], "Run 2 #chi^{2} = %.3f"      % chisq_Run2)
+                    mark.DrawLatex(0.2, y_list[1], "Run 2 #chi_{r}^{2} = %.3f"  % chisq_Run2_r                      )
+                    mark.DrawLatex(0.2, y_list[2], "S = %.3f"                   % scale                             )
+                    mark.DrawLatex(0.2, y_list[3], "#sigma_{stat} = %.3f"       % Run2_stat_err                     )
+                    mark.DrawLatex(0.2, y_list[4], "R_{Z} = %.3f #pm %.3f"      % (Run2_norm, final_Run2_total_err) )
                 
                 # save final Rz syst.
                 # WARNING: this needs to be saved separately for validaiton and search bins, otherwise it will be overwritten
@@ -776,7 +797,6 @@ class Normalization:
 def main():
     json_file = "runs/run_2019-07-24.json"
     eras = ["2016", "2017", "2018_AB", "2018_CD"]
-    #eras = ["2016", "2017", "2018_PreHEM", "2018_PostHEM"]
     latex_dir = "latex_files"
     # add "/" to directory if not present
     if latex_dir[-1] != "/":
