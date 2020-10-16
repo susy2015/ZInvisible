@@ -33,18 +33,17 @@ class Normalization:
         self.eras = []
         self.systTag = ""
         # variable is also TDirectoryFile that holds histograms 
-        self.variable = "bestRecoZM"
-        self.bin_types  = ["validation", "validationMetStudy", "search"]
-        self.particles = ["Electron", "Muon"]
-        self.channels = self.particles + ["Combined"]
-        self.factors = ["R_Z", "R_T"]
-        self.regions   = ["LowDM", "HighDM"]
+        self.variable    = "bestRecoZM"
+        self.bin_types   = ["validation", "validationMetStudy", "search"]
+        self.particles   = ["Electron", "Muon"]
+        self.channels    = self.particles + ["Combined"]
+        self.factors     = ["R_Z", "R_T"]
+        self.regions     = ["LowDM", "HighDM"]
         self.regions_tex = {
                              "LowDM"  : "Low $\Delta m$",
                              "HighDM" : "High $\Delta m$"
                            }
-       
-        self.bin_maps = {}
+        self.bin_maps    = {}
         with open("validation_bins_v3.json", "r") as j:
             self.bin_maps["validation"] = tools.stringifyMap(json.load(j))
         with open("validation_bins_metStudy.json", "r") as j:
@@ -637,20 +636,20 @@ class Normalization:
             self.rz_syst_map[bin_type][region] = {}
             for selection in self.selections[bin_type][region]:
                 region_tex              = self.regions_tex[region]
-                selections_tex          = self.selections_tex[bin_type][region][selection]
                 region_root_tex         = region_tex.replace("\\", "#")
-                selections_root_tex     = selections_tex.replace("\\", "#")
                 region_root_tex         = region_root_tex.replace("$", "")
+                selections_tex          = self.selections_tex[bin_type][region][selection]
+                selections_root_tex     = selections_tex.replace("\\", "#")
                 selections_root_tex     = selections_root_tex.replace("$", "")
-                h_Electron       = ROOT.TH1F("h_Electron",        "h_Electron",        nBins, 0, nBins)
-                h_Muon           = ROOT.TH1F("h_Muon",            "h_Muon",            nBins, 0, nBins)
-                h_Combined       = ROOT.TH1F("h_Combined",        "h_Combined",        nBins, 0, nBins)
-                h_Combined_Run2  = ROOT.TH1F("h_Combined_Run2",   "h_Combined_Run2",   nBins, 0, nBins)
-                title = "Norm. for {0}, {1}".format(region_root_tex, selections_root_tex)
+                h_Electron              = ROOT.TH1F("h_Electron",        "h_Electron",        nBins, 0, nBins)
+                h_Muon                  = ROOT.TH1F("h_Muon",            "h_Muon",            nBins, 0, nBins)
+                h_Combined              = ROOT.TH1F("h_Combined",        "h_Combined",        nBins, 0, nBins)
+                h_Combined_Run2         = ROOT.TH1F("h_Combined_Run2",   "h_Combined_Run2",   nBins, 0, nBins)
+                title   = "Norm. for {0}, {1}".format(region_root_tex, selections_root_tex)
                 x_title = "Year"
                 y_title = "Norm. #left(R_{Z}#right)"
-                y_min = 0.0
-                y_max = 4.0
+                y_min   = 0.0
+                y_max   = 4.0
                 # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False)
                 setupHist(h_Electron,       title, x_title, y_title, self.color_red,    y_min, y_max, True)
                 setupHist(h_Muon,           title, x_title, y_title, self.color_blue,   y_min, y_max, True)

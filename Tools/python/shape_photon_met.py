@@ -4,7 +4,7 @@ import copy
 import json
 import os
 import numpy as np
-from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringifyMap, normalize, getNormalizedRatio
+from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringifyMap, normalize, getNormalizedRatio, getTexSelection
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -33,10 +33,14 @@ class Shape:
         self.ratio_rebinned_map     = {}
         self.eras = []
         # variable is also TDirectoryFile that holds histograms 
-        self.variable   = "metWithPhoton"
-        self.bin_types  = ["validation", "validationMetStudy", "search"]
-        self.regions    = ["LowDM", "HighDM"]
-        self.bin_maps = {}
+        self.variable    = "metWithPhoton"
+        self.bin_types   = ["validation", "validationMetStudy", "search"]
+        self.regions     = ["LowDM", "HighDM"]
+        self.regions_tex = {
+                             "LowDM"  : "Low $\Delta m$",
+                             "HighDM" : "High $\Delta m$"
+                           }
+        self.bin_maps    = {}
         with open("validation_bins_v3.json", "r") as j:
             self.bin_maps["validation"] = stringifyMap(json.load(j))
         with open("validation_bins_metStudy.json", "r") as j:
@@ -577,13 +581,24 @@ class Shape:
 
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
-        c.SetGrid()
+        pad = c.cd(1)
+        rightMargin = 0.075
+        topMargin   = 0.180
+        # set ticks on all sides of plot
+        pad.SetTickx()
+        pad.SetTicky()
+        pad.SetLeftMargin(0.15)
+        pad.SetRightMargin(rightMargin)
+        pad.SetTopMargin(topMargin)
+        pad.SetBottomMargin(0.15)
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.5
-        legend_x2 = 0.9 
-        legend_y1 = 0.7 
-        legend_y2 = 0.9 
+        legend_width  = 0.3
+        legend_height = 0.3
+        legend_x1 = 1.0 - rightMargin - legend_width
+        legend_x2 = 1.0 - rightMargin
+        legend_y1 = 1.0 - topMargin   - legend_height
+        legend_y2 = 1.0 - topMargin
 
         # use 3 years and Run2 for eras
         eras = ["2016", "2017", "2018", "Run2"]
@@ -591,14 +606,26 @@ class Shape:
         for region in self.regions:
             for selection in self.selections[bin_type][region]:
                 for rebin in self.ratio_rebinned_map["2016"][bin_type][region][selection]: 
-                    title = "Shape for {0} bins, {1}, {2}, {3}".format(bin_type, region, selection, rebin)
+                    region_tex          = self.regions_tex[region] 
+                    region_root_tex     = region_tex.replace("\\", "#")
+                    region_root_tex     = region_root_tex.replace("$", "")
+                    selections_tex      = getTexSelection(selection)
+                    selections_root_tex = selections_tex.replace("\\", "#")
+                    selections_root_tex = selections_root_tex.replace("$", "")
+                    #title   = "Shape for {0} bins, {1}, {2}, {3}".format(bin_type, region, selection, rebin)
+                    title   = "Shapes for {0}, {1}".format(region_root_tex, selections_root_tex)
                     x_title = "MET (GeV)" 
                     y_title = "Shape #left(S_{#gamma}#right)"
-                    y_min = -1.0
-                    y_max = 3.0
+                    y_min   = 0.0
+                    y_max   = 4.0
                     
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+                    legend.SetFillStyle(0)
+                    legend.SetBorderSize(0)
+                    legend.SetLineWidth(1)
+                    legend.SetNColumns(1)
+                    legend.SetTextFont(42)
                     
                     # map for histograms
                     hist_map = {}
