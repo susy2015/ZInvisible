@@ -582,23 +582,31 @@ class Shape:
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
         pad = c.cd(1)
-        rightMargin = 0.075
-        topMargin   = 0.180
+        leftMargin      = 0.150
+        rightMargin     = 0.075
+        topMargin       = 0.180
+        bottomMargin    = 0.150
         # set ticks on all sides of plot
         pad.SetTickx()
         pad.SetTicky()
-        pad.SetLeftMargin(0.15)
+        pad.SetLeftMargin(leftMargin)
         pad.SetRightMargin(rightMargin)
         pad.SetTopMargin(topMargin)
-        pad.SetBottomMargin(0.15)
+        pad.SetBottomMargin(bottomMargin)
         
         # legend: TLegend(x1,y1,x2,y2)
         legend_width  = 0.3
         legend_height = 0.3
-        legend_x1 = 1.0 - rightMargin - legend_width
-        legend_x2 = 1.0 - rightMargin
-        legend_y1 = 1.0 - topMargin   - legend_height
-        legend_y2 = 1.0 - topMargin
+        # legend in left corner
+        legend_x1 = 0.025 + leftMargin
+        legend_x2 = 0.025 + leftMargin + legend_width
+        legend_y1 = 0.975 - topMargin  - legend_height
+        legend_y2 = 0.975 - topMargin
+        # legend in right corner
+        #legend_x1 = 1.0 - rightMargin - legend_width
+        #legend_x2 = 1.0 - rightMargin
+        #legend_y1 = 1.0 - topMargin   - legend_height
+        #legend_y2 = 1.0 - topMargin
 
         # use 3 years and Run2 for eras
         eras = ["2016", "2017", "2018", "Run2"]
@@ -614,10 +622,10 @@ class Shape:
                     selections_root_tex = selections_root_tex.replace("$", "")
                     #title   = "Shape for {0} bins, {1}, {2}, {3}".format(bin_type, region, selection, rebin)
                     title   = "Shapes for {0}, {1}".format(region_root_tex, selections_root_tex)
-                    x_title = "MET (GeV)" 
+                    x_title = self.labels["met"]
                     y_title = "Shape #left(S_{#gamma}#right)"
                     y_min   = 0.0
-                    y_max   = 4.0
+                    y_max   = 5.0
                     
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
