@@ -764,7 +764,6 @@ class Shape:
             h.GetXaxis().SetNdivisions(5, 5, 0, True)
             # change style for data
             if key == "Data":
-                #h.SetLineWidth(6)
                 h.SetMarkerStyle(ROOT.kFullCircle)
                 h.SetMarkerSize(1.25)
             # draw

@@ -193,6 +193,7 @@ class Common:
         debug = False
         eraTag = "_" + era
         draw_option = "hist error"
+        data_style  = "E"
         if self.saveRootFile:
             #print "Running makeHistos(). Saving output to {0}".format(output_file)
             f_out = ROOT.TFile(output_file, "recreate")
@@ -207,15 +208,17 @@ class Common:
         h_pred_highdm = ROOT.TH1F("pred_highdm", "pred_highdm", self.high_dm_nbins, self.high_dm_start, self.high_dm_end + 1) 
 
         # setup histograms
-        #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-        title = "Z to Invisible Data, MC and Prediction for " + era
+        # turn off main title and x-axis title for upper plot
+        # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, lineWidth=5)
+        #title = "Z to Invisible Data, MC and Prediction for " + era
+        title = ""
         if (self.unblind):
-            setupHist(h_data_lowdm,    title, x_title, "Events", self.color_black,  10.0 ** -2, 10.0 ** 5)
-            setupHist(h_data_highdm,   title, x_title, "Events", self.color_black,  10.0 ** -2, 10.0 ** 5)
-        setupHist(h_mc_lowdm,    title, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 5)
-        setupHist(h_mc_highdm,   title, x_title, "Events", self.color_red,  10.0 ** -2, 10.0 ** 5)
-        setupHist(h_pred_lowdm,  title, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 5)
-        setupHist(h_pred_highdm, title, x_title, "Events", self.color_blue, 10.0 ** -2, 10.0 ** 5)
+            setupHist(h_data_lowdm,    title, "", "Events", self.color_black,  10.0 ** -2, 10.0 ** 5, True, 3)
+            setupHist(h_data_highdm,   title, "", "Events", self.color_black,  10.0 ** -2, 10.0 ** 5, True, 3)
+        setupHist(h_mc_lowdm,    title, "", "Events", self.color_red,  10.0 ** -2, 10.0 ** 5, True, 3)
+        setupHist(h_mc_highdm,   title, "", "Events", self.color_red,  10.0 ** -2, 10.0 ** 5, True, 3)
+        setupHist(h_pred_lowdm,  title, "", "Events", self.color_blue, 10.0 ** -2, 10.0 ** 5, True, 3)
+        setupHist(h_pred_highdm, title, "", "Events", self.color_blue, 10.0 ** -2, 10.0 ** 5, True, 3)
                 
         # set histogram content and error
         bin_i = 1
@@ -267,44 +270,78 @@ class Common:
             # draw histograms
             c = ROOT.TCanvas("c", "c", 800, 800)
             c.Divide(1, 2)
+        
+            # total margins (around two pads)
+            leftMargin      = 0.150
+            rightMargin     = 0.050
+            topMargin       = 0.050
+            bottomMargin    = 0.150
             
             # legend: TLegend(x1,y1,x2,y2)
-            legend_x1 = 0.7
-            legend_x2 = 0.9 
-            legend_y1 = 0.7 
-            legend_y2 = 0.9 
+            legend_width  = 0.3
+            legend_height = 0.3
+            # legend in right corner
+            legend_x1 = 1.0 - rightMargin - legend_width
+            legend_x2 = 1.0 - rightMargin
+            legend_y1 = 1.0 - topMargin   - legend_height
+            legend_y2 = 1.0 - topMargin
 
             for region in h_map:
                 if (self.unblind):
-                    h_data   = h_map[region]["data"]
-                h_mc   = h_map[region]["mc"]
-                h_pred = h_map[region]["pred"]
+                    h_data = h_map[region]["data"]
+                    h_data.SetMarkerStyle(ROOT.kFullCircle)
+                    h_data.SetMarkerSize(1.25)
+                h_mc    = h_map[region]["mc"]
+                h_pred  = h_map[region]["pred"]
                 h_ratio = h_pred.Clone("h_ratio")
                 h_ratio.Divide(h_mc)
             
-                #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-                setupHist(h_ratio, "Z to Invisible Prediction / MC", x_title, "Pred / MC", self.color_blue, 0.0, 2.0)
-
+                # turn off main title for lower plot
+                # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, lineWidth=5)
+                setupHist(h_ratio, "", x_title, "Pred./Sim.", self.color_blue, 0.0, 2.0, True, 3)
+                
+                h_mc.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
+                
                 # histograms
-                c.cd(1)
-                ROOT.gPad.SetLogy(1) # set log y
+                pad = c.cd(1)
+                #ROOT.gPad.SetLogy(1) # set log y
+                pad.SetLogy(1) # set log y
+                # set ticks on all sides of plot
+                pad.SetTickx()
+                pad.SetTicky()
+                pad.SetLeftMargin(leftMargin)
+                pad.SetRightMargin(rightMargin)
+                pad.SetTopMargin(topMargin)
+                pad.SetBottomMargin(0.01)
                 # ZInv MC and Prediction
                 h_mc.Draw(draw_option)
                 h_pred.Draw("error same")
                 if (self.unblind):
-                    h_data.Draw("error same")
+                    h_data.Draw(data_style + " same")
                 
                 # legend: TLegend(x1,y1,x2,y2)
                 legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+                legend.SetFillStyle(0)
+                legend.SetBorderSize(0)
+                legend.SetLineWidth(1)
+                legend.SetNColumns(1)
+                legend.SetTextFont(42)
                 if (self.unblind):
-                    legend.AddEntry(h_data,   "MET Data",   "l")
+                    legend.AddEntry(h_data,   "MET Data",   "pe")
                 legend.AddEntry(h_mc,   "Z#rightarrow#nu#nu MC",   "l")
                 legend.AddEntry(h_pred, "Z#rightarrow#nu#nu Pred", "l")
                 legend.Draw()
                
                 # ratios
-                c.cd(2)
-                h_ratio.Draw(draw_option)
+                pad = c.cd(2)
+                # set ticks on all sides of plot
+                pad.SetTickx()
+                pad.SetTicky()
+                pad.SetLeftMargin(leftMargin)
+                pad.SetRightMargin(rightMargin)
+                pad.SetTopMargin(0.01)
+                pad.SetBottomMargin(bottomMargin)
+                h_ratio.Draw("hist")
                     
                 # save histograms
                 plot_name = self.plot_dir + name + "_" + region + eraTag
@@ -540,7 +577,7 @@ class ValidationBins(Common):
         self.saveRootFile = saveRootFile
         self.binValues = {}
         self.histograms = {}
-        self.unblind = True
+        self.unblind = False
         # SBv3
         self.low_dm_start           = 0
         self.low_dm_normal_end      = 14
@@ -647,7 +684,7 @@ class ValidationBinsMETStudy(Common):
         self.saveRootFile = saveRootFile
         self.binValues = {}
         self.histograms = {}
-        self.unblind = True
+        self.unblind = False
         self.low_dm_start  = 0
         self.low_dm_end    = 3
         self.high_dm_start = 4
@@ -740,7 +777,7 @@ class SearchBins(Common):
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
-        self.unblind = True
+        self.unblind = False
         self.draw = draw
         self.saveRootFile = saveRootFile
         # SBv4
