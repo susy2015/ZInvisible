@@ -192,7 +192,7 @@ class Common:
     def makeHistos(self, output_file, x_title, name, era):
         debug = False
         eraTag = "_" + era
-        draw_option = "hist error"
+        draw_option = "hist"
         data_style  = "E"
         if self.saveRootFile:
             #print "Running makeHistos(). Saving output to {0}".format(output_file)
@@ -315,7 +315,7 @@ class Common:
                 pad.SetBottomMargin(0.01)
                 # ZInv MC and Prediction
                 h_mc.Draw(draw_option)
-                h_pred.Draw("error same")
+                h_pred.Draw(draw_option + " same")
                 if (self.unblind):
                     h_data.Draw(data_style + " same")
                 
