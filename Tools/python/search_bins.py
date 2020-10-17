@@ -328,8 +328,8 @@ class Common:
                 legend.SetTextFont(42)
                 if (self.unblind):
                     legend.AddEntry(h_data,   "MET Data",   "pe")
-                legend.AddEntry(h_mc,   "Z#rightarrow#nu#nu MC",   "l")
-                legend.AddEntry(h_pred, "Z#rightarrow#nu#nu Pred", "l")
+                legend.AddEntry(h_mc,   "Z#rightarrow#nu#nu Sim.",  "l")
+                legend.AddEntry(h_pred, "Z#rightarrow#nu#nu Pred.", "l")
                 legend.Draw()
                
                 # ratios
