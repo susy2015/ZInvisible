@@ -216,6 +216,7 @@ class Systematic:
     def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, x_min, x_max, n_bins=0, xbins=np.array([]), rebin=False, useForSyst=False, doDataOverData=False):
         doFit = False
         draw_option = "hist error"
+        data_style  = "E"
         drawSyst = (era == "Run2") and (not doDataOverData)
         ROOT.gStyle.SetErrorX(0) # remove horizontal bar for data points
         
@@ -304,7 +305,7 @@ class Systematic:
                 x_title = self.labels[var]
             
             # turn off x-axis titles for upper plot
-            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
+            # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False)
             setupHist(h_ratio_num,          title, "",      y_title,       num_color,         y_min, y_max, True)
             setupHist(h_ratio_den,          title, "",      y_title,       "electric blue",   y_min, y_max, True)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, ratio_title,   "black",           ratio_y_min, ratio_y_max, True)
@@ -313,17 +314,19 @@ class Systematic:
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             
             # label and title formatting
-            labelSize   = 0.14
-            titleSize   = 0.14
-            titleOffsetXaxis = 1.20
-            titleOffsetYaxis = 0.60
+            labelSize           = 0.14
+            titleSize           = 0.14
+            titleOffsetXaxis    = 1.20
+            titleOffsetYaxis    = 0.60
             
+            # upper plot
             h_ratio_den.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
             h_ratio_den.GetYaxis().SetLabelSize(padHeightRatio * labelSize)
             h_ratio_den.GetYaxis().SetTitleSize(padHeightRatio * titleSize)
             h_ratio_den.GetYaxis().SetTitleOffset(titleOffsetYaxis/padHeightRatio)
             h_ratio_den.GetYaxis().SetNdivisions(5, 5, 0, True)
             
+            # lower plot
             h_ratio_ZoverPhoton.GetXaxis().SetLabelSize(labelSize)
             h_ratio_ZoverPhoton.GetXaxis().SetTitleSize(titleSize)
             h_ratio_ZoverPhoton.GetXaxis().SetTitleOffset(titleOffsetXaxis)
@@ -355,7 +358,6 @@ class Systematic:
             
             # pad for histograms
             pad = c.cd(1)
-            #pad.SetGrid()
             # resize pad
             # SetPad(xlow, ylow, xup, yup)
             pad.SetPad(0, lowerPadHeight, 1, 1)
@@ -371,7 +373,7 @@ class Systematic:
             h_ratio_den.Draw(draw_option)
             if doDataOverData:
                 h_ratio_num.SetMarkerStyle(ROOT.kFullCircle)
-                h_ratio_num.Draw("E1 same")
+                h_ratio_num.Draw(data_style + " same")
             else:
                 h_ratio_num.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
@@ -422,7 +424,6 @@ class Systematic:
             # pad for ratio
             pad = c.cd(2)
             # resize pad
-            #pad.SetGrid()
             pad.SetGridy()
             # SetPad(xlow, ylow, xup, yup)
             pad.SetPad(0, 0, 1, lowerPadHeight)
@@ -437,7 +438,7 @@ class Systematic:
             # draw
             if doDataOverData:
                 h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullCircle)
-                h_ratio_ZoverPhoton.Draw("E1")
+                h_ratio_ZoverPhoton.Draw(data_style)
             else:
                 h_ratio_ZoverPhoton.Draw(draw_option)
             if doFit:

@@ -4,13 +4,17 @@ import copy
 import json
 import os
 import numpy as np
-from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringifyMap, normalize, getNormalizedRatio
+from tools import setupHist, getMETBinEdges, getSelections, removeCuts, stringifyMap, normalize, getNormalizedRatio, getTexSelection
 
 # make sure ROOT.TFile.Open(fileURL) does not seg fault when $ is in sys.argv (e.g. $ passed in as argument)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 # make plots faster without displaying them
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
-
+# title size
+ROOT.gStyle.SetTitleSize(0.15, "t")
+# how to set pad title size (for histogram):
+# https://root-forum.cern.ch/t/setting-histogram-title-size-in-root/4468
+# https://root.cern.ch/doc/master/classTStyle.html#a92b426badbae2e2d8dcceb38a8b93912
 
 class Shape:
     def __init__(self, plot_dir, draw, doUnits, verbose):
@@ -29,10 +33,14 @@ class Shape:
         self.ratio_rebinned_map     = {}
         self.eras = []
         # variable is also TDirectoryFile that holds histograms 
-        self.variable   = "metWithPhoton"
-        self.bin_types  = ["validation", "validationMetStudy", "search"]
-        self.regions    = ["LowDM", "HighDM"]
-        self.bin_maps = {}
+        self.variable    = "metWithPhoton"
+        self.bin_types   = ["validation", "validationMetStudy", "search"]
+        self.regions     = ["LowDM", "HighDM"]
+        self.regions_tex = {
+                             "LowDM"  : "Low $\Delta m$",
+                             "HighDM" : "High $\Delta m$"
+                           }
+        self.bin_maps    = {}
         with open("validation_bins_v3.json", "r") as j:
             self.bin_maps["validation"] = stringifyMap(json.load(j))
         with open("validation_bins_metStudy.json", "r") as j:
@@ -47,9 +55,19 @@ class Shape:
             self.selections[bin_type] = getSelections(self.bin_maps[bin_type], bin_type, ["NSV", "MET"])
         
         # labels
-        self.label_met    = "#slash{E}_{T}^{#gamma} [GeV]"
+        #self.label_met    = "#slash{E}_{T}^{#gamma} [GeV]"
+        self.label_met    = "Modified p_{T}^{miss} [GeV]"
         self.label_events = "Events"
         self.label_ratio  = "Data / MC"
+        self.labels = {
+                        "met"   : "Modified p_{T}^{miss} [GeV]", 
+                        "ht"    : "H_{T} [GeV]",
+                        "nj"    : "N_{j}",
+                        "nb"    : "N_{b}",
+                        "nmt"   : "N_{merged tops}",
+                        "nrt"   : "N_{resolved tops}",
+                        "nw"    : "N_{W}"
+                      }
         # colors
         self.color_black  = "black"
         self.color_red    = "vermillion"
@@ -60,7 +78,9 @@ class Shape:
         # rainbow ordered
         #self.color_list   = ["bubblegum pink", "hot pink", "red", "salmon", "red orange", "orange", "goldenrod", "light olive green", "medium green", "turquoise", "aqua blue", "bright blue", "dark sky blue", "blurple", "purple", "pastel purple"]
         # for shape study
-        self.color_list   = ["hot pink", "bright magenta", "red", "orange", "goldenrod", "light olive green", "aqua blue", "bright blue", "violet", "blurple", "purple", "pastel purple"]
+        #self.color_list   = ["hot pink", "bright magenta", "red", "orange", "goldenrod", "light olive green", "aqua blue", "bright blue", "violet", "blurple", "purple", "pastel purple"]
+        # colors matching data/MC plots
+        self.color_list   = ["#0373E6", "#66CC33", "#FF9900", "#C843C8", "#6699FF", "#CC3333", "#339966", "#0533FF"]
 
     # here Tag variables should begin with underscore: e.g. _met, _2016, etc.
     def getSimpleMap(self, region, nameTag, dataSelectionTag, mcSelectionTag, variable, varTag = "", splitQCD=False):
@@ -561,13 +581,32 @@ class Shape:
 
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
-        c.SetGrid()
+        pad = c.cd(1)
+        leftMargin      = 0.150
+        rightMargin     = 0.075
+        topMargin       = 0.180
+        bottomMargin    = 0.150
+        # set ticks on all sides of plot
+        pad.SetTickx()
+        pad.SetTicky()
+        pad.SetLeftMargin(leftMargin)
+        pad.SetRightMargin(rightMargin)
+        pad.SetTopMargin(topMargin)
+        pad.SetBottomMargin(bottomMargin)
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.5
-        legend_x2 = 0.9 
-        legend_y1 = 0.7 
-        legend_y2 = 0.9 
+        legend_width  = 0.3
+        legend_height = 0.3
+        # legend in left corner
+        legend_x1 = 0.025 + leftMargin
+        legend_x2 = 0.025 + leftMargin + legend_width
+        legend_y1 = 0.975 - topMargin  - legend_height
+        legend_y2 = 0.975 - topMargin
+        # legend in right corner
+        #legend_x1 = 1.0 - rightMargin - legend_width
+        #legend_x2 = 1.0 - rightMargin
+        #legend_y1 = 1.0 - topMargin   - legend_height
+        #legend_y2 = 1.0 - topMargin
 
         # use 3 years and Run2 for eras
         eras = ["2016", "2017", "2018", "Run2"]
@@ -575,14 +614,26 @@ class Shape:
         for region in self.regions:
             for selection in self.selections[bin_type][region]:
                 for rebin in self.ratio_rebinned_map["2016"][bin_type][region][selection]: 
-                    title = "Shape for {0} bins, {1}, {2}, {3}".format(bin_type, region, selection, rebin)
-                    x_title = "MET (GeV)" 
+                    region_tex          = self.regions_tex[region] 
+                    region_root_tex     = region_tex.replace("\\", "#")
+                    region_root_tex     = region_root_tex.replace("$", "")
+                    selections_tex      = getTexSelection(selection)
+                    selections_root_tex = selections_tex.replace("\\", "#")
+                    selections_root_tex = selections_root_tex.replace("$", "")
+                    #title   = "Shape for {0} bins, {1}, {2}, {3}".format(bin_type, region, selection, rebin)
+                    title   = "Shapes for {0}, {1}".format(region_root_tex, selections_root_tex)
+                    x_title = self.labels["met"]
                     y_title = "Shape #left(S_{#gamma}#right)"
-                    y_min = -1.0
-                    y_max = 3.0
+                    y_min   = 0.0
+                    y_max   = 5.0
                     
                     # legend: TLegend(x1,y1,x2,y2)
                     legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+                    legend.SetFillStyle(0)
+                    legend.SetBorderSize(0)
+                    legend.SetLineWidth(1)
+                    legend.SetNColumns(1)
+                    legend.SetTextFont(42)
                     
                     # map for histograms
                     hist_map = {}
@@ -594,6 +645,8 @@ class Shape:
                         hist_map[era] = self.ratio_rebinned_map[era][bin_type][region][selection][rebin]
                         #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
                         setupHist(hist_map[era],   title, x_title, y_title, color,     y_min, y_max)
+                        hist_map[era].GetXaxis().SetTitleOffset(1.5)
+                        hist_map[era].GetXaxis().SetNdivisions(5, 5, 0, True)
                         # draw
                         if i == 0:
                             hist_map[era].Draw(draw_option)
@@ -608,6 +661,9 @@ class Shape:
                     c.SaveAs(plot_name + ".pdf")
                     c.SaveAs(plot_name + ".png")
     
+    # ----------------------------------------------------- #
+    # - study shape of data and different MC in photon CR - #
+    # ----------------------------------------------------- #
     def studyShapes(self, file_name, region, era, variable, nameTag, varName, xbins, n_bins):
         
         # check that the file exists
@@ -618,6 +674,7 @@ class Shape:
         f = ROOT.TFile(file_name)
         
         draw_option = "hist"
+        data_style  = "E"
         
         ###################
         # Draw Histograms #
@@ -625,16 +682,28 @@ class Shape:
 
         # draw histograms
         c = ROOT.TCanvas("c", "c", 800, 800)
-        c.SetGrid()
+        pad = c.cd(1)
+        # set ticks on all sides of plot
+        pad.SetTickx()
+        pad.SetTicky()
+        pad.SetLeftMargin(0.15)
+        pad.SetRightMargin(0.10)
+        pad.SetTopMargin(0.05)
+        pad.SetBottomMargin(0.15)
         
         # legend: TLegend(x1,y1,x2,y2)
-        legend_x1 = 0.5
-        legend_x2 = 0.9 
-        legend_y1 = 0.7 
-        legend_y2 = 0.9 
-                    
+        legend_x1 = 0.45
+        legend_x2 = 0.90
+        legend_y1 = 0.60
+        legend_y2 = 0.90
+        
         # legend: TLegend(x1,y1,x2,y2)
         legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        legend.SetFillStyle(0)
+        legend.SetBorderSize(0)
+        legend.SetLineWidth(1)
+        legend.SetNColumns(1)
+        legend.SetTextFont(42)
         
         dataSelectionTag = ""
         mcSelectionTag   = ""
@@ -662,8 +731,15 @@ class Shape:
         # Data and all MC
         #hList = ["Data", "GJets", "QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
         # only Data, GJets, QCD
-        hList = ["Data", "GJets", "QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake"]
-        for i, key in enumerate(hList):
+        # order to draw
+        hListDraw   = ["GJets", "QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake", "Data"]
+        # order for legend
+        hListLegend = ["Data", "GJets", "QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake"]
+
+        hNew = {} 
+        
+        # draw
+        for i, key in enumerate(hListDraw):
             hOriginal = hMap[key]
             # rebin 
             h = hOriginal.Rebin(n_bins, "h_" + key + "_rebinned", xbins)
@@ -673,19 +749,45 @@ class Shape:
                 color = self.color_black
             else:
                 color = self.color_list[i]
-            title   = "{0} in {1} for {2}".format(varName, region, era)
+            # turn off title
+            #title   = "{0} in {1} for {2}".format(varName, region, era)
+            title   = ""
             x_title = varName
+            if varName.lower() in self.labels:
+                x_title = self.labels[varName.lower()]
             y_title = "Events (normalized)"
             y_min   = 0.0
             y_max   = 1.0
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
             setupHist(h, title, x_title, y_title, color, y_min, y_max)
+            h.GetXaxis().SetTitleOffset(1.5)
+            h.GetXaxis().SetNdivisions(5, 5, 0, True)
+            # change style for data
+            if key == "Data":
+                h.SetMarkerStyle(ROOT.kFullCircle)
+                h.SetMarkerSize(1.25)
             # draw
             if i == 0:
-                h.Draw(draw_option)
+                if key == "Data":
+                    h.Draw(data_style)
+                else:
+                    h.Draw(draw_option)
             else:
-                h.Draw(draw_option + " same")
-            legend.AddEntry(h,  key,  "l")
+                if key == "Data":
+                    h.Draw(data_style + " same")
+                else:
+                    h.Draw(draw_option + " same")
+            # save new histogram to map
+            hNew[key] = h
+        
+        # legend
+        for i, key in enumerate(hListLegend):
+            h = hNew[key]
+            # change style for data
+            if key == "Data":
+                legend.AddEntry(h,  key,  "pe")
+            else:
+                legend.AddEntry(h,  key,  "l")
                     
                     
         legend.Draw()
@@ -739,27 +841,71 @@ class Shape:
             h_ratio_up.Divide(h_shape_nominal)
             h_ratio_down.Divide(h_shape_nominal)
             
-            title   = "{0} with {1} varied 50% in {2} for {3}".format(varName, key, region, era)
-            x_title = varName
-            y_title = "Data / (normalized MC)"
+            #title   = "{0} with {1} varied 50% in {2} for {3}".format(varName, key, region, era)
+            title   = "{0} varied 50% in {1}".format(key, region)
+            y_title = "Data/Sim."
             y_min   = 0.5
             y_max   = 1.5
+            
+            # turn off x-axis titles for upper plot
+            # turn off main title for lower plot
             #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h_shape_nominal, title, x_title, y_title, self.color_black, y_min, y_max)
-            setupHist(h_shape_up,      title, x_title, y_title, self.color_red,   y_min, y_max)
-            setupHist(h_shape_down,    title, x_title, y_title, self.color_blue,  y_min, y_max)
-            setupHist(h_ratio_up,      title, x_title, "Ratio", self.color_red,   0.8, 1.2)
-            setupHist(h_ratio_down,    title, x_title, "Ratio", self.color_blue,  0.8, 1.2)
+            setupHist(h_shape_nominal, title, "",      y_title,             self.color_black, y_min, y_max, True)
+            setupHist(h_shape_up,      title, "",      y_title,             self.color_red,   y_min, y_max, True)
+            setupHist(h_shape_down,    title, "",      y_title,             self.color_blue,  y_min, y_max, True)
+            setupHist(h_ratio_up,      "",    x_title, "Varied/Nominal",    self.color_red,   0.94,  1.06,  True)
+            setupHist(h_ratio_down,    "",    x_title, "Varied/Nominal",    self.color_blue,  0.94,  1.06,  True)
+            
+            # label and title formatting
+            labelSize           = 0.08 
+            titleSize           = 0.08
+            titleOffsetXaxis    = 1.20
+            titleOffsetYaxis    = 0.80
+            
+            # upper plot
+            #h_shape_nominal.SetTitleSize(0.075, "t")
+            h_shape_nominal.GetXaxis().SetLabelSize(0) # turn off x-axis labels for upper plot
+            h_shape_nominal.GetYaxis().SetLabelSize(labelSize)
+            h_shape_nominal.GetYaxis().SetTitleSize(titleSize)
+            h_shape_nominal.GetYaxis().SetTitleOffset(titleOffsetYaxis)
+            h_shape_nominal.GetYaxis().SetNdivisions(5, 5, 0, True)
+            
+            # lower plot
+            h_ratio_up.GetXaxis().SetLabelSize(labelSize)
+            h_ratio_up.GetXaxis().SetTitleSize(titleSize)
+            h_ratio_up.GetXaxis().SetTitleOffset(titleOffsetXaxis)
+            h_ratio_up.GetXaxis().SetNdivisions(5, 5, 0, True)
+            h_ratio_up.GetYaxis().SetLabelSize(labelSize)
+            h_ratio_up.GetYaxis().SetTitleSize(titleSize)
+            h_ratio_up.GetYaxis().SetTitleOffset(titleOffsetYaxis)
+            h_ratio_up.GetYaxis().SetNdivisions(3, 5, 0, True)
             
             # draw
             # note: use different variables for different legends, one legend for each plot
 
             # shapes
             pad = c.cd(1)
-            pad.SetGrid()
+            # set ticks on all sides of plot
+            pad.SetTickx()
+            pad.SetTicky()
+            pad.SetLeftMargin(0.15)
+            pad.SetRightMargin(0.10)
+            pad.SetTopMargin(0.15)
+            pad.SetBottomMargin(0.01)
+            
             # new legend for each plot
             # legend: TLegend(x1,y1,x2,y2)
+            legend_x1 = 0.40
+            legend_x2 = 0.90
+            legend_y1 = 0.50
+            legend_y2 = 0.85
+            # legend: TLegend(x1,y1,x2,y2)
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend1.SetFillStyle(0)
+            legend1.SetBorderSize(0)
+            legend1.SetLineWidth(1)
+            legend1.SetNColumns(1)
+            legend1.SetTextFont(42)
             legend1.AddEntry(h_shape_nominal,  "Shape (nominal)",                "l")
             legend1.AddEntry(h_shape_up,       "Shape ({0} up)".format(key),     "l")
             legend1.AddEntry(h_shape_down,     "Shape ({0} down)".format(key),   "l")
@@ -769,15 +915,24 @@ class Shape:
             legend1.Draw()
             # ratios
             pad = c.cd(2)
-            pad.SetGrid()
-            # new legend for each plot
+            pad.SetGridy()
+            # set ticks on all sides of plot
+            pad.SetTickx()
+            pad.SetTicky()
+            pad.SetLeftMargin(0.15)
+            pad.SetRightMargin(0.10)
+            pad.SetTopMargin(0.01)
+            pad.SetBottomMargin(0.25)
+            
+            # skip legend in lower plot for now
             # legend: TLegend(x1,y1,x2,y2)
-            legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            legend2.AddEntry(h_ratio_up,       "({0} up) / nominal".format(key),     "l")
-            legend2.AddEntry(h_ratio_down,     "({0} down) / nominal".format(key),   "l")
+            # legend2 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            # legend2.AddEntry(h_ratio_up,       "({0} up) / nominal".format(key),     "l")
+            # legend2.AddEntry(h_ratio_down,     "({0} down) / nominal".format(key),   "l")
+            
             h_ratio_up.Draw(draw_option)
             h_ratio_down.Draw(draw_option + " same")
-            legend2.Draw()
+            # legend2.Draw()
             
             # save histograms
             plot_name = "{0}VaryShapes_{1}_{2}_{3}_{4}".format(self.plot_dir, region, variable, key, era)

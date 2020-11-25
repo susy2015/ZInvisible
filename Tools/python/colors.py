@@ -20,7 +20,12 @@ def printColors():
 def getColorIndex(color):
     with open("rgb.json", "r") as input_file:
         data = json.load(input_file)
-        index = ROOT.TColor.GetColor(data[color])
+        # if color in map, get RGB from map
+        if color in data:
+            index = ROOT.TColor.GetColor(data[color])
+        # otherwise, assume RBG are provided
+        else:
+            index = ROOT.TColor.GetColor(color)
         #print "{0}: {1}: {2}".format(color, data[color], index) 
         return index
 
