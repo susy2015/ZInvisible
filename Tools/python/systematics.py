@@ -166,7 +166,7 @@ class Systematic:
         return h_ratio
 
     # get MC Z / Photon ratio
-    def getMCRatio(self, root_file, region, selection, name, varLepton, varPhoton, rebin):
+    def getMCRatio(self, root_file, region, selection, name, varLepton, varPhoton, rebin, norm_val_map):
         selectionTag    = "_" + selection
         nameTag         = "_" + name
         h_map_norm  = self.getZHistoMap(region, nameTag, selectionTag, varLepton)
@@ -174,11 +174,14 @@ class Systematic:
         # numerator: Z MC (normalize to Z data)
         h_mc_Z   = self.getZMC(root_file, varLepton, h_map_norm)
         h_data_Z = self.getZData(root_file, varLepton, h_map_norm)
-        normalizeHistToHist(h_mc_Z, h_data_Z)
+        norm_Z   = normalizeHistToHist(h_mc_Z, h_data_Z)
         # denominator: Photon MC (normalize to Photon data)
         h_mc_photon   = self.getPhotonMC(root_file, varPhoton, h_map_shape)
         h_data_photon = self.getPhotonData(root_file, varPhoton, h_map_shape)
-        normalizeHistToHist(h_mc_photon, h_data_photon)
+        norm_photon   = normalizeHistToHist(h_mc_photon, h_data_photon)
+        # add norm values to map
+        norm_val_map[region]["norm_Z"]      = norm_Z 
+        norm_val_map[region]["norm_photon"] = norm_photon
         # take ratio
         h_ratio = self.getHistRatio(h_mc_Z, h_mc_photon, rebin) 
         return h_ratio
@@ -263,11 +266,14 @@ class Systematic:
         f = ROOT.TFile(file_name)
         c = ROOT.TCanvas("c", "c", 800, 800)
         c.Divide(1, 2)
-        selection = "jetpt30"
+        selection    = "jetpt30"
+        output_name  = "output/norm_values_{0}_{1}.json".format(var, era)
+        norm_val_map = {}
         for region in self.regions:
+            norm_val_map[region] = {}
             if doDataOverData:
                 h_ratio_num = self.getDataRatio(f, region, selection, var, varLepton, varPhoton, rebin)
-                h_ratio_den = self.getMCRatio(f, region, selection, var, varLepton, varPhoton, rebin)
+                h_ratio_den = self.getMCRatio(f, region, selection, var, varLepton, varPhoton, rebin, norm_val_map)
             else:
                 h_ratio_num = self.getZRatio(f, region, selection, var, varLepton, rebin)
                 h_ratio_den = self.getPhotonRatio(f, region, selection, var, varPhoton, rebin)
@@ -479,5 +485,8 @@ class Systematic:
             c.SaveAs(plot_name + ".pdf")
             c.SaveAs(plot_name + ".png")
 
-
+        # write map to json file 
+        if doDataOverData:
+            with open (output_name, "w") as j:
+                json.dump(norm_val_map, j, sort_keys=True, indent=4, separators=(',', ' : '))
 

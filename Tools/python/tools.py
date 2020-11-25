@@ -234,6 +234,8 @@ def normalizeHistToHist(hist, histForNorm):
     if nDen != 0.0:
         ratio = nNum / nDen
         hist.Scale(ratio)
+    # return ratio for later use (printing, etc)
+    return ratio
 
 # get ratio
 def getRatio(h_num, h_den):
