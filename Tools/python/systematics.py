@@ -49,29 +49,33 @@ class Systematic:
     # get make of Z histograms
     def getZHistoMap(self, region, nameTag, selectionTag, variable):
         # histogram name examples
-        # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30_2016metWithLLmetWithLLDatadata;1  metWithLL
-        # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30_2016metWithLLmetWithLLDYstack;1   metWithLL
-        # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30_2016metWithLLmetWithLLt#bar{t}stack;1 metWithLL
-        # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30_2016metWithLLmetWithLLSingle tstack;1 metWithLL
-        # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30_2016metWithLLmetWithLLRarestack;1 metWithLL
+        # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30metWithLLmetWithLLDatadata;1   metWithLL
+        # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30metWithLLmetWithLLDYstack;1    metWithLL
+        # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30metWithLLmetWithLLDibosonstack;1   metWithLL
+        # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30metWithLLmetWithLLRarestack;1  metWithLL
+        # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30metWithLLmetWithLLt#bar{t}stack;1  metWithLL
+        # KEY: TH1D  DataMC_Electron_LowDM_met_jetpt30metWithLLmetWithLLSingle tstack;1  metWithLL  
+        
         debug = False
         h_map_norm = {}
         for particle in self.particles:
             h_map_norm[particle] = { 
                 "Data"      : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "Datadata",
                 "DY"        : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "DYstack",
+                "Diboson"   : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "Dibosonstack",
+                "Rare"      : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "Rarestack",
                 "TTbar"     : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "t#bar{t}stack",
-                "SingleT"   : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "Single tstack",
-                "Rare"      : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "Rarestack"
+                "SingleT"   : "DataMC_" + particle + "_" + region + nameTag + selectionTag + 2 * variable + "Single tstack"
             }
         
             if debug:
                 print "# Loading {0} histograms".format(particle)
                 print str(variable + "/" + h_map_norm[particle]["Data"]     )
                 print str(variable + "/" + h_map_norm[particle]["DY"]       )
+                print str(variable + "/" + h_map_norm[particle]["Diboson"]  )
+                print str(variable + "/" + h_map_norm[particle]["Rare"]     )
                 print str(variable + "/" + h_map_norm[particle]["TTbar"]    )
                 print str(variable + "/" + h_map_norm[particle]["SingleT"]  )
-                print str(variable + "/" + h_map_norm[particle]["Rare"]     )
         return h_map_norm
 
     def getHistRatio(self, num, den, rebin):
@@ -99,22 +103,26 @@ class Systematic:
 
     def getZMC(self, root_file, variable, h_map_norm):
         h_DY_Electron       = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["DY"]      ) )
+        h_Diboson_Electron  = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Diboson"] ) )
+        h_Rare_Electron     = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Rare"]    ) )
         h_TTbar_Electron    = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["TTbar"]   ) )
         h_SingleT_Electron  = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["SingleT"] ) )
-        h_Rare_Electron     = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Rare"]    ) )
         h_DY_Muon           = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["DY"]          ) )
+        h_Diboson_Muon      = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Diboson"]     ) )
+        h_Rare_Muon         = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Rare"]        ) )
         h_TTbar_Muon        = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["TTbar"]       ) )
         h_SingleT_Muon      = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["SingleT"]     ) )
-        h_Rare_Muon         = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Rare"]        ) )
         
         h_mc_Z = h_DY_Electron.Clone("h_mc_Z") 
+        h_mc_Z.Add(h_Diboson_Electron)
+        h_mc_Z.Add(h_Rare_Electron)
         h_mc_Z.Add(h_TTbar_Electron)
         h_mc_Z.Add(h_SingleT_Electron)
-        h_mc_Z.Add(h_Rare_Electron)
         h_mc_Z.Add(h_DY_Muon)
+        h_mc_Z.Add(h_Diboson_Muon)
+        h_mc_Z.Add(h_Rare_Muon)
         h_mc_Z.Add(h_TTbar_Muon)
         h_mc_Z.Add(h_SingleT_Muon)
-        h_mc_Z.Add(h_Rare_Muon)
         
         return h_mc_Z
     
@@ -198,8 +206,12 @@ class Systematic:
         num_mc_photon   = h_mc_photon.Integral(0, h_mc_photon.GetNbinsX() + 1)
         purity_DY       = num_DY / num_mc_Z
         purity_GJets    = num_GJets / num_mc_photon
-        val_map[region]["purity_DY"]    = purity_DY
-        val_map[region]["purity_GJets"] = purity_GJets
+        val_map[region]["num_DY"]           = num_DY
+        val_map[region]["num_mc_Z"]         = num_mc_Z
+        val_map[region]["num_GJets"]        = num_GJets
+        val_map[region]["num_mc_photon"]    = num_mc_photon
+        val_map[region]["purity_DY"]        = purity_DY
+        val_map[region]["purity_GJets"]     = purity_GJets
         # add norm values to map
         norm_Z      = normalizeHistToHist(h_mc_Z, h_data_Z)
         norm_photon = normalizeHistToHist(h_mc_photon, h_data_photon)
