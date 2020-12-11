@@ -381,16 +381,18 @@ def plot(histograms, labels, name, title, x_title, y_title, x_min, x_max, y_min,
         # - give x, y coordinates (same as plot coordinates)
         # - y list is for positioning the text
         x_range = x_max - x_min 
-        x_pos_1 = x_max - 0.4  * x_range
-        x_pos_2 = x_max - 0.35 * x_range
+        x_pos_1 = x_max - 0.50 * x_range
+        x_pos_2 = x_max - 0.40 * x_range
         step = (y_max - y_min) / 20.0
         y_list = np.arange(0.7 * y_max, 0.0, -1 * step)
         mark = ROOT.TLatex()
         mark.SetTextSize(0.03)
+        mark.SetTextFont(42)
         
         for i in xrange(len(labels)):
-            mark.DrawLatex(x_pos_1, y_list[2 * i + 0], labels[i])
-            mark.DrawLatex(x_pos_2, y_list[2 * i + 1], "\mu = %.3f, \sigma = %.3f" % (histograms[i].GetMean(), histograms[i].GetStdDev()))
+            mark.DrawLatex(x_pos_1, y_list[3 * i + 0], labels[i])
+            mark.DrawLatex(x_pos_2, y_list[3 * i + 1], "\mu = %.3f, \sigma = %.3f" % (histograms[i].GetMean(), histograms[i].GetStdDev()))
+            mark.DrawLatex(x_pos_2, y_list[3 * i + 2], "min = %.2f, max = %.2f"    % (histograms[i].GetMinimum(), histograms[i].GetMaximum()))
 
     # save histograms
     if plot_dir[-1] != "/":
