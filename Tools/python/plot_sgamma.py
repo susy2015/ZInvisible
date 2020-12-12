@@ -12,7 +12,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 
 def run(era):
-    verbose = 0
+    verbose = 1
     print "---------- Running {0} ----------".format(era)
     # for datacard, the allowed Sgamma range is [0.01, 5]
     minSgamma = 0.01
@@ -33,6 +33,7 @@ def run(era):
     nbins_2 = 60
     limits_1 = [-5, 20]
     limits_2 = [-1, 5]
+    # multiple sets of histograms with different limits
     h_sgamma_searchbins_1       = ROOT.TH1F("h_sgamma_searchbins_1",        "h_sgamma_searchbins_1",        nbins_1, limits_1[0], limits_1[1])
     h_sgamma_crunits_1          = ROOT.TH1F("h_sgamma_crunits_1",           "h_sgamma_crunits_1",           nbins_1, limits_1[0], limits_1[1])
     h_sgamma_searchbins_2       = ROOT.TH1F("h_sgamma_searchbins_2",        "h_sgamma_searchbins_2",        nbins_2, limits_2[0], limits_2[1])
@@ -89,6 +90,8 @@ def run(era):
             sgamma = phocr_data / den
         else:
             print "WARNING: CR bin {0}, denominator = {1}".format(b, den)
+
+        sgammaCRUnits.append(sgamma)
         h_sgamma_crunits_1.Fill(sgamma)
         h_sgamma_crunits_2.Fill(sgamma)
         
@@ -118,6 +121,8 @@ def run(era):
         print "Total gjets = {0}".format(total_phocr_gjets)
         print "Total other background = {0}".format(total_phocr_back)
         print "Total normalization: data / (gjets + other back) = {0}".format(total_norm)
+        print "Sgamma in search bins: mean = {0:.2f}, std_dev = {1:.2f}, min = {2:.2f}, max = {3:.2f}".format(np.mean(sgammaSearchBins), np.std(sgammaSearchBins), np.amin(sgammaSearchBins), np.amax(sgammaSearchBins))
+        print "Sgamma in control bins: mean = {0:.2f}, std_dev = {1:.2f}, min = {2:.2f}, max = {3:.2f}".format(np.mean(sgammaCRUnits), np.std(sgammaCRUnits), np.amin(sgammaCRUnits), np.amax(sgammaCRUnits))
 
     del h_sgamma_searchbins_1
     del h_sgamma_searchbins_2

@@ -390,9 +390,8 @@ def plot(histograms, labels, name, title, x_title, y_title, x_min, x_max, y_min,
         mark.SetTextFont(42)
         
         for i in xrange(len(labels)):
-            mark.DrawLatex(x_pos_1, y_list[3 * i + 0], labels[i])
-            mark.DrawLatex(x_pos_2, y_list[3 * i + 1], "\mu = %.3f, \sigma = %.3f" % (histograms[i].GetMean(), histograms[i].GetStdDev()))
-            mark.DrawLatex(x_pos_2, y_list[3 * i + 2], "min = %.2f, max = %.2f"    % (histograms[i].GetMinimum(), histograms[i].GetMaximum()))
+            mark.DrawLatex(x_pos_1, y_list[2 * i + 0], labels[i])
+            mark.DrawLatex(x_pos_2, y_list[2 * i + 1], "\mu = %.3f, \sigma = %.3f" % (histograms[i].GetMean(), histograms[i].GetStdDev()))
 
     # save histograms
     if plot_dir[-1] != "/":
