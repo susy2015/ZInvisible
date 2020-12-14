@@ -17,6 +17,8 @@ def run(era):
     # for datacard, the allowed Sgamma range is [0.01, 5]
     minSgamma = 0.01
     maxSgamma = 5.0
+    # sufficient data to calclate shape factor
+    minData = 5
     
     fileSB = "results/SearchBinResults.json"
     fileYields = "datacard_inputs/zinv_yields_" + era + ".json"
@@ -62,7 +64,8 @@ def run(era):
     total_phocr_data    = 0
     total_phocr_gjets   = 0
     total_phocr_back    = 0
-    sgammaForCRUnits = []
+    sgammaForCRUnits    = []
+    sgammaForCRUnitsGoodData = []
     CRBinNames = {}
     for binName in binMap["unitCRNum"]["phocr"]:
         b =  int(binMap["unitCRNum"]["phocr"][binName])
@@ -97,6 +100,10 @@ def run(era):
         h_sgamma_crunits_1.Fill(sgamma)
         h_sgamma_crunits_2.Fill(sgamma)
         
+        # sgamma values for bins with sufficient number of data events
+        if phocr_data >= minData:
+            sgammaForCRUnitsGoodData.append(sgamma)
+        
         if verbose > 1 and (sgamma < minSgamma or sgamma > maxSgamma):
             print "CR bin {0}, sgamma = {1}; phocr_data = {2}, phocr_gjets = {3}, phocr_back = {4}".format(b, sgamma, phocr_data, phocr_gjets, phocr_back)
         
@@ -123,8 +130,9 @@ def run(era):
         print "Total gjets = {0}".format(total_phocr_gjets)
         print "Total other background = {0}".format(total_phocr_back)
         print "Total normalization: data / (gjets + other back) = {0}".format(total_norm)
-        print "Sgamma in search bins: mean = {0:.2f}, std_dev = {1:.2f}, min = {2:.2f}, max = {3:.2f}".format(np.mean(sgammaForSearchBins), np.std(sgammaForSearchBins), np.amin(sgammaForSearchBins), np.amax(sgammaForSearchBins))
-        print "Sgamma in control bins: mean = {0:.2f}, std_dev = {1:.2f}, min = {2:.2f}, max = {3:.2f}".format(np.mean(sgammaForCRUnits), np.std(sgammaForCRUnits), np.amin(sgammaForCRUnits), np.amax(sgammaForCRUnits))
+        print "Sgamma in search bins  ({0}): mean = {1:.2f}, std_dev = {2:.2f}, min = {3:.2f}, max = {4:.2f}".format(len(sgammaForSearchBins), np.mean(sgammaForSearchBins), np.std(sgammaForSearchBins), np.amin(sgammaForSearchBins), np.amax(sgammaForSearchBins))
+        print "Sgamma in control bins ({0}): mean = {1:.2f}, std_dev = {2:.2f}, min = {3:.2f}, max = {4:.2f}".format(len(sgammaForCRUnits), np.mean(sgammaForCRUnits), np.std(sgammaForCRUnits), np.amin(sgammaForCRUnits), np.amax(sgammaForCRUnits))
+        print "Sgamma in control bins with at least {0} data events ({1}): mean = {2:.2f}, std_dev = {3:.2f}, min = {4:.2f}, max = {5:.2f}".format(minData, len(sgammaForCRUnitsGoodData), np.mean(sgammaForCRUnitsGoodData), np.std(sgammaForCRUnitsGoodData), np.amin(sgammaForCRUnitsGoodData), np.amax(sgammaForCRUnitsGoodData))
 
     del h_sgamma_searchbins_1
     del h_sgamma_searchbins_2
