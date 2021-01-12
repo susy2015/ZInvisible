@@ -29,7 +29,7 @@ namespace plotterFunctions
         std::string year_;
         bool verbose  = false;
         bool verbose2 = false;
-        bool verbose3 = true;
+        bool verbose3 = false;
         enum ID{Loose, Medium, Tight};
         enum PhotonType{Reco, Direct, Fragmentation, NonPrompt, Fake};
         std::map<int, std::string> PhotonMap;
@@ -289,9 +289,11 @@ namespace plotterFunctions
                     if (Photon_PassLooseID[i])  LoosePhotonTLV.push_back(PhotonTLV[i]);
                     if (Photon_PassMediumID[i]) MediumPhotonTLV.push_back(PhotonTLV[i]);
                     if (Photon_PassTightID[i])  TightPhotonTLV.push_back(PhotonTLV[i]);
-                    if(Photon_ID[i])  
+                    // photon ID does not include pixel seed veto
+                    if(Photon_ID[i] && (! Photon_pixelSeed[i]))  
                     {
                         if (verbose) std::cout << "ID = " << Photon_ID[i];
+                        if (verbose) std::cout << "Photon_pixelSeed = " << Photon_pixelSeed[i];
                         if (verbose) printf(" Found CutPhoton; ");
                         RecoPhotonTLVIso.push_back(PhotonTLV[i]);
                         cutPhotonTLV.push_back(PhotonTLV[i]);
