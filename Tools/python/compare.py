@@ -425,21 +425,29 @@ if __name__ == "__main__":
         #
         # compare v6p5 runs (before and after changes to the prediciton)
         # compare v6p5 vs. v7 predictions
+        # compare v7 predictions without and with pixel seed veto for photons
         #
         # -------------------------- #
-        values = ["pred"]
-        labels = ["v6p5_May31", "v6p5_July24"]
-        f_map = {}
-        f_map["v6p5_May31"]    = "/uscms/home/caleb/archive/zinv_results/2020-05-31/prediction_histos/searchBinsZinv_Run2.root"
-        f_map["v6p5_July24"]   = "/uscms/home/caleb/archive/zinv_results/2020-07-24/prediction_histos/searchBinsZinv_Run2.root"
-        searchCompareMyHists(f_map, values, labels, "Run2")
         
-        values = ["pred"]
-        labels = ["v6p5_July24", "v7"]
-        f_map = {}
-        f_map["v6p5_July24"]    = "/uscms/home/caleb/archive/zinv_results/2020-07-24/prediction_histos/searchBinsZinv_Run2.root"
-        f_map["v7"]             = "/uscms/home/caleb/archive/zinv_results/2020-07-31/prediction_histos/searchBinsZinv_Run2.root"
-        searchCompareMyHists(f_map, values, labels, "Run2")
+        #values = ["pred"]
+        #labels = ["v6p5_May31", "v6p5_July24"]
+        #f_map = {}
+        #f_map["v6p5_May31"]    = "/uscms/home/caleb/archive/zinv_results/2020-05-31/prediction_histos/searchBinsZinv_Run2.root"
+        #f_map["v6p5_July24"]   = "/uscms/home/caleb/archive/zinv_results/2020-07-24/prediction_histos/searchBinsZinv_Run2.root"
+        #searchCompareMyHists(f_map, values, labels, "Run2")
+        
+        #values = ["pred"]
+        #labels = ["v6p5_July24", "v7"]
+        #f_map = {}
+        #f_map["v6p5_July24"]    = "/uscms/home/caleb/archive/zinv_results/2020-07-24/prediction_histos/searchBinsZinv_Run2.root"
+        #f_map["v7"]             = "/uscms/home/caleb/archive/zinv_results/2020-07-31/prediction_histos/searchBinsZinv_Run2.root"
+        #searchCompareMyHists(f_map, values, labels, "Run2")
     
+        values = ["pred"]
+        labels = ["nominal", "pixel_seed_veto"]
+        f_map = {}
+        f_map["nominal"]            = "/uscms/home/caleb/archive/zinv_results/2020-07-31/prediction_histos/searchBinsZinv_Run2.root"
+        f_map["pixel_seed_veto"]    = "/uscms/home/caleb/archive/zinv_results/2021-01-12/prediction_histos/searchBinsZinv_Run2.root"
+        searchCompareMyHists(f_map, values, labels, "Run2")
 
 
