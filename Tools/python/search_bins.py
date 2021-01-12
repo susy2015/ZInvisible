@@ -898,7 +898,9 @@ class SearchBins(Common):
                     # https://hypernews.cern.ch/HyperNews/CMS/get/SUS-19-003/103/1/1/1/1/1/1.html
                     # -ln((1-0.68)/2) = 1.8325814637483102
                     total_data_error = 1.83
-                    shape_cr_error   = 1.83 / den
+                    shape_cr_error   = 1.83
+                    if den > 0.0:
+                        shape_cr_error   = 1.83 / den
                     print "WARNING: Era: {0} Search bin {1}: NO DATA: data = {2}, mc = {3}, shape_cr = {4} +{5} -0.0".format(era, b, total_data, den, shape_cr, shape_cr_error)
                 else:
                     # getMultiplicationError(q, x, dx, y, dy)
