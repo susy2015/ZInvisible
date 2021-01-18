@@ -483,8 +483,8 @@ if __name__ == "__main__":
         values = ["pred"]
         labels = ["nominal", "pixel_seed_veto"]
         f_map = {}
-        f_map["nominal"]            = "/uscms/home/caleb/archive/zinv_results/2020-07-31/prediction_histos/searchBinsZinv_Run2.root"
-        f_map["pixel_seed_veto"]    = "/uscms/home/caleb/archive/zinv_results/2021-01-12/prediction_histos/searchBinsZinv_Run2.root"
+        f_map["nominal"]            = "/uscms/home/caleb/archive/zinv_results/2020-09-20/prediction_histos/searchBinsZinv_Run2.root"
+        f_map["pixel_seed_veto"]    = "/uscms/home/caleb/archive/zinv_results/2021-01-18/prediction_histos/searchBinsZinv_Run2.root"
         searchCompareMyHists(f_map, values, labels, "Run2")
 
 
