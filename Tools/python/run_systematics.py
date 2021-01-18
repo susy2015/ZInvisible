@@ -1280,7 +1280,7 @@ def run(era, eras, runs_json, syst_json, doRun2, splitBtag, verbose):
     VB      =  ValidationBins(          N, S, eras, tmp_dir, verbose, draw, saveRootFile)
     VB_MS   =  ValidationBinsMETStudy(  N, S, eras, tmp_dir, verbose, draw, saveRootFile)
     SB      =  SearchBins(              N, S, eras, tmp_dir, verbose, draw, saveRootFile)
-    CRU     =  CRUnitBins(              N, S, eras, tmp_dir, verbose)
+    CRU     =  CRUnitBins(              N, S, eras, tmp_dir, verbose, saveRootFile)
     
     #-------------------------------------------------------
     # Normal predictions (no systematics) 
