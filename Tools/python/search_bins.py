@@ -195,7 +195,6 @@ class Common:
         draw_option = "hist"
         data_style  = "E"
         if self.saveRootFile:
-            #print "Running makeHistos(). Saving output to {0}".format(output_file)
             f_out = ROOT.TFile(output_file, "recreate")
         
         # define histograms 
@@ -939,7 +938,7 @@ class SearchBins(Common):
 
 # search region unit bins
 class SRUnitBins(Common):
-    def __init__(self, normalization, shape, eras, plot_dir, verbose):
+    def __init__(self, normalization, shape, eras, plot_dir, verbose, saveRootFile):
         # run parent init function
         Common.__init__(self)
         self.N = normalization
@@ -947,6 +946,7 @@ class SRUnitBins(Common):
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
+        self.saveRootFile = saveRootFile
         # SBv4
         self.low_dm_start   = 0
         self.low_dm_end     = 52
@@ -985,12 +985,23 @@ class SRUnitBins(Common):
         
         # set bin values 
         self.setBinValues(b_map, h_map, era)
+        
+        # save root files
+        if self.saveRootFile:
+            new_file = self.results_dir + "SRUnitBinsZinv_" + era + ".root"
+            f_out    = ROOT.TFile(new_file, "recreate")
+            # clone to rename
+            h_mc_lowdm_clone  = h_mc_lowdm.Clone("mc_lowdm")
+            h_mc_highdm_clone = h_mc_highdm.Clone("mc_highdm")
+            h_mc_lowdm_clone.Write()
+            h_mc_highdm_clone.Write()
+            f_out.Close()
 
         f_in.Close()
 
 # control region unit bins
 class CRUnitBins(Common):
-    def __init__(self, normalization, shape, eras, plot_dir, verbose):
+    def __init__(self, normalization, shape, eras, plot_dir, verbose, saveRootFile):
         # run parent init function
         Common.__init__(self)
         self.N = normalization
@@ -998,6 +1009,7 @@ class CRUnitBins(Common):
         self.eras = eras
         self.plot_dir = plot_dir
         self.verbose = verbose
+        self.saveRootFile = saveRootFile
         # SBv4
         self.low_dm_start   = 0
         self.low_dm_end     = 52
@@ -1047,5 +1059,23 @@ class CRUnitBins(Common):
         
         # set bin values 
         self.setBinValues(b_map, h_map, era)
-
+        
+        # save root files
+        if self.saveRootFile:
+            new_file = self.results_dir + "CRUnitBinsZinv_" + era + ".root"
+            f_out    = ROOT.TFile(new_file, "recreate")
+            # clone to rename
+            h_data_lowdm_clone      = h_data_lowdm.Clone("data_lowdm")
+            h_data_highdm_clone     = h_data_highdm.Clone("data_highdm")
+            h_mc_gjets_lowdm_clone  = h_mc_gjets_lowdm.Clone("mc_gjets_lowdm")
+            h_mc_gjets_highdm_clone = h_mc_gjets_highdm.Clone("mc_gjets_highdm")
+            h_mc_back_lowdm_clone   = h_mc_back_lowdm.Clone("mc_back_lowdm")
+            h_mc_back_highdm_clone  = h_mc_back_highdm.Clone("mc_back_highdm")
+            h_data_lowdm_clone.Write()
+            h_data_highdm_clone.Write()
+            h_mc_gjets_lowdm_clone.Write()
+            h_mc_gjets_highdm_clone.Write()
+            h_mc_back_lowdm_clone.Write()
+            h_mc_back_highdm_clone.Write()
+            f_out.Close()
 
