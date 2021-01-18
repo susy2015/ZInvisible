@@ -30,9 +30,12 @@ def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
     # draw histograms
     c = ROOT.TCanvas("c", "c", 800, 800)
     c.Divide(1, 2)
+        
+    # set lower pad height as percentage
+    lowerPadHeight = 0.50
     
     # legend: TLegend(x1,y1,x2,y2)
-    legend_x1 = 0.7
+    legend_x1 = 0.5
     legend_x2 = 0.9 
     legend_y1 = 0.7 
     legend_y2 = 0.9 
@@ -48,17 +51,39 @@ def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
             h_ratio.Divide(h1)
             
             title_main  = "Z Invisible {0} {1}: Compare {2} and {3}".format(value, era, label1, label2)
-            title_ratio = "Z Invisible {0}: {1}".format(value, label_ratio)
             x_title = bin_type + " bin"
             
-            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h1, title_main, x_title, "Events", color_red,  10.0 ** -2, 10.0 ** 4)
-            setupHist(h2, title_main, x_title, "Events", color_blue, 10.0 ** -2, 10.0 ** 4)
-            setupHist(h_ratio, title_ratio, x_title, label_ratio, color_blue, ratio_limits[0], ratio_limits[1])
+            # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, lineWidth=5)
+            setupHist(h1, title_main, "", "Events", color_red,  10.0 ** -2, 10.0 ** 4, adjust=True, lineWidth=3)
+            setupHist(h2, title_main, "", "Events", color_blue, 10.0 ** -2, 10.0 ** 4, adjust=True, lineWidth=3)
+            setupHist(h_ratio, "", x_title, label_ratio, color_blue, ratio_limits[0], ratio_limits[1], adjust=True, lineWidth=3)
+
+            # formatting
+            h1.GetXaxis().SetLabelSize(0)
+            h1.GetYaxis().SetTitleSize(0.075)
+            h1.GetYaxis().SetTitleOffset(1.0)
+            h_ratio.GetXaxis().SetTitleSize(0.075)
+            h_ratio.GetXaxis().SetTitleOffset(1.0)
+            h_ratio.GetYaxis().SetTitleSize(0.075)
+            h_ratio.GetYaxis().SetTitleOffset(1.0)
+            h_ratio.SetFillColor(ROOT.kGreen + 2)
+            h_ratio.SetFillStyle(3444)
             
-            # histograms
-            c.cd(1)
+            # pad for histograms
+            pad = c.cd(1)
+            # resize pad
+            # SetPad(xlow, ylow, xup, yup)
+            pad.SetPad(0, lowerPadHeight, 1, 1)
+            # set ticks on all sides of plot
+            pad.SetTickx()
+            pad.SetTicky()
+            pad.SetLeftMargin(0.2)
+            pad.SetRightMargin(0.1)
+            pad.SetTopMargin(0.1)
+            pad.SetBottomMargin(0.01)
+            
             ROOT.gPad.SetLogy(1) # set log y
+            
             h1.Draw(draw_option)
             h2.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
@@ -67,9 +92,21 @@ def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
             legend.AddEntry(h2, "{0}: {1}".format(value, label2), "l")
             legend.Draw()
            
-            # ratios
-            c.cd(2)
-            h_ratio.Draw(draw_option)
+            # pad for ratio
+            pad = c.cd(2)
+            # resize pad
+            pad.SetGridy()
+            # SetPad(xlow, ylow, xup, yup)
+            pad.SetPad(0, 0, 1, lowerPadHeight)
+            # set ticks on all sides of plot
+            pad.SetTickx()
+            pad.SetTicky()
+            pad.SetLeftMargin(0.2)
+            pad.SetRightMargin(0.1)
+            pad.SetTopMargin(0.01)
+            pad.SetBottomMargin(0.4)
+            
+            h_ratio.Draw(draw_option + " E2")
                 
             # save histograms
             plot_name = "{0}/{1}_{2}_{3}_{4}".format(plot_dir, region, value, label1, label2)
