@@ -66,8 +66,8 @@ def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
             h_ratio.GetXaxis().SetTitleOffset(1.0)
             h_ratio.GetYaxis().SetTitleSize(0.075)
             h_ratio.GetYaxis().SetTitleOffset(1.0)
-            h_ratio.SetFillColor(ROOT.kGreen + 2)
-            h_ratio.SetFillStyle(3444)
+            #h_ratio.SetFillColor(ROOT.kGreen + 2)
+            #h_ratio.SetFillStyle(3444)
             
             # pad for histograms
             pad = c.cd(1)
@@ -106,7 +106,8 @@ def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
             pad.SetTopMargin(0.01)
             pad.SetBottomMargin(0.4)
             
-            h_ratio.Draw(draw_option + " E2")
+            h_ratio.Draw(draw_option)
+            #h_ratio.Draw(draw_option + " E2")
                 
             # save histograms
             plot_name = "{0}/{1}_{2}_{3}_{4}".format(plot_dir, region, value, label1, label2)
@@ -325,7 +326,7 @@ def search(file_map, values, labels, h_names, era):
     ratio_limits = [0.98, 1.02]
     plot(h_map_1, h_map_2, ratio_limits, "search", era)
 
-def searchCompareMyHists(file_map, values, labels, era):
+def searchCompareMyHists(file_map, values, labels, bin_type, era):
     label1 = labels[0]
     label2 = labels[1]
     file1 = file_map[label1]
@@ -338,7 +339,7 @@ def searchCompareMyHists(file_map, values, labels, era):
     # make plots
     print "Running plot() for {0} and {1}, {2}".format(label1, label2, era)
     ratio_limits = [0.5, 1.5]
-    plot(h_map_1, h_map_2, ratio_limits, "search", era)
+    plot(h_map_1, h_map_2, ratio_limits, bin_type, era)
 
 if __name__ == "__main__":
     
@@ -455,7 +456,7 @@ if __name__ == "__main__":
         f_map = {}
         f_map["RzRun2"]    = "/uscms_data/d3/caleb/SusyAnalysis/CMSSW_10_2_9/src/ZInvisible/Tools/prediction_histos/searchBinsZinv_Run2.root"
         f_map["RzPerYear"] = "/uscms_data/d3/caleb/SusyAnalysis/CMSSW_10_2_9/src/ZInvisible/Tools/prediction_histos/searchBinsZinv_useRzPerYear_Run2.root"
-        searchCompareMyHists(f_map, values, labels, "Run2")
+        searchCompareMyHists(f_map, values, labels, "search", "Run2")
     
     if True:
         # --- Caleb's comparison --- #
@@ -480,11 +481,20 @@ if __name__ == "__main__":
         #f_map["v7"]             = "/uscms/home/caleb/archive/zinv_results/2020-07-31/prediction_histos/searchBinsZinv_Run2.root"
         #searchCompareMyHists(f_map, values, labels, "Run2")
     
+        # compare prediction in search bins
         values = ["pred"]
         labels = ["nominal", "pixel_seed_veto"]
         f_map = {}
         f_map["nominal"]            = "/uscms/home/caleb/archive/zinv_results/2020-09-20/prediction_histos/searchBinsZinv_Run2.root"
         f_map["pixel_seed_veto"]    = "/uscms/home/caleb/archive/zinv_results/2021-01-18/prediction_histos/searchBinsZinv_Run2.root"
-        searchCompareMyHists(f_map, values, labels, "Run2")
+        searchCompareMyHists(f_map, values, labels, "search", "Run2")
+        
+        # compare yields in control bins
+        values = ["data", "mc_gjets", "mc_back"]
+        labels = ["nominal", "pixel_seed_veto"]
+        f_map = {}
+        f_map["nominal"]            = "/uscms/home/caleb/archive/zinv_results/2020-09-20/prediction_histos/CRUnitBinsZinv_Run2.root"
+        f_map["pixel_seed_veto"]    = "/uscms/home/caleb/archive/zinv_results/2021-01-18/prediction_histos/CRUnitBinsZinv_Run2.root"
+        searchCompareMyHists(f_map, values, labels, "control", "Run2")
 
 
