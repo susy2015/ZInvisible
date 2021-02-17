@@ -62,9 +62,9 @@ def main():
     SB = SearchBins(        N, S, eras, plot_dir, verbose, draw=True, saveRootFile=True )
     if doUnits:
         # control region unit bins  
-        CRunits = CRUnitBins(N, S, eras, plot_dir, verbose) 
+        CRunits = CRUnitBins(N, S, eras, plot_dir, verbose, saveRootFile=True) 
         # search region unit bins  
-        SRunits = SRUnitBins(N, S, eras, plot_dir, verbose) 
+        SRunits = SRUnitBins(N, S, eras, plot_dir, verbose, saveRootFile=True) 
     # systematics
     Syst = Systematic(plot_dir, N, S)
     

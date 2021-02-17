@@ -30,9 +30,12 @@ def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
     # draw histograms
     c = ROOT.TCanvas("c", "c", 800, 800)
     c.Divide(1, 2)
+        
+    # set lower pad height as percentage
+    lowerPadHeight = 0.50
     
     # legend: TLegend(x1,y1,x2,y2)
-    legend_x1 = 0.7
+    legend_x1 = 0.5
     legend_x2 = 0.9 
     legend_y1 = 0.7 
     legend_y2 = 0.9 
@@ -48,17 +51,39 @@ def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
             h_ratio.Divide(h1)
             
             title_main  = "Z Invisible {0} {1}: Compare {2} and {3}".format(value, era, label1, label2)
-            title_ratio = "Z Invisible {0}: {1}".format(value, label_ratio)
             x_title = bin_type + " bin"
             
-            #setupHist(hist, title, x_title, y_title, color, y_min, y_max)
-            setupHist(h1, title_main, x_title, "Events", color_red,  10.0 ** -2, 10.0 ** 4)
-            setupHist(h2, title_main, x_title, "Events", color_blue, 10.0 ** -2, 10.0 ** 4)
-            setupHist(h_ratio, title_ratio, x_title, label_ratio, color_blue, ratio_limits[0], ratio_limits[1])
+            # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, lineWidth=5)
+            setupHist(h1, title_main, "", "Events", color_red,  10.0 ** -2, 10.0 ** 4, adjust=True, lineWidth=3)
+            setupHist(h2, title_main, "", "Events", color_blue, 10.0 ** -2, 10.0 ** 4, adjust=True, lineWidth=3)
+            setupHist(h_ratio, "", x_title, label_ratio, color_blue, ratio_limits[0], ratio_limits[1], adjust=True, lineWidth=3)
+
+            # formatting
+            h1.GetXaxis().SetLabelSize(0)
+            h1.GetYaxis().SetTitleSize(0.075)
+            h1.GetYaxis().SetTitleOffset(1.0)
+            h_ratio.GetXaxis().SetTitleSize(0.075)
+            h_ratio.GetXaxis().SetTitleOffset(1.0)
+            h_ratio.GetYaxis().SetTitleSize(0.075)
+            h_ratio.GetYaxis().SetTitleOffset(1.0)
+            #h_ratio.SetFillColor(ROOT.kGreen + 2)
+            #h_ratio.SetFillStyle(3444)
             
-            # histograms
-            c.cd(1)
+            # pad for histograms
+            pad = c.cd(1)
+            # resize pad
+            # SetPad(xlow, ylow, xup, yup)
+            pad.SetPad(0, lowerPadHeight, 1, 1)
+            # set ticks on all sides of plot
+            pad.SetTickx()
+            pad.SetTicky()
+            pad.SetLeftMargin(0.2)
+            pad.SetRightMargin(0.1)
+            pad.SetTopMargin(0.1)
+            pad.SetBottomMargin(0.01)
+            
             ROOT.gPad.SetLogy(1) # set log y
+            
             h1.Draw(draw_option)
             h2.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
@@ -67,9 +92,22 @@ def plot(h_map_1, h_map_2, ratio_limits, bin_type, era):
             legend.AddEntry(h2, "{0}: {1}".format(value, label2), "l")
             legend.Draw()
            
-            # ratios
-            c.cd(2)
+            # pad for ratio
+            pad = c.cd(2)
+            # resize pad
+            pad.SetGridy()
+            # SetPad(xlow, ylow, xup, yup)
+            pad.SetPad(0, 0, 1, lowerPadHeight)
+            # set ticks on all sides of plot
+            pad.SetTickx()
+            pad.SetTicky()
+            pad.SetLeftMargin(0.2)
+            pad.SetRightMargin(0.1)
+            pad.SetTopMargin(0.01)
+            pad.SetBottomMargin(0.4)
+            
             h_ratio.Draw(draw_option)
+            #h_ratio.Draw(draw_option + " E2")
                 
             # save histograms
             plot_name = "{0}/{1}_{2}_{3}_{4}".format(plot_dir, region, value, label1, label2)
@@ -288,7 +326,7 @@ def search(file_map, values, labels, h_names, era):
     ratio_limits = [0.98, 1.02]
     plot(h_map_1, h_map_2, ratio_limits, "search", era)
 
-def searchCompareMyHists(file_map, values, labels, era):
+def searchCompareMyHists(file_map, values, labels, bin_type, era):
     label1 = labels[0]
     label2 = labels[1]
     file1 = file_map[label1]
@@ -301,7 +339,7 @@ def searchCompareMyHists(file_map, values, labels, era):
     # make plots
     print "Running plot() for {0} and {1}, {2}".format(label1, label2, era)
     ratio_limits = [0.5, 1.5]
-    plot(h_map_1, h_map_2, ratio_limits, "search", era)
+    plot(h_map_1, h_map_2, ratio_limits, bin_type, era)
 
 if __name__ == "__main__":
     
@@ -418,28 +456,45 @@ if __name__ == "__main__":
         f_map = {}
         f_map["RzRun2"]    = "/uscms_data/d3/caleb/SusyAnalysis/CMSSW_10_2_9/src/ZInvisible/Tools/prediction_histos/searchBinsZinv_Run2.root"
         f_map["RzPerYear"] = "/uscms_data/d3/caleb/SusyAnalysis/CMSSW_10_2_9/src/ZInvisible/Tools/prediction_histos/searchBinsZinv_useRzPerYear_Run2.root"
-        searchCompareMyHists(f_map, values, labels, "Run2")
+        searchCompareMyHists(f_map, values, labels, "search", "Run2")
     
     if True:
         # --- Caleb's comparison --- #
         #
         # compare v6p5 runs (before and after changes to the prediciton)
         # compare v6p5 vs. v7 predictions
+        # compare v7 predictions without and with pixel seed veto for photons
         #
         # -------------------------- #
-        values = ["pred"]
-        labels = ["v6p5_May31", "v6p5_July24"]
-        f_map = {}
-        f_map["v6p5_May31"]    = "/uscms/home/caleb/archive/zinv_results/2020-05-31/prediction_histos/searchBinsZinv_Run2.root"
-        f_map["v6p5_July24"]   = "/uscms/home/caleb/archive/zinv_results/2020-07-24/prediction_histos/searchBinsZinv_Run2.root"
-        searchCompareMyHists(f_map, values, labels, "Run2")
         
-        values = ["pred"]
-        labels = ["v6p5_July24", "v7"]
-        f_map = {}
-        f_map["v6p5_July24"]    = "/uscms/home/caleb/archive/zinv_results/2020-07-24/prediction_histos/searchBinsZinv_Run2.root"
-        f_map["v7"]             = "/uscms/home/caleb/archive/zinv_results/2020-07-31/prediction_histos/searchBinsZinv_Run2.root"
-        searchCompareMyHists(f_map, values, labels, "Run2")
+        #values = ["pred"]
+        #labels = ["v6p5_May31", "v6p5_July24"]
+        #f_map = {}
+        #f_map["v6p5_May31"]    = "/uscms/home/caleb/archive/zinv_results/2020-05-31/prediction_histos/searchBinsZinv_Run2.root"
+        #f_map["v6p5_July24"]   = "/uscms/home/caleb/archive/zinv_results/2020-07-24/prediction_histos/searchBinsZinv_Run2.root"
+        #searchCompareMyHists(f_map, values, labels, "Run2")
+        
+        #values = ["pred"]
+        #labels = ["v6p5_July24", "v7"]
+        #f_map = {}
+        #f_map["v6p5_July24"]    = "/uscms/home/caleb/archive/zinv_results/2020-07-24/prediction_histos/searchBinsZinv_Run2.root"
+        #f_map["v7"]             = "/uscms/home/caleb/archive/zinv_results/2020-07-31/prediction_histos/searchBinsZinv_Run2.root"
+        #searchCompareMyHists(f_map, values, labels, "Run2")
     
+        # compare prediction in search bins
+        values = ["pred"]
+        labels = ["nominal", "pixel_seed_veto"]
+        f_map = {}
+        f_map["nominal"]            = "/uscms/home/caleb/archive/zinv_results/2020-09-20/prediction_histos/searchBinsZinv_Run2.root"
+        f_map["pixel_seed_veto"]    = "/uscms/home/caleb/archive/zinv_results/2021-01-18/prediction_histos/searchBinsZinv_Run2.root"
+        searchCompareMyHists(f_map, values, labels, "search", "Run2")
+        
+        # compare yields in control bins
+        values = ["data", "mc_gjets", "mc_back"]
+        labels = ["nominal", "pixel_seed_veto"]
+        f_map = {}
+        f_map["nominal"]            = "/uscms/home/caleb/archive/zinv_results/2020-09-20/prediction_histos/CRUnitBinsZinv_Run2.root"
+        f_map["pixel_seed_veto"]    = "/uscms/home/caleb/archive/zinv_results/2021-01-18/prediction_histos/CRUnitBinsZinv_Run2.root"
+        searchCompareMyHists(f_map, values, labels, "control", "Run2")
 
 

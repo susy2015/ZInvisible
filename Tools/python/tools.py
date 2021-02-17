@@ -234,6 +234,8 @@ def normalizeHistToHist(hist, histForNorm):
     if nDen != 0.0:
         ratio = nNum / nDen
         hist.Scale(ratio)
+    # return ratio for later use (printing, etc)
+    return ratio
 
 # get ratio
 def getRatio(h_num, h_den):
@@ -379,12 +381,13 @@ def plot(histograms, labels, name, title, x_title, y_title, x_min, x_max, y_min,
         # - give x, y coordinates (same as plot coordinates)
         # - y list is for positioning the text
         x_range = x_max - x_min 
-        x_pos_1 = x_max - 0.4  * x_range
-        x_pos_2 = x_max - 0.35 * x_range
+        x_pos_1 = x_max - 0.50 * x_range
+        x_pos_2 = x_max - 0.40 * x_range
         step = (y_max - y_min) / 20.0
         y_list = np.arange(0.7 * y_max, 0.0, -1 * step)
         mark = ROOT.TLatex()
         mark.SetTextSize(0.03)
+        mark.SetTextFont(42)
         
         for i in xrange(len(labels)):
             mark.DrawLatex(x_pos_1, y_list[2 * i + 0], labels[i])

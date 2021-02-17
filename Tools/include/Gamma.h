@@ -29,6 +29,7 @@ namespace plotterFunctions
         std::string year_;
         bool verbose  = false;
         bool verbose2 = false;
+        bool verbose3 = false;
         enum ID{Loose, Medium, Tight};
         enum PhotonType{Reco, Direct, Fragmentation, NonPrompt, Fake};
         std::map<int, std::string> PhotonMap;
@@ -37,6 +38,7 @@ namespace plotterFunctions
         const auto& event                  = tr.getVar<unsigned long long>("event");
         const auto& PhotonTLV              = tr.getVec<TLorentzVector>("PhotonTLV");  // reco photon
         const auto& Photon_jetIdx          = tr.getVec<int>("Photon_jetIdx");
+        const auto& Photon_pixelSeed       = tr.getVec<unsigned char>("Photon_pixelSeed");
         const auto& Photon_Stop0l          = tr.getVec<unsigned char>("Photon_Stop0l");
         const auto& met                    = tr.getVar<data_t>("MET_pt");
         const auto& metphi                 = tr.getVar<data_t>("MET_phi");
@@ -287,13 +289,19 @@ namespace plotterFunctions
                     if (Photon_PassLooseID[i])  LoosePhotonTLV.push_back(PhotonTLV[i]);
                     if (Photon_PassMediumID[i]) MediumPhotonTLV.push_back(PhotonTLV[i]);
                     if (Photon_PassTightID[i])  TightPhotonTLV.push_back(PhotonTLV[i]);
-                    if(Photon_ID[i])  
+                    // photon ID does not include pixel seed veto
+                    if(Photon_ID[i] && (! Photon_pixelSeed[i]))  
                     {
                         if (verbose) std::cout << "ID = " << Photon_ID[i];
+                        if (verbose) std::cout << "Photon_pixelSeed = " << Photon_pixelSeed[i];
                         if (verbose) printf(" Found CutPhoton; ");
                         RecoPhotonTLVIso.push_back(PhotonTLV[i]);
                         cutPhotonTLV.push_back(PhotonTLV[i]);
                         cutPhotonJetIndex.push_back(Photon_jetIdx[i]);
+                        if (verbose3)
+                        {
+                            printf("Reco Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), photonType=%s, Photon_pixelSeed=%d\n", PhotonTLV[i].Pt(), PhotonTLV[i].Eta(), PhotonTLV[i].Phi(), PhotonTLV[i].M(), PhotonMap[photonType].c_str(), Photon_pixelSeed[i]);
+                        }
                         // MC Only
                         if (! isData)
                         {
@@ -360,11 +368,11 @@ namespace plotterFunctions
                                 // print reco and gen photons
                                 printf("------------------------------------------------------------------------------------\n");
                                 printf("event=%d, passQCDSelection=%d\n", event, passQCDSelection);
-                                printf("Reco Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), photonType=%s\n", PhotonTLV[i].Pt(), PhotonTLV[i].Eta(), PhotonTLV[i].Phi(), PhotonTLV[i].M(), PhotonMap[photonType].c_str());
+                                printf("Reco Photon: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), photonType=%s, Photon_pixelSeed=%d\n", PhotonTLV[i].Pt(), PhotonTLV[i].Eta(), PhotonTLV[i].Phi(), PhotonTLV[i].M(), PhotonMap[photonType].c_str(), Photon_pixelSeed[i]);
                                 printf("------------------------------------------------------------------------------------\n");
                                 for(int j = 0; j < GenPhotonTLV.size(); ++j)
                                 {
-                                    printf("Gen Photon %d: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, genPartIdx=%d, genPartIdxMother=%d, min_parton_DR=%.3f\n", j, GenPhotonTLV[j].Pt(), GenPhotonTLV[j].Eta(), GenPhotonTLV[j].Phi(), GenPhotonTLV[j].M(), GenPhotonStatus[j], GenPhotonStatusFlags[j], GenPhotonGenPartIdx[j], GenPhotonGenPartIdxMother[j], GenPhotonMinPartonDR[j]);
+                                    printf("Gen Photon %d: (pt=%.3f, eta=%.3f, phi=%.3f, mass=%.3f), status=%d, statusFlags=0x%x, genPartIdx=%d, genPartIdxMother=%d\n", j, GenPhotonTLV[j].Pt(), GenPhotonTLV[j].Eta(), GenPhotonTLV[j].Phi(), GenPhotonTLV[j].M(), GenPhotonStatus[j], GenPhotonStatusFlags[j], GenPhotonGenPartIdx[j], GenPhotonGenPartIdxMother[j]);
                                 }
                                 printf("------------------------------------------------------------------------------------\n");
                                 // print all gen particles

@@ -28,6 +28,8 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 
 def combine(predFile, systFile, outFile):
+    # combine data histograms
+    do_data       = True
     f_pred        = ROOT.TFile(predFile, "read")
     f_syst        = ROOT.TFile(systFile, "read")
     f_out         = ROOT.TFile(outFile,  "recreate")
@@ -66,14 +68,17 @@ def combine(predFile, systFile, outFile):
 
     # check that data is present
     if not h_data_lowdm:
-        print "ERROR: No data lowdm for {0}".format(predFile)
+        do_data = False
+        print "INFO: No data lowdm for {0}. Skipping data.".format(predFile)
     if not h_data_highdm:
-        print "ERROR: No data highdm for {0}".format(predFile)
+        do_data = False
+        print "INFO: No data highdm for {0}. Skipping data.".format(predFile)
 
     bin_i = 1
     for b in xrange(low_dm_start, low_dm_end + 1):
-        h_data_combined.SetBinContent(b + 1,        h_data_lowdm.GetBinContent(bin_i)) 
-        h_data_combined.SetBinError(b + 1,          h_data_lowdm.GetBinError(bin_i)) 
+        if do_data:
+            h_data_combined.SetBinContent(b + 1,        h_data_lowdm.GetBinContent(bin_i)) 
+            h_data_combined.SetBinError(b + 1,          h_data_lowdm.GetBinError(bin_i)) 
         h_mc_combined.SetBinContent(b + 1,          h_mc_lowdm.GetBinContent(bin_i)) 
         h_mc_combined.SetBinError(b + 1,            h_mc_lowdm.GetBinError(bin_i)) 
         h_pred_combined.SetBinContent(b + 1,        h_pred_lowdm.GetBinContent(bin_i)) 
@@ -85,8 +90,9 @@ def combine(predFile, systFile, outFile):
         bin_i += 1
     bin_i = 1
     for b in xrange(high_dm_start, high_dm_end + 1):
-        h_data_combined.SetBinContent(b + 1,        h_data_highdm.GetBinContent(bin_i)) 
-        h_data_combined.SetBinError(b + 1,          h_data_highdm.GetBinError(bin_i)) 
+        if do_data:
+            h_data_combined.SetBinContent(b + 1,        h_data_highdm.GetBinContent(bin_i)) 
+            h_data_combined.SetBinError(b + 1,          h_data_highdm.GetBinError(bin_i)) 
         h_mc_combined.SetBinContent(b + 1,          h_mc_highdm.GetBinContent(bin_i)) 
         h_mc_combined.SetBinError(b + 1,            h_mc_highdm.GetBinError(bin_i)) 
         h_pred_combined.SetBinContent(b + 1,        h_pred_highdm.GetBinContent(bin_i)) 
@@ -98,7 +104,8 @@ def combine(predFile, systFile, outFile):
         bin_i += 1
 
     # save histograms to file
-    h_data_combined.Write()
+    if do_data:
+        h_data_combined.Write()
     h_mc_combined.Write()
     h_pred_combined.Write()
     h_syst_up_combined.Write()
@@ -107,7 +114,8 @@ def combine(predFile, systFile, outFile):
     f_out.Close()
 
 def main():
-    # WARNING: assumes data, pred, and mc exist for each era
+    # WARNING: assumes pred and mc exist for each era
+    # data can be skipped
     eras = ["2016", "2017", "2018", "2016and2017", "Run2"]
     for era in eras:
         predFile = "prediction_histos/searchBinsZinv_{0}.root".format(era)
