@@ -903,15 +903,15 @@ void Plotter::plot()
         //double leg_y1 = 0.88 - NlegEntries * 0.045;
         //double leg_y2 = 0.88;
         // modified (good for lepton CR plots)
-        //double leg_x1 = 0.50 + leg_x_offset;
-        //double leg_x2 = 0.89 + leg_x_offset;
-        //double leg_y1 = 0.89 - NlegEntries * 0.06;
-        //double leg_y2 = 0.89;
-        // modified (good for photon CR plots)
-        double leg_x1 = 0.50;
-        double leg_x2 = 0.89;
-        double leg_y1 = 0.89 - NlegEntries * 0.045;
+        double leg_x1 = 0.50 + leg_x_offset;
+        double leg_x2 = 0.89 + leg_x_offset;
+        double leg_y1 = 0.89 - NlegEntries * 0.06;
         double leg_y2 = 0.89;
+        // modified (good for photon CR plots)
+        //double leg_x1 = 0.50;
+        //double leg_x2 = 0.89;
+        //double leg_y1 = 0.89 - NlegEntries * 0.045;
+        //double leg_y2 = 0.89;
 
         TLegend *leg = new TLegend(leg_x1, leg_y1, leg_x2, leg_y2);
         leg->SetFillStyle(0);
