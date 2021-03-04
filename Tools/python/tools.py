@@ -295,7 +295,7 @@ def getConstantMultiplicationError(a, dx):
 def getMultiplicationError(q, x, dx, y, dy):
     # q = x * y 
     # q = x / y 
-    # dq = q * sqrt( (dx/x)^2 + (dy/y)^2) )
+    # dq = q * sqrt( (dx/x)^2 + (dy/y)^2 )
     if x == 0.0 or y == 0.0:
         print "ERROR in getMultiplicationError(): Cannot divide by zero."
         return ERROR_CODE
@@ -304,7 +304,7 @@ def getMultiplicationError(q, x, dx, y, dy):
 def getMultiplicationErrorList(q, x_list, dx_list):
     # q = x * y * ... 
     # q = x / y / ...
-    # dq = q * sqrt( (dx/x)^2 + (dy/y)^2) + ... )
+    # dq = q * sqrt( (dx/x)^2 + (dy/y)^2 + ... )
     if len(x_list) != len(dx_list):
         print "ERROR in getMultiplicationErrorList(): x_list and dx_list do not have the same length."
         return ERROR_CODE
