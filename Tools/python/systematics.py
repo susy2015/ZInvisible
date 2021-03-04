@@ -254,7 +254,7 @@ class Systematic:
     def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, x_min, x_max, n_bins=0, xbins=np.array([]), rebin=False, useForSyst=False, doDataOverData=False):
         doFit = False
         draw_option = "hist error"
-        data_style  = "E"
+        data_style  = "E1"
         drawSyst = (era == "Run2") and (not doDataOverData)
         ROOT.gStyle.SetErrorX(0) # remove horizontal bar for data points
         
@@ -440,19 +440,23 @@ class Systematic:
             width       = right - left
             mark_x1     = left + x_offset * width
             mark_x2     = left + (x_offset + 0.15) * width
-            mark_y      = 0.9 * y_max
+            mark_y1      = 0.90 * y_max
+            mark_y2      = 0.83 * y_max
             lumi_x      = right 
             lumi_y      = 1.02 * y_max
             
             # Draw CMS mark
             cms_mark = ROOT.TLatex()
             cms_mark.SetTextAlign(11) # left aligned
-            cms_mark.SetTextFont(61)
+            cms_mark.SetTextFont(62)
             cms_mark.SetTextSize(1.25 * font_scale)
-            cms_mark.DrawLatex(mark_x1, mark_y, "CMS")
+            cms_mark.DrawLatex(mark_x1, mark_y1, "CMS")
             cms_mark.SetTextFont(52)
             cms_mark.SetTextSize(font_scale)
-            cms_mark.DrawLatex(mark_x2, mark_y, "Supplementary")
+            cms_mark.DrawLatex(mark_x2, mark_y1, "Supplementary")
+            cms_mark.SetTextFont(42)
+            cms_mark.SetTextSize(font_scale)
+            cms_mark.DrawLatex(mark_x1, mark_y2, "arXiv:2103.01290")
 
             # Draw lumi stamp
             lumi = self.lumis[era]
