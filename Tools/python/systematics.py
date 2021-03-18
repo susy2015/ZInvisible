@@ -253,8 +253,12 @@ class Systematic:
     # double ratio: Z (data/MC) over Photon (data/MC), or data (Z/Photon) over MC (Z/Photon)
     def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, x_min, x_max, n_bins=0, xbins=np.array([]), rebin=False, useForSyst=False, doDataOverData=False):
         doFit = False
-        draw_option = "hist error"
-        data_style  = "E1"
+        #draw_option = "hist error"
+        #draw_option = "hist E2"
+        #draw_option = "hist E4"
+        draw_option = "hist"
+        #data_style  = "E1"
+        data_style  = "PZ0"
         drawSyst = (era == "Run2") and (not doDataOverData)
         ROOT.gStyle.SetErrorX(0) # remove horizontal bar for data points
         
@@ -397,6 +401,14 @@ class Systematic:
                 if useForSyst:
                     self.h_map_syst[region] = copy.deepcopy(h_syst)
             
+            # Uncertainties
+            unc = ROOT.TGraphAsymmErrors(h_ratio_den)
+            unc.SetFillColor(getColorIndex("electric blue"))
+            unc.SetFillStyle(3013)
+            unc.SetLineStyle(0)
+            unc.SetLineWidth(0)
+            unc.SetMarkerSize(0)
+
             # pad for histograms
             pad = c.cd(1)
             # resize pad
@@ -412,8 +424,10 @@ class Systematic:
             
             # draw
             h_ratio_den.Draw(draw_option)
+            unc.Draw("E2 same")
             if doDataOverData:
-                h_ratio_num.SetMarkerStyle(ROOT.kFullCircle)
+                #h_ratio_num.SetMarkerStyle(ROOT.kFullCircle)
+                h_ratio_num.SetMarkerStyle(ROOT.kFullDotLarge)
                 h_ratio_num.Draw(data_style + " same")
             else:
                 h_ratio_num.Draw(draw_option + " same")
@@ -482,7 +496,8 @@ class Systematic:
             
             # draw
             if doDataOverData:
-                h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullCircle)
+                #h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullCircle)
+                h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullDotLarge)
                 h_ratio_ZoverPhoton.Draw(data_style)
             else:
                 h_ratio_ZoverPhoton.Draw(draw_option)
