@@ -253,11 +253,7 @@ class Systematic:
     # double ratio: Z (data/MC) over Photon (data/MC), or data (Z/Photon) over MC (Z/Photon)
     def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, x_min, x_max, n_bins=0, xbins=np.array([]), rebin=False, useForSyst=False, doDataOverData=False):
         doFit = False
-        #draw_option = "hist error"
-        #draw_option = "hist E2"
-        #draw_option = "hist E4"
         draw_option = "hist"
-        #data_style  = "E1"
         data_style  = "PZ0"
         drawSyst = (era == "Run2") and (not doDataOverData)
         ROOT.gStyle.SetErrorX(0) # remove horizontal bar for data points
@@ -426,7 +422,6 @@ class Systematic:
             h_ratio_den.Draw(draw_option)
             unc.Draw("E2 same")
             if doDataOverData:
-                #h_ratio_num.SetMarkerStyle(ROOT.kFullCircle)
                 h_ratio_num.SetMarkerStyle(ROOT.kFullDotLarge)
                 h_ratio_num.Draw(data_style + " same")
             else:
@@ -497,7 +492,6 @@ class Systematic:
             
             # draw
             if doDataOverData:
-                #h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullCircle)
                 h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullDotLarge)
                 h_ratio_ZoverPhoton.Draw(data_style)
             else:
