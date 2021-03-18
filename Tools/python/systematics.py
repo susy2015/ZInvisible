@@ -432,10 +432,10 @@ class Systematic:
             else:
                 h_ratio_num.Draw(draw_option + " same")
             # legend: TLegend(x1,y1,x2,y2)
-            legend_x1 = 0.65
+            legend_x1 = 0.60
             legend_x2 = 0.90
-            legend_y1 = 0.73
-            legend_y2 = 0.88
+            legend_y1 = 0.65
+            legend_y2 = 0.85
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
             legend1.SetFillStyle(0)
             legend1.SetBorderSize(0)
@@ -444,6 +444,7 @@ class Systematic:
             legend1.SetTextFont(42)
             legend1.AddEntry(h_ratio_num, num_label, num_legend_style)
             legend1.AddEntry(h_ratio_den, den_label, "l")
+            legend1.AddEntry(unc, "Stat. unc.", "F")
             legend1.Draw()
             
             # parameters for CMS mark and lumi stamp
