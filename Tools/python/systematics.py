@@ -398,12 +398,32 @@ class Systematic:
                     self.h_map_syst[region] = copy.deepcopy(h_syst)
             
             # Uncertainties
-            unc = ROOT.TGraphAsymmErrors(h_ratio_den)
+            #unc = ROOT.TGraphAsymmErrors(h_ratio_den)
+            #unc = ROOT.TGraph(h_ratio_den)
+            
+            # manually create TGraph
+            nBins = h_ratio_den.GetNbinsX()
+            xVals = []
+            yVals = []
+            for n in range(1, nBins + 1):
+                xVals.append(h_ratio_den.GetBinCenter(n))
+                yVals.append(h_ratio_den.GetBinContent(n))
+            xVals = np.array(xVals)
+            yVals = np.array(yVals)
+            unc = ROOT.TGraph(nBins, xVals, yVals)
+            
             unc.SetFillColor(getColorIndex("electric blue"))
             unc.SetFillStyle(3013)
-            unc.SetLineStyle(0)
-            unc.SetLineWidth(0)
-            unc.SetMarkerSize(0)
+            
+            #unc.SetLineStyle(0)
+            #unc.SetLineWidth(0)
+            #unc.SetMarkerSize(0)
+            
+            unc.SetLineColor(ROOT.kRed)
+            unc.SetLineWidth(3)
+            unc.SetMarkerStyle(ROOT.kFullSquare)
+            unc.SetMarkerColor(ROOT.kRed)
+            unc.SetMarkerSize(2)
 
             # pad for histograms
             pad = c.cd(1)
@@ -417,15 +437,35 @@ class Systematic:
             pad.SetRightMargin(0.1)
             pad.SetTopMargin(0.1)
             pad.SetBottomMargin(0.01)
+
+            # --- testing ---
+
+            for n in range(1, h_ratio_den.GetNbinsX() + 1):
+                print "h_ratio_den_{0}_{1}_{2}: bin: {3}, content: {4}, error: {5}".format(era, var, region, n, h_ratio_den.GetBinContent(n), h_ratio_den.GetBinError(n))
             
-            # draw
-            h_ratio_den.Draw(draw_option)
-            unc.Draw("E2 same")
-            if doDataOverData:
-                h_ratio_num.SetMarkerStyle(ROOT.kFullDotLarge)
-                h_ratio_num.Draw(data_style + " same")
-            else:
-                h_ratio_num.Draw(draw_option + " same")
+            #print "TGraphAsymmErrors_{0}: unc.GetN(): {1}".format(era, unc.GetN())
+            #for n in range(1, unc.GetN() + 1):
+            #    print "TGraphAsymmErrors_{0}: bin: {1}, x: {2}, y: {3}, x_error: {4}, y_error: {5}".format(era, n, unc.GetPointX(n), unc.GetPointY(n), unc.GetErrorX(n), unc.GetErrorY(n))
+            
+            print "TGraph_{0}: unc.GetN(): {1}".format(era, unc.GetN())
+            for n in range(1, unc.GetN() + 1):
+                print "TGraph_{0}: bin: {1}, x: {2}, y: {3}, x_error: {4}, y_error: {5}".format(era, n, unc.GetPointX(n), unc.GetPointY(n), unc.GetErrorX(n), unc.GetErrorY(n))
+            
+            # --- draw --- 
+            
+            # testing
+            #unc.Draw("P0Z")
+            unc.Draw("E1")
+            
+            #h_ratio_den.Draw(draw_option)
+            #unc.Draw("E2 same")
+            #unc.Draw("E1 same")
+            #if doDataOverData:
+            #    h_ratio_num.SetMarkerStyle(ROOT.kFullDotLarge)
+            #    h_ratio_num.Draw(data_style + " same")
+            #else:
+            #    h_ratio_num.Draw(draw_option + " same")
+            
             # legend: TLegend(x1,y1,x2,y2)
             legend_x1 = 0.60
             legend_x2 = 0.90
