@@ -398,9 +398,9 @@ class Systematic:
                     self.h_map_syst[region] = copy.deepcopy(h_syst)
             
             # Uncertainties
-            unc = ROOT.TGraphAsymmErrors(h_ratio_den)
+            #unc = ROOT.TGraphAsymmErrors(h_ratio_den)
             #unc = ROOT.TGraphErrors(h_ratio_den)
-            #unc = ROOT.TGraph(h_ratio_den)
+            unc = ROOT.TGraph(h_ratio_den)
             
             #setupHist(unc, title, x_title, ratio_title, "electric blue", ratio_y_min, ratio_y_max, True, 3, False)
             
@@ -414,7 +414,7 @@ class Systematic:
             #xVals = np.array(xVals)
             #yVals = np.array(yVals)
             #unc = ROOT.TGraph(nBins, xVals, yVals)
-            
+
             unc.SetFillColor(getColorIndex("electric blue"))
             unc.SetFillStyle(3013)
             
@@ -443,6 +443,7 @@ class Systematic:
 
             # --- testing ---
 
+
             #for n in range(1, h_ratio_den.GetNbinsX() + 1):
             #    print "h_ratio_den_{0}_{1}_{2}: bin: {3}, content: {4}, error: {5}".format(era, var, region, n, h_ratio_den.GetBinContent(n), h_ratio_den.GetBinError(n))
             
@@ -450,9 +451,17 @@ class Systematic:
             #for n in range(1, unc.GetN() + 1):
             #    print "TGraphAsymmErrors_{0}: bin: {1}, x: {2}, y: {3}, x_error: {4}, y_error: {5}".format(era, n, unc.GetPointX(n), unc.GetPointY(n), unc.GetErrorX(n), unc.GetErrorY(n))
             
+            # Error message: AttributeError: 'TGraph' object has no attribute 'GetPointX'
+            
             #print "TGraph_{0}: unc.GetN(): {1}".format(era, unc.GetN())
             #for n in range(1, unc.GetN() + 1):
             #    print "TGraph_{0}: bin: {1}, x: {2}, y: {3}, x_error: {4}, y_error: {5}".format(era, n, unc.GetPointX(n), unc.GetPointY(n), unc.GetErrorX(n), unc.GetErrorY(n))
+            
+            points_x = unc.GetX()
+            points_y = unc.GetY()
+            print "TGraph_{0}: unc.GetN(): {1}".format(era, unc.GetN())
+            for n in range(1, unc.GetN() + 1):
+                print "TGraph_{0}_{1}_{2}: bin: {3}, x: {4}, y: {5}, x_error: {6}, y_error: {7}".format(era, var, region, n, points_x[n-1], points_y[n-1], unc.GetErrorX(n), unc.GetErrorY(n))
             
             # --- draw --- 
             
