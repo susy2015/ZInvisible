@@ -334,7 +334,6 @@ class Systematic:
                 chisq   = fit.GetChisquare()
                 chisq_r = chisq / nDegFree
             
-            
             # histogram info 
             # turn off title
             #title = "Z vs. Photon, {0}, {1}".format(region, era)
@@ -346,10 +345,10 @@ class Systematic:
                 x_title = self.labels[var]
             
             # turn off x-axis titles for upper plot
-            # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False)
-            setupHist(h_ratio_num,          title, "",      y_title,       num_color,         y_min, y_max, True, 3)
-            setupHist(h_ratio_den,          title, "",      y_title,       "electric blue",   y_min, y_max, True, 3)
-            setupHist(h_ratio_ZoverPhoton,  title, x_title, ratio_title,   "black",           ratio_y_min, ratio_y_max, True, 3)
+            # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, lineWidth=5, turnOffStats=True)
+            setupHist(h_ratio_num,          title, "",      y_title,       num_color,         y_min,        y_max,        True,  1)
+            setupHist(h_ratio_den,          title, "",      y_title,       "electric blue",   y_min,        y_max,        True,  1)
+            setupHist(h_ratio_ZoverPhoton,  title, x_title, ratio_title,   "black",           ratio_y_min,  ratio_y_max,  True,  1)
             h_ratio_num.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_den.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
@@ -397,16 +396,8 @@ class Systematic:
                 if useForSyst:
                     self.h_map_syst[region] = copy.deepcopy(h_syst)
             
-            # Uncertainties
-            #unc = ROOT.TGraphAsymmErrors(h_ratio_den)
-            #unc = ROOT.TGraphErrors(h_ratio_den)
-            #unc = ROOT.TGraph(h_ratio_den)
-            
-            #setupHist(unc, title, x_title, ratio_title, "electric blue", ratio_y_min, ratio_y_max, True, 3, False)
-            
             # manually create TGraphErrors
             
-            # version 1
             nBins = h_ratio_den.GetNbinsX()
             xVals = []
             yVals = []
@@ -417,26 +408,18 @@ class Systematic:
                 yVals.append(h_ratio_den.GetBinContent(n))
                 xErrors.append(h_ratio_den.GetBinWidth(n) / 2)
                 yErrors.append(h_ratio_den.GetBinError(n))
-            # np.array() is required
+            # np.array() is required for TGraphErrors constructor
             xVals = np.array(xVals)
             yVals = np.array(yVals)
             xErrors = np.array(xErrors)
             yErrors = np.array(yErrors)
             unc = ROOT.TGraphErrors(nBins, xVals, yVals, xErrors, yErrors)
-            
             unc.SetFillColor(getColorIndex("electric blue"))
             unc.SetFillStyle(3013)
-            
             unc.SetLineStyle(0)
             unc.SetLineWidth(0)
             unc.SetMarkerSize(0)
             
-            #unc.SetLineColor(ROOT.kRed)
-            #unc.SetLineWidth(3)
-            #unc.SetMarkerStyle(ROOT.kFullSquare)
-            #unc.SetMarkerColor(ROOT.kRed)
-            #unc.SetMarkerSize(2)
-
             # pad for histograms
             pad = c.cd(1)
             # resize pad
@@ -452,19 +435,8 @@ class Systematic:
 
             # --- testing ---
 
-
-            #for n in range(1, h_ratio_den.GetNbinsX() + 1):
-            #    print "h_ratio_den_{0}_{1}_{2}: bin: {3}, content: {4}, error: {5}".format(era, var, region, n, h_ratio_den.GetBinContent(n), h_ratio_den.GetBinError(n))
-            
-            #print "TGraphAsymmErrors_{0}: unc.GetN(): {1}".format(era, unc.GetN())
-            #for n in range(1, unc.GetN() + 1):
-            #    print "TGraphAsymmErrors_{0}: bin: {1}, x: {2}, y: {3}, x_error: {4}, y_error: {5}".format(era, n, unc.GetPointX(n), unc.GetPointY(n), unc.GetErrorX(n), unc.GetErrorY(n))
-            
-            # Error message: AttributeError: 'TGraph' object has no attribute 'GetPointX'
-            
-            #print "TGraph_{0}: unc.GetN(): {1}".format(era, unc.GetN())
-            #for n in range(1, unc.GetN() + 1):
-            #    print "TGraph_{0}: bin: {1}, x: {2}, y: {3}, x_error: {4}, y_error: {5}".format(era, n, unc.GetPointX(n), unc.GetPointY(n), unc.GetErrorX(n), unc.GetErrorY(n))
+            for n in range(1, h_ratio_den.GetNbinsX() + 1):
+                print "h_ratio_den_{0}_{1}_{2}: bin: {3}, content: {4}, error: {5}".format(era, var, region, n, h_ratio_den.GetBinContent(n), h_ratio_den.GetBinError(n))
             
             points_x = unc.GetX()
             points_y = unc.GetY()
@@ -473,11 +445,6 @@ class Systematic:
                 print "TGraph_{0}_{1}_{2}: bin: {3}, x: {4}, y: {5}, x_error: {6}, y_error: {7}".format(era, var, region, n, points_x[n-1], points_y[n-1], unc.GetErrorX(n), unc.GetErrorY(n))
             
             # --- draw --- 
-            
-            # testing
-            #unc.Draw("P0Z")
-            #unc.Draw("E1")
-            
             h_ratio_den.Draw(draw_option)
             unc.Draw("E2 same")
             if doDataOverData:
