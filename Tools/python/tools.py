@@ -254,7 +254,7 @@ def getNormalizedRatio(h_num, h_den):
     return h_ratio_normalized
 
 # setup histogram
-def setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, lineWidth=5):
+def setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, lineWidth=5, turnOffStats=True):
     x_axis = hist.GetXaxis()
     y_axis = hist.GetYaxis()
     y_axis.SetRangeUser(y_min, y_max)
@@ -269,9 +269,10 @@ def setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, 
         y_axis.SetTitleOffset(1.0)
     x_axis.SetTitle(x_title)
     y_axis.SetTitle(y_title)
-    hist.SetStats(ROOT.kFALSE)
     hist.SetLineColor(getColorIndex(color))
     hist.SetLineWidth(lineWidth)
+    if turnOffStats:
+        hist.SetStats(ROOT.kFALSE)
 
 def getAdditionError(dx, dy):
     # q  = x + y
