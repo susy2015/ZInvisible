@@ -400,21 +400,30 @@ class Systematic:
             # Uncertainties
             #unc = ROOT.TGraphAsymmErrors(h_ratio_den)
             #unc = ROOT.TGraphErrors(h_ratio_den)
-            unc = ROOT.TGraph(h_ratio_den)
+            #unc = ROOT.TGraph(h_ratio_den)
             
             #setupHist(unc, title, x_title, ratio_title, "electric blue", ratio_y_min, ratio_y_max, True, 3, False)
             
-            # manually create TGraph
-            #nBins = h_ratio_den.GetNbinsX()
-            #xVals = []
-            #yVals = []
-            #for n in range(1, nBins + 1):
-            #    xVals.append(h_ratio_den.GetBinCenter(n))
-            #    yVals.append(h_ratio_den.GetBinContent(n))
-            #xVals = np.array(xVals)
-            #yVals = np.array(yVals)
-            #unc = ROOT.TGraph(nBins, xVals, yVals)
-
+            # manually create TGraphErrors
+            
+            # version 1
+            nBins = h_ratio_den.GetNbinsX()
+            xVals = []
+            yVals = []
+            xErrors = []
+            yErrors = []
+            for n in range(1, nBins + 1):
+                xVals.append(h_ratio_den.GetBinCenter(n))
+                yVals.append(h_ratio_den.GetBinContent(n))
+                xErrors.append(h_ratio_den.GetBinWidth(n) / 2)
+                yErrors.append(h_ratio_den.GetBinError(n))
+            # np.array() is required
+            xVals = np.array(xVals)
+            yVals = np.array(yVals)
+            xErrors = np.array(xErrors)
+            yErrors = np.array(yErrors)
+            unc = ROOT.TGraphErrors(nBins, xVals, yVals, xErrors, yErrors)
+            
             unc.SetFillColor(getColorIndex("electric blue"))
             unc.SetFillStyle(3013)
             
