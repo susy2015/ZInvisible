@@ -347,7 +347,7 @@ class Systematic:
             # turn off x-axis titles for upper plot
             # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, lineWidth=5, turnOffStats=True)
             setupHist(h_ratio_num,          title, "",      y_title,       num_color,         y_min,        y_max,        True,  1)
-            setupHist(h_ratio_den,          title, "",      y_title,       "electric blue",   y_min,        y_max,        True,  1)
+            setupHist(h_ratio_den,          title, "",      y_title,       "electric blue",   y_min,        y_max,        True,  2)
             setupHist(h_ratio_ZoverPhoton,  title, x_title, ratio_title,   "black",           ratio_y_min,  ratio_y_max,  True,  1)
             h_ratio_num.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_den.GetXaxis().SetRangeUser(self.x_min, self.x_max)
