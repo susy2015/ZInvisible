@@ -253,8 +253,8 @@ class Systematic:
     # double ratio: Z (data/MC) over Photon (data/MC), or data (Z/Photon) over MC (Z/Photon)
     def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, x_min, x_max, n_bins=0, xbins=np.array([]), rebin=False, useForSyst=False, doDataOverData=False):
         doFit = False
-        draw_option = "hist error"
-        data_style  = "E"
+        draw_option = "hist"
+        data_style  = "PZ0"
         drawSyst = (era == "Run2") and (not doDataOverData)
         ROOT.gStyle.SetErrorX(0) # remove horizontal bar for data points
         
@@ -334,7 +334,6 @@ class Systematic:
                 chisq   = fit.GetChisquare()
                 chisq_r = chisq / nDegFree
             
-            
             # histogram info 
             # turn off title
             #title = "Z vs. Photon, {0}, {1}".format(region, era)
@@ -346,10 +345,10 @@ class Systematic:
                 x_title = self.labels[var]
             
             # turn off x-axis titles for upper plot
-            # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False)
-            setupHist(h_ratio_num,          title, "",      y_title,       num_color,         y_min, y_max, True)
-            setupHist(h_ratio_den,          title, "",      y_title,       "electric blue",   y_min, y_max, True)
-            setupHist(h_ratio_ZoverPhoton,  title, x_title, ratio_title,   "black",           ratio_y_min, ratio_y_max, True)
+            # setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, lineWidth=5, turnOffStats=True)
+            setupHist(h_ratio_num,          title, "",      y_title,       num_color,         y_min,        y_max,        True,  1)
+            setupHist(h_ratio_den,          title, "",      y_title,       "electric blue",   y_min,        y_max,        True,  3)
+            setupHist(h_ratio_ZoverPhoton,  title, x_title, ratio_title,   "black",           ratio_y_min,  ratio_y_max,  True,  1)
             h_ratio_num.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_den.GetXaxis().SetRangeUser(self.x_min, self.x_max)
             h_ratio_ZoverPhoton.GetXaxis().SetRangeUser(self.x_min, self.x_max)
@@ -397,6 +396,30 @@ class Systematic:
                 if useForSyst:
                     self.h_map_syst[region] = copy.deepcopy(h_syst)
             
+            # manually create TGraphErrors
+            
+            nBins = h_ratio_den.GetNbinsX()
+            xVals = []
+            yVals = []
+            xErrors = []
+            yErrors = []
+            for n in range(1, nBins + 1):
+                xVals.append(h_ratio_den.GetBinCenter(n))
+                yVals.append(h_ratio_den.GetBinContent(n))
+                xErrors.append(h_ratio_den.GetBinWidth(n) / 2)
+                yErrors.append(h_ratio_den.GetBinError(n))
+            # np.array() is required for TGraphErrors constructor
+            xVals = np.array(xVals)
+            yVals = np.array(yVals)
+            xErrors = np.array(xErrors)
+            yErrors = np.array(yErrors)
+            unc = ROOT.TGraphErrors(nBins, xVals, yVals, xErrors, yErrors)
+            unc.SetFillColor(getColorIndex("electric blue"))
+            unc.SetFillStyle(3013)
+            unc.SetLineStyle(0)
+            unc.SetLineWidth(0)
+            unc.SetMarkerSize(0)
+            
             # pad for histograms
             pad = c.cd(1)
             # resize pad
@@ -409,19 +432,32 @@ class Systematic:
             pad.SetRightMargin(0.1)
             pad.SetTopMargin(0.1)
             pad.SetBottomMargin(0.01)
+
+            # --- testing ---
+
+            for n in range(1, h_ratio_den.GetNbinsX() + 1):
+                print "h_ratio_den_{0}_{1}_{2}: bin: {3}, content: {4}, error: {5}".format(era, var, region, n, h_ratio_den.GetBinContent(n), h_ratio_den.GetBinError(n))
             
-            # draw
+            points_x = unc.GetX()
+            points_y = unc.GetY()
+            print "TGraph_{0}: unc.GetN(): {1}".format(era, unc.GetN())
+            for n in range(1, unc.GetN() + 1):
+                print "TGraph_{0}_{1}_{2}: bin: {3}, x: {4}, y: {5}, x_error: {6}, y_error: {7}".format(era, var, region, n, points_x[n-1], points_y[n-1], unc.GetErrorX(n), unc.GetErrorY(n))
+            
+            # --- draw --- 
             h_ratio_den.Draw(draw_option)
+            unc.Draw("E2 same")
             if doDataOverData:
-                h_ratio_num.SetMarkerStyle(ROOT.kFullCircle)
+                h_ratio_num.SetMarkerStyle(ROOT.kFullDotLarge)
                 h_ratio_num.Draw(data_style + " same")
             else:
                 h_ratio_num.Draw(draw_option + " same")
+            
             # legend: TLegend(x1,y1,x2,y2)
-            legend_x1 = 0.65
+            legend_x1 = 0.60
             legend_x2 = 0.90
-            legend_y1 = 0.73
-            legend_y2 = 0.88
+            legend_y1 = 0.65
+            legend_y2 = 0.85
             legend1 = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
             legend1.SetFillStyle(0)
             legend1.SetBorderSize(0)
@@ -430,6 +466,7 @@ class Systematic:
             legend1.SetTextFont(42)
             legend1.AddEntry(h_ratio_num, num_label, num_legend_style)
             legend1.AddEntry(h_ratio_den, den_label, "l")
+            legend1.AddEntry(unc, "Stat. unc.", "F")
             legend1.Draw()
             
             # parameters for CMS mark and lumi stamp
@@ -440,19 +477,23 @@ class Systematic:
             width       = right - left
             mark_x1     = left + x_offset * width
             mark_x2     = left + (x_offset + 0.15) * width
-            mark_y      = 0.9 * y_max
+            mark_y1      = 0.90 * y_max
+            mark_y2      = 0.83 * y_max
             lumi_x      = right 
             lumi_y      = 1.02 * y_max
             
             # Draw CMS mark
             cms_mark = ROOT.TLatex()
             cms_mark.SetTextAlign(11) # left aligned
-            cms_mark.SetTextFont(61)
+            cms_mark.SetTextFont(62)
             cms_mark.SetTextSize(1.25 * font_scale)
-            cms_mark.DrawLatex(mark_x1, mark_y, "CMS")
+            cms_mark.DrawLatex(mark_x1, mark_y1, "CMS")
             cms_mark.SetTextFont(52)
             cms_mark.SetTextSize(font_scale)
-            cms_mark.DrawLatex(mark_x2, mark_y, "Supplementary")
+            cms_mark.DrawLatex(mark_x2, mark_y1, "Supplementary")
+            cms_mark.SetTextFont(42)
+            cms_mark.SetTextSize(font_scale)
+            cms_mark.DrawLatex(mark_x1, mark_y2, "arXiv:2103.01290")
 
             # Draw lumi stamp
             lumi = self.lumis[era]
@@ -478,7 +519,7 @@ class Systematic:
             
             # draw
             if doDataOverData:
-                h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullCircle)
+                h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullDotLarge)
                 h_ratio_ZoverPhoton.Draw(data_style)
             else:
                 h_ratio_ZoverPhoton.Draw(draw_option)

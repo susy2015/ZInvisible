@@ -903,15 +903,15 @@ void Plotter::plot()
         //double leg_y1 = 0.88 - NlegEntries * 0.045;
         //double leg_y2 = 0.88;
         // modified (good for lepton CR plots)
-        //double leg_x1 = 0.50 + leg_x_offset;
-        //double leg_x2 = 0.89 + leg_x_offset;
-        //double leg_y1 = 0.89 - NlegEntries * 0.06;
-        //double leg_y2 = 0.89;
-        // modified (good for photon CR plots)
-        double leg_x1 = 0.50;
-        double leg_x2 = 0.89;
-        double leg_y1 = 0.89 - NlegEntries * 0.045;
+        double leg_x1 = 0.50 + leg_x_offset;
+        double leg_x2 = 0.89 + leg_x_offset;
+        double leg_y1 = 0.89 - NlegEntries * 0.06;
         double leg_y2 = 0.89;
+        // modified (good for photon CR plots)
+        //double leg_x1 = 0.50;
+        //double leg_x2 = 0.89;
+        //double leg_y1 = 0.89 - NlegEntries * 0.045;
+        //double leg_y2 = 0.89;
 
         TLegend *leg = new TLegend(leg_x1, leg_y1, leg_x2, leg_y2);
         leg->SetFillStyle(0);
@@ -1291,27 +1291,38 @@ void Plotter::plot()
         TLatex mark;
         mark.SetNDC(true);
 
-        //Draw CMS mark
+        //Drawing text
         double x_offset = 0.0;
-        mark.SetTextAlign(11);
-        mark.SetTextSize(0.042 * fontScale * 1.25);
-        //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * 1.25 * fontScale);
-        mark.SetTextFont(61);
-        //mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
-        mark.DrawLatex(gPad->GetLeftMargin() + x_offset, 1 - (gPad->GetTopMargin() - 0.017), "CMS");
-        mark.SetTextSize(0.042 * fontScale);
-        //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
-        mark.SetTextFont(52);
-        //mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
-        mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
+        double y_position_1 = 1 - (gPad->GetTopMargin() - 0.017);
+        double y_position_2 = 1 - (gPad->GetTopMargin() + 0.075);
         
-        //mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
-        //mark.DrawLatex(gPad->GetLeftMargin() + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
+        //Draw CMS mark
+        mark.SetTextAlign(11); // Left adjusted (left aligned)
+        mark.SetTextFont(62);
+        //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * 1.25 * fontScale);
+        mark.SetTextSize(0.042 * fontScale * 1.25);
+        //mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
+        mark.DrawLatex(gPad->GetLeftMargin() + x_offset, y_position_1, "CMS");
+        
+        //Draw type (e.g. Preliminary, Supplementary, etc.)
+        mark.SetTextAlign(11); // Left adjusted (left aligned)
+        mark.SetTextFont(52);
+        //mark.SetTextSize(0.04 * 1.1 * 8 / 6.5 * fontScale);
+        mark.SetTextSize(0.042 * fontScale);
+        //mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.095, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+        mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.095, y_position_1, "Supplementary");
 
         //Draw lumistamp
+        mark.SetTextAlign(31); // Right adjusted (right aligned)
         mark.SetTextFont(42);
-        mark.SetTextAlign(31);
-        mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
+        mark.SetTextSize(0.042 * fontScale);
+        mark.DrawLatex(1 - gPad->GetRightMargin(), y_position_1, lumistamp);
+
+        //Draw arXiv number: arXiv:2103.01290 
+        mark.SetTextAlign(11); // Left adjusted (left aligned)
+        mark.SetTextFont(42);
+        mark.SetTextSize(0.042 * fontScale);
+        mark.DrawLatex(gPad->GetLeftMargin() + x_offset + 0.030, y_position_2, "arXiv:2103.01290");
 
         //Write comment on normalization
         //if(hist.isNorm)

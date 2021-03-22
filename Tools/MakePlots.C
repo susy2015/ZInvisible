@@ -530,6 +530,8 @@ int main(int argc, char* argv[])
     std::string label_metphi = "#phi_{MET}";
     std::string label_metphiWithLL = "#phi_{MET}^{ll}";
     std::string label_metphiWithPhoton = "#phi_{MET}^{#gamma}";
+    //std::string label_bestRecoZM  = "m_{#ell#ell} [GeV]";   // does not work
+    //std::string label_bestRecoZM  = "m_{\\ell\\ell} [GeV]"; // works only for png, but not pdf 
     std::string label_bestRecoZM  = "m_{ll} [GeV]";
     std::string label_bestRecoZPt = "p_{T}(ll) [GeV]";
     std::string label_ht  = "H_{T} [GeV]";

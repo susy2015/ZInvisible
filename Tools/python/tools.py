@@ -254,7 +254,7 @@ def getNormalizedRatio(h_num, h_den):
     return h_ratio_normalized
 
 # setup histogram
-def setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, lineWidth=5):
+def setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, lineWidth=5, turnOffStats=True):
     x_axis = hist.GetXaxis()
     y_axis = hist.GetYaxis()
     y_axis.SetRangeUser(y_min, y_max)
@@ -269,9 +269,10 @@ def setupHist(hist, title, x_title, y_title, color, y_min, y_max, adjust=False, 
         y_axis.SetTitleOffset(1.0)
     x_axis.SetTitle(x_title)
     y_axis.SetTitle(y_title)
-    hist.SetStats(ROOT.kFALSE)
     hist.SetLineColor(getColorIndex(color))
     hist.SetLineWidth(lineWidth)
+    if turnOffStats:
+        hist.SetStats(ROOT.kFALSE)
 
 def getAdditionError(dx, dy):
     # q  = x + y
@@ -295,7 +296,7 @@ def getConstantMultiplicationError(a, dx):
 def getMultiplicationError(q, x, dx, y, dy):
     # q = x * y 
     # q = x / y 
-    # dq = q * sqrt( (dx/x)^2 + (dy/y)^2) )
+    # dq = q * sqrt( (dx/x)^2 + (dy/y)^2 )
     if x == 0.0 or y == 0.0:
         print "ERROR in getMultiplicationError(): Cannot divide by zero."
         return ERROR_CODE
@@ -304,7 +305,7 @@ def getMultiplicationError(q, x, dx, y, dy):
 def getMultiplicationErrorList(q, x_list, dx_list):
     # q = x * y * ... 
     # q = x / y / ...
-    # dq = q * sqrt( (dx/x)^2 + (dy/y)^2) + ... )
+    # dq = q * sqrt( (dx/x)^2 + (dy/y)^2 + ... )
     if len(x_list) != len(dx_list):
         print "ERROR in getMultiplicationErrorList(): x_list and dx_list do not have the same length."
         return ERROR_CODE
