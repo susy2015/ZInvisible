@@ -396,29 +396,66 @@ class Systematic:
                 if useForSyst:
                     self.h_map_syst[region] = copy.deepcopy(h_syst)
             
-            # manually create TGraphErrors
+            # manually (bin by bin) create TGraphErrors to show stat. unc. as error bands (rectangles)
             
-            nBins = h_ratio_den.GetNbinsX()
-            xVals = []
-            yVals = []
-            xErrors = []
-            yErrors = []
+            nBins      = h_ratio_den.GetNbinsX()
+            # simulation (Z/photon) values and errors (upper plot)
+            xValsSim   = []
+            yValsSim   = []
+            xErrorsSim = []
+            yErrorsSim = []
+            # relative stat. unc. for simulation (lower plot)
+            xValsRel   = []
+            yValsRel   = []
+            xErrorsRel = []
+            yErrorsRel = []
             for n in range(1, nBins + 1):
-                xVals.append(h_ratio_den.GetBinCenter(n))
-                yVals.append(h_ratio_den.GetBinContent(n))
-                xErrors.append(h_ratio_den.GetBinWidth(n) / 2)
-                yErrors.append(h_ratio_den.GetBinError(n))
-            # np.array() is required for TGraphErrors constructor
-            xVals = np.array(xVals)
-            yVals = np.array(yVals)
-            xErrors = np.array(xErrors)
-            yErrors = np.array(yErrors)
-            unc = ROOT.TGraphErrors(nBins, xVals, yVals, xErrors, yErrors)
-            unc.SetFillColor(getColorIndex("electric blue"))
-            unc.SetFillStyle(3013)
-            unc.SetLineStyle(0)
-            unc.SetLineWidth(0)
-            unc.SetMarkerSize(0)
+                # center at bin center
+                xVal = h_ratio_den.GetBinCenter(n)
+                yVal = h_ratio_den.GetBinContent(n)
+                xValsSim.append(xVal)
+                yValsSim.append(yVal)
+                xValsRel.append(xVal)
+                yValsRel.append(1.0) # WARNING: needs to be a float (1.0), not int (1) to work
+                # use 1/2 of bin width for x_error to draw rectangle errors
+                xError = h_ratio_den.GetBinWidth(n) / 2.0
+                yError = h_ratio_den.GetBinError(n)
+                # relative uncertainties for ratio plot
+                relUnc = 0.0 
+                if yVal != 0.0:
+                    relUnc = yError / yVal
+                xErrorsSim.append(xError)
+                yErrorsSim.append(yError)
+                xErrorsRel.append(xError)
+                yErrorsRel.append(relUnc)
+            # WARNING: np.array() of floats is required for TGraphErrors constructor
+            # - needs to be an array of floats
+            # - can't be a list of floats
+            # - can't be an array of ints
+            xValsSim        = np.array(xValsSim)
+            yValsSim        = np.array(yValsSim)
+            xErrorsSim      = np.array(xErrorsSim)
+            yErrorsSim      = np.array(yErrorsSim)
+            xValsRel        = np.array(xValsRel)
+            yValsRel        = np.array(yValsRel)
+            xErrorsRel      = np.array(xErrorsRel)
+            yErrorsRel      = np.array(yErrorsRel)
+            
+            # simulation (Z/photon) values and errors (upper plot)
+            sim_stat_unc = ROOT.TGraphErrors(nBins, xValsSim, yValsSim, xErrorsSim, yErrorsSim)
+            sim_stat_unc.SetFillColor(getColorIndex("electric blue"))
+            sim_stat_unc.SetFillStyle(3013)
+            sim_stat_unc.SetLineStyle(0)
+            sim_stat_unc.SetLineWidth(0)
+            sim_stat_unc.SetMarkerSize(0)
+            
+            # relative stat. unc. for simulation (lower plot)
+            sim_rel_stat_unc = ROOT.TGraphErrors(nBins, xValsRel, yValsRel, xErrorsRel, yErrorsRel)
+            sim_rel_stat_unc.SetFillColor(getColorIndex("electric blue"))
+            sim_rel_stat_unc.SetFillStyle(3013)
+            sim_rel_stat_unc.SetLineStyle(0)
+            sim_rel_stat_unc.SetLineWidth(0)
+            sim_rel_stat_unc.SetMarkerSize(0)
             
             # pad for histograms
             pad = c.cd(1)
@@ -438,15 +475,21 @@ class Systematic:
             for n in range(1, h_ratio_den.GetNbinsX() + 1):
                 print "h_ratio_den_{0}_{1}_{2}: bin: {3}, content: {4}, error: {5}".format(era, var, region, n, h_ratio_den.GetBinContent(n), h_ratio_den.GetBinError(n))
             
-            points_x = unc.GetX()
-            points_y = unc.GetY()
-            print "TGraph_{0}: unc.GetN(): {1}".format(era, unc.GetN())
-            for n in range(1, unc.GetN() + 1):
-                print "TGraph_{0}_{1}_{2}: bin: {3}, x: {4}, y: {5}, x_error: {6}, y_error: {7}".format(era, var, region, n, points_x[n-1], points_y[n-1], unc.GetErrorX(n), unc.GetErrorY(n))
+            points_x = sim_stat_unc.GetX()
+            points_y = sim_stat_unc.GetY()
+            print "TGraphErrors_{0}: sim_stat_unc.GetN(): {1}".format(era, sim_stat_unc.GetN())
+            for n in range(1, sim_stat_unc.GetN() + 1):
+                print "TGraphErrors_{0}_{1}_{2}_upper_plot: bin: {3}, x: {4}, y: {5}, x_error: {6}, y_error: {7}".format(era, var, region, n, points_x[n-1], points_y[n-1], sim_stat_unc.GetErrorX(n), sim_stat_unc.GetErrorY(n))
+            
+            points_x = sim_rel_stat_unc.GetX()
+            points_y = sim_rel_stat_unc.GetY()
+            print "TGraphErrors_{0}: sim_rel_stat_unc.GetN(): {1}".format(era, sim_rel_stat_unc.GetN())
+            for n in range(1, sim_rel_stat_unc.GetN() + 1):
+                print "TGraphErrors_{0}_{1}_{2}_lower_plot: bin: {3}, x: {4}, y: {5}, x_error: {6}, y_error: {7}".format(era, var, region, n, points_x[n-1], points_y[n-1], sim_rel_stat_unc.GetErrorX(n), sim_rel_stat_unc.GetErrorY(n))
             
             # --- draw --- 
             h_ratio_den.Draw(draw_option)
-            unc.Draw("E2 same")
+            sim_stat_unc.Draw("E2 same") # E2: error rectangles
             if doDataOverData:
                 h_ratio_num.SetMarkerStyle(ROOT.kFullDotLarge)
                 h_ratio_num.Draw(data_style + " same")
@@ -466,7 +509,7 @@ class Systematic:
             legend1.SetTextFont(42)
             legend1.AddEntry(h_ratio_num, num_label, num_legend_style)
             legend1.AddEntry(h_ratio_den, den_label, "l")
-            legend1.AddEntry(unc, "Stat. unc.", "F")
+            legend1.AddEntry(sim_stat_unc, "Stat. unc.", "F")
             legend1.Draw()
             
             # parameters for CMS mark and lumi stamp
@@ -517,12 +560,21 @@ class Systematic:
             pad.SetTopMargin(0.01)
             pad.SetBottomMargin(0.4)
             
-            # draw
+            # --- draw --- 
+
+            # FIXME: use only data stat. unc. for data/sim histo; stat. unc. are shown by sim_rel_stat_unc
+            # FIXME: draw sim_rel_stat_unc first, not last; requires setting it up with axis labels, etc. (or using dummy histo)
+            
+            #sim_rel_stat_unc.Draw("E2") # E2: error rectangles
             if doDataOverData:
                 h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullDotLarge)
+                #h_ratio_ZoverPhoton.Draw(data_style + " same")
                 h_ratio_ZoverPhoton.Draw(data_style)
             else:
+                #h_ratio_ZoverPhoton.Draw(draw_option + " same")
                 h_ratio_ZoverPhoton.Draw(draw_option)
+            sim_rel_stat_unc.Draw("E2 same") # E2: error rectangles
+            
             if doFit:
                 fit.Draw("same")
                 # write chisq_r
