@@ -398,11 +398,11 @@ class Systematic:
                     self.h_map_syst[region] = copy.deepcopy(h_syst)
             
             # Uncertainties
-            #unc = ROOT.TGraphAsymmErrors(h_ratio_den)
-            unc = ROOT.TGraphErrors(h_ratio_den)
+            unc = ROOT.TGraphAsymmErrors(h_ratio_den)
+            #unc = ROOT.TGraphErrors(h_ratio_den)
             #unc = ROOT.TGraph(h_ratio_den)
             
-            setupHist(unc, title, x_title, ratio_title, "electric blue", ratio_y_min, ratio_y_max, True, 3, False)
+            #setupHist(unc, title, x_title, ratio_title, "electric blue", ratio_y_min, ratio_y_max, True, 3, False)
             
             # manually create TGraph
             #nBins = h_ratio_den.GetNbinsX()
@@ -418,9 +418,9 @@ class Systematic:
             unc.SetFillColor(getColorIndex("electric blue"))
             unc.SetFillStyle(3013)
             
-            #unc.SetLineStyle(0)
-            #unc.SetLineWidth(0)
-            #unc.SetMarkerSize(0)
+            unc.SetLineStyle(0)
+            unc.SetLineWidth(0)
+            unc.SetMarkerSize(0)
             
             #unc.SetLineColor(ROOT.kRed)
             #unc.SetLineWidth(3)
@@ -443,8 +443,8 @@ class Systematic:
 
             # --- testing ---
 
-            for n in range(1, h_ratio_den.GetNbinsX() + 1):
-                print "h_ratio_den_{0}_{1}_{2}: bin: {3}, content: {4}, error: {5}".format(era, var, region, n, h_ratio_den.GetBinContent(n), h_ratio_den.GetBinError(n))
+            #for n in range(1, h_ratio_den.GetNbinsX() + 1):
+            #    print "h_ratio_den_{0}_{1}_{2}: bin: {3}, content: {4}, error: {5}".format(era, var, region, n, h_ratio_den.GetBinContent(n), h_ratio_den.GetBinError(n))
             
             #print "TGraphAsymmErrors_{0}: unc.GetN(): {1}".format(era, unc.GetN())
             #for n in range(1, unc.GetN() + 1):
