@@ -563,17 +563,24 @@ class Systematic:
             # --- draw --- 
 
             # FIXME: use only data stat. unc. for data/sim histo; stat. unc. are shown by sim_rel_stat_unc
-            # FIXME: draw sim_rel_stat_unc first, not last; requires setting it up with axis labels, etc. (or using dummy histo)
             
-            #sim_rel_stat_unc.Draw("E2") # E2: error rectangles
+            # First draw to setup axis, labels, etc.
+
             if doDataOverData:
                 h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullDotLarge)
-                #h_ratio_ZoverPhoton.Draw(data_style + " same")
                 h_ratio_ZoverPhoton.Draw(data_style)
             else:
-                #h_ratio_ZoverPhoton.Draw(draw_option + " same")
                 h_ratio_ZoverPhoton.Draw(draw_option)
+            
             sim_rel_stat_unc.Draw("E2 same") # E2: error rectangles
+
+            # Repeat first draw to get data points on top (over stat unc)
+            
+            if doDataOverData:
+                h_ratio_ZoverPhoton.SetMarkerStyle(ROOT.kFullDotLarge)
+                h_ratio_ZoverPhoton.Draw(data_style + " same")
+            else:
+                h_ratio_ZoverPhoton.Draw(draw_option + " same")
             
             if doFit:
                 fit.Draw("same")
