@@ -405,29 +405,36 @@ class Systematic:
             xErrorsSim = []
             yErrorsSim = []
             # relative stat. unc. for simulation (lower plot)
-            xValsRel   = []
-            yValsRel   = []
-            xErrorsRel = []
-            yErrorsRel = []
+            xValsSimRel   = []
+            yValsSimRel   = []
+            xErrorsSimRel = []
+            yErrorsSimRel = []
             for n in range(1, nBins + 1):
                 # center at bin center
-                xVal = h_ratio_den.GetBinCenter(n)
-                yVal = h_ratio_den.GetBinContent(n)
-                xValsSim.append(xVal)
-                yValsSim.append(yVal)
-                xValsRel.append(xVal)
-                yValsRel.append(1.0) # WARNING: needs to be a float (1.0), not int (1) to work
+                x_val_sim = h_ratio_den.GetBinCenter(n)
+                y_val_sim = h_ratio_den.GetBinContent(n)
+                xValsSim.append(x_val_sim)
+                yValsSim.append(y_val_sim)
+                xValsSimRel.append(x_val_sim)
+                yValsSimRel.append(1.0) # WARNING: needs to be a float (1.0), not int (1) to work
                 # use 1/2 of bin width for x_error to draw rectangle errors
-                xError = h_ratio_den.GetBinWidth(n) / 2.0
-                yError = h_ratio_den.GetBinError(n)
+                x_error_sim  = h_ratio_den.GetBinWidth(n) / 2.0
+                y_error_sim  = h_ratio_den.GetBinError(n)
+                y_error_data = h_ratio_num.GetBinError(n)
                 # relative uncertainties for ratio plot
-                relUnc = 0.0 
-                if yVal != 0.0:
-                    relUnc = yError / yVal
-                xErrorsSim.append(xError)
-                yErrorsSim.append(yError)
-                xErrorsRel.append(xError)
-                yErrorsRel.append(relUnc)
+                simRelUnc  = 0.0 
+                dataRelUnc = 0.0 
+                if y_val_sim != 0.0:
+                    simRelUnc  = y_error_sim  / y_val_sim
+                    dataRelUnc = y_error_data / y_val_sim
+                # stat. unc. for simulation 
+                xErrorsSim.append(x_error_sim)
+                yErrorsSim.append(y_error_sim)
+                xErrorsSimRel.append(x_error_sim)
+                yErrorsSimRel.append(simRelUnc)
+                # relative stat. unc. for data (lower plot)
+                h_ratio_ZoverPhoton.SetBinError(n, dataRelUnc)
+            
             # WARNING: np.array() of floats is required for TGraphErrors constructor
             # - needs to be an array of floats
             # - can't be a list of floats
@@ -436,10 +443,10 @@ class Systematic:
             yValsSim        = np.array(yValsSim)
             xErrorsSim      = np.array(xErrorsSim)
             yErrorsSim      = np.array(yErrorsSim)
-            xValsRel        = np.array(xValsRel)
-            yValsRel        = np.array(yValsRel)
-            xErrorsRel      = np.array(xErrorsRel)
-            yErrorsRel      = np.array(yErrorsRel)
+            xValsSimRel     = np.array(xValsSimRel)
+            yValsSimRel     = np.array(yValsSimRel)
+            xErrorsSimRel   = np.array(xErrorsSimRel)
+            yErrorsSimRel   = np.array(yErrorsSimRel)
             
             # simulation (Z/photon) values and errors (upper plot)
             sim_stat_unc = ROOT.TGraphErrors(nBins, xValsSim, yValsSim, xErrorsSim, yErrorsSim)
@@ -450,7 +457,7 @@ class Systematic:
             sim_stat_unc.SetMarkerSize(0)
             
             # relative stat. unc. for simulation (lower plot)
-            sim_rel_stat_unc = ROOT.TGraphErrors(nBins, xValsRel, yValsRel, xErrorsRel, yErrorsRel)
+            sim_rel_stat_unc = ROOT.TGraphErrors(nBins, xValsSimRel, yValsSimRel, xErrorsSimRel, yErrorsSimRel)
             sim_rel_stat_unc.SetFillColor(getColorIndex("electric blue"))
             sim_rel_stat_unc.SetFillStyle(3013)
             sim_rel_stat_unc.SetLineStyle(0)
