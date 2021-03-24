@@ -29,6 +29,7 @@ class Systematic:
         self.x_min = 250.0
         self.x_max = 1000.0
         self.h_map_syst = {}
+        self.region_labels = {"LowDM" : "Low #Deltam", "HighDM": "High #Deltam"}
         self.labels = {
                         "met"   : "Modified p_{T}^{miss} [GeV]", 
                         "ht"    : "H_{T} [GeV]",
@@ -522,20 +523,23 @@ class Systematic:
             legend1.AddEntry(sim_stat_unc, "Stat. unc.", "F")
             legend1.Draw()
             
-            # parameters for CMS mark and lumi stamp
+            # parameters for CMS mark, other text, and lumi stamp
             font_scale  = 0.05
             left        = self.x_min
             right       = self.x_max
-            x_offset    = 0.05
+            x_offset    = 0.06  # x offset from left edge
+            y_offset    = 0.90  # y offset from bottom edge
+            y_spacing   = 0.075 # vertical spacing between marks
             width       = right - left
             mark_x1     = left + x_offset * width
             mark_x2     = left + (x_offset + 0.15) * width
-            mark_y1      = 0.90 * y_max
-            mark_y2      = 0.83 * y_max
+            mark_y1     = (y_offset - 0 * y_spacing) * y_max
+            mark_y2     = (y_offset - 1 * y_spacing) * y_max
+            mark_y3     = (y_offset - 2 * y_spacing) * y_max
             lumi_x      = right 
             lumi_y      = 1.02 * y_max
             
-            # Draw CMS mark
+            # Draw CMS and other text
             cms_mark = ROOT.TLatex()
             cms_mark.SetTextAlign(11) # left aligned
             cms_mark.SetTextFont(62)
@@ -547,6 +551,9 @@ class Systematic:
             cms_mark.SetTextFont(42)
             cms_mark.SetTextSize(font_scale)
             cms_mark.DrawLatex(mark_x1, mark_y2, "arXiv:2103.01290")
+            cms_mark.SetTextFont(42)
+            cms_mark.SetTextSize(font_scale)
+            cms_mark.DrawLatex(mark_x1, mark_y3, self.region_labels[region])
 
             # Draw lumi stamp
             lumi = self.lumis[era]
