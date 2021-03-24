@@ -478,21 +478,24 @@ class Systematic:
             pad.SetBottomMargin(0.01)
 
             # --- testing ---
+            printTests = False
 
-            for n in range(1, h_ratio_den.GetNbinsX() + 1):
-                print "h_ratio_den_{0}_{1}_{2}: bin: {3}, content: {4}, error: {5}".format(era, var, region, n, h_ratio_den.GetBinContent(n), h_ratio_den.GetBinError(n))
-            
-            points_x = sim_stat_unc.GetX()
-            points_y = sim_stat_unc.GetY()
-            print "TGraphErrors_{0}: sim_stat_unc.GetN(): {1}".format(era, sim_stat_unc.GetN())
-            for n in range(1, sim_stat_unc.GetN() + 1):
-                print "TGraphErrors_{0}_{1}_{2}_upper_plot: bin: {3}, x: {4}, y: {5}, x_error: {6}, y_error: {7}".format(era, var, region, n, points_x[n-1], points_y[n-1], sim_stat_unc.GetErrorX(n), sim_stat_unc.GetErrorY(n))
-            
-            points_x = sim_rel_stat_unc.GetX()
-            points_y = sim_rel_stat_unc.GetY()
-            print "TGraphErrors_{0}: sim_rel_stat_unc.GetN(): {1}".format(era, sim_rel_stat_unc.GetN())
-            for n in range(1, sim_rel_stat_unc.GetN() + 1):
-                print "TGraphErrors_{0}_{1}_{2}_lower_plot: bin: {3}, x: {4}, y: {5}, x_error: {6}, y_error: {7}".format(era, var, region, n, points_x[n-1], points_y[n-1], sim_rel_stat_unc.GetErrorX(n), sim_rel_stat_unc.GetErrorY(n))
+            if printTests:
+
+                for n in range(1, h_ratio_den.GetNbinsX() + 1):
+                    print "h_ratio_den_{0}_{1}_{2}: bin: {3}, content: {4}, error: {5}".format(era, var, region, n, h_ratio_den.GetBinContent(n), h_ratio_den.GetBinError(n))
+                
+                points_x = sim_stat_unc.GetX()
+                points_y = sim_stat_unc.GetY()
+                print "TGraphErrors_{0}: sim_stat_unc.GetN(): {1}".format(era, sim_stat_unc.GetN())
+                for n in range(1, sim_stat_unc.GetN() + 1):
+                    print "TGraphErrors_{0}_{1}_{2}_upper_plot: bin: {3}, x: {4}, y: {5}, x_error: {6}, y_error: {7}".format(era, var, region, n, points_x[n-1], points_y[n-1], sim_stat_unc.GetErrorX(n), sim_stat_unc.GetErrorY(n))
+                
+                points_x = sim_rel_stat_unc.GetX()
+                points_y = sim_rel_stat_unc.GetY()
+                print "TGraphErrors_{0}: sim_rel_stat_unc.GetN(): {1}".format(era, sim_rel_stat_unc.GetN())
+                for n in range(1, sim_rel_stat_unc.GetN() + 1):
+                    print "TGraphErrors_{0}_{1}_{2}_lower_plot: bin: {3}, x: {4}, y: {5}, x_error: {6}, y_error: {7}".format(era, var, region, n, points_x[n-1], points_y[n-1], sim_rel_stat_unc.GetErrorX(n), sim_rel_stat_unc.GetErrorY(n))
             
             # --- draw --- 
             h_ratio_den.Draw(draw_option)
@@ -569,8 +572,6 @@ class Systematic:
             
             # --- draw --- 
 
-            # FIXME: use only data stat. unc. for data/sim histo; stat. unc. are shown by sim_rel_stat_unc
-            
             # First draw to setup axis, labels, etc.
 
             if doDataOverData:
