@@ -317,6 +317,12 @@ class Systematic:
         # WARNING: don't use "c" as this is already used in makeZvsPhoton()
         # you need to use a different name to avoid problems with the open "c" canvas
         c1 = ROOT.TCanvas("c1", "c1", 800, 800)
+        
+        pad = c1.cd(1)
+        pad.SetLeftMargin(0.2)
+        pad.SetRightMargin(0.1)
+        pad.SetTopMargin(0.1)
+        pad.SetBottomMargin(0.2)
 
         # ------------------- #
         # --- draw yields --- #
@@ -370,12 +376,15 @@ class Systematic:
             h_mc_statunc_map[histName]    = h_statunc 
             h_mc_relstatunc_map[histName] = h_relstatunc 
             
-            title   = "MC Yields in {0}: {1} {2} {3}".format(cr_name, self.labels[var], self.region_labels[region], era)
+            # formatting
+            title   = "MC Yields in {0} ({1})".format(cr_name, self.region_labels[region])
             x_title = self.labels[var]
             y_title = "Events"
             y_min = y_limits_map[region]["yield"][0]
             y_max = y_limits_map[region]["yield"][1]
             setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
+            
+            hist.GetYaxis().SetTitleOffset(1.5)
             hist.GetXaxis().SetNdivisions(5, 5, 0, True)
             hist.GetYaxis().SetNdivisions(5, 5, 0, True)
         
@@ -422,12 +431,15 @@ class Systematic:
         for histName in mc_list:
             hist = h_mc_statunc_map[histName]
             
-            title   = "MC Stat. Unc. in {0}: {1} {2} {3}".format(cr_name, self.labels[var], self.region_labels[region], era)
+            # formatting
+            title   = "MC Stat. Unc. in {0} ({1})".format(cr_name, self.region_labels[region])
             x_title = self.labels[var]
             y_title = "Stat. Unc."
             y_min = y_limits_map[region]["statunc"][0]
             y_max = y_limits_map[region]["statunc"][1]
             setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
+            
+            hist.GetYaxis().SetTitleOffset(1.5)
             hist.GetXaxis().SetNdivisions(5, 5, 0, True)
             hist.GetYaxis().SetNdivisions(5, 5, 0, True)
             
@@ -474,12 +486,15 @@ class Systematic:
         for histName in mc_list:
             hist = h_mc_relstatunc_map[histName]
             
-            title   = "MC Rel. Stat. Unc. in {0}: {1} {2} {3}".format(cr_name, self.labels[var], self.region_labels[region], era)
+            # formatting
+            title   = "MC Rel. Stat. Unc. in {0} ({1})".format(cr_name, self.region_labels[region])
             x_title = self.labels[var]
             y_title = "Rel. Stat. Unc."
             y_min = y_limits_map[region]["relstatunc"][0]
             y_max = y_limits_map[region]["relstatunc"][1]
             setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
+            
+            hist.GetYaxis().SetTitleOffset(1.5)
             hist.GetXaxis().SetNdivisions(5, 5, 0, True)
             hist.GetYaxis().SetNdivisions(5, 5, 0, True)
             
@@ -503,6 +518,9 @@ class Systematic:
         c1.Update()
         c1.SaveAs(plot_name + ".pdf")
         c1.SaveAs(plot_name + ".png")
+        
+        # delete
+        del c1
 
     # double ratio: Z (data/MC) over Photon (data/MC), or data (Z/Photon) over MC (Z/Photon)
     def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, x_min, x_max, n_bins=0, xbins=np.array([]), rebin=False, useForSyst=False, doDataOverData=False):
@@ -934,5 +952,8 @@ class Systematic:
         if doDataOverData:
             with open (output_name, "w") as j:
                 json.dump(val_map, j, sort_keys=True, indent=4, separators=(',', ' : '))
+
+        # delete
+        del c 
 
 
