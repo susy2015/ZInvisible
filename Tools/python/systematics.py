@@ -748,8 +748,10 @@ class Systematic:
                     h_mc_yield_map_Z[histName] = h_original.Rebin(self.n_bins, "h_"+histName, self.xbins)
                 else:
                     h_mc_yield_map_Z[histName] = h_original.Clone("h_"+histName)
-                # use map so that hist exists for legend
+                # use map so that hist exists for legend; legend will seg fault if hists are overwritten and don't exist
                 hist = h_mc_yield_map_Z[histName]
+                # set x axis limits before cloning; this will persist for clone hists
+                hist.GetXaxis().SetRangeUser(self.x_min, self.x_max)
                 # create stat unc hist
                 h_statunc    = hist.Clone("h_statunc")
                 h_relstatunc = hist.Clone("h_relstatunc")
@@ -796,9 +798,20 @@ class Systematic:
             c1.SaveAs(plot_name + ".pdf")
             c1.SaveAs(plot_name + ".png")
             
-            
             # --- draw --- #
             c1.SetLogy(0) # unset log y
+            
+            # legend: TLegend(x1,y1,x2,y2)
+            legend_x1 = 0.60
+            legend_x2 = 0.90
+            legend_y1 = 0.65
+            legend_y2 = 0.85
+            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend.SetFillStyle(0)
+            legend.SetBorderSize(0)
+            legend.SetLineWidth(1)
+            legend.SetNColumns(1)
+            legend.SetTextFont(42)
             
             # use list to define order
             i = 0
@@ -816,6 +829,8 @@ class Systematic:
                 setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
                 hist.GetXaxis().SetNdivisions(5, 5, 0, True)
                 hist.GetYaxis().SetNdivisions(5, 5, 0, True)
+                
+                legend.AddEntry(hist, histName, "l")
             
                 if i == 0:
                     hist.Draw("hist")
@@ -823,6 +838,8 @@ class Systematic:
                     hist.Draw("hist same")
 
                 i += 1
+            
+            legend.Draw()
             
             # save histograms
             if rebin:
@@ -837,6 +854,18 @@ class Systematic:
             # --- draw --- #
             c1.SetLogy(0) # unset log y
             
+            # legend: TLegend(x1,y1,x2,y2)
+            legend_x1 = 0.60
+            legend_x2 = 0.90
+            legend_y1 = 0.65
+            legend_y2 = 0.85
+            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend.SetFillStyle(0)
+            legend.SetBorderSize(0)
+            legend.SetLineWidth(1)
+            legend.SetNColumns(1)
+            legend.SetTextFont(42)
+            
             # use list to define order
             i = 0
             for histName in mc_list_Z:
@@ -850,6 +879,8 @@ class Systematic:
                 setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
                 hist.GetXaxis().SetNdivisions(5, 5, 0, True)
                 hist.GetYaxis().SetNdivisions(5, 5, 0, True)
+                
+                legend.AddEntry(hist, histName, "l")
             
                 if i == 0:
                     hist.Draw("hist")
@@ -857,6 +888,8 @@ class Systematic:
                     hist.Draw("hist same")
 
                 i += 1
+            
+            legend.Draw()
             
             # save histograms
             if rebin:
