@@ -314,9 +314,13 @@ class Systematic:
         return h_ratio
 
     def plotYieldsAndStatUnc(self, mc_list, h_mc_map, colors, var, region, era, fileTag, rebin):
+        # WARNING: don't use "c" as this is already used in makeZvsPhoton()
+        # you need to use a different name to avoid problems with the open "c" canvas
         c1 = ROOT.TCanvas("c1", "c1", 800, 800)
 
-        # --- draw --- #
+        # ------------------- #
+        # --- draw yields --- #
+        # ------------------- #
         c1.SetLogy(1) # set log y
         
         # legend: TLegend(x1,y1,x2,y2)
@@ -396,7 +400,9 @@ class Systematic:
         c1.SaveAs(plot_name + ".pdf")
         c1.SaveAs(plot_name + ".png")
         
-        # --- draw --- #
+        # --------------------- #
+        # --- draw stat unc --- #
+        # --------------------- #
         c1.SetLogy(0) # unset log y
         
         # legend: TLegend(x1,y1,x2,y2)
@@ -449,7 +455,9 @@ class Systematic:
         c1.SaveAs(plot_name + ".pdf")
         c1.SaveAs(plot_name + ".png")
         
-        # --- draw --- #
+        # ------------------------- #
+        # --- draw rel stat unc --- #
+        # ------------------------- #
         c1.SetLogy(0) # unset log y
         
         # legend: TLegend(x1,y1,x2,y2)
@@ -905,192 +913,6 @@ class Systematic:
             # plotYieldsAndStatUnc(self, mc_list, h_mc_map, colors, var, region, era, fileTag, rebin)
             self.plotYieldsAndStatUnc(mc_list_Z, h_mc_map_Z, colors, var, region, era, fileTag + "_Z", rebin)
             self.plotYieldsAndStatUnc(mc_list_photon, h_mc_map_photon, colors, var, region, era, fileTag + "_Photon", rebin)
-
-            
-            # c1 = ROOT.TCanvas("c1", "c1", 800, 800)
-
-            # # --- draw --- #
-            # c1.SetLogy(1) # set log y
-            # 
-            # # legend: TLegend(x1,y1,x2,y2)
-            # legend_x1 = 0.60
-            # legend_x2 = 0.90
-            # legend_y1 = 0.65
-            # legend_y2 = 0.85
-            # legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            # legend.SetFillStyle(0)
-            # legend.SetBorderSize(0)
-            # legend.SetLineWidth(1)
-            # legend.SetNColumns(1)
-            # legend.SetTextFont(42)
-            # 
-            # # histograms to show stat. unc.
-            # h_mc_yield_map_Z      = {}
-            # h_mc_statunc_map_Z    = {}
-            # h_mc_relstatunc_map_Z = {}
-
-            # # use list to define order
-            # i = 0
-            # for histName in mc_list_Z:
-            #     # load hist and create stat unc hist
-            #     h_original = h_mc_map_Z[histName]
-            #     # rebin 
-            #     if rebin: 
-            #         h_mc_yield_map_Z[histName] = h_original.Rebin(self.n_bins, "h_"+histName, self.xbins)
-            #     else:
-            #         h_mc_yield_map_Z[histName] = h_original.Clone("h_"+histName)
-            #     # use map so that hist exists for legend; legend will seg fault if hists are overwritten and don't exist
-            #     hist = h_mc_yield_map_Z[histName]
-            #     # set x axis limits before cloning; this will persist for clone hists
-            #     hist.GetXaxis().SetRangeUser(self.x_min, self.x_max)
-            #     # create stat unc hist
-            #     h_statunc    = hist.Clone("h_statunc")
-            #     h_relstatunc = hist.Clone("h_relstatunc")
-            #     for b in range(1, hist.GetNbinsX() + 1):
-            #         # statunc
-            #         h_statunc.SetBinContent(b, hist.GetBinError(b))
-            #         h_statunc.SetBinError(b, 0.0)
-            #         # relstatunc
-            #         rel_stat_unc = 0.0
-            #         if hist.GetBinContent(b) != 0.0:
-            #             rel_stat_unc = hist.GetBinError(b) / hist.GetBinContent(b)
-            #         h_relstatunc.SetBinContent(b, rel_stat_unc)
-            #         h_relstatunc.SetBinError(b, 0.0)
-            #     h_mc_statunc_map_Z[histName]    = h_statunc 
-            #     h_mc_relstatunc_map_Z[histName] = h_relstatunc 
-            #     
-            #     title   = "MC Yields in Z CR: {0} {1} {2}".format(self.labels[var], self.region_labels[region], era)
-            #     x_title = self.labels[var]
-            #     y_title = "Events"
-            #     y_min = 0.01
-            #     y_max = 10.0 ** 6
-            #     setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
-            #     hist.GetXaxis().SetNdivisions(5, 5, 0, True)
-            #     hist.GetYaxis().SetNdivisions(5, 5, 0, True)
-            # 
-            #     legend.AddEntry(hist, histName, "l")
-            #     
-            #     if i == 0:
-            #         hist.Draw("hist")
-            #     else:
-            #         hist.Draw("hist same")
-
-            #     i += 1
-            # 
-            # legend.Draw()
-
-            # # save histograms
-            # if rebin:
-            #     plot_name = "{0}{1}_Yield_Z_{2}_{3}_rebinned_{4}".format(self.plot_dir, fileTag, var, region, era)
-            # else:
-            #     plot_name = "{0}{1}_Yield_Z_{2}_{3}_{4}".format(self.plot_dir, fileTag, var, region, era)
-            # 
-            # c1.Update()
-            # c1.SaveAs(plot_name + ".pdf")
-            # c1.SaveAs(plot_name + ".png")
-            # 
-            # # --- draw --- #
-            # c1.SetLogy(0) # unset log y
-            # 
-            # # legend: TLegend(x1,y1,x2,y2)
-            # legend_x1 = 0.60
-            # legend_x2 = 0.90
-            # legend_y1 = 0.65
-            # legend_y2 = 0.85
-            # legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            # legend.SetFillStyle(0)
-            # legend.SetBorderSize(0)
-            # legend.SetLineWidth(1)
-            # legend.SetNColumns(1)
-            # legend.SetTextFont(42)
-            # 
-            # # use list to define order
-            # i = 0
-            # for histName in mc_list_Z:
-            #     hist = h_mc_statunc_map_Z[histName]
-            #     
-            #     title   = "MC Stat. Unc. in Z CR: {0} {1} {2}".format(self.labels[var], self.region_labels[region], era)
-            #     x_title = self.labels[var]
-            #     y_title = "Stat. Unc."
-            #     y_min = 0.01
-            #     if region == "LowDM":
-            #         y_max = 100.0
-            #     else:
-            #         y_max = 10.0
-            #     setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
-            #     hist.GetXaxis().SetNdivisions(5, 5, 0, True)
-            #     hist.GetYaxis().SetNdivisions(5, 5, 0, True)
-            #     
-            #     legend.AddEntry(hist, histName, "l")
-            # 
-            #     if i == 0:
-            #         hist.Draw("hist")
-            #     else:
-            #         hist.Draw("hist same")
-
-            #     i += 1
-            # 
-            # legend.Draw()
-            # 
-            # # save histograms
-            # if rebin:
-            #     plot_name = "{0}{1}_StatUnc_Z_{2}_{3}_rebinned_{4}".format(self.plot_dir, fileTag, var, region, era)
-            # else:
-            #     plot_name = "{0}{1}_StatUnc_Z_{2}_{3}_{4}".format(self.plot_dir, fileTag, var, region, era)
-            # 
-            # c1.Update()
-            # c1.SaveAs(plot_name + ".pdf")
-            # c1.SaveAs(plot_name + ".png")
-            # 
-            # # --- draw --- #
-            # c1.SetLogy(0) # unset log y
-            # 
-            # # legend: TLegend(x1,y1,x2,y2)
-            # legend_x1 = 0.60
-            # legend_x2 = 0.90
-            # legend_y1 = 0.65
-            # legend_y2 = 0.85
-            # legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            # legend.SetFillStyle(0)
-            # legend.SetBorderSize(0)
-            # legend.SetLineWidth(1)
-            # legend.SetNColumns(1)
-            # legend.SetTextFont(42)
-            # 
-            # # use list to define order
-            # i = 0
-            # for histName in mc_list_Z:
-            #     hist = h_mc_relstatunc_map_Z[histName]
-            #     
-            #     title   = "MC Rel. Stat. Unc. in Z CR: {0} {1} {2}".format(self.labels[var], self.region_labels[region], era)
-            #     x_title = self.labels[var]
-            #     y_title = "Rel. Stat. Unc."
-            #     y_min = 0.01
-            #     y_max = 1.00
-            #     setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
-            #     hist.GetXaxis().SetNdivisions(5, 5, 0, True)
-            #     hist.GetYaxis().SetNdivisions(5, 5, 0, True)
-            #     
-            #     legend.AddEntry(hist, histName, "l")
-            # 
-            #     if i == 0:
-            #         hist.Draw("hist")
-            #     else:
-            #         hist.Draw("hist same")
-
-            #     i += 1
-            # 
-            # legend.Draw()
-            # 
-            # # save histograms
-            # if rebin:
-            #     plot_name = "{0}{1}_RelStatUnc_Z_{2}_{3}_rebinned_{4}".format(self.plot_dir, fileTag, var, region, era)
-            # else:
-            #     plot_name = "{0}{1}_RelStatUnc_Z_{2}_{3}_{4}".format(self.plot_dir, fileTag, var, region, era)
-            # 
-            # c1.Update()
-            # c1.SaveAs(plot_name + ".pdf")
-            # c1.SaveAs(plot_name + ".png")
 
 
         # write map to json file 
