@@ -127,6 +127,38 @@ class Systematic:
         
         return h_mc_Z
     
+    def getZMCHists(self, root_file, variable, h_map_norm):
+        h_DY_Electron       = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["DY"]      ) )
+        h_Diboson_Electron  = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Diboson"] ) )
+        h_Rare_Electron     = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Rare"]    ) )
+        h_TTbar_Electron    = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["TTbar"]   ) )
+        h_SingleT_Electron  = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["SingleT"] ) )
+        h_DY_Muon           = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["DY"]          ) )
+        h_Diboson_Muon      = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Diboson"]     ) )
+        h_Rare_Muon         = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Rare"]        ) )
+        h_TTbar_Muon        = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["TTbar"]       ) )
+        h_SingleT_Muon      = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["SingleT"]     ) )
+        
+        h_DY        = h_DY_Electron.Clone("h_DY") 
+        h_Diboson   = h_Diboson_Electron.Clone("h_Diboson") 
+        h_Rare      = h_Rare_Electron.Clone("h_Rare") 
+        h_TTbar     = h_TTbar_Electron.Clone("h_TTbar") 
+        h_SingleT   = h_SingleT_Electron.Clone("h_SingleT") 
+        h_DY.Add(h_DY_Muon)
+        h_Diboson.Add(h_Diboson_Muon)
+        h_Rare.Add(h_Rare_Muon)
+        h_TTbar.Add(h_TTbar_Muon)
+        h_SingleT.Add(h_SingleT_Muon)
+        
+        hist_map = {}
+        hist_map["DY"]          = h_DY
+        hist_map["Diboson"]     = h_Diboson
+        hist_map["Rare"]        = h_Rare
+        hist_map["TTbar"]       = h_TTbar
+        hist_map["SingleT"]     = h_SingleT
+        
+        return hist_map
+    
     def getDY(self, root_file, variable, h_map_norm):
         h_DY_Electron   = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["DY"]      ) )
         h_DY_Muon       = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["DY"]          ) )
@@ -166,6 +198,36 @@ class Systematic:
         h_mc_photon.Add(h_Rare)
 
         return h_mc_photon
+    
+    def getPhotonMCHists(self, root_file, variable, h_map_shape):
+        h_GJets             = root_file.Get( str(variable + "/" + h_map_shape["GJets"]           ) )
+        if self.S.splitQCD:
+            h_QCD_Direct        = root_file.Get( str(variable + "/" + h_map_shape["QCD_Direct"]         ) )
+            h_QCD_Fragmentation = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fragmentation"]  ) )
+            h_QCD_NonPrompt     = root_file.Get( str(variable + "/" + h_map_shape["QCD_NonPrompt"]      ) )
+            h_QCD_Fake          = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fake"]           ) )
+        else:
+            h_QCD               = root_file.Get( str(variable + "/" + h_map_shape["QCD"]  ) )
+        h_WJets             = root_file.Get( str(variable + "/" + h_map_shape["WJets"]    ) )
+        h_TTG               = root_file.Get( str(variable + "/" + h_map_shape["TTG"]      ) )
+        h_tW                = root_file.Get( str(variable + "/" + h_map_shape["tW"]       ) )
+        h_Rare              = root_file.Get( str(variable + "/" + h_map_shape["Rare"]     ) )
+        
+        hist_map = {}
+        hist_map["GJets"] = h_GJets
+        if self.S.splitQCD:
+            hist_map["QCD_Direct"]          = h_QCD_Direct
+            hist_map["QCD_Fragmentation"]   = h_QCD_Fragmentation
+            hist_map["QCD_NonPrompt"]       = h_QCD_NonPrompt
+            hist_map["QCD_Fake"]            = h_QCD_Fake
+        else:
+            hist_map["QCD"] = h_QCD
+        hist_map["WJets"] = h_WJets
+        hist_map["TTG"]   = h_TTG
+        hist_map["tW"]    = h_tW
+        hist_map["Rare"]  = h_Rare
+
+        return hist_map
     
     def getGJets(self, root_file, variable, h_map_shape):
         h_GJets = root_file.Get( str(variable + "/" + h_map_shape["GJets"]           ) )
@@ -635,8 +697,55 @@ class Systematic:
             c.SaveAs(plot_name + ".pdf")
             c.SaveAs(plot_name + ".png")
 
+            # --- study stat unc --- #
+            selectionTag    = "_" + selection
+            nameTag         = "_" + var
+            h_map_norm      = self.getZHistoMap(region, nameTag, selectionTag, varLepton)
+            h_map_shape     = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, varPhoton)
+            h_mc_map_Z      = self.getZMCHists(f, varLepton, h_map_norm)
+            h_mc_map_photon = self.getPhotonMCHists(f, varPhoton, h_map_shape)
+            
+            colors = ["cherry red", "orange", "apple green", "cerulean", "bright purple", "fuchsia", "marigold", "lightish blue", "purpley blue", "terracotta"]
+            
+            c1 = ROOT.TCanvas("c1", "c1", 800, 800)
+            c1.SetLogy(1) # set log y
+            
+            # draw
+            i = 0
+            for histName in h_mc_map_Z:
+                hist = h_mc_map_Z[histName]
+                if rebin: 
+                    h_new = hist.Rebin(self.n_bins, "h_new", self.xbins)
+                else:
+                    h_new = hist.Clone("h_new")
+                title   = "MC in Z CR: {0} {1} {2}".format(self.labels[var], self.region_labels[region], era)
+                x_title = self.labels[var]
+                y_title = "Events"
+                y_min = 0.01
+                y_max = 10.0 ** 5
+                setupHist(h_new,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
+                h_new.GetXaxis().SetNdivisions(5, 5, 0, True)
+                h_new.GetYaxis().SetNdivisions(5, 5, 0, True)
+                if i == 0:
+                    h_new.Draw("hist")
+                else:
+                    h_new.Draw("hist same")
+
+                i += 1
+
+            # save histograms
+            if rebin:
+                plot_name = "{0}{1}_StatUnc_Z_{2}_{3}_rebinned_{4}".format(self.plot_dir, fileTag, var, region, era)
+            else:
+                plot_name = "{0}{1}_StatUnc_Z_{2}_{3}_{4}".format(self.plot_dir, fileTag, var, region, era)
+            
+            c1.Update()
+            c1.SaveAs(plot_name + ".pdf")
+            c1.SaveAs(plot_name + ".png")
+
         # write map to json file 
         if doDataOverData:
             with open (output_name, "w") as j:
                 json.dump(val_map, j, sort_keys=True, indent=4, separators=(',', ' : '))
+
 
