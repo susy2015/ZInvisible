@@ -799,7 +799,10 @@ class Systematic:
                 x_title = self.labels[var]
                 y_title = "Stat. Unc."
                 y_min = 0.01
-                y_max = 100.0
+                if region == "LowDM":
+                    y_max = 100.0
+                else:
+                    y_max = 10.0
                 setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
                 hist.GetXaxis().SetNdivisions(5, 5, 0, True)
                 hist.GetYaxis().SetNdivisions(5, 5, 0, True)
