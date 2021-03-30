@@ -697,22 +697,44 @@ class Systematic:
             c.SaveAs(plot_name + ".pdf")
             c.SaveAs(plot_name + ".png")
 
+            # ---------------------- #
             # --- study stat unc --- #
+            # ---------------------- #
+            
             selectionTag    = "_" + selection
             nameTag         = "_" + var
             h_map_norm      = self.getZHistoMap(region, nameTag, selectionTag, varLepton)
             h_map_shape     = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, varPhoton)
             h_mc_map_Z      = self.getZMCHists(f, varLepton, h_map_norm)
             h_mc_map_photon = self.getPhotonMCHists(f, varPhoton, h_map_shape)
+            mc_list_Z       = ["DY", "Diboson", "Rare", "TTbar", "SingleT"]
+            if self.S.splitQCD:
+                mc_list_photon = ["GJets", "QCD_Direct", "QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
+            else:
+                mc_list_photon = ["GJets", "QCD", "WJets", "TTG", "tW", "Rare"]
             
             colors = ["cherry red", "orange", "apple green", "cerulean", "bright purple", "fuchsia", "marigold", "lightish blue", "purpley blue", "terracotta"]
             
             c1 = ROOT.TCanvas("c1", "c1", 800, 800)
             c1.SetLogy(1) # set log y
             
-            # draw
+            # --- draw --- #
+            
+            # legend: TLegend(x1,y1,x2,y2)
+            legend_x1 = 0.60
+            legend_x2 = 0.90
+            legend_y1 = 0.65
+            legend_y2 = 0.85
+            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend.SetFillStyle(0)
+            legend.SetBorderSize(0)
+            legend.SetLineWidth(1)
+            legend.SetNColumns(1)
+            legend.SetTextFont(42)
+
+            # use list to define order
             i = 0
-            for histName in h_mc_map_Z:
+            for histName in mc_list_Z:
                 hist = h_mc_map_Z[histName]
                 if rebin: 
                     h_new = hist.Rebin(self.n_bins, "h_new", self.xbins)
@@ -726,12 +748,18 @@ class Systematic:
                 setupHist(h_new,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
                 h_new.GetXaxis().SetNdivisions(5, 5, 0, True)
                 h_new.GetYaxis().SetNdivisions(5, 5, 0, True)
+            
+                # adding to legend causes seg fault at the moment
+                #legend.AddEntry(h_new, histName, "l")
+                
                 if i == 0:
                     h_new.Draw("hist")
                 else:
                     h_new.Draw("hist same")
 
                 i += 1
+            
+            legend.Draw()
 
             # save histograms
             if rebin:
@@ -742,6 +770,9 @@ class Systematic:
             c1.Update()
             c1.SaveAs(plot_name + ".pdf")
             c1.SaveAs(plot_name + ".png")
+
+            del c1
+            del legend
 
         # write map to json file 
         if doDataOverData:
