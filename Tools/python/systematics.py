@@ -718,23 +718,23 @@ class Systematic:
             c1 = ROOT.TCanvas("c1", "c1", 800, 800)
             
 
-            
             # --- draw --- #
             c1.SetLogy(1) # set log y
             
             # legend: TLegend(x1,y1,x2,y2)
-            #legend_x1 = 0.60
-            #legend_x2 = 0.90
-            #legend_y1 = 0.65
-            #legend_y2 = 0.85
-            #legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            #legend.SetFillStyle(0)
-            #legend.SetBorderSize(0)
-            #legend.SetLineWidth(1)
-            #legend.SetNColumns(1)
-            #legend.SetTextFont(42)
+            legend_x1 = 0.60
+            legend_x2 = 0.90
+            legend_y1 = 0.65
+            legend_y2 = 0.85
+            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            legend.SetFillStyle(0)
+            legend.SetBorderSize(0)
+            legend.SetLineWidth(1)
+            legend.SetNColumns(1)
+            legend.SetTextFont(42)
             
             # histograms to show stat. unc.
+            h_mc_yield_map_Z      = {}
             h_mc_statunc_map_Z    = {}
             h_mc_relstatunc_map_Z = {}
 
@@ -742,23 +742,25 @@ class Systematic:
             i = 0
             for histName in mc_list_Z:
                 # load hist and create stat unc hist
-                hist      = h_mc_map_Z[histName]
+                h_original = h_mc_map_Z[histName]
                 # rebin 
                 if rebin: 
-                    h_new = hist.Rebin(self.n_bins, "h_new", self.xbins)
+                    h_mc_yield_map_Z[histName] = h_original.Rebin(self.n_bins, "h_"+histName, self.xbins)
                 else:
-                    h_new = hist.Clone("h_new")
+                    h_mc_yield_map_Z[histName] = h_original.Clone("h_"+histName)
+                # use map so that hist exists for legend
+                hist = h_mc_yield_map_Z[histName]
                 # create stat unc hist
-                h_statunc    = h_new.Clone("h_statunc")
-                h_relstatunc = h_new.Clone("h_relstatunc")
-                for b in range(1, h_new.GetNbinsX() + 1):
+                h_statunc    = hist.Clone("h_statunc")
+                h_relstatunc = hist.Clone("h_relstatunc")
+                for b in range(1, hist.GetNbinsX() + 1):
                     # statunc
-                    h_statunc.SetBinContent(b, h_new.GetBinError(b))
+                    h_statunc.SetBinContent(b, hist.GetBinError(b))
                     h_statunc.SetBinError(b, 0.0)
                     # relstatunc
                     rel_stat_unc = 0.0
-                    if h_new.GetBinContent(b) != 0.0:
-                        rel_stat_unc = h_new.GetBinError(b) / h_new.GetBinContent(b)
+                    if hist.GetBinContent(b) != 0.0:
+                        rel_stat_unc = hist.GetBinError(b) / hist.GetBinContent(b)
                     h_relstatunc.SetBinContent(b, rel_stat_unc)
                     h_relstatunc.SetBinError(b, 0.0)
                 h_mc_statunc_map_Z[histName]    = h_statunc 
@@ -768,23 +770,21 @@ class Systematic:
                 x_title = self.labels[var]
                 y_title = "Events"
                 y_min = 0.01
-                y_max = 10.0 ** 5
-                setupHist(h_new,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
-                h_new.GetXaxis().SetNdivisions(5, 5, 0, True)
-                h_new.GetYaxis().SetNdivisions(5, 5, 0, True)
+                y_max = 10.0 ** 6
+                setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
+                hist.GetXaxis().SetNdivisions(5, 5, 0, True)
+                hist.GetYaxis().SetNdivisions(5, 5, 0, True)
             
-                # adding hists to legend causes seg fault at the moment
-                #legend.AddEntry(h_new, histName, "l")
+                legend.AddEntry(hist, histName, "l")
                 
                 if i == 0:
-                    h_new.Draw("hist")
+                    hist.Draw("hist")
                 else:
-                    h_new.Draw("hist same")
+                    hist.Draw("hist same")
 
                 i += 1
             
-            # adding hists to legend causes seg fault at the moment
-            #legend.Draw()
+            legend.Draw()
 
             # save histograms
             if rebin:
