@@ -735,7 +735,8 @@ class Systematic:
             #legend.SetTextFont(42)
             
             # histograms to show stat. unc.
-            h_mc_statunc_map_Z = {}
+            h_mc_statunc_map_Z    = {}
+            h_mc_relstatunc_map_Z = {}
 
             # use list to define order
             i = 0
@@ -748,11 +749,20 @@ class Systematic:
                 else:
                     h_new = hist.Clone("h_new")
                 # create stat unc hist
-                h_statunc = h_new.Clone("h_statunc")
+                h_statunc    = h_new.Clone("h_statunc")
+                h_relstatunc = h_new.Clone("h_relstatunc")
                 for b in range(1, h_new.GetNbinsX() + 1):
+                    # statunc
                     h_statunc.SetBinContent(b, h_new.GetBinError(b))
                     h_statunc.SetBinError(b, 0.0)
-                h_mc_statunc_map_Z[histName] = h_statunc 
+                    # relstatunc
+                    rel_stat_unc = 0.0
+                    if h_new.GetBinContent(b) != 0.0:
+                        rel_stat_unc = h_new.GetBinError(b) / h_new.GetBinContent(b)
+                    h_relstatunc.SetBinContent(b, rel_stat_unc)
+                    h_relstatunc.SetBinError(b, 0.0)
+                h_mc_statunc_map_Z[histName]    = h_statunc 
+                h_mc_relstatunc_map_Z[histName] = h_relstatunc 
                 
                 title   = "MC Yields in Z CR: {0} {1} {2}".format(self.labels[var], self.region_labels[region], era)
                 x_title = self.labels[var]
@@ -819,6 +829,40 @@ class Systematic:
                 plot_name = "{0}{1}_StatUnc_Z_{2}_{3}_rebinned_{4}".format(self.plot_dir, fileTag, var, region, era)
             else:
                 plot_name = "{0}{1}_StatUnc_Z_{2}_{3}_{4}".format(self.plot_dir, fileTag, var, region, era)
+            
+            c1.Update()
+            c1.SaveAs(plot_name + ".pdf")
+            c1.SaveAs(plot_name + ".png")
+            
+            # --- draw --- #
+            c1.SetLogy(0) # unset log y
+            
+            # use list to define order
+            i = 0
+            for histName in mc_list_Z:
+                hist = h_mc_relstatunc_map_Z[histName]
+                
+                title   = "MC Rel. Stat. Unc. in Z CR: {0} {1} {2}".format(self.labels[var], self.region_labels[region], era)
+                x_title = self.labels[var]
+                y_title = "Rel. Stat. Unc."
+                y_min = 0.01
+                y_max = 1.00
+                setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
+                hist.GetXaxis().SetNdivisions(5, 5, 0, True)
+                hist.GetYaxis().SetNdivisions(5, 5, 0, True)
+            
+                if i == 0:
+                    hist.Draw("hist")
+                else:
+                    hist.Draw("hist same")
+
+                i += 1
+            
+            # save histograms
+            if rebin:
+                plot_name = "{0}{1}_RelStatUnc_Z_{2}_{3}_rebinned_{4}".format(self.plot_dir, fileTag, var, region, era)
+            else:
+                plot_name = "{0}{1}_RelStatUnc_Z_{2}_{3}_{4}".format(self.plot_dir, fileTag, var, region, era)
             
             c1.Update()
             c1.SaveAs(plot_name + ".pdf")
