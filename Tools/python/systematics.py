@@ -716,31 +716,45 @@ class Systematic:
             colors = ["cherry red", "orange", "apple green", "cerulean", "bright purple", "fuchsia", "marigold", "lightish blue", "purpley blue", "terracotta"]
             
             c1 = ROOT.TCanvas("c1", "c1", 800, 800)
-            c1.SetLogy(1) # set log y
+            
+
             
             # --- draw --- #
+            c1.SetLogy(1) # set log y
             
             # legend: TLegend(x1,y1,x2,y2)
-            legend_x1 = 0.60
-            legend_x2 = 0.90
-            legend_y1 = 0.65
-            legend_y2 = 0.85
-            legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
-            legend.SetFillStyle(0)
-            legend.SetBorderSize(0)
-            legend.SetLineWidth(1)
-            legend.SetNColumns(1)
-            legend.SetTextFont(42)
+            #legend_x1 = 0.60
+            #legend_x2 = 0.90
+            #legend_y1 = 0.65
+            #legend_y2 = 0.85
+            #legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+            #legend.SetFillStyle(0)
+            #legend.SetBorderSize(0)
+            #legend.SetLineWidth(1)
+            #legend.SetNColumns(1)
+            #legend.SetTextFont(42)
+            
+            # histograms to show stat. unc.
+            h_mc_statunc_map_Z = {}
 
             # use list to define order
             i = 0
             for histName in mc_list_Z:
-                hist = h_mc_map_Z[histName]
+                # load hist and create stat unc hist
+                hist      = h_mc_map_Z[histName]
+                # rebin 
                 if rebin: 
                     h_new = hist.Rebin(self.n_bins, "h_new", self.xbins)
                 else:
                     h_new = hist.Clone("h_new")
-                title   = "MC in Z CR: {0} {1} {2}".format(self.labels[var], self.region_labels[region], era)
+                # create stat unc hist
+                h_statunc = h_new.Clone("h_statunc")
+                for b in range(1, h_new.GetNbinsX() + 1):
+                    h_statunc.SetBinContent(b, h_new.GetBinError(b))
+                    h_statunc.SetBinError(b, 0.0)
+                h_mc_statunc_map_Z[histName] = h_statunc 
+                
+                title   = "MC Yields in Z CR: {0} {1} {2}".format(self.labels[var], self.region_labels[region], era)
                 x_title = self.labels[var]
                 y_title = "Events"
                 y_min = 0.01
@@ -749,7 +763,7 @@ class Systematic:
                 h_new.GetXaxis().SetNdivisions(5, 5, 0, True)
                 h_new.GetYaxis().SetNdivisions(5, 5, 0, True)
             
-                # adding to legend causes seg fault at the moment
+                # adding hists to legend causes seg fault at the moment
                 #legend.AddEntry(h_new, histName, "l")
                 
                 if i == 0:
@@ -759,8 +773,44 @@ class Systematic:
 
                 i += 1
             
-            legend.Draw()
+            # adding hists to legend causes seg fault at the moment
+            #legend.Draw()
 
+            # save histograms
+            if rebin:
+                plot_name = "{0}{1}_Yield_Z_{2}_{3}_rebinned_{4}".format(self.plot_dir, fileTag, var, region, era)
+            else:
+                plot_name = "{0}{1}_Yield_Z_{2}_{3}_{4}".format(self.plot_dir, fileTag, var, region, era)
+            
+            c1.Update()
+            c1.SaveAs(plot_name + ".pdf")
+            c1.SaveAs(plot_name + ".png")
+            
+            
+            # --- draw --- #
+            c1.SetLogy(0) # unset log y
+            
+            # use list to define order
+            i = 0
+            for histName in mc_list_Z:
+                hist = h_mc_statunc_map_Z[histName]
+                
+                title   = "MC Stat. Unc. in Z CR: {0} {1} {2}".format(self.labels[var], self.region_labels[region], era)
+                x_title = self.labels[var]
+                y_title = "Stat. Unc."
+                y_min = 0.01
+                y_max = 100.0
+                setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
+                hist.GetXaxis().SetNdivisions(5, 5, 0, True)
+                hist.GetYaxis().SetNdivisions(5, 5, 0, True)
+            
+                if i == 0:
+                    hist.Draw("hist")
+                else:
+                    hist.Draw("hist same")
+
+                i += 1
+            
             # save histograms
             if rebin:
                 plot_name = "{0}{1}_StatUnc_Z_{2}_{3}_rebinned_{4}".format(self.plot_dir, fileTag, var, region, era)
@@ -771,8 +821,6 @@ class Systematic:
             c1.SaveAs(plot_name + ".pdf")
             c1.SaveAs(plot_name + ".png")
 
-            del c1
-            del legend
 
         # write map to json file 
         if doDataOverData:
