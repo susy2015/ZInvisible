@@ -313,7 +313,7 @@ class Systematic:
         h_ratio = self.getHistRatio(h_data, h_mc, rebin)
         return h_ratio
 
-    def plotYieldsAndStatUnc(self, mc_list, h_mc_map, colors, var, region, era, fileTag, rebin):
+    def plotYieldsAndStatUnc(self, mc_list, h_mc_map, y_limits_map, colors, cr_name, var, region, era, fileTag, rebin):
         # WARNING: don't use "c" as this is already used in makeZvsPhoton()
         # you need to use a different name to avoid problems with the open "c" canvas
         c1 = ROOT.TCanvas("c1", "c1", 800, 800)
@@ -370,11 +370,11 @@ class Systematic:
             h_mc_statunc_map[histName]    = h_statunc 
             h_mc_relstatunc_map[histName] = h_relstatunc 
             
-            title   = "MC Yields in Z CR: {0} {1} {2}".format(self.labels[var], self.region_labels[region], era)
+            title   = "MC Yields in {0}: {1} {2} {3}".format(cr_name, self.labels[var], self.region_labels[region], era)
             x_title = self.labels[var]
             y_title = "Events"
-            y_min = 0.01
-            y_max = 10.0 ** 6
+            y_min = y_limits_map[region]["yield"][0]
+            y_max = y_limits_map[region]["yield"][1]
             setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
             hist.GetXaxis().SetNdivisions(5, 5, 0, True)
             hist.GetYaxis().SetNdivisions(5, 5, 0, True)
@@ -422,14 +422,11 @@ class Systematic:
         for histName in mc_list:
             hist = h_mc_statunc_map[histName]
             
-            title   = "MC Stat. Unc. in Z CR: {0} {1} {2}".format(self.labels[var], self.region_labels[region], era)
+            title   = "MC Stat. Unc. in {0}: {1} {2} {3}".format(cr_name, self.labels[var], self.region_labels[region], era)
             x_title = self.labels[var]
             y_title = "Stat. Unc."
-            y_min = 0.01
-            if region == "LowDM":
-                y_max = 100.0
-            else:
-                y_max = 10.0
+            y_min = y_limits_map[region]["statunc"][0]
+            y_max = y_limits_map[region]["statunc"][1]
             setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
             hist.GetXaxis().SetNdivisions(5, 5, 0, True)
             hist.GetYaxis().SetNdivisions(5, 5, 0, True)
@@ -477,11 +474,11 @@ class Systematic:
         for histName in mc_list:
             hist = h_mc_relstatunc_map[histName]
             
-            title   = "MC Rel. Stat. Unc. in Z CR: {0} {1} {2}".format(self.labels[var], self.region_labels[region], era)
+            title   = "MC Rel. Stat. Unc. in {0}: {1} {2} {3}".format(cr_name, self.labels[var], self.region_labels[region], era)
             x_title = self.labels[var]
             y_title = "Rel. Stat. Unc."
-            y_min = 0.01
-            y_max = 1.00
+            y_min = y_limits_map[region]["relstatunc"][0]
+            y_max = y_limits_map[region]["relstatunc"][1]
             setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
             hist.GetXaxis().SetNdivisions(5, 5, 0, True)
             hist.GetYaxis().SetNdivisions(5, 5, 0, True)
@@ -909,11 +906,29 @@ class Systematic:
             
             colors = ["cherry red", "orange", "apple green", "cerulean", "bright purple", "fuchsia", "marigold", "lightish blue", "purpley blue", "terracotta"]
 
+            # put y axis limits in maps
+            y_limits_map_Z                              = {}
+            y_limits_map_Z["LowDM"]                     = {}
+            y_limits_map_Z["LowDM"]["yield"]            = [10.0 ** -2, 10.0 ** 7]
+            y_limits_map_Z["LowDM"]["statunc"]          = [0.01, 100.0]
+            y_limits_map_Z["LowDM"]["relstatunc"]       = [0.01, 1.0]
+            y_limits_map_Z["HighDM"]                    = {}
+            y_limits_map_Z["HighDM"]["yield"]           = [10.0 ** -2, 10.0 ** 7]
+            y_limits_map_Z["HighDM"]["statunc"]         = [0.01, 10.0]
+            y_limits_map_Z["HighDM"]["relstatunc"]      = [0.01, 1.0]
+            y_limits_map_photon                         = {}
+            y_limits_map_photon["LowDM"]                = {}
+            y_limits_map_photon["LowDM"]["yield"]       = [10.0 ** -2, 10.0 ** 8]
+            y_limits_map_photon["LowDM"]["statunc"]     = [0.01, 3000.0]
+            y_limits_map_photon["LowDM"]["relstatunc"]  = [0.01, 2.0]
+            y_limits_map_photon["HighDM"]               = {}
+            y_limits_map_photon["HighDM"]["yield"]      = [10.0 ** -2, 10.0 ** 8]
+            y_limits_map_photon["HighDM"]["statunc"]    = [0.01, 1000.0]
+            y_limits_map_photon["HighDM"]["relstatunc"] = [0.01, 2.0]
 
-            # plotYieldsAndStatUnc(self, mc_list, h_mc_map, colors, var, region, era, fileTag, rebin)
-            self.plotYieldsAndStatUnc(mc_list_Z, h_mc_map_Z, colors, var, region, era, fileTag + "_Z", rebin)
-            self.plotYieldsAndStatUnc(mc_list_photon, h_mc_map_photon, colors, var, region, era, fileTag + "_Photon", rebin)
-
+            # plotYieldsAndStatUnc(self, mc_list, h_mc_map, y_limits_map, colors, cr_name, var, region, era, fileTag, rebin):
+            self.plotYieldsAndStatUnc(mc_list_Z,      h_mc_map_Z,      y_limits_map_Z,      colors, "Z CR",      var, region, era, fileTag + "_Z",      rebin)
+            self.plotYieldsAndStatUnc(mc_list_photon, h_mc_map_photon, y_limits_map_photon, colors, "Photon CR", var, region, era, fileTag + "_Photon", rebin)
 
         # write map to json file 
         if doDataOverData:
