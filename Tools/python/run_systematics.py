@@ -130,16 +130,16 @@ def writeToConfFromSyst(era, outFile, binMap, process, syst, h, region, offset, 
         new_down = r_down
         if new_up <= 0:
             new_up = ERROR_SYST
-            print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
+            #print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
         if new_up > 3:
             new_up = 3
-            print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
+            #print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
         if new_down <= 0:
             new_down = ERROR_SYST
-            print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
+            #print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
         if new_down > 3:
             new_down = 3
-            print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
+            #print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
 
         # First fix largely asymmetric systematics
         # Next fix same direction systematics
@@ -174,23 +174,24 @@ def writeToConfFromPred(era, outFile, infoFile, binMap, process, syst, h, h_up, 
                 r_up   = p_up   / p
                 r_down = p_down / p
             else:
-                print "WARNING: pred = 0 for bin {0}".format(sb_i)
+                #print "WARNING: pred = 0 for bin {0}".format(sb_i)
+                pass
         
         # avoid taking log of negative number or 0
         new_up   = r_up
         new_down = r_down
         if new_up <= 0:
             new_up = ERROR_SYST
-            print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
+            #print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
         if new_up > 3:
             new_up = 3
-            print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
+            #print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_up, new_up)
         if new_down <= 0:
             new_down = ERROR_SYST
-            print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
+            #print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
         if new_down > 3:
             new_down = 3
-            print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
+            #print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}".format(era, sb_i, sb_name, process, syst, r_down, new_down)
         
         # First fix largely asymmetric systematics
         # Next fix same direction systematics
@@ -201,10 +202,10 @@ def writeToConfFromPred(era, outFile, infoFile, binMap, process, syst, h, h_up, 
         if p > 0 and p_error > 0 and p_error / p > 0.99:
             if new_up != 1.0:
                 new_up   = 1.0
-                print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}; nominal = {7}, stat_unc = {8}, stat_unc/nominal = {9}".format(era, sb_i, sb_name, process, syst, r_up, new_up, p, p_error, p_error / p)
+                #print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_up = {5}, setting to {6}; nominal = {7}, stat_unc = {8}, stat_unc/nominal = {9}".format(era, sb_i, sb_name, process, syst, r_up, new_up, p, p_error, p_error / p)
             if new_down != 1.0:
                 new_down   = 1.0
-                print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}; nominal = {7}, stat_unc = {8}, stat_unc/nominal = {9}".format(era, sb_i, sb_name, process, syst, r_down, new_down, p, p_error, p_error / p)
+                #print "WARNING: DATACARD, {0}: bin {1}, {2}: {3}, {4}, r_down = {5}, setting to {6}; nominal = {7}, stat_unc = {8}, stat_unc/nominal = {9}".format(era, sb_i, sb_name, process, syst, r_down, new_down, p, p_error, p_error / p)
         
         # make both up and down variations >= 1.0 independent of direction
         values_up.append(np.exp(abs(np.log(new_up))))
@@ -261,9 +262,7 @@ def symmetrizeSyst(h, h_up, h_down):
         if same_dir:
             if useLogNormal:
                 # using geometric mean
-                if Aup * Adown < 0:
-                    print "WARNING: Aup * Adown = {0}, about to take square root.".format(Aup * Adown)
-                # HACK: use abs() to avoid negative values
+                # HACK: use abs() to avoid sqrt() of negative values
                 geometric_mean = np.sqrt(abs(Aup * Adown))
                 Aup     /= geometric_mean
                 Adown   /= geometric_mean
@@ -400,11 +399,11 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                     # avoid taking log of negative number or 0
                     if log_syst_up <= 0:
                         new_value = ERROR_SYST
-                        print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_up = {4}. Setting log_syst_up = {5}.".format(era, bintype, b, syst, log_syst_up, new_value)
+                        #print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_up = {4}. Setting log_syst_up = {5}.".format(era, bintype, b, syst, log_syst_up, new_value)
                         log_syst_up = new_value
                     if log_syst_down <= 0:
                         new_value = ERROR_SYST
-                        print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_down = {4}. Setting log_syst_down = {5}.".format(era, bintype, b, syst, log_syst_down, new_value)
+                        #print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_down = {4}. Setting log_syst_down = {5}.".format(era, bintype, b, syst, log_syst_down, new_value)
                         log_syst_down = new_value
                     # sum in quadrature 
                     syst_up_sum     += syst_up**2
@@ -444,11 +443,11 @@ def getTotalSystematics(BinObject, bintype, systematics_znunu, systHistoMap, his
                         # avoid taking log of negative number or 0
                         if log_syst_up <= 0:
                             new_value = ERROR_SYST
-                            print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_up = {4}. Setting log_syst_up = {5}.".format(era, bintype, b, syst, log_syst_up, new_value)
+                            #print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_up = {4}. Setting log_syst_up = {5}.".format(era, bintype, b, syst, log_syst_up, new_value)
                             log_syst_up = new_value
                         if log_syst_down <= 0:
                             new_value = ERROR_SYST
-                            print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_down = {4}. Setting log_syst_down = {5}.".format(era, bintype, b, syst, log_syst_down, new_value)
+                            #print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_down = {4}. Setting log_syst_down = {5}.".format(era, bintype, b, syst, log_syst_down, new_value)
                             log_syst_down = new_value
                         # sum in quadrature 
                         syst_up_sum     += syst_up**2
@@ -633,7 +632,7 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
             
             p  = p1
 
-            print "PREDICTION {0} search bin {1}: {2}, {3}, {4}".format(era, b, p1, p2, isclose(p1, p2, rel_tol=1e-06))
+            #print "PREDICTION {0} search bin {1}: {2}, {3}, {4}".format(era, b, p1, p2, isclose(p1, p2, rel_tol=1e-06))
 
             # stat unc
             if znunu_mc > 0:
@@ -782,11 +781,11 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                     # avoid taking log of negative number or 0
                     if log_syst_up <= 0:
                         new_value = ERROR_SYST
-                        print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_up = {4}. Setting log_syst_up = {5}.".format(era, "search", b, syst, log_syst_up, new_value)
+                        #print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_up = {4}. Setting log_syst_up = {5}.".format(era, "search", b, syst, log_syst_up, new_value)
                         log_syst_up = new_value
                     if log_syst_down <= 0:
                         new_value = ERROR_SYST
-                        print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_down = {4}. Setting log_syst_down = {5}.".format(era, "search", b, syst, log_syst_down, new_value)
+                        #print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_down = {4}. Setting log_syst_down = {5}.".format(era, "search", b, syst, log_syst_down, new_value)
                         log_syst_down = new_value
                     # If both systematics go the same direction, need to symmetrize
                     # Because all the nuisance parameters are log-normal, symmetrize by dividing by the geometric mean
@@ -883,11 +882,11 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
                         # avoid taking log of negative number or 0
                         if log_syst_up <= 0:
                             new_value = ERROR_SYST
-                            print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_up = {4}. Setting log_syst_up = {5}.".format(era, "search", b, syst, log_syst_up, new_value)
+                            #print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_up = {4}. Setting log_syst_up = {5}.".format(era, "search", b, syst, log_syst_up, new_value)
                             log_syst_up = new_value
                         if log_syst_down <= 0:
                             new_value = ERROR_SYST
-                            print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_down = {4}. Setting log_syst_down = {5}.".format(era, "search", b, syst, log_syst_down, new_value)
+                            #print "WARNING: systematic<=0, {0}: For {1} bin {2}, syst {3}: log_syst_down = {4}. Setting log_syst_down = {5}.".format(era, "search", b, syst, log_syst_down, new_value)
                             log_syst_down = new_value
                         # Because all the nuisance parameters are log-normal, sum the log of the ratios in quadrature
                         try: 
@@ -1010,7 +1009,6 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         pred_up_error   = systValMap[syst]["pred_up_error"]
         pred_down       = systValMap[syst]["pred_down"]
         pred_down_error = systValMap[syst]["pred_down_error"]
-        print "Recording systematic {0}".format(syst)
 
         # get percentages >= 0.0%
         ave_val  = 100 * np.exp(np.average(values))
@@ -1035,15 +1033,17 @@ def getTotalSystematicsPrediction(SearchBinObject, CRBinObject, N, S, runMap, sy
         infoFile.write("{0}  {1}_Down  ave={2:.2f}%, med={3:.2f}%, range=[{4:.2f}%, {5:.2f}%]\n".format("total", syst, ave_down, med_down, min_down, max_down ))
 
         # --- investigate large values
-        print "{0} LENGTH values: {1}".format(era, len(values))
-        print "{0} LENGTH values_up: {1}".format(era, len(values_up))
-        print "{0} LENGTH values_down: {1}".format(era, len(values_down))
-        for i in xrange(len(values_up)):
-            maxVal = 1.5
-            if values_up[i] >= maxVal: 
-                print "LargeSyst: {0}, {1}, bin {2}, pred = {3} +/- {4}, pred_up = {5} +/- {6}, syst_up = {7}".format(era, syst, i, pred[i], pred_error[i], pred_up[i], pred_up_error[i], values_up[i])
-            if values_down[i] >= maxVal: 
-                print "LargeSyst: {0}, {1}, bin {2}, pred = {3} +/- {4}, pred_down = {5} +/- {6}, syst_down = {7}".format(era, syst, i, pred[i], pred_error[i], pred_down[i], pred_down_error[i], values_down[i])
+        showLargeSyst = False
+        if showLargeSyst:
+            print "{0} LENGTH values: {1}".format(era, len(values))
+            print "{0} LENGTH values_up: {1}".format(era, len(values_up))
+            print "{0} LENGTH values_down: {1}".format(era, len(values_down))
+            for i in xrange(len(values_up)):
+                maxVal = 1.5
+                if values_up[i] >= maxVal: 
+                    print "LargeSyst: {0}, {1}, bin {2}, pred = {3} +/- {4}, pred_up = {5} +/- {6}, syst_up = {7}".format(era, syst, i, pred[i], pred_error[i], pred_up[i], pred_up_error[i], values_up[i])
+                if values_down[i] >= maxVal: 
+                    print "LargeSyst: {0}, {1}, bin {2}, pred = {3} +/- {4}, pred_down = {5} +/- {6}, syst_down = {7}".format(era, syst, i, pred[i], pred_error[i], pred_down[i], pred_down_error[i], values_down[i])
 
         # --- plot 1D histograms
         h_up    = ROOT.TH1F("h_up",   "h_up",   100, 1.0, 3.0)
@@ -1407,7 +1407,6 @@ def run(era, eras, runs_json, syst_json, doRun2, splitBtag, verbose):
                 # Do not vary Normalization
                 # Vary shape to get GJets MC variation
                 S.getShape(         result_file,  era, systTag, varTag)
-                print "Using systTag={0}, varTag={1}".format(systTag, varTag)
                 CRU.getValues(      result_file,  era)
                 
                 for region in regions:

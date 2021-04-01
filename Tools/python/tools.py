@@ -212,10 +212,12 @@ def getTexSelection(selection):
 
 # remove cuts if pattern in cuts
 def removeCuts(cutString, pattern_list, delim = "_"):
+    verbose = False
     newString = cutString
     for pattern in pattern_list:
         cutList = newString.split(delim)
-        #print "cutString: {0}, newString: {1}, cutList: {2}".format(cutString, newString, cutList)
+        if verbose:
+            print "cutString: {0}, newString: {1}, cutList: {2}".format(cutString, newString, cutList)
         newList = list(c for c in cutList if pattern not in c)
         newString = delim.join(newList)
     return newString
@@ -297,8 +299,10 @@ def getMultiplicationError(q, x, dx, y, dy):
     # q = x * y 
     # q = x / y 
     # dq = q * sqrt( (dx/x)^2 + (dy/y)^2 )
+    verbose = False
     if x == 0.0 or y == 0.0:
-        print "ERROR in getMultiplicationError(): Cannot divide by zero."
+        if verbose:
+            print "ERROR in getMultiplicationError(): Cannot divide by zero."
         return ERROR_CODE
     return abs(q * np.sqrt( (dx/x)**2 + (dy/y)**2 ))
 
@@ -306,13 +310,16 @@ def getMultiplicationErrorList(q, x_list, dx_list):
     # q = x * y * ... 
     # q = x / y / ...
     # dq = q * sqrt( (dx/x)^2 + (dy/y)^2 + ... )
+    verbose = False
     if len(x_list) != len(dx_list):
-        print "ERROR in getMultiplicationErrorList(): x_list and dx_list do not have the same length."
+        if verbose:
+            print "ERROR in getMultiplicationErrorList(): x_list and dx_list do not have the same length."
         return ERROR_CODE
     s = 0.0
     for i in xrange(len(x_list)):
         if x_list[i] == 0.0:
-            print "ERROR in getMultiplicationErrorList(): Cannot divide by zero."
+            if verbose:
+                print "ERROR in getMultiplicationErrorList(): Cannot divide by zero."
             return ERROR_CODE
         s += (dx_list[i] / x_list[i]) ** 2
     return abs(q * np.sqrt(s))

@@ -29,6 +29,7 @@ class Systematic:
         self.x_min = 250.0
         self.x_max = 1000.0
         self.h_map_syst = {}
+        self.region_labels = {"LowDM" : "Low #Deltam", "HighDM": "High #Deltam"}
         self.labels = {
                         "met"   : "Modified p_{T}^{miss} [GeV]", 
                         "ht"    : "H_{T} [GeV]",
@@ -126,6 +127,38 @@ class Systematic:
         
         return h_mc_Z
     
+    def getZMCHists(self, root_file, variable, h_map_norm):
+        h_DY_Electron       = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["DY"]      ) )
+        h_Diboson_Electron  = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Diboson"] ) )
+        h_Rare_Electron     = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["Rare"]    ) )
+        h_TTbar_Electron    = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["TTbar"]   ) )
+        h_SingleT_Electron  = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["SingleT"] ) )
+        h_DY_Muon           = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["DY"]          ) )
+        h_Diboson_Muon      = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Diboson"]     ) )
+        h_Rare_Muon         = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["Rare"]        ) )
+        h_TTbar_Muon        = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["TTbar"]       ) )
+        h_SingleT_Muon      = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["SingleT"]     ) )
+        
+        h_DY        = h_DY_Electron.Clone("h_DY") 
+        h_Diboson   = h_Diboson_Electron.Clone("h_Diboson") 
+        h_Rare      = h_Rare_Electron.Clone("h_Rare") 
+        h_TTbar     = h_TTbar_Electron.Clone("h_TTbar") 
+        h_SingleT   = h_SingleT_Electron.Clone("h_SingleT") 
+        h_DY.Add(h_DY_Muon)
+        h_Diboson.Add(h_Diboson_Muon)
+        h_Rare.Add(h_Rare_Muon)
+        h_TTbar.Add(h_TTbar_Muon)
+        h_SingleT.Add(h_SingleT_Muon)
+        
+        hist_map = {}
+        hist_map["DY"]          = h_DY
+        hist_map["Diboson"]     = h_Diboson
+        hist_map["Rare"]        = h_Rare
+        hist_map["TTbar"]       = h_TTbar
+        hist_map["SingleT"]     = h_SingleT
+        
+        return hist_map
+    
     def getDY(self, root_file, variable, h_map_norm):
         h_DY_Electron   = root_file.Get( str(variable + "/" + h_map_norm["Electron"]["DY"]      ) )
         h_DY_Muon       = root_file.Get( str(variable + "/" + h_map_norm["Muon"]["DY"]          ) )
@@ -165,6 +198,36 @@ class Systematic:
         h_mc_photon.Add(h_Rare)
 
         return h_mc_photon
+    
+    def getPhotonMCHists(self, root_file, variable, h_map_shape):
+        h_GJets             = root_file.Get( str(variable + "/" + h_map_shape["GJets"]           ) )
+        if self.S.splitQCD:
+            h_QCD_Direct        = root_file.Get( str(variable + "/" + h_map_shape["QCD_Direct"]         ) )
+            h_QCD_Fragmentation = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fragmentation"]  ) )
+            h_QCD_NonPrompt     = root_file.Get( str(variable + "/" + h_map_shape["QCD_NonPrompt"]      ) )
+            h_QCD_Fake          = root_file.Get( str(variable + "/" + h_map_shape["QCD_Fake"]           ) )
+        else:
+            h_QCD               = root_file.Get( str(variable + "/" + h_map_shape["QCD"]  ) )
+        h_WJets             = root_file.Get( str(variable + "/" + h_map_shape["WJets"]    ) )
+        h_TTG               = root_file.Get( str(variable + "/" + h_map_shape["TTG"]      ) )
+        h_tW                = root_file.Get( str(variable + "/" + h_map_shape["tW"]       ) )
+        h_Rare              = root_file.Get( str(variable + "/" + h_map_shape["Rare"]     ) )
+        
+        hist_map = {}
+        hist_map["GJets"] = h_GJets
+        if self.S.splitQCD:
+            hist_map["QCD_Direct"]          = h_QCD_Direct
+            hist_map["QCD_Fragmentation"]   = h_QCD_Fragmentation
+            hist_map["QCD_NonPrompt"]       = h_QCD_NonPrompt
+            hist_map["QCD_Fake"]            = h_QCD_Fake
+        else:
+            hist_map["QCD"] = h_QCD
+        hist_map["WJets"] = h_WJets
+        hist_map["TTG"]   = h_TTG
+        hist_map["tW"]    = h_tW
+        hist_map["Rare"]  = h_Rare
+
+        return hist_map
     
     def getGJets(self, root_file, variable, h_map_shape):
         h_GJets = root_file.Get( str(variable + "/" + h_map_shape["GJets"]           ) )
@@ -249,6 +312,215 @@ class Systematic:
         # take ratio
         h_ratio = self.getHistRatio(h_data, h_mc, rebin)
         return h_ratio
+
+    def plotYieldsAndStatUnc(self, mc_list, h_mc_map, y_limits_map, colors, cr_name, var, region, era, fileTag, rebin):
+        # WARNING: don't use "c" as this is already used in makeZvsPhoton()
+        # you need to use a different name to avoid problems with the open "c" canvas
+        c1 = ROOT.TCanvas("c1", "c1", 800, 800)
+        
+        pad = c1.cd(1)
+        pad.SetLeftMargin(0.2)
+        pad.SetRightMargin(0.1)
+        pad.SetTopMargin(0.1)
+        pad.SetBottomMargin(0.2)
+
+        # ------------------- #
+        # --- draw yields --- #
+        # ------------------- #
+        c1.SetLogy(1) # set log y
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.60
+        legend_x2 = 0.90
+        legend_y1 = 0.65
+        legend_y2 = 0.85
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        legend.SetFillStyle(0)
+        legend.SetBorderSize(0)
+        legend.SetLineWidth(1)
+        legend.SetNColumns(1)
+        legend.SetTextFont(42)
+        
+        # histograms to show stat. unc.
+        h_mc_yield_map      = {}
+        h_mc_statunc_map    = {}
+        h_mc_relstatunc_map = {}
+
+        # use list to define order
+        i = 0
+        for histName in mc_list:
+            # load hist and create stat unc hist
+            h_original = h_mc_map[histName]
+            # rebin 
+            if rebin: 
+                h_mc_yield_map[histName] = h_original.Rebin(self.n_bins, "h_"+histName, self.xbins)
+            else:
+                h_mc_yield_map[histName] = h_original.Clone("h_"+histName)
+            # use map so that hist exists for legend; legend will seg fault if hists are overwritten and don't exist
+            hist = h_mc_yield_map[histName]
+            # set x axis limits before cloning; this will persist for clone hists
+            hist.GetXaxis().SetRangeUser(self.x_min, self.x_max)
+            # create stat unc hist
+            h_statunc    = hist.Clone("h_statunc")
+            h_relstatunc = hist.Clone("h_relstatunc")
+            for b in range(1, hist.GetNbinsX() + 1):
+                # statunc
+                h_statunc.SetBinContent(b, hist.GetBinError(b))
+                h_statunc.SetBinError(b, 0.0)
+                # relstatunc
+                rel_stat_unc = 0.0
+                if hist.GetBinContent(b) != 0.0:
+                    rel_stat_unc = hist.GetBinError(b) / hist.GetBinContent(b)
+                h_relstatunc.SetBinContent(b, rel_stat_unc)
+                h_relstatunc.SetBinError(b, 0.0)
+            h_mc_statunc_map[histName]    = h_statunc 
+            h_mc_relstatunc_map[histName] = h_relstatunc 
+            
+            # formatting
+            title   = "MC Yields in {0} ({1})".format(cr_name, self.region_labels[region])
+            x_title = self.labels[var]
+            y_title = "Events"
+            y_min = y_limits_map[region]["yield"][0]
+            y_max = y_limits_map[region]["yield"][1]
+            setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
+            
+            hist.GetYaxis().SetTitleOffset(1.5)
+            hist.GetXaxis().SetNdivisions(5, 5, 0, True)
+            hist.GetYaxis().SetNdivisions(5, 5, 0, True)
+        
+            legend.AddEntry(hist, histName, "l")
+            
+            if i == 0:
+                hist.Draw("hist")
+            else:
+                hist.Draw("hist same")
+
+            i += 1
+        
+        legend.Draw()
+
+        # save histograms
+        if rebin:
+            plot_name = "{0}{1}_Yield_{2}_{3}_rebinned_{4}".format(self.plot_dir, fileTag, var, region, era)
+        else:
+            plot_name = "{0}{1}_Yield_{2}_{3}_{4}".format(self.plot_dir, fileTag, var, region, era)
+        
+        c1.Update()
+        c1.SaveAs(plot_name + ".pdf")
+        c1.SaveAs(plot_name + ".png")
+        
+        # --------------------- #
+        # --- draw stat unc --- #
+        # --------------------- #
+        c1.SetLogy(0) # unset log y
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.60
+        legend_x2 = 0.90
+        legend_y1 = 0.65
+        legend_y2 = 0.85
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        legend.SetFillStyle(0)
+        legend.SetBorderSize(0)
+        legend.SetLineWidth(1)
+        legend.SetNColumns(1)
+        legend.SetTextFont(42)
+        
+        # use list to define order
+        i = 0
+        for histName in mc_list:
+            hist = h_mc_statunc_map[histName]
+            
+            # formatting
+            title   = "MC Stat. Unc. in {0} ({1})".format(cr_name, self.region_labels[region])
+            x_title = self.labels[var]
+            y_title = "Stat. Unc."
+            y_min = y_limits_map[region]["statunc"][0]
+            y_max = y_limits_map[region]["statunc"][1]
+            setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
+            
+            hist.GetYaxis().SetTitleOffset(1.5)
+            hist.GetXaxis().SetNdivisions(5, 5, 0, True)
+            hist.GetYaxis().SetNdivisions(5, 5, 0, True)
+            
+            legend.AddEntry(hist, histName, "l")
+        
+            if i == 0:
+                hist.Draw("hist")
+            else:
+                hist.Draw("hist same")
+
+            i += 1
+        
+        legend.Draw()
+        
+        # save histograms
+        if rebin:
+            plot_name = "{0}{1}_StatUnc_{2}_{3}_rebinned_{4}".format(self.plot_dir, fileTag, var, region, era)
+        else:
+            plot_name = "{0}{1}_StatUnc_{2}_{3}_{4}".format(self.plot_dir, fileTag, var, region, era)
+        
+        c1.Update()
+        c1.SaveAs(plot_name + ".pdf")
+        c1.SaveAs(plot_name + ".png")
+        
+        # ------------------------- #
+        # --- draw rel stat unc --- #
+        # ------------------------- #
+        c1.SetLogy(0) # unset log y
+        
+        # legend: TLegend(x1,y1,x2,y2)
+        legend_x1 = 0.60
+        legend_x2 = 0.90
+        legend_y1 = 0.65
+        legend_y2 = 0.85
+        legend = ROOT.TLegend(legend_x1, legend_y1, legend_x2, legend_y2)
+        legend.SetFillStyle(0)
+        legend.SetBorderSize(0)
+        legend.SetLineWidth(1)
+        legend.SetNColumns(1)
+        legend.SetTextFont(42)
+        
+        # use list to define order
+        i = 0
+        for histName in mc_list:
+            hist = h_mc_relstatunc_map[histName]
+            
+            # formatting
+            title   = "MC Rel. Stat. Unc. in {0} ({1})".format(cr_name, self.region_labels[region])
+            x_title = self.labels[var]
+            y_title = "Rel. Stat. Unc."
+            y_min = y_limits_map[region]["relstatunc"][0]
+            y_max = y_limits_map[region]["relstatunc"][1]
+            setupHist(hist,   title,  x_title,  y_title,  colors[i],   y_min,   y_max,   True,  3)
+            
+            hist.GetYaxis().SetTitleOffset(1.5)
+            hist.GetXaxis().SetNdivisions(5, 5, 0, True)
+            hist.GetYaxis().SetNdivisions(5, 5, 0, True)
+            
+            legend.AddEntry(hist, histName, "l")
+        
+            if i == 0:
+                hist.Draw("hist")
+            else:
+                hist.Draw("hist same")
+
+            i += 1
+        
+        legend.Draw()
+        
+        # save histograms
+        if rebin:
+            plot_name = "{0}{1}_RelStatUnc_{2}_{3}_rebinned_{4}".format(self.plot_dir, fileTag, var, region, era)
+        else:
+            plot_name = "{0}{1}_RelStatUnc_{2}_{3}_{4}".format(self.plot_dir, fileTag, var, region, era)
+        
+        c1.Update()
+        c1.SaveAs(plot_name + ".pdf")
+        c1.SaveAs(plot_name + ".png")
+        
+        # delete
+        del c1
 
     # double ratio: Z (data/MC) over Photon (data/MC), or data (Z/Photon) over MC (Z/Photon)
     def makeZvsPhoton(self, file_name, var, varPhoton, varLepton, era, x_min, x_max, n_bins=0, xbins=np.array([]), rebin=False, useForSyst=False, doDataOverData=False):
@@ -522,20 +794,23 @@ class Systematic:
             legend1.AddEntry(sim_stat_unc, "Stat. unc.", "F")
             legend1.Draw()
             
-            # parameters for CMS mark and lumi stamp
+            # parameters for CMS mark, other text, and lumi stamp
             font_scale  = 0.05
             left        = self.x_min
             right       = self.x_max
-            x_offset    = 0.05
+            x_offset    = 0.06  # x offset from left edge
+            y_offset    = 0.90  # y offset from bottom edge
+            y_spacing   = 0.075 # vertical spacing between marks
             width       = right - left
             mark_x1     = left + x_offset * width
             mark_x2     = left + (x_offset + 0.15) * width
-            mark_y1      = 0.90 * y_max
-            mark_y2      = 0.83 * y_max
+            mark_y1     = (y_offset - 0 * y_spacing) * y_max
+            mark_y2     = (y_offset - 1 * y_spacing) * y_max
+            mark_y3     = (y_offset - 2 * y_spacing) * y_max
             lumi_x      = right 
             lumi_y      = 1.02 * y_max
             
-            # Draw CMS mark
+            # Draw CMS and other text
             cms_mark = ROOT.TLatex()
             cms_mark.SetTextAlign(11) # left aligned
             cms_mark.SetTextFont(62)
@@ -547,6 +822,9 @@ class Systematic:
             cms_mark.SetTextFont(42)
             cms_mark.SetTextSize(font_scale)
             cms_mark.DrawLatex(mark_x1, mark_y2, "arXiv:2103.01290")
+            cms_mark.SetTextFont(42)
+            cms_mark.SetTextSize(font_scale)
+            cms_mark.DrawLatex(mark_x1, mark_y3, self.region_labels[region])
 
             # Draw lumi stamp
             lumi = self.lumis[era]
@@ -628,8 +906,54 @@ class Systematic:
             c.SaveAs(plot_name + ".pdf")
             c.SaveAs(plot_name + ".png")
 
+            # ---------------------- #
+            # --- study stat unc --- #
+            # ---------------------- #
+            
+            selectionTag    = "_" + selection
+            nameTag         = "_" + var
+            h_map_norm      = self.getZHistoMap(region, nameTag, selectionTag, varLepton)
+            h_map_shape     = self.S.getSimpleMap(region, nameTag, selectionTag, selectionTag, varPhoton)
+            h_mc_map_Z      = self.getZMCHists(f, varLepton, h_map_norm)
+            h_mc_map_photon = self.getPhotonMCHists(f, varPhoton, h_map_shape)
+            mc_list_Z       = ["DY", "Diboson", "Rare", "TTbar", "SingleT"]
+            if self.S.splitQCD:
+                mc_list_photon = ["GJets", "QCD_Direct", "QCD_Fragmentation", "QCD_NonPrompt", "QCD_Fake", "WJets", "TTG", "tW", "Rare"]
+            else:
+                mc_list_photon = ["GJets", "QCD", "WJets", "TTG", "tW", "Rare"]
+            
+            colors = ["cherry red", "orange", "apple green", "cerulean", "bright purple", "fuchsia", "marigold", "lightish blue", "purpley blue", "terracotta"]
+
+            # put y axis limits in maps
+            y_limits_map_Z                              = {}
+            y_limits_map_Z["LowDM"]                     = {}
+            y_limits_map_Z["LowDM"]["yield"]            = [10.0 ** -2, 10.0 ** 7]
+            y_limits_map_Z["LowDM"]["statunc"]          = [0.01, 100.0]
+            y_limits_map_Z["LowDM"]["relstatunc"]       = [0.01, 1.0]
+            y_limits_map_Z["HighDM"]                    = {}
+            y_limits_map_Z["HighDM"]["yield"]           = [10.0 ** -2, 10.0 ** 7]
+            y_limits_map_Z["HighDM"]["statunc"]         = [0.01, 10.0]
+            y_limits_map_Z["HighDM"]["relstatunc"]      = [0.01, 1.0]
+            y_limits_map_photon                         = {}
+            y_limits_map_photon["LowDM"]                = {}
+            y_limits_map_photon["LowDM"]["yield"]       = [10.0 ** -2, 10.0 ** 8]
+            y_limits_map_photon["LowDM"]["statunc"]     = [0.01, 3000.0]
+            y_limits_map_photon["LowDM"]["relstatunc"]  = [0.01, 2.0]
+            y_limits_map_photon["HighDM"]               = {}
+            y_limits_map_photon["HighDM"]["yield"]      = [10.0 ** -2, 10.0 ** 8]
+            y_limits_map_photon["HighDM"]["statunc"]    = [0.01, 1000.0]
+            y_limits_map_photon["HighDM"]["relstatunc"] = [0.01, 2.0]
+
+            # plotYieldsAndStatUnc(self, mc_list, h_mc_map, y_limits_map, colors, cr_name, var, region, era, fileTag, rebin):
+            self.plotYieldsAndStatUnc(mc_list_Z,      h_mc_map_Z,      y_limits_map_Z,      colors, "Z CR",      var, region, era, fileTag + "_Z",      rebin)
+            self.plotYieldsAndStatUnc(mc_list_photon, h_mc_map_photon, y_limits_map_photon, colors, "Photon CR", var, region, era, fileTag + "_Photon", rebin)
+
         # write map to json file 
         if doDataOverData:
             with open (output_name, "w") as j:
                 json.dump(val_map, j, sort_keys=True, indent=4, separators=(',', ' : '))
+
+        # delete
+        del c 
+
 

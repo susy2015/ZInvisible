@@ -52,7 +52,8 @@ class Common:
                     value       = h.GetBinContent(bin_i)
                     value_error = h.GetBinError(bin_i)
                     if value < 0:
-                        print "WARNING: {0} {1} bin {2}, {3}: bin content = {4}; setting to 0.000001".format(era, region, b, h_type, value)
+                        if debug:
+                            print "WARNING: {0} {1} bin {2}, {3}: bin content = {4}; setting to 0.000001".format(era, region, b, h_type, value)
                         value = 0.000001
                     final_error = getBinError(value, value_error, ERROR_ZERO) 
                     self.binValues[era][b][h_type]            = value
@@ -372,8 +373,6 @@ class Common:
     # ---------------------------------------------------------------------- #
     def calcPrediction(self, x_title, name, era, useRzPerYear=False):
         # save values in map
-        if self.verbose:
-            print era
         for b in self.all_bins:
             region          = self.bins[b]["region"]
             selection       = self.bins[b]["selection"]
@@ -410,7 +409,8 @@ class Common:
                 # this error is already in s_error... but we need to scale by Rz and Nmc
                 p_error_mc_only    = s_error * n * m
                 p_error_propagated = s_error * n * m
-                print "bin {0}: shape = {1} +{2} -0.0, Rz * Nmc = {3}, pred = {4} +{5} -0.0".format(b, s, s_error, n * m, p, p_error_propagated)
+                if self.verbose:
+                    print "{0} bin {1}: shape = {2} +{3} -0.0, Rz * Nmc = {4}, pred = {5} +{6} -0.0".format(era, b, s, s_error, n * m, p, p_error_propagated)
             else:
                 # MC stat. error adjusted by multiplication; does not include Rz or Sgamma stat. unc.
                 p_error_mc_only    = m_error
@@ -434,10 +434,13 @@ class Common:
             
             # error < 0.0 due to error code
             if p_error_propagated < 0:
-                print "ERROR: p_error_propagated = {0}; setting error to {1}".format(p_error_propagated, ERROR_ZERO)
+                if self.verbose:
+                    print "ERROR: p_error_propagated = {0}; setting error to {1}".format(p_error_propagated, ERROR_ZERO)
                 p_error_propagated = ERROR_ZERO 
             elif p_error_propagated >= 100:
-                print "WARNING: p_error_propagated = {0}".format(p_error_propagated)
+                if self.verbose:
+                    print "WARNING: p_error_propagated = {0}".format(p_error_propagated)
+                pass
             
             # prediction:                   p     = bin value
             # uncertainty:                  sigma = bin error
@@ -505,13 +508,9 @@ class Common:
                 selection = self.bins[b]["selection"]
                 selection_norm = removeCuts(selection, ["NJ"])
                 
-                #print "DEBUG: b={0}, selection={1}, selection_norm={2}, type={3}".format(b, selection, selection_norm, type(selection_norm))
-                #print "DEBUG: rz_syst_map[{0}] keys = {1}".format(region, rz_syst_map[bin_type][region].keys())
-                
                 # rz_syst_map[bin_type][region][selection]
                 syst = rz_syst_map[bin_type][region][selection_norm]
                 
-                #print "--- syst = {0}".format(syst)
                 systMap[region]["hist"].SetBinContent(i, syst)
                 systMap[region]["hist"].SetBinError(i, 0)
                 i += 1
