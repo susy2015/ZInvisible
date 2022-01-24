@@ -11,14 +11,13 @@ def main():
     for t in tuples:
         d = t[0]
         if d[2:8] == tag:
-            #if "output" in d: 
-            if "logs" in d or "output" in d: 
+            if d.endswith("logs") or d.endswith("output"):
                 print "Removing {0}".format(d)
-                ## Try to remove tree; if failed show an error using try...except on screen
+                ### Try to remove tree; if failed show an error
                 try:
-                        shutil.rmtree(d)
+                    shutil.rmtree(d)
                 except OSError as e:
-                        print ("Error: %s - %s." % (e.filename, e.strerror))
+                    print ("Error: %s - %s." % (e.filename, e.strerror))
 
 if __name__ == "__main__":
     main()
